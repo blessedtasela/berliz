@@ -1,0 +1,11 @@
+
+    <h1 class="font-sans text-4xl mb-5 text-center mt-40">
+        Our promotions
+    </h1>
+    <div class="mt-20 flex justify-center mb-2 space-y-1 mx-auto p-1">
+        <div class="grid lg:grid-cols-2 gap-20 items-center mx-auto p-6">
+            <app-promotions *ngFor="let promotion of promotionsList" 
+            [promotions]="promotion">
+            </app-promotions>
+        </div>
+    </div>

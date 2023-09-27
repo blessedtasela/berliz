@@ -1,0 +1,128 @@
+<nav class="py-0 bg-white shadow flex items-center justify-between nav-menu w-full">
+    <div class="flex justify-between items-center w-full justify-end">
+        <div class="text-xl font-sans cursor-pointer">
+            <img class="h-16 inline" src="../../../assets/landing/logo.jpg" [routerLink]="['/home']">
+        </div>
+        <div *ngIf="menuStatus; else alignJustify">
+            <div class="text-4xl cursor-pointer mx-2 md:hidden block">
+                <i-feather name="arrow-left" (click)="navMenu('arrow-left')"></i-feather>
+            </div>
+        </div>
+        <ng-template #alignJustify>
+            <div class="text-4xl cursor-pointer mx-2 md:hidden block">
+                <i-feather name="align-justify" (click)="navMenu('align-justify')"></i-feather>
+            </div>
+        </ng-template>
+    </div>
+    <div>
+        <ul class="md:flex md:items-center z-[-1] md:z-auto md:static absolute bg-white w-full left-0 md:w-auto md:py-0 
+        py-1 md:pl-0 pl-7 md:opacity-100 opacity-0 top-[50px] transition-all ease-in-out duration-400"
+            [ngClass]="{'top-[50px]': menuStatus, 'opacity-100': menuStatus, 'hidden': !menuStatus}">
+            <li
+                class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300 ease-in-out transform hover:scale-110 focus:scale-110">
+                <div class="text-md hover:text-red-600 duration-500"
+                    [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('home')}">
+                    <a [routerLink]="['/home']">
+                        Home
+                    </a>
+                </div>
+            </li>
+            <li
+                class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300 ease-in-out transform hover:scale-110 focus:scale-110">
+                <div class="text-md hover:text-red-600 duration-500"
+                    [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('contact')}">
+                    <a [routerLink]="['/contact']">
+                        Contact
+                    </a>
+                </div>
+            </li>
+            <li
+                class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300 transform hover:scale-110 focus:scale-110">
+                <div class="text-md hover:text-red-600 duration-500"
+                    [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('about')}">
+                    <a [routerLink]="['/about']">
+                        About
+                    </a>
+                </div>
+            </li>
+            <li
+                class="mx-8 my-5 md:my-0 hidden hover:drop-shadow-2xl transition-all duration-300 transform hover:scale-110 focus:scale-110">
+                <div class="text-md hover:text-red-600 duration-500"
+                    [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('products')}">
+                    <a [routerLink]="['/products']">
+                        Products
+                    </a>
+                </div>
+            </li>
+            <li
+                class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300 transform hover:scale-110 focus:scale-110">
+                <div class="text-md hover:text-red-600 duration-500"
+                    [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('centers') || isActive('centers/:id/:name')}">
+                    <a [routerLink]="['/centers']">
+                        Centers
+                    </a>
+                </div>
+            </li>
+            <li
+                class="hidden mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300 transform hover:scale-110 focus:scale-110">
+                <div class="text-md hover:text-red-600 duration-500" [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('new-products') 
+                    || isActive('new-products/:id/:name')
+                || isActive('old-products')
+                || isActive('old-products/:id/:name') }">
+                    <a [routerLink]="['/products']" [ngClass]="{'shadow:bg-gray-200': isActive('products')}">
+                        Products
+                    </a>
+                </div>
+            </li>
+            <li
+                class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300 transform hover:scale-110 focus:scale-110">
+                <div class="text-md hover:text-red-600 duration-500"
+                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('categories') || isActive('categories/:id/:name')}">
+                <a [routerLink]="['/categories']">
+                    Categories
+                </a>
+                </div>
+            </li>
+            <li
+                class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300 transform hover:scale-110 focus:scale-110">
+                <div class="text-md hover:text-red-600 duration-500"
+                    [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('trainers') || isActive('trainers/:id/:name')}">
+                    <a [routerLink]="['/trainers']">
+                        Trainers
+                    </a>
+                </div>
+            </li>
+            <li class="hover:drop-shadow-2xl transition-all duration-500 transform hover:scale-110 focus:scale-110">
+                <button
+                    class="bg-red-600 text-white font-sans px-6 mb-2 py-1 mx-4 hover:bg-red-700 rounded duration-500 whitespace-nowrap"
+                    *ngIf="!isActive('sign-up')  && isActive('login')"
+                    [ngClass]="{'shadow:bg-gray-200': isActive('sign-up')}">
+                    <a [routerLink]="['/sign-up']">
+                        Sign up
+                    </a>
+
+                </button>
+            </li>
+            <li class="hover:drop-shadow-2xl transition-all duration-500 transform hover:scale-110 focus:scale-110"
+                *ngIf="!getUser()">
+                <button
+                    class="bg-red-600 text-white font-sans px-6 mb-2 py-1 mx-4 hover:bg-red-700 rounded duration-500 whitespace-nowrap"
+                    *ngIf="!isActive('login')" [ngClass]="{'shadow:bg-gray-200': isActive('login')}">
+                    <a [routerLink]="['/login']">
+                        Login
+                    </a>
+                </button>
+            </li>
+            <li class="hover:drop-shadow-2xl transition-all duration-500 transform hover:scale-110 focus:scale-110"
+                *ngIf="getUser()">
+                <button
+                    class="bg-red-600 text-white font-sans px-6 mb-2 py-1 mx-4 hover:bg-red-700 rounded duration-500 whitespace-nowrap"
+                    [ngClass]="{'shadow:bg-gray-200': isActive('dashboard')}">
+                    <a [routerLink]="['/dashboard']">
+                        dashboard
+                    </a>
+                </button>
+            </li>
+        </ul>
+    </div>
+</nav>

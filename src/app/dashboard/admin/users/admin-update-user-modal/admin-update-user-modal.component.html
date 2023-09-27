@@ -1,0 +1,225 @@
+<div class="rounded-md mx-auto">
+    <form [formGroup]="updateUserForm">
+        <div class="border-2 " *ngIf="formIndex === 0" [ngClass]="{'border-red-400':
+          (updateUserForm.get('firstname')?.invalid ||
+                updateUserForm.get('lastname')?.invalid ||
+                updateUserForm.get('phone')?.invalid ||
+                updateUserForm.get('dob')?.invalid ||
+                updateUserForm.get('gender')?.invalid) && invalidForm }">
+
+            <header class="text-center m-2">
+                <div class="text-red-600 text-right font-bold p-1">
+                    <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer ml-20"></i-feather>
+                </div>
+                <h1 class="font-bold font-sans text-xl">Personal Information</h1>
+                <p class="font-sans text-sm">Update account information
+                </p>
+            </header>
+            <hr [ngClass]="{'border-red-500':  (updateUserForm.get('firstname')?.invalid ||
+                updateUserForm.get('lastname')?.invalid ||
+                updateUserForm.get('phone')?.invalid ||
+                updateUserForm.get('dob')?.invalid ||
+                updateUserForm.get('gender')?.invalid) && invalidForm }">
+            <div class="invalid-form">
+                <span *ngIf="!(updateUserForm.get('firstname')?.invalid ||
+                    updateUserForm.get('lastname')?.invalid ||
+                    updateUserForm.get('phone')?.invalid ||
+                    updateUserForm.get('dob')?.invalid ||
+                    updateUserForm.get('gender')?.invalid) && invalidForm" class="mx-2 text-gray-400">
+                    Everything looks good
+                </span>
+                <span *ngIf="(updateUserForm.get('firstname')?.invalid ||
+                    updateUserForm.get('lastname')?.invalid ||
+                    updateUserForm.get('phone')?.invalid ||
+                    updateUserForm.get('dob')?.invalid ||
+                    updateUserForm.get('gender')?.invalid) && invalidForm" class="text-red-500 mx-2">
+                    Please complete this section
+                </span>
+            </div>
+            <div class="grid grid-cols-2 gap-5 flex items-center">
+                <div class="mx-auto col-span-2">
+                    <input formControlName="id" [value]="userData?.id" readonly
+                        class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-red-400': updateUserForm.get('id')?.invalid && updateUserForm.get('id')?.touched }"
+                        placeholder="user id" type="number">
+                </div>
+                <div class="mx-auto">
+                    <input formControlName="firstname" [value]="userData?.firstname"
+                        class="w-36 md:w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-red-400': updateUserForm.get('firstname')?.invalid && updateUserForm.get('firstname')?.touched }"
+                        placeholder="First Name" type="text">
+                    <div *ngIf="updateUserForm.get('firstname')?.invalid && updateUserForm.get('firstname')?.dirty"
+                        class="text-red-500 mx-2">
+                        First Name is required
+                    </div>
+                </div>
+                <div class="mx-auto">
+                    <input formControlName="lastname" [value]="userData?.lastname"
+                        class="w-36 md:w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-red-400': updateUserForm.get('lastname')?.invalid && updateUserForm.get('lastname')?.touched }"
+                        placeholder="Last Name" type="text">
+                    <div *ngIf="updateUserForm.get('lastname')?.invalid && updateUserForm.get('lastname')?.dirty"
+                        class="text-red-500 mx-2">
+                        Last Name is required
+                    </div>
+                </div>
+                <div class="mx-auto col-span-2">
+                    <input formControlName="phone" [value]="userData?.phone"
+                        class="border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-red-400': updateUserForm.get('phone')?.invalid && updateUserForm.get('phone')?.touched }"
+                        placeholder="+123 000 000 000" type="tel">
+                    <div *ngIf="updateUserForm.get('phone')?.invalid && updateUserForm.get('phone')?.dirty"
+                        class="text-red-500 mx-2">
+                        must be at least 8 characters
+                    </div>
+                </div>
+                <div class="mx-auto col-span-2">
+                    <input formControlName="dob" [value]="userData?.dob"
+                        class="border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-red-400': updateUserForm.get('dob')?.invalid && updateUserForm.get('dob')?.touched }"
+                        placeholder="date of birth" type="date">
+                    <div *ngIf="updateUserForm.get('dob')?.invalid && updateUserForm.get('dob')?.dirty"
+                        class="text-red-500 mx-2">
+                        Please select your birth date
+                    </div>
+                </div>
+                <div class="font-sans mx-auto">
+                    Male
+                    <input formControlName="gender" [value]="'Male'"
+                        class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-red-400': updateUserForm.get('gender')?.invalid && updateUserForm.get('gender')?.touched }"
+                        placeholder="Male" type="radio" [checked]="userData?.gender === 'Male'">
+                </div>
+                <div class="font-sans mx-auto">
+                    Female
+                    <input formControlName="gender" [value]="'Female'"
+                        class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-red-400': updateUserForm.get('gender')?.invalid && updateUserForm.get('gender')?.touched }"
+                        placeholder="Female" type="radio" [checked]="userData?.gender === 'Female'">
+                    <div *ngIf="updateUserForm.get('gender')?.invalid && updateUserForm.get('gender')?.dirty"
+                        class="text-red-500 mx-2">
+                        Please select a gender
+                    </div>
+                </div>
+                <div class="bg-red-600 rounded-md mx-auto m-2">
+                    <button
+                        class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                        (click)="clear()">
+                        Clear
+                    </button>
+                </div>
+                <div class="bg-gray-950 rounded-md mx-auto m-2">
+                    <button
+                        class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                        (click)="toggleIndex(+1)">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="border-2 " *ngIf="formIndex === 1" [ngClass]="{'border-red-400': (updateUserForm.get('country')?.invalid ||
+            updateUserForm.get('state')?.invalid ||
+            updateUserForm.get('city')?.invalid ||
+            updateUserForm.get('address')?.invalid ||
+            updateUserForm.get('postalCode')?.invalid) && invalidForm }">
+
+            <header class="text-center m-2">
+                <h1 class="font-bold font-sans text-xl">Account Information</h1>
+                <p class="font-sans text-sm">Update user information
+                </p>
+            </header>
+            <hr [ngClass]="{'border-red-500':  (updateUserForm.get('country')?.invalid ||
+                updateUserForm.get('state')?.invalid ||
+                updateUserForm.get('city')?.invalid ||
+                updateUserForm.get('address')?.invalid ||
+                updateUserForm.get('postalCode')?.invalid) && invalidForm }">
+            <div class="invalid-form">
+                <span *ngIf="!(updateUserForm.get('country')?.invalid ||
+                    updateUserForm.get('state')?.invalid ||
+                    updateUserForm.get('city')?.invalid ||
+                    updateUserForm.get('address')?.invalid ||
+                    updateUserForm.get('postalCode')?.invalid) && invalidForm" class="mx-2 text-gray-400">
+                    Everything looks good
+                </span>
+                <span *ngIf="(updateUserForm.get('country')?.invalid ||
+                    updateUserForm.get('state')?.invalid ||
+                    updateUserForm.get('city')?.invalid ||
+                    updateUserForm.get('address')?.invalid ||
+                    updateUserForm.get('postalCode')?.invalid) && invalidForm" class="text-red-500 mx-2">
+                    Please complete this section
+                </span>
+            </div>
+            <div class="grid grid-cols-2 gap-5 flex items-center">
+                <div class="col-span-2 mx-auto">
+                    <select formControlName="country" class="w-full" [value]="userData?.country"
+                        class="w-64 md:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2  hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-red-400': updateUserForm.get('country')?.invalid && updateUserForm.get('country')?.touched }"
+                        placeholder="country" type="text">
+                        <option selected hidden class="font-sans">{{userData?.country}}</option>
+                        <option *ngFor="let country of countries">{{ country.name }}</option>
+                    </select>
+                    <div *ngIf="updateUserForm.get('country')?.invalid && updateUserForm.get('country')?.touched"
+                        class="text-red-500 mx-2">
+                        select your country
+                    </div>
+                </div>
+                <div class="mx-auto">
+                    <input formControlName="state" [value]="userData?.state"
+                        class="w-36 md:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-red-400': updateUserForm.get('state')?.invalid && updateUserForm.get('state')?.touched }"
+                        placeholder="State" type="text">
+                    <div *ngIf="updateUserForm.get('state')?.invalid && updateUserForm.get('state')?.dirty"
+                        class="text-red-500 mx-2">
+                        Select your state
+                    </div>
+                </div>
+                <div class="font-sans mx-auto">
+                    <input formControlName="city" [value]="userData?.city"
+                        class="font-sans w-36 md:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-red-400': updateUserForm.get('city')?.invalid && updateUserForm.get('city')?.touched }"
+                        placeholder="City" type="text">
+                    <div *ngIf="updateUserForm.get('city')?.invalid && updateUserForm.get('city')?.dirty"
+                        class="text-red-500 mx-2">
+                        Please select your city
+                    </div>
+                </div>
+                <div class="mx-auto col-span-2">
+                    <textarea formControlName="address" [value]="userData?.address"
+                        class="md:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-red-400': updateUserForm.get('address')?.invalid && updateUserForm.get('address')?.touched }"
+                        placeholder="Write your addresss here" rows="5" cols="20"></textarea>
+                    <div *ngIf="updateUserForm.get('address')?.invalid && updateUserForm.get('address')?.dirty"
+                        class="text-red-500 mx-2">
+                        Address is required
+                    </div>
+                </div>
+                <div class="font-sans mx-auto col-span-2">
+                    <input formControlName="postalCode" [value]="userData?.postalCode"
+                        class="font-sans w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-red-400': updateUserForm.get('postalCode')?.invalid && updateUserForm.get('postalCode')?.touched }"
+                        placeholder="Postal code" type="number">
+                    <div *ngIf="updateUserForm.get('postalCode')?.invalid && updateUserForm.get('postalCode')?.dirty"
+                        class="text-red-500 mx-2">
+                        postal code cannot be empty
+                    </div>
+                </div>
+                <div class="bg-gray-950 rounded-md mx-auto m-2">
+                    <button
+                        class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                        (click)="toggleIndex(-1)">
+                        Prev
+                    </button>
+                </div>
+                <div class="bg-red-600 rounded-md mx-auto m-2">
+                    <button
+                        class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                        type="submit" (click)="updateUserAdmin()">
+                        Submit
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </form>
+</div>

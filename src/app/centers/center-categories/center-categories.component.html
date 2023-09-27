@@ -1,0 +1,41 @@
+<div class="justify-between mt-40 font-sans mx-auto flex flex-col justify-center items-center">
+    <h2 class="text-4xl mb-5 text-center">
+        Our Services
+    </h2>
+</div>
+<section class="mx-auto mb-2 px-2 mt-20">
+    <div class="grid md:grid-cols-3 grid-cols-1">
+        <section class="flex justify-between items-center cursor-pointer
+                 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+            *ngFor="let c of centerCategories?.categories; let i = index">
+            <div class="bg-gray-950 rounded-md p-4 m-4 min-h-[400px] md:min-h-[450px]">
+                <div class="flex flex-col justify-center items-center">
+                    <img class="rounded-md w-20 m-2" src="{{ c.iconUrl }}">
+                    <p class="p-2 text-center text-md font-sans font-bold text-red-600 uppercase">
+                        {{ c.categoryName }}
+                    </p>
+                    <p class="p-2 text-center text-sm font-sans font-bold text-gray-400">
+                        <ng-container *ngFor="let tag of c.tags; let ix = index">
+                            {{ tag }} {{ ix < (c.tags.length - 1) ? "/" : "" }} </ng-container>
+                    </p>
+                    <p class="mt-1 text-sm text-gray-100 w-full text-center font-sans mb-2">
+                        {{ c.description }}
+                    </p>
+                    <div class="flex mt-2">
+                        <i-feather name="thumbs-up" style="width: 20px;"
+                            class="font-bold text-red-600 mr-4"></i-feather>
+                        <p class="mt-1 text-sm font-sans font-bold text-gray-400 text-right font-sans mb-2">
+                            {{ c.likes }} people like this sport.
+                        </p>
+                    </div>
+                    <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
+                        rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
+                        <a [routerLink]="['/categories', c.categoryId, formatCategoryName(c.categoryName)]">
+                            Know more
+                        </a>
+                    </button>
+                </div>
+            </div>
+</section>
+</div>
+</section>

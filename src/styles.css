@@ -1,0 +1,72 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+.hero-bg {
+  background-image: url('./assets/landing/hero-bg-6.jpg');
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+@media (max-width: 640px) {
+  .max-w {
+    max-width: 150px;
+    min-height: 350px;
+  }
+}
+
+.top-z{
+z-index: 20;
+}
+
+.full-width{
+  width: 100%;
+}
+
+.snack-bar-error {
+  background-color: #e61515; 
+  color: #d9dcdf; 
+  font-size: 14px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.snack-bar-success {
+  background-color: #099e11; 
+  color: #d9dcdf; 
+  font-size: 14px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.list-styleImage {
+  list-style-type: none;
+  padding-left: 20px;
+  background-image: url('./assets/icons/check.png');
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 16px 16px;
+}
+
+.width{
+  width: 50px;
+  flex: auto;
+}
+
+.mat-dialog-height{
+  max-height: 600px;
+}

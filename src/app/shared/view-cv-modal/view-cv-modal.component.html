@@ -1,0 +1,12 @@
+<div class="relative p-2">
+    <div class="text-red-600 absolute top-0 right-0 p-1">
+        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+    </div>
+    <div *ngIf="cv">
+        <p class="text-gray-950 font-sans font-bold text-md flex">CV</p>
+        <ngx-extended-pdf-viewer [src]="cv"
+            onerror="this.src='../../../assets/icons/file.png';" [textLayer]="true">
+        </ngx-extended-pdf-viewer>
+    </div>
+    <div *ngIf="!cv">No cv file found for partner</div>
+    </div>

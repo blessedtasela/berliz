@@ -1,0 +1,11 @@
+@media (min-width: 768px) {
+    .rounded-image {
+      border-radius: 0 0.5rem 0.5rem 0;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .rounded-image {
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
+  }

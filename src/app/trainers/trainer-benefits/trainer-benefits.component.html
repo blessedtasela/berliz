@@ -1,0 +1,22 @@
+<section class="mt-40 bg-gray-950 rounded-md p-2">
+    <div class="grid grid-cols-1 md:grid-cols-2">
+        <div>
+            <h1 class="p-4 font-sans text-gray-200 text-xl font-bold uppercase">
+                Expereince a new level of
+                <div class="text-red-600 text-right">instence training</div>
+            </h1>
+            <ul class="list-styleImage mx-4 p-2" *ngFor="let t of trainerBenefit?.benefits">
+                <li class="text-gray-200 text-sm mx-8">
+                    {{ t.benefit }}
+                </li>
+            </ul>
+        </div>
+        <div class="text-gray-200 text-center">
+            <button class="p-2 m-8 bg-red-700 hover:bg-red-800 hero-button font-sans
+            rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105"> Set your heart Ablaze
+                <i-feather name="arrow-up-right" class="text-gray-200 -mt-2"></i-feather>
+            </button>
+            <img src="{{ trainerBenefit?.imageUrl }}" class="w-full rounded-md cursor-pointer">
+        </div>
+        </div>
+</section>

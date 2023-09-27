@@ -1,0 +1,50 @@
+ <section class="bg-gray-950 rounded-md mt-40">
+    <div class="mx-auto px-2 space-y-1">
+        <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols gap-10">
+            <section class="flex justify-between items-center cursor-pointer mb-40
+            transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+            *ngFor="let c of centers; let i = index" [ngClass] ="{ 'hidden' : i >= 3 && !showAllCenters }">
+                <div class="w-full items-center justify-items-center md:min-h-[750px]">
+                    <div class="flex flex-col justify-center items-center bg-gray-100 rounded-md aspect-square -mt-20 m-5">
+                        <div class="-mt-10">
+                          <img class="rounded-md"
+                          src="{{ c.imageUrl }}">
+                        </div>
+                        <p class="mt-4 text-center text-md font-sans font-bold text-red-600 uppercase">
+                            {{ c.name }}
+                        </p>
+                        <p class="mt-1 text-center text-sm font-sans italic font-bold text-gray-600 p-2">
+                            <ng-container *ngFor="let cat of c.categories; let ix = index">
+                            {{ cat }} {{ ix < (c.categories.length - 1) ? "/" : "" }}
+                        </ng-container>
+                        </p>
+                        <p class="mt-1 text-sm text-gray-950 w-full text-center font-sans m-2 p-2">
+                            {{ c.description }}
+                        </p>
+                        <p class="text-sm text-gray-600 italic w-full text-right font-sans mb-2 p-2 font-bold">
+                            {{ c.location }}
+                        </p>
+                        <div class="flex mt-2 text-left">
+                            <i-feather name="thumbs-up" style="width: 20px;" class="font-bold text-red-600 mr-4 mt-1"></i-feather>
+                        <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
+                            {{ c.likes }} people like this center.
+                        </p>
+                    </div>
+                        <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
+                        rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
+                            <a [routerLink]="['/centers', c.centerId, formatCenterName(c.name) ]">
+                                Know more
+                            </a>
+                        </button>
+                    </div>
+                </div>
+            </section>
+             </div>
+         </div>
+         <div class="-mt-20 p-4 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
+         <button class="py-2 px-2 bg-gray-100 text-red-600 font-sans font-bold rounded-md mx-auto flex justify-center"
+         (click)="allCenters()">
+             {{ !showAllCenters ? 'See more' : 'See less' }}
+         </button>
+     </div>
+ </section>

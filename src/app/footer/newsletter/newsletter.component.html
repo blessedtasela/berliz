@@ -1,0 +1,29 @@
+<form [formGroup]="newsletterForm">
+    <div class="grid grid-cols-1 font-sans">
+        <div class="w-full text-lg font-bold md:text-lg text-red-600 text-transform: uppercase">stay
+            connected
+        </div>
+        <div class=" w-full font-sans text-sm mt-2">
+            <p>We are thrilled to present to you the latest news, exclusive future updates,
+                and a wide array of remarkable services that we have in store for you. Sign up today and
+                embark
+                on an exceptional journey of knowledge, growth, and achievement.
+            </p>
+        </div>
+        <div *ngIf="!newsletterForm.invalid && newsletterForm.touched" class="flex text-gray-950">
+            Everything looks good
+        </div>
+        <div *ngIf="newsletterForm.get('email')?.invalid && newsletterForm.get('email')?.dirty" class="text-red-600">
+            invalid email
+        </div>
+        <div class="flex w-full mt-4">
+        <input id="email" autocomplete="email"
+            class="container w-26 border border-red-400 hover:border-red-600 focus:border-red-600 focus:outline-none rounded-l-lg mt-1 p-2"
+            placeholder="example@gmail.com" type="email" formControlName="email">
+        <button class="text-md bg-red-600 text-white py-1 px-4 mt-1 hover:bg-red-800 rounded-r-lg font-sans whitespace-nowrap"
+            type="submit" (click)="addNewsletter()">
+            Sign up
+        </button>
+    </div>
+</div>
+</form>

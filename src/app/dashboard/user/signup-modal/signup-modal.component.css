@@ -1,0 +1,9 @@
+/* signup-modal.component.css */
+
+.mat-dialog-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* This ensures the dialog covers the entire viewport height */
+  }
+  

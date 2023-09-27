@@ -1,0 +1,72 @@
+<div *ngIf="userData">
+    <div class="justify-between mt-20 font-sans flex flex-col justify-center items-center">
+        <div class=" font sans text-4xl mb-5 text-center">
+            Welcome {{ userData.firstname }} {{ userData.lastname }}
+        </div>
+        <div class="italic font sans text-md mb-5 text-center">
+            You are currently logged in as {{ userData.role === 'admin' ? 'an' : 'a' }} {{ userData.role }}
+        </div>
+        <button class="text-md bg-red-600 text-white py-2 mb-5 px-5 hover:bg-red-700 rounded-md font-sans mx-auto
+    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+            (click)="openUpdateUser()">
+            update account information
+        </button>
+    </div>
+    <section class="grid md:grid-cols-2 grid-cols w-full rounded-md mt-20 bg-gray-200">
+        <div class="p-2">
+            <div class="shrink-0">
+                <img [src]="profilePhoto" class="object-cover rounded-full"
+                    onerror="this.src='../../../assets/icons/user.png';">
+            </div>
+            <div class="flex justify-end p-2" (click)="openUpdateProfilePhoto()">
+                <i-feather name="Edit" class="font-bold text-red-600 mr-4  cursor-pointer" style="width: 30px;">
+                </i-feather>
+            </div>
+        </div>
+        <div class="bg-gray-950 md:rounded-r-md rounded-b-md p-8">
+            <p class="text-red-600 font-sans font-bold text-md italic mb-4">{{ userData.email }}</p>
+            <p class="text-gray-200 font-sans font-bold text-xl uppercase">{{ userData.phone }}</p>
+            <div class="flex items-center">
+                <div class="flex flex-col m-8 gap-5">
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        Gender: {{ userData.gender }}
+                    </p>
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        Date of Birth: {{ userData.dob }}
+                    </p>
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        Date Joined: {{ userData.date }}
+                    </p>
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        Country: {{ userData.country }}
+                    </p>
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        State: {{ userData.state }}
+                    </p>
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        City: {{ userData.city }}
+                    </p>
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        Postal code: {{ userData.postalCode }}
+                    </p>
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        Address: {{ userData.address }}
+                    </p>
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        Account status: {{ userData.status === 'true' ? 'active' :'false' }}
+                    </p>
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        City: {{ userData.city }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="flex items-center">
+        <button class="mt-6 text-sm bg-red-600 text-white py-2 px-5 hover:bg-red-700 rounded-md font-sans mx-auto ml-4
+    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
+            (click)="deactivateAccount()">
+            deactivate account
+        </button>
+    </div>
+</div>

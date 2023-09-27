@@ -1,0 +1,99 @@
+<div class="justify-between mt-40 font-sans mx-auto flex flex-col justify-center items-center">
+    <div class="font-sans text-2xl mb-5 text-center uppercase font-bold">
+        Subscribe now
+    </div>
+</div>
+<section class="m-2 flex items-center justify-center">
+    <div class="mt-12 container border-2 rounded-md max-w-2xl min-w-2xl mx-auto py-2 bg-red-600"
+        [ngClass]="{'border-gray-950': centerSubscriptionForm.invalid && invalidForm}">
+        <header class="text-center m-2">
+            <h1 class="font-bold font-sans text-xl text-gray-100">
+                Choose your plan
+            </h1>
+        </header>
+        <form [formGroup]="centerSubscriptionForm" (ngSubmit)="submitForm()">
+            <div>
+                <input formControlName="clientId" value="1" hidden>
+                <input formControlName="trainerId" value="1" hidden>
+            </div>
+            <div class="invalid-form">
+                <hr [ngClass]="{'border-gray-950': centerSubscriptionForm.invalid && invalidForm}">
+                <span *ngIf="!centerSubscriptionForm.invalid && centerSubscriptionForm.touched" class="text-gray-100">
+                    Everything looks good
+                </span>
+                <span *ngIf="centerSubscriptionForm.invalid && invalidForm" class="text-gray-100 mx-2">
+                    Please complete all required fields
+                </span>
+            </div>
+            <div class="grid grid-cols-1 gap-5">
+                <div class="mx-auto">
+                    <span class="sr-only">Enter Name</span>
+                    <input formControlName="name"
+                        class="w-64 md:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        placeholder="Enter full name" type="text"
+                        [ngClass]="{'border-gray-100 text-bold': centerSubscriptionForm.get('motivation')?.invalid && centerSubscriptionForm.get('motivation')?.touched }">
+                    <div *ngIf="centerSubscriptionForm.get('name')?.invalid && centerSubscriptionForm.get('name')?.touched"
+                        class="text-gray-100 mx-2">
+                        please enter your name
+                    </div>
+                </div>
+                <div class="mx-auto">
+                    <span class="sr-only">Select a plan</span>
+                    <select formControlName="plan"
+                        class="w-64 md:96 border-2 px-4 py-2 rounded-md m-2 col-span-2  hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-gary-100': centerSubscriptionForm.get('plan')?.invalid && centerSubscriptionForm.get('plan')?.touched }"
+                        placeholder="choose plan" type="text">
+                        <option disabled selected class="font-sans">Choose a plan</option>
+                        <option class="font-sans" value="one month">1 Month</option>
+                        <option class="font-sans" value="one month">3 Month</option>
+                        <option class="font-sans" value="one month">6 Month</option>
+                        <option class="font-sans" value="one month">9 Month</option>
+                        <option class="font-sans" value="one month">1 Year</option>
+                        <option class="font-sans" value="one month">3 Years</option>
+                        <option class="font-sans" value="one month">5 Years</option>
+                    </select>
+                    <div *ngIf="centerSubscriptionForm.get('plan')?.invalid && centerSubscriptionForm.get('plan')?.touched"
+                        class="text-gray-100 mx-2">
+                        You must select a plan
+                    </div>
+                </div>
+                <div class="mx-auto">
+                    <span class="sr-only">Select categories (2 max)</span>
+                    <input
+                        class="w-64 md:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        placeholder="Choose category. 2 max" type="text" readonly>
+                    <div *ngFor="let c of centerCategories; let i=index" class="p-2 text-gray-200">
+                        <input type="checkbox" formArrayName="categories" [value]="c.value"
+                            (change)="onCheckboxChange($event)">
+                        {{ c.name }}
+                    </div>
+                    <div
+                        *ngIf="centerSubscriptionForm.get('categories')?.hasError('maxCategoriesExceeded') || centerSubscriptionForm.get('categories')?.touched"
+                        class="text-gray-100 mx-2">
+                        You can select up to two categories.
+                    </div>
+                    <div
+                        *ngIf="centerSubscriptionForm.get('categories')?.hasError('required') && centerSubscriptionForm.get('categories')?.touched"
+                        class="text-gray-100 mx-2">
+                        Please select at least one category.
+                    </div>
+                </div>
+                <div class="mx-auto">
+                    <span class="sr-only">Write Motivation</span>
+                    <textarea formControlName="motivation"
+                        class="w-64 md:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-gray-100 text-bold': centerSubscriptionForm.get('motivation')?.invalid && centerSubscriptionForm.get('motivation')?.touched }"
+                        placeholder="Leave your motivation here" rows="5" cols="30"></textarea>
+                    <div *ngIf="centerSubscriptionForm.get('motivation')?.invalid && centerSubscriptionForm.get('motivation')?.touched"
+                        class="text-gray-100 mx-2">
+                        motivation is required
+                    </div>
+                </div>
+                <button class="uppercase p-1 px-2 bg-gray-100 mx-auto rounded-md text-md text-red-600 font-sans font-bold"
+                    type="submit">
+                    submit
+                </button>
+            </div>
+        </form>
+    </div>
+</section>

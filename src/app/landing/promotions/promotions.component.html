@@ -1,0 +1,26 @@
+<div class="w-80 lg:w-full bg-gray-100 rounded-md cursor-pointer flex items-center justify-center
+transition-all duration-300 transform m-w-12 hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
+    <div class="grid lg:grid-cols-2 items-center justify-items-center">
+        <div class="order-2 lg:order-1 grid grid-cols justify-center items-center gap-1">
+                <p class="w-full text-center text-md font-bold text-red-600 text-transform: uppercase font-sans">
+                    {{ promotions.title}}
+                </p>
+          
+                <P class="w-full text-center font-sans text-sm font-bold text-transform: uppercase">
+                    {{ promotions.subTitle}}
+                </P>
+           
+                <p class="mt-1 text-sm w-full text-center font-sans">
+                    {{ promotions.description}}
+                </p>
+                <button class="text-sm bg-red-600 text-white p-1 m-6  hover:bg-red-700 rounded-md font-sans"
+                (click)="openSignup()">
+                  {{ promotions.button}}
+                </button>
+            </div>
+            <div class="order-1 lg:order-2 flex justify-end">
+                <img class="w-full object-cover rounded-md mb-4 lg:mb-0"
+                    src="{{ promotions.imageUrl }}">
+            </div>
+        </div>
+    </div>

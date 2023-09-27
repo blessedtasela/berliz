@@ -1,0 +1,48 @@
+<div class="justify-between mt-20 font-sans mx-auto flex flex-col justify-center items-center">
+    <div class="text-4xl mb-5 text-center">
+        Our top-notch trainers
+    </div>
+    <button class="text-sm bg-red-600 text-white py-2 mb-5 px-5 hover:bg-red-700 rounded-md font-sans mx-auto
+    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl" (click)="scrollToComponent()">
+        Subscribe now
+    </button>
+</div>
+<section class="mx-auto mb-2 px-2 space-y-1 mt-40">
+    <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-20">
+        <section class="flex justify-between items-center cursor-pointer
+                 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+            *ngFor="let t of centerTrainers?.trainers; let i = index" [ngClass]="{ 'hidden' : i >= 12 && !showAllTrainers }">
+            <div class="w-full bg-gray-100 rounded-md aspect-square m-5 md:min-h-[500px]">
+                <div class="text-center">
+                    <img class="rounded-md self-start" src="{{ t.imageUrl }}">
+                    <div class="p-2">
+                        <p class="text-center text-lg font-sans font-bold lg:text-xl text-red-600 text-transform: uppercase mt-3">
+                            {{ t.name }}
+                        </p>
+                        <p class="mt-1 text-sm font-bold text-gray-600 w-full text-center font-sans italic">
+                            <ng-container *ngFor="let category of t.categories; let ix = index">
+                                {{ category }} {{ ix < (t.categories.length - 1) ? "/" : "" }} </ng-container>
+                        </p>
+                    </div>
+                        <p class="text-red-600 font-bold font-sans text-sm text-left p-4">
+                            {{ t.experience }} of experience
+                        </p>
+                        <p class="text-gray-950 font-bold font-sans text-sm text-center">
+                            {{ t.motto }}
+                        </p>
+                    <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
+                rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
+                {{ t.ratings }} <i-feather name="Star" style="width: 20px;" class="font-boldt ext-gray-200 ml-1 -mb-2"></i-feather>
+            </button>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="p-3" *ngFor="let t of centerTrainers?.trainers; let i = index" [ngClass]="{ 'hidden' : i <= 6 }">
+        <button
+            class="p-1 px-2 bg-red-600 text-gray-100 font-sans font-bold rounded-md mx-auto flex justify-center mt-2"
+            (click)="allTrainers()">
+            {{ !showAllTrainers ? 'See more' : 'See less' }}
+        </button>
+    </div>
+</section>

@@ -1,0 +1,77 @@
+<section class="rounded-md font-bold bg-gray-100">
+    <div class="w-full items-center justify-items-center gap-5 cursor-pointer"
+        *ngFor="let a of album?.videos; let i = index" [class.hidden]=" i !== albumIndex">
+        <div
+            class="flex flex-col justify-center items-center transition-auto duration-3000 ease-in-out">
+            <video class="md:object-cover w-full object-contain md:h-[600px] rounded-md hover:drop-shadow-2xl transition-all 
+            duration-300 transform hover:scale-105 focus:scale-105 cursor-pointer" src="{{ a.videoUrl}}"
+                autoplay loop muted>
+            </video>
+            <div class="absolute  p-4">
+                <p class="md:m-5 w-full text-center text-xl md:text-4xl font-bold text-red-600 uppercase">
+                    {{ album?.name }}
+                </p>
+                <p class="text-sm md:text-md w-full text-center font-sans text-gray-200">
+                    {{ a.comment }}
+                </p>
+                <div class="flex justify-center mt-5">
+                    <button class="m-4 text-sm md:text-xl bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 
+                    hero-button font-sans rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
+                        <a [routerLink]="['/community']">
+                            Subscribe Now
+                        </a>
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                    <div
+                        class="transition-all duration-300 transform hover:scale-110 focus:scale-110">
+                            <div class="text-center text-sm md:text-xl font-bold text-red-600 uppercase">
+                                Members
+                            </div>
+                            <div class="flex justify-center gap-3">
+                                <img class="w-12 text-gray-200" src="../../../assets/icons/group.png">
+                                <div class="text-right text-sm md:text-md font-bold text-gray-100 mt-5">
+                                    +{{ stats?.membersCounter }}
+                                </div>
+                            </div>
+                    </div>
+                    <div
+                        class="transition-all duration-300 transform hover:scale-110 focus:scale-110">
+                            <div class="text-center text-sm md:text-xl font-bold text-red-600 uppercase">
+                                Experience
+                            </div>
+                            <div class="flex justify-center gap-3">
+                                <img class="w-12 text-gray-200" src="../../../assets/icons/networking.png">
+                                <div class="text-right text-sm md:text-md font-bold text-gray-100 mt-5">
+                                    +{{ stats?.experienceCounter }}
+                                </div>
+                            </div>
+                    </div>
+                    <div
+                        class="transition-all duration-300 transform hover:scale-110 focus:scale-110">
+                            <div class="text-center text-sm md:text-xl font-bold text-red-600 uppercase">
+                                Ratings
+                            </div>
+                            <div class="flex justify-center gap-3">
+                                <img class="w-12 text-gray-200" src="../../../assets/icons/rating.png">
+                                <div class="text-right text-sm md:text-md font-bold text-gray-100 mt-5">
+                                    +{{ stats?.ratingsCounter }}
+                                </div>
+                            </div>
+                    </div>
+                </div>
+                <div class="gap-10 text-gray-200 ">
+                    <a class="mt-2 cursor-pointer font-sans md:text-xl text-2xl transition-all absolute top-40 left-4
+                    duration-300 transform hover:scale-110 focus:scale-110" (click)="changeAlbum(-1)">
+                    &#8592;
+                    </a>
+                    <a class="mt-2 cursor-pointer font-sans md:text-4xl text-2xl transition-all absolute top-40 right-4
+                    duration-300 transform hover:scale-110 focus:scale-110" (click)="changeAlbum(+1)">
+                    &#8594;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>

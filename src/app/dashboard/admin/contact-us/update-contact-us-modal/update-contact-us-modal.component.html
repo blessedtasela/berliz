@@ -1,0 +1,61 @@
+<section class="p-4">
+    <div class="mt-10 container border-2 rounded-md max-w-2xl min-w-2xl mx-auto py-2"
+        [ngClass]="{'border-red-400': contactUsForm.invalid && invalidForm}">
+        <header class="text-center m-2">
+            <h1 class="font-bold font-sans text-xl">Update ContactUs details</h1>
+            <p class="font-sans text-sm">Edit this entity data for ID: {{ contactUsData.id }}   </p>
+        </header>
+        <form [formGroup]="contactUsForm">
+            <hr [ngClass]="{'border-red-500': 
+            (contactUsForm.get('name')?.invalid ||
+               contactUsForm.get('email')?.invalid ||
+               contactUsForm.get('message')?.invalid)
+                && invalidForm }">
+       <div class="invalid-form">
+           <span *ngIf="!(contactUsForm.get('name')?.invalid ||
+                   contactUsForm.get('email')?.invalid ||
+                   contactUsForm.get('message')?.invalid)
+                    && invalidForm" class="mx-2 text-gray-400">
+               Everything looks good
+           </span>
+       </div>
+            <div class="grid grid-cols-1 gap-5">
+                <div class="mx-auto">
+                    <input formControlName="name" [value]="contactUsData.name"
+                        class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-red-400': contactUsForm.get('name')?.invalid && contactUsForm.get('name')?.touched }"
+                        placeholder="Full Name" type="text">
+                    <div *ngIf="contactUsForm.get('name')?.invalid && contactUsForm.get('name')?.dirty"
+                        class="text-red-400 mx-2">
+                        Please enter your full name
+                    </div>
+                </div>
+                <div class="mx-auto">
+                    <input formControlName="email" [value]="contactUsData.email"
+                        class="w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-red-400': contactUsForm.get('email')?.invalid && contactUsForm.get('email')?.touched }"
+                        placeholder="example@gmail.com" type="email">
+                    <div *ngIf="contactUsForm.get('email')?.invalid && contactUsForm.get('email')?.dirty"
+                        class="text-red-400 mx-2">
+                        Invalid email
+                    </div>
+                </div>
+                <div class="mx-auto">
+                    <textarea formControlName="message" [value]="contactUsData.message"
+                        class="lg:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-red-400': contactUsForm.get('message')?.invalid && contactUsForm.get('message')?.touched }"
+                        placeholder="Leave your message here" rows="5" cols="20"></textarea>
+                    <div *ngIf="contactUsForm.get('message')?.invalid && contactUsForm.get('message')?.dirty"
+                        class="text-red-400 mx-2">
+                        Message must be at least 20 characters
+                    </div>
+                </div>
+                <button class="p-1 px-2 uppercase bg-red-600 mx-auto rounded-md text-sm md:text-md text-white font-sans
+                         transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl" 
+                         type="submit" (click)="updateContactUs()">
+                    submit
+                </button>
+            </div>
+        </form>
+    </div>
+</section>

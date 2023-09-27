@@ -1,0 +1,107 @@
+<section class="p-2 mt-40">
+    <header class="text-center m-2">
+        <h1 class="font-bold font-sans text-4xl text-red-600 p-10">
+            Expand Your Horizon
+        </h1>
+        <div class="text-justify p-2">
+            <p class="font-sans text-sm text-gray-800">
+                Embrace the opportunity to elevate your fitness business and make a significant impact in the industry.
+                As a Partner with Berliz, you have the power to transform lives, inspire health and wellness, and build
+                a thriving fitness community.
+            </p>
+            <p class="mt-4 font-sans text-sm text-gray-800">
+                Step into a rewarding role where you'll provide top-notch fitness facilities, cutting-edge equipment,
+                and world-class training programs. Your center will become the go-to destination for individuals seeking
+                a transformative fitness experience, allowing them to reach their health and fitness goals.
+            </p>
+            <p class="mt-4 font-sans text-sm text-gray-800">
+                Join our global network of successful partners and become part of a legacy that has revolutionized the
+                fitness industry. Your unique vision, passion, and dedication will shape the future of fitness and
+                inspire countless individuals to lead active and healthy lifestyles.
+            </p>
+            <p class="mt-4 font-sans text-sm text-gray-800">
+                Don't miss out on the chance to make a lasting impact in the fitness world, both for yourself and for
+                those seeking a remarkable fitness journey. Begin your application today and embark on an exciting
+                adventure as a Partner with Berliz.
+            </p>
+        </div>
+    </header>
+    <div class="mt-12 bg-red-600 border-2 rounded-md max-w-2xl min-w-2xl mx-auto py-2"
+        [ngClass]="{'border-gray-950': centerForm.invalid && invalidForm}">
+        <p class="text-2xl  m-2 text-center font-sans text-gray-100">
+            Become a partner
+        </p>
+        <section class="py-2">
+            <form [formGroup]="centerForm" (ngSubmit)="submitForm()">
+                <div class="invalid-form">
+                    <hr [ngClass]="{'border-gray-100 font-bold': centerForm.invalid && invalidForm}">
+                    <span *ngIf="!centerForm.invalid && centerForm.touched" class="text-gray-100 p-2">
+                        Everything looks good
+                    </span>
+                    <span *ngIf="centerForm.invalid && invalidForm" class="text-gray-100 mx-2 p-2">
+                        Please complete all required fields
+                    </span>
+                </div>
+                <div class="grid grid-cols-1 gap-5">
+                    <div class="mx-auto">
+                        <input formControlName="name"
+                            class="md:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': centerForm.get('name')?.invalid && centerForm.get('name')?.touched }"
+                            placeholder="Enter your name here" type="text">
+                        <div *ngIf="centerForm.get('name')?.invalid && centerForm.get('name')?.touched"
+                            class="text-gray-100 mx-2">
+                            Your Name is required and at least 6 characters
+                        </div>
+                    </div>
+
+                    <div class="mx-auto">
+                        <input formControlName="facebookUrl"
+                            class="md:w-96 border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': centerForm.get('facebookUrl')?.invalid && centerForm.get('facebookUrl')?.touched }"
+                            placeholder="Facebook URL" type="url">
+                        <div *ngIf="centerForm.get('facebookUrl')?.invalid && centerForm.get('facebookUrl')?.touched"
+                            class="text-gray-100 mx-2">
+                            Please enter a valid Facebook URL
+                        </div>
+                    </div>
+
+                    <div class="mx-auto">
+                        <input formControlName="instagramUrl"
+                            class="md:w-96 border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': centerForm.get('instagramUrl')?.invalid && centerForm.get('instagramUrl')?.touched }"
+                            placeholder="Instagram URL" type="url">
+                        <div *ngIf="centerForm.get('instagramUrl')?.invalid && centerForm.get('instagramUrl')?.touched"
+                            class="text-gray-100 mx-2">
+                            Please enter a valid Instagram URL
+                        </div>
+                    </div>
+
+                    <div class="mx-auto">
+                        <input formControlName="twitterUrl"
+                            class="md:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': centerForm.get('twitterUrl')?.invalid && centerForm.get('twitterUrl')?.touched }"
+                            placeholder="Twitter URL" type="url">
+                        <div *ngIf="centerForm.get('twitterUrl')?.invalid && centerForm.get('twitterUrl')?.touched"
+                            class="text-gray-100 mx-2">
+                            Please enter a valid Twitter URL
+                        </div>
+                    </div>
+
+                    <div class="mx-auto">
+                        <textarea formControlName="motivation"
+                            class="md:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': centerForm.get('motivation')?.invalid && centerForm.get('motivation')?.touched }"
+                            placeholder="Write your motivation here" rows="5"></textarea>
+                        <div *ngIf="centerForm.get('motivation')?.invalid && centerForm.get('motivation')?.touched"
+                            class="text-gray-100 mx-2">
+                            Motivation is required
+                        </div>
+                    </div>
+
+                    <button class="p-1 uppercase px-2 m-2 bg-gray-100 mx-auto rounded-md text-md text-red-600 font-bold font-sans
+          transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl" type="submit">
+                        submit
+                    </button>
+                </div>
+            </form>
+        </section>

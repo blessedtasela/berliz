@@ -1,0 +1,54 @@
+<div class="justify-between mt-20 font-sans mx-auto flex flex-col justify-center items-center">
+    <div class="text-4xl mb-5 text-center">
+        We are here for you!
+    </div>
+    <button class="text-sm bg-red-600 text-white py-2 mb-5 px-5 hover:bg-red-700 rounded-md font-sans mx-auto
+    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
+        what our clients says
+    </button>
+</div>
+<section class="rounded-md mt-20 m-4 p-8">
+    <div class="mx-auto px-2">
+        <div class="grid md:grid-cols-2 grid-cols gap-5">
+            <section class="flex items-center cursor-pointer
+            transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+                *ngFor="let r of centerReviews?.reviews; let i = index"
+                [ngClass]="{ 'hidden' : i >= 3 && !showAllReviews }">
+                <div class="mx-auto items-center justify-items-center">
+                    <div
+                        class="grid grid-cols-2 justify-center rounded-md m-2">
+                        <div class="w-24">
+                            <img class="rounded-md" src="{{ r.photo }}">
+                            <div class="flex mt-2">
+                                <i-feather name="heart" style="width: 40px;"
+                                    class="font-bold text-red-600 mr-4 mt-1"></i-feather>
+                                <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
+                                    {{ r.likes }} people love it.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="md:-ml-20">
+                        <p class="mt-4 text-center text-md font-sans font-bold text-red-600 uppercase">
+                            {{ r.userName }}
+                        </p>
+                        <p class="mt-1 text-sm text-gray-950 w-full text-justify font-sans m-2 p-2">
+                            {{ r.comment }}
+                        </p>
+                        <p class="text-sm text-gray-600 italic w-full text-right font-sans mb-2 p-2 font-bold">
+                            {{ r.date }}
+                        </p>
+                    </div>
+                    </div>
+                    
+                </div>
+            </section>
+        </div>
+    </div>
+    <div class="mt-10 p-4 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+    *ngFor="let r of centerReviews?.reviews; let i = index" [ngClass]="{'hidden': i <= 10}">
+        <button class="p-1 px-2 bg-red-600 text-gray-100 font-sans font-bold rounded-md mx-auto flex justify-center"
+            (click)="allReviews()">
+            {{ !showAllReviews ? 'See more' : 'See less' }}
+        </button>
+    </div>
+</section>

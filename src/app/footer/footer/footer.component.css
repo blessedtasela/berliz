@@ -1,0 +1,14 @@
+.bg-color{
+    background-color: rgb(34,36,41);
+}
+
+@media (max-width: 767px) {
+    .one-column {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .height-fit{
+    height: max-content;
+  }

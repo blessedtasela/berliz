@@ -1,0 +1,62 @@
+<div class="rounded-md mx-auto">
+    <form [formGroup]="updateTagForm">
+        <header class="text-center m-2">
+            <div class="text-red-600 text-right font-bold -mb-4">
+                <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer ml-20"></i-feather>
+            </div>
+            <h1 class="font-bold font-sans text-xl">Add a new tag</h1>
+            <p class="font-sans text-sm">Please provide name and description of thre tag
+            </p>
+        </header>
+        <hr [ngClass]="{'border-red-500': 
+             (updateTagForm.get('name')?.invalid ||
+                updateTagForm.get('description')?.invalid) && invalidForm }">
+        <div class="invalid-form">
+            <span *ngIf="!(updateTagForm.get('name')?.invalid ||
+                    updateTagForm.get('description')?.invalid) && invalidForm" class="mx-2 text-gray-400">
+                Everything looks good
+            </span>
+        </div>
+        <div class="grid grid-cols-2 gap-1 flex items-center">
+            <div class="mx-auto col-span-2">
+                <input formControlName="id" [value]="tagData.id" readonly
+                    class="border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                    type="number">
+            </div>
+            <div class="mx-auto col-span-2">
+                <input formControlName="name" [value]="tagData.name"
+                    class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                    [ngClass]="{'border-red-400': updateTagForm.get('name')?.invalid && updateTagForm.get('name')?.touched }"
+                    placeholder="First Name" type="text">
+                <div *ngIf="updateTagForm.get('name')?.invalid && updateTagForm.get('name')?.dirty"
+                    class="text-red-500 mx-2">
+                    Tag Name is required
+                </div>
+            </div>
+            <div class="mx-auto col-span-2">
+                <textarea formControlName="address" formControlName="description" [value]="tagData.description"
+                    class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                    [ngClass]="{'border-red-400': updateTagForm.get('description')?.invalid && updateTagForm.get('description')?.touched }"
+                    placeholder="Description" rows="5" cols="20"></textarea>
+                <div *ngIf="updateTagForm.get('description')?.invalid && updateTagForm.get('description')?.dirty"
+                    class="text-red-500 mx-2">
+                    Description is required
+                </div>
+            </div>
+            <div class="bg-gray-950 rounded-md mx-auto m-2">
+                <button
+                    class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                    (click)="clear()">
+                    Clear
+                </button>
+            </div>
+            <div class="bg-red-600 rounded-md mx-auto m-2">
+                <button
+                    class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                    type="submit" (click)="updateTag()">
+                    Update
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

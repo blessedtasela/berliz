@@ -1,0 +1,13 @@
+<app-navigation-bar></app-navigation-bar>
+<app-center-hero></app-center-hero>
+<app-center-search
+(loading)="isLoading = $event"
+(results)="onResults($event)"
+></app-center-search>
+<app-center-search-result
+[centersResult]="searchResults"
+[countResult]="countResults"
+*ngIf="showResult"
+></app-center-search-result>
+<app-center-list></app-center-list>
+<app-footer></app-footer>

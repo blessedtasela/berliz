@@ -1,0 +1,12 @@
+<div class="relative p-2">
+    <div class="text-red-600 absolute top-0 right-0 p-1">
+        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+    </div>
+    <div *ngIf="certificate">
+    <p class="text-gray-950 font-sans font-bold text-md flex">Certificate</p>
+    <ngx-extended-pdf-viewer [src]="certificate"
+        onerror="this.src='../../../assets/icons/file.png';" [textLayer]="true">
+    </ngx-extended-pdf-viewer>
+</div>
+<div *ngIf="!certificate">No certificate file found</div>
+</div>

@@ -1,0 +1,35 @@
+<div class="rounded-md p-2 m-4">
+    <div class="text-red-600 text-right font-bold p-1">
+        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer ml-20"></i-feather>
+    </div>
+    <h2 class="text-gray-950 text-md font-bold font-sans p-2 flex justify-center">
+        Update profile photo
+    </h2>
+    <form [formGroup]="UpdateProfilePhotoForm">
+            <div class="ml-8 flex justify-center">
+                <input formControlName="id" [value]="id" readonly
+                class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                [ngClass]="{'border-red-400': UpdateProfilePhotoForm.get('id')?.invalid && UpdateProfilePhotoForm.get('id')?.touched }"
+                placeholder="user id" type="number">
+            </div>
+            <div class="m-2 flex">
+                <div class="shrink-0">
+                    <img class="h-16 w-16 object-cover rounded-full" [src]="photo"
+                        onerror="this.src='../../../assets/icons/user.png';" alt="Display photo" />
+                </div>
+                <input formControlName="profilePhoto"
+                    class="w-full border-2 px-4 py-2 rounded-md m-2 border-gray-400 hover:border-gray-500 focus:border-gray-500 focus:outline-none"
+                    [ngClass]="{'border-red-400': UpdateProfilePhotoForm.get('profilePhoto')?.invalid && UpdateProfilePhotoForm.get('profilePhoto')?.touched
+            && UpdateProfilePhotoForm.invalid}" (change)="onImgSelected($event)" type="file" accept="image/*">
+                <div *ngIf="UpdateProfilePhotoForm.get('profilePhoto')?.invalid && UpdateProfilePhotoForm.get('profilePhoto')?.dirty
+            && UpdateProfilePhotoForm.invalid" class="text-red-500 mx-2">
+                    Please select a file
+                </div>
+            </div>
+            <div class="flex justify-center">
+                <button class="bg-red-600 p-2 px-2 rounded-md font-bold font-sans text-gray-200 text-sm" type="submit"
+                    (click)="updateProfilePhoto()">
+                    Confirm
+                </button>
+            </div>
+    </form>

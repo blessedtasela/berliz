@@ -1,0 +1,8 @@
+<div class="z-10 text-red-600 font-bold fixed top-40 right-6 bg-gray-200 rounded-md w-[180px] px-1 m-8"
+    *ngIf="showPopUp" [ngClass]="{'hidden transition-all transform smooth': hidePopUp }">
+    <div class="whitespace-nowrap flex items-center gap-2">
+        <img src="../../../assets/icons/cancel.png" class="w-4 cursor-pointer -mt-4" (click)="hidePop()">
+        <span>Chat with trainer</span>
+        <img src="../../../assets/icons/whatsapp.png" class="w-10 cursor-pointer" (click)="chatWhatsapp()">
+    </div>
+</div>

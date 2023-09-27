@@ -1,0 +1,106 @@
+<span class="sr-only">Search</span>
+<div class="grid grid-cols-1">
+    <div class="flex justify-center items-center mt-10">
+        <input
+            class="placeholder:italic placeholder:text-gray-400 border border-gray-400 rounded-md py-1 px-4 hover:border-gray-500 hover:drop-shadow-2xl focus:border-gray-600 focus:outline-none cursor-pointer max-w-64"
+            placeholder="Search" [(ngModel)]="searchQuery">
+        <span class="cursor-pointer">
+            <i-feather name="Search" class="ml-2 text-gray-500" style="width: 28px;"></i-feather>
+        </span>
+    </div>
+    <div class="flex justify-center items-center cursor-pointer mt-2 -ml-8">
+        <h1 class="mr-2 text-gray-500">Select criteria</h1>
+        <select
+            class="cursor-pointer border border-gray-400 rounded-md hover:border-gray-500 hover:drop-shadow-2xl focus:border-gray-600 focus:outline-none text-gray-700">
+            <option class="text-gray-500" value="Name">Name</option>
+            <option class="text-gray-500" value="Tag">Tag</option>
+        </select>
+    </div>
+</div>
+<div class="flex justify-center mt-5 gap-10 font-sans font-bold">
+    <div>
+        Showing <span class="italic"> {{ counter }} </span> of
+        <span class="italic">{{ totalCategories }}</span> results
+    </div>
+    <div>
+        sorted by 
+            <select [(ngModel)]="selectedSortOption" (change)="onSortOptionChange($event)"
+                class="italic text-sm cursor-pointer border border-gray-400 rounded-md  focus:outline-none text-gray-700">
+                <option class="text-gray-500" value="date">Date added</option>
+                <option class="text-gray-500" value="name">Name</option>
+                <option class="text-gray-500" value="tag">Tag</option>
+            </select>
+    </div>
+</div>
+<section class="mt-10">
+    <div class="flex justify-center ">
+        <h1 class="p-4 font-sans text-gray-200 text-xl font-bold uppercase
+        bg-red-700 hover:bg-red-800 hero-button font-sans text-left mx-8
+        rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
+            Top Categories
+        </h1>
+    </div>
+    <div class="m-16 -mb-4 bg-gray-100 w-80 rounded-md relative mx-auto">
+        <h1 class="font-sans font-bold text-xl text-red-600 uppercase text-center">
+            Our services
+        </h1>
+    </div>
+    <div class="bg-gray-950 rounded-md">
+        <div class="justify-items-center items-center">
+            <p class="font-bold text-sm text-center font-sans py-5 text-white">
+                Amazing peaks, just for you.
+            </p>
+        </div>
+        <div class="flex flex-wrap">
+            <div class="mb-2 px-2 space-y-1 w-full">
+                <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-10 mb-5 p-5">
+                    <div class="flex justify-center items-center cursor-pointer  transition-all duration-300
+                transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+                        *ngFor="let category of filteredCategoriesData; let i = index"
+                        [class.hidden]="!showFullData && i >= 12">
+                        <div class="text-justify justify-items-center">
+                            <div
+                                class=" flex flex-col justify-center items-center bg-gray-100 rounded-md min-h-[400px] min-w-[300px]">
+                                <div class="p-2">
+                                    <img class="w-24" [src]="'../../../assets/icons/' + category.photo +'.png'">
+                                </div>
+                                <p
+                                    class="p-2 text-center text-md font-sans font-bold lg:text-md text-red-600 uppercase">
+                                    {{ category.name }}
+                                </p>
+                                <span class="p-2 text-center text-sm font-sans font-bold text-gray-600">Tags: </span>
+                                <p class="p-2 text-center text-sm font-sans font-bold text-gray-600">
+                                    <ng-container *ngFor="let tag of category.tagSet; let ix = index">
+                                        {{ tag.name }} {{ ix < (category.tagSet.length - 1) ? "/" : "" }}
+                                            </ng-container>
+                                </p>
+                                <p class="mt-1 text-sm lg:text-sm w-full text-center font-sans mb-2">
+                                    {{ category.description }}
+                                </p>
+                                <div class="flex -ml-20 mt-2">
+                                    <i-feather name="thumbs-up" style="width: 20px;"
+                                        class="font-bold text-red-600 mr-4 mt-1"></i-feather>
+                                    <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
+                                        {{ category.likes }} people like this sport.
+                                    </p>
+                                </div>
+                                <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
+                            rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
+                                    <a [routerLink]="['/categories', category.id, (category.name)]">
+                                        Know more
+                                    </a>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div [class.hidden]="filteredCategoriesData.length  <= 9">
+                    <button
+                        class="p-1 px-2 m-8 mt-8 bg-gray-100 text-red-600 rounded-md font-sans font-bold mx-auto flex justify-center mt-5">
+                        {{ !showFullData ? 'view more' : 'see less'}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,17 @@
+<div class="justify-between mt-40 font-sans mx-auto flex flex-col justify-center items-center">
+    <h2 class="text-4xl mb-5 text-center text-red-600">
+        Discover a new world
+    </h2>
+</div>
+<section class="mx-auto mb-2 px-2 gap-10 mt-20 rounded-md">
+    <div class="grid md:grid-cols-2 grid-cols-1 m-4">
+        <div *ngFor="let video of trainerVideos?.video"
+            class="flex flex-col justify-center items-center rounded-md
+              mb-5  cursor-pointer transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
+            <video class="rounded-md object-cover" [src]="video.videoUrl" autoplay loop [muted]="true"></video>
+            <p class="p-2 absolute flex text-center font-sans font-bold text-red-600 text-xl bg-blur-lg shadow-lg">
+                {{ video.motto }}
+            </p>
+        </div>
+    </div>
+</section>

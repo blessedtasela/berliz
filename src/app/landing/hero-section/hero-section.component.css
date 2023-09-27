@@ -1,0 +1,11 @@
+.hero{
+    padding-top: 100px;
+}
+.hero-button{
+    border-radius: 6px;
+}
+.next, .prev {
+    height: 100px;
+    line-height: 50px;
+    justify-items: left;
+}

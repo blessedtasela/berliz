@@ -1,0 +1,82 @@
+<div class="justify-between mt-40 font-sans mx-auto flex flex-col justify-center items-center">
+    <div class="font-sans text-2xl mb-5 text-center uppercase font-bold">
+        let us know what you think
+    </div>
+</div>
+<section class="m-2 flex items-center justify-center">
+    <div class="mt-12 container border-2 rounded-md max-w-2xl min-w-2xl mx-auto py-2 bg-red-600"
+        [ngClass]="{'border-gray-950': testimonialForm.invalid && invalidForm}">
+        <header class="text-center m-2">
+            <h1 class="font-bold font-sans text-xl text-gray-200">Share your testimony with us</h1>
+        </header>
+        <form [formGroup]="testimonialForm" (ngSubmit)="submitForm()">
+            <div class="invalid-form">
+                <hr [ngClass]="{'border-gray-950': testimonialForm.invalid && invalidForm}">
+                <span *ngIf="!testimonialForm.invalid && testimonialForm.touched" class="text-gray-950">
+                    Everything looks good
+                </span>
+                <span *ngIf="testimonialForm.invalid && invalidForm" class="text-gray-950 mx-2">
+                    Please complete all required fields
+                </span>
+            </div>
+            <div class="grid grid-cols-1 gap-5">
+                <div class="mx-auto">
+                    <span class="sr-only">Enter full name</span>
+                    <input formControlName="name"
+                        class="lg:w-96 border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-gray-950': testimonialForm.get('name')?.invalid && testimonialForm.get('name')?.touched }"
+                        placeholder="Full Name" type="text">
+                    <div *ngIf="testimonialForm.get('name')?.invalid && testimonialForm.get('name')?.touched"
+                        class="text-gray-950 mx-2">
+                        Name is required
+                    </div>
+                </div>
+                <div class="mx-auto">
+                    <span class="sr-only">Choose gym center</span>
+                    <input formControlName="center"
+                        class="lg:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-gray-950': testimonialForm.get('center')?.invalid && testimonialForm.get('center')?.touched }"
+                        placeholder="Gym center" type="text">
+                    <div *ngIf="testimonialForm.get('center')?.invalid && testimonialForm.get('center')?.touched"
+                        class="text-gray-950 mx-2">
+                        Center Name is required
+                    </div>
+                </div>
+                <div class="mx-auto">
+                    <span class="sr-only">Write testiomony</span>
+                    <textarea formControlName="testimony"
+                        class="lg:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        [ngClass]="{'border-gray-950': testimonialForm.get('testimony')?.invalid && testimonialForm.get('testimony')?.touched }"
+                        placeholder="Leave your testimony here" rows="5" cols="30"></textarea>
+                    <div *ngIf="testimonialForm.get('testimony')?.invalid && testimonialForm.get('testimony')?.touched"
+                        class="text-gray-950 mx-2">
+                        testimony is required
+                    </div>
+                </div>
+                <div class="mx-auto">
+                    <div class=" flex items-center">
+                    <span class="sr-only">Choose testimonial photo</span>
+                    <div class="shrink-0">
+                        <img class="h-16 w-16 object-cover rounded-full" src="../../../assets/clients/c5.jpg" alt="Display photo" />
+                      </div>
+                    <input formControlName="imageUrl"
+                        class="lg:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none
+                        block w-full text-sm text-gray-100 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
+                        file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
+                        [ngClass]="{'border-gray-950': testimonialForm.get('imageUrl')?.invalid && testimonialForm.get('imageUrl')?.touched }"
+                        placeholder="Gym center" type="file" (change)="validateImage(testimonialForm.get('imageUrl')?.value)"
+                        accept="image/*">     
+                </div>
+                <div *ngIf="testimonialForm.get('imageUrl')?.invalid && testimonialForm.get('imageUrl')?.touched"
+                class="text-gray-950 mx-2">
+                Image is required
+            </div>
+        </div>
+            <button class="uppercase p-2 px-4 bg-gray-950 mx-auto rounded-md text-md text-white font-sans"
+                type="submit">
+                submit
+            </button>
+        </div>
+    </form>
+    </div>
+</section>

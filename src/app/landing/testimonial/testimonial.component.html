@@ -1,0 +1,48 @@
+<div class="justify-between mt-40 font-sans flex flex-col justify-center items-center">
+    <div class=" font sans text-4xl mb-5 text-center">
+    Testimonial
+    </div>
+    <button class="text-md bg-red-600 text-white py-2 mb-5 px-5 hover:bg-red-700 rounded-md font-sans mx-auto
+    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
+  <a [routerLink]="['/testimonials']">  See more </a>
+ </button>
+ </div>
+ <section class="grid md:grid-cols-2 grid-cols w-full rounded-md mt-20">
+    <div class="flex">
+        <img src="../../../assets/trainers/t10.jpg" class="md:rounded-l-md rounded-t-md">
+    </div>
+    <div class="bg-gray-950 md:rounded-r-md rounded-b-md p-8">
+        <p class="text-red-600 font-sans font-bold text-md md:text-xl uppercase mb-4">Testimonies</p>
+        <p class="text-gray-200 font-sans font-bold md:text-4xl text-2xl uppercase">What our client says</p>
+        <div *ngFor="let t of testimonials; let i = index" [class.hidden]="i !== testimonialIndex">
+            <p class="text-gray-200 font-sans md:text-md text-sm my-8">
+                <span class="text-red-600 md:text-6xl font-bold ml-2">&#8220;</span>
+                <span class="ml-2">{{ t.testimony }}</span>
+                <span class="text-red-600 md:text-2xl font-bold ml-2">&#8221;</span>
+            </p>
+            <div class="flex items-center">
+                <img class="rounded-full w-48" src="{{ t.imageUrl }}">
+                <div class="flex flex-col m-8">
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        {{ t.name }}
+                    </p>
+                    <p class="text-gray-200 font-sans text-sm flex">
+                        {{t.date }}
+                    </p>
+                </div>
+            </div>
+            <div class="grid grid grid-cols-2">
+            <button class="mt-6 text-sm bg-red-600 text-white py-2 px-5 hover:bg-red-700 rounded-md font-sans mx-auto ml-4
+            transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold">
+                {{t.center}}
+            </button>
+            <div class="mt-6 flex justify-end">
+                <span (click)="toggleTestimonial(-1)"
+                class="text-red-600 text-2xl md:text-4xl font-bold cursor-pointer mx-3">&#8592;</span>
+                <span (click)="toggleTestimonial(+1)"
+                class="text-red-600 text-2xl md:text-4xl font-bold cursor-pointer mx-3">&#8594;</span>
+            </div>
+        </div>
+        </div>
+    </div>
+</section>

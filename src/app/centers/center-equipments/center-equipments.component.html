@@ -1,0 +1,54 @@
+<div class="justify-between mt-40 font-sans mx-auto flex flex-col justify-center items-center">
+    <div class="text-4xl mb-5 text-center">
+        State of the art equipments
+    </div>
+    <button class="text-md bg-red-600 text-white py-1 mb-5 px-2 hover:bg-red-700 rounded-md font-sans mx-auto
+    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
+       Subscribe Now
+    </button>
+</div>
+<section class="mx-auto mb-2 px-2 space-y-1 mt-40">
+    <div class="grid grid-cols-1 gap-20 p-2">
+        <section class="flex justify-center items-center cursor-pointer
+                 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+            *ngFor="let e of centerEquipments?.equipments; let i = index" [ngClass]="{ 'hidden' : i >= 9 && !showAllEquipments }">
+            <div class="bg-gray-100 rounded-md m-5 min-h[900px] grid grid-cols md:grid-cols-2">
+                <div class="flex">
+                    <img class="rounded-md mx-auto" src="{{ e.imageUrl }}">
+                </div>
+                <div class="flex flex-col justify-center items-center p-4">
+                    <div class="p-2">
+                        <p
+                            class="text-center text-md font-sans font-bold text-red-600 text-transform: uppercase mt-3">
+                            {{ e.equipmentName }}
+                        </p>
+                        <p class="mt-1 text-sm w-full text-gray-600 font-bold text-center font-sans italic">
+                            <ng-container *ngFor="let category of e.categories; let ix = index">
+                                {{ category }} {{ ix < (e.categories.length - 1) ? "/" : "" }} </ng-container>
+                        </p>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-red-600 font-bold font-sans text-sm text-left mb-2">
+                            {{ e.date }}
+                        </p>
+                        <p class="text-gray-950 font-bold font-sans text-sm text-justify">
+                            {{ e.description }}
+                        </p>
+                    </div>
+                    <div
+                        class="text-sm bg-red-600 text-white py-1 mb-5 px-2 hover:bg-red-700 rounded-md font-sans mx-auto
+                                             transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
+                        {{ e.stockNumber}} items in stock
+                </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="p-3"  *ngFor="let e of centerEquipments?.equipments; let i = index" [ngClass]="{ 'hidden' : i <= 9  }">
+        <button
+            class="p-2 px-4 bg-gray-100 text-red-600 font-sans font-bold rounded-md mx-auto flex justify-center mt-2"
+            (click)="allEquipments()">
+            {{ !showAllEquipments ? 'See more' : 'See less' }}
+        </button>
+    </div>
+</section>

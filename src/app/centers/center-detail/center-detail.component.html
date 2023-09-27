@@ -1,0 +1,30 @@
+<app-navigation-bar></app-navigation-bar>
+<app-center-hero-detail
+[stats]="centerStatistics"
+[album]="centerHeroVideo"></app-center-hero-detail>
+<app-center-introduction
+[centerIntroduction]="centerIntro"></app-center-introduction>
+<app-center-locations
+[centerLoction]="centerLocation"></app-center-locations>
+<app-center-categories
+[centerCategories]="centerCategory"></app-center-categories>
+<app-center-equipments
+[centerEquipments]="centerEquipment"></app-center-equipments>
+<app-center-trainers
+[centerTrainers]="centerTrainer"></app-center-trainers>
+<app-center-promotions #CenterPromotions
+[centerPromotions]="centerPromo"
+(scrollToSubscriptionForm)="scrollToCenterSubscriptionForm"></app-center-promotions>
+<app-center-subscription-form #CenterSubscriptionForm
+></app-center-subscription-form>
+<app-center-announcements
+[centerAnnouncements]="centerAnnounce"></app-center-announcements>
+<app-center-review
+[centerReviews]="centerReview"></app-center-review>
+<app-center-album
+[centerAlbum]="centerAlbums"></app-center-album>
+<app-chat-with-center
+[whatsappContact]="centerWhatsapp"></app-chat-with-center>
+<app-chat-with-center-pop-up
+[whatsappContact]="centerWhatsapp"></app-chat-with-center-pop-up>
+<app-footer></app-footer>

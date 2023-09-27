@@ -1,0 +1,66 @@
+<div class="justify-between mt-4 font-sans mx-auto flex flex-col justify-center items-center">
+    <div class="text-4xl mb-5 text-center" *ngIf="searchResult.length === 0">
+        No result found
+        <div class="text-sm font-sans text-gray-500">Please scroll down or enter new keyword</div>
+    </div>
+</div>
+
+<div *ngIf="searchResult.length  > 0">
+    <div class="justify-between mt-4 font-sans mx-auto flex flex-col justify-center items-center">
+        <div class="text-4xl mb-5 text-center">
+            Search Results
+            <div class="text-sm font-sans text-gray-500">{{ countResult }} items matched</div>
+        </div>
+    </div>
+    <section class="mx-auto mb-2 px-2 space-y-1 mt-10">
+        <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-20">
+            <section class="flex justify-between items-center cursor-pointer
+                 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+            *ngFor="let t of searchResult; let i = index" [ngClass]="{ 'hidden' : i >= 12 && !showAllTrainers }">
+            <div class="w-full bg-gray-100 rounded-md aspect-square m-5 md:min-h-[750px]">
+                <div class="flex flex-col justify-center items-center">
+                    <img class="rounded-md object-cover" src="{{ t.photo }}">
+                    <div class="p-2">
+                        <p
+                            class="text-center text-lg font-sans font-bold lg:text-xl text-red-600 text-transform: uppercase mt-3">
+                            {{ t.name }}
+                        </p>
+                        <p class="mt-1 text-sm text-center font-sans italic font-bold text-gray-600 p-1">
+                            <ng-container *ngFor="let category of t.categorySet; let ix = index">
+                                {{ category }} {{ ix < (t.categorySet.length - 1) ? "/" : "" }} </ng-container>
+                        </p>
+                        <p class="text-red-600 font-bold font-sans text-sm text-left p-2">
+                            + {{ t.experience }} experience
+                        </p>
+                        <p class="text-gray-800 font-bold font-sans text-sm text-center p-2">
+                             {{ t.motto }}
+                        </p>
+                        <p class="text-gray-600 font-bold italic font-sans text-sm text-right p-2">
+                            {{ t.address }}
+                       </p>
+                    </div> 
+                    <div class="flex -ml-20 mt-2">
+                        <i-feather name="thumbs-up" style="width: 20px;" class="font-bold text-red-600 mr-4 mt-1"></i-feather>
+                    <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
+                        {{ t.likes }} people like this trainer.
+                    </p>
+                </div>                      
+                    <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
+                rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
+                <a [routerLink]="['/trainers', t.id, t.name ]">
+                Know more
+            </a>
+            </button>
+                </div>
+            </div>
+        </section>
+        </div>
+        <div class="p-3" [ngClass]="{ 'hidden': searchResult.length <= 12}">
+            <button
+                class="p-1 px-2 bg-gray-100 text-red-600 font-sans font-bold rounded-md mx-auto flex justify-center mt-2"
+                (click)="allTrainers()">
+                {{ !showAllTrainers ? 'See more' : 'See less' }}
+            </button>
+        </div>
+    </section>
+</div>

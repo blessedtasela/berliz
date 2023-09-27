@@ -1,0 +1,24 @@
+<div class="flex flex-col gap-5 items-center justify-center bg-gray-200 fixed right-0 left-0 
+                top-0 bottom-0 h-screen font-sans rounded-md">
+    <h1 class="text-2xl uppercase font-bold text-gray-950">
+        Buy Now
+    </h1>
+    <div class="grid grid-cols-2 gap-10">
+        <div>
+            <button class="bg-red-700 text-gray-100 font-bold p-1 px-2 rounded-md hover:bg-red-800
+            transition-all duration-300 transform hover:scale-105 focus:scale-105 focus:bg-red-800">
+                <a  [routerLink]="['/new-products']">
+                    New Products
+                </a>
+            </button>
+        </div>
+        <div>
+            <button class="bg-red-600 text-gray-100 font-bold p-1 px-2 rounded-md hover:bg-red-700
+            transition-all duration-300 transform hover:scale-105 focus:scale-105 focus:bg-red-700">
+            <a  [routerLink]="['/used-products']">
+                Used Products
+            </a>
+        </button>
+        </div>
+    </div>
+</div>
