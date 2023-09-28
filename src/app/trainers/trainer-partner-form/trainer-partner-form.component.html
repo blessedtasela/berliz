@@ -1,121 +1,151 @@
-    <div class="rounded-md p-4 flex justify-center border-rounded-md">
-        <form [formGroup]="addPartnerForm" class="bg-red-600 text-gray-200">
-            <div class="border-2 " [ngClass]="{'border-gray-200': addPartnerForm.invalid && invalidForm }">
-                <header class="text-center m-2">
-                    <h1 class="font-bold font-sans text-xl">Become a Berliz partner</h1>
-                    <p class="font-sans text-sm">Register today and transform lives
-                    </p>
-                </header>
-                <hr [ngClass]="{'border-gray-200': addPartnerForm.invalid && invalidForm }">
-                <div class="invalid-form">
-                    <span *ngIf="addPartnerForm.invalid && invalidForm" class="mx-2 text-gray-200">
-                        Please complete all sections
-                    </span>
-                    <span *ngIf="!addPartnerForm.invalid && invalidForm" class="mx-2 text-gray-200">
-                        Everything looks good
-                    </span>
-                </div>
-                <div class="grid grid-cols-2 gap-1 flex items-center p-2 gap-4">
-                    <div class="mx-auto col-span-2">
-                        <span>Relevant document or certificate</span>
-                        <div class="flex">
-                            <span class="sr-only">Upload certificate</span>
-                            <div class="shrink-0">
-                                <feather-icon name="file-text" class=" rounded-md" style="width: 60px;">
-                                </feather-icon>
+<section class="p-2 mt-40">
+    <header class="text-center m-2">
+        <h1 class="font-bold font-sans text-2xl md:text-4xl text-red-600 p-10">
+            Unlock Your True Potential
+        </h1>
+        <div class="text-justify p-2">
+            <p class="font-sans text-sm text-gray-800">
+                <span class="ml-4">Embrace</span> the opportunity to inspire and transform lives. As a Berliz Trainer,
+                you have the power to
+                ignite passion, foster growth, and open doors to new horizons. By guiding individuals in their fitness
+                journey, you become a catalyst for positive change,
+                motivating them to push their limits and achieve remarkable physical feats.
+            </p>
+            <p class="mt-4 font-sans text-sm text-gray-800">
+                <span class="ml-4">Step</span> into a rewarding role where you'll empower athletes and fitness
+                enthusiasts to surpass their goals.
+                By helping individuals conquer challenges and celebrate successes, you
+                create a sense of fulfillment and accomplishment in their fitness endeavors.
+            </p>
+            <p class="mt-4 font-sans text-sm text-gray-800">
+                <span class="ml-4">Join</span> our global network of dedicated fitness educators and become part of a
+                legacy that has empowered
+                millions to live active and healthy lives. As a Berliz Trainer, you'll be part of a supportive community
+                where collaboration and continuous learning are embraced. Your unique skills, passion, and dedication
+                will make a lasting impact on the lives of those seeking to transform their bodies and elevate their
+                performance.
+            </p>
+            <p class="mt-4 font-sans text-sm text-gray-800">
+                <span class="ml-4">Don't</span> miss out on the chance to be a driving force for positive change. Begin
+                your journey today and
+                embark on a fulfilling career with Berliz. Together, we'll inspire greatness, celebrate victories, and
+                redefine the boundaries of human potential in the world of sports and fitness.
+            </p>
+
+        </div>
+    </header>
+    <div class="mt-12 bg-red-600 border-2 rounded-md max-w-2xl min-w-2xl mx-auto py-2 "
+        [ngClass]="{'border-gray-950': addPartnerForm.invalid && invalidForm}">
+        <div class="" [ngClass]="{'border-gray-200': addPartnerForm.invalid && invalidForm }">
+            <header class="text-center m-2 text-gray-100">
+                <h1 class="font-bold font-sans text-xl">Become a Berliz partner</h1>
+                <p class="font-sans text-sm">Register today and transform lives
+                </p>
+            </header>
+            <hr class="text-gray-100 font-bold">
+            <section class="py-2">
+                <form [formGroup]="addPartnerForm">
+                    <div class="invalid-form">
+                        <span *ngIf="addPartnerForm.invalid && invalidForm" class="mtext-gray-100 mx-2 p-2">
+                            Please complete all sections
+                        </span>
+                        <span *ngIf="!addPartnerForm.invalid && invalidForm" class="text-gray-100 mx-2 p-2">
+                            Everything looks good
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 gap-5 text-gray-100">
+                        <div class="mx-auto grid grid-cols-1">
+                            <span>Relevant document or certificate</span>
+                            <div class="flex">
+                                <span class="sr-only">Upload certificate</span>
+                                <div class="shrink-0">
+                                    <feather-icon name="file-text" class=" rounded-md" style="width: 60px;">
+                                    </feather-icon>
+                                </div>
+                                <input formControlName="certificate"
+                                    class="md:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none
+                                        block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
+                                        file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
+                                    [ngClass]="{'border-gray-950': invalidForm && this.addPartnerForm.get('certificate')?.dirty }"
+                                    (change)="onCertificateSelected($event)" type="file" accept=".pdf">
                             </div>
-                            <input formControlName="certificate"
-                                class="border-2 px-4 py-2 rounded-md m-2 hover:border-gray-200 focus:border-gray-200 focus:outline-none
+                            <div *ngIf="this.addPartnerForm.get('certificate')?.invalid && this.addPartnerForm.get('certificate')?.dirty"
+                                class="text-gray-100 mx-2">
+                                Certificate is required
+                            </div>
+                        </div>
+                        <div class="mx-auto grid grid-cols-1">
+                            <textarea formControlName="motivation"
+                                class="md:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none text-gray-950"
+                                [ngClass]="{'border-red-400': addPartnerForm.get('motivation')?.invalid && addPartnerForm.get('motivation')?.dirty }"
+                                placeholder="Tell us why you want to be a Berliz partner in at least 50 words" rows="5"
+                                cols="25"></textarea>
+                            <div *ngIf="addPartnerForm.get('motivation')?.invalid && addPartnerForm.get('motivation')?.dirty"
+                                class="text-gray-200 mx-2">
+                                At least 50 characters
+                            </div>
+                        </div>
+                        <div class="mx-auto grid grid-cols-1">
+                            <span class="sr-only">Choose cover photo</span>
+                            <span>Please upload your CV</span>
+                            <div class="flex">
+                                <div class="shrink-0">
+                                    <feather-icon name="file-text" class=" rounded-md" style="width: 60px;">
+                                    </feather-icon>
+                                </div>
+                                <input formControlName="cv"
+                                    class="md:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none
                                     block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
                                     file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
-                                [ngClass]="{'border-gray-950': invalidForm && this.addPartnerForm.get('certificate')?.dirty }"
-                                (change)="onCertificateSelected($event)" type="file" accept=".pdf">
-                        </div>
-                        <div *ngIf="this.addPartnerForm.invalid && this.addPartnerForm.get('certificate')?.invalid && this.addPartnerForm.get('certificate')?.dirty"
-                            class="text-gray-200 mx-2">
-                            Certificate is required
-                        </div>
-                    </div>
-                    <div class="mx-auto col-span-2">
-                        <textarea formControlName="motivation"
-                            class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-200 focus:border-gray-200 focus:outline-none text-gray-950"
-                            [ngClass]="{'border-red-400': addPartnerForm.get('motivation')?.invalid && addPartnerForm.get('motivation')?.dirty }"
-                            placeholder="Tell us why you want to be a Berliz partner in at least 50 words" rows="5" cols="25"></textarea>
-                        <div *ngIf="addPartnerForm.get('motivation')?.invalid && addPartnerForm.get('motivation')?.dirty"
-                            class="text-gray-200 mx-2">
-                            At least 50 characters
-                        </div>
-                    </div>
-                    <div class="mx-auto col-span-2">
-                        <span class="sr-only">Choose cover photo</span>
-                        <span>Please upload your CV</span>
-                        <div class="flex">
-                            <div class="shrink-0">
-                                <feather-icon name="file-text" class=" rounded-md" style="width: 60px;">
-                                </feather-icon>
+                                    [ngClass]="{'border-gray-950': invalidForm && this.addPartnerForm.get('cv')?.dirty}"
+                                    (change)="onCVSelected($event)" type="file" accept=".pdf">
                             </div>
-                            <input formControlName="cv"
-                                class="border-2 px-4 py-2 rounded-md m-2 hover:border-gray-200 focus:border-gray-200 focus:outline-none
-                            block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
-                            file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
-                                [ngClass]="{'border-gray-950': invalidForm && this.addPartnerForm.get('cv')?.dirty}"
-                                (change)="onCVSelected($event)" type="file" accept=".pdf">
+                            <div *ngIf="this.addPartnerForm.get('cv')?.invalid && this.addPartnerForm.get('cv')?.dirty"
+                                class="text-red-500 mx-2">
+                                Upload a valid file
+                            </div>
                         </div>
-                        <div *ngIf="this.addPartnerForm.invalid && this.addPartnerForm.get('cv')?.invalid && this.addPartnerForm.get('cv')?.dirty" class="text-red-500 mx-2">
-                            Upload a valid file
+                        <div class="mx-auto grid grid-cols-1">
+                            <span class="sr-only">Facebook url link *required</span>
+                            <span>Facebook url link *required</span>
+                            <input formControlName="facebookUrl"
+                                class="md:w-96 border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none text-gray-950"
+                                [ngClass]="{'border-red-400': addPartnerForm.get('facebookUrl')?.invalid && addPartnerForm.get('facebookUrl')?.dirty }"
+                                placeholder="https://www.facebook.com/my-profile/" type="text">
+                            <div *ngIf="addPartnerForm.get('facebookUrl')?.invalid && addPartnerForm.get('facebookUrl')?.dirty"
+                                class="text-gray-200 mx-2">
+                                Please enter a valid facebook url
+                            </div>
                         </div>
-                    </div>
-                    <div class="mx-auto col-span-2 p-2">
-                        <span class="sr-only">Facebook url link *required</span>
-                        <span>Facebook url link *required</span>
-                        <input formControlName="facebookUrl"
-                            class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-200 focus:border-gray-200 focus:outline-none text-gray-950"
-                            [ngClass]="{'border-red-400': addPartnerForm.get('facebookUrl')?.invalid && addPartnerForm.get('facebookUrl')?.dirty }"
-                            placeholder="https://www.facebook.com/my-profile/" type="text">
-                        <div *ngIf="addPartnerForm.get('facebookUrl')?.invalid && addPartnerForm.get('facebookUrl')?.dirty"
-                            class="text-gray-200 mx-2">
-                            Please enter a valid facebook url
+                        <div class="mx-auto grid grid-cols-1">
+                            <span class="sr-only">Instagram url link *required</span>
+                            <span>Instagram url link *required</span>
+                            <input formControlName="instagramUrl"
+                                class="md:w-96 border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none text-gray-950"
+                                [ngClass]="{'border-red-400': addPartnerForm.get('instagramUrl')?.invalid && addPartnerForm.get('instagramUrl')?.dirty }"
+                                placeholder="https://www.instagram.com/my-profile/" type="instagramUrl">
+                            <div *ngIf="addPartnerForm.get('instagramUrl')?.invalid && addPartnerForm.get('instagramUrl')?.dirty"
+                                class="text-red-500 mx-2">
+                                Please enter a valid instagram url
+                            </div>
                         </div>
-                    </div>
-                    <div class="mx-auto col-span-2 p-2">
-                        <span class="sr-only">Instagram url link *required</span>
-                        <span>Instagram url link *required</span>
-                        <input formControlName="instagramUrl"
-                            class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-200 focus:border-gray-200 focus:outline-none text-gray-950"
-                            [ngClass]="{'border-red-400': addPartnerForm.get('instagramUrl')?.invalid && addPartnerForm.get('instagramUrl')?.dirty }"
-                            placeholder="https://www.instagram.com/my-profile/" type="instagramUrl">
-                        <div *ngIf="addPartnerForm.get('instagramUrl')?.invalid && addPartnerForm.get('instagramUrl')?.dirty"
-                            class="text-red-500 mx-2">
-                            Please enter a valid instagram url
+                        <div class="mx-auto grid grid-cols-1">
+                            <span class="sr-only">Youtube url link *optional</span>
+                            <span>Youtube url link *optional</span>
+                            <input formControlName="youtubeUrl"
+                                class="md:w-96 border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none text-gray-950"
+                                [ngClass]="{'border-red-400': addPartnerForm.get('youtubeUrl')?.invalid && addPartnerForm.get('youtubeUrl')?.dirty }"
+                                placeholder="https://www.youtube.com/my-profile/" type="youtubeUrl">
+                            <div *ngIf="addPartnerForm.get('youtubeUrl')?.invalid && addPartnerForm.get('youtubeUrl')?.dirty"
+                                class="text-gray-200 mx-2">
+                                Please enter a valid youtube url
+                            </div>
                         </div>
-                    </div>
-                    <div class="mx-auto col-span-2 p-2">
-                        <span class="sr-only">Youtube url link *optional</span>
-                        <span>Youtube url link *optional</span>
-                        <input formControlName="youtubeUrl"
-                            class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-200 focus:border-gray-200 focus:outline-none text-gray-950"
-                            [ngClass]="{'border-red-400': addPartnerForm.get('youtubeUrl')?.invalid && addPartnerForm.get('youtubeUrl')?.dirty }"
-                            placeholder="https://www.youtube.com/my-profile/" type="youtubeUrl">
-                        <div *ngIf="addPartnerForm.get('youtubeUrl')?.invalid && addPartnerForm.get('youtubeUrl')?.dirty"
-                            class="text-gray-200 mx-2">
-                            Please enter a valid youtube url
-                        </div>
-                    </div>
-                    <div class="bg-gray-200 rounded-md mx-auto m-2">
-                        <button
-                            class="p-2 font-bold font-sans mx-4 text-gray-950 text-sm lg:text-md flex items-center justify-center"
-                            (click)="clear()">
-                            Clear
-                        </button>
-                    </div>
-                    <div class="bg-gray-200 rounded-md mx-auto m-2">
-                        <button
-                            class="p-2 font-bold font-sans mx-4 text-red-600 text-sm lg:text-md flex items-center justify-center"
+                        <button class="p-1 uppercase px-2 m-2 bg-gray-100 mx-auto rounded-md text-md text-red-600 font-bold font-sans
+              transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
                             type="submit" (click)="addPartner()">
                             Submit
                         </button>
                     </div>
-                </div>
-            </div>
-        </form>
-    </div>
+                </form>
+            </section>
