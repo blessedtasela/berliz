@@ -13,6 +13,8 @@ import { CenterFormModalComponent } from 'src/app/shared/center-form-modal/cente
 import { Trainers } from 'src/app/models/trainers.interface';
 import { TrainerDataService } from 'src/app/services/trainer-data.service';
 import { ViewCvModalComponent } from 'src/app/shared/view-cv-modal/view-cv-modal.component';
+import { UpdateTrainerModalComponent } from 'src/app/shared/update-trainer-modal/update-trainer-modal.component';
+import { UpdateTrainerPhotoModalComponent } from 'src/app/shared/update-trainer-photo-modal/update-trainer-photo-modal.component';
 
 @Component({
   selector: 'app-partner-application-details',
@@ -25,7 +27,6 @@ export class PartnerApplicationDetailsComponent {
   trainerData!: Trainers;
   user!: Users;
   responseMessage: any;
-  profilePhoto: any;
 
   constructor(
     private userDataService: UserDataService,
@@ -49,12 +50,10 @@ export class PartnerApplicationDetailsComponent {
     });
     this.trainerDataService.getTrainer().subscribe(() => {
       this.trainerData = this.trainerDataService.trainerData;
-      console.log('trainer: ', this.trainerData); 
     });
     this.ngxService.stop();
   }
   
-
   openUpdatePartner() {
     const dialogRef = this.dialog.open(UpdatePartnerModalComponent, {
       width: '800px',
@@ -124,26 +123,6 @@ export class PartnerApplicationDetailsComponent {
     }
   }
 
-  openUpdateTrainer() {
-    const dialogRef = this.dialog.open(UpdatePartnerModalComponent, {
-      width: '800px',
-      data: {
-        trainerData: this.trainerData,
-      }
-    });
-    const childComponentInstance = dialogRef.componentInstance as UpdatePartnerModalComponent;
-    childComponentInstance.onUpdatePartnerEmit.subscribe(() => {
-      this.handleEmitEvent();
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log(`Dialog result: ${result}`);
-      } else {
-        console.log('Dialog closed without updating partner');
-      }
-    });
-  }
-
   openViewCV() {
     const cv = 'data:application/pdf;base64,' +this.partnerData?.cv;
       const dialogRef = this.dialog.open(ViewCvModalComponent, {
@@ -179,6 +158,48 @@ export class PartnerApplicationDetailsComponent {
           }
         });
       }
+
+      openUpdateTrainer() {
+        const dialogRef = this.dialog.open(UpdateTrainerModalComponent, {
+          width: '800px',
+          data: {
+            trainerData: this.trainerData,
+          },
+          panelClass: 'mat-dialog-height',
+        });
+        const childComponentInstance = dialogRef.componentInstance as UpdateTrainerModalComponent;
+        childComponentInstance.onUpdateTrainerEmit.subscribe(() => {
+          this.handleEmitEvent();
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            console.log(`Dialog result: ${result}`);
+          } else {
+            console.log('Dialog closed without updating partner');
+          }
+        });
+      }
+    
+      openUpdateCoverPhoto() {
+          const dialogRef = this.dialog.open(UpdateTrainerPhotoModalComponent, {
+            width: '400px',
+            data: {
+              trainerData: this.trainerData,
+            },
+            panelClass: 'mat-dialog-height',
+          });
+          const childComponentInstance = dialogRef.componentInstance as UpdateTrainerPhotoModalComponent;
+          childComponentInstance.onUpdatePhotoEmit.subscribe(() => {
+            this.handleEmitEvent();
+          });
+          dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+              console.log(`Dialog result: ${result}`);
+            } else {
+              console.log('Dialog closed without updating partner');
+            }
+          });
+        }
     
   formatDate(dateString: any): any {
     const date = new Date(dateString);

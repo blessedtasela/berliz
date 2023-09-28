@@ -1,9 +1,9 @@
-<div class="rounded-md mx-auto">
+<div class="relative">
+    <div class="text-red-600 absolute top-0 right-0 p-1">
+        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+    </div>
     <form [formGroup]="updateCategoryForm">
         <header class="text-center m-2">
-            <div class="text-red-600 text-right font-bold -mb-4">
-                <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer ml-20"></i-feather>
-            </div>
             <h1 class="font-bold font-sans text-xl">Update category</h1>
             <p class="font-sans text-sm">Please provide update for category with 
                 <span class="font-bold italic">ID: {{categoryData.id}}</span>

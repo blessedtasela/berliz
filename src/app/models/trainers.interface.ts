@@ -15,7 +15,24 @@ export interface Trainers {
       role: string;
     }
   }
-  categorySet: string[];
+  categorySet: {
+    id: number;
+    name: string;
+    description: string;
+    photo: string;
+    tagSet: {
+        id: number;
+        name: string;
+        description: string;
+        date: Date;
+        lastUpdate: Date;
+        status: string;
+    }[];
+    likes: number;
+    date: Date;
+    lastUpdate: Date;
+    status: string;
+  }[];
   date: Date;
   lastUpdate: Date;
   status: string;

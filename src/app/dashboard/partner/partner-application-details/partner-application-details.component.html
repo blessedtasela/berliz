@@ -1,5 +1,5 @@
 <div class="mt-10" *ngIf="!partnerData">No application yet</div>
-<div *ngIf="partnerData">
+<div *ngIf="partnerData && !trainerData">
     <div class="justify-between mt-20 font-sans flex flex-col justify-center items-center">
         <div *ngIf="user" class=" font sans text-4xl mb-2 text-center">
             Hello {{ user.firstname }} {{ user.lastname }}
@@ -38,7 +38,7 @@
                     View CV file
                 </button>
             </div>
-            <div *ngIf="partnerData.certificate"  class="flex justify-center">
+            <div *ngIf="partnerData.certificate" class="flex justify-center">
                 <button class="text-md bg-gray-800 text-white py-2 mb-5 px-5 hover:bg-gray-900 rounded-md font-sans mx-auto
                 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
                     (click)="openViewCertificate()">
@@ -87,19 +87,19 @@
     </section>
 </div>
 
-<div *ngIf="trainerData" class="hidden">
+<div *ngIf="trainerData">
     <div class="justify-between mt-20 font-sans flex flex-col justify-center items-center">
         <div *ngIf="user" class=" font sans text-4xl mb-2 text-center">
             Hello {{ user.firstname }} {{ user.lastname }}
         </div>
         <div *ngIf="trainerData.status ==='false'" class="flex flex-col justify-center items-center">
-            <div class="text-gray-600 font-sans italic m-1">Your Trainer account has been successfully created
+            <div class="text-gray-600 font-sans italic m-1">Your Trainer account has successfully been created
             </div>
             <div class="text-gray-600 font-sans italic m-1">Your application would be approved soon by an admin</div>
             <button class="text-md bg-red-600 text-white py-2 mb-5 px-5 hover:bg-red-700 rounded-md font-sans mx-auto
     transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
                 (click)="openUpdateTrainer()">
-                update application information
+                update {{ trainerData.partner.user.role }} information
             </button>
         </div>
         <div *ngIf="trainerData.status ==='true'" class="flex flex-col justify-center items-center">
@@ -113,51 +113,50 @@
             </button>
         </div>
     </div>
-    <section class="grid md:grid-cols-2 grid-cols w-full rounded-md mt-20">
+    <section class="grid md:grid-cols-2 grid-cols w-full rounded-md mt-20 bg-gray-200">
         <div class="p-2">
             <div class="shrink-0">
-                <img [src]="profilePhoto" class="object-cover rounded-full"
+                <img [src]="'data:image;base64,'+ trainerData.photo" class="object-cover rounded-full"
                     onerror="this.src='../../../assets/icons/user.png';">
             </div>
-            <div class="flex justify-end p-2" (click)="openUpdateFile()">
+            <div class="flex justify-end p-2" (click)="openUpdateCoverPhoto()">
                 <i-feather name="Edit" class="font-bold text-red-600 mr-4  cursor-pointer" style="width: 30px;">
                 </i-feather>
             </div>
         </div>
-        <div class="bg-gray-200 md:rounded-r-md rounded-b-md p-8">
-            <p class="text-red-600 font-sans font-bold text-md italic mb-4">{{ partnerData.user.email }}</p>
+        <div class="bg-gray-950 md:rounded-r-md rounded-b-md p-8">
+            <p class="text-red-600 font-sans font-bold text-md italic mb-4">{{ trainerData.partner.user.email }}</p>
+            <p class="text-gray-200 font-sans font-bold text-xl uppercase">{{ trainerData.partner.user.role }}</p>
             <div class="flex items-center">
-                <div class="flex flex-col m-8 gap-5 font-sans">
-                    <p class="text-gray-950 font-sans  text-md flex">
-                        Date registered: {{ formatDate(partnerData.date) }}
+                <div class="flex flex-col m-8 gap-5">
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        Motivation: {{ trainerData.partner.motiation }}
                     </p>
-                    <p class="text-gray-950 font-sans  text-md flex">
-                        Motivation: {{ partnerData.motivation }}
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        Date Joined: {{ formatDate(trainerData.date) }}
                     </p>
-                    <p class="text-gray-950 font-sans  text-md flex">
-                        Facebook link: <button class="ml-2 px-1 bg-red-600 text-gray-200 rounded md"
-                            (click)="openUrl(partnerData.facebookUrl)"> facebook</button>
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        Motto: {{ trainerData.motto }}
                     </p>
-                    <p class="text-gray-950 font-sans  text-md flex">
-                        Instagram link: <button class="ml-2 px-1 bg-red-600 text-gray-200 rounded md"
-                            (click)="openUrl(partnerData.instagramUrl)"> instagram</button>
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        Address: {{ trainerData.address }}
                     </p>
-                    <p class="text-gray-950 font-sans text-md flex">
-                        Youtube link: <button *ngIf="partnerData.youtubeUrl"
-                            class="ml-2 px-1 bg-red-600 text-gray-200 rounded md"
-                            (click)="openUrl(partnerData.youtubeUrl)">youtube
-                        </button>
-                        <button *ngIf="!partnerData.youtubeUrl" class="ml-2 px-1 bg-red-600 text-gray-200 rounded md">
-                            null</button>
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        Experience: {{ trainerData.experience }} years
                     </p>
-                    <p class="text-gray-950 font-sans  text-md flex">
-                        Role: {{ partnerData.role }}
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        <ng-container *ngFor="let category of trainerData.categorySet; let i = index">
+                            Categories: {{ category.name }} {{ i < (trainerData.categorySet.length - 1) ? "/" : "" }}
+                                </ng-container>
                     </p>
-                    <p class="text-gray-950 font-sans  text-md flex">
-                        Application status: {{ partnerData.status ==='true' ? 'active' :'false' }}
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        Likes: {{ trainerData.likes }}
                     </p>
-                    <p class="text-gray-950 font-sans  text-md flex">
-                        Last Update: {{ formatDate(partnerData.lastUpdate) }}
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        Account status: {{ trainerData.status === 'true' ? 'active' :'false' }}
+                    </p>
+                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                        Last updated: {{ formatDate(trainerData.lastUpdate) }}
                     </p>
                 </div>
             </div>
