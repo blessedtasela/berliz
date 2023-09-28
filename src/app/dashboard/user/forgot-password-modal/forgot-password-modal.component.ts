@@ -61,4 +61,8 @@ export class ForgotPasswordModalComponent {
     }
     this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
+
+  closeDialog() {
+    this.dialogRef.close('Dialog closed without completing trainer aplication')
+  }
 }

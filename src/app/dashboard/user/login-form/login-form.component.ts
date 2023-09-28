@@ -46,7 +46,7 @@ export class LoginFormComponent implements OnInit {
 
   openForgotPassword() {
     const dialogRef = this.dialog.open(ForgotPasswordModalComponent, {
-      width: '350px'
+      width: '600px'
     });
 
     dialogRef.afterClosed().subscribe(result => {

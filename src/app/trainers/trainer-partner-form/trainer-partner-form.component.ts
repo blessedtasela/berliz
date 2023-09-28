@@ -16,7 +16,6 @@ export class TrainerPartnerFormComponent {
   onAddPartnerEmit = new EventEmitter();
   addPartnerForm!: FormGroup;
   invalidForm: boolean = false;
-  // formIndex: number = 0;
   user!: Users;
   responseMessage: any;
   selectedCV: any;
