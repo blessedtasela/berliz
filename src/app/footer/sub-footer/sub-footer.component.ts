@@ -7,4 +7,9 @@ import { Component } from '@angular/core';
 })
 export class SubFooterComponent {
 
+  constructor() { }
+  openBlessedTasela() {
+      window.open('https://blessed-tasela.netlify.app/', '_blank');
+    
+  }
 }

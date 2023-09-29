@@ -26,7 +26,6 @@ import { TestimonialModule } from './testimonial/testimonial.module';
 import { LandingPageModule } from './landing/landing-page.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AboutUsModule } from './about-us/about-us.module';
-import { PortfolioModule } from './portfolio/portfolio.module';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   text: "Loading....",
@@ -67,7 +66,6 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     LandingPageModule,
     CategoriesModule,
     AboutUsModule,
-    PortfolioModule
   ],
   exports: [],
 
