@@ -35,10 +35,12 @@ import { ProgressPageComponent } from './dashboard/user/progress/progress-page/p
 import { ResetPasswordComponent } from './dashboard/user/reset-password/reset-password.component';
 import { RunNowPageComponent } from './dashboard/user/run-now/run-now-page/run-now-page.component';
 import { AdminTrainerComponent } from './dashboard/trainer/admin-trainer/admin-trainer.component';
+import { BlessedTaselaComponent } from './blessed-tasela/blessed-tasela.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: LandingPageComponent },
+  { path: 'blessed-tasela', component: BlessedTaselaComponent },
   { path: 'contact', component: ContactUsPageComponent },
   { path: 'contact-us', redirectTo: 'contact' },
   { path: 'about', component: AboutUsComponent },
