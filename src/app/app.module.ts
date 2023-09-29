@@ -26,8 +26,7 @@ import { TestimonialModule } from './testimonial/testimonial.module';
 import { LandingPageModule } from './landing/landing-page.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AboutUsModule } from './about-us/about-us.module';
-import { BlessedTaselaComponent } from './blessed-tasela/blessed-tasela.component';
-
+import { PortfolioModule } from './portfolio/portfolio.module';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   text: "Loading....",
@@ -45,7 +44,6 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     AppComponent,
     PageNotFoundComponent,
     ExamplePdfViewerComponent,
-    BlessedTaselaComponent,
   ],
   imports: [
     BrowserModule,
@@ -68,7 +66,8 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     TestimonialModule,
     LandingPageModule,
     CategoriesModule,
-    AboutUsModule
+    AboutUsModule,
+    PortfolioModule
   ],
   exports: [],
 
