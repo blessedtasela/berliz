@@ -31,12 +31,13 @@ export class ContactUsFormComponent implements OnInit {
   }
 
   submitForm() {
+    this.ngxService.start()
     console.log("form value: ", this.contactUsForm.value)
     this.ngxService.start();
     if (this.contactUsForm.invalid) {
       this.invalidForm = true
+      this.snackBarService.openSnackBar("Invalid form input", 'error');
       this.ngxService.stop()
-      this.snackBarService.openSnackBar("Invalid form input", "error");
     }
     else {
       this.contactUsService.addContactUs(this.contactUsForm.value)
@@ -58,7 +59,6 @@ export class ContactUsFormComponent implements OnInit {
           this.snackBarService.openSnackBar(this.responseMessage, "error");
         });
     }
-    this.ngxService.stop();
     this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
 

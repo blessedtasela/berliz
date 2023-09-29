@@ -37,18 +37,18 @@ z-index: 20;
 .snack-bar-error {
   background-color: #e61515; 
   color: #d9dcdf; 
-  font-size: 14px;
-  padding: 12px 16px;
-  border-radius: 4px;
+  font-size: 12px;
+  padding: 14px 20px;
+  border-radius: 2px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .snack-bar-success {
   background-color: #099e11; 
   color: #d9dcdf; 
-  font-size: 14px;
-  padding: 12px 16px;
-  border-radius: 4px;
+  font-size: 12px;
+  padding: 14px 20px;
+  border-radius: 2px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
