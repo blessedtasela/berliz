@@ -71,7 +71,8 @@ export class SignupModalComponent {
       this.signUpForm.get('lastName')?.invalid ||
       this.signUpForm.get('phone')?.invalid ||
       this.signUpForm.get('dob')?.invalid ||
-      this.signUpForm.get('gender')?.invalid
+      this.signUpForm.get('gender')?.invalid ||
+      this.signUpForm.get('country')?.invalid
     ) {
       this.invalidForm = true;
       console.log("Can't validate");
@@ -83,7 +84,6 @@ export class SignupModalComponent {
 
   toggleSecondIndex(n: number) {
     if (
-      this.signUpForm.get('country')?.invalid ||
       this.signUpForm.get('state')?.invalid ||
       this.signUpForm.get('city')?.invalid ||
       this.signUpForm.get('postalCode')?.invalid ||
