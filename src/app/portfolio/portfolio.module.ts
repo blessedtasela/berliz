@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BlessedTaselaComponent } from './blessed-tasela/blessed-tasela.component';
+import { IconsModule } from '../icons/icons.module';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -9,7 +11,9 @@ import { BlessedTaselaComponent } from './blessed-tasela/blessed-tasela.componen
     BlessedTaselaComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    IconsModule,
+    RouterModule
   ]
 })
 export class PortfolioModule { }
