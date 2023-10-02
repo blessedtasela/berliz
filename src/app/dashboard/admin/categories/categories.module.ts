@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { FooterModule } from 'src/app/footer/footer.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
+import { CategoriesListComponent } from './categories-list/categories-list.component';
 
 
 
@@ -16,7 +17,8 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
     CategoryComponent,
     CategoryDetailsComponent,
     AddCategoryModalComponent,
-    UpdateCategoryModalComponent
+    UpdateCategoryModalComponent,
+    CategoriesListComponent
   ],
   imports: [
     CommonModule,

@@ -13,7 +13,6 @@ import { CategoryDataService } from 'src/app/services/category-data.service';
 })
 export class CategoriesListComponent implements OnInit {
   categoriesData: Categories[] = [];
-  responseMessage: any;
   showFullData: boolean = false;
   invalidForm: boolean = false;
   selectedSortOption: string = 'date';
@@ -163,5 +162,9 @@ export class CategoriesListComponent implements OnInit {
   formatDate(dateString: any): any {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');
+  }
+
+  formatStringToUrl(string: any){
+    return string.replace(/ /g, "-");
   }
 }

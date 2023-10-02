@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -8,9 +9,18 @@ import { environment } from 'src/environments/environment';
 })
 export class TrainerService {
   url = environment.apiUrl;
+  trainerEventEmitter = new EventEmitter();
+  
+   private trainerEmitSource = new Subject<void>();
+   trainerEmit$ = this.trainerEmitSource.asObservable();
 
   constructor(private httpClient: HttpClient,
     private router: Router) { }
+
+    // Method to trigger an emit event
+   triggerTrainerEmit() {
+    this.trainerEmitSource.next();
+  }
 
   addTrainer(data: any) {
     return this.httpClient.post(this.url + "/trainer/add", data);
@@ -39,6 +49,10 @@ export class TrainerService {
 
   getAllTrainers() {
     return this.httpClient.get(this.url + "/trainer/get")
+  }
+
+  getActiveTrainers() {
+    return this.httpClient.get(this.url + "/trainer/getActiveTrainers")
   }
 
   deleteTrainer(id: number) {

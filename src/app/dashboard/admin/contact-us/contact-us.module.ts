@@ -8,6 +8,8 @@ import { FooterModule } from 'src/app/footer/footer.module';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { MatDialogModule } from '@angular/material/dialog';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
+import { ContactUsListComponent } from './contact-us-list/contact-us-list.component';
+import { ContactUsDetailsComponent } from './contact-us-details/contact-us-details.component';
 
 
 
@@ -15,7 +17,9 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
   declarations: [
     UpdateContactUsModalComponent,
     AdminContactUsComponent,
-    AdminContactUsDetailsComponent
+    AdminContactUsDetailsComponent,
+    ContactUsListComponent,
+    ContactUsDetailsComponent
   ],
   imports: [
     CommonModule,

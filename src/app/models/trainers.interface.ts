@@ -8,7 +8,7 @@ export interface Trainers {
   likes: number;
   partner: {
     id: number;
-    motiation: string;
+    motivation: string;
     user: {
       id: number;
       email: string;

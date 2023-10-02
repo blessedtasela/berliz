@@ -19,8 +19,6 @@ export class CategoryGuard implements CanActivate {
       return false;
     }
 
-
-
     if (!0) {
       // If the trainer with the given 'id' doesn't exist, redirect to trainers page
       window.alert("Category not found");

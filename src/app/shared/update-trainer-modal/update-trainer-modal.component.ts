@@ -3,15 +3,14 @@ import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, FormA
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
-import { Partners } from 'src/app/models/partners.interface';
 import { CategoryDataService } from 'src/app/services/category-data.service';
-import { PartnerDataService } from 'src/app/services/partner-data.service';
-import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
-import { fileValidator, genericError } from 'src/validators/form-validators.module';
+import { genericError } from 'src/validators/form-validators.module';
 import { TrainerFormModalComponent } from '../trainer-form-modal/trainer-form-modal.component';
 import { Trainers } from 'src/app/models/trainers.interface';
+import { Users } from 'src/app/models/users.interface';
+import { UserDataService } from 'src/app/services/user-data.service';
 
 @Component({
   selector: 'app-update-trainer-modal',
@@ -27,10 +26,12 @@ export class UpdateTrainerModalComponent {
   selectedPhoto: any;
   trainer!: Trainers;
   selectedCategoriesId: any;
+  user!: Users;
 
   constructor(private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<TrainerFormModalComponent>,
     private ngxService: NgxUiLoaderService,
+    private userDataService: UserDataService,
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,
     private categoryDataService: CategoryDataService,
@@ -48,17 +49,23 @@ export class UpdateTrainerModalComponent {
       'address': new FormControl(this.trainer.address, Validators.compose([Validators.required, Validators.minLength(10)])),
       'experience': new FormControl(this.trainer.experience, Validators.compose([Validators.required, Validators.minLength(1)])),
       'likes': new FormControl(this.trainer.likes, Validators.compose([Validators.required, Validators.minLength(1)])),
-      'categoryIds': this.formBuilder.array([], this.validateCheckbox()),
+      'categoryIds': this.formBuilder.array(this.selectedCategoriesId, this.validateCheckbox()),
     });
 
     this.handleEmitEvent();
   }
 
+  ngAfterViewInit(){
+    this.cdr.detectChanges();
+  }
+
   handleEmitEvent() {
     this.categoryDataService.getActiveCategories().subscribe(() => {
       this.categories = this.categoryDataService.activeCategories;
-      this.cdr.detectChanges();
     });
+    this.userDataService.getUser().subscribe(() => {
+      this.user = this.userDataService.userData;
+    })
   }
 
   closeDialog() {
@@ -75,23 +82,24 @@ export class UpdateTrainerModalComponent {
   }
 
   onCheckboxChanged(event: any) {
+    console.log('Checkbox changed:', event.target.checked, event.target.value);
     const categories = this.updateTrainerForm.get('categoryIds') as FormArray;
 
     if (event.target.checked) {
-      categories.push(this.formBuilder.group({ categoryIds: event.target.value }));
+      categories.push(new FormControl(event.target.value));
     } else {
       // Remove the control by its value
-      const index = categories.controls.findIndex((control) => control.value.tagIds === event.target.value);
+      const index = categories.controls.findIndex((control) => control.value === event.target.value);
       categories.removeAt(index);
     }
   }
 
-  addTrainer(): void {
-    const selectedCategoryIds = this.updateTrainerForm.value.categoryIds.map((categories: any) => categories.categoryIds);
+  updateTrainer(): void {
+    const selectedCategoryIds = this.updateTrainerForm.value.categoryIds;
     const categoryToStrings = selectedCategoryIds.join(',');
     const formData = {
       ...this.updateTrainerForm.value,
-      tagIds: categoryToStrings
+      categoryIds: categoryToStrings
     };
 
     if (this.updateTrainerForm.invalid) {

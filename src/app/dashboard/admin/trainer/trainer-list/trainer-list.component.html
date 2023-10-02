@@ -1,0 +1,134 @@
+<div class="justify-center items-center mt-20 p-5 overflow-x-scroll bg-gray-200 rounded-lg">
+    <div class="min-w-[300px]">
+        <div class="grid grid-cols md:grid-cols-3 gap-5 mb-10">
+            <div class="flex justify-start">
+                <div class="flex justify-center items-center cursor-pointer">
+                    <button
+                        class="text-sm bg-red-600 text-white p-1 px-4 hover:bg-red-700 rounded-md
+                            transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold">
+                        <i-feather name="filter" class="mr-2"></i-feather>
+                        <select [(ngModel)]="selectedSortOption" (change)="onSortOptionChange($event)"
+                            class="mt-2 cursor-pointer border border-gray-400 rounded-md  focus:outline-none text-gray-700">
+                            <option class="text-gray-500" value="date">Date added</option>
+                            <option class="text-gray-500" value="motto">motto</option>
+                            <option class="text-gray-500" value="likes">likes</option>
+                            <option class="text-gray-500" value="id">partner id</option>
+                        </select>
+                    </button>
+                </div>
+            </div>
+            <div class="flex justify-center">
+                <span class="sr-only">Search</span>
+                <div class="grid grid-cols-1">
+                    <div class="flex justify-center items-center">
+                        <input class="placeholder:italic placeholder:text-gray-400 border border-gray-400 
+                                        rounded-md py-1 px-4 hover:border-gray-500 hover:drop-shadow-2xl focus:border-gray-600
+                                         focus:outline-none cursor-pointer max-w-64" placeholder="Search"
+                            [(ngModel)]="searchQuery">
+                        <span class="cursor-pointer">
+                            <i-feather name="Search" class="ml-2 text-gray-500" style="width: 28px;"></i-feather>
+                        </span>
+                    </div>
+                    <div class="flex justify-center items-center mt-2 -ml-8">
+                        <h1 class="mr-2 text-gray-500">Select criteria</h1>
+                        <select (change)="onSearchCriteriaChange($event)" class="cursor-pointer border border-gray-400 rounded-md hover:border-gray-500 
+                        hover:drop-shadow-2xl focus:border-gray-600 focus:outline-none text-gray-700">
+                            <option class="text-gray-500" value="email">Email</option>
+                            <option class="text-gray-500" value="id">partner id</option>
+                            <option class="text-gray-500" value="motto">Motto</option>
+                            <option class="text-gray-500" value="status">Status</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-center items-center mt-5 gap-10 font-sans font-bold">
+                        <div>
+                            Showing <span class="italic"> {{ counter }} </span> of
+                            <span class="italic">{{ totalTrainers }}</span> results
+                        </div>
+                        <div>
+                            sorted by<span class="italic"> {{ selectedSortOption }} </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end">
+                <div class="flex justify-center items-center cursor-pointer">
+                    <button
+                        class="text-sm bg-red-600 text-white p-1 px-4 hover:bg-red-700 rounded-md
+                            transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
+                        (click)="openAddTrainer()">
+                        <i-feather name="user-plus"></i-feather>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <table class="table-auto border-collapse border border-gray-400 bg-gray-300 text-gray-950 font-sans
+                container">
+            <thead>
+                <tr class="cursor-pointer">
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">SN</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Cover photo </th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Name</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Likes</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Address</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">partner id</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Actions</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Status</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let trainer of filteredTrainersData; let i = index" class="bg-gray-100 hover:bg-gray-200">
+                    <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">
+                        <img [src]="'data:image;base64,' + trainer.photo " class="object-cover rounded-full"
+                            onerror="this.src='../../../assets/icons/user.png';">     
+                                <i-feather name="Edit" (click)="openUpdatePhoto(trainer.id)" class="font-bold text-red-600 mr-4  cursor-pointer"
+                                    style="width: 10px;">
+                                </i-feather>          
+                    </td>
+                    <td class="border-b border-gray-400 px-4 py-2">
+                        {{ trainer.name }}
+                    </td>
+                    <td class="border-b border-gray-400 px-4 py-2">
+                        {{ trainer.likes }}
+                    </td>
+                    <td class="border-b border-gray-400 px-4 py-2">
+                        {{ trainer.address }}
+                    </td>
+                    <th class="border-b border-gray-400 px-4 py-2 font-bold">{{ trainer.partner.id }}</th>
+                    <td class="border-b border-gray-400 px-4 py-2">
+                        <div class="flex items-center p-2">
+                            <button
+                                class="text-sm bg-red-600 text-white p-1 px-2 hover:bg-red-700 rounded-md font-sans mx-auto ml-4
+                                        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
+                                (click)="openUpdateTrainer(trainer.id)">
+                                <i-feather name="edit"></i-feather>
+                            </button>
+                            <button
+                                class="text-sm bg-gray-950 text-white p-1 px-2 hover:bg-gray-1000 rounded-md font-sans mx-auto ml-4
+                                transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
+                                [ngClass]="{'bg-red-600 hover:bg-red-700': trainer.status == 'true'}"
+                                (click)="updateTrainerStatus(trainer.id)">
+                                {{ trainer.status == 'false' ? 'activate' : 'deactivate'}}
+                            </button>
+                            <button
+                                class="text-sm bg-red-600 text-white p-1 px-2 hover:bg-red-700 rounded-md font-sans mx-auto ml-4
+                                        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
+                                (click)="deletePartner(trainer.id)">
+                                <i-feather name="trash-2"></i-feather>
+                            </button>
+                            <button (click)="openTrainerDetails(trainer.id)"
+                                class="text-sm bg-gray-950 text-white p-1 px-2 hover:bg-gray-1000 rounded-md font-sans mx-auto ml-4
+                                    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold">
+                                {{ !showFullData ? 'more' : 'less'}}
+                            </button>
+                        </div>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ trainer.status }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2"> {{ formatDate(trainer.date) }}
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

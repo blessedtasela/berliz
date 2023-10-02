@@ -86,7 +86,7 @@
                                 </div>
                                 <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
                             rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
-                                    <a [routerLink]="['/categories', category.id, (category.name)]">
+                                    <a [routerLink]="['/categories', category.id, formatStringToUrl(category.name)]">
                                         Know more
                                     </a>
                                 </button>

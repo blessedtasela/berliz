@@ -6,7 +6,7 @@ import { TrainersDetailsComponent } from './trainers-details/trainers-details.co
 import { TrainersHeroComponent } from './trainers-hero/trainers-hero.component';
 import { NavbarModule } from '../navbar/navbar.module';
 import { FooterModule } from '../footer/footer.module';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TrainersSearchResultComponent } from './trainers-search-result/trainers-search-result.component';
 import { TrainersSearchComponent } from './trainers-search/trainers-search.component';
 import { RouterModule } from '@angular/router';
@@ -52,6 +52,7 @@ import { TrainerPartnerFormComponent } from './trainer-partner-form/trainer-part
     ReactiveFormsModule,
     RouterModule,
     IconsModule,
+    FormsModule
   ]
 })
 export class TrainersModule { }

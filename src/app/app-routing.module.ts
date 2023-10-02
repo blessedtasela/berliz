@@ -34,7 +34,8 @@ import { LoginComponent } from './dashboard/user/login/login.component';
 import { ProgressPageComponent } from './dashboard/user/progress/progress-page/progress-page.component';
 import { ResetPasswordComponent } from './dashboard/user/reset-password/reset-password.component';
 import { RunNowPageComponent } from './dashboard/user/run-now/run-now-page/run-now-page.component';
-import { AdminTrainerComponent } from './dashboard/trainer/admin-trainer/admin-trainer.component';
+import { TrainerComponent } from './dashboard/admin/trainer/trainer/trainer.component';
+
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -87,7 +88,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'dashboard/trainers', component: AdminTrainerComponent, canActivate: [RouteGuardService],
+    path: 'dashboard/trainers', component: TrainerComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }

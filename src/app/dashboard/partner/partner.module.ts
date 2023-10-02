@@ -7,13 +7,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { FooterModule } from 'src/app/footer/footer.module';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { TrainerComponent } from './trainer/trainer.component';
 
 
 
 @NgModule({
   declarations: [
     PartnerApplicationComponent,
-    PartnerApplicationDetailsComponent
+    PartnerApplicationDetailsComponent,
+    TrainerComponent,
   ],
   imports: [
     CommonModule,

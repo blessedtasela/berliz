@@ -9,10 +9,16 @@ import { NewslettersModule } from './newsletters/newsletters.module';
 import { TagsModule } from './tags/tags.module';
 import { UsersModule } from './users/users.module';
 import { ContactUsModule } from './contact-us/contact-us.module';
+import { TrainerModule } from './trainer/trainer.module';
+import { NewsletterListComponent } from './newsletter/newsletter-list/newsletter-list.component';
+import { TagListComponent } from './tag/tag-list/tag-list.component';
 
 @NgModule({
   declarations: [
 
+  
+    NewsletterListComponent,
+        TagListComponent
   ],
   imports: [
     CommonModule,
@@ -25,7 +31,8 @@ import { ContactUsModule } from './contact-us/contact-us.module';
     ContactUsModule,
     NewslettersModule,
     TagsModule,
-    UsersModule
+    UsersModule,
+    TrainerModule
   ],
   providers: [DatePipe,]
 })

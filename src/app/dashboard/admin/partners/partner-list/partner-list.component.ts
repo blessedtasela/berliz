@@ -7,14 +7,14 @@ import { Partners } from 'src/app/models/partners.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { genericError } from 'src/validators/form-validators.module';
 import { PartnerDetailsComponent } from '../partner-details/partner-details.component';
-import { UpdatePartnerFileModalComponent } from '../update-partner-file-modal/update-partner-file-modal.component';
 import { UpdatePartnerModalComponent } from '../update-partner-modal/update-partner-modal.component';
 import { AddPartnerModalComponent } from '../add-partner-modal/add-partner-modal.component';
-import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { ViewCertificateModalComponent } from 'src/app/shared/view-certificate-modal/view-certificate-modal.component';
 import { ViewCvModalComponent } from 'src/app/shared/view-cv-modal/view-cv-modal.component';
+import { PartnerDataService } from 'src/app/services/partner-data.service';
 
 @Component({
   selector: 'app-partner-list',
@@ -39,7 +39,7 @@ export class PartnerListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private elementRef: ElementRef,
-    private sanitizer: DomSanitizer,
+    private partnerDataService: PartnerDataService,
     private datePipe: DatePipe) { }
 
   ngOnInit(): void {
@@ -47,11 +47,14 @@ export class PartnerListComponent {
   }
 
   handleEmitEvent() {
-    this.getAllPartners().subscribe(() => {
+    this.partnerDataService.getAllPartners().subscribe(() => {
+      this.ngxService.start();
       this.initializeSearch();
+      this.partnersData = this.partnerDataService.partnersData
       this.filteredPartnersData = this.partnersData
       this.counter = this.filteredPartnersData.length
       this.totalPartners = this.partnersData.length;
+      this.ngxService.stop();
     });
   }
 
@@ -80,40 +83,6 @@ export class PartnerListComponent {
       );
   }
 
-  generateBlobUrl(data: any, mimeType: string): SafeResourceUrl {
-    const blob = new Blob([data], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
-  }
-
-  getAllPartners(): Observable<Partners[]> {
-    this.ngxService.start();
-    return this.partnerService.getAllPartners().pipe(
-      tap((response: any) => {
-        this.partnersData = response; // Assuming response is an array of partners
-
-        // Loop through each partner and generate Blob URLs for CV and certificate
-        for (const partner of this.partnersData) {
-          partner.cv = "data:application/pdf;base64," + partner.cv;
-          partner.certificate = "data:application/pdf;base64," + partner.certificate;
-          // console.log('pdf cv: ', partner.cv)
-        }
-
-        this.ngxService.stop();
-      }),
-      catchError((error) => {
-        this.ngxService.stop();
-        this.snackbarService.openSnackBar(error, 'error');
-        if (error.error?.message) {
-          this.responseMessage = error.error?.message;
-        } else {
-          this.responseMessage = genericError;
-        }
-        this.snackbarService.openSnackBar(this.responseMessage, 'error');
-        return of([]);
-      })
-    );
-  }
 
   detectDocumentType(data: ArrayBuffer): 'pdf' | 'doc' | null {
     // Add logic to detect the file type based on its content.

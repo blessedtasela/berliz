@@ -44,7 +44,7 @@
                             Expereince is required
                         </div>
                     </div>
-                    <div class="mx-auto p-2 col-span-4">
+                    <div class="mx-auto p-2 col-span-4" *ngIf="user?.role === 'admin'">
                         <span class="sr-only">Likes</span>
                         <span class="ml-4 font-bold text-gray-600 italic">Likes</span>
                         <input formControlName="likes" [value]="trainer.likes"
@@ -101,7 +101,7 @@
                             <div>
                                 <button
                                     class="bg-red-600 rounded-md mx-auto m-2 col-span-2 p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                                    type="submit" (click)="addTrainer()">
+                                    type="submit" (click)="updateTrainer()">
                                     Submit
                                 </button>
                             </div>

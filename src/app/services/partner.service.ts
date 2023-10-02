@@ -59,6 +59,10 @@ export class PartnerService {
     return this.httpClient.get(this.url + "/partner/get")
   }
 
+  getActivePartners() {
+    return this.httpClient.get(this.url + "/partner/getActivePartners")
+  }
+
   deletePartner(id: number) {
     return this.httpClient.delete(this.url + `/partner/delete/${id}`);
   }

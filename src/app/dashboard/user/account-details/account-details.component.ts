@@ -37,7 +37,7 @@ export class AccountDetailsComponent {
     this.ngxService.start();
     this.userDataService.getUser().subscribe(() => {
       this.userData = this.userDataService.userData;
-      this.profilePhoto = 'data:image/jpeg;base64,' + this.userData.profilePhoto
+      this.profilePhoto = 'data:image;base64,' + this.userData.profilePhoto
       this.ngxService.stop()
     });
   }

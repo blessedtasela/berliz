@@ -19,7 +19,7 @@ export class TrainerGuard implements CanActivate {
     }
 
 
-    if (0) {
+    if (!0) {
       // If the trainer with the given 'id' doesn't exist, redirect to trainers page
       window.alert("Trainer does not exit");
       window.scrollTo({ top: 0, behavior: 'smooth' });

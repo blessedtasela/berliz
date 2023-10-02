@@ -25,7 +25,7 @@ export class UpdateTrainerPhotoModalComponent {
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<UpdateProfilePhotoModalComponent>,
+    public dialogRef: MatDialogRef<UpdateTrainerPhotoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) {
     this.trainer = this.data.trainerData;
   }
