@@ -1,6 +1,7 @@
 <app-navigation-bar></app-navigation-bar>
 <app-trainers-hero></app-trainers-hero>
 <app-trainer-header></app-trainer-header>
-<app-trainers-list></app-trainers-list>
+<app-trainers-search (allTrainers)="handleSearchResults($event)"></app-trainers-search>
+<app-trainers-search-result [trainersResult]="trainers" [totalTrainers]="countResult"></app-trainers-search-result>
 <app-trainer-partner-form></app-trainer-partner-form>
-<app-footer ></app-footer>
+<app-footer></app-footer>

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TrainersPageComponent } from './trainers-page/trainers-page.component';
-import { TrainersListComponent } from './trainers-list/trainers-list.component';
 import { TrainersDetailsComponent } from './trainers-details/trainers-details.component';
 import { TrainersHeroComponent } from './trainers-hero/trainers-hero.component';
 import { NavbarModule } from '../navbar/navbar.module';
@@ -27,7 +26,6 @@ import { TrainerPartnerFormComponent } from './trainer-partner-form/trainer-part
 @NgModule({
   declarations: [
     TrainersPageComponent,
-    TrainersListComponent,
     TrainersDetailsComponent,
     TrainersHeroComponent,
     TrainersSearchResultComponent,

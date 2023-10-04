@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { Trainers } from 'src/app/models/trainers.interface';
 
@@ -7,21 +8,26 @@ import { Trainers } from 'src/app/models/trainers.interface';
   styleUrls: ['./trainers-search-result.component.css']
 })
 export class TrainersSearchResultComponent {
-  @Input() countResult: number = 0;
-  showAllTrainers: boolean = false;
-  @Input() searchResult: Trainers[] = [];
-  filteredTrainers: Trainers[] = [];
+  @Input() trainersResult: Trainers[] = [];
+  showFullData: boolean = false;
+  @Input() totalTrainers: number = 0;
 
-  constructor() {}
-  
-  allTrainers() {
-    this.showAllTrainers = !this.showAllTrainers;
+  constructor(private datePipe: DatePipe) { }
+
+  ngOnInit(): void {
+ 
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if ('results' in changes) {
-      this.filteredTrainers = changes['results'].currentValue;
-    }
+  toggleData() {
+    this.showFullData = !this.showFullData;
   }
 
+  formatDate(dateString: any): any {
+    const date = new Date(dateString);
+    return this.datePipe.transform(date, 'dd/MM/yyyy');
+  }
+
+  formatStringtoUrl(string: any) {
+    return string.replace(/ /g, "-");
+  }
 }
