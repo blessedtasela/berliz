@@ -1,16 +1,15 @@
 <div *ngIf="totalTrainers > 0" class="flex flex-col items-center justify-center">
     <div class="m-4 text-center text-gray-700 font-bold text-md">
-      Results Found: {{ totalTrainers }}
+        {{ totalTrainers }} Results Found 
     </div>
 </div>
-<div *ngIf="totalTrainers === 0" class="flex flex-col items-center justify-center">
+<div *ngIf="trainersResult.length === 0" class="flex flex-col items-center justify-center">
     <div class="m-4 text-center text-gray-700 font-bold text-md">
-      No Results Found. Please Try Another Search.
+      No Results Found. Please Try Again
     </div>
 </div>
-
-  
-<section class="mx-auto mb-2 px-2 space-y-1 mt-40">
+ 
+<section class="mx-auto mb-2 px-2 space-y-1 mt-10">
     <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-20">
         <section class="flex justify-between items-center cursor-pointer
                  transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"

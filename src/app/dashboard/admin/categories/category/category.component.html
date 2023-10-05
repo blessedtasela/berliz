@@ -1,7 +1,9 @@
 <div class="relative min-h-screen flex">
     <app-sidebar-navigation></app-sidebar-navigation>
-    <div class="flex p-10 full-width">
-        <app-category-details class="width"></app-category-details>
+    <div class="flex p-10 full-width mt-20">
+        <app-category-details class="width" [handleEmitEvent]="handleEmitEvent"
+        [categoriesData]="categoriesData" [totalCategories]="totalCategories"
+        ></app-category-details>
     </div>
 </div>
 <app-footer></app-footer>

@@ -1,0 +1,52 @@
+<div class="flex items-center p-2">
+    <div class="flex items-center gap-2">
+        <div class="hidden md:block flex flex-col ">
+            <h3 class="capitalize text-gray-700">
+                {{ userData?.firstname }} {{ userData?.lastname }}
+            </h3>
+            <h4 class="flex justify-center text-gray-400 capitalize text-sm"> {{ userData?.role }}</h4>
+        </div>
+        <img [src]="profilePhoto" width="30px" class="cursor-pointer object-cover rounded-full"
+            (click)="toggleProfile()" onerror="this.src='../../../assets/icons/user.png';">
+        <i-feather name="chevron-down" class="text-gray-600 cursor-pointer" (click)="toggleProfile()"></i-feather>
+    </div>
+
+    <div [ngClass]="{'hidden': !profileOpen}"
+        class="fixed mt-12 right-0 bg-gray-200 rounded-md w-64 text-sm z-[20] bg-opacity-75">
+        <div class="flex justify-center p-2">
+            <div class="shrink-0">
+                <img [src]="profilePhoto" width="50px" class="object-cover rounded-full"
+                    onerror="this.src='../../../assets/icons/user.png';">
+            </div>
+            <div class="bottom-0 right-0" (click)="openUpdateProfilePhoto()">
+                <i-feather name="Edit" class="font-bold text-red-600 mr-4  cursor-pointer" style="width: 15px;">
+                </i-feather>
+            </div>
+        </div>
+        <div class="flex justify-center">
+            <p class="p-1 text-lg text-gray-950 hover:drop-shadow-2xl hover:scale-105 font-bold">
+                {{ userData?.firstname }} {{ userData?.lastname }}
+            </p>
+        </div>
+        <div class="flex justify-center">
+            <p class="text-gray-950 cursor-pointer hover:drop-shadow-2xl hover:scale-105 italic mb-2">
+                {{ userData?.email }}
+            </p>
+        </div>
+        <p class="p-1 mx-2 text-gray-950 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md"
+            (click)="openChangePassword()">
+            Change password
+        </p>
+        <p class="p-1 mx-2 text-gray-950 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md"
+            (click)="openUpdateUser()">
+            Edit Account
+        </p>
+        <p class="p-1 mx-2 text-gray-950 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md">
+            <a routerLink="/dashboard/account"> Account Information</a>
+        </p>
+        <p class="p-1 mx-2 text-gray-950 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md">
+            <feather-icon name="log-out" class="text-sm mr-2"></feather-icon>
+            <a class="text-sm font-bold" (click)="logout()">Log out</a>
+        </p>
+    </div>
+</div>

@@ -1,77 +1,46 @@
-
 <div class="relative min-h-screen flex">
-    <div class="bg-red-600 flex justify-between fixed w-full p-2 rounded-b-md nav-z">
-        <div class="flex items-center p-2 text-gray-200 cursor-pointerhover:drop-shadow-2xl transition-all 
-            duration-300 ease-in-out transform hover:scale-110 cursor-pointer" (click)="toggleSidebar()">
-            <feather-icon name="align-justify" class="text-sm mr-2"></feather-icon>
+    <div class="bg-white flex justify-between fixed w-full p-1 rounded-b-md text-gray-950 shadow-lg">
+        <div class="ml-4 flex items-center cursor-pointer z-2">
+            <div class="flex items-center p-2 t cursor-pointer">
+                <img src="../../../assets/landing/berliz.png" style="width: 150px;" class="hidden md:block">
+                <div class="hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
+                border-2 border-gray-200 rounded-md p-1 mr-2">
+                    <i-feather name="align-justify" class="min-w-[30px] text-gray-200  font-bold drop-shadow-xl"
+                        (click)="toggleSidebar()"></i-feather>
+                </div>
+            </div>
         </div>
-        <div class="flex justify-end gap-5">
-            <div class="flex items-center p-2 text-gray-200 cursor-pointerhover:drop-shadow-2xl transition-all 
-            duration-300 ease-in-out transform hover:scale-110 cursor-pointer">
-                <feather-icon name="home" class="text-sm mr-2"></feather-icon>
-                <a routerLink="/home" class="font-bold text-sm">
-                    Home
-                </a>
-            </div>
-            <div class="flex items-center p-2 text-gray-200 cursor-pointerhover:drop-shadow-2xl transition-all 
-            duration-300 ease-in-out transform hover:scale-110 cursor-pointer">
-                <feather-icon name="log-out" class="text-sm mr-2"></feather-icon>
-                <a class="text-sm font-bold" (click)="logout()">Log out</a>
-            </div>
-            <div (click)="toggleProfile()" class="cursor-pointer">
-                <div class="shrink-0">
-                    <img [src]="profilePhoto" width="30px" class="object-cover rounded-full"
-                    onerror="this.src='../../../assets/icons/user.png';">
+        <div class="flex justify-end gap-2 border-2 rounded-full border-gray-300">
+            <app-search></app-search>
+            <div class="flex items-center p-2 cursor-pointer hover:drop-shadow-2xl transition-all 
+            duration-300 ease-in-out transform hover:scale-105 cursor-pointer">
+                <div class=" bg-gray-200 rounded-full p-1">
+                    <feather-icon name="home" class="text-ld font-bold text-gray-600"></feather-icon>
+                    <a routerLink="/home"></a>
                 </div>
             </div>
-            <div [ngClass]="{'hidden': !profileOpen}"
-                    class="fixed mt-12 right-0 bg-gray-200 rounded-md w-64 text-sm z-[20] bg-opacity-75">
-                    <div class="flex justify-center p-2">
-                        <div class="shrink-0">
-                            <img [src]="profilePhoto" width="50px" class="object-cover rounded-full"
-                            onerror="this.src='../../../assets/icons/user.png';">
-                        </div>
-                        <div class="bottom-0 right-0" (click)="openUpdateProfilePhoto()">
-                            <i-feather name="Edit" class="font-bold text-red-600 mr-4  cursor-pointer" style="width: 15px;">
-                            </i-feather>
-                        </div>
-                    </div>
-                    <div class="flex justify-center">
-                        <p class="p-1 text-lg text-gray-950 hover:drop-shadow-2xl hover:scale-105 font-bold">
-                           {{ userData?.firstname }} {{ userData?.lastname }}
-                        </p>
-                    </div>
-                    <div class="flex justify-center">
-                        <p class="text-gray-950 cursor-pointer hover:drop-shadow-2xl hover:scale-105 italic mb-2">
-                           {{ userData?.email }}
-                        </p>
-                    </div>
-                    <p class="p-1 mx-2 text-gray-950 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md"
-                        (click)="openChangePassword()">
-                        Change password
-                    </p>
-                    <p class="p-1 mx-2 text-gray-950 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md"
-                        (click)="openUpdateUser()">
-                        Edit Account
-                    </p>
-                    <p class="p-1 mx-2 text-gray-950 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md">
-                        <a routerLink="/dashboard/account"> Account Information</a>
-                    </p>
-                </div>
+            <app-profile></app-profile>
         </div>
     </div>
-    
-    <div class="bg-black bg-opacity-50 h-full z-10 cursor-pointer" *ngIf="openMenu" (click)="toggleSidebar()"></div>
     <div class="bg-gray-950 text-gray-200 w-64 fixed inset-y-0 left-0 transform duration-300
     -translate-x-0 ease-in-out md:relative transition duration-300 ease-in-out side-z"
-        [ngClass]="{'hidden': !openMenu}">
+        [ngClass]="{'hidden md:block': openMenu}">
+        <div class="flex items-center p-2 t cursor-pointer">
+            <img src="../../../assets/side-bar-berliz.png" style="width: 200px;">
+            <div class="hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
+            border-2 border-gray-200 rounded-md p-1 mr-4">
+                <i-feather name="x" class="min-w-[30px] text-gray-200  font-bold drop-shadow-xl"
+                    (click)="toggleSidebar()"></i-feather>
+            </div>
+        </div>
         <nav class="mt-20">
             <span class="sr-only">Search</span>
             <div
                 class="flex items-left p-2 mx-2 mt-4 text-gray-200 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md">
                 <input class="placeholder:italic placeholder:text-gray-500 border border-gray-400 rounded-md py-2 px-4 hover:border-gray-300 
                     hover:drop-shadow-4xl focus:border-gray-200 focus:outline-none flex cursor-pointer max-w-64 h-7 hover:drop-shadow-2xl 
-                    transition-all duration-300 transform hover:scale-105 focus:scale-105" placeholder="Search" id="search">
+                    transition-all duration-300 transform hover:scale-105 focus:scale-105" placeholder="Search"
+                    id="search">
             </div>
             <div
                 class="flex items-left p-2 mx-2 mt-4 text-gray-200 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md">
@@ -99,32 +68,13 @@
                 <feather-icon name="activity" class="text-sm" style="width: 18px;"></feather-icon>
                 <h1 class="mx-4 text-sm font-bold">My Trainings</h1>
             </div>
-            <hr class="text-gray-200 my-6">
-            <div>
-                <div (click)="toggleAccount()"
-                    class="flex items-left p-2 mx-2 text-gray-200 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md">
-                    <feather-icon name="user" class="text-sm" style="width: 18px;"></feather-icon>
-                    <h1 class="mx-4 text-sm font-bold">Account</h1>
-                    <feather-icon name="chevron-down"
-                        class="text-sm mt-0.5 cursor-pointer duration-300 ease-in-out hover:bg-gray-800 hover:rounded-md"
-                        style="width: 18px;">
-                    </feather-icon>
-                </div>
-                <div [ngClass]="{'hidden': !accountOpen}"
-                    class="items-left p-2 mx-12 bg-gray-200 bg-opacity-50 rounded-md w-48 font-bold text-sm">
-                    <p class="p-1 text-gray-950 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md"
-                        (click)="openChangePassword()">
-                        Change password
-                    </p>
-                    <p class="p-1 text-gray-950 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md"
-                        (click)="openUpdateUser()">
-                        Edit Account
-                    </p>
-                    <p class="p-1 text-gray-950 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md">
-                        <a routerLink="/dashboard/account"> Account Information</a>
-                    </p>
-                </div>
+            <div
+                class="flex items-left p-2 mx-2 text-gray-200 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md">
+                <feather-icon name="user" class="text-sm" style="width: 18px;"></feather-icon>
+                <h1 class="mx-4 text-sm font-bold"> <a routerLink="/dashboard/account">Account</a>
+                </h1>
             </div>
+            <hr class="text-gray-200 my-6">
             <div
                 class="flex items-left p-2 mx-2 text-gray-200 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md">
                 <feather-icon name="inbox" class="text-sm" style="width: 18px;"></feather-icon>

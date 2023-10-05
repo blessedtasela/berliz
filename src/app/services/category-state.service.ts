@@ -1,29 +1,37 @@
 import { Injectable } from '@angular/core';
-import { CategoryService } from './category.service';
-import { Observable, tap, catchError, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, tap, catchError, of } from 'rxjs';
 import { genericError } from 'src/validators/form-validators.module';
 import { Categories } from '../models/categories.interface';
+import { CategoryService } from './category.service';
 import { SnackBarService } from './snack-bar.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CategoryDataService {
-  categories: Categories[] = [];
-  activeCategories: Categories[] = []
+export class CategoryStateService {
+  private activeCategoriesSubject = new BehaviorSubject<any>(null);
+  public activeCategoriesData$: Observable<Categories[]> = this.activeCategoriesSubject.asObservable();
+  private allCategoriesSubject = new BehaviorSubject<any>(null);
+  public allCategoriesData$: Observable<Categories[]> = this.allCategoriesSubject.asObservable();
   responseMessage: any;
+  allCategories: Categories[] = [];
+  activeCategories: Categories[] = [];
 
   constructor(private categoryService: CategoryService,
     private snackbarService: SnackBarService) { }
 
-  ngOnInit() {
+  setActiveCategoriesSubject(data: Categories[]) {
+    this.activeCategoriesSubject.next(data);
+  }
 
+  setAllCategoriesSubject(data: Categories[]) {
+    this.allCategoriesSubject.next(data);
   }
 
   getCategories(): Observable<Categories[]> {
     return this.categoryService.getCategories().pipe(
       tap((response: any) => {
-        this.categories = response;
+        this.allCategories = response;
       }),
       catchError((error) => {
         this.snackbarService.openSnackBar(error, 'error');
@@ -56,3 +64,4 @@ export class CategoryDataService {
     );
   }
 }
+

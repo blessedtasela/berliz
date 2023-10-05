@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
 import { Partners } from 'src/app/models/partners.interface';
-import { CategoryDataService } from 'src/app/services/category-data.service';
+import { CategoryStateService } from 'src/app/services/category-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
@@ -28,7 +28,7 @@ export class TrainerFormModalComponent {
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,
-    private categoryDataService: CategoryDataService,
+    private categoryStateService: CategoryStateService,
     private trainerService: TrainerService,
     @Inject(MAT_DIALOG_DATA) private data: any) {
     this.partner = this.data.partnerData;
@@ -49,8 +49,8 @@ export class TrainerFormModalComponent {
   }
 
   handleEmitEvent() {
-    this.categoryDataService.getActiveCategories().subscribe(() => {
-      this.categories = this.categoryDataService.activeCategories;
+    this.categoryStateService.getActiveCategories().subscribe(() => {
+      this.categories = this.categoryStateService.activeCategories;
       this.cdr.detectChanges();
     });
   }

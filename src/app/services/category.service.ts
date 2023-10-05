@@ -65,5 +65,15 @@ export class CategoryService {
     return this.httpClient.get(this.url + `/getcategory/${id}`);
   }
 
+  likeCategory(id: number) {
+    return this.httpClient.put(this.url + `/category/like/${id}`, null, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
 
+  dislikeCategory(id: number) {
+    return this.httpClient.put(this.url + `/category/dislike/${id}`, null, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
 }

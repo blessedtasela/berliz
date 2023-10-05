@@ -3,7 +3,6 @@ import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, FormA
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
-import { CategoryDataService } from 'src/app/services/category-data.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { genericError } from 'src/validators/form-validators.module';
@@ -11,6 +10,7 @@ import { TrainerFormModalComponent } from '../trainer-form-modal/trainer-form-mo
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { UserDataService } from 'src/app/services/user-data.service';
+import { CategoryStateService } from 'src/app/services/category-state.service';
 
 @Component({
   selector: 'app-update-trainer-modal',
@@ -34,7 +34,7 @@ export class UpdateTrainerModalComponent {
     private userDataService: UserDataService,
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,
-    private categoryDataService: CategoryDataService,
+    private categoryStateService: CategoryStateService,
     private trainerService: TrainerService,
     @Inject(MAT_DIALOG_DATA) private data: any) {
     this.trainer = this.data.trainerData;
@@ -60,8 +60,8 @@ export class UpdateTrainerModalComponent {
   }
 
   handleEmitEvent() {
-    this.categoryDataService.getActiveCategories().subscribe(() => {
-      this.categories = this.categoryDataService.activeCategories;
+    this.categoryStateService.getActiveCategories().subscribe(() => {
+      this.categories = this.categoryStateService.activeCategories;
     });
     this.userDataService.getUser().subscribe(() => {
       this.user = this.userDataService.userData;

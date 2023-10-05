@@ -1,24 +1,22 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { ChangePasswordModalComponent } from 'src/app/dashboard/user/change-password-modal/change-password-modal.component';
+import { UpdateProfilePhotoModalComponent } from 'src/app/dashboard/user/update-profile-photo-modal/update-profile-photo-modal.component';
+import { UpdateUserModalComponent } from 'src/app/dashboard/user/update-user-modal/update-user-modal.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserDataService } from 'src/app/services/user-data.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
-import { UpdateProfilePhotoModalComponent } from 'src/app/dashboard/user/update-profile-photo-modal/update-profile-photo-modal.component';
 
 @Component({
-  selector: 'app-sidebar-navigation',
-  templateUrl: './sidebar-navigation.component.html',
-  styleUrls: ['./sidebar-navigation.component.css']
+  selector: 'app-profile',
+  templateUrl: './profile.component.html',
+  styleUrls: ['./profile.component.css']
 })
-export class SidebarNavigationComponent {
+export class ProfileComponent {
   @Output() isMenuOpen = new EventEmitter<boolean>();
-  accountOpen: boolean = false;
-  openMenu: boolean = false;
-  isVisible: boolean = false;
   userData: any;
-  visibilityClasses!: { 'opacity-0': boolean; 'opacity-100': boolean; };
   profileOpen: boolean = false;
   responseMessage: any;
   profilePhoto: any;
@@ -45,12 +43,6 @@ export class SidebarNavigationComponent {
     });
   }
 
-  
-  toggleAccount() {
-    this.accountOpen = !this.accountOpen;
-    this.isMenuOpen.emit(this.accountOpen);
-  }
-
   openUpdateProfilePhoto() {
     const dialogRef = this.dialog.open(UpdateProfilePhotoModalComponent, {
       width: '400px',
@@ -59,8 +51,6 @@ export class SidebarNavigationComponent {
       }
     });
     const childComponentInstance = dialogRef.componentInstance as UpdateProfilePhotoModalComponent;
-
-    // Set the event emitter before opening the dialog
     childComponentInstance.onUpdateProfilePhoto.subscribe(() => {
       this.handleEmitEvent();
     });
@@ -77,21 +67,15 @@ export class SidebarNavigationComponent {
     this.profileOpen = !this.profileOpen;
   }
 
-  toggleSidebar(): void {
-    this.openMenu = !this.openMenu;
-  }
-
-  isActive(path: string): boolean {
-    return this.route.snapshot.routeConfig?.path === path;
-  }
-
   logout() {
     console.log('logging out')
     const dialogConfig = new MatDialogConfig();
+
     dialogConfig.data = {
       message: 'Logout',
       confirmation: true
     };
+
     const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((response: any) => {
       dialogRef.close();
@@ -101,4 +85,48 @@ export class SidebarNavigationComponent {
       this.snackbarService.openSnackBar(this.responseMessage, '');
     });
   }
+
+  openChangePassword() {
+    const dialogRef = this.dialog.open(ChangePasswordModalComponent, {
+      width: '400px', data: {
+        image: this.profilePhoto
+      }
+    });
+    const childComponentInstance = dialogRef.componentInstance as ChangePasswordModalComponent;
+
+    // Set the event emitter before opening the dialog
+    childComponentInstance.onChangePassword.subscribe(() => {
+      this.handleEmitEvent();
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log(`Dialog result: ${result}`);
+      } else {
+        console.log('Dialog closed without updatig password');
+      }
+    });
+  }
+
+  openUpdateUser() {
+    const dialogRef = this.dialog.open(UpdateUserModalComponent, {
+      width: '700px',
+      data: {
+        userData: this.userData
+      }
+    });
+    const childComponentInstance = dialogRef.componentInstance as UpdateUserModalComponent;
+
+    // Set the event emitter before opening the dialog
+    childComponentInstance.onUpdateUser.subscribe(() => {
+      this.handleEmitEvent();
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log(`Dialog result: ${result}`);
+      } else {
+        console.log('Dialog closed without updatig account');
+      }
+    });
+  }
+
 }

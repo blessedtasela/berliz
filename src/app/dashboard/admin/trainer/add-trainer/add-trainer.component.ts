@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
 import { Partners } from 'src/app/models/partners.interface';
-import { CategoryDataService } from 'src/app/services/category-data.service';
+import { CategoryStateService } from 'src/app/services/category-state.service';
 import { PartnerDataService } from 'src/app/services/partner-data.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerDataService } from 'src/app/services/trainer-data.service';
@@ -31,7 +31,7 @@ export class AddTrainerComponent {
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,
-    private categoryDataService: CategoryDataService,
+    private categoryStateService: CategoryStateService,
     private trainerService: TrainerService,
     private partnerDataService: PartnerDataService) { }
 
@@ -55,8 +55,8 @@ export class AddTrainerComponent {
   }
 
   handleEmitEvent() {
-    this.categoryDataService.getActiveCategories().subscribe(() => {
-      this.categories = this.categoryDataService.activeCategories;
+    this.categoryStateService.getActiveCategories().subscribe(() => {
+      this.categories = this.categoryStateService.activeCategories;
     });
     this.partnerDataService.getActivePartners().subscribe(() => {
       this.activePartners = this.partnerDataService.activePartners;

@@ -4,17 +4,27 @@ import { NavigationBarComponent } from './navigation-bar/navigation-bar.componen
 import { IconsModule } from '../icons/icons.module';
 import { RouterModule } from '@angular/router';
 import { SidebarNavigationComponent } from './sidebar-navigation/sidebar-navigation.component';
+import { SearchComponent } from './search/search.component';
+import { ProfileComponent } from './profile/profile.component';
+import { SideBarMenuComponent } from './side-bar-menu/side-bar-menu.component';
+import { SearchCategoryComponent } from './search-category/search-category.component';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
   declarations: [
     NavigationBarComponent,
-    SidebarNavigationComponent
+    SidebarNavigationComponent,
+    SearchComponent,
+    ProfileComponent,
+    SideBarMenuComponent,
+    SearchCategoryComponent
   ],
   imports: [
     CommonModule,
     IconsModule,
-    RouterModule
+    RouterModule,
+    FormsModule
   ],
   exports: [
     NavigationBarComponent,

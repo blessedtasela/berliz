@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Categories } from 'src/app/models/categories.interface';
-import { CategoryDataService } from 'src/app/services/category-data.service';
+import { CategoryStateService } from 'src/app/services/category-state.service';
 
 @Component({
   selector: 'app-categories',
@@ -12,15 +12,15 @@ export class CategoriesComponent {
   categoriesData: Categories[] = [];
   showFullData: boolean = false;
   constructor(private datePipe: DatePipe,
-    private categoryDataService: CategoryDataService) { }
+    private categoryStateService: CategoryStateService) { }
 
   ngOnInit(): void {
     this.handleEmitEvent()
   }
 
   handleEmitEvent() {
-    this.categoryDataService.getActiveCategories().subscribe(() => {
-      this.categoriesData = this.categoryDataService.activeCategories
+    this.categoryStateService.getActiveCategories().subscribe(() => {
+      this.categoriesData = this.categoryStateService.activeCategories
     });
   }
 

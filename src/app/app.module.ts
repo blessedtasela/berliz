@@ -71,7 +71,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
 
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorInterceptor, multi: true },
-    DatePipe
+    DatePipe,
   ],
 
   bootstrap: [AppComponent]

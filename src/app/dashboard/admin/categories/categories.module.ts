@@ -11,14 +11,13 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { CategoriesListComponent } from './categories-list/categories-list.component';
 
 
-
 @NgModule({
   declarations: [
     CategoryComponent,
     CategoryDetailsComponent,
     AddCategoryModalComponent,
     UpdateCategoryModalComponent,
-    CategoriesListComponent
+    CategoriesListComponent,
   ],
   imports: [
     CommonModule,

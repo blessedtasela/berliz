@@ -18,3 +18,7 @@
   align-items: center;
   white-space: nowrap;
 }
+
+.menu-transition {
+  transition: opacity 3s ease-in-out, transform 3s ease-in-out;
+}

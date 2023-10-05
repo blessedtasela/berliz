@@ -59,4 +59,15 @@ export class TrainerService {
     return this.httpClient.delete(this.url + `/trainer/delete/${id}`);
   }
 
+  likeTrainer(id: number) {
+    return this.httpClient.put(this.url + `/trainer/like/${id}`, null, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
+  dislikeTrainer(id: number) {
+    return this.httpClient.put(this.url + `/trainer/dislike/${id}`, null, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
 }

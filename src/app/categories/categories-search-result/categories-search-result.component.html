@@ -1,37 +1,14 @@
-<span class="sr-only">Search</span>
-<div class="grid grid-cols-1">
-    <div class="flex justify-center items-center mt-10">
-        <input
-            class="placeholder:italic placeholder:text-gray-400 border border-gray-400 rounded-md py-1 px-4 hover:border-gray-500 hover:drop-shadow-2xl focus:border-gray-600 focus:outline-none cursor-pointer max-w-64"
-            placeholder="Search" [(ngModel)]="searchQuery">
-        <span class="cursor-pointer">
-            <i-feather name="Search" class="ml-2 text-gray-500" style="width: 28px;"></i-feather>
-        </span>
-    </div>
-    <div class="flex justify-center items-center cursor-pointer mt-2 -ml-8">
-        <h1 class="mr-2 text-gray-500">Select criteria</h1>
-        <select
-            class="cursor-pointer border border-gray-400 rounded-md hover:border-gray-500 hover:drop-shadow-2xl focus:border-gray-600 focus:outline-none text-gray-700">
-            <option class="text-gray-500" value="Name">Name</option>
-            <option class="text-gray-500" value="Tag">Tag</option>
-        </select>
+<div *ngIf="totalCategories > 0" class="flex flex-col items-center justify-center">
+    <div class="m-4 text-center text-gray-700 font-bold text-md">
+        {{ totalCategories }} Results Found
     </div>
 </div>
-<div class="flex justify-center mt-5 gap-5 font-sans font-bold">
-    <div class="p-5">
-        Showing <span class="italic"> {{ counter }} </span> of
-        <span class="italic">{{ totalCategories }}</span> results
-    </div>
-    <div class="p-5">
-        sorted by 
-            <select [(ngModel)]="selectedSortOption" (change)="onSortOptionChange($event)"
-                class="italic text-sm cursor-pointer border border-gray-400 rounded-md  focus:outline-none text-gray-700">
-                <option class="text-gray-500" value="date">Date added</option>
-                <option class="text-gray-500" value="name">Name</option>
-                <option class="text-gray-500" value="tag">Tag</option>
-            </select>
+<div *ngIf="categoriesResult.length === 0" class="flex flex-col items-center justify-center">
+    <div class="m-4 text-center text-gray-700 font-bold text-md">
+        No Results Found. Please Try Again
     </div>
 </div>
+
 <section class="mt-10">
     <div class="flex justify-center ">
         <h1 class="p-4 font-sans text-gray-200 text-xl font-bold uppercase
@@ -56,7 +33,7 @@
                 <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-10 mb-5 p-5">
                     <div class="flex justify-center items-center cursor-pointer  transition-all duration-300
                 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                        *ngFor="let category of filteredCategoriesData; let i = index"
+                        *ngFor="let category of categoriesResult; let i = index"
                         [class.hidden]="!showFullData && i >= 12">
                         <div class="text-justify justify-items-center">
                             <div
@@ -94,7 +71,7 @@
                         </div>
                     </div>
                 </div>
-                <div [class.hidden]="filteredCategoriesData.length  <= 9">
+                <div [class.hidden]="categoriesResult.length  <= 9">
                     <button
                         class="p-1 px-2 m-8 mt-8 bg-gray-100 text-red-600 rounded-md font-sans font-bold mx-auto flex justify-center mt-5">
                         {{ !showFullData ? 'view more' : 'see less'}}

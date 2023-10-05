@@ -1,30 +1,26 @@
-import { Component, ElementRef, EventEmitter, OnInit } from '@angular/core';
-import { Categories } from '../../models/categories.interface';
+import { query } from '@angular/animations';
 import { DatePipe } from '@angular/common';
+import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
+import { Categories } from 'src/app/models/categories.interface';
+import { CategoryStateService } from 'src/app/services/category-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { CategoryDataService } from 'src/app/services/category-data.service';
 
 @Component({
-  selector: 'app-categories-list',
-  templateUrl: './categories-list.component.html',
-  styleUrls: ['./categories-list.component.css']
+  selector: 'app-categories-search',
+  templateUrl: './categories-search.component.html',
+  styleUrls: ['./categories-search.component.css']
 })
-export class CategoriesListComponent implements OnInit {
-  categoriesData: Categories[] = [];
-  showFullData: boolean = false;
-  invalidForm: boolean = false;
+export class CategoriesSearchComponent {
+  categories: Categories[] = [];
   selectedSortOption: string = 'date';
-  filteredCategoriesData: Categories[] = [];
+  filteredCategories: Categories[] = [];
   searchQuery: string = '';
   selectedSearchCriteria: any = 'name';
-  counter: number = 0;
-  totalCategories: number = 0;
-  results: EventEmitter<Categories[]> = new EventEmitter<Categories[]>()
+  @Output() results: EventEmitter<Categories[]> = new EventEmitter<Categories[]>()
 
-  constructor(private datePipe: DatePipe,
-    private categoryDataService: CategoryDataService,
+  constructor(private categoryStateService: CategoryStateService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) { }
@@ -34,12 +30,10 @@ export class CategoriesListComponent implements OnInit {
   }
 
   handleEmitEvent() {
-    this.categoryDataService.getActiveCategories().subscribe(() => {
+    this.categoryStateService.getActiveCategories().subscribe(() => {
       this.initializeSearch();
-      this.categoriesData = this.categoryDataService.activeCategories
-      this.filteredCategoriesData = this.categoriesData
-      this.counter = this.categoriesData.length
-      this.totalCategories = this.categoriesData.length
+      this.categories = this.categoryStateService.activeCategories
+      this.filteredCategories = this.categories
     });
   }
 
@@ -67,29 +61,24 @@ export class CategoriesListComponent implements OnInit {
       );
   }
 
-
-
   sortCategoriesData() {
     switch (this.selectedSortOption) {
       case 'date':
-        this.filteredCategoriesData.sort((a, b) => {
+        this.filteredCategories.sort((a, b) => {
           const dateA = new Date(a.date);
           const dateB = new Date(b.date);
           return dateA.getTime() - dateB.getTime();
         });
         break;
-
       case 'name':
-        this.filteredCategoriesData.sort((a, b) => {
+        this.filteredCategories.sort((a, b) => {
           return a.name.localeCompare(b.name);
         });
         break;
-
       case 'tag':
-        this.filteredCategoriesData.sort((a, b) => {
+        this.filteredCategories.sort((a, b) => {
           const nameA = a.tagSet[0].name.toLowerCase();
           const nameB = b.tagSet[0].name.toLowerCase();
-
           if (nameA < nameB) {
             return -1;
           }
@@ -99,9 +88,8 @@ export class CategoriesListComponent implements OnInit {
           return 0;
         });
         break;
-
       default:
-        this.filteredCategoriesData.sort((a, b) => {
+        this.filteredCategories.sort((a, b) => {
           const dateA = new Date(a.date);
           const dateB = new Date(b.date);
           return dateA.getTime() - dateB.getTime();
@@ -127,14 +115,9 @@ export class CategoriesListComponent implements OnInit {
   search(query: string): Observable<Categories[]> {
     query = query.toLowerCase();
     if (query.trim() === '') {
-      // If the query is empty, return the original data
-      this.filteredCategoriesData = this.categoriesData;
-      this.counter = this.filteredCategoriesData.length;
-      return of(this.filteredCategoriesData);
+      this.filteredCategories = this.categories;
     }
-
-    // Filter your data based on the selected criteria and search query
-    this.filteredCategoriesData = this.categoriesData.filter((category: Categories) => {
+    this.filteredCategories = this.categories.filter((category: Categories) => {
       switch (this.selectedSearchCriteria) {
         case 'name':
           return category.name.toLowerCase().includes(query);
@@ -150,21 +133,7 @@ export class CategoriesListComponent implements OnInit {
           return false;
       }
     });
-    this.counter = this.filteredCategoriesData.length;
-    return of(this.filteredCategoriesData);
-  }
-
-  toggleData() {
-    this.showFullData = !this.showFullData;
-  }
-
-
-  formatDate(dateString: any): any {
-    const date = new Date(dateString);
-    return this.datePipe.transform(date, 'dd/MM/yyyy');
-  }
-
-  formatStringToUrl(string: any){
-    return string.replace(/ /g, "-");
+    return of(this.filteredCategories);
   }
 }
+

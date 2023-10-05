@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CategoriesHeroComponent } from './categories-hero/categories-hero.component';
-import { CategoriesListComponent } from './categories-list/categories-list.component';
 import { NavbarModule } from '../navbar/navbar.module';
 import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
@@ -14,20 +13,23 @@ import { CategoryVoteComponent } from './category-vote/category-vote.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CategoriesComponent } from './categories/categories.component';
+import { CategoriesSearchComponent } from './categories-search/categories-search.component';
+import { CategoriesSearchResultComponent } from './categories-search-result/categories-search-result.component';
 
 
 
 @NgModule({
   declarations: [
     CategoriesHeroComponent,
-    CategoriesListComponent,
     CategoryDetailsComponent,
     CategoryHeroDetailsComponent,
     CategoryBenefitsComponent,
     CategoryIntroductionComponent,
     CategoryTagsComponent,
     CategoryVoteComponent,
-    CategoriesComponent
+    CategoriesComponent,
+    CategoriesSearchComponent,
+    CategoriesSearchResultComponent
   ],
   imports: [
     CommonModule,
@@ -39,7 +41,6 @@ import { CategoriesComponent } from './categories/categories.component';
     FormsModule
   ],
   exports: [
-    CategoriesListComponent
   ]
 })
 export class CategoriesModule { }

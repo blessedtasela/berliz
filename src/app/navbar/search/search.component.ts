@@ -4,11 +4,11 @@ import { Categories } from 'src/app/models/categories.interface';
 import { CategoryStateService } from 'src/app/services/category-state.service';
 
 @Component({
-  selector: 'app-category',
-  templateUrl: './category.component.html',
-  styleUrls: ['./category.component.css']
+  selector: 'app-search',
+  templateUrl: './search.component.html',
+  styleUrls: ['./search.component.css']
 })
-export class CategoryComponent {
+export class SearchComponent {
   categoriesData: Categories[] = [];
   totalCategories: number = 0;
 
