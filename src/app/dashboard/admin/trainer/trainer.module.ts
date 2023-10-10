@@ -8,6 +8,7 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { FooterModule } from 'src/app/footer/footer.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AddTrainerComponent } from './add-trainer/add-trainer.component';
+import { TrainerHeaderComponent } from './trainer-header/trainer-header.component';
 
 
 
@@ -16,7 +17,8 @@ import { AddTrainerComponent } from './add-trainer/add-trainer.component';
     TrainerComponent,
     TrainerListComponent,
     TrainerDetailsComponent,
-    AddTrainerComponent
+    AddTrainerComponent,
+    TrainerHeaderComponent
   ],
   imports: [
     CommonModule,

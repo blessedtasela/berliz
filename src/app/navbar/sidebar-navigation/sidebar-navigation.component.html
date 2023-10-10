@@ -1,22 +1,25 @@
 <div class="relative min-h-screen flex">
-    <div class="bg-white flex justify-between fixed w-full p-1 rounded-b-md text-gray-950 shadow-lg">
-        <div class="ml-4 flex items-center cursor-pointer z-2">
-            <div class="flex items-center p-2 t cursor-pointer">
-                <img src="../../../assets/landing/berliz.png" style="width: 150px;" class="hidden md:block">
+    <div class="bg-white flex justify-between fixed w-full p-1 nav-z rounded-b-md text-gray-950 shadow-lg">
+        <div class="ml-2 flex items-center cursor-pointer z-2">
+            <div class="flex items-center p-2 cursor-pointer">
+                <img src="../../../assets/landing/berliz.png" style="width: 170px;" class="hidden md:block">
                 <div class="hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
                 border-2 border-gray-200 rounded-md p-1 mr-2">
-                    <i-feather name="align-justify" class="min-w-[30px] text-gray-200  font-bold drop-shadow-xl"
+                    <i-feather name="align-justify" class="min-w-[30px] gray-950 font-bold drop-shadow-xl"
                         (click)="toggleSidebar()"></i-feather>
                 </div>
             </div>
         </div>
-        <div class="flex justify-end gap-2 border-2 rounded-full border-gray-300">
-            <app-search></app-search>
+        <app-search (categoriesResults)="handleCategorySearchResults($event)"
+            (contactUsResults)="handleContactUsSearchResults($event)"
+            (trainersResults)="handleTrainerSearchResults($event)"
+            (usersResults)="handleUserSearchResults($event)"
+            [searchComponent]="searchComponent"></app-search>
+        <div class="flex justify-end mr-2 gap-2 md:gap-6 border-2 rounded-full border-gray-300">
             <div class="flex items-center p-2 cursor-pointer hover:drop-shadow-2xl transition-all 
             duration-300 ease-in-out transform hover:scale-105 cursor-pointer">
-                <div class=" bg-gray-200 rounded-full p-1">
+                <div class=" bg-gray-200 rounded-full p-1" [routerLink]="['/home']">
                     <feather-icon name="home" class="text-ld font-bold text-gray-600"></feather-icon>
-                    <a routerLink="/home"></a>
                 </div>
             </div>
             <app-profile></app-profile>
@@ -24,31 +27,16 @@
     </div>
     <div class="bg-gray-950 text-gray-200 w-64 fixed inset-y-0 left-0 transform duration-300
     -translate-x-0 ease-in-out md:relative transition duration-300 ease-in-out side-z"
-        [ngClass]="{'hidden md:block': openMenu}">
-        <div class="flex items-center p-2 t cursor-pointer">
-            <img src="../../../assets/side-bar-berliz.png" style="width: 200px;">
+        [ngClass]="{'hidden': !openMenu}">
+        <div class="flex items-center p-2 mt-1 cursor-pointer">
+            <img src="../../../assets/side-bar-berliz.png" style="width: 170px;">
             <div class="hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
             border-2 border-gray-200 rounded-md p-1 mr-4">
                 <i-feather name="x" class="min-w-[30px] text-gray-200  font-bold drop-shadow-xl"
                     (click)="toggleSidebar()"></i-feather>
             </div>
         </div>
-        <nav class="mt-20">
-            <span class="sr-only">Search</span>
-            <div
-                class="flex items-left p-2 mx-2 mt-4 text-gray-200 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md">
-                <input class="placeholder:italic placeholder:text-gray-500 border border-gray-400 rounded-md py-2 px-4 hover:border-gray-300 
-                    hover:drop-shadow-4xl focus:border-gray-200 focus:outline-none flex cursor-pointer max-w-64 h-7 hover:drop-shadow-2xl 
-                    transition-all duration-300 transform hover:scale-105 focus:scale-105" placeholder="Search"
-                    id="search">
-            </div>
-            <div
-                class="flex items-left p-2 mx-2 mt-4 text-gray-200 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md">
-                <feather-icon name="home" class="text-sm" style="width: 18px;"></feather-icon>
-                <h1 class="mx-4 text-sm font-bold">
-                    <a [routerLink]="['/home']">Home</a>
-                </h1>
-            </div>
+        <nav class="mt-10">
             <div
                 class="flex items-left p-2 mx-2 text-gray-200 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md">
                 <feather-icon name="layers" class="text-sm" style="width: 18px;"></feather-icon>

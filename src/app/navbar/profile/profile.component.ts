@@ -6,7 +6,7 @@ import { ChangePasswordModalComponent } from 'src/app/dashboard/user/change-pass
 import { UpdateProfilePhotoModalComponent } from 'src/app/dashboard/user/update-profile-photo-modal/update-profile-photo-modal.component';
 import { UpdateUserModalComponent } from 'src/app/dashboard/user/update-user-modal/update-user-modal.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserDataService } from 'src/app/services/user-data.service';
+import { UserStateService } from 'src/app/services/user-state.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 @Component({
@@ -26,7 +26,7 @@ export class ProfileComponent {
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
-    private userDataService: UserDataService,
+    private userStateService: UserStateService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService) { }
 
@@ -35,11 +35,9 @@ export class ProfileComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
-    this.userDataService.getUser().subscribe(() => {
-      this.userData = this.userDataService.userData;
-      this.profilePhoto = this.userDataService.profilePhoto;
-      this.ngxService.stop()
+    this.userStateService.getUser().subscribe((user) => {
+      this.userData = user;
+      this.profilePhoto = 'data:image/jpeg;base64,' +this.userData.profilePhoto;
     });
   }
 
@@ -52,7 +50,9 @@ export class ProfileComponent {
     });
     const childComponentInstance = dialogRef.componentInstance as UpdateProfilePhotoModalComponent;
     childComponentInstance.onUpdateProfilePhoto.subscribe(() => {
+      this.ngxService.start();
       this.handleEmitEvent();
+      this.ngxService.stop();
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -70,12 +70,10 @@ export class ProfileComponent {
   logout() {
     console.log('logging out')
     const dialogConfig = new MatDialogConfig();
-
     dialogConfig.data = {
       message: 'Logout',
       confirmation: true
     };
-
     const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((response: any) => {
       dialogRef.close();
@@ -93,10 +91,10 @@ export class ProfileComponent {
       }
     });
     const childComponentInstance = dialogRef.componentInstance as ChangePasswordModalComponent;
-
-    // Set the event emitter before opening the dialog
     childComponentInstance.onChangePassword.subscribe(() => {
+      this.ngxService.start();
       this.handleEmitEvent();
+      this.ngxService.stop();
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -115,10 +113,10 @@ export class ProfileComponent {
       }
     });
     const childComponentInstance = dialogRef.componentInstance as UpdateUserModalComponent;
-
-    // Set the event emitter before opening the dialog
     childComponentInstance.onUpdateUser.subscribe(() => {
+      this.ngxService.start();
       this.handleEmitEvent();
+      this.ngxService.stop();
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

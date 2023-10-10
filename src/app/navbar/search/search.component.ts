@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Categories } from 'src/app/models/categories.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
+import { ContactUs } from 'src/app/models/contact-us.model';
+import { Trainers } from 'src/app/models/trainers.interface';
+import { Users } from 'src/app/models/users.interface';
 
 @Component({
   selector: 'app-search',
@@ -9,39 +10,40 @@ import { CategoryStateService } from 'src/app/services/category-state.service';
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent {
-  categoriesData: Categories[] = [];
-  totalCategories: number = 0;
+  @Output() categoriesResults: EventEmitter<Categories[]> = new EventEmitter<Categories[]>()
+  @Output() contactUsResults: EventEmitter<ContactUs[]> = new EventEmitter<ContactUs[]>()
+  @Output() trainersResults: EventEmitter<Trainers[]> = new EventEmitter<Trainers[]>()
+  @Output() usersResults: EventEmitter<Users[]> = new EventEmitter<Users[]>()
 
-  constructor(private ngxService: NgxUiLoaderService,
-    public categoryStateService: CategoryStateService) {
+
+  @Output() searchComponentChange: EventEmitter<string> = new EventEmitter<string>();
+  @Input() searchComponent: string = '';
+
+  constructor() {
   }
 
+  ngOnInit(): void {
 
-    ngOnInit(): void {
-      this.categoryStateService.allCategoriesData$.subscribe((cachedData) => {
-        if (!cachedData) {
-          this.handleEmitEvent()
-        } else {
-          this.categoriesData = cachedData;
-          this.totalCategories = this.categoriesData.length
-        }
-      });
-    }
-  
-    handleEmitEvent() {
-      this.categoryStateService.getCategories().subscribe(() => {
-        this.ngxService.start()
-        this.categoriesData = this.categoryStateService.allCategories;
-        this.totalCategories = this.categoriesData.length
-        this.categoryStateService.setAllCategoriesSubject(this.categoriesData);
-        this.ngxService.stop()
-      });
-    }
-  
+  }
 
-  handleSearchResults(results: Categories[]): void {
-    this.categoriesData = results;
-    this.totalCategories = results.length;
+  handleCategorySearchResults(results: Categories[]): void {
+    this.categoriesResults.emit(results)
+    this.searchComponentChange.emit(this.searchComponent);
+  }
+
+  handleContactUsSearchResults(results: ContactUs[]): void {
+    this.contactUsResults.emit(results)
+    this.searchComponentChange.emit(this.searchComponent);
+  }
+
+  handleTrainerSearchResults(results: Trainers[]): void {
+    this.trainersResults.emit(results)
+    this.searchComponentChange.emit(this.searchComponent);
+  }
+
+  handleUserSearchResults(results: Users[]): void {
+    this.usersResults.emit(results)
+    this.searchComponentChange.emit(this.searchComponent);
   }
 
 }

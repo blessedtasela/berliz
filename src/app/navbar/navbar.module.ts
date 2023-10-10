@@ -9,6 +9,9 @@ import { ProfileComponent } from './profile/profile.component';
 import { SideBarMenuComponent } from './side-bar-menu/side-bar-menu.component';
 import { SearchCategoryComponent } from './search-category/search-category.component';
 import { FormsModule } from '@angular/forms';
+import { SearchContactUsComponent } from './search-contact-us/search-contact-us.component';
+import { SearchTrainerComponent } from './search-trainer/search-trainer.component';
+import { SearchUserComponent } from './search-user/search-user.component';
 
 
 @NgModule({
@@ -18,7 +21,10 @@ import { FormsModule } from '@angular/forms';
     SearchComponent,
     ProfileComponent,
     SideBarMenuComponent,
-    SearchCategoryComponent
+    SearchCategoryComponent,
+    SearchContactUsComponent,
+    SearchTrainerComponent,
+    SearchUserComponent
   ],
   imports: [
     CommonModule,

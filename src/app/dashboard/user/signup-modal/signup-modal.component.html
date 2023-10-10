@@ -1,6 +1,6 @@
 <div class="rounded-md mx-auto">
     <form [formGroup]="signUpForm">
-        <div class="border-2 " *ngIf="formIndex === 0" [ngClass]="{'border-red-400':
+        <div class="border-b-2 " *ngIf="formIndex === 0" [ngClass]="{'border-red-400':
           (signUpForm.get('firstname')?.invalid ||
                 signUpForm.get('lastname')?.invalid ||
                 signUpForm.get('phone')?.invalid ||
@@ -43,7 +43,7 @@
             <div class="grid grid-cols-2 gap-1 flex items-center">
                 <div class="mx-auto col-span-2">
                     <input formControlName="firstname"
-                        class="border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                         [ngClass]="{'border-red-400': signUpForm.get('firstname')?.invalid && signUpForm.get('firstname')?.touched }"
                         placeholder="First Name" type="text">
                     <div *ngIf="signUpForm.get('firstname')?.invalid && signUpForm.get('firstname')?.dirty"
@@ -53,7 +53,7 @@
                 </div>
                 <div class="mx-auto col-span-2">
                     <input formControlName="lastname"
-                        class="border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                         [ngClass]="{'border-red-400': signUpForm.get('lastname')?.invalid && signUpForm.get('lastname')?.touched }"
                         placeholder="Last Name" type="text">
                     <div *ngIf="signUpForm.get('lastname')?.invalid && signUpForm.get('lastname')?.dirty"
@@ -63,7 +63,7 @@
                 </div>
                 <div class="mx-auto col-span-2">
                     <input formControlName="phone"
-                        class="border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="border-b-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                         [ngClass]="{'border-red-400': signUpForm.get('phone')?.invalid && signUpForm.get('phone')?.touched }"
                         placeholder="+123 000 000 000" type="tel">
                     <div *ngIf="signUpForm.get('phone')?.invalid && signUpForm.get('phone')?.dirty"
@@ -73,7 +73,7 @@
                 </div>
                 <div class="mx-auto col-span-2">
                     <input formControlName="dob"
-                        class="border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                         [ngClass]="{'border-red-400': signUpForm.get('dob')?.invalid && signUpForm.get('dob')?.touched }"
                         placeholder="date of birth" type="date">
                     <div *ngIf="signUpForm.get('dob')?.invalid && signUpForm.get('dob')?.dirty"
@@ -84,14 +84,14 @@
                 <div class="font-sans mx-auto">
                     Male
                     <input formControlName="gender"
-                        class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="w-3 lg:w-full border-b-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                         [ngClass]="{'border-red-400': signUpForm.get('gender')?.invalid && signUpForm.get('gender')?.touched }"
                         placeholder="Male" type="radio" value="Male">
                 </div>
                 <div class="font-sans mx-auto">
                     Female
                     <input formControlName="gender"
-                        class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="w-3 lg:w-full border-b-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                         [ngClass]="{'border-red-400': signUpForm.get('gender')?.invalid && signUpForm.get('gender')?.touched }"
                         placeholder="Female" type="radio" value="Female">
                     <div *ngIf="signUpForm.get('gender')?.invalid && signUpForm.get('gender')?.dirty"
@@ -101,7 +101,7 @@
                 </div>
                 <div class="col-span-2 mx-auto">
                     <select formControlName="country" class="w-full"
-                        class="w-64 md:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2  hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="w-64 md:w-full border-b-2 px-4 py-2 rounded-md m-2 col-span-2  hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                         [ngClass]="{'border-red-400': signUpForm.get('country')?.invalid && signUpForm.get('country')?.touched }"
                         placeholder="country" type="text">
                         <option selected hidden class="font-sans">Please select your country</option>
@@ -128,7 +128,7 @@
                 </div>
             </div>
         </div>
-        <div class="border-2 " *ngIf="formIndex === 1" [ngClass]="{'border-red-400': (
+        <div class="border-b-2 " *ngIf="formIndex === 1" [ngClass]="{'border-red-400': (
             signUpForm.get('state')?.invalid ||
             signUpForm.get('city')?.invalid ||
             signUpForm.get('postalCode')?.invalid ||
@@ -167,10 +167,10 @@
                     Please complete this section
                 </span>
             </div>
-            <div class="grid grid-cols-2 gap-1 flex items-center">
-                <div class="mx-auto">
+            <div class="grid grid-cols-2 gap-1 flex items-center font-sans">
+                <div class="mx-auto col-span-2">
                     <input formControlName="state"
-                        class="border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="border-b-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                         [ngClass]="{'border-red-400': signUpForm.get('state')?.invalid && signUpForm.get('state')?.touched }"
                         placeholder="State" type="text">
                     <div *ngIf="signUpForm.get('state')?.invalid && signUpForm.get('state')?.dirty"
@@ -178,9 +178,9 @@
                         Select your state
                     </div>
                 </div>
-                <div class="font-sans mx-auto">
+                <div class=" mx-auto col-span-2" >
                     <input formControlName="city"
-                        class="font-sans border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="border-b-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                         [ngClass]="{'border-red-400': signUpForm.get('city')?.invalid && signUpForm.get('city')?.touched }"
                         placeholder="City" type="text">
                     <div *ngIf="signUpForm.get('city')?.invalid && signUpForm.get('city')?.dirty"
@@ -188,9 +188,9 @@
                         Please select your city
                     </div>
                 </div>
-                <div class="mx-auto">
+                <div class="mx-auto col-span-2">
                     <input formControlName="postalCode"
-                        class="border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                         [ngClass]="{'border-red-400': signUpForm.get('postalCode')?.invalid && signUpForm.get('postalCode')?.touched }"
                         placeholder="postal code" type="number">
                     <div *ngIf="signUpForm.get('postalCode')?.invalid && signUpForm.get('postalCode')?.dirty"
@@ -198,9 +198,9 @@
                         please enter a valid postal code
                     </div>
                 </div>
-                <div class="mx-auto">
+                <div class="mx-auto col-span-2">
                     <textarea formControlName="address"
-                        class="md:w-96 border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="md:w-96 border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                         [ngClass]="{'border-red-400': signUpForm.get('address')?.invalid && signUpForm.get('address')?.touched }"
                         placeholder="Write your addresss here" rows="5" cols="15"></textarea>
                     <div *ngIf="signUpForm.get('address')?.invalid && signUpForm.get('address')?.dirty"
@@ -216,7 +216,7 @@
                                 alt="Display photo" />
                         </div>
                         <input formControlName="profilePhoto"
-                            class="border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none
+                            class="border-b-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none
                             block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
                             file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
                             [ngClass]="{'border-gray-950': signUpForm.get('profilePhoto')?.invalid && signUpForm.get('profilePhoto')?.touched }"
@@ -242,7 +242,7 @@
                 </div>
             </div>
         </div>
-        <div class="border-2 " *ngIf="formIndex === 2" [ngClass]="{'border-red-400':  (signUpForm.get('email')?.invalid ||
+        <div class="border-b-2 " *ngIf="formIndex === 2" [ngClass]="{'border-red-400':  (signUpForm.get('email')?.invalid ||
                 signUpForm.get('password')?.invalid ||
                 signUpForm.get('confirmPassword')?.invalid) && invalidForm }">
 
@@ -275,9 +275,9 @@
                 </span>
             </div>
             <div class="grid grid-cols-2 gap-1 flex items-center">
-                <div class="mx-auto">
+                <div class="mx-auto col-span-2">
                     <input formControlName="email"
-                        class="border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                         [ngClass]="{'border-red-400': signUpForm.get('email')?.invalid && signUpForm.get('email')?.touched }"
                         placeholder="input email" type="text">
                     <div *ngIf="signUpForm.get('email')?.invalid && signUpForm.get('email')?.dirty"
@@ -285,9 +285,9 @@
                         email is required
                     </div>
                 </div>
-                <div class="mx-auto">
+                <div class="mx-auto col-span-2">
                     <input formControlName="password"
-                        class="border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                         [ngClass]="{'border-red-400': signUpForm.get('password')?.invalid && signUpForm.get('password')?.touched }"
                         placeholder="at least 8 characters" type="password">
                     <div *ngIf="signUpForm.get('password')?.invalid && signUpForm.get('password')?.dirty"
@@ -295,9 +295,9 @@
                         must be at least 8 characters
                     </div>
                 </div>
-                <div class="mx-auto">
+                <div class="mx-auto col-span-2">
                     <input formControlName="confirmPassword"
-                        class="border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                         [ngClass]="{'border-red-400': signUpForm.get('confirmPassword')?.invalid && signUpForm.get('confirmPassword')?.touched }"
                         placeholder="re-type password" type="password">
                     <div *ngIf="signUpForm.hasError('passwordMismatch') && signUpForm.get('confirmPassword')?.dirty"
@@ -305,7 +305,6 @@
                         Passwords do not match.
                     </div>
                 </div>
-
                 <div class="bg-gray-950 rounded-md mx-auto m-2">
                     <button
                         class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"

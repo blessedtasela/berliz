@@ -14,7 +14,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 })
 export class CategoriesSearchComponent {
   categories: Categories[] = [];
-  selectedSortOption: string = 'date';
+  selectedSortOption: string = 'name';
   filteredCategories: Categories[] = [];
   searchQuery: string = '';
   selectedSearchCriteria: any = 'name';
@@ -26,15 +26,11 @@ export class CategoriesSearchComponent {
     private elementRef: ElementRef) { }
 
   ngOnInit(): void {
-    this.handleEmitEvent()
+ 
   }
 
-  handleEmitEvent() {
-    this.categoryStateService.getActiveCategories().subscribe(() => {
-      this.initializeSearch();
-      this.categories = this.categoryStateService.activeCategories
-      this.filteredCategories = this.categories
-    });
+  ngAfterViewInit(): void {
+    this.initializeSearch();
   }
 
   initializeSearch(): void {
@@ -90,9 +86,7 @@ export class CategoriesSearchComponent {
         break;
       default:
         this.filteredCategories.sort((a, b) => {
-          const dateA = new Date(a.date);
-          const dateB = new Date(b.date);
-          return dateA.getTime() - dateB.getTime();
+          return a.name.localeCompare(b.name);
         });
         break;
     }
@@ -113,6 +107,9 @@ export class CategoriesSearchComponent {
   }
 
   search(query: string): Observable<Categories[]> {
+    this.categoryStateService.activeCategoriesData$.subscribe((cachedData) => {
+      this.categories = cachedData;
+    });
     query = query.toLowerCase();
     if (query.trim() === '') {
       this.filteredCategories = this.categories;

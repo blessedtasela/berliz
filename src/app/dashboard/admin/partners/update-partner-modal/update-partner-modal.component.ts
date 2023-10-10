@@ -8,7 +8,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
 import { AddPartnerModalComponent } from '../add-partner-modal/add-partner-modal.component';
 import { Partners } from 'src/app/models/partners.interface';
-import { UserDataService } from 'src/app/services/user-data.service';
+import { UserStateService } from 'src/app/services/user-state.service';
 
 
 @Component({
@@ -42,7 +42,7 @@ export class UpdatePartnerModalComponent {
 
   constructor(private formBuilder: FormBuilder,
     private partnerService: PartnerService,
-    private userDataService: UserDataService,
+    private userStateService: UserStateService,
     private cdr: ChangeDetectorRef,
     public dialogRef: MatDialogRef<AddPartnerModalComponent>,
     private ngxService: NgxUiLoaderService,

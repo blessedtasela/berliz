@@ -22,6 +22,7 @@ export class AddCategoryModalComponent implements OnInit {
   responseMessage: any;
   icons: Icons[];
   tags!: Tags[];
+  selectedIcon: string  = '../../../../../assets/icons/gym';
 
   constructor(private formBuilder: FormBuilder,
     private categoryService: CategoryService,
@@ -138,6 +139,7 @@ export class AddCategoryModalComponent implements OnInit {
 
   clear() {
     this.addCategoryForm.reset();
+    this.selectedIcon = '../../../../../assets/icons/gym';
   }
 
 }

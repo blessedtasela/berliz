@@ -6,7 +6,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { UpdateTrainerPhotoModalComponent } from 'src/app/shared/update-trainer-photo-modal/update-trainer-photo-modal.component';
 import { Trainers } from 'src/app/models/trainers.interface';
-import { TrainerDataService } from 'src/app/services/trainer-data.service';
+import { TrainerStateService } from 'src/app/services/trainer-state.service';
 
 @Component({
   selector: 'app-trainer-details',
@@ -22,7 +22,7 @@ export class TrainerDetailsComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<TrainerDetailsComponent>,
-    private trainerDataService: TrainerDataService,
+    private trainerStateService: TrainerStateService,
     private dialog: MatDialog,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
@@ -34,9 +34,9 @@ export class TrainerDetailsComponent {
   }
 
   handleEmit() {
-    this.trainerDataService.getAllTrainers().subscribe(() => {
+    this.trainerStateService.getAllTrainers().subscribe((trainers) => {
       this.ngxService.start();
-      const trainer = this.trainerDataService.trainersData.find(trainer => trainer.id == this.trainerData.id);
+      const trainer = trainers.find(trainer => trainer.id == this.trainerData.id);
       if (trainer)
         this.trainerData = trainer
       this.ngxService.stop();

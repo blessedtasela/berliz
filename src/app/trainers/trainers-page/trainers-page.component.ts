@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Trainers } from 'src/app/models/trainers.interface';
-import { TrainerDataService } from 'src/app/services/trainer-data.service';
+import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 
 @Component({
@@ -13,29 +14,33 @@ export class TrainersPageComponent {
   countResult: number = 0;
   allTrainers: Trainers[] = [];
 
-  constructor(private trainerDataService: TrainerDataService,
-    private trainerService: TrainerService,) { }
+  constructor(private trainerStateService: TrainerStateService,
+    private ngxService: NgxUiLoaderService) { }
 
   ngOnInit(): void {
-    this.handleEmitEvent()
-    this.triggerEmitEvent()
-  }
-
-  handleEmitEvent() {
-    this.trainerDataService.getActiveTrainers().subscribe(() => {
-      this.trainers = this.trainerDataService.activeTrainers
+    this.trainerStateService.activeTrainersData$.subscribe((cachedData) => {
+      if (!cachedData) {
+        this.handleEmitEvent()
+      } else {
+        this.trainers = cachedData;
+      }
     });
   }
 
-  triggerEmitEvent() {
-    this.trainerService.trainerEventEmitter.subscribe(() => {
-      this.handleEmitEvent();
-    })
+  handleEmitEvent() {
+    this.trainerStateService.getActiveTrainers().subscribe((activeTrainers) => {
+      this.ngxService.start()
+      console.log('isCachedData false')
+      this.trainers = activeTrainers;
+      this.trainerStateService.setActiveTrainersSubject(this.trainers);
+      this.ngxService.stop()
+    });
   }
 
   handleSearchResults(results: Trainers[]): void {
     this.trainers = results;
     this.countResult = results.length;
   }
+
 
 }

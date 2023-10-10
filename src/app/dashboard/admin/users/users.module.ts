@@ -10,6 +10,7 @@ import { AdminUpdateUserProfilePhotoModalComponent } from './admin-update-user-p
 import { UserComponent } from './user/user.component';
 import { UsersListComponent } from './users-list/users-list.component';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
+import { UserHeaderComponent } from './user-header/user-header.component';
 
 
 
@@ -20,7 +21,8 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
     AdminUpdateUserModalComponent,
     AdminUpdateUserProfilePhotoModalComponent,
     UserComponent,
-    UsersListComponent
+    UsersListComponent,
+    UserHeaderComponent
   ],
   imports: [
     CommonModule,

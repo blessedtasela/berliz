@@ -1,3 +1,5 @@
+import { Trainers } from "./trainers.interface";
+
 export interface Users {
     id: number,
     firstname: string,
@@ -13,6 +15,21 @@ export interface Users {
     profilePhoto: any;
     email: string,
     role: string;
+    likedCategoriesSet: {
+        id: number;
+        name: string;
+        description: string;
+    }[];
+    likedCentersSet: {
+        id: number;
+        name: string;
+        address: string;
+    }[];
+    likedTrainersSet: {
+        id: number;
+        name: string;
+        address: string;
+    }[];
     date: string;
     lastUpdate: string;
     status: string;
@@ -21,6 +38,13 @@ export interface Users {
 export interface Login {
     email: string,
     password: string
+}
+
+export interface TrainerLike {
+    id: number,
+    user: Users;
+    trainer: Trainers;
+    date: Date;
 }
 
 export interface Role {

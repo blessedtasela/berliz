@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Partners } from 'src/app/models/partners.interface';
 import { Users } from 'src/app/models/users.interface';
-import { PartnerDataService } from 'src/app/services/partner-data.service';
-import { UserDataService } from 'src/app/services/user-data.service';
+import { PartnerStateService } from 'src/app/services/partner-state.service';
+import { UserStateService } from 'src/app/services/user-state.service';
 import { PartnerFormModalComponent } from 'src/app/shared/partner-form-modal/partner-form-modal.component';
 
 @Component({
@@ -18,22 +18,21 @@ export class TrainerHeaderComponent {
   user!: Users;
 
   constructor(private dialog: MatDialog,
-    private partnerDataService: PartnerDataService,
+    private partnerDataService: PartnerStateService,
     private ngxService: NgxUiLoaderService,
-    private userDataService: UserDataService,
+    private userStateService: UserStateService,
     private router: Router) { }
 
   ngOnInit() {
-    this.userDataService.getUser().subscribe(() => {
-      this.user = this.userDataService.userData;
+    this.userStateService.getUser().subscribe((user) => {
+      this.user = user;
     })
   }
 
   handleEmitEvent() {
-    this.partnerDataService.getPartner().subscribe(() => {
+    this.partnerDataService.getPartner().subscribe((partnerData) => {
       this.ngxService.start()
-      this.partner = this.partnerDataService.partnerData;
-
+      this.partner =partnerData;
       this.ngxService.stop()
     });
   }

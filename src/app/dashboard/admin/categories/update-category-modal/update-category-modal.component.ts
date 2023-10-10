@@ -41,9 +41,9 @@ export class UpdateCategoryModalComponent {
   ngOnInit(): void {
     this.selectedTagsId = this.categoryData.tagSet.map(tag => tag.id);
     this.updateCategoryForm = this.formBuilder.group({
-       'id': new FormControl(this.categoryData.id, [Validators.required]),
+      'id': new FormControl(this.categoryData.id, [Validators.required]),
       'name': new FormControl(this.categoryData.name, [Validators.required, Validators.minLength(2)]),
-      'photo':new FormControl(this.categoryData.photo, [Validators.required, Validators.minLength(2)]),
+      'photo': new FormControl(this.categoryData.photo, [Validators.required, Validators.minLength(2)]),
       'description': new FormControl(this.categoryData.description, [Validators.required, Validators.minLength(20)]),
       'likes': new FormControl(this.categoryData.likes, [Validators.required, Validators.minLength(1)]),
       'tagIds': this.formBuilder.array(this.selectedTagsId, this.validateCheckbox()),
@@ -52,13 +52,13 @@ export class UpdateCategoryModalComponent {
       // Data is loaded, manually trigger change detection
       this.cdr.detectChanges();
     });
-    
+
   }
 
   onCheckboxChanged(event: any) {
     console.log('Checkbox changed:', event.target.checked, event.target.value);
     const tags = this.updateCategoryForm.get('tagIds') as FormArray;
-  
+
     if (event.target.checked) {
       tags.push(new FormControl(event.target.value));
     } else {
@@ -66,7 +66,7 @@ export class UpdateCategoryModalComponent {
       tags.removeAt(index);
     }
   }
-  
+
 
   validateCheckbox(): ValidatorFn {
     return (formArray: AbstractControl) => {
@@ -107,8 +107,8 @@ export class UpdateCategoryModalComponent {
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
     } else {
-     // Get the selected tagIds values as an array
-     const selectedTagIds = this.updateCategoryForm.value.tagIds
+      // Get the selected tagIds values as an array
+      const selectedTagIds = this.updateCategoryForm.value.tagIds
 
       // Convert the array to a comma-separated string
       const tagIdsString = selectedTagIds.join(',');

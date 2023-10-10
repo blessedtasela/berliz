@@ -6,7 +6,7 @@ import { AddPartnerModalComponent } from 'src/app/dashboard/admin/partners/add-p
 import { Role, Users } from 'src/app/models/users.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserDataService } from 'src/app/services/user-data.service';
+import { UserStateService } from 'src/app/services/user-state.service';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -33,7 +33,7 @@ export class PartnerFormModalComponent {
   },]
 
   constructor(private fb: FormBuilder,
-    private userDataService: UserDataService,
+    private userStateService: UserStateService,
     public dialogRef: MatDialogRef<AddPartnerModalComponent>,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
@@ -54,8 +54,8 @@ export class PartnerFormModalComponent {
   }
 
   handleEmitEvent() {
-    this.userDataService.getUser().subscribe(() => {
-      this.user = this.userDataService.userData;
+    this.userStateService.getUser().subscribe((user) => {
+      this.user = user;
     });
   }
 

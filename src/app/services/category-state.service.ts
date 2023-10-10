@@ -14,8 +14,6 @@ export class CategoryStateService {
   private allCategoriesSubject = new BehaviorSubject<any>(null);
   public allCategoriesData$: Observable<Categories[]> = this.allCategoriesSubject.asObservable();
   responseMessage: any;
-  allCategories: Categories[] = [];
-  activeCategories: Categories[] = [];
 
   constructor(private categoryService: CategoryService,
     private snackbarService: SnackBarService) { }
@@ -31,7 +29,11 @@ export class CategoryStateService {
   getCategories(): Observable<Categories[]> {
     return this.categoryService.getCategories().pipe(
       tap((response: any) => {
-        this.allCategories = response;
+        return response.sort((a: Categories, b: Categories) => {
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          return dateB - dateA;
+        })
       }),
       catchError((error) => {
         this.snackbarService.openSnackBar(error, 'error');
@@ -49,7 +51,9 @@ export class CategoryStateService {
   getActiveCategories(): Observable<Categories[]> {
     return this.categoryService.getActiveCategories().pipe(
       tap((response: any) => {
-        this.activeCategories = response;
+        return response.sort((a: Categories, b: Categories) => {
+          return a.name.localeCompare(b.name);
+        })
       }),
       catchError((error) => {
         this.snackbarService.openSnackBar(error, 'error');

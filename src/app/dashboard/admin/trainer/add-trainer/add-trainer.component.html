@@ -1,29 +1,41 @@
-<div class="relative">
-    <div class="text-red-600 absolute top-0 right-0 p-1">
+<div class="relative bg-white text-gray-700 p-2">
+    <div class="text-red-600 absolute top-0 right-0 p-5">
         <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
     </div>
-    <div class="rounded-md mx-auto">
+    <section class="bg-white">
         <form [formGroup]="addTrainerForm">
-            <div class="border-2 " [ngClass]="{'border-red-400': addTrainerForm.invalid && invalidForm }">
-                <header class="text-center m-2">
-                    <h1 class="font-bold font-sans text-xl">Complete Trainer Application</h1>
-                    <p class="font-sans text-sm">Get ready to transform lives!
-                    </p>
-                </header>
-                <hr [ngClass]="{'border-red-500': addTrainerForm.invalid && invalidForm }">
-                <div class="invalid-form">
-                    <span *ngIf="addTrainerForm.invalid && invalidForm" class="mx-2 text-red-600">
-                        Please complete all sections
-                    </span>
-                    <span *ngIf="!addTrainerForm.invalid && invalidForm" class="mx-2 text-gray-400">
-                        Everything looks good
-                    </span>
+            <header class="text-center m-2 text-gray-700">
+                <h1 class="font-bold font-sans text-xl">Complete Trainer Application</h1>
+                <p class="font-sans text-sm text-red-600">Get ready to transform lives
+                </p>
+            </header>
+            <div class="invalid-form">
+                <span *ngIf="!addTrainerForm.invalid 
+                         && invalidForm" class="mx-2 text-gray-700">
+                    Everything looks good
+                </span>
+                <span *ngIf="addTrainerForm.invalid 
+                 && invalidForm" class="mx-2 text-red-500">
+                    Please complete all sessions
+                </span>
+            </div>
+            <div class="grid grid-cols md:grid-cols-2 p-1 gap-2">
+                <div class="mx-auto grid grid-cols-2 md:grid-cols-4 rounded-lg text-gray-700">
+                    <div *ngIf="addTrainerForm.get('categoryIds')?.invalid && invalidForm"
+                        class="text-red-500 mx-2 col-span-4">
+                        Select at least one tag
+                    </div>
+                    <div *ngFor="let category of categories; let i = index" class="mx-auto flex items-center justify-center">
+                        <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
+                            class="w-full border-b-2 px-4 py-2 rounded-md m-2 text-gray-950 focus:outline-none border-gray-400 hover:border-gray-500"
+                            placeholder="tags" type="checkbox" [value]="category.id">
+                        {{ category.name }}
+                    </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-1 flex items-center p-2">
-                    <div class="mx-auto p-2 col-span-2">
-                        <span class="sr-only">Select partner</span>
+                <div class="bg-gray-200 grid grid-cols gap-4 rounded-lg">
+                    <div class="mx-auto p-2">Select partner
                         <select formControlName="id"
-                            class="w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            class="w-full px-4 py-2 m-2 col-span-2 bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                             [ngClass]="{'border-red-400': addTrainerForm.get('id')?.invalid && addTrainerForm.get('id')?.dirty }"
                             type="text">
                             <option selected hidden class="font-sans">Please select partner </option>
@@ -35,31 +47,30 @@
                             Partner cannot be null
                         </div>
                     </div>
-                    <div class="mx-auto p-2 col-span-2">
-                        <span class="sr-only">Display Name</span>
+                    <div class="mx-auto p-2">Display Name
                         <input formControlName="name"
-                            class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            class="w-full px-4 py-2 m-2 col-span-2 bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                             [ngClass]="{'border-red-400': addTrainerForm.get('name')?.invalid && addTrainerForm.get('name')?.dirty }"
-                            placeholder="Display name Team Berliz" type="text">
+                            placeholder="Display name e.g Team Berliz" type="text">
                         <div *ngIf="addTrainerForm.get('name')?.invalid && addTrainerForm.get('name')?.dirty"
                             class="text-red-500 mx-2">
                             Display name is required
                         </div>
                     </div>
-                    <div class="mx-auto p-2 col-span-2">
-                        <span class="sr-only">Expereince</span>
+
+                    <div class="mx-auto p-2">Expereince
                         <input formControlName="experience"
-                            class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            class="w-full px-4 py-2 m-2 col-span-2 bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                             [ngClass]="{'border-red-400': addTrainerForm.get('experience')?.invalid && addTrainerForm.get('experience')?.dirty }"
-                            placeholder="experience" type="number">
+                            placeholder="experience" type="number" min="0">
                         <div *ngIf="addTrainerForm.get('experience')?.invalid && addTrainerForm.get('experience')?.dirty"
                             class="text-red-500 mx-2">
                             Expereince is required
                         </div>
                     </div>
-                    <div class="mx-auto col-span-2">
+                    <div class="mx-auto p-2">
                         <textarea formControlName="motto"
-                            class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            class="w-full px-4 py-2 m-2 col-span-2 bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                             [ngClass]="{'border-red-400': addTrainerForm.get('mtoo')?.invalid && addTrainerForm.get('motto')?.dirty }"
                             placeholder="Write a short bio about discipline or motto" rows="5" cols="25"></textarea>
                         <div *ngIf="addTrainerForm.get('motto')?.invalid && addTrainerForm.get('motto')?.dirty"
@@ -67,9 +78,9 @@
                             At least 30 characters
                         </div>
                     </div>
-                    <div class="mx-auto col-span-2">
+                    <div class="mx-auto p-2">
                         <textarea formControlName="address"
-                            class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            class="w-full px-4 py-2 m-2 col-span-2 bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                             [ngClass]="{'border-red-400': addTrainerForm.get('address')?.invalid && addTrainerForm.get('address')?.dirty }"
                             placeholder="Write your street address or location here" rows="5" cols="25"></textarea>
                         <div *ngIf="addTrainerForm.get('address')?.invalid && addTrainerForm.get('address')?.dirty"
@@ -77,9 +88,9 @@
                             At least 10 characters
                         </div>
                     </div>
-                    <div class="mx-auto col-span-2">
+                    <div class="mx-auto p-2">
                         <span class="sr-only">Choose cover photo</span>
-                        <span>Please upload a cover photo</span>
+                        <span class="">Upload cover photo</span>
                         <div class="flex">
                             <div class="shrink-0">
                                 <img class="h-16 w-16 object-cover rounded-md" src="../../../assets/icons/user.png"
@@ -87,8 +98,8 @@
                             </div>
                             <input formControlName="photo"
                                 class="border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none
-                            block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
-                            file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
+                        block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
+                        file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
                                 [ngClass]="{'border-gray-950': invalidForm && this.addTrainerForm.get('photo')?.dirty}"
                                 (change)="onPhotoSelected($event)" type="file" accept="image/*">
                         </div>
@@ -97,36 +108,24 @@
                             Upload a valid image
                         </div>
                     </div>
-                    <div class="col-span-2 mx-auto">
-                        <div class="grid grid-cols-2">
-                            <div *ngFor="let cat of categories; let i = index" class="mx-auto flex items-center">
-                                <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
-                                    class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                                    placeholder="tags" type="checkbox" [value]="cat.id">
-                                {{ cat.name }}
-                            </div>
+                    <div class="grid grid-cols-2">
+                        <div class="bg-gray-950 rounded-md mx-auto m-2">
+                            <button type="button"
+                                class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                                (click)="clear()">
+                                Clear
+                            </button>
                         </div>
-                        <div *ngIf="addTrainerForm.get('categoryIds')?.invalid && invalidForm"
-                            class="text-red-500 mx-2">
-                            Select at least one category
+                        <div class="bg-red-600 rounded-md mx-auto m-2">
+                            <button type="submit"
+                                class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                                (click)="addTrainer()">
+                                Add
+
+                            </button>
                         </div>
-                    </div>
-                    <div class="bg-gray-950 rounded-md mx-auto m-2">
-                        <button
-                            class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                            (click)="clear()">
-                            Clear
-                        </button>
-                    </div>
-                    <div class="bg-red-600 rounded-md mx-auto m-2">
-                        <button
-                            class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                            type="submit" (click)="addTrainer()">
-                            Submit
-                        </button>
                     </div>
                 </div>
             </div>
         </form>
-    </div>
-</div>
+    </section>

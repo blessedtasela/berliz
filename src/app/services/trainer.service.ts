@@ -51,6 +51,10 @@ export class TrainerService {
     return this.httpClient.get(this.url + "/trainer/get")
   }
 
+  getTrainerLikes() {
+    return this.httpClient.get(this.url + "/trainer/getTrainerLikes")
+  }
+
   getActiveTrainers() {
     return this.httpClient.get(this.url + "/trainer/getActiveTrainers")
   }

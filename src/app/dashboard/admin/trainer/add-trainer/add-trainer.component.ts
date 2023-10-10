@@ -5,9 +5,8 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
 import { Partners } from 'src/app/models/partners.interface';
 import { CategoryStateService } from 'src/app/services/category-state.service';
-import { PartnerDataService } from 'src/app/services/partner-data.service';
+import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TrainerDataService } from 'src/app/services/trainer-data.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { TrainerFormModalComponent } from 'src/app/shared/trainer-form-modal/trainer-form-modal.component';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
@@ -25,6 +24,7 @@ export class AddTrainerComponent {
   responseMessage: any;
   selectedPhoto: any;
   activePartners: Partners[] = [];
+  displayPhoto: any = "../../../assets/icons/user.png";
 
   constructor(private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<TrainerFormModalComponent>,
@@ -33,7 +33,7 @@ export class AddTrainerComponent {
     private cdr: ChangeDetectorRef,
     private categoryStateService: CategoryStateService,
     private trainerService: TrainerService,
-    private partnerDataService: PartnerDataService) { }
+    private partnerStateService: PartnerStateService) { }
 
 
   ngOnInit(): void {
@@ -47,21 +47,44 @@ export class AddTrainerComponent {
       'categoryIds': this.formBuilder.array([], this.validateCheckbox()),
     });
 
-    this.handleEmitEvent();
+    this.onEmit();
   }
+
+
+  onEmit(): void {
+    this.categoryStateService.allCategoriesData$.subscribe((cachedData) => {
+      if (!cachedData) {
+        this.handleEmitEvent()
+      } else {
+        this.categories = cachedData;
+      }
+    });
+    this.partnerStateService.activePartnersData$.subscribe((cachedData) => {
+      if (!cachedData) {
+        this.handleEmitEvent()
+      } else {
+        this.activePartners = cachedData;
+      }
+    });
+  }
+
+  handleEmitEvent() {
+    console.log('isCachedData false')
+    this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
+      this.categories = activeCategories;
+      this.categoryStateService.setActiveCategoriesSubject(activeCategories);
+    });
+    this.partnerStateService.getActivePartners().subscribe((activePartners) => {
+      this.activePartners = activePartners;
+      this.partnerStateService.setActivePartnerssSubject(activePartners);
+    });
+  }
+
 
   ngAfterViewInit(): void {
     this.cdr.detectChanges();
   }
 
-  handleEmitEvent() {
-    this.categoryStateService.getActiveCategories().subscribe(() => {
-      this.categories = this.categoryStateService.activeCategories;
-    });
-    this.partnerDataService.getActivePartners().subscribe(() => {
-      this.activePartners = this.partnerDataService.activePartners;
-    });
-  }
 
   closeDialog() {
     this.dialogRef.close('Dialog closed without completing trainer aplication')

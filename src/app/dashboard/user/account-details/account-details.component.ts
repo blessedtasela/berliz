@@ -9,7 +9,7 @@ import { UpdateUserModalComponent } from '../update-user-modal/update-user-modal
 import { UpdateProfilePhotoModalComponent } from '../update-profile-photo-modal/update-profile-photo-modal.component';
 import { PromptModalComponent } from '../../../shared/prompt-modal/prompt-modal.component';
 import { Users } from 'src/app/models/users.interface';
-import { UserDataService } from 'src/app/services/user-data.service';
+import { UserStateService } from 'src/app/services/user-state.service';
 
 @Component({
   selector: 'app-account-details',
@@ -25,7 +25,7 @@ export class AccountDetailsComponent {
     private userService: UserService,
     private router: Router,
     private dialog: MatDialog,
-    private userDataService: UserDataService,
+    private userStateService: UserStateService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService) { }
 
@@ -35,8 +35,8 @@ export class AccountDetailsComponent {
 
   handleEmitEvent() {
     this.ngxService.start();
-    this.userDataService.getUser().subscribe(() => {
-      this.userData = this.userDataService.userData;
+    this.userStateService.getUser().subscribe((user) => {
+      this.userData = user;
       this.profilePhoto = 'data:image;base64,' + this.userData.profilePhoto
       this.ngxService.stop()
     });

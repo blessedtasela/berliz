@@ -13,6 +13,7 @@ export class PromptModalComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public dialogData: any,
     public dialogRef: MatDialogRef<PromptModalComponent>) { }
+    
   ngOnInit(): void {
     if (this.dialogData && this.dialogData.confirmation) {
       this.details = this.dialogData;

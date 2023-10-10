@@ -34,6 +34,12 @@ export class ContactUsService {
     })
   }
 
+  reviewContactUs(data: any) {
+    return this.httpClient.post(this.url + "/contactUs/review", data,{
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
   deleteContactUs(id: any) {
     return this.httpClient.delete(this.url + `/contactUs/delete/${id}`);
   }

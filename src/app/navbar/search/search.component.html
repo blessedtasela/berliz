@@ -1,1 +1,8 @@
-<app-search-category (results)="handleSearchResults($event)"></app-search-category>
+<app-search-category *ngIf="searchComponent === 'category'"
+    (results)="handleCategorySearchResults($event)"></app-search-category>
+<app-search-contact-us *ngIf="searchComponent === 'contactUs'"
+    (results)="handleContactUsSearchResults($event)"></app-search-contact-us>
+    <app-search-trainer *ngIf="searchComponent === 'trainer'"
+    (results)="handleTrainerSearchResults($event)"></app-search-trainer>
+    <app-search-user *ngIf="searchComponent === 'user'"
+    (results)="handleUserSearchResults($event)"></app-search-user>

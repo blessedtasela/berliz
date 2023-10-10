@@ -36,9 +36,17 @@
                             {{ trainer.address }}
                         </p>
                     </div>
-                    <div class="flex mt-2 text-left">
+                    <div class="flex items-center mt-2" *ngIf="isLikedTrainer(trainer)">
                         <i-feather name="thumbs-up" style="width: 20px;"
-                            class="font-bold text-red-600 mr-4"></i-feather>
+                            (click)="likeTrainer(trainer)"
+                            class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
+                        <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
+                            you and {{ trainer.likes - 1 }} people like this trainer.
+                        </p>
+                    </div>
+                    <div class="flex items-center mt-2" *ngIf="!isLikedTrainer(trainer)">
+                        <i-feather name="thumbs-up" style="width: 20px;" (click)="likeTrainer(trainer)"
+                            class="font-bold text-gray-600 mr-4 mt-1 cursor-pointer"></i-feather>
                         <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
                             {{ trainer.likes }} people like this trainer.
                         </p>

@@ -1,11 +1,8 @@
-import { DatePipe } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { CategoryStateService } from 'src/app/services/category-state.service';
-import { CategoryService } from 'src/app/services/category.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 @Component({
@@ -18,51 +15,28 @@ export class SearchCategoryComponent {
   filteredCategoriesData: Categories[] = [];
   searchQuery: string = '';
   selectedSearchCriteria: any = 'name';
-  @Output()results: EventEmitter<Categories[]> = new EventEmitter<Categories[]>()
+  @Output() results: EventEmitter<Categories[]> = new EventEmitter<Categories[]>()
 
-  constructor(private datePipe: DatePipe,
-    private categoryService: CategoryService,
-    private ngxService: NgxUiLoaderService,
+
+  constructor(private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
-    private dialog: MatDialog,
     private elementRef: ElementRef,
     public categoryStateService: CategoryStateService) {
   }
 
   ngOnInit(): void {
-    this.categoryStateService.allCategoriesData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.categoriesData = cachedData;
-        this.filteredCategoriesData = this.categoriesData
-      }
-    });
   }
 
   ngAfterViewInit(): void {
     this.initializeSearch();
   }
 
-
-  handleEmitEvent() {
-    console.log('categoryData: ', this.categoriesData)
-    this.categoryStateService.getCategories().subscribe(() => {
-      this.ngxService.start()
-      this.categoriesData = this.categoryStateService.allCategories;
-      this.filteredCategoriesData = this.categoriesData
-      this.categoryStateService.setAllCategoriesSubject(this.categoriesData);
-      this.ngxService.stop()
-    });
-  }
-
-
   initializeSearch(): void {
     fromEvent(this.elementRef.nativeElement.querySelector('input'), 'keyup')
       .pipe(
         debounceTime(300),
         map((e: any) => e.target.value),
-        tap((query: string) => {
+        tap(() => {
           this.ngxService.start();
         }),
         switchMap((query: string) => {
@@ -73,7 +47,6 @@ export class SearchCategoryComponent {
         (results: Categories[]) => {
           this.ngxService.stop();
           this.results.emit(results);
-          console.log('search results: ', results)
         },
         (error: any) => {
           this.snackbarService.openSnackBar(error, 'error');
@@ -83,6 +56,9 @@ export class SearchCategoryComponent {
   }
 
   search(query: string): Observable<Categories[]> {
+    this.categoryStateService.allCategoriesData$.subscribe((cachedData) => {
+      this.categoriesData = cachedData;
+    });
     query = query.toLowerCase();
     if (query.trim() === '') {
       this.filteredCategoriesData = this.categoriesData;
@@ -90,15 +66,18 @@ export class SearchCategoryComponent {
     this.filteredCategoriesData = this.categoriesData.filter((category: Categories) => {
       switch (this.selectedSearchCriteria) {
         case 'name':
-          return category.name.toLowerCase().includes(query);
+          return category.name && category.name.toLowerCase().includes(query);
         case 'id':
-          return category.id.toString().includes(query);
+          return category.id && category.id.toString().includes(query);
         case 'description':
-          return category.description.toLowerCase().includes(query);
+          return category.description && category.description.toLowerCase().includes(query);
         case 'status':
-          return category.status.toLowerCase().includes(query);
+          return category.status && category.status.toLowerCase().includes(query);
         case 'tag':
-          return category.tagSet.some(tag => tag.name.toLowerCase().includes(query));
+          return (
+            category.tagSet.length > 0 &&
+            category.tagSet.some((tag) => tag.name.toLowerCase().includes(query))
+          );
         default:
           return false;
       }
@@ -107,10 +86,8 @@ export class SearchCategoryComponent {
   }
 
   onSearchCriteriaChange(event: any): void {
-    this.ngxService.start();
     this.selectedSearchCriteria = event.target.value;
     this.search(this.searchQuery);
-    this.ngxService.stop()
   }
 
 }

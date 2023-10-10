@@ -15,12 +15,18 @@ export class CategoriesComponent {
     private categoryStateService: CategoryStateService) { }
 
   ngOnInit(): void {
-    this.handleEmitEvent()
+    this.categoryStateService.allCategoriesData$.subscribe((cachedData) => {
+      if (!cachedData) {
+        this.handleEmitEvent()
+      } else {
+        this.categoriesData = cachedData;
+      }
+    });
   }
 
   handleEmitEvent() {
-    this.categoryStateService.getActiveCategories().subscribe(() => {
-      this.categoriesData = this.categoryStateService.activeCategories
+    this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
+      this.categoriesData = activeCategories;
     });
   }
 

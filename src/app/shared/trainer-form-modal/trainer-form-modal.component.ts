@@ -49,8 +49,8 @@ export class TrainerFormModalComponent {
   }
 
   handleEmitEvent() {
-    this.categoryStateService.getActiveCategories().subscribe(() => {
-      this.categories = this.categoryStateService.activeCategories;
+    this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
+      this.categories = activeCategories;
       this.cdr.detectChanges();
     });
   }

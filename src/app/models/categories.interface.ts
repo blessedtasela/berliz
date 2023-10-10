@@ -8,9 +8,6 @@ export interface Categories {
         id: number;
         name: string;
         description: string;
-        date: Date;
-        lastUpdate: Date;
-        status: string;
     }[];
     likes: number;
     date: Date;

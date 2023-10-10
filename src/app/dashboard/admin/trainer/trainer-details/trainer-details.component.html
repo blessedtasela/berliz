@@ -2,48 +2,45 @@
     <div class="text-red-600 absolute top-0 right-0 p-1">
         <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
     </div>
-    <section class="grid md:grid-cols-2 grid-cols w-full rounded-md">
-        <div class="p-2">
-            <i-feather name="Edit" (click)="openUpdatePhoto()" class="font-bold text-red-600 mr-4  cursor-pointer"
-                style="width: 30px;">
-            </i-feather>
-            <div class="min-h-screen flex justify-center items-center">
-                <img [src]="'data:image;base64,' + trainerData.photo " class="object-cover rounded-full"
-                    onerror="this.src='../../../assets/icons/user.png';">
-            </div>
-            <div class="flex justify-end p-2">
-                <i-feather name="Edit" (click)="openUpdatePhoto()" class="font-bold text-red-600 mr-4  cursor-pointer"
-                    style="width: 30px;">
-                </i-feather>
-            </div>
-        </div>
-        <div class="bg-gray-200 md:rounded-r-md rounded-b-md p-8">
-            <p class="text-red-600 font-sans font-bold text-md italic mb-4 mt-2">{{ trainerData.partner.user.email }}
+    <section class="p-2 flex flex-col justify-center items-center">
+        <div class="text-center">
+            <p class="text-red-600 font-sans font-bold text-xl uppercase mt-4">{{ trainerData.name }} [ID {{
+                trainerData.id }}]</p>
+            <p class="text-gray-500 font-sans font-bold text-sm italic">
+                created at {{ formatDate(trainerData.date) }}
             </p>
-            <p class="text-gray-950 font-bold font-sans font-bold text-md uppercase">User ID: {{
-                trainerData.partner.user.id }}
-            <div class="flex items-center">
-                <div class="flex flex-col m-8 gap-5">
-                    <p class="text-gray-950 font-sans font-bold text-md flex">
-                        Motto: {{ trainerData.motto }}
+            <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
+                <div class="flex items-center justify-center">
+                    <img [src]="'data:image;base64,' + trainerData.photo " class="bg-gray-200 rounded-lg p-2"
+                        onerror="this.src='../../../assets/icons/user.png';">
+                </div>
+                <div class="flex flex-col m-4 gap-2">
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        {{ trainerData.partner.user.email }} - <span class="ml-2 text-red-600"> user id - {{
+                            trainerData.partner.user.id }}
+                        </span> </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        {{ trainerData.motto }}
                     </p>
-                    <p class="text-gray-950 font-sans font-bold text-md flex">
-                        Date registered: {{ formatDate(trainerData.date) }}
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        <ng-container *ngFor="let category of trainerData.categorySet; let i = index">
+                            {{ category.name }} {{ i < (trainerData.categorySet.length - 1) ? "/" : "" }}
+                                </ng-container>
                     </p>
-                    <p class="text-gray-950 font-sans font-bold text-md flex">
-                        Motivation: {{ trainerData.partner.motivation }}
+                    <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
+                        Motivation - {{ trainerData.partner.motivation }}
                     </p>
-                    <p class="text-gray-950 font-sans font-bold text-md flex">
-                        Role: {{ trainerData.partner.user.role }}
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Liked by {{ trainerData.likes }} users
                     </p>
-                    <p class="text-gray-950 font-sans font-bold text-md flex">
-                        Partner ID: {{ trainerData.partner.id }}
+                    <p class="text-gray-700 font-sans font-bold text-md flex mt-2">
+                        Trainer status: {{ trainerData.status ==='true' ? 'active' :'false' }}
                     </p>
-                    <p class="text-gray-950 font-sans font-bold text-md flex">
-                        Application status: {{ trainerData.status ==='true' ? 'active' :'false' }}
-                    </p>
-                    <p class="text-gray-950 font-sans font-bold text-md flex">
+                    <p class="text-red-600 font-sans font-bold text-md flex mt-2">
                         Last Update: {{ formatDate(trainerData.lastUpdate) }}
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Partner id: {{ trainerData.partner.id }}
                     </p>
                 </div>
             </div>

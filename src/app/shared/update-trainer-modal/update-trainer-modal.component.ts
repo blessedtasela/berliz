@@ -9,8 +9,8 @@ import { genericError } from 'src/validators/form-validators.module';
 import { TrainerFormModalComponent } from '../trainer-form-modal/trainer-form-modal.component';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
-import { UserDataService } from 'src/app/services/user-data.service';
 import { CategoryStateService } from 'src/app/services/category-state.service';
+import { UserStateService } from 'src/app/services/user-state.service';
 
 @Component({
   selector: 'app-update-trainer-modal',
@@ -31,7 +31,7 @@ export class UpdateTrainerModalComponent {
   constructor(private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<TrainerFormModalComponent>,
     private ngxService: NgxUiLoaderService,
-    private userDataService: UserDataService,
+    private userStateService: UserStateService,
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,
     private categoryStateService: CategoryStateService,
@@ -60,11 +60,11 @@ export class UpdateTrainerModalComponent {
   }
 
   handleEmitEvent() {
-    this.categoryStateService.getActiveCategories().subscribe(() => {
-      this.categories = this.categoryStateService.activeCategories;
+    this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
+      this.categories = activeCategories;
     });
-    this.userDataService.getUser().subscribe(() => {
-      this.user = this.userDataService.userData;
+    this.userStateService.getUser().subscribe((user) => {
+      this.user = user;
     })
   }
 

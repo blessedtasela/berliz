@@ -6,7 +6,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Role, Users } from 'src/app/models/users.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserDataService } from 'src/app/services/user-data.service';
+import { UserStateService } from 'src/app/services/user-state.service';
 import { emailExtensionValidator, fileValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -43,7 +43,7 @@ export class AddPartnerModalComponent implements AfterViewInit {
 
   constructor(private fb: FormBuilder,
     private partnerService: PartnerService,
-    private userDataService: UserDataService,
+    private userStateService: UserStateService,
     private cdr: ChangeDetectorRef,
     public dialogRef: MatDialogRef<AddPartnerModalComponent>,
     private ngxService: NgxUiLoaderService,
@@ -65,9 +65,9 @@ export class AddPartnerModalComponent implements AfterViewInit {
       'role': ['', [Validators.required, Validators.minLength(3)]],
     });
 
-    this.userDataService.getAllUsers().subscribe(() => {
+    this.userStateService.getAllUsers().subscribe((user) => {
       this.ngxService.start();
-      this.users = this.userDataService.usersData;
+      this.users = user;
       this.ngxService.stop();
     });
 

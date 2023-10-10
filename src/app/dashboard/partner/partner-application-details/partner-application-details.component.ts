@@ -2,17 +2,17 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Partners } from 'src/app/models/partners.interface';
-import { PartnerDataService } from 'src/app/services/partner-data.service';
+import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { Users } from 'src/app/models/users.interface';
-import { UserDataService } from 'src/app/services/user-data.service';
 import { DatePipe } from '@angular/common';
 import { UpdatePartnerFileModalComponent } from '../../admin/partners/update-partner-file-modal/update-partner-file-modal.component';
 import { UpdatePartnerModalComponent } from '../../admin/partners/update-partner-modal/update-partner-modal.component';
 import { TrainerFormModalComponent } from 'src/app/shared/trainer-form-modal/trainer-form-modal.component';
 import { CenterFormModalComponent } from 'src/app/shared/center-form-modal/center-form-modal.component';
 import { Trainers } from 'src/app/models/trainers.interface';
-import { TrainerDataService } from 'src/app/services/trainer-data.service';
 import { ViewCvModalComponent } from 'src/app/shared/view-cv-modal/view-cv-modal.component';
+import { TrainerStateService } from 'src/app/services/trainer-state.service';
+import { UserStateService } from 'src/app/services/user-state.service';
 
 @Component({
   selector: 'app-partner-application-details',
@@ -27,11 +27,11 @@ export class PartnerApplicationDetailsComponent {
   responseMessage: any;
 
   constructor(
-    private userDataService: UserDataService,
-    private partnerDataService: PartnerDataService,
+    private userStateService: UserStateService,
+    private partnerDataService: PartnerStateService,
     private dialog: MatDialog,
     private ngxService: NgxUiLoaderService,
-    private trainerDataService: TrainerDataService,
+    private trainerStateService: TrainerStateService,
     private datePipe: DatePipe) { }
 
   ngOnInit(): void {
@@ -40,14 +40,14 @@ export class PartnerApplicationDetailsComponent {
 
   handleEmitEvent() {
     this.ngxService.start();
-    this.userDataService.getUser().subscribe(() => {
-      this.user = this.userDataService.userData;
+    this.userStateService.getUser().subscribe((user) => {
+      this.user = user;
     });
     this.partnerDataService.getPartner().subscribe((partnerData) => {
       this.partnerData = partnerData; 
     });
-    this.trainerDataService.getTrainer().subscribe(() => {
-      this.trainerData = this.trainerDataService.trainerData;
+    this.trainerStateService.getTrainer().subscribe((trainer) => {
+      this.trainerData = trainer;
     });
     this.ngxService.stop();
   }

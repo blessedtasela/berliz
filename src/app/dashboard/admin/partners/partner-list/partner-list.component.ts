@@ -14,7 +14,7 @@ import { DatePipe } from '@angular/common';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { ViewCertificateModalComponent } from 'src/app/shared/view-certificate-modal/view-certificate-modal.component';
 import { ViewCvModalComponent } from 'src/app/shared/view-cv-modal/view-cv-modal.component';
-import { PartnerDataService } from 'src/app/services/partner-data.service';
+import { PartnerStateService } from 'src/app/services/partner-state.service';
 
 @Component({
   selector: 'app-partner-list',
@@ -39,7 +39,7 @@ export class PartnerListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private elementRef: ElementRef,
-    private partnerDataService: PartnerDataService,
+    private partnerDataService: PartnerStateService,
     private datePipe: DatePipe) { }
 
   ngOnInit(): void {
@@ -47,10 +47,10 @@ export class PartnerListComponent {
   }
 
   handleEmitEvent() {
-    this.partnerDataService.getAllPartners().subscribe(() => {
+    this.partnerDataService.getAllPartners().subscribe((partnersData) => {
       this.ngxService.start();
       this.initializeSearch();
-      this.partnersData = this.partnerDataService.partnersData
+      this.partnersData = partnersData
       this.filteredPartnersData = this.partnersData
       this.counter = this.filteredPartnersData.length
       this.totalPartners = this.partnersData.length;

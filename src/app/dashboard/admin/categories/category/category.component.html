@@ -1,9 +1,13 @@
 <div class="relative min-h-screen flex">
-    <app-sidebar-navigation></app-sidebar-navigation>
-    <div class="flex p-10 full-width mt-20">
-        <app-category-details class="width" [handleEmitEvent]="handleEmitEvent"
-        [categoriesData]="categoriesData" [totalCategories]="totalCategories"
-        ></app-category-details>
+    <app-sidebar-navigation (categoriesResults)="handleSearchResults($event)"
+        [searchComponent]="searchComponent"></app-sidebar-navigation>
+    <div class="flex p-10 full-width">
+        <div class="width bg-gray-200 p-4 rounded-lg mt-20">
+            <app-categories-header [categoriesData]="categoriesData" [totalCategories]="totalCategories"
+                [categoriesLength]="categoriesLength"></app-categories-header>
+            <app-categories-list [categoriesData]="categoriesData"
+                [totalCategories]="totalCategories"></app-categories-list>
+        </div>
     </div>
 </div>
 <app-footer></app-footer>

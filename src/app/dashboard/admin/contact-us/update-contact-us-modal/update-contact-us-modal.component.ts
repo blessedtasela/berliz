@@ -39,6 +39,10 @@ export class UpdateContactUsModalComponent {
     });
   }
 
+  closeDialog() {
+    this.dialogRef.close("Dialog closed successfully");
+  }
+
   updateContactUs() {
     this.ngxService.start();
     if (this.contactUsForm.invalid) {

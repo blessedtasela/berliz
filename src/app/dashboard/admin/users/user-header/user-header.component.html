@@ -1,0 +1,28 @@
+<div class="flex justify-between">
+    <div class="flex justify-start font-bold text-gray-700">
+        <div class="flex justify-center items-center">
+            showing {{ totalUsers }} of {{ usersLength }} results
+        </div>
+    </div>
+    <div class="flex justify-end gap-4 mb-5">
+        <div class="flex justify-center items-center">
+            <div
+                class="text-sm bg-red-600 text-gray-200 p-1 px-4 hover:bg-red-700 rounded-md
+                    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold">
+                Sort by:
+                <select [(ngModel)]="selectedSortOption" (change)="onSortOptionChange($event)"
+                    class="mt-2 cursor-pointer border border-gray-400 rounded-md  focus:outline-none text-gray-700">
+                    <option class="text-gray-500" value="date">Date added</option>
+                    <option class="text-gray-500" value="name">Firstname</option>
+                    <option class="text-gray-500" value="id">User id</option>
+                </select>
+            </div>
+        </div>
+        <div class="hover:drop-shadow-2xl bg-red-600 transition-all duration-1000 ease-in-out transform hover:scale-105 
+                    rounded-md p-1 mr-2 cursor-pointer">
+            <i-feather name="plus-square" class="min-w-[30px] text-gray-200 font-bold drop-shadow-xl"
+                (click)="openSignup()">
+            </i-feather>
+        </div>
+    </div>
+</div>

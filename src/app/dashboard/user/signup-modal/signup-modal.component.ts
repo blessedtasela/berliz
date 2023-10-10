@@ -170,7 +170,6 @@ export class SignupModalComponent {
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.ngxService.stop();
-          this.router.navigate(['/login']);
           this.onSignupEmit.emit();
         }
           , (error: any) => {

@@ -4,7 +4,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Role, Users } from 'src/app/models/users.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserDataService } from 'src/app/services/user-data.service';
+import { UserStateService } from 'src/app/services/user-state.service';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -22,7 +22,7 @@ export class TrainerPartnerFormComponent {
   selectedCertificate: any;
 
   constructor(private fb: FormBuilder,
-    private userDataService: UserDataService,
+    private userStateService: UserStateService,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private partnerService: PartnerService,) { }
@@ -42,8 +42,8 @@ export class TrainerPartnerFormComponent {
   }
 
   handleEmitEvent() {
-    this.userDataService.getUser().subscribe(() => {
-      this.user = this.userDataService.userData;
+    this.userStateService.getUser().subscribe((user) => {
+      this.user = user;
     });
   }
 
