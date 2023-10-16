@@ -29,14 +29,45 @@
             <div class="border-l-2 h-4 border-gray-200"></div>
             0<span class="text-sm text-gray-400">Subscriptions</span>
         </div>
-        <div class="text-gray-600 font-sans italic m-1 p-4 justify-text">
-            {{ user.city }}
+        <div
+            class="grid grid-cols md:grid-cols-2 gap-2 m-4 p-4 border-2 rounded-lg border-gray-200 shadow-sm font-bold text-md">
+            <div class="text-gray-600 font-sans italic">
+                <span class="font-bold">Phone:</span> {{ user.phone }}
+            </div>
+            <div class="text-gray-600 font-sans italic">
+                <span class="font-bold">Email:</span> {{ user.email }}
+            </div>
+            <div class="text-gray-600 font-sans italic">
+                <span class="font-bold">Date of Birth:</span> {{ user.dob }}
+            </div>
+            <div class="text-gray-600 font-sans italic">
+                <span class="font-bold">Gender:</span> {{ user.gender }}
+            </div>
+            <div class="text-gray-600 font-sans italic">
+                <span class="font-bold">Country:</span> {{ user.country }}
+            </div>
+            <div class="text-gray-600 font-sans italic">
+                <span class="font-bold">State:</span> {{ user.state }}
+            </div>
+            <div class="text-gray-600 font-sans italic">
+                <span class="font-bold">City:</span> {{ user.city }}
+            </div>
+            <div class="text-gray-600 font-sans italic">
+                <span class="font-bold">Postal Code:</span> {{ user.postalCode }}
+            </div>
+            <div class="text-gray-600 font-sans italic">
+                <span class="font-bold">Address:</span> {{ user.address }}
+            </div>
+            <div class="text-gray-600 font-sans italic">
+                <span class="font-bold">Date joined:</span> {{ formatDate(user.date) }}
+            </div>
         </div>
+
 
         <button class="text-sm bg-red-600 text-white mt-6 py-1 mb-5 px-2 hover:bg-red-700 rounded-md font-sans mx-auto
         transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"><a
                 [routerLink]="['/profile/settings']">
-                Go to set4tings
+                Go to settings
             </a>
         </button>
     </div>

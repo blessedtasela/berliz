@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { genericError } from 'src/validators/form-validators.module';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
@@ -22,7 +23,8 @@ export class ProfileComponent {
   constructor(private userService: UserService,
     private userStateService: UserStateService,
     private ngxService: NgxUiLoaderService,
-    private snackbarService: SnackBarService) { }
+    private snackbarService: SnackBarService,
+    private datePipe: DatePipe) { }
 
   ngOnInit(): void {
 
@@ -74,4 +76,8 @@ export class ProfileComponent {
     this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
+  formatDate(dateString: any): any {
+    const date = new Date(dateString);
+    return this.datePipe.transform(date, 'dd/MM/yyyy');
+  }
 }
