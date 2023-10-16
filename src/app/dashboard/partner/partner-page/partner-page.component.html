@@ -1,0 +1,17 @@
+<div class="relative min-h-screen flex">
+    <app-sidebar-navigation></app-sidebar-navigation>
+    <div class="flex p-2 md:p-6 full-width">
+        <div class="width p-4 rounded-lg mt-20">
+            <app-partner-application
+            *ngIf="partner"
+                [trainer]="trainer" [center]="center" [partnerData]="partner" [user]="user"
+                (emitEvent)="emitData()">
+            </app-partner-application>
+            <app-center *ngIf="center " [centerData]="center" [user]="user" [partnerData]="partner"
+            (emitEvent)="emitData()"></app-center>
+            <app-trainer *ngIf="trainer " [trainerData]="trainer" [user]="user" [partnerData]="partner"
+            (emitEvent)="emitData()"></app-trainer>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

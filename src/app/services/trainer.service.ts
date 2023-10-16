@@ -10,17 +10,9 @@ import { environment } from 'src/environments/environment';
 export class TrainerService {
   url = environment.apiUrl;
   trainerEventEmitter = new EventEmitter();
-  
-   private trainerEmitSource = new Subject<void>();
-   trainerEmit$ = this.trainerEmitSource.asObservable();
 
-  constructor(private httpClient: HttpClient,
-    private router: Router) { }
 
-    // Method to trigger an emit event
-   triggerTrainerEmit() {
-    this.trainerEmitSource.next();
-  }
+  constructor(private httpClient: HttpClient) { }
 
   addTrainer(data: any) {
     return this.httpClient.post(this.url + "/trainer/add", data);
@@ -69,9 +61,4 @@ export class TrainerService {
     });
   }
 
-  dislikeTrainer(id: number) {
-    return this.httpClient.put(this.url + `/trainer/dislike/${id}`, null, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
-  }
 }

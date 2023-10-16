@@ -43,7 +43,7 @@ export class TrainerHeaderComponent {
       this.router.navigate(['/login'])
     } else {
       const dialogRef = this.dialog.open(PartnerFormModalComponent, {
-        width: '800px',
+        width: '900px',
         panelClass: 'mat-dialog-height',
       });
       const childComponentInstance = dialogRef.componentInstance as PartnerFormModalComponent;

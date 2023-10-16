@@ -12,6 +12,7 @@ import { AddPartnerModalComponent } from './add-partner-modal/add-partner-modal.
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { FeatherModule } from 'angular-feather';
+import { PartnerHeaderComponent } from './partner-header/partner-header.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { FeatherModule } from 'angular-feather';
     PartnerListComponent,
     UpdatePartnerModalComponent,
     UpdatePartnerFileModalComponent,
-    AddPartnerModalComponent
+    AddPartnerModalComponent,
+    PartnerHeaderComponent
   ],
   imports: [
     CommonModule,

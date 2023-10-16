@@ -24,6 +24,10 @@ export class UserService {
     });
   }
 
+  refreshToken(token: any) {
+    return this.httpClient.post(this.url + "/user/refreshToken", token);
+  }
+
   updateUser(data: any) {
     return this.httpClient.put(this.url + "/user/update", data, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
@@ -39,11 +43,11 @@ export class UserService {
   updateProfilePhoto(data: any) {
     return this.httpClient.put(this.url + "/user/updateProfilePhoto", data);
   }
-  
+
   updateProfilePhotoAdmin(data: any) {
     return this.httpClient.put(this.url + "/user/updateProfilePhotoAdmin", data);
   }
-  
+
 
   forgotPassword(data: any) {
     return this.httpClient.post(this.url + "/user/forgotPassword", data, {
@@ -85,13 +89,13 @@ export class UserService {
     return this.httpClient.put(this.url + `/user/updateStatus/${id}`, null, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     });
-}
+  }
 
-updateUserRole(data: any) {
-  return this.httpClient.put(this.url + `/user/updateRole`, data, {
-    headers: new HttpHeaders().set('Content-Type', 'application/json')
-  });
-}
+  updateUserRole(data: any) {
+    return this.httpClient.put(this.url + `/user/updateRole`, data, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
 
   checkToken() {
     return this.httpClient.get(this.url + '/user/checkToken');
@@ -99,15 +103,15 @@ updateUserRole(data: any) {
 
   getUser() {
     return this.httpClient.get(this.url + "/user/getUser")
-}
+  }
 
-getAllUsers() {
-  return this.httpClient.get(this.url + "/user/get")
-}
+  getAllUsers() {
+    return this.httpClient.get(this.url + "/user/get")
+  }
 
-deleteUser(id: number) {
-  return this.httpClient.delete(this.url + `/user/delete/${id}`);
-}
+  deleteUser(id: number) {
+    return this.httpClient.delete(this.url + `/user/delete/${id}`);
+  }
 
   setLoginFormIndex(index: number) {
     this.signUpFormIndex = index;
@@ -116,13 +120,9 @@ deleteUser(id: number) {
   }
 
   logout(): any {
-    const confirmation = confirm('Are you sure?');
-    if (confirmation){
-    localStorage.removeItem('token');
-    this.router.navigate(['/home']);
-    } else {
-      return false;
-    }
+      localStorage.removeItem('token');
+      localStorage.removeItem('refresh_token');
+      this.router.navigate(['/login']);
   }
 
 }

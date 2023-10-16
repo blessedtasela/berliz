@@ -1,22 +1,20 @@
 <span class="sr-only">Search</span>
 <div class="grid grid-cols-1">
-  <div class="flex justify-center items-center mt-10">
-    <input class="placeholder:italic placeholder:text-gray-400 border border-gray-400 
-    rounded-md py-2 px-4 hover:border-gray-500 hover:drop-shadow-2xl 
-    focus:border-gray-600 focus:outline-none cursor-pointer max-w-40 h-8" 
-      placeholder="Search" [(ngModel)]="searchQuery">
-    <span class="cursor-pointer">
-      <i-feather name="Search" class="ml-2 text-gray-500" style="width: 28px;"></i-feather>
-    </span>
-  </div>
-  <div class="flex justify-center items-center cursor-pointer mt-2 -ml-8">
-    <h1 class="mr-2 text-gray-500">Select criteria</h1>
-    <select
-    class="cursor-pointer border border-gray-400 rounded-md hover:border-gray-500 
-    hover:drop-shadow-2xl focus:border-gray-600 focus:outline-none text-gray-700">
-      <option class="text-gray-500" value="Name">Name</option>
-      <option class="text-gray-500" value="Category">Category</option>
-      <option class="text-gray-500" value="Location">Location</option>
-    </select>
-  </div>
+    <div class="flex justify-center items-center mt-10">
+        <input
+            class="placeholder:italic placeholder:text-gray-400 border border-gray-400 rounded-md py-1 px-4 hover:border-gray-500 hover:drop-shadow-2xl focus:border-gray-600 focus:outline-none cursor-pointer max-w-64"
+            placeholder="Search" [(ngModel)]="searchQuery">
+        <span class="cursor-pointer">
+            <i-feather name="Search" class="ml-2 text-gray-500" style="width: 28px;"></i-feather>
+        </span>
+    </div>
+    <div class="flex justify-center items-center cursor-pointer mt-2 -ml-8">
+        <h1 class="mr-2 text-gray-500">Select criteria</h1>
+        <select
+            class="cursor-pointer border border-gray-400 rounded-md hover:border-gray-500 hover:drop-shadow-2xl focus:border-gray-600 focus:outline-none text-gray-700">
+            <option class="text-gray-500" value="name">Name</option>
+            <option class="text-gray-500" value="category">Category</option>
+            <option class="text-gray-500" value="address">Address</option>
+        </select>
+    </div>
 </div>

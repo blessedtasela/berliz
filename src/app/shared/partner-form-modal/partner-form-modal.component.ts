@@ -17,6 +17,7 @@ import { fileValidator, genericError } from 'src/validators/form-validators.modu
 export class PartnerFormModalComponent {
   onAddPartnerEmit = new EventEmitter();
   addPartnerForm!: FormGroup;
+  formIndex: number = 0;
   invalidForm: boolean = false;
   user!: Users;
   responseMessage: any;
@@ -50,12 +51,22 @@ export class PartnerFormModalComponent {
       'role': ['', [Validators.required, Validators.minLength(3)]],
     });
 
-    this.handleEmitEvent();
+    this.userStateService.allUsersData$.subscribe((cachedData)=>{
+      if(!cachedData){
+        this.user = cachedData
+      } else{
+        this.handleEmitEvent();
+      }
+    })
+  
   }
 
   handleEmitEvent() {
     this.userStateService.getUser().subscribe((user) => {
+      this.ngxService.start()
       this.user = user;
+      this.userStateService.setUserSubject(this.user);
+      this.ngxService.stop()
     });
   }
 
@@ -74,6 +85,19 @@ export class PartnerFormModalComponent {
       this.selectedCertificate = event.target.files[0];
     }
   }
+
+  toggleIndex(index: number) {
+    console.log('index: ', index)
+    if (
+      this.addPartnerForm.get('certificate')?.invalid ||
+      this.addPartnerForm.get('motivation')?.invalid ||
+      this.addPartnerForm.get('cv')?.invalid) {
+      this.invalidForm = true;
+    } else {
+      this.formIndex = + index
+    }
+  }
+
 
   addPartner(): void {
     const requestData = new FormData();

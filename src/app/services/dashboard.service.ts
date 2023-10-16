@@ -12,7 +12,7 @@ export class DashboardService {
   constructor(private httpClient: HttpClient,
     private router: Router) { }
 
-  getDetails() {
+  getDashboardDetails() {
     return this.httpClient.get(this.url + "/dashboard/details")
 }
 
@@ -20,4 +20,7 @@ getBerlizDetails() {
   return this.httpClient.get(this.url + "/dashboard/berliz")
 }
 
+getPartnerDetails() {
+  return this.httpClient.get(this.url + "/dashboard/getPartnerDetails")
+}
 }

@@ -11,8 +11,6 @@ import { UserStateService } from 'src/app/services/user-state.service';
   styleUrls: ['./user-header.component.css']
 })
 export class UserHeaderComponent {
-  responseMessage: any;
-  showFullData: boolean = false;
   selectedSortOption: string = 'date';
   @Input() usersData: Users[] = [];
   @Input() totalUsers: number = 0;
@@ -50,6 +48,11 @@ export class UserHeaderComponent {
           return a.firstname.localeCompare(b.firstname);
         });
         break;
+        case 'email':
+          this.usersData.sort((a, b) => {
+            return a.email.localeCompare(b.email);
+          });
+          break;
       case 'id':
         this.usersData.sort((a, b) => {
           return a.id - b.id;

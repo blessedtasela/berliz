@@ -12,7 +12,6 @@ import { StoreFormModalComponent } from './store-form-modal/store-form-modal.com
 import { ViewCvModalComponent } from './view-cv-modal/view-cv-modal.component';
 import { ViewCertificateModalComponent } from './view-certificate-modal/view-certificate-modal.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
-import { UpdateTrainerModalComponent } from './update-trainer-modal/update-trainer-modal.component';
 import { UpdateTrainerPhotoModalComponent } from './update-trainer-photo-modal/update-trainer-photo-modal.component';
 
 
@@ -27,7 +26,6 @@ import { UpdateTrainerPhotoModalComponent } from './update-trainer-photo-modal/u
     StoreFormModalComponent,
     ViewCvModalComponent,
     ViewCertificateModalComponent,
-    UpdateTrainerModalComponent,
     UpdateTrainerPhotoModalComponent
   ],
   imports: [

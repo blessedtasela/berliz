@@ -10,6 +10,9 @@ import { UserStateService } from 'src/app/services/user-state.service';
 import { ContactUs } from 'src/app/models/contact-us.model';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
+import { Partners } from 'src/app/models/partners.interface';
+import { UserService } from 'src/app/services/user.service';
+import { Centers } from 'src/app/models/centers.interface';
 
 @Component({
   selector: 'app-sidebar-navigation',
@@ -25,11 +28,13 @@ export class SidebarNavigationComponent {
   @Output() contactUsResults: EventEmitter<ContactUs[]> = new EventEmitter<ContactUs[]>()
   @Output() trainersResults: EventEmitter<Trainers[]> = new EventEmitter<Trainers[]>()
   @Output() usersResults: EventEmitter<Users[]> = new EventEmitter<Users[]>()
+  @Output() partnersResults: EventEmitter<Partners[]> = new EventEmitter<Partners[]>()
+  @Output() centersResult: EventEmitter<Centers[]> = new EventEmitter<Centers[]>()
   @Input() searchComponent: string = ''
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
+    private userService: UserService,
     private dialog: MatDialog,
     private userStateService: UserStateService,
     private ngxService: NgxUiLoaderService,
@@ -60,6 +65,14 @@ export class SidebarNavigationComponent {
 
   handleUserSearchResults(results: Users[]): void {
     this.usersResults.emit(results)
+  }
+
+  handlePartnerSearchResults(results: Partners[]): void {
+    this.partnersResults.emit(results)
+  }
+
+  handleCenterSearchResults(results: Centers[]): void {
+    this.centersResult.emit(results)
   }
 
   openUpdateProfilePhoto() {
@@ -102,8 +115,7 @@ export class SidebarNavigationComponent {
     const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((response: any) => {
       dialogRef.close();
-      localStorage.removeItem('token');
-      this.router.navigate(['/login']);
+      this.userService.logout();
       this.responseMessage = "you have successfully logged out"
       this.snackbarService.openSnackBar(this.responseMessage, '');
     });

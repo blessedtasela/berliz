@@ -91,7 +91,7 @@ export class TrainerFormModalComponent {
     const categoryToStrings = selectedCategoryIds.join(',');
 
     const requestData = new FormData();
-    requestData.append('id', this.addTrainerForm.get('id')?.value);
+    requestData.append('partnerId', this.addTrainerForm.get('id')?.value);
     requestData.append('name', this.addTrainerForm.get('name')?.value);
     requestData.append('motto', this.addTrainerForm.get('motto')?.value);
     requestData.append('address', this.addTrainerForm.get('address')?.value);

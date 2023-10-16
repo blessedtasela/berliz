@@ -1,13 +1,7 @@
 <app-navigation-bar></app-navigation-bar>
 <app-center-hero></app-center-hero>
-<app-center-search
-(loading)="isLoading = $event"
-(results)="onResults($event)"
-></app-center-search>
-<app-center-search-result
-[centersResult]="searchResults"
-[countResult]="countResults"
-*ngIf="showResult"
-></app-center-search-result>
-<app-center-list></app-center-list>
+<app-center-header></app-center-header>
+<app-center-search (allCenters)="handleSearchResults($event)"></app-center-search>
+<app-center-search-result [centersResult]="centers" [totalCenters]="countResult"></app-center-search-result>
+<app-center-partner-form></app-center-partner-form>
 <app-footer></app-footer>

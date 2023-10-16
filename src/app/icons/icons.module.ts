@@ -56,7 +56,7 @@ import {
   FileText,
   Eye,
   EyeOff,
-  Send
+  Send,
 } from 'angular-feather/icons';
 
 // Select some icons (use an object, not an array)

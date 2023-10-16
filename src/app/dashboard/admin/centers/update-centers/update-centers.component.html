@@ -1,0 +1,127 @@
+<div class="relative">
+    <div class="text-red-600 absolute top-0 right-0 p-1">
+        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+    </div>
+    <div class="rounded-md mx-auto">
+        <form [formGroup]="updateCenterForm">
+            <div class="border-b-2 " [ngClass]="{'border-red-400': updateCenterForm.invalid && invalidForm }">
+                <header class="text-center m-2">
+                    <h1 class="font-bold font-sans text-xl">Update center Details</h1>
+                    <p class="font-sans text-sm">center ID: {{ center.id }}
+                    </p>
+                </header>
+                <hr [ngClass]="{'border-red-500': updateCenterForm.invalid && invalidForm }">
+                <div class="invalid-form">
+                    <span *ngIf="updateCenterForm.invalid && invalidForm" class="mx-2 text-red-600">
+                        Please complete all sections
+                    </span>
+                    <span *ngIf="!updateCenterForm.invalid && invalidForm" class="mx-2 text-gray-400">
+                        Everything looks good
+                    </span>
+                </div>
+                <div class="gap-1  p-2">
+                    <div class="mx-auto p-2">
+                        <span class="sr-only">Center Name</span>
+                        <span class="ml-4 font-bold text-gray-600 italic">Center Name</span>
+                        <input formControlName="name" [value]="center.name"
+                            class="w-full border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': updateCenterForm.get('name')?.invalid && updateCenterForm.get('name')?.dirty }"
+                            placeholder="Display name Team Berliz" type="text">
+                        <div *ngIf="updateCenterForm.get('name')?.invalid && updateCenterForm.get('name')?.dirty"
+                            class="text-red-500 mx-2">
+                            Center name is required
+                        </div>
+                    </div>
+                    <div class="mx-auto p-2">
+                        <span class="sr-only">Expereince</span>
+                        <span class="ml-4 font-bold text-gray-600 italic">Expereince</span>
+                        <input formControlName="experience" [value]="center.experience"
+                            class="w-full border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': updateCenterForm.get('experience')?.invalid && updateCenterForm.get('experience')?.dirty }"
+                            placeholder="experience" type="number">
+                        <div *ngIf="updateCenterForm.get('experience')?.invalid && updateCenterForm.get('experience')?.dirty"
+                            class="text-red-500 mx-2">
+                            Expereince is required
+                        </div>
+                    </div>
+                    <div class="mx-auto p-2" *ngIf="user?.role === 'admin'">
+                        <span class="sr-only">Likes</span>
+                        <span class="ml-4 font-bold text-gray-600 italic">Likes</span>
+                        <input formControlName="likes" [value]="center.likes"
+                            class="w-full border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': updateCenterForm.get('likes')?.invalid && updateCenterForm.get('likes')?.dirty }"
+                            placeholder="likes" type="number">
+                        <div *ngIf="updateCenterForm.get('likes')?.invalid && updateCenterForm.get('likes')?.dirty"
+                            class="text-red-500 mx-2">
+                            Expereince is required
+                        </div>
+                    </div>
+                    <div class="mx-auto">
+                        <span class="sr-only">Motto</span>
+                        <span class="ml-4 font-bold text-gray-600 italic">Motto</span>
+                        <textarea formControlName="motto" [value]="center.motto"
+                            class="w-full border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': updateCenterForm.get('mtoo')?.invalid && updateCenterForm.get('motto')?.dirty }"
+                            placeholder="Write a short bio about discipline or motto" rows="5" cols="25"></textarea>
+                        <div *ngIf="updateCenterForm.get('motto')?.invalid && updateCenterForm.get('motto')?.dirty"
+                            class="text-red-500 mx-2">
+                            At least 30 characters
+                        </div>
+                    </div>
+                    <div class="mx-auto">
+                        <span class="sr-only">Location</span>
+                        <span class="ml-4 font-bold text-gray-600 italic">location</span>
+                        <textarea formControlName="location" [value]="center.location"
+                            class="w-full border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': updateCenterForm.get('mtoo')?.invalid && updateCenterForm.get('location')?.dirty }"
+                            placeholder="Google maps url" rows="5" cols="25"></textarea>
+                        <div *ngIf="updateCenterForm.get('location')?.invalid && updateCenterForm.get('location')?.dirty"
+                            class="text-red-500 mx-2">
+                            Location cannot be null
+                        </div>
+                    </div>
+                    <div class="mx-auto">
+                        <span class="sr-only">Address</span>
+                        <span class="ml-4 font-bold text-gray-600 italic">Address</span>
+                        <textarea formControlName="address" [value]="center.address"
+                            class="w-full border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': updateCenterForm.get('address')?.invalid && updateCenterForm.get('address')?.dirty }"
+                            placeholder="Write your street address or location here" rows="5" cols="25"></textarea>
+                        <div *ngIf="updateCenterForm.get('address')?.invalid && updateCenterForm.get('address')?.dirty"
+                            class="text-red-500 mx-2">
+                            At least 10 characters
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4">
+                        <div *ngFor="let cat of categories; let i = index" class="mx-auto flex items-center">
+                            <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
+                                [checked]="selectedCategoriesId.includes(cat.id)"
+                                class="w-full border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                                placeholder="tags" type="checkbox" [value]="cat.id">
+                            {{ cat.name }}
+                            <div *ngIf="updateCenterForm.get('categoryIds')?.invalid && invalidForm"
+                                class="text-red-500 mx-2">
+                                Select at least one category
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2">
+                        <div><button
+                                class="bg-gray-950 rounded-md mx-auto m-2 col-span-2 py-1 px-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                                (click)="clear()">
+                                Clear
+                            </button>
+                        </div>
+                        <div>
+                            <button
+                                class="bg-red-600 rounded-md mx-auto m-2 col-span-2 py-1 px-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                                type="submit" (click)="updateCenter()">
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

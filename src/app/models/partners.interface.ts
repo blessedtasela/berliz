@@ -2,7 +2,8 @@ export interface Partners {
     id: number;
     user: {
         id: number;
-        email: string
+        email: string;
+        photo: any;
     };
     role: string;
     certificate: any;

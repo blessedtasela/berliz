@@ -18,15 +18,15 @@
                 <tr *ngFor="let user of usersData; let i = index" class="bg-gray-100 hover:bg-gray-200">
                     <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">
-                        <div class="flex items-center">
-                            <img [src]="'data:image/jpeg;base64,' + user.profilePhoto" class="object-cover rounded-full"
-                                width="40px" onerror="this.src='../../../assets/icons/user.png';">
-                            <div class="bottom-0 right-0" (click)="openUpdateProfilePhoto(user.id)">
-                                <i-feather name="Edit" class="font-bold text-red-600 mr-4  cursor-pointer"
-                                    style="width: 15px;">
-                                </i-feather>
-                            </div>
-                        </div>
+                        <img [src]="'data:image;base64,' + user.profilePhoto " class="rounded-full"
+                            onerror="this.src='../../../assets/icons/user.png';" style="width: 40px;">
+                        <label for="fileInput-{{user.id}}" class="">
+                            <i-feather name="Edit" class="font-bold text-red-600 mr-4 cursor-pointer"
+                                style="width: 10px;">
+                            </i-feather>
+                        </label>
+                        <input accept="image/*" type="file" id="fileInput-{{user.id}}" style="display: none;"
+                            (change)="onImgSelected($event, user.id)">
                     </td>
                     <td class="border-b border-gray-400 px-4 py-2">{{ user.firstname }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">{{ user.lastname }}</td>

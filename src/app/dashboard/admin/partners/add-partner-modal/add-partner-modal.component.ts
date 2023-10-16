@@ -65,12 +65,18 @@ export class AddPartnerModalComponent implements AfterViewInit {
       'role': ['', [Validators.required, Validators.minLength(3)]],
     });
 
-    this.userStateService.getAllUsers().subscribe((user) => {
-      this.ngxService.start();
-      this.users = user;
-      this.ngxService.stop();
-    });
-
+    this.userStateService.allUsersData$.subscribe((cachedData) => {
+      if (!cachedData) {
+        this.userStateService.getAllUsers().subscribe((user) => {
+          this.ngxService.start();
+          this.users = user;
+          this.userStateService.setAllUsersSubject(this.users);
+          this.ngxService.stop();
+        });
+      } else {
+        this.users = cachedData
+      }
+    })
   }
 
   closeDialog() {

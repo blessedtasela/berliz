@@ -2,56 +2,47 @@
     <div class="text-red-600 absolute top-0 right-0 p-1">
         <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
     </div>
-    <section class="grid md:grid-cols-2 grid-cols w-full rounded-md bg-gray-200">
-        <div class="p-2">
-            <div class="shrink-0">
-                <img [src]="profilePhoto" class="object-cover rounded-full"
-                    onerror="this.src='../../../assets/icons/user.png';">
-            </div>
-        </div>
-        <div class="bg-gray-950 md:rounded-r-md rounded-b-md p-8">
-            <p class="text-red-600 font-sans font-bold text-md italic mb-4">{{ userData.email }}</p>
-            <p class="text-gray-200 font-sans font-bold text-xl uppercase">{{ userData.phone }}</p>
-            <div class="flex items-center">
-                <div class="flex flex-col m-8 gap-5">
-                    <p class="text-gray-200 font-sans font-bold text-md flex">
-                        User ID: {{ userData.id }}
+    <section class="p-2 flex flex-col justify-center items-center">
+        <div class="text-center">
+            <p class="text-red-600 font-sans font-bold text-xl uppercase mt-4">{{ userData.firstname }} {{
+                userData.lastname }} [ID {{
+                userData.id }}]</p>
+            <p class="text-gray-500 font-sans font-bold text-sm italic">
+                joined on {{ formatDate(userData.date) }}
+            </p>
+            <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
+                <div class="flex items-center justify-center">
+                    <img [src]="'data:image;base64,' + userData.profilePhoto" class="bg-gray-200 rounded-lg p-2"
+                        onerror="this.src='../../../assets/icons/user.png';">
+                </div>
+                <div class="flex flex-col m-4 gap-2">
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        {{ userData.email }}
                     </p>
-                    <p class="text-gray-200 font-sans font-bold text-md flex">
-                        Name: {{ userData.firstname }} {{ userData.lastname }}
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Birthday: {{ userData.dob }}
+                        <span class="ml-2 text-red-600 italic">Gender: {{ userData.gender }}</span>
                     </p>
-                    <p class="text-gray-200 font-sans font-bold text-md flex">
-                        Gender: {{ userData.gender }}
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        From {{ userData.country }}
                     </p>
-                    <p class="text-gray-200 font-sans font-bold text-md flex">
-                        Date of Birth: {{ userData.dob }}
+                    <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
+                        Lives in {{ userData.state }}
                     </p>
-                    <p class="text-gray-200 font-sans font-bold text-md flex">
-                        Date Joined: {{ formatDate(userData.date) }}
+                    <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
+                        City - {{ userData.city }}
                     </p>
-                    <p class="text-gray-200 font-sans font-bold text-md flex">
-                        Country: {{ userData.country }}
-                    </p>
-                    <p class="text-gray-200 font-sans font-bold text-md flex">
-                        State: {{ userData.state }}
-                    </p>
-                    <p class="text-gray-200 font-sans font-bold text-md flex">
-                        City: {{ userData.city }}
-                    </p>
-                    <p class="text-gray-200 font-sans font-bold text-md flex">
-                        Postal code: {{ userData.postalCode }}
-                    </p>
-                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                    <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
                         Address: {{ userData.address }}
                     </p>
-                    <p class="text-gray-200 font-sans font-bold text-md flex">
-                        Account status: {{ userData.status === 'true' ? 'active' :'false' }}
+                    <p class="text-gray-700 font-sans font-bold text-md flex mt-2">
+                        User status: {{ userData.status ==='true' ? 'active' :'false' }}
                     </p>
-                    <p class="text-gray-200 font-sans font-bold text-md flex">
+                    <p class="text-red-600 font-sans font-bold text-md flex mt-2">
+                        Last Update: {{ formatDate(userData.lastUpdate) }}
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
                         Account role: {{ userData.role }}
-                    </p>
-                    <p class="text-gray-200 font-sans font-bold text-md flex">
-                        Last updated: {{ formatDate(userData.lastUpdate) }}
                     </p>
                 </div>
             </div>

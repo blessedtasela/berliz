@@ -34,7 +34,9 @@ import { LoginComponent } from './dashboard/user/login/login.component';
 import { ProgressPageComponent } from './dashboard/user/progress/progress-page/progress-page.component';
 import { ResetPasswordComponent } from './dashboard/user/reset-password/reset-password.component';
 import { RunNowPageComponent } from './dashboard/user/run-now/run-now-page/run-now-page.component';
-import { TrainerComponent } from './dashboard/admin/trainer/trainer/trainer.component';
+import { CenterComponent } from './dashboard/admin/centers/center/center.component';
+import { PartnerPageComponent } from './dashboard/partner/partner-page/partner-page.component';
+import { TrainerComponent } from './dashboard/admin/trainers/trainer/trainer.component';
 
 
 const routes: Routes = [
@@ -94,6 +96,12 @@ const routes: Routes = [
     }
   },
   {
+    path: 'dashboard/centers', component: CenterComponent, canActivate: [RouteGuardService],
+    data: {
+      expectedRole: ['admin']
+    }
+  },
+  {
     path: 'dashboard/tags', component: TagComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
@@ -127,7 +135,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'dashboard/partnership', component: PartnerApplicationComponent,
+    path: 'dashboard/partnership', component: PartnerPageComponent,
     canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin', 'user', 'partner', 'trainer',

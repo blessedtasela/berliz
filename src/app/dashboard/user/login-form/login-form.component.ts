@@ -36,7 +36,7 @@ export class LoginFormComponent implements OnInit {
 
   openSignup() {
     const dialogRef = this.dialog.open(SignupModalComponent, {
-      width: '800px'
+      width: '900px'
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
@@ -61,7 +61,7 @@ export class LoginFormComponent implements OnInit {
       'password': ['', Validators.compose([Validators.required, Validators.minLength(8)])],
     });
 
-    this.userService.checkToken().subscribe((response: any) => {
+    this.userService.checkToken().subscribe(() => {
       this.router.navigate(['/dashboard']);
     }, (error: any) => {
       console.log(error)
@@ -78,7 +78,8 @@ export class LoginFormComponent implements OnInit {
       this.userService.login(this.loginForm.value)
         .subscribe((response: any) => {
           this.invalidForm = false;
-          localStorage.setItem('token', response.token);
+          localStorage.setItem('token', response.access_token);
+          localStorage.setItem('refresh_token', response.refresh_token);
           this.ngxService.stop();
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");

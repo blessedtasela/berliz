@@ -60,8 +60,10 @@ export class PartnerStateService {
           partner.cv = "data:application/pdf;base64," + partner.cv;
           partner.certificate = "data:application/pdf;base64," + partner.certificate;
         }
-        return response.sort((a: any, b: any) => {
-          return a.name.localeCompare(b.name);
+        return response.sort((a: Partners, b: Partners) => {
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          return dateB - dateA;
         })
       }),
       catchError((error) => {

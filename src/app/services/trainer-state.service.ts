@@ -15,7 +15,7 @@ export class TrainerStateService {
   private allTrainersSubject = new BehaviorSubject<any>(null);
   public allTrainersData$: Observable<Trainers[]> = this.allTrainersSubject.asObservable();
   private trainerSubject = new BehaviorSubject<any>(null);
-  public TrainerData$: Observable<Trainers> = this.trainerSubject.asObservable();
+  public trainerData$: Observable<Trainers> = this.trainerSubject.asObservable();
   private likeTrainersSubject = new BehaviorSubject<any>(null);
   public likeTrainersData$: Observable<TrainerLike[]> = this.likeTrainersSubject.asObservable();
   responseMessage: any;
@@ -47,13 +47,13 @@ export class TrainerStateService {
       tap((response: any) => {
         return response;
       }), catchError((error: any) => {
-        this.snackbarService.openSnackBar(error, 'error');
+        console.log(error, 'error');
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {
           this.responseMessage = genericError;
         }
-        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        console.log(this.responseMessage, 'error');
         return of();
       })
     );

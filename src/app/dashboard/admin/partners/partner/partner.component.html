@@ -1,7 +1,12 @@
 <div class="relative min-h-screen flex">
-    <app-sidebar-navigation></app-sidebar-navigation>
+    <app-sidebar-navigation (partnersResults)="handleSearchResults($event)"
+        [searchComponent]="searchComponent"></app-sidebar-navigation>
     <div class="flex p-10 full-width">
-        <app-partner-list class="width"></app-partner-list>
+        <div class="width bg-gray-200 p-4 rounded-lg mt-20">
+            <app-partner-header [partnersData]="partnersData" [totalPartners]="totalPartners"
+                [partnersLength]="partnersLength"></app-partner-header>
+            <app-partner-list [partnersData]="partnersData"></app-partner-list>
+        </div>
     </div>
 </div>
 <app-footer></app-footer>

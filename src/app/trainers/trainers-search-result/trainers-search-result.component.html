@@ -1,14 +1,14 @@
-<div *ngIf="totalTrainers > 0" class="flex flex-col items-center justify-center">
+<div *ngIf="trainersResult.length > 0" class="flex flex-col items-center justify-center">
     <div class="m-4 text-center text-gray-700 font-bold text-md">
-        {{ totalTrainers }} Results Found 
+        {{ trainersResult.length }} Results Found
     </div>
 </div>
 <div *ngIf="trainersResult.length === 0" class="flex flex-col items-center justify-center">
     <div class="m-4 text-center text-gray-700 font-bold text-md">
-      No Results Found. Please Try Again
+        No Results Found. Please Try Again
     </div>
 </div>
- 
+
 <section class="mx-auto mb-2 px-2 space-y-1 mt-10">
     <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-20">
         <section class="flex justify-between items-center cursor-pointer
@@ -24,7 +24,8 @@
                         </p>
                         <p class="mt-1 text-sm text-center font-sans italic font-bold text-gray-600 p-1">
                             <ng-container *ngFor="let category of trainer.categorySet; let ix = index">
-                                {{ category.name }} {{ ix < (trainer.categorySet.length - 1) ? "/" : "" }} </ng-container>
+                                {{ category.name }} {{ ix < (trainer.categorySet.length - 1) ? "/" : "" }}
+                                    </ng-container>
                         </p>
                         <p class="text-red-600 font-bold font-sans text-sm text-left p-2">
                             + {{ trainer.experience }} years
@@ -36,19 +37,25 @@
                             {{ trainer.address }}
                         </p>
                     </div>
-                    <div class="flex items-center mt-2" *ngIf="isLikedTrainer(trainer)">
-                        <i-feather name="thumbs-up" style="width: 20px;"
-                            (click)="likeTrainer(trainer)"
+                    <div class="flex items-center mt-2" *ngIf="isLikedTrainer(trainer) && trainer.likes > 1">
+                        <i-feather name="thumbs-up" style="width: 20px;" (click)="likeTrainer(trainer)"
                             class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
                         <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                            you and {{ trainer.likes - 1 }} people like this trainer.
+                            you and {{ trainer.likes - 1 }} people like this center.
+                        </p>
+                    </div>
+                    <div class="flex items-center mt-2" *ngIf="isLikedTrainer(trainer)  && trainer.likes === 1">
+                        <i-feather name="thumbs-up" style="width: 20px;" (click)="likeTrainer(trainer)"
+                            class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
+                        <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
+                            you like this center.
                         </p>
                     </div>
                     <div class="flex items-center mt-2" *ngIf="!isLikedTrainer(trainer)">
                         <i-feather name="thumbs-up" style="width: 20px;" (click)="likeTrainer(trainer)"
                             class="font-bold text-gray-600 mr-4 mt-1 cursor-pointer"></i-feather>
                         <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                            {{ trainer.likes }} people like this trainer.
+                            {{ trainer.likes }} people like this center.
                         </p>
                     </div>
                     <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans

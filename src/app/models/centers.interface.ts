@@ -1,13 +1,45 @@
+import { Users } from "./users.interface";
+
 export interface Centers {
-  centerId: number;
+  id: number;
   name: string;
-  description: string;
+  motto: string;
+  address: string;
+  experience: string;
   location: string;
-  imageUrl: string;
-  categories: string[];
+  photo: string;
   likes: number;
-  date: string;
+  partner: {
+    id: number;
+    motivation: string;
+    user: {
+      id: number;
+      email: string;
+      role: string;
+    }
+  }
+  categorySet: {
+    id: number;
+    name: string;
+    description: string;
+    tagSet: {
+        id: number;
+        name: string;
+    }[];
+    likes: number;
+  }[];
+  date: Date;
+  lastUpdate: Date;
+  status: string;
 }
+
+export interface CenterLike {
+  id: number,
+  user: Users;
+  center: Centers;
+  date: Date;
+}
+
 
 export interface CenterStatistics {
   id: number;

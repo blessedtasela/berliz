@@ -7,6 +7,7 @@ import { UpdateProfilePhotoModalComponent } from 'src/app/dashboard/user/update-
 import { UpdateUserModalComponent } from 'src/app/dashboard/user/update-user-modal/update-user-modal.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserStateService } from 'src/app/services/user-state.service';
+import { UserService } from 'src/app/services/user.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 @Component({
@@ -23,7 +24,7 @@ export class ProfileComponent {
 
 
   constructor(
-    private route: ActivatedRoute,
+    private userService: UserService,
     private router: Router,
     private dialog: MatDialog,
     private userStateService: UserStateService,
@@ -77,8 +78,7 @@ export class ProfileComponent {
     const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((response: any) => {
       dialogRef.close();
-      localStorage.removeItem('token');
-      this.router.navigate(['/login']);
+      this.userService.logout()
       this.responseMessage = "you have successfully logged out"
       this.snackbarService.openSnackBar(this.responseMessage, '');
     });

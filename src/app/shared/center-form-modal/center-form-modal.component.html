@@ -1,1 +1,127 @@
-<p>center-form-modal works!</p>
+<div class="relative">
+    <div class="text-red-600 absolute top-0 right-0 p-1">
+        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+    </div>
+    <div class="rounded-md mx-auto">
+        <form [formGroup]="addCenterForm">
+            <div class="border-2 " [ngClass]="{'border-red-400': addCenterForm.invalid && invalidForm }">
+                <header class="text-center m-2">
+                    <h1 class="font-bold font-sans text-xl">Complete Center Application</h1>
+                    <p class="font-sans text-sm">Get ready to transform lives!
+                    </p>
+                </header>
+                <hr [ngClass]="{'border-red-500': addCenterForm.invalid && invalidForm }">
+                <div class="invalid-form">
+                    <span *ngIf="addCenterForm.invalid && invalidForm" class="mx-2 text-red-600">
+                        Please complete all sections
+                    </span>
+                    <span *ngIf="!addCenterForm.invalid && invalidForm" class="mx-2 text-gray-400">
+                        Everything looks good
+                    </span>
+                </div>
+                <div class="grid grid-cols-2 gap-1 flex items-center p-2">
+                    <div class="mx-auto p-2 col-span-2">
+                        <span class="sr-only">Display Name</span>
+                        <input formControlName="name"
+                            class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': addCenterForm.get('name')?.invalid && addCenterForm.get('name')?.dirty }"
+                            placeholder="Gym club Name e.g M-fitness" type="text">
+                        <div *ngIf="addCenterForm.get('name')?.invalid && addCenterForm.get('name')?.dirty"
+                            class="text-red-500 mx-2">
+                            Display name is required
+                        </div>
+                    </div>
+                    <div class="mx-auto p-2 col-span-2">
+                        <span class="sr-only">Expereince</span>
+                        <input formControlName="experience"
+                            class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': addCenterForm.get('experience')?.invalid && addCenterForm.get('experience')?.dirty }"
+                            placeholder="Years in service" type="number">
+                        <div *ngIf="addCenterForm.get('experience')?.invalid && addCenterForm.get('experience')?.dirty"
+                            class="text-red-500 mx-2">
+                            Expereince is required
+                        </div>
+                    </div>
+                    <div class="mx-auto col-span-2">
+                        <textarea formControlName="motto"
+                            class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': addCenterForm.get('mtoo')?.invalid && addCenterForm.get('motto')?.dirty }"
+                            placeholder="Motivate your subscribers" rows="5" cols="25"></textarea>
+                        <div *ngIf="addCenterForm.get('motto')?.invalid && addCenterForm.get('motto')?.dirty"
+                            class="text-red-500 mx-2">
+                            At least 30 characters
+                        </div>
+                    </div>
+                    <div class="mx-auto p-2 col-span-2">
+                        <span class="sr-only">Location url</span>
+                        <input formControlName="location"
+                            class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': addCenterForm.get('location')?.invalid && addCenterForm.get('location')?.dirty }"
+                            placeholder="Enter location url" type="text">
+                        <div *ngIf="addCenterForm.get('location')?.invalid && addCenterForm.get('location')?.dirty"
+                            class="text-red-500 mx-2">
+                            Location is required
+                        </div>
+                    </div>
+                    <div class="mx-auto col-span-2">
+                        <textarea formControlName="address"
+                            class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-red-400': addCenterForm.get('address')?.invalid && addCenterForm.get('address')?.dirty }"
+                            placeholder="Write your gym club address" rows="5" cols="25"></textarea>
+                        <div *ngIf="addCenterForm.get('address')?.invalid && addCenterForm.get('address')?.dirty"
+                            class="text-red-500 mx-2">
+                            At least 10 characters
+                        </div>
+                    </div>
+                    <div class="mx-auto col-span-2">
+                        <span class="sr-only">Choose cover photo</span>
+                        <span class="font-bold text-gray-700 text-md italic">Gym cover photo</span>
+                        <div class="flex">
+                            <div class="shrink-0">
+                                <img class="h-16 w-16 object-cover rounded-md" src="../../../assets/icons/user.png"
+                                    alt="Display photo" />
+                            </div>
+                            <input formControlName="photo"
+                                class="border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none
+                            block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
+                            file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
+                                [ngClass]="{'border-gray-950': invalidForm && this.addCenterForm.get('photo')?.dirty}"
+                                (change)="onPhotoSelected($event)" type="file" accept="image/*">
+                        </div>
+                        <div *ngIf="this.addCenterForm.invalid && this.addCenterForm.get('photo')?.invalid && this.addCenterForm.get('photo')?.dirty"
+                            class="text-red-500 mx-2">
+                            Upload a valid image
+                        </div>
+                    </div>
+                    <div class="col-span-2 mx-auto">
+                        <div class="grid grid-cols-2">
+                        <div *ngFor="let cat of categories; let i = index" class="mx-auto flex items-center">
+                            <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
+                                class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                                placeholder="tags" type="checkbox" [value]="cat.id">
+                            {{ cat.name }}
+                        </div>
+                    </div>
+                        <div *ngIf="addCenterForm.get('categoryIds')?.invalid && invalidForm" class="text-red-500 mx-2">
+                            Select at least one category
+                        </div>
+                    </div>
+                    <div class="bg-gray-950 rounded-md mx-auto m-2">
+                        <button
+                            class="py-1 px-2 font-bold font-sans text-white text-sm lg:text-md flex items-center justify-center"
+                            (click)="clear()">
+                            Clear
+                        </button>
+                    </div>
+                    <div class="bg-red-600 rounded-md mx-auto m-2">
+                        <button
+                            class="py-1 px-2 font-bold font-sans text-white text-sm lg:text-md flex items-center justify-center"
+                            type="submit" (click)="addCenter()">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

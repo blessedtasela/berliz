@@ -8,6 +8,8 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { genericError } from 'src/validators/form-validators.module';
 import { UpdatePartnerFileModalComponent } from '../update-partner-file-modal/update-partner-file-modal.component';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { ViewCertificateModalComponent } from 'src/app/shared/view-certificate-modal/view-certificate-modal.component';
+import { ViewCvModalComponent } from 'src/app/shared/view-cv-modal/view-cv-modal.component';
 
 @Component({
   selector: 'app-partner-details',
@@ -34,7 +36,7 @@ export class PartnerDetailsComponent {
 
   }
 
-  openUrl(url: any){
+  openUrl(url: any) {
     window.open(url, '_blank');
   }
 
@@ -42,10 +44,10 @@ export class PartnerDetailsComponent {
     this.dialogRef.close("Dialog closed successfully");
   }
 
-  rejectApplication(id: number){
+  rejectApplication(id: number) {
     const dialogConfig = new MatDialogConfig();
     const partner = this.partnerData;
-    const message = 'reject this partner\'s  appliaction as a '+ partner.role;
+    const message = 'reject this partner\'s  appliaction as a ' + partner.role;
 
     dialogConfig.data = {
       message: message,
@@ -75,29 +77,72 @@ export class PartnerDetailsComponent {
 
   openUpdateFile() {
     try {
-        const dialogRef = this.dialog.open(UpdatePartnerFileModalComponent, {
-          width: '600px',
-          data: {
-            partnerData: this.partnerData,
-          }
-        });
-        const childComponentInstance = dialogRef.componentInstance as UpdatePartnerFileModalComponent;
+      const dialogRef = this.dialog.open(UpdatePartnerFileModalComponent, {
+        width: '600px',
+        data: {
+          partnerData: this.partnerData,
+        }
+      });
+      const childComponentInstance = dialogRef.componentInstance as UpdatePartnerFileModalComponent;
 
-        // Set the event emitter before closing the dialog
-        childComponentInstance.onUpdatePartnerFileEmit.subscribe(() => {
-          this.partnerData = this.data.partnerData;
-        });
-        dialogRef.afterClosed().subscribe(result => {
-          if (result) {
-            console.log(`Dialog result: ${result}`);
-          } else {
-            console.log('Dialog closed without updating file');
-          }
-        });
+      // Set the event emitter before closing the dialog
+      childComponentInstance.onUpdatePartnerFileEmit.subscribe(() => {
+        this.partnerData = this.data.partnerData;
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          console.log(`Dialog result: ${result}`);
+        } else {
+          console.log('Dialog closed without updating file');
+        }
+      });
     } catch (error) {
       this.snackbarService.openSnackBar("An error occurred. Check partner status", 'error');
     }
   }
+
+  openViewCertificate() {
+    const partner = this.partnerData;
+    const certificate = partner?.certificate;
+    if (partner) {
+      const dialogRef = this.dialog.open(ViewCertificateModalComponent, {
+        width: '800px',
+        data: {
+          partnerData: certificate,
+        },
+        panelClass: 'mat-dialog-height',
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          console.log(`Dialog result: ${result}`);
+        } else {
+          console.log('Dialog closed without any action');
+        }
+      });
+    }
+  }
+
+  openViewCV() {
+    const partner = this.partnerData;
+    const cv = partner?.cv;
+    if (partner) {
+      const dialogRef = this.dialog.open(ViewCvModalComponent, {
+        width: '800px',
+        data: {
+          partnerData: cv,
+        },
+        panelClass: 'mat-dialog-height',
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          console.log(`Dialog result: ${result}`);
+        } else {
+          console.log('Dialog closed without any action');
+        }
+      });
+    }
+  }
+
 
   formatDate(dateString: any): any {
     const date = new Date(dateString);

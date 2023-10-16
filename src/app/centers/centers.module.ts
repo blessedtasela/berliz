@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CenterPageComponent } from './center-page/center-page.component';
 import { CenterHeroComponent } from './center-hero/center-hero.component';
-import { CenterListComponent } from './center-list/center-list.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavbarModule } from '../navbar/navbar.module';
 import { FooterModule } from '../footer/footer.module';
@@ -27,12 +26,14 @@ import { CenterTrainersComponent } from './center-trainers/center-trainers.compo
 import { CenterSubscriptionFormComponent } from './center-subscription-form/center-subscription-form.component';
 import { CenterReviewFormComponent } from './center-review-form/center-review-form.component';
 import { CenterLocationsComponent } from './center-locations/center-locations.component';
+import { CenterHeaderComponent } from './center-header/center-header.component';
+import { SharedModule } from '../shared/shared.module';
+import { CenterPartnerFormComponent } from './center-partner-form/center-partner-form.component';
 
 @NgModule({
   declarations: [
     CenterPageComponent,
     CenterHeroComponent,
-    CenterListComponent,
     CenterSearchComponent,
     CenterDetailComponent,
     CenterSearchResultComponent,
@@ -51,6 +52,8 @@ import { CenterLocationsComponent } from './center-locations/center-locations.co
     CenterSubscriptionFormComponent,
     CenterReviewFormComponent,
     CenterLocationsComponent,
+    CenterHeaderComponent,
+    CenterPartnerFormComponent
   ],
   imports: [
     CommonModule,
@@ -59,8 +62,8 @@ import { CenterLocationsComponent } from './center-locations/center-locations.co
     FooterModule,
     IconsModule,
     BrowserModule,
-    FormsModule,
-    RouterModule
+    RouterModule,
+    FormsModule
   ],
   providers: [
   ]

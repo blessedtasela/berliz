@@ -1,81 +1,50 @@
-<div class="justify-between mt-20 font-sans flex flex-col justify-center items-center">
-    <div *ngIf="user" class=" font sans text-4xl mb-2 text-center">
-        Hello {{ user.firstname }} {{ user.lastname }}
+<div class="bg-gray-100 font-sans rounded-lg" *ngIf="trainerData">
+    <div class="w-full h-64 overflow-hidden">
+        <img src="../../../../assets/landing/hero-bg-4.jpg" class="w-full h-64 object-cover overflow-hidden rounded-lg">
     </div>
-    <div *ngIf="trainerData.status ==='false'" class="flex flex-col justify-center items-center">
-        <div class="text-gray-600 font-sans italic m-1">Your Trainer account has successfully been created
+    <div *ngIf="user" class="relative overflow-visible -mt-16 flex items-center justify-center">
+        <img [src]="'data:image;base64, ' + trainerData.photo" onerror="this.src='../../../assets/icons/user.png';"
+          class="shadow-lg ring-offset-2 ring-red-400 ring-4 rounded-full w-32">
+        <label for="fileInput" class="absolute bottom-0 ml-36">
+          <i-feather name="Camera" class="font-bold text-red-600 cursor-pointer"></i-feather>
+        </label>
+        <form [formGroup]="updateTrainerPhotoForm">
+          <input accept="image/*" type="file" formControlName="photo" id="fileInput" style="display: none;"
+            (change)="onImgSelected($event)">
+        </form>
+      </div>      
+    <div class="justify-between mt-4 font-sans flex flex-col justify-center items-center">
+        <div *ngIf="user" class="text-gray-950  text-2xl text-center">
+            {{ user.firstname }} {{ user.lastname }}
         </div>
-        <div class="text-gray-600 font-sans italic m-1">Your application would be approved soon by an admin</div>
-        <button class="text-md bg-red-600 text-white py-2 mb-5 px-5 hover:bg-red-700 rounded-md font-sans mx-auto
-transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-            (click)="openUpdateTrainer()">
-            update {{ trainerData.partner.user.role }} information
-        </button>
-    </div>
-    <div *ngIf="trainerData.status ==='true'" class="flex flex-col justify-center items-center">
-        <div class="text-gray-600 font-sans italic m-1">Here is the details of your current partnership application
+        <div *ngIf="user?.role==='user'" class="italic text-gray-400 font-bold text-md mb-2 text-center">
+            Application pending
         </div>
-        <div class="text-gray-600 font-sans italic m-1">Your application has been successfully approved</div>
-        <button class="text-md bg-red-600 text-white py-2 mb-5 px-5 hover:bg-red-700 rounded-md font-sans mx-auto
-    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+        <div *ngIf="user?.role!=='user'" class="Capitalize italic text-gray-400 font-bold text-md mb-2 text-center">
+            {{ trainerData.partner.user.role }}
+        </div>
+        <div
+            class="flex items-center justify-center gap-1 md:gap-4 m-4  border-2 p-1 md:p-2 rounded-lg border-gray-200 shadow-sm font-bold text-md">
+            {{ trainerData.likes }}<span class="text-sm text-gray-400">Likes</span>
+            <div class="border-l-2 h-4 border-gray-200"></div>
+            0<span class="text-sm text-gray-400">Clients</span>
+            <div class="border-l-2 h-4 border-gray-200"></div>
+            0<span class="text-sm text-gray-400">Centers</span>
+        </div>
+        <div class="text-gray-600 font-sans italic m-1 p-4 justify-text">
+            {{ trainerData.motto }}
+        </div>
+        <button class="text-sm bg-red-600 text-white mt-2 py-1 mb-5 px-2 hover:bg-red-700 rounded-md font-sans mx-auto
+        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
             (click)="openUpdateTrainer()">
-            update application information
+            Quick update
         </button>
+
+        <div class="bg-white p-6 mb-10">
+            <app-trainer-data [trainer]="trainerData" (emitEvent)="emitData()"></app-trainer-data>
+        </div>
+        <div class="bg-white m-12 p-4 mb-10">
+            <app-partner-data [partnerData]="partnerData" (emitEvent)="emitData()"></app-partner-data>
+        </div>
     </div>
 </div>
-<section class="grid md:grid-cols-2 grid-cols w-full rounded-md mt-20 bg-gray-200">
-    <div class="p-2">
-        <i-feather name="Edit" (click)="openUpdateCoverPhoto()"
-                    class="font-bold text-red-600 mr-4  cursor-pointer" style="width: 30px;">
-                </i-feather>
-        <div class="">
-                <img [src]="'data:image;base64,' + trainerData.photo " class="object-cover rounded-full"
-                    onerror="this.src='../../../assets/icons/user.png';">
-            </div>
-            <div class="flex justify-end p-2">
-                <i-feather name="Edit" (click)="openUpdateCoverPhoto()"
-                    class="font-bold text-red-600 mr-4  cursor-pointer" style="width: 30px;">
-                </i-feather>
-            </div>
-    </div>
-    <div class="bg-gray-950 md:rounded-r-md rounded-b-md p-8">
-        <p class="text-red-600 font-sans font-bold text-md italic mb-4">{{ trainerData.partner.user.email }}</p>
-        <p class="text-gray-200 font-sans font-bold text-xl uppercase">{{ trainerData.partner.user.role }}</p>
-        <div class="flex items-center">
-            <div class="flex flex-col m-8 gap-5">
-                <p class="text-gray-200 font-sans font-bold text-md flex">
-                    Nickname: {{ trainerData.name }}
-                </p>
-                <p class="text-gray-200 font-sans font-bold text-md flex">
-                    Motivation: {{ trainerData.partner.motivation }}
-                </p>
-                <p class="text-gray-200 font-sans font-bold text-md flex">
-                    Date Joined: {{ formatDate(trainerData.date) }}
-                </p>
-                <p class="text-gray-200 font-sans font-bold text-md flex">
-                    Motto: {{ trainerData.motto }}
-                </p>
-                <p class="text-gray-200 font-sans font-bold text-md flex">
-                    Address: {{ trainerData.address }}
-                </p>
-                <p class="text-gray-200 font-sans font-bold text-md flex">
-                    Experience: {{ trainerData.experience }} years
-                </p>
-                <p class="text-gray-200 font-sans font-bold text-md flex">
-                    <ng-container *ngFor="let category of trainerData.categorySet; let i = index">
-                        Categories: {{ category.name }} {{ i < (trainerData.categorySet.length - 1) ? "/" : "" }}
-                            </ng-container>
-                </p>
-                <p class="text-gray-200 font-sans font-bold text-md flex">
-                    Likes: {{ trainerData.likes }}
-                </p>
-                <p class="text-gray-200 font-sans font-bold text-md flex">
-                    Account status: {{ trainerData.status === 'true' ? 'active' :'false' }}
-                </p>
-                <p class="text-gray-200 font-sans font-bold text-md flex">
-                    Last updated: {{ formatDate(trainerData.lastUpdate) }}
-                </p>
-            </div>
-        </div>
-    </div>
-</section>

@@ -22,7 +22,7 @@ export class UsersListComponent {
   @Input() usersData: Users[] = [];
   responseMessage: any;
   showFullData: boolean = false;
-  @Input() totalUsers: number = 0;
+  selectedImage: any;
 
   constructor(private userStateService: UserStateService,
     private userService: UserService,
@@ -38,7 +38,6 @@ export class UsersListComponent {
     this.userStateService.getAllUsers().subscribe((users) => {
       this.ngxService.start();
       this.usersData = users;
-      this.totalUsers = this.usersData.length;
       this.userStateService.setAllUsersSubject(this.usersData);
       this.ngxService.stop();
     });
@@ -107,36 +106,38 @@ export class UsersListComponent {
     }
   }
 
-  openUpdateProfilePhoto(id: number) {
-    try {
-      const user = this.usersData.find(user => user.id === id);
-      if (user) {
-        const userId = user.id;
-        const profilePhoto = 'data:image/jpeg;base64,' + user.profilePhoto.photo;
-        const dialogRef = this.dialog.open(AdminUpdateUserProfilePhotoModalComponent, {
-          width: '400px',
-          data: {
-            photo: profilePhoto,
-            id: userId,
-          }
-        });
-        const childComponentInstance = dialogRef.componentInstance as AdminUpdateUserProfilePhotoModalComponent;
-        childComponentInstance.onUpdateUserProfilePhoto.subscribe(() => {
-          this.handleEmitEvent();
-        });
-        dialogRef.afterClosed().subscribe(result => {
-          if (result) {
-            console.log(`Dialog result: ${result}`);
-          } else {
-            console.log('Dialog closed without updatig user\'s profile photo');
-          }
-        });
-      } else {
-        this.snackbarService.openSnackBar('User not found for id: ' + id, 'error');
-      }
-    } catch (error) {
-      this.snackbarService.openSnackBar("An error occurred. Check user status", 'error');
+
+  onImgSelected(event: any, id: number): void {
+    const selectedImage = event.target.files[0];
+    if (selectedImage) {
+      this.selectedImage = selectedImage;
+      this.updatePhoto(id);
     }
+  }
+
+  updatePhoto(id: number): void {
+    this.ngxService.start();
+    const requestData = new FormData();
+    requestData.append('profilePhoto', this.selectedImage);
+    requestData.append('id', id.toString());
+    this.userService.updateProfilePhoto(requestData)
+      .subscribe(
+        (response: any) => {
+          this.ngxService.stop();
+          this.responseMessage = response?.message;
+          this.snackbarService.openSnackBar(this.responseMessage, "");
+          this.handleEmitEvent()
+        }, (error: any) => {
+          this.ngxService.stop();
+          console.error("error");
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        });
+    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   updateUserStatus(id: number) {

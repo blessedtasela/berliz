@@ -6,12 +6,13 @@ import { RouterModule } from '@angular/router';
 import { SidebarNavigationComponent } from './sidebar-navigation/sidebar-navigation.component';
 import { SearchComponent } from './search/search.component';
 import { ProfileComponent } from './profile/profile.component';
-import { SideBarMenuComponent } from './side-bar-menu/side-bar-menu.component';
 import { SearchCategoryComponent } from './search-category/search-category.component';
 import { FormsModule } from '@angular/forms';
 import { SearchContactUsComponent } from './search-contact-us/search-contact-us.component';
 import { SearchTrainerComponent } from './search-trainer/search-trainer.component';
 import { SearchUserComponent } from './search-user/search-user.component';
+import { SearchPartnerComponent } from './search-partner/search-partner.component';
+import { SearchCenterComponent } from './search-center/search-center.component';
 
 
 @NgModule({
@@ -20,11 +21,12 @@ import { SearchUserComponent } from './search-user/search-user.component';
     SidebarNavigationComponent,
     SearchComponent,
     ProfileComponent,
-    SideBarMenuComponent,
     SearchCategoryComponent,
     SearchContactUsComponent,
     SearchTrainerComponent,
-    SearchUserComponent
+    SearchUserComponent,
+    SearchPartnerComponent,
+    SearchCenterComponent
   ],
   imports: [
     CommonModule,

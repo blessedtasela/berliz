@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { CenterCategory, Centers } from 'src/app/models/centers.interface';
+import { CenterStateService } from 'src/app/services/center-state.service';
 
 @Component({
   selector: 'app-center-page',
@@ -8,29 +11,45 @@ import { CenterCategory, Centers } from 'src/app/models/centers.interface';
   styleUrls: ['./center-page.component.css']
 })
 
-export class CenterPageComponent implements OnInit{
-  isLoading: boolean = false;
-  searchResults: Centers[] = [];
-  countResults: number = 0;
-  showResult: boolean = false;
+export class CenterPageComponent implements OnInit {
+  centers: Centers[] = [];
+  countResult: number = 0;
+  allCenters: Centers[] = [];
+  subscription: Subscription = new Subscription;
 
-
-  constructor(){}
+  constructor(private centerStateService: CenterStateService,
+    private ngxService: NgxUiLoaderService) { }
 
   ngOnInit(): void {
-    
-  }
-  onLoading(loading: boolean) {
-    // Handle the loading state here, if needed
-    this.isLoading = loading;
-  }
-
-  onResults(results: Centers[]) {
-    // Handle the search results here
-    this.showResult = true;
-    this.searchResults = results;
-    // this.countResults = this.centerService.counter;
+    this.centerStateService.activeCentersData$.subscribe((cachedData) => {
+      if (!cachedData) {
+        this.handleEmitEvent()
+      } else {
+        this.centers = cachedData;
+      }
+    });
   }
 
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+  handleEmitEvent() {
+    this.subscription.add(
+      this.centerStateService.getActiveCenters().subscribe((activeCenters) => {
+        this.ngxService.start()
+        console.log('isCachedData false')
+        this.centers = activeCenters;
+        this.centerStateService.setActiveCentersSubject(this.centers);
+        this.ngxService.stop()
+      })
+    );
   }
 
+  handleSearchResults(results: Centers[]): void {
+    this.centers = results;
+    this.countResult = results.length;
+  }
+
+}

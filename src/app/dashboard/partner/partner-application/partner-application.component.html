@@ -1,7 +1,61 @@
-<div class="relative min-h-screen flex">
-    <app-sidebar-navigation></app-sidebar-navigation>
-    <div class="flex p-10 full-width">
-        <app-partner-application-details class="full-width"></app-partner-application-details>
+<div class="mt-10 text-xl font-bold text-gray-700 flex items-center justify-center" *ngIf="!partnerData">
+    Hello {{ user.firstname }} {{ user.lastname }} , you currently have no application
+</div>
+<div class="bg-gray-100 font-sans rounded-lg" *ngIf="partnerData && !trainer && !center">
+    <div class="w-full h-64 overflow-hidden">
+        <img src="../../../../assets/landing/hero-bg-4.jpg" class="w-full h-64 object-cover overflow-hidden rounded-lg">
+    </div>
+    <div *ngIf="user" class="overflow-visible -mt-16 flex items-center justify-center">
+        <img [src]="'data:image;base64, ' + user.profilePhoto" onerror="this.src='../../../assets/icons/user.png';"
+            class="shadow-lg ring-offset-2 ring-red-400 ring-4 rounded-full w-32">
+    </div>
+    <div class="justify-between mt-4 font-sans flex flex-col justify-center items-center" *ngIf="user">
+        <div class="text-gray-950  text-2xl text-center">
+            {{ user.firstname }} {{ user.lastname }}
+        </div>
+        <div *ngIf="user?.role==='user'" class="italic text-gray-400 font-bold text-md mb-2 text-center">
+            Application pending
+        </div>
+        <div *ngIf="user?.role!=='user'" class="italic text-gray-400 font-bold text-md mb-2 text-center">
+            {{ user.role }} pending...
+        </div>
+        <div
+            class="flex items-center justify-center gap-1 md:gap-4 m-4 p-1 border-2 rounded-lg border-gray-200 shadow-sm font-bold text-md">
+            0<span class="text-sm text-gray-400">Likes</span>
+            <div class="border-l-2 h-4 border-gray-200"></div>
+            0<span class="text-sm text-gray-400">Clients</span>
+            <div class="border-l-2 h-4 border-gray-200"></div>
+            0<span class="text-sm text-gray-400">Centers</span>
+        </div>
+        <div *ngIf="partnerData?.status === 'true'" class="flex flex-col items-center justify-center p-4">
+            <p class="text-md text-gray-600 font-sans italic mt-6 mb-4">
+                Congratulations! Your partnership request has been approved.
+            </p>
+            <p class="text-sm text-gray-600 font-sans">
+                You can now complete your profile data and enjoy the benefits of being a partner with Berliz.
+            </p>
+            <button class="mb-6 text-sm bg-red-600 text-white mt-4 py-1 px-2 hover:bg-red-700 rounded-md font-sans
+              transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+                (click)="openApplicagtionForm()">
+                Complete Application
+            </button>
+        </div>
+        <div *ngIf="partnerData?.status ==='false'" class="flex flex-col justify-center items-center">
+            <div class="text-gray-600 font-sans italic m-1 p-4 justify-text">
+                "Thank you for applying to become a partner with Berliz! Your application is currently under review
+                by
+                our dedicated team. We appreciate your interest and effort, and we want to assure you that your
+                application is important to us. Our team is carefully evaluating your application, and we'll get
+                back to
+                you as soon as possible with an update. We value your commitment to partnering with Berliz and look
+                forward to the possibility of working together. Your patience is greatly appreciated, and we want
+                you to
+                know that your application is in good hands. Thank you for considering Berliz, and we'll be in touch
+                shortly."
+            </div>
+        </div>
+        <div class="bg-white m-12 p-4 mb-10">
+            <app-partner-data [partnerData]="partnerData" (emitEvent)="emitPartner()"></app-partner-data>
+        </div>
     </div>
 </div>
-<app-footer></app-footer>

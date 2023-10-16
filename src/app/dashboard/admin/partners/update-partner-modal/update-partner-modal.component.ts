@@ -56,6 +56,9 @@ export class UpdatePartnerModalComponent {
   }
 
   ngOnInit(): void {
+    this.userStateService.allUsersData$.subscribe((users)=>{
+      this.users = users;
+    })
     this.updatePartnerForm = this.formBuilder.group({
       'id': new FormControl(this.partnerData?.id, [Validators.required]),
       'email': new FormControl(this.partnerData?.user.email, Validators.compose([Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])])),

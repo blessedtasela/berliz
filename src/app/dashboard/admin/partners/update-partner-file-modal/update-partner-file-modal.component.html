@@ -8,8 +8,8 @@
                 <div class="text-red-600 text-right font-bold -mb-4">
                     <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer ml-20"></i-feather>
                 </div>
-                <h1 class="font-bold font-sans text-xl">Update partner CV and certificate</h1>
-                <p class="font-sans text-sm">Partner ID: {{partnerData.user.id}}
+                <h1 class="font-bold font-sans text-xl">Update documents</h1>
+                <p class="font-sans text-sm italic">id: {{partnerData.user.id}}
                 </p>
             </header>
             <hr [ngClass]="{'border-red-500':    
@@ -28,12 +28,11 @@
             </div>
             <div class="grid grid-cols-2 gap-1 flex items-center gap-5">
                 <div class="mx-auto col-span-2">
-                    <div class="font-bold text-gray-950 mt-4 mb-1">Relevant document or certificate</div>
-                    <span *ngIf="partnerData.certificate">certificate-{{partnerData.user.email}}</span>
+                    <div class="ml-4 text-gray-950 mt-4 mb-1"> certificate</div>
                     <div class="flex">
                         <span class="sr-only">Upload certificate</span>
                         <div class="shrink-0">
-                            <img class="h-16 w-16 object-cover rounded-full" src="../../../assets/icons/file.png"
+                            <img class="h-16 w-16 object-cover rounded-md" src="../../../assets/icons/file.png"
                                 alt="Display photo" />
                         </div>
                         <input formControlName="certificate" id="certificate"
@@ -50,11 +49,10 @@
                 </div>
                 <div class="mx-auto col-span-2">
                     <span class="sr-only">Choose CV </span>
-                    <div class="font-bold text-gray-950 mt-4 mb-1">Upload CV</div>
-                    <span *ngIf="partnerData.cv">cv-{{partnerData.user.email}}</span>
+                    <div class="ml-4 text-gray-950 mt-4 mb-1">cv</div>
                     <div class="flex">
                         <div class="shrink-0">
-                            <img class="h-16 w-16 object-cover rounded-full" src="../../../assets/icons/file.png"
+                            <img class="h-16 w-16 object-cover rounded-md" src="../../../assets/icons/file.png"
                                 alt="Display photo" />
                         </div>
                         <input formControlName="cv" id="cv"

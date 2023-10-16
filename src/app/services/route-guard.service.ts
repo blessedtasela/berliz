@@ -5,7 +5,6 @@ import { UNAUTHORIZED } from 'src/validators/form-validators.module';
 import { SnackBarService } from './snack-bar.service';
 import jwt_decode from 'jwt-decode';
 import { AuthenticationService } from './authentication.service';
-import { LoginPromptModalComponent } from '../dashboard/user/login-prompt-modal/login-prompt-modal.component';
 
 @Injectable({
   providedIn: 'root',
@@ -17,15 +16,6 @@ export class RouteGuardService {
     private dialog: MatDialog,
     private snackBarService: SnackBarService
   ) {}
-
-  openLoginPrompt() {
-    const dialogRef = this.dialog.open(LoginPromptModalComponent, {
-      width: '400px',
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
-    });
-  }
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
     console.log('canActivate called');
@@ -52,7 +42,7 @@ export class RouteGuardService {
     }
 
     if (!allowedRoles.includes(tokenPayload.role)) {
-      this.openLoginPrompt();
+      this.snackBarService.openSnackBar("Invalid user role", 'error');
       this.router.navigate(['/login']);
       return false;
     }

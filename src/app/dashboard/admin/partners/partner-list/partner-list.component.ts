@@ -1,15 +1,12 @@
-import { Component, ElementRef, EventEmitter } from '@angular/core';
+import { Component, ElementRef, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { fromEvent, debounceTime, map, tap, switchMap, Observable, catchError, of } from 'rxjs';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { Partners } from 'src/app/models/partners.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { genericError } from 'src/validators/form-validators.module';
 import { PartnerDetailsComponent } from '../partner-details/partner-details.component';
 import { UpdatePartnerModalComponent } from '../update-partner-modal/update-partner-modal.component';
-import { AddPartnerModalComponent } from '../add-partner-modal/add-partner-modal.component';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { ViewCertificateModalComponent } from 'src/app/shared/view-certificate-modal/view-certificate-modal.component';
@@ -22,175 +19,32 @@ import { PartnerStateService } from 'src/app/services/partner-state.service';
   styleUrls: ['./partner-list.component.css']
 })
 export class PartnerListComponent {
-  partnersData: Partners[] = [];
   responseMessage: any;
+  @Input() partnersData: Partners[] = [];
   showFullData: boolean = false;
-  invalidForm: boolean = false;
-  selectedSortOption: string = 'date';
-  filteredPartnersData: Partners[] = [];
-  searchQuery: string = '';
-  selectedSearchCriteria: any = 'name';
-  counter: number = 0;
-  totalPartners: number = 0;
-  results: EventEmitter<Partners[]> = new EventEmitter<Partners[]>()
 
   constructor(private partnerService: PartnerService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private elementRef: ElementRef,
-    private partnerDataService: PartnerStateService,
+    private partnerStateService: PartnerStateService,
     private datePipe: DatePipe) { }
 
   ngOnInit(): void {
-    this.handleEmitEvent()
+
   }
 
   handleEmitEvent() {
-    this.partnerDataService.getAllPartners().subscribe((partnersData) => {
+    this.partnerStateService.getAllPartners().subscribe((partnersData) => {
       this.ngxService.start();
-      this.initializeSearch();
       this.partnersData = partnersData
-      this.filteredPartnersData = this.partnersData
-      this.counter = this.filteredPartnersData.length
-      this.totalPartners = this.partnersData.length;
+      this.partnerStateService.setAllPartnersSubject(this.partnersData);
       this.ngxService.stop();
     });
   }
 
-
-  initializeSearch(): void {
-    fromEvent(this.elementRef.nativeElement.querySelector('input'), 'keyup')
-      .pipe(
-        debounceTime(300),
-        map((e: any) => e.target.value),
-        tap((query: string) => {
-          this.ngxService.start();
-        }),
-        switchMap((query: string) => {
-          return this.search(query); // Perform the search with the query
-        })
-      )
-      .subscribe(
-        (results: Partners[]) => {
-          this.ngxService.stop();
-          this.results.emit(results);
-        },
-        (error: any) => {
-          this.snackbarService.openSnackBar(error, 'error');
-          this.ngxService.stop();
-        }
-      );
-  }
-
-
-  detectDocumentType(data: ArrayBuffer): 'pdf' | 'doc' | null {
-    // Add logic to detect the file type based on its content.
-    const view = new Uint8Array(data);
-    if (view[0] === 0x25 && view[1] === 0x50 && view[2] === 0x44 && view[3] === 0x46) {
-      return 'pdf'; // PDF signature: %PDF
-    } else if (view[0] === 0xD0 && view[1] === 0xCF && view[2] === 0x11 && view[3] === 0xE0) {
-      return 'doc'; // Word 97-2003 signature: D0 CF 11 E0
-    } else {
-      return null; // Unknown file type
-    }
-  }
-
-  sortPartnersData() {
-    switch (this.selectedSortOption) {
-      case 'date':
-        this.filteredPartnersData.sort((a, b) => {
-          const dateA = new Date(a.date);
-          const dateB = new Date(b.date);
-          return dateA.getTime() - dateB.getTime();
-        });
-        break;
-
-      case 'motivation':
-        this.filteredPartnersData.sort((a, b) => {
-          return a.motivation.localeCompare(b.motivation);
-        });
-        break;
-
-      case 'id':
-        this.filteredPartnersData.sort((a, b) => {
-          return a.id - b.id;
-        });
-        break;
-
-      default:
-        this.filteredPartnersData.sort((a, b) => {
-          const dateA = new Date(a.date);
-          const dateB = new Date(b.date);
-          return dateA.getTime() - dateB.getTime();
-        });
-        break;
-    }
-  }
-
-  // Function to handle the sort select change event
-  onSortOptionChange(event: any) {
-    this.selectedSortOption = event.target.value;
-    this.sortPartnersData();
-  }
-
-  // Function to handle the search select change event
-  onSearchCriteriaChange(event: any): void {
-    this.ngxService.start();
-    this.selectedSearchCriteria = event.target.value;
-    this.search(this.searchQuery);
-    this.ngxService.stop()
-  }
-
-  search(query: string): Observable<Partners[]> {
-    query = query.toLowerCase();
-    if (query.trim() === '') {
-      // If the query is empty, return the original data
-      this.filteredPartnersData = this.partnersData;
-      this.counter = this.filteredPartnersData.length;
-      return of(this.filteredPartnersData);
-    }
-    this.filteredPartnersData = this.partnersData.filter((partner: Partners) => {
-      switch (this.selectedSearchCriteria) {
-        case 'motivation':
-          return partner.motivation.toLowerCase().includes(query);
-        case 'id':
-          return partner.id.toString().includes(query);
-        case 'email':
-          return partner.user.email.toLowerCase().includes(query);
-        case 'role':
-          return partner.role.toLowerCase().includes(query);
-        case 'status':
-          return partner.status.toLowerCase().includes(query);
-        default:
-          return false;
-      }
-    });
-    this.counter = this.filteredPartnersData.length;
-    return of(this.filteredPartnersData);
-  }
-
   toggleData() {
     this.showFullData = !this.showFullData;
-  }
-
-  openAddPartner() {
-    const dialogRef = this.dialog.open(AddPartnerModalComponent, {
-      width: '800px'
-    });
-    const childComponentInstance = dialogRef.componentInstance as AddPartnerModalComponent;
-
-    // Set the event emitter before closing the dialog
-    childComponentInstance.onAddPartnerEmit.subscribe(() => {
-      this.handleEmitEvent();
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log(`Dialog result: ${result}`);
-      } else {
-        console.log('Dialog closed without performing any action');
-      }
-    });
   }
 
   openUpdatePartner(id: number) {

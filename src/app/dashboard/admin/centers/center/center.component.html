@@ -1,0 +1,13 @@
+<div class="relative min-h-screen flex">
+    <app-sidebar-navigation (centersResult)="handleSearchResults($event)"
+        [searchComponent]="searchComponent"></app-sidebar-navigation>
+        <div class="flex p-10 full-width">
+            <div class="width bg-gray-200 p-4 rounded-lg mt-20">
+                <app-center-header [centersData]="centersData" [totalCenters]="totalCenters"
+                    [centersLength]="centersLength"></app-center-header>
+                <app-center-list [centerData]="centersData"
+                    [totalCenters]="totalCenters" (emitEvent)="emitData()"></app-center-list>
+            </div>
+        </div>
+</div>
+<app-footer></app-footer>

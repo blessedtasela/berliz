@@ -23,15 +23,8 @@ export interface Trainers {
     tagSet: {
         id: number;
         name: string;
-        description: string;
-        date: Date;
-        lastUpdate: Date;
-        status: string;
     }[];
     likes: number;
-    date: Date;
-    lastUpdate: Date;
-    status: string;
   }[];
   date: Date;
   lastUpdate: Date;
