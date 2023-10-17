@@ -12,10 +12,8 @@
         </div>
         <app-search (categoriesResults)="handleCategorySearchResults($event)"
             (contactUsResults)="handleContactUsSearchResults($event)"
-            (trainersResults)="handleTrainerSearchResults($event)"
-            (usersResults)="handleUserSearchResults($event)"
-            (partnersResults)="handlePartnerSearchResults($event)"
-            (centerssResults)="handleCenterSearchResults($event)"
+            (trainersResults)="handleTrainerSearchResults($event)" (usersResults)="handleUserSearchResults($event)"
+            (partnersResults)="handlePartnerSearchResults($event)" (centerssResults)="handleCenterSearchResults($event)"
             [searchComponent]="searchComponent"></app-search>
         <div class="flex justify-end mr-2 gap-2 md:gap-6 border-2 rounded-full border-gray-300">
             <div class="flex items-center p-2 cursor-pointer hover:drop-shadow-2xl transition-all 
@@ -61,7 +59,7 @@
             <div
                 class="flex items-left p-2 mx-2 text-gray-200 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md">
                 <feather-icon name="user" class="text-sm" style="width: 18px;"></feather-icon>
-                <h1 class="mx-4 text-sm font-bold"> <a routerLink="/dashboard/account">Account</a>
+                <h1 class="mx-4 text-sm font-bold"> <a routerLink="/dashboard/profile">Profile</a>
                 </h1>
             </div>
             <hr class="text-gray-200 my-6">
@@ -78,7 +76,7 @@
             <div
                 class="flex items-left p-2 mx-2 text-gray-200 cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md">
                 <feather-icon name="settings" class="text-sm" style="width: 18px;"></feather-icon>
-                <h1 class="mx-4 text-sm font-bold">Settings</h1>
+                <a routerLink="/dashboard/profile/settings">Account settings</a>
             </div>
             <div class="flex fixed items-center p-2 text-gray-200 cursor-pointer duration-300 hover:bg-gray-700 
                 hover:rounded-md bottom-0 left-0">

@@ -28,7 +28,6 @@ import { TagComponent } from './dashboard/admin/tags/tag/tag.component';
 import { UserComponent } from './dashboard/admin/users/user/user.component';
 import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
 import { PartnerApplicationComponent } from './dashboard/partner/partner-application/partner-application.component';
-import { AccountComponent } from './dashboard/user/account/account.component';
 import { ActivateAccountComponent } from './dashboard/user/activate-account/activate-account.component';
 import { LoginComponent } from './dashboard/user/login/login.component';
 import { ProgressPageComponent } from './dashboard/user/progress/progress-page/progress-page.component';
@@ -37,6 +36,8 @@ import { RunNowPageComponent } from './dashboard/user/run-now/run-now-page/run-n
 import { CenterComponent } from './dashboard/admin/centers/center/center.component';
 import { PartnerPageComponent } from './dashboard/partner/partner-page/partner-page.component';
 import { TrainerComponent } from './dashboard/admin/trainers/trainer/trainer.component';
+import { ProfilePageComponent } from './dashboard/user/profile-page/profile-page.component';
+import { ProfileSettingsComponent } from './dashboard/user/profile-settings/profile-settings.component';
 
 
 const routes: Routes = [
@@ -127,7 +128,7 @@ const routes: Routes = [
 
   // user components
   {
-    path: 'dashboard/account', component: AccountComponent,
+    path: 'dashboard/profile', component: ProfilePageComponent,
     canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin', 'user', 'partner', 'trainer',
@@ -136,6 +137,14 @@ const routes: Routes = [
   },
   {
     path: 'dashboard/partnership', component: PartnerPageComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: ['admin', 'user', 'partner', 'trainer',
+        'center', 'driver', 'store', 'client',]
+    }
+  },
+  {
+    path: 'dashboard/profile/settings', component: ProfileSettingsComponent,
     canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin', 'user', 'partner', 'trainer',
