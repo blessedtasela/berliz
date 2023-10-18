@@ -9,7 +9,6 @@ import { UserStateService } from 'src/app/services/user-state.service';
 import { UserService } from 'src/app/services/user.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
-import { UpdateUserModalComponent } from '../update-user-modal/update-user-modal.component';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CountryService } from 'src/app/services/country.service';
 
@@ -67,6 +66,7 @@ export class ProfileSettingsComponent {
 
   initForm(): void {
     this.updateUserForm = this.formbuilder.group({
+      'id': new FormControl(this.user?.id),
       'firstname': new FormControl(this.user?.firstname, [Validators.required, Validators.minLength(2)]),
       'lastname': new FormControl(this.user?.lastname, [Validators.required, Validators.minLength(2)]),
       'phone': new FormControl(this.user?.phone, Validators.compose([Validators.required, Validators.minLength(9)])),

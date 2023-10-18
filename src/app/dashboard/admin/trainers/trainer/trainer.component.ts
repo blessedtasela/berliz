@@ -13,6 +13,7 @@ export class TrainerComponent {
   totalTrainers: number = 0;
   trainersLength: number = 0;
   searchComponent: string = 'trainer'
+  isSearch: boolean = true;
 
   constructor(private ngxService: NgxUiLoaderService,
     public trainerStateService: TrainerStateService) {

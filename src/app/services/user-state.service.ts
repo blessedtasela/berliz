@@ -50,13 +50,12 @@ export class UserStateService {
       tap((response: any) => {
         return response;
       }), catchError((error: any) => {
-        this.snackbarService.openSnackBar(error, 'error');
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {
           this.responseMessage = "You are currently logged out";
         }
-        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        console.log(this.responseMessage, 'error');
         return of();
       })
     );

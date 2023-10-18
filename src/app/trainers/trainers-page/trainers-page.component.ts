@@ -14,8 +14,7 @@ export class TrainersPageComponent {
   countResult: number = 0;
   allTrainers: Trainers[] = [];
 
-  constructor(private trainerStateService: TrainerStateService,
-    private ngxService: NgxUiLoaderService) { }
+  constructor(private trainerStateService: TrainerStateService) { }
 
   ngOnInit(): void {
     this.trainerStateService.activeTrainersData$.subscribe((cachedData) => {
@@ -29,11 +28,9 @@ export class TrainersPageComponent {
 
   handleEmitEvent() {
     this.trainerStateService.getActiveTrainers().subscribe((activeTrainers) => {
-      this.ngxService.start()
       console.log('isCachedData false')
       this.trainers = activeTrainers;
       this.trainerStateService.setActiveTrainersSubject(this.trainers);
-      this.ngxService.stop()
     });
   }
 
@@ -41,6 +38,5 @@ export class TrainersPageComponent {
     this.trainers = results;
     this.countResult = results.length;
   }
-
 
 }

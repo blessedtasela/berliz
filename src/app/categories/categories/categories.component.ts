@@ -29,11 +29,9 @@ export class CategoriesComponent {
 
   handleEmitEvent() {
     this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
-      this.ngxService.start()
       console.log('isCachedData false')
       this.categories = activeCategories;
       this.categoryStateService.setActiveCategoriesSubject(this.categories);
-      this.ngxService.stop()
     });
   }
 

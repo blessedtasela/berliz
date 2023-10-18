@@ -14,6 +14,7 @@ export class AdminContactUsComponent {
   totalContactUs: number = 0;
   contactUsLength: number = 0;
   searchComponent: string = 'contactUs'
+  isSearch: boolean = true;
 
   constructor(private contactUsStateService: ContactUsStateService,
     private ngxService: NgxUiLoaderService,

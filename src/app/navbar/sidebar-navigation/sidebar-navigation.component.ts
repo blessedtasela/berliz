@@ -24,6 +24,7 @@ export class SidebarNavigationComponent {
   userData: any;
   responseMessage: any;
   profilePhoto: any;
+  @Input() isSearch: boolean = false;
   @Output() categoriesResults: EventEmitter<Categories[]> = new EventEmitter<Categories[]>()
   @Output() contactUsResults: EventEmitter<ContactUs[]> = new EventEmitter<ContactUs[]>()
   @Output() trainersResults: EventEmitter<Trainers[]> = new EventEmitter<Trainers[]>()
@@ -57,6 +58,7 @@ export class SidebarNavigationComponent {
 
   handleContactUsSearchResults(results: ContactUs[]): void {
     this.contactUsResults.emit(results)
+    this.isSearch = true;
   }
 
   handleTrainerSearchResults(results: Trainers[]): void {

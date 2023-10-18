@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, map, debounceTime, tap, switchMap, distinctUntilChanged, Observable, of, Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
@@ -11,7 +11,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
   styleUrls: ['./center-search.component.css']
 })
 export class CenterSearchComponent {
-  centers: Centers[] = [];
+  @Input() centers: Centers[] = [];
   activeCenters: Centers[] = [];
   @Output() allCenters: EventEmitter<Centers[]> = new EventEmitter<Centers[]>();
   searchQuery: string = '';
@@ -34,6 +34,7 @@ export class CenterSearchComponent {
     if (this.subscription)
       this.subscription.unsubscribe();
   }
+
   handleEmitEvent() {
     this.subscription = new Subscription();
     this.subscription.add(

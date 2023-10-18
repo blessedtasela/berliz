@@ -1,8 +1,7 @@
 <div class="relative min-h-screen flex">
     <app-sidebar-navigation></app-sidebar-navigation>
-    <div class="flex p-10 full-width">
-        <div class="width bg-gray-200 p-4 rounded-lg mt-20">
-
+    <div class="flex p-4 md:p-8 mt-4 full-width">
+        <div class="width bg-gray-200 p-2 rounded-lg mt-20">
             <section class="">
                 <div class="rounded-md mx-auto">
                     <form [formGroup]="updateUserForm">
@@ -17,7 +16,9 @@
                         <span *ngIf="updateUserForm?.invalid && invalidForm" class="text-red-500 mx-2">
                             Please complete all section
                         </span>
-                        <div class="flex flex-col gap-2" *ngIf="user">
+                        <div class="flex flex-col gap-2 p-2" *ngIf="user">
+                            <input formControlName="id" [value]="user.id" type="number"  [(ngModel)]="user.id" *ngIf="user.role === 'admin'" hidden
+                            class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500">
                             <div class="mx-auto w-full">
                                 <span class="ml-4 font-bold text-gray-600 italic">Firstname</span>
                                 <input formControlName="firstname" [value]="user.firstname" [(ngModel)]="user.firstname"
@@ -76,19 +77,21 @@
                             <div class="font-sans mx-auto flex items-center gap-5">
                                 <span class="ml-4 font-bold text-gray-600 italic">Male</span>
                                 <input formControlName="gender" [(ngModel)]="user.gender"
-                                    (change)="updateGender('Male')" class="px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                    (change)="updateGender('Male')"
+                                    class="px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                                     [ngClass]="{'border-red-400': updateUserForm.get('gender')?.invalid && updateUserForm.get('gender')?.touched }"
                                     placeholder="Male" type="radio" value="Male">
                                 <span class="ml-8 font-bold text-gray-600 italic">Female</span>
                                 <input formControlName="gender" [(ngModel)]="user.gender"
-                                    (change)="updateGender('Female')" class="px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                    (change)="updateGender('Female')"
+                                    class="px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                                     [ngClass]="{'border-red-400': updateUserForm.get('gender')?.invalid && updateUserForm.get('gender')?.touched }"
                                     placeholder="Female" type="radio" value="Female">
                                 <div *ngIf="updateUserForm.get('gender')?.invalid && updateUserForm.get('gender')?.dirty || (invalidForm && updateUserForm.get('gender')?.invalid)"
                                     class="text-red-500 mx-2">
                                     Please select a gender
                                 </div>
-                            </div>                            
+                            </div>
                             <div class="col-span-2 mx-auto w-full">
                                 <span class="ml-4 font-bold text-gray-600 italic">Country</span>
                                 <select formControlName="country" class="w-full" [(ngModel)]="user.country"
@@ -153,7 +156,7 @@
                                 <button
                                     class="py-1 px-2 font-bold font-sans text-white text-sm lg:text-md flex items-center justify-center"
                                     type="submit" (click)="submitForm()">
-                                    Submit
+                                    Update
                                 </button>
                             </div>
                         </div>
@@ -165,7 +168,8 @@
 </div>
 <div class="m-12 gap-4 flex">
     <i-feather name="Alert-Triangle" class="text-red-600 font-bold mt-1"></i-feather>
-    <button  class="rounded-lg py-1 px-2 bg-gray-950 font-bold font-sans text-white text-sm lg:text-md flex items-center justify-center"
-     (click)="deactivateAccount()">Deactivate account</button>
+    <button
+        class="rounded-lg py-1 px-2 bg-gray-950 font-bold font-sans text-white text-sm lg:text-md flex items-center justify-center"
+        (click)="deactivateAccount()">Deactivate account</button>
 </div>
 <app-footer></app-footer>

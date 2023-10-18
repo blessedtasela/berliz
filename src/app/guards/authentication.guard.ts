@@ -18,8 +18,6 @@ export class AuthenticationGuard implements CanActivate {
   ): Observable<boolean> | Promise<boolean> | boolean {
     console.log('canActivate called');
 
-  
-
       alert('Please log in to continue');
       this.router.navigate(['/login']);
     

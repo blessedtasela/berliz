@@ -1,16 +1,6 @@
-<div *ngIf="centersResult.length > 0" class="flex flex-col items-center justify-center">
-    <div class="m-4 text-center text-gray-700 font-bold text-md">
-        {{ totalCenters }} Results Found
-    </div>
-</div>
-<div *ngIf="centersResult.length === 0" class="flex flex-col items-center justify-center">
-    <div class="m-4 text-center text-gray-700 font-bold text-md">
-        No Results Found. Please Try Again
-    </div>
-</div>
-<section class="mx-auto mb-2 px-2 space-y-1 mt-10">
+<section class="mx-auto mb-2 px-2 space-y-1 mt-20">
     <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-20">
-        <section class="flex justify-between items-center cursor-pointer
+        <section class="flex justify-between items-center
                  transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-xl"
             *ngFor="let center of centersResult; let i = index" [ngClass]="{ 'hidden' : i >= 12 && !showFullData }">
             <div class="w-full bg-gray-100 rounded-md aspect-square m-5 md:min-h-[750px]">
@@ -41,11 +31,18 @@
                             </span>
                         </p>
                     </div>
-                    <div class="flex items-center mt-2" *ngIf="isLikedCenter(center) && center.likes > 1">
+                    <div class="flex items-center mt-2" *ngIf="isLikedCenter(center) && center.likes > 2">
                         <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCenter(center)"
                             class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
                             <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
                             you and {{ center.likes - 1 }} people like this center.
+                        </p> 
+                    </div>
+                    <div class="flex items-center mt-2" *ngIf="isLikedCenter(center) && center.likes === 2">
+                        <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCenter(center)"
+                            class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
+                            <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
+                            you and {{ center.likes - 1 }} person like this center.
                         </p> 
                     </div>
                     <div class="flex items-center mt-2" *ngIf="isLikedCenter(center)  && center.likes === 1">
@@ -55,11 +52,18 @@
                                 you like this center.
                             </p>  
                     </div>
-                    <div class="flex items-center mt-2" *ngIf="!isLikedCenter(center)">
+                    <div class="flex items-center mt-2" *ngIf="!isLikedCenter(center) && center.likes > 1">
                         <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCenter(center)"
                             class="font-bold text-gray-600 mr-4 mt-1 cursor-pointer"></i-feather>
                         <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
                             {{ center.likes }} people like this center.
+                        </p>
+                    </div>
+                    <div class="flex items-center mt-2" *ngIf="!isLikedCenter(center) && center.likes === 1">
+                        <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCenter(center)"
+                            class="font-bold text-gray-600 mr-4 mt-1 cursor-pointer"></i-feather>
+                        <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
+                            {{ center.likes }} person like this center.
                         </p>
                     </div>
                     <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans

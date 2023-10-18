@@ -11,6 +11,7 @@ import { NewsAndUpdatesModule } from '../news-and-updates/news-and-updates.modul
 import { CategoriesComponent } from './categories/categories.component';
 import { RouterModule } from '@angular/router';
 import { IconsModule } from '../icons/icons.module';
+import { FactsComponent } from './facts/facts.component';
 
 
 
@@ -22,12 +23,12 @@ import { IconsModule } from '../icons/icons.module';
     AboutUsMissionComponent,
     AboutUsVisionComponent,
     CategoriesComponent,
+    FactsComponent,
   ],
   imports: [
     CommonModule,
     NavbarModule,
     FooterModule,
-    NewsAndUpdatesModule,
     RouterModule,
     IconsModule
   ]

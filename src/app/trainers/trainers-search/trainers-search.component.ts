@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Trainers } from 'src/app/models/trainers.interface';
@@ -12,7 +12,7 @@ import { TrainerService } from 'src/app/services/trainer.service';
   styleUrls: ['./trainers-search.component.css']
 })
 export class TrainersSearchComponent {
-  trainers: Trainers[] = [];
+  @Input() trainers: Trainers[] = [];
   activeTrainers: Trainers[] = [];
   @Output() allTrainers: EventEmitter<Trainers[]> = new EventEmitter<Trainers[]>();
   searchQuery: string = '';

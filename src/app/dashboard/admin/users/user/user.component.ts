@@ -13,6 +13,7 @@ export class UserComponent {
   totalUsers: number = 0;
   usersLength: number = 0;
   searchComponent: string = 'user'
+  isSearch: boolean = true;
 
   constructor(private ngxService: NgxUiLoaderService,
     public userStateService: UserStateService) {

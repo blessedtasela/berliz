@@ -5,6 +5,7 @@ export interface Users {
     firstname: string,
     lastname: string,
     phone: string,
+    bio: string,
     dob: string,
     gender: string,
     country: string,

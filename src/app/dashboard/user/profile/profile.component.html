@@ -1,8 +1,9 @@
-<div class="bg-gray-100 font-sans rounded-lg" *ngIf="user">
+<div class="bg-gray-100 font-sans rounded-lg -m-4" *ngIf="user">
     <div class="w-full h-64 overflow-hidden">
-        <img src="../../../../assets/landing/hero-bg-4.jpg" class="w-full h-64 object-cover overflow-hidden rounded-lg">
+        <img src="../../../../assets/landing/hero-bg-4.jpg"
+            class="w-full h-48 md:h-64 object-cover overflow-hidden rounded-lg">
     </div>
-    <div *ngIf="user" class="relative overflow-visible -mt-16 flex items-center justify-center">
+    <div class="relative overflow-visible -mt-32 md:-mt-16  flex items-center justify-center">
         <img [src]="'data:image;base64, ' + user.profilePhoto" onerror="this.src='../../../assets/icons/user.png';"
             class="shadow-lg ring-offset-2 ring-red-400 ring-4 rounded-full w-32">
         <label for="fileInput" class="absolute bottom-0 ml-36">
@@ -27,37 +28,22 @@
             <div class="border-l-2 h-4 border-gray-200"></div>
             0<span class="text-sm text-gray-400">Subscriptions</span>
         </div>
-        <div
-            class="grid grid-cols md:grid-cols-2 gap-2 m-4 p-4 border-2 rounded-lg border-gray-200 shadow-sm font-bold text-md">
-            <div class="text-gray-600 font-sans italic">
-                <span class="font-bold">Phone:</span> {{ user.phone }}
-            </div>
-            <div class="text-gray-600 font-sans italic">
-                <span class="font-bold">Email:</span> {{ user.email }}
-            </div>
-            <div class="text-gray-600 font-sans italic">
-                <span class="font-bold">Date of Birth:</span> {{ user.dob }}
-            </div>
-            <div class="text-gray-600 font-sans italic">
-                <span class="font-bold">Gender:</span> {{ user.gender }}
-            </div>
-            <div class="text-gray-600 font-sans italic">
-                <span class="font-bold">Country:</span> {{ user.country }}
-            </div>
-            <div class="text-gray-600 font-sans italic">
-                <span class="font-bold">State:</span> {{ user.state }}
-            </div>
-            <div class="text-gray-600 font-sans italic">
-                <span class="font-bold">City:</span> {{ user.city }}
-            </div>
-            <div class="text-gray-600 font-sans italic">
-                <span class="font-bold">Postal Code:</span> {{ user.postalCode }}
-            </div>
-            <div class="text-gray-600 font-sans italic">
-                <span class="font-bold">Address:</span> {{ user.address }}
-            </div>
-            <div class="text-gray-600 font-sans italic">
-                <span class="font-bold">Date joined:</span> {{ formatDate(user.date) }}
+        <div class="grid grid-cols md:grid-cols-2 gap-2 m-4 p-4 border-2 rounded-lg border-gray-200 shadow-sm text-md">
+            <form [formGroup]="bioForm">
+                <div class="mx-auto w-full">
+                    <span class="ml-4 font-bold text-gray-600 italic text-center">Bio</span>
+                    <textarea formControlName="bio" [value]="user.bio" [(ngModel)]="user.bio"
+                        class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                        placeholder="You can write a short description about you, your values, and what you aim to achive in the fitness and sports industry"
+                        rows="10" cols="20"></textarea>
+                </div>
+                <div class="text-red-600 font-sans italic font-bold flex items-center justify-center">
+                    <button (click)="updateBio()" class="font-sans italic font-bold">save</button>
+                    </div>
+            </form>
+            <div class="text-gray-600 font-sans itali mt-10">
+                You joined Berliz on
+                <span class="font-bold">{{ formatDate(user.date) }}</span>
             </div>
         </div>
         <button class="text-sm bg-red-600 text-white mt-6 py-1 mb-5 px-2 hover:bg-red-700 rounded-md font-sans mx-auto

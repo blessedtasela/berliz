@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { delay } from 'rxjs';
+import { Users } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { genericError, fileValidator } from 'src/validators/form-validators.module';
@@ -21,6 +22,7 @@ export class UpdateProfilePhotoModalComponent {
   invalidForm: boolean = false;
   selectedImage: any;
   profilePhoto: any;
+  user!: Users;
 
   constructor(private router: Router,
     private userService: UserService,
@@ -29,7 +31,8 @@ export class UpdateProfilePhotoModalComponent {
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<UpdateProfilePhotoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) {
-    this.profilePhoto = this.data.image;
+    this.user = this.data.user;
+    this.profilePhoto = this.user.profilePhoto;
   }
 
   onImgSelected(event: any): void {
@@ -37,11 +40,9 @@ export class UpdateProfilePhotoModalComponent {
     console.log("onSelectedImage", this.selectedImage)
   }
 
-
   ngOnInit(): void {
     this.UpdateProfilePhotoForm = this.fb.group({
       'profilePhoto': ['', [Validators.required, fileValidator]],
-      'id': ['', 0],
     })
   }
 
@@ -50,18 +51,13 @@ export class UpdateProfilePhotoModalComponent {
 
     console.log("updateProfilePhotoForm", this.UpdateProfilePhotoForm.value)
     console.log("selectedImage", this.selectedImage)
-
     const requestData = new FormData();
-    requestData.append('id', '0');
+    requestData.append('id', this.user.id.toLocaleString());
     requestData.append('profilePhoto', this.selectedImage);
-
-    console.log("requestMap", requestData)
-
     if (this.UpdateProfilePhotoForm.invalid) {
       this.invalidForm = true
       this.responseMessage = 'Invalid form';
       this.ngxService.stop();
-
     } else {
       this.userService.updateProfilePhoto(requestData)
         .subscribe(

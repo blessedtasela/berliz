@@ -14,6 +14,7 @@ export class CenterComponent {
   totalCenters: number = 0;
   centersLength: number = 0;
   searchComponent: string = 'center';
+  isSearch: boolean = true;
   subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,

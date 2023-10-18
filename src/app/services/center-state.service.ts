@@ -88,13 +88,12 @@ export class CenterStateService {
         })
       }),
       catchError((error) => {
-        this.snackbarService.openSnackBar(error, 'error');
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {
           this.responseMessage = genericError;
         }
-        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+       console.log(this.responseMessage, 'error');
         return of([]);
       })
     );
@@ -106,13 +105,12 @@ export class CenterStateService {
         return response;
       }),
       catchError((error) => {
-        this.snackbarService.openSnackBar(error, 'error');
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {
           this.responseMessage = genericError;
         }
-        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        console.log(this.responseMessage, 'error');
         return of([]);
       })
     );

@@ -40,6 +40,12 @@ export class UserService {
     })
   }
 
+  updateBio(data: any) {
+    return this.httpClient.put(this.url + "/user/updateBio", data, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    })
+  }
+
   updateProfilePhoto(data: any) {
     return this.httpClient.put(this.url + "/user/updateProfilePhoto", data);
   }

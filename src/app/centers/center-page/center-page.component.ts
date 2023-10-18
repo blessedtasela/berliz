@@ -38,11 +38,9 @@ export class CenterPageComponent implements OnInit {
   handleEmitEvent() {
     this.subscription.add(
       this.centerStateService.getActiveCenters().subscribe((activeCenters) => {
-        this.ngxService.start()
         console.log('isCachedData false')
         this.centers = activeCenters;
         this.centerStateService.setActiveCentersSubject(this.centers);
-        this.ngxService.stop()
       })
     );
   }

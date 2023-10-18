@@ -13,6 +13,7 @@ export class PartnerComponent {
   totalPartners: number = 0;
   partnersLength: number = 0;
   searchComponent: string = 'partner'
+  isSearch: boolean = true;
 
   constructor(private ngxService: NgxUiLoaderService,
     private partnerStateService: PartnerStateService) {

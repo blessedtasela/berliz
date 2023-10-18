@@ -13,6 +13,7 @@ export class CategoryComponent {
   totalCategories: number = 0;
   categoriesLength: number = 0;
   searchComponent: string = 'category'
+  isSearch: boolean = true;
 
   constructor(private ngxService: NgxUiLoaderService,
     public categoryStateService: CategoryStateService) {

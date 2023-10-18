@@ -1,6 +1,6 @@
 import { query } from '@angular/animations';
 import { DatePipe } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
@@ -13,7 +13,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
   styleUrls: ['./categories-search.component.css']
 })
 export class CategoriesSearchComponent {
-  categories: Categories[] = [];
+  @Input() categories: Categories[] = [];
   selectedSortOption: string = 'name';
   filteredCategories: Categories[] = [];
   searchQuery: string = '';

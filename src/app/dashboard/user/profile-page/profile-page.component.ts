@@ -1,12 +1,8 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Users } from 'src/app/models/users.interface';
-import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserStateService } from 'src/app/services/user-state.service';
-import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-profile-page',

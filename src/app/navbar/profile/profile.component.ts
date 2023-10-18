@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -20,8 +20,7 @@ export class ProfileComponent {
   userData: any;
   profileOpen: boolean = false;
   responseMessage: any;
-  profilePhoto: any;
-
+  @Input() search: boolean  = false;
 
   constructor(
     private userService: UserService,
@@ -38,7 +37,6 @@ export class ProfileComponent {
   handleEmitEvent() {
     this.userStateService.getUser().subscribe((user) => {
       this.userData = user;
-      this.profilePhoto = 'data:image/jpeg;base64,' +this.userData.profilePhoto;
     });
   }
 
@@ -46,7 +44,7 @@ export class ProfileComponent {
     const dialogRef = this.dialog.open(UpdateProfilePhotoModalComponent, {
       width: '400px',
       data: {
-        image: this.profilePhoto
+        user: this.userData
       }
     });
     const childComponentInstance = dialogRef.componentInstance as UpdateProfilePhotoModalComponent;
@@ -86,8 +84,9 @@ export class ProfileComponent {
 
   openChangePassword() {
     const dialogRef = this.dialog.open(ChangePasswordModalComponent, {
-      width: '400px', data: {
-        image: this.profilePhoto
+      width: '400px',
+       data: {
+        user: this.userData
       }
     });
     const childComponentInstance = dialogRef.componentInstance as ChangePasswordModalComponent;

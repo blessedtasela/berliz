@@ -18,3 +18,13 @@
         </select>
     </div>
 </div>
+<div *ngIf="centers.length !== 0" class="flex flex-col items-center justify-center">
+    <div class="m-4 text-center text-gray-700 font-bold text-md">
+        {{ centers.length }} Results Found
+    </div>
+</div>
+<div *ngIf="centers.length === 0" class="flex flex-col items-center justify-center">
+    <div class="m-4 text-center text-gray-700 font-bold text-md">
+        No Results Found. Please Try Again
+    </div>
+</div>
