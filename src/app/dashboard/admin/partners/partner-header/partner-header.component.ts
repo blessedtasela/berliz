@@ -21,7 +21,7 @@ export class PartnerHeaderComponent {
     private partnerStateService: PartnerStateService) { }
 
   ngOnInit(): void {
- 
+
   }
 
   handleEmitEvent() {
@@ -52,6 +52,13 @@ export class PartnerHeaderComponent {
       case 'id':
         this.partnersData.sort((a, b) => {
           return a.id - b.id;
+        });
+        break;
+      case 'lastUpdate':
+        this.partnersData.sort((a, b) => {
+          const dateA = new Date(a.lastUpdate);
+          const dateB = new Date(b.lastUpdate);
+          return dateB.getTime() - dateA.getTime();
         });
         break;
       default:

@@ -32,8 +32,6 @@ export class AdminUpdateUserModalComponent {
   }
 
   ngOnInit(): void {
-
-    this.formIndex = this.getIndex();
     this.getCountriesData();
     this.updateUserForm = this.fb.group({
       'id': new FormControl(this.userData?.id, [Validators.required]),
@@ -63,16 +61,7 @@ export class AdminUpdateUserModalComponent {
       console.log("Can't validate");
     } else {
       this.formIndex += n;
-      this.userService.setLoginFormIndex(this.formIndex);
     }
-  }
-
-
-  getIndex() {
-    const storedIndex = localStorage.getItem("updateUserFormIndex");
-    const index = storedIndex ? parseInt(storedIndex, 10) : 0;
-    console.log('Current form Index: ', index);
-    return index;
   }
 
   getCountriesData() {

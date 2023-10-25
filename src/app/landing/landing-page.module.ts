@@ -14,6 +14,7 @@ import { PromotionsComponent } from './promotions/promotions.component';
 import { PromotionsListComponent } from './promotions-list/promotions-list.component';
 import { RouterModule } from '@angular/router';
 import { TestimonialComponent } from './testimonial/testimonial.component';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
@@ -26,7 +27,7 @@ import { TestimonialComponent } from './testimonial/testimonial.component';
     OffersComponent,
     PromotionsComponent,
     PromotionsListComponent,
-    TestimonialComponent
+    TestimonialComponent,
   ],
   imports: [
     CommonModule, 
@@ -35,6 +36,7 @@ import { TestimonialComponent } from './testimonial/testimonial.component';
     IconsModule,
     NewsAndUpdatesModule,
     RouterModule,
+
   ],
   exports: [
     LandingPageComponent

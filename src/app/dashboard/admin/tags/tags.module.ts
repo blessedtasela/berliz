@@ -8,6 +8,8 @@ import { TagDetailsComponent } from './tag-details/tag-details.component';
 import { AddTagModalComponent } from './add-tag-modal/add-tag-modal.component';
 import { UpdateTagModalComponent } from './update-tag-modal/update-tag-modal.component';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
+import { TagHeaderComponent } from './tag-header/tag-header.component';
+import { TagListComponent } from './tag-list/tag-list.component';
 
 
 
@@ -16,7 +18,9 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
     TagComponent,
     TagDetailsComponent,
     AddTagModalComponent,
-    UpdateTagModalComponent
+    UpdateTagModalComponent,
+    TagHeaderComponent,
+    TagListComponent
   ],
   imports: [
     CommonModule,

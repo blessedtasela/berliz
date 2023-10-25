@@ -7,7 +7,8 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
 import { AddContactUsModalComponent } from '../add-contact-us-modal/add-contact-us-modal.component';
 import { ContactUsStateService } from 'src/app/services/contact-us-state.service';
-import { ContactUs } from 'src/app/models/contact-us.model';
+import { ContactUs, ContactUsMessage } from 'src/app/models/contact-us.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-contact-us-review-modal',
@@ -20,6 +21,10 @@ export class ContactUsReviewModalComponent {
   invalidForm: boolean = false;
   responseMessage: string = '';
   contactUs!: ContactUs;
+  selectedMessage: string = '';
+  selectedSubject: string = '';
+  savedMessages: ContactUsMessage[] = [];
+  subscription = new Subscription;
 
   constructor(private formBuilder: FormBuilder,
     private contactUsService: ContactUsService,
@@ -31,17 +36,48 @@ export class ContactUsReviewModalComponent {
     this.contactUs = this.data.contactUs;
   }
 
-
   ngOnInit(): void {
     this.reviewContactUsForm = this.formBuilder.group({
-      'id':this.contactUs?.id,
-      'message': ['', [Validators.required, Validators.minLength(20)]]
+      'savedSubject': '',
+      'savedBody': '',
+      'id': this.contactUs?.id,
+      'subject': ['', [Validators.required, Validators.minLength(12)]],
+      'body': ['', [Validators.required, Validators.minLength(50)]],
+    });
+
+    this.contactUsStateService.contactUsMessageData$.subscribe((cachedData) => {
+      if (!cachedData) {
+        this.handleEmitEvent();
+      } else {
+        this.savedMessages = cachedData
+      }
+    })
+  }
+
+  handleEmitEvent() {
+    this.subscription.add(this.contactUsStateService.getContactUsMessages().subscribe((messages) => {
+      this.ngxService.start()
+      console.log("isCached false")
+      this.savedMessages = messages
+      this.contactUsStateService.setContactUsMessageSubject(this.savedMessages);
+      this.ngxService.stop()
+    }),
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.selectedMessage = '';
+      this.selectedSubject = '';
     });
   }
 
-  submitForm() {
+  reviewContactUs() {
     this.ngxService.start()
-    console.log("form value: ", this.reviewContactUsForm.value)
     this.ngxService.start();
     if (this.reviewContactUsForm.invalid) {
       this.invalidForm = true
@@ -74,5 +110,10 @@ export class ContactUsReviewModalComponent {
   closeDialog() {
     this.dialogRef.close("Dialog closed successfully");
   }
+
+  clear() {
+    this.reviewContactUsForm.reset();
+  }
+
 }
 

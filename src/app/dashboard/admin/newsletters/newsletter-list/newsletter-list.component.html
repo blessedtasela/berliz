@@ -1,0 +1,58 @@
+<div class="justify-center items-center p-5 overflow-x-scroll rounded-lg">
+    <div class="min-w-[300px]">
+        <table class="table-auto border-collapse border border-gray-400 bg-gray-300 text-gray-950 font-sans
+                container">
+            <thead>
+                <tr class="cursor-pointer">
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">SN</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Email </th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Date</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">ID</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Actions</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Status</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Last update</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let newsletter of newsletterData; let i = index" class="bg-gray-100 hover:bg-gray-200">
+                    <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">
+                        <a href="mailto:{{ newsletter.email }}"> {{ newsletter.email }}</a>
+                    </td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(newsletter.date) }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2 font-bold">{{ newsletter.id }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">
+                        <div class="flex items-center p-2">
+                            <button
+                                class="text-sm rounded-md font-sans mx-auto ml-4
+                                    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
+                                (click)="sendNewsletterMessage(newsletter.email)">
+                                <i-feather name="Send" class="text-gray-800"></i-feather>
+                            </button>
+                            <button
+                                class="text-sm rounded-md font-sans mx-auto ml-4
+                                        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
+                                (click)="openUpdateNewsletter(newsletter.id)">
+                                <i-feather name="edit" class="text-red-600"></i-feather>
+                            </button>
+                            <button
+                                class="text-sm bg-gray-950 text-white p-1 px-2 hover:bg-gray-1000 rounded-md font-sans mx-auto ml-4
+                                transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
+                                [ngClass]="{'bg-red-600 hover:bg-red-700': newsletter.status == 'true'}"
+                                (click)="updateNewsletterStatus(newsletter.id)">
+                                {{ newsletter.status == 'false' ? 'activate' : 'deactivate'}}
+                            </button>
+                            <button
+                                class="text-sm rounded-md font-sans mx-auto ml-4
+                                        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
+                                (click)="deleteNewsletter(newsletter.id)">
+                                <i-feather name="trash-2" class="text-red-600"></i-feather>
+                            </button>
+                        </div>
+                    </td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ newsletter.status }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(newsletter.lastUpdate) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>

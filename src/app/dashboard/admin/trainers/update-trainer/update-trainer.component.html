@@ -2,12 +2,12 @@
     <div class="text-red-600 absolute top-0 right-0 p-1">
         <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
     </div>
-    <div class="rounded-md mx-auto">
+    <div class="rounded-lg p-2 mr-2  mx-auto">
         <form [formGroup]="updateTrainerForm">
             <div class="border-b-2 " [ngClass]="{'border-red-400': updateTrainerForm.invalid && invalidForm }">
-                <header class="text-center m-2">
-                    <h1 class="font-bold font-sans text-xl">Update Trainer Details</h1>
-                    <p class="font-sans text-sm">Trainer ID: {{ trainer.id }}
+                <header class="text-center m-2 font-bold font-sans">
+                    <h1 class=" text-xl">Update Center Details</h1>
+                    <p class="text-red-600 italic text-sm">Trainer ID: {{ trainer.id }}
                     </p>
                 </header>
                 <hr [ngClass]="{'border-red-500': updateTrainerForm.invalid && invalidForm }">
@@ -19,93 +19,100 @@
                         Everything looks good
                     </span>
                 </div>
-                <div class="grid grid-cols gap-1 flex items-center p-2">
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Display Name</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Display Name</span>
-                        <input formControlName="name" [value]="trainer.name"
-                            class="w-full border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                            [ngClass]="{'border-red-400': updateTrainerForm.get('name')?.invalid && updateTrainerForm.get('name')?.dirty }"
-                            placeholder="Display name Team Berliz" type="text">
-                        <div *ngIf="updateTrainerForm.get('name')?.invalid && updateTrainerForm.get('name')?.dirty"
-                            class="text-red-500 mx-2">
-                            Display name is required
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Expereince</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Expereince</span>
-                        <input formControlName="experience" [value]="trainer.experience"
-                            class="w-full border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                            [ngClass]="{'border-red-400': updateTrainerForm.get('experience')?.invalid && updateTrainerForm.get('experience')?.dirty }"
-                            placeholder="experience" type="number">
-                        <div *ngIf="updateTrainerForm.get('experience')?.invalid && updateTrainerForm.get('experience')?.dirty"
-                            class="text-red-500 mx-2">
-                            Expereince is required
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2 " *ngIf="user?.role === 'admin'">
-                        <span class="sr-only">Likes</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Likes</span>
-                        <input formControlName="likes" [value]="trainer.likes"
-                            class="w-full border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                            [ngClass]="{'border-red-400': updateTrainerForm.get('likes')?.invalid && updateTrainerForm.get('likes')?.dirty }"
-                            placeholder="likes" type="number">
-                        <div *ngIf="updateTrainerForm.get('likes')?.invalid && updateTrainerForm.get('likes')?.dirty"
-                            class="text-red-500 mx-2">
-                            Expereince is required
-                        </div>
-                    </div>
-                    <div class="mx-auto ">
-                        <span class="sr-only">Motto</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Motto</span>
-                        <textarea formControlName="motto" [value]="trainer.motto"
-                            class="w-full border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                            [ngClass]="{'border-red-400': updateTrainerForm.get('mtoo')?.invalid && updateTrainerForm.get('motto')?.dirty }"
-                            placeholder="Write a short bio about discipline or motto" rows="5" cols="25"></textarea>
-                        <div *ngIf="updateTrainerForm.get('motto')?.invalid && updateTrainerForm.get('motto')?.dirty"
-                            class="text-red-500 mx-2">
-                            At least 30 characters
-                        </div>
-                    </div>
-                    <div class="mx-auto ">
-                        <span class="sr-only">Address</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Address</span>
-                        <textarea formControlName="address" [value]="trainer.address"
-                            class="w-full border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                            [ngClass]="{'border-red-400': updateTrainerForm.get('address')?.invalid && updateTrainerForm.get('address')?.dirty }"
-                            placeholder="Write your street address or location here" rows="5" cols="25"></textarea>
-                        <div *ngIf="updateTrainerForm.get('address')?.invalid && updateTrainerForm.get('address')?.dirty"
-                            class="text-red-500 mx-2">
-                            At least 10 characters
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 md:grid-cols-4">
-                        <div *ngFor="let cat of categories; let i = index" class="mx-auto flex items-center">
-                            <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
-                                [checked]="selectedCategoriesId.includes(cat.id)"
-                                class="w-full border-b-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                                placeholder="tags" type="checkbox" [value]="cat.id">
-                            {{ cat.name }}
-                            <div *ngIf="updateTrainerForm.get('categoryIds')?.invalid && invalidForm"
-                                class="text-red-500 mx-2">
-                                Select at least one category
+                <div class="grid grid-cols md:grid-cols-2 rounded-lg p-2 gap-2">
+                    <div class="rounded-lg object-cover gap-5">
+                        <img [src]="'data:image;base64, ' + trainer.photo" class="rounded-lg"
+                            onerror="this.src='../../../assets/icons/user.png';">
+                        <div class="grid grid-cols-2 md:grid-cols-4">
+                            <div *ngFor="let cat of categories; let i = index" class="mx-auto flex items-center">
+                                <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
+                                    [checked]="selectedCategoriesId.includes(cat.id)"
+                                    class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
+                                    placeholder="tags" type="checkbox" [value]="cat.id">
+                                {{ cat.name }}
                             </div>
                         </div>
-                    </div>
-                    <div class="grid grid-cols-2">
-                        <div><button
-                                class="bg-gray-950 rounded-md mx-auto m-2 p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                                (click)="clear()">
-                                Clear
-                            </button>
+                        <div *ngIf="updateTrainerForm.get('categoryIds')?.invalid && invalidForm"
+                            class="text-red-500 mx-2">
+                            Select at least one category
                         </div>
-                        <div>
-                            <button
-                                class="bg-red-600 rounded-md mx-auto m-2 p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                                type="submit" (click)="updateTrainer()">
-                                Submit
-                            </button>
+                    </div>
+                    <div class="bg-gray-200 gap-6 rounded-lg">
+                        <div class="mx-auto p-2">
+                            <span class="sr-only">Display Name</span>
+                            <span class="ml-4 font-bold text-gray-600 italic">Display Name</span>
+                            <input formControlName="name" [value]="trainer.name"
+                                class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
+                                [ngClass]="{'border-red-400': updateTrainerForm.get('name')?.invalid && updateTrainerForm.get('name')?.dirty }"
+                                placeholder="Display name Team Berliz" type="text">
+                            <div *ngIf="updateTrainerForm.get('name')?.invalid && updateTrainerForm.get('name')?.dirty"
+                                class="text-red-500 mx-2">
+                                Display name is required
+                            </div>
+                        </div>
+                        <div class="mx-auto p-2">
+                            <span class="sr-only">Expereince</span>
+                            <span class="ml-4 font-bold text-gray-600 italic">Expereince</span>
+                            <input formControlName="experience" [value]="trainer.experience"
+                                class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
+                                [ngClass]="{'border-red-400': updateTrainerForm.get('experience')?.invalid && updateTrainerForm.get('experience')?.dirty }"
+                                placeholder="experience" type="number">
+                            <div *ngIf="updateTrainerForm.get('experience')?.invalid && updateTrainerForm.get('experience')?.dirty"
+                                class="text-red-500 mx-2">
+                                Expereince is required
+                            </div>
+                        </div>
+                        <div class="mx-auto p-2 " *ngIf="user?.role === 'admin'">
+                            <span class="sr-only">Likes</span>
+                            <span class="ml-4 font-bold text-gray-600 italic">Likes</span>
+                            <input formControlName="likes" [value]="trainer.likes"
+                                class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
+                                [ngClass]="{'border-red-400': updateTrainerForm.get('likes')?.invalid && updateTrainerForm.get('likes')?.dirty }"
+                                placeholder="likes" type="number">
+                            <div *ngIf="updateTrainerForm.get('likes')?.invalid && updateTrainerForm.get('likes')?.dirty"
+                                class="text-red-500 mx-2">
+                                Expereince is required
+                            </div>
+                        </div>
+                        <div class="mx-auto p-2">
+                            <span class="sr-only">Motto</span>
+                            <span class="ml-4 font-bold text-gray-600 italic">Motto</span>
+                            <textarea formControlName="motto" [value]="trainer.motto"
+                                class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
+                                [ngClass]="{'border-red-400': updateTrainerForm.get('mtoo')?.invalid && updateTrainerForm.get('motto')?.dirty }"
+                                placeholder="Write a short bio about discipline or motto" rows="5" cols="25"></textarea>
+                            <div *ngIf="updateTrainerForm.get('motto')?.invalid && updateTrainerForm.get('motto')?.dirty"
+                                class="text-red-500 mx-2">
+                                At least 30 characters
+                            </div>
+                        </div>
+                        <div class="mx-auto p-2">
+                            <span class="sr-only">Address</span>
+                            <span class="ml-4 font-bold text-gray-600 italic">Address</span>
+                            <textarea formControlName="address" [value]="trainer.address"
+                                class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
+                                [ngClass]="{'border-red-400': updateTrainerForm.get('address')?.invalid && updateTrainerForm.get('address')?.dirty }"
+                                placeholder="Write your street address or location here" rows="5" cols="25"></textarea>
+                            <div *ngIf="updateTrainerForm.get('address')?.invalid && updateTrainerForm.get('address')?.dirty"
+                                class="text-red-500 mx-2">
+                                At least 10 characters
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2">
+                            <div>
+                                <button
+                                    class="bg-gray-950 rounded-md mx-auto py-1 px-2 m-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                                    (click)="clear()">
+                                    Clear
+                                </button>
+                            </div>
+                            <div>
+                                <button
+                                    class="bg-red-600 rounded-md mx-auto py-1 px-2 m-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                                    type="submit" (click)="updateTrainer()">
+                                    Submit
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

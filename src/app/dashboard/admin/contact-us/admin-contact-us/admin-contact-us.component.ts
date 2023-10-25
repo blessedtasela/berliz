@@ -22,7 +22,7 @@ export class AdminContactUsComponent {
   }
 
   ngOnInit(): void {
-    this.contactUsStateService.allContacctUsData$.subscribe((cachedData) => {
+    this.contactUsStateService.allContactUsData$.subscribe((cachedData) => {
       if (!cachedData) {
         this.handleEmitEvent()
       } else {
@@ -40,7 +40,7 @@ export class AdminContactUsComponent {
       this.contactUsData = contactUs;
       this.totalContactUs = contactUs.length
       this.contactUsLength = contactUs.length;
-      this.contactUsStateService.setAallContactUsSubject(this.contactUsData);
+      this.contactUsStateService.setAllContactUsSubject(this.contactUsData);
       this.ngxService.stop()
     });
   }

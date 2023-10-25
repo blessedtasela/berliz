@@ -67,5 +67,9 @@ export class AddContactUsModalComponent {
   closeDialog() {
     this.dialogRef.close("Dialog closed successfully");
   }
+
+  clear() {
+    this.contactUsForm.reset()
+  }
 }
 

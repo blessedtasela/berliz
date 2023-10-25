@@ -1,9 +1,9 @@
 <section class="p-4">
-    <div class="mt-10 container border-2 rounded-md max-w-2xl min-w-2xl mx-auto py-2"
+    <div class="mt-10 container border-2 rounded-md max-w-2xl min-w-2xl mx-auto"
         [ngClass]="{'border-red-400': contactUsForm.invalid && invalidForm}">
-        <header class="text-center m-2">
-            <h1 class="font-bold font-sans text-xl">We want to hear from you</h1>
-            <p class="font-sans text-sm">If you have any technical concerns or would like to provide feedback
+        <header class="text-center font-bold font-sans m-2">
+            <h1 class="text-gray-950 text-xl">We want to hear from you</h1>
+            <p class="italic text-gray-600 text-sm">If you have any technical concerns or would like to provide feedback
                 on our beta features, require further information about our Business plan,
                 or have any inquiries about our program, please do not hesitate to contact us.
                 We highly value your input and are here to assist you in a professional and informative manner.
@@ -19,14 +19,20 @@
                 <span *ngIf="!(contactUsForm.get('name')?.invalid ||
                    contactUsForm.get('email')?.invalid ||
                    contactUsForm.get('message')?.invalid)
-                    && invalidForm" class="mx-2 text-gray-400">
+                    && invalidForm" class="mx-2 text-gray-600">
                     Everything looks good
                 </span>
+                <span *ngIf="(contactUsForm.get('name')?.invalid ||
+                contactUsForm.get('email')?.invalid ||
+                contactUsForm.get('message')?.invalid)
+                 && invalidForm" class="mx-2 text-red-600">
+                    Please complete all sections
+                </span>
             </div>
-            <div class="grid grid-cols-1 gap-5">
-                <div class="mx-auto">
+            <div class="grid grid-cols-1 gap-5 p-4 bg-gray-200">
+                <div class="mx-auto w-full p-2">
                     <input formControlName="name"
-                        class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="w-full border-b-2 px-4 py-2 rounded-md m-2 border-gray-400 hover:border-gray-500 focus:border-gray-600 focus:outline-none"
                         [ngClass]="{'border-red-400': contactUsForm.get('name')?.invalid && contactUsForm.get('name')?.touched }"
                         placeholder="Full Name" type="text">
                     <div *ngIf="contactUsForm.get('name')?.invalid && contactUsForm.get('name')?.dirty"
@@ -34,9 +40,9 @@
                         Please enter your full name
                     </div>
                 </div>
-                <div class="mx-auto">
+                <div class="mx-auto w-full p-2">
                     <input formControlName="email"
-                        class="w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="w-full border-b-2 px-4 py-2 rounded-md m-2 border-gray-400 hover:border-gray-500 focus:border-gray-600 focus:outline-none"
                         [ngClass]="{'border-red-400': contactUsForm.get('email')?.invalid && contactUsForm.get('email')?.touched }"
                         placeholder="example@gmail.com" type="email">
                     <div *ngIf="contactUsForm.get('email')?.invalid && contactUsForm.get('email')?.dirty"
@@ -44,9 +50,9 @@
                         Invalid email
                     </div>
                 </div>
-                <div class="mx-auto">
+                <div class="mx-auto w-full p-2">
                     <textarea formControlName="message"
-                        class="lg:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                        class="w-full border-b-2 px-4 py-2 rounded-md m-2 border-gray-400 hover:border-gray-500 focus:border-gray-600 focus:outline-none"
                         [ngClass]="{'border-red-400': contactUsForm.get('message')?.invalid && contactUsForm.get('message')?.touched }"
                         placeholder="Leave your message here" rows="5" cols="20"></textarea>
                     <div *ngIf="contactUsForm.get('message')?.invalid && contactUsForm.get('message')?.dirty"
@@ -54,13 +60,23 @@
                         Message must be at least 20 characters
                     </div>
                 </div>
-                <button class="p-1 px-2 uppercase bg-red-600 mx-auto rounded-md text-sm md:text-md text-white font-sans
-                         transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl" type="submit"
-                    (click)="submitForm()">
-                    submit
-                </button>
+                <div class="grid grid-cols-2">
+                    <div>
+                        <button
+                            class="bg-gray-950 rounded-md mx-auto py-1 px-2 m-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                            (click)="clear()">
+                            Clear
+                        </button>
+                    </div>
+                    <div>
+                        <button
+                            class="bg-red-600 rounded-md mx-auto py-1 px-2 m-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                            type="submit" (click)="submitForm()">
+                            Submit
+                        </button>
+                    </div>
+                </div>
             </div>
         </form>
     </div>
 </section>
-

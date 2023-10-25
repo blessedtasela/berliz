@@ -36,7 +36,7 @@ export class ContactUsFormComponent implements OnInit {
     this.ngxService.start();
     if (this.contactUsForm.invalid) {
       this.invalidForm = true
-      this.snackBarService.openSnackBar("Invalid form input", 'error');
+      this.responseMessage = "Invalid form input";
       this.ngxService.stop()
     }
     else {
@@ -62,4 +62,7 @@ export class ContactUsFormComponent implements OnInit {
     this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
 
+  clear() {
+    this.contactUsForm.reset()
+  }
 }

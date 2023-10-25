@@ -41,7 +41,7 @@ export class ContactUsListComponent {
       this.ngxService.start()
       this.contactUsData = contactUs;
       this.totalContactUs = this.contactUsData.length
-      this.contactUsStateService.setAallContactUsSubject(this.contactUsData);
+      this.contactUsStateService.setAllContactUsSubject(this.contactUsData);
       this.ngxService.stop()
     });
   }
@@ -55,8 +55,8 @@ export class ContactUsListComponent {
       const contactUs = this.contactUsData.find(contactUs => contactUs.id === id);
       if (contactUs) {
         const dialogRef = this.dialog.open(ContactUsDetailsComponent, {
-          width: '700px',
-          height: '400px',
+          width: '800px',
+          minHeight: '400px',
           data: {
             contactUs: contactUs,
           }
@@ -74,8 +74,8 @@ export class ContactUsListComponent {
       const contactUs = this.contactUsData.find(contactUs => contactUs.id === id);
       if (contactUs) {
         const dialogRef = this.dialog.open(UpdateContactUsModalComponent, {
-          width: '900px',
-          height: '480px',
+          width: '800px',
+          height: '500px',
           data: {
             contactUsData: contactUs,
           }
@@ -134,7 +134,7 @@ export class ContactUsListComponent {
     } else {
       const dialogRef = this.dialog.open(ContactUsReviewModalComponent, {
         width: '800px',
-        height: '350px',
+        height: '520px',
         data: {
           contactUs: contactUs,
         }

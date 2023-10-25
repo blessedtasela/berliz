@@ -2,7 +2,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Categories } from 'src/app/models/categories.interface';
 import { Centers } from 'src/app/models/centers.interface';
 import { ContactUs } from 'src/app/models/contact-us.model';
+import { Newsletter } from 'src/app/models/newsletter.model';
 import { Partners } from 'src/app/models/partners.interface';
+import { Tags } from 'src/app/models/tags.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 
@@ -18,6 +20,8 @@ export class SearchComponent {
   @Output() usersResults: EventEmitter<Users[]> = new EventEmitter<Users[]>()
   @Output() partnersResults: EventEmitter<Partners[]> = new EventEmitter<Partners[]>()
   @Output() centerssResults: EventEmitter<Centers[]> = new EventEmitter<Centers[]>()
+  @Output() newslettersResult: EventEmitter<Newsletter[]> = new EventEmitter<Newsletter[]>();
+  @Output() tagsResults: EventEmitter<Tags[]> = new EventEmitter<Tags[]>();
   @Output() searchComponentChange: EventEmitter<string> = new EventEmitter<string>();
   @Input() searchComponent: string = '';
 
@@ -58,4 +62,13 @@ export class SearchComponent {
     this.searchComponentChange.emit(this.searchComponent);
   }
 
+  handleNewsletterSearchResults(results: Newsletter[]): void {
+    this.newslettersResult.emit(results)
+    this.searchComponentChange.emit(this.searchComponent);
+  }
+
+  handleTagSearchResults(results: Tags[]) {
+    this.tagsResults.emit(results);
+    this.searchComponentChange.emit(this.searchComponent);
+  }
 }

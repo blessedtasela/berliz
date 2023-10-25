@@ -55,7 +55,7 @@ export class UpdateTrainerComponent {
     this.handleEmitEvent();
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.cdr.detectChanges();
   }
 
@@ -101,7 +101,6 @@ export class UpdateTrainerComponent {
       ...this.updateTrainerForm.value,
       categoryIds: categoryToStrings
     };
-
     if (this.updateTrainerForm.invalid) {
       this.ngxService.start();
       this.invalidForm = true;

@@ -13,6 +13,8 @@ import { Users } from 'src/app/models/users.interface';
 import { Partners } from 'src/app/models/partners.interface';
 import { UserService } from 'src/app/services/user.service';
 import { Centers } from 'src/app/models/centers.interface';
+import { Newsletter } from 'src/app/models/newsletter.model';
+import { Tags } from 'src/app/models/tags.interface';
 
 @Component({
   selector: 'app-sidebar-navigation',
@@ -31,6 +33,8 @@ export class SidebarNavigationComponent {
   @Output() usersResults: EventEmitter<Users[]> = new EventEmitter<Users[]>()
   @Output() partnersResults: EventEmitter<Partners[]> = new EventEmitter<Partners[]>()
   @Output() centersResult: EventEmitter<Centers[]> = new EventEmitter<Centers[]>()
+  @Output() newslettersResult: EventEmitter<Newsletter[]> = new EventEmitter<Newsletter[]>();
+  @Output() tagsResult: EventEmitter<Tags[]> = new EventEmitter<Tags[]>();
   @Input() searchComponent: string = ''
 
   constructor(
@@ -75,6 +79,14 @@ export class SidebarNavigationComponent {
 
   handleCenterSearchResults(results: Centers[]): void {
     this.centersResult.emit(results)
+  }
+
+  handleNewsletterSearchResults(results: Newsletter[]): void {
+    this.newslettersResult.emit(results)
+  }
+
+  handleTagSearchResults(results: Tags[]) {
+    this.tagsResult.emit(results)
   }
 
   openUpdateProfilePhoto() {

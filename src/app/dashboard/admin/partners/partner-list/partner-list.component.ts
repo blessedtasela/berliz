@@ -21,6 +21,7 @@ import { PartnerStateService } from 'src/app/services/partner-state.service';
 export class PartnerListComponent {
   responseMessage: any;
   @Input() partnersData: Partners[] = [];
+  @Input() totalPartners: number = 0
   showFullData: boolean = false;
 
   constructor(private partnerService: PartnerService,

@@ -1,0 +1,83 @@
+<div class="relative p-2">
+    <section class="p-2 grid grid-cols md:grid-cols-2 gap-2">
+        <div class="text-red-600 absolute top-0 right-0 p-5">
+            <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+        </div>
+        <div class="rounded-lg object-cover flex">
+            <img src="../../../../../assets/newsletter.jpg" class="rounded-lg">
+        </div>
+        <div class="container border-2 rounded-md max-w-2xl min-w-2xl mx-auto py-2 bg-gray-200">
+            <header class="font-bold font-sans text-center m-2">
+                <h1 class="text-xl">Send Bulk Newsletter to subscribers</h1>
+                <h3 class="text-sm italic text-red-600"> Embark on a fulfilling journey</h3>
+            </header>
+            <form [formGroup]="newsletterBulkMessageForm">
+                <hr [ngClass]="{'border-red-500': (newsletterBulkMessageForm.get('subject')?.invalid
+                     || newsletterBulkMessageForm.get('body')?.invalid) 
+                     && invalidForm }">
+                <div class="invalid-form">
+                    <span *ngIf="!(newsletterBulkMessageForm.get('subject')?.invalid
+                         || newsletterBulkMessageForm.get('body')?.invalid)
+                          && invalidForm" class="mx-2 text-gray-200">
+                        Everything looks good
+                    </span>
+                    <span *ngIf="(newsletterBulkMessageForm.get('subject')?.invalid 
+                        || newsletterBulkMessageForm.get('body')?.invalid) 
+                        && invalidForm" class="mx-2 text-red-600">
+                        Please complete all sections
+                    </span>
+                </div>
+                <div class="grid grid-cols-1 gap-5">
+                    <div class="mx-auto w-full p-1">
+                        <select formControlName="savedSubject" [(ngModel)]="selectedSubject"
+                            class="w-full p-2 mr-2 bg-gray-100 rounded-lg focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                            placeholder="savedMessages" type="text">
+                            <option selected hidden class="font-sans">You can select message subject</option>
+                            <option *ngFor="let message of savedMessages">{{ message.subject }}</option>
+                        </select>
+                    </div>
+                    <div class="mx-auto w-full p-1">
+                        <input formControlName="subject" [(ngModel)]="selectedSubject"
+                            class="w-full p-2 mr-2 bg-gray-100 rounded-lg focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                            [ngClass]="{'border-red-400': newsletterBulkMessageForm.get('subject')?.invalid && newsletterBulkMessageForm.get('subject')?.touched }"
+                            placeholder="Email subject" type="text">
+                        <div *ngIf="newsletterBulkMessageForm.get('subject')?.invalid && newsletterBulkMessageForm.get('subject')?.dirty"
+                            class="text-red-400 mx-2">
+                            Please enter email subject
+                        </div>
+                    </div>
+                    <div class="mx-auto w-full p-1">
+                        <select formControlName="savedBody" [(ngModel)]="selectedMessage"
+                            class="w-full p-2 mr-2 bg-gray-100 rounded-lg focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                            placeholder="savedMessages" type="text">
+                            <option selected hidden class="font-sans">You can select saved messages</option>
+                            <option *ngFor="let message of savedMessages">{{ message.message }}</option>
+                        </select>
+                    </div>
+                    <div class="mx-auto w-full p-1">
+                        <textarea formControlName="body" [(ngModel)]="selectedMessage"
+                            class="w-full p-2 mr-2 bg-gray-100 rounded-lg focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                            [ngClass]="{'border-red-400': newsletterBulkMessageForm.get('body')?.invalid && newsletterBulkMessageForm.get('body')?.touched }"
+                            placeholder="Enter email body here" rows="5" cols="20"></textarea>
+                        <div *ngIf="newsletterBulkMessageForm.get('body')?.invalid && newsletterBulkMessageForm.get('body')?.dirty"
+                            class="text-red-400 mx-2">
+                            Body must be at least 50 characters
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-5 font-bold">
+                        <button
+                            class="py-1 px-2 bg-gray-950 mx-auto rounded-md text-sm md:text-md text-white font-sans transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+                            type="submit" (click)="clear()">
+                            Clear
+                        </button>
+                        <button
+                            class="py-1 px-2 bg-red-600 mx-auto rounded-md text-sm md:text-md text-white font-sans transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+                            type="submit" (click)="sendNewsletterMessage()">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>

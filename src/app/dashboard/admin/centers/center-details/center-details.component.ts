@@ -58,7 +58,6 @@ export class CenterDetailsComponent {
     this.dialogRef.close("Dialog closed successfully");
   }
 
-
   openUpdatePhoto() {
     try {
       const dialogRef = this.dialog.open(UpdateTrainerPhotoModalComponent, {
@@ -68,8 +67,6 @@ export class CenterDetailsComponent {
         }
       });
       const childComponentInstance = dialogRef.componentInstance as UpdateTrainerPhotoModalComponent;
-
-      // Set the event emitter before closing the dialog
       childComponentInstance.onUpdatePhotoEmit.subscribe(() => {
         this.handleEmit()
       });
@@ -89,6 +86,5 @@ export class CenterDetailsComponent {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
-
 
 }

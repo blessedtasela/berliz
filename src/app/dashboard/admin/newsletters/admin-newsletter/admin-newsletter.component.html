@@ -1,6 +1,13 @@
 <div class="relative min-h-screen flex">
-    <app-sidebar-navigation></app-sidebar-navigation>
-    <div class="flex p-10 full-width">
-        <app-newsletter-details class="width"></app-newsletter-details>
+    <app-sidebar-navigation (contactUsResults)="handleSearchResults($event)"
+        [searchComponent]="searchComponent" [isSearch]="isSearch"></app-sidebar-navigation>
+    <div class="flex p-4 md:p-8 mt-4 full-width">
+        <div class="width bg-gray-200 p-2 rounded-lg mt-20">
+            <app-newsletter-header [newsletterData]="newsletterData" [totalNewsletters]="totalNewsletters"
+                [newsletterLength]="newsletterLength"></app-newsletter-header>
+            <app-newsletter-list [newsletterData]="newsletterData"
+                [totalNewsletters]="totalNewsletters"></app-newsletter-list>
+        </div>
     </div>
 </div>
+<app-footer></app-footer>

@@ -12,8 +12,12 @@
         </div>
         <app-search (categoriesResults)="handleCategorySearchResults($event)"
             (contactUsResults)="handleContactUsSearchResults($event)"
-            (trainersResults)="handleTrainerSearchResults($event)" (usersResults)="handleUserSearchResults($event)"
-            (partnersResults)="handlePartnerSearchResults($event)" (centerssResults)="handleCenterSearchResults($event)"
+            (trainersResults)="handleTrainerSearchResults($event)" 
+            (usersResults)="handleUserSearchResults($event)"
+            (partnersResults)="handlePartnerSearchResults($event)"
+             (centerssResults)="handleCenterSearchResults($event)"
+            (newslettersResult)="handleNewsletterSearchResults($event)"
+            (tagsResults)="handleTagSearchResults($event)"
             [searchComponent]="searchComponent"></app-search>
         <div class="flex justify-end mr-2 gap-2 md:gap-6 border-2 rounded-full border-gray-300">
             <div class="flex items-center p-2 cursor-pointer hover:drop-shadow-2xl transition-all 

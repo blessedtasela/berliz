@@ -12,8 +12,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
 import { CenterService } from 'src/app/services/center.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UpdateCenterModalComponent } from '../../admin/centers/update-center-modal/update-center-modal.component';
-
+import { UpdateCentersComponent } from '../../admin/centers/update-centers/update-centers.component';
 @Component({
   selector: 'app-center',
   templateUrl: './center.component.html',
@@ -34,7 +33,7 @@ export class CenterComponent {
     private ngxService: NgxUiLoaderService,
     private centerStateService: CenterStateService,
     private partnerStateService: PartnerStateService,
-    private datePipe: DatePipe, 
+    private datePipe: DatePipe,
     private formbuilder: FormBuilder,
     private centerService: CenterService,
     private snackBarService: SnackBarService,) { }
@@ -45,7 +44,7 @@ export class CenterComponent {
       'id': [this.centerData.id],
     })
   }
-  
+
   handleEmitEvent() {
     this.ngxService.start();
     this.subscriptions.push(
@@ -71,14 +70,14 @@ export class CenterComponent {
   }
 
   openUpdateCenter() {
-    const dialogRef = this.dialog.open(UpdateCenterModalComponent, {
+    const dialogRef = this.dialog.open(UpdateCentersComponent, {
       width: '800px',
       data: {
         centerData: this.centerData,
       },
       panelClass: 'mat-dialog-height',
     });
-    const childComponentInstance = dialogRef.componentInstance as UpdateCenterModalComponent;
+    const childComponentInstance = dialogRef.componentInstance as UpdateCentersComponent;
     childComponentInstance.onUpdateCenterEmit.subscribe(() => {
       this.handleEmitEvent();
     });

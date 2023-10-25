@@ -8,7 +8,7 @@
                     <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Cover photo </th>
                     <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Name</th>
                     <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Likes</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Address</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Email</th>
                     <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Trainer id</th>
                     <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Actions</th>
                     <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Status</th>
@@ -26,8 +26,8 @@
                                 style="width: 10px;">
                             </i-feather>
                         </label>
-                            <input accept="image/*" type="file" id="fileInput-{{trainer.id}}"
-                                style="display: none;" (change)="onImgSelected($event, trainer.id)">
+                        <input accept="image/*" type="file" id="fileInput-{{trainer.id}}" style="display: none;"
+                            (change)="onImgSelected($event, trainer.id)">
                     </td>
                     <td class="border-b border-gray-400 px-4 py-2">
                         {{ trainer.name }}
@@ -36,7 +36,7 @@
                         {{ trainer.likes }}
                     </td>
                     <td class="border-b border-gray-400 px-4 py-2">
-                        {{ trainer.address }}
+                        {{ trainer.partner.user.email }}
                     </td>
                     <th class="border-b border-gray-400 px-4 py-2 font-bold">{{ trainer.id }}</th>
                     <td class="border-b border-gray-400 px-4 py-2">{{ trainer.status }}</td>

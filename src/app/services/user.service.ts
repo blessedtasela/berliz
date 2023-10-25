@@ -10,6 +10,7 @@ import { environment } from 'src/environments/environment';
 export class UserService {
   signUpFormIndex: number = 1;
   url = environment.apiUrl;
+  partnerFormIndex: number = 0;
 
   constructor(private httpClient: HttpClient,
     private router: Router) { }
@@ -129,6 +130,12 @@ export class UserService {
       localStorage.removeItem('token');
       localStorage.removeItem('refresh_token');
       this.router.navigate(['/login']);
+  }
+
+  setPartnerFormIndex(index: number) {
+    this.partnerFormIndex = index;
+    localStorage.setItem("partnerFormIndex", index.toString());
+    console.log('current index:', this.signUpFormIndex);
   }
 
 }

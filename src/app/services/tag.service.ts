@@ -22,6 +22,10 @@ export class TagService {
     return this.httpClient.get(this.url + "/tag/get");
   }
 
+  getActiveTags() {
+    return this.httpClient.get(this.url + "/tag/getActiveTags");
+  }
+
   updateTag(data: any) {
     return this.httpClient.put(this.url + "/tag/update", data, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')

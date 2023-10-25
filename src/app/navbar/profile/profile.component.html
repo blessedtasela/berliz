@@ -12,7 +12,7 @@
             </h3>
             <h4 class="flex justify-center text-gray-400 capitalize text-sm"> {{ userData?.role }}</h4>
         </div>
-        <img [src]="'data:image;base64, ' + userData.profilePhoto" width="30px"
+        <img [src]="'data:image;base64, ' + userData?.profilePhoto" width="30px"
             class="cursor-pointer object-cover rounded-full" (click)="toggleProfile()"
             onerror="this.src='../../../assets/icons/user.png';">
         <i-feather name="chevron-down" class="text-gray-600 cursor-pointer" (click)="toggleProfile()"
@@ -25,7 +25,7 @@
         class="absolute top-[120%] right-6 bg-white rounded-md w-64 text-sm border border-gray-300 shadow-lg">
         <div class="flex justify-center p-2">
             <div class="shrink-0">
-                <img [src]="'data:image;base64, ' + userData.profilePhoto" width="50px"
+                <img [src]="'data:image;base64, ' + userData?.profilePhoto" width="50px"
                     class="object-cover rounded-full" onerror="this.src='../../../assets/icons/user.png';">
             </div>
             <div class="bottom-0 right-0" (click)="openUpdateProfilePhoto()">

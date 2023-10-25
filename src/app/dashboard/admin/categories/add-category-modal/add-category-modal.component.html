@@ -4,9 +4,9 @@
     </div>
     <section class="bg-white">
         <form [formGroup]="addCategoryForm">
-            <header class="text-center m-2 text-gray-700">
-                <h1 class="font-bold font-sans text-xl">Add a new category</h1>
-                <p class="font-sans text-sm">Please provide details of the category and select it's tags.
+            <header class="font-bold font-sans text-center m-2 text-gray-700">
+                <h1 class="text-xl">Add a new category</h1>
+                <p class="text-red-600 italic text-sm">Please provide details of the category and select it's tags.
                 </p>
             </header>
             <div class="invalid-form">
@@ -28,79 +28,85 @@
                 </span>
             </div>
             <div class="grid grid-cols md:grid-cols-2 p-1 gap-2">
-                <div class="mx-auto grid grid-cols-4 rounded-lg text-gray-700">
+                <div class="mx-auto w-full grid grid-cols-2 grid-cols-4 rounded-lg text-gray-700">
                     <div class="rounded-lg object-cover flex col-span-4 flex">
                         <img [src]="'../../../../../assets/icons/'+ selectedIcon + '.png'" class="rounded-lg">
                     </div>
-                    <div *ngIf="addCategoryForm.get('tagIds')?.invalid && invalidForm" 
-                    class="text-red-500 mx-2 col-span-4">
+                    <div *ngIf="addCategoryForm.get('tagIds')?.invalid && invalidForm"
+                        class="text-red-500 mx-2 col-span-4">
                         Select at least one tag
                     </div>
-                    <div *ngFor="let tag of tags; let i = index" class="mx-auto flex items-center">
+                    <div *ngFor="let tag of tags; let i = index"
+                        class="col-span-2 md:col-span-1 mx-auto w-full flex items-center">
                         <input formArrayName="tagIds" (change)="onCheckboxChanged($event)"
-                            class="w-full border-b-2 px-4 py-2 rounded-md m-2 text-gray-950 focus:outline-none border-gray-400 hover:border-gray-500"
+                            class="w-full border-b-2 rounded-lg  rounded-md m-2 text-gray-950 focus:outline-none border-gray-400 hover:border-gray-500"
                             placeholder="tags" type="checkbox" [value]="tag.id">
                         {{ tag.name }}
                     </div>
                 </div>
-                <div class="bg-gray-200 grid grid-cols gap-4 rounded-lg">
-                    <div class="mx-auto">
-                        Category Name
+                <div class="bg-gray-200 gap-5 rounded-lg p-2 ">
+                    <div class="mx-auto w-full p-2">
+                        <span class="text-gray-700 font-bold italic">Icon</span>
+                        <select formControlName="photo" class="w-full" [(ngModel)]="selectedIcon"
+                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
+                            [ngClass]="{'border-red-400': addCategoryForm.get('photo')?.invalid && addCategoryForm.get('photo')?.touched 
+                            || (addCategoryForm.get('photo')?.invalid && invalidForm)}" placeholder="photo"
+                            type="text">
+                            <option selected hidden class="w-auto font-sans">Select Icon name</option>
+                            <option *ngFor="let photo of icons" class="w-auto p-8 text-sm m-8">{{ photo.name }}</option>
+                        </select>
+                        <div *ngIf="addCategoryForm.get('photo')?.invalid && addCategoryForm.get('photo')?.dirty|| 
+                        (addCategoryForm.get('photo')?.invalid && invalidForm)" class="text-red-500 mx-2">
+                            select an icon name
+                        </div>
+                    </div>
+                    <div class="mx-auto w-full p-2">
+                        <span class="text-gray-700 font-bold italic"> Category Name</span>
                         <input formControlName="name"
-                            class="w-full px-4 py-2 m-2 bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addCategoryForm.get('name')?.invalid && addCategoryForm.get('name')?.touched }"
-                            placeholder="Category Name" type="text">
-                        <div *ngIf="addCategoryForm.get('name')?.invalid && addCategoryForm.get('name')?.dirty"
-                            class="text-red-500 mx-2">
+                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
+                            [ngClass]="{'border-red-400': addCategoryForm.get('name')?.invalid && addCategoryForm.get('name')?.touched 
+                            || (addCategoryForm.get('name')?.invalid && invalidForm)}" placeholder="Category Name"
+                            type="text">
+                        <div *ngIf="addCategoryForm.get('name')?.invalid && addCategoryForm.get('name')?.dirty 
+                        || (addCategoryForm.get('name')?.invalid && invalidForm)" class="text-red-500 mx-2">
                             Category Name is required
                         </div>
                     </div>
-                    <div class="mx-auto">
-                        Likes
+                    <div class="mx-auto w-full p-2">
+                        <span class="text-gray-700 font-bold italic">Likes</span>
                         <input formControlName="likes"
-                            class="w-full px-4 py-2 m-2 col-span-2 bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addCategoryForm.get('likes')?.invalid && addCategoryForm.get('likes')?.touched }"
-                            placeholder="Likes" type="number" min="0">
-                        <div *ngIf="addCategoryForm.get('likes')?.invalid && addCategoryForm.get('likes')?.dirty"
-                            class="text-red-500 mx-2">
+                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
+                            [ngClass]="{'border-red-400': addCategoryForm.get('likes')?.invalid && addCategoryForm.get('likes')?.touched 
+                            || (addCategoryForm.get('likes')?.invalid && invalidForm)}" placeholder="Likes"
+                            type="number" min="0">
+                        <div *ngIf="addCategoryForm.get('likes')?.invalid && addCategoryForm.get('likes')?.dirty 
+                        || (addCategoryForm.get('likes')?.invalid && invalidForm)" class="text-red-500 mx-2">
                             Check the number of likes
                         </div>
                     </div>
-                    <div class="mx-auto">
+                    <div class="mx-auto w-full p-2">
+                        <span class="text-gray-700 font-bold italic">Description</span>
                         <textarea formControlName="description"
-                            class="w-full px-4 py-2 m-2 col-span-2 bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addCategoryForm.get('description')?.invalid && addCategoryForm.get('description')?.touched }"
-                            placeholder="Description" rows="5" cols="30"></textarea>
-                        <div *ngIf="addCategoryForm.get('description')?.invalid && addCategoryForm.get('description')?.dirty"
-                            class="text-red-500 mx-2">
+                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
+                            [ngClass]="{'border-red-400': addCategoryForm.get('description')?.invalid && addCategoryForm.get('description')?.touched 
+                            || (addCategoryForm.get('description')?.invalid && invalidForm)}" placeholder="Description"
+                            rows="5" cols="30"></textarea>
+                        <div *ngIf="addCategoryForm.get('description')?.invalid && addCategoryForm.get('description')?.dirty
+                        || (addCategoryForm.get('description')?.invalid && invalidForm)" class="text-red-500 mx-2">
                             Description is required
-                        </div>
-                    </div>
-                    <div class="mx-auto">
-                        Icon Name
-                        <select formControlName="photo" class="w-full" [(ngModel)]="selectedIcon"
-                            class="w-full px-4 py-2 m-2 col-span-2 bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addCategoryForm.get('photo')?.invalid && addCategoryForm.get('photo')?.touched }"
-                            placeholder="photo" type="text">
-                            <option selected hidden class="font-sans">Select Icon name</option>
-                            <option *ngFor="let photo of icons">{{ photo.name }}</option>
-                        </select>
-                        <div *ngIf="addCategoryForm.get('photo')?.invalid && addCategoryForm.get('photo')?.touched"
-                            class="text-red-500 mx-2">
-                            select an icon name
                         </div>
                     </div>
                     <div class="grid grid-cols-2">
                         <div class="bg-gray-950 rounded-md mx-auto m-2">
                             <button type="button"
-                                class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
                                 (click)="clear()">
                                 Clear
                             </button>
                         </div>
                         <div class="bg-red-600 rounded-md mx-auto m-2">
                             <button type="submit"
-                                class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
                                 (click)="addCategory()">
                                 Add
 

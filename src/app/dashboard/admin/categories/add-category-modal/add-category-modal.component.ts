@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl, ValidatorFn } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl, ValidatorFn, FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -8,7 +8,8 @@ import { genericError } from 'src/validators/form-validators.module';
 import { CategoryService } from 'src/app/services/category.service';
 import { Icons } from 'src/app/models/categories.interface';
 import { Tags } from 'src/app/models/tags.interface';
-import { Observable, tap, catchError, of } from 'rxjs';
+import { Observable, tap, catchError, of, Subscription } from 'rxjs';
+import { TagStateService } from 'src/app/services/tag-state.service';
 
 @Component({
   selector: 'app-add-category-modal',
@@ -22,14 +23,15 @@ export class AddCategoryModalComponent implements OnInit {
   responseMessage: any;
   icons: Icons[];
   tags!: Tags[];
-  selectedIcon: string  = '../../../../../assets/icons/gym';
+  selectedIcon: string = '../../../../../assets/icons/gym';
+  subscription = new Subscription;
 
   constructor(private formBuilder: FormBuilder,
     private categoryService: CategoryService,
-    private tagService: TagService,
-    private cdr: ChangeDetectorRef,
+    private tagStateService: TagStateService,
     public dialogRef: MatDialogRef<AddCategoryModalComponent>,
     private ngxService: NgxUiLoaderService,
+    private cd: ChangeDetectorRef,
     private snackbarService: SnackBarService) {
     this.icons = categoryService.getIcons();
   }
@@ -43,19 +45,38 @@ export class AddCategoryModalComponent implements OnInit {
       'tagIds': this.formBuilder.array([], this.validateCheckbox()),
     });
 
-    this.getAlltags().subscribe(() => {
-      // Data is loaded, manually trigger change detection
-      this.cdr.detectChanges();
-    });
+    this.tagStateService.activeTagsData$.subscribe((cachedData) => {
+      if (!cachedData) {
+        this.handleEmitEvent();
+      } else {
+        this.tags = cachedData
+      }
+    })
   }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe()
+  }
+
+  handleEmitEvent() {
+    console.log("isCached false");
+    this.subscription.add(
+      this.tagStateService.getActiveTags().subscribe((tags) => {
+        this.ngxService.start();
+        this.tags = tags;
+        this.tagStateService.setActiveTagsSubject(tags);
+        this.cd.detectChanges(); // Manually trigger change detection
+        this.ngxService.stop();
+      })
+    );
+  }
+
 
   onCheckboxChanged(event: any) {
     const tags = this.addCategoryForm.get('tagIds') as FormArray;
-
     if (event.target.checked) {
       tags.push(this.formBuilder.group({ tagIds: event.target.value }));
     } else {
-      // Remove the control by its value
       const index = tags.controls.findIndex((control) => control.value.tagIds === event.target.value);
       tags.removeAt(index);
     }
@@ -65,32 +86,8 @@ export class AddCategoryModalComponent implements OnInit {
     return (formArray: AbstractControl) => {
       const checkboxes = formArray.value;
       const isChecked = checkboxes.length > 0;
-
       return isChecked ? null : { noCheckboxChecked: true };
     };
-  }
-
-  getAlltags(): Observable<Tags[]> {
-    return this.tagService.getAllTags()
-      .pipe(
-        tap((response: any) => {
-          this.ngxService.start();
-          this.tags = response;
-          this.ngxService.stop();
-        }),
-        catchError((error) => {
-          this.ngxService.start();
-          this.ngxService.stop();
-          this.snackbarService.openSnackBar(error, 'error');
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackbarService.openSnackBar(this.responseMessage, 'error');
-          return of([]);
-        })
-      );
   }
 
   addCategory(): void {
@@ -140,7 +137,9 @@ export class AddCategoryModalComponent implements OnInit {
   clear() {
     this.addCategoryForm.reset();
     this.selectedIcon = '../../../../../assets/icons/gym';
+    this.onCheckboxChanged(event)
   }
+
 
 }
 

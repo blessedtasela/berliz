@@ -22,6 +22,14 @@ export class NewsletterService {
     return this.httpClient.get(this.url + "/newsletter/get");
   }
 
+  getActiveNewsletters() {
+    return this.httpClient.get(this.url + "/newsletter/getActiveNewsletters");
+  }
+
+  getNewsletterMessages() {
+    return this.httpClient.get(this.url + "/newsletter/getNewsletterMessages");
+  }
+
   updateNewsletter(data: any) {
     return this.httpClient.put(this.url + "/newsletter/update", data, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
@@ -32,6 +40,18 @@ export class NewsletterService {
     return this.httpClient.put(this.url + `/newsletter/updateStatus/${id}`, null, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     })
+  }
+
+  sendMessage(data: any) {
+    return this.httpClient.post(this.url + "/newsletter/sendMessage", data,{
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
+  sendBulkMessage(data: any) {
+    return this.httpClient.post(this.url + "/newsletter/sendBulkMessage", data,{
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
   }
 
   deleteNewsletter(id: any) {

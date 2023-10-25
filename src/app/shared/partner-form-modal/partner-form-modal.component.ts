@@ -7,6 +7,7 @@ import { Role, Users } from 'src/app/models/users.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserStateService } from 'src/app/services/user-state.service';
+import { UserService } from 'src/app/services/user.service';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -34,6 +35,7 @@ export class PartnerFormModalComponent {
   },]
 
   constructor(private fb: FormBuilder,
+    private userService: UserService,
     private userStateService: UserStateService,
     public dialogRef: MatDialogRef<AddPartnerModalComponent>,
     private ngxService: NgxUiLoaderService,
@@ -51,14 +53,14 @@ export class PartnerFormModalComponent {
       'role': ['', [Validators.required, Validators.minLength(3)]],
     });
 
-    this.userStateService.allUsersData$.subscribe((cachedData)=>{
-      if(!cachedData){
+    this.userStateService.allUsersData$.subscribe((cachedData) => {
+      if (!cachedData) {
         this.user = cachedData
-      } else{
+      } else {
         this.handleEmitEvent();
       }
     })
-  
+
   }
 
   handleEmitEvent() {
@@ -94,10 +96,9 @@ export class PartnerFormModalComponent {
       this.addPartnerForm.get('cv')?.invalid) {
       this.invalidForm = true;
     } else {
-      this.formIndex = + index
+      this.formIndex += index;
     }
   }
-
 
   addPartner(): void {
     const requestData = new FormData();

@@ -8,10 +8,10 @@
                     <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Cover photo </th>
                     <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Name</th>
                     <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Likes</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Address</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">partner id</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Actions</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Map</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">ID</th>
                     <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Status</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Actions</th>
                     <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Date</th>
                 </tr>
             </thead>
@@ -26,8 +26,8 @@
                                 style="width: 10px;">
                             </i-feather>
                         </label>
-                            <input accept="image/*" type="file" id="fileInput-{{center.id}}"
-                                style="display: none;" (change)="onImgSelected($event, center.id)">
+                        <input accept="image/*" type="file" id="fileInput-{{center.id}}" style="display: none;"
+                            (change)="onImgSelected($event, center.id)">
                     </td>
                     <td class="border-b border-gray-400 px-4 py-2">
                         {{ center.name }}
@@ -36,9 +36,13 @@
                         {{ center.likes }}
                     </td>
                     <td class="border-b border-gray-400 px-4 py-2">
-                        {{ center.address }}
+                        <span (click)="openUrl(center.location)">
+                            <i-feather name="map-pin" style="width: 20px;"
+                                class="font-bold text-red-600 ml-2 -mb-2 cursor-pointer">
+                            </i-feather>
+                        </span>
                     </td>
-                    <th class="border-b border-gray-400 px-4 py-2 font-bold">{{ center.partner.id }}</th>
+                    <th class="border-b border-gray-400 px-4 py-2 font-bold">{{ center.id }}</th>
                     <td class="border-b border-gray-400 px-4 py-2">{{ center.status }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">
                         <div class="flex items-center p-2">

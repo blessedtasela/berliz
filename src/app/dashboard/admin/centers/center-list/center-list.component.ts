@@ -35,7 +35,7 @@ export class CenterListComponent {
     private datePipe: DatePipe) { }
 
   ngOnInit(): void {
-  
+
   }
 
   ngOnDestroy() {
@@ -247,5 +247,8 @@ export class CenterListComponent {
     this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
+  openUrl(url: any) {
+    window.open(url, '_blank');
+  }
 }
 

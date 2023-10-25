@@ -60,7 +60,7 @@ export class SearchContactUsComponent {
   }
 
   search(query: string): Observable<ContactUs[]> {
-    this.contactUsStateService.allContacctUsData$.subscribe((cachedData) => {
+    this.contactUsStateService.allContactUsData$.subscribe((cachedData) => {
       this.contactUsData = cachedData;
     });
     query = query.toLowerCase();

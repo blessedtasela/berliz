@@ -7,3 +7,10 @@ export interface ContactUs {
     date: Date;
     lastUpdate: Date;
 }
+
+export interface ContactUsMessage {
+    id: number;
+    subject: string;
+    message: string;
+    date: Date;
+}

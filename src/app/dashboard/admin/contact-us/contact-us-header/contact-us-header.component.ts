@@ -33,7 +33,7 @@ export class ContactUsHeaderComponent {
       this.contactUsData = contactUs;
       this.totalContactUs = this.contactUsData.length
       this.contactUsLength = this.contactUsData.length
-      this.contactUsStateService.setAallContactUsSubject(this.contactUsData);
+      this.contactUsStateService.setAllContactUsSubject(this.contactUsData);
       this.ngxService.stop()
     });
   }
@@ -81,7 +81,8 @@ export class ContactUsHeaderComponent {
 
   openAddContactUs() {
     const dialogRef = this.dialog.open(AddContactUsModalComponent, {
-      width: '700px'
+      width: '800px',
+      height: '600px'
     });
     const childComponentInstance = dialogRef.componentInstance as AddContactUsModalComponent;
     childComponentInstance.onAddContactUsEmit.subscribe(() => {
@@ -96,5 +97,6 @@ export class ContactUsHeaderComponent {
       }
     });
   }
+
 }
 

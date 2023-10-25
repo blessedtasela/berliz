@@ -13,6 +13,7 @@ import { ViewCvModalComponent } from './view-cv-modal/view-cv-modal.component';
 import { ViewCertificateModalComponent } from './view-certificate-modal/view-certificate-modal.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { UpdateTrainerPhotoModalComponent } from './update-trainer-photo-modal/update-trainer-photo-modal.component';
+import { NewsletterPopupComponent } from './newsletter-popup/newsletter-popup.component';
 
 
 
@@ -26,7 +27,8 @@ import { UpdateTrainerPhotoModalComponent } from './update-trainer-photo-modal/u
     StoreFormModalComponent,
     ViewCvModalComponent,
     ViewCertificateModalComponent,
-    UpdateTrainerPhotoModalComponent
+    UpdateTrainerPhotoModalComponent,
+    NewsletterPopupComponent
   ],
   imports: [
     CommonModule,
@@ -34,6 +36,9 @@ import { UpdateTrainerPhotoModalComponent } from './update-trainer-photo-modal/u
     FeatherModule,
     IconsModule,
     NgxExtendedPdfViewerModule
+  ],
+  exports: [
+    NewsletterPopupComponent
   ]
 })
 export class SharedModule { }

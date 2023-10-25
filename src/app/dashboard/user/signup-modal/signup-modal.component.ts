@@ -16,7 +16,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 export class SignupModalComponent {
   onSignupEmit = new EventEmitter();
-  signUpForm!: FormGroup;
+  signupForm!: FormGroup;
   invalidForm: boolean = false;
   formIndex: number = 0;
   countries: any[] = [];
@@ -34,7 +34,7 @@ export class SignupModalComponent {
   ngOnInit(): void {
     this.formIndex = this.getIndex();
     this.getCountriesData();
-    this.signUpForm = this.fb.group({
+    this.signupForm = this.fb.group({
       'firstname': ['', [Validators.required, Validators.minLength(2)]],
       'lastname': ['', [Validators.required, Validators.minLength(2)]],
       'phone': ['', Validators.compose([Validators.required, Validators.minLength(9)])],
@@ -61,18 +61,18 @@ export class SignupModalComponent {
     const file = input.files && input.files[0];
 
     if (file) {
-      this.signUpForm.get('imageUrl')?.updateValueAndValidity();
+      this.signupForm.get('imageUrl')?.updateValueAndValidity();
     }
   }
 
   toggleFirstIndex(n: number) {
     if (
-      this.signUpForm.get('firstname')?.invalid ||
-      this.signUpForm.get('lastName')?.invalid ||
-      this.signUpForm.get('phone')?.invalid ||
-      this.signUpForm.get('dob')?.invalid ||
-      this.signUpForm.get('gender')?.invalid ||
-      this.signUpForm.get('country')?.invalid
+      this.signupForm.get('firstname')?.invalid ||
+      this.signupForm.get('lastName')?.invalid ||
+      this.signupForm.get('phone')?.invalid ||
+      this.signupForm.get('dob')?.invalid ||
+      this.signupForm.get('gender')?.invalid ||
+      this.signupForm.get('country')?.invalid
     ) {
       this.invalidForm = true;
       console.log("Can't validate");
@@ -84,11 +84,11 @@ export class SignupModalComponent {
 
   toggleSecondIndex(n: number) {
     if (
-      this.signUpForm.get('state')?.invalid ||
-      this.signUpForm.get('city')?.invalid ||
-      this.signUpForm.get('postalCode')?.invalid ||
-      this.signUpForm.get('address')?.invalid ||
-      this.signUpForm.get('profilePhoto')?.invalid
+      this.signupForm.get('state')?.invalid ||
+      this.signupForm.get('city')?.invalid ||
+      this.signupForm.get('postalCode')?.invalid ||
+      this.signupForm.get('address')?.invalid ||
+      this.signupForm.get('profilePhoto')?.invalid
     ) {
       this.invalidForm = true
       console.log("can't validate");
@@ -99,9 +99,9 @@ export class SignupModalComponent {
 
   toggleThirdIndex(n: number) {
     if (
-      this.signUpForm.get('email')?.invalid ||
-      this.signUpForm.get('password')?.invalid ||
-      this.signUpForm.get('confirmPassword')?.invalid
+      this.signupForm.get('email')?.invalid ||
+      this.signupForm.get('password')?.invalid ||
+      this.signupForm.get('confirmPassword')?.invalid
     ) {
       this.invalidForm = true
       console.log("can't validate");
@@ -142,28 +142,28 @@ export class SignupModalComponent {
   submitForm(): void {
     this.ngxService.start();
     const requestData = new FormData();
-    requestData.append('firstname', this.signUpForm.get('firstname')?.value);
-    requestData.append('lastname', this.signUpForm.get('lastname')?.value);
-    requestData.append('phone', this.signUpForm.get('phone')?.value);
-    requestData.append('postalCode', this.signUpForm.get('postalCode')?.value);
-    requestData.append('dob', this.signUpForm.get('dob')?.value);
-    requestData.append('gender', this.signUpForm.get('gender')?.value);
-    requestData.append('country', this.signUpForm.get('country')?.value);
-    requestData.append('state', this.signUpForm.get('state')?.value);
-    requestData.append('city', this.signUpForm.get('city')?.value);
-    requestData.append('address', this.signUpForm.get('address')?.value);
+    requestData.append('firstname', this.signupForm.get('firstname')?.value);
+    requestData.append('lastname', this.signupForm.get('lastname')?.value);
+    requestData.append('phone', this.signupForm.get('phone')?.value);
+    requestData.append('postalCode', this.signupForm.get('postalCode')?.value);
+    requestData.append('dob', this.signupForm.get('dob')?.value);
+    requestData.append('gender', this.signupForm.get('gender')?.value);
+    requestData.append('country', this.signupForm.get('country')?.value);
+    requestData.append('state', this.signupForm.get('state')?.value);
+    requestData.append('city', this.signupForm.get('city')?.value);
+    requestData.append('address', this.signupForm.get('address')?.value);
     requestData.append('profilePhoto', this.selectedImage);
-    requestData.append('email', this.signUpForm.get('email')?.value);
-    requestData.append('password', this.signUpForm.get('password')?.value);
+    requestData.append('email', this.signupForm.get('email')?.value);
+    requestData.append('password', this.signupForm.get('password')?.value);
 
-    if (this.signUpForm.invalid) {
+    if (this.signupForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
     } else {
       this.userService.signup(requestData)
         .subscribe((response: any) => {
-          this.signUpForm.reset();
+          this.signupForm.reset();
           this.userService.setLoginFormIndex(0);
           this.invalidForm = false;
           this.dialogRef.close('User account added successfully');
@@ -188,7 +188,7 @@ export class SignupModalComponent {
   }
 
   clear() {
-    this.signUpForm.reset();
+    this.signupForm.reset();
   }
 
 }

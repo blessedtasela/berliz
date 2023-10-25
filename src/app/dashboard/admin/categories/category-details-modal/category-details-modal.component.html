@@ -4,9 +4,9 @@
     </div>
     <section class="p-2 flex flex-col justify-center items-center">
         <div class="text-center">
-            <p class="text-red-600 font-sans font-bold text-xl uppercase mt-4">{{ categoryData.name }} [ID {{
-                categoryData.id }}]</p>
-            <p class="text-gray-500 font-sans font-bold text-sm italic">
+            <p class="text-gray-950 font-sans font-bold text-xl uppercase mt-4">{{ categoryData.name }} [ID {{
+                categoryData.id }}</p>
+            <p class="text-red-600 font-sans font-bold text-sm italic">
                 created at {{ formatDate(categoryData.date) }}
             </p>
             <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
@@ -19,7 +19,7 @@
                         {{ categoryData.description }}
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex">
-                      <ng-container *ngFor="let tag of categoryData.tagSet; let i = index">
+                        <ng-container *ngFor="let tag of categoryData.tagSet; let i = index">
                             {{ tag.name }} {{ i < (categoryData.tagSet.length - 1) ? "/" : "" }} </ng-container>
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex">

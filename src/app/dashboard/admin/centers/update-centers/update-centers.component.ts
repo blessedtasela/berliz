@@ -69,7 +69,6 @@ export class UpdateCentersComponent {
       this.userStateService.getUser().subscribe((user) => {
         this.user = user;
         this.userStateService.setUserSubject(user)
-        console.log(this.user)
       }),
     );
   }

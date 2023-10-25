@@ -10,7 +10,6 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { FooterModule } from 'src/app/footer/footer.module';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
-import { UpdateCenterModalComponent } from './update-center-modal/update-center-modal.component';
 
 
 
@@ -22,7 +21,6 @@ import { UpdateCenterModalComponent } from './update-center-modal/update-center-
     CenterHeaderComponent,
     AddCenterComponent,
     UpdateCentersComponent,
-    UpdateCenterModalComponent
   ],
   imports: [
     CommonModule,

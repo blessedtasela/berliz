@@ -73,4 +73,8 @@ export class UpdateContactUsModalComponent {
     this.ngxService.stop();
     this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
+
+  clear() {
+    this.contactUsForm.reset();
+  }
 }

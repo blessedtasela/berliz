@@ -1,12 +1,12 @@
-<div class="relative bg-gray-950 p-2">
+<div class="relative p-2">
     <div class="text-red-600 absolute top-0 right-0 p-5">
         <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
     </div>
-    <section class="bg-gray-950">
+    <section class="text-gray-950">
         <form [formGroup]="updateCategoryForm">
-            <header class="text-center m-2 text-gray-200">
-                <h1 class="font-bold font-sans text-xl">Update Category</h1>
-                <p class="font-sans text-sm">ID: {{ categoryData.id }}
+            <header class="font-bold font-sans text-center m-2">
+                <h1 class=" text-xl">Update Category</h1>
+                <p class="text-red-600 italic text-sm">ID: {{ categoryData.id }}
                 </p>
             </header>
             <div class="invalid-form">
@@ -27,28 +27,28 @@
                     Please complete all sessions
                 </span>
             </div>
-            <div class="grid grid-cols md:grid-cols-2 p-1 gap-2">
-                <div class="mx-auto grid grid-cols-4 rounded-lg text-gray-200">
-                    <div class="rounded-lg object-cover flex col-span-4 flex">
-                        <img [src]="'../../../../../assets/icons/'+ categoryData.photo + '.png'" class="rounded-lg">
-                    </div>
-                    <div *ngFor="let tag of tags; let i = index" class="mx-auto flex items-center">
-                        <input formArrayName="tagIds" (change)="onCheckboxChanged($event)"
-                            [checked]="selectedTagsId.includes(tag.id)"
-                            class="w-full border-b-2 px-4 py-2 rounded-md m-2 text-gray-950 focus:outline-none border-gray-400 hover:border-gray-500"
-                            placeholder="Tags" type="checkbox" [value]="tag.id">
-                        {{ tag.name }}
-
-                        <div *ngIf="updateCategoryForm.get('tagIds')?.invalid && invalidForm" class="text-red-500 mx-2">
-                            Select at least one tag
+            <div class="grid grid-cols md:grid-cols-2 rounded-lg p-2 gap-2">
+                <div class="rounded-lg object-cover">
+                    <img [src]="'../../../../../assets/icons/'+ categoryData.photo + '.png'" class="rounded-lg">
+                    <div class="grid grid-cols-2 md:grid-cols-4 p-1 gap-2">
+                        <div *ngFor="let tag of tags; let i = index" class="">
+                            <input formArrayName="tagIds" (change)="onCheckboxChanged($event)"
+                                [checked]="selectedTagsId.includes(tag.id)"
+                                class="w-full border-b-2 px-4 py-2 rounded-md m-2 text-gray-950 focus:outline-none border-gray-400 hover:border-gray-500"
+                                placeholder="Tags" type="checkbox" [value]="tag.id">
+                            {{ tag.name }}
+                            <div *ngIf="updateCategoryForm.get('tagIds')?.invalid && invalidForm"
+                                class="text-red-500 mx-2">
+                                Select at least one tag
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="bg-gray-200 grid grid-cols gap-4 rounded-lg">
-                    <div class="mx-auto">
-                        Category Name
+                <div class="bg-gray-200 gap-6 rounded-lg">
+                    <div class="mx-auto w-full p-2 mr-2">
+                        <span class="text-gray-700 font-bold italic"> Category Name</span>
                         <input formControlName="name" [value]="categoryData.name"
-                            class="w-full px-4 py-2 m-2 bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                            class="w-full p-2  bg-gray-100 rounded-lg focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                             [ngClass]="{'border-red-400': updateCategoryForm.get('name')?.invalid && updateCategoryForm.get('name')?.touched }"
                             placeholder="Category Name" type="text">
                         <div *ngIf="updateCategoryForm.get('name')?.invalid && updateCategoryForm.get('name')?.dirty"
@@ -56,10 +56,10 @@
                             Category Name is required
                         </div>
                     </div>
-                    <div class="mx-auto">
-                        Likes
+                    <div class="mx-auto w-full p-2 mr-2">
+                        <span class="text-gray-700 font-bold italic"> Likes</span>
                         <input formControlName="likes" [value]="categoryData.likes"
-                            class="w-full px-4 py-2 m-2 col-span-2 bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                            class="w-full p-2  rounded-lg bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                             [ngClass]="{'border-red-400': updateCategoryForm.get('likes')?.invalid && updateCategoryForm.get('likes')?.touched }"
                             placeholder="Likes" type="number" min="0">
                         <div *ngIf="updateCategoryForm.get('likes')?.invalid && updateCategoryForm.get('likes')?.dirty"
@@ -67,9 +67,10 @@
                             Check the number of likes
                         </div>
                     </div>
-                    <div class="mx-auto">
+                    <div class="mx-auto w-full p-2 mr-2">
+                        <span class="text-gray-700 font-bold italic"> Description</span>
                         <textarea formControlName="description" [value]="categoryData.description"
-                            class="w-full px-4 py-2 m-2 col-span-2 bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                            class="w-full p-2 rounded-lg bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                             [ngClass]="{'border-red-400': updateCategoryForm.get('description')?.invalid && updateCategoryForm.get('description')?.touched }"
                             placeholder="Description" rows="5" cols="30"></textarea>
                         <div *ngIf="updateCategoryForm.get('description')?.invalid && updateCategoryForm.get('description')?.dirty"
@@ -77,10 +78,10 @@
                             Description is required
                         </div>
                     </div>
-                    <div class="mx-auto">
-                        Icon Name
-                        <select formControlName="photo" class="w-full" [(ngModel)]="categoryData.photo" 
-                            class="w-full px-4 py-2 m-2 col-span-2 bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                    <div class="mx-auto w-full p-2 mr-2">
+                        <span class="text-gray-700 font-bold italic">Icon</span>
+                        <select formControlName="photo" class="w-full" [(ngModel)]="categoryData.photo"
+                            class="w-full p-2 rounded-lg bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                             [ngClass]="{'border-red-400': updateCategoryForm.get('photo')?.invalid && updateCategoryForm.get('photo')?.touched }"
                             placeholder="Icon Name" type="text">
                             <option selected hidden class="font-sans">{{ categoryData.photo }}</option>
@@ -94,14 +95,14 @@
                     <div class="grid grid-cols-2">
                         <div class="bg-gray-950 rounded-md mx-auto m-2">
                             <button type="button"
-                                class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                                class="font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
                                 (click)="clear()">
                                 Clear
                             </button>
                         </div>
                         <div class="bg-red-600 rounded-md mx-auto m-2">
                             <button type="submit"
-                                class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                                class="font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
                                 (click)="updateCategory()">
                                 Update
                             </button>

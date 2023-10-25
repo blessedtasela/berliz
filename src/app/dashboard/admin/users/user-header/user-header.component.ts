@@ -48,11 +48,11 @@ export class UserHeaderComponent {
           return a.firstname.localeCompare(b.firstname);
         });
         break;
-        case 'email':
-          this.usersData.sort((a, b) => {
-            return a.email.localeCompare(b.email);
-          });
-          break;
+      case 'email':
+        this.usersData.sort((a, b) => {
+          return a.email.localeCompare(b.email);
+        });
+        break;
       case 'id':
         this.usersData.sort((a, b) => {
           return a.id - b.id;
@@ -73,7 +73,8 @@ export class UserHeaderComponent {
 
   openSignup() {
     const dialogRef = this.dialog.open(SignupModalComponent, {
-      width: '800px'
+      width: '900px',
+      height: '600px',
     });
     const childComponentInstance = dialogRef.componentInstance as SignupModalComponent;
     childComponentInstance.onSignupEmit.subscribe(() => {

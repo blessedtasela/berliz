@@ -1,11 +1,8 @@
-import { DatePipe } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Partners } from 'src/app/models/partners.interface';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
-import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 @Component({
@@ -17,7 +14,7 @@ export class SearchPartnerComponent {
   partnersData: Partners[] = [];
   filteredPartnersData: Partners[] = [];
   searchQuery: string = '';
-  selectedSearchCriteria: any = 'name';
+  selectedSearchCriteria: any = 'email';
   @Output() results: EventEmitter<Partners[]> = new EventEmitter<Partners[]>()
 
   constructor(private ngxService: NgxUiLoaderService,

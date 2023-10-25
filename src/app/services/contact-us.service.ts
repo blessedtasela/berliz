@@ -21,6 +21,10 @@ export class ContactUsService {
   getAllContactUs() {
     return this.httpClient.get(this.url + "/contactUs/get");
   }
+  
+  getContactUsMessages() {
+    return this.httpClient.get(this.url + "/contactUs/getContactUsMessages");
+  }
 
   updateContactUs(data: any) {
     return this.httpClient.put(this.url + "/contactUs/update", data, {

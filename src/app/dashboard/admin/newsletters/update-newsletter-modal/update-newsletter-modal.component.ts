@@ -70,4 +70,8 @@ export class UpdateNewsletterModalComponent {
   closeDialog() {
     this.dialogRef.close("Dialog closed without updating newsletter")
   }
+
+  clear() {
+    this.newsletterForm.reset()
+  }
 }

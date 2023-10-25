@@ -13,6 +13,8 @@ import { SearchTrainerComponent } from './search-trainer/search-trainer.componen
 import { SearchUserComponent } from './search-user/search-user.component';
 import { SearchPartnerComponent } from './search-partner/search-partner.component';
 import { SearchCenterComponent } from './search-center/search-center.component';
+import { SearchNewsletterComponent } from './search-newsletter/search-newsletter.component';
+import { SearchTagComponent } from './search-tag/search-tag.component';
 
 
 @NgModule({
@@ -26,7 +28,9 @@ import { SearchCenterComponent } from './search-center/search-center.component';
     SearchTrainerComponent,
     SearchUserComponent,
     SearchPartnerComponent,
-    SearchCenterComponent
+    SearchCenterComponent,
+    SearchNewsletterComponent,
+    SearchTagComponent
   ],
   imports: [
     CommonModule,

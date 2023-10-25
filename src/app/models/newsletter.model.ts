@@ -5,3 +5,10 @@ export interface Newsletter {
     date: Date;
     lastUpdate: Date;
 }
+
+export interface NewsletterMessage {
+    id: number;
+    subject: string;
+    message: string;
+    date: Date;
+}

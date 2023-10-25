@@ -1,17 +1,17 @@
-<div class="relative">
+<div class="relative p-2">
     <div class="text-red-600 absolute top-0 right-0 p-1">
         <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
     </div>
     <section class="p-2 flex flex-col justify-center items-center text-gray-800" >
         <div class="text-center">
-            <p class="text-red-600 font-sans font-bold text-xl uppercase mt-4">{{ contactUs.name }} [ID {{
+            <p class="py-1 mx-4 flex items-center justify-center text-red-600 font-sans font-bold text-md md:text-xl uppercase mt-4">{{ contactUs.name }} [ID {{
                 contactUs.id }}]</p>
             <p class="text-gray-600 font-sans font-bold text-sm italic">
                 sent on {{ formatDate(contactUs.date) }}
             </p>
             <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
-                <div>
-                    <img class="w-16" class="bg-gray-200 rounded-md p-2" 
+                <div class="p-2 flex items-center justify-center">
+                    <img class="w-16" class="bg-gray-200 rounded-md" 
                     src="../../../../../assets/contact-us-details.jpg">
                 </div>
                 <div class="flex flex-col m-4 gap-2">
