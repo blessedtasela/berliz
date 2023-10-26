@@ -51,7 +51,7 @@ export class LandingPageComponent implements OnInit {
   openAddNewsletter() {
     const dialogRef = this.dialog.open(AddNewsletterComponent, {
       width: '600px',
-      height: '400px',
+      height: '600px',
     });
     const childComponentInstance = dialogRef.componentInstance as AddNewsletterComponent;
     childComponentInstance.onAddNewsletter.subscribe(() => {
