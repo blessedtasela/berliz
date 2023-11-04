@@ -1,7 +1,7 @@
 <section class="mx-auto mb-2 px-2 space-y-1 mt-20">
     <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-20">
         <section class="flex justify-between items-center cursor-pointer
-                 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+                 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:shadow-md"
             *ngFor="let trainer of trainersResult; let i = index" [ngClass]="{ 'hidden' : i >= 12 && !showFullData }">
             <div class="w-full bg-gray-100 rounded-md aspect-square m-5 md:min-h-[750px]">
                 <div class="flex flex-col justify-center items-center">

@@ -3,9 +3,12 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Observable, tap, catchError, of } from 'rxjs';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { TrainerLike, Users } from 'src/app/models/users.interface';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { UserStateService } from 'src/app/services/user-state.service';
+import { WebSocketService } from 'src/app/services/web-socket.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -24,9 +27,13 @@ export class TrainersSearchResultComponent implements OnInit {
   constructor(private datePipe: DatePipe,
     private userStateService: UserStateService,
     private trainerStateService: TrainerStateService,
-    private trainerService: TrainerService) { }
+    private trainerService: TrainerService,
+    private websocketService: WebSocketService,
+    private snackbarService: SnackBarService,
+    private rxStompService: RxStompService,) { }
 
   ngOnInit(): void {
+    this.updateClient()
     this.trainerStateService.likeTrainersData$.subscribe((cachedData) => {
       if (!cachedData) {
         this.handleTrainerLikeEmit()
@@ -34,6 +41,10 @@ export class TrainersSearchResultComponent implements OnInit {
         this.trainerlikes = cachedData;
       }
     });
+    this.userSubscription()
+  }
+
+  userSubscription() {
     this.userStateService.getUser().subscribe((user) => {
       this.user = user;
     })
@@ -57,6 +68,14 @@ export class TrainersSearchResultComponent implements OnInit {
     });
   }
 
+  updateClient() {
+    this.rxStompService.watch('/topic/likeTrainer').subscribe((message) => {
+      const receivedTrainer: Trainers = JSON.parse(message.body);
+      const trainer = this.trainersResult.findIndex(trainer => trainer.id === receivedTrainer.id)
+      this.trainersResult[trainer] = receivedTrainer
+    });
+  }
+
   toggleData() {
     this.showFullData = !this.showFullData;
   }
@@ -75,7 +94,7 @@ export class TrainersSearchResultComponent implements OnInit {
       (response: any) => {
         this.responseMessage = response.message;
         this.handleEmitEvent()
-        console.log('message', this.responseMessage);
+        this.snackbarService.openSnackBar(this.responseMessage, '');
       },
       (error: any) => {
         if (error.error?.message) {

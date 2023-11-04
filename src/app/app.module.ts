@@ -26,6 +26,8 @@ import { TestimonialModule } from './testimonial/testimonial.module';
 import { LandingPageModule } from './landing/landing-page.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AboutUsModule } from './about-us/about-us.module';
+import { RxStompService } from './services/rx-stomp.service';
+import { rxStompServiceFactory } from './rx-stomp-service-factory';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   text: "Loading....",
@@ -72,6 +74,10 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorInterceptor, multi: true },
     DatePipe,
+    {
+      provide: RxStompService,
+      useFactory: rxStompServiceFactory,
+    },
   ],
 
   bootstrap: [AppComponent]
