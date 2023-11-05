@@ -56,13 +56,13 @@ export class CategoryStateService {
         })
       }),
       catchError((error) => {
-        this.snackbarService.openSnackBar(error, 'error');
+        console.log(error, 'error');
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {
           this.responseMessage = genericError;
         }
-        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        console.log(this.responseMessage, 'error');
         return of([]);
       })
     );
