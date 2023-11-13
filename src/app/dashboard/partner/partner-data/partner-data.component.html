@@ -1,107 +1,119 @@
-<section class="" *ngIf="partnerData">
-    <form [formGroup]="updatePartnerForm">
-        <header class="justify-start p-2 text-gray-950 font-bold font-sans">
-            <h1 class=" text-xl text-red-600">Partnership Application Details</h1>
-            <span class="text-md flex text-gray-700">
-                Date registered: {{ formatDate(partnerData.date) }}
-            </span>
-        </header>
-        <div class="border-b-2"></div>
-        <div class="invalid-form">
-            <span *ngIf="!(updatePartnerForm.get('email')?.invalid ||
+<div class="bg-gray-100 font-sans rounded-lg">
+    <div class="flex items-center justify-center">
+        <div class="bg-white p-6 mt-20 mb-10 lg-roounded">
+            <section class="" *ngIf="partnerData">
+                <form [formGroup]="updatePartnerForm">
+                    <header class="justify-start p-2 text-gray-950 font-bold font-sans">
+                        <h1 class=" text-xl text-red-600">Partnership Application Details</h1>
+                        <span class="text-md flex text-gray-700">
+                            Date registered: {{ formatDate(partnerData.date) }}
+                        </span>
+                    </header>
+                    <div class="border-b-2"></div>
+                    <div class="invalid-form">
+                        <span *ngIf="!(updatePartnerForm.get('email')?.invalid ||
                         updatePartnerForm.get('motivation')?.invalid ||
                         updatePartnerForm.get('role')?.invalid)
                                  && invalidForm" class="mx-2 text-gray-200">
-                Everything's up to date
-            </span>
-            <span *ngIf="(updatePartnerForm.get('facebookUrl')?.invalid ||
+                            Everything's up to date
+                        </span>
+                        <span *ngIf="(updatePartnerForm.get('facebookUrl')?.invalid ||
                         updatePartnerForm.get('motivation')?.invalid ||
                         updatePartnerForm.get('instagramUrl')?.invalid ||
                         updatePartnerForm.get('youtubeUrl')?.invalid ||
                         updatePartnerForm.get('role')?.invalid)
                          && invalidForm" class="mx-2 text-red-500">
-                Form field cannot be empty
-            </span>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <div class="mx-auto w-full">
-                    Email
-                    <input formControlName="email" id="email" [value]="partnerData.user.email" [(ngModel)]="partnerData.user.email"
-                        class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                        placeholder="User email" type="text" readonly>
-                </div>
-                <div class="mx-auto w-full">
-                    Partnership
-                    <select formControlName="role" id="role" [(ngModel)]="partnerData.role"
-                        class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                        [ngClass]="{'border-red-400': updatePartnerForm.get('role')?.invalid && updatePartnerForm.get('role')?.touched }"
-                        type="text">
-                        <option selected [value]="partnerData.role" class="font-sans">{{partnerData.role}}
-                        </option>
-                        <option *ngFor="let role of roles">{{ role.role }}</option>
-                    </select>
-                    <div *ngIf="updatePartnerForm.get('role')?.invalid && updatePartnerForm.get('role')?.touched"
-                        class="text-red-500 mx-2">
-                        Select a role
-                    </div>
-                </div>
-                <div class="mx-auto md:col-span-2 w-full">
-                    Motivation
-                    <textarea formControlName="motivation" id="motivation" [value]="partnerData.motivation" [(ngModel)]="partnerData.motivation"
-                        class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                        placeholder="Motivation here" rows="5" cols="30"></textarea>
-                </div>
-            </div>
-            <div class="mx-auto">
-                Facebook url
-                <input formControlName="facebookUrl" id="facebookUrl" [value]="partnerData.facebookUrl" [(ngModel)]="partnerData.facebookUrl"
-                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                    [ngClass]="{'border-red-400': updatePartnerForm.get('facebookUrl')?.invalid && updatePartnerForm.get('facebookUrl')?.touched }"
-                    placeholder="https://www.facebook.com/my-profile/" type="text">
+                            Form field cannot be empty
+                        </span>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div class="mx-auto w-full">
+                                <span class="ml-4 font-bold text-gray-600 italic"> Email</span>
+                                <input formControlName="email" id="email" [value]="partnerData.user.email"
+                                    [(ngModel)]="partnerData.user.email"
+                                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                    placeholder="User email" type="text" readonly>
+                            </div>
+                            <div class="mx-auto w-full">
+                                <span class="ml-4 font-bold text-gray-600 italic"> Partnership</span>
+                                <select formControlName="role" id="role" [(ngModel)]="partnerData.role"
+                                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                    [ngClass]="{'border-red-400': updatePartnerForm.get('role')?.invalid && updatePartnerForm.get('role')?.touched }"
+                                    type="text">
+                                    <option selected [value]="partnerData.role" class="font-sans">{{partnerData.role}}
+                                    </option>
+                                    <option *ngFor="let role of roles">{{ role.role }}</option>
+                                </select>
+                                <div *ngIf="updatePartnerForm.get('role')?.invalid && updatePartnerForm.get('role')?.touched"
+                                    class="text-red-500 mx-2">
+                                    Select a role
+                                </div>
+                            </div>
+                            <div class="mx-auto md:col-span-2 w-full">
+                                <span class="ml-4 font-bold text-gray-600 italic"> Motivation</span>
+                                <textarea formControlName="motivation" id="motivation" [value]="partnerData.motivation"
+                                    [(ngModel)]="partnerData.motivation"
+                                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                    placeholder="Motivation here" rows="5" cols="30"></textarea>
+                            </div>
+                        </div>
+                        <div class="mx-auto">
+                            <span class="ml-4 font-bold text-gray-600 italic"> Facebook url</span>
+                            <input formControlName="facebookUrl" id="facebookUrl" [value]="partnerData.facebookUrl"
+                                [(ngModel)]="partnerData.facebookUrl"
+                                class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                [ngClass]="{'border-red-400': updatePartnerForm.get('facebookUrl')?.invalid && updatePartnerForm.get('facebookUrl')?.touched }"
+                                placeholder="https://www.facebook.com/my-profile/" type="text">
 
-            </div>
-            <div class="mx-auto">
-                Instagram url
-                <input formControlName="instagramUrl" id="instagramUrl" [value]="partnerData.instagramUrl" [(ngModel)]="partnerData.instagramUrl"
-                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                    [ngClass]="{'border-red-400': updatePartnerForm.get('instagramUrl')?.invalid && updatePartnerForm.get('instagramUrl')?.touched }"
-                    placeholder="https://www.instagram.com/my-profile/" type="text">
-            </div>
-            <div class="mx-auto">
-                Youtube url
-                <input formControlName="youtubeUrl" id="youtubeUrl" [value]="partnerData.youtubeUrl" [(ngModel)]="partnerData.youtubeUrl"
-                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100  focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                    [ngClass]="{'border-red-400': updatePartnerForm.get('youtubeUrl')?.invalid && updatePartnerForm.get('youtubeUrl')?.touched }"
-                    placeholder="https://www.youtube.com/my-profile/" type="text">
-            </div>
-            <div class="flex justify-end p-2" *ngIf="partnerData.status==='false'">
-                <button
-                    class="bg-red-600 rounded-md py-2 px-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                    type="submit" (click)="updatePartner()">
-                    save
-                </button>
-            </div>
-        </div>
-    </form>
-    <section class="grid md:grid-cols-2 grid-cols p-8">
-        <div class="flex gap-5 justify-center items-center">
-            <div *ngIf="partnerData?.cv" class="flex justify-center">
-                <button class="text-md bg-red-600 text-white py-1 mb-5 px-2 hover:bg-gray-700 rounded-md font-sans mx-auto
+                        </div>
+                        <div class="mx-auto">
+                            <span class="ml-4 font-bold text-gray-600 italic"> Instagram url</span>
+                            <input formControlName="instagramUrl" id="instagramUrl" [value]="partnerData.instagramUrl"
+                                [(ngModel)]="partnerData.instagramUrl"
+                                class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                [ngClass]="{'border-red-400': updatePartnerForm.get('instagramUrl')?.invalid && updatePartnerForm.get('instagramUrl')?.touched }"
+                                placeholder="https://www.instagram.com/my-profile/" type="text">
+                        </div>
+                        <div class="mx-auto">
+                            <span class="ml-4 font-bold text-gray-600 italic"> Youtube url</span>
+                            <input formControlName="youtubeUrl" id="youtubeUrl" [value]="partnerData.youtubeUrl"
+                                [(ngModel)]="partnerData.youtubeUrl"
+                                class="w-full px-4 py-2 m-2 rounded-md bg-gray-100  focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                [ngClass]="{'border-red-400': updatePartnerForm.get('youtubeUrl')?.invalid && updatePartnerForm.get('youtubeUrl')?.touched }"
+                                placeholder="https://www.youtube.com/my-profile/" type="text">
+                        </div>
+                        <div class="flex justify-end p-2" *ngIf="partnerData.status==='false'">
+                            <button
+                                class="bg-red-600 rounded-md py-2 px-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                                type="submit" (click)="updatePartner()">
+                                save
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <section class="grid md:grid-cols-2 grid-cols p-8">
+                    <div class="flex gap-5 justify-center items-center">
+                        <div *ngIf="partnerData?.cv" class="flex justify-center">
+                            <button class="text-sm bg-red-600 text-white py-1 mb-5 px-2 hover:bg-red-700 rounded-md font-sans mx-auto
                 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                    (click)="openViewCV()">
-                    open cv
-                </button>
-            </div>
-            <div *ngIf="partnerData?.certificate" class="flex justify-center">
-                <button class="text-md bg-gray-950 text-white py-1 mb-5 px-2 hover:bg-gray-900 rounded-md font-sans mx-auto
+                                (click)="openViewCV()">
+                                open cv
+                            </button>
+                        </div>
+                        <div *ngIf="partnerData?.certificate" class="flex justify-center">
+                            <button class="text-sm bg-gray-950 text-white py-1 mb-5 px-2 hover:bg-gray-900 rounded-md font-sans mx-auto
                 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                    (click)="openViewCertificate()">
-                    open certificate
-                </button>
-            </div>
+                                (click)="openViewCertificate()">
+                                open certificate
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex justify-center p-2" (click)="openUpdateFile()"
+                        *ngIf="partnerData.status==='false'">
+                        <i-feather name="Edit" class="font-bold text-red-600 cursor-pointer" style="width: 30px;">
+                        </i-feather>
+                    </div>
+                </section>
+            </section>
         </div>
-        <div class="flex justify-center p-2" (click)="openUpdateFile()" *ngIf="partnerData.status==='false'">
-            <i-feather name="Edit" class="font-bold text-red-600 cursor-pointer" style="width: 30px;">
-            </i-feather>
-        </div>
-    </section>
-</section>
+    </div>
+</div>

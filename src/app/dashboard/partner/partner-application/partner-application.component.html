@@ -1,11 +1,9 @@
-<div class="mt-10 text-xl font-bold text-gray-700 flex items-center justify-center" *ngIf="!partnerData">
-    Hello {{ user.firstname }} {{ user.lastname }} , you currently have no application
-</div>
 <div class="bg-gray-100 font-sans rounded-lg" *ngIf="partnerData && !trainer && !center">
     <div class="w-full h-64 overflow-hidden">
-        <img src="../../../../assets/landing/hero-bg-4.jpg" class="w-full h-64 object-cover overflow-hidden rounded-lg">
+        <img src="../../../../assets/landing/hero-bg-4.jpg"
+            class="w-full h-48 md:h-64 object-cover overflow-hidden rounded-lg">
     </div>
-    <div *ngIf="user" class="overflow-visible -mt-16 flex items-center justify-center">
+    <div *ngIf="user" class="overflow-visible -mt-32 md:-mt-16  flex items-center justify-center">
         <img [src]="'data:image;base64, ' + user.profilePhoto" onerror="this.src='../../../assets/icons/user.png';"
             class="shadow-lg ring-offset-2 ring-red-400 ring-4 rounded-full w-32">
     </div>
@@ -53,9 +51,6 @@
                 know that your application is in good hands. Thank you for considering Berliz, and we'll be in touch
                 shortly."
             </div>
-        </div>
-        <div class="bg-white m-12 p-4 mb-10">
-            <app-partner-data [partnerData]="partnerData" (emitEvent)="emitPartner()"></app-partner-data>
         </div>
     </div>
 </div>

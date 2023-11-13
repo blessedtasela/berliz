@@ -1,4 +1,3 @@
-
 <section class="mt-20">
     <div class="flex justify-center mb-20">
         <h1 class="p-4 font-sans text-gray-200 text-xl font-bold uppercase
@@ -45,19 +44,27 @@
                                 <p class="mt-1 text-sm lg:text-sm w-full text-center font-sans mb-2">
                                     {{ category.description }}
                                 </p>
-                                <div class="flex items-center mt-2" *ngIf="isLikedCategory(category)">
-                                    <i-feather name="thumbs-up" style="width: 20px;"
-                                        (click)="dislikeCategory(category)"
+                                <div class="flex items-center mt-2"
+                                    *ngIf="isLikedCategory(category) && category.likes > 1">
+                                    <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCategory(category)"
                                         class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
                                     <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                                        you and {{ category.likes - 1 }} people like this sport.
+                                        you and {{ category.likes - 1 }} people like this center.
+                                    </p>
+                                </div>
+                                <div class="flex items-center mt-2"
+                                    *ngIf="isLikedCategory(category)  && category.likes === 1">
+                                    <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCategory(category)"
+                                        class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
+                                    <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
+                                        you like this category.
                                     </p>
                                 </div>
                                 <div class="flex items-center mt-2" *ngIf="!isLikedCategory(category)">
                                     <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCategory(category)"
                                         class="font-bold text-gray-600 mr-4 mt-1 cursor-pointer"></i-feather>
                                     <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                                        {{ category.likes }} people like this sport.
+                                        {{ category.likes }} people like this category.
                                     </p>
                                 </div>
                                 <button

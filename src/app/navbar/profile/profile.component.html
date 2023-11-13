@@ -1,18 +1,18 @@
-<div class="flex items-center p-2 relative text-gray-700">
+<div class="flex items-center p-2 relative text-gray-700" *ngIf="userData">
     <div class="flex items-center gap-2">
         <div class="hidden md:block flex flex-col text-md" *ngIf="search === true">
             <h3 class="capitalize text-gray-700 text-md">
-                {{ userData?.firstname }} {{ userData?.lastname }}
+                {{ userData.firstname }} {{ userData.lastname }}
             </h3>
-            <h4 class="flex justify-center text-gray-400 capitalize text-sm"> {{ userData?.role }}</h4>
+            <h4 class="flex justify-center text-gray-400 capitalize text-sm"> {{ userData.role }}</h4>
         </div>
         <div class="flex flex-col text-md" *ngIf="search === false">
             <h3 class="capitalize text-gray-700 text-md">
-                {{ userData?.firstname }} {{ userData?.lastname }}
+                {{ userData.firstname }} {{ userData.lastname }}
             </h3>
-            <h4 class="flex justify-center text-gray-400 capitalize text-sm"> {{ userData?.role }}</h4>
+            <h4 class="flex justify-center text-gray-400 capitalize text-sm"> {{ userData.role }}</h4>
         </div>
-        <img [src]="'data:image;base64, ' + userData?.profilePhoto" width="30px"
+        <img [src]="'data:image;base64, ' + userData.profilePhoto" width="30px"
             class="cursor-pointer object-cover rounded-full" (click)="toggleProfile()"
             onerror="this.src='../../../assets/icons/user.png';">
         <i-feather name="chevron-down" class="text-gray-600 cursor-pointer" (click)="toggleProfile()"
@@ -25,7 +25,7 @@
         class="absolute top-[120%] right-6 bg-white rounded-md w-64 text-sm border border-gray-300 shadow-lg">
         <div class="flex justify-center p-2">
             <div class="shrink-0">
-                <img [src]="'data:image;base64, ' + userData?.profilePhoto" width="50px"
+                <img [src]="'data:image;base64, ' + userData.profilePhoto" width="50px"
                     class="object-cover rounded-full" onerror="this.src='../../../assets/icons/user.png';">
             </div>
             <div class="bottom-0 right-0" (click)="openUpdateProfilePhoto()">
@@ -35,26 +35,26 @@
         </div>
         <div class="flex justify-center">
             <p class="p-1 text-lg  hover:drop-shadow-2xl hover:scale-105 font-bold">
-                {{ userData?.firstname }} {{ userData?.lastname }}
+                {{ userData.firstname }} {{ userData.lastname }}
             </p>
         </div>
         <div class="flex justify-center">
             <p class="text-sm cursor-pointer hover:drop-shadow-2xl hover:scale-105 italic mb-2 hover:text-red-600">
-                {{ userData?.email }}
+                {{ userData.email }}
             </p>
         </div>
-        <h4 class="flex justify-center text-gray-400 capitalize text-sm"> {{ userData?.role }}</h4>
+        <h4 class="flex justify-center text-gray-400 capitalize text-sm"> {{ userData.role }}</h4>
         <p class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105"
             (click)="openChangePassword()">
             Change password
         </p>
         <p
             class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105">
-            <a routerLink="/dashboard/profile"> Account information</a>
+            <a routerLink="/profile"> Account information</a>
         </p>
         <p
             class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105">
-            <a routerLink="/dashboard/profile/settings"> Account settings</a>
+            <a routerLink="/settings"> Account settings</a>
         </p>
         <p class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105 flex items-center justify-center"
             (click)="logout()">

@@ -4,9 +4,9 @@
     </div>
     <section class="p-2 flex flex-col justify-center items-center text-gray-800" >
         <div class="text-center">
-            <p class="py-1 mx-4 flex items-center justify-center text-red-600 font-sans font-bold text-md md:text-xl uppercase mt-4">{{ contactUs.name }} [ID {{
-                contactUs.id }}]</p>
-            <p class="text-gray-600 font-sans font-bold text-sm italic">
+            <p class="py-1 mx-4 flex items-center justify-center text-gray-950 font-sans font-bold text-md md:text-xl uppercase mt-4">
+                {{ contactUs.name }}</p>
+            <p class="text-red-600 font-sans font-bold text-sm italic">
                 sent on {{ formatDate(contactUs.date) }}
             </p>
             <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
@@ -14,7 +14,10 @@
                     <img class="w-16" class="bg-gray-200 rounded-md" 
                     src="../../../../../assets/contact-us-details.jpg">
                 </div>
-                <div class="flex flex-col m-4 gap-2">
+                <div class="flex flex-col m-4 gap-2 text-justify">
+                    <p class="text-gray-800 font-sans font-bold text-md flex">
+                        id: {{ contactUs.id }}
+                    </p>
                     <p class="text-gray-800 font-sans font-bold text-md flex">
                         {{ contactUs.message }}
                     </p>

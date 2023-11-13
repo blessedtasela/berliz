@@ -8,6 +8,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { genericError } from 'src/validators/form-validators.module';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 
 @Component({
   selector: 'app-profile',
@@ -26,9 +27,20 @@ export class ProfileComponent {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private datePipe: DatePipe,
-    private formBuilder: FormBuilder) { }
+    private formBuilder: FormBuilder,
+    private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
+    this.handleEmitEvent();
+    this.watchActivateAccount()
+    this.watchDeactivateAccount()
+    this.watchDeleteUser()
+    this.watchUpdateProfilePhoto()
+    this.watchUpdateUser()
+    this.watchUpdateUserBio()
+    this.watchUpdateUserRole()
+    this.watchUpdateUserStatus()
+
     this.bioForm = this.formBuilder.group({
       bio: ['', Validators.required]
     });
@@ -37,7 +49,7 @@ export class ProfileComponent {
   ngOnDestroy() {
     this.subscription.unsubscribe()
   }
-  
+
   handleEmitEvent() {
     this.ngxService.start();
     this.subscription.add(
@@ -59,7 +71,7 @@ export class ProfileComponent {
     this.ngxService.start();
     const requestData = new FormData();
     requestData.append('id', id.toLocaleString());
-    requestData.append('photo', this.selectedImage);
+    requestData.append('profilePhoto', this.selectedImage);
     this.userService.updateProfilePhoto(requestData)
       .subscribe(
         (response: any) => {
@@ -105,5 +117,69 @@ export class ProfileComponent {
   formatDate(dateString: any): any {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');
+  }
+
+  watchActivateAccount() {
+    this.rxStompService.watch('/topic/activateAccount').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user = receivedUsers
+    });
+  }
+
+  watchDeactivateAccount() {
+    this.rxStompService.watch('/topic/deactivateAccount').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user = receivedUsers
+    });
+  }
+
+  watchUpdateUserStatus() {
+    this.rxStompService.watch('/topic/updateUserStatus').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user = receivedUsers
+    });
+  }
+
+  watchUpdateUserRole() {
+    this.rxStompService.watch('/topic/updateUserRole').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user = receivedUsers
+    });
+  }
+
+  watchDeleteUser() {
+    this.rxStompService.watch('/topic/deleteUser').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user === null;
+    });
+  }
+
+  watchUpdateUserBio() {
+    this.rxStompService.watch('/topic/updateUserBio').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user = receivedUsers
+    });
+  }
+
+  watchUpdateUser() {
+    this.rxStompService.watch('/topic/updateUser').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user = receivedUsers
+    });
+  }
+
+  watchUpdateProfilePhoto() {
+    this.rxStompService.watch('/topic/updateProfilePhoto').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user = receivedUsers
+    });
   }
 }

@@ -28,12 +28,14 @@ export class TrainersSearchResultComponent implements OnInit {
     private userStateService: UserStateService,
     private trainerStateService: TrainerStateService,
     private trainerService: TrainerService,
-    private websocketService: WebSocketService,
     private snackbarService: SnackBarService,
     private rxStompService: RxStompService,) { }
 
   ngOnInit(): void {
-    this.updateClient()
+    this.watchLikeTrainer()
+    this.watchUpdatePhoto()
+    this.watchUpdateTrainerStatus()
+    this.watchUpdateTrainer()
     this.trainerStateService.likeTrainersData$.subscribe((cachedData) => {
       if (!cachedData) {
         this.handleTrainerLikeEmit()
@@ -68,14 +70,6 @@ export class TrainersSearchResultComponent implements OnInit {
     });
   }
 
-  updateClient() {
-    this.rxStompService.watch('/topic/likeTrainer').subscribe((message) => {
-      const receivedTrainer: Trainers = JSON.parse(message.body);
-      const trainer = this.trainersResult.findIndex(trainer => trainer.id === receivedTrainer.id)
-      this.trainersResult[trainer] = receivedTrainer
-    });
-  }
-
   toggleData() {
     this.showFullData = !this.showFullData;
   }
@@ -89,7 +83,7 @@ export class TrainersSearchResultComponent implements OnInit {
     return string.replace(/ /g, "-");
   }
 
-  likeTrainer(trainer: Trainers) {
+  updateTrainerLike(trainer: Trainers) {
     this.trainerService.likeTrainer(trainer.id).subscribe(
       (response: any) => {
         this.responseMessage = response.message;
@@ -112,6 +106,41 @@ export class TrainersSearchResultComponent implements OnInit {
     return this.trainerlikes.some((trainerLike) =>
       trainerLike.user.id === this.user?.id && trainerLike.trainer.id === trainer.id
     );
+  }
+
+  watchLikeTrainer() {
+    this.rxStompService.watch('/topic/likeTrainer').subscribe((message) => {
+      const receivedTrainer: Trainers = JSON.parse(message.body);
+      const trainerId = this.trainersResult.findIndex(trainer => trainer.id === receivedTrainer.id)
+      this.trainersResult[trainerId] = receivedTrainer
+    });
+  }
+
+  watchUpdateTrainer() {
+    this.rxStompService.watch('/topic/updateTrainer').subscribe((message) => {
+      const receivedTrainer: Trainers = JSON.parse(message.body);
+      const trainerId = this.trainersResult.findIndex(trainer => trainer.id === receivedTrainer.id)
+      this.trainersResult[trainerId] = receivedTrainer
+    });
+  }
+
+  watchUpdateTrainerStatus() {
+    this.rxStompService.watch('/topic/updateTrainerStatus').subscribe((message) => {
+      const receivedTrainer: Trainers = JSON.parse(message.body);
+      if (receivedTrainer.status === 'true') {
+        this.trainersResult.push(receivedTrainer);
+      } else {
+        this.trainersResult = this.trainersResult.filter(trainer => trainer.id !== receivedTrainer.id);
+      }
+    });
+  }
+
+  watchUpdatePhoto() {
+    this.rxStompService.watch('/topic/updatePhoto').subscribe((message) => {
+      const receivedTrainer: Trainers = JSON.parse(message.body);
+      const trainerId = this.trainersResult.findIndex(trainer => trainer.id === receivedTrainer.id)
+      this.trainersResult[trainerId] = receivedTrainer
+    });
   }
 
 }

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
@@ -11,13 +11,14 @@ import { genericError } from 'src/validators/form-validators.module';
 import { AddCategoryModalComponent } from '../add-category-modal/add-category-modal.component';
 import { UpdateCategoryModalComponent } from '../update-category-modal/update-category-modal.component';
 import { CategoryDetailsModalComponent } from '../category-details-modal/category-details-modal.component';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 
 @Component({
   selector: 'app-categories-list',
   templateUrl: './categories-list.component.html',
   styleUrls: ['./categories-list.component.css']
 })
-export class CategoriesListComponent {
+export class CategoriesListComponent implements OnInit {
   responseMessage: any;
   showFullData: boolean = false;
   @Input() categoriesData: Categories[] = [];
@@ -28,10 +29,16 @@ export class CategoriesListComponent {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
+    private rxStompService: RxStompService,
     public categoryStateService: CategoryStateService) {
   }
 
   ngOnInit() {
+    this.watchGetCategoryFromMap()
+    this.watchLikeCategory()
+    this.watchUpdateCategory()
+    this.watchUpdateStatus()
+    this.watchDeleteCategory()
   }
 
   handleEmitEvent() {
@@ -180,5 +187,44 @@ export class CategoriesListComponent {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
+
+  watchLikeCategory() {
+    this.rxStompService.watch('/topic/likeCategory').subscribe((message) => {
+      const receivedCategories: Categories = JSON.parse(message.body);
+      const categoryId = this.categoriesData.findIndex(category => category.id === receivedCategories.id)
+      this.categoriesData[categoryId] = receivedCategories
+    });
+  }
+
+  watchUpdateCategory() {
+    this.rxStompService.watch('/topic/updateCategory').subscribe((message) => {
+      const receivedCategories: Categories = JSON.parse(message.body);
+      const categoryId = this.categoriesData.findIndex(category => category.id === receivedCategories.id)
+      this.categoriesData[categoryId] = receivedCategories
+    });
+  }
+
+  watchGetCategoryFromMap() {
+    this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
+      const receivedCategories: Categories = JSON.parse(message.body);
+      this.categoriesData.push(receivedCategories);
+    });
+  }
+
+  watchUpdateStatus() {
+    this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
+      const receivedCategories: Categories = JSON.parse(message.body);
+      const categoryId = this.categoriesData.findIndex(category => category.id === receivedCategories.id)
+      this.categoriesData[categoryId] = receivedCategories
+    });
+  }
+
+  watchDeleteCategory() {
+    this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
+      const receivedCategories: Categories = JSON.parse(message.body);
+      this.categoriesData = this.categoriesData.filter(category => category.id !== receivedCategories.id);
+    });
+  }
+
 }
 

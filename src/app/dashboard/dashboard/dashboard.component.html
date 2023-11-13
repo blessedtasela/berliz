@@ -1,7 +1,9 @@
 <div class="relative min-h-screen flex">
         <app-sidebar-navigation></app-sidebar-navigation>
         <div class="flex p-10 full-width">
-                <app-dashboard-details class="full-width"></app-dashboard-details>
+                <div class="width bg-gray- p-4 rounded-lg mt-20">
+                        <app-dashboard-details [data]="data"></app-dashboard-details>
+                </div>
         </div>
 </div>
 <app-footer></app-footer>

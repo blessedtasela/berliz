@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
 import { CategoryStateService } from 'src/app/services/category-state.service';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 
 @Component({
   selector: 'app-categories-header',
@@ -20,11 +21,13 @@ export class CategoriesHeaderComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    public categoryStateService: CategoryStateService) {
+    private categoryStateService: CategoryStateService,
+    private rxStompService: RxStompService) {
   }
 
   ngOnInit() {
-
+    this.watchDeleteCategory()
+    this.watchGetCategoryFromMap()
   }
 
   handleEmitEvent() {
@@ -111,4 +114,21 @@ export class CategoriesHeaderComponent {
     });
   }
 
+  watchDeleteCategory() {
+    this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
+      const receivedCategories: Categories = JSON.parse(message.body);
+      this.categoriesData = this.categoriesData.filter(category => category.id !== receivedCategories.id);
+      this.categoriesLength = this.categoriesData.length;
+      this.totalCategories = this.categoriesData.length
+    });
+  }
+
+  watchGetCategoryFromMap() {
+    this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
+      const receivedCategories: Categories = JSON.parse(message.body);
+      this.categoriesData.push(receivedCategories);
+      this.categoriesLength = this.categoriesData.length;
+      this.totalCategories = this.categoriesData.length
+    });
+  }
 }

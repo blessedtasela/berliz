@@ -35,8 +35,8 @@ export class UserService {
     })
   }
 
-  updateUserAdmin(data: any) {
-    return this.httpClient.put(this.url + "/user/updateUserAdmin", data, {
+  updateSuperUser(data: any) {
+    return this.httpClient.put(this.url + "/user/updateSuperUser", data, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     })
   }

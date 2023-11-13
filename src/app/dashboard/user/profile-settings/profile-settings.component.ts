@@ -11,6 +11,7 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CountryService } from 'src/app/services/country.service';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 
 @Component({
   selector: 'app-profile-settings',
@@ -35,9 +36,19 @@ export class ProfileSettingsComponent {
     private router: Router,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
-    private formbuilder: FormBuilder) { }
+    private formbuilder: FormBuilder,
+    private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
+    this.watchActivateAccount()
+    this.watchDeactivateAccount()
+    this.watchDeleteUser()
+    this.watchUpdateProfilePhoto()
+    this.watchUpdateUser()
+    this.watchUpdateUserBio()
+    this.watchUpdateUserRole()
+    this.watchUpdateUserStatus()
+
     this.userStateService.userData$.subscribe((cachedData) => {
       if (!cachedData) {
         this.handleEmitEvent()
@@ -77,14 +88,15 @@ export class ProfileSettingsComponent {
       'state': new FormControl(this.user?.state, [Validators.required, Validators.minLength(3)]),
       'city': new FormControl(this.user?.city, [Validators.required, Validators.minLength(3)]),
       'address': new FormControl(this.user?.address, [Validators.required, Validators.minLength(8)]),
+      'bio': new FormControl(this.user?.bio, [Validators.required, Validators.minLength(8)]),
       'email': new FormControl(this.user?.email, Validators.compose([Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])])),
     })
   }
 
   updateGender(selectedGender: string) {
-    this.user.gender = selectedGender; 
+    this.user.gender = selectedGender;
     this.updateUserForm.get('gender')?.setValue(selectedGender); // Update the form control's value
-}
+  }
 
   deactivateAccount() {
     const dialogConfig = new MatDialogConfig();
@@ -159,4 +171,67 @@ export class ProfileSettingsComponent {
     this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
 
+  watchActivateAccount() {
+    this.rxStompService.watch('/topic/activateAccount').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user = receivedUsers
+    });
+  }
+
+  watchDeactivateAccount() {
+    this.rxStompService.watch('/topic/deactivateAccount').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user = receivedUsers
+    });
+  }
+
+  watchUpdateUserStatus() {
+    this.rxStompService.watch('/topic/updateUserStatus').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user = receivedUsers
+    });
+  }
+
+  watchUpdateUserRole() {
+    this.rxStompService.watch('/topic/updateUserRole').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user = receivedUsers
+    });
+  }
+
+  watchDeleteUser() {
+    this.rxStompService.watch('/topic/deleteUser').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user === null;
+    });
+  }
+
+  watchUpdateUserBio() {
+    this.rxStompService.watch('/topic/updateUserBio').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user = receivedUsers
+    });
+  }
+
+  watchUpdateUser() {
+    this.rxStompService.watch('/topic/updateUser').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user = receivedUsers
+    });
+  }
+
+  watchUpdateProfilePhoto() {
+    this.rxStompService.watch('/topic/updateProfilePhoto').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      if (this.user.id === receivedUsers.id)
+        this.user = receivedUsers
+    });
+  }
 }

@@ -17,7 +17,7 @@ import { genericError } from 'src/validators/form-validators.module';
 export class SearchNewsletterComponent {
   newsletterData: Newsletter[] = [];
   searchQuery: string = '';
-  selectedSearchCriteria: any = 'name';
+  selectedSearchCriteria: any = 'email';
   filteredNewsletterData: Newsletter[] = [];
   @Output() results: EventEmitter<Newsletter[]> = new EventEmitter<Newsletter[]>()
 
@@ -28,6 +28,7 @@ export class SearchNewsletterComponent {
   }
 
   ngOnInit(): void {
+
   }
 
   ngAfterViewInit(): void {
@@ -64,8 +65,8 @@ export class SearchNewsletterComponent {
   }
 
   search(query: string): Observable<Newsletter[]> {
-    this.newsletterStateService.allNewsletterData$.subscribe((newsletter) => {
-      this.newsletterData = newsletter;
+    this.newsletterStateService.allNewsletterData$.subscribe((cachedData) => {
+      this.newsletterData = cachedData;
     })
     query = query.toLowerCase();
     if (query.trim() === '') {
@@ -85,8 +86,6 @@ export class SearchNewsletterComponent {
     });
     return of(this.filteredNewsletterData);
   }
-
-
 
 }
 

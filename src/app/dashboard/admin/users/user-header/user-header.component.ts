@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SignupModalComponent } from 'src/app/dashboard/user/signup-modal/signup-modal.component';
 import { Users } from 'src/app/models/users.interface';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { UserStateService } from 'src/app/services/user-state.service';
 
 @Component({
@@ -18,11 +19,13 @@ export class UserHeaderComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    public userStateService: UserStateService) {
+    private userStateService: UserStateService,
+    private rxStompService: RxStompService) {
   }
 
   ngOnInit() {
-
+    this.watchDeleteUser()
+    this.watchGetUserFromMap()
   }
 
   handleEmitEvent() {
@@ -89,4 +92,21 @@ export class UserHeaderComponent {
     });
   }
 
+  watchGetUserFromMap() {
+    this.rxStompService.watch('/topic/getUserFromMap').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      this.usersData.push(receivedUsers);
+      this.usersLength = this.usersData.length;
+      this.totalUsers = this.usersData.length;
+    });
+  }
+
+  watchDeleteUser() {
+    this.rxStompService.watch('/topic/deleteUser').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      this.usersData = this.usersData.filter(Users => Users.id !== receivedUsers.id);
+      this.usersLength = this.usersData.length;
+      this.totalUsers = this.usersData.length;
+    });
+  }
 }

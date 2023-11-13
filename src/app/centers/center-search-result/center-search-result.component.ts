@@ -2,11 +2,10 @@ import { DatePipe } from '@angular/common';
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CenterLike, Centers } from 'src/app/models/centers.interface';
-import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { CenterStateService } from 'src/app/services/center-state.service';
 import { CenterService } from 'src/app/services/center.service';
-import { TrainerService } from 'src/app/services/trainer.service';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { UserStateService } from 'src/app/services/user-state.service';
 import { genericError } from 'src/validators/form-validators.module';
 
@@ -27,9 +26,14 @@ export class CenterSearchResultComponent {
   constructor(private datePipe: DatePipe,
     private userStateService: UserStateService,
     private centerStateService: CenterStateService,
-    private centerService: CenterService) { }
+    private centerService: CenterService,
+    private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
+    this.watchLikeCenter()
+    this.watchUpdatePhoto()
+    this.watchUpdateCenterStatus()
+    this.watchUpdateCenter()
     this.centerStateService.likeCentersData$.subscribe((cachedData) => {
       if (!cachedData) {
         this.handleEmitEvent()
@@ -37,10 +41,7 @@ export class CenterSearchResultComponent {
         this.centerLikes = cachedData;
       }
     });
-    this.userStateService.getUser().subscribe((user) => {
-      this.user = user;
-      this.userStateService.setUserSubject(user);
-    })
+    this.subscribeUser()
   }
 
   ngOnDestroy() {
@@ -49,21 +50,28 @@ export class CenterSearchResultComponent {
     }
   }
 
-  handleEmitEvent() {
-    this.subscriptions.push(
-    this.centerStateService.getActiveCenters().subscribe((activeCenters) => {
-      this.centersResult = activeCenters;
-      this.totalCenters = this.centersResult.length;
-      this.centerStateService.setActiveCentersSubject(this.centersResult);
-    }),
+  subscribeUser() {
     this.userStateService.getUser().subscribe((user) => {
       this.user = user;
       this.userStateService.setUserSubject(user);
-    }),
-    this.centerStateService.getCenterLikes().subscribe((likes) => {
-      this.centerLikes = likes
-      this.centerStateService.setLikeCentersSubject(this.centerLikes);
-    }),
+    })
+  }
+
+  handleEmitEvent() {
+    this.subscriptions.push(
+      this.centerStateService.getActiveCenters().subscribe((activeCenters) => {
+        this.centersResult = activeCenters;
+        this.totalCenters = this.centersResult.length;
+        this.centerStateService.setActiveCentersSubject(this.centersResult);
+      }),
+      this.userStateService.getUser().subscribe((user) => {
+        this.user = user;
+        this.userStateService.setUserSubject(user);
+      }),
+      this.centerStateService.getCenterLikes().subscribe((likes) => {
+        this.centerLikes = likes
+        this.centerStateService.setLikeCentersSubject(this.centerLikes);
+      }),
     )
   }
 
@@ -102,11 +110,46 @@ export class CenterSearchResultComponent {
   openUrl(url: any) {
     window.open(url, '_blank');
   }
-  
+
   isLikedCenter(center: Centers): boolean {
     return this.centerLikes.some((centerLikes) =>
       centerLikes.user.id === this.user?.id && centerLikes.center.id === center.id
     );
+  }
+
+  watchLikeCenter() {
+    this.rxStompService.watch('/topic/likeCenter').subscribe((message) => {
+      const receivedCenter: Centers = JSON.parse(message.body);
+      const centerId = this.centersResult.findIndex(center => center.id === receivedCenter.id)
+      this.centersResult[centerId] = receivedCenter
+    });
+  }
+
+  watchUpdateCenter() {
+    this.rxStompService.watch('/topic/updateCenter').subscribe((message) => {
+      const receivedCenter: Centers = JSON.parse(message.body);
+      const centerId = this.centersResult.findIndex(center => center.id === receivedCenter.id)
+      this.centersResult[centerId] = receivedCenter
+    });
+  }
+
+  watchUpdateCenterStatus() {
+    this.rxStompService.watch('/topic/updateCenterStatus').subscribe((message) => {
+      const receivedCenter: Centers = JSON.parse(message.body);
+      if (receivedCenter.status === 'true') {
+        this.centersResult.push(receivedCenter);
+      } else {
+        this.centersResult = this.centersResult.filter(center => center.id !== receivedCenter.id);
+      }
+    });
+  }
+
+  watchUpdatePhoto() {
+    this.rxStompService.watch('/topic/updateCenterPhoto').subscribe((message) => {
+      const receivedCenter: Centers = JSON.parse(message.body);
+      const centerId = this.centersResult.findIndex(center => center.id === receivedCenter.id)
+      this.centersResult[centerId] = receivedCenter
+    });
   }
 
 }

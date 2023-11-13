@@ -12,6 +12,7 @@ import { PartnerPageComponent } from './partner-page/partner-page.component';
 import { PartnerDataComponent } from './partner-data/partner-data.component';
 import { TrainerDataComponent } from './trainer-data/trainer-data.component';
 import { CenterDataComponent } from './center-data/center-data.component';
+import { NullPartnerComponent } from './null-partner/null-partner.component';
 
 
 
@@ -24,6 +25,7 @@ import { CenterDataComponent } from './center-data/center-data.component';
     PartnerDataComponent,
     TrainerDataComponent,
     CenterDataComponent,
+    NullPartnerComponent,
   ],
   imports: [
     CommonModule,

@@ -4,6 +4,7 @@ import { CenterStateService } from 'src/app/services/center-state.service';
 import { AddCenterComponent } from '../add-center/add-center.component';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 
 @Component({
   selector: 'app-center-header',
@@ -20,11 +21,12 @@ export class CenterHeaderComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    public centerStateService: CenterStateService) {
-  }
+    public centerStateService: CenterStateService,
+    private rxStompService: RxStompService) { }
 
   ngOnInit() {
-
+    this.watchDeleteCenter()
+    this.watchGetCenterFromMap()
   }
 
   handleEmitEvent() {
@@ -52,22 +54,22 @@ export class CenterHeaderComponent {
           return a.motto.localeCompare(b.motto);
         });
         break;
-        case 'name':
+      case 'name':
         this.centersData.sort((a, b) => {
           return a.name.localeCompare(b.name);
         });
         break;
-        case 'address':
-          this.centersData.sort((a, b) => {
-            return a.address.localeCompare(b.address);
-          });
-          break;
+      case 'address':
+        this.centersData.sort((a, b) => {
+          return a.address.localeCompare(b.address);
+        });
+        break;
       case 'id':
         this.centersData.sort((a, b) => {
           return a.id - b.id;
         });
         break;
-        case 'partnerId':
+      case 'partnerId':
         this.centersData.sort((a, b) => {
           return a.partner.id - b.partner.id;
         });
@@ -111,6 +113,24 @@ export class CenterHeaderComponent {
       } else {
         console.log('Dialog closed without performing any action');
       }
+    });
+  }
+
+  watchDeleteCenter() {
+    this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
+      const receivedCenter: Centers = JSON.parse(message.body);
+      this.centersData = this.centersData.filter(center => center.id !== receivedCenter.id);
+      this.centersLength = this.centersData.length;
+      this.totalCenters = this.centersData.length;
+    });
+  }
+
+  watchGetCenterFromMap() {
+    this.rxStompService.watch('/topic/getCenterFromMap').subscribe((message) => {
+      const receivedCategories: Centers = JSON.parse(message.body);
+      this.centersData.push(receivedCategories);
+      this.centersLength = this.centersData.length;
+      this.totalCenters = this.centersData.length;
     });
   }
 

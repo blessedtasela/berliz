@@ -71,9 +71,4 @@ export class CategoryService {
     });
   }
 
-  dislikeCategory(id: number) {
-    return this.httpClient.put(this.url + `/category/dislike/${id}`, null, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
-  }
 }

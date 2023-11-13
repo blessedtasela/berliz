@@ -1,3 +1,4 @@
+import { Users } from "./users.interface";
 
 export interface Categories {
     id: number;
@@ -18,6 +19,13 @@ export interface Categories {
 export interface Icons {
     id: number;
     name: string;
+}
+
+export interface CategoryLikes {
+    id: number,
+    user: Users;
+    category: Categories;
+    date: Date;
 }
 
 export interface CategoryIntroduction {

@@ -5,6 +5,7 @@ import { Trainers } from '../models/trainers.interface';
 import { SnackBarService } from './snack-bar.service';
 import { TrainerService } from './trainer.service';
 import { TrainerLike } from '../models/users.interface';
+import { RxStompService } from './rx-stomp.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,8 @@ export class TrainerStateService {
 
 
   constructor(private trainerService: TrainerService,
-    private snackbarService: SnackBarService) { }
+    private snackbarService: SnackBarService,
+    private rxStompService: RxStompService,) { }
 
   setTrainerSubject(data: Trainers) {
     this.trainerSubject.next(data);
@@ -116,4 +118,5 @@ export class TrainerStateService {
       })
     );
   }
+
 }

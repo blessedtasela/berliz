@@ -12,6 +12,7 @@ import { UserDetailsComponent } from '../user-details/user-details.component';
 import { DatePipe } from '@angular/common';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { UserStateService } from 'src/app/services/user-state.service';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 
 @Component({
   selector: 'app-users-list',
@@ -29,9 +30,19 @@ export class UsersListComponent {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private datePipe: DatePipe) {
+    private datePipe: DatePipe,
+    private rxStompService: RxStompService) {
   }
   ngOnInit(): void {
+    this.watchActivateAccount()
+    this.watchDeactivateAccount()
+    this.watchDeleteUser()
+    this.watchGetUserFromMap()
+    this.watchUpdateProfilePhoto()
+    this.watchUpdateUser()
+    this.watchUpdateUserBio()
+    this.watchUpdateUserRole()
+    this.watchUpdateUserStatus()
   }
 
   handleEmitEvent() {
@@ -229,4 +240,76 @@ export class UsersListComponent {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
+
+
+  watchGetUserFromMap() {
+    this.rxStompService.watch('/topic/getUserFromMap').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      this.usersData.push(receivedUsers);
+    });
+  }
+
+  watchActivateAccount() {
+    this.rxStompService.watch('/topic/activateAccount').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      const userId = this.usersData.findIndex(users => users.id === receivedUsers.id)
+      this.usersData[userId] = receivedUsers
+    });
+  }
+
+  watchDeactivateAccount() {
+    this.rxStompService.watch('/topic/deactivateAccount').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      const userId = this.usersData.findIndex(Users => Users.id === receivedUsers.id)
+      this.usersData[userId] = receivedUsers
+    });
+  }
+
+  watchUpdateUserStatus() {
+    this.rxStompService.watch('/topic/updateUserStatus').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      const userId = this.usersData.findIndex(Users => Users.id === receivedUsers.id)
+      this.usersData[userId] = receivedUsers
+    });
+  }
+
+  watchUpdateUserRole() {
+    this.rxStompService.watch('/topic/updateUserRole').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      const userId = this.usersData.findIndex(Users => Users.id === receivedUsers.id)
+      this.usersData[userId] = receivedUsers
+    });
+  }
+
+  watchDeleteUser() {
+    this.rxStompService.watch('/topic/deleteUser').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      this.usersData = this.usersData.filter(Users => Users.id !== receivedUsers.id);
+    });
+  }
+
+  watchUpdateUserBio() {
+    this.rxStompService.watch('/topic/updateUserBio').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      const userId = this.usersData.findIndex(Users => Users.id === receivedUsers.id)
+      this.usersData[userId] = receivedUsers
+    });
+  }
+
+  watchUpdateUser() {
+    this.rxStompService.watch('/topic/updateUser').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      const userId = this.usersData.findIndex(Users => Users.id === receivedUsers.id)
+      this.usersData[userId] = receivedUsers
+    });
+  }
+
+  watchUpdateProfilePhoto() {
+    this.rxStompService.watch('/topic/updateProfilePhoto').subscribe((message) => {
+      const receivedUsers: Users = JSON.parse(message.body);
+      const userId = this.usersData.findIndex(Users => Users.id === receivedUsers.id)
+      this.usersData[userId] = receivedUsers
+    });
+  }
+
 }

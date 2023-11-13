@@ -57,7 +57,10 @@ import {
   Eye,
   EyeOff,
   Send,
-  AlertTriangle
+  AlertTriangle,
+  Package,
+  Airplay,
+  Calendar
 } from 'angular-feather/icons';
 
 // Select some icons (use an object, not an array)
@@ -117,7 +120,10 @@ const icons = {
   Eye,
   EyeOff,
   Send,
-  AlertTriangle
+  AlertTriangle,
+  Package,
+  Airplay,
+  Calendar
 };
 
 @NgModule({

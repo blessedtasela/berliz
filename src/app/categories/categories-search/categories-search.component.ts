@@ -5,6 +5,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { CategoryStateService } from 'src/app/services/category-state.service';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 @Component({
@@ -23,10 +24,11 @@ export class CategoriesSearchComponent {
   constructor(private categoryStateService: CategoryStateService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
-    private elementRef: ElementRef) { }
+    private elementRef: ElementRef,
+    private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
- 
+    this.watchUpdateStatus()
   }
 
   ngAfterViewInit(): void {
@@ -131,6 +133,18 @@ export class CategoriesSearchComponent {
       }
     });
     return of(this.filteredCategories);
+  }
+
+
+  watchUpdateStatus() {
+    this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
+      const receivedCategories: Categories = JSON.parse(message.body);
+      if (receivedCategories.status === 'false') {
+        this.categories.push(receivedCategories);
+      } else {
+        this.categories = this.categories.filter(category => category.id !== receivedCategories.id);
+      }
+    });
   }
 }
 

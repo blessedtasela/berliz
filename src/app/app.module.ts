@@ -28,6 +28,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { AboutUsModule } from './about-us/about-us.module';
 import { RxStompService } from './services/rx-stomp.service';
 import { rxStompServiceFactory } from './rx-stomp-service-factory';
+import { DBConfig } from 'ngx-indexed-db';
+import { NgxIndexedDBModule } from 'ngx-indexed-db';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   text: "Loading....",
@@ -39,6 +41,21 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   fgsSize: 100,
   hasProgressBar: false
 }
+
+const dbConfig: DBConfig  = {
+  name: 'BerlizClient',
+  version: 1,
+  objectStoresMeta: [{
+    store: 'notifications',
+    storeConfig: { keyPath: 'id', autoIncrement: true },
+    storeSchema: [
+      { name: 'message', keypath: 'name', options: { unique: false } },
+      { name: 'email', keypath: 'email', options: { unique: false } },
+      { name: 'role', keypath: 'role', options: { unique: false } },
+      { name: 'date', keypath: 'date', options: { unique: false } },
+    ]
+  }]
+};
 
 @NgModule({
   declarations: [
@@ -68,6 +85,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     LandingPageModule,
     CategoriesModule,
     AboutUsModule,
+    NgxIndexedDBModule.forRoot(dbConfig)
   ],
   exports: [],
 

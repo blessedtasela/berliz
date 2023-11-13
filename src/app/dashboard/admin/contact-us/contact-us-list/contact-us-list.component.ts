@@ -11,6 +11,7 @@ import { UpdateContactUsModalComponent } from '../update-contact-us-modal/update
 import { ContactUsStateService } from 'src/app/services/contact-us-state.service';
 import { ContactUsDetailsComponent } from '../contact-us-details/contact-us-details.component';
 import { ContactUsReviewModalComponent } from '../contact-us-review-modal/contact-us-review-modal.component';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 
 @Component({
   selector: 'app-contact-us-list',
@@ -29,10 +30,16 @@ export class ContactUsListComponent {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private elementRef: ElementRef) {
+    private elementRef: ElementRef,
+    private rxStompService: RxStompService) {
   }
 
   ngOnInit(): void {
+    this.watchGetContactUsFromMap()
+    this.watchDeleteContactUs()
+    this.watchReviewContactUs()
+    this.watchUpdateContactUs()
+    this.watchUpdateContactUsStatus()
   }
 
 
@@ -189,6 +196,44 @@ export class ContactUsListComponent {
   formatDate(dateString: any): any {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');
+  }
+
+  watchGetContactUsFromMap() {
+    this.rxStompService.watch('/topic/getContactUsFromMap').subscribe((message) => {
+      const receivedCategories: ContactUs = JSON.parse(message.body);
+      this.contactUsData.push(receivedCategories);
+    });
+  }
+
+  watchReviewContactUs() {
+    this.rxStompService.watch('/topic/reviewContactUs').subscribe((message) => {
+      const receivedContactUs: ContactUs = JSON.parse(message.body);
+      const centerId = this.contactUsData.findIndex(contactUs => contactUs.id === receivedContactUs.id)
+      this.contactUsData[centerId] = receivedContactUs
+    });
+  }
+
+  watchUpdateContactUs() {
+    this.rxStompService.watch('/topic/updateContactUs').subscribe((message) => {
+      const receivedContactUs: ContactUs = JSON.parse(message.body);
+      const centerId = this.contactUsData.findIndex(contactUs => contactUs.id === receivedContactUs.id)
+      this.contactUsData[centerId] = receivedContactUs
+    });
+  }
+
+  watchUpdateContactUsStatus() {
+    this.rxStompService.watch('/topic/updateContactUsStatus').subscribe((message) => {
+      const receivedContactUs: ContactUs = JSON.parse(message.body);
+      const centerId = this.contactUsData.findIndex(contactUs => contactUs.id === receivedContactUs.id)
+      this.contactUsData[centerId] = receivedContactUs
+    });
+  }
+
+  watchDeleteContactUs() {
+    this.rxStompService.watch('/topic/deleteContactUs').subscribe((message) => {
+      const receivedContactUs: ContactUs = JSON.parse(message.body);
+      this.contactUsData = this.contactUsData.filter(contactUs => contactUs.id !== receivedContactUs.id);
+    });
   }
 
 }

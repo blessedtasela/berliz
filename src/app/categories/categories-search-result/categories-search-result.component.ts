@@ -1,9 +1,10 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { Categories } from 'src/app/models/categories.interface';
+import { Categories, CategoryLikes } from 'src/app/models/categories.interface';
 import { Users } from 'src/app/models/users.interface';
 import { CategoryStateService } from 'src/app/services/category-state.service';
 import { CategoryService } from 'src/app/services/category.service';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { UserStateService } from 'src/app/services/user-state.service';
 import { genericError } from 'src/validators/form-validators.module';
 
@@ -18,13 +19,18 @@ export class CategoriesSearchResultComponent {
   @Input() totalCategories: number = 0;
   responseMessage: any;
   user!: Users;
+  categoryLikes: CategoryLikes[] = [];
 
   constructor(private datePipe: DatePipe,
     private categoryService: CategoryService,
     private categoryStateService: CategoryStateService,
-    private userStateService: UserStateService) { }
+    private userStateService: UserStateService,
+    private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
+    this.watchLikeCategory()
+    this.watchUpdateCategory()
+    this.watchUpdateStatus()
     this.userStateService.getUser().subscribe((user) => {
       this.user = user;
     })
@@ -33,6 +39,7 @@ export class CategoriesSearchResultComponent {
   handleEmitEvent() {
     this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
       this.categoriesResult = activeCategories;
+      this.totalCategories = activeCategories.length;
       this.categoryStateService.setActiveCategoriesSubject(this.categoriesResult);
     });
     this.userStateService.getUser().subscribe((user) => {
@@ -58,26 +65,6 @@ export class CategoriesSearchResultComponent {
       (response: any) => {
         this.responseMessage = response.message;
         this.handleEmitEvent()
-        console.log('message', this.responseMessage);
-      },
-      (error: any) => {
-        if (error.error?.message) {
-          this.responseMessage = error.error?.message;
-        } else {
-          this.responseMessage = genericError;
-        }
-        console.log('error message', this.responseMessage);
-        window.alert('please login to continue')
-      }
-    );
-  }
-
-  dislikeCategory(category: Categories) {
-    this.categoryService.dislikeCategory(category.id).subscribe(
-      (response: any) => {
-        this.responseMessage = response.message;
-        this.handleEmitEvent()
-        console.log('message', this.responseMessage);
       },
       (error: any) => {
         if (error.error?.message) {
@@ -92,9 +79,36 @@ export class CategoriesSearchResultComponent {
   }
 
   isLikedCategory(category: Categories): boolean {
-    return this.user?.likedCategoriesSet?.map((likedCategory) =>
-      likedCategory.id).includes(category.id) || false;
+    return this.categoryLikes.some((categoryLike) =>
+      categoryLike.user.id === this.user?.id && categoryLike.category.id === category.id
+    );
   }
 
+  watchLikeCategory() {
+    this.rxStompService.watch('/topic/likeCategory').subscribe((message) => {
+      const receivedCategories: Categories = JSON.parse(message.body);
+      const trainerId = this.categoriesResult.findIndex(trainer => trainer.id === receivedCategories.id)
+      this.categoriesResult[trainerId] = receivedCategories
+    });
+  }
+
+  watchUpdateCategory() {
+    this.rxStompService.watch('/topic/updateCategory').subscribe((message) => {
+      const receivedCategories: Categories = JSON.parse(message.body);
+      const trainerId = this.categoriesResult.findIndex(trainer => trainer.id === receivedCategories.id)
+      this.categoriesResult[trainerId] = receivedCategories
+    });
+  }
+
+  watchUpdateStatus() {
+    this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
+      const receivedCategories: Categories = JSON.parse(message.body);
+      if (receivedCategories.status === 'true') {
+        this.categoriesResult.push(receivedCategories);
+      } else {
+        this.categoriesResult = this.categoriesResult.filter(trainer => trainer.id !== receivedCategories.id);
+      }
+    });
+  }
 
 }

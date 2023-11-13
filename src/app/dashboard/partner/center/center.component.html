@@ -40,11 +40,8 @@
             (click)="openUpdateCenter()">
             Quick update
         </button>
-        <div class="bg-white p-6 mb-10">
+        <div class="bg-white p-6 mb-10 rounded-lg">
             <app-center-data [center]="centerData" (emitEvent)="emitData()"></app-center-data>
-        </div>
-        <div class="bg-white m-12 p-4 mb-10">
-            <app-partner-data [partnerData]="partnerData" (emitEvent)="emitData()"></app-partner-data>
         </div>
     </div>
 </div>

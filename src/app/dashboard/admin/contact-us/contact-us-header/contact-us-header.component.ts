@@ -6,6 +6,7 @@ import { ContactUs } from 'src/app/models/contact-us.model';
 import { ContactUsStateService } from 'src/app/services/contact-us-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { AddContactUsModalComponent } from '../add-contact-us-modal/add-contact-us-modal.component';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 
 @Component({
   selector: 'app-contact-us-header',
@@ -21,10 +22,13 @@ export class ContactUsHeaderComponent {
 
   constructor(private contactUsStateService: ContactUsStateService,
     private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,) {
+    private dialog: MatDialog,
+    private rxStompService: RxStompService) {
   }
 
   ngOnInit(): void {
+    this.watchGetContactUsFromMap()
+    this.watchDeleteContactUs()
   }
 
   handleEmitEvent() {
@@ -62,13 +66,13 @@ export class ContactUsHeaderComponent {
           return a.id - b.id;
         });
         break;
-        case 'lastUpdate':
-          this.contactUsData.sort((a, b) => {
-            const dateA = new Date(a.lastUpdate);
-            const dateB = new Date(b.lastUpdate);
-            return dateB.getTime() - dateA.getTime();
-          });
-          break;
+      case 'lastUpdate':
+        this.contactUsData.sort((a, b) => {
+          const dateA = new Date(a.lastUpdate);
+          const dateB = new Date(b.lastUpdate);
+          return dateB.getTime() - dateA.getTime();
+        });
+        break;
       default:
         break;
     }
@@ -98,5 +102,22 @@ export class ContactUsHeaderComponent {
     });
   }
 
+  watchGetContactUsFromMap() {
+    this.rxStompService.watch('/topic/getContactUsFromMap').subscribe((message) => {
+      const receivedCategories: ContactUs = JSON.parse(message.body);
+      this.contactUsData.push(receivedCategories);
+      this.contactUsLength = this.contactUsData.length;
+      this.totalContactUs = this.contactUsData.length;
+    });
+  }
+
+  watchDeleteContactUs() {
+    this.rxStompService.watch('/topic/deleteContactUs').subscribe((message) => {
+      const receivedContactUs: ContactUs = JSON.parse(message.body);
+      this.contactUsData = this.contactUsData.filter(contactUs => contactUs.id !== receivedContactUs.id);
+      this.contactUsLength = this.contactUsData.length;
+      this.totalContactUs = this.contactUsData.length;
+    });
+  }
 }
 

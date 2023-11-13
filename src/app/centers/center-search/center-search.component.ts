@@ -3,6 +3,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, map, debounceTime, tap, switchMap, distinctUntilChanged, Observable, of, Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
 import { CenterStateService } from 'src/app/services/center-state.service';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 @Component({
@@ -21,9 +22,11 @@ export class CenterSearchComponent {
   constructor(private centerStateService: CenterStateService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
-    private elementRef: ElementRef) { }
+    private elementRef: ElementRef,
+    private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
+    this.watchUpdateCenterStatus()
   }
 
   ngAfterViewInit(): void {
@@ -99,6 +102,17 @@ export class CenterSearchComponent {
       }
     });
     return of(this.centers);
+  }
+
+  watchUpdateCenterStatus() {
+    this.rxStompService.watch('/topic/updateCenterStatus').subscribe((message) => {
+      const receivedCenter: Centers = JSON.parse(message.body);
+      if (receivedCenter.status === 'true') {
+        this.centers.push(receivedCenter);
+      } else {
+        this.centers = this.centers.filter(center => center.id !== receivedCenter.id);
+      }
+    });
   }
 
 }

@@ -12,6 +12,7 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
 import { genericError } from 'src/validators/form-validators.module';
 import { UpdateNewsletterModalComponent } from '../update-newsletter-modal/update-newsletter-modal.component';
 import { NewsletterMessageComponent } from '../newsletter-message/newsletter-message.component';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 
 @Component({
   selector: 'app-newsletter-list',
@@ -31,10 +32,14 @@ export class NewsletterListComponent {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private elementRef: ElementRef) {
+    private rxStompService: RxStompService) {
   }
 
   ngOnInit(): void {
+    this.watchDeleteNewsletter()
+    this.watchGetNewsletterFromMap()
+    this.watchUpdateNewsletter()
+    this.watchUpdateNewsletterStatus()
   }
 
 
@@ -200,6 +205,36 @@ export class NewsletterListComponent {
   formatDate(dateString: any): any {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');
+  }
+
+  watchGetNewsletterFromMap() {
+    this.rxStompService.watch('/topic/getNewsletterFromMap').subscribe((message) => {
+      const receivedCategories: Newsletter = JSON.parse(message.body);
+      this.newsletterData.push(receivedCategories);
+    });
+  }
+
+  watchUpdateNewsletter() {
+    this.rxStompService.watch('/topic/updateNewsletter').subscribe((message) => {
+      const receivedNewsletter: Newsletter = JSON.parse(message.body);
+      const newsletterId = this.newsletterData.findIndex(newsletter => newsletter.id === receivedNewsletter.id)
+      this.newsletterData[newsletterId] = receivedNewsletter
+    });
+  }
+
+  watchUpdateNewsletterStatus() {
+    this.rxStompService.watch('/topic/updateNewsletterStatus').subscribe((message) => {
+      const receivedNewsletter: Newsletter = JSON.parse(message.body);
+      const newsletterId = this.newsletterData.findIndex(newsletter => newsletter.id === receivedNewsletter.id)
+      this.newsletterData[newsletterId] = receivedNewsletter
+    });
+  }
+
+  watchDeleteNewsletter() {
+    this.rxStompService.watch('/topic/deleteNewsletter').subscribe((message) => {
+      const receivedNewsletter: Newsletter = JSON.parse(message.body);
+      this.newsletterData = this.newsletterData.filter(newsletter => newsletter.id !== receivedNewsletter.id);
+    });
   }
 
 }

@@ -2,79 +2,80 @@
     <app-sidebar-navigation></app-sidebar-navigation>
     <div class="flex p-4 md:p-8 mt-4 full-width">
         <div class="width bg-gray-200 p-2 rounded-lg mt-20">
-            <section class="">
-                <div class="rounded-md mx-auto">
-                    <form [formGroup]="updateUserForm">
-                        <header class="text-center m-2 font-bold font-sans mb-2">
-                            <h1 class=" text-xl">Personal Information</h1>
-                            <p class="text-red-600 italic text-sm">Update account information
-                            </p>
-                        </header>
-                        <span *ngIf="!updateUserForm?.invalid && invalidForm" class="mx-2 text-gray-400">
-                            Everything looks good
-                        </span>
-                        <span *ngIf="updateUserForm?.invalid && invalidForm" class="text-red-500 mx-2">
-                            Please complete all section
-                        </span>
-                        <div class="flex flex-col gap-2 p-2" *ngIf="user">
-                            <input formControlName="id" [value]="user.id" type="number"  [(ngModel)]="user.id" *ngIf="user.role === 'admin'" hidden
+            <div class="rounded-md mx-auto">
+                <form [formGroup]="updateUserForm">
+                    <header class="text-center m-2 font-bold font-sans mb-2">
+                        <h1 class=" text-xl">Personal Information</h1>
+                        <p class="text-red-600 italic text-sm">Update account information
+                        </p>
+                    </header>
+                    <span *ngIf="!updateUserForm?.invalid && invalidForm" class="mx-2 text-gray-400">
+                        Everything looks good
+                    </span>
+                    <span *ngIf="updateUserForm?.invalid && invalidForm" class="text-red-500 mx-2">
+                        Please complete all section
+                    </span>
+                    <div class="grid grid-cols md:grid-cols-2 p-4 gap-2 p-2" *ngIf="user">
+                        <input formControlName="id" [value]="user.id" type="number" [(ngModel)]="user.id"
+                            *ngIf="user.role === 'admin'" hidden
                             class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500">
-                            <div class="mx-auto w-full">
-                                <span class="ml-4 font-bold text-gray-600 italic">Firstname</span>
-                                <input formControlName="firstname" [value]="user.firstname" [(ngModel)]="user.firstname"
-                                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                                    [ngClass]="{'border-red-400': updateUserForm.get('firstname')?.invalid && updateUserForm.get('firstname')?.touched }"
-                                    placeholder="First Name" type="text">
-                                <div *ngIf="updateUserForm.get('firstname')?.invalid && updateUserForm.get('firstname')?.dirty || (invalidForm && updateUserForm.get('firstname')?.invalid)"
-                                    class="text-red-500 mx-2">
-                                    First Name is required
-                                </div>
+                        <div class="mx-auto w-full">
+                            <span class="ml-4 font-bold text-gray-600 italic">Firstname</span>
+                            <input formControlName="firstname" [value]="user.firstname" [(ngModel)]="user.firstname"
+                                class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                [ngClass]="{'border-red-400': updateUserForm.get('firstname')?.invalid && updateUserForm.get('firstname')?.touched }"
+                                placeholder="First Name" type="text">
+                            <div *ngIf="updateUserForm.get('firstname')?.invalid && updateUserForm.get('firstname')?.dirty || (invalidForm && updateUserForm.get('firstname')?.invalid)"
+                                class="text-red-500 mx-2">
+                                First Name is required
                             </div>
-                            <div class="mx-auto w-full">
-                                <span class="ml-4 font-bold text-gray-600 italic">Lastname</span>
-                                <input formControlName="lastname" [value]="user.lastname" [(ngModel)]="user.lastname"
-                                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                                    [ngClass]="{'border-red-400': updateUserForm.get('lastname')?.invalid && updateUserForm.get('lastname')?.touched }"
-                                    placeholder="Last Name" type="text">
-                                <div *ngIf="updateUserForm.get('lastname')?.invalid && updateUserForm.get('lastname')?.dirty || (invalidForm && updateUserForm.get('lastname')?.invalid)"
-                                    class="text-red-500 mx-2">
-                                    Last Name is required
-                                </div>
+                        </div>
+                        <div class="mx-auto w-full">
+                            <span class="ml-4 font-bold text-gray-600 italic">Lastname</span>
+                            <input formControlName="lastname" [value]="user.lastname" [(ngModel)]="user.lastname"
+                                class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                [ngClass]="{'border-red-400': updateUserForm.get('lastname')?.invalid && updateUserForm.get('lastname')?.touched }"
+                                placeholder="Last Name" type="text">
+                            <div *ngIf="updateUserForm.get('lastname')?.invalid && updateUserForm.get('lastname')?.dirty || (invalidForm && updateUserForm.get('lastname')?.invalid)"
+                                class="text-red-500 mx-2">
+                                Last Name is required
                             </div>
-                            <div class="mx-auto w-full">
-                                <span class="ml-4 font-bold text-gray-600 italic">Email</span>
-                                <input formControlName="email" [value]="user.email" [(ngModel)]="user.email"
-                                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                                    [ngClass]="{'border-red-400': updateUserForm.get('email')?.invalid && updateUserForm.get('email')?.touched }"
-                                    placeholder="input email" type="text">
-                                <div *ngIf="updateUserForm.get('email')?.invalid && updateUserForm.get('email')?.dirty || (invalidForm && updateUserForm.get('email')?.invalid)"
-                                    class="text-red-500 mx-2">
-                                    email is required
-                                </div>
+                        </div>
+                        <div class="mx-auto w-full">
+                            <span class="ml-4 font-bold text-gray-600 italic">Email</span>
+                            <input formControlName="email" [value]="user.email" [(ngModel)]="user.email"
+                                class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                [ngClass]="{'border-red-400': updateUserForm.get('email')?.invalid && updateUserForm.get('email')?.touched }"
+                                placeholder="input email" type="text">
+                            <div *ngIf="updateUserForm.get('email')?.invalid && updateUserForm.get('email')?.dirty || (invalidForm && updateUserForm.get('email')?.invalid)"
+                                class="text-red-500 mx-2">
+                                email is required
                             </div>
-                            <div class="mx-auto w-full">
-                                <span class="ml-4 font-bold text-gray-600 italic">Telephone</span>
-                                <input formControlName="phone" [value]="user.phone" [(ngModel)]="user.phone"
-                                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                                    [ngClass]="{'border-red-400': updateUserForm.get('phone')?.invalid && updateUserForm.get('phone')?.touched }"
-                                    placeholder="+123 000 000 000" type="tel">
-                                <div *ngIf="updateUserForm.get('phone')?.invalid && updateUserForm.get('phone')?.dirty || (invalidForm && updateUserForm.get('phone')?.invalid)"
-                                    class="text-red-500 mx-2">
-                                    must be at least 8 characters
-                                </div>
+                        </div>
+                        <div class="mx-auto w-full">
+                            <span class="ml-4 font-bold text-gray-600 italic">Telephone</span>
+                            <input formControlName="phone" [value]="user.phone" [(ngModel)]="user.phone"
+                                class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                [ngClass]="{'border-red-400': updateUserForm.get('phone')?.invalid && updateUserForm.get('phone')?.touched }"
+                                placeholder="+123 000 000 000" type="tel">
+                            <div *ngIf="updateUserForm.get('phone')?.invalid && updateUserForm.get('phone')?.dirty || (invalidForm && updateUserForm.get('phone')?.invalid)"
+                                class="text-red-500 mx-2">
+                                must be at least 8 characters
                             </div>
-                            <div class="mx-auto w-full">
-                                <span class="ml-4 font-bold text-gray-600 italic">Date of birth</span>
-                                <input formControlName="dob" [value]="user.dob" [(ngModel)]="user.dob"
-                                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                                    [ngClass]="{'border-red-400': updateUserForm.get('dob')?.invalid && updateUserForm.get('dob')?.touched }"
-                                    placeholder="date of birth" type="date">
-                                <div *ngIf="updateUserForm.get('dob')?.invalid && updateUserForm.get('dob')?.dirty || (invalidForm && updateUserForm.get('dob')?.invalid)"
-                                    class="text-red-500 mx-2">
-                                    Please select your birth date
-                                </div>
+                        </div>
+                        <div class="mx-auto w-full">
+                            <span class="ml-4 font-bold text-gray-600 italic">Date of birth</span>
+                            <input formControlName="dob" [value]="user.dob" [(ngModel)]="user.dob"
+                                class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                [ngClass]="{'border-red-400': updateUserForm.get('dob')?.invalid && updateUserForm.get('dob')?.touched }"
+                                placeholder="date of birth" type="date">
+                            <div *ngIf="updateUserForm.get('dob')?.invalid && updateUserForm.get('dob')?.dirty || (invalidForm && updateUserForm.get('dob')?.invalid)"
+                                class="text-red-500 mx-2">
+                                Please select your birth date
                             </div>
-                            <div class="font-sans mx-auto flex items-center gap-5">
+                        </div>
+                        <div class="mx-auto w-full">
+                            <div class="font-sans mx-auto flex items-center justify-center mt-4 md:mt-10 gap-5">
                                 <span class="ml-4 font-bold text-gray-600 italic">Male</span>
                                 <input formControlName="gender" [(ngModel)]="user.gender"
                                     (change)="updateGender('Male')"
@@ -92,77 +93,89 @@
                                     Please select a gender
                                 </div>
                             </div>
-                            <div class="col-span-2 mx-auto w-full">
-                                <span class="ml-4 font-bold text-gray-600 italic">Country</span>
-                                <select formControlName="country" class="w-full" [(ngModel)]="user.country"
-                                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                                    [ngClass]="{'border-red-400': updateUserForm.get('country')?.invalid && updateUserForm.get('country')?.touched }"
-                                    placeholder="country" type="text">
-                                    <option selected [value]="user.country" class="font-sans">{{ user.country }}
-                                    </option>
-                                    <option *ngFor="let country of countries">{{ country.name }}</option>
-                                </select>
-                                <div *ngIf="updateUserForm.get('country')?.invalid && updateUserForm.get('country')?.dirty || (invalidForm && updateUserForm.get('country')?.invalid)"
-                                    class="text-red-500 mx-2">
-                                    select your country
-                                </div>
-                            </div>
-                            <div class="mx-auto w-full">
-                                <span class="ml-4 font-bold text-gray-600 italic">State</span>
-                                <input formControlName="state" [value]="user.state" [(ngModel)]="user.state"
-                                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                                    [ngClass]="{'border-red-400': updateUserForm.get('state')?.invalid && updateUserForm.get('state')?.touched }"
-                                    placeholder="State" type="text">
-                                <div *ngIf="updateUserForm.get('state')?.invalid && updateUserForm.get('state')?.dirty || (invalidForm && updateUserForm.get('state')?.invalid)"
-                                    class="text-red-500 mx-2">
-                                    Select your state
-                                </div>
-                            </div>
-                            <div class=" mx-auto w-full">
-                                <span class="ml-4 font-bold text-gray-600 italic">City</span>
-                                <input formControlName="city" [value]="user.city" [(ngModel)]="user.city"
-                                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                                    [ngClass]="{'border-red-400': updateUserForm.get('city')?.invalid && updateUserForm.get('city')?.touched }"
-                                    placeholder="City" type="text">
-                                <div *ngIf="updateUserForm.get('city')?.invalid && updateUserForm.get('city')?.dirty || (invalidForm && updateUserForm.get('city')?.invalid)"
-                                    class="text-red-500 mx-2">
-                                    Please select your city
-                                </div>
-                            </div>
-                            <div class="mx-auto w-full">
-                                <span class="ml-4 font-bold text-gray-600 italic">Postal code</span>
-                                <input formControlName="postalCode" [value]="user.postalCode"
-                                    [(ngModel)]="user.postalCode"
-                                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                                    [ngClass]="{'border-red-400': updateUserForm.get('postalCode')?.invalid && updateUserForm.get('postalCode')?.touched }"
-                                    placeholder="postal code" type="number">
-                                <div *ngIf="updateUserForm.get('postalCode')?.invalid && updateUserForm.get('postalCode')?.dirty || (invalidForm && updateUserForm.get('postalCode')?.invalid)"
-                                    class="text-red-500 mx-2">
-                                    please enter a valid postal code
-                                </div>
-                            </div>
-                            <div class="mx-auto w-full">
-                                <span class="ml-4 font-bold text-gray-600 italic">Adress</span>
-                                <textarea formControlName="address" [value]="user.address" [(ngModel)]="user.address"
-                                    class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                                    [ngClass]="{'border-red-400': updateUserForm.get('address')?.invalid && updateUserForm.get('address')?.touched }"
-                                    placeholder="Write your addresss here" rows="5" cols="15"></textarea>
-                                <div *ngIf="updateUserForm.get('address')?.invalid && updateUserForm.get('address')?.dirty || (invalidForm && updateUserForm.get('address')?.invalid)"
-                                    class="text-red-500 mx-2">
-                                    Address is required
-                                </div>
-                            </div>
-                            <div class="bg-red-600 rounded-md mx-auto m-2">
-                                <button
-                                    class="py-1 px-2 font-bold font-sans text-white text-sm lg:text-md flex items-center justify-center"
-                                    type="submit" (click)="submitForm()">
-                                    Update
-                                </button>
+                        </div>
+                        <div class="mx-auto w-full">
+                            <span class="ml-4 font-bold text-gray-600 italic">Country</span>
+                            <select formControlName="country"  [(ngModel)]="user.country"
+                                class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                [ngClass]="{'border-red-400': updateUserForm.get('country')?.invalid && updateUserForm.get('country')?.touched }"
+                                placeholder="country" type="text">
+                                <option selected [value]="user.country" class="font-sans m-2">{{ user.country }}
+                                </option>
+                                <option *ngFor="let country of countries">{{ country.name }}</option>
+                            </select>
+                            <div *ngIf="updateUserForm.get('country')?.invalid && updateUserForm.get('country')?.dirty || (invalidForm && updateUserForm.get('country')?.invalid)"
+                                class="text-red-500 mx-2">
+                                select your country
                             </div>
                         </div>
-                    </form>
-                </div>
-            </section>
+                        <div class="mx-auto w-full">
+                            <span class="ml-4 font-bold text-gray-600 italic">State</span>
+                            <input formControlName="state" [value]="user.state" [(ngModel)]="user.state"
+                                class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                [ngClass]="{'border-red-400': updateUserForm.get('state')?.invalid && updateUserForm.get('state')?.touched }"
+                                placeholder="State" type="text">
+                            <div *ngIf="updateUserForm.get('state')?.invalid && updateUserForm.get('state')?.dirty || (invalidForm && updateUserForm.get('state')?.invalid)"
+                                class="text-red-500 mx-2">
+                                Select your state
+                            </div>
+                        </div>
+                        <div class=" mx-auto w-full">
+                            <span class="ml-4 font-bold text-gray-600 italic">City</span>
+                            <input formControlName="city" [value]="user.city" [(ngModel)]="user.city"
+                                class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                [ngClass]="{'border-red-400': updateUserForm.get('city')?.invalid && updateUserForm.get('city')?.touched }"
+                                placeholder="City" type="text">
+                            <div *ngIf="updateUserForm.get('city')?.invalid && updateUserForm.get('city')?.dirty || (invalidForm && updateUserForm.get('city')?.invalid)"
+                                class="text-red-500 mx-2">
+                                Please select your city
+                            </div>
+                        </div>
+                        <div class="mx-auto w-full">
+                            <span class="ml-4 font-bold text-gray-600 italic">Postal code</span>
+                            <input formControlName="postalCode" [value]="user.postalCode" [(ngModel)]="user.postalCode"
+                                class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                [ngClass]="{'border-red-400': updateUserForm.get('postalCode')?.invalid && updateUserForm.get('postalCode')?.touched }"
+                                placeholder="postal code" type="number">
+                            <div *ngIf="updateUserForm.get('postalCode')?.invalid && updateUserForm.get('postalCode')?.dirty || (invalidForm && updateUserForm.get('postalCode')?.invalid)"
+                                class="text-red-500 mx-2">
+                                please enter a valid postal code
+                            </div>
+                        </div>
+                        <div class="mx-auto w-full">
+                            <span class="ml-4 font-bold text-gray-600 italic">Adress</span>
+                            <textarea formControlName="address" [value]="user.address" [(ngModel)]="user.address"
+                                class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                [ngClass]="{'border-red-400': updateUserForm.get('address')?.invalid && updateUserForm.get('address')?.touched }"
+                                placeholder="Write your addresss here" rows="5" cols="15"></textarea>
+                            <div *ngIf="updateUserForm.get('address')?.invalid && updateUserForm.get('address')?.dirty || (invalidForm && updateUserForm.get('address')?.invalid)"
+                                class="text-red-500 mx-2">
+                                Address is required
+                            </div>
+                        </div>
+                        <div class="mx-auto w-full">
+                            <span class="ml-4 font-bold text-gray-600 italic">Bio</span>
+                            <textarea formControlName="bio" [value]="user.bio" [(ngModel)]="user.bio"
+                                class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                [ngClass]="{'border-red-400': updateUserForm.get('bio')?.invalid && updateUserForm.get('bio')?.touched }"
+                                placeholder="Write your addresss here" rows="5" cols="15"></textarea>
+                            <div *ngIf="updateUserForm.get('bio')?.invalid && updateUserForm.get('bio')?.dirty || (invalidForm && updateUserForm.get('bio')?.invalid)"
+                                class="text-red-500 mx-2">
+                                Address is required
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center jutsify-center mb-6">
+                        <div class="bg-red-600 rounded-md mx-auto m-2">
+                            <button
+                                class="py-1 px-2 font-bold font-sans text-white text-sm lg:text-md flex items-center justify-center"
+                                type="submit" (click)="submitForm()">
+                                Update
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

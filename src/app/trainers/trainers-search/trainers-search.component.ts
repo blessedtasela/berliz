@@ -2,6 +2,7 @@ import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/cor
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Trainers } from 'src/app/models/trainers.interface';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
@@ -21,16 +22,17 @@ export class TrainersSearchComponent {
   constructor(private trainerStateService: TrainerStateService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
-    private elementRef: ElementRef) { }
+    private elementRef: ElementRef,
+    private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-    
+    this.watchUpdateTrainerStatus()
   }
 
   ngAfterViewInit(): void {
     this.initializeSearch();
   }
-  
+
   handleEmitEvent() {
     this.trainerStateService.getActiveTrainers().subscribe((trainers) => {
       this.initializeSearch();
@@ -93,4 +95,14 @@ export class TrainersSearchComponent {
     return of(this.trainers);
   }
 
+  watchUpdateTrainerStatus() {
+    this.rxStompService.watch('/topic/updateTrainerStatus').subscribe((message) => {
+      const receivedTrainer: Trainers = JSON.parse(message.body);
+      if (receivedTrainer.status === 'false') {
+        this.trainers.push(receivedTrainer);
+      } else {
+        this.trainers = this.trainers.filter(trainer => trainer.id !== receivedTrainer.id);
+      }
+    });
+  }
 }

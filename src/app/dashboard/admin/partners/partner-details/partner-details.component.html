@@ -4,27 +4,25 @@
     </div>
     <section class="p-2 flex flex-col justify-center items-center">
         <div class="text-center">
-            <p class="text-gray-950 font-sans font-bold text-xl mt-4">{{ partnerData.user.email }} [ID {{
-                partnerData.id }}]</p>
-            <p class="text-gray-500 font-sans font-bold text-sm italic">
+            <p class="text-gray-950 font-sans font-bold text-xl mt-4">{{ partnerData.user.email }} - {{
+                partnerData.id }}</p>
+            <p class="text-red-600 font-sans font-bold text-sm italic">
                 added at {{ formatDate(partnerData.date) }}
             </p>
             <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
                 <div>
-                    <div class="flex items-center justify-center bg-gray-200 rounded-lg">
-                        <button
-                            class="text-sm bg-gray-950 text-white p-1 px-2 hover:bg-red-700 rounded-md font-sans mx-auto ml-4
-                    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
+                    <div class="flex items-center justify-center mb-4">
+                        <button class="text-sm bg-gray-950 text-white p-1 px-2 hover:bg-red-700 rounded-md font-sans mx-auto ml-4
+                    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
                             (click)="openUpdateFile()">
                             edit files
                         </button>
-                        <button
-                            class="text-sm bg-red-600 text-white p-1 px-2 hover:bg-red-700 rounded-md font-sans mx-auto ml-4
-                    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
+                        <button class="text-sm bg-red-600 text-white p-1 px-2 hover:bg-red-700 rounded-md font-sans mx-auto ml-4
+                    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
                             (click)="openViewCV()">open cv
                         </button>
                         <button class="text-sm bg-gray-950 text-white p-1 px-2 hover:bg-gray-1000 rounded-md font-sans mx-auto ml-4
-                transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
+                transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
                             (click)="openViewCertificate()">open certificate
                         </button>
                     </div>
@@ -40,31 +38,30 @@
                             class="ml-2 px-2 p-1 text-sm text-gray-200 font-bold bg-red-600 rounded md"
                             (click)="rejectApplication(partnerData.id)"> reject application
                         </button>
-                        <span class="ml-2 text-gray-950"> user id - {{
-                            partnerData.user.id }}
+                        <span class="ml-2 text-gray-950"> user id - {{partnerData.user.id }}
                         </span>
                     </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
+                    <p class="text-gray-950 font-sans text-md flex text-justify">
                         Motivation - {{ partnerData.motivation }}
                     </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
-                        <button class="ml-2 px-1 bg-red-600 text-gray-100 rounded md"
+                    <p class="text-gray-700 font-sans text-sm flex gap-4">
+                        <button class=" px-2 p-1 bg-red-600 text-white rounded md"
                             (click)="openUrl(partnerData.facebookUrl)"> facebook</button>
-                        <button class="ml-2 px-1 bg-gray-950 text-gray-100 rounded md"
+                        <button class="px-2 p-1 bg-gray-950 text-white rounded md"
                             (click)="openUrl(partnerData.instagramUrl)"> instagram</button>
-                        <button *ngIf="partnerData.youtubeUrl" class="ml-2 px-1 bg-red-600 text-gray-100 rounded md"
+                        <button *ngIf="partnerData.youtubeUrl" class=" px-2 p-1 bg-red-600 text-white rounded md"
                             (click)="openUrl(partnerData.youtubeUrl)">youtube
                         </button>
-                        <button *ngIf="!partnerData.youtubeUrl" class="ml-2 px-1 bg-red-600 text-gray-100 rounded md">
+                        <button *ngIf="!partnerData.youtubeUrl" class="px-1 bg-red-600 text-white rounded md">
                             null</button>
 
-                    <p class="text-gray-700 font-sans font-bold text-md flex mt-2">
+                    <p class="text-gray-950 font-sans text-md flex mt-2">
                         Partner status: {{ partnerData.status ==='true' ? 'active' :'false' }}
                     </p>
                     <p class="text-red-600 font-sans font-bold text-md flex mt-2">
                         Last Update: {{ formatDate(partnerData.lastUpdate) }}
                     </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                    <p class="text-gray-9500 font-sans text-md flex">
                         Role: {{ partnerData.role }}
                     </p>
                 </div>

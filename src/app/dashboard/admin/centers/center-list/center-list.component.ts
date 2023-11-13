@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { UpdateCentersComponent } from '../update-centers/update-centers.component';
 import { CenterDetailsComponent } from '../center-details/center-details.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 
 @Component({
   selector: 'app-center-list',
@@ -32,10 +33,16 @@ export class CenterListComponent {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private datePipe: DatePipe) { }
+    private datePipe: DatePipe,
+    private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-
+    this.watchDeleteCenter()
+    this.watchGetCenterFromMap()
+    this.watchLikeCenter()
+    this.watchUpdateCenter()
+    this.watchUpdateCenterStatus()
+    this.watchUpdatePhoto()
   }
 
   ngOnDestroy() {
@@ -249,6 +256,52 @@ export class CenterListComponent {
 
   openUrl(url: any) {
     window.open(url, '_blank');
+  }
+
+  watchGetCenterFromMap() {
+    this.rxStompService.watch('/topic/getCenterFromMap').subscribe((message) => {
+      const receivedCategories: Centers = JSON.parse(message.body);
+      this.centerData.push(receivedCategories);
+    });
+  }
+
+  watchLikeCenter() {
+    this.rxStompService.watch('/topic/likeCenter').subscribe((message) => {
+      const receivedCenter: Centers = JSON.parse(message.body);
+      const centerId = this.centerData.findIndex(center => center.id === receivedCenter.id)
+      this.centerData[centerId] = receivedCenter
+    });
+  }
+
+  watchUpdateCenter() {
+    this.rxStompService.watch('/topic/updateCenter').subscribe((message) => {
+      const receivedCenter: Centers = JSON.parse(message.body);
+      const centerId = this.centerData.findIndex(center => center.id === receivedCenter.id)
+      this.centerData[centerId] = receivedCenter
+    });
+  }
+
+  watchUpdateCenterStatus() {
+    this.rxStompService.watch('/topic/updateCenterStatus').subscribe((message) => {
+      const receivedCenter: Centers = JSON.parse(message.body);
+      const centerId = this.centerData.findIndex(center => center.id === receivedCenter.id)
+      this.centerData[centerId] = receivedCenter
+    });
+  }
+
+  watchUpdatePhoto() {
+    this.rxStompService.watch('/topic/updateCenterPhoto').subscribe((message) => {
+      const receivedCenter: Centers = JSON.parse(message.body);
+      const centerId = this.centerData.findIndex(center => center.id === receivedCenter.id)
+      this.centerData[centerId] = receivedCenter
+    });
+  }
+
+  watchDeleteCenter() {
+    this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
+      const receivedCenter: Centers = JSON.parse(message.body);
+      this.centerData = this.centerData.filter(center => center.id !== receivedCenter.id);
+    });
   }
 }
 

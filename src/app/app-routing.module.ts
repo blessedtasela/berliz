@@ -38,6 +38,10 @@ import { PartnerPageComponent } from './dashboard/partner/partner-page/partner-p
 import { TrainerComponent } from './dashboard/admin/trainers/trainer/trainer.component';
 import { ProfilePageComponent } from './dashboard/user/profile-page/profile-page.component';
 import { ProfileSettingsComponent } from './dashboard/user/profile-settings/profile-settings.component';
+import { TaskPageComponent } from './dashboard/tasks/task-page/task-page.component';
+import { SubscriptionPageComponent } from './dashboard/subscriptions/subscription-page/subscription-page.component';
+import { NotificationPageComponent } from './dashboard/notifications/notification-page/notification-page.component';
+import { FaqPageComponent } from './dashboard/faqs/faq-page/faq-page.component';
 
 
 const routes: Routes = [
@@ -51,7 +55,7 @@ const routes: Routes = [
   { path: 'trainers/:id/:name', component: TrainersDetailsComponent, canActivate: [TrainerGuard] },
   { path: 'centers', component: CenterPageComponent },
   { path: 'centers/:id/:name', component: CenterDetailComponent, canActivate: [CenterGuard] },
-  { path: 'categories', component: CategoriesComponent},
+  { path: 'categories', component: CategoriesComponent },
   { path: 'categories/:id/:name', component: CategoryDetailsComponent, canActivate: [CategoryGuard] },
   { path: 'testimonials', component: TestimonialPageComponent },
   { path: 'equipments', component: EquipmentPageComponent },
@@ -128,7 +132,7 @@ const routes: Routes = [
 
   // user components
   {
-    path: 'dashboard/profile', component: ProfilePageComponent,
+    path: 'profile', component: ProfilePageComponent,
     canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin', 'user', 'partner', 'trainer',
@@ -144,7 +148,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'dashboard/profile/settings', component: ProfileSettingsComponent,
+    path: 'settings', component: ProfileSettingsComponent,
     canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin', 'user', 'partner', 'trainer',
@@ -167,6 +171,38 @@ const routes: Routes = [
         'center', 'driver', 'store', 'client',]
     }
   },
+  {
+    path: 'notifications', component: NotificationPageComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: ['admin', 'user', 'partner', 'trainer',
+        'center', 'driver', 'store', 'client',]
+    }
+  },
+  {
+    path: 'tasks', component: TaskPageComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: ['admin', 'user', 'partner', 'trainer',
+        'center', 'driver', 'store', 'client',]
+    }
+  },
+  {
+    path: 'subscriptions', component: SubscriptionPageComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: ['admin', 'user', 'partner', 'trainer',
+        'center', 'driver', 'store', 'client',]
+    }
+  },
+  {
+    path: 'faqs', component: FaqPageComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: ['admin', 'user', 'partner', 'trainer',
+        'center', 'driver', 'store', 'client',]
+    }
+  },
 
   //handles other exceptions
   { path: '**', component: PageNotFoundComponent },
@@ -177,7 +213,7 @@ const routes: Routes = [
     RouterModule.forRoot(routes, {
       // Restore the last scroll position
       scrollPositionRestoration: "enabled",
-  
+
       // Enable scrolling to anchors
       anchorScrolling: "enabled",
     }

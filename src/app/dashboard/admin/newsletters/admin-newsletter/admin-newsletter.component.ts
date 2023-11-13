@@ -46,7 +46,7 @@ export class AdminNewsletterComponent {
     });
   }
 
-  handleSearchResults(results: ContactUs[]): void {
+  handleSearchResults(results: Newsletter[]): void {
     this.newsletterData = results;
     this.totalNewsletters = results.length;
   }

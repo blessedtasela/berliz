@@ -58,7 +58,7 @@ export class AdminUpdateUserProfilePhotoModalComponent {
       this.responseMessage = 'Invalid form';
       this.ngxService.stop();
     } else {
-      this.userService.updateProfilePhotoAdmin(requestData)
+      this.userService.updateProfilePhoto(requestData)
         .subscribe(
           (response: any) => {
             this.dialogRef.close('User\'s profile photo updated successfully');

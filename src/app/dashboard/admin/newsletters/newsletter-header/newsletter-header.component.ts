@@ -6,6 +6,7 @@ import { NewsletterStateService } from 'src/app/services/newsletter-state.servic
 import { AddContactUsModalComponent } from '../../contact-us/add-contact-us-modal/add-contact-us-modal.component';
 import { AddNewsletterComponent } from '../add-newsletter/add-newsletter.component';
 import { NewsletterBulkMessageComponent } from '../newsletter-bulk-message/newsletter-bulk-message.component';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 
 @Component({
   selector: 'app-newsletter-header',
@@ -21,10 +22,12 @@ export class NewsletterHeaderComponent {
 
   constructor(private newsletterStateService: NewsletterStateService,
     private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,) {
-  }
+    private dialog: MatDialog,
+    private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
+    this.watchDeleteNewsletter()
+    this.watchGetNewsletterFromMap()
   }
 
   handleEmitEvent() {
@@ -109,6 +112,24 @@ export class NewsletterHeaderComponent {
       } else {
         console.log('Dialog closed without sending newsletter bulk messages');
       }
+    });
+  }
+
+  watchGetNewsletterFromMap() {
+    this.rxStompService.watch('/topic/getNewsletterFromMap').subscribe((message) => {
+      const receivedCategories: Newsletter = JSON.parse(message.body);
+      this.newsletterData.push(receivedCategories);
+      this.newsletterLength = this.newsletterData.length;
+      this.totalNewsletters = this.newsletterData.length;
+    });
+  }
+
+  watchDeleteNewsletter() {
+    this.rxStompService.watch('/topic/deleteNewsletter').subscribe((message) => {
+      const receivedNewsletter: Newsletter = JSON.parse(message.body);
+      this.newsletterData = this.newsletterData.filter(newsletter => newsletter.id !== receivedNewsletter.id);
+      this.newsletterLength = this.newsletterData.length;
+      this.totalNewsletters = this.newsletterData.length;
     });
   }
 

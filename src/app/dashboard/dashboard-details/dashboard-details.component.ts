@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import jwt_decode from "jwt-decode";
 import { DashboardStateService } from 'src/app/services/dashboard-state.service';
+import { Trainers } from 'src/app/models/trainers.interface';
 
 @Component({
   selector: 'app-dashboard-details',
@@ -10,9 +11,9 @@ import { DashboardStateService } from 'src/app/services/dashboard-state.service'
   styleUrls: ['./dashboard-details.component.css']
 })
 export class DashboardDetailsComponent implements OnInit {
-  data: any;
+  @Input() data: any;
   responseMessage: any;
-  allData: any;
+  showAllData: boolean = false;
   token: any = localStorage.getItem('token')
   tokenPayload: any
   userRole: any
@@ -21,11 +22,6 @@ export class DashboardDetailsComponent implements OnInit {
     private dashboardStateService: DashboardStateService) {
     this.tokenPayload = jwt_decode(this.token);
     this.userRole = this.tokenPayload?.role
-  }
-
-
-  formatUrl(name: any): any {
-    return name.replace(/\s+/g, '-').toLowerCase();
   }
 
   ngOnInit(): void {
@@ -38,10 +34,6 @@ export class DashboardDetailsComponent implements OnInit {
     })
   }
 
-  showAllData() {
-    this.allData == !this.allData;
-  }
-
   handleEmitEvent() {
     this.dashboardStateService.getDashBoard().subscribe((data) => {
       this.ngxService.start()
@@ -50,6 +42,15 @@ export class DashboardDetailsComponent implements OnInit {
       this.dashboardStateService.setDashboardSubject(this.data);
       this.ngxService.stop()
     })
+  }
+
+
+  formatUrl(name: any): any {
+    return name.replace(/\s+/g, '-').toLowerCase();
+  }
+
+  toggleData() {
+    this.showAllData == !this.showAllData;
   }
 
 }

@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -26,6 +26,7 @@ export class SidebarNavigationComponent {
   userData: any;
   responseMessage: any;
   profilePhoto: any;
+  currentRoute: any;
   @Input() isSearch: boolean = false;
   @Output() categoriesResults: EventEmitter<Categories[]> = new EventEmitter<Categories[]>()
   @Output() contactUsResults: EventEmitter<ContactUs[]> = new EventEmitter<ContactUs[]>()
@@ -38,15 +39,34 @@ export class SidebarNavigationComponent {
   @Input() searchComponent: string = ''
 
   constructor(
-    private route: ActivatedRoute,
+    private router: Router,
     private userService: UserService,
     private dialog: MatDialog,
     private userStateService: UserStateService,
     private ngxService: NgxUiLoaderService,
-    private snackbarService: SnackBarService) { }
+    private snackbarService: SnackBarService) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.currentRoute = event.url;
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.handleEmitEvent();
+  }
+
+  toggleSidebar(): void {
+    this.openMenu = !this.openMenu;
+  }
+
+  isActive(path: string): boolean {
+    return this.currentRoute.startsWith('/' + path);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event): void {
+    this.openMenu = window.innerWidth <= 768; // Change the breakpoint as needed
   }
 
   handleEmitEvent() {
@@ -109,14 +129,6 @@ export class SidebarNavigationComponent {
         console.log('Dialog closed without updatig profile photo');
       }
     });
-  }
-
-  toggleSidebar(): void {
-    this.openMenu = !this.openMenu;
-  }
-
-  isActive(path: string): boolean {
-    return this.route.snapshot.routeConfig?.path === path;
   }
 
   logout() {

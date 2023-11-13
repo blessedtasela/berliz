@@ -12,6 +12,7 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
 import { ViewCertificateModalComponent } from 'src/app/shared/view-certificate-modal/view-certificate-modal.component';
 import { ViewCvModalComponent } from 'src/app/shared/view-cv-modal/view-cv-modal.component';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 
 @Component({
   selector: 'app-partner-list',
@@ -29,10 +30,16 @@ export class PartnerListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private partnerStateService: PartnerStateService,
-    private datePipe: DatePipe) { }
+    private datePipe: DatePipe,
+    private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-
+    this.watchDeletePartner()
+    this.watchGetPartnerFromMap()
+    this.watchRejectPartnerApplication()
+    this.watchUpdatePartner()
+    this.watchUpdatePartnerStatus()
+    this.watchUpdatePartnerFile()
   }
 
   handleEmitEvent() {
@@ -216,5 +223,51 @@ export class PartnerListComponent {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
+
+  watchGetPartnerFromMap() {
+    this.rxStompService.watch('/topic/getPartnerFromMap').subscribe((message) => {
+      const receivedCategories: Partners = JSON.parse(message.body);
+      this.partnersData.push(receivedCategories);
+    });
+  }
+
+  watchUpdatePartner() {
+    this.rxStompService.watch('/topic/updatePartner').subscribe((message) => {
+      const receivedPartner: Partners = JSON.parse(message.body);
+      const partnerId = this.partnersData.findIndex(partners => partners.id === receivedPartner.id)
+      this.partnersData[partnerId] = receivedPartner
+    });
+  }
+
+  watchUpdatePartnerStatus() {
+    this.rxStompService.watch('/topic/updatePartnerStatus').subscribe((message) => {
+      const receivedPartner: Partners = JSON.parse(message.body);
+      const partnerId = this.partnersData.findIndex(partners => partners.id === receivedPartner.id)
+      this.partnersData[partnerId] = receivedPartner
+    });
+  }
+
+  watchDeletePartner() {
+    this.rxStompService.watch('/topic/deletePartner').subscribe((message) => {
+      const receivedPartner: Partners = JSON.parse(message.body);
+      this.partnersData = this.partnersData.filter(partners => partners.id !== receivedPartner.id);
+    });
+  }
+
+  watchRejectPartnerApplication() {
+    this.rxStompService.watch('/topic/rejectPartnerApplication').subscribe((message) => {
+      const response = message.body;
+      this.snackbarService.openSnackBar(response, '');
+    });
+  }
+
+  watchUpdatePartnerFile() {
+    this.rxStompService.watch('/topic/updatePartnerFile').subscribe((message) => {
+      const receivedPartner: Partners = JSON.parse(message.body);
+      const partnerId = this.partnersData.findIndex(partners => partners.id === receivedPartner.id)
+      this.partnersData[partnerId] = receivedPartner
+    });
+  }
+
 }
 

@@ -80,4 +80,6 @@ export class PartnerPageComponent {
   emitData(): void {
     this.handleEmitEvent()
   }
+
+  
 }

@@ -12,6 +12,7 @@ import { fileValidator, genericError } from 'src/validators/form-validators.modu
 import { TrainerDetailsComponent } from '../trainer-details/trainer-details.component';
 import { UpdateTrainerComponent } from '../update-trainer/update-trainer.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 
 @Component({
   selector: 'app-trainer-list',
@@ -30,10 +31,16 @@ export class TrainerListComponent {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private datePipe: DatePipe) { }
+    private datePipe: DatePipe,
+    private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-
+    this.watchDeleteTrainer()
+    this.watchGetTrainerFromMap()
+    this.watchLikeTrainer()
+    this.watchUpdatePhoto()
+    this.watchUpdateStatus()
+    this.watchUpdateTrainer()
   }
 
   handleEmitEvent() {
@@ -187,10 +194,10 @@ export class TrainerListComponent {
   onImgSelected(event: any, id: number): void {
     const selectedImage = event.target.files[0];
     if (selectedImage) {
-        this.selectedImage = selectedImage;
-        this.updatePhoto(id);
+      this.selectedImage = selectedImage;
+      this.updatePhoto(id);
     }
-}
+  }
 
   updatePhoto(id: number): void {
     this.ngxService.start();
@@ -220,6 +227,52 @@ export class TrainerListComponent {
   formatDate(dateString: any): any {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');
+  }
+
+  watchLikeTrainer() {
+    this.rxStompService.watch('/topic/likeTrainer').subscribe((message) => {
+      const receivedTrainer: Trainers = JSON.parse(message.body);
+      const trainerId = this.trainersData.findIndex(trainer => trainer.id === receivedTrainer.id)
+      this.trainersData[trainerId] = receivedTrainer
+    });
+  }
+
+  watchUpdateTrainer() {
+    this.rxStompService.watch('/topic/updateTrainer').subscribe((message) => {
+      const receivedTrainer: Trainers = JSON.parse(message.body);
+      const trainerId = this.trainersData.findIndex(trainer => trainer.id === receivedTrainer.id)
+      this.trainersData[trainerId] = receivedTrainer
+    });
+  }
+
+  watchGetTrainerFromMap() {
+    this.rxStompService.watch('/topic/getTrainerFromMap').subscribe((message) => {
+      const receivedTrainer: Trainers = JSON.parse(message.body);
+      this.trainersData.push(receivedTrainer);
+    });
+  }
+
+  watchUpdatePhoto() {
+    this.rxStompService.watch('/topic/updatePhoto').subscribe((message) => {
+      const receivedTrainer: Trainers = JSON.parse(message.body);
+      const trainerId = this.trainersData.findIndex(trainer => trainer.id === receivedTrainer.id)
+      this.trainersData[trainerId] = receivedTrainer
+    });
+  }
+
+  watchUpdateStatus() {
+    this.rxStompService.watch('/topic/updateTrainerStatus').subscribe((message) => {
+      const receivedTrainer: Trainers = JSON.parse(message.body);
+      const trainerId = this.trainersData.findIndex(trainer => trainer.id === receivedTrainer.id)
+      this.trainersData[trainerId] = receivedTrainer
+    });
+  }
+
+  watchDeleteTrainer() {
+    this.rxStompService.watch('/topic/deleteTrainer').subscribe((message) => {
+      const receivedTrainer: Trainers = JSON.parse(message.body);
+      this.trainersData = this.trainersData.filter(trainer => trainer.id !== receivedTrainer.id);
+    });
   }
 }
 

@@ -4,6 +4,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Tags } from 'src/app/models/tags.interface';
 import { TagStateService } from 'src/app/services/tag-state.service';
 import { AddTagModalComponent } from '../add-tag-modal/add-tag-modal.component';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 
 @Component({
   selector: 'app-tag-header',
@@ -18,10 +19,12 @@ export class TagHeaderComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private tagStateService: TagStateService) { }
+    private tagStateService: TagStateService,
+    private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-
+    this.watchDeleteTag()
+    this.watchGetTagFromMap()
   }
 
   handleEmitEvent() {
@@ -87,6 +90,24 @@ export class TagHeaderComponent {
       } else {
         console.log('Dialog closed without adding a tag');
       }
+    });
+  }
+
+  watchGetTagFromMap() {
+    this.rxStompService.watch('/topic/getTagFromMap').subscribe((message) => {
+      const receivedCategories: Tags = JSON.parse(message.body);
+      this.tagsData.push(receivedCategories);
+      this.tagsLength = this.tagsData.length;
+      this.totalTags = this.tagsData.length;
+    });
+  }
+
+  watchDeleteTag() {
+    this.rxStompService.watch('/topic/deleteTag').subscribe((message) => {
+      const receivedNewsletter: Tags = JSON.parse(message.body);
+      this.tagsData = this.tagsData.filter(tags => tags.id !== receivedNewsletter.id);
+      this.tagsLength = this.tagsData.length;
+      this.totalTags = this.tagsData.length;
     });
   }
 

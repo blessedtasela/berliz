@@ -84,7 +84,7 @@ export class AdminUpdateUserModalComponent {
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
     } else {
-      this.userService.updateUserAdmin(this.updateUserForm.value)
+      this.userService.updateSuperUser(this.updateUserForm.value)
         .subscribe((response: any) => {
           this.updateUserForm.reset();
           this.userService.setLoginFormIndex(0);

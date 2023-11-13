@@ -15,13 +15,23 @@ import { DashboardDetailsComponent } from './dashboard-details/dashboard-details
 import { RouterModule } from '@angular/router';
 import { NavbarModule } from '../navbar/navbar.module';
 import { FooterModule } from '../footer/footer.module';
+import { DashboardTodoListComponent } from './dashboard-todo-list/dashboard-todo-list.component';
+import { DashboardLoginChartComponent } from './dashboard-login-chart/dashboard-login-chart.component';
+import { DashboardNotificationComponent } from './dashboard-notification/dashboard-notification.component';
+import { DashboardActionComponent } from './dashboard-action/dashboard-action.component';
+import { DashboardAppAnalyticsComponent } from './dashboard-app-analytics/dashboard-app-analytics.component';
 
 
 
 @NgModule({
   declarations: [
     DashboardComponent,
-    DashboardDetailsComponent
+    DashboardDetailsComponent,
+    DashboardTodoListComponent,
+    DashboardLoginChartComponent,
+    DashboardNotificationComponent,
+    DashboardActionComponent,
+    DashboardAppAnalyticsComponent
   ],
   imports: [
     CommonModule,
