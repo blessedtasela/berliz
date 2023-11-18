@@ -7,22 +7,22 @@
             <div class="md:hidden block mx-2 cursor-pointer hover:drop-shadow-2xl transition-all 
                 duration-1000 ease-in-out transform hover:scale-105 cursor-pointer 
                 border-2 border-gray-500 rounded-md p-1 mr-4">
-                <i-feather name="x" class="min-w-[30px] text-gray-700  font-bold drop-shadow-xl"
-                    (click)="navMenu('x')"></i-feather>
+                <i-feather name="x" class="min-w-[30px] text-gray-700  font-bold drop-shadow-xl" (click)="navMenu('x')"
+                    (click)="stopPropagation($event)"></i-feather>
             </div>
         </div>
         <ng-template #alignJustify>
             <div class="md:hidden block mx-2 cursor-pointer hover:drop-shadow-2xl transition-all
                 duration-1000 ease-in-out transform hover:scale-105 cursor-pointer 
                 border-2 border-gray-500 rounded-md p-1  mr-4">
-                <i-feather name="align-justify" (click)="navMenu('align-justify')"
+                <i-feather name="align-justify" (click)="navMenu('align-justify')" (click)="stopPropagation($event)"
                     class="min-w-[30px] text-gray-700  font-bold drop-shadow-xl"></i-feather>
             </div>
         </ng-template>
     </div>
     <ul class="md:flex md:items-center z-[-1] md:z-auto md:static absolute bg-white w-full 
         left-0 md:w-auto md:py-0 py-1 md:pl-0 pl-7 top-[50px] md:opacity-100 opacity-0
-        transition-all duration-1000 ease-in-out transform menu-transition"
+        transition-all duration-1000 ease-in-out transform menu-transition" id="navbarView"
         [ngClass]="{'opacity-100': menuStatus, 'opacity-0 hidden': !menuStatus}">
         <li class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300 
                 ease-in-out transform hover:scale-105 focus:scale-105">
