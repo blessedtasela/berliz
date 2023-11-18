@@ -13,15 +13,15 @@
             <h4 class="flex justify-center text-gray-400 capitalize text-sm"> {{ userData.role }}</h4>
         </div>
         <img [src]="'data:image;base64, ' + userData.profilePhoto" width="30px"
-            class="cursor-pointer object-cover rounded-full" (click)="toggleProfile()"
+            class="cursor-pointer object-cover rounded-full" (click)="toggleProfile()" (click)="stopPropagation($event)"
             onerror="this.src='../../../assets/icons/user.png';">
-        <i-feather name="chevron-down" class="text-gray-600 cursor-pointer" (click)="toggleProfile()"
+        <i-feather name="chevron-down" class="text-gray-600 cursor-pointer" (click)="toggleProfile()" (click)="stopPropagation($event)"
             *ngIf="!profileOpen"></i-feather>
-        <i-feather name="chevron-up" class="text-gray-600 cursor-pointer" (click)="toggleProfile()"
+        <i-feather name="chevron-up" class="text-gray-600 cursor-pointer" (click)="toggleProfile()" (click)="stopPropagation($event)"
             *ngIf="profileOpen"></i-feather>
     </div>
 
-    <div [ngClass]="{'hidden': !profileOpen}"
+    <div [ngClass]="{'hidden': !profileOpen}" id="profileDropdown"
         class="absolute top-[120%] right-6 bg-white rounded-md w-64 text-sm border border-gray-300 shadow-lg">
         <div class="flex justify-center p-2">
             <div class="shrink-0">

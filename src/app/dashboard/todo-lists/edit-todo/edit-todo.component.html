@@ -1,0 +1,45 @@
+<div class="relative">
+    <div class="text-red-600 absolute top-0 right-0 p-1">
+        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+    </div>
+    <div class="rounded-lg p-2 mr-2  mx-auto">
+        <form [formGroup]="updateTodoForm">
+            <div class="border-b-2 " [ngClass]="{'border-red-400': updateTodoForm.invalid && invalidForm }">
+                <header class="text-center m-2 font-bold font-sans">
+                    <h1 class=" text-xl">Update My Todo</h1>
+                    <p class="text-red-600 italic text-sm">Id: {{ myTodo.id }}
+                    </p>
+                </header>
+                <hr [ngClass]="{'border-red-500': updateTodoForm.invalid && invalidForm }">
+                <div class="invalid-form">
+                    <span *ngIf="updateTodoForm.invalid && invalidForm" class="mx-2 text-red-600">
+                        Please complete all sections
+                    </span>
+                    <span *ngIf="!updateTodoForm.invalid && invalidForm" class="mx-2 text-gray-400">
+                        Everything looks good
+                    </span>
+                </div>
+                <div class="grid-cols-1 p-1 gap-2">
+                    <div class="mx-auto p-2">
+                        <span class="sr-only">Edit task</span>
+                        <span class="ml-4 font-bold text-gray-600 italic">Edit task</span>
+                        <textarea formControlName="task" [value]="myTodo.task"
+                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
+                            [ngClass]="{'border-red-400': updateTodoForm.get('task')?.invalid && updateTodoForm.get('task')?.dirty }"
+                            placeholder="todo" rows="5" type="text"></textarea>
+                        <div *ngIf="updateTodoForm.get('task')?.invalid && updateTodoForm.get('task')?.dirty"
+                            class="text-red-500 mx-2">
+                            Task is required
+                        </div>
+                    </div>
+                    <div class="bg-red-600 rounded-md mx-auto m-2 flex items-center justify-center"
+                        (click)="updateTodo()">
+                        <button type="submit"
+                            class="font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center cursor-pointer">
+                            Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

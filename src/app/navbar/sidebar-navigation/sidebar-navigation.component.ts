@@ -39,6 +39,7 @@ export class SidebarNavigationComponent {
   @Input() searchComponent: string = ''
 
   constructor(
+    private activatedRoute: ActivatedRoute,
     private router: Router,
     private userService: UserService,
     private dialog: MatDialog,
@@ -53,6 +54,8 @@ export class SidebarNavigationComponent {
   }
 
   ngOnInit(): void {
+    this.onResize();
+    this.subscribeToCloseSideBar()
     this.handleEmitEvent();
   }
 
@@ -65,8 +68,29 @@ export class SidebarNavigationComponent {
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize(event: Event): void {
+  onResize(): void {
     this.openMenu = window.innerWidth <= 768; // Change the breakpoint as needed
+  }
+
+  subscribeToCloseSideBar() {
+    document.addEventListener('click', (event) => {
+      if (!this.isClickInsideDropdown(event)) {
+        this.closeDropdown();
+      }
+    });
+  }
+
+  isClickInsideDropdown(event: Event): any {
+    const dropdownElement = document.getElementById('sidebarView');
+    return dropdownElement && dropdownElement.contains(event.target as Node);
+  }
+
+  closeDropdown() {
+    this.openMenu = false;
+  }
+
+  stopPropagation(event: Event): void {
+    event.stopPropagation();
   }
 
   handleEmitEvent() {

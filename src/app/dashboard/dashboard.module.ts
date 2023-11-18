@@ -20,6 +20,7 @@ import { DashboardLoginChartComponent } from './dashboard-login-chart/dashboard-
 import { DashboardNotificationComponent } from './dashboard-notification/dashboard-notification.component';
 import { DashboardActionComponent } from './dashboard-action/dashboard-action.component';
 import { DashboardAppAnalyticsComponent } from './dashboard-app-analytics/dashboard-app-analytics.component';
+import { TodoListsModule } from './todo-lists/todo-lists.module';
 
 
 
@@ -47,7 +48,8 @@ import { DashboardAppAnalyticsComponent } from './dashboard-app-analytics/dashbo
     FeatherModule,
     RouterModule,
     NavbarModule,
-    FooterModule
+    FooterModule,
+    TodoListsModule
   ]
 })
 export class DashboardModule { }

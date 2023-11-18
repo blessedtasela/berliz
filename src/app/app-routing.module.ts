@@ -42,6 +42,7 @@ import { TaskPageComponent } from './dashboard/tasks/task-page/task-page.compone
 import { SubscriptionPageComponent } from './dashboard/subscriptions/subscription-page/subscription-page.component';
 import { NotificationPageComponent } from './dashboard/notifications/notification-page/notification-page.component';
 import { FaqPageComponent } from './dashboard/faqs/faq-page/faq-page.component';
+import { TodoListPageComponent } from './dashboard/todo-lists/todo-list-page/todo-list-page.component';
 
 
 const routes: Routes = [
@@ -197,6 +198,14 @@ const routes: Routes = [
   },
   {
     path: 'faqs', component: FaqPageComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: ['admin', 'user', 'partner', 'trainer',
+        'center', 'driver', 'store', 'client',]
+    }
+  },
+  {
+    path: 'to-do-list', component: TodoListPageComponent,
     canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin', 'user', 'partner', 'trainer',

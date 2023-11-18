@@ -11,6 +11,7 @@ import { UsersModule } from './users/users.module';
 import { ContactUsModule } from './contact-us/contact-us.module';
 import { TrainersModule } from './trainers/trainers.module';
 import { CentersModule } from './centers/centers.module';
+import { TodoListModule } from './todo-list/todo-list.module';
 @NgModule({
   declarations: [
   ],
@@ -27,7 +28,8 @@ import { CentersModule } from './centers/centers.module';
     TagsModule,
     UsersModule,
     TrainersModule,
-    CentersModule
+    CentersModule,
+    TodoListModule
   ],
   providers: [DatePipe,]
 })

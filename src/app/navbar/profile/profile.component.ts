@@ -47,11 +47,32 @@ export class ProfileComponent {
   }
 
   handleEmitEvent() {
+    this.subscribeToCloseProfileOpen()
     this.userStateService.getUser().subscribe((user) => {
       this.userData = user;
     });
   }
 
+  subscribeToCloseProfileOpen() {
+    document.addEventListener('click', (event) => {
+      if (!this.isClickInsideDropdown(event)) {
+        this.closeDropdown();
+      }
+    });
+  }
+
+  isClickInsideDropdown(event: Event): any {
+    const dropdownElement = document.getElementById('profileDropdown');
+    return dropdownElement && dropdownElement.contains(event.target as Node);
+  }
+
+  closeDropdown() {
+    this.profileOpen = false;
+  }
+
+  stopPropagation(event: Event): void {
+    event.stopPropagation();
+  }
   openUpdateProfilePhoto() {
     const dialogRef = this.dialog.open(UpdateProfilePhotoModalComponent, {
       width: '400px',

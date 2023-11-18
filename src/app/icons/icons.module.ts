@@ -60,7 +60,10 @@ import {
   AlertTriangle,
   Package,
   Airplay,
-  Calendar
+  Calendar,
+  MoreHorizontal,
+  MoreVertical,
+  RotateCcw
 } from 'angular-feather/icons';
 
 // Select some icons (use an object, not an array)
@@ -123,7 +126,10 @@ const icons = {
   AlertTriangle,
   Package,
   Airplay,
-  Calendar
+  Calendar,
+  MoreHorizontal,
+  MoreVertical,
+  RotateCcw
 };
 
 @NgModule({

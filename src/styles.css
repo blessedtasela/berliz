@@ -70,3 +70,33 @@ z-index: 20;
 .mat-dialog-height{
   max-height: 600px;
 }
+
+/* Add this style to your CSS file */
+.custom-checkbox {
+  /* Remove the default browser styles */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* Set the size of the checkbox */
+  width: 18px;
+  height: 18px;
+
+  /* Style the checkbox border */
+  border: 2px solid #808080; /* Gray border */
+  border-radius: 3px;
+
+  /* Style the checkmark/indicator */
+  background-color: #fff; /* White background */
+}
+
+/* Style the checkbox when it's checked */
+.custom-checkbox:checked {
+  background-color: #808080; /* Gray background */
+  border-color: #808080; /* Gray border */
+}
+
+/* Optionally, you can add a hover effect */
+.custom-checkbox:hover {
+  border-color: #606060; /* Darker gray on hover */
+}
