@@ -2,7 +2,7 @@ import { Users } from "./users.interface";
 
 export interface TodoList {
     id: number;
-    task: number;
+    task: string;
     user: Users;
     date: Date;
     lastUpdate: Date;

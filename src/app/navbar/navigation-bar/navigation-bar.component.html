@@ -63,7 +63,7 @@
         <li class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300
                  transform hover:scale-110 focus:scale-105">
             <div class="text-md hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('centers') || isActive('centers/:id/:name')}">
+                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('centers') }">
                 <a [routerLink]="['/centers']">
                     Centers
                 </a>
@@ -71,10 +71,8 @@
         </li>
         <li class="hidden mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300
                  transform hover:scale-110 focus:scale-105">
-            <div class="text-md hover:text-red-600 duration-500" [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('new-products') 
-                    || isActive('new-products/:id/:name')
-                || isActive('old-products')
-                || isActive('old-products/:id/:name') }">
+            <div class="text-md hover:text-red-600 duration-500"
+                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('new-products') }">
                 <a [routerLink]="['/products']" [ngClass]="{'shadow:bg-gray-200': isActive('products')}">
                     Products
                 </a>
@@ -83,7 +81,7 @@
         <li class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300 
                 transform hover:scale-110 focus:scale-105">
             <div class="text-md hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('categories') || isActive('categories/:id/:name')}">
+                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('categories') }">
                 <a [routerLink]="['/categories']">
                     Categories
                 </a>
@@ -92,7 +90,7 @@
         <li class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300
                  transform hover:scale-110 focus:scale-105">
             <div class="text-md hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('trainers') || isActive('trainers/:id/:name')}">
+                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('trainers')}">
                 <a [routerLink]="['/trainers']">
                     Trainers
                 </a>

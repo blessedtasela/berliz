@@ -3,6 +3,9 @@
         Your Todo Tasks will appear here
     </h1>
 </div>
+<h1 class="text-gray-500 italic font-sans">
+    Total tasks {{ todoData.length }}
+</h1>
 <div class="justify-center items-center p-1 mt-4 overflow-x-scroll font-sans" *ngIf="todoData.length > 0">
     <div class="min-w-[300px]">
         <table class="table-auto border-collapse rounded-lg text-gray-950 font-sans container">
@@ -37,7 +40,8 @@
                             </div>
                             <div class="grid grid-cols">
                                 <div>
-                                    <i-feather name="more-horizontal" (click)="openMenu(i)" (click)="stopPropagation($event)"
+                                    <i-feather name="more-horizontal" (click)="openMenu(i)"
+                                        (click)="stopPropagation($event)"
                                         class="font-bold text-gray-950 mr-2 mt-1 cursor-pointer" style="width: 16px;">
                                     </i-feather>
                                 </div>
@@ -47,7 +51,7 @@
                                             class="font-bold text-gray-950 mr-2 mt-2 cursor-pointer"
                                             style="width: 15px;">
                                         </i-feather>
-                                        <div [ngClass]="{'hidden': !menuOpen[i]}" id="todoAction"  
+                                        <div [ngClass]="{'hidden': !menuOpen[i]}" id="todoAction"
                                             class="absolute grid grid-cols right-8 md:right-16 bg-white rounded-md w-24 text-sm border border-gray-300 shadow-lg">
                                             <p *ngIf="todo.status==='pending'"
                                                 (click)="updateTodoStatus(todo.id, 'in-progress')"

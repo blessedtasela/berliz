@@ -18,6 +18,7 @@
             (trainersResults)="handleTrainerSearchResults($event)" (usersResults)="handleUserSearchResults($event)"
             (partnersResults)="handlePartnerSearchResults($event)" (centerssResults)="handleCenterSearchResults($event)"
             (newslettersResult)="handleNewsletterSearchResults($event)" (tagsResults)="handleTagSearchResults($event)"
+            (myTodoResults)="handleMyTodoSearchResults($event)" (todoListResults)="handleTodoListSearchResults($event)"
             [searchComponent]="searchComponent"></app-search>
         <div class="flex justify-end mr-2 gap-2 md:gap-6 border-2 rounded-full border-gray-300">
             <div class="flex items-center p-2 cursor-pointer hover:drop-shadow-2xl transition-all 
@@ -30,15 +31,15 @@
         </div>
     </div>
     <!-- Sidebar -->
-    <div class="bg-gray-950 text-gray-200 w-64 fixed inset-y-0 left-0 transform duration-300
-        -translate-x-0 ease-in-out md:relative transition duration-300 ease-in-out side-z"
-        [ngClass]="{'hidden': openMenu, 'md:relative': !openMenu}" id="sidebarView">
+    <div class="bg-gray-950 text-gray-200 w-64 inset-y-0 left-0 transform duration-300
+        -translate-x-0 ease-in-out fixed md:relative transition duration-300 ease-in-out side-z"
+        [ngClass]="{'hidden md:block': !openMenu, 'md:hidden': mdScreen}" id="sidebarView">
         <!-- Sidebar Branding and Close Button -->
         <div class="flex items-center p-2 mt-1 cursor-pointer">
-            <img src="../../../assets/side-bar-berliz.png" style="width: 170px;">
-            <div class="hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
+            <img src="../../../assets/side-bar-berliz.png" style="width: 170px;" class="-ml-2">
+            <div class="ml-3 hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
                 border-2 border-gray-200 rounded-md p-1 mr-4">
-                <i-feather name="x" class="min-w-[30px] text-gray-200  font-bold drop-shadow-xl"
+                <i-feather name="x" class="min-w-[30px] text-gray-200 font-bold drop-shadow-xl"
                     (click)="toggleSidebar()" (click)="stopPropagation($event)"></i-feather>
             </div>
         </div>
@@ -98,10 +99,10 @@
             <hr class="text-gray-200 my-6">
             <!-- To-do List Link -->
             <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
-                [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('to-do-list')}">
+                [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('todo-list')}">
                 <feather-icon name="calendar" class="text-xl text-white" style="width: 26px;"></feather-icon>
                 <h1 class="mx-4">
-                    <a routerLink="/to-do-list" class="text-md">
+                    <a routerLink="/my-todos" class="text-md">
                         To-do list
                     </a>
                 </h1>

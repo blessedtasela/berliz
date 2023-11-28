@@ -8,10 +8,10 @@ import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { ViewCvModalComponent } from 'src/app/shared/view-cv-modal/view-cv-modal.component';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
-import { UpdatePartnerFileModalComponent } from '../../admin/partners/update-partner-file-modal/update-partner-file-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Role } from 'src/app/models/users.interface';
 import { Subscription } from 'rxjs';
+import { UpdatePartnerFileModalComponent } from 'src/app/admin/partners/update-partner-file-modal/update-partner-file-modal.component';
 
 @Component({
   selector: 'app-partner-data',

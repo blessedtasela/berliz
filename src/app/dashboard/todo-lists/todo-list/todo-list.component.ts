@@ -39,12 +39,10 @@ export class TodoListComponent {
   ngOnInit(): void {
     this.subscribeToCloseTodoAction()
     this.isTaskCompleted = this.todoData.map(todo => todo.status === 'completed');
-    this.watchDeleteCenter()
-    this.watchGetCenterFromMap()
-    this.watchLikeCenter()
-    this.watchUpdateCenter()
-    this.watchUpdateCenterStatus()
-    this.watchUpdatePhoto()
+    this.watchDeleteTodo()
+    this.watchGetTodoFromMap()
+    this.watchUpdateTodoList()
+    this.watchUpdateTodoStatus()
   }
 
   ngOnDestroy() {
@@ -263,51 +261,38 @@ export class TodoListComponent {
     return date.toDateString();
   }
 
-  watchGetCenterFromMap() {
-    this.rxStompService.watch('/topic/getCenterFromMap').subscribe((message) => {
-      const receivedCategories: TodoList = JSON.parse(message.body);
-      this.todoData.push(receivedCategories);
+  watchGetTodoFromMap() {
+    this.rxStompService.watch('/topic/getTodoFromMap').subscribe((message) => {
+      const receivedTodo: TodoList = JSON.parse(message.body);
+      this.todoData.push(receivedTodo);
+      this.totalTodos = this.todoData.length;
     });
   }
 
-  watchLikeCenter() {
-    this.rxStompService.watch('/topic/likeCenter').subscribe((message) => {
-      const receivedCenter: TodoList = JSON.parse(message.body);
-      const centerId = this.todoData.findIndex(todo => todo.id === receivedCenter.id)
-      this.todoData[centerId] = receivedCenter
+  watchUpdateTodoList() {
+    this.rxStompService.watch('/topic/updateTodoList').subscribe((message) => {
+      const receivedTodo: TodoList = JSON.parse(message.body);
+      const todoId = this.todoData.findIndex(todoList => todoList.id === receivedTodo.id)
+      this.todoData[todoId] = receivedTodo
     });
   }
 
-  watchUpdateCenter() {
-    this.rxStompService.watch('/topic/updateCenter').subscribe((message) => {
-      const receivedCenter: TodoList = JSON.parse(message.body);
-      const centerId = this.todoData.findIndex(todo => todo.id === receivedCenter.id)
-      this.todoData[centerId] = receivedCenter
+  watchUpdateTodoStatus() {
+    this.rxStompService.watch('/topic/updateTodoStatus').subscribe((message) => {
+      const receivedTodo: TodoList = JSON.parse(message.body);
+      const todoId = this.todoData.findIndex(todoList => todoList.id === receivedTodo.id)
+      this.todoData[todoId] = receivedTodo
     });
   }
 
-  watchUpdateCenterStatus() {
-    this.rxStompService.watch('/topic/updateCenterStatus').subscribe((message) => {
-      const receivedCenter: TodoList = JSON.parse(message.body);
-      const centerId = this.todoData.findIndex(todo => todo.id === receivedCenter.id)
-      this.todoData[centerId] = receivedCenter
+  watchDeleteTodo() {
+    this.rxStompService.watch('/topic/deleteTodo').subscribe((message) => {
+      const receivedNewsletter: TodoList = JSON.parse(message.body);
+      this.todoData = this.todoData.filter(todo => todo.id !== receivedNewsletter.id);
+      this.totalTodos = this.todoData.length;
     });
   }
 
-  watchUpdatePhoto() {
-    this.rxStompService.watch('/topic/updateCenterPhoto').subscribe((message) => {
-      const receivedCenter: TodoList = JSON.parse(message.body);
-      const centerId = this.todoData.findIndex(todo => todo.id === receivedCenter.id)
-      this.todoData[centerId] = receivedCenter
-    });
-  }
-
-  watchDeleteCenter() {
-    this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
-      const receivedCenter: TodoList = JSON.parse(message.body);
-      this.todoData = this.todoData.filter(todo => todo.id !== receivedCenter.id);
-    });
-  }
 }
 
 

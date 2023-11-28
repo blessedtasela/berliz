@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Route, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Route, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
@@ -9,16 +9,20 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 })
 
 export class NavigationBarComponent implements OnInit {
-  menuStatus: boolean;
+  menuStatus: boolean = false;
+  currentRoute: any;
 
-
-  constructor(private router: ActivatedRoute,
+  constructor(private router: Router,
     private authService: AuthenticationService) {
-    this.menuStatus = false
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.currentRoute = event.url;
+      }
+    });
   }
 
   ngOnInit() {
-    this.subscribeToCloseSideBar()
+    this.subscribeToCloseNavBar()
   }
 
   navMenu(item: any): void {
@@ -29,8 +33,8 @@ export class NavigationBarComponent implements OnInit {
     }
   }
 
-  subscribeToCloseSideBar() {
-    document.addEventListener('click', (event) => {
+  subscribeToCloseNavBar() {
+    document.addEventListener('mousedown', (event) => {
       if (!this.isClickInsideDropdown(event)) {
         this.closeDropdown();
       }
@@ -50,9 +54,8 @@ export class NavigationBarComponent implements OnInit {
     event.stopPropagation();
   }
 
-
   isActive(path: string): boolean {
-    return this.router.snapshot.routeConfig?.path === path;
+    return this.currentRoute.startsWith('/' + path);
   }
 
   getUser(): boolean {

@@ -1,8 +1,7 @@
 import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { AddPartnerModalComponent } from 'src/app/dashboard/admin/partners/add-partner-modal/add-partner-modal.component';
+import { NgxUiLoaderService } from 'ngx-ui-loader';import { AddPartnerModalComponent } from 'src/app/admin/partners/add-partner-modal/add-partner-modal.component';
 import { Role, Users } from 'src/app/models/users.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';

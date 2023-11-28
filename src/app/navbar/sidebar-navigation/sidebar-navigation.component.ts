@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -15,14 +15,16 @@ import { UserService } from 'src/app/services/user.service';
 import { Centers } from 'src/app/models/centers.interface';
 import { Newsletter } from 'src/app/models/newsletter.model';
 import { Tags } from 'src/app/models/tags.interface';
+import { TodoList } from 'src/app/models/todoList.interface';
 
 @Component({
   selector: 'app-sidebar-navigation',
   templateUrl: './sidebar-navigation.component.html',
   styleUrls: ['./sidebar-navigation.component.css']
 })
-export class SidebarNavigationComponent {
+export class SidebarNavigationComponent implements OnInit {
   openMenu: boolean = false;
+  mdScreen: boolean = false;
   userData: any;
   responseMessage: any;
   profilePhoto: any;
@@ -35,11 +37,12 @@ export class SidebarNavigationComponent {
   @Output() partnersResults: EventEmitter<Partners[]> = new EventEmitter<Partners[]>()
   @Output() centersResult: EventEmitter<Centers[]> = new EventEmitter<Centers[]>()
   @Output() newslettersResult: EventEmitter<Newsletter[]> = new EventEmitter<Newsletter[]>();
-  @Output() tagsResult: EventEmitter<Tags[]> = new EventEmitter<Tags[]>();
+  @Output() tagsResults: EventEmitter<Tags[]> = new EventEmitter<Tags[]>();
+  @Output() myTodoResults: EventEmitter<TodoList[]> = new EventEmitter<TodoList[]>();
+  @Output() todoListResults: EventEmitter<TodoList[]> = new EventEmitter<TodoList[]>();
   @Input() searchComponent: string = ''
 
   constructor(
-    private activatedRoute: ActivatedRoute,
     private router: Router,
     private userService: UserService,
     private dialog: MatDialog,
@@ -53,7 +56,7 @@ export class SidebarNavigationComponent {
     });
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.onResize();
     this.subscribeToCloseSideBar()
     this.handleEmitEvent();
@@ -61,6 +64,7 @@ export class SidebarNavigationComponent {
 
   toggleSidebar(): void {
     this.openMenu = !this.openMenu;
+    this.mdScreen = !this.mdScreen;
   }
 
   isActive(path: string): boolean {
@@ -69,11 +73,11 @@ export class SidebarNavigationComponent {
 
   @HostListener('window:resize', ['$event'])
   onResize(): void {
-    this.openMenu = window.innerWidth <= 768; // Change the breakpoint as needed
+    this.openMenu = window.innerWidth >= 768; // Change the breakpoint as needed
   }
 
   subscribeToCloseSideBar() {
-    document.addEventListener('click', (event) => {
+    document.addEventListener('mousedown', (event) => {
       if (!this.isClickInsideDropdown(event)) {
         this.closeDropdown();
       }
@@ -130,7 +134,15 @@ export class SidebarNavigationComponent {
   }
 
   handleTagSearchResults(results: Tags[]) {
-    this.tagsResult.emit(results)
+    this.tagsResults.emit(results)
+  }
+
+  handleMyTodoSearchResults(results: TodoList[]) {
+    this.myTodoResults.emit(results)
+  }
+
+  handleTodoListSearchResults(results: TodoList[]) {
+    this.todoListResults.emit(results)
   }
 
   openUpdateProfilePhoto() {

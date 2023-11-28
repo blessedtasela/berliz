@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AdminModule } from './admin/admin.module';
 import { CenterModule } from './center/center.module';
 import { ClientModule } from './client/client.module';
 import { DriverModule } from './driver/driver.module';
@@ -36,7 +35,6 @@ import { TodoListsModule } from './todo-lists/todo-lists.module';
   ],
   imports: [
     CommonModule,
-    AdminModule,
     CenterModule,
     ClientModule,
     DriverModule,

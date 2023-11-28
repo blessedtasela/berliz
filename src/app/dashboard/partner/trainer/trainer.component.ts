@@ -10,11 +10,11 @@ import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { UserStateService } from 'src/app/services/user-state.service';
 import { Partners } from 'src/app/models/partners.interface';
 import { Subscriber, Subscription } from 'rxjs';
-import { UpdateTrainerComponent } from '../../admin/trainers/update-trainer/update-trainer.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { UpdateTrainerModalComponent } from 'src/app/admin/trainers/update-trainer-modal/update-trainer-modal.component';
 
 @Component({
   selector: 'app-trainer',
@@ -75,14 +75,14 @@ export class TrainerComponent {
   }
 
   openUpdateTrainer() {
-    const dialogRef = this.dialog.open(UpdateTrainerComponent, {
+    const dialogRef = this.dialog.open(UpdateTrainerModalComponent, {
       width: '800px',
       data: {
         trainerData: this.trainerData,
       },
       panelClass: 'mat-dialog-height',
     });
-    const childComponentInstance = dialogRef.componentInstance as UpdateTrainerComponent;
+    const childComponentInstance = dialogRef.componentInstance as UpdateTrainerModalComponent;
     childComponentInstance.onUpdateTrainerEmit.subscribe(() => {
       this.handleEmitEvent();
     });

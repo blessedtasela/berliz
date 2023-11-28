@@ -14,3 +14,7 @@
     (results)="handleNewsletterSearchResults($event)"></app-search-newsletter>
 <app-search-tag *ngIf="searchComponent === 'tag'" 
 (results)="handleTagSearchResults($event)"></app-search-tag>
+<app-search-my-todo *ngIf="searchComponent === 'myTodo'" 
+(results)="handleMyTodoSearchResults($event)"></app-search-my-todo>
+<app-search-todo-list *ngIf="searchComponent === 'todoList'" 
+(results)="handleTodoListSearchResults($event)"></app-search-todo-list>

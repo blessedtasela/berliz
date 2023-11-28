@@ -30,6 +30,7 @@ import { RxStompService } from './services/rx-stomp.service';
 import { rxStompServiceFactory } from './rx-stomp-service-factory';
 import { DBConfig } from 'ngx-indexed-db';
 import { NgxIndexedDBModule } from 'ngx-indexed-db';
+import { AdminModule } from './admin/admin.module';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   text: "Loading....",
@@ -42,7 +43,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   hasProgressBar: false
 }
 
-const dbConfig: DBConfig  = {
+const dbConfig: DBConfig = {
   name: 'BerlizClient',
   version: 1,
   objectStoresMeta: [{
@@ -85,6 +86,7 @@ const dbConfig: DBConfig  = {
     LandingPageModule,
     CategoriesModule,
     AboutUsModule,
+    AdminModule,
     NgxIndexedDBModule.forRoot(dbConfig)
   ],
   exports: [],

@@ -17,6 +17,7 @@ import { SearchNewsletterComponent } from './search-newsletter/search-newsletter
 import { SearchTagComponent } from './search-tag/search-tag.component';
 import { SearchMyTodoComponent } from './search-my-todo/search-my-todo.component';
 import { SearchTodoListComponent } from './search-todo-list/search-todo-list.component';
+import { SearchMuscleGroupsComponent } from './search-muscle-groups/search-muscle-groups.component';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { SearchTodoListComponent } from './search-todo-list/search-todo-list.com
     SearchNewsletterComponent,
     SearchTagComponent,
     SearchMyTodoComponent,
-    SearchTodoListComponent
+    SearchTodoListComponent,
+    SearchMuscleGroupsComponent
   ],
   imports: [
     CommonModule,

@@ -1,13 +1,11 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Promotions } from '../../models/promotion.model';
 import { Offers } from '../../models/offers.model';
-import { UserService } from 'src/app/services/user.service';
-import { Router } from '@angular/router';
-import { AddNewsletterComponent } from 'src/app/dashboard/admin/newsletters/add-newsletter/add-newsletter.component';
 import { StateService } from 'src/app/services/state.service';
 import { MatDialog } from '@angular/material/dialog';
 import { NewsletterStateService } from 'src/app/services/newsletter-state.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { AddNewsletterModalComponent } from 'src/app/admin/newsletters/add-newsletter-modal/add-newsletter-modal.component';
 
 @Component({
   selector: 'app-landing-page',
@@ -49,11 +47,11 @@ export class LandingPageComponent implements OnInit {
   }
 
   openAddNewsletter() {
-    const dialogRef = this.dialog.open(AddNewsletterComponent, {
+    const dialogRef = this.dialog.open(AddNewsletterModalComponent, {
       width: '600px',
       height: '600px',
     });
-    const childComponentInstance = dialogRef.componentInstance as AddNewsletterComponent;
+    const childComponentInstance = dialogRef.componentInstance as AddNewsletterModalComponent;
     childComponentInstance.onAddNewsletter.subscribe(() => {
       this.handleEmitEvent();
     });

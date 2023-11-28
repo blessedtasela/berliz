@@ -1,0 +1,12 @@
+<div class="relative min-h-screen flex">
+    <app-sidebar-navigation (myTodoResults)="handleSearchResults($event)"
+    [searchComponent]="searchComponent"  [isSearch]="isSearch"></app-sidebar-navigation>
+    <div class="flex p-2 md:p-6 full-width">
+        <div class="width p-4 rounded-lg mt-20">
+            <app-todo-form (emitEvent)="emitData()"></app-todo-form>
+            <app-todo-list [todoData]="todoData" [totalTodos]="totalTodos" [todosLength]="todosLength"
+                (emitEvent)="emitData()"></app-todo-list>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

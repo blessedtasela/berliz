@@ -1,0 +1,12 @@
+<div class="relative min-h-screen flex">
+    <app-sidebar-navigation (todoListResults)="handleSearchResults($event)" [searchComponent]="searchComponent"
+        [isSearch]="isSearch"></app-sidebar-navigation>
+    <div class="flex p-4 md:p-8 mt-4 full-width">
+        <div class="width bg-gray-200 p-2 rounded-lg mt-20">
+            <app-todo-list-header [todoListData]="todoListData" [totalTodoList]="totalTodoList"
+                [todoListLength]="todoListLength"></app-todo-list-header>
+            <app-todo-list-list [todoListData]="todoListData" [totalTodoList]="totalTodoList"></app-todo-list-list>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

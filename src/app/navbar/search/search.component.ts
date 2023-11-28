@@ -5,6 +5,7 @@ import { ContactUs } from 'src/app/models/contact-us.model';
 import { Newsletter } from 'src/app/models/newsletter.model';
 import { Partners } from 'src/app/models/partners.interface';
 import { Tags } from 'src/app/models/tags.interface';
+import { TodoList } from 'src/app/models/todoList.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 
@@ -22,6 +23,8 @@ export class SearchComponent {
   @Output() centerssResults: EventEmitter<Centers[]> = new EventEmitter<Centers[]>()
   @Output() newslettersResult: EventEmitter<Newsletter[]> = new EventEmitter<Newsletter[]>();
   @Output() tagsResults: EventEmitter<Tags[]> = new EventEmitter<Tags[]>();
+  @Output() myTodoResults: EventEmitter<TodoList[]> = new EventEmitter<TodoList[]>();
+  @Output() todoListResults: EventEmitter<TodoList[]> = new EventEmitter<TodoList[]>();
   @Output() searchComponentChange: EventEmitter<string> = new EventEmitter<string>();
   @Input() searchComponent: string = '';
 
@@ -69,6 +72,16 @@ export class SearchComponent {
 
   handleTagSearchResults(results: Tags[]) {
     this.tagsResults.emit(results);
+    this.searchComponentChange.emit(this.searchComponent);
+  }
+
+  handleMyTodoSearchResults(results: TodoList[]) {
+    this.myTodoResults.emit(results);
+    this.searchComponentChange.emit(this.searchComponent);
+  }
+
+  handleTodoListSearchResults(results: TodoList[]) {
+    this.todoListResults.emit(results);
     this.searchComponentChange.emit(this.searchComponent);
   }
 }

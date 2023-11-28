@@ -2,8 +2,6 @@ import { Component, EventEmitter, HostListener, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { AddNewsletterComponent } from 'src/app/dashboard/admin/newsletters/add-newsletter/add-newsletter.component';
-import { UpdateNewsletterModalComponent } from 'src/app/dashboard/admin/newsletters/update-newsletter-modal/update-newsletter-modal.component';
 import { NewsletterService } from 'src/app/services/newsletter.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
@@ -25,7 +23,7 @@ export class NewsletterPopupComponent {
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<AddNewsletterComponent>,) { }
+    public dialogRef: MatDialogRef<NewsletterPopupComponent>,) { }
 
   ngOnInit() {
     this.newsletterForm = this.formBuilder.group({
