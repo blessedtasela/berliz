@@ -31,6 +31,7 @@ export class CategoryService {
   getIcons() {
     return this.icons;
   }
+  
   addCategory(data: any) {
     return this.httpClient.post(this.url + "/category/add", data, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')

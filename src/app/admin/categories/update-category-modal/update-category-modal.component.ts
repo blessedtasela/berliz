@@ -9,7 +9,7 @@ import { CategoryService } from 'src/app/services/category.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TagService } from 'src/app/services/tag.service';
 import { genericError } from 'src/validators/form-validators.module';
-import { AddTagModalComponent } from '../../tags/add-tag-modal/add-tag-modal.component';
+import { TagStateService } from 'src/app/services/tag-state.service';
 
 @Component({
   selector: 'app-update-category-modal',
@@ -33,7 +33,8 @@ export class UpdateCategoryModalComponent {
     public dialogRef: MatDialogRef<UpdateCategoryModalComponent>,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private tagStateService: TagStateService) {
     this.icons = categoryService.getIcons();
     this.categoryData = this.data.categoryData;
   }
@@ -48,11 +49,10 @@ export class UpdateCategoryModalComponent {
       'likes': new FormControl(this.categoryData.likes, [Validators.required, Validators.minLength(1)]),
       'tagIds': this.formBuilder.array(this.selectedTagsId, this.validateCheckbox()),
     });
-    this.getAlltags().subscribe(() => {
-      // Data is loaded, manually trigger change detection
+    this.tagStateService.allTagsData$.subscribe((allTags) => {
+      this.tags = allTags;
       this.cdr.detectChanges();
     });
-
   }
 
   onCheckboxChanged(event: any) {
@@ -75,29 +75,6 @@ export class UpdateCategoryModalComponent {
 
       return isChecked ? null : { noCheckboxChecked: true };
     };
-  }
-
-  getAlltags(): Observable<Tags[]> {
-    return this.tagService.getAllTags()
-      .pipe(
-        tap((response: any) => {
-          this.ngxService.start();
-          this.tags = response;
-          this.ngxService.stop();
-        }),
-        catchError((error) => {
-          this.ngxService.start();
-          this.ngxService.stop();
-          this.snackbarService.openSnackBar(error, 'error');
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackbarService.openSnackBar(this.responseMessage, 'error');
-          return of([]);
-        })
-      );
   }
 
   updateCategory(): void {

@@ -1,14 +1,31 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { BodyParts } from '../models/muscle-groups.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MuscleGroupService {
   url = environment.apiUrl;
+  bodyParts: BodyParts[];
+  
+  constructor(private httpClient: HttpClient) { 
+    this.bodyParts = [
+      { id: 1, name: "chest" },
+      { id: 2, name: "shoulders" },
+      { id: 3, name: "legs" },
+      { id: 4, name: "back" },
+      { id: 5, name: "abs" },
+      { id: 6, name: "arms" },
+      { id: 7, name: "bicep" },
+      { id: 8, name: "tricep" },
+    ];
+  }
 
-  constructor(private httpClient: HttpClient) { }
+  getBodyParts() {
+    return this.bodyParts;
+  }
 
   addMuscleGroup(data: any) {
     return this.httpClient.post(this.url + "/muscleGroup/add", data);

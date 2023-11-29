@@ -1,1 +1,13 @@
-<p>muscle-groups works!</p>
+<div class="relative min-h-screen flex">
+    <app-sidebar-navigation (muscleGroupResults)="handleSearchResults($event)" [searchComponent]="searchComponent"
+        [isSearch]="isSearch"></app-sidebar-navigation>
+    <div class="flex p-4 md:p-8 mt-4 full-width">
+        <div class="width bg-gray-200 p-2 rounded-lg mt-20">
+            <app-muscle-groups-header [muscleGroupsData]="muscleGroupsData" [totalMuscleGroups]="totalMuscleGroups"
+                [muscleGroupsLength]="muscleGroupsLength"></app-muscle-groups-header>
+            <app-muscle-groups-list [muscleGroupsData]="muscleGroupsData"
+                [totalMuscleGroups]="totalMuscleGroups"></app-muscle-groups-list>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

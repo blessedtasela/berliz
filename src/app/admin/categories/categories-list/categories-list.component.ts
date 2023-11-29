@@ -220,7 +220,7 @@ export class CategoriesListComponent implements OnInit {
   }
 
   watchDeleteCategory() {
-    this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
+    this.rxStompService.watch('/topic/deleteCategory').subscribe((message) => {
       const receivedCategories: Categories = JSON.parse(message.body);
       this.categoriesData = this.categoriesData.filter(category => category.id !== receivedCategories.id);
     });

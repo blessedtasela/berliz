@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Categories } from 'src/app/models/categories.interface';
 import { Centers } from 'src/app/models/centers.interface';
 import { ContactUs } from 'src/app/models/contact-us.model';
+import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
 import { Newsletter } from 'src/app/models/newsletter.model';
 import { Partners } from 'src/app/models/partners.interface';
 import { Tags } from 'src/app/models/tags.interface';
@@ -25,6 +26,7 @@ export class SearchComponent {
   @Output() tagsResults: EventEmitter<Tags[]> = new EventEmitter<Tags[]>();
   @Output() myTodoResults: EventEmitter<TodoList[]> = new EventEmitter<TodoList[]>();
   @Output() todoListResults: EventEmitter<TodoList[]> = new EventEmitter<TodoList[]>();
+  @Output() muscleGroupResults: EventEmitter<MuscleGroups[]> = new EventEmitter<MuscleGroups[]>();
   @Output() searchComponentChange: EventEmitter<string> = new EventEmitter<string>();
   @Input() searchComponent: string = '';
 
@@ -82,6 +84,11 @@ export class SearchComponent {
 
   handleTodoListSearchResults(results: TodoList[]) {
     this.todoListResults.emit(results);
+    this.searchComponentChange.emit(this.searchComponent);
+  }
+
+  handleMuscleGroupSearchResults(results: MuscleGroups[]) {
+    this.muscleGroupResults.emit(results);
     this.searchComponentChange.emit(this.searchComponent);
   }
 }

@@ -1,1 +1,51 @@
-<p>add-newsletter-modal works!</p>
+<div class="relative p-2 flex items-center justify-center">
+    <div class="text-red-600 absolute top-0 right-0 p-2">
+        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+    </div>
+    <div class="grid grid-cols rounded-lg p-2 gap-2">
+        <div class="gap-6 rounded-lg gap-2 p-2">
+            <form [formGroup]="newsletterForm">
+                <header class="text-center m-2 text-gray-950 font-bold">
+                    <p class="font-sans text-md italic">Stay updated with our exclusive newsletter for
+                        thrilling insights,
+                        inspiring stories, and endless learning adventures.</p>
+                </header>
+                <div class="invalid-form">
+                    <span *ngIf="!newsletterForm.invalid && newsletterForm.touched" class="flex text-gray-950">
+                        Everything looks good
+                    </span>
+                </div>
+                <div class="mx-auto w-full p-2">
+                    <span class="text-gray-700 font-bold italic">Email</span>
+                    <input formControlName="email" id="email"
+                        class="w-full p-2 mr-2 rounded-lg bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                        [ngClass]="{'border-red-400': newsletterForm.get('email')?.invalid && newsletterForm.get('email')?.touched }"
+                        placeholder="input your email here" type="text">
+                    <div *ngIf="newsletterForm.get('email')?.invalid && newsletterForm.get('email')?.dirty"
+                        class="text-red-500 mx-2">
+                        Please input valid email
+                    </div>
+                </div>
+            </form>
+            <div class="grid grid-cols-2">
+                <div>
+                    <button
+                        class="bg-gray-950 rounded-md mx-auto py-1 px-2 m-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                        (click)="clear()">
+                        Clear
+                    </button>
+                </div>
+                <div>
+                    <button
+                        class="bg-red-600 rounded-md mx-auto py-1 px-2 m-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                        type="submit" (click)="addNewsletter()">
+                        Subscribe
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="flex">
+            <img src="../../../../../assets/newsletter.jpg" class="rounded-lg object-cover">
+        </div>
+    </div>
+</div>
