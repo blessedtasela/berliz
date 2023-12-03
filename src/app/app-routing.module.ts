@@ -45,6 +45,7 @@ import { NewslettersComponent } from './admin/newsletters/newsletters/newsletter
 import { PartnersComponent } from './admin/partners/partners/partners.component';
 import { TodoListsComponent } from './admin/todo-lists/todo-lists/todo-lists.component';
 import { MuscleGroupsComponent } from './admin/muscle-groups/muscle-groups/muscle-groups.component';
+import { ExercisesComponent } from './admin/exercises/exercises/exercises.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -67,61 +68,67 @@ const routes: Routes = [
 
   // admin components #protected
   {
-    path: 'dashboard/users', component: UsersComponent, canActivate: [RouteGuardService],
+    path: 'users', component: UsersComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'dashboard/newsletters', component: NewslettersComponent, canActivate: [RouteGuardService],
+    path: 'newsletters', component: NewslettersComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'dashboard/categories', component: CategoryComponent, canActivate: [RouteGuardService],
+    path: 'categories', component: CategoryComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'dashboard/partners', component: PartnersComponent, canActivate: [RouteGuardService],
+    path: 'partners', component: PartnersComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'dashboard/contact-us', component: AdminContactUsComponent, canActivate: [RouteGuardService],
+    path: 'contact-us', component: AdminContactUsComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'dashboard/trainers', component: TrainerComponent, canActivate: [RouteGuardService],
+    path: 'trainers', component: TrainerComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'dashboard/centers', component: CenterComponent, canActivate: [RouteGuardService],
+    path: 'centers', component: CenterComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'dashboard/tags', component: TagsComponent, canActivate: [RouteGuardService],
+    path: 'tags', component: TagsComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'dashboard/todo-list', component: TodoListsComponent, canActivate: [RouteGuardService],
+    path: 'todo-list', component: TodoListsComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'dashboard/muscle-groups', component: MuscleGroupsComponent, canActivate: [RouteGuardService],
+    path: 'muscle-groups', component: MuscleGroupsComponent, canActivate: [RouteGuardService],
+    data: {
+      expectedRole: ['admin']
+    }
+  },
+  {
+    path: 'exercises', component: ExercisesComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
@@ -153,7 +160,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'dashboard/partnership', component: PartnerPageComponent,
+    path: 'partnership', component: PartnerPageComponent,
     canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin', 'user', 'partner', 'trainer',

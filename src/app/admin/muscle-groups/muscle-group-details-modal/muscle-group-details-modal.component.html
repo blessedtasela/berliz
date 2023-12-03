@@ -1,1 +1,36 @@
-<p>muscle-group-details-modal works!</p>
+<div class="relative">
+    <div class="text-red-600 absolute top-0 right-0 p-1">
+        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+    </div>
+    <section class="p-2 flex flex-col justify-center items-center">
+        <p class="text-gray-950 font-sans font-bold text-xl uppercase mt-4">{{ muscleGroupData.name }} - {{
+            muscleGroupData.id }}</p>
+        <p class="text-red-600 font-sans font-bold text-sm italic">
+            created at {{ formatDate(muscleGroupData.date) }}
+        </p>
+        <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
+            <div class="flex">
+                <img [src]="'data:image;base64,' + muscleGroupData.image " class="bg-gray-200 rounded-lg p-2"
+                    onerror="this.src='../../../assets/icons/user.png';">
+            </div>
+            <div class="flex flex-col m-4 gap-2">
+                <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
+                    "{{ muscleGroupData.description }}"
+                </p>
+                <p class="text-gray-500 font-sans font-bold text-sm flex text-center italic">
+                    <ng-container *ngFor="let exercise of muscleGroupData.exercise; let i = index">
+                        {{ exercise.name }} {{ i < (muscleGroupData.exercise.length - 1) ? "/" : "" }} </ng-container>
+                </p>
+                <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
+                    Body part - {{ muscleGroupData.bodyPart }}
+                </p>
+                <p class="text-gray-700 font-sans font-bold text-md flex mt-2">
+                    Muscle Group status: {{ muscleGroupData.status ==='true' ? 'active' :'false' }}
+                </p>
+                <p class="text-red-600 font-sans font-bold text-md flex mt-2">
+                    Last Update: {{ formatDate(muscleGroupData.lastUpdate) }}
+                </p>
+            </div>
+        </div>
+    </section>
+</div>

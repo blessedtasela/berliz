@@ -17,6 +17,7 @@ import { Newsletter } from 'src/app/models/newsletter.model';
 import { Tags } from 'src/app/models/tags.interface';
 import { TodoList } from 'src/app/models/todoList.interface';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
+import { Exercises } from 'src/app/models/exercise.interface';
 
 @Component({
   selector: 'app-sidebar-navigation',
@@ -42,6 +43,7 @@ export class SidebarNavigationComponent implements OnInit {
   @Output() myTodoResults: EventEmitter<TodoList[]> = new EventEmitter<TodoList[]>();
   @Output() todoListResults: EventEmitter<TodoList[]> = new EventEmitter<TodoList[]>();
   @Output() muscleGroupResults: EventEmitter<MuscleGroups[]> = new EventEmitter<MuscleGroups[]>();
+  @Output() exerciseResults: EventEmitter<Exercises[]> = new EventEmitter<Exercises[]>();
   @Input() searchComponent: string = ''
 
   constructor(
@@ -149,6 +151,10 @@ export class SidebarNavigationComponent implements OnInit {
 
   handleMuscleGroupSearchResults(results: MuscleGroups[]) {
     this.muscleGroupResults.emit(results);
+  }
+
+  handleExerciseSearchResults(results: Exercises[]) {
+    this.exerciseResults.emit(results);
   }
 
   openUpdateProfilePhoto() {

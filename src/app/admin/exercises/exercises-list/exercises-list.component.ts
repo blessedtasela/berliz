@@ -2,111 +2,113 @@ import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
-import { MuscleGroupStateService } from 'src/app/services/muscle-group-state.service';
-import { MuscleGroupService } from 'src/app/services/muscle-group.service';
+import { Exercises } from 'src/app/models/exercise.interface';
+import { ExerciseStateService } from 'src/app/services/exercise-state.service';
+import { ExerciseService } from 'src/app/services/exercise.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
-import { UpdateMuscleGroupModalComponent } from '../update-muscle-group-modal/update-muscle-group-modal.component';
-import { MuscleGroupDetailsModalComponent } from '../muscle-group-details-modal/muscle-group-details-modal.component';
+import { MuscleGroupDetailsModalComponent } from '../../muscle-groups/muscle-group-details-modal/muscle-group-details-modal.component';
+import { UpdateMuscleGroupModalComponent } from '../../muscle-groups/update-muscle-group-modal/update-muscle-group-modal.component';
+import { UpdateExercisesModalComponent } from '../update-exercises-modal/update-exercises-modal.component';
+import { ExercisesDetailsModalComponent } from '../exercises-details-modal/exercises-details-modal.component';
 
 @Component({
-  selector: 'app-muscle-groups-list',
-  templateUrl: './muscle-groups-list.component.html',
-  styleUrls: ['./muscle-groups-list.component.css']
+  selector: 'app-exercises-list',
+  templateUrl: './exercises-list.component.html',
+  styleUrls: ['./exercises-list.component.css']
 })
-export class MuscleGroupsListComponent {
+export class ExercisesListComponent {
   responseMessage: any;
   showFullData: boolean = false;
-  @Input() muscleGroupsData: MuscleGroups[] = [];
-  @Input() totalMuscleGroups: number = 0;
-  selectedImage: any;
+  @Input() exercisesData: Exercises[] = [];
+  @Input() totalExercises: number = 0;
+  selectedDemo: any;
 
   constructor(private datePipe: DatePipe,
-    private muscleGroupService: MuscleGroupService,
+    private exerciseService: ExerciseService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private rxStompService: RxStompService,
-    public muscleGroupStateService: MuscleGroupStateService) {
+    public exerciseStateService: ExerciseStateService) {
   }
 
   ngOnInit() {
-    this.watchDeleteMuscleGroup()
-    this.watchGetMuscleGroupFromMap()
-    this.watchUpdateMuscleGroup()
+    this.watchDeleteExercise()
+    this.watchGetExerciseFromMap()
+    this.watchUpdateExercise()
     this.watchUpdateStatus()
   }
 
   handleEmitEvent() {
-    this.muscleGroupStateService.getMuscleGroups().subscribe((allMuscleGroups) => {
+    this.exerciseStateService.getExercises().subscribe((allExercises) => {
       this.ngxService.start()
-      this.muscleGroupsData = allMuscleGroups;
-      this.totalMuscleGroups = this.muscleGroupsData.length
-      this.muscleGroupStateService.setAllMuscleGroupsSubject(this.muscleGroupsData);
+      this.exercisesData = allExercises;
+      this.totalExercises = this.exercisesData.length
+      this.exerciseStateService.setAllExercisesSubject(this.exercisesData);
       this.ngxService.stop()
     });
   }
 
 
-  openUpdateCategory(id: number) {
+  openUpdateExercise(id: number) {
     try {
-      const muscleGroup = this.muscleGroupsData.find(muscleGroup => muscleGroup.id === id);
-      if (muscleGroup) {
-        const dialogRef = this.dialog.open(UpdateMuscleGroupModalComponent, {
+      const exercise = this.exercisesData.find(exercise => exercise.id === id);
+      if (exercise) {
+        const dialogRef = this.dialog.open(UpdateExercisesModalComponent, {
           width: '900px',
           maxHeight: '600px',
           disableClose: true,
           data: {
-            muscleGroupData: muscleGroup,
+            exerciseData: exercise,
           }
         });
-        const childComponentInstance = dialogRef.componentInstance as UpdateMuscleGroupModalComponent;
-        childComponentInstance.onUpdateMuscleGroupEmit.subscribe(() => {
+        const childComponentInstance = dialogRef.componentInstance as UpdateExercisesModalComponent;
+        childComponentInstance.onUpdateExerciseEmit.subscribe(() => {
           this.handleEmitEvent()
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
               console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without adding a muscleGroup');
+              console.log('Dialog closed without adding a exercise');
             }
           });
         });
       } else {
-        this.snackbarService.openSnackBar('muscleGroup not found for id: ' + id, 'error');
+        this.snackbarService.openSnackBar('exercise not found for id: ' + id, 'error');
       }
     } catch (error) {
-      this.snackbarService.openSnackBar("An error occurred. Check muscleGroup status", 'error');
+      this.snackbarService.openSnackBar("An error occurred. Check exercise status", 'error');
     }
   }
 
-  openCategoryDetails(id: number) {
+  openExerciseDetails(id: number) {
     try {
-      const muscleGroup = this.muscleGroupsData.find(muscleGroup => muscleGroup.id === id);
-      if (muscleGroup) {
-        const dialogRef = this.dialog.open(MuscleGroupDetailsModalComponent, {
+      const exercise = this.exercisesData.find(exercise => exercise.id === id);
+      if (exercise) {
+        const dialogRef = this.dialog.open(ExercisesDetailsModalComponent, {
           width: '800px',
           panelClass: 'mat-dialog-height',
           data: {
-            muscleGroupData: muscleGroup,
+            exerciseData: exercise,
           }
         });
       } else {
-        this.snackbarService.openSnackBar('muscleGroup not found for id: ' + id, 'error');
+        this.snackbarService.openSnackBar('exercise not found for id: ' + id, 'error');
       }
     } catch (error) {
-      this.snackbarService.openSnackBar("An error occurred. Check muscleGroup status", 'error');
+      this.snackbarService.openSnackBar("An error occurred. Check exercise status", 'error');
     }
   }
 
-  updateCategoryStatus(id: number) {
+  updateExerciseStatus(id: number) {
     const dialogConfig = new MatDialogConfig();
-    const muscleGroup = this.muscleGroupsData.find(muscleGroup => muscleGroup.id === id);
-    const message = muscleGroup?.status === 'false'
-      ? 'activate this muscleGroup?'
-      : 'deactivate this muscleGroup?';
+    const exercise = this.exercisesData.find(exercise => exercise.id === id);
+    const message = exercise?.status === 'false'
+      ? 'activate this exercise?'
+      : 'deactivate this exercise?';
 
     dialogConfig.data = {
       message: message,
@@ -116,18 +118,18 @@ export class MuscleGroupsListComponent {
     const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((res: any) => {
       this.ngxService.start();
-      this.muscleGroupService.updateStatus(id)
+      this.exerciseService.updateStatus(id)
         .subscribe((response: any) => {
           this.ngxService.stop();
           this.responseMessage = response.message;
           this.snackbarService.openSnackBar(this.responseMessage, '');
           this.handleEmitEvent()
-          dialogRef.close('muscleGroup status updated successfully')
+          dialogRef.close('exercise status updated successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
               console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without updating muscleGroup status');
+              console.log('Dialog closed without updating exercise status');
             }
           })
         })
@@ -143,9 +145,9 @@ export class MuscleGroupsListComponent {
     });
   }
 
-  deleteCategory(id: number) {
+  deleteExercise(id: number) {
     const dialogConfig = new MatDialogConfig();
-    const message = "delete this muscleGroup? This is irreversible.";
+    const message = "delete this exercise? This is irreversible.";
 
     dialogConfig.data = {
       message: message,
@@ -155,18 +157,18 @@ export class MuscleGroupsListComponent {
     const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((res: any) => {
       this.ngxService.start();
-      this.muscleGroupService.deleteMuscleGroup(id)
+      this.exerciseService.deleteExercise(id)
         .subscribe((response: any) => {
           this.ngxService.stop();
           this.responseMessage = response.message;
           this.snackbarService.openSnackBar(this.responseMessage, '');
           this.handleEmitEvent()
-          dialogRef.close('muscleGroup deleted successfully')
+          dialogRef.close('exercise deleted successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
               console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without deleting muscleGroup');
+              console.log('Dialog closed without deleting exercise');
             }
           })
         })
@@ -187,20 +189,20 @@ export class MuscleGroupsListComponent {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
-  onImgSelected(event: any, id: number): void {
-    const selectedImage = event.target.files[0];
-    if (selectedImage) {
-      this.selectedImage = selectedImage;
-      this.updateImage(id);
+  onVideoSelected(event: any, id: number): void {
+    const selectedDemo = event.target.files[0];
+    if (selectedDemo) {
+      this.selectedDemo = selectedDemo;
+      this.updateDemo(id);
     }
   }
 
-  updateImage(id: number): void {
+  updateDemo(id: number): void {
     this.ngxService.start();
     const requestData = new FormData();
-    requestData.append('image', this.selectedImage);
+    requestData.append('file', this.selectedDemo);
     requestData.append('id', id.toString());
-    this.muscleGroupService.updateMuscleGroupImage(requestData)
+    this.exerciseService.updateExerciseDemo(requestData)
       .subscribe(
         (response: any) => {
           this.ngxService.stop();
@@ -220,33 +222,33 @@ export class MuscleGroupsListComponent {
     this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
-  watchUpdateMuscleGroup() {
-    this.rxStompService.watch('/topic/updateMuscleGroup').subscribe((message) => {
-      const receivedCategories: MuscleGroups = JSON.parse(message.body);
-      const categoryId = this.muscleGroupsData.findIndex(muscleGroup => muscleGroup.id === receivedCategories.id)
-      this.muscleGroupsData[categoryId] = receivedCategories
+  watchUpdateExercise() {
+    this.rxStompService.watch('/topic/updateExercise').subscribe((message) => {
+      const receivedExercises: Exercises = JSON.parse(message.body);
+      const exerciseId = this.exercisesData.findIndex(exercise => exercise.id === receivedExercises.id)
+      this.exercisesData[exerciseId] = receivedExercises
     });
   }
 
-  watchGetMuscleGroupFromMap() {
-    this.rxStompService.watch('/topic/getMuscleGroupFromMap').subscribe((message) => {
-      const receivedCategories: MuscleGroups = JSON.parse(message.body);
-      this.muscleGroupsData.push(receivedCategories);
+  watchGetExerciseFromMap() {
+    this.rxStompService.watch('/topic/getExerciseFromMap').subscribe((message) => {
+      const receivedExercises: Exercises = JSON.parse(message.body);
+      this.exercisesData.push(receivedExercises);
     });
   }
 
   watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateMuscleGroupStatus').subscribe((message) => {
-      const receivedCategories: MuscleGroups = JSON.parse(message.body);
-      const categoryId = this.muscleGroupsData.findIndex(muscleGroup => muscleGroup.id === receivedCategories.id)
-      this.muscleGroupsData[categoryId] = receivedCategories
+    this.rxStompService.watch('/topic/updateExerciseStatus').subscribe((message) => {
+      const receivedExercises: Exercises = JSON.parse(message.body);
+      const exerciseId = this.exercisesData.findIndex(exercise => exercise.id === receivedExercises.id)
+      this.exercisesData[exerciseId] = receivedExercises
     });
   }
 
-  watchDeleteMuscleGroup() {
-    this.rxStompService.watch('/topic/deleteMuscleGroup').subscribe((message) => {
-      const receivedCategories: MuscleGroups = JSON.parse(message.body);
-      this.muscleGroupsData = this.muscleGroupsData.filter(muscleGroup => muscleGroup.id !== receivedCategories.id);
+  watchDeleteExercise() {
+    this.rxStompService.watch('/topic/deleteExercise').subscribe((message) => {
+      const receivedExercises: Exercises = JSON.parse(message.body);
+      this.exercisesData = this.exercisesData.filter(exercise => exercise.id !== receivedExercises.id);
     });
   }
 

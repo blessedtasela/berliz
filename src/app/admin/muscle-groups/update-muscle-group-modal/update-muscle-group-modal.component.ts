@@ -9,7 +9,6 @@ import { ExerciseStateService } from 'src/app/services/exercise-state.service';
 import { MuscleGroupService } from 'src/app/services/muscle-group.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { genericError } from 'src/validators/form-validators.module';
-import { AddMuscleGroupModalComponent } from '../add-muscle-group-modal/add-muscle-group-modal.component';
 
 @Component({
   selector: 'app-update-muscle-group-modal',
@@ -78,7 +77,7 @@ export class UpdateMuscleGroupModalComponent implements OnInit {
       this.exerciseStateService.getActiveExercises().subscribe((exercises) => {
         this.ngxService.start();
         this.exercises = exercises;
-        this.exerciseStateService.setActiveMuscleGroupsSubject(exercises);
+        this.exerciseStateService.setActiveExercisesSubject(exercises);
         this.ngxService.stop();
       })
     );

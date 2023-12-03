@@ -18,7 +18,7 @@
                 <tr *ngFor="let user of usersData; let i = index" class="bg-gray-100 hover:bg-gray-200">
                     <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">
-                        <img [src]="'data:image;base64,' + user.profilePhoto " class="rounded-full"
+                        <img [src]="'data:image;base64,' + user.profilePhoto" class="rounded-full"
                             onerror="this.src='../../../assets/icons/user.png';" style="width: 40px;">
                         <label for="fileInput-{{user.id}}" class="">
                             <i-feather name="Edit" class="font-bold text-red-600 mr-4 cursor-pointer"

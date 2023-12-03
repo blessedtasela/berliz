@@ -1,0 +1,40 @@
+<div class="relative">
+    <div class="text-red-600 absolute top-0 right-0 p-1">
+        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+    </div>
+    <section class="p-2 flex flex-col justify-center items-center">
+        <p class="text-gray-950 font-sans font-bold text-xl uppercase mt-4">{{ exerciseData.name }} - {{
+            exerciseData.id }}</p>
+        <p class="text-red-600 font-sans font-bold text-sm italic">
+            created at {{ formatDate(exerciseData.date) }}
+        </p>
+        <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
+            <div class="flex">
+                <video [src]="'data:video/mp4;base64,' + exerciseData.demo " class="bg-gray-200 rounded-lg p-2"
+                  loop autoplay [muted]="true"  onerror="this.src='../../../assets/icons/user.png';"></video>
+            </div>
+            <div class="flex flex-col m-4 gap-2">
+                <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
+                    "{{ exerciseData.description }}"
+                </p>
+                <p class="text-gray-500 font-sans font-bold text-sm flex text-center italic">
+                    <span class="text-justify font-bold">Muscle Groups</span>
+                    <ng-container *ngFor="let muscleGroup of exerciseData.muscleGroups; let i = index">
+                        {{ muscleGroup.name }} {{ i < (exerciseData.muscleGroups.length - 1) ? "/" : "" }} </ng-container>
+                </p>
+                <p class="text-gray-500 font-sans font-bold text-sm flex text-center italic">
+                    <span class="text-justify font-bold">Categories</span>
+                    <ng-container *ngFor="let category of exerciseData.categories; let i = index">
+                        {{ category.name }} {{ i < (exerciseData.categories.length - 1) ? "/" : "" }} </ng-container>
+                </p>
+              
+                <p class="text-gray-700 font-sans font-bold text-md flex mt-2">
+                    Muscle Group status: {{ exerciseData.status ==='true' ? 'active' :'false' }}
+                </p>
+                <p class="text-red-600 font-sans font-bold text-md flex mt-2">
+                    Last Update: {{ formatDate(exerciseData.lastUpdate) }}
+                </p>
+            </div>
+        </div>
+    </section>
+</div>

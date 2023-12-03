@@ -18,6 +18,7 @@ import { SearchTagComponent } from './search-tag/search-tag.component';
 import { SearchMyTodoComponent } from './search-my-todo/search-my-todo.component';
 import { SearchTodoListComponent } from './search-todo-list/search-todo-list.component';
 import { SearchMuscleGroupComponent } from './search-muscle-group/search-muscle-group.component';
+import { SearchExerciseComponent } from './search-exercise/search-exercise.component';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { SearchMuscleGroupComponent } from './search-muscle-group/search-muscle-
     SearchTagComponent,
     SearchMyTodoComponent,
     SearchTodoListComponent,
-    SearchMuscleGroupComponent
+    SearchMuscleGroupComponent,
+    SearchExerciseComponent
   ],
   imports: [
     CommonModule,

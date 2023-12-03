@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { Exercises } from 'src/app/models/exercise.interface';
 import { BodyParts } from 'src/app/models/muscle-groups.interface';
 import { ExerciseStateService } from 'src/app/services/exercise-state.service';
@@ -41,16 +41,25 @@ export class AddMuscleGroupModalComponent {
       'bodyPart': ['', [Validators.required, Validators.minLength(2)]],
       'image': ['', [Validators.required, Validators.minLength(2)]],
       'description': ['', [Validators.required, Validators.minLength(20)]],
-      'exerciseIds': this.formBuilder.array([]),
+      'exerciseIds': this.formBuilder.array([], (control: AbstractControl) => {
+        const formArray = control as FormArray;
+        if (formArray && formArray.value) {
+          return this.validateCheckbox()(formArray);
+        }
+        return null;
+      }),
     });
 
-    this.exerciseStateService.activeExercisesData$.subscribe((cachedData) => {
+    this.exerciseStateService.activeExercisesData$
+    .pipe(take(1))
+    .subscribe((cachedData) => {
+      console.log('activeExercisesData$ emitted:', cachedData);
       if (!cachedData) {
         this.handleEmitEvent();
       } else {
-        this.exercises = cachedData
+        this.exercises = cachedData;
       }
-    })
+    });
   }
 
   ngOnDestroy() {
@@ -63,8 +72,7 @@ export class AddMuscleGroupModalComponent {
       this.exerciseStateService.getActiveExercises().subscribe((exercises) => {
         this.ngxService.start();
         this.exercises = exercises;
-        this.exerciseStateService.setActiveMuscleGroupsSubject(exercises);
-        this.cd.detectChanges(); // Manually trigger change detection
+        this.exerciseStateService.setActiveExercisesSubject(exercises);
         this.ngxService.stop();
       })
     );
@@ -85,10 +93,15 @@ export class AddMuscleGroupModalComponent {
   }
 
   validateCheckbox(): ValidatorFn {
-    return (formArray: AbstractControl) => {
-      const checkboxes = formArray.value;
-      const isChecked = checkboxes.length > 0;
-      return isChecked ? null : { noCheckboxChecked: true };
+    return (formArray: AbstractControl): ValidationErrors | null => {
+      try {
+        const checkboxes = formArray.value;
+        const isChecked = checkboxes != null && checkboxes.length > 0;
+        return isChecked ? null : { noCheckboxChecked: { message: 'At least one checkbox must be checked.' } };
+      } catch (error) {
+        console.error('Error in checkbox validation:', error);
+        return { validationError: { message: 'An error occurred during validation.' } };
+      }
     };
   }
 

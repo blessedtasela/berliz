@@ -1,0 +1,108 @@
+<div class="relative bg-white text-gray-700 p-2">
+    <div class="text-red-600 absolute top-0 right-0 p-5">
+        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+    </div>
+    <section class="bg-white">
+        <form [formGroup]="updateExerciseForm">
+            <header class="font-bold font-sans text-center m-2 text-gray-700">
+                <h1 class="text-xl">Add Exercise</h1>
+                <p class="text-red-600 italic text-sm">Please provide details of the exercise select it's
+                    muscleGroups amd categories.
+                </p>
+            </header>
+            <div class="invalid-form">
+                <span *ngIf="!(updateExerciseForm.get('name')?.invalid ||
+                        updateExerciseForm.get('description')?.invalid ||
+                        updateExerciseForm.get('categoryIds')?.invalid ||
+                        updateExerciseForm.get('muscleGroupIds')?.invalid)
+                         && invalidForm" class="mx-2 text-gray-700">
+                    Everything looks good
+                </span>
+                <span *ngIf="(updateExerciseForm.get('name')?.invalid ||
+                updateExerciseForm.get('description')?.invalid ||
+                updateExerciseForm.get('categoryIds')?.invalid ||
+                updateExerciseForm.get('muscleGroupIds')?.invalid)
+                 && invalidForm" class="mx-2 text-red-500">
+                    Please complete all sessions
+                </span>
+            </div>
+            <div class="grid grid-cols md:grid-cols-2 p-1 gap-2">
+                <div class="mx-auto w-full grid grid-cols-2 grid-cols-4 rounded-lg text-gray-700">
+                    <div class="rounded-lg object-cover flex col-span-4 flex">
+                        <video [src]="'data:video/mp4;base64,' + exerciseData.demo" loop [muted]="true" autoplay
+                            class="rounded-lg"></video>
+                    </div>
+                    <div *ngIf="updateExerciseForm.get('muscleGroupIds')?.invalid && invalidForm"
+                        class="text-red-500 mx-2 col-span-4">
+                        Select at least one MuscleGroup
+                    </div>
+                    <div *ngFor="let muscleGroup of muscleGroups; let i = index"
+                        class="col-span-2 md:col-span-1 mx-auto w-full flex items-center">
+                        <input formArrayName="muscleGroupIds" (change)="onMuscleGroupCheckboxChanged($event)"
+                            [checked]="selectedMuscleGroupIds.includes(muscleGroup.id)"
+                            class="w-full border-b-2 rounded-lg  rounded-md m-2 text-gray-950 focus:outline-none border-gray-400 hover:border-gray-500"
+                            placeholder="tags" type="checkbox" [value]="muscleGroup.id">
+                        {{ muscleGroup.name }}
+                    </div>
+                </div>
+                <div class="bg-gray-200 gap-5 rounded-lg p-2 ">
+                    <input formControlName="id" [value]="exerciseData.id" type="number" hidden>
+                    <div class="mx-auto w-full p-2">
+                        <span class="text-gray-700 font-bold italic">MuscleGroup Name</span>
+                        <input formControlName="name" [value]="exerciseData.name"
+                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
+                            [ngClass]="{'border-red-400': updateExerciseForm.get('name')?.invalid && updateExerciseForm.get('name')?.touched 
+                            || (updateExerciseForm.get('name')?.invalid && invalidForm)}"
+                            placeholder="MuscleGroup Name" type="text">
+                        <div *ngIf="updateExerciseForm.get('name')?.invalid && updateExerciseForm.get('name')?.dirty 
+                        || (updateExerciseForm.get('name')?.invalid && invalidForm)" class="text-red-500 mx-2">
+                            MuscleGroup Name is required
+                        </div>
+                    </div>
+                    <div class="mx-auto w-full p-2">
+                        <span class="ml-4 font-bold text-gray-700 italic">Categories</span>
+                        <div *ngFor="let category of categories; let i = index"
+                            class="grid grid-cols-4 mx-auto w-full flex items-center">
+                            <input formArrayName="categoryIds" (change)="onCategoryCheckboxChanged($event)"
+                                [checked]="selectedCategoryIds.includes(category.id)"
+                                class="w-full border-b-2 rounded-lg  rounded-md m-2 text-gray-950 focus:outline-none border-gray-400 hover:border-gray-500"
+                                placeholder="tags" type="checkbox" [value]="category.id">
+                            {{ category.name }}
+                        </div>
+                        <div *ngIf="updateExerciseForm.get('categoryIds')?.invalid && invalidForm"
+                            class="text-red-500 mx-2 col-span-4">
+                            Select at least one Category
+                        </div>
+                    </div>
+                    <div class="mx-auto w-full p-2">
+                        <span class="text-gray-700 font-bold italic">Description</span>
+                        <textarea formControlName="description" [value]="exerciseData.description"
+                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
+                            [ngClass]="{'border-red-400': updateExerciseForm.get('description')?.invalid && updateExerciseForm.get('description')?.touched 
+                            || (updateExerciseForm.get('description')?.invalid && invalidForm)}"
+                            placeholder="Description" rows="5" cols="30"></textarea>
+                        <div *ngIf="updateExerciseForm.get('description')?.invalid && updateExerciseForm.get('description')?.dirty
+                        || (updateExerciseForm.get('description')?.invalid && invalidForm)" class="text-red-500 mx-2">
+                            Description is required
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2">
+                        <div class="bg-gray-950 rounded-md mx-auto m-2">
+                            <button type="button"
+                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
+                                (click)="clear()">
+                                Clear
+                            </button>
+                        </div>
+                        <div class="bg-red-600 rounded-md mx-auto m-2">
+                            <button type="submit"
+                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
+                                (click)="updateExercise()">
+                                Update
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </section>

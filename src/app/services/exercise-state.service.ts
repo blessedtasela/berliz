@@ -19,11 +19,11 @@ export class ExerciseStateService {
   constructor(private exerciseService: ExerciseService,
     private snackbarService: SnackBarService) { }
 
-  setActiveMuscleGroupsSubject(data: Exercises[]) {
+  setActiveExercisesSubject(data: Exercises[]) {
     this.activeExercisesSubject.next(data);
   }
 
-  setAllMuscleGroupsSubject(data: Exercises[]) {
+  setAllExercisesSubject(data: Exercises[]) {
     this.allExercisesSubject.next(data);
   }
 

@@ -15,6 +15,7 @@ import { TrainersModule } from './trainers/trainers.module';
 import { UsersModule } from './users/users.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { FooterModule } from '../footer/footer.module';
+import { ExercisesModule } from './exercises/exercises.module';
 
 
 
@@ -26,6 +27,8 @@ import { FooterModule } from '../footer/footer.module';
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
+    NavbarModule,
+    FooterModule,
     CategoriesModule,
     CentersModule,
     ContactUsModule,
@@ -36,8 +39,7 @@ import { FooterModule } from '../footer/footer.module';
     TodoListsModule,
     TrainersModule,
     UsersModule,
-    NavbarModule,
-    FooterModule
+    ExercisesModule
   ]
 })
 export class AdminModule { }

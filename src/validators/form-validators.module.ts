@@ -26,9 +26,7 @@ export function  fileValidator(control: AbstractControl): ValidationErrors | nul
     console.log(file)
     console.log(typeof file.name)
     const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
-
     if (file.size > maxSizeInBytes) {
-
       console.log('Max size exceeded. Allowed size << 5mb');
       return { invalidSize: true };
     }
