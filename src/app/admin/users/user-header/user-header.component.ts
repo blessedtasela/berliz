@@ -78,6 +78,7 @@ export class UserHeaderComponent {
     const dialogRef = this.dialog.open(SignupModalComponent, {
       width: '900px',
       height: '600px',
+      disableClose: true,
     });
     const childComponentInstance = dialogRef.componentInstance as SignupModalComponent;
     childComponentInstance.onSignupEmit.subscribe(() => {

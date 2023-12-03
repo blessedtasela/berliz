@@ -5,7 +5,6 @@ export interface MuscleGroups {
     name: string;
     bodyPart: string;
     description: string;
-    exercise: Exercises[];
     image: any;
     date: Date;
     lastUpdate: Date;

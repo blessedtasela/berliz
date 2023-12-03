@@ -9,21 +9,21 @@
             created at {{ formatDate(exerciseData.date) }}
         </p>
         <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
-            <div class="flex">
+            <div class="flex w-full">
                 <video [src]="'data:video/mp4;base64,' + exerciseData.demo " class="bg-gray-200 rounded-lg p-2"
                   loop autoplay [muted]="true"  onerror="this.src='../../../assets/icons/user.png';"></video>
             </div>
             <div class="flex flex-col m-4 gap-2">
-                <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
+                <p class="text-gray-700 font-sans font-bold text-sm flex text-justify">
                     "{{ exerciseData.description }}"
                 </p>
                 <p class="text-gray-500 font-sans font-bold text-sm flex text-center italic">
-                    <span class="text-justify font-bold">Muscle Groups</span>
+                    <span class="text-justify text-gray-900 italic">Muscle Groups</span>
                     <ng-container *ngFor="let muscleGroup of exerciseData.muscleGroups; let i = index">
                         {{ muscleGroup.name }} {{ i < (exerciseData.muscleGroups.length - 1) ? "/" : "" }} </ng-container>
                 </p>
                 <p class="text-gray-500 font-sans font-bold text-sm flex text-center italic">
-                    <span class="text-justify font-bold">Categories</span>
+                    <span class="text-justify text-gray-900 italic">Categories</span>
                     <ng-container *ngFor="let category of exerciseData.categories; let i = index">
                         {{ category.name }} {{ i < (exerciseData.categories.length - 1) ? "/" : "" }} </ng-container>
                 </p>

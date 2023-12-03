@@ -20,19 +20,13 @@ export class UpdateMuscleGroupModalComponent implements OnInit {
   updateMuscleGroupForm!: FormGroup;
   invalidForm: boolean = false;
   responseMessage: any;
-  exercises!: Exercises[];
-  selectedImage: any;
-  subscription = new Subscription;
   bodyParts: BodyParts[] = [];
   muscleGroupData: MuscleGroups;
-  selectedExerciseId: any;
 
   constructor(private formBuilder: FormBuilder,
     private muscleGroupService: MuscleGroupService,
-    private exerciseStateService: ExerciseStateService,
     public dialogRef: MatDialogRef<UpdateMuscleGroupModalComponent>,
     private ngxService: NgxUiLoaderService,
-    private cd: ChangeDetectorRef,
     private snackbarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: any) {
     this.bodyParts = this.muscleGroupService.getBodyParts();
@@ -40,91 +34,30 @@ export class UpdateMuscleGroupModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.muscleGroupData && this.muscleGroupData.exercise) {
-      this.selectedExerciseId = this.muscleGroupData.exercise.map(exercise => exercise.id);
-      this.updateMuscleGroupForm = this.formBuilder.group({
-        'id': new FormControl(this.muscleGroupData.id, [Validators.required]),
-        'name': new FormControl(this.muscleGroupData.name, [Validators.required, Validators.minLength(2)]),
-        'description': new FormControl(this.muscleGroupData.description, [Validators.required, Validators.minLength(20)]),
-        'bodyPart': new FormControl(this.muscleGroupData.bodyPart, [Validators.required, Validators.minLength(1)]),
-        'exerciseIds': this.formBuilder.array(this.selectedExerciseId, this.validateCheckbox()),
-      });
-    } else {
-      console.error('Muscle group data or exercise data is null or undefined.');
-      this.updateMuscleGroupForm = this.formBuilder.group({
-        'id': new FormControl(this.muscleGroupData.id, [Validators.required]),
-        'name': new FormControl(this.muscleGroupData.name, [Validators.required, Validators.minLength(2)]),
-        'description': new FormControl(this.muscleGroupData.description, [Validators.required, Validators.minLength(20)]),
-        'bodyPart': new FormControl(this.muscleGroupData.bodyPart, [Validators.required, Validators.minLength(1)]),
-      });
-    }
-    this.exerciseStateService.activeExercisesData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.exercises = cachedData
-      } else {
-        this.handleEmitEvent();
-      }
-    })
+    this.updateMuscleGroupForm = this.formBuilder.group({
+      'id': new FormControl(this.muscleGroupData.id, [Validators.required]),
+      'name': new FormControl(this.muscleGroupData.name, [Validators.required, Validators.minLength(2)]),
+      'description': new FormControl(this.muscleGroupData.description, [Validators.required, Validators.minLength(20)]),
+      'bodyPart': new FormControl(this.muscleGroupData.bodyPart, [Validators.required, Validators.minLength(1)]),
+    });
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe()
   }
 
-  handleEmitEvent() {
-    console.log("isCached false");
-    this.subscription.add(
-      this.exerciseStateService.getActiveExercises().subscribe((exercises) => {
-        this.ngxService.start();
-        this.exercises = exercises;
-        this.exerciseStateService.setActiveExercisesSubject(exercises);
-        this.ngxService.stop();
-      })
-    );
-  }
-
-  onCheckboxChanged(event: any) {
-    const exercises = this.updateMuscleGroupForm.get('exerciseIds') as FormArray;
-    if (event.target.checked) {
-      exercises.push(this.formBuilder.group({ exerciseIds: event.target.value }));
-    } else {
-      const index = exercises.controls.findIndex((control) => control.value.exerciseIds === event.target.value);
-      exercises.removeAt(index);
-    }
-  }
-
-  validateCheckbox(): ValidatorFn {
-    return (formArray: AbstractControl) => {
-      const checkboxes = formArray.value;
-      const isChecked = checkboxes.length > 0;
-      return isChecked ? null : { noCheckboxChecked: true };
-    };
-  }
-
-  addCategory(): void {
+  updateMuscleGroup(): void {
     this.ngxService.start();
     if (this.updateMuscleGroupForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
     } else {
-      var formData;
-      if (this.muscleGroupData && this.muscleGroupData.exercise) {
-        const selectedExerciseIds = this.updateMuscleGroupForm.value.exerciseIds.map((exercise: any) => exercise.exerciseIds);
-        const tagIdsString = selectedExerciseIds.join(',');
-        formData = {
-          ...this.updateMuscleGroupForm.value,
-          tagIds: tagIdsString
-        };
-      } else {
-        formData = this.updateMuscleGroupForm.value;
-      }
-      this.muscleGroupService.updateMuscleGroup(formData)
+      this.muscleGroupService.updateMuscleGroup(this.updateMuscleGroupForm.value)
         .subscribe((response: any) => {
           this.onUpdateMuscleGroupEmit.emit();
           this.updateMuscleGroupForm.reset();
           this.invalidForm = false;
-          this.dialogRef.close('muscleGroup added successfully');
+          this.dialogRef.close('muscleGroup updated successfully');
           this.responseMessage = response?.message;
           this.snackbarService.openSnackBar(this.responseMessage, "");
           this.ngxService.stop();

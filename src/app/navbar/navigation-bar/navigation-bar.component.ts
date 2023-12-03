@@ -22,7 +22,8 @@ export class NavigationBarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.subscribeToCloseNavBar()
+    this.subscribeToCloseNavBarOnMouseDown()
+    this.subscribeToCloseNavBarOnScroll()
   }
 
   navMenu(item: any): void {
@@ -33,7 +34,7 @@ export class NavigationBarComponent implements OnInit {
     }
   }
 
-  subscribeToCloseNavBar() {
+  subscribeToCloseNavBarOnMouseDown() {
     document.addEventListener('mousedown', (event) => {
       if (!this.isClickInsideDropdown(event)) {
         this.closeDropdown();
@@ -41,6 +42,13 @@ export class NavigationBarComponent implements OnInit {
     });
   }
 
+  subscribeToCloseNavBarOnScroll() {
+    document.addEventListener('scroll', (event) => {
+      if (!this.isClickInsideDropdown(event)) {
+        this.closeDropdown();
+      }
+    });
+  }
   isClickInsideDropdown(event: Event): any {
     const dropdownElement = document.getElementById('navbarView');
     return dropdownElement && dropdownElement.contains(event.target as Node);
@@ -55,7 +63,8 @@ export class NavigationBarComponent implements OnInit {
   }
 
   isActive(path: string): boolean {
-    return this.currentRoute.startsWith('/' + path);
+    const formattedPath = '/' + path;
+    return this.currentRoute.startsWith(formattedPath);
   }
 
   getUser(): boolean {

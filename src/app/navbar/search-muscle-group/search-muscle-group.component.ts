@@ -75,11 +75,6 @@ export class SearchMuscleGroupComponent {
           return muscleGroup.description && muscleGroup.description.toLowerCase().includes(query);
         case 'status':
           return muscleGroup.status && muscleGroup.status.toLowerCase().includes(query);
-        case 'exercise':
-          return (
-            muscleGroup.exercise.length > 0 &&
-            muscleGroup.exercise.some((exercise) => exercise.name.toLowerCase().includes(query))
-          );
         default:
           return false;
       }

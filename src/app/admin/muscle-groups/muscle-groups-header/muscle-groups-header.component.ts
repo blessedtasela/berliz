@@ -66,19 +66,6 @@ export class MuscleGroupsHeaderComponent {
           return a.id - b.id;
         });
         break;
-      case 'exercise':
-        this.muscleGroupsData.sort((a, b) => {
-          const nameA = a.exercise[0].name.toLowerCase();
-          const nameB = b.exercise[0].name.toLowerCase();
-          if (nameA < nameB) {
-            return -1;
-          }
-          if (nameA > nameB) {
-            return 1;
-          }
-          return 0;
-        });
-        break;
       case 'lastUpdate':
         this.muscleGroupsData.sort((a, b) => {
           const dateA = new Date(a.lastUpdate);

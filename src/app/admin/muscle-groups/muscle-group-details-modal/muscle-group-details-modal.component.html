@@ -17,10 +17,6 @@
                 <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
                     "{{ muscleGroupData.description }}"
                 </p>
-                <p class="text-gray-500 font-sans font-bold text-sm flex text-center italic">
-                    <ng-container *ngFor="let exercise of muscleGroupData.exercise; let i = index">
-                        {{ exercise.name }} {{ i < (muscleGroupData.exercise.length - 1) ? "/" : "" }} </ng-container>
-                </p>
                 <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
                     Body part - {{ muscleGroupData.bodyPart }}
                 </p>

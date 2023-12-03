@@ -13,15 +13,13 @@
             <div class="invalid-form">
                 <span *ngIf="!(updateMuscleGroupForm.get('name')?.invalid ||
                         updateMuscleGroupForm.get('description')?.invalid ||
-                        updateMuscleGroupForm.get('bodyPart')?.invalid ||
-                        updateMuscleGroupForm.get('exerciseIds')?.invalid)
+                        updateMuscleGroupForm.get('bodyPart')?.invalid )
                          && invalidForm" class="mx-2 text-gray-700">
                     Everything looks good
                 </span>
                 <span *ngIf="(updateMuscleGroupForm.get('name')?.invalid ||
                 updateMuscleGroupForm.get('description')?.invalid ||
-                updateMuscleGroupForm.get('bodyPart')?.invalid ||
-                updateMuscleGroupForm.get('exerciseIds')?.invalid)
+                updateMuscleGroupForm.get('bodyPart')?.invalid )
                  && invalidForm" class="mx-2 text-red-500">
                     Please complete all sessions
                 </span>
@@ -30,18 +28,6 @@
                 <div class="mx-auto w-full grid grid-cols-2 grid-cols-4 rounded-lg text-gray-700">
                     <div class="rounded-lg object-cover flex col-span-4 flex">
                         <img [src]="'data:image;base64,' + muscleGroupData.image" class="rounded-lg">
-                    </div>
-                    <div *ngIf="updateMuscleGroupForm.get('exerciseIds')?.invalid && invalidForm"
-                        class="text-red-500 mx-2 col-span-4">
-                        Select at least one Exercise
-                    </div>
-                    <div *ngFor="let exercise of exercises; let i = index"
-                        class="col-span-2 md:col-span-1 mx-auto w-full flex items-center">
-                        <input formArrayName="exerciseIds" (change)="onCheckboxChanged($event)"
-                            [checked]="selectedExerciseId.includes(exercise.id)"
-                            class="w-full border-b-2 rounded-lg  rounded-md m-2 text-gray-950 focus:outline-none border-gray-400 hover:border-gray-500"
-                            placeholder="tags" type="checkbox" [value]="exercise.id">
-                        {{ exercise.name }}
                     </div>
                 </div>
                 <div class="bg-gray-200 gap-5 rounded-lg p-2 ">
@@ -90,15 +76,15 @@
                     <div class="grid grid-cols-2">
                         <div class="bg-gray-950 rounded-md mx-auto m-2">
                             <button type="button"
-                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
+                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm flex items-center justify-center"
                                 (click)="clear()">
                                 Clear
                             </button>
                         </div>
                         <div class="bg-red-600 rounded-md mx-auto m-2">
                             <button type="submit"
-                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
-                                (click)="addCategory()">
+                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm flex items-center justify-center"
+                                (click)="updateMuscleGroup()">
                                 Update
                             </button>
                         </div>

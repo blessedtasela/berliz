@@ -46,7 +46,6 @@ export class UpdateTagModalComponent {
 
   updateTag(): void {
     this.ngxService.start();
-
     if (this.updateTagForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Invalid form"

@@ -20,7 +20,6 @@ export class AddMuscleGroupModalComponent {
   addMuscleGroupForm!: FormGroup;
   invalidForm: boolean = false;
   responseMessage: any;
-  exercises!: Exercises[];
   selectedImage: any;
   subscription = new Subscription;
   bodyParts: BodyParts[] = [];
@@ -41,85 +40,28 @@ export class AddMuscleGroupModalComponent {
       'bodyPart': ['', [Validators.required, Validators.minLength(2)]],
       'image': ['', [Validators.required, Validators.minLength(2)]],
       'description': ['', [Validators.required, Validators.minLength(20)]],
-      'exerciseIds': this.formBuilder.array([], (control: AbstractControl) => {
-        const formArray = control as FormArray;
-        if (formArray && formArray.value) {
-          return this.validateCheckbox()(formArray);
-        }
-        return null;
-      }),
-    });
-
-    this.exerciseStateService.activeExercisesData$
-    .pipe(take(1))
-    .subscribe((cachedData) => {
-      console.log('activeExercisesData$ emitted:', cachedData);
-      if (!cachedData) {
-        this.handleEmitEvent();
-      } else {
-        this.exercises = cachedData;
-      }
     });
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe()
-  }
-
-  handleEmitEvent() {
-    console.log("isCached false");
-    this.subscription.add(
-      this.exerciseStateService.getActiveExercises().subscribe((exercises) => {
-        this.ngxService.start();
-        this.exercises = exercises;
-        this.exerciseStateService.setActiveExercisesSubject(exercises);
-        this.ngxService.stop();
-      })
-    );
   }
 
   onImgSelected(event: any): void {
     this.selectedImage = event.target.files[0];
   }
 
-  onCheckboxChanged(event: any) {
-    const exercises = this.addMuscleGroupForm.get('exerciseIds') as FormArray;
-    if (event.target.checked) {
-      exercises.push(this.formBuilder.group({ exerciseIds: event.target.value }));
-    } else {
-      const index = exercises.controls.findIndex((control) => control.value.exerciseIds === event.target.value);
-      exercises.removeAt(index);
-    }
-  }
-
-  validateCheckbox(): ValidatorFn {
-    return (formArray: AbstractControl): ValidationErrors | null => {
-      try {
-        const checkboxes = formArray.value;
-        const isChecked = checkboxes != null && checkboxes.length > 0;
-        return isChecked ? null : { noCheckboxChecked: { message: 'At least one checkbox must be checked.' } };
-      } catch (error) {
-        console.error('Error in checkbox validation:', error);
-        return { validationError: { message: 'An error occurred during validation.' } };
-      }
-    };
-  }
-
-  addCategory(): void {
+  addMuscleGroup(): void {
     this.ngxService.start();
     if (this.addMuscleGroupForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
     } else {
-      const selectedExerciseIds = this.addMuscleGroupForm.value.exerciseIds.map((exercise: any) => exercise.exerciseIds);
-      const tagIdsString = selectedExerciseIds.join(',');
       const requestData = new FormData();
       requestData.append('name', this.addMuscleGroupForm.get('name')?.value);
       requestData.append('bodyPart', this.addMuscleGroupForm.get('bodyPart')?.value);
       requestData.append('description', this.addMuscleGroupForm.get('description')?.value);
       requestData.append('image', this.selectedImage);
-      requestData.append('exerciseIds', tagIdsString);
       this.muscleGroupService.addMuscleGroup(requestData)
         .subscribe((response: any) => {
           this.onAddMuscleGroupEmit.emit();
