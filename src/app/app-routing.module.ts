@@ -68,67 +68,67 @@ const routes: Routes = [
 
   // admin components #protected
   {
-    path: 'users', component: UsersComponent, canActivate: [RouteGuardService],
+    path: 'users-list', component: UsersComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'newsletters', component: NewslettersComponent, canActivate: [RouteGuardService],
+    path: 'newsletters-list', component: NewslettersComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'categories', component: CategoryComponent, canActivate: [RouteGuardService],
+    path: 'categories-list', component: CategoryComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'partners', component: PartnersComponent, canActivate: [RouteGuardService],
+    path: 'partners-list', component: PartnersComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'contact-us', component: AdminContactUsComponent, canActivate: [RouteGuardService],
+    path: 'contact-us-list', component: AdminContactUsComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'trainers', component: TrainerComponent, canActivate: [RouteGuardService],
+    path: 'trainers-list', component: TrainerComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'centers', component: CenterComponent, canActivate: [RouteGuardService],
+    path: 'centers-list', component: CenterComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'tags', component: TagsComponent, canActivate: [RouteGuardService],
+    path: 'tags-list', component: TagsComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'todo-list', component: TodoListsComponent, canActivate: [RouteGuardService],
+    path: 'todo-list-list', component: TodoListsComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'muscle-groups', component: MuscleGroupsComponent, canActivate: [RouteGuardService],
+    path: 'muscle-groups-list', component: MuscleGroupsComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'exercises', component: ExercisesComponent, canActivate: [RouteGuardService],
+    path: 'exercises-list', component: ExercisesComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }

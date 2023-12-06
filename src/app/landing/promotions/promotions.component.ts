@@ -15,7 +15,8 @@ export class PromotionsComponent {
 
   openSignup() {
     const dialogRef = this.dialog.open(SignupModalComponent, {
-      width: '800px'
+      width: '900px',
+      height: '600px'
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);

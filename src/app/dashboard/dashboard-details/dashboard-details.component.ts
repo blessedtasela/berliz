@@ -1,9 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { SnackBarService } from 'src/app/services/snack-bar.service';
 import jwt_decode from "jwt-decode";
 import { DashboardStateService } from 'src/app/services/dashboard-state.service';
-import { Trainers } from 'src/app/models/trainers.interface';
 
 @Component({
   selector: 'app-dashboard-details',

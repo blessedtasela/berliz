@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -17,7 +17,7 @@ import { MuscleGroupStateService } from 'src/app/services/muscle-group-state.ser
   templateUrl: './add-exercises-modal.component.html',
   styleUrls: ['./add-exercises-modal.component.css']
 })
-export class AddExercisesModalComponent {
+export class AddExercisesModalComponent implements OnInit{
   onAddExerciseEmit = new EventEmitter()
   addExerciseForm!: FormGroup;
   invalidForm: boolean = false;
@@ -37,7 +37,6 @@ export class AddExercisesModalComponent {
     private snackbarService: SnackBarService) { }
 
   ngOnInit(): void {
-    if (this.categories && this.muscleGroups) {
       this.addExerciseForm = this.formBuilder.group({
         'name': ['', [Validators.required, Validators.minLength(2)]],
         'demo': ['', [Validators.required, fileValidator]],
@@ -45,23 +44,16 @@ export class AddExercisesModalComponent {
         'categoryIds': this.formBuilder.array([], this.validateCheckbox()),
         'muscleGroupIds': this.formBuilder.array([], this.validateCheckbox()),
       });
-    } else{
-      this.addExerciseForm = this.formBuilder.group({
-        'name': ['', [Validators.required, Validators.minLength(2)]],
-        'demo': ['', [Validators.required, fileValidator]],
-        'description': ['', [Validators.required, Validators.minLength(20)]],
-      });
-    }
       forkJoin([
         this.muscleGroupStateService.activeMuscleGroupsData$.pipe(take(1)),
         this.categoryStateService.activeCategoriesData$.pipe(take(1))
       ]).subscribe(([muscleGroupsData, categoriesData]) => {
-        if (!muscleGroupsData) {
+        if (muscleGroupsData === null) {
           this.handleEmitEvent();
         } else {
           this.muscleGroups = muscleGroupsData;
         }
-        if (!categoriesData) {
+        if (categoriesData === null) {
           this.handleEmitEvent();
         } else {
           this.categories = categoriesData;

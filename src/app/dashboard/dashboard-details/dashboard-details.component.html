@@ -24,7 +24,7 @@
                     </div>
                     <button class="m-4 mb-8 text-sm bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
                 rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
-                        <a [routerLink]="['/', formatUrl(item.key)]">
+                        <a [routerLink]="['/', formatUrl(item.key)+ '-list']">
                             Perform an action
                         </a>
                     </button>
@@ -32,10 +32,4 @@
             </div>
         </section>
     </div>
-    <!-- <div class="p-3">
-        <button
-            class="p-1 px-2 bg-gray-100 text-red-600 font-sans font-bold rounded-md mx-auto flex justify-center mt-2">
-            {{ !showAllData ? 'See more' : 'See less' }}
-        </button>
-    </div> -->
 </section>

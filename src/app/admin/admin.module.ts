@@ -16,11 +16,16 @@ import { UsersModule } from './users/users.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { FooterModule } from '../footer/footer.module';
 import { ExercisesModule } from './exercises/exercises.module';
+import { AdminPanelComponent } from './admin-panel/admin-panel.component';
+import { AdminPanelDetailsComponent } from './admin-panel-details/admin-panel-details.component';
 
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    AdminPanelComponent,
+    AdminPanelDetailsComponent
+  ],
   imports: [
     CommonModule,
     IconsModule,
