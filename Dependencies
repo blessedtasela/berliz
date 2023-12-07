@@ -3,3 +3,5 @@ i-feather icons
 NgxUiLoaderService
 Ngx-extended-pdf-viewer
 ngx-indexed-db
+npm install chart.js --save
+npm install ng2-charts

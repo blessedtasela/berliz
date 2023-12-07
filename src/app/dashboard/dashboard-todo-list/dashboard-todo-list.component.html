@@ -1,1 +1,57 @@
-<p>dashboard-todo-list works!</p>
+<div class="justify-center items-center p-1 mt-4 overflow-x-scroll" *ngIf="todoData.length === 0">
+    <h1 class="text-gray-500 italic font-sans">
+        Your Todo Tasks will appear here
+    </h1>
+    <h1 class="text-gray-500 italic font-sans text-sm">
+        You currenty have no to-do tasks. Click
+        <span class=" text-red-600  hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
+            rounded-md font-bold cursor-pointer" routerLink="/my-todos">
+            here
+        </span> to add one now|
+    </h1>
+</div>
+<div class="flex justify-center items-center" *ngIf="todoData.length > 0">
+    <h1 class="text-gray-500 text-xl capitalize font-bold italic font-sans">
+       My Todos
+    </h1>
+    </div>
+<div class="justify-center items-center p-1 mt-4 overflow-x-scroll font-sans" *ngIf="todoData.length > 0">
+    <div class="min-w-[300px]">
+        <table class="table-auto border-collapse rounded-lg text-gray-950 font-sans container">
+            <tbody class="rounded-lg">
+                <tr *ngFor="let todo of todoData; let i = index" class="">
+                    <td class="border-b border-gray-400 px-4 py-2 text-bold">{{ i + 1 }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">
+                        <div class="grid grid-cols">
+                            <div class="text-gray-700 font-bold text-sm">
+                                {{ todo.task }}
+                            </div>
+                            <div class="grid grid-cols text-sm italic text-gray-400">
+                                <span class="flex flex-cols">
+                                    <i-feather name="calendar" class="font-bold text-red-600 mr-2 mt-1 cursor-pointer"
+                                        style="width: 15px;">
+                                    </i-feather>
+                                    created on {{ formatDate(todo.date) }}
+                                </span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="border-b border-gray-400 px-4 py-2 text-sm">
+                        <div class="grid grid-cols md:grid-cols-2">
+                            <div *ngIf="todo.status==='completed'" class="font-bold italic text-blue-500 mt-0 md:mt-3">
+                                {{ todo.status }}
+                            </div>
+                            <div *ngIf="todo.status==='pending'" class="font-bold italic text-gray-700 mt-0 md:mt-3">
+                                {{ todo.status }}
+                            </div>
+                            <div *ngIf="todo.status==='in-progress'"
+                                class="font-bold italic text-green-600 mt-0 md:mt-3">
+                                {{ todo.status }}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

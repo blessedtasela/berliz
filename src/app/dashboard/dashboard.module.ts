@@ -1,16 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CenterModule } from './center/center.module';
-import { ClientModule } from './client/client.module';
-import { DriverModule } from './driver/driver.module';
 import { PartnerModule } from './partner/partner.module';
-import { StoreModule } from './store/store.module';
-import { TrainerModule } from './trainer/trainer.module';
 import { UserModule } from './user/user.module';
 import { IconsModule } from '../icons/icons.module';
 import { FeatherModule } from 'angular-feather';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { DashboardDetailsComponent } from './dashboard-details/dashboard-details.component';
 import { RouterModule } from '@angular/router';
 import { NavbarModule } from '../navbar/navbar.module';
 import { FooterModule } from '../footer/footer.module';
@@ -20,34 +13,40 @@ import { DashboardNotificationComponent } from './dashboard-notification/dashboa
 import { DashboardActionComponent } from './dashboard-action/dashboard-action.component';
 import { DashboardAppAnalyticsComponent } from './dashboard-app-analytics/dashboard-app-analytics.component';
 import { TodoListsModule } from './todo-lists/todo-lists.module';
+import { WorkspaceComponent } from './workspace/workspace.component';
+import { WorkspaceDetailsComponent } from './workspace-details/workspace-details.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardTopUsersComponent } from './dashboard-top-users/dashboard-top-users.component';
+import { DashboardNowActiveComponent } from './dashboard-now-active/dashboard-now-active.component';
+import { DashboardActivityChartComponent } from './dashboard-activity-chart/dashboard-activity-chart.component';
 
 
 
 @NgModule({
   declarations: [
-    DashboardComponent,
-    DashboardDetailsComponent,
     DashboardTodoListComponent,
     DashboardLoginChartComponent,
     DashboardNotificationComponent,
     DashboardActionComponent,
-    DashboardAppAnalyticsComponent
+    DashboardAppAnalyticsComponent,
+    WorkspaceComponent,
+    WorkspaceDetailsComponent,
+    DashboardComponent,
+    DashboardTopUsersComponent,
+    DashboardNowActiveComponent,
+    DashboardActivityChartComponent
   ],
   imports: [
     CommonModule,
-    CenterModule,
-    ClientModule,
-    DriverModule,
-    StoreModule,
     PartnerModule,
-    TrainerModule,
+    TodoListsModule,
     UserModule,
     IconsModule,
     FeatherModule,
     RouterModule,
     NavbarModule,
     FooterModule,
-    TodoListsModule
+  
   ]
 })
 export class DashboardModule { }

@@ -13,8 +13,10 @@
             </div>
         </div>
         <!-- Search and Profile Icons -->
-        <app-search (categoriesResults)="handleCategorySearchResults($event)" (exerciseResults)="handleExerciseSearchResults($event)"
-            (contactUsResults)="handleContactUsSearchResults($event)" (muscleGroupResults)="handleMuscleGroupSearchResults($event)"
+        <app-search (categoriesResults)="handleCategorySearchResults($event)"
+            (exerciseResults)="handleExerciseSearchResults($event)"
+            (contactUsResults)="handleContactUsSearchResults($event)"
+            (muscleGroupResults)="handleMuscleGroupSearchResults($event)"
             (trainersResults)="handleTrainerSearchResults($event)" (usersResults)="handleUserSearchResults($event)"
             (partnersResults)="handlePartnerSearchResults($event)" (centerssResults)="handleCenterSearchResults($event)"
             (newslettersResult)="handleNewsletterSearchResults($event)" (tagsResults)="handleTagSearchResults($event)"
@@ -55,22 +57,12 @@
                     </a>
                 </h1>
             </div>
-            <!-- Subscriptions Link -->
-            <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
-                [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('subscriptions')}">
-                <feather-icon name="Airplay" class="text-xl text-white" style="width: 24px;"></feather-icon>
-                <h1 class="mx-4">
-                    <a routerLink="/subscriptions" class="text-md">
-                        Subscriptions
-                    </a>
-                </h1>
-            </div>
             <!-- Tasks Link -->
             <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
                 [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('tasks')}">
                 <feather-icon name="activity" class="text-xl text-white" style="width: 26px;"></feather-icon>
                 <h1 class="mx-4">
-                    <a routerLink="/tasks" class="text-md">
+                    <a routerLink="/my-tasks" class="text-md">
                         Tasks
                     </a>
                 </h1>
@@ -80,8 +72,18 @@
                 [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('notifications')}">
                 <feather-icon name="inbox" class="text-xl text-white" style="width: 26px;"></feather-icon>
                 <h1 class="mx-4">
-                    <a routerLink="/notifications" class="text-md">
+                    <a routerLink="/my-notifications" class="text-md">
                         Notifications
+                    </a>
+                </h1>
+            </div>
+            <!-- Workspace Link -->
+            <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
+                [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('workspace')}">
+                <feather-icon name="globe" class="text-xl text-white" style="width: 26px;"></feather-icon>
+                <h1 class="mx-4">
+                    <a routerLink="/workspace" class="text-md">
+                        <span class="capitalize">{{ userData?.role }} </span> workspace
                     </a>
                 </h1>
             </div>
@@ -107,12 +109,22 @@
                     </a>
                 </h1>
             </div>
+            <!-- Subscriptions Link -->
+            <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
+                [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('subscriptions')}">
+                <feather-icon name="Airplay" class="text-xl text-white" style="width: 24px;"></feather-icon>
+                <h1 class="mx-4">
+                    <a routerLink="/my-subscriptions" class="text-md">
+                        Subscriptions
+                    </a>
+                </h1>
+            </div>
             <!-- FAQs Link -->
             <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
                 [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('faqs')}">
                 <feather-icon name="message-square" class="text-xl text-white" style="width: 26px;"></feather-icon>
                 <h1 class="mx-4">
-                    <a routerLink="/faqs" class="text-md">
+                    <a routerLink="/my-faqs" class="text-md">
                         FAQs
                     </a>
                 </h1>

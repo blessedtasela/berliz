@@ -1,0 +1,47 @@
+<div class="justify-center items-center p-1 mt-4">
+    <h1 class="text-gray-500 italic font-sans">
+        Top Users
+    </h1>
+</div>
+<div class="justify-center items-center p-1 mt-4 overflow-x-scroll font-sans" *ngIf="users.length > 0">
+    <div class="min-w-[300px]">
+        <table class="table-auto border-collapse rounded-lg text-gray-950 font-sans container">
+            <tbody class="rounded-lg">
+                <tr *ngFor="let user of users; let i = index" class="" [ngClass]="{'hidden': i > 5}">
+                    <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">
+                        <div class="grid grid-cols">
+                            <div>
+                                {{ user.email }}
+                            </div>
+                            <div class="grid grid-cols md:grid-cols-2 text-sm italic text-gray-400">
+                                <span class="flex flex-cols">
+                                    <i-feather name="calendar" class="font-bold text-gray-950 mr-2 mt-1 cursor-pointer"
+                                        style="width: 15px;">
+                                    </i-feather>
+                                    created on {{ formatDate(user.date) }}
+                                </span>
+                                <span class="flex flex-cols">
+                                    <i-feather name="calendar" class="font-bold text-red-600 mr-2 mt-1 cursor-pointer"
+                                        style="width: 15px;">
+                                    </i-feather>
+                                    last updated {{ formatDate(user.lastUpdate) }}
+                                </span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="border-b border-gray-400 px-4 py-2 text-sm">
+                        <div class="grid grid-cols md:grid-cols-2">
+                            <div *ngIf="user.status==='true'" class="font-bold italic text-green-700 mt-0 md:mt-3">
+                                active
+                            </div>
+                            <div *ngIf="user.status==='false'" class="font-bold italic text-gray-700 mt-0 md:mt-3">
+                                requires action
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

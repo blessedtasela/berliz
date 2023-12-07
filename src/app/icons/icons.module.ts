@@ -63,7 +63,7 @@ import {
   Calendar,
   MoreHorizontal,
   MoreVertical,
-  RotateCcw
+  RotateCcw,
 } from 'angular-feather/icons';
 
 // Select some icons (use an object, not an array)

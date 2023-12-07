@@ -27,7 +27,7 @@ import { Exercises } from 'src/app/models/exercise.interface';
 export class SidebarNavigationComponent implements OnInit {
   openMenu: boolean = false;
   mdScreen: boolean = false;
-  userData: any;
+  userData!: any;
   responseMessage: any;
   profilePhoto: any;
   currentRoute: any;

@@ -20,8 +20,6 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { RouteGuardService } from './services/route-guard.service';
 import { CategoriesComponent } from './categories/categories/categories.component';
 import { AboutUsComponent } from './about-us/about-us/about-us.component';
-import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
-import { PartnerApplicationComponent } from './dashboard/partner/partner-application/partner-application.component';
 import { ActivateAccountComponent } from './dashboard/user/activate-account/activate-account.component';
 import { LoginComponent } from './dashboard/user/login/login.component';
 import { ProgressPageComponent } from './dashboard/user/progress/progress-page/progress-page.component';
@@ -30,10 +28,6 @@ import { RunNowPageComponent } from './dashboard/user/run-now/run-now-page/run-n
 import { PartnerPageComponent } from './dashboard/partner/partner-page/partner-page.component';
 import { ProfilePageComponent } from './dashboard/user/profile-page/profile-page.component';
 import { ProfileSettingsComponent } from './dashboard/user/profile-settings/profile-settings.component';
-import { TaskPageComponent } from './dashboard/tasks/task-page/task-page.component';
-import { SubscriptionPageComponent } from './dashboard/subscriptions/subscription-page/subscription-page.component';
-import { NotificationPageComponent } from './dashboard/notifications/notification-page/notification-page.component';
-import { FaqPageComponent } from './dashboard/faqs/faq-page/faq-page.component';
 import { MyTodosComponent } from './dashboard/todo-lists/my-todos/my-todos.component';
 import { CategoryComponent } from './admin/categories/category/category.component';
 import { AdminContactUsComponent } from './admin/contact-us/admin-contact-us/admin-contact-us.component';
@@ -46,6 +40,13 @@ import { PartnersComponent } from './admin/partners/partners/partners.component'
 import { TodoListsComponent } from './admin/todo-lists/todo-lists/todo-lists.component';
 import { MuscleGroupsComponent } from './admin/muscle-groups/muscle-groups/muscle-groups.component';
 import { ExercisesComponent } from './admin/exercises/exercises/exercises.component';
+import { WorkspaceComponent } from './dashboard/workspace/workspace.component';
+import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
+import { TasksComponent } from './admin/tasks/tasks/tasks.component';
+import { MyNotificationsPageComponent } from './my-notifications/my-notifications-page/my-notifications-page.component';
+import { MySubscriptionsPageComponent } from './my-subscriptions/my-subscriptions-page/my-subscriptions-page.component';
+import { MyFaqsPageComponent } from './my-faqs/my-faqs-page/my-faqs-page.component';
+import { MyTasksPageComponent } from './my-tasks/my-tasks-page/my-tasks-page.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -68,67 +69,73 @@ const routes: Routes = [
 
   // admin components #protected
   {
-    path: 'users-list', component: UsersComponent, canActivate: [RouteGuardService],
+    path: 'users', component: UsersComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'newsletters-list', component: NewslettersComponent, canActivate: [RouteGuardService],
+    path: 'newsletters', component: NewslettersComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'categories-list', component: CategoryComponent, canActivate: [RouteGuardService],
+    path: 'all-categories', component: CategoryComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'partners-list', component: PartnersComponent, canActivate: [RouteGuardService],
+    path: 'partners', component: PartnersComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'contact-us-list', component: AdminContactUsComponent, canActivate: [RouteGuardService],
+    path: 'all-contact-us', component: AdminContactUsComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'trainers-list', component: TrainerComponent, canActivate: [RouteGuardService],
+    path: 'all-trainers', component: TrainerComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'centers-list', component: CenterComponent, canActivate: [RouteGuardService],
+    path: 'all-centers', component: CenterComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'tags-list', component: TagsComponent, canActivate: [RouteGuardService],
+    path: 'tags', component: TagsComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'todo-list-list', component: TodoListsComponent, canActivate: [RouteGuardService],
+    path: 'todo-list', component: TodoListsComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
-    path: 'muscle-groups-list', component: MuscleGroupsComponent, canActivate: [RouteGuardService],
+    path: 'muscle-groups', component: MuscleGroupsComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
   },
   {
     path: 'exercises-list', component: ExercisesComponent, canActivate: [RouteGuardService],
+    data: {
+      expectedRole: ['admin']
+    }
+  },
+  {
+    path: 'tasks', component: TasksComponent, canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin']
     }
@@ -143,6 +150,15 @@ const routes: Routes = [
   // protected components
   {
     path: 'dashboard', component: DashboardComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: ['admin', 'user', 'partner', 'trainer',
+        'center', 'driver', 'store', 'client',]
+    }
+  },
+
+  {
+    path: 'workspace', component: WorkspaceComponent,
     canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin', 'user', 'partner', 'trainer',
@@ -192,7 +208,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'notifications', component: NotificationPageComponent,
+    path: 'my-notifications', component: MyNotificationsPageComponent,
     canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin', 'user', 'partner', 'trainer',
@@ -200,7 +216,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'tasks', component: TaskPageComponent,
+    path: 'my-tasks', component: MyTasksPageComponent,
     canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin', 'user', 'partner', 'trainer',
@@ -208,7 +224,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'subscriptions', component: SubscriptionPageComponent,
+    path: 'my-subscriptions', component: MySubscriptionsPageComponent,
     canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin', 'user', 'partner', 'trainer',
@@ -216,7 +232,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'faqs', component: FaqPageComponent,
+    path: 'my-faqs', component: MyFaqsPageComponent,
     canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin', 'user', 'partner', 'trainer',

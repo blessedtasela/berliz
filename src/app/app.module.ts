@@ -31,6 +31,12 @@ import { rxStompServiceFactory } from './rx-stomp-service-factory';
 import { DBConfig } from 'ngx-indexed-db';
 import { NgxIndexedDBModule } from 'ngx-indexed-db';
 import { AdminModule } from './admin/admin.module';
+import { MyTasksModule } from './my-tasks/my-tasks.module';
+import { MySubscriptionsModule } from './my-subscriptions/my-subscriptions.module';
+import { MyNotificationsModule } from './my-notifications/my-notifications.module';
+import { MyFaqsModule } from './my-faqs/my-faqs.module';
+import { RefreshTokenOverlayComponent } from './refresh-token-overlay/refresh-token-overlay.component';
+import { ResfreshTokenModalComponent } from './resfresh-token-modal/resfresh-token-modal.component';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   text: "Loading....",
@@ -63,6 +69,8 @@ const dbConfig: DBConfig = {
     AppComponent,
     PageNotFoundComponent,
     ExamplePdfViewerComponent,
+    RefreshTokenOverlayComponent,
+    ResfreshTokenModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -87,6 +95,10 @@ const dbConfig: DBConfig = {
     CategoriesModule,
     AboutUsModule,
     AdminModule,
+    MyTasksModule,
+    MySubscriptionsModule,
+    MyNotificationsModule,
+    MyFaqsModule,
     NgxIndexedDBModule.forRoot(dbConfig)
   ],
   exports: [],
