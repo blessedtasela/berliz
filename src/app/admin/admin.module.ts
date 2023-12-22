@@ -18,6 +18,13 @@ import { FooterModule } from '../footer/footer.module';
 import { ExercisesModule } from './exercises/exercises.module';
 import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 import { AdminPanelDetailsComponent } from './admin-panel-details/admin-panel-details.component';
+import { ClientsModule } from './clients/clients.module';
+import { MembersModule } from './members/members.module';
+import { PaymentsModule } from './payments/payments.module';
+import { SubTasksModule } from './sub-tasks/sub-tasks.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { TasksModule } from './tasks/tasks.module';
+import { TestimonialsModule } from './testimonials/testimonials.module';
 
 
 
@@ -44,7 +51,14 @@ import { AdminPanelDetailsComponent } from './admin-panel-details/admin-panel-de
     TodoListsModule,
     TrainersModule,
     UsersModule,
-    ExercisesModule
+    ExercisesModule,
+    ClientsModule,
+    MembersModule,
+    PaymentsModule,
+    SubTasksModule,
+    SubscriptionsModule,
+    TasksModule,
+    TestimonialsModule
   ]
 })
 export class AdminModule { }

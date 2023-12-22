@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-update-testimonials-modal',
@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./update-testimonials-modal.component.css']
 })
 export class UpdateTestimonialsModalComponent {
-
+  onUpdateTestimonialEmit = new EventEmitter()
 }

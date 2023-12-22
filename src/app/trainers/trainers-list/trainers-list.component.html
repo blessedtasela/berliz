@@ -1,0 +1,51 @@
+<section class="mx-auto mb-2 px-2 space-y-1 mt-40">
+    <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-20">
+        <section class="flex justify-between items-center cursor-pointer
+                 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+            *ngFor="let trainer of trainersResult; let i = index" [ngClass]="{ 'hidden' : i >= 12 && !showFullData }">
+            <div class="w-full bg-gray-100 rounded-md aspect-square m-5 md:min-h-[750px]">
+                <div class="flex flex-col justify-center items-center">
+                    <img class="rounded-md object-cover" [src]="'data:image;base64, ' + trainer.photo">
+                    <div class="p-2">
+                        <p
+                            class="text-center text-lg font-sans font-bold lg:text-xl text-red-600 text-transform: uppercase mt-3">
+                            {{ trainer.name }}
+                        </p>
+                        <p class="mt-1 text-sm text-center font-sans italic font-bold text-gray-600 p-1">
+                            <ng-container *ngFor="let category of trainer.categorySet; let ix = index">
+                                {{ category.name }} {{ ix < (trainer.categorySet.length - 1) ? "/" : "" }} </ng-container>
+                        </p>
+                        <p class="text-red-600 font-bold font-sans text-sm text-left p-2">
+                            + {{ trainer.experience }} years
+                        </p>
+                        <p class="text-gray-800 font-bold font-sans text-sm text-center p-2">
+                            {{ trainer.motto }}
+                        </p>
+                        <p class="text-gray-600 font-bold italic font-sans text-sm text-right p-2">
+                            {{ trainer.address }}
+                        </p>
+                    </div>
+                    <div class="flex mt-2 text-left">
+                        <i-feather name="thumbs-up" style="width: 20px;"
+                            class="font-bold text-red-600 mr-4"></i-feather>
+                        <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
+                            {{ trainer.likes }} people like this trainer.
+                        </p>
+                    </div>
+                    <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
+                rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
+                        <a [routerLink]="['/trainers', trainer.id, formatStringtoUrl(trainer.name)]">
+                            Know more
+                        </a>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="p-3" [ngClass]="{ 'hidden': trainersResult.length <= 12 }">
+        <button
+            class="p-1 px-2 bg-gray-100 text-red-600 font-sans font-bold rounded-md mx-auto flex justify-center mt-2">
+            {{ !showFullData ? 'See more' : 'See less' }}
+        </button>
+    </div>
+</section>

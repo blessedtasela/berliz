@@ -17,14 +17,14 @@
         <div *ngFor="let t of testimonials; let i = index" [class.hidden]="i !== testimonialIndex">
             <p class="text-gray-200 font-sans md:text-md text-sm my-8">
                 <span class="text-red-600 md:text-6xl font-bold ml-2">&#8220;</span>
-                <span class="ml-2">{{ t.testimony }}</span>
+                <span class="ml-2">{{ t.testimonial }}</span>
                 <span class="text-red-600 md:text-2xl font-bold ml-2">&#8221;</span>
             </p>
             <div class="grid grid-cols-2 items-center">
                 <img class="rounded-full w-48" src="../../../assets/trainers/t15.jpg">
                 <div class="grid grid-cols-1 m-8">
                     <div class="text-gray-200 font-sans font-bold text-md flex">
-                        {{ t.name }}
+                        {{ t.user.firstname }}
                     </div>
                     <div class="text-gray-200 font-sans text-sm flex">
                         {{t.date }}

@@ -1,14 +1,3 @@
-<div class="relative min-h-screen flex">
-    <app-sidebar-navigation (contactUsResults)="handleSearchResults($event)"
-     [searchComponent]="searchComponent"
-        [isSearch]="isSearch"></app-sidebar-navigation>
-    <div class="flex p-4 md:p-8 mt-4 full-width">
-        <div class="width bg-gray-200 p-2 rounded-lg mt-20">
-            <app-contact-us-header [contactUsData]="contactUsData" [totalContactUs]="totalContactUs"
-                [contactUsLength]="contactUsLength"></app-contact-us-header>
-            <app-contact-us-list [contactUsData]="contactUsData"
-                [totalContactUs]="totalContactUs"></app-contact-us-list>
-        </div>
-    </div>
-</div>
-<app-footer></app-footer>
+<app-contact-us-header [contactUsData]="contactUsData" [totalContactUs]="totalContactUs"
+    [contactUsLength]="contactUsLength"></app-contact-us-header>
+<app-contact-us-list [contactUsData]="contactUsData" [totalContactUs]="totalContactUs"></app-contact-us-list>

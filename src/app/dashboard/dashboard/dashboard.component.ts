@@ -11,39 +11,4 @@ import { UserStateService } from 'src/app/services/user-state.service';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent {
-  userData!: any;
-  currentRoute: any;
-
-  constructor(
-    private router: Router,
-    private userStateService: UserStateService,
-    private ngxService: NgxUiLoaderService,
-    private snackbarService: SnackBarService) {
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.currentRoute = event.url;
-      }
-    });
-  }
-
-  ngOnInit() {
-    this.userStateService.userData$.subscribe((cachedData) => {
-      if (cachedData === null) {
-        this.handleEmitEvent()
-      } else {
-        this.userData = cachedData;
-      }
-    })
-  }
-
-  handleEmitEvent() {
-    this.userStateService.getUser().subscribe((user) => {
-      this.ngxService.start()
-      console.log("isCached false")
-      this.userData = user;
-      this.userStateService.setUserSubject(this.userData);
-      this.ngxService.stop()
-    });
-  }
-
 }

@@ -1,10 +1,10 @@
-<section class="bg-gray-200 text-gray-950 font-sans container rounded-lg">
+<section class="mt-2 bg-gray-200 text-gray-950 font-sans container rounded-lg">
     <div class="overflow-x-scroll">
         <div class="flex">
             <div class="flex justify-between items-center cursor-pointer z-0 
                  transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
                 *ngFor="let item of data | keyvalue">
-                <div class="w-56 h-48 bg-gray-100 rounded-md m-5 w-96">
+                <div class="w-56 h-56 bg-gray-100 rounded-md p-2 m-4">
                     <div class="flex mt-2 justify-end">
                         <i-feather name="Bell" style="width: 20px;" class="font-bold text-red-600 mr-4"></i-feather>
                     </div>
@@ -19,8 +19,8 @@
                             </p>
                         </div>
                         <button class="text-sm bg-red-600 text-white py-1 px-2 hover:bg-red-700 hero-button font-sans
-                rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
-                            <a [routerLink]="['/', formatUrl(item.key)]">
+                                            rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
+                            <a [routerLink]="['/dashboard/' + formatUrl(item.key)]">
                                 view details
                             </a>
                         </button>

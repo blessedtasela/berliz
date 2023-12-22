@@ -21,6 +21,13 @@ import { SearchMuscleGroupComponent } from './search-muscle-group/search-muscle-
 import { SearchExerciseComponent } from './search-exercise/search-exercise.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { SideBarComponent } from './side-bar/side-bar.component';
+import { SearchPaymentComponent } from './search-payment/search-payment.component';
+import { SearchTaskComponent } from './search-task/search-task.component';
+import { SearchSubTaskComponent } from './search-sub-task/search-sub-task.component';
+import { SearchClientComponent } from './search-client/search-client.component';
+import { SearchMemberComponent } from './search-member/search-member.component';
+import { SearchTestimonialComponent } from './search-testimonial/search-testimonial.component';
+import { SearchSubscriptionComponent } from './search-subscription/search-subscription.component';
 
 
 @NgModule({
@@ -42,7 +49,14 @@ import { SideBarComponent } from './side-bar/side-bar.component';
     SearchMuscleGroupComponent,
     SearchExerciseComponent,
     TopBarComponent,
-    SideBarComponent
+    SideBarComponent,
+    SearchPaymentComponent,
+    SearchTaskComponent,
+    SearchSubTaskComponent,
+    SearchClientComponent,
+    SearchMemberComponent,
+    SearchTestimonialComponent,
+    SearchSubscriptionComponent
   ],
   imports: [
     CommonModule,

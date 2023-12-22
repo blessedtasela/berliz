@@ -1,0 +1,12 @@
+<app-dashboard-action></app-dashboard-action>
+<div class="grid grid-cols md:grid-cols-2 gap-4 mt-4">
+    <app-dashboard-app-analytics></app-dashboard-app-analytics>
+    <app-dashboard-login-chart></app-dashboard-login-chart>
+</div>
+<app-dashboard-notification class="mt-4"></app-dashboard-notification>
+<app-dashboard-top-users class="mt-4" *ngIf="userData?.role==='admin'"></app-dashboard-top-users>
+<app-dashboard-now-active class="mt-4" *ngIf="userData?.role==='admin'" hidden></app-dashboard-now-active>
+<div class="grid grid-cols md:grid-cols-2 gap-4 mt-4">
+    <app-dashboard-activity-chart></app-dashboard-activity-chart>
+    <app-dashboard-todo-list></app-dashboard-todo-list>
+</div>

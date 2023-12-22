@@ -21,7 +21,6 @@ import { RouteGuardService } from './services/route-guard.service';
 import { CategoriesComponent } from './categories/categories/categories.component';
 import { AboutUsComponent } from './about-us/about-us/about-us.component';
 import { ActivateAccountComponent } from './dashboard/user/activate-account/activate-account.component';
-import { LoginComponent } from './dashboard/user/login/login.component';
 import { ProgressPageComponent } from './dashboard/user/progress/progress-page/progress-page.component';
 import { ResetPasswordComponent } from './dashboard/user/reset-password/reset-password.component';
 import { RunNowPageComponent } from './dashboard/user/run-now/run-now-page/run-now-page.component';
@@ -33,7 +32,6 @@ import { CategoryComponent } from './admin/categories/category/category.componen
 import { AdminContactUsComponent } from './admin/contact-us/admin-contact-us/admin-contact-us.component';
 import { UsersComponent } from './admin/users/users/users.component';
 import { CenterComponent } from './dashboard/partner/center/center.component';
-import { TrainerComponent } from './dashboard/partner/trainer/trainer.component';
 import { TagsComponent } from './admin/tags/tags/tags.component';
 import { NewslettersComponent } from './admin/newsletters/newsletters/newsletters.component';
 import { PartnersComponent } from './admin/partners/partners/partners.component';
@@ -47,6 +45,10 @@ import { MyNotificationsPageComponent } from './my-notifications/my-notification
 import { MySubscriptionsPageComponent } from './my-subscriptions/my-subscriptions-page/my-subscriptions-page.component';
 import { MyFaqsPageComponent } from './my-faqs/my-faqs-page/my-faqs-page.component';
 import { MyTasksPageComponent } from './my-tasks/my-tasks-page/my-tasks-page.component';
+import { TrainersComponent } from './admin/trainers/trainers/trainers.component';
+import { LoginComponent } from './login/login/login.component';
+import { MainComponent } from './dashboard/main/main.component';
+import { CentersComponent } from './admin/centers/centers/centers.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -67,80 +69,6 @@ const routes: Routes = [
   { path: 'login/reset-password', component: ResetPasswordComponent },
   { path: 'login/activate-account', component: ActivateAccountComponent },
 
-  // admin components #protected
-  {
-    path: 'users', component: UsersComponent, canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin']
-    }
-  },
-  {
-    path: 'newsletters', component: NewslettersComponent, canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin']
-    }
-  },
-  {
-    path: 'all-categories', component: CategoryComponent, canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin']
-    }
-  },
-  {
-    path: 'partners', component: PartnersComponent, canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin']
-    }
-  },
-  {
-    path: 'all-contact-us', component: AdminContactUsComponent, canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin']
-    }
-  },
-  {
-    path: 'all-trainers', component: TrainerComponent, canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin']
-    }
-  },
-  {
-    path: 'all-centers', component: CenterComponent, canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin']
-    }
-  },
-  {
-    path: 'tags', component: TagsComponent, canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin']
-    }
-  },
-  {
-    path: 'todo-list', component: TodoListsComponent, canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin']
-    }
-  },
-  {
-    path: 'muscle-groups', component: MuscleGroupsComponent, canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin']
-    }
-  },
-  {
-    path: 'exercises-list', component: ExercisesComponent, canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin']
-    }
-  },
-  {
-    path: 'tasks', component: TasksComponent, canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin']
-    }
-  },
-
 
   // nested components
   {
@@ -154,99 +82,191 @@ const routes: Routes = [
     data: {
       expectedRole: ['admin', 'user', 'partner', 'trainer',
         'center', 'driver', 'store', 'client',]
-    }
+    },
+    children: [
+      // user components
+      {
+        path: '',
+        redirectTo: 'main',
+        pathMatch: 'full',
+      },
+      {
+        path: 'main', component: MainComponent, canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin', 'user', 'partner', 'trainer',
+            'center', 'driver', 'store', 'client',]
+        },
+      },
+      {
+        path: 'workspace', component: WorkspaceComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin', 'user', 'partner', 'trainer',
+            'center', 'driver', 'store', 'client',]
+        }
+      },
+      {
+        path: 'profile', component: ProfilePageComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin', 'user', 'partner', 'trainer',
+            'center', 'driver', 'store', 'client',]
+        }
+      },
+      {
+        path: 'partnership', component: PartnerPageComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin', 'user', 'partner', 'trainer',
+            'center', 'driver', 'store', 'client',]
+        }
+      },
+      {
+        path: 'settings', component: ProfileSettingsComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin', 'user', 'partner', 'trainer',
+            'center', 'driver', 'store', 'client',]
+        }
+      },
+      {
+        path: 'run-now', component: RunNowPageComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin', 'user', 'partner', 'trainer',
+            'center', 'driver', 'store', 'client',]
+        }
+      },
+      {
+        path: 'progress', component: ProgressPageComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin', 'user', 'partner', 'trainer',
+            'center', 'driver', 'store', 'client',]
+        }
+      },
+      {
+        path: 'my-notifications', component: MyNotificationsPageComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin', 'user', 'partner', 'trainer',
+            'center', 'driver', 'store', 'client',]
+        }
+      },
+      {
+        path: 'my-tasks', component: MyTasksPageComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin', 'user', 'partner', 'trainer',
+            'center', 'driver', 'store', 'client',]
+        }
+      },
+      {
+        path: 'my-subscriptions', component: MySubscriptionsPageComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin', 'user', 'partner', 'trainer',
+            'center', 'driver', 'store', 'client',]
+        }
+      },
+      {
+        path: 'my-faqs', component: MyFaqsPageComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin', 'user', 'partner', 'trainer',
+            'center', 'driver', 'store', 'client',]
+        }
+      },
+      {
+        path: 'my-todos', component: MyTodosComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin', 'user', 'partner', 'trainer',
+            'center', 'driver', 'store', 'client',]
+        }
+      },
+
+      // admin components #protected
+      {
+        path: 'users', component: UsersComponent, canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin']
+        }
+      },
+      {
+        path: 'newsletters', component: NewslettersComponent, canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin']
+        }
+      },
+      {
+        path: 'partners', component: PartnersComponent, canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin']
+        }
+      },
+      {
+        path: 'contact-us', component: AdminContactUsComponent, canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin']
+        }
+      },
+      {
+        path: 'trainers', component: TrainersComponent, canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin']
+        }
+      },
+      {
+        path: 'centers', component: CentersComponent, canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin']
+        }
+      },
+      {
+        path: 'tags', component: TagsComponent, canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin']
+        }
+      },
+      {
+        path: 'todo-lists', component: TodoListsComponent, canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin']
+        }
+      },
+      {
+        path: 'muscle-groups', component: MuscleGroupsComponent, canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin']
+        }
+      },
+      {
+        path: 'exercises', component: ExercisesComponent, canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin']
+        }
+      },
+      {
+        path: 'tasks', component: TasksComponent, canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin']
+        }
+      },
+      {
+        path: 'categories', component: CategoryComponent, canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin']
+        },
+      },
+
+
+    ],
+
   },
 
-  {
-    path: 'workspace', component: WorkspaceComponent,
-    canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin', 'user', 'partner', 'trainer',
-        'center', 'driver', 'store', 'client',]
-    }
-  },
 
-  // user components
-  {
-    path: 'profile', component: ProfilePageComponent,
-    canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin', 'user', 'partner', 'trainer',
-        'center', 'driver', 'store', 'client',]
-    }
-  },
-  {
-    path: 'partnership', component: PartnerPageComponent,
-    canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin', 'user', 'partner', 'trainer',
-        'center', 'driver', 'store', 'client',]
-    }
-  },
-  {
-    path: 'settings', component: ProfileSettingsComponent,
-    canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin', 'user', 'partner', 'trainer',
-        'center', 'driver', 'store', 'client',]
-    }
-  },
-  {
-    path: 'run-now', component: RunNowPageComponent,
-    canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin', 'user', 'partner', 'trainer',
-        'center', 'driver', 'store', 'client',]
-    }
-  },
-  {
-    path: 'progress', component: ProgressPageComponent,
-    canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin', 'user', 'partner', 'trainer',
-        'center', 'driver', 'store', 'client',]
-    }
-  },
-  {
-    path: 'my-notifications', component: MyNotificationsPageComponent,
-    canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin', 'user', 'partner', 'trainer',
-        'center', 'driver', 'store', 'client',]
-    }
-  },
-  {
-    path: 'my-tasks', component: MyTasksPageComponent,
-    canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin', 'user', 'partner', 'trainer',
-        'center', 'driver', 'store', 'client',]
-    }
-  },
-  {
-    path: 'my-subscriptions', component: MySubscriptionsPageComponent,
-    canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin', 'user', 'partner', 'trainer',
-        'center', 'driver', 'store', 'client',]
-    }
-  },
-  {
-    path: 'my-faqs', component: MyFaqsPageComponent,
-    canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin', 'user', 'partner', 'trainer',
-        'center', 'driver', 'store', 'client',]
-    }
-  },
-  {
-    path: 'my-todos', component: MyTodosComponent,
-    canActivate: [RouteGuardService],
-    data: {
-      expectedRole: ['admin', 'user', 'partner', 'trainer',
-        'center', 'driver', 'store', 'client',]
-    }
-  },
+
 
   //handles other exceptions
   { path: '**', component: PageNotFoundComponent },

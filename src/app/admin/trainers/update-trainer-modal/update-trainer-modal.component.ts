@@ -9,7 +9,6 @@ import { CategoryStateService } from 'src/app/services/category-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { UserStateService } from 'src/app/services/user-state.service';
-import { TrainerFormModalComponent } from 'src/app/shared/trainer-form-modal/trainer-form-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({

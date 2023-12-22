@@ -1,0 +1,8 @@
+<div class="flex flex-cols font-bold text-sm text-gray-950">
+  <p *ngFor="let breadcrumb of breadcrumbs; let last = last">
+    <a *ngIf="!last" [routerLink]="['/' + breadcrumb]">
+      {{ breadcrumb }}
+    </a>
+    <span *ngIf="last"> {{ breadcrumb}}</span>
+  </p>
+</div>>

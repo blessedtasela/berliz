@@ -6,6 +6,10 @@ import { PaymentsHeaderComponent } from './payments-header/payments-header.compo
 import { AddPaymentsModalComponent } from './add-payments-modal/add-payments-modal.component';
 import { UpdatePaymentsModalComponent } from './update-payments-modal/update-payments-modal.component';
 import { PaymentDetailsModalComponent } from './payment-details-modal/payment-details-modal.component';
+import { FooterModule } from 'src/app/footer/footer.module';
+import { NavbarModule } from 'src/app/navbar/navbar.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { IconsModule } from 'src/app/icons/icons.module';
 
 
 
@@ -19,7 +23,12 @@ import { PaymentDetailsModalComponent } from './payment-details-modal/payment-de
     PaymentDetailsModalComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    FooterModule,
+    NavbarModule,
+    ReactiveFormsModule,
+    FormsModule,
+    IconsModule
   ]
 })
 export class PaymentsModule { }

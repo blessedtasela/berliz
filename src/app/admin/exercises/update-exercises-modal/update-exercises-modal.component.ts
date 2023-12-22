@@ -64,12 +64,12 @@ export class UpdateExercisesModalComponent {
       this.muscleGroupStateService.activeMuscleGroupsData$.pipe(take(1)),
       this.categoryStateService.activeCategoriesData$.pipe(take(1))
     ]).subscribe(([muscleGroupsData, categoriesData]) => {
-      if (!muscleGroupsData) {
+      if (muscleGroupsData === null) {
         this.handleEmitEvent();
       } else {
         this.muscleGroups = muscleGroupsData;
       }
-      if (!categoriesData) {
+      if (categoriesData === null) {
         this.handleEmitEvent();
       } else {
         this.categories = categoriesData;

@@ -37,6 +37,10 @@ import { MyNotificationsModule } from './my-notifications/my-notifications.modul
 import { MyFaqsModule } from './my-faqs/my-faqs.module';
 import { RefreshTokenOverlayComponent } from './refresh-token-overlay/refresh-token-overlay.component';
 import { ResfreshTokenModalComponent } from './resfresh-token-modal/resfresh-token-modal.component';
+import { NavbarModule } from './navbar/navbar.module';
+import { FooterModule } from './footer/footer.module';
+import { LoginModule } from './login/login.module';
+import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb.component';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   text: "Loading....",
@@ -71,6 +75,7 @@ const dbConfig: DBConfig = {
     ExamplePdfViewerComponent,
     RefreshTokenOverlayComponent,
     ResfreshTokenModalComponent,
+    RouterBreadcrumbComponent,
   ],
   imports: [
     BrowserModule,
@@ -99,6 +104,9 @@ const dbConfig: DBConfig = {
     MySubscriptionsModule,
     MyNotificationsModule,
     MyFaqsModule,
+    NavbarModule,
+    FooterModule,
+    LoginModule,
     NgxIndexedDBModule.forRoot(dbConfig)
   ],
   exports: [],

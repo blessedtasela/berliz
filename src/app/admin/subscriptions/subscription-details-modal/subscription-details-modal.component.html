@@ -1,1 +1,35 @@
-<p>subscription-details-modal works!</p>
+<div class="relative">
+    <div class="text-red-600 absolute top-0 right-0 p-1">
+        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+    </div>
+    <section class="p-2 flex flex-col justify-center items-center">
+        <div class="text-center">
+            <p class="text-gray-950 font-sans font-bold text-xl uppercase mt-4">{{ subscriptionData.user.email }} [ID {{
+                subscriptionData.id }}</p>
+            <p class="text-red-600 font-sans font-bold text-sm italic">
+                created at {{ formatDate(subscriptionData.date) }}
+            </p>
+            <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
+                <div>
+                    image
+                </div>
+                <div class="flex flex-col m-4 gap-2">
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        {{ subscriptionData.months }}
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                       start date
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Liked by {{ subscriptionData.endDate }} users
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex mt-2">
+                        Category status: {{ subscriptionData.status ==='true' ? 'active' :'false' }}
+                    </p>
+                    <p class="text-red-600 font-sans font-bold text-md flex mt-2">
+                        Last Update: {{ formatDate(subscriptionData.lastUpdate) }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

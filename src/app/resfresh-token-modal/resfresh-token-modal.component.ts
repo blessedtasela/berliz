@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-resfresh-token-modal',
@@ -11,7 +12,8 @@ export class ResfreshTokenModalComponent {
   details: any;
 
   constructor(@Inject(MAT_DIALOG_DATA) public dialogData: any,
-    public dialogRef: MatDialogRef<ResfreshTokenModalComponent>) { }
+    public dialogRef: MatDialogRef<ResfreshTokenModalComponent>,
+    private userService: UserService) { }
     
   ngOnInit(): void {
     if (this.dialogData && this.dialogData.confirmation) {
@@ -19,7 +21,7 @@ export class ResfreshTokenModalComponent {
     }
   }
 
-  refreshToken() {
+  callRefreshToken() {
     this.onEmitStatusChange.emit();
   }
 

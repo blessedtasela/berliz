@@ -19,6 +19,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { DashboardTopUsersComponent } from './dashboard-top-users/dashboard-top-users.component';
 import { DashboardNowActiveComponent } from './dashboard-now-active/dashboard-now-active.component';
 import { DashboardActivityChartComponent } from './dashboard-activity-chart/dashboard-activity-chart.component';
+import { MainComponent } from './main/main.component';
+import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb.component';
 
 
 
@@ -34,7 +36,9 @@ import { DashboardActivityChartComponent } from './dashboard-activity-chart/dash
     DashboardComponent,
     DashboardTopUsersComponent,
     DashboardNowActiveComponent,
-    DashboardActivityChartComponent
+    DashboardActivityChartComponent,
+    MainComponent,
+    RouterBreadcrumbComponent
   ],
   imports: [
     CommonModule,

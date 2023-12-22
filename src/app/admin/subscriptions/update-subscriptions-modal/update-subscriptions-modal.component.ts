@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-update-subscriptions-modal',
@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./update-subscriptions-modal.component.css']
 })
 export class UpdateSubscriptionsModalComponent {
-
+  onUpdateSubscriptionEmit = new EventEmitter()
 }

@@ -14,6 +14,7 @@ export class NavigationBarComponent implements OnInit {
 
   constructor(private router: Router,
     private authService: AuthenticationService) {
+    this.currentRoute = this.router.url;
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.currentRoute = event.url;
@@ -63,8 +64,7 @@ export class NavigationBarComponent implements OnInit {
   }
 
   isActive(path: string): boolean {
-    const formattedPath = '/' + path;
-    return this.currentRoute.startsWith(formattedPath);
+    return this.currentRoute?.startsWith('/' + path);
   }
 
   getUser(): boolean {

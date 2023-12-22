@@ -1,1 +1,13 @@
-<p>testimonials works!</p>
+<div class="relative min-h-screen flex">
+    <app-sidebar-navigation (testimonialsResult)="handleSearchResults($event)" [searchComponent]="searchComponent"
+        [isSearch]="isSearch"></app-sidebar-navigation>
+    <div class="flex p-4 md:p-8 mt-4 full-width">
+        <div class="width bg-gray-200 p-2 rounded-lg mt-20">
+            <app-testimonials-header [testimonialsData]="testimonialsData" [totalTestimonials]="totalTestimonials"
+                [testimonialsLength]="testimonialsLength"></app-testimonials-header>
+            <app-testimonials-list [testimonialsData]="testimonialsData"
+                [totalTestimonials]="totalTestimonials"></app-testimonials-list>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

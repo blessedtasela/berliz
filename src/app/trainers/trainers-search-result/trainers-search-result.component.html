@@ -30,21 +30,21 @@
                         <i-feather name="thumbs-up" style="width: 20px;" (click)="updateTrainerLike(trainer)"
                             class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
                         <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                            you and {{ trainer.likes - 1 }} people like this center.
+                            you and {{ trainer.likes - 1 }} people like this trainer.
                         </p>
                     </div>
                     <div class="flex items-center mt-2" *ngIf="isLikedTrainer(trainer)  && trainer.likes === 1">
                         <i-feather name="thumbs-up" style="width: 20px;" (click)="updateTrainerLike(trainer)"
                             class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
                         <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                            you like this center.
+                            you like this trainer.
                         </p>
                     </div>
                     <div class="flex items-center mt-2" *ngIf="!isLikedTrainer(trainer)">
                         <i-feather name="thumbs-up" style="width: 20px;" (click)="updateTrainerLike(trainer)"
                             class="font-bold text-gray-600 mr-4 mt-1 cursor-pointer"></i-feather>
                         <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                            {{ trainer.likes }} people like this center.
+                            {{ trainer.likes }} people like this trainer.
                         </p>
                     </div>
                     <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans

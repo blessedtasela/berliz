@@ -1,1 +1,48 @@
-<p>sub-tasks-list works!</p>
+<div class="justify-center items-center p-5 overflow-x-scroll">
+    <div class="min-w-[300px]">
+        <table class="table-auto border-collapse border border-gray-400 bg-gray-300 text-gray-950 font-sans
+                        container">
+            <thead>
+                <tr class="cursor-pointer">
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">SN</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Name</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Date</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">subTask ID</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Task ID</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let subTask of subTasksData; let i = index" class="bg-gray-100 hover:bg-gray-200">
+                    <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ subTask.name }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(subTask.date) }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2 font-bold">{{ subTask.id }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ subTask.task.id }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">
+                        <div class="flex items-center p-2">
+                            <button
+                                class="text-sm rounded-md font-sans mx-auto ml-4
+                                    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
+                                (click)="openSubTaskDetails(subTask.id)">
+                                <i-feather name="eye" class="text-gray-800"></i-feather>
+                            </button>
+                            <button
+                                class="text-sm rounded-md font-sans mx-auto ml-4
+                                        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
+                                (click)="openUpdateSubTask(subTask.id)">
+                                <i-feather name="edit" class="text-red-600"></i-feather>
+                            </button>
+                            <button
+                                class="text-sm rounded-md font-sans mx-auto ml-4
+                                        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
+                                (click)="deleteSubTask(subTask.id)">
+                                <i-feather name="trash-2" class="text-red-600"></i-feather>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

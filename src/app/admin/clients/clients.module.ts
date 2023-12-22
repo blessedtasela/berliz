@@ -6,6 +6,11 @@ import { UpdateClientModalComponent } from './update-client-modal/update-client-
 import { ClientsListComponent } from './clients-list/clients-list.component';
 import { ClientsHeaderComponent } from './clients-header/clients-header.component';
 import { ClientsDetailsModalComponent } from './clients-details-modal/clients-details-modal.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FeatherModule } from 'angular-feather';
+import { IconsModule } from 'src/app/icons/icons.module';
+import { NavbarModule } from 'src/app/navbar/navbar.module';
+import { FooterModule } from 'src/app/footer/footer.module';
 
 
 
@@ -19,7 +24,13 @@ import { ClientsDetailsModalComponent } from './clients-details-modal/clients-de
     ClientsDetailsModalComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule,
+    FeatherModule,
+    IconsModule,
+    ReactiveFormsModule,
+    NavbarModule,
+    FooterModule
   ]
 })
 export class ClientsModule { }

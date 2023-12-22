@@ -1,1 +1,37 @@
-<p>top-bar works!</p>
+<!-- Top Navigation Bar -->
+<div class="bg-white flex justify-between fixed w-full p-1 nav-z rounded-b-md text-gray-950 shadow-lg">
+    <!-- Branding and Sidebar Toggle Button -->
+    <div class="ml-2 flex items-center cursor-pointer z-2">
+        <div class="flex items-center p-2 cursor-pointer">
+            <img src="../../../assets/landing/berliz.png" style="width: 170px;" class="hidden md:block">
+            <div class="hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
+                    border-2 border-gray-200 rounded-md p-1 mr-2">
+                <i-feather name="align-justify" class="min-w-[30px] gray-950 font-bold drop-shadow-xl"
+                    (click)="toggleSidebar()" (click)="stopPropagation($event)"></i-feather>
+            </div>
+        </div>
+    </div>
+    <!-- Search and Profile Icons -->
+    <app-search (categoriesResults)="handleCategorySearchResults($event)"
+        (exerciseResults)="handleExerciseSearchResults($event)"
+        (contactUsResults)="handleContactUsSearchResults($event)"
+        (muscleGroupResults)="handleMuscleGroupSearchResults($event)"
+        (trainersResults)="handleTrainerSearchResults($event)" (usersResults)="handleUserSearchResults($event)"
+        (partnersResults)="handlePartnerSearchResults($event)" (centerssResults)="handleCenterSearchResults($event)"
+        (newslettersResult)="handleNewsletterSearchResults($event)" (tagsResults)="handleTagSearchResults($event)"
+        (myTodoResults)="handleMyTodoSearchResults($event)" (todoListResults)="handleTodoListSearchResults($event)"
+        (clientssResults)="handleClientSearchResults($event)" (membersResult)="handleMemberSearchResults($event)"
+        (paymentsResults)="handlePaymentSearchResults($event)"
+        (subscriptionsResults)="handleSubscriptionSearchResults($event)"
+        (subTasksResults)="handlesubTaskSearchResults($event)" (tasksResults)="handleTaskSearchResults($event)"
+        (testimonialsResults)="handleTestimonialSearchResults($event)" [searchComponent]="searchComponent"></app-search>
+    <div class="flex justify-end mr-2 gap-2 md:gap-6 border-2 rounded-full border-gray-300">
+        <div class="flex items-center p-2 cursor-pointer hover:drop-shadow-2xl transition-all 
+                duration-300 ease-in-out transform hover:scale-105 cursor-pointer">
+            <div class="bg-gray-200 rounded-full p-1" [routerLink]="['/home']">
+                <feather-icon name="home" class="text-ld font-bold text-gray-600"></feather-icon>
+            </div>
+        </div>
+        <app-profile [search]="isSearch"></app-profile>
+    </div>
+</div>

@@ -1,12 +1,2 @@
-<div class="relative min-h-screen flex">
-    <app-sidebar-navigation (usersResults)="handleSearchResults($event)"
-        [searchComponent]="searchComponent"></app-sidebar-navigation>
-    <div class="flex p-10 full-width">
-        <div class="width bg-gray-200 p-4 rounded-lg mt-20">
-            <app-user-header [usersData]="usersData" [totalUsers]="totalUsers"
-                [usersLength]="usersLength"></app-user-header>
-            <app-user-list [usersData]="usersData"></app-user-list>
-        </div>
-    </div>
-</div>
-<app-footer></app-footer>
+<app-user-header [usersData]="usersData" [totalUsers]="totalUsers" [usersLength]="usersLength"></app-user-header>
+<app-user-list [usersData]="usersData"></app-user-list>

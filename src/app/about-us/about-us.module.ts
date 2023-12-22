@@ -27,8 +27,6 @@ import { FactsComponent } from './facts/facts.component';
   ],
   imports: [
     CommonModule,
-    NavbarModule,
-    FooterModule,
     RouterModule,
     IconsModule
   ]

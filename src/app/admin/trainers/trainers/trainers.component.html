@@ -1,1 +1,12 @@
-<p>trainers works!</p>
+<div class="relative min-h-screen flex">
+    <app-sidebar-navigation (trainersResults)="handleSearchResults($event)"
+        [searchComponent]="searchComponent"  [isSearch]="isSearch"></app-sidebar-navigation>
+    <div class="flex p-10 full-width">
+        <div class="width bg-gray-200 p-4 rounded-lg mt-20">
+            <app-trainer-header [trainersData]="trainersData" [totalTrainers]="totalTrainers"
+                [trainersLength]="trainersLength"></app-trainer-header>
+            <app-trainer-list [trainersData]="trainersData" [totalTrainers]="totalTrainers"></app-trainer-list>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

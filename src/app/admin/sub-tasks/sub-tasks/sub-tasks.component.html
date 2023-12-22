@@ -1,1 +1,13 @@
-<p>sub-tasks works!</p>
+<div class="relative min-h-screen flex">
+    <app-sidebar-navigation (subTasksResult)="handleSearchResults($event)" [searchComponent]="searchComponent"
+        [isSearch]="isSearch"></app-sidebar-navigation>
+    <div class="flex p-4 md:p-8 mt-4 full-width">
+        <div class="width bg-gray-200 p-2 rounded-lg mt-20">
+            <app-sub-tasks-header [subTasksData]="subTasksData" [totalSubTasks]="totalSubTasks"
+                [subTasksLength]="subTasksLength"></app-sub-tasks-header>
+            <app-sub-tasks-list [subTasksData]="subTasksData"
+                [totalSubTasks]="totalSubTasks"></app-sub-tasks-list>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

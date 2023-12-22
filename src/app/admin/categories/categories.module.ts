@@ -28,7 +28,6 @@ import { CategoryDetailsModalComponent } from './category-details-modal/category
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
-    FooterModule,
     NavbarModule
   ]
 })

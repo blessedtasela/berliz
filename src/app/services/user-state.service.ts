@@ -10,11 +10,12 @@ import { Users } from '../models/users.interface';
 })
 export class UserStateService {
   responseMessage: any;
-
   private userSubject = new BehaviorSubject<any>(null);
   public userData$: Observable<Users> = this.userSubject.asObservable();
   private allUsersSubject = new BehaviorSubject<any>(null);
   public allUsersData$: Observable<Users[]> = this.allUsersSubject.asObservable();
+  private activeUsersSubject = new BehaviorSubject<any>(null);
+  public activeUserData$: Observable<Users[]> = this.activeUsersSubject.asObservable();
 
   constructor(private userService: UserService,
     private snackbarService: SnackBarService,) {
@@ -25,6 +26,28 @@ export class UserStateService {
 
   getAllUsers(): Observable<Users[]> {
     return this.userService.getAllUsers().pipe(
+      tap((response: any) => {
+        return response.sort((a: Users, b: Users) => {
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          return dateB - dateA;
+        })
+      }),
+      catchError((error) => {
+        this.snackbarService.openSnackBar(error, 'error');
+        if (error.error?.message) {
+          this.responseMessage = error.error?.message;
+        } else {
+          this.responseMessage = genericError;
+        }
+        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        return of([]);
+      })
+    );
+  }
+
+  getActiveUsers(): Observable<Users[]> {
+    return this.userService.getActiveUsers().pipe(
       tap((response: any) => {
         return response.sort((a: Users, b: Users) => {
           const dateA = new Date(a.date).getTime();
@@ -61,13 +84,17 @@ export class UserStateService {
     );
   }
 
-setUserSubject(data: Users) {
-  this.userSubject.next(data);
-}
+  setUserSubject(data: Users) {
+    this.userSubject.next(data);
+  }
 
-setAllUsersSubject(data: Users[]) {
-  this.allUsersSubject.next(data);
-}
+  setAllUsersSubject(data: Users[]) {
+    this.allUsersSubject.next(data);
+  }
+
+  setActiveUsersSubject(data: Users[]) {
+    this.activeUsersSubject.next(data);
+  }
 
 }
 export const UserDataInjectable: Array<any> = [

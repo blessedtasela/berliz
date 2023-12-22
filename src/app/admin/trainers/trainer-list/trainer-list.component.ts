@@ -92,7 +92,7 @@ export class TrainerListComponent {
     const trainer = this.trainersData.find(partner => partner.id === id);
     if (trainer) {
       const dialogConfig = new MatDialogConfig();
-      dialogConfig.disableClose = true;
+      dialogConfig.disableClose = false;
       dialogConfig.autoFocus = true;
       dialogConfig.width = '800px',
         dialogConfig.height = '600px',

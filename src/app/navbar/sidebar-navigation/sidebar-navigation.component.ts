@@ -18,6 +18,12 @@ import { Tags } from 'src/app/models/tags.interface';
 import { TodoList } from 'src/app/models/todoList.interface';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
 import { Exercises } from 'src/app/models/exercise.interface';
+import { Testimonials } from 'src/app/models/testimonials.model';
+import { SubTasks, Tasks } from 'src/app/models/tasks.interface';
+import { Subscriptions } from 'src/app/models/subscriptions.interface';
+import { Payments } from 'src/app/models/payment.interface';
+import { Members } from 'src/app/models/members.interface';
+import { Clients } from 'src/app/models/clients.interface';
 
 @Component({
   selector: 'app-sidebar-navigation',
@@ -44,6 +50,13 @@ export class SidebarNavigationComponent implements OnInit {
   @Output() todoListResults: EventEmitter<TodoList[]> = new EventEmitter<TodoList[]>();
   @Output() muscleGroupResults: EventEmitter<MuscleGroups[]> = new EventEmitter<MuscleGroups[]>();
   @Output() exerciseResults: EventEmitter<Exercises[]> = new EventEmitter<Exercises[]>();
+  @Output() clientsResult: EventEmitter<Clients[]> = new EventEmitter<Clients[]>()
+  @Output() membersResult: EventEmitter<Members[]> = new EventEmitter<Members[]>()
+  @Output() paymentsResult: EventEmitter<Payments[]> = new EventEmitter<Payments[]>()
+  @Output() subscriptionsResults: EventEmitter<Subscriptions[]> = new EventEmitter<Subscriptions[]>()
+  @Output() subTasksResult: EventEmitter<SubTasks[]> = new EventEmitter<SubTasks[]>()
+  @Output() tasksResults: EventEmitter<Tasks[]> = new EventEmitter<Tasks[]>();
+  @Output() testimonialsResult: EventEmitter<Testimonials[]> = new EventEmitter<Testimonials[]>();
   @Input() searchComponent: string = ''
 
   constructor(
@@ -72,7 +85,7 @@ export class SidebarNavigationComponent implements OnInit {
   }
 
   isActive(path: string): boolean {
-    return this.currentRoute.startsWith('/' + path);
+    return this.currentRoute?.startsWith('/' + path);
   }
 
   @HostListener('window:resize', ['$event'])
@@ -157,26 +170,32 @@ export class SidebarNavigationComponent implements OnInit {
     this.exerciseResults.emit(results);
   }
 
-  openUpdateProfilePhoto() {
-    const dialogRef = this.dialog.open(UpdateProfilePhotoModalComponent, {
-      width: '400px',
-      data: {
-        image: this.profilePhoto
-      }
-    });
-    const childComponentInstance = dialogRef.componentInstance as UpdateProfilePhotoModalComponent;
-    childComponentInstance.onUpdateProfilePhoto.subscribe(() => {
-      this.ngxService.start()
-      this.handleEmitEvent();
-      this.ngxService.stop()
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log(`Dialog result: ${result}`);
-      } else {
-        console.log('Dialog closed without updatig profile photo');
-      }
-    });
+  handlePaymentSearchResults(results: Payments[]) {
+    this.paymentsResult.emit(results)
+  }
+
+  handleClientSearchResults(results: Clients[]) {
+    this.clientsResult.emit(results);
+  }
+
+  handleMemberSearchResults(results: Members[]) {
+    this.membersResult.emit(results);
+  }
+
+  handleSubscriptionSearchResults(results: Subscriptions[]) {
+    this.subscriptionsResults.emit(results)
+  }
+
+  handlesubTaskSearchResults(results: SubTasks[]) {
+    this.subTasksResult.emit(results);
+  }
+
+  handleTaskSearchResults(results: Tasks[]) {
+    this.tasksResults.emit(results);
+  }
+
+  handleTestimonialSearchResults(results: Testimonials[]) {
+    this.testimonialsResult.emit(results);
   }
 
   logout() {

@@ -6,6 +6,10 @@ import { MembersHeaderComponent } from './members-header/members-header.componen
 import { AddMembersModalComponent } from './add-members-modal/add-members-modal.component';
 import { UpdateMembersModalComponent } from './update-members-modal/update-members-modal.component';
 import { MemberDetailsModalComponent } from './member-details-modal/member-details-modal.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { IconsModule } from 'src/app/icons/icons.module';
+import { FooterModule } from 'src/app/footer/footer.module';
+import { NavbarModule } from 'src/app/navbar/navbar.module';
 
 
 
@@ -19,7 +23,12 @@ import { MemberDetailsModalComponent } from './member-details-modal/member-detai
     MemberDetailsModalComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    ReactiveFormsModule,
+    IconsModule,
+    FooterModule,
+    NavbarModule,
+    FormsModule
   ]
 })
 export class MembersModule { }

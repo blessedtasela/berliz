@@ -6,6 +6,10 @@ import { TestimonialsHeaderComponent } from './testimonials-header/testimonials-
 import { TestimonialDetailsModalComponent } from './testimonial-details-modal/testimonial-details-modal.component';
 import { AddTestimonialsModalComponent } from './add-testimonials-modal/add-testimonials-modal.component';
 import { UpdateTestimonialsModalComponent } from './update-testimonials-modal/update-testimonials-modal.component';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FooterModule } from 'src/app/footer/footer.module';
+import { IconsModule } from 'src/app/icons/icons.module';
+import { NavbarModule } from 'src/app/navbar/navbar.module';
 
 
 
@@ -19,7 +23,12 @@ import { UpdateTestimonialsModalComponent } from './update-testimonials-modal/up
     UpdateTestimonialsModalComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    FooterModule,
+    NavbarModule,
+    ReactiveFormsModule,
+    FormsModule,
+    IconsModule
   ]
 })
 export class TestimonialsModule { }

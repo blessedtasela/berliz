@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-update-sub-tasks-modal',
@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./update-sub-tasks-modal.component.css']
 })
 export class UpdateSubTasksModalComponent {
-
+onUpdateSubTaskEmit = new EventEmitter()
 }

@@ -1,1 +1,53 @@
-<p>clients-details-modal works!</p>
+<div class="relative">
+    <div class="text-red-600 absolute top-0 right-0 p-1">
+        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+    </div>
+    <section class="p-2 flex flex-col justify-center items-center">
+        <div class="text-center">
+            <p class="text-gray-950 font-sans font-bold text-xl uppercase mt-4">{{ clientData.user.email }} [ID {{
+                clientData.id }}</p>
+            <p class="text-red-600 font-sans font-bold text-sm italic">
+                created at {{ formatDate(clientData.date) }}
+            </p>
+            <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
+                <div>
+                    <img class="w-16" class="bg-gray-200 rounded-md p-2"
+                        [src]="'../../../assets/icons/' + clientData.user.profilePhoto +'.png'">
+                </div>
+                <div class="flex flex-col m-4 gap-2">
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        {{ clientData.motivation }}
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        <ng-container *ngFor="let category of clientData.categories; let i = index">
+                            {{ category.name }} {{ i < (clientData.categories.length - 1) ? "/" : "" }} </ng-container>
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Liked by {{ clientData.bodyFat }} users
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Liked by {{ clientData.calorieIntake }} users
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Liked by {{ clientData.dietaryPreferences }} users
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Liked by {{ clientData.dietaryRestrictions }} users
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Liked by {{ clientData.height }} users
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Liked by {{ clientData.weight }} users
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex mt-2">
+                        Category status: {{ clientData.status ==='true' ? 'active' :'false' }}
+                    </p>
+                    <p class="text-red-600 font-sans font-bold text-md flex mt-2">
+                        Last Update: {{ formatDate(clientData.lastUpdate) }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
