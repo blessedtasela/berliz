@@ -1,4 +1,4 @@
-<div class="flex flex-cols font-bold text-sm text-gray-950 italic">
+<div class="ml-4 flex flex-cols font-bold text-sm text-white italic">
     <ng-container *ngFor="let breadcrumb of breadcrumbs; let last = last">
       <ng-container *ngIf="!last">
         <a [routerLink]="breadcrumb.url">{{ breadcrumb.label +'/' }}</a>

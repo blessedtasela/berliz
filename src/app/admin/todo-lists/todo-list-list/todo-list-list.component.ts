@@ -34,8 +34,6 @@ export class TodoListListComponent {
   }
 
   ngOnInit(): void {
-    this.watchDeleteTodo()
-    this.watchGetTodoFromMap()
     this.watchUpdateTodoList()
     this.watchUpdateTodoStatus()
   }
@@ -168,14 +166,6 @@ export class TodoListListComponent {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
-  watchGetTodoFromMap() {
-    this.rxStompService.watch('/topic/getTodoFromMap').subscribe((message) => {
-      const receivedTodo: TodoList = JSON.parse(message.body);
-      this.todoListData.push(receivedTodo);
-      this.totalTodoList = this.todoListData.length;
-    });
-  }
-
   watchUpdateTodoList() {
     this.rxStompService.watch('/topic/updateTodoList').subscribe((message) => {
       const receivedTodo: TodoList = JSON.parse(message.body);
@@ -189,14 +179,6 @@ export class TodoListListComponent {
       const receivedTodo: TodoList = JSON.parse(message.body);
       const todoId = this.todoListData.findIndex(todoList => todoList.id === receivedTodo.id)
       this.todoListData[todoId] = receivedTodo
-    });
-  }
-
-  watchDeleteTodo() {
-    this.rxStompService.watch('/topic/deleteTodo').subscribe((message) => {
-      const receivedNewsletter: TodoList = JSON.parse(message.body);
-      this.todoListData = this.todoListData.filter(todo => todo.id !== receivedNewsletter.id);
-      this.totalTodoList = this.todoListData.length;
     });
   }
 

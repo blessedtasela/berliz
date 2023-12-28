@@ -36,8 +36,6 @@ export class CenterListComponent {
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-    this.watchDeleteCenter()
-    this.watchGetCenterFromMap()
     this.watchLikeCenter()
     this.watchUpdateCenter()
     this.watchUpdateCenterStatus()
@@ -136,18 +134,13 @@ export class CenterListComponent {
 
       const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
       const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((res: any) => {
-        // Start ngxService when making the API request
         this.ngxService.start();
-
         this.centerService.updateStatus(id).subscribe(
           (response: any) => {
-            // API response received, stop ngxService
             this.ngxService.stop();
-
             this.responseMessage = response.message;
             this.snackbarService.openSnackBar(this.responseMessage, '');
             this.handleEmitEvent();
-
             dialogRef.close('Center status updated successfully');
             dialogRef.afterClosed().subscribe((result) => {
               if (result) {
@@ -168,8 +161,7 @@ export class CenterListComponent {
               this.responseMessage = genericError;
             }
             this.snackbarService.openSnackBar(this.responseMessage, 'error');
-          }
-        );
+          });
       });
     } else {
       console.log('Center id not found');
@@ -202,17 +194,17 @@ export class CenterListComponent {
             } else {
               console.log('Dialog closed without deleting center');
             }
-          })
-        })
-    }, (error) => {
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(error, 'error');
-      if (error.error?.message) {
-        this.responseMessage = error.error?.message;
-      } else {
-        this.responseMessage = genericError;
-      }
-      this.snackbarService.openSnackBar(this.responseMessage, 'error');
+          });
+        }, (error) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(error, 'error');
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        });
     });
   }
 
@@ -257,13 +249,6 @@ export class CenterListComponent {
     window.open(url, '_blank');
   }
 
-  watchGetCenterFromMap() {
-    this.rxStompService.watch('/topic/getCenterFromMap').subscribe((message) => {
-      const receivedCategories: Centers = JSON.parse(message.body);
-      this.centerData.push(receivedCategories);
-    });
-  }
-
   watchLikeCenter() {
     this.rxStompService.watch('/topic/likeCenter').subscribe((message) => {
       const receivedCenter: Centers = JSON.parse(message.body);
@@ -296,11 +281,5 @@ export class CenterListComponent {
     });
   }
 
-  watchDeleteCenter() {
-    this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
-      const receivedCenter: Centers = JSON.parse(message.body);
-      this.centerData = this.centerData.filter(center => center.id !== receivedCenter.id);
-    });
-  }
 }
 

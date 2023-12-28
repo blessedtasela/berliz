@@ -21,6 +21,7 @@ import { DashboardNowActiveComponent } from './dashboard-now-active/dashboard-no
 import { DashboardActivityChartComponent } from './dashboard-activity-chart/dashboard-activity-chart.component';
 import { MainComponent } from './main/main.component';
 import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb.component';
+import { WorkspaceRouteComponent } from './workspace-route/workspace-route.component';
 
 
 
@@ -38,7 +39,8 @@ import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb
     DashboardNowActiveComponent,
     DashboardActivityChartComponent,
     MainComponent,
-    RouterBreadcrumbComponent
+    RouterBreadcrumbComponent,
+    WorkspaceRouteComponent
   ],
   imports: [
     CommonModule,

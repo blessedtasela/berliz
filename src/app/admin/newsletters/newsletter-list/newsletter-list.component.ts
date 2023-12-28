@@ -36,8 +36,6 @@ export class NewsletterListComponent {
   }
 
   ngOnInit(): void {
-    this.watchDeleteNewsletter()
-    this.watchGetNewsletterFromMap()
     this.watchUpdateNewsletter()
     this.watchUpdateNewsletterStatus()
   }
@@ -207,13 +205,6 @@ export class NewsletterListComponent {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
-  watchGetNewsletterFromMap() {
-    this.rxStompService.watch('/topic/getNewsletterFromMap').subscribe((message) => {
-      const receivedCategories: Newsletter = JSON.parse(message.body);
-      this.newsletterData.push(receivedCategories);
-    });
-  }
-
   watchUpdateNewsletter() {
     this.rxStompService.watch('/topic/updateNewsletter').subscribe((message) => {
       const receivedNewsletter: Newsletter = JSON.parse(message.body);
@@ -227,13 +218,6 @@ export class NewsletterListComponent {
       const receivedNewsletter: Newsletter = JSON.parse(message.body);
       const newsletterId = this.newsletterData.findIndex(newsletter => newsletter.id === receivedNewsletter.id)
       this.newsletterData[newsletterId] = receivedNewsletter
-    });
-  }
-
-  watchDeleteNewsletter() {
-    this.rxStompService.watch('/topic/deleteNewsletter').subscribe((message) => {
-      const receivedNewsletter: Newsletter = JSON.parse(message.body);
-      this.newsletterData = this.newsletterData.filter(newsletter => newsletter.id !== receivedNewsletter.id);
     });
   }
 

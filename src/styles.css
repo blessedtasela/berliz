@@ -30,6 +30,14 @@ body {
 z-index: 20;
 }
 
+.nav-z{
+  z-index: 50;
+  }
+
+  .side-z{
+    z-index: 40;
+  }
+
 .full-width{
   width: 100%;
 }

@@ -36,8 +36,6 @@ export class ExercisesListComponent {
   }
 
   ngOnInit() {
-    this.watchDeleteExercise()
-    this.watchGetExerciseFromMap()
     this.watchUpdateExercise()
     this.watchUpdateStatus()
   }
@@ -131,17 +129,17 @@ export class ExercisesListComponent {
             } else {
               console.log('Dialog closed without updating exercise status');
             }
-          })
-        })
-    }, (error) => {
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(error, 'error');
-      if (error.error?.message) {
-        this.responseMessage = error.error?.message;
-      } else {
-        this.responseMessage = genericError;
-      }
-      this.snackbarService.openSnackBar(this.responseMessage, 'error');
+          });
+        }, (error) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(error, 'error');
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        });
     });
   }
 
@@ -170,17 +168,17 @@ export class ExercisesListComponent {
             } else {
               console.log('Dialog closed without deleting exercise');
             }
-          })
-        })
-    }, (error) => {
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(error, 'error');
-      if (error.error?.message) {
-        this.responseMessage = error.error?.message;
-      } else {
-        this.responseMessage = genericError;
-      }
-      this.snackbarService.openSnackBar(this.responseMessage, 'error');
+          });
+        }, (error) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(error, 'error');
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        });
     });
   }
 
@@ -230,25 +228,11 @@ export class ExercisesListComponent {
     });
   }
 
-  watchGetExerciseFromMap() {
-    this.rxStompService.watch('/topic/getExerciseFromMap').subscribe((message) => {
-      const receivedExercises: Exercises = JSON.parse(message.body);
-      this.exercisesData.push(receivedExercises);
-    });
-  }
-
   watchUpdateStatus() {
     this.rxStompService.watch('/topic/updateExerciseStatus').subscribe((message) => {
       const receivedExercises: Exercises = JSON.parse(message.body);
       const exerciseId = this.exercisesData.findIndex(exercise => exercise.id === receivedExercises.id)
       this.exercisesData[exerciseId] = receivedExercises
-    });
-  }
-
-  watchDeleteExercise() {
-    this.rxStompService.watch('/topic/deleteExercise').subscribe((message) => {
-      const receivedExercises: Exercises = JSON.parse(message.body);
-      this.exercisesData = this.exercisesData.filter(exercise => exercise.id !== receivedExercises.id);
     });
   }
 

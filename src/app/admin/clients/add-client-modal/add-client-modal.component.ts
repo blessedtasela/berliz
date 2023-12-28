@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl, FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { forkJoin, take } from 'rxjs';
@@ -45,7 +45,7 @@ export class AddClientModalComponent {
       'medicalConditions': ['', [Validators.required, Validators.minLength(2)]],
       'dietaryPreferences': ['', [Validators.required, Validators.minLength(2)]],
       'dietaryRestrictions': ['', [Validators.required, Validators.minLength(2)]],
-      'calorieIntake': ['', [Validators.required, Validators.minLength(2)]],
+      'caloriesIntake': ['', [Validators.required, Validators.minLength(2)]],
       'categoryIds': this.formBuilder.array([], this.validateCheckbox()),
       'mode': ['', [Validators.required, Validators.minLength(2)]],
       'motivation': ['', [Validators.required, Validators.minLength(15)]],
@@ -98,7 +98,7 @@ export class AddClientModalComponent {
   onCheckboxChanged(event: any) {
     const categories = this.addClientForm.get('categoryIds') as FormArray;
     if (event.target.checked) {
-      categories.push(this.formBuilder.group(event.target.value));
+      categories.push(new FormControl(event.target.value));
     } else {
       const index = categories.controls.findIndex((control) => control.value === event.target.value);
       categories.removeAt(index);
@@ -120,7 +120,7 @@ export class AddClientModalComponent {
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
     } else {
-      const selectedCategoryIds = this.addClientForm.value.categoryIds;
+      const selectedCategoryIds = this.addClientForm.value.categoryIds.map((category: any) => category.categoryIds);
       const categoryIdsString = selectedCategoryIds.join(',');
       const formData = {
         ...this.addClientForm.value,

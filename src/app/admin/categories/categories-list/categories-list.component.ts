@@ -34,11 +34,9 @@ export class CategoriesListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.watchGetCategoryFromMap()
     this.watchLikeCategory()
     this.watchUpdateCategory()
     this.watchUpdateStatus()
-    this.watchDeleteCategory()
   }
 
   handleEmitEvent() {
@@ -131,16 +129,16 @@ export class CategoriesListComponent implements OnInit {
               console.log('Dialog closed without updating category status');
             }
           })
-        })
-    }, (error) => {
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(error, 'error');
-      if (error.error?.message) {
-        this.responseMessage = error.error?.message;
-      } else {
-        this.responseMessage = genericError;
-      }
-      this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        }, (error) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(error, 'error');
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        });
     });
   }
 
@@ -169,17 +167,17 @@ export class CategoriesListComponent implements OnInit {
             } else {
               console.log('Dialog closed without deleting category');
             }
-          })
-        })
-    }, (error) => {
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(error, 'error');
-      if (error.error?.message) {
-        this.responseMessage = error.error?.message;
-      } else {
-        this.responseMessage = genericError;
-      }
-      this.snackbarService.openSnackBar(this.responseMessage, 'error');
+          });
+        }, (error) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(error, 'error');
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        });
     });
   }
 
@@ -204,25 +202,11 @@ export class CategoriesListComponent implements OnInit {
     });
   }
 
-  watchGetCategoryFromMap() {
-    this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
-      const receivedCategories: Categories = JSON.parse(message.body);
-      this.categoriesData.push(receivedCategories);
-    });
-  }
-
   watchUpdateStatus() {
     this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
       const receivedCategories: Categories = JSON.parse(message.body);
       const categoryId = this.categoriesData.findIndex(category => category.id === receivedCategories.id)
       this.categoriesData[categoryId] = receivedCategories
-    });
-  }
-
-  watchDeleteCategory() {
-    this.rxStompService.watch('/topic/deleteCategory').subscribe((message) => {
-      const receivedCategories: Categories = JSON.parse(message.body);
-      this.categoriesData = this.categoriesData.filter(category => category.id !== receivedCategories.id);
     });
   }
 

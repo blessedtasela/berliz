@@ -35,8 +35,6 @@ export class UserListComponent {
   ngOnInit(): void {
     this.watchActivateAccount()
     this.watchDeactivateAccount()
-    this.watchDeleteUser()
-    this.watchGetUserFromMap()
     this.watchUpdateProfilePhoto()
     this.watchUpdateUser()
     this.watchUpdateUserBio()
@@ -240,14 +238,6 @@ export class UserListComponent {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
-
-  watchGetUserFromMap() {
-    this.rxStompService.watch('/topic/getUserFromMap').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      this.usersData.push(receivedUsers);
-    });
-  }
-
   watchActivateAccount() {
     this.rxStompService.watch('/topic/activateAccount').subscribe((message) => {
       const receivedUsers: Users = JSON.parse(message.body);
@@ -277,13 +267,6 @@ export class UserListComponent {
       const receivedUsers: Users = JSON.parse(message.body);
       const userId = this.usersData.findIndex(Users => Users.id === receivedUsers.id)
       this.usersData[userId] = receivedUsers
-    });
-  }
-
-  watchDeleteUser() {
-    this.rxStompService.watch('/topic/deleteUser').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      this.usersData = this.usersData.filter(Users => Users.id !== receivedUsers.id);
     });
   }
 

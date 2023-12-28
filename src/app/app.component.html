@@ -2,18 +2,20 @@
 <div *ngIf="isTopbar()">
     <app-navigation-bar></app-navigation-bar>
     <router-outlet></router-outlet>
+    <app-footer></app-footer>
 </div>
 <div *ngIf="isLogin()">
     <router-outlet></router-outlet>
 </div>
 <div *ngIf="!isTopbar() && !isLogin()">
     <div class="relative min-h-screen flex">
-        <app-sidebar-navigation></app-sidebar-navigation>
+        <app-top-bar></app-top-bar>
+        <app-side-bar class="mt-2"></app-side-bar>
         <div class="flex p-4 full-width">
-            <div class="width rounded-lg mt-20">
+            <div class="width rounded-lg mt-24">
                 <router-outlet></router-outlet>
+                <app-footer></app-footer>
             </div>
         </div>
     </div>
 </div>
-<app-footer></app-footer>

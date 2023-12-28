@@ -11,6 +11,7 @@ import { genericError } from 'src/validators/form-validators.module';
 import { Clients } from 'src/app/models/clients.interface';
 import { UpdateClientModalComponent } from '../update-client-modal/update-client-modal.component';
 import { ClientsDetailsModalComponent } from '../clients-details-modal/clients-details-modal.component';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-clients-list',
@@ -33,8 +34,6 @@ export class ClientsListComponent {
   }
 
   ngOnInit() {
-    this.watchDeleteClient()
-    this.watchGetClientFromMap()
     this.watchUpdateClient()
     this.watchUpdateStatus()
   }
@@ -48,7 +47,6 @@ export class ClientsListComponent {
       this.ngxService.stop()
     });
   }
-
 
   openUpdateClient(id: number) {
     try {
@@ -117,10 +115,10 @@ export class ClientsListComponent {
       this.ngxService.start();
       this.clientService.updateStatus(id)
         .subscribe((response: any) => {
-          this.ngxService.stop();
           this.responseMessage = response.message;
           this.snackbarService.openSnackBar(this.responseMessage, '');
           this.handleEmitEvent()
+          this.ngxService.stop();
           dialogRef.close('client status updated successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
@@ -129,16 +127,16 @@ export class ClientsListComponent {
               console.log('Dialog closed without updating client status');
             }
           })
-        })
-    }, (error) => {
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(error, 'error');
-      if (error.error?.message) {
-        this.responseMessage = error.error?.message;
-      } else {
-        this.responseMessage = genericError;
-      }
-      this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        }, (error: any) => {
+          this.ngxService.stop();
+          console.error("error");
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, "error");
+        });
     });
   }
 
@@ -168,17 +166,17 @@ export class ClientsListComponent {
               console.log('Dialog closed without deleting client');
             }
           })
-        })
-    }, (error) => {
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(error, 'error');
-      if (error.error?.message) {
-        this.responseMessage = error.error?.message;
-      } else {
-        this.responseMessage = genericError;
-      }
-      this.snackbarService.openSnackBar(this.responseMessage, 'error');
-    });
+        }, (error) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(error, 'error');
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        });
+    })
   }
 
   formatDate(dateString: any): any {
@@ -187,32 +185,18 @@ export class ClientsListComponent {
   }
 
   watchUpdateClient() {
-    this.rxStompService.watch('/topic/updateClient').subscribe((message) => {
+    this.rxStompService.watch('/topic/updateClient').pipe(take(1)).subscribe((message) => {
       const receivedClients: Clients = JSON.parse(message.body);
       const ClientId = this.clientsData.findIndex(client => client.id === receivedClients.id)
       this.clientsData[ClientId] = receivedClients
-    });
-  }
-
-  watchGetClientFromMap() {
-    this.rxStompService.watch('/topic/getClientFromMap').subscribe((message) => {
-      const receivedClients: Clients = JSON.parse(message.body);
-      this.clientsData.push(receivedClients);
     });
   }
 
   watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateClientStatus').subscribe((message) => {
+    this.rxStompService.watch('/topic/updateClientStatus').pipe(take(1)).subscribe((message) => {
       const receivedClients: Clients = JSON.parse(message.body);
       const ClientId = this.clientsData.findIndex(client => client.id === receivedClients.id)
       this.clientsData[ClientId] = receivedClients
-    });
-  }
-
-  watchDeleteClient() {
-    this.rxStompService.watch('/topic/deleteClient').subscribe((message) => {
-      const receivedClients: Clients = JSON.parse(message.body);
-      this.clientsData = this.clientsData.filter(client => client.id !== receivedClients.id);
     });
   }
 

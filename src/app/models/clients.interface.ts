@@ -12,7 +12,7 @@ export interface Clients {
     medicalConditions: string;
     dietaryPreferences: string;
     dietaryRestrictions: string;
-    calorieIntake: number;
+    caloriesIntake: number;
     categories: Categories[];
     subscriptions: Subscriptions[];  
     mode: string;

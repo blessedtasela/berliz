@@ -1,0 +1,10 @@
+<div class="flex flex-cols font-bold text-sm text-white italic">
+    <ng-container *ngFor="let breadcrumb of breadcrumbs$ | async; let last = last">
+        <ng-container *ngIf="!last">
+            <a [routerLink]="breadcrumb.url">{{ breadcrumb.label +'/' }}</a>
+        </ng-container>
+        <ng-container *ngIf="last">
+            {{ breadcrumb.label }}
+        </ng-container>
+    </ng-container>
+</div>

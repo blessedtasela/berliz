@@ -4,7 +4,10 @@ import { BreadcrumbService } from '../services/breadcrumb.service';
 @Component({
   selector: 'app-router-breadcrumb',
   templateUrl: './router-breadcrumb.component.html',
-  styleUrls: ['./router-breadcrumb.component.css']
+  styleUrls: ['./router-breadcrumb.component.css'],
+  host: {
+    '[class.app-router-breadcrumb]': 'true', // Add a host attribute to force a different ID
+  },
 })
 export class RouterBreadcrumbComponent {
   breadcrumbs: { label: string; url: string }[] = [];

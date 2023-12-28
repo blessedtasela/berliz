@@ -4,7 +4,7 @@
     </div>
     <section class="p-2 flex flex-col justify-center items-center">
         <div class="text-center">
-            <p class="text-gray-950 font-sans font-bold text-xl uppercase mt-4">{{ clientData.user.email }} [ID {{
+            <p class="text-gray-950 font-sans font-bold text-xl uppercase mt-4">{{ clientData.user.email }} - ID: {{
                 clientData.id }}</p>
             <p class="text-red-600 font-sans font-bold text-sm italic">
                 created at {{ formatDate(clientData.date) }}
@@ -12,36 +12,52 @@
             <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
                 <div>
                     <img class="w-16" class="bg-gray-200 rounded-md p-2"
-                        [src]="'../../../assets/icons/' + clientData.user.profilePhoto +'.png'">
+                        [src]="'data:image;base64,' + clientData.user.profilePhoto">
                 </div>
                 <div class="flex flex-col m-4 gap-2">
                     <p class="text-gray-700 font-sans font-bold text-md flex">
-                        {{ clientData.motivation }}
+                        Motivation: {{ clientData.motivation }}
                     </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                    <p class="text-gray-700 font-sans font-bold text-md flex italic justify-center">
                         <ng-container *ngFor="let category of clientData.categories; let i = index">
                             {{ category.name }} {{ i < (clientData.categories.length - 1) ? "/" : "" }} </ng-container>
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Liked by {{ clientData.bodyFat }} users
+                        Body fat: <span class="ml-2 text-gray-800 italic">
+                            {{ clientData.bodyFat | number:'1.2-2' }} %</span>
+                      </p>
+                      <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Daily calories Intake: <span class="ml-2 text-gray-800 italic">
+                            {{ clientData.caloriesIntake }} cal</span>
+                      </p>                      
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Dietary preference: {{ clientData.dietaryPreferences }}
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Liked by {{ clientData.calorieIntake }} users
+                        Weight: <span class="ml-2 text-gray-800 italic">{{ clientData.weight }} kg</span>
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Liked by {{ clientData.dietaryPreferences }} users
+                        Dietary Restrictions {{ clientData.dietaryRestrictions }}
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Liked by {{ clientData.dietaryRestrictions }} users
+                        Height: <span class="ml-2 text-gray-800 italic">{{ clientData.height }} cm</span>
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Liked by {{ clientData.height }} users
+                        Medical conditions: {{ clientData.medicalConditions }}
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Liked by {{ clientData.weight }} users
+                        Mode of training: {{ clientData.mode }}
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        <ng-container *ngFor="let subscription of clientData.subscriptions; let i = index">
+                            Subscriptions: {{ subscription.months }} months ({{ formatDate(subscription.endDate) }}) {{
+                            i < (clientData.subscriptions.length - 1) ? "/" : "" }} </ng-container>
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Target weight: <span class="ml-2 text-gray-800 italic">{{ clientData.targetWeight }} cm</span>
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex mt-2">
-                        Category status: {{ clientData.status ==='true' ? 'active' :'false' }}
+                        Client status: {{ clientData.status ==='true' ? 'active' :'false' }}
                     </p>
                     <p class="text-red-600 font-sans font-bold text-md flex mt-2">
                         Last Update: {{ formatDate(clientData.lastUpdate) }}

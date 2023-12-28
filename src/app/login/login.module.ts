@@ -5,6 +5,7 @@ import { LoginFormComponent } from './login-form/login-form.component';
 import { LoginHeroComponent } from './login-hero/login-hero.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconsModule } from '../icons/icons.module';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -18,7 +19,8 @@ import { IconsModule } from '../icons/icons.module';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    IconsModule
+    IconsModule,
+    RouterModule
   ]
 })
 export class LoginModule { }

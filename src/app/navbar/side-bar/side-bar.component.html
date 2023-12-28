@@ -1,100 +1,141 @@
-<nav class=" font-sans text-white">
-    <!-- Dashboard Link -->
-    <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('dashboard')}">
-        <feather-icon name="package" class="text-xl text-white" style="width: 30px;"></feather-icon>
-        <h1 class="mx-4">
-            <a routerLink="/dashboard" class="text-md">
-                Dashboard
-            </a>
-        </h1>
+<div *ngIf="openMenu" class="hidden md:block -mt-11 w-full fixed rounded-b-md p-2 ease-in-out side-z bg-gray-950">
+    <navbar-router-breadcrumb></navbar-router-breadcrumb>
+</div>
+<!-- Sidebar closed -->
+<div class="w-0 md:w-12">
+    <div class="mt-10 w-full inset-y-0 left-0 transform duration-300
+            -translate-x-0 ease-in-out fixed transition duration-300 ease-in-out side-z"
+        [ngClass]="{'hidden': openMenu}" id="sidebarView">
+        <!-- Sidebar Branding and Close Button -->
+        <div class="bg-gray-950 -mt-1 rounded-b-md flex items-center p-1 mt-1">
+            <div class="ml-2 hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
+         mr-4">
+                <i-feather name="align-justify" style="width: 30px;"
+                    class="mt-5 text-white font-bold drop-shadow-xl p-1" (click)="toggleSidebar()"
+                    (click)="stopPropagation($event)"></i-feather>
+            </div>
+            <div class="text-white ml-4 mt-4">
+                <navbar-router-breadcrumb></navbar-router-breadcrumb>
+            </div>
+        </div>
     </div>
-    <!-- Tasks Link -->
-    <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('tasks')}">
-        <feather-icon name="activity" class="text-xl text-white" style="width: 26px;"></feather-icon>
-        <h1 class="mx-4">
-            <a routerLink="/dashboard/my-tasks" class="text-md">
-                Tasks
-            </a>
-        </h1>
-    </div>
-    <!-- Notifications Link -->
-    <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('notifications')}">
-        <feather-icon name="inbox" class="text-xl text-white" style="width: 26px;"></feather-icon>
-        <h1 class="mx-4">
-            <a routerLink="/dashboard/my-notifications" class="text-md">
-                Notifications
-            </a>
-        </h1>
-    </div>
-    <!-- Workspace Link -->
-    <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('workspace')}">
-        <feather-icon name="globe" class="text-xl text-white" style="width: 26px;"></feather-icon>
-        <h1 class="mx-4">
-            <a routerLink="/dashboard/workspace" class="text-md">
-                <span class="capitalize">{{ userData?.role }} </span> workspace
-            </a>
-        </h1>
-    </div>
-    <!-- Profile Link -->
-    <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('profile')}">
-        <feather-icon name="user" class="text-xl text-white" style="width: 26px;"></feather-icon>
-        <h1 class="mx-4">
-            <a routerLink="/dashboard/profile" class="text-md">
-                Profile
-            </a>
-        </h1>
-    </div>
-    <!-- Separator Line -->
-    <hr class="text-gray-200 my-6">
-    <!-- To-do List Link -->
-    <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('todo-list')}">
-        <feather-icon name="calendar" class="text-xl text-white" style="width: 26px;"></feather-icon>
-        <h1 class="mx-4">
-            <a routerLink="/dashboard/my-todos" class="text-md">
-                To-do list
-            </a>
-        </h1>
-    </div>
-    <!-- Subscriptions Link -->
-    <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('subscriptions')}">
-        <feather-icon name="Airplay" class="text-xl text-white" style="width: 24px;"></feather-icon>
-        <h1 class="mx-4">
-            <a routerLink="/dashboard/my-subscriptions" class="text-md">
-                Subscriptions
-            </a>
-        </h1>
-    </div>
-    <!-- FAQs Link -->
-    <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('faqs')}">
-        <feather-icon name="message-square" class="text-xl text-white" style="width: 26px;"></feather-icon>
-        <h1 class="mx-4">
-            <a routerLink="/dashboard/my-faqs" class="text-md">
-                FAQs
-            </a>
-        </h1>
-    </div>
-    <!-- Settings Link -->
-    <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('settings')}">
-        <feather-icon name="settings" class="text-xl text-white" style="width: 26px;"></feather-icon>
-        <h1 class="mx-4">
-            <a routerLink="/dashboard/settings" class="text-md">
-                Settings
-            </a>
-        </h1>
-    </div>
-    <!-- Logout Link -->
-    <div class="flex fixed items-center p-2 text-white cursor-pointer duration-300 hover:bg-gray-700 
+</div>
+<div class="bg-gray-950 w-full fixed rounded-b-md flex items-center p-1 mt-1">
+    open menu
+    <navbar-router-breadcrumb></navbar-router-breadcrumb>
+</div>
+<!-- Sidebar -->
+<div class="w-0 md:w-64" *ngIf="openMenu">
+    <div class="mt-10 bg-gray-950 text-gray-200 w-64 inset-y-0 left-0 transform duration-300
+ -translate-x-0 ease-in-out fixed transition duration-300 ease-in-out side-z" [ngClass]="{'hidden ': !openMenu,}"
+        id="sidebarView">
+        <!-- Sidebar Branding and Close Button -->
+        <div class="flex justify-end cursor-pointer">
+            <div class="mt-10 hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
+         rounded-md mr-4">
+                <i-feather name="x" class="min-w-[20px] text-gray-200 font-bold drop-shadow-xl"
+                    (click)="toggleSidebar()" (click)="stopPropagation($event)"></i-feather>
+            </div>
+        </div>
+        <nav class="font-sans text-white -mt-4">
+            <!-- Dashboard Link -->
+            <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
+                [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('dashboard') && isPath('dashboard')}">
+                <feather-icon name="package" class="text-xl text-white" style="width: 30px;"></feather-icon>
+                <h1 class="mx-4">
+                    <a routerLink="/dashboard" class="text-md">
+                        Dashboard
+                    </a>
+                </h1>
+            </div>
+            <!-- Tasks Link -->
+            <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
+                [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('dashboard/my-tasks')}">
+                <feather-icon name="activity" class="text-xl text-white" style="width: 26px;"></feather-icon>
+                <h1 class="mx-4">
+                    <a routerLink="/dashboard/my-tasks" class="text-md">
+                        Tasks
+                    </a>
+                </h1>
+            </div>
+            <!-- Notifications Link -->
+            <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
+                [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('dashboard/my-notifications')}">
+                <feather-icon name="inbox" class="text-xl text-white" style="width: 26px;"></feather-icon>
+                <h1 class="mx-4">
+                    <a routerLink="/dashboard/my-notifications" class="text-md">
+                        Notifications
+                    </a>
+                </h1>
+            </div>
+            <!-- Workspace Link -->
+            <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
+                [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('dashboard/workspace')}">
+                <feather-icon name="globe" class="text-xl text-white" style="width: 26px;"></feather-icon>
+                <h1 class="mx-4">
+                    <a routerLink="/dashboard/workspace" class="text-md">
+                        <span class="capitalize">{{ userData?.role }} </span> workspace
+                    </a>
+                </h1>
+            </div>
+            <!-- Profile Link -->
+            <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
+                [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('dashboard/profile')}">
+                <feather-icon name="user" class="text-xl text-white" style="width: 26px;"></feather-icon>
+                <h1 class="mx-4">
+                    <a routerLink="/dashboard/profile" class="text-md">
+                        Profile
+                    </a>
+                </h1>
+            </div>
+            <!-- Separator Line -->
+            <hr class="text-gray-200 my-6">
+            <!-- To-do List Link -->
+            <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
+                [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('dashboard/my-todos')}">
+                <feather-icon name="calendar" class="text-xl text-white" style="width: 26px;"></feather-icon>
+                <h1 class="mx-4">
+                    <a routerLink="/dashboard/my-todos" class="text-md">
+                        To-do list
+                    </a>
+                </h1>
+            </div>
+            <!-- Subscriptions Link -->
+            <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
+                [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('dashboard/my-subscriptions')}">
+                <feather-icon name="Airplay" class="text-xl text-white" style="width: 24px;"></feather-icon>
+                <h1 class="mx-4">
+                    <a routerLink="/dashboard/my-subscriptions" class="text-md">
+                        Subscriptions
+                    </a>
+                </h1>
+            </div>
+            <!-- FAQs Link -->
+            <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
+                [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('dashboard/my-faqs')}">
+                <feather-icon name="message-square" class="text-xl text-white" style="width: 26px;"></feather-icon>
+                <h1 class="mx-4">
+                    <a routerLink="/dashboard/my-faqs" class="text-md">
+                        FAQs
+                    </a>
+                </h1>
+            </div>
+            <!-- Settings Link -->
+            <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
+                [ngClass]="{'bg-gray-800 rounded-md px-2 w-32': isActive('dashboard/settings')}">
+                <feather-icon name="settings" class="text-xl text-white" style="width: 26px;"></feather-icon>
+                <h1 class="mx-4">
+                    <a routerLink="/dashboard/settings" class="text-md">
+                        Settings
+                    </a>
+                </h1>
+            </div>
+            <!-- Logout Link -->
+            <div class="flex fixed items-center p-2 text-white cursor-pointer duration-300 hover:bg-gray-700 
         hover:rounded-md bottom-0 right-0">
-        <feather-icon name="log-out" class="text-sm mr-2"></feather-icon>
-        <h1 class="text-sm font-bold" (click)="logout()">Log out</h1>
+                <feather-icon name="log-out" class="text-sm mr-2"></feather-icon>
+                <h1 class="text-sm font-bold" (click)="logout()">Log out</h1>
+            </div>
+        </nav>
     </div>
-</nav>
+</div>

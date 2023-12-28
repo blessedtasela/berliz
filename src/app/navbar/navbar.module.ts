@@ -28,6 +28,7 @@ import { SearchClientComponent } from './search-client/search-client.component';
 import { SearchMemberComponent } from './search-member/search-member.component';
 import { SearchTestimonialComponent } from './search-testimonial/search-testimonial.component';
 import { SearchSubscriptionComponent } from './search-subscription/search-subscription.component';
+import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb.component';
 
 
 @NgModule({
@@ -56,7 +57,8 @@ import { SearchSubscriptionComponent } from './search-subscription/search-subscr
     SearchClientComponent,
     SearchMemberComponent,
     SearchTestimonialComponent,
-    SearchSubscriptionComponent
+    SearchSubscriptionComponent,
+    RouterBreadcrumbComponent
   ],
   imports: [
     CommonModule,
@@ -66,7 +68,9 @@ import { SearchSubscriptionComponent } from './search-subscription/search-subscr
   ],
   exports: [
     NavigationBarComponent,
-    SidebarNavigationComponent
+    SidebarNavigationComponent,
+    TopBarComponent,
+    SideBarComponent
   ]
 })
 export class NavbarModule { }

@@ -34,8 +34,6 @@ export class MuscleGroupsListComponent {
   }
 
   ngOnInit() {
-    this.watchDeleteMuscleGroup()
-    this.watchGetMuscleGroupFromMap()
     this.watchUpdateMuscleGroup()
     this.watchUpdateStatus()
   }
@@ -129,17 +127,17 @@ export class MuscleGroupsListComponent {
             } else {
               console.log('Dialog closed without updating muscleGroup status');
             }
-          })
-        })
-    }, (error) => {
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(error, 'error');
-      if (error.error?.message) {
-        this.responseMessage = error.error?.message;
-      } else {
-        this.responseMessage = genericError;
-      }
-      this.snackbarService.openSnackBar(this.responseMessage, 'error');
+          });
+        }, (error) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(error, 'error');
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        });
     });
   }
 
@@ -168,17 +166,17 @@ export class MuscleGroupsListComponent {
             } else {
               console.log('Dialog closed without deleting muscleGroup');
             }
-          })
-        })
-    }, (error) => {
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(error, 'error');
-      if (error.error?.message) {
-        this.responseMessage = error.error?.message;
-      } else {
-        this.responseMessage = genericError;
-      }
-      this.snackbarService.openSnackBar(this.responseMessage, 'error');
+          });
+        }, (error) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(error, 'error');
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        });
     });
   }
 
@@ -228,25 +226,11 @@ export class MuscleGroupsListComponent {
     });
   }
 
-  watchGetMuscleGroupFromMap() {
-    this.rxStompService.watch('/topic/getMuscleGroupFromMap').subscribe((message) => {
-      const receivedCategories: MuscleGroups = JSON.parse(message.body);
-      this.muscleGroupsData.push(receivedCategories);
-    });
-  }
-
   watchUpdateStatus() {
     this.rxStompService.watch('/topic/updateMuscleGroupStatus').subscribe((message) => {
       const receivedCategories: MuscleGroups = JSON.parse(message.body);
       const categoryId = this.muscleGroupsData.findIndex(muscleGroup => muscleGroup.id === receivedCategories.id)
       this.muscleGroupsData[categoryId] = receivedCategories
-    });
-  }
-
-  watchDeleteMuscleGroup() {
-    this.rxStompService.watch('/topic/deleteMuscleGroup').subscribe((message) => {
-      const receivedCategories: MuscleGroups = JSON.parse(message.body);
-      this.muscleGroupsData = this.muscleGroupsData.filter(muscleGroup => muscleGroup.id !== receivedCategories.id);
     });
   }
 

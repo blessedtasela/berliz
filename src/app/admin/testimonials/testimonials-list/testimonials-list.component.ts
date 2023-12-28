@@ -6,7 +6,7 @@ import { Testimonials } from 'src/app/models/testimonials.model';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
-import { genericError } from 'src/validators/form-validators.module';import { TestimonialService } from 'src/app/services/testimonial.service';
+import { genericError } from 'src/validators/form-validators.module'; import { TestimonialService } from 'src/app/services/testimonial.service';
 import { TestimonialStateService } from 'src/app/services/testimonial-state.service';
 import { UpdateTestimonialsModalComponent } from '../update-testimonials-modal/update-testimonials-modal.component';
 import { TestimonialDetailsModalComponent } from '../testimonial-details-modal/testimonial-details-modal.component';
@@ -32,11 +32,8 @@ export class TestimonialsListComponent {
   }
 
   ngOnInit() {
-    this.watchGetCategoryFromMap()
-    this.watchLikeCategory()
-    this.watchUpdateCategory()
     this.watchUpdateStatus()
-    this.watchDeleteCategory()
+    this.watchUpdateTestimonial()
   }
 
   handleEmitEvent() {
@@ -128,17 +125,17 @@ export class TestimonialsListComponent {
             } else {
               console.log('Dialog closed without updating testimonial status');
             }
-          })
-        })
-    }, (error) => {
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(error, 'error');
-      if (error.error?.message) {
-        this.responseMessage = error.error?.message;
-      } else {
-        this.responseMessage = genericError;
-      }
-      this.snackbarService.openSnackBar(this.responseMessage, 'error');
+          });
+        }, (error) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(error, 'error');
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        });
     });
   }
 
@@ -167,17 +164,17 @@ export class TestimonialsListComponent {
             } else {
               console.log('Dialog closed without deleting testimonial');
             }
-          })
-        })
-    }, (error) => {
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(error, 'error');
-      if (error.error?.message) {
-        this.responseMessage = error.error?.message;
-      } else {
-        this.responseMessage = genericError;
-      }
-      this.snackbarService.openSnackBar(this.responseMessage, 'error');
+          });
+        }, (error) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(error, 'error');
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        });
     });
   }
 
@@ -186,41 +183,19 @@ export class TestimonialsListComponent {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
-  watchLikeCategory() {
-    this.rxStompService.watch('/topic/likeCategory').subscribe((message) => {
+  watchUpdateTestimonial() {
+    this.rxStompService.watch('/topic/updateTestimonial').subscribe((message) => {
       const receivedCategories: Testimonials = JSON.parse(message.body);
       const categoryId = this.testimonialsData.findIndex(testimonial => testimonial.id === receivedCategories.id)
       this.testimonialsData[categoryId] = receivedCategories
-    });
-  }
-
-  watchUpdateCategory() {
-    this.rxStompService.watch('/topic/updateCategory').subscribe((message) => {
-      const receivedCategories: Testimonials = JSON.parse(message.body);
-      const categoryId = this.testimonialsData.findIndex(testimonial => testimonial.id === receivedCategories.id)
-      this.testimonialsData[categoryId] = receivedCategories
-    });
-  }
-
-  watchGetCategoryFromMap() {
-    this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
-      const receivedCategories: Testimonials = JSON.parse(message.body);
-      this.testimonialsData.push(receivedCategories);
     });
   }
 
   watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
+    this.rxStompService.watch('/topic/updateTestimonialStatus').subscribe((message) => {
       const receivedCategories: Testimonials = JSON.parse(message.body);
       const categoryId = this.testimonialsData.findIndex(testimonial => testimonial.id === receivedCategories.id)
       this.testimonialsData[categoryId] = receivedCategories
-    });
-  }
-
-  watchDeleteCategory() {
-    this.rxStompService.watch('/topic/deleteCategory').subscribe((message) => {
-      const receivedCategories: Testimonials = JSON.parse(message.body);
-      this.testimonialsData = this.testimonialsData.filter(testimonial => testimonial.id !== receivedCategories.id);
     });
   }
 

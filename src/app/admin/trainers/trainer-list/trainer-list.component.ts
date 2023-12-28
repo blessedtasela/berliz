@@ -33,8 +33,6 @@ export class TrainerListComponent {
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-    this.watchDeleteTrainer()
-    this.watchGetTrainerFromMap()
     this.watchLikeTrainer()
     this.watchUpdatePhoto()
     this.watchUpdateStatus()
@@ -136,17 +134,17 @@ export class TrainerListComponent {
             } else {
               console.log('Dialog closed without updating trainer status');
             }
-          })
-        })
-    }, (error) => {
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(error, 'error');
-      if (error.error?.message) {
-        this.responseMessage = error.error?.message;
-      } else {
-        this.responseMessage = genericError;
-      }
-      this.snackbarService.openSnackBar(this.responseMessage, 'error');
+          });
+        }, (error) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(error, 'error');
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        });
     });
   }
 
@@ -175,17 +173,17 @@ export class TrainerListComponent {
             } else {
               console.log('Dialog closed without deleting trainer');
             }
-          })
-        })
-    }, (error) => {
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(error, 'error');
-      if (error.error?.message) {
-        this.responseMessage = error.error?.message;
-      } else {
-        this.responseMessage = genericError;
-      }
-      this.snackbarService.openSnackBar(this.responseMessage, 'error');
+          });
+        }, (error) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(error, 'error');
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        });
     });
   }
 
@@ -243,13 +241,6 @@ export class TrainerListComponent {
     });
   }
 
-  watchGetTrainerFromMap() {
-    this.rxStompService.watch('/topic/getTrainerFromMap').subscribe((message) => {
-      const receivedTrainer: Trainers = JSON.parse(message.body);
-      this.trainersData.push(receivedTrainer);
-    });
-  }
-
   watchUpdatePhoto() {
     this.rxStompService.watch('/topic/updatePhoto').subscribe((message) => {
       const receivedTrainer: Trainers = JSON.parse(message.body);
@@ -263,13 +254,6 @@ export class TrainerListComponent {
       const receivedTrainer: Trainers = JSON.parse(message.body);
       const trainerId = this.trainersData.findIndex(trainer => trainer.id === receivedTrainer.id)
       this.trainersData[trainerId] = receivedTrainer
-    });
-  }
-
-  watchDeleteTrainer() {
-    this.rxStompService.watch('/topic/deleteTrainer').subscribe((message) => {
-      const receivedTrainer: Trainers = JSON.parse(message.body);
-      this.trainersData = this.trainersData.filter(trainer => trainer.id !== receivedTrainer.id);
     });
   }
 }

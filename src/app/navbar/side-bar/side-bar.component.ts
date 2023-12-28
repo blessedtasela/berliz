@@ -37,7 +37,7 @@ export class SideBarComponent {
 
   ngOnInit() {
     this.onResize();
-    this.subscribeToCloseSideBar()
+    // this.subscribeToCloseSideBar()
     this.handleEmitEvent();
   }
 
@@ -51,6 +51,10 @@ export class SideBarComponent {
 
   isActive(path: string): boolean {
     return this.currentRoute?.startsWith('/' + path);
+  }
+
+  isPath(path: string): boolean {
+    return this.currentRoute === '/' + path;;
   }
 
   @HostListener('window:resize', ['$event'])

@@ -22,7 +22,7 @@ export class ClientsDetailsModalComponent {
   }
 
   ngOnInit(): void {
-
+    // console.log(this.clientData)
   }
 
   openUrl(url: any) {

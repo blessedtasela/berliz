@@ -1,12 +1,3 @@
-<div class="relative min-h-screen flex">
-    <app-sidebar-navigation (exerciseResults)="handleSearchResults($event)" [searchComponent]="searchComponent"
-        [isSearch]="isSearch"></app-sidebar-navigation>
-    <div class="flex p-4 md:p-8 mt-4 full-width">
-        <div class="width bg-gray-200 p-2 rounded-lg mt-20">
-            <app-exercises-header [exercisesData]="exercisesData" [totalExercises]="totalExercises"
-                [exercisesLength]="exercisesLength"></app-exercises-header>
-            <app-exercises-list [exercisesData]="exercisesData" [totalExercises]="totalExercises"></app-exercises-list>
-        </div>
-    </div>
-</div>
-<app-footer></app-footer>
+<app-exercises-header [exercisesData]="exercisesData" [totalExercises]="totalExercises"
+    [exercisesLength]="exercisesLength"></app-exercises-header>
+<app-exercises-list [exercisesData]="exercisesData" [totalExercises]="totalExercises"></app-exercises-list>

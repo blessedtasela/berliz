@@ -1,27 +1,33 @@
-<div class="w-full bg-gray-950 rounded-b-md flex items-center h-20 lg:h-10">
-    <div class="grid grid-cols-2 lg:grid-cols-3 mx-auto gap-2 p-5 text-sm">
-        <h3 class="text-white pl-5">
-            &copy; <span class="text-red-600 font-bold font-sans">Berliz.</span> All right reserved
-        </h3>
-        <h3 class="text-white">
-            Developed by
-            <span class="text-red-600 font-bold font-sans cursor-pointer" (click)="openBlessedTasela()">
-                Blessed Tasela
-            </span>
-        </h3>
-        <div class="flex flex-wrap gap-2 lg:gap-10 items-center col-span-2 lg:col-span-1 mx-auto">
-            <h3 class="text-white">
-                FAQs
-            </h3>
-            <h3 class="text-white">
-                Terms
-            </h3>
-            <h3 class="text-white">
-                Privacy
-            </h3>
-            <h3 class="text-white">
-                Help
-            </h3>
+<section class="w-full bottom-0 text-sm">
+    <div class="bg-gray-950 rounded-b-md flex items-center h-14 md:h-12 lg:h-10">
+        <div class="grid grid-cols md:grid-cols-2 lg:grid-cols-3 mx-auto gap-2 lg:gap-0">
+            <div>
+                <h3 class="text-white pl-5 hidden md:block">
+                    &copy;<span class="text-red-600 font-bold font-sans">Berliz.</span> All right reserved
+                </h3>
+            </div>
+            <div>
+                <h3 class="text-white flex">
+                    <span class="block md:hidden mr-2">&copy;</span> Developed by
+                    <span class="ml-2 text-red-600 font-bold font-sans cursor-pointer" (click)="openBlessedTasela()">
+                        Blessed Tasela
+                    </span>
+                </h3>
+            </div>
+            <div class="flex flex-wrap gap-2 lg:gap-6 items-center col-span-2 lg:col-span-1 mx-auto">
+                <h3 class="text-white">
+                    FAQs
+                </h3>
+                <h3 class="text-white">
+                    Terms
+                </h3>
+                <h3 class="text-white">
+                    Privacy
+                </h3>
+                <h3 class="text-white">
+                    Help
+                </h3>
+            </div>
         </div>
     </div>
-</div>
+</section>

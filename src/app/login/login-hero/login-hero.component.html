@@ -1,11 +1,11 @@
-<section class="bg-gray-950 w-full flex items-center grid lg:grid-cols-3 grid-cols-2">
-    <a routerLink="/home">
-        <img class="h-32 lg:h-48" src="../../../assets/landing/hero-bg-6.jpg">
+<section class="bg-gray-950 rounded-md w-full flex items-center justify-center">
+    <div class="grid grid-cols-2">
+    <a [routerLink]="['/home']" class="">
+        <img class="w-full cursor-pointer rounded-lg" src="../../../assets/landing/hero-bg-6.jpg">
     </a>
     <div class="flex items-center">
         <div class="mx-auto">
-            <h1
-                class="font-sans font-bold text-red-600 text-center uppercase md:text-xl text-md w-full">
+            <h1 class="font-sans font-bold text-red-600 text-center uppercase md:text-xl text-md w-full">
                 Welcome to Berliz
             </h1>
             <h6 class="text-sm md:text-md font-sans font-bold text-center text-gray-200 w-full">
@@ -13,4 +13,5 @@
             </h6>
         </div>
     </div>
+</div>
 </section>

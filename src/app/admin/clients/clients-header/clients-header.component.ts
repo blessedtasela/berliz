@@ -5,6 +5,7 @@ import { AddClientModalComponent } from '../add-client-modal/add-client-modal.co
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-clients-header',
@@ -120,7 +121,7 @@ export class ClientsHeaderComponent {
   }
 
   watchDeleteClient() {
-    this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
+    this.rxStompService.watch('/topic/deleteClient').pipe(take(1)).subscribe((message) => {
       const receivedClients: Clients = JSON.parse(message.body);
       this.clientsData = this.clientsData.filter(category => category.id !== receivedClients.id);
       this.clientsLength = this.clientsData.length;
@@ -129,7 +130,7 @@ export class ClientsHeaderComponent {
   }
 
   watchGetClientFromMap() {
-    this.rxStompService.watch('/topic/getClientFromMap').subscribe((message) => {
+    this.rxStompService.watch('/topic/getClientFromMap').pipe(take(1)).subscribe((message) => {
       const receivedClients: Clients = JSON.parse(message.body);
       this.clientsData.push(receivedClients);
       this.clientsLength = this.clientsData.length;

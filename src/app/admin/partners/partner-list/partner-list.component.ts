@@ -34,8 +34,6 @@ export class PartnerListComponent {
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-    this.watchDeletePartner()
-    this.watchGetPartnerFromMap()
     this.watchRejectPartnerApplication()
     this.watchUpdatePartner()
     this.watchUpdatePartnerStatus()
@@ -224,13 +222,6 @@ export class PartnerListComponent {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
-  watchGetPartnerFromMap() {
-    this.rxStompService.watch('/topic/getPartnerFromMap').subscribe((message) => {
-      const receivedCategories: Partners = JSON.parse(message.body);
-      this.partnersData.push(receivedCategories);
-    });
-  }
-
   watchUpdatePartner() {
     this.rxStompService.watch('/topic/updatePartner').subscribe((message) => {
       const receivedPartner: Partners = JSON.parse(message.body);
@@ -244,13 +235,6 @@ export class PartnerListComponent {
       const receivedPartner: Partners = JSON.parse(message.body);
       const partnerId = this.partnersData.findIndex(partners => partners.id === receivedPartner.id)
       this.partnersData[partnerId] = receivedPartner
-    });
-  }
-
-  watchDeletePartner() {
-    this.rxStompService.watch('/topic/deletePartner').subscribe((message) => {
-      const receivedPartner: Partners = JSON.parse(message.body);
-      this.partnersData = this.partnersData.filter(partners => partners.id !== receivedPartner.id);
     });
   }
 

@@ -31,8 +31,6 @@ export class TagListComponent {
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-this.watchDeleteTag()
-this.watchGetTagFromMap()
 this.watchUpdateTag()
 this.watchUpdateTagStatus()
   }
@@ -172,13 +170,6 @@ this.watchUpdateTagStatus()
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
-  watchGetTagFromMap() {
-    this.rxStompService.watch('/topic/getTagFromMap').subscribe((message) => {
-      const receivedCategories: Tags = JSON.parse(message.body);
-      this.tagsData.push(receivedCategories);
-    });
-  }
-
   watchUpdateTag() {
     this.rxStompService.watch('/topic/updateTag').subscribe((message) => {
       const receivedTags: Tags = JSON.parse(message.body);
@@ -192,13 +183,6 @@ this.watchUpdateTagStatus()
       const receivedTags: Tags = JSON.parse(message.body);
       const tagId = this.tagsData.findIndex(tags => tags.id === receivedTags.id)
       this.tagsData[tagId] = receivedTags
-    });
-  }
-
-  watchDeleteTag() {
-    this.rxStompService.watch('/topic/deleteTag').subscribe((message) => {
-      const receivedTags: Tags = JSON.parse(message.body);
-      this.tagsData = this.tagsData.filter(tags => tags.id !== receivedTags.id);
     });
   }
 

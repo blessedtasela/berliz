@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, FormArray, FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
@@ -110,7 +110,7 @@ export class AddCenterModalComponent {
     const categories = this.addCenterForm.get('categoryIds') as FormArray;
 
     if (event.target.checked) {
-      categories.push(this.formBuilder.group({ categoryIds: event.target.value }));
+      categories.push(new FormControl({ categoryIds: event.target.value }));
     } else {
       // Remove the control by its value
       const index = categories.controls.findIndex((control) => control.value.tagIds === event.target.value);

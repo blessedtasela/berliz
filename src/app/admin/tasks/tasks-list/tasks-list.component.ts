@@ -33,11 +33,9 @@ export class TasksListComponent {
   }
 
   ngOnInit() {
-    this.watchGetCategoryFromMap()
     this.watchLikeCategory()
     this.watchUpdateCategory()
     this.watchUpdateStatus()
-    this.watchDeleteCategory()
   }
 
   handleEmitEvent() {
@@ -202,25 +200,11 @@ export class TasksListComponent {
     });
   }
 
-  watchGetCategoryFromMap() {
-    this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
-      const receivedCategories: Tasks = JSON.parse(message.body);
-      this.tasksData.push(receivedCategories);
-    });
-  }
-
   watchUpdateStatus() {
     this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
       const receivedCategories: Tasks = JSON.parse(message.body);
       const categoryId = this.tasksData.findIndex(task => task.id === receivedCategories.id)
       this.tasksData[categoryId] = receivedCategories
-    });
-  }
-
-  watchDeleteCategory() {
-    this.rxStompService.watch('/topic/deleteCategory').subscribe((message) => {
-      const receivedCategories: Tasks = JSON.parse(message.body);
-      this.tasksData = this.tasksData.filter(task => task.id !== receivedCategories.id);
     });
   }
 
