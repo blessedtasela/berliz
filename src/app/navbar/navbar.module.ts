@@ -29,6 +29,8 @@ import { SearchMemberComponent } from './search-member/search-member.component';
 import { SearchTestimonialComponent } from './search-testimonial/search-testimonial.component';
 import { SearchSubscriptionComponent } from './search-subscription/search-subscription.component';
 import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb.component';
+import { SideBarOpenComponent } from './side-bar-open/side-bar-open.component';
+import { SideBarCloseComponent } from './side-bar-close/side-bar-close.component';
 
 
 @NgModule({
@@ -58,7 +60,9 @@ import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb
     SearchMemberComponent,
     SearchTestimonialComponent,
     SearchSubscriptionComponent,
-    RouterBreadcrumbComponent
+    RouterBreadcrumbComponent,
+    SideBarOpenComponent,
+    SideBarCloseComponent
   ],
   imports: [
     CommonModule,

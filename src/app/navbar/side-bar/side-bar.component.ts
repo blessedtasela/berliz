@@ -37,7 +37,7 @@ export class SideBarComponent {
 
   ngOnInit() {
     this.onResize();
-    // this.subscribeToCloseSideBar()
+    this.subscribeToCloseSideBar()
     this.handleEmitEvent();
   }
 
@@ -63,8 +63,8 @@ export class SideBarComponent {
   }
 
   subscribeToCloseSideBar() {
-    document.addEventListener('mousedown', (event) => {
-      if (!this.isClickInsideDropdown(event)) {
+    document.addEventListener('click', (event) => {
+      if (!this.isClickInsideDropdown(event)  && window.innerWidth < 768) {
         this.closeDropdown();
       }
     });
