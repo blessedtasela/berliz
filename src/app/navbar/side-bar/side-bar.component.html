@@ -4,14 +4,19 @@
             -translate-x-0 ease-in-out fixed transition duration-300 ease-in-out side-z"
             [ngClass]="{'hidden': openMenu}" id="sidebarView">
             <div class="bg-gray-950 -mt-1 rounded-b-md flex items-center p-1 mt-1">
-                <div class="ml-2 hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
-         mr-4">
+                <div class="cursor-pointer ml-2 hover:drop-shadow-2xl transition-all duration-1000 
+                ease-in-out transform hover:scale-105 mr-4">
                     <i-feather name="align-justify" style="width: 30px;"
                         class="mt-5 text-white font-bold drop-shadow-xl p-1" (click)="toggleSidebar()"
                         (click)="stopPropagation($event)"></i-feather>
                 </div>
                 <div class="text-white ml-4 mt-4">
                     <navbar-router-breadcrumb></navbar-router-breadcrumb>
+                </div>
+            </div>
+            <div *ngIf="!openMenu" class="hidden md:block">
+                <div class="rounded-b-md flex items-center p-1 mt-1">
+                    <app-side-bar-close></app-side-bar-close>
                 </div>
             </div>
         </div>
@@ -37,7 +42,7 @@
                         (click)="toggleSidebar()" (click)="stopPropagation($event)"></i-feather>
                 </div>
             </div>
-           <nav class="font-sans text-white -mt-4">
+            <nav class="font-sans text-white -mt-4">
                 <!-- Dashboard Link -->
                 <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
                     [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('dashboard') && isPath('dashboard')}">
