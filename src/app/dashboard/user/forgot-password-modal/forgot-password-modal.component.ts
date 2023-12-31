@@ -48,18 +48,19 @@ export class ForgotPasswordModalComponent {
           this.router.navigate(['/login']);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        , (error: any) => {
-          this.ngxService.stop();
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error")
-        });
+          , (error: any) => {
+            this.ngxService.stop();
+            console.error("error");
+            if (error.error?.message) {
+              this.responseMessage = error.error?.message;
+            } else {
+              this.responseMessage = genericError;
+            }
+            this.snackBarService.openSnackBar(this.responseMessage, "error")
+          });
     }
     this.snackBarService.openSnackBar(this.responseMessage, "error");
+    this.ngxService.stop()
   }
 
   closeDialog() {

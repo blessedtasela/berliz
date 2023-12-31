@@ -37,6 +37,7 @@ export class LoginFormComponent {
     const dialogRef = this.dialog.open(SignupModalComponent, {
       width: '900px',
       height: '600px',
+      disableClose: true
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
@@ -46,7 +47,8 @@ export class LoginFormComponent {
 
   openForgotPassword() {
     const dialogRef = this.dialog.open(ForgotPasswordModalComponent, {
-      width: '600px'
+      width: '600px',
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe(result => {

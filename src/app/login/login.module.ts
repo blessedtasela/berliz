@@ -6,6 +6,8 @@ import { LoginHeroComponent } from './login-hero/login-hero.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconsModule } from '../icons/icons.module';
 import { RouterModule } from '@angular/router';
+import { SignupComponent } from './signup/signup.component';
+import { SignupModalComponent } from './signup-modal/signup-modal.component';
 
 
 
@@ -13,7 +15,9 @@ import { RouterModule } from '@angular/router';
   declarations: [
     LoginComponent,
     LoginFormComponent,
-    LoginHeroComponent
+    LoginHeroComponent,
+    SignupComponent,
+    SignupModalComponent
   ],
   imports: [
     CommonModule,

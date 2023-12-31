@@ -1,71 +1,59 @@
-<section class="mt-4 p-2 flex justify-center items-center">
-    <div class="border-2 border-gray-400 bg-gray-100 rounded-md  min-w-[200px]"
-        [ngClass]="{'border-red-400': loginForm.invalid && invalidForm && loginForm.touched}">
+<section class="flex justify-center items-center mx-auto text-gray-950 font-sans">
+    <div class=" rounded-md mx-auto p-2">
+        <h3 class="left-0 mt-2 col-span-2 font-bold text-xl mx-auto">
+            Login to continue
+            <button (click)="clear()">
+                <feather-icon name="rotate-ccw" class="-mb-2 ml-2" style="width: 17px;"></feather-icon>
+            </button>
+
+        </h3>
+        <h3 class="text-red-600 ml-16 col-span-2 font-bold text-sm mx-auto">
+            Enter login details below
+        </h3>
         <form [formGroup]="loginForm">
-            <span *ngIf="loginForm.invalid && invalidForm && loginForm.touched" class="text-red-400 mx-2">
-                Please complete all required fields
-            </span>
-            <div class="grid grid-cols-2 gap-2 p-4">
-                <h3 class="mt-2 col-span-2 font-bold text-md uppercase text-red-500 mx-auto">
-                    please login to continue
-                </h3>
+            <div class="gap-2 p-2">
                 <span *ngIf="invalidLogin" class="text-red-600 mx-2 font-bold font-sans">
                     {{ invalidLogin }}
                 </span>
-                <div class="col-span-2 flex items-center mx-auto">
-                    <div>
-                        <input formControlName="email" id="loginEmail"
-                            class="border-2 border-gray-400 px-4 py-2 rounded-md m-2 hover:border-gray-500 focus:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': loginForm.get('email')?.invalid && loginForm.get('email')?.touched }"
-                            placeholder="email or email" type="text">
-                        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.dirty"
-                            class="col-span-2 text-red-400 mx-2">
-                            Invalid email
-                        </div>
+                <span *ngIf="loginForm.invalid && invalidForm" class="text-sm text-red-600 mx-2">
+                    Please enter email and password
+                </span>
+                <div class="mx-auto mt-4">
+                    <input formControlName="email" id="loginEmail"
+                        class="border-b-2 border-gray-500 w-64 md:w-96 hover:border-gray-700 focus:border-gray-800 focus:outline-none"
+                        [ngClass]="{'border-red-600': loginForm.get('email')?.invalid && loginForm.get('email')?.touched }"
+                        placeholder="Enter email" type="text">
+                    <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.dirty"
+                        class="text-sm text-red-600">
+                        Invalid email
                     </div>
                 </div>
-                <div class="col-span-2 flex items-center mx-auto">
-                    <div>
-                        <input formControlName="password" id="loginPassword"
-                            class="border-2 border-gray-400 px-4 py-2 rounded-md m-2 hover:border-gray-500 focus:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': loginForm.get('password')?.invalid && loginForm.get('password')?.touched }"
-                            placeholder="password" type="password">
-                        <div *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty 
-                        || loginForm.get('password')?.touched)"
-                            class="col-span-1 text-red-400 mx-2">
-                            at least 8 characters
-                        </div>
+                <div class="mx-auto mt-6">
+                    <input formControlName="password" id="loginPassword"
+                        class="border-b-2 border-gray-500 w-64 md:w-96 hover:border-gray-700 focus:border-gray-800 focus:outline-none"
+                        [ngClass]="{'border-red-600': loginForm.get('password')?.invalid && loginForm.get('password')?.touched }"
+                        placeholder="Password" type="password">
+                    <div *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty 
+                        || loginForm.get('password')?.touched)" class="text-sm text-red-600">
+                        at least 8 characters
                     </div>
                 </div>
-                <div class="bg-gray-950 rounded-md mx-auto m-2 hover:drop-shadow-2xl transition-all duration-500 transform hover:scale-110 focus:scale-110">
-                    <button class="mx-2 p-2 text-gray-200 font-sans font-bold text-sm lg:text-md  flex items-center justify-center"
-                    (click)="clear()">
-                        Cancel
-                    </button>
-                </div>
-                <div class="bg-red-600 rounded-md mx-auto m-2 hover:drop-shadow-2xl transition-all duration-500 transform hover:scale-110 focus:scale-110">
-                    <button class="mx-2 p-2 text-gray-200 font-sans font-bold text-sm lg:text-md flex items-center justify-center"
-                     type="submit" (click)="login()">
+                <div class="mt-6 flex items-center justify-center bg-red-600 rounded-md mx-auto text-white font-bold">
+                    <button
+                        class="mx-2 p-2 hover:drop-shadow-2xl transition-all duration-500 transform hover:scale-105 focus:scale-105 text-sm md:text-md "
+                        type="submit" (click)="login()">
                         Submit
                     </button>
                 </div>
-                <div class="rounded-md mx-auto mb-2 text-gray-950 font-bold cursor-pointer">
-                         Remember me
-                      <input type="checkbox" class="mx-2">
-                </div>
-                <div class="rounded-md mx-auto mb-2 cursor-pointer text-gray-950 font-bold">
-                        <a (click)="openForgotPassword()">
-                         Forgot password ?
-                        </a>
+                <div class="grid grid-cols-2 mt-2 mx-auto text-gray-950 font-bold">
+                    <div (click)="openForgotPassword()" class="cursor-pointer flex justify-start">
+                        Forgot password?
+                    </div>
+                    <div (click)="openSignup()" class="cursor-pointer text-red-600 flex justify-end">
+                        Sign up!
+                    </div>
                 </div>
             </div>
         </form>
     </div>
 </section>
-<div class="flex justify-center cursor-pointer">
-    <h3 class="flex items-center text-red-500 font-bold">
-      <a (click)="openSignup()">
-        click here to create an account
-      </a>
-    </h3>
-</div>
