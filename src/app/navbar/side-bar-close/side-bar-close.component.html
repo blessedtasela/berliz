@@ -1,7 +1,7 @@
 <nav class="mt-1 font-sans text-gray-950 font-bold space-y-3">
     <!-- Dashboard Link -->
     <div class="cursor-pointer p-1 duration-300 hover:bg-gray-100 w-12 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-200 rounded-md': isActive('dashboard') && isPath('dashboard')}"
+        [ngClass]="{'bg-gray-200 rounded-md': isActive('dashboard') && !isNotActive()}"
         (mouseover)="setRouterName('Dashboard')" (mouseout)="clearRouterName()">
         <h1 class="flex items-center justify-center">
             <a routerLink="/dashboard" class="text-md">
@@ -42,12 +42,11 @@
     <div class="cursor-pointer p-1 duration-300 hover:bg-gray-100 w-12 hover:rounded-md hover:p-2"
         [ngClass]="{'bg-gray-200 rounded-md px-2 bg-w-full': isActive('dashboard/workspace')}"
         (mouseover)="setRouterName('Workspace')" (mouseout)="clearRouterName()">
-
         <h1 class="flex items-center justify-center">
             <a routerLink="/dashboard/workspace" class="text-md">
                 <feather-icon name="globe" class="text-xl " style="width: 26px;"></feather-icon>
                 <span class="capitalize fixed ml-4 text-gray-500 italic text-sm" *ngIf="currentRouteName==='Workspace'">
-                    {{ userData.role }} {{ currentRouteName }}
+                    {{ currentRouteName }}
                 </span>
             </a>
         </h1>
@@ -56,7 +55,6 @@
     <div class="cursor-pointer p-1 duration-300 hover:bg-gray-100 w-12 hover:rounded-md hover:p-2"
         [ngClass]="{'bg-gray-200 rounded-md px-2 bg-w-full': isActive('dashboard/profile')}"
         (mouseover)="setRouterName('Profile')" (mouseout)="clearRouterName()">
-
         <h1 class="flex items-center justify-center">
             <a routerLink="/dashboard/profile" class="text-md">
                 <feather-icon name="user" class="text-xl " style="width: 26px;"></feather-icon>

@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ForgotPasswordModalComponent } from 'src/app/dashboard/user/forgot-password-modal/forgot-password-modal.component';
-import { SignupModalComponent } from 'src/app/dashboard/user/signup-modal/signup-modal.component';
 import { Login } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
@@ -32,18 +31,6 @@ export class LoginFormComponent {
     private snackBarService: SnackBarService) {
     this.invalidLogin = ''
   }
-
-  openSignup() {
-    const dialogRef = this.dialog.open(SignupModalComponent, {
-      width: '900px',
-      height: '600px',
-      disableClose: true
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
-  }
-
 
   openForgotPassword() {
     const dialogRef = this.dialog.open(ForgotPasswordModalComponent, {

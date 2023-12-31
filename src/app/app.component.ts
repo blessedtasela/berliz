@@ -16,12 +16,13 @@ export class AppComponent {
   }
 
   isSidebar(): boolean {
-    const topbarRoutes = ['/dashboard', '/tasks', '/notifications', '/workspcae', '/settings'];
+    const topbarRoutes = ['/dashboard', '/tasks', '/notifications', '/workspace', '/settings', 'tasks'];
     return topbarRoutes.some(route => this.router.url?.startsWith(route));
   }
 
   isLogin(): boolean {
-    return this.router.url.includes('/login')
+    const loginRoutes = ['/login', '/sign-up',];
+    return loginRoutes.some(route => this.router.url.includes(route));
   }
 
 }

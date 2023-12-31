@@ -1,13 +1,4 @@
-<div class="relative min-h-screen flex">
-    <app-sidebar-navigation (subscriptionsResults)="handleSearchResults($event)" [searchComponent]="searchComponent"
-        [isSearch]="isSearch"></app-sidebar-navigation>
-    <div class="flex p-4 md:p-8 mt-4 full-width">
-        <div class="width bg-gray-200 p-2 rounded-lg mt-20">
-            <app-subscriptions-header [subscriptionsData]="subscriptionsData" [totalSubscriptions]="totalSubscriptions"
-                [subscriptionsLength]="subscriptionsLength"></app-subscriptions-header>
-            <app-subscriptions-list [subscriptionsData]="subscriptionsData"
-                [totalSubscriptions]="totalSubscriptions"></app-subscriptions-list>
-        </div>
-    </div>
-</div>
-<app-footer></app-footer>
+<app-subscriptions-header [subscriptionsData]="subscriptionsData" [totalSubscriptions]="totalSubscriptions"
+    [subscriptionsLength]="subscriptionsLength"></app-subscriptions-header>
+<app-subscriptions-list [subscriptionsData]="subscriptionsData"
+    [totalSubscriptions]="totalSubscriptions"></app-subscriptions-list>

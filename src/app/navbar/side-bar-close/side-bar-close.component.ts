@@ -33,6 +33,12 @@ export class SideBarCloseComponent {
     return this.currentRoute?.startsWith('/' + path);
   }
 
+  isNotActive(): boolean {
+    const paths = ['/dashboard/my-tasks', '/dashboard/my-notifications', '/dashboard/my-subscriptions', '/dashboard/my-faqs',
+      '/dashboard/my-todos', '/dashboard/workspace', '/dashboard/profile', '/dashboard/settings'];
+    return paths.some(route => this.currentRoute?.startsWith(route));
+  }
+
   isPath(path: string): boolean {
     return this.currentRoute === '/' + path;;
   }

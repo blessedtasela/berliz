@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { SignupModalComponent } from './signup-modal/signup-modal.component';
 import { ForgotPasswordModalComponent } from './forgot-password-modal/forgot-password-modal.component';
 import { ResetPasswordModalComponent } from './reset-password-modal/reset-password-modal.component';
 import { ChangePasswordModalComponent } from './change-password-modal/change-password-modal.component';
@@ -20,7 +19,6 @@ import { ProfilePageComponent } from './profile-page/profile-page.component';
 
 @NgModule({
   declarations: [
-    SignupModalComponent,
     ForgotPasswordModalComponent,
     ResetPasswordModalComponent,
     ChangePasswordModalComponent,

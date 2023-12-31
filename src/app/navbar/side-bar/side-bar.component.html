@@ -1,28 +1,38 @@
 <section>
+    <!-- Sidebar Toggle Button -->
     <div class="w-0 md:w-12">
-        <div class="mt-10 w-full inset-y-0 left-0 transform duration-300
-            -translate-x-0 ease-in-out fixed transition duration-300 ease-in-out side-z"
-            [ngClass]="{'hidden': openMenu}" id="sidebarView">
-            <div class="bg-gray-950 -mt-1 rounded-b-md flex items-center p-1 mt-1">
+        <div class="mt-12 left-0 transform duration-300 w-screen ease-in-out fixed transition duration-300 ease-in-out side-z"
+            [ngClass]="{'hidden': openMenu, 'w-12': !openMenu}" id="sidebarView">
+            <div class="bg-gray-950 rounded-b-md flex items-center">
+                <!-- Sidebar Toggle Icon -->
                 <div class="cursor-pointer ml-2 hover:drop-shadow-2xl transition-all duration-1000 
-                ease-in-out transform hover:scale-105 mr-4">
+                    ease-in-out transform hover:scale-105 mr-4">
                     <i-feather name="align-justify" style="width: 30px;"
-                        class="mt-5 text-white font-bold drop-shadow-xl p-1" (click)="toggleSidebar()"
+                        class="mt-5 ml-1 text-white font-bold drop-shadow-xl p-1" (click)="toggleSidebar()"
                         (click)="stopPropagation($event)"></i-feather>
                 </div>
-                <div class="text-white ml-4 mt-4">
+                <!-- Breadcrumb Navigation -->
+                <div class="text-white ml-4 mt-5">
                     <navbar-router-breadcrumb></navbar-router-breadcrumb>
-                </div>
-            </div>
-            <div *ngIf="!openMenu" class="hidden md:block">
-                <div class="rounded-b-md flex items-center p-1 mt-1">
-                    <app-side-bar-close></app-side-bar-close>
                 </div>
             </div>
         </div>
     </div>
-    <div class="mt-12 p-1 w-full inset-y-0 left-64 ml-4 transform duration-300 hidden md:block
-            -translate-x-0 ease-in-out fixed transition duration-300 ease-in-out side-z"
+
+    <!-- Sidebar Close Button (visible when sidebar is open) -->
+    <div class="w-0 md:w-12 hidden md:block" *ngIf="!openMenu">
+        <div class="mt-28 inset-y-0 left-0 transform duration-300 -translate-x-0 ease-in-out fixed 
+            transition duration-300 ease-in-out side-z" id="sidebarView">
+            <div class="rounded-b-md w-12 flex items-center p-1 mt-1">
+                <!-- Sidebar Close Button Icon -->
+                <app-side-bar-close></app-side-bar-close>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Sidebar (visible when sidebar is open) -->
+    <div class="mt-12 w-screen left-64 ml-4 transform duration-300 hidden md:block
+        -translate-x-0 ease-in-out fixed transition duration-300 ease-in-out side-z"
         [ngClass]="{'block md:hidden': !openMenu}" id="sidebarView">
         <div class="bg-gray-950 -mt-1 rounded-b-md flex items-center p-1 mt-1">
             <div class="text-white ml-4 mt-4">
@@ -30,21 +40,26 @@
             </div>
         </div>
     </div>
+
+    <!-- Expanded Sidebar (visible when sidebar is open) -->
     <div class="w-0 md:w-64" *ngIf="openMenu">
         <div class="mt-10 bg-gray-950 text-gray-200 w-64 inset-y-0 left-0 transform duration-300
- -translate-x-0 ease-in-out fixed transition duration-300 ease-in-out side-z" [ngClass]="{'hidden ': !openMenu,}"
-            id="sidebarView">
+            -translate-x-0 ease-in-out fixed transition duration-300 ease-in-out side-z"
+            [ngClass]="{'hidden ': !openMenu,}" id="sidebarView">
             <!-- Sidebar Branding and Close Button -->
             <div class="flex justify-end cursor-pointer">
+                <!-- Close Button Icon -->
                 <div class="mt-10 hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
-         rounded-md mr-4">
+                     rounded-md mr-4">
                     <i-feather name="x" class="min-w-[20px] text-gray-200 font-bold drop-shadow-xl"
                         (click)="toggleSidebar()" (click)="stopPropagation($event)"></i-feather>
                 </div>
             </div>
+            <!-- Sidebar Navigation Links -->
             <nav class="font-sans text-white -mt-4">
                 <!-- Dashboard Link -->
-                <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
+                <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 
+                    hover:rounded-md hover:p-2"
                     [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('dashboard') && isPath('dashboard')}">
                     <feather-icon name="package" class="text-xl text-white" style="width: 30px;"></feather-icon>
                     <h1 class="mx-4">
@@ -54,7 +69,8 @@
                     </h1>
                 </div>
                 <!-- Tasks Link -->
-                <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 hover:rounded-md hover:p-2"
+                <div class="flex items-left p-2 m-4 text-white cursor-pointer duration-300 hover:bg-gray-700 
+                    hover:rounded-md hover:p-2"
                     [ngClass]="{'bg-gray-800 rounded-md px-2 bg-w-full': isActive('dashboard/my-tasks')}">
                     <feather-icon name="activity" class="text-xl text-white" style="width: 26px;"></feather-icon>
                     <h1 class="mx-4">

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { SignupModalComponent } from 'src/app/dashboard/user/signup-modal/signup-modal.component';
+import { SignupModalComponent } from 'src/app/login/signup-modal/signup-modal.component';
 import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { UserStateService } from 'src/app/services/user-state.service';

@@ -1,5 +1,5 @@
 <div class="justify-between mt-5 font-sans mx-auto flex flex-col justify-center items-center">
-    <div class="text-4xl mb-5 text-center">
+    <div class="text-2xl uppercase mb-4 text-center text-red-600 font-bold">
         Control Panel
     </div>
 </div>
@@ -22,9 +22,10 @@
                             {{ item.value }}
                         </p>
                     </div>
-                    <button class="m-4 mb-8 text-sm bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
-                rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
-                        <a [routerLink]="['/dashboard/workspace', formatUrl(item.key)]">
+                    <button
+                        class="m-4 mb-8 text-sm bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
+                         rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
+                        <a [routerLink]="['/dashboard/workspace', formatUrl(item.key)]" class=" cursor-pointer">
                             action
                         </a>
                     </button>

@@ -51,6 +51,8 @@ import { MainComponent } from './dashboard/main/main.component';
 import { CentersComponent } from './admin/centers/centers/centers.component';
 import { ClientsComponent } from './admin/clients/clients/clients.component';
 import { WorkspaceRouteComponent } from './dashboard/workspace-route/workspace-route.component';
+import { SignupComponent } from './login/signup/signup.component';
+import { SubscriptionsComponent } from './admin/subscriptions/subscriptions/subscriptions.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -59,6 +61,7 @@ const routes: Routes = [
   { path: 'contact-us', redirectTo: 'contact' },
   { path: 'about', component: AboutUsComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'sign-up', component: SignupComponent },
   { path: 'trainers', component: TrainersPageComponent },
   { path: 'trainers/:id/:name', component: TrainersDetailsComponent, canActivate: [TrainerGuard] },
   { path: 'centers', component: CenterPageComponent },
@@ -195,6 +198,12 @@ const routes: Routes = [
           },
           {
             path: 'clients', component: ClientsComponent, canActivate: [RouteGuardService],
+            data: {
+              expectedRole: ['admin']
+            },
+          },
+          {
+            path: 'subscriptions', component: SubscriptionsComponent, canActivate: [RouteGuardService],
             data: {
               expectedRole: ['admin']
             },

@@ -15,7 +15,7 @@
                 <span *ngIf="invalidLogin" class="text-red-600 mx-2 font-bold font-sans">
                     {{ invalidLogin }}
                 </span>
-                <span *ngIf="loginForm.invalid && invalidForm" class="text-sm text-red-600 mx-2">
+                <span *ngIf="loginForm.invalid && invalidForm" class="text-sm text-red-600">
                     Please enter email and password
                 </span>
                 <div class="mx-auto mt-4">
@@ -49,9 +49,9 @@
                     <div (click)="openForgotPassword()" class="cursor-pointer flex justify-start">
                         Forgot password?
                     </div>
-                    <div (click)="openSignup()" class="cursor-pointer text-red-600 flex justify-end">
+                    <a [routerLink]="['/sign-up']" class="cursor-pointer text-red-600 flex justify-end">
                         Sign up!
-                    </div>
+                    </a>
                 </div>
             </div>
         </form>
