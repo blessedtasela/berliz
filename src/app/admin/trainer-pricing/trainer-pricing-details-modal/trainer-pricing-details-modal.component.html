@@ -1,0 +1,50 @@
+<div class="relative">
+    <div class="text-red-600 absolute top-0 right-0 p-1">
+        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+    </div>
+    <section class="p-2 flex flex-col justify-center items-center">
+        <div class="text-center">
+            <p class="text-gray-950 font-sans font-bold text-xl uppercase mt-4">{{ trainerPricingData.trainer.name }}
+                [ID {{
+                trainerPricingData.id }}</p>
+            <p class="text-red-600 font-sans font-bold text-sm italic">
+                created at {{ formatDate(trainerPricingData.date) }}
+            </p>
+            <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
+                <div class="flex">
+                    <img [src]="'data:image;base64,' + trainerPricingData.trainer.photo "
+                        class="bg-gray-200 rounded-lg p-2" onerror="this.src='../../../assets/icons/user.png';">
+                </div>
+                <div class="flex flex-col m-4 gap-2">
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Online coaccing price: {{ trainerPricingData.priceOnline }} USD
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Hybrid coaching price: {{ trainerPricingData.priceHybrid }} USD
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        Personal coaching price: {{ trainerPricingData.pricePersonal }} USD
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        2 programs discount: {{ trainerPricingData.discount2Programs }} %
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        3 months discount: {{ trainerPricingData.discount3Months }} %
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        6 months discount: {{ trainerPricingData.discount6Months }} %
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        9 months discount: {{ trainerPricingData.discount9Months }} %
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                        12 months discount: {{ trainerPricingData.discount12Months }} %
+                    </p>
+                    <p class="text-red-600 font-sans font-bold text-md flex mt-2">
+                        Last Update: {{ formatDate(trainerPricingData.lastUpdate) }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

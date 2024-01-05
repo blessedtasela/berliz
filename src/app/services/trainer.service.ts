@@ -18,8 +18,18 @@ export class TrainerService {
     return this.httpClient.post(this.url + "/trainer/add", data);
   }
 
+  addTrainerPricing(data: any) {
+    return this.httpClient.post(this.url + "/trainer/addTrainerPricing", data);
+  }
+
   updateTrainer(data: any) {
     return this.httpClient.put(this.url + "/trainer/update", data, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    })
+  }
+
+  updateTrainerPricing(data: any) {
+    return this.httpClient.put(this.url + "/trainer/updateTrainerPricing", data, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     })
   }
@@ -43,6 +53,11 @@ export class TrainerService {
     return this.httpClient.get(this.url + "/trainer/get")
   }
 
+
+  getTrainerPricing() {
+    return this.httpClient.get(this.url + "/trainer/getTrainerPricing")
+  }
+
   getTrainerLikes() {
     return this.httpClient.get(this.url + "/trainer/getTrainerLikes")
   }
@@ -53,6 +68,10 @@ export class TrainerService {
 
   deleteTrainer(id: number) {
     return this.httpClient.delete(this.url + `/trainer/delete/${id}`);
+  }
+
+  deleteTrainerPricing(id: number) {
+    return this.httpClient.delete(this.url + `/trainer/deleteTrainerPricing/${id}`);
   }
 
   likeTrainer(id: number) {

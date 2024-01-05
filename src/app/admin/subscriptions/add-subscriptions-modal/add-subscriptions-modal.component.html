@@ -1,28 +1,30 @@
 <div class="relative bg-white text-gray-700 p-2">
     <div class="text-red-600 absolute top-0 right-0 p-5">
-        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+        <i-feather userId="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
     </div>
     <section class="bg-white">
         <form [formGroup]="addSubscriptionForm">
             <header class="font-bold font-sans text-center m-2 text-gray-700">
-                <h1 class="text-xl">Add a new category</h1>
-                <p class="text-red-600 italic text-sm">Please provide details of the category and select it's tags.
+                <h1 class="text-xl">Add subscription</h1>
+                <p class="text-red-600 italic text-sm">Please select user and select it's center | trainer
                 </p>
             </header>
             <div class="invalid-form">
-                <span *ngIf="!(addSubscriptionForm.get('name')?.invalid ||
-                        addSubscriptionForm.get('likes')?.invalid ||
-                        addSubscriptionForm.get('description')?.invalid ||
-                        addSubscriptionForm.get('photo')?.invalid ||
-                        addSubscriptionForm.get('tagIds')?.invalid)
+                <span *ngIf="!(addSubscriptionForm.get('userId')?.invalid ||
+                        addSubscriptionForm.get('months')?.invalid ||
+                        addSubscriptionForm.get('centerId')?.invalid ||
+                        addSubscriptionForm.get('trainerId')?.invalid ||
+                        addSubscriptionForm.get('mode')?.invalid ||
+                        addSubscriptionForm.get('categoryIds')?.invalid)
                          && invalidForm" class="mx-2 text-gray-700">
                     Everything looks good
                 </span>
-                <span *ngIf="(addSubscriptionForm.get('name')?.invalid ||
-                addSubscriptionForm.get('likes')?.invalid ||
-                addSubscriptionForm.get('description')?.invalid ||
-                addSubscriptionForm.get('photo')?.invalid ||
-                addSubscriptionForm.get('tagIds')?.invalid)
+                <span *ngIf="(addSubscriptionForm.get('userId')?.invalid ||
+                addSubscriptionForm.get('months')?.invalid ||
+                addSubscriptionForm.get('centerId')?.invalid ||
+                addSubscriptionForm.get('trainerId')?.invalid ||
+                addSubscriptionForm.get('mode')?.invalid ||
+                addSubscriptionForm.get('categoryIds')?.invalid)
                  && invalidForm" class="mx-2 text-red-500">
                     Please complete all sessions
                 </span>
@@ -30,71 +32,130 @@
             <div class="grid grid-cols md:grid-cols-2 p-1 gap-2">
                 <div class="mx-auto w-full grid grid-cols-2 grid-cols-4 rounded-lg text-gray-700">
                     <div class="rounded-lg object-cover flex col-span-4 flex">
-                        <img [src]="'../../../../../assets/icons/'+ selectedIcon + '.png'" class="rounded-lg">
+                        <img src="../../.././../assets/icons/subscribe.jpg" class="rounded-lg">
                     </div>
-                    <div *ngIf="addSubscriptionForm.get('tagIds')?.invalid && invalidForm"
+                    <div *ngIf="addSubscriptionForm.get('categoryIds')?.invalid && invalidForm"
                         class="text-red-500 mx-2 col-span-4">
                         Select at least one tag
                     </div>
-                    <div *ngFor="let tag of users; let i = index"
+                    <div *ngFor="let category of categories; let i = index"
                         class="col-span-2 md:col-span-1 mx-auto w-full flex items-center">
-                        <input formArrayName="tagIds" (change)="onCheckboxChanged($event)"
+                        <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
+                            (change)="calculateTotalAmount(selectedTrainer)"
                             class="w-full border-b-2 rounded-lg  rounded-md m-2 text-gray-950 focus:outline-none border-gray-400 hover:border-gray-500"
-                            placeholder="tags" type="checkbox" [value]="tag.id">
-                        {{ tag.email }}
+                            placeholder="tags" type="checkbox" [value]="category.id">
+                        {{ category.name }}
+                    </div>
+                    <div *ngIf="addSubscriptionForm.hasError('noCheckboxChecked') && addSubscriptionForm.dirty"
+                        class="text-red-500 mx-2">
+                        Please select at most two categories.
                     </div>
                 </div>
                 <div class="bg-gray-200 gap-5 rounded-lg p-2 ">
                     <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">Icon</span>
-                        <select formControlName="photo" class="w-full" [(ngModel)]="selectedIcon"
+                        <span class="text-gray-700 font-bold italic">User email</span>
+                        <select formControlName="userId"
                             class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addSubscriptionForm.get('photo')?.invalid && addSubscriptionForm.get('photo')?.touched 
-                            || (addSubscriptionForm.get('photo')?.invalid && invalidForm)}" placeholder="photo"
+                            [ngClass]="{'border-red-400': addSubscriptionForm.get('userId')?.invalid 
+                            && addSubscriptionForm.get('userId')?.touched 
+                            || (addSubscriptionForm.get('userId')?.invalid && invalidForm)}" placeholder="userId"
                             type="text">
-                            <option selected hidden class="w-auto font-sans">Select Icon name</option>
-                            <option *ngFor="let photo of centers" class="w-auto p-8 text-sm m-8">{{ photo.name }}</option>
+                            <option selected class="w-auto font-sans">Select user email</option>
+                            <option *ngFor="let user of users" class="w-auto p-8 text-sm m-8">{{ user.email }}
+                                ( {{ user.role }} )</option>
                         </select>
-                        <div *ngIf="addSubscriptionForm.get('photo')?.invalid && addSubscriptionForm.get('photo')?.dirty|| 
-                        (addSubscriptionForm.get('photo')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            select an icon name
+                        <div *ngIf="addSubscriptionForm.get('userId')?.invalid && addSubscriptionForm.get('userId')?.dirty|| 
+                        (addSubscriptionForm.get('userId')?.invalid && invalidForm)" class="text-red-500 mx-2">
+                            Please select user
                         </div>
                     </div>
                     <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic"> Category Name</span>
-                        <input formControlName="name"
+                        <span class="text-gray-700 font-bold italic">Duration</span>
+                        <select formControlName="months" (change)="calculateTotalAmount(selectedTrainer)"
                             class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addSubscriptionForm.get('name')?.invalid && addSubscriptionForm.get('name')?.touched 
-                            || (addSubscriptionForm.get('name')?.invalid && invalidForm)}" placeholder="Category Name"
+                            [ngClass]="{'border-red-400': addSubscriptionForm.get('months')?.invalid
+                             && addSubscriptionForm.get('months')?.touched 
+                            || (addSubscriptionForm.get('months')?.invalid && invalidForm)}" type="text">
+                            <option selected hidden class="w-auto font-sans">Select month</option>
+                            <option *ngFor="let month of months" [value]="month.month" class="w-auto p-8 text-sm m-8">
+                                {{ month.month }} month (s)
+                            </option>
+                        </select>
+                        <div *ngIf="addSubscriptionForm.get('months')?.invalid && addSubscriptionForm.get('months')?.dirty|| 
+                        (addSubscriptionForm.get('months')?.invalid && invalidForm)" class="text-red-500 mx-2">
+                            Please select subscription durtation
+                        </div>
+                    </div>
+                    <div class="mx-auto w-full p-2">
+                        <span class="text-gray-700 font-bold italic">Trainer</span>
+                        <select formControlName="trainerId" (change)="onTrainerSelected($event)"
+                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
+                            [ngClass]="{'border-red-400': addSubscriptionForm.get('trainerId')?.invalid && addSubscriptionForm.get('trainerId')?.touched 
+                            || (addSubscriptionForm.get('trainerId')?.invalid && invalidForm)}" placeholder="trainerId"
                             type="text">
-                        <div *ngIf="addSubscriptionForm.get('name')?.invalid && addSubscriptionForm.get('name')?.dirty 
-                        || (addSubscriptionForm.get('name')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            Category Name is required
+                            <option selected hidden class="w-auto font-sans">Select trainer</option>
+                            <option *ngFor="let trainer of trainers" class="w-auto p-8 text-sm m-8"
+                                [value]="trainer.id">{{ trainer.name }}</option>
+                        </select>
+                        <div *ngIf="addSubscriptionForm.get('trainerId')?.invalid && addSubscriptionForm.get('trainerId')?.dirty|| 
+                        (addSubscriptionForm.get('trainerId')?.invalid && invalidForm)" class="text-red-500 mx-2">
+                            lease select trainer
+                        </div>
+                    </div>
+                    <div class="mx-auto p-2">
+                        <span class="ml-4 font-bold text-gray-600 italic">Please select mode of training</span>
+                        <div class="grid grid-cols-2 gap-5">
+                            <div>
+                                <span class="sr-only">Online</span>
+                                <span class="ml-4 font-bold text-gray-700">Online</span>
+                                <input formControlName="mode" [value]="'online'"
+                                    (change)="calculateTotalAmount(selectedTrainer)"
+                                    class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                                    [ngClass]="{'border-red-400': addSubscriptionForm.get('mode')?.invalid && addSubscriptionForm.get('mode')?.touched }"
+                                    placeholder="Online" type="radio">
+                            </div>
+                            <div>
+                                <span class="sr-only">Hybrid</span>
+                                <span class="ml-4 font-bold text-gray-700">Hybrid</span>
+                                <input formControlName="mode" [value]="'hybrid'"
+                                    (change)="calculateTotalAmount(selectedTrainer)"
+                                    class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                                    [ngClass]="{'border-red-400': addSubscriptionForm.get('mode')?.invalid && addSubscriptionForm.get('mode')?.touched }"
+                                    placeholder="Hybrid" type="radio">
+                            </div>
+                            <div>
+                                <span class="sr-only">Personal</span>
+                                <span class="ml-4 font-bold text-gray-700">Personal</span>
+                                <input formControlName="mode" [value]="'personal'"
+                                    (change)="calculateTotalAmount(selectedTrainer)"
+                                    class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                                    [ngClass]="{'border-red-400': addSubscriptionForm.get('mode')?.invalid && addSubscriptionForm.get('mode')?.touched }"
+                                    placeholder="Personal" type="radio">
+                            </div>
+                        </div>
+                        <div class="text-red-500" *ngIf="addSubscriptionForm.get('mode')?.invalid && addSubscriptionForm.get('mode')?.dirty
+                            || (addSubscriptionForm.get('mode')?.invalid && invalidForm)">
+                            Please select a mode
                         </div>
                     </div>
                     <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">Likes</span>
-                        <input formControlName="likes"
+                        <span class="text-gray-700 font-bold italic">Center</span>
+                        <select formControlName="centerId"
                             class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addSubscriptionForm.get('likes')?.invalid && addSubscriptionForm.get('likes')?.touched 
-                            || (addSubscriptionForm.get('likes')?.invalid && invalidForm)}" placeholder="Likes"
-                            type="number" min="0">
-                        <div *ngIf="addSubscriptionForm.get('likes')?.invalid && addSubscriptionForm.get('likes')?.dirty 
-                        || (addSubscriptionForm.get('likes')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            Check the number of likes
+                            [ngClass]="{'border-red-400': addSubscriptionForm.get('centerId')?.invalid && addSubscriptionForm.get('centerId')?.touched 
+                            || (addSubscriptionForm.get('centerId')?.invalid && invalidForm)}" placeholder="centerId"
+                            type="text">
+                            <option selected hidden class="w-auto font-sans">Select center</option>
+                            <option *ngFor="let center of centers" class="w-auto p-8 text-sm m-8" [value]="center.id">{{
+                                center.name }}</option>
+                        </select>
+                        <div *ngIf="addSubscriptionForm.get('centerId')?.invalid && addSubscriptionForm.get('centerId')?.dirty|| 
+                        (addSubscriptionForm.get('centerId')?.invalid && invalidForm)" class="text-red-500 mx-2">
+                            Please select a center
                         </div>
                     </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">Description</span>
-                        <textarea formControlName="description"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addSubscriptionForm.get('description')?.invalid && addSubscriptionForm.get('description')?.touched 
-                            || (addSubscriptionForm.get('description')?.invalid && invalidForm)}" placeholder="Description"
-                            rows="5" cols="30"></textarea>
-                        <div *ngIf="addSubscriptionForm.get('description')?.invalid && addSubscriptionForm.get('description')?.dirty
-                        || (addSubscriptionForm.get('description')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            Description is required
-                        </div>
+                    <div class="flex items-center justify-center text-gray-950 font-bold">
+                        total Amount: {{ formatTotalAmount(totalAmount) }} USD
                     </div>
                     <div class="grid grid-cols-2">
                         <div class="bg-gray-950 rounded-md mx-auto m-2">
@@ -107,9 +168,8 @@
                         <div class="bg-red-600 rounded-md mx-auto m-2">
                             <button type="submit"
                                 class="p-2 font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
-                                (click)="addCategory()">
+                                (click)="addSubscription()">
                                 Add
-
                             </button>
                         </div>
                     </div>

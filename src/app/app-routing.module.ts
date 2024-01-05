@@ -53,6 +53,7 @@ import { ClientsComponent } from './admin/clients/clients/clients.component';
 import { WorkspaceRouteComponent } from './dashboard/workspace-route/workspace-route.component';
 import { SignupComponent } from './login/signup/signup.component';
 import { SubscriptionsComponent } from './admin/subscriptions/subscriptions/subscriptions.component';
+import { TrainerPricingComponent } from './admin/trainer-pricing/trainer-pricing/trainer-pricing.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -204,6 +205,12 @@ const routes: Routes = [
           },
           {
             path: 'subscriptions', component: SubscriptionsComponent, canActivate: [RouteGuardService],
+            data: {
+              expectedRole: ['admin']
+            },
+          },
+          {
+            path: 'trainer-pricing', component: TrainerPricingComponent, canActivate: [RouteGuardService],
             data: {
               expectedRole: ['admin']
             },
@@ -454,7 +461,18 @@ const routes: Routes = [
           expectedRole: ['admin']
         },
       },
-
+      {
+        path: 'subscriptions', component: SubscriptionsComponent, canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin']
+        },
+      },
+      {
+        path: 'trainer-pricing', component: TrainerPricingComponent, canActivate: [RouteGuardService],
+        data: {
+          expectedRole: ['admin']
+        },
+      },
     ],
 
   },

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap, catchError, of, Subject } from 'rxjs';
 import { genericError } from 'src/validators/form-validators.module';
-import { Trainers } from '../models/trainers.interface';
+import { TrainerPricing, Trainers } from '../models/trainers.interface';
 import { SnackBarService } from './snack-bar.service';
 import { TrainerService } from './trainer.service';
 import { TrainerLike } from '../models/users.interface';
@@ -19,6 +19,8 @@ export class TrainerStateService {
   public trainerData$: Observable<Trainers> = this.trainerSubject.asObservable();
   private likeTrainersSubject = new BehaviorSubject<any>(null);
   public likeTrainersData$: Observable<TrainerLike[]> = this.likeTrainersSubject.asObservable();
+  private trainerPricingSubject = new BehaviorSubject<any>(null);
+  public trainerPricingData$: Observable<TrainerPricing[]> = this.trainerPricingSubject.asObservable();
   responseMessage: any;
 
 
@@ -41,6 +43,10 @@ export class TrainerStateService {
 
   setLikeTrainersSubject(data: TrainerLike[]) {
     this.likeTrainersSubject.next(data);
+  }
+
+  setTrainerPricingSubject(data: TrainerPricing[]) {
+    this.trainerPricingSubject.next(data);
   }
 
 
@@ -119,4 +125,24 @@ export class TrainerStateService {
     );
   }
 
+  getTrainerPricing(): Observable<TrainerPricing[]> {
+    return this.trainerService.getTrainerPricing().pipe(
+      tap((response: any) => {
+        return response.sort((a: TrainerPricing, b: TrainerPricing) => {
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          return dateB - dateA;
+        })
+      }),
+      catchError((error) => {
+        if (error.error?.message) {
+          this.responseMessage = error.error?.message;
+        } else {
+          this.responseMessage = genericError;
+        }
+        console.log(this.responseMessage, 'error');
+        return of([]);
+      })
+    );
+  }
 }

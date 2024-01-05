@@ -19,3 +19,8 @@
         </div>
     </div>
 </div>
+<div *ngIf="isPageError()">
+    <app-navigation-bar></app-navigation-bar>
+    <router-outlet></router-outlet>
+    <app-footer></app-footer>
+</div>

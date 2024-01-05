@@ -99,8 +99,6 @@ export class AddCategoryModalComponent implements OnInit {
     } else {
       // Get the selected tagIds values as an array
       const selectedTagIds = this.addCategoryForm.value.tagIds.map((tag: any) => tag.tagIds);
-
-      // Convert the array to a comma-separated string
       const tagIdsString = selectedTagIds.join(',');
       const formData = {
         ...this.addCategoryForm.value,

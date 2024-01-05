@@ -25,6 +25,7 @@ import { SubTasksModule } from './sub-tasks/sub-tasks.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { TasksModule } from './tasks/tasks.module';
 import { TestimonialsModule } from './testimonials/testimonials.module';
+import { TrainerPricingModule } from './trainer-pricing/trainer-pricing.module';
 
 
 
@@ -58,7 +59,8 @@ import { TestimonialsModule } from './testimonials/testimonials.module';
     SubTasksModule,
     SubscriptionsModule,
     TasksModule,
-    TestimonialsModule
+    TestimonialsModule,
+    TrainerPricingModule
   ]
 })
 export class AdminModule { }

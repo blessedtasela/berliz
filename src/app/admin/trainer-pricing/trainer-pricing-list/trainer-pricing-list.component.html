@@ -5,49 +5,50 @@
             <thead>
                 <tr class="cursor-pointer">
                     <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">SN</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Name</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Status</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Email</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Trainer</th>
                     <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Date</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">subscription ID</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Likes</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400"> ID</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">OTC</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">PTC</th>
+                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">HTC</th>
                     <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Last update</th>
                     <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let subscription of subscriptionsData; let i = index" class="bg-gray-100 hover:bg-gray-200">
+                <tr *ngFor="let trainerPricing of trainerPricingData; let i = index"
+                    class="bg-gray-100 hover:bg-gray-200">
                     <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ subscription.user.email }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ subscription.status }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(subscription.date) }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2 font-bold">{{ subscription.id }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ subscription.months }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(subscription.lastUpdate) }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">
+                        <a href="mailto:{{ trainerPricing.trainer.partner.user.email }}"> {{
+                            trainerPricing.trainer.partner.user.email }}</a>
+                    </td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ trainerPricing.trainer.name }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(trainerPricing.date) }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2 font-bold">{{ trainerPricing.id }}</td>
+                   <td class="border-b border-gray-400 px-4 py-2">{{ trainerPricing.priceOnline }} usd</td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ trainerPricing.pricePersonal }} usd</td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ trainerPricing.priceHybrid }} usd</td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(trainerPricing.lastUpdate) }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">
                         <div class="flex items-center p-2">
                             <button
                                 class="text-sm rounded-md font-sans mx-auto ml-4
                                     transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                (click)="openSubscriptionDetails(subscription.id)">
+                                (click)="openTrainerPricingDetails(trainerPricing.id)">
                                 <i-feather name="eye" class="text-gray-800"></i-feather>
                             </button>
                             <button
                                 class="text-sm rounded-md font-sans mx-auto ml-4
                                         transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                (click)="openUpdateSubscription(subscription.id)">
+                                (click)="openUpdateTrainerPricing(trainerPricing.id)">
                                 <i-feather name="edit" class="text-red-600"></i-feather>
-                            </button>
-                            <button
-                                class="text-sm bg-gray-950 text-white p-1 px-2 hover:bg-gray-1000 rounded-md font-sans mx-auto ml-4
-                                transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                [ngClass]="{'bg-red-600 hover:bg-red-700': subscription.status == 'true'}"
-                                (click)="updateSubscriptionStatus(subscription.id)">
-                                {{ subscription.status == 'false' ? 'activate' : 'deactivate'}}
                             </button>
                             <button
                                 class="text-sm rounded-md font-sans mx-auto ml-4
                                         transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                (click)="deleteSubscription(subscription.id)">
+                                (click)="deleteTrainerPricing(trainerPricing.id)">
                                 <i-feather name="trash-2" class="text-red-600"></i-feather>
                             </button>
                         </div>

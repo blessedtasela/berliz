@@ -3,10 +3,12 @@ import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractCon
 import { MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription, forkJoin, take } from 'rxjs';
+import { Categories } from 'src/app/models/categories.interface';
 import { Centers } from 'src/app/models/centers.interface';
 import { Clients } from 'src/app/models/clients.interface';
-import { Trainers } from 'src/app/models/trainers.interface';
+import { TrainerPricing, Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
+import { CategoryStateService } from 'src/app/services/category-state.service';
 import { CenterStateService } from 'src/app/services/center-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SubscriptionService } from 'src/app/services/subscription.service';
@@ -27,8 +29,19 @@ export class AddSubscriptionsModalComponent {
   users: Users[] = [];
   trainers: Trainers[] = [];
   centers: Centers[] = [];
-  selectedIcon: string = '../../../../../assets/icons/gym';
+  categories: Categories[] = [];
   subscriptions: Subscription[] = [];
+  trainerPricing: TrainerPricing[] = [];
+  selectedTrainer!: Trainers;
+  totalAmount: any = 0;
+  months: any[] = [
+    { id: 1, month: 1, amount: "" },
+    { id: 2, month: 3, amount: "" },
+    { id: 3, month: 6, amount: "" },
+    { id: 4, month: 9, amount: "" },
+    { id: 5, month: 12, amount: "" },
+  ];
+
 
   constructor(private formBuilder: FormBuilder,
     private subscriptionService: SubscriptionService,
@@ -38,23 +51,27 @@ export class AddSubscriptionsModalComponent {
     public dialogRef: MatDialogRef<AddSubscriptionsModalComponent>,
     private ngxService: NgxUiLoaderService,
     private cd: ChangeDetectorRef,
-    private snackbarService: SnackBarService) {
+    private snackbarService: SnackBarService,
+    private categoryStateService: CategoryStateService,) {
   }
 
   ngOnInit(): void {
     this.addSubscriptionForm = this.formBuilder.group({
-      'name': ['', [Validators.required, Validators.minLength(2)]],
-      'photo': ['', [Validators.required, Validators.minLength(2)]],
-      'description': ['', [Validators.required, Validators.minLength(20)]],
-      'likes': ['0',],
-      'tagIds': this.formBuilder.array([], this.validateCheckbox()),
+      'userId': ['', [Validators.required, Validators.minLength(1)]],
+      'months': ['', [Validators.required, Validators.minLength(1)]],
+      'mode': ['', [Validators.required, Validators.minLength(1)]],
+      'trainerId': ['',],
+      'centerId': ['',],
+      'categoryIds': this.formBuilder.array([], this.validateCheckbox()),
     });
 
     forkJoin([
       this.centerStateService.activeCentersData$.pipe(take(1)),
       this.trainerStateService.activeTrainersData$.pipe(take(1)),
-      this.userStateService.activeUserData$.pipe(take(1))
-    ]).subscribe(([centers, trainers, users]) => {
+      this.userStateService.activeUserData$.pipe(take(1)),
+      this.categoryStateService.activeCategoriesData$.pipe(take(1)),
+      this.trainerStateService.trainerPricingData$.pipe(take(1))
+    ]).subscribe(([centers, trainers, users, categories, trainerPricing]) => {
       if (centers === null) {
         this.handleEmitEvent()
       } else {
@@ -69,6 +86,16 @@ export class AddSubscriptionsModalComponent {
         this.handleEmitEvent()
       } else {
         this.users = users
+      }
+      if (categories === null) {
+        this.handleEmitEvent()
+      } else {
+        this.categories = categories
+      }
+      if (trainerPricing === null) {
+        this.handleEmitEvent()
+      } else {
+        this.trainerPricing = trainerPricing
       }
     });
   }
@@ -101,50 +128,160 @@ export class AddSubscriptionsModalComponent {
         this.cd.detectChanges();
         this.ngxService.stop();
       }),
+      this.categoryStateService.getActiveCategories().subscribe((categories) => {
+        this.ngxService.start();
+        this.categories = categories;
+        this.categoryStateService.setActiveCategoriesSubject(categories);
+        this.cd.detectChanges();
+        this.ngxService.stop();
+      }),
+      this.trainerStateService.getTrainerPricing().subscribe((trainerPricing) => {
+        this.ngxService.start();
+        this.trainerPricing = trainerPricing;
+        this.trainerStateService.setTrainerPricingSubject(trainerPricing);
+        this.cd.detectChanges();
+        this.ngxService.stop();
+      })
     );
   }
 
+  onTrainerSelected(event: any): void {
+    console.log("onTrainerSelectedCalled")
+    const id = +event.target.value;
+    const selectedTrainer = this.trainers.find(trainer => trainer.id === id);
+    if (selectedTrainer) {
+      this.selectedTrainer = selectedTrainer;
+      this.calculateTotalAmount(selectedTrainer);
+    }
+    else {
+      console.log('trainer not found')
+    }
+  }
+
+  calculateTotalAmount(selectedTrainer: Trainers): void {
+    if (!selectedTrainer) {
+      console.log('trainer is null')
+    }
+    this.selectedTrainer = selectedTrainer;
+    const selectedTrainerPricing = this.trainerPricing.find(trainerPricing => trainerPricing.trainer.id === selectedTrainer.id)
+
+    if (!selectedTrainerPricing) {
+      console.log('trainerPricing not found')
+      return;
+    }
+
+    // You can access form controls using this.addSubscriptionForm.get('controlName').value
+    const selectedMode = this.addSubscriptionForm.get('mode')?.value;
+    const selectedMonths = this.addSubscriptionForm.get('months')?.value;
+    const selectedCategoriesCount = this.addSubscriptionForm.get('categoryIds')?.value.length;
+    console.log('selectedMode', selectedMode)
+    console.log('selectedMonths', selectedMonths)
+    console.log('selectedCategories', selectedCategoriesCount)
+
+    // Get the base price based on the selected mode
+    let basePrice = 0;
+    switch (selectedMode) {
+      case 'online':
+        basePrice = selectedTrainerPricing.priceOnline;
+        break;
+      case 'hybrid':
+        basePrice = selectedTrainerPricing.priceHybrid;
+        break;
+      case 'personal':
+        basePrice = selectedTrainerPricing.pricePersonal;
+        break;
+      // Add more cases if needed
+    }
+
+    console.log('basePrice', basePrice)
+    // Apply discount for selected months
+    let discountedPrice = basePrice;
+
+    switch (selectedMonths) {
+      case '1':
+        discountedPrice = discountedPrice + 0;
+        break;
+      case '3':
+        discountedPrice -= ((discountedPrice * selectedTrainerPricing.discount3Months) / 100);
+        discountedPrice = discountedPrice * 3;
+        break;
+      case '6':
+        discountedPrice -= ((discountedPrice * selectedTrainerPricing.discount6Months) / 100);
+        discountedPrice = discountedPrice * 6;
+        break;
+      case '9':
+        discountedPrice -= ((discountedPrice * selectedTrainerPricing.discount9Months) / 100);
+        discountedPrice = discountedPrice * 9;
+        break;
+      case '12':
+        discountedPrice -= ((discountedPrice * selectedTrainerPricing.discount12Months) / 100);
+        discountedPrice = discountedPrice * 12;
+        break;
+      default:
+        discountedPrice = discountedPrice;
+        break;
+    }
+    // Apply discount for 2 categories
+    if (selectedCategoriesCount === 2) {
+      const twoProgramsDiscount = selectedTrainerPricing.discount2Programs;
+      discountedPrice -= (discountedPrice *
+        twoProgramsDiscount) / 100;
+    } else {
+      discountedPrice = discountedPrice;
+    }
+
+    // Update a property in your component to store the total amount and bind it in your template
+    this.totalAmount = discountedPrice;
+    console.log('discountPrice', discountedPrice)
+  }
+
+  formatTotalAmount(amount: any) {
+    return amount.toFixed(2);
+  }
 
   onCheckboxChanged(event: any) {
-    const users = this.addSubscriptionForm.get('tagIds') as FormArray;
+    const categories = this.addSubscriptionForm.get('categoryIds') as FormArray;
     if (event.target.checked) {
-      users.push(this.formBuilder.group({ tagIds: event.target.value }));
+      // Check the maximum number of checkboxes
+      if (categories.length < 2) {
+        categories.push(this.formBuilder.group({ categoryIds: event.target.value }));
+      } else {
+        event.target.checked = false; // Uncheck the checkbox
+      }
     } else {
-      const index = users.controls.findIndex((control) => control.value.tagIds === event.target.value);
-      users.removeAt(index);
+      const index = categories.controls.findIndex((control) => control.value.categoryIds === event.target.value);
+      categories.removeAt(index);
     }
   }
 
   validateCheckbox(): ValidatorFn {
     return (formArray: AbstractControl) => {
       const checkboxes = formArray.value;
-      const isChecked = checkboxes.length > 0;
+      const isChecked = checkboxes.length > 0 && checkboxes.length <= 2;
       return isChecked ? null : { noCheckboxChecked: true };
     };
   }
 
-  addCategory(): void {
+
+  addSubscription(): void {
     this.ngxService.start();
     if (this.addSubscriptionForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
     } else {
-      // Get the selected tagIds values as an array
-      const selectedTagIds = this.addSubscriptionForm.value.tagIds.map((tag: any) => tag.tagIds);
-
-      // Convert the array to a comma-separated string
-      const tagIdsString = selectedTagIds.join(',');
+      const selectedTagIds = this.addSubscriptionForm.value.categoryIds.map((category: any) => category.categoryIds);
+      const categoryIdsString = selectedTagIds.join(',');
       const formData = {
         ...this.addSubscriptionForm.value,
-        tagIds: tagIdsString
+        categoryIds: categoryIdsString
       };
       this.subscriptionService.addSubscription(formData)
         .subscribe((response: any) => {
           this.onAddSubscriptionEmit.emit();
           this.addSubscriptionForm.reset();
           this.invalidForm = false;
-          this.dialogRef.close('Category added successfully');
+          this.dialogRef.close('Subscription added successfully');
           this.responseMessage = response?.message;
           this.snackbarService.openSnackBar(this.responseMessage, "");
           this.ngxService.stop();
@@ -164,13 +301,11 @@ export class AddSubscriptionsModalComponent {
   }
 
   closeDialog() {
-    this.dialogRef.close('Dialog closed without adding a category');
+    this.dialogRef.close('Dialog closed without adding a subscription');
   }
 
   clear() {
     this.addSubscriptionForm.reset();
-    this.selectedIcon = '../../../../../assets/icons/gym';
-    this.onCheckboxChanged(event)
   }
 
 

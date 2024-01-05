@@ -21,14 +21,29 @@ export interface Trainers {
     description: string;
     photo: string;
     tagSet: {
-        id: number;
-        name: string;
+      id: number;
+      name: string;
     }[];
     likes: number;
   }[];
   date: Date;
   lastUpdate: Date;
   status: string;
+}
+
+export interface TrainerPricing {
+  id: number;
+  trainer: Trainers;
+  priceOnline: number;
+  priceHybrid: number;
+  pricePersonal: number;
+  discount3Months: number;
+  discount6Months: number;
+  discount9Months: number;
+  discount12Months: number;
+  discount2Programs: number;
+  date: Date;
+  lastUpdate: Date;
 }
 
 export interface TrainerStatistics {
