@@ -7,7 +7,7 @@ import { CenterEquipment } from 'src/app/models/centers.interface';
   styleUrls: ['./center-equipments.component.css']
 })
 export class CenterEquipmentsComponent {
- @Input() centerEquipments: CenterEquipment | undefined;
+ @Input() centerEquipments: CenterEquipment[] = [];
   showAllEquipments: boolean = false;
 
   constructor() {

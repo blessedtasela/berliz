@@ -1,3 +1,4 @@
+import { Categories } from "./categories.interface";
 import { Users } from "./users.interface";
 
 export interface Centers {
@@ -23,8 +24,8 @@ export interface Centers {
     name: string;
     description: string;
     tagSet: {
-        id: number;
-        name: string;
+      id: number;
+      name: string;
     }[];
     likes: number;
   }[];
@@ -61,16 +62,6 @@ export interface HeroCenterAlbum {
   comment: string;
 }
 
-export interface CenterVideoAlbum {
-  id: number;
-  centerId: number;
-  name: string;
-  videos: {
-    videoUrl: string;
-    comment: string;
-  }[];
-  date: string;
-}
 
 export interface CenterCategory {
   id: number;
@@ -88,16 +79,14 @@ export interface CenterCategory {
 
 export interface CenterEquipment {
   id: number;
-  centerId: number;
-  equipments: {
-    equipmentName: string;
-    description: string;
-    categories: string[];
-    imageUrl: string;
-    stockNumber: number;
-    date: string;
-  }[];
-  date: string;
+  center: Centers;
+  name: string;
+  description: string;
+  categories: Categories[];
+  image: any;
+  stockNumber: number;
+  lastUpdate: Date;
+  date: Date;
 }
 
 export interface CenterTrainers {
@@ -126,24 +115,31 @@ export interface CenterPromotions {
 
 export interface CenterAnnouncement {
   id: number;
-  centerId: number;
-  announcements: {
-    announcement: string,
-    imageUrl: string
-    date: string
-  }[];
-  date: string;
+  center: Centers;
+  announcement: string;
+  icon: any;
+  lastUpdate: Date;
+  date: Date;
 }
 
-export interface CenterAlbum {
+export interface CenterPhotoAlbum {
   id: number;
-  centerId: number;
+  center: Centers;
+  uuid: string;
+  photo: any;
+  comment: string;
+  lastUpdate: Date;
+  date: Date;
+}
+
+export interface CenterVideoAlbum {
+  id: number;
+  center: Centers;
   name: string;
-  photos: {
-    photo: string;
-    comment: string;
-  }[];
-  date: string;
+  video: any;
+  comment: string;
+  lastUpdate: Date;
+  date: Date;
 }
 
 export interface CenterSubscriptionForm {
@@ -156,15 +152,16 @@ export interface CenterSubscriptionForm {
 export interface CenterIntroduction {
   id: number;
   centerId: number;
-  paragraphs: { paragraph: string }[];
-  imageUrl: string;
-  date: string;
+  introduction: string;
+  coverPhoto: any;
+  lastUpdate: Date;
+  date: Date;
 }
 
 export interface CenterReview {
   id: number;
   centerId: number;
-  reviews : {
+  reviews: {
     userName: string;
     photo: string;
     comment: string;
@@ -176,13 +173,12 @@ export interface CenterReview {
 
 export interface CenterLocation {
   id: number;
-  centerId: number;
-  location: {
-    locationId: number;
-    name: string;
-    address: string;
-    imageUrl: string;
-    ratings: number;
-  }[];
-  date: string;
+  center: Centers;
+  subName: string;
+  locationUrl: string;
+  address: string;
+  coverPhoto: any;
+  ratings: number;
+  lastUpdate: Date;
+  date: Date;
 }

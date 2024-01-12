@@ -7,14 +7,14 @@ import { CenterAnnouncement } from 'src/app/models/centers.interface';
   styleUrls: ['./center-announcements.component.css']
 })
 export class CenterAnnouncementsComponent {
-@Input() centerAnnouncements: CenterAnnouncement | undefined;
-showAllAnnouncements: boolean = false;
+  @Input() centerAnnouncements: CenterAnnouncement[] = [];
+  showAllAnnouncements: boolean = false;
 
-constructor() {
+  constructor() {
 
-}
+  }
 
-allAnnouncements() {
-  this.showAllAnnouncements = !this.showAllAnnouncements;
-}
+  allAnnouncements() {
+    this.showAllAnnouncements = !this.showAllAnnouncements;
+  }
 }

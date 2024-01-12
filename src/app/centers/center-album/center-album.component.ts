@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CenterAlbum } from 'src/app/models/centers.interface';
+import { CenterPhotoAlbum } from 'src/app/models/centers.interface';
 
 @Component({
   selector: 'app-center-album',
@@ -7,5 +7,5 @@ import { CenterAlbum } from 'src/app/models/centers.interface';
   styleUrls: ['./center-album.component.css']
 })
 export class CenterAlbumComponent {
-  @Input() centerAlbum: CenterAlbum | undefined;
+  @Input() centerAlbum: CenterPhotoAlbum | undefined;
 }

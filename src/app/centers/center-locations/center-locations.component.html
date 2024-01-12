@@ -10,31 +10,31 @@
 
             <div class="grid grid-cols md:grid-cols-2 justify-center items-center p-4 gap-10
                 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                *ngFor="let a of centerLoction?.location; let i = index"
+                *ngFor="let centerLocation of centerLocations; let i = index"
                 [ngClass]="{ 'hidden' : i >= 9 && !showAllLocations }">
                 <div class="flex">
-                    <img class="rounded-md mx-auto" src="{{ a.imageUrl }}">
+                    <img class="rounded-md mx-auto" [src]="centerLocation.coverPhoto">
                 </div>
                 <div class="p-4">
                     <p class="text-red-600 font-bold font-sans text-sm text-center mb-2 uppercase">
-                        {{ a.name }}
+                        {{ centerLocation.subName }}
                     </p>
                     <p class="text-gray-600 font-bold font-sans text-sm text-justify">
-                        {{ a.address }}
+                        {{ centerLocation.address }}
                     </p>
                     <div class="text-center">
-                    <button class="m-4 text-sm  bg-red-600 text-gray-200 p-1 px-2 mt-3 hover:bg-red-700 hero-button font-sans
+                        <button class="m-4 text-sm  bg-red-600 text-gray-200 p-1 px-2 mt-3 hover:bg-red-700 hero-button font-sans
                         rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
-                        {{ a.ratings }} <i-feather name="Star" style="width: 14px;"
-                            class="font-boldt ext-gray-200 ml-1 -mb-3"></i-feather>
-                    </button>
-                </div>
+                            {{ centerLocation.ratings }} <i-feather name="Star" style="width: 14px;"
+                                class="font-boldt ext-gray-200 ml-1 -mb-3"></i-feather>
+                        </button>
+                    </div>
                 </div>
                 <hr class="text-red-600 border-gray-600 border-bold">
             </div>
         </div>
     </section>
-    <div class="p-3" *ngFor="let a of centerLoction?.location; let i = index"
+    <div class="p-3" *ngFor="let a of centerLocations; let i = index"
         [ngClass]="{ 'hidden' : i <= 9 && !showAllLocations }">
         <button
             class="p-2 px-4 bg-gray-100 text-red-600 font-sans font-bold rounded-md mx-auto flex justify-center mt-2"

@@ -7,7 +7,7 @@ import { CenterLocation } from 'src/app/models/centers.interface';
   styleUrls: ['./center-locations.component.css']
 })
 export class CenterLocationsComponent {
-  @Input() centerLoction: CenterLocation | undefined;
+  @Input() centerLocations: CenterLocation[] = [];
   showAllLocations: boolean = false;
   
   constructor() {

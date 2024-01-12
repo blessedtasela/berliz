@@ -65,6 +65,6 @@ export class CenterHeroDetailComponent {
 
   changeAlbum(n: number): void {
     if (this.album)
-      this.albumIndex = (this.albumIndex + n + this.album?.videos?.length) % this.album?.videos?.length;
+      this.albumIndex = (this.albumIndex + n + this.album?.video?.length) % this.album?.video?.length;
   }
 }

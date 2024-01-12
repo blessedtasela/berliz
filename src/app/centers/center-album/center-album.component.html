@@ -3,7 +3,7 @@
         Photo Ablum
     </div>
     <div class="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-2">
-        <div class="gap-2" *ngFor="let a of centerAlbum?.photos; let i = index">
+        <div class="gap-2" *ngFor="let a of centerAlbum?.photo; let i = index">
         <img class="w-full aspect-video rounded-md" [ngClass]="{'aspect-square': i%2===0}" src="{{ a.photo }}" />
       </div>
     </div>
