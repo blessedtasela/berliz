@@ -4,7 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription, forkJoin, take } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
-import { Centers } from 'src/app/models/centers.interface';
+import { CenterPricing, Centers } from 'src/app/models/centers.interface';
 import { Clients } from 'src/app/models/clients.interface';
 import { TrainerPricing, Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
@@ -32,7 +32,9 @@ export class AddSubscriptionsModalComponent {
   categories: Categories[] = [];
   subscriptions: Subscription[] = [];
   trainerPricing: TrainerPricing[] = [];
+  centerPricing: CenterPricing[] = [];
   selectedTrainer!: Trainers;
+  selectedCenter!: Centers;
   totalAmount: any = 0;
   months: any[] = [
     { id: 1, month: 1, amount: "" },
@@ -70,8 +72,9 @@ export class AddSubscriptionsModalComponent {
       this.trainerStateService.activeTrainersData$.pipe(take(1)),
       this.userStateService.activeUserData$.pipe(take(1)),
       this.categoryStateService.activeCategoriesData$.pipe(take(1)),
-      this.trainerStateService.trainerPricingData$.pipe(take(1))
-    ]).subscribe(([centers, trainers, users, categories, trainerPricing]) => {
+      this.trainerStateService.trainerPricingData$.pipe(take(1)),
+      this.centerStateService.centerPricingData$.pipe(take(1))
+    ]).subscribe(([centers, trainers, users, categories, trainerPricing, centerPricing]) => {
       if (centers === null) {
         this.handleEmitEvent()
       } else {
@@ -96,6 +99,11 @@ export class AddSubscriptionsModalComponent {
         this.handleEmitEvent()
       } else {
         this.trainerPricing = trainerPricing
+      }
+      if (centerPricing === null) {
+        this.handleEmitEvent()
+      } else {
+        this.centerPricing = centerPricing
       }
     });
   }
@@ -141,100 +149,136 @@ export class AddSubscriptionsModalComponent {
         this.trainerStateService.setTrainerPricingSubject(trainerPricing);
         this.cd.detectChanges();
         this.ngxService.stop();
+      }),
+      this.centerStateService.getCenterPricing().subscribe((centerPricing) => {
+        this.ngxService.start();
+        this.centerPricing = centerPricing;
+        this.centerStateService.setAllCenterPricingSubject(centerPricing);
+        this.cd.detectChanges();
+        this.ngxService.stop();
       })
     );
   }
 
   onTrainerSelected(event: any): void {
-    console.log("onTrainerSelectedCalled")
+    console.log("onTrainerSelected called")
     const id = +event.target.value;
     const selectedTrainer = this.trainers.find(trainer => trainer.id === id);
     if (selectedTrainer) {
       this.selectedTrainer = selectedTrainer;
-      this.calculateTotalAmount(selectedTrainer);
+      this.calculateTotalAmount();
     }
     else {
       console.log('trainer not found')
     }
   }
 
-  calculateTotalAmount(selectedTrainer: Trainers): void {
-    if (!selectedTrainer) {
-      console.log('trainer is null')
+  onCenterSelected(event: any): void {
+    console.log("onCenterSelected called")
+    const id = +event.target.value;
+    const selectedCenter = this.centers.find(center => center.id === id);
+    if (selectedCenter) {
+      this.selectedCenter = selectedCenter;
+      this.calculateTotalAmount();
     }
-    this.selectedTrainer = selectedTrainer;
-    const selectedTrainerPricing = this.trainerPricing.find(trainerPricing => trainerPricing.trainer.id === selectedTrainer.id)
+    else {
+      console.log('center not found')
+    }
+  }
 
-    if (!selectedTrainerPricing) {
-      console.log('trainerPricing not found')
+  calculateTotalAmount(): void {
+    if (!this.selectedTrainer || !this.selectedCenter) {
+      console.log('Trainer or center is null');
       return;
     }
-
-    // You can access form controls using this.addSubscriptionForm.get('controlName').value
+  
+    const selectedTrainerPricing = this.trainerPricing.find(
+      (trainerPricing) => trainerPricing.trainer.id === this.selectedTrainer.id
+    );
+    const selectedCenterPricing = this.centerPricing.find(
+      (centerPricing) => centerPricing.center.id === this.selectedCenter.id
+    );
+  
+    if (!selectedTrainerPricing || !selectedCenterPricing) {
+      console.log('Trainer or center pricing not found');
+      return;
+    }
+  
     const selectedMode = this.addSubscriptionForm.get('mode')?.value;
     const selectedMonths = this.addSubscriptionForm.get('months')?.value;
     const selectedCategoriesCount = this.addSubscriptionForm.get('categoryIds')?.value.length;
-    console.log('selectedMode', selectedMode)
-    console.log('selectedMonths', selectedMonths)
-    console.log('selectedCategories', selectedCategoriesCount)
-
-    // Get the base price based on the selected mode
-    let basePrice = 0;
-    switch (selectedMode) {
-      case 'online':
-        basePrice = selectedTrainerPricing.priceOnline;
-        break;
-      case 'hybrid':
-        basePrice = selectedTrainerPricing.priceHybrid;
-        break;
-      case 'personal':
-        basePrice = selectedTrainerPricing.pricePersonal;
-        break;
-      // Add more cases if needed
+  
+    console.log('Selected Mode:', selectedMode);
+    console.log('Selected Months:', selectedMonths);
+    console.log('Selected Categories:', selectedCategoriesCount);
+  
+    const calculateDiscount = (
+      basePrice: number,
+      discountPercentage: number,
+      months: number
+    ): number => {
+      let discountedPrice = basePrice;
+      if (months > 1) {
+        discountedPrice -= (basePrice * discountPercentage) / 100;
+        discountedPrice *= months;
+      }
+      return discountedPrice;
+    };
+  
+    const calculate2ProgramsDiscount = (basePrice: number, discountPercentage: number): number => {
+      return basePrice - (basePrice * discountPercentage) / 100;
+    };
+  
+    // Calculate trainer price
+    interface GetTrainerPrice {
+      priceOnline: number;
+      priceHybrid: number;
+      pricePersonal: number;
+      discount3Months: number;
+      discount6Months: number;
+      discount9Months: number;
+      discount12Months: number;
     }
-
-    console.log('basePrice', basePrice)
-    // Apply discount for selected months
-    let discountedPrice = basePrice;
-
-    switch (selectedMonths) {
-      case '1':
-        discountedPrice = discountedPrice + 0;
-        break;
-      case '3':
-        discountedPrice -= ((discountedPrice * selectedTrainerPricing.discount3Months) / 100);
-        discountedPrice = discountedPrice * 3;
-        break;
-      case '6':
-        discountedPrice -= ((discountedPrice * selectedTrainerPricing.discount6Months) / 100);
-        discountedPrice = discountedPrice * 6;
-        break;
-      case '9':
-        discountedPrice -= ((discountedPrice * selectedTrainerPricing.discount9Months) / 100);
-        discountedPrice = discountedPrice * 9;
-        break;
-      case '12':
-        discountedPrice -= ((discountedPrice * selectedTrainerPricing.discount12Months) / 100);
-        discountedPrice = discountedPrice * 12;
-        break;
-      default:
-        discountedPrice = discountedPrice;
-        break;
-    }
+    let trainerDiscount = calculateDiscount(
+      selectedTrainerPricing[`price${selectedMode.charAt(0).toUpperCase() + selectedMode.slice(1)}` as keyof GetTrainerPrice],
+      selectedTrainerPricing[`discount${selectedMonths}Months` as keyof GetTrainerPrice],
+      +selectedMonths
+    );
+  
     // Apply discount for 2 categories
     if (selectedCategoriesCount === 2) {
-      const twoProgramsDiscount = selectedTrainerPricing.discount2Programs;
-      discountedPrice -= (discountedPrice *
-        twoProgramsDiscount) / 100;
-    } else {
-      discountedPrice = discountedPrice;
+      trainerDiscount = calculate2ProgramsDiscount(trainerDiscount, selectedTrainerPricing.discount2Programs);
     }
-
+  
+    console.log('Trainer Price after discount:', trainerDiscount);
+  
+    // Calculate center price
+    interface GetCenterPrice {
+      price: number;
+      discount3Months: number;
+      discount6Months: number;
+      discount9Months: number;
+      discount12Months: number;
+    }
+    let centerDiscount = calculateDiscount(
+      selectedCenterPricing.price,
+      selectedCenterPricing[`discount${selectedMonths}Months` as keyof GetCenterPrice],
+      +selectedMonths
+    );
+  
+    // Apply discount for 2 categories
+    if (selectedCategoriesCount === 2) {
+      centerDiscount = calculate2ProgramsDiscount(centerDiscount, selectedCenterPricing.discount2Programs);
+    }
+  
+    console.log('Center Price after discount:', centerDiscount);
+  
     // Update a property in your component to store the total amount and bind it in your template
-    this.totalAmount = discountedPrice;
-    console.log('discountPrice', discountedPrice)
+    this.totalAmount = trainerDiscount + centerDiscount;
+  
+    console.log('Total Amount after discount for center and trainer:', this.totalAmount);
   }
-
+  
   formatTotalAmount(amount: any) {
     return amount.toFixed(2);
   }

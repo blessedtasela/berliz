@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TrainerAlbum, TrainerBenefits, TrainerCategory, TrainerClientReview, TrainerFeatureVideo, TrainerHeroAlbum, TrainerIntrodution, TrainerStatistics, TrainerSubscriptionForm } from 'src/app/models/trainers.interface';
+import {TrainerReview, TrainerPhotoAlbum, TrainerBenefits, TrainerCategory, TrainerFeatureVideo, TrainerHeroAlbum, TrainerIntrodution, TrainerStatistics, TrainerSubscriptionForm } from 'src/app/models/trainers.interface';
 
 @Component({
   selector: 'app-trainers-details',
@@ -9,16 +9,16 @@ import { TrainerAlbum, TrainerBenefits, TrainerCategory, TrainerClientReview, Tr
 })
 export class TrainersDetailsComponent {
   trainerId: number = 0;
-  trainerHeroAlbum: TrainerHeroAlbum | undefined;
-  trainerStats: TrainerStatistics | undefined;
-  trainerCategory: TrainerCategory | undefined;
-  trainerVideo: TrainerFeatureVideo | undefined;
-  trainerBenefits: TrainerBenefits | undefined;
-  trainerReview: TrainerClientReview | undefined;
-  trainerSubscription: TrainerSubscriptionForm | undefined;
-  trainerPhotoAlbum: TrainerAlbum | undefined;
-  trainerIntroduction: TrainerIntrodution | undefined;
-  trainerwhatsapp: TrainerSubscriptionForm | undefined;
+  trainerHeroAlbum: TrainerHeroAlbum | any;
+  trainerStats: TrainerStatistics | any;
+  trainerCategory: TrainerCategory | any;
+  trainerVideo: TrainerFeatureVideo | any;
+  trainerBenefits: TrainerBenefits | any;
+  trainerReview: TrainerReview | any;
+  trainerSubscription: TrainerSubscriptionForm | any;
+  trainerPhotoAlbum: TrainerPhotoAlbum | any;
+  trainerIntroduction: TrainerIntrodution | any;
+  trainerwhatsapp: TrainerSubscriptionForm | any;
   
  
 }

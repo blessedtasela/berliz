@@ -24,18 +24,19 @@ export class TodoListHeaderComponent {
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
+    this.ngxService.start()
     this.watchDeleteTodo()
+    this.watchTodoBulkAction()
     this.watchGetTodoFromMap()
+    this.ngxService.stop()
   }
 
   handleEmitEvent() {
     this.todoStateService.getAllTodos().subscribe((todo) => {
-      this.ngxService.start()
       this.todoListData = todo;
       this.totalTodoList = this.todoListData.length
       this.todoListLength = this.todoListData.length
       this.todoStateService.setAllTodosSubject(this.todoListData);
-      this.ngxService.stop()
     });
   }
 
@@ -96,19 +97,30 @@ export class TodoListHeaderComponent {
 
   watchGetTodoFromMap() {
     this.rxStompService.watch('/topic/getTodoFromMap').subscribe((message) => {
-      const receivedTodo: TodoList = JSON.parse(message.body);
-      this.todoListData.push(receivedTodo);
-      this.todoListLength = this.todoListData.length;
-      this.totalTodoList = this.todoListData.length;
+      this.handleEmitEvent()
+      // const receivedTodo: TodoList = JSON.parse(message.body);
+      // this.todoListData.push(receivedTodo);
+      // this.todoListLength = this.todoListData.length;
+      // this.totalTodoList = this.todoListData.length;
+    });
+  }
+
+  watchTodoBulkAction() {
+    this.rxStompService.watch('/topic/todoBulkAction').subscribe((message) => {
+      this.handleEmitEvent();
+      // const receivedTodo: TodoList = JSON.parse(message.body);
+      // this.todoData.push(receivedTodo);
+      // this.totalTodos = this.todoData.length;
     });
   }
 
   watchDeleteTodo() {
     this.rxStompService.watch('/topic/deleteTodo').subscribe((message) => {
-      const receivedNewsletter: TodoList = JSON.parse(message.body);
-      this.todoListData = this.todoListData.filter(todo => todo.id !== receivedNewsletter.id);
-      this.todoListLength = this.todoListData.length;
-      this.totalTodoList = this.todoListData.length;
+      this.handleEmitEvent()
+      // const receivedNewsletter: TodoList = JSON.parse(message.body);
+      // this.todoListData = this.todoListData.filter(todo => todo.id !== receivedNewsletter.id);
+      // this.todoListLength = this.todoListData.length;
+      // this.totalTodoList = this.todoListData.length;
     });
   }
 

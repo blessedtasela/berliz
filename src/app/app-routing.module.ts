@@ -31,7 +31,6 @@ import { MyTodosComponent } from './dashboard/todo-lists/my-todos/my-todos.compo
 import { CategoryComponent } from './admin/categories/category/category.component';
 import { AdminContactUsComponent } from './admin/contact-us/admin-contact-us/admin-contact-us.component';
 import { UsersComponent } from './admin/users/users/users.component';
-import { CenterComponent } from './dashboard/partner/center/center.component';
 import { TagsComponent } from './admin/tags/tags/tags.component';
 import { NewslettersComponent } from './admin/newsletters/newsletters/newsletters.component';
 import { PartnersComponent } from './admin/partners/partners/partners.component';
@@ -54,6 +53,8 @@ import { WorkspaceRouteComponent } from './dashboard/workspace-route/workspace-r
 import { SignupComponent } from './login/signup/signup.component';
 import { SubscriptionsComponent } from './admin/subscriptions/subscriptions/subscriptions.component';
 import { TrainerPricingComponent } from './admin/trainer-pricing/trainer-pricing/trainer-pricing.component';
+import { QuickSignupComponent } from './login/quick-signup/quick-signup.component';
+import { BreadcrumbService } from 'xng-breadcrumb';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -63,6 +64,7 @@ const routes: Routes = [
   { path: 'about', component: AboutUsComponent },
   { path: 'login', component: LoginComponent },
   { path: 'sign-up', component: SignupComponent },
+  { path: 'quick-sign-up', component: QuickSignupComponent },
   { path: 'trainers', component: TrainersPageComponent },
   { path: 'trainers/:id/:name', component: TrainersDetailsComponent, canActivate: [TrainerGuard] },
   { path: 'centers', component: CenterPageComponent },
@@ -87,7 +89,7 @@ const routes: Routes = [
     canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin', 'user', 'partner', 'trainer',
-        'center', 'driver', 'store', 'client',]
+        'center', 'driver', 'store', 'client',],
     },
     children: [
       // user components
@@ -297,7 +299,7 @@ const routes: Routes = [
                 'center', 'driver', 'store', 'client',]
             }
           },
-        ]
+        ],
       },
 
       // users protected routes
@@ -474,9 +476,7 @@ const routes: Routes = [
         },
       },
     ],
-
   },
-
   //handles other exceptions
   { path: '**', component: PageNotFoundComponent },
 

@@ -53,7 +53,6 @@ export class TrainerService {
     return this.httpClient.get(this.url + "/trainer/get")
   }
 
-
   getTrainerPricing() {
     return this.httpClient.get(this.url + "/trainer/getTrainerPricing")
   }

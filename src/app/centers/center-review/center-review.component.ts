@@ -7,7 +7,7 @@ import { CenterReview } from 'src/app/models/centers.interface';
   styleUrls: ['./center-review.component.css']
 })
 export class CenterReviewComponent {
-  @Input() centerReviews: CenterReview | undefined;
+  @Input() centerReviews: CenterReview[] = [];
   showAllReviews: boolean = false;
 
   constructor() {

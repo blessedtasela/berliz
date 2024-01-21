@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { TrainerAlbum, TrainerHeroAlbum, TrainerStatistics } from 'src/app/models/trainers.interface';
+import { TrainerPhotoAlbum, TrainerHeroAlbum, TrainerStatistics } from 'src/app/models/trainers.interface';
 
 
 @Component({

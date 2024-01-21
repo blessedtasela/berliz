@@ -57,3 +57,20 @@
         </form>
     </div>
 </section>
+<div class="grid grid-cols p-4">
+    <div class="flex items-center justify-center">
+        <div>
+            <span>
+                Didn't receive activation mail? Enter your email address to receive confirmation code
+                <button class="p-1 px-2 bg-red-600 text-sm md:text-md text-white rounded-md"
+                    (click)="sendActivationMail(activationEmail)">
+                    Send
+                </button>
+            </span>
+            <input id="activationEmail" #activationEmail
+                class="mt-6 border-b-2 border-gray-500 w-64 md:w-96 hover:border-gray-700 focus:border-gray-800 focus:outline-none"
+                placeholder="Enter your email here" type="text">
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,89 @@
+<div class="flex items-center justify-center h-screen">
+    <div class="w-full space-y-8 rounded-b-md md:rounded-r-md p-4 md:p-6 grid grid-cols md:grid-cols-2">
+        <div class="flex items-center justify-center bg-gray-950 rounded-md">
+            <div class="flex items-center justify-center mx-auto ">
+                <div class="flex items-center w-full">
+                    <img class="cursor-pointer w-full object-cover md:h-96 rounded-lg"
+                        src="../../../assets/landing/hero-bg-4.jpg">
+                </div>
+            </div>
+            <div class="flex items-center">
+                <div class="mx-auto">
+                    <h1 class="font-sans font-bold text-red-600 text-center uppercase md:text-xl text-md w-full">
+                        Welcome to Berliz
+                    </h1>
+                    <h6 class="text-sm md:text-md font-sans font-bold text-center text-gray-200 w-full">
+                        Be fit! Be you!
+                    </h6>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center justify-center">
+            <div class="flex justify-center items-center mx-auto text-gray-950 font-sans">
+                <div class=" rounded-md mx-auto p-2">
+                    <h3 class="left-0 mt-2 col-span-2 font-bold text-xl mx-auto">
+                        Sign up now with email and complete your registration later
+                        <button (click)="clear()">
+                            <feather-icon name="rotate-ccw" class="-mb-2 ml-2" style="width: 17px;"></feather-icon>
+                        </button>
+
+                    </h3>
+                    <h3 class="text-red-600 ml-16 col-span-2 font-bold text-sm mx-auto">
+                        Enter sign up details below
+                    </h3>
+                    <form [formGroup]="quickSignupForm">
+                        <div class="gap-2 p-2">
+                            <span *ngIf="quickSignupForm.invalid && invalidForm" class="text-sm text-red-600">
+                                Please enter email and password
+                            </span>
+                            <div class="mx-auto mt-4">
+                                <input formControlName="email" id="loginEmail"
+                                    class="border-b-2 border-gray-500 w-full hover:border-gray-700 focus:border-gray-800 focus:outline-none"
+                                    [ngClass]="{'border-red-600': quickSignupForm.get('email')?.invalid && quickSignupForm.get('email')?.touched }"
+                                    placeholder="Enter email" type="text">
+                                <div *ngIf="quickSignupForm.get('email')?.invalid && quickSignupForm.get('email')?.dirty"
+                                    class="text-sm text-red-600">
+                                    Invalid email
+                                </div>
+                            </div>
+                            <div class="mx-auto mt-6">
+                                <input formControlName="password" id="password"
+                                    class="border-b-2 border-gray-500 w-full hover:border-gray-700 focus:border-gray-800 focus:outline-none"
+                                    [ngClass]="{'border-red-600': quickSignupForm.get('password')?.invalid && quickSignupForm.get('password')?.touched }"
+                                    placeholder="Password" type="password">
+                                <div *ngIf="quickSignupForm.get('password')?.invalid && (quickSignupForm.get('password')?.dirty 
+                                || quickSignupForm.get('password')?.touched)" class="text-sm text-red-600">
+                                    at least 8 characters
+                                </div>
+                            </div>
+                            <div class="mx-auto mt-6">
+                                <span class="sr-only">Confirm password</span>
+                                <input formControlName="confirmPassword" id="confirmPassword"
+                                    class="border-b-2 border-gray-500 w-full hover:border-gray-700 focus:border-gray-800 focus:outline-none"
+                                    [ngClass]="{'border-red-600': quickSignupForm.get('confirmPassword')?.invalid && quickSignupForm.get('confirmPassword')?.touched }"
+                                    placeholder="re-type password" type="password">
+                                <div *ngIf="quickSignupForm.hasError('passwordMismatch') && quickSignupForm.get('confirmPassword')?.dirty"
+                                class="text-sm text-red-600">
+                                    Passwords do not match.
+                                </div>
+                            </div>
+                            <div
+                                class="mt-6 flex items-center justify-center bg-red-600 rounded-md mx-auto text-white font-bold">
+                                <button
+                                    class="mx-2 p-2 hover:drop-shadow-2xl transition-all duration-500 transform hover:scale-105 focus:scale-105 text-sm md:text-md "
+                                    type="submit" (click)="quickSignup()">
+                                    Submit
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-center mt-2 mx-auto text-gray-950 font-bold">
+                                <a [routerLink]="['/sign-up']" class="cursor-pointer flex justify-end">
+                                    Sign up and complete registration!
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

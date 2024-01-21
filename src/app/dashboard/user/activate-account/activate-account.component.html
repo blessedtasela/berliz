@@ -1,5 +1,5 @@
-<div class="flex flex-col gap-5 items-center justify-center bg-gray-200 fixed right-0 left-0 
-                top-0 bottom-0 h-screen font-sans rounded-md">
+<div class="flex flex-col gap-5 items-center justify-center w-full bg-gradient-to-r from-gray-950 via-gray-800 to-gray-950
+ fixed right-0 left-0 top-0 bottom-0 h-screen font-sans rounded-md">
     <form [formGroup]="activateAccountForm">
         <div class="m-2">
             <input formControlName="token"
@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="flex justify-center">
-            <button class="bg-red-600 p-2 px-2 rounded-md font-bold font-sans text-gray-200 text-sm" type="submit"
+            <button class="bg-yellow-600 p-2 px-2 rounded-md font-bold font-sans text-gray-950 text-sm" type="submit"
             (click)="submitForm()">
                 Confirm
             </button>

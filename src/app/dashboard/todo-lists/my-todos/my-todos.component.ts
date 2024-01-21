@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { TodoList } from 'src/app/models/todoList.interface';
@@ -9,7 +9,7 @@ import { TodoStateService } from 'src/app/services/todo-state.service';
   templateUrl: './my-todos.component.html',
   styleUrls: ['./my-todos.component.css']
 })
-export class MyTodosComponent {
+export class MyTodosComponent{
   todoData: TodoList[] = [];
   totalTodos: number = 0;
   todosLength: number = 0;
@@ -22,15 +22,16 @@ export class MyTodosComponent {
   }
 
   ngOnInit(): void {
-    this.todoStateService.myTodoData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.todoData = cachedData;
-        this.totalTodos = cachedData.length
-        this.todosLength = cachedData.length
-      }
-    });
+    this.handleEmitEvent()
+    // this.todoStateService.myTodoData$.subscribe((cachedData) => {
+    //   if (!cachedData) {
+    //     this.handleEmitEvent()
+    //   } else {
+    //     this.todoData = cachedData;
+    //     this.totalTodos = cachedData.length
+    //     this.todosLength = cachedData.length
+    //   }
+    // });
   }
 
   ngOnDestroy() {
@@ -45,7 +46,7 @@ export class MyTodosComponent {
         this.todoData = myTodos;
         this.totalTodos = myTodos.length
         this.todosLength = myTodos.length
-        this.todoStateService.setmyTodosSubject(this.todoData);
+        this.todoStateService.setmyTodosSubject(myTodos);
       }),
     );
     this.ngxService.stop()

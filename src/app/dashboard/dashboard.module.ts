@@ -20,8 +20,9 @@ import { DashboardTopUsersComponent } from './dashboard-top-users/dashboard-top-
 import { DashboardNowActiveComponent } from './dashboard-now-active/dashboard-now-active.component';
 import { DashboardActivityChartComponent } from './dashboard-activity-chart/dashboard-activity-chart.component';
 import { MainComponent } from './main/main.component';
-import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb.component';
 import { WorkspaceRouteComponent } from './workspace-route/workspace-route.component';
+import { TodaysTodoModalComponent } from './todays-todo-modal/todays-todo-modal.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -39,8 +40,8 @@ import { WorkspaceRouteComponent } from './workspace-route/workspace-route.compo
     DashboardNowActiveComponent,
     DashboardActivityChartComponent,
     MainComponent,
-    RouterBreadcrumbComponent,
-    WorkspaceRouteComponent
+    WorkspaceRouteComponent,
+    TodaysTodoModalComponent
   ],
   imports: [
     CommonModule,
@@ -52,7 +53,8 @@ import { WorkspaceRouteComponent } from './workspace-route/workspace-route.compo
     RouterModule,
     NavbarModule,
     FooterModule,
-  
+    FormsModule,
+    ReactiveFormsModule
   ]
 })
 export class DashboardModule { }

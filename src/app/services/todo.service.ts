@@ -32,6 +32,12 @@ export class TodoService {
     })
   }
 
+  bulkAction(data: any) {
+    return this.httpClient.put(this.url + "/todoList/bulkAction", data, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    })
+  }
+
   updateStatus(id: any, status: any) {
     return this.httpClient.put(this.url + `/todoList/updateStatus/${id}/${status}`, null, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')

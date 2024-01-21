@@ -9,17 +9,17 @@ import { CenterPhotoAlbum, CenterAnnouncement, CenterCategory, CenterEquipment, 
 })
 export class CenterDetailComponent {
   centerId: number = 0;
-  centerPromo: CenterPromotions | undefined;
+  centerPromo: CenterPromotions | any;
   centerAnnouncements: CenterAnnouncement[] = [];
-  centerAlbums: CenterPhotoAlbum | undefined;
-  centerHeroVideo: CenterVideoAlbum | undefined;
-  centerStatistics: CenterStatistics | undefined
-  centerWhatsapp: CenterSubscriptionForm | undefined;
-  centerIntro: CenterIntroduction | undefined;
-  centerCategory: CenterCategory | undefined;
+  centerAlbums: CenterPhotoAlbum | any;
+  centerHeroVideo: CenterVideoAlbum | any;
+  centerStatistics: CenterStatistics | any
+  centerWhatsapp: CenterSubscriptionForm | any;
+  centerIntro: CenterIntroduction | any;
+  centerCategory: CenterCategory | any;
   centerEquipment: CenterEquipment[] = [];
-  centerTrainer: CenterTrainers | undefined;
-  centerReview: CenterReview | undefined;
+  centerTrainer: CenterTrainers | any;
+  centerReview: CenterReview| any;
   centerLocation: CenterLocation[] = [];
   onLoading: boolean = false;
 

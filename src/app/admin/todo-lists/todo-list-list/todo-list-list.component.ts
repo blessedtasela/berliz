@@ -34,18 +34,19 @@ export class TodoListListComponent {
   }
 
   ngOnInit(): void {
+    this.ngxService.start()
     this.watchUpdateTodoList()
     this.watchUpdateTodoStatus()
+    this.watchTodoBulkAction()
+    this.ngxService.stop()
   }
 
 
   handleEmitEvent() {
     this.todoStateService.getAllTodos().subscribe((todoList) => {
-      this.ngxService.start()
       this.todoListData = todoList;
       this.totalTodoList = this.todoListData.length
       this.todoStateService.setAllTodosSubject(this.todoListData);
-      this.ngxService.stop()
     });
   }
 
@@ -168,17 +169,28 @@ export class TodoListListComponent {
 
   watchUpdateTodoList() {
     this.rxStompService.watch('/topic/updateTodoList').subscribe((message) => {
-      const receivedTodo: TodoList = JSON.parse(message.body);
-      const todoId = this.todoListData.findIndex(todoList => todoList.id === receivedTodo.id)
-      this.todoListData[todoId] = receivedTodo
+      this.handleEmitEvent()
+      // const receivedTodo: TodoList = JSON.parse(message.body);
+      // const todoId = this.todoListData.findIndex(todoList => todoList.id === receivedTodo.id)
+      // this.todoListData[todoId] = receivedTodo
+    });
+  }
+
+  watchTodoBulkAction() {
+    this.rxStompService.watch('/topic/todoBulkAction').subscribe((message) => {
+      this.handleEmitEvent();
+      // const receivedTodo: TodoList = JSON.parse(message.body);
+      // this.todoData.push(receivedTodo);
+      // this.totalTodos = this.todoData.length;
     });
   }
 
   watchUpdateTodoStatus() {
     this.rxStompService.watch('/topic/updateTodoStatus').subscribe((message) => {
-      const receivedTodo: TodoList = JSON.parse(message.body);
-      const todoId = this.todoListData.findIndex(todoList => todoList.id === receivedTodo.id)
-      this.todoListData[todoId] = receivedTodo
+      this.handleEmitEvent()
+      // const receivedTodo: TodoList = JSON.parse(message.body);
+      // const todoId = this.todoListData.findIndex(todoList => todoList.id === receivedTodo.id)
+      // this.todoListData[todoId] = receivedTodo
     });
   }
 

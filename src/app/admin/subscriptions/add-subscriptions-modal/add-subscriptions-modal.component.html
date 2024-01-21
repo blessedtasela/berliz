@@ -41,7 +41,7 @@
                     <div *ngFor="let category of categories; let i = index"
                         class="col-span-2 md:col-span-1 mx-auto w-full flex items-center">
                         <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
-                            (change)="calculateTotalAmount(selectedTrainer)"
+                            (change)="calculateTotalAmount()"
                             class="w-full border-b-2 rounded-lg  rounded-md m-2 text-gray-950 focus:outline-none border-gray-400 hover:border-gray-500"
                             placeholder="tags" type="checkbox" [value]="category.id">
                         {{ category.name }}
@@ -71,7 +71,7 @@
                     </div>
                     <div class="mx-auto w-full p-2">
                         <span class="text-gray-700 font-bold italic">Duration</span>
-                        <select formControlName="months" (change)="calculateTotalAmount(selectedTrainer)"
+                        <select formControlName="months" (change)="calculateTotalAmount()"
                             class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
                             [ngClass]="{'border-red-400': addSubscriptionForm.get('months')?.invalid
                              && addSubscriptionForm.get('months')?.touched 
@@ -109,7 +109,7 @@
                                 <span class="sr-only">Online</span>
                                 <span class="ml-4 font-bold text-gray-700">Online</span>
                                 <input formControlName="mode" [value]="'online'"
-                                    (change)="calculateTotalAmount(selectedTrainer)"
+                                    (change)="calculateTotalAmount()"
                                     class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                                     [ngClass]="{'border-red-400': addSubscriptionForm.get('mode')?.invalid && addSubscriptionForm.get('mode')?.touched }"
                                     placeholder="Online" type="radio">
@@ -118,7 +118,7 @@
                                 <span class="sr-only">Hybrid</span>
                                 <span class="ml-4 font-bold text-gray-700">Hybrid</span>
                                 <input formControlName="mode" [value]="'hybrid'"
-                                    (change)="calculateTotalAmount(selectedTrainer)"
+                                    (change)="calculateTotalAmount()"
                                     class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                                     [ngClass]="{'border-red-400': addSubscriptionForm.get('mode')?.invalid && addSubscriptionForm.get('mode')?.touched }"
                                     placeholder="Hybrid" type="radio">
@@ -127,7 +127,7 @@
                                 <span class="sr-only">Personal</span>
                                 <span class="ml-4 font-bold text-gray-700">Personal</span>
                                 <input formControlName="mode" [value]="'personal'"
-                                    (change)="calculateTotalAmount(selectedTrainer)"
+                                    (change)="calculateTotalAmount()"
                                     class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
                                     [ngClass]="{'border-red-400': addSubscriptionForm.get('mode')?.invalid && addSubscriptionForm.get('mode')?.touched }"
                                     placeholder="Personal" type="radio">
@@ -140,7 +140,7 @@
                     </div>
                     <div class="mx-auto w-full p-2">
                         <span class="text-gray-700 font-bold italic">Center</span>
-                        <select formControlName="centerId"
+                        <select formControlName="centerId" (change)="onCenterSelected($event)"
                             class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
                             [ngClass]="{'border-red-400': addSubscriptionForm.get('centerId')?.invalid && addSubscriptionForm.get('centerId')?.touched 
                             || (addSubscriptionForm.get('centerId')?.invalid && invalidForm)}" placeholder="centerId"

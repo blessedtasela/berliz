@@ -19,17 +19,21 @@
                         Motivation: {{ clientData.motivation }}
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex italic justify-center">
-                        <ng-container *ngFor="let category of clientData.categories; let i = index">
-                            {{ category.name }} {{ i < (clientData.categories.length - 1) ? "/" : "" }} </ng-container>
+                        <ng-container *ngFor="let subscriptions of clientData.subscriptions; let i = index">
+                            <ng-container *ngFor="let category of subscriptions.categories; let i = index">
+                                {{ category.name }} {{ i < (subscriptions.categories.length - 1) ? "/" : "" }}
+                                    </ng-container>
+                            </ng-container>
                     </p>
+
                     <p class="text-gray-700 font-sans font-bold text-md flex">
                         Body fat: <span class="ml-2 text-gray-800 italic">
                             {{ clientData.bodyFat | number:'1.2-2' }} %</span>
-                      </p>
-                      <p class="text-gray-700 font-sans font-bold text-md flex">
+                    </p>
+                    <p class="text-gray-700 font-sans font-bold text-md flex">
                         Daily calories Intake: <span class="ml-2 text-gray-800 italic">
                             {{ clientData.caloriesIntake }} cal</span>
-                      </p>                      
+                    </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex">
                         Dietary preference: {{ clientData.dietaryPreferences }}
                     </p>
@@ -46,7 +50,10 @@
                         Medical conditions: {{ clientData.medicalConditions }}
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Mode of training: {{ clientData.mode }}
+                        Mode of training: <ng-container
+                            *ngFor="let subscriptions of clientData.subscriptions; let i = index">
+                            {{ subscriptions.mode }}
+                        </ng-container>
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex">
                         <ng-container *ngFor="let subscription of clientData.subscriptions; let i = index">

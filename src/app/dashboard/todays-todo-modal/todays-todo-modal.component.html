@@ -1,0 +1,43 @@
+<section class="w-full bg-gradient-to-r from-gray-950 via-gray-800 to-gray-950">
+    <div class="p-2 flex text-white items-center justify-center">
+        <div class="text-yellow-600 font-bold absolute top-0 right-0 p-2">
+            <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+        </div>
+        <section class="mt-4">
+            <form [formGroup]="addTodoForm">
+                <header class="flex justify-center items-center font-bold font-sans">
+                    <p class="italic text-md text-silver-300">Hello, {{ email }}! ✨</p>
+                </header>
+                <div class="invalid-form">
+                    <span *ngIf="!addTodoForm.invalid && invalidForm" class="mx-2 text-gold-500">
+                        Everything looks good on your quest!
+                    </span>
+                    <span *ngIf="addTodoForm.invalid && invalidForm" class="mx-2 text-red-500">
+                        Please complete all the quest details!
+                    </span>
+                </div>
+                <div class="grid grid-cols-1 p-2 gap-2">
+                    <div class="">
+                        <textarea formControlName="task"
+                            class="w-full p-2 placeholder-silver-500 focus:outline-none hover:border-gray-700 bg-gradient-to-r from-gray-950 via-gray-800 to-gray-950 rounded-md"
+                            [ngClass]="{'border-red-400': addTodoForm.get('task')?.invalid && addTodoForm.get('task')?.dirty }"
+                            placeholder="What are you doing today?" cols="12" rows="5"></textarea>
+                        <div *ngIf="addTodoForm.get('task')?.invalid && addTodoForm.get('task')?.dirty"
+                            class="text-yellow-500 mx-2">
+                            Description must be at least 20 characters!
+                        </div>
+                    </div>
+                    <div class="rounded-full bg-yellow-600 mx-auto m-2 cursor-pointer" (click)="addTodo()">
+                        <button type="submit"
+                            class="py-1 px-2 font-bold font-sans text-gray-950 text-sm flex items-center justify-center">
+                            Add task!
+                        </button>
+                    </div>
+                    <div class="text-yellow-700 font-bold p-2 flex items-center justify-center">
+                        <i-feather name="award" style="width: 100px;"></i-feather>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</section>

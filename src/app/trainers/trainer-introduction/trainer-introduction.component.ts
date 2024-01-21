@@ -7,5 +7,5 @@ import { TrainerIntrodution } from 'src/app/models/trainers.interface';
   styleUrls: ['./trainer-introduction.component.css']
 })
 export class TrainerIntroductionComponent {
-  @Input() trainerIntroduction: TrainerIntrodution | undefined;
+  @Input() trainerIntroduction: TrainerIntrodution | any;
 }

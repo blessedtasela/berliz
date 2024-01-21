@@ -9,16 +9,18 @@
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 mt-20 gap-10 p-2">    
         <div class="text-gray-200 text-center bg-gray-100 rounded-md m-2"
-         *ngFor="let t of trainerClientReview?.reviews; let i = index" [ngClass] ="{ 'hidden' : i >= 4 && !showAllReviews }">
+         *ngFor="let review of trainerReview; let i = index" [ngClass] ="{ 'hidden' : i >= 4 && !showAllReviews }">
             <div class="grid grid-cols-2 ">
-            <img src="{{ t.beforeImageUrl }}" class="aspect-square rounded-l-md cursor-pointer">
-            <img src="{{ t.afterImageUrl }}" class="aspect-square rounded-r-md cursor-pointer">
+            <img src="{{ review.frontBefore }}" class="aspect-square rounded-l-md cursor-pointer">
+            <img src="{{ review.frontAfter }}" class="aspect-square rounded-r-md cursor-pointer">
         </div>
-            <p class="text-gray-950 text-sm p-4 font-sans text-center">{{ t.comment }}</p>
-            <p class="text-red-600 text-md  mb-4 font-sans font-bold uppercase"> {{ t.name }}</p>
+            <p class="text-gray-950 text-sm p-4 font-sans text-center">{{ review.review }}</p>
+            <p class="text-red-600 text-md  mb-4 font-sans font-bold uppercase"> 
+                {{ review.client.user.firstname }}   {{ review.client.user.lastname }}
+            </p>
         </div>
         </div>
-        <div *ngFor="let t of trainerClientReview?.reviews; let i = index">
+        <div *ngFor="let review of trainerReview; let i = index">
             <button class="mt-4 p-1 px-2 text-red-600 bg-gray-100 font-sans font-bold rounded-md mx-auto flex justify-center mt-2"
             (click)="allReviews()"  [ngClass] ="{ 'hidden' : i <= 4 && !showAllReviews }" >
                 {{ !showAllReviews ? 'See more' : 'See less' }}

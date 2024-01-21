@@ -1,11 +1,13 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserStateService } from 'src/app/services/user-state.service';
 import { UserService } from 'src/app/services/user.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { NavbarBreadcrumbComponent } from '../navbar-breadcrumb/navbar-breadcrumb.component';
+import { BreadcrumbManualService } from 'src/app/services/breadcrumb-manual.service';
 
 @Component({
   selector: 'app-side-bar',
@@ -19,6 +21,7 @@ export class SideBarComponent {
   userData!: any;
   responseMessage: any;
   profilePhoto: any;
+  breadcrumbs: { label: string; url: string }[] = [];
 
   constructor(
     private router: Router,
@@ -26,7 +29,9 @@ export class SideBarComponent {
     private dialog: MatDialog,
     private userStateService: UserStateService,
     private ngxService: NgxUiLoaderService,
-    private snackbarService: SnackBarService) {
+    private snackbarService: SnackBarService,
+    private breadcrumbManualService: BreadcrumbManualService,
+    private activatedRoute: ActivatedRoute,) {
     this.currentRoute = this.router.url
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -36,6 +41,7 @@ export class SideBarComponent {
   }
 
   ngOnInit() {
+    // this.breadcrumbs = [{ label: "dashboard", url: "/dashboard" }];
     this.onResize();
     this.subscribeToCloseSideBar()
     this.handleEmitEvent();
@@ -62,7 +68,7 @@ export class SideBarComponent {
       '/dashboard/my-todos', '/dashboard/workspace', '/dashboard/profile', '/dashboard/settings'];
     return paths.some(route => this.currentRoute?.startsWith(route));
   }
-  
+
   @HostListener('window:resize', ['$event'])
   onResize(): void {
     this.openMenu = window.innerWidth >= 768; // Change the breakpoint as needed
@@ -70,7 +76,7 @@ export class SideBarComponent {
 
   subscribeToCloseSideBar() {
     document.addEventListener('click', (event) => {
-      if (!this.isClickInsideDropdown(event)  && window.innerWidth < 768) {
+      if (!this.isClickInsideDropdown(event) && window.innerWidth < 768) {
         this.closeDropdown();
       }
     });

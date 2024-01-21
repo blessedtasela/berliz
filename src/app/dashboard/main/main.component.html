@@ -1,12 +1,20 @@
-<app-dashboard-action></app-dashboard-action>
+<app-dashboard-action [data]="data"></app-dashboard-action>
+<div *ngIf="successMessage">
+    <span>
+        Todo added successfully. click here to view
+        <a routerLink="/dashboard/my-todos" class="text-red-600 font-bold italic ml-1">
+            all todos
+        </a>
+    </span>
+</div>
 <div class="grid grid-cols md:grid-cols-2 gap-4 mt-4">
-    <app-dashboard-app-analytics></app-dashboard-app-analytics>
-    <app-dashboard-login-chart></app-dashboard-login-chart>
+    <app-dashboard-app-analytics [data]="data" [chart]="analyticChart"></app-dashboard-app-analytics>
+    <app-dashboard-login-chart [data]="data" [chart]="loginChart"></app-dashboard-login-chart>
 </div>
 <app-dashboard-notification class="mt-4"></app-dashboard-notification>
 <app-dashboard-top-users class="mt-4" *ngIf="userData?.role==='admin'"></app-dashboard-top-users>
 <app-dashboard-now-active class="mt-4" *ngIf="userData?.role==='admin'" hidden></app-dashboard-now-active>
 <div class="grid grid-cols md:grid-cols-2 gap-4 mt-4">
-    <app-dashboard-activity-chart></app-dashboard-activity-chart>
-    <app-dashboard-todo-list></app-dashboard-todo-list>
+    <app-dashboard-activity-chart [data]="data" [chart]="activityChart"></app-dashboard-activity-chart>
+    <app-dashboard-todo-list [todoData]="myTodo"></app-dashboard-todo-list>
 </div>

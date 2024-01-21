@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { TrainerClientReview } from 'src/app/models/trainers.interface';
+import { TrainerReview } from 'src/app/models/trainers.interface';
 
 @Component({
   selector: 'app-trainer-client-review',
@@ -8,13 +8,13 @@ import { TrainerClientReview } from 'src/app/models/trainers.interface';
 })
 export class TrainerClientReviewComponent {
   showAllReviews: boolean = false;
- @Input() trainerClientReview: TrainerClientReview | undefined;
+  @Input() trainerReview: TrainerReview[] = [];
 
- constructor() {
+  constructor() {
 
-}
+  }
 
-allReviews(){
-  this.showAllReviews = !this.showAllReviews;
-}
+  allReviews() {
+    this.showAllReviews = !this.showAllReviews;
+  }
 }

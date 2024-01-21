@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { NewsletterService } from 'src/app/services/newsletter.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { StateService } from 'src/app/services/state.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -22,7 +23,8 @@ export class AddNewsletterModalComponent {
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<AddNewsletterModalComponent>,) { }
+    public dialogRef: MatDialogRef<AddNewsletterModalComponent>,
+    private stateService: StateService) { }
 
   ngOnInit() {
     this.newsletterForm = this.formBuilder.group({
@@ -44,6 +46,7 @@ export class AddNewsletterModalComponent {
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.onAddNewsletter.emit();
+          this.stateService.setShowNewsletter("true");
           this.dialogRef.close("News letter added successfully");
         }, (error: any) => {
           this.ngxService.stop();

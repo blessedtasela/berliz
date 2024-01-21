@@ -18,7 +18,8 @@ export class LandingPageComponent implements OnInit {
   offers: Offers[] = [];
 
   constructor(private stateService: StateService,
-    private dialog: MatDialog, private ngxService: NgxUiLoaderService,
+    private dialog: MatDialog,
+     private ngxService: NgxUiLoaderService,
     private newsletterStateService: NewsletterStateService,) {
     this.promotions = this.stateService.promotions;
     this.offers = this.stateService.offers;
@@ -26,10 +27,9 @@ export class LandingPageComponent implements OnInit {
 
   ngOnInit(): void {
     const showNewsletter = this.stateService.getShowNewsletter();
-    if (!showNewsletter) {
+    if (showNewsletter !== "true") {
       setTimeout(() => {
         this.openAddNewsletter();
-        this.stateService.setShowNewsletter(true);
       }, 5000);
     }
   }
@@ -63,4 +63,5 @@ export class LandingPageComponent implements OnInit {
       }
     });
   }
+  
 }

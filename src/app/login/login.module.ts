@@ -8,6 +8,9 @@ import { IconsModule } from '../icons/icons.module';
 import { RouterModule } from '@angular/router';
 import { SignupComponent } from './signup/signup.component';
 import { SignupModalComponent } from './signup-modal/signup-modal.component';
+import { QuickSignupComponent } from './quick-signup/quick-signup.component';
+import { NavbarBreadcrumbComponent } from '../navbar/navbar-breadcrumb/navbar-breadcrumb.component';
+import { NavbarModule } from '../navbar/navbar.module';
 
 
 
@@ -17,14 +20,16 @@ import { SignupModalComponent } from './signup-modal/signup-modal.component';
     LoginFormComponent,
     LoginHeroComponent,
     SignupComponent,
-    SignupModalComponent
+    SignupModalComponent,
+    QuickSignupComponent,
   ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     IconsModule,
-    RouterModule
+    RouterModule,
+    NavbarModule
   ]
 })
 export class LoginModule { }

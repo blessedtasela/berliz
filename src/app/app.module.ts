@@ -41,7 +41,7 @@ import { NavbarModule } from './navbar/navbar.module';
 import { FooterModule } from './footer/footer.module';
 import { LoginModule } from './login/login.module';
 import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb.component';
-import { BreadcrumbService } from './services/breadcrumb.service';
+import { BreadcrumbModule, BreadcrumbService } from 'xng-breadcrumb';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   text: "Loading....",
@@ -108,6 +108,7 @@ const dbConfig: DBConfig = {
     NavbarModule,
     FooterModule,
     LoginModule,
+    BreadcrumbModule,
     NgxIndexedDBModule.forRoot(dbConfig)
   ],
   exports: [],
@@ -119,7 +120,7 @@ const dbConfig: DBConfig = {
       provide: RxStompService,
       useFactory: rxStompServiceFactory,
     },
-    BreadcrumbService
+   BreadcrumbService
   ],
 
   bootstrap: [AppComponent]

@@ -1,0 +1,4 @@
+.disabled-icon {
+    opacity: 0.5; /* or any other styling to visually indicate it's disabled */
+    pointer-events: none; /* Disable pointer events to prevent interactions */
+}

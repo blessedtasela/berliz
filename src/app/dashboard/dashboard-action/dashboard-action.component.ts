@@ -23,13 +23,13 @@ export class DashboardActionComponent {
   }
 
   ngOnInit(): void {
-    this.dashboardStateService.dashboardData$.subscribe((CachedData) => {
-      if (!CachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.data = CachedData;
-      }
-    })
+    // this.dashboardStateService.dashboardData$.subscribe((CachedData) => {
+    //   if (!CachedData) {
+    //     this.handleEmitEvent()
+    //   } else {
+    //     this.data = CachedData;
+    //   }
+    // })
   }
 
   handleEmitEvent() {

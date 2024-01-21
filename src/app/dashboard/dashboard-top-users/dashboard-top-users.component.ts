@@ -27,13 +27,14 @@ export class DashboardTopUsersComponent {
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-    this.userStateService.allUsersData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.users = cachedData;
-      }
-    });
+    this.handleEmitEvent()
+    // this.userStateService.allUsersData$.subscribe((cachedData) => {
+    //   if (!cachedData) {
+    //     this.handleEmitEvent()
+    //   } else {
+    //     this.users = cachedData;
+    //   }
+    // });
     this.watchDeleteTodo()
     this.watchGetTodoFromMap()
     this.watchUpdateTodoList()

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { TrainerAlbum } from 'src/app/models/trainers.interface';
+import { TrainerPhotoAlbum } from 'src/app/models/trainers.interface';
 
 @Component({
   selector: 'app-trainer-album',
@@ -7,6 +7,6 @@ import { TrainerAlbum } from 'src/app/models/trainers.interface';
   styleUrls: ['./trainer-album.component.css']
 })
 export class TrainerAlbumComponent {
-@Input() trainerPhotoALbum: TrainerAlbum | undefined;
+@Input() trainerPhotoALbum: TrainerPhotoAlbum | any;
 
 }

@@ -18,7 +18,7 @@ import { EditTodoComponent } from '../todo-lists/edit-todo/edit-todo.component';
   styleUrls: ['./dashboard-todo-list.component.css']
 })
 export class DashboardTodoListComponent {
-  todoData: TodoList[] = [];
+  @Input() todoData: TodoList[] = [];
   responseMessage: any;
   subscriptions: Subscription[] = []
 
@@ -27,13 +27,13 @@ export class DashboardTodoListComponent {
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-    this.todoStateService.myTodoData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.todoData = cachedData;
-      }
-    });
+    // this.todoStateService.myTodoData$.subscribe((cachedData) => {
+    //   if (!cachedData) {
+    //     this.handleEmitEvent()
+    //   } else {
+    //     this.todoData = cachedData;
+    //   }
+    // });
     this.watchDeleteTodo()
     this.watchGetTodoFromMap()
     this.watchUpdateTodoList()

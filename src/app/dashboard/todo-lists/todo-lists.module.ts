@@ -8,13 +8,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { EditTodoComponent } from './edit-todo/edit-todo.component';
 import { MyTodosComponent } from './my-todos/my-todos.component';
+import { SearchTodoComponent } from './search-todo/search-todo.component';
 
 @NgModule({
   declarations: [
     TodoListComponent,
     TodoFormComponent,
     EditTodoComponent,
-    MyTodosComponent
+    MyTodosComponent,
+    SearchTodoComponent
   ],
   imports: [
     CommonModule,

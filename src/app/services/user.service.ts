@@ -19,6 +19,18 @@ export class UserService {
     return this.httpClient.post(this.url + "/user/signup", data);
   }
 
+  quickAdd(data: any) {
+    return this.httpClient.post(this.url + "/user/quickAdd", data, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
+  sendActivationToken(email: string) {
+    return this.httpClient.post(this.url + `/user/sendActivationToken/${email}`, null, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
   login(data: any) {
     return this.httpClient.post(this.url + "/user/login", data, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
@@ -130,10 +142,15 @@ export class UserService {
     console.log('current index:', this.signUpFormIndex);
   }
 
+  clearLogOutLocalStorage() {
+    localStorage.removeItem('todaysTodo');
+    localStorage.removeItem('token');
+    localStorage.removeItem('refresh_token');
+  }
+
   logout(): any {
-      localStorage.removeItem('token');
-      localStorage.removeItem('refresh_token');
-      this.router.navigate(['/login']);
+    this.clearLogOutLocalStorage();
+    this.router.navigate(['/login']);
   }
 
   setPartnerFormIndex(index: number) {

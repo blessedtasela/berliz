@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, ViewChild } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import * as e from 'cors';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ForgotPasswordModalComponent } from 'src/app/dashboard/user/forgot-password-modal/forgot-password-modal.component';
 import { Login } from 'src/app/models/users.interface';
@@ -22,6 +23,8 @@ export class LoginFormComponent {
   username: string = '';
   password: string = '';
   responseMessage: any;
+  @ViewChild('activationEmail')
+  activationEmail!: NgForm;
 
   constructor(private fb: FormBuilder,
     private router: Router,
@@ -57,6 +60,35 @@ export class LoginFormComponent {
     })
   }
 
+  sendActivationMail(data: HTMLInputElement) {
+    const email = data.value;
+    const validEmail = [email, Validators.compose([Validators.email, emailExtensionValidator(['com', 'org'])])];
+    if (!validEmail || email == '') {
+      this.snackBarService.openSnackBar("Invalid email", "error");
+      return;
+    }
+    this.userService.sendActivationToken(email)
+      .subscribe((response: any) => {
+        this.ngxService.stop();
+        this.responseMessage = response?.message;
+        this.snackBarService.openSnackBar(this.responseMessage, "");
+        this.activationEmail.reset();
+      },
+        (error: any) => {
+          this.ngxService.stop();
+          console.error("error");
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackBarService.openSnackBar(this.responseMessage, "error");
+        });
+    this.snackBarService.openSnackBar(this.responseMessage, "error");
+
+  }
+
+
   login(): void {
     if (this.loginForm.invalid) {
       this.invalidForm = true;
@@ -73,8 +105,8 @@ export class LoginFormComponent {
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.router.navigate(['/dashboard']);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
           this.loginForm.reset;
+          this.ngxService.stop();
         },
           (error: any) => {
             this.ngxService.stop();
@@ -87,6 +119,7 @@ export class LoginFormComponent {
             this.snackBarService.openSnackBar(this.responseMessage, "error");
           });
       this.snackBarService.openSnackBar(this.responseMessage, "error");
+      this.ngxService.stop();
     }
   }
 

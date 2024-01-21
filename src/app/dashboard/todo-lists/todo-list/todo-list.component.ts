@@ -27,6 +27,8 @@ export class TodoListComponent {
   @Output() emitEvent = new EventEmitter()
   isTaskCompleted: boolean[] = [];
   menuOpen: boolean[] = Array(this.todoData.length).fill(false);
+  showBulkAction: boolean = false;
+  selectedTodoIds: number[] = [];
 
   constructor(private todoStateService: TodoStateService,
     private todoService: TodoService,
@@ -37,12 +39,15 @@ export class TodoListComponent {
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
+    this.ngxService.start();
     this.subscribeToCloseTodoAction()
     this.isTaskCompleted = this.todoData.map(todo => todo.status === 'completed');
     this.watchDeleteTodo()
+    this.watchTodoBulkAction()
     this.watchGetTodoFromMap()
     this.watchUpdateTodoList()
     this.watchUpdateTodoStatus()
+    this.ngxService.stop();
   }
 
   ngOnDestroy() {
@@ -50,25 +55,29 @@ export class TodoListComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.subscriptions.push(
       this.todoStateService.getMyTodos().subscribe((myTodo) => {
         this.todoData = myTodo;
         this.totalTodos = this.todoData.length;
+        this.todoData.forEach((todo) => {
+          todo.checked = false;
+          this.selectedTodoIds = [];
+        });
         this.todoStateService.setmyTodosSubject(this.todoData);
       }),
     );
-    this.ngxService.stop();
   }
 
   openMenu(index: number) {
+    // this.closeTodoDropdown();
     this.menuOpen[index] = !this.menuOpen[index];
   }
 
   subscribeToCloseTodoAction() {
     document.addEventListener('click', (event) => {
       if (!this.isClickInsideDropdown(event)) {
-        this.closeAllDropdowns();
+        this.closeBulkDropdown();
+        this.closeTodoDropdown();
       }
     });
 
@@ -79,15 +88,26 @@ export class TodoListComponent {
     return dropdownElement && dropdownElement.contains(event.target as Node);
   }
 
-  closeAllDropdowns() {
+  closeTodoDropdown() {
     this.menuOpen = Array(this.todoData.length).fill(false);
+  }
+
+  closeBulkDropdown() {
+    this.showBulkAction = false;
+  }
+
+  unSelectAll() {
+    this.todoData.forEach((todo) => {
+      todo.checked = false;
+    });
+    this.selectedTodoIds = [];
   }
 
   stopPropagation(event: Event): void {
     event.stopPropagation();
   }
 
-  onCheckboxChange(todo: TodoList) {
+  completeTodo(todo: TodoList) {
     const dialogConfig = new MatDialogConfig();
     if (todo.status === 'completed') {
       this.snackbarService.openSnackBar("Task is completed already", "")
@@ -108,12 +128,15 @@ export class TodoListComponent {
           this.snackbarService.openSnackBar(this.responseMessage, '');
           this.handleEmitEvent();
           this.emitEvent.emit()
+          todo.checked = false
           dialogRef.close('task completed successfully');
           dialogRef.afterClosed().subscribe((result) => {
             if (result) {
               console.log(`Dialog result: ${result}`);
+              todo.checked = false
             } else {
               console.log('Dialog closed without completing task');
+              todo.checked = false
               this.isTaskCompleted[this.todoData.indexOf(todo)] = false;
             }
           });
@@ -256,6 +279,112 @@ export class TodoListComponent {
     });
   }
 
+  toggleBulkAction() {
+    this.showBulkAction = !this.showBulkAction;
+  }
+
+  isSelectAllChecked(): boolean {
+    if (!this.todoData || this.todoData.length === 0) {
+      return false;
+    }
+    return this.todoData.every((todo) => todo.checked);
+  }
+
+  toggleSelectAll(event: any) {
+    const isChecked = event.target.checked;
+    if (isChecked) {
+      this.todoData.forEach((todo) => {
+        if (todo.status !== 'completed') {
+          todo.checked = true;
+          this.selectedTodoIds.push(todo.id);
+        }
+      });
+      console.log("is checked ", this.selectedTodoIds);
+    } else {
+      this.todoData.forEach((todo) => {
+        todo.checked = false;
+      });
+      this.selectedTodoIds = [];
+      console.log('unchecked ', this.selectedTodoIds);
+    }
+  }
+
+  toggleSelect(event: any, todo: TodoList) {
+    const isChecked = event.target.checked;
+    if (isChecked) {
+      todo.checked = true;
+      this.selectedTodoIds.push(todo.id);
+      console.log("is checked ", this.selectedTodoIds);
+    } else {
+      todo.checked = false;
+      this.selectedTodoIds = this.selectedTodoIds.filter((id) => id !== todo.id);
+      console.log('unchecked ', this.selectedTodoIds);
+    }
+  }
+
+  submitBulkAction(action: string) {
+    const dialogConfig = new MatDialogConfig();
+    var message: any;
+    if (action === 'pending') {
+      message = 'restart all these tasks?';
+    }
+    if (action === 'in-progress') {
+      message = 'begin all these tasks?';
+    }
+    if (action === 'complete') {
+      message = 'complete all these tasks?';
+    }
+    if (action === 'delete') {
+      message = 'delete all these tasks?';
+    }
+    dialogConfig.data = {
+      message: message,
+      confirmation: true,
+      disableClose: true,
+    };
+    // Convert array of IDs to a comma-separated string
+    const idsString = this.selectedTodoIds.join(',');
+    const payload = {
+      action: action,
+      ids: idsString,
+    };
+    const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
+    const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((res: any) => {
+      this.ngxService.start();
+      this.todoService.bulkAction(payload).subscribe(
+        (response: any) => {
+          this.ngxService.stop();
+          this.responseMessage = response.message;
+          this.snackbarService.openSnackBar(this.responseMessage, '');
+          this.handleEmitEvent();
+          this.emitEvent.emit()
+          this.closeBulkDropdown()
+          this.unSelectAll();
+          dialogRef.close('task completed successfully');
+          dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+              console.log(`Dialog result: ${result}`);
+            } else {
+              console.log('Dialog closed without completing task');
+              this.closeBulkDropdown()
+              this.unSelectAll();
+            }
+          });
+        },
+        (error) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(error, 'error');
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        }
+      );
+    });
+  }
+
   formatDate(dateString: any): string {
     const date = new Date(dateString);
     return date.toDateString();
@@ -263,33 +392,46 @@ export class TodoListComponent {
 
   watchGetTodoFromMap() {
     this.rxStompService.watch('/topic/getTodoFromMap').subscribe((message) => {
-      const receivedTodo: TodoList = JSON.parse(message.body);
-      this.todoData.push(receivedTodo);
-      this.totalTodos = this.todoData.length;
+      this.handleEmitEvent();
+      // const receivedTodo: TodoList = JSON.parse(message.body);
+      // this.todoData.push(receivedTodo);
+      // this.totalTodos = this.todoData.length;
+    });
+  }
+
+  watchTodoBulkAction() {
+    this.rxStompService.watch('/topic/todoBulkAction').subscribe((message) => {
+      this.handleEmitEvent();
+      // const receivedTodo: TodoList = JSON.parse(message.body);
+      // this.todoData.push(receivedTodo);
+      // this.totalTodos = this.todoData.length;
     });
   }
 
   watchUpdateTodoList() {
     this.rxStompService.watch('/topic/updateTodoList').subscribe((message) => {
-      const receivedTodo: TodoList = JSON.parse(message.body);
-      const todoId = this.todoData.findIndex(todoList => todoList.id === receivedTodo.id)
-      this.todoData[todoId] = receivedTodo
+      this.handleEmitEvent();
+      // const receivedTodo: TodoList = JSON.parse(message.body);
+      // const todoId = this.todoData.findIndex(todoList => todoList.id === receivedTodo.id)
+      // this.todoData[todoId] = receivedTodo
     });
   }
 
   watchUpdateTodoStatus() {
     this.rxStompService.watch('/topic/updateTodoStatus').subscribe((message) => {
-      const receivedTodo: TodoList = JSON.parse(message.body);
-      const todoId = this.todoData.findIndex(todoList => todoList.id === receivedTodo.id)
-      this.todoData[todoId] = receivedTodo
+      this.handleEmitEvent();
+      // const receivedTodo: TodoList = JSON.parse(message.body);
+      // const todoId = this.todoData.findIndex(todoList => todoList.id === receivedTodo.id)
+      // this.todoData[todoId] = receivedTodo
     });
   }
 
   watchDeleteTodo() {
     this.rxStompService.watch('/topic/deleteTodo').subscribe((message) => {
-      const receivedNewsletter: TodoList = JSON.parse(message.body);
-      this.todoData = this.todoData.filter(todo => todo.id !== receivedNewsletter.id);
-      this.totalTodos = this.todoData.length;
+      this.handleEmitEvent();
+      // const receivedNewsletter: TodoList = JSON.parse(message.body);
+      // this.todoData = this.todoData.filter(todo => todo.id !== receivedNewsletter.id);
+      // this.totalTodos = this.todoData.length;
     });
   }
 

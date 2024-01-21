@@ -56,5 +56,8 @@ export class CenterService {
     });
   }
 
+  getAllCenterPricing() {
+    return this.httpClient.get(this.url + "/center/getAllCenterPricing")
+  }
 }
 

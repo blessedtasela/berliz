@@ -3,7 +3,7 @@
     <div class="w-0 md:w-12">
         <div class="mt-12 left-0 transform duration-300 w-screen ease-in-out fixed transition duration-300 ease-in-out side-z"
             [ngClass]="{'hidden': openMenu, 'w-12': !openMenu}" id="sidebarView">
-            <div class="bg-gray-950 rounded-b-md flex items-center">
+            <div class="bg-gradient-to-r from-gray-950 via-gray-900 to-gray-950 rounded-b-md flex items-center">
                 <!-- Sidebar Toggle Icon -->
                 <div class="cursor-pointer ml-2 hover:drop-shadow-2xl transition-all duration-1000 
                     ease-in-out transform hover:scale-105 mr-4">
@@ -12,8 +12,8 @@
                         (click)="stopPropagation($event)"></i-feather>
                 </div>
                 <!-- Breadcrumb Navigation -->
-                <div class="text-white ml-4 mt-5">
-                    <navbar-router-breadcrumb></navbar-router-breadcrumb>
+                <div class="text-white ml-4 mt-5 side-z">
+                    <app-navbar-breadcrumb [breadcrumbs]="breadcrumbs"></app-navbar-breadcrumb>
                 </div>
             </div>
         </div>
@@ -34,16 +34,16 @@
     <div class="mt-12 w-screen left-64 ml-4 transform duration-300 hidden md:block
         -translate-x-0 ease-in-out fixed transition duration-300 ease-in-out side-z"
         [ngClass]="{'block md:hidden': !openMenu}" id="sidebarView">
-        <div class="bg-gray-950 -mt-1 rounded-b-md flex items-center p-1 mt-1">
+        <div class="bg-gradient-to-r from-gray-950 via-gray-900 to-gray-950 -mt-1 rounded-b-md flex items-center p-1 mt-1">
             <div class="text-white ml-4 mt-4">
-                <navbar-router-breadcrumb></navbar-router-breadcrumb>
+                <app-navbar-breadcrumb [breadcrumbs]="breadcrumbs"></app-navbar-breadcrumb>
             </div>
         </div>
     </div>
 
     <!-- Expanded Sidebar (visible when sidebar is open) -->
     <div class="w-0 md:w-64" *ngIf="openMenu">
-        <div class="mt-10 bg-gray-950 text-gray-200 w-64 inset-y-0 left-0 transform duration-300
+        <div class="mt-10 bg-gradient-to-r from-gray-950 via-gray-900 to-gray-950 text-gray-200 w-64 inset-y-0 left-0 transform duration-300
             -translate-x-0 ease-in-out fixed transition duration-300 ease-in-out side-z"
             [ngClass]="{'hidden ': !openMenu,}" id="sidebarView">
             <!-- Sidebar Branding and Close Button -->
@@ -153,7 +153,7 @@
                 </div>
                 <!-- Logout Link -->
                 <div class="flex fixed items-center p-2 text-white cursor-pointer duration-300 hover:bg-gray-700 
-        hover:rounded-md bottom-0 right-0">
+                    hover:rounded-md bottom-0 right-0">
                     <feather-icon name="log-out" class="text-sm mr-2"></feather-icon>
                     <h1 class="text-sm font-bold" (click)="logout()">Log out</h1>
                 </div>

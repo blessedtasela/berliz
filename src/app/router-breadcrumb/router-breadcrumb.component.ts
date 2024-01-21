@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BreadcrumbService } from '../services/breadcrumb.service';
+import { BreadcrumbManualService } from '../services/breadcrumb-manual.service';
 
 @Component({
   selector: 'app-router-breadcrumb',
@@ -12,9 +12,9 @@ import { BreadcrumbService } from '../services/breadcrumb.service';
 export class RouterBreadcrumbComponent {
   breadcrumbs: { label: string; url: string }[] = [];
 
-  constructor(private breadcrumbServic: BreadcrumbService) { }
+  constructor(private breadcrumbManualeService: BreadcrumbManualService) { }
 
   ngOnInit() {
-    this.breadcrumbs = this.breadcrumbServic.getBreadcrumbs();
+    this.breadcrumbs = this.breadcrumbManualeService.getBreadcrumbs();
   }
 }

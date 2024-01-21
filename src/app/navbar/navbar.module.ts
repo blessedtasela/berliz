@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { NavigationBarComponent } from './navigation-bar/navigation-bar.component';
 import { IconsModule } from '../icons/icons.module';
@@ -28,9 +29,10 @@ import { SearchClientComponent } from './search-client/search-client.component';
 import { SearchMemberComponent } from './search-member/search-member.component';
 import { SearchTestimonialComponent } from './search-testimonial/search-testimonial.component';
 import { SearchSubscriptionComponent } from './search-subscription/search-subscription.component';
-import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb.component';
 import { SideBarOpenComponent } from './side-bar-open/side-bar-open.component';
 import { SideBarCloseComponent } from './side-bar-close/side-bar-close.component';
+import { NavbarBreadcrumbComponent } from './navbar-breadcrumb/navbar-breadcrumb.component';
+import { BreadcrumbModule } from 'xng-breadcrumb';
 
 
 @NgModule({
@@ -60,21 +62,26 @@ import { SideBarCloseComponent } from './side-bar-close/side-bar-close.component
     SearchMemberComponent,
     SearchTestimonialComponent,
     SearchSubscriptionComponent,
-    RouterBreadcrumbComponent,
     SideBarOpenComponent,
-    SideBarCloseComponent
+    SideBarCloseComponent,
+    NavbarBreadcrumbComponent
   ],
   imports: [
     CommonModule,
     IconsModule,
     RouterModule,
-    FormsModule
+    FormsModule,
+    BreadcrumbModule,
+    MatIconModule
   ],
   exports: [
     NavigationBarComponent,
     SidebarNavigationComponent,
     TopBarComponent,
-    SideBarComponent
+    SideBarComponent,
+    NavbarBreadcrumbComponent
+  ],
+  providers: [
   ]
 })
 export class NavbarModule { }

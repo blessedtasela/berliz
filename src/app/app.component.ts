@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 })
 export class AppComponent {
   title = 'berliz';
-  constructor(private router: Router) { }
+  constructor(private router: Router,) { }
 
   isTopbar(): boolean {
     const topbarRoutes = ['/home', '/centers', '/trainers', '/about', '/categories', '/contact'];
@@ -21,7 +21,7 @@ export class AppComponent {
   }
 
   isLogin(): boolean {
-    const loginRoutes = ['/login', '/sign-up',];
+    const loginRoutes = ['/login', '/sign-up', 'quick-sign-up'];
     return loginRoutes.some(route => this.router.url.includes(route));
   }
 

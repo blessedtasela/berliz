@@ -1,3 +1,5 @@
+import { Clients } from "./clients.interface";
+
 export interface Trainers {
   id: number;
   name: string;
@@ -67,15 +69,13 @@ export interface TrainerHeroAlbum {
   date: string;
 }
 
-export interface TrainerAlbum {
+export interface TrainerPhotoAlbum {
   id: number;
-  trainerId: number;
-  name: string;
-  photos: {
-    photo: string;
-    comment: string;
-  }[];
-  date: string;
+  trainer: Trainers;
+  photo: any;
+  comment: string;
+  date: Date;
+  lastUpdate: Date;
 }
 
 export interface TrainerCategory {
@@ -95,22 +95,26 @@ export interface TrainerCategory {
 export interface TrainerBenefits {
   id: number;
   trainerId: number;
-  benefits: { benefit: string }[];
-  imageUrl: string;
-  date: string;
+  benefit: string;
+  date: Date;
+  lastUpdate: Date;
 }
 
-export interface TrainerClientReview {
+export interface TrainerReview {
   id: number;
-  trainerId: number;
-  reviews: {
-    clientId: number;
-    name: string;
-    beforeImageUrl: string;
-    afterImageUrl: string;
-    comment: string;
-  }[];
-  date: string;
+  trainer: Trainers;
+  client: Clients;
+  frontBefore: any;
+  frontAfter: any;
+  sideBefore: any;
+  sideAfter: any;
+  backBefore: any;
+  backAfter: any;
+  review: string;
+  likes: number;
+  date: Date;
+  lastUpdate: Date;
+  status: string;
 }
 
 export interface TrainerClientSubscription {
@@ -125,12 +129,11 @@ export interface TrainerClientSubscription {
 
 export interface TrainerFeatureVideo {
   id: number;
-  trainerId: number;
-  video: {
-    videoUrl: string;
-    motto: string;
-  }[];
-  date: string
+  trainer: Trainers;
+  video: any;
+  motivation: string;
+  date: Date;
+  lastUpdate: Date;
 }
 
 export interface TrainerSubscriptionForm {
@@ -142,8 +145,9 @@ export interface TrainerSubscriptionForm {
 
 export interface TrainerIntrodution {
   id: number;
-  trainerId: number;
-  paragraphs: { paragraph: string }[];
-  videoUrl: string;
-  date: string;
+  trainer: Trainers;
+  introduction: string;
+  coverPhoto: any;
+  date: Date;
+  lastUpdate: Date;
 }

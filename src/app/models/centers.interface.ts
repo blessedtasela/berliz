@@ -41,6 +41,18 @@ export interface CenterLike {
   date: Date;
 }
 
+export interface CenterPricing {
+  id: number;
+  center: Centers;
+  price: number;
+  discount3Months: number;
+  discount6Months: number;
+  discount9Months: number;
+  discount12Months: number;
+  discount2Programs: number;
+  date: Date;
+  lastUpdate: Date;
+}
 
 export interface CenterStatistics {
   id: number;
@@ -160,15 +172,13 @@ export interface CenterIntroduction {
 
 export interface CenterReview {
   id: number;
-  centerId: number;
-  reviews: {
-    userName: string;
-    photo: string;
-    comment: string;
-    likes: number;
-    date: string;
-  }[];
-  date: string;
+  center: Centers;
+  user: Users;
+  comment: string;
+  likes: number;
+  status: string;
+  date: Date;
+  lastUpdate: Date;
 }
 
 export interface CenterLocation {

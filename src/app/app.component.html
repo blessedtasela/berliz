@@ -7,7 +7,7 @@
 <div *ngIf="isLogin()">
     <router-outlet></router-outlet>
 </div>
-<div *ngIf="!isTopbar() && !isLogin()">
+<div *ngIf="isSidebar()">
     <div class="relative min-h-screen flex">
         <app-top-bar></app-top-bar>
         <app-side-bar class="mt-2"></app-side-bar>

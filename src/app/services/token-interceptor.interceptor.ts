@@ -34,7 +34,7 @@ export class TokenInterceptorInterceptor implements HttpInterceptor {
 
     return next.handle(modRequest).pipe(
       catchError((error) => {
-        if (error.status === 401) {
+        if (error.status === 405) {
 
           const refreshToken = localStorage.getItem('refresh_token');
           return this.userService.refreshToken({ token: refreshToken }).pipe(

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
 import { genericError } from 'src/validators/form-validators.module';
-import { CenterLike, Centers } from '../models/centers.interface';
+import { CenterLike, CenterPricing, Centers } from '../models/centers.interface';
 import { SnackBarService } from './snack-bar.service';
 import { CenterService } from './center.service';
 
@@ -17,6 +17,8 @@ export class CenterStateService {
   public centerData$: Observable<Centers> = this.centerSubject.asObservable();
   private likeCentersSubject = new BehaviorSubject<any>(null);
   public likeCentersData$: Observable<CenterLike[]> = this.likeCentersSubject.asObservable();
+  private centerPricingSubject = new BehaviorSubject<any>(null);
+  public centerPricingData$: Observable<CenterPricing[]> = this.centerPricingSubject.asObservable();
   responseMessage: any;
 
 
@@ -40,6 +42,9 @@ export class CenterStateService {
     this.likeCentersSubject.next(data);
   }
 
+  setAllCenterPricingSubject(data: CenterPricing[]) {
+    this.centerPricingSubject.next(data);
+  }
 
   getCenter(): Observable<Centers> {
     return this.centerService.getCenter().pipe(
@@ -115,4 +120,26 @@ export class CenterStateService {
       })
     );
   }
+
+  getCenterPricing(): Observable<CenterPricing[]> {
+    return this.centerService.getAllCenterPricing().pipe(
+      tap((response: any) => {
+        return response.sort((a: CenterPricing, b: CenterPricing) => {
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          return dateB - dateA;
+        })
+      }),
+      catchError((error) => {
+        if (error.error?.message) {
+          this.responseMessage = error.error?.message;
+        } else {
+          this.responseMessage = genericError;
+        }
+        console.log(this.responseMessage, 'error');
+        return of([]);
+      })
+    );
+  }
+
 }
