@@ -1,11 +1,11 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Partners } from 'src/app/models/partners.interface';
-import { Users } from 'src/app/models/users.interface';
+import { Role, Users } from 'src/app/models/users.interface';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -21,13 +21,20 @@ import { fileValidator, genericError } from 'src/validators/form-validators.modu
 })
 export class NullPartnerComponent {
   @Input() user!: Users;
+  profilePhoto: any;
   @Input() partnerData!: Partners;
+  @Output() onEmit = new EventEmitter()
   responseMessage: any;
   invalidForm: boolean = false;
   addPartnerForm!: FormGroup;
   selectedCV: any;
   selectedCertificate: any;
   subscriptions: Subscription[] = [];
+  roles: Role[] = [{
+    id: 1, role: 'center'
+  }, {
+    id: 2, role: 'trainer'
+  },]
 
   constructor(
     private userStateService: UserStateService,
@@ -37,7 +44,8 @@ export class NullPartnerComponent {
     private formBuilder: FormBuilder,
     private snackbarService: SnackBarService,
     private partnerService: PartnerService,
-    private partnerStateService: PartnerStateService) { }
+    private partnerStateService: PartnerStateService) {
+  }
 
   ngOnInit(): void {
     this.addPartnerForm = this.formBuilder.group({
@@ -47,7 +55,7 @@ export class NullPartnerComponent {
       'facebookUrl': ['', Validators.compose([Validators.required, Validators.pattern('^(https?:\\/\\/)?(www\\.)?facebook\\.com\\/.+$')])],
       'instagramUrl': ['', Validators.compose([Validators.required, Validators.pattern('^(https?:\\/\\/)?(www\\.)?instagram\\.com\\/.+$')])],
       'youtubeUrl': ['', Validators.pattern('^(https?:\\/\\/)?(www\\.)?youtube\\.com\\/.+$')],
-      'role': ['trainer'],
+      'role': ['', Validators.compose([Validators.required, Validators.minLength(4)])],
     });
   }
 
@@ -106,13 +114,10 @@ export class NullPartnerComponent {
     requestData.append('instagramUrl', this.addPartnerForm.get('instagramUrl')?.value);
     requestData.append('youtubeUrl', this.addPartnerForm.get('youtubeUrl')?.value);
     requestData.append('role', this.addPartnerForm.get('role')?.value);
-
     if (this.addPartnerForm.invalid) {
-      this.ngxService.start();
       this.invalidForm = true;
       this.responseMessage = "Invalid form. Please complete all sections";
       this.snackbarService.openSnackBar(this.responseMessage, "error");
-      this.ngxService.stop();
     } else {
       this.ngxService.start();
       this.partnerService.addPartner(requestData)
@@ -123,7 +128,13 @@ export class NullPartnerComponent {
           this.responseMessage = response?.message;
           this.snackbarService.openSnackBar(this.responseMessage, "");
           this.ngxService.stop();
+          this.onEmit.emit();
           this.handleEmitEvent();
+          window.scrollTo({
+            top: 100,
+            left: 0,
+            behavior: 'smooth' // Optional: adds smooth scrolling effect
+          });
         }, (error: any) => {
           this.ngxService.start();
           console.error("error");

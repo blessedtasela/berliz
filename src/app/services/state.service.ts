@@ -11,7 +11,7 @@ export class StateService {
   public data$: Observable<any> = this.dataSubject.asObservable();
   promotions: Promotions[] = []
   offers: Offers[] = []
-  private showNewsletter: string = 'false';
+  private showNewsletter: boolean = false;
   private showTodaysTodo: string = 'false';
   constructor() {
     this.promotions = [
@@ -130,8 +130,16 @@ export class StateService {
   }
 
   getShowNewsletter() {
-    const value  = localStorage.getItem("newsletter")
+    const value = localStorage.getItem("newsletter")
     return value;
+  }
+
+  setPauseNewsletter(value: boolean) {
+    this.showNewsletter = value
+  }
+
+  getPauseNewsletter() {
+    return this.showNewsletter;
   }
 
   setTodaysTodo(value: string) {
@@ -140,7 +148,7 @@ export class StateService {
   }
 
   getTodaysTodo() {
-    const value  = localStorage.getItem("todaysTodo")
+    const value = localStorage.getItem("todaysTodo")
     return value;
   }
 }

@@ -1,1 +1,3 @@
-<app-my-notifications></app-my-notifications>
+   <app-search-my-notification (results)="handleSearchResults($event)"></app-search-my-notification>
+   <app-my-notifications [notificationData]="notificationData" [totalNotifications]="totalNotifications"
+      [notificationsLength]="notificationsLength" (emitEvent)="emitData()"></app-my-notifications>

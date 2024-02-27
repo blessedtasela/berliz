@@ -7,8 +7,14 @@
             <img src="../../../assets/landing/berliz.png" style="width: 120px;" class="hidden md:block">
             <div class="hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
                     rounded-md p-1 mr-2">
-                <i-feather name="bell" class="mt-2 w-24 md:w-36 text-gray-700 font-bold drop-shadow-xl"
-                    (click)="toggleSidebar()" (click)="stopPropagation($event)"></i-feather>
+                <a [routerLink]="['/dashboard/my-notifications']">
+                    <i-feather name="bell" class="mt-2 w-24 md:w-36 text-gray-700 font-bold drop-shadow-xl"
+                        (click)="toggleSidebar()" (click)="stopPropagation($event)"></i-feather>
+                    <span *ngIf="notificationLength > 0"
+                        class="text-sm text-white font-bold bg-red-600 px-1 rounded-full fixed">
+                        {{ notificationLength }}
+                    </span>
+                </a>
             </div>
         </div>
     </div>
@@ -30,12 +36,11 @@
         <div class="flex items-center p-2 cursor-pointer hover:drop-shadow-2xl transition-all 
                 duration-300 ease-in-out transform hover:scale-105 cursor-pointer">
             <div class="h-6 bg-gray-200 rounded-full" [routerLink]="['/home']">
-                <feather-icon name="home" class=" p-1 font-bold text-gray-800" 
-                style="width: 22px;"></feather-icon>
+                <feather-icon name="home" class=" p-1 font-bold text-gray-800" style="width: 22px;"></feather-icon>
             </div>
         </div>
         <div class="flex items-center justify-center">
-        <app-profile [search]="isSearch"></app-profile>
-    </div>
+            <app-profile [search]="isSearch" [userData]="userData"></app-profile>
+        </div>
     </div>
 </div>

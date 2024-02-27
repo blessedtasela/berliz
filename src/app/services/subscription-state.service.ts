@@ -11,6 +11,8 @@ import { Subscriptions } from '../models/subscriptions.interface';
 export class SubscriptionStateService {
   private activeSubscriptionsSubject = new BehaviorSubject<any>(null);
   public activeSubscriptionsData$: Observable<Subscriptions[]> = this.activeSubscriptionsSubject.asObservable();
+  private mySubscriptionsSubject = new BehaviorSubject<any>(null);
+  public mySubscriptionsData$: Observable<Subscriptions[]> = this.mySubscriptionsSubject.asObservable();
   private allSubscriptionsSubject = new BehaviorSubject<any>(null);
   public allSubscriptionsData$: Observable<Subscriptions[]> = this.allSubscriptionsSubject.asObservable();
   private subscriptionSubject = new BehaviorSubject<any>(null);
@@ -32,6 +34,9 @@ export class SubscriptionStateService {
     this.allSubscriptionsSubject.next(data);
   }
 
+  setMySubscriptionsSubject(data: Subscriptions[]) {
+    this.mySubscriptionsSubject.next(data);
+  }
 
   getSubscription(): Observable<Subscriptions> {
     return this.subscriptionService.getSubscription().pipe(
@@ -55,6 +60,26 @@ export class SubscriptionStateService {
       tap((response: any) => {
         return response.sort((a: Subscriptions, b: Subscriptions) => {
           return a.user.email.localeCompare(b.user.email);
+        })
+      }),
+      catchError((error) => {
+        this.snackbarService.openSnackBar(error, 'error');
+        if (error.error?.message) {
+          this.responseMessage = error.error?.message;
+        } else {
+          this.responseMessage = genericError;
+        }
+        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        return of([]);
+      })
+    );
+  }
+
+  getMySubscriptions(): Observable<Subscriptions[]> {
+    return this.subscriptionService.getMySubscriptions().pipe(
+      tap((response: any) => {
+        return response.sort((a: Subscriptions, b: Subscriptions) => {
+          return a.date.getTime() - b.date.getTime();
         })
       }),
       catchError((error) => {

@@ -41,6 +41,18 @@ export class UserService {
     return this.httpClient.post(this.url + "/user/refreshToken", token);
   }
 
+  validateEmail(data: any) {
+    return this.httpClient.put(this.url + "/user/validateEmail", data, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    })
+  }
+
+  updateEmail(data: any) {
+    return this.httpClient.put(this.url + "/user/updateEmail", data, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    })
+  }
+
   updateUser(data: any) {
     return this.httpClient.put(this.url + "/user/update", data, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
@@ -63,10 +75,15 @@ export class UserService {
     return this.httpClient.put(this.url + "/user/updateProfilePhoto", data);
   }
 
+  removePhoto(id: number) {
+    return this.httpClient.put(this.url + `/user/removePhoto/${id}`, null, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
   updateProfilePhotoAdmin(data: any) {
     return this.httpClient.put(this.url + "/user/updateProfilePhotoAdmin", data);
   }
-
 
   forgotPassword(data: any) {
     return this.httpClient.post(this.url + "/user/forgotPassword", data, {
@@ -88,6 +105,12 @@ export class UserService {
 
   changePassword(data: any) {
     return this.httpClient.put(this.url + "/user/changePassword", data, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
+  forcePasswordChange(id: number, password: string) {
+    return this.httpClient.put(this.url + `/user/forcePasswordChange/${id}/${password}`, null, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     });
   }

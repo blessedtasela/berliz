@@ -29,15 +29,11 @@ export class TodoListListComponent {
     private todoService: TodoService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
-    private dialog: MatDialog,
-    private rxStompService: RxStompService) {
+    private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
     this.ngxService.start()
-    this.watchUpdateTodoList()
-    this.watchUpdateTodoStatus()
-    this.watchTodoBulkAction()
     this.ngxService.stop()
   }
 
@@ -68,7 +64,6 @@ export class TodoListListComponent {
         const childComponentInstance = dialogRef.componentInstance as UpdateTodoModalComponent;
         childComponentInstance.onUpdateTodoList.subscribe(() => {
           dialogRef.close('todoList status updated successfully')
-          this.handleEmitEvent()
         });
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
@@ -116,7 +111,6 @@ export class TodoListListComponent {
           this.responseMessage = response.message;
           this.snackbarService.openSnackBar(this.responseMessage, '');
           dialogRef.close('todoList status updated successfully')
-          this.handleEmitEvent()
         }, (error) => {
           this.ngxService.stop();
           this.snackbarService.openSnackBar(error, 'error');
@@ -148,7 +142,6 @@ export class TodoListListComponent {
           this.responseMessage = response.message;
           this.snackbarService.openSnackBar(this.responseMessage, '');
           dialogRef.close('todo task deleted successfully')
-          this.handleEmitEvent()
         }, (error) => {
           this.ngxService.stop();
           this.snackbarService.openSnackBar(error, 'error');
@@ -165,33 +158,6 @@ export class TodoListListComponent {
   formatDate(dateString: any): any {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');
-  }
-
-  watchUpdateTodoList() {
-    this.rxStompService.watch('/topic/updateTodoList').subscribe((message) => {
-      this.handleEmitEvent()
-      // const receivedTodo: TodoList = JSON.parse(message.body);
-      // const todoId = this.todoListData.findIndex(todoList => todoList.id === receivedTodo.id)
-      // this.todoListData[todoId] = receivedTodo
-    });
-  }
-
-  watchTodoBulkAction() {
-    this.rxStompService.watch('/topic/todoBulkAction').subscribe((message) => {
-      this.handleEmitEvent();
-      // const receivedTodo: TodoList = JSON.parse(message.body);
-      // this.todoData.push(receivedTodo);
-      // this.totalTodos = this.todoData.length;
-    });
-  }
-
-  watchUpdateTodoStatus() {
-    this.rxStompService.watch('/topic/updateTodoStatus').subscribe((message) => {
-      this.handleEmitEvent()
-      // const receivedTodo: TodoList = JSON.parse(message.body);
-      // const todoId = this.todoListData.findIndex(todoList => todoList.id === receivedTodo.id)
-      // this.todoListData[todoId] = receivedTodo
-    });
   }
 
 }

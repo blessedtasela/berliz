@@ -16,6 +16,7 @@ export class SideBarCloseComponent {
   responseMessage: any;
   @Input() userData!: Users;
   currentRouteName: string | null = null;
+  @Input() notificationLength: number = 0;
 
   constructor(private router: Router,
     private dialog: MatDialog,

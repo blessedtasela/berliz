@@ -37,21 +37,20 @@ export class NewsletterPopupComponent {
   }
 
   addNewsletter(): void {
-    this.ngxService.start();
     if (this.newsletterForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
-      this.ngxService.stop();
     } else {
       this.newsletterService.addNewsletter(this.newsletterForm.value)
         .subscribe((response: any) => {
+          this.ngxService.start();
           this.newsletterForm.reset();
           this.invalidForm = false;
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.onAddNewsletter.emit();
-        }, (error: any) => {
           this.ngxService.stop();
+        }, (error: any) => {
           console.error("error");
           if (error.error?.message) {
             this.responseMessage = error.error?.message;

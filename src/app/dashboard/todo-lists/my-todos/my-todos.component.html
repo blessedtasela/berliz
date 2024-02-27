@@ -1,3 +1,4 @@
 <app-todo-form (emitEvent)="emitData()"></app-todo-form>
+<app-search-todo (results)="handleSearchResults($event)"></app-search-todo>
 <app-todo-list [todoData]="todoData" [totalTodos]="totalTodos" [todosLength]="todosLength"
     (emitEvent)="emitData()"></app-todo-list>

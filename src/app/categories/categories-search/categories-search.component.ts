@@ -28,7 +28,6 @@ export class CategoriesSearchComponent {
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-    this.watchUpdateStatus()
   }
 
   ngAfterViewInit(): void {
@@ -135,16 +134,5 @@ export class CategoriesSearchComponent {
     return of(this.filteredCategories);
   }
 
-
-  watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
-      const receivedCategories: Categories = JSON.parse(message.body);
-      if (receivedCategories.status === 'false') {
-        this.categories.push(receivedCategories);
-      } else {
-        this.categories = this.categories.filter(category => category.id !== receivedCategories.id);
-      }
-    });
-  }
 }
 

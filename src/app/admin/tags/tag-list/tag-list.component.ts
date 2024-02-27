@@ -27,13 +27,9 @@ export class TagListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private tagStateService: TagStateService,
-    private datePipe: DatePipe,
-    private rxStompService: RxStompService) { }
+    private datePipe: DatePipe,) { }
 
-  ngOnInit(): void {
-this.watchUpdateTag()
-this.watchUpdateTagStatus()
-  }
+  ngOnInit(): void { }
 
   handleEmitEvent() {
     this.tagStateService.getAllTags().subscribe((tagsData) => {
@@ -116,8 +112,7 @@ this.watchUpdateTagStatus()
     const tag = this.tagsData.find(tag => tag.id === id);
     if (tag) {
       const dialogRef = this.dialog.open(TagDetailsModalComponent, {
-        width: '800px',
-        height: '400px',
+        width: '600px',
         data: {
           tagData: tag,
         },
@@ -168,22 +163,6 @@ this.watchUpdateTagStatus()
   formatDate(dateString: any): any {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');
-  }
-
-  watchUpdateTag() {
-    this.rxStompService.watch('/topic/updateTag').subscribe((message) => {
-      const receivedTags: Tags = JSON.parse(message.body);
-      const tagId = this.tagsData.findIndex(tags => tags.id === receivedTags.id)
-      this.tagsData[tagId] = receivedTags
-    });
-  }
-
-  watchUpdateTagStatus() {
-    this.rxStompService.watch('/topic/updateTagStatus').subscribe((message) => {
-      const receivedTags: Tags = JSON.parse(message.body);
-      const tagId = this.tagsData.findIndex(tags => tags.id === receivedTags.id)
-      this.tagsData[tagId] = receivedTags
-    });
   }
 
 }

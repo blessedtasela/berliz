@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
@@ -7,6 +7,7 @@ import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { CenterStateService } from 'src/app/services/center-state.service';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { UserStateService } from 'src/app/services/user-state.service';
 
@@ -15,39 +16,31 @@ import { UserStateService } from 'src/app/services/user-state.service';
   templateUrl: './partner-page.component.html',
   styleUrls: ['./partner-page.component.css']
 })
-export class PartnerPageComponent {
+export class PartnerPageComponent implements OnInit{
   center!: Centers;
   trainer!: Trainers;
   partner!: Partners;
   user!: Users;
-
-  private subscriptions: Subscription[] = []
+  subscriptions: Subscription[] = []
 
   constructor(private userStateService: UserStateService,
     private partnerStateService: PartnerStateService,
     private centerStateService: CenterStateService,
     private trainerStateService: TrainerStateService,
-    private ngxService: NgxUiLoaderService) { }
+    private ngxService: NgxUiLoaderService,
+    private rxStompService: RxStompService) { }
 
   ngOnInit() {
-    this.subscriptions.push(
-      this.userStateService.userData$.subscribe((cachedUser) => {
-        this.user = cachedUser;
-      }),
-      this.centerStateService.centerData$.subscribe((cachedCenter) => {
-        this.center = cachedCenter;
-      }),
-      this.trainerStateService.trainerData$.subscribe((cachedTrainer) => {
-        this.trainer = cachedTrainer;
-      }),
-      this.partnerStateService.partnerData$.subscribe((cachedPartner) => {
-        this.partner = cachedPartner;
-      })
-    );
-
-    if (!this.user || !this.center || !this.trainer || !this.partner) {
-      this.handleEmitEvent();
-    }
+    this.ngxService.start();
+    this.handleEmitEvent();
+    this.ngxService.stop();
+    this.watchDeletePartner()
+    this.watchGetPartnerFromMap()
+    this.watchRejectPartnerApplication()
+    this.watchUpdatePartner()
+    this.watchUpdatePartnerStatus()
+    this.watchUpdateProfilePhoto()
+    this.watchUpdateUser()
   }
 
   ngOnDestroy() {
@@ -56,7 +49,6 @@ export class PartnerPageComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.subscriptions.push(this.userStateService.getUser().subscribe((user) => {
       this.user = user;
       this.userStateService.setUserSubject(user);
@@ -74,12 +66,53 @@ export class PartnerPageComponent {
         this.centerStateService.setCenterSubject(center);
       })
     );
-    this.ngxService.stop();
   }
 
   emitData(): void {
     this.handleEmitEvent()
   }
 
-  
+  watchGetPartnerFromMap() {
+    this.rxStompService.watch('/topic/getPartnerFromMap').subscribe((message) => {
+      this.handleEmitEvent()
+    });
+  }
+
+  watchDeletePartner() {
+    this.rxStompService.watch('/topic/deletePartner').subscribe((message) => {
+      this.handleEmitEvent()
+    });
+  }
+
+  watchUpdatePartnerStatus() {
+    this.rxStompService.watch('/topic/updatePartnerStatus').subscribe((message) => {
+      this.handleEmitEvent()
+    });
+  }
+
+  watchUpdatePartner() {
+    this.rxStompService.watch('/topic/updatePartner').subscribe((message) => {
+      this.handleEmitEvent()
+    });
+  }
+
+  watchRejectPartnerApplication() {
+    this.rxStompService.watch('/topic/rejectPartnerApplication').subscribe((message) => {
+      this.handleEmitEvent()
+    });
+  }
+
+  watchUpdateProfilePhoto() {
+    this.rxStompService.watch('/topic/updateProfilePhoto').subscribe((message) => {
+      this.handleEmitEvent()
+    });
+  }
+
+  watchUpdateUser() {
+    this.rxStompService.watch('/topic/updateUser').subscribe((message) => {
+      this.handleEmitEvent()
+    });
+  }
 }
+
+

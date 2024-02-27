@@ -25,9 +25,6 @@ export class TodoListHeaderComponent {
 
   ngOnInit(): void {
     this.ngxService.start()
-    this.watchDeleteTodo()
-    this.watchTodoBulkAction()
-    this.watchGetTodoFromMap()
     this.ngxService.stop()
   }
 
@@ -92,35 +89,6 @@ export class TodoListHeaderComponent {
       } else {
         console.log('Dialog closed without adding a todo');
       }
-    });
-  }
-
-  watchGetTodoFromMap() {
-    this.rxStompService.watch('/topic/getTodoFromMap').subscribe((message) => {
-      this.handleEmitEvent()
-      // const receivedTodo: TodoList = JSON.parse(message.body);
-      // this.todoListData.push(receivedTodo);
-      // this.todoListLength = this.todoListData.length;
-      // this.totalTodoList = this.todoListData.length;
-    });
-  }
-
-  watchTodoBulkAction() {
-    this.rxStompService.watch('/topic/todoBulkAction').subscribe((message) => {
-      this.handleEmitEvent();
-      // const receivedTodo: TodoList = JSON.parse(message.body);
-      // this.todoData.push(receivedTodo);
-      // this.totalTodos = this.todoData.length;
-    });
-  }
-
-  watchDeleteTodo() {
-    this.rxStompService.watch('/topic/deleteTodo').subscribe((message) => {
-      this.handleEmitEvent()
-      // const receivedNewsletter: TodoList = JSON.parse(message.body);
-      // this.todoListData = this.todoListData.filter(todo => todo.id !== receivedNewsletter.id);
-      // this.todoListLength = this.todoListData.length;
-      // this.totalTodoList = this.todoListData.length;
     });
   }
 

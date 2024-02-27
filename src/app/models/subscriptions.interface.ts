@@ -18,6 +18,7 @@ export interface Subscriptions {
     date: Date;
     lastUpdate: Date;
     status: string;
+    checked: boolean;
   }
 
   

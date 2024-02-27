@@ -11,6 +11,7 @@ import { CategoriesListComponent } from './categories-list/categories-list.compo
 import { CategoryComponent } from './category/category.component';
 import { UpdateCategoryModalComponent } from './update-category-modal/update-category-modal.component';
 import { CategoryDetailsModalComponent } from './category-details-modal/category-details-modal.component';
+import { SearchCategoriesComponent } from './search-categories/search-categories.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { CategoryDetailsModalComponent } from './category-details-modal/category
     CategoriesListComponent,
     CategoryComponent,
     CategoryDetailsModalComponent,
-    UpdateCategoryModalComponent
+    UpdateCategoryModalComponent,
+    SearchCategoriesComponent
   ],
 
   imports: [

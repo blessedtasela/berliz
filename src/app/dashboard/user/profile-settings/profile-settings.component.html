@@ -42,7 +42,7 @@
                 <input formControlName="email" [value]="user.email" [(ngModel)]="user.email"
                     class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                     [ngClass]="{'border-red-400': updateUserForm.get('email')?.invalid && updateUserForm.get('email')?.touched }"
-                    placeholder="input email" type="text">
+                    placeholder="input email" type="text" readonly>
                 <div *ngIf="updateUserForm.get('email')?.invalid && updateUserForm.get('email')?.dirty || (invalidForm && updateUserForm.get('email')?.invalid)"
                     class="text-red-500 mx-2">
                     email is required
@@ -163,7 +163,7 @@
             <div class="bg-red-600 rounded-md mx-auto m-2">
                 <button
                     class="py-1 px-2 font-bold font-sans text-white text-sm lg:text-md flex items-center justify-center"
-                    type="submit" (click)="submitForm()">
+                    type="submit" (click)="updateUser()">
                     Update
                 </button>
             </div>
@@ -175,5 +175,12 @@
     <i-feather name="Alert-Triangle" class="text-red-600 font-bold mt-1"></i-feather>
     <button
         class="rounded-lg py-1 px-2 bg-gray-950 font-bold font-sans text-white text-sm lg:text-md flex items-center justify-center"
-        (click)="deactivateAccount()">Deactivate account</button>
+        (click)="deactivateAccount()">
+        Deactivate account
+    </button>
+    <button
+        class="rounded-lg py-1 px-2 bg-red-600 font-bold font-sans text-white text-sm lg:text-md flex items-center justify-center"
+        (click)="openUpdateEmail()">
+        Update email
+    </button>
 </div>

@@ -56,7 +56,7 @@ export class UpdatePartnerModalComponent {
   }
 
   ngOnInit(): void {
-    this.userStateService.allUsersData$.subscribe((users)=>{
+    this.userStateService.getActiveUsers().subscribe((users) => {
       this.users = users;
     })
     this.updatePartnerForm = this.formBuilder.group({

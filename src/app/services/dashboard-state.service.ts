@@ -15,6 +15,8 @@ export class DashboardStateService {
   public berlizData$: Observable<any[]> = this.berlizSubject.asObservable();
   private partnerDetailsSubject = new BehaviorSubject<any>(null);
   public partnerDetailsData$: Observable<PartnerDetails[]> = this.partnerDetailsSubject.asObservable();
+  private profileDataSubject = new BehaviorSubject<any>(null);
+  public profileData$: Observable<any[]> = this.profileDataSubject.asObservable();
   responseMessage: any;
 
   constructor(private dashboardService: DashboardService,
@@ -30,6 +32,10 @@ export class DashboardStateService {
 
   setPartnerDetailsSubject(data: any[]) {
     this.partnerDetailsSubject.next(data);
+  }
+
+  setProfileDataSubject(data: any[]) {
+    this.profileDataSubject.next(data);
   }
 
   getDashBoard(): Observable<any[]> {
@@ -72,6 +78,24 @@ export class DashboardStateService {
     return this.dashboardService.getPartnerDetails().pipe(
       tap((response: any) => {
         return response
+      }),
+      catchError((error) => {
+        this.snackbarService.openSnackBar(error, 'error');
+        if (error.error?.message) {
+          this.responseMessage = error.error?.message;
+        } else {
+          this.responseMessage = genericError;
+        }
+        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        return of([]);
+      })
+    );
+  }
+
+  getProfileData(): Observable<any[]> {
+    return this.dashboardService.getProfileData().pipe(
+      tap((response: any) => {
+        return response;
       }),
       catchError((error) => {
         this.snackbarService.openSnackBar(error, 'error');

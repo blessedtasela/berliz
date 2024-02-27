@@ -15,9 +15,11 @@
                         [src]="'../../../assets/icons/' + categoryData.photo +'.png'">
                 </div>
                 <div class="flex flex-col m-4 gap-2">
+                    <p class="font-bold">Description</p>
                     <p class="text-gray-700 font-sans font-bold text-md flex">
                         {{ categoryData.description }}
                     </p>
+                    <p class="font-bold">Tags</p>
                     <p class="text-gray-700 font-sans font-bold text-md flex">
                         <ng-container *ngFor="let tag of categoryData.tagSet; let i = index">
                             {{ tag.name }} {{ i < (categoryData.tagSet.length - 1) ? "/" : "" }} </ng-container>

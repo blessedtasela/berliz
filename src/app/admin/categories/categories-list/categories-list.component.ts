@@ -29,15 +29,10 @@ export class CategoriesListComponent implements OnInit {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private rxStompService: RxStompService,
     public categoryStateService: CategoryStateService) {
   }
 
-  ngOnInit() {
-    this.watchLikeCategory()
-    this.watchUpdateCategory()
-    this.watchUpdateStatus()
-  }
+  ngOnInit() { }
 
   handleEmitEvent() {
     this.categoryStateService.getCategories().subscribe((allCategories) => {
@@ -184,30 +179,6 @@ export class CategoriesListComponent implements OnInit {
   formatDate(dateString: any): any {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');
-  }
-
-  watchLikeCategory() {
-    this.rxStompService.watch('/topic/likeCategory').subscribe((message) => {
-      const receivedCategories: Categories = JSON.parse(message.body);
-      const categoryId = this.categoriesData.findIndex(category => category.id === receivedCategories.id)
-      this.categoriesData[categoryId] = receivedCategories
-    });
-  }
-
-  watchUpdateCategory() {
-    this.rxStompService.watch('/topic/updateCategory').subscribe((message) => {
-      const receivedCategories: Categories = JSON.parse(message.body);
-      const categoryId = this.categoriesData.findIndex(category => category.id === receivedCategories.id)
-      this.categoriesData[categoryId] = receivedCategories
-    });
-  }
-
-  watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
-      const receivedCategories: Categories = JSON.parse(message.body);
-      const categoryId = this.categoriesData.findIndex(category => category.id === receivedCategories.id)
-      this.categoriesData[categoryId] = receivedCategories
-    });
   }
 
 }

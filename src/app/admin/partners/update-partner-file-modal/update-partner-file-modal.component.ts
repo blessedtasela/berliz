@@ -5,7 +5,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Partners } from 'src/app/models/partners.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { genericError } from 'src/validators/form-validators.module';
+import { fileValidator, genericError } from 'src/validators/form-validators.module';
 import { AddPartnerModalComponent } from '../add-partner-modal/add-partner-modal.component';
 
 @Component({
@@ -41,8 +41,8 @@ export class UpdatePartnerFileModalComponent {
   ngOnInit(): void {
     this.updatePartnerForm = this.formBuilder.group({
       'id': new FormControl(this.partnerData?.id, [Validators.required]),
-      'certificate': new FormControl(this.selectedCertificate, [Validators.required, Validators.minLength(2)]),
-      'cv': new FormControl(this.selectedCV, Validators.compose([Validators.required, Validators.minLength(5)])),
+      'certificate': new FormControl(this.selectedCertificate, [Validators.required, fileValidator]),
+      'cv': new FormControl(this.selectedCV, Validators.compose([Validators.required, fileValidator])),
     });
   }
 
@@ -75,19 +75,17 @@ export class UpdatePartnerFileModalComponent {
 
 
   updatePartner(): void {
-    this.ngxService.start();
     const requestData = new FormData();
     requestData.append('id', this.updatePartnerForm.get('id')?.value);
     requestData.append('certificate', this.selectedCertificate);
     requestData.append('cv', this.selectedCV);
-
     if (this.updatePartnerForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
-      this.ngxService.stop();
     } else {
       this.partnerService.updateFile(requestData)
         .subscribe((response: any) => {
+          this.ngxService.start();
           this.updatePartnerForm.reset();
           this.partnerService.setPartnerFormIndex(0);
           this.invalidForm = false;
@@ -98,7 +96,6 @@ export class UpdatePartnerFileModalComponent {
           this.onUpdatePartnerFileEmit.emit();
         }
           , (error: any) => {
-            this.ngxService.stop();
             console.error("error");
             if (error.error?.message) {
               this.responseMessage = error.error?.message;

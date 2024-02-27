@@ -20,18 +20,16 @@ import { UpdatePartnerFileModalComponent } from 'src/app/admin/partners/update-p
 })
 export class PartnerDataComponent {
   @Input() partnerData!: Partners;
+  @Output() onEmit = new EventEmitter;
   updatePartnerForm!: FormGroup;
   invalidForm: boolean = false;
   formIndex: number = 0;
   responseMessage: any;
-  @Output() emitEvent = new EventEmitter();
   subscriptions: Subscription[] = []
   roles: Role[] = [{
     id: 1, role: 'center'
   }, {
     id: 2, role: 'trainer'
-  }, {
-    id: 3, role: 'driver'
   },]
 
   constructor(private datePipe: DatePipe,
@@ -45,8 +43,8 @@ export class PartnerDataComponent {
 
   ngOnInit(): void {
     this.updatePartnerForm = this.formBuilder.group({
+      'email': [],
       'id': new FormControl(this.partnerData?.id, [Validators.required]),
-      'email': new FormControl(this.partnerData?.user.email, Validators.compose([Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])])),
       'motivation': new FormControl(this.partnerData?.motivation, Validators.compose([Validators.required, Validators.minLength(9)])),
       'facebookUrl': new FormControl(this.partnerData?.facebookUrl, Validators.compose([Validators.required, Validators.pattern('^(https?:\\/\\/)?(www\\.)?facebook\\.com\\/.+$')])),
       'instagramUrl': new FormControl(this.partnerData?.instagramUrl, Validators.compose([Validators.required, Validators.pattern('^(https?:\\/\\/)?(www\\.)?instagram\\.com\\/.+$')])),
@@ -118,7 +116,7 @@ export class PartnerDataComponent {
 
   openUpdateFile() {
     const dialogRef = this.dialog.open(UpdatePartnerFileModalComponent, {
-      width: '800px',
+      width: '500px',
       data: {
         partnerData: this.partnerData,
       }
@@ -138,22 +136,20 @@ export class PartnerDataComponent {
 
 
   updatePartner(): void {
-    this.ngxService.start();
     if (this.updatePartnerForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
-      this.ngxService.stop();
     } else {
       this.partnerService.updatePartner(this.updatePartnerForm.value)
         .subscribe((response: any) => {
+          this.ngxService.start();
           this.updatePartnerForm.reset();
           this.invalidForm = false;
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.emitEvent.emit()
+          this.onEmit.emit()
           this.ngxService.stop();
         }, (error: any) => {
-          this.ngxService.stop();
           console.error("error");
           if (error.error?.message) {
             this.responseMessage = error.error?.message;

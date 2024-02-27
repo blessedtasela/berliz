@@ -27,4 +27,33 @@ export class AuthenticationService {
     }
     return null;
   }
+
+  getCurrentUserId(): number | null {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken: any = jwt_decode(token);
+      return decodedToken.id;
+    }
+    return null;
+  }
+
+  getCurrentUserRole(): string | null {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken: any = jwt_decode(token);
+      return decodedToken.role;
+    }
+    return null;
+  }
+
+  isAdmin(): boolean {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken: any = jwt_decode(token);
+      return decodedToken.role === 'admin';
+    }
+    return false;
+  }
+
+
 }

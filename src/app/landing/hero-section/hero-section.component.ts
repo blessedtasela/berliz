@@ -28,16 +28,16 @@ export class HeroSectionComponent implements OnInit {
     this.heroCounter();
     this.getBerlizDetails();
     this.stats = [
-      { id: 1, name: "Our Partners", iconUrl: "../../../assets/landing/trainer.png", value: 65, counterValue: 0 },
-      { id: 2, name: "Our Centers", iconUrl: "../../../assets/landing/gym.png", value: 23, counterValue: 0 },
-      { id: 3, name: "Our Members", iconUrl: "../../../assets/landing/member-card.png", value: 400, counterValue: 0 },
+      { id: 1, name: "Partners", iconUrl: "globe", value: 65, counterValue: 0 },
+      { id: 2, name: "Centers", iconUrl: "map-pin", value: 23, counterValue: 0 },
+      { id: 3, name: "Members", iconUrl: "users", value: 400, counterValue: 0 },
     ]
 
     this.heroes = [
-      { id: 1, title: "Transform Your Body with Berliz", image: "../../../assets/landing/landing-page-hero.jpg" },
-      { id: 2, title: "Inspire and Transform with Berliz", image: "../../../assets/landing/gym-coach.jpg" },
-      { id: 3, title: "Unleash Your Potential with Berliz", image: "../../../assets/landing/combat-sport.jpg" },
-      { id: 4, title: "Fuel Your Body, Transform Your Life with Berliz", image: "../../../assets/landing/gym-meal.jpg" }
+      { id: 1, title: "Inspire and Transform Your Body with", image: "../../../assets/landing/landing-page-hero.jpg" },
+      { id: 2, title: "Explore and Discover new Levels with ", image: "../../../assets/landing/gym-coach.jpg" },
+      { id: 3, title: "Unleash Your Potentials with ", image: "../../../assets/landing/combat-sport.jpg" },
+      { id: 4, title: "Fuel Your Body, Transform Your Life with ", image: "../../../assets/landing/gym-meal.jpg" }
     ]
 
   }

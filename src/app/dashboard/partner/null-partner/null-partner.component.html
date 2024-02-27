@@ -1,14 +1,13 @@
-<div class="font-sans rounded-lg">
+<div class="font-sans rounded-lg" *ngIf="user !=null">
     <div class="w-full h-64 overflow-hidden">
         <img src="../../../../assets/landing/hero-bg-4.jpg"
             class="w-full h-48 md:h-64 object-cover overflow-hidden rounded-lg">
     </div>
-    <div *ngIf="user" class="overflow-visible -mt-32 md:-mt-16  flex items-center justify-center">
+    <div class="overflow-visible -mt-32 md:-mt-16  flex items-center justify-center">
         <img [src]="'data:image;base64, ' + user.profilePhoto" onerror="this.src='../../../assets/icons/user.png';"
             class="shadow-lg ring-offset-2 ring-red-400 ring-4 rounded-full w-32">
     </div>
-    <div class="p-2 mt-10 text-sm md:text-md font-bold text-gray-950 flex items-center justify-center"
-        *ngIf="!partnerData && user">
+    <div class="p-2 mt-10 text-sm md:text-md font-bold text-gray-950 flex items-center justify-center">
         Hello {{ user.firstname }} {{ user.lastname }}, it appears that you do not have any pending partnership
         applications at the moment.
         To become a partner, kindly complete the application form below &#128079; &#128079;
@@ -58,8 +57,8 @@
             </div>
         </header>
         <div class="mt-12 bg-red-600 border-2 rounded-md max-w-2xl min-w-2xl mx-auto py-2 "
-            [ngClass]="{'border-gray-950': addPartnerForm.invalid && invalidForm}">
-            <div class="" [ngClass]="{'border-gray-200': addPartnerForm.invalid && invalidForm }">
+            [ngClass]="{'border-white': addPartnerForm.invalid && invalidForm}">
+            <div class="" [ngClass]="{'border-white': addPartnerForm.invalid && invalidForm }">
                 <header class="text-center m-2 text-white">
                     <h1 class="font-bold font-sans text-xl">Become a Berliz partner</h1>
                     <p class="font-sans text-sm">Register today and transform lives
@@ -69,17 +68,24 @@
                 <section class="py-2">
                     <form [formGroup]="addPartnerForm">
                         <div class="invalid-form">
-                            <span *ngIf="addPartnerForm.invalid && invalidForm" class="mtext-gray-100 mx-2 p-2">
+                            <span *ngIf="(addPartnerForm.get('facebookUrl')?.invalid ||
+                            addPartnerForm.get('motivation')?.invalid ||
+                            addPartnerForm.get('instagramUrl')?.invalid ||
+                            addPartnerForm.get('role')?.invalid)
+                             && invalidForm" class="text-white mx-2 font-bold">
                                 Please complete all sections
                             </span>
-                            <span *ngIf="!addPartnerForm.invalid && invalidForm" class="text-white mx-2 p-2">
+                            <span *ngIf="!(addPartnerForm.get('facebookUrl')?.invalid ||
+                            addPartnerForm.get('motivation')?.invalid ||
+                            addPartnerForm.get('instagramUrl')?.invalid ||
+                            addPartnerForm.get('role')?.invalid)" class="text-white mx-2 font-bold">
                                 Everything looks good
                             </span>
                         </div>
                         <div class="grid grid-cols-1 gap-5 text-white p-2">
                             <div class="mx-auto p-2 w-full">
                                 <span class="sr-only">Upload certificate</span>
-                                <span class="p-2">Certification</span>
+                                <span class="ml-4 font-bold text-white italic">Certification</span>
                                 <div class="flex">
                                     <div class="shrink-0">
                                         <feather-icon name="file-text" class="p-1 mt-2 text-white rounded-md"
@@ -90,30 +96,34 @@
                                         class="w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none
                                         block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
                                         file:text-sm file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer text-white"
-                                        [ngClass]="{'border-gray-950': invalidForm && this.addPartnerForm.get('certificate')?.dirty }"
+                                        [ngClass]="{'border-white': invalidForm && this.addPartnerForm.get('certificate')?.dirty }"
                                         (change)="onCertificateSelected($event)" type="file" accept=".pdf">
                                 </div>
-                                <div *ngIf="this.addPartnerForm.get('certificate')?.invalid && this.addPartnerForm.get('certificate')?.dirty"
+                                <!-- <div *ngIf="this.addPartnerForm.get('certificate')?.invalid && this.addPartnerForm.get('certificate')?.dirty"
                                     class="text-white mx-2">
-                                    Certificate is required
+                                    Upload a valid file
+                                </div> -->
+                                <div *ngIf="addPartnerForm.get('certificate')?.hasError('invalidSize') && addPartnerForm.get('certificate')?.dirty"
+                                    class="text-white mx-2">
+                                    File size exceeds 4MB
                                 </div>
                             </div>
                             <div class="mx-auto p-2 w-full">
                                 <span class="sr-only">Motivation</span>
-                                <span class="p-2">Motivation</span>
+                                <span class="ml-4 font-bold text-white italic">Motivation</span>
                                 <textarea formControlName="motivation"
                                     class="w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none text-gray-950"
                                     [ngClass]="{'border-red-400': addPartnerForm.get('motivation')?.invalid && addPartnerForm.get('motivation')?.dirty }"
                                     placeholder="Tell us why you want to be a Berliz partner in at least 50 words"
                                     rows="5" cols="25"></textarea>
                                 <div *ngIf="addPartnerForm.get('motivation')?.invalid && addPartnerForm.get('motivation')?.dirty"
-                                    class="text-gray-200 mx-2">
+                                    class="text-white mx-2">
                                     At least 50 characters
                                 </div>
                             </div>
                             <div class="mx-auto p-2 w-full">
-                                <span class="sr-only">Choose cover photo</span>
-                                <span class="p-2">Please upload your CV</span>
+                                <span class="sr-only">Upload cv</span>
+                                <span class="ml-4 font-bold text-white italic">Upload CV</span>
                                 <div class="flex">
                                     <div class="shrink-0">
                                         <feather-icon name="file-text" class="p-1 text-white mt-2 rounded-md"
@@ -124,47 +134,67 @@
                                         class="w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none
                                     block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
                                     file:text-sm file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer text-white"
-                                        [ngClass]="{'border-gray-950': invalidForm && this.addPartnerForm.get('cv')?.dirty}"
+                                        [ngClass]="{'border-white': invalidForm && this.addPartnerForm.get('cv')?.dirty}"
                                         (change)="onCVSelected($event)" type="file" accept=".pdf">
                                 </div>
-                                <div *ngIf="this.addPartnerForm.get('cv')?.invalid && this.addPartnerForm.get('cv')?.dirty"
-                                    class="text-red-500 mx-2">
+                                <!-- <div *ngIf="this.addPartnerForm.get('cv')?.invalid && this.addPartnerForm.get('cv')?.dirty"
+                                    class="text-white mx-2">
                                     Upload a valid file
+                                </div> -->
+                                <div *ngIf="addPartnerForm.get('cv')?.hasError('invalidSize') && addPartnerForm.get('cv')?.dirty"
+                                    class="text-white mx-2">
+                                    File size exceeds 4MB
+                                </div>
+
+                            </div>
+                            <div class="mx-auto p-2 w-full">
+                                <span class="sr-only">Partnership</span>
+                                <span class="ml-4 font-bold text-white italic"> Partnership</span>
+                                <select formControlName="role" id="role"
+                                    class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none text-gray-950"
+                                    [ngClass]="{'border-red-400': addPartnerForm.get('role')?.invalid && addPartnerForm.get('role')?.touched }"
+                                    type="text">
+                                    <option selected hidden class="font-sans">Select partnership</option>
+                                    <option *ngFor="let role of roles">{{ role.role }}</option>
+                                </select>
+                                <div *ngIf="addPartnerForm.get('role')?.invalid && addPartnerForm.get('role')?.touched"
+                                    class="text-white mx-2">
+                                    Please Select a role
                                 </div>
                             </div>
                             <div class="mx-auto p-2 w-full">
                                 <span class="sr-only">Facebook url link *required</span>
-                                <span class="p-2 ">Facebook url link *required</span>
+                                <span class="ml-4 font-bold text-white italic">Facebook url </span>
                                 <input formControlName="facebookUrl"
                                     class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none text-gray-950"
                                     [ngClass]="{'border-red-400': addPartnerForm.get('facebookUrl')?.invalid && addPartnerForm.get('facebookUrl')?.dirty }"
                                     placeholder="https://www.facebook.com/my-profile/" type="text">
                                 <div *ngIf="addPartnerForm.get('facebookUrl')?.invalid && addPartnerForm.get('facebookUrl')?.dirty"
-                                    class="text-gray-200 mx-2">
+                                    class="text-white mx-2">
                                     Please enter a valid facebook url
                                 </div>
                             </div>
                             <div class="mx-auto p-2 w-full">
                                 <span class="sr-only">Instagram url link *required</span>
-                                <span class="p-2">Instagram url link *required</span>
+                                <span class="ml-4 font-bold text-white italic">Instagram url link</span>
                                 <input formControlName="instagramUrl"
                                     class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none text-gray-950"
                                     [ngClass]="{'border-red-400': addPartnerForm.get('instagramUrl')?.invalid && addPartnerForm.get('instagramUrl')?.dirty }"
                                     placeholder="https://www.instagram.com/my-profile/" type="instagramUrl">
                                 <div *ngIf="addPartnerForm.get('instagramUrl')?.invalid && addPartnerForm.get('instagramUrl')?.dirty"
-                                    class="text-red-500 mx-2">
+                                    class="text-white mx-2">
                                     Please enter a valid instagram url
                                 </div>
                             </div>
                             <div class="mx-auto p-2 w-full">
                                 <span class="sr-only">Youtube url link *optional</span>
-                                <span class="p-2">Youtube url link *optional</span>
+                                <span class="ml-4 font-bold text-white italic">Youtube url</span>
                                 <input formControlName="youtubeUrl"
                                     class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none text-gray-950"
                                     [ngClass]="{'border-red-400': addPartnerForm.get('youtubeUrl')?.invalid && addPartnerForm.get('youtubeUrl')?.dirty }"
                                     placeholder="https://www.youtube.com/my-profile/" type="youtubeUrl">
                                 <div *ngIf="addPartnerForm.get('youtubeUrl')?.invalid && addPartnerForm.get('youtubeUrl')?.dirty"
-                                    class="text-gray-200 mx-2">
+                                    class="text-white mx-2">
                                     Please enter a valid youtube url
                                 </div>
                             </div>

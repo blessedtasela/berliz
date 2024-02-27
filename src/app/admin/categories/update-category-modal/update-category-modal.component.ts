@@ -40,6 +40,7 @@ export class UpdateCategoryModalComponent {
   }
 
   ngOnInit(): void {
+    this.handleEmitEvent()
     this.selectedTagsId = this.categoryData.tagSet.map(tag => tag.id);
     this.updateCategoryForm = this.formBuilder.group({
       'id': new FormControl(this.categoryData.id, [Validators.required]),
@@ -48,10 +49,6 @@ export class UpdateCategoryModalComponent {
       'description': new FormControl(this.categoryData.description, [Validators.required, Validators.minLength(20)]),
       'likes': new FormControl(this.categoryData.likes, [Validators.required, Validators.minLength(1)]),
       'tagIds': this.formBuilder.array(this.selectedTagsId, this.validateCheckbox()),
-    });
-    this.tagStateService.allTagsData$.subscribe((allTags) => {
-      this.tags = allTags;
-      this.cdr.detectChanges();
     });
   }
 
@@ -67,6 +64,12 @@ export class UpdateCategoryModalComponent {
     }
   }
 
+  handleEmitEvent() {
+    this.tagStateService.getActiveTags().subscribe((activeTags) => {
+      this.tags = activeTags;
+      this.tagStateService.setActiveTagsSubject(activeTags);
+    })
+  }
 
   validateCheckbox(): ValidatorFn {
     return (formArray: AbstractControl) => {

@@ -34,6 +34,10 @@ export class SubscriptionService {
     return this.httpClient.get(this.url + "/subscription/get")
   }
 
+  getMySubscriptions() {
+    return this.httpClient.get(this.url + "/subscription/getMySubscriptions")
+  }
+
   getActiveSubscriptions() {
     return this.httpClient.get(this.url + "/subscription/getActiveSubscriptions")
   }
@@ -42,5 +46,10 @@ export class SubscriptionService {
     return this.httpClient.delete(this.url + `/subscription/delete/${id}`);
   }
 
+  bulkAction(data: any) {
+    return this.httpClient.put(this.url + "/subscription/bulkAction", data, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    })
+  }
 }
 

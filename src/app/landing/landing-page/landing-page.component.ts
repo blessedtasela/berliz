@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NewsletterStateService } from 'src/app/services/newsletter-state.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { AddNewsletterModalComponent } from 'src/app/admin/newsletters/add-newsletter-modal/add-newsletter-modal.component';
+import { NewsletterPopupComponent } from 'src/app/shared/newsletter-popup/newsletter-popup.component';
 
 @Component({
   selector: 'app-landing-page',
@@ -19,7 +20,7 @@ export class LandingPageComponent implements OnInit {
 
   constructor(private stateService: StateService,
     private dialog: MatDialog,
-     private ngxService: NgxUiLoaderService,
+    private ngxService: NgxUiLoaderService,
     private newsletterStateService: NewsletterStateService,) {
     this.promotions = this.stateService.promotions;
     this.offers = this.stateService.offers;
@@ -27,7 +28,9 @@ export class LandingPageComponent implements OnInit {
 
   ngOnInit(): void {
     const showNewsletter = this.stateService.getShowNewsletter();
-    if (showNewsletter !== "true") {
+    const pauseNewsletter = this.stateService.getPauseNewsletter();
+    if (showNewsletter !== "true" && pauseNewsletter !== true) {
+      this.stateService.setPauseNewsletter(true)
       setTimeout(() => {
         this.openAddNewsletter();
       }, 5000);
@@ -47,11 +50,11 @@ export class LandingPageComponent implements OnInit {
   }
 
   openAddNewsletter() {
-    const dialogRef = this.dialog.open(AddNewsletterModalComponent, {
+    const dialogRef = this.dialog.open(NewsletterPopupComponent, {
       width: '600px',
-      height: '600px',
+      height: '500px',
     });
-    const childComponentInstance = dialogRef.componentInstance as AddNewsletterModalComponent;
+    const childComponentInstance = dialogRef.componentInstance as NewsletterPopupComponent;
     childComponentInstance.onAddNewsletter.subscribe(() => {
       this.handleEmitEvent();
     });
@@ -63,5 +66,5 @@ export class LandingPageComponent implements OnInit {
       }
     });
   }
-  
+
 }

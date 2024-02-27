@@ -25,10 +25,7 @@ export class CategoriesHeaderComponent {
     private rxStompService: RxStompService) {
   }
 
-  ngOnInit() {
-    this.watchDeleteCategory()
-    this.watchGetCategoryFromMap()
-  }
+  ngOnInit() { }
 
   handleEmitEvent() {
     this.categoryStateService.getCategories().subscribe((allCategories) => {
@@ -114,21 +111,5 @@ export class CategoriesHeaderComponent {
     });
   }
 
-  watchDeleteCategory() {
-    this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
-      const receivedCategories: Categories = JSON.parse(message.body);
-      this.categoriesData = this.categoriesData.filter(category => category.id !== receivedCategories.id);
-      this.categoriesLength = this.categoriesData.length;
-      this.totalCategories = this.categoriesData.length
-    });
-  }
 
-  watchGetCategoryFromMap() {
-    this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
-      const receivedCategories: Categories = JSON.parse(message.body);
-      this.categoriesData.push(receivedCategories);
-      this.categoriesLength = this.categoriesData.length;
-      this.totalCategories = this.categoriesData.length
-    });
-  }
 }

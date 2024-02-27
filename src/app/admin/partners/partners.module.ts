@@ -12,6 +12,7 @@ import { PartnerListComponent } from './partner-list/partner-list.component';
 import { PartnersComponent } from './partners/partners.component';
 import { UpdatePartnerFileModalComponent } from './update-partner-file-modal/update-partner-file-modal.component';
 import { UpdatePartnerModalComponent } from './update-partner-modal/update-partner-modal.component';
+import { SearchPartnerComponent } from './search-partner/search-partner.component';
 
 
 
@@ -23,7 +24,8 @@ import { UpdatePartnerModalComponent } from './update-partner-modal/update-partn
     PartnerListComponent,
     PartnersComponent,
     UpdatePartnerFileModalComponent,
-    UpdatePartnerModalComponent
+    UpdatePartnerModalComponent,
+    SearchPartnerComponent
   ],
 
   imports: [

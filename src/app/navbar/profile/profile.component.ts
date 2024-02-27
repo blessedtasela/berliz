@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ChangePasswordModalComponent } from 'src/app/dashboard/user/change-password-modal/change-password-modal.component';
-import { UpdateProfilePhotoModalComponent } from 'src/app/dashboard/user/update-profile-photo-modal/update-profile-photo-modal.component';
 import { UpdateUserModalComponent } from 'src/app/dashboard/user/update-user-modal/update-user-modal.component';
 import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -11,6 +11,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserStateService } from 'src/app/services/user-state.service';
 import { UserService } from 'src/app/services/user.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
   selector: 'app-profile',
@@ -20,10 +21,13 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
 
 export class ProfileComponent {
   @Output() isMenuOpen = new EventEmitter<boolean>();
-  userData!: Users;
+  @Input() userData!: Users;
   profileOpen: boolean = false;
   responseMessage: any;
   @Input() search: boolean = false;
+  imageChangedEvent: any = '';
+  croppedImage: any = '';
+  showCropper: boolean = false;
 
   constructor(
     private userService: UserService,
@@ -35,26 +39,36 @@ export class ProfileComponent {
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-    this.handleEmitEvent();
-    this.watchActivateAccount()
-    this.watchDeactivateAccount()
-    this.watchDeleteUser()
-    this.watchUpdateProfilePhoto()
-    this.watchUpdateUser()
-    this.watchUpdateUserBio()
-    this.watchUpdateUserRole()
-    this.watchUpdateUserStatus()
+    this.subscribeToCloseProfileOnClick()
+    this.subscribeToCloseProfileOnMouseDown()
+    this.subscribeToCloseProfileOnScroll()
   }
 
   handleEmitEvent() {
-    this.subscribeToCloseProfileOpen()
     this.userStateService.getUser().subscribe((user) => {
       this.userData = user;
+      this.userStateService.setUserSubject(user);
     });
   }
 
-  subscribeToCloseProfileOpen() {
+  subscribeToCloseProfileOnClick() {
     document.addEventListener('click', (event) => {
+      if (!this.isClickInsideDropdown(event)) {
+        this.closeDropdown();
+      }
+    });
+  }
+
+  subscribeToCloseProfileOnMouseDown() {
+    document.addEventListener('mousedown', (event) => {
+      if (!this.isClickInsideDropdown(event)) {
+        this.closeDropdown();
+      }
+    });
+  }
+
+  subscribeToCloseProfileOnScroll() {
+    document.addEventListener('scroll', (event) => {
       if (!this.isClickInsideDropdown(event)) {
         this.closeDropdown();
       }
@@ -73,25 +87,93 @@ export class ProfileComponent {
   stopPropagation(event: Event): void {
     event.stopPropagation();
   }
-  openUpdateProfilePhoto() {
-    const dialogRef = this.dialog.open(UpdateProfilePhotoModalComponent, {
-      width: '400px',
-      data: {
-        user: this.userData
-      }
-    });
-    const childComponentInstance = dialogRef.componentInstance as UpdateProfilePhotoModalComponent;
-    childComponentInstance.onUpdateProfilePhoto.subscribe(() => {
+
+  onImgSelected(event: any): void {
+    const selectedImage = event.target.files[0];
+    if (selectedImage) {
+      this.imageChangedEvent = event;
+      this.showCropper = true;
+    }
+  }
+
+  imageCropped(event: ImageCroppedEvent) {
+    this.croppedImage = event.blob;
+  }
+
+  imageLoaded() {
+    // This method is called when the image is loaded in the cropper
+    // You can perform any actions you need when the image is loaded, such as displaying the cropper
+  }
+
+  cropperReady() {
+    // This method is called when the cropper is ready
+    // You can perform any actions you need when the cropper is ready
+  }
+
+  loadImageFailed() {
+    // This method is called if there is an error loading the image in the cropper
+    // You can handle the error and display a message to the user
+  }
+
+  cancelUpload() {
+    this.showCropper = false;
+  }
+
+  updatePhoto(): void {
+    this.ngxService.start();
+    const id = this.userData.id;
+    const photo = this.croppedImage;
+    const requestData = new FormData();
+    requestData.append('profilePhoto', photo);
+    requestData.append('id', id.toString());
+    this.userService.updateProfilePhoto(requestData)
+      .subscribe((response: any) => {
+        this.ngxService.stop();
+        this.responseMessage = response?.message;
+        this.snackbarService.openSnackBar(this.responseMessage, "");
+        this.showCropper = false;
+        this.handleEmitEvent()
+      }, (error: any) => {
+        this.ngxService.stop();
+        console.error("error");
+        if (error.error?.message) {
+          this.responseMessage = error.error?.message;
+        } else {
+          this.responseMessage = genericError;
+        }
+        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+      });
+  }
+
+  removePhoto(): void {
+    const user = this.userData;
+    const dialogConfig = new MatDialogConfig();
+    const message = "remove profile photo for this user? - " + user?.email;
+    dialogConfig.data = {
+      message: message,
+      confirmation: true,
+    };
+    const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
+    const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((res: any) => {
       this.ngxService.start();
-      this.handleEmitEvent();
-      this.ngxService.stop();
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log(`Dialog result: ${result}`);
-      } else {
-        console.log('Dialog closed without updatig profile photo');
-      }
+      this.userService.removePhoto(this.userData.id)
+        .subscribe(
+          (response: any) => {
+            this.ngxService.stop();
+            this.responseMessage = response?.message;
+            this.snackbarService.openSnackBar(this.responseMessage, "");
+            dialogRef.close('Profile photo removed succesfully')
+            this.handleEmitEvent()
+          }, (error: any) => {
+            this.ngxService.stop();
+            console.error("error");
+            if (error.error?.message) {
+              this.responseMessage = error.error?.message;
+            } else {
+              this.responseMessage = genericError;
+            }
+            this.snackbarService.openSnackBar(this.responseMessage, 'error');
+          });
     });
   }
 
@@ -159,67 +241,4 @@ export class ProfileComponent {
     });
   }
 
-  watchActivateAccount() {
-    this.rxStompService.watch('/topic/activateAccount').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.userData.id === receivedUsers.id)
-        this.userData = receivedUsers
-    });
-  }
-
-  watchDeactivateAccount() {
-    this.rxStompService.watch('/topic/deactivateAccount').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.userData.id === receivedUsers.id)
-        this.userData = receivedUsers
-    });
-  }
-
-  watchUpdateUserStatus() {
-    this.rxStompService.watch('/topic/updateUserStatus').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.userData.id === receivedUsers.id)
-        this.userData = receivedUsers
-    });
-  }
-
-  watchUpdateUserRole() {
-    this.rxStompService.watch('/topic/updateUserRole').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.userData.id === receivedUsers.id)
-        this.userData = receivedUsers
-    });
-  }
-
-  watchDeleteUser() {
-    this.rxStompService.watch('/topic/deleteUser').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.userData.id === receivedUsers.id)
-        this.userData === null;
-    });
-  }
-
-  watchUpdateUserBio() {
-    this.rxStompService.watch('/topic/updateUserBio').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.userData.id === receivedUsers.id)
-        this.userData = receivedUsers
-    });
-  }
-
-  watchUpdateUser() {
-    this.rxStompService.watch('/topic/updateUser').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.userData.id === receivedUsers.id)
-        this.userData = receivedUsers
-    });
-  }
-
-  watchUpdateProfilePhoto() {
-    this.rxStompService.watch('/topic/updateProfilePhoto').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.userData.id === receivedUsers.id)
-        this.userData = receivedUsers
-    });
-  }
 }

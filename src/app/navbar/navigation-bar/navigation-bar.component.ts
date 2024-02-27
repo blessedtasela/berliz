@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Route, Router } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
@@ -13,11 +13,14 @@ export class NavigationBarComponent implements OnInit {
   currentRoute: any;
 
   constructor(private router: Router,
-    private authService: AuthenticationService) {
+    private authService: AuthenticationService,) {
     this.currentRoute = this.router.url;
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.currentRoute = event.url;
+      }
+      if (event instanceof NavigationStart) {
+        this.closeDropdown();
       }
     });
   }
@@ -26,6 +29,9 @@ export class NavigationBarComponent implements OnInit {
     this.subscribeToCloseNavBarOnMouseDown()
     this.subscribeToCloseNavBarOnScroll()
     this.subscribeToCloseNavBarOnClick()
+  }
+
+  handleEmitEvent() {
   }
 
   navMenu(item: any): void {
@@ -59,7 +65,7 @@ export class NavigationBarComponent implements OnInit {
       }
     });
   }
-  
+
   isClickInsideDropdown(event: Event): any {
     const dropdownElement = document.getElementById('navbarView');
     return dropdownElement && dropdownElement.contains(event.target as Node);
@@ -80,4 +86,5 @@ export class NavigationBarComponent implements OnInit {
   getUser(): boolean {
     return this.authService.isAuthenticated();
   }
+
 }

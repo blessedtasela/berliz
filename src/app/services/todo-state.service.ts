@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TodoService } from './todo.service';
-import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
+import { BehaviorSubject, Observable, tap, catchError, of, map } from 'rxjs';
 import { genericError } from 'src/validators/form-validators.module';
 import { TodoList } from '../models/todoList.interface';
 import { SnackBarService } from './snack-bar.service';
@@ -28,7 +28,7 @@ export class TodoStateService {
 
   getAllTodos(): Observable<TodoList[]> {
     return this.todoService.getAllTodos().pipe(
-      tap((response: any) => {
+      map((response: any) => {
         return response.sort((a: TodoList, b: TodoList) => {
           const dateA = new Date(a.date).getTime();
           const dateB = new Date(b.date).getTime();
@@ -50,7 +50,7 @@ export class TodoStateService {
 
   getMyTodos(): Observable<TodoList[]> {
     return this.todoService.getmyTodos().pipe(
-      tap((response: any) => {
+      map((response: any) => {
         return response.sort((a: TodoList, b: TodoList) => {
           const dateA = new Date(a.date).getTime();
           const dateB = new Date(b.date).getTime();

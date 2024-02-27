@@ -35,6 +35,10 @@
                 <span class="fixed ml-4 text-gray-500 italic text-sm" *ngIf="currentRouteName==='My-notifications'">
                     {{ currentRouteName }}
                 </span>
+                <span *ngIf="notificationLength > 0"
+                    class="text-sm text-red-600 font-bold ml-0.5 rounded-full -mt-1 fixed">
+                    {{ notificationLength }}
+                </span>
             </a>
         </h1>
     </div>

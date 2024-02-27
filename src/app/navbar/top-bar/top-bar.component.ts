@@ -1,8 +1,8 @@
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router, NavigationEnd } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { UpdateProfilePhotoModalComponent } from 'src/app/dashboard/user/update-profile-photo-modal/update-profile-photo-modal.component';
+import { Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { Centers } from 'src/app/models/centers.interface';
 import { Clients } from 'src/app/models/clients.interface';
@@ -20,10 +20,11 @@ import { Testimonials } from 'src/app/models/testimonials.model';
 import { TodoList } from 'src/app/models/todoList.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
+import { NotificationStateService } from 'src/app/services/notification-state.service';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserStateService } from 'src/app/services/user-state.service';
 import { UserService } from 'src/app/services/user.service';
-import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 @Component({
   selector: 'app-top-bar',
@@ -33,10 +34,12 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
 export class TopBarComponent {
   openMenu: boolean = false;
   mdScreen: boolean = false;
-  userData!: any;
+  userData!: Users;
   responseMessage: any;
   profilePhoto: any;
   currentRoute: any;
+  notificationLength: number = 0
+  subscriptions: Subscription[] = []
   @Input() isSearch: boolean = false;
   @Output() categoriesResults: EventEmitter<Categories[]> = new EventEmitter<Categories[]>()
   @Output() contactUsResults: EventEmitter<ContactUs[]> = new EventEmitter<ContactUs[]>()
@@ -65,7 +68,9 @@ export class TopBarComponent {
     private dialog: MatDialog,
     private userStateService: UserStateService,
     private ngxService: NgxUiLoaderService,
-    private snackbarService: SnackBarService) {
+    private snackbarService: SnackBarService,
+    private notificationStateService: NotificationStateService,
+    private rxStompService: RxStompService) {
     this.currentRoute = this.router.url
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -78,6 +83,36 @@ export class TopBarComponent {
     this.onResize();
     this.subscribeToCloseSideBar()
     this.handleEmitEvent();
+    this.watchReadNotification()
+    this.watchNotification()
+    this.watchGetNotificationFromMap()
+    this.watchNotificationBulkAction()
+    this.watchDeleteNotification()
+    this.watchActivateAccount()
+    this.watchDeactivateAccount()
+    this.watchUpdateProfilePhoto()
+    this.watchUpdateUser()
+    this.watchUpdateUserRole()
+    this.watchUpdateUserStatus()
+  }
+
+  handleEmitEvent() {
+    this.subscriptions.push(
+      this.userStateService.getUser().subscribe((user) => {
+        this.userData = user;
+        this.profilePhoto = 'data:image/jpeg;base64,' + this.userData.profilePhoto;
+      }),
+      this.notificationStateService.getMyNotifications().subscribe((notifications) => {
+        if (notifications && notifications.length > 0) {
+          this.notificationLength = notifications.filter(notification => !notification.read).length;
+          console.log(this.notificationLength);
+        } else {
+          // Handle the case when there are no notifications
+          this.notificationLength = 0;
+          console.log('No notifications available.');
+        }
+      })
+    );
   }
 
   toggleSidebar(): void {
@@ -113,13 +148,6 @@ export class TopBarComponent {
 
   stopPropagation(event: Event): void {
     event.stopPropagation();
-  }
-
-  handleEmitEvent() {
-    this.userStateService.getUser().subscribe((user) => {
-      this.userData = user;
-      this.profilePhoto = 'data:image/jpeg;base64,' + this.userData.profilePhoto;
-    });
   }
 
   handleCategorySearchResults(results: Categories[]): void {
@@ -199,4 +227,72 @@ export class TopBarComponent {
     this.testimonialsResult.emit(results);
   }
 
+  watchGetNotificationFromMap() {
+    this.rxStompService.watch('/topic/getNotificationFromMap').subscribe((message) => {
+      this.handleEmitEvent();
+    });
+  }
+
+  watchNotification() {
+    this.rxStompService.watch('/topic/notification').subscribe((message) => {
+      this.handleEmitEvent();
+    });
+  }
+
+  watchNotificationBulkAction() {
+    this.rxStompService.watch('/topic/notificationBulkAction').subscribe((message) => {
+      this.handleEmitEvent();
+    });
+  }
+
+  watchReadNotification() {
+    this.rxStompService.watch('/topic/readNotification').subscribe((message) => {
+      this.handleEmitEvent();
+    });
+  }
+
+  watchDeleteNotification() {
+    this.rxStompService.watch('/topic/deleteNotification').subscribe((message) => {
+      this.handleEmitEvent();
+      // const receivedNewsletter: Notifications = JSON.parse(message.body);
+      // this.notificationData = this.notificationData.filter(Notification => Notification.id !== receivedNewsletter.id);
+      // this.totalNotifications = this.notificationData.length;
+    });
+  }
+
+  watchActivateAccount() {
+    this.rxStompService.watch('/topic/activateAccount').subscribe((message) => {
+      this.handleEmitEvent()
+    });
+  }
+
+  watchDeactivateAccount() {
+    this.rxStompService.watch('/topic/deactivateAccount').subscribe((message) => {
+      this.handleEmitEvent()
+    });
+  }
+
+  watchUpdateUserStatus() {
+    this.rxStompService.watch('/topic/updateUserStatus').subscribe((message) => {
+      this.handleEmitEvent()
+    });
+  }
+
+  watchUpdateUserRole() {
+    this.rxStompService.watch('/topic/updateUserRole').subscribe((message) => {
+      this.handleEmitEvent()
+    });
+  }
+
+  watchUpdateUser() {
+    this.rxStompService.watch('/topic/updateUser').subscribe((message) => {
+      this.handleEmitEvent()
+    });
+  }
+
+  watchUpdateProfilePhoto() {
+    this.rxStompService.watch('/topic/updateProfilePhoto').subscribe((message) => {
+      this.handleEmitEvent()
+    });
+  }
 }

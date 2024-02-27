@@ -11,6 +11,7 @@ import { TagHeaderComponent } from './tag-header/tag-header.component';
 import { TagListComponent } from './tag-list/tag-list.component';
 import { TagsComponent } from './tags/tags.component';
 import { UpdateTagModalComponent } from './update-tag-modal/update-tag-modal.component';
+import { SearchTagComponent } from './search-tag/search-tag.component';
 
 
 
@@ -21,7 +22,8 @@ import { UpdateTagModalComponent } from './update-tag-modal/update-tag-modal.com
     TagHeaderComponent,
     TagListComponent,
     TagsComponent,
-    UpdateTagModalComponent
+    UpdateTagModalComponent,
+    SearchTagComponent
   ],
 
   imports: [

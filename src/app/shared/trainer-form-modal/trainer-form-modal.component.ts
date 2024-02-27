@@ -89,7 +89,6 @@ export class TrainerFormModalComponent {
   addTrainer(): void {
     const selectedCategoryIds = this.addTrainerForm.value.categoryIds.map((categories: any) => categories.categoryIds);
     const categoryToStrings = selectedCategoryIds.join(',');
-
     const requestData = new FormData();
     requestData.append('partnerId', this.addTrainerForm.get('id')?.value);
     requestData.append('name', this.addTrainerForm.get('name')?.value);
@@ -98,13 +97,10 @@ export class TrainerFormModalComponent {
     requestData.append('experience', this.addTrainerForm.get('experience')?.value);
     requestData.append('photo', this.selectedPhoto);
     requestData.append('categoryIds', categoryToStrings);
-
     if (this.addTrainerForm.invalid) {
-      this.ngxService.start();
       this.invalidForm = true;
       this.responseMessage = "Invalid form. Please complete all sections";
       this.snackBarService.openSnackBar(this.responseMessage, "error");
-      this.ngxService.stop();
     } else {
       this.ngxService.start();
       this.trainerService.addTrainer(requestData)

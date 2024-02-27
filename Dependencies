@@ -1,5 +1,11 @@
-Tailwind css
-i-feather icons
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init { add in content -  "./src/**/*.{html,ts}",}
+{ add in style.css - 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+}
+npm install feather-icons --save
 NgxUiLoaderService
 Ngx-extended-pdf-viewer
 ngx-indexed-db
@@ -8,4 +14,7 @@ npm install ng2-charts
 npm i xng-breadcrumb
 ng add @angular/material
 npm install maticon
+npm install ngx-image-cropper --save
+npm install hammerjs
+npm install @syncfusion/ej2-angular-inputs
 

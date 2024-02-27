@@ -1,1 +1,37 @@
-<p>my-subscriptions works!</p>
+<section class="mt-4 md:mt-8 font-sans">
+    <div *ngIf="mySubscriptions.length < 1">
+        <h1 class="text-center text-lg md:text-4xl text-red-600 font-bold">
+            Discover Your Path to Fitness Success
+        </h1>
+        <p class="text-center text-sm md:text-md italic text-gray-950 font-bold">
+            Embark on a transformative journey towards your fitness goals with our exclusive subscription services.
+        </p>
+    </div>
+    <div *ngIf="mySubscriptions.length > 0">
+        <h1 class="text-center text-lg md:text-4xl text-red-600 font-bold">
+          Your Fitness Journey Continues
+        </h1>
+        <p class="text-center text-sm md:text-md italic text-gray-950 font-bold">
+          Here are the subscription plans you're currently enrolled in:
+        </p>
+        <!-- Display Active Plan -->
+        <div *ngFor="let plan of mySubscriptions">
+          <div *ngIf="plan.status === 'true'; else previousPlan">
+            <div>Active Plan: {{ formatDate(plan.startDate) }}</div>
+          </div>
+        </div>
+        <!-- Display Previous Plans -->
+        <ng-template #previousPlan>
+          <div *ngFor="let plan of mySubscriptions">
+            <div *ngIf="plan.status !== 'true'">
+              <div>Previous Plan: {{ formatDate(plan.startDate) }}</div>
+            </div>
+          </div>
+        </ng-template>
+        <div *ngIf="mySubscriptions.length === 1">
+            <p class="text-center text-sm md:text-md italic text-gray-950 font-bold">
+              You currently have no previous subscription plans.
+            </p>
+          </div>
+      </div>    
+</section>

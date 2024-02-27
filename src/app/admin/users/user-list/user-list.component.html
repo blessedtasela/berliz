@@ -1,3 +1,18 @@
+<div *ngIf="showCropper" class="fixed p-4 md:p-1 inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50">
+    <div class="bg-white p-4 rounded-lg w-full max-w-md image-cropper-container">
+        <image-cropper class="image-cropper" [imageChangedEvent]="imageChangedEvent"
+            (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()" (cropperReady)="cropperReady()"
+            (loadImageFailed)="loadImageFailed()" [maintainAspectRatio]="true" [aspectRatio]="1/1"
+            [resizeToWidth]="256">
+        </image-cropper>
+
+        <div class="mt-4 flex justify-center text-sm">
+            <button class="px-2 p-1 mr-4 bg-red-600 text-white rounded-md" (click)="updatePhoto()">Upload</button>
+            <button class="px-2 p-1 bg-blue-600 text-white rounded-md" (click)="cancelUpload()">Cancel</button>
+        </div>
+    </div>
+</div>
+
 <div class="justify-center items-center p-5 overflow-x-scroll">
     <div class="min-w-[300px]">
         <table class="table-auto border-collapse border border-gray-400 bg-gray-300 text-gray-950 font-sans
@@ -18,19 +33,39 @@
                 <tr *ngFor="let user of usersData; let i = index" class="bg-gray-100 hover:bg-gray-200">
                     <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">
-                        <img [src]="'data:image;base64,' + user.profilePhoto" class="rounded-full"
-                            onerror="this.src='../../../assets/icons/user.png';" style="width: 40px;">
-                        <label for="fileInput-{{user.id}}" class="">
-                            <i-feather name="Edit" class="font-bold text-red-600 mr-4 cursor-pointer"
-                                style="width: 10px;">
-                            </i-feather>
-                        </label>
-                        <input accept="image/*" type="file" id="fileInput-{{user.id}}" style="display: none;"
-                            (change)="onImgSelected($event, user.id)">
+                        <div class="group relative">
+                            <!-- Default image -->
+                            <img [src]="'data:image;base64,' + user.profilePhoto" class="rounded-full"
+                                onerror="this.src='../../../assets/icons/user.png';" style="width: 40px;">
+                            <!-- Image preview on mouseover -->
+                            <div class="hidden group-hover:block fixed top-1/2 left-1/2 transform -translate-x-1/2
+                             -translate-y-1/2 bg-black bg-opacity-50 p-4 rounded-lg ">
+                                <img [src]="'data:image;base64,' + user.profilePhoto" class="rounded-md p-2 w-96 h-96"
+                                    onerror="this.src='../../../assets/icons/user.png';">
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <div>
+                                <label for="fileInput-{{user.id}}" class="">
+                                    <i-feather name="Edit" class="font-bold text-red-600 mr-4 cursor-pointer"
+                                        style="width: 10px;">
+                                    </i-feather>
+                                </label>
+                                <input accept="image/*" type="file" id="fileInput-{{user.id}}" style="display: none;"
+                                    (change)="onImgSelected($event, user.id)">
+                            </div>
+                            <div (click)="removePhoto(user.id)">
+                                <i-feather name="x" class="font-bold text-red-600 mr-4 cursor-pointer"
+                                    style="width: 10px;">
+                                </i-feather>
+                            </div>
+                        </div>
                     </td>
                     <td class="border-b border-gray-400 px-4 py-2">{{ user.firstname }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">{{ user.lastname }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ user.email }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">
+                        {{ user.email }}
+                    </td>
                     <th class="border-b border-gray-400 px-4 py-2 font-bold">{{ user.id }}</th>
                     <td class="border-b border-gray-400 px-4 py-2">
                         <div class="flex items-center p-2">

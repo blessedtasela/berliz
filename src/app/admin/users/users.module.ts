@@ -11,6 +11,8 @@ import { UserDetailsModalComponent } from './user-details-modal/user-details-mod
 import { UserHeaderComponent } from './user-header/user-header.component';
 import { UserListComponent } from './user-list/user-list.component';
 import { UsersComponent } from './users/users.component';
+import { SearchUserComponent } from './search-user/search-user.component';
+import { ImageCropperModule } from 'ngx-image-cropper';
 
 
 
@@ -21,7 +23,8 @@ import { UsersComponent } from './users/users.component';
     UserDetailsModalComponent,
     UserHeaderComponent,
     UserListComponent,
-    UsersComponent
+    UsersComponent,
+    SearchUserComponent
   ],
 
   imports: [
@@ -31,7 +34,8 @@ import { UsersComponent } from './users/users.component';
     ReactiveFormsModule,
     MatDialogModule,
     FooterModule,
-    NavbarModule
+    NavbarModule,
+    ImageCropperModule
   ]
 })
 export class UsersModule { }

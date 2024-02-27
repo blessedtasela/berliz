@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
@@ -21,6 +21,7 @@ export class PartnerApplicationComponent {
   @Input() user!: Users;
   @Input() center!: Centers;
   @Input() trainer!: Trainers;
+  @Output() onEmit = new EventEmitter;
   responseMessage: any;
   subscriptions: Subscription[] = [];
 
@@ -30,9 +31,7 @@ export class PartnerApplicationComponent {
     private ngxService: NgxUiLoaderService,
     private datePipe: DatePipe) { }
 
-  ngOnInit(): void {
-    console.log('data', this.partnerData, this.center, this.trainer)
-  }
+  ngOnInit(): void { }
 
   handleEmitEvent() {
     this.ngxService.start();
@@ -53,7 +52,7 @@ export class PartnerApplicationComponent {
     this.handleEmitEvent()
   }
 
-  openApplicagtionForm() {
+  openApplicationForm() {
     if (this.partnerData.role === 'trainer') {
       const dialogRef = this.dialog.open(TrainerFormModalComponent, {
         width: '800px',
@@ -65,6 +64,7 @@ export class PartnerApplicationComponent {
       const childComponentInstance = dialogRef.componentInstance as TrainerFormModalComponent;
       childComponentInstance.onAddTrainerEmit.subscribe(() => {
         this.handleEmitEvent()
+        this.onEmit.emit()
       });
     }
     if (this.partnerData.role === 'center') {
@@ -78,6 +78,7 @@ export class PartnerApplicationComponent {
       const childComponentInstance = dialogRef.componentInstance as CenterFormModalComponent;
       childComponentInstance.onAddCenterEmit.subscribe(() => {
         this.handleEmitEvent()
+        this.onEmit.emit()
       });
     }
   }

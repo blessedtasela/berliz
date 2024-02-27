@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Centers } from 'src/app/models/centers.interface';
@@ -23,6 +23,7 @@ export class CenterComponent {
   @Input() centerData!: Centers;
   @Input() user!: Users;
   @Input() partnerData!: Partners;
+  @Output() onEmit = new EventEmitter;
   subscriptions: Subscription[] = [];
   responseMessage: any;
   invalidForm: boolean = false;
@@ -109,6 +110,7 @@ export class CenterComponent {
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.handleEmitEvent()
+          this.onEmit.emit()
         }, (error: any) => {
           this.ngxService.stop();
           console.error("error");

@@ -1,0 +1,76 @@
+<div *ngIf="showCropper"
+    class="fixed p-4 md:p-1 inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50">
+    <div class="bg-white p-4 rounded-lg w-full max-w-md image-cropper-container">
+        <image-cropper class="image-cropper" [imageChangedEvent]="imageChangedEvent"
+            (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()" (cropperReady)="cropperReady()"
+            (loadImageFailed)="loadImageFailed()" [maintainAspectRatio]="true" [aspectRatio]="1/1"
+            [resizeToWidth]="256">
+        </image-cropper>
+
+        <div class="mt-4 flex justify-center text-sm">
+            <button class="px-2 p-1 mr-4 bg-red-600 text-white rounded-md" (click)="updatePhoto()">Upload</button>
+            <button class="px-2 p-1 bg-blue-600 text-white rounded-md" (click)="cancelUpload()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div class="bg-gray-100 font-sans rounded-lg mt-2" *ngIf="user">
+    <div class="w-full h-64 overflow-hidden">
+        <img src="../../../../assets/landing/hero-bg-4.jpg"
+            class="w-full h-48 md:h-64 object-cover overflow-hidden rounded-lg">
+    </div>
+    <div class="relative overflow-visible -mt-32 md:-mt-16  flex items-center justify-center">
+        <img [src]="'data:image;base64, ' + user.profilePhoto" onerror="this.src='../../../assets/icons/user.png';"
+            class="shadow-lg ring-offset-2 ring-red-400 ring-4 rounded-full w-32">
+        <label for="fileInput" class="absolute bottom-0 ml-36">
+            <i-feather name="Camera" class="font-bold text-red-600 cursor-pointer"></i-feather>
+        </label>
+        <input accept="image/*" type="file" id="fileInput" style="display: none;" (change)="onImgSelected($event)">
+    </div>
+    <div class="justify-between mt-4 font-sans flex flex-col justify-center items-center">
+        <div *ngIf="user" class="text-gray-950  text-2xl text-center">
+            {{ user.firstname }} {{ user.lastname }}
+        </div>
+        <div *ngIf="user" class="italic text-gray-400 font-bold text-md mb-2 text-center">
+            {{ user.role }}
+        </div>
+        <div class="flex items-center justify-center gap-1 border-2 p-1 md:p-2 rounded-lg
+         border-gray-200 shadow-sm font-bold text-md">
+            <div *ngFor="let data of profileData | keyvalue; let last = last" class="">
+                {{data.value}}
+                <span class="text-sm text-gray-400">{{data.key}}</span>
+                <span class="border-l-2 h-4 m-2 border-gray-200" *ngIf="!last"></span>
+            </div>
+        </div>
+        <div class="grid grid-cols gap-2 p-2 md:p-8 w-full border-b-2 rounded-lg border-gray-200 shadow-sm text-md">
+            <form [formGroup]="bioForm">
+                <div class="mx-auto w-full">
+                    <span class="ml-4 font-bold text-gray-600 italic text-center">Bio</span>
+                    <textarea formControlName="bio" [value]="user.bio" [(ngModel)]="user.bio"
+                        class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                        placeholder="You can write a short description about you, your values, and what you aim to achive in the fitness and sports industry"
+                        rows="10" cols="20"></textarea>
+                </div>
+                <div class="text-red-600 font-sans italic font-bold flex items-center justify-center">
+                    <button (click)="updateBio()" class="font-sans italic font-bold">save</button>
+                </div>
+            </form>
+            <div class="flex gap-8">
+                <div class="text-gray-600 font-sans itali mt-10">
+                    You joined Berliz on
+                    <span class="font-bold">{{ formatDate(user.date) }}</span>
+                </div>
+                <div class="text-gray-600 font-sans itali mt-10">
+                    Account status:
+                    <span class="font-bold text-red-600">{{ user.status=='true' ? 'active' : 'inactive' }}</span>
+                </div>
+            </div>
+        </div>
+        <button class="text-sm bg-red-600 text-white mt-6 py-1 mb-5 px-2 hover:bg-red-700 rounded-md font-sans mx-auto
+        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"><a
+                [routerLink]="['/dashboard/settings']">
+                Go to settings
+            </a>
+        </button>
+    </div>
+</div>

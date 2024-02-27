@@ -33,6 +33,7 @@ import { SideBarOpenComponent } from './side-bar-open/side-bar-open.component';
 import { SideBarCloseComponent } from './side-bar-close/side-bar-close.component';
 import { NavbarBreadcrumbComponent } from './navbar-breadcrumb/navbar-breadcrumb.component';
 import { BreadcrumbModule } from 'xng-breadcrumb';
+import { ImageCropperModule } from 'ngx-image-cropper';
 
 
 @NgModule({
@@ -64,7 +65,7 @@ import { BreadcrumbModule } from 'xng-breadcrumb';
     SearchSubscriptionComponent,
     SideBarOpenComponent,
     SideBarCloseComponent,
-    NavbarBreadcrumbComponent
+    NavbarBreadcrumbComponent,
   ],
   imports: [
     CommonModule,
@@ -72,7 +73,8 @@ import { BreadcrumbModule } from 'xng-breadcrumb';
     RouterModule,
     FormsModule,
     BreadcrumbModule,
-    MatIconModule
+    MatIconModule,
+    ImageCropperModule
   ],
   exports: [
     NavigationBarComponent,

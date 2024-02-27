@@ -6,13 +6,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
 import { NavbarModule } from '../navbar/navbar.module';
-
-
+import { MyNotificationDetailModalComponent } from './my-notification-detail-modal/my-notification-detail-modal.component';
+import { SearchMyNotificationComponent } from './search-my-notification/search-my-notification.component';
 
 @NgModule({
   declarations: [
     MyNotificationsComponent,
-    MyNotificationsPageComponent
+    MyNotificationsPageComponent,
+    MyNotificationDetailModalComponent,
+    SearchMyNotificationComponent,
   ],
   imports: [
     CommonModule,

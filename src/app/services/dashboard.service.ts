@@ -23,4 +23,8 @@ getBerlizDetails() {
 getPartnerDetails() {
   return this.httpClient.get(this.url + "/dashboard/getPartnerDetails")
 }
+
+getProfileData() {
+  return this.httpClient.get(this.url + "/dashboard/getProfileData")
+}
 }

@@ -1,52 +1,57 @@
-<section class="px-1 bg-gray-100 p-1 hero rounded-md">
-    <div class="grid lg:grid-cols-2 items-center justify-items-center gap-5 cursor-pointer font-sans"
+<section class="flex bg-gray-100 p-2 hero rounded-md font-mono">
+    <div class="grid lg:grid-cols-2 items-center justify-items-center gap-5 cursor-pointer "
         *ngFor="let h of heroes; let i = index" [class.hidden]=" i !== heroIndex">
-        <div class="order-2 lg:order-1 flex flex-col justify-center items-center 
-        overflow-hidden transition-auto duration-3000 ease-in-out flex-none">
-            <div class="grid grid-cols-2 gap-5 -mt-4">
-                <a class="mt-2 cursor-pointer text-left font-sans
+        <div class="flex flex-col justify-center items-center overflow-hidden transition-auto duration-3000 ease-in-out flex-none">
+            <p class="px-4 lg:px-8 text-justify font-bold text-md text-gray-950 text-xl md:text-4xl">
+                {{ h.title }} <span class="font-bold text-red-600">Berliz</span>
+            </p>
+            <P class="mt-2 md:mt-2 px-4 lg:px-8 text-justify text-md lg:text-lg italic text-gray-800">
+                Become our member today and Unlock a World of Unlimited Services
+            </P>
+            <button class="mt-2 md:mt-8 text-md lg:text-lg bg-red-600 text-white py-1 px-3 hover:bg-red-700 hero-button 
+                transition-all duration-300 transform hover:scale-105 focus:scale-105">
+                <a [routerLink]="['/login']">
+                    Join Us Today
+                </a>
+            </button>
+            <div class="mt-2 md:mt-8 flex items-center gap-10 cursor-pointer mt-5">
+                <div *ngFor="let s of stats"
+                    class="transition-all duration-300 transform hover:scale-110 focus:scale-110">
+                    <div class="flex justify-center gap-3">
+                        <i-feather name="{{ s.iconUrl }}" class="text-red-600 font-bold "></i-feather>
+                        <span class="text-right text-md font-bold md:text-md">
+                            +{{ s.counterValue }}
+                        </span>
+                    </div>
+                    <div class="w-full text-center text-md md:text-lg md:text-md text-gray-950">
+                        {{ s.name }}
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-5 mt-8 hidden md:block">
+                <a class="mt-2 cursor-pointer text-left 
             transition-all duration-300 transform hover:scale-110 focus:scale-110" (click)="changeHero(-1)">
                     &#9668;
                 </a>
-                <a class="mt-2 cursor-pointer text-left font-sans
+                <a class="mt-2 cursor-pointer text-left 
             transition-all duration-300 transform hover:scale-110 focus:scale-110" (click)="changeHero(+1)">
                     &#9658;
                 </a>
             </div>
-            <p class="lg:m-5 w-full text-center font-bold text-md text-red-600 uppercase">
-                {{ h.title }}
-            </p>
-            <P class="w-full text-center text-md font-bold uppercase text-gray-800">
-                Become a member today
-            </P>
-            <p class="text-sm w-full text-center font-sans text-gray-700 italic">
-                Unlock a World of Unlimited Services
-            </p>
-            <button class="text-sm lg:text-md bg-red-600 text-white py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
-                transition-all duration-300 transform hover:scale-105 focus:scale-105">
-                <a [routerLink]="['/community']">
-                Join our Fitness Community Now
-            </a>
-            </button>
-            <div class="grid lg:grid-cols-3 gap-10 cursor-pointer mt-5">
-                <div *ngFor="let s of stats"
-                    class="transition-all duration-300 transform hover:scale-110 focus:scale-110">
-                    <div class="w-full text-center text-md font-bold md:text-md text-red-600 uppercase">
-                        {{ s.name }}
-                    </div>
-                    <div class="flex justify-center gap-3">
-                    <img class="w-10  lg:mx-2" src="{{ s.iconUrl }}">
-                    <div class="text-right text-md font-bold md:text-md mt-2">
-                        +{{ s.counterValue }}
-                    </div>
-                </div>
-                </div>
-            </div>
         </div>
-        <div class="order-1 lg:order-2">
+        <div class="p-">
             <img class="h-80 w-80 object-cover lg:w-[500px] lg:h-[500px] rounded-md hover:drop-shadow-2xl
             transition-all duration-300 transform hover:scale-110 focus:scale-110 cursor-pointer" src="{{ h.image}}">
-
+            <div class="block md:hidden flex justify-between">
+                <a class=" flex justify-start mt-2 cursor-pointer
+            transition-all duration-300 transform hover:scale-110 focus:scale-110" (click)="changeHero(-1)">
+                    &#9668;
+                </a>
+                <a class="flex justify-end mt-2 cursor-pointer
+            transition-all duration-300 transform hover:scale-110 focus:scale-110" (click)="changeHero(+1)">
+                    &#9658;
+                </a>
+            </div>
         </div>
     </div>
 

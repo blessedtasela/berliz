@@ -6,13 +6,19 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
 import { NavbarModule } from '../navbar/navbar.module';
+import { MySubscriptionDetailModalComponent } from './my-subscription-detail-modal/my-subscription-detail-modal.component';
+import { SubscriptionPlansComponent } from './subscription-plans/subscription-plans.component';
+import { SubscriptionFormComponent } from './subscription-form/subscription-form.component';
 
 
 
 @NgModule({
   declarations: [
     MySubscriptionsComponent,
-    MySubscriptionsPageComponent
+    MySubscriptionsPageComponent,
+    MySubscriptionDetailModalComponent,
+    SubscriptionPlansComponent,
+    SubscriptionFormComponent
   ],
   imports: [
     CommonModule,

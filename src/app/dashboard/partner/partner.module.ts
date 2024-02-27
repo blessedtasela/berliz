@@ -13,7 +13,7 @@ import { PartnerDataComponent } from './partner-data/partner-data.component';
 import { TrainerDataComponent } from './trainer-data/trainer-data.component';
 import { CenterDataComponent } from './center-data/center-data.component';
 import { NullPartnerComponent } from './null-partner/null-partner.component';
-
+import { UploaderModule } from '@syncfusion/ej2-angular-inputs';
 
 
 @NgModule({
@@ -33,7 +33,8 @@ import { NullPartnerComponent } from './null-partner/null-partner.component';
     ReactiveFormsModule,
     NavbarModule,
     FooterModule,
-    NgxExtendedPdfViewerModule
+    NgxExtendedPdfViewerModule,
+    UploaderModule
   ]
 })
 export class PartnerModule { }

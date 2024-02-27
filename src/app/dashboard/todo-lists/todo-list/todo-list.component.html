@@ -1,9 +1,9 @@
-<div class="justify-center items-center p-1 mt-4 overflow-x-scroll" *ngIf="todoData.length === 0">
+<div class="justify-center items-center p-1 mt-2 overflow-x-scroll" *ngIf="todoData.length === 0">
     <h1 class="text-gray-500 italic font-sans">
         Your Todo Tasks will appear here
     </h1>
 </div>
-<div class="flex justify-between p-4">
+<div class="flex justify-between p-2">
     <div class="text-gray-500 italic font-sans">
         Total tasks {{ todoData.length }}
     </div>
@@ -12,7 +12,7 @@
         <div>
             <i-feather name="more-horizontal" (click)="toggleBulkAction(); stopPropagation($event);"
                 class="font-bold text-gray-950 mr-2 mt-1 cursor-pointer" style="width: 16px;"
-                [ngClass]="{'disabled-icon': selectedTodoIds.length === 0}">
+                [ngClass]="{'disabled-horizontal-icon': selectedTodoIds.length === 0}">
             </i-feather>
         </div>
     </div>
@@ -23,23 +23,23 @@
         </p>
         <p (click)="submitBulkAction('in-progress')"
             class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105">
-            Begin task
+            Begin tasks
         </p>
         <p (click)="submitBulkAction( 'complete')"
             class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105">
-            Complete all tasks
+            Complete tasks
         </p>
         <p (click)="submitBulkAction('pending')"
             class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105">
-            Restart all tasks
+            Restart tasks
         </p>
         <p (click)="submitBulkAction('delete')"
             class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105">
-            Delete all tasks
+            Delete tasks
         </p>
     </div>
 </div>
-<div class="justify-center items-center p-1 mt-4 overflow-x-scroll font-sans" *ngIf="todoData.length > 0">
+<div class="justify-center items-center p-1 overflow-x-scroll font-sans" *ngIf="todoData.length > 0">
     <div class="min-w-[300px]">
         <table class="table-auto border-collapse rounded-lg text-gray-950 font-sans container">
             <tbody class="rounded-lg">

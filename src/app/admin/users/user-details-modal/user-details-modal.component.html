@@ -14,7 +14,8 @@
             </p>
             <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
                 <div class="flex">
-                    <img [src]="'data:image;base64,' + userData.profilePhoto" class="bg-gray-200 rounded-lg p-2"
+                    <img [src]="'data:image;base64,' + userData.profilePhoto"
+                        class="bg-gray-200 rounded-lg p-2 w-full h-full object-cover"
                         onerror="this.src='../../../assets/icons/user.png';">
                 </div>
                 <div class="flex flex-col m-4 gap-2">
@@ -25,10 +26,10 @@
                         Birthday: {{ userData.dob }}
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
-                        From {{ userData.country }}
+                        Country: {{ userData.country }}
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
-                        Lives in {{ userData.state }}
+                        State: {{ userData.state }}
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
                         City - {{ userData.city }}
@@ -48,6 +49,49 @@
                     <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
                         Account role: {{ userData.role }}
                     </p>
+                </div>
+            </div>
+            <div class="flex flex-col items-center justify-center p-2">
+                <div class="text-gray-700 font-sans font-bold text-md flex text-justify">
+                    Bio: {{ userData.bio }}
+                </div>
+                <div class="text-gray-700 font-sans font-bold text-md flex text-justify">
+                    <form [formGroup]="passwordForceChnageForm">
+                        <div class="gap-2 p-1">
+                            <span *ngIf="passwordForceChnageForm.invalid && invalidForm" class="text-sm text-red-600">
+                                Please enter password
+                            </span>
+                            <div class="mx-auto mt-2">
+                                <input formControlName="password" id="password"
+                                    class="border-b-2 border-gray-500 w-full hover:border-gray-700 focus:border-gray-800 focus:outline-none"
+                                    [ngClass]="{'border-red-600': passwordForceChnageForm.get('password')?.invalid && passwordForceChnageForm.get('password')?.touched }"
+                                    placeholder="Password" type="password">
+                                <div *ngIf="passwordForceChnageForm.get('password')?.invalid && (passwordForceChnageForm.get('password')?.dirty 
+                                || passwordForceChnageForm.get('password')?.touched)" class="text-sm text-red-600">
+                                    at least 8 characters
+                                </div>
+                            </div>
+                            <div class="mx-auto mt-2">
+                                <span class="sr-only">Confirm password</span>
+                                <input formControlName="confirmPassword" id="confirmPassword"
+                                    class="border-b-2 border-gray-500 w-full hover:border-gray-700 focus:border-gray-800 focus:outline-none"
+                                    [ngClass]="{'border-red-600': passwordForceChnageForm.get('confirmPassword')?.invalid && passwordForceChnageForm.get('confirmPassword')?.touched }"
+                                    placeholder="re-type password" type="password">
+                                <div *ngIf="passwordForceChnageForm.hasError('passwordMismatch') && passwordForceChnageForm.get('confirmPassword')?.dirty"
+                                    class="text-sm text-red-600">
+                                    Passwords do not match.
+                                </div>
+                            </div>
+                            <div
+                                class="mt-6 flex items-center justify-center bg-red-600 rounded-md mx-auto text-white font-bold">
+                                <button
+                                    class="mx-2 p-2 hover:drop-shadow-2xl transition-all duration-500 transform hover:scale-105 focus:scale-105 text-sm md:text-md "
+                                    type="submit" (click)="forcePasswordChnage()">
+                                    force change password
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

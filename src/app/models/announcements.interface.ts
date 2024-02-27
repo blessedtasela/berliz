@@ -1,4 +1,4 @@
-export interface Notifications {
+export interface announcements {
     id: number;
     message: string;
     email: string;

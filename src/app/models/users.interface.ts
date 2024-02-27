@@ -21,16 +21,7 @@ export interface Users {
         name: string;
         description: string;
     }[];
-    likedCentersSet: {
-        id: number;
-        name: string;
-        address: string;
-    }[];
-    likedTrainersSet: {
-        id: number;
-        name: string;
-        address: string;
-    }[];
+    token: string;
     date: string;
     lastUpdate: string;
     status: string;

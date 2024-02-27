@@ -25,7 +25,7 @@ export class TrainerComponent {
   @Input() trainerData!: Trainers;
   @Input() user!: Users;
   @Input() partnerData!: Partners;
-  @Output() emitEvent = new EventEmitter();
+  @Output() onEmit = new EventEmitter;
   subscriptions: Subscription[] = [];
   responseMessage: any;
   invalidForm: boolean = false;
@@ -134,6 +134,7 @@ export class TrainerComponent {
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.handleEmitEvent()
+          this.onEmit.emit()
         }, (error: any) => {
           this.ngxService.stop();
           console.error("error");

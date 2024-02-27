@@ -2,6 +2,7 @@ import { AfterViewInit, Component } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { TodoList } from 'src/app/models/todoList.interface';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { TodoStateService } from 'src/app/services/todo-state.service';
 
 @Component({
@@ -9,7 +10,7 @@ import { TodoStateService } from 'src/app/services/todo-state.service';
   templateUrl: './my-todos.component.html',
   styleUrls: ['./my-todos.component.css']
 })
-export class MyTodosComponent{
+export class MyTodosComponent {
   todoData: TodoList[] = [];
   totalTodos: number = 0;
   todosLength: number = 0;
@@ -18,11 +19,19 @@ export class MyTodosComponent{
   subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
-    public todoStateService: TodoStateService) {
+    public todoStateService: TodoStateService,
+    private rxStompService: RxStompService) {
   }
 
   ngOnInit(): void {
+    this.ngxService.start()
     this.handleEmitEvent()
+    this.watchDeleteTodo()
+    this.watchTodoBulkAction()
+    this.watchGetTodoFromMap()
+    this.watchUpdateTodoList()
+    this.watchUpdateTodoStatus()
+    this.ngxService.stop()
     // this.todoStateService.myTodoData$.subscribe((cachedData) => {
     //   if (!cachedData) {
     //     this.handleEmitEvent()
@@ -39,7 +48,6 @@ export class MyTodosComponent{
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.subscriptions.push(
       this.todoStateService.getMyTodos().subscribe((myTodos) => {
         console.log('isCachedData false')
@@ -49,7 +57,6 @@ export class MyTodosComponent{
         this.todoStateService.setmyTodosSubject(myTodos);
       }),
     );
-    this.ngxService.stop()
   }
 
   handleSearchResults(results: TodoList[]): void {
@@ -59,6 +66,51 @@ export class MyTodosComponent{
 
   emitData() {
     this.handleEmitEvent();
+  }
+
+  watchGetTodoFromMap() {
+    this.rxStompService.watch('/topic/getTodoFromMap').subscribe((message) => {
+      this.handleEmitEvent();
+      // const receivedTodo: TodoList = JSON.parse(message.body);
+      // this.todoData.push(receivedTodo);
+      // this.totalTodos = this.todoData.length;
+    });
+  }
+
+  watchTodoBulkAction() {
+    this.rxStompService.watch('/topic/todoBulkAction').subscribe((message) => {
+      this.handleEmitEvent();
+      // const receivedTodo: TodoList = JSON.parse(message.body);
+      // this.todoData.push(receivedTodo);
+      // this.totalTodos = this.todoData.length;
+    });
+  }
+
+  watchUpdateTodoList() {
+    this.rxStompService.watch('/topic/updateTodoList').subscribe((message) => {
+      this.handleEmitEvent();
+      // const receivedTodo: TodoList = JSON.parse(message.body);
+      // const todoId = this.todoData.findIndex(todoList => todoList.id === receivedTodo.id)
+      // this.todoData[todoId] = receivedTodo
+    });
+  }
+
+  watchUpdateTodoStatus() {
+    this.rxStompService.watch('/topic/updateTodoStatus').subscribe((message) => {
+      this.handleEmitEvent();
+      // const receivedTodo: TodoList = JSON.parse(message.body);
+      // const todoId = this.todoData.findIndex(todoList => todoList.id === receivedTodo.id)
+      // this.todoData[todoId] = receivedTodo
+    });
+  }
+
+  watchDeleteTodo() {
+    this.rxStompService.watch('/topic/deleteTodo').subscribe((message) => {
+      this.handleEmitEvent();
+      // const receivedNewsletter: TodoList = JSON.parse(message.body);
+      // this.todoData = this.todoData.filter(todo => todo.id !== receivedNewsletter.id);
+      // this.totalTodos = this.todoData.length;
+    });
   }
 
 }

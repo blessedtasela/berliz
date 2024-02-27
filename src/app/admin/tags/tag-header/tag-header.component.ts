@@ -22,10 +22,7 @@ export class TagHeaderComponent {
     private tagStateService: TagStateService,
     private rxStompService: RxStompService) { }
 
-  ngOnInit(): void {
-    this.watchDeleteTag()
-    this.watchGetTagFromMap()
-  }
+  ngOnInit(): void {  }
 
   handleEmitEvent() {
     this.tagStateService.getAllTags().subscribe((tagsData) => {
@@ -90,24 +87,6 @@ export class TagHeaderComponent {
       } else {
         console.log('Dialog closed without adding a tag');
       }
-    });
-  }
-
-  watchGetTagFromMap() {
-    this.rxStompService.watch('/topic/getTagFromMap').subscribe((message) => {
-      const receivedCategories: Tags = JSON.parse(message.body);
-      this.tagsData.push(receivedCategories);
-      this.tagsLength = this.tagsData.length;
-      this.totalTags = this.tagsData.length;
-    });
-  }
-
-  watchDeleteTag() {
-    this.rxStompService.watch('/topic/deleteTag').subscribe((message) => {
-      const receivedNewsletter: Tags = JSON.parse(message.body);
-      this.tagsData = this.tagsData.filter(tags => tags.id !== receivedNewsletter.id);
-      this.tagsLength = this.tagsData.length;
-      this.totalTags = this.tagsData.length;
     });
   }
 

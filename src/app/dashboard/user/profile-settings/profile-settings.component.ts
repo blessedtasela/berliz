@@ -1,17 +1,18 @@
 import { Component, EventEmitter } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Users } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserStateService } from 'src/app/services/user-state.service';
 import { UserService } from 'src/app/services/user.service';
-import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CountryService } from 'src/app/services/country.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { UpdateEmailModalComponent } from '../update-email-modal/update-email-modal.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile-settings',
@@ -29,25 +30,22 @@ export class ProfileSettingsComponent {
 
   constructor(
     private userService: UserService,
-    private dialog: MatDialog,
     private userStateService: UserStateService,
-    private snackbarService: SnackBarService,
     private countryService: CountryService,
-    private router: Router,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private formbuilder: FormBuilder,
-    private rxStompService: RxStompService) { }
+    private rxStompService: RxStompService,
+    private snackbarService: SnackBarService,
+    private dialog: MatDialog,
+    private router: Router,) { }
 
   ngOnInit(): void {
     this.watchActivateAccount()
-    this.watchDeactivateAccount()
     this.watchDeleteUser()
-    this.watchUpdateProfilePhoto()
     this.watchUpdateUser()
     this.watchUpdateUserBio()
-    this.watchUpdateUserRole()
-    this.watchUpdateUserStatus()
+    this.watchUpdateUserEmail()
 
     this.userStateService.userData$.subscribe((cachedData) => {
       if (!cachedData) {
@@ -98,36 +96,7 @@ export class ProfileSettingsComponent {
     this.updateUserForm.get('gender')?.setValue(selectedGender); // Update the form control's value
   }
 
-  deactivateAccount() {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.data = {
-      message: 'deactivate your acount. You won\'t be able to login anymore.' +
-        'To activate your account back, please contact berlizworld@gmail.com with your username and request.',
-      confirmation: true
-    };
-    const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
-    const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((res: any) => {
-      this.userService.deactivateAccount()
-        .subscribe((response: any) => {
-          localStorage.removeItem('token')
-          this.ngxService.start()
-          this.responseMessage = response;
-          this.ngxService.stop();
-          this.snackbarService.openSnackBar(this.responseMessage, '');
-          this.router.navigate(['/home'])
-        }, (error) => {
-          this.ngxService.stop();
-          console.log(error)
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackbarService.openSnackBar(this.responseMessage, 'error');
-        });
-    });
-  }
-
+ 
   getCountriesData() {
     this.countryService.getCountriesData().subscribe((response: any) => {
       this.countries = response.map((country: any) => {
@@ -139,7 +108,7 @@ export class ProfileSettingsComponent {
     });
   }
 
-  submitForm(): void {
+  updateUser(): void {
     this.ngxService.start();
     if (this.updateUserForm.invalid) {
       this.invalidForm = true
@@ -171,67 +140,85 @@ export class ProfileSettingsComponent {
     this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
 
+  deactivateAccount() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = {
+      message: 'deactivate your acount. You won\'t be able to login anymore.' +
+        'To activate your account back, please contact berlizworld@gmail.com with your username and request.',
+      confirmation: true
+    };
+    const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
+    const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((res: any) => {
+      this.userService.deactivateAccount()
+        .subscribe((response: any) => {
+          localStorage.removeItem('token')
+          this.ngxService.start()
+          this.responseMessage = response;
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(this.responseMessage, '');
+          this.router.navigate(['/home'])
+        }, (error) => {
+          this.ngxService.stop();
+          console.log(error)
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        });
+    });
+  }
+
+  openUpdateEmail() {
+    const dialogRef = this.dialog.open(UpdateEmailModalComponent, {
+      width: '600px',
+      height: '400px',
+      disableClose: true,
+      data: {
+        userData: this.user,
+      }
+    });
+    const childComponentInstance = dialogRef.componentInstance as UpdateEmailModalComponent;
+    childComponentInstance.onUpdateEMail.subscribe(() => {
+      this.handleEmitEvent();
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log(`Dialog result: ${result}`);
+      } else {
+        console.log('Dialog closed without adding a category');
+      }
+    });
+  }
+  
   watchActivateAccount() {
     this.rxStompService.watch('/topic/activateAccount').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.user.id === receivedUsers.id)
-        this.user = receivedUsers
-    });
-  }
-
-  watchDeactivateAccount() {
-    this.rxStompService.watch('/topic/deactivateAccount').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.user.id === receivedUsers.id)
-        this.user = receivedUsers
-    });
-  }
-
-  watchUpdateUserStatus() {
-    this.rxStompService.watch('/topic/updateUserStatus').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.user.id === receivedUsers.id)
-        this.user = receivedUsers
-    });
-  }
-
-  watchUpdateUserRole() {
-    this.rxStompService.watch('/topic/updateUserRole').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.user.id === receivedUsers.id)
-        this.user = receivedUsers
+      this.handleEmitEvent()
     });
   }
 
   watchDeleteUser() {
     this.rxStompService.watch('/topic/deleteUser').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.user.id === receivedUsers.id)
-        this.user === null;
+      this.handleEmitEvent()
     });
   }
 
   watchUpdateUserBio() {
     this.rxStompService.watch('/topic/updateUserBio').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.user.id === receivedUsers.id)
-        this.user = receivedUsers
+      this.handleEmitEvent()
     });
   }
 
   watchUpdateUser() {
     this.rxStompService.watch('/topic/updateUser').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.user.id === receivedUsers.id)
-        this.user = receivedUsers
+      this.handleEmitEvent()
     });
   }
 
-  watchUpdateProfilePhoto() {
-    this.rxStompService.watch('/topic/updateProfilePhoto').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      if (this.user.id === receivedUsers.id)
-        this.user = receivedUsers
+  watchUpdateUserEmail() {
+    this.rxStompService.watch('/topic/updateUserEmail').subscribe((message) => {
+     this.handleEmitEvent()
     });
   }
 }

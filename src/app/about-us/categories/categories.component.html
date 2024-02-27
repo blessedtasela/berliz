@@ -23,7 +23,7 @@
                     <div class="flex justify-center items-center cursor-pointer  transition-all duration-300
                 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
                         *ngFor="let category of categoriesData; let i = index"
-                        [class.hidden]="!showFullData && i >= 12">
+                        [class.hidden]="!showFullData && i >= 9">
                         <div class="text-justify justify-items-center">
                             <div
                                 class=" flex flex-col justify-center items-center bg-gray-100 rounded-md min-h-[400px] min-w-[300px]">
@@ -61,9 +61,9 @@
                     </div>
                 </div>
                 <div [class.hidden]="categoriesData.length  <= 9">
-                    <button
-                        class="p-1 px-2 m-8 mt-8 bg-gray-100 text-red-600 rounded-md font-sans font-bold mx-auto flex justify-center mt-5">
-                        {{ !showFullData ? 'view more' : 'see less'}}
+                    <button (click)="toggleData()"
+                        class="p-1 px-2 text-sm mt-16 bg-white text-yellow-500 italic rounded-md font-sans mx-auto flex justify-center">
+                        {{ !showFullData ? 'see more' : 'see less'}}
                     </button>
                 </div>
             </div>

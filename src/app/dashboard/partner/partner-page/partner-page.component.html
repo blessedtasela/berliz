@@ -1,17 +1,9 @@
-<div class="relative min-h-screen flex">
-    <app-sidebar-navigation></app-sidebar-navigation>
-    <div class="flex p-2 md:p-6 full-width">
-        <div class="width p-4 rounded-lg mt-20">
-            <app-null-partner *ngIf="!partner" [user]="user" [partnerData]="partner" (emitEvent)="emitData()"></app-null-partner>
-            <app-partner-application *ngIf="partner" [trainer]="trainer" [center]="center" [partnerData]="partner"
-                [user]="user" (emitEvent)="emitData()">
-            </app-partner-application>
-            <app-center *ngIf="center " [centerData]="center" [user]="user" [partnerData]="partner"
-                (emitEvent)="emitData()"></app-center>
-            <app-trainer *ngIf="trainer " [trainerData]="trainer" [user]="user" [partnerData]="partner"
-                (emitEvent)="emitData()"></app-trainer>
-            <app-partner-data [partnerData]="partner" (emitEvent)="emitData()"></app-partner-data>
-        </div>
-    </div>
-</div>
-<app-footer></app-footer>
+<app-null-partner *ngIf="!partner" [user]="user" [partnerData]="partner" (onEmit)="emitData()"></app-null-partner>
+<app-partner-application *ngIf="partner" [trainer]="trainer" [center]="center" [partnerData]="partner" [user]="user"
+    (onEmit)="emitData()">
+</app-partner-application>
+<app-center *ngIf="center " [centerData]="center" [user]="user" [partnerData]="partner"
+    (onEmit)="emitData()"></app-center>
+<app-trainer *ngIf="trainer " [trainerData]="trainer" [user]="user" [partnerData]="partner"
+    (onEmit)="emitData()"></app-trainer>
+<app-partner-data [partnerData]="partner" (onEmit)="emitData()"></app-partner-data>

@@ -1,117 +1,116 @@
-<nav class="py-0 bg-white shadow-lg flex items-center justify-between nav-menu w-full">
+<nav class="py-0 bg-white shadow-lg flex items-center justify-between nav-menu w-full font-mono">
     <div class="flex justify-between items-center w-full justify-end">
-        <div class="text-xl font-sans cursor-pointer">
-            <img style="width: 180px;" src="../../../assets/landing/berliz.png" [routerLink]="['/home']">
+        <div class="p-1 cursor-pointer">
+            <img style="width: 140px;" src="../../../assets/berliz-nav-logo.jpeg" [routerLink]="['/home']">
         </div>
         <div *ngIf="menuStatus; else alignJustify">
-            <div class="md:hidden block mx-2 cursor-pointer hover:drop-shadow-2xl transition-all 
+            <div class="lg:hidden block mx-2 cursor-pointer hover:drop-shadow-2xl transition-all 
                 duration-1000 ease-in-out transform hover:scale-105 cursor-pointer 
-                border-2 border-gray-500 rounded-md p-1 mr-4">
-                <i-feather name="x" class="min-w-[30px] text-gray-700  font-bold drop-shadow-xl" (click)="navMenu('x')"
-                    (click)="stopPropagation($event)"></i-feather>
+                border-2 border-gray-500 rounded-lg p-1 mr-4">
+                <i-feather name="x" class="min-w-[30px] text-gray-700  font-bold drop-shadow-xl"
+                    (click)="navMenu('x'); stopPropagation($event)"></i-feather>
             </div>
         </div>
         <ng-template #alignJustify>
-            <div class="md:hidden block mx-2 cursor-pointer hover:drop-shadow-2xl transition-all
+            <div class="lg:hidden block mx-2 cursor-pointer hover:drop-shadow-2xl transition-all
                 duration-1000 ease-in-out transform hover:scale-105 cursor-pointer 
-                border-2 border-gray-500 rounded-md p-1  mr-4">
-                <i-feather name="align-justify" (click)="navMenu('align-justify')" (click)="stopPropagation($event)"
+                border-2 border-gray-500 rounded-lg p-1  mr-4">
+                <i-feather name="align-justify" (click)="navMenu('align-justify'); stopPropagation($event)"
                     class="min-w-[30px] text-gray-700  font-bold drop-shadow-xl"></i-feather>
             </div>
         </ng-template>
     </div>
-    <ul class="md:flex md:items-center z-[-1] md:z-auto md:static absolute bg-white w-full 
-        left-0 md:w-auto md:py-0 py-1 md:pl-0 pl-7 top-[50px] md:opacity-100 opacity-0
+    <ul class="lg:flex lg:items-center z-[-1] lg:z-auto lg:static absolute bg-white w-full 
+        left-0 lg:w-auto lg:py-0 py-1 lg:pl-0 pl-7 top-[50px] lg:opacity-100 opacity-0
         transition-all duration-1000 ease-in-out transform menu-transition" id="navbarView"
         [ngClass]="{'opacity-100': menuStatus, 'opacity-0 hidden': !menuStatus}">
-        <li class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300 
+        <li class="mx-8 my-5 lg:my-0 hover:drop-shadow-2xl transition-all duration-300 
                 ease-in-out transform hover:scale-105 focus:scale-105">
-            <div class="text-md hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('home')}">
+            <div class="text-lg hover:text-red-600 duration-500"
+                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-lg lg:w-full w-24': isActive('home')}">
                 <a [routerLink]="['/home']">
                     Home
                 </a>
             </div>
         </li>
-        <li class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300 
+        <li class="mx-8 my-5 lg:my-0 hover:drop-shadow-2xl transition-all duration-300 
                 ease-in-out transform hover:scale-110 focus:scale-105">
-            <div class="text-md hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('contact')}">
+            <div class="text-lg hover:text-red-600 duration-500"
+                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-lg lg:w-full w-24': isActive('contact')}">
                 <a [routerLink]="['/contact']">
                     Contact
                 </a>
             </div>
         </li>
-        <li class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300
+        <li class="mx-8 my-5 lg:my-0 hover:drop-shadow-2xl transition-all duration-300
              transform hover:scale-110 focus:scale-105">
-            <div class="text-md hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('about')}">
+            <div class="text-lg hover:text-red-600 duration-500"
+                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-lg lg:w-full w-24': isActive('about')}">
                 <a [routerLink]="['/about']">
                     About
                 </a>
             </div>
         </li>
-        <li class="mx-8 my-5 md:my-0 hidden hover:drop-shadow-2xl transition-all duration-300
+        <li class="mx-8 my-5 lg:my-0 hidden hover:drop-shadow-2xl transition-all duration-300
                  transform hover:scale-110 focus:scale-105">
-            <div class="text-md hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('products')}">
+            <div class="text-lg hover:text-red-600 duration-500"
+                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-lg lg:w-full w-24': isActive('products')}">
                 <a [routerLink]="['/products']">
                     Products
                 </a>
             </div>
         </li>
-        <li class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300
+        <li class="mx-8 my-5 lg:my-0 hover:drop-shadow-2xl transition-all duration-300
                  transform hover:scale-110 focus:scale-105">
-            <div class="text-md hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('centers') }">
+            <div class="text-lg hover:text-red-600 duration-500"
+                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-lg lg:w-full w-24': isActive('centers') }">
                 <a [routerLink]="['/centers']">
                     Centers
                 </a>
             </div>
         </li>
-        <li class="hidden mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300
+        <li class="hidden mx-8 my-5 lg:my-0 hover:drop-shadow-2xl transition-all duration-300
                  transform hover:scale-110 focus:scale-105">
-            <div class="text-md hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('new-products') }">
+            <div class="text-lg hover:text-red-600 duration-500"
+                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-lg lg:w-full w-24': isActive('new-products') }">
                 <a [routerLink]="['/products']" [ngClass]="{'shadow:bg-gray-200': isActive('products')}">
                     Products
                 </a>
             </div>
         </li>
-        <li class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300 
+        <li class="mx-8 my-5 lg:my-0 hover:drop-shadow-2xl transition-all duration-300 
                 transform hover:scale-110 focus:scale-105">
-            <div class="text-md hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('categories') }">
+            <div class="text-lg hover:text-red-600 duration-500"
+                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-lg lg:w-full w-24': isActive('categories') }">
                 <a [routerLink]="['/categories']">
                     Categories
                 </a>
             </div>
         </li>
-        <li class="mx-8 my-5 md:my-0 hover:drop-shadow-2xl transition-all duration-300
+        <li class="mx-8 my-5 lg:my-0 hover:drop-shadow-2xl transition-all duration-300
                  transform hover:scale-110 focus:scale-105">
-            <div class="text-md hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-md md:w-full w-24': isActive('trainers')}">
+            <div class="text-lg hover:text-red-600 duration-500"
+                [ngClass]="{'bg-red-500 text-gray-100 p-2 rounded-lg lg:w-full w-24': isActive('trainers')}">
                 <a [routerLink]="['/trainers']">
                     Trainers
                 </a>
             </div>
         </li>
-        <li class="hover:drop-shadow-2xl transition-all duration-500 transform hover:scale-110 focus:scale-105">
+        <li class="hover:drop-shadow-2xl transition-all duration-500 transform hover:scale-110 focus:scale-105"
+        *ngIf="!getUser()">
             <button
-                class="bg-red-600 text-white font-sans px-6 mb-2 py-1 mx-4 hover:bg-red-700 rounded duration-500 whitespace-nowrap"
-                *ngIf="!isActive('sign-up')  && isActive('login')"
+                class="bg-gray-200 text-red-600  px-6 mb-2 py-1 mx-4 hover:bg-gray-300 rounded-lg duration-500 whitespace-nowrap"
                 [ngClass]="{'shadow:bg-gray-200': isActive('sign-up')}">
                 <a [routerLink]="['/sign-up']">
                     Sign up
                 </a>
-
             </button>
         </li>
         <li class="hover:drop-shadow-2xl transition-all duration-500 transform hover:scale-110 focus:scale-105"
             *ngIf="!getUser()">
             <button
-                class="bg-red-600 text-white font-sans px-6 mb-2 py-1 mx-4 hover:bg-red-700 rounded duration-500 whitespace-nowrap"
-                *ngIf="!isActive('login')" [ngClass]="{'shadow:bg-gray-200': isActive('login')}">
+                class="bg-red-600 text-white  px-6 mb-2 py-1 mx-4 hover:bg-red-700 rounded-lg duration-500 whitespace-nowrap"
+                [ngClass]="{'shadow:bg-gray-200': isActive('login')}">
                 <a [routerLink]="['/login']">
                     Login
                 </a>
@@ -120,7 +119,7 @@
         <li class="hover:drop-shadow-2xl transition-all duration-500 transform hover:scale-110 focus:scale-105"
             *ngIf="getUser()">
             <button
-                class="bg-red-600 text-white font-sans px-6 mb-2 py-1 mx-4 hover:bg-red-700 rounded duration-500 whitespace-nowrap"
+                class="bg-red-600 text-white  px-6 mb-2 py-1 mx-4 hover:bg-red-700 rounded duration-500 whitespace-nowrap"
                 [ngClass]="{'shadow:bg-gray-200': isActive('dashboard')}">
                 <a [routerLink]="['/dashboard']">
                     dashboard

@@ -14,8 +14,8 @@
         <div *ngIf="user?.role==='user'" class="italic text-gray-400 font-bold text-md mb-2 text-center">
             Application pending
         </div>
-        <div *ngIf="user?.role!=='user'" class="italic text-gray-400 font-bold text-md mb-2 text-center">
-            {{ user.role }} pending...
+        <div *ngIf="user?.role!=='user'" class="italic text-gray-400 font-bold text-md mb-2 text-center capitalize">
+            {{ user.role }} (application incomplete)
         </div>
         <div
             class="flex items-center justify-center gap-1 md:gap-4 m-4 p-1 border-2 rounded-lg border-gray-200 shadow-sm font-bold text-md">
@@ -23,18 +23,19 @@
             <div class="border-l-2 h-4 border-gray-200"></div>
             0<span class="text-sm text-gray-400">Clients</span>
             <div class="border-l-2 h-4 border-gray-200"></div>
-            0<span class="text-sm text-gray-400">Centers</span>
+            0<span class="text-sm text-gray-400">Tasks</span>
         </div>
-        <div *ngIf="partnerData?.status === 'true'" class="flex flex-col items-center justify-center p-4">
-            <p class="text-md text-gray-600 font-sans italic mt-6 mb-4">
-                Congratulations! Your partnership request has been approved.
+        <div *ngIf="partnerData?.status === 'true'"
+            class="font-sans flex flex-col items-center justify-center p-4 ">
+            <p class="text-md md:text-lg text-gray-950 font-sans">
+                Congratulations! Your partnership request as a {{ partnerData.role }} has been approved.
             </p>
-            <p class="text-sm text-gray-600 font-sans">
+            <p class="text-sm md:text-md text-gray-600 italic">
                 You can now complete your profile data and enjoy the benefits of being a partner with Berliz.
             </p>
             <button class="mb-6 text-sm bg-red-600 text-white mt-4 py-1 px-2 hover:bg-red-700 rounded-md font-sans
               transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                (click)="openApplicagtionForm()">
+                (click)="openApplicationForm()">
                 Complete Application
             </button>
         </div>

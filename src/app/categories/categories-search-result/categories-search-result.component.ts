@@ -28,9 +28,6 @@ export class CategoriesSearchResultComponent {
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-    this.watchLikeCategory()
-    this.watchUpdateCategory()
-    this.watchUpdateStatus()
     this.userStateService.getUser().subscribe((user) => {
       this.user = user;
     })
@@ -82,33 +79,6 @@ export class CategoriesSearchResultComponent {
     return this.categoryLikes.some((categoryLike) =>
       categoryLike.user.id === this.user?.id && categoryLike.category.id === category.id
     );
-  }
-
-  watchLikeCategory() {
-    this.rxStompService.watch('/topic/likeCategory').subscribe((message) => {
-      const receivedCategories: Categories = JSON.parse(message.body);
-      const trainerId = this.categoriesResult.findIndex(trainer => trainer.id === receivedCategories.id)
-      this.categoriesResult[trainerId] = receivedCategories
-    });
-  }
-
-  watchUpdateCategory() {
-    this.rxStompService.watch('/topic/updateCategory').subscribe((message) => {
-      const receivedCategories: Categories = JSON.parse(message.body);
-      const trainerId = this.categoriesResult.findIndex(trainer => trainer.id === receivedCategories.id)
-      this.categoriesResult[trainerId] = receivedCategories
-    });
-  }
-
-  watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
-      const receivedCategories: Categories = JSON.parse(message.body);
-      if (receivedCategories.status === 'true') {
-        this.categoriesResult.push(receivedCategories);
-      } else {
-        this.categoriesResult = this.categoriesResult.filter(trainer => trainer.id !== receivedCategories.id);
-      }
-    });
   }
 
 }

@@ -13,7 +13,7 @@
                 </div>
                 <!-- Breadcrumb Navigation -->
                 <div class="text-white ml-4 mt-5 side-z">
-                    <app-navbar-breadcrumb [breadcrumbs]="breadcrumbs"></app-navbar-breadcrumb>
+                    <app-navbar-breadcrumb></app-navbar-breadcrumb>
                 </div>
             </div>
         </div>
@@ -25,7 +25,7 @@
             transition duration-300 ease-in-out side-z" id="sidebarView">
             <div class="rounded-b-md w-12 flex items-center p-1 mt-1">
                 <!-- Sidebar Close Button Icon -->
-                <app-side-bar-close></app-side-bar-close>
+                <app-side-bar-close [notificationLength]="notificationLength"> </app-side-bar-close>
             </div>
         </div>
     </div>
@@ -34,9 +34,10 @@
     <div class="mt-12 w-screen left-64 ml-4 transform duration-300 hidden md:block
         -translate-x-0 ease-in-out fixed transition duration-300 ease-in-out side-z"
         [ngClass]="{'block md:hidden': !openMenu}" id="sidebarView">
-        <div class="bg-gradient-to-r from-gray-950 via-gray-900 to-gray-950 -mt-1 rounded-b-md flex items-center p-1 mt-1">
+        <div
+            class="bg-gradient-to-r from-gray-950 via-gray-900 to-gray-950 -mt-1 rounded-b-md flex items-center p-1 mt-1">
             <div class="text-white ml-4 mt-4">
-                <app-navbar-breadcrumb [breadcrumbs]="breadcrumbs"></app-navbar-breadcrumb>
+                <app-navbar-breadcrumb></app-navbar-breadcrumb>
             </div>
         </div>
     </div>
@@ -52,7 +53,7 @@
                 <div class="mt-10 hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
                      rounded-md mr-4">
                     <i-feather name="x" class="min-w-[20px] text-gray-200 font-bold drop-shadow-xl"
-                        (click)="toggleSidebar()" (click)="stopPropagation($event)"></i-feather>
+                        (click)="toggleSidebar(); stopPropagation($event)"></i-feather>
                 </div>
             </div>
             <!-- Sidebar Navigation Links -->
@@ -87,6 +88,10 @@
                         <a routerLink="/dashboard/my-notifications" class="text-md">
                             Notifications
                         </a>
+                        <span *ngIf="notificationLength > 0"
+                            class="text-sm text-white font-bold ml-4 bg-red-600 px-1 rounded-full -mt-1 fixed">
+                            {{ notificationLength }}
+                        </span>
                     </h1>
                 </div>
                 <!-- Workspace Link -->

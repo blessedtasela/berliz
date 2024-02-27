@@ -9,6 +9,10 @@
             <p class="text-red-600 font-sans font-bold text-sm italic">
                 added at {{ formatDate(partnerData.date) }}
             </p>
+            <div *ngIf="partnerData.status==='false'" class="text-red-600 font-sans text-md cursor-pointer"
+                (click)="rejectApplication(partnerData.id)">
+                reject application
+            </div>
             <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
                 <div>
                     <div class="flex items-center justify-center mb-4">
@@ -29,21 +33,12 @@
 
                     <img [src]="'data:image;base64,' + partnerData.user.photo"
                         onerror="this.src='../../../assets/icons/user.png';" class="rounded-lg object-cover">
-
-
                 </div>
                 <div class="flex flex-col m-4 gap-2">
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
-                        <button *ngIf="partnerData.status==='false'"
-                            class="ml-2 px-2 p-1 text-sm text-gray-200 font-bold bg-red-600 rounded md"
-                            (click)="rejectApplication(partnerData.id)"> reject application
-                        </button>
-                        <span class="ml-2 text-gray-950"> user id - {{partnerData.user.id }}
-                        </span>
-                    </p>
-                    <p class="text-gray-950 font-sans text-md flex text-justify">
-                        Motivation - {{ partnerData.motivation }}
-                    </p>
+                    <div class="text-gray-700 font-bold italic p-1">Motivation: </div>
+                    <div class="text-gray-950 font-sans text-md flex text-justify">
+                        {{ partnerData.motivation }}
+                    </div>
                     <p class="text-gray-700 font-sans text-sm flex gap-4">
                         <button class=" px-2 p-1 bg-red-600 text-white rounded md"
                             (click)="openUrl(partnerData.facebookUrl)"> facebook</button>
@@ -63,6 +58,9 @@
                     </p>
                     <p class="text-gray-9500 font-sans text-md flex">
                         Role: {{ partnerData.role }}
+                    </p>
+                    <p class="text-gray-9500 font-sans text-md flex">
+                        user id: {{partnerData.user.id }}
                     </p>
                 </div>
             </div>

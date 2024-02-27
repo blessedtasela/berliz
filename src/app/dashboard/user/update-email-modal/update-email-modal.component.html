@@ -1,0 +1,75 @@
+<section
+    class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-r from-gray-950 via-gray-800 to-gray-950">
+    <div class="p-2 flex text-white items-center justify-center">
+        <div class="text-yellow-600 font-bold absolute top-0 right-0 p-2">
+            <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+        </div>
+        <section class="mt-4">
+            <form [formGroup]="updateEmailForm">
+                <p class="font-sans font-bold text-md text-md text-center">Update Login </p>
+                <p class="font-sans font-bold text-yellow-500 text-sm text-md text-center italic" *ngIf="inputToken">
+                    Please check your email, and input the code to confirm your new login detail. Note do not close this
+                    tab, if you do, you will restart the process, thanls. </p>
+                <div class="invalid-form">
+                    <span *ngIf="!(updateEmailForm.get('email')?.invalid ||
+                    updateEmailForm.get('token')?.invalid) && invalidForm" class="mx-2 text-yellow-500">
+                        Everything looks good
+                    </span>
+                </div>
+                <div class="grid grid-cols-2 gap-5 flex items-center text-gray-950">
+                    <div class="mx-auto col-span-2">
+                        <input formControlName="email"
+                            class="w-full px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-yellow-500': updateEmailForm.get('email')?.invalid && updateEmailForm.get('email')?.touched }"
+                            placeholder="Input email here" type="text">
+                        <div *ngIf="updateEmailForm.get('email')?.invalid && updateEmailForm.get('email')?.dirty"
+                            class="text-yellow-500 mx-2">
+                            Email must be valid
+                        </div>
+                    </div>
+                    <div class="mx-auto col-span-2" *ngIf="inputToken">
+                        <input formControlName="token"
+                            class="w-full px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-yellow-500': updateEmailForm.get('token')?.invalid && updateEmailForm.get('token')?.touched }"
+                            placeholder="Token here" type="text">
+                        <div *ngIf="updateEmailForm.get('token')?.invalid && updateEmailForm.get('token')?.dirty"
+                            class="text-yellow-500 mx-2">
+                            Token is required
+                        </div>
+                    </div>
+                    <div class="mx-auto col-span-2" *ngIf="inputToken">
+                        <input formControlName="password"
+                            class="w-full px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            [ngClass]="{'border-yellow-500': updateEmailForm.get('password')?.invalid && updateEmailForm.get('password')?.touched }"
+                            placeholder="password here" type="password">
+                        <div *ngIf="updateEmailForm.get('password')?.invalid && updateEmailForm.get('password')?.dirty"
+                            class="text-yellow-500 mx-2">
+                            Password is required
+                        </div>
+                    </div>
+                    <div class="bg-gray-950 rounded-md mx-auto m-2">
+                        <button
+                            class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                            (click)="closeDialog()">
+                            Cancel
+                        </button>
+                    </div>
+                    <div class="bg-red-600 rounded-md mx-auto m-2" *ngIf="!inputToken">
+                        <button
+                            class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                            type="submit" (click)="validateEmail()">
+                            Confirm
+                        </button>
+                    </div>
+                    <div class="bg-red-600 rounded-md mx-auto m-2" *ngIf="inputToken">
+                        <button
+                            class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                            type="submit" (click)="updateEmail()">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</section>

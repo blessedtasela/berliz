@@ -14,6 +14,11 @@ body {
   height: 100%;
 }
 
+.disabled-horizontal-icon {
+  opacity: 0.5; /* or any other styling to visually indicate it's disabled */
+  pointer-events: none; /* Disable pointer events to prevent interactions */
+}
+
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -45,21 +50,38 @@ z-index: 20;
 .snack-bar-error {
   background-color: #e61515; 
   color: #d9dcdf; 
+  opacity: 50px;
   font-size: 12px;
-  padding: 14px 20px;
+  padding: 4px 10px;
   border-radius: 2px;
+  border-radius: 2%;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .snack-bar-success {
   background-color: #099e11; 
   color: #d9dcdf; 
+  opacity: 50px;
   font-size: 12px;
-  padding: 14px 20px;
+  padding: 4px 10px;
   border-radius: 2px;
+  border-radius: 2%;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.mat-snack-bar-container {
+  padding-right: 24px; /* Add space for X mark */
+}
+
+.mat-snack-bar-action {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 12px;
+  font-size: 20px;
+  line-height: 1;
+}
 
 .list-styleImage {
   list-style-type: none;
@@ -107,4 +129,36 @@ z-index: 20;
 /* Optionally, you can add a hover effect */
 .custom-checkbox:hover {
   border-color: #606060; /* Darker gray on hover */
+}
+
+/* Adjustments for large images */
+.image-cropper-container {
+  max-height: 80vh;
+  /* Maximum height for the image cropper container */
+  overflow: auto;
+  /* Enable scrolling if the image cropper exceeds the maximum height */
+}
+
+.image-cropper {
+  max-width: 100%;
+  /* Ensure the image cropper does not exceed the container width */
+}
+
+.cropped-image {
+  max-width: 100%;
+  /* Ensure the cropped image fits within the container width */
+}
+
+/* Ensure the buttons remain visible even for large images */
+.actions-container {
+  position: fixed;
+  /* Fixed positioning to keep the buttons visible */
+  bottom: 1rem;
+  /* Adjust as needed */
+  left: 50%;
+  /* Center horizontally */
+  transform: translateX(-50%);
+  /* Center horizontally */
+  z-index: 999;
+  /* Ensure the buttons appear above other content */
 }
