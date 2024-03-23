@@ -78,6 +78,15 @@ export interface TrainerPhotoAlbum {
   lastUpdate: Date;
 }
 
+export interface TrainerVideoAlbum {
+  id: number;
+  trainer: Trainers;
+  video: any;
+  comment: string;
+  date: Date;
+  lastUpdate: Date;
+}
+
 export interface TrainerCategory {
   id: number;
   trainerId: number;
@@ -148,6 +157,15 @@ export interface TrainerIntrodution {
   trainer: Trainers;
   introduction: string;
   coverPhoto: any;
+  date: Date;
+  lastUpdate: Date;
+}
+
+export interface TrainerClients {
+  id: number;
+  trainer: Trainers;
+  photo: any;
+  comment: string;
   date: Date;
   lastUpdate: Date;
 }

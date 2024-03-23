@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Categories, CategoryLikes } from 'src/app/models/categories.interface';
 import { Users } from 'src/app/models/users.interface';
 import { CategoryStateService } from 'src/app/services/category-state.service';
@@ -20,6 +21,7 @@ export class CategoriesSearchResultComponent {
   responseMessage: any;
   user!: Users;
   categoryLikes: CategoryLikes[] = [];
+  subscriptions: Subscription[] = []
 
   constructor(private datePipe: DatePipe,
     private categoryService: CategoryService,
@@ -27,21 +29,23 @@ export class CategoriesSearchResultComponent {
     private userStateService: UserStateService,
     private rxStompService: RxStompService) { }
 
-  ngOnInit(): void {
-    this.userStateService.getUser().subscribe((user) => {
-      this.user = user;
-    })
-  }
+  ngOnInit(): void { }
 
   handleEmitEvent() {
-    this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
-      this.categoriesResult = activeCategories;
-      this.totalCategories = activeCategories.length;
-      this.categoryStateService.setActiveCategoriesSubject(this.categoriesResult);
-    });
-    this.userStateService.getUser().subscribe((user) => {
-      this.user = user;
-    })
+    this.subscriptions.push(
+      this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
+        this.categoriesResult = activeCategories;
+        this.totalCategories = activeCategories.length;
+        this.categoryStateService.setActiveCategoriesSubject(this.categoriesResult);
+      }),
+      this.userStateService.getUser().subscribe((user) => {
+        this.user = user;
+      }),
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => sub.unsubscribe())
   }
 
   toggleData() {
@@ -72,12 +76,6 @@ export class CategoriesSearchResultComponent {
         console.log('error message', this.responseMessage);
         window.alert('please login to continue')
       }
-    );
-  }
-
-  isLikedCategory(category: Categories): boolean {
-    return this.categoryLikes.some((categoryLike) =>
-      categoryLike.user.id === this.user?.id && categoryLike.category.id === category.id
     );
   }
 

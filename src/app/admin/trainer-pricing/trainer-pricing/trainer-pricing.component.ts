@@ -21,7 +21,7 @@ export class TrainerPricingComponent {
   }
 
   ngOnInit(): void {
-    this.trainerStateService.trainerPricingData$.subscribe((cachedData) => {
+    this.trainerStateService.allTrainerPricingData$.subscribe((cachedData) => {
       if (!cachedData) {
         this.handleEmitEvent()
       } else {
@@ -33,13 +33,13 @@ export class TrainerPricingComponent {
   }
 
   handleEmitEvent() {
-    this.trainerStateService.getTrainerPricing().subscribe((trainerPricing) => {
+    this.trainerStateService.getAllTrainerPricing().subscribe((trainerPricing) => {
       this.ngxService.start()
       console.log('isCachedData false')
       this.trainerPricingData = trainerPricing;
       this.totalTrainerPricing = trainerPricing.length
       this.trainerPricingLength = trainerPricing.length
-      this.trainerStateService.setTrainerPricingSubject(this.trainerPricingData);
+      this.trainerStateService.setAllTrainerPricingSubject(this.trainerPricingData);
       this.ngxService.stop()
     });
   }

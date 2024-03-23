@@ -31,7 +31,9 @@ export class ProfilePageComponent {
     private dashboardStateService: DashboardStateService) { }
 
   ngOnInit(): void {
+    this.ngxService.start();
     this.handleEmitEvent()
+    this.ngxService.stop();
     this.watchUpdateProfilePhoto()
     this.watchUpdateUser()
     this.watchUpdateUserEmail()
@@ -47,7 +49,6 @@ export class ProfilePageComponent {
 
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.subscriptions.push(
       this.userStateService.getUser().subscribe((user) => {
         this.user = user;
@@ -58,7 +59,6 @@ export class ProfilePageComponent {
         this.dashboardStateService.setProfileDataSubject(data)
       })
     );
-    this.ngxService.stop()
   }
 
 

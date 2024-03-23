@@ -35,18 +35,17 @@ export class TrainerPricingListComponent {
   }
 
   ngOnInit() {
+    this.ngxService.start()
     this.watchUpdateTrainerPricing()
     this.watchDeleteTrainerPricing()
+    this.ngxService.stop()
     // this.watchGetTrainerPricingFromMap()
   }
 
   handleEmitEvent() {
-    this.trainerStateService.getTrainerPricing().subscribe((trainerPricing) => {
-      this.ngxService.start()
+    this.trainerStateService.getAllTrainerPricing().subscribe((trainerPricing) => {
       this.trainerPricingData = trainerPricing;
       this.totalTrainerPricing = this.trainerPricingData.length
-      this.trainerStateService.setTrainerPricingSubject(this.trainerPricingData);
-      this.ngxService.stop()
     });
   }
 

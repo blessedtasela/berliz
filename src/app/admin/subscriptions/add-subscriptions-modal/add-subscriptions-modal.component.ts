@@ -72,7 +72,7 @@ export class AddSubscriptionsModalComponent {
       this.trainerStateService.activeTrainersData$.pipe(take(1)),
       this.userStateService.activeUserData$.pipe(take(1)),
       this.categoryStateService.activeCategoriesData$.pipe(take(1)),
-      this.trainerStateService.trainerPricingData$.pipe(take(1)),
+      this.trainerStateService.allTrainerPricingData$.pipe(take(1)),
       this.centerStateService.centerPricingData$.pipe(take(1))
     ]).subscribe(([centers, trainers, users, categories, trainerPricing, centerPricing]) => {
       if (centers === null) {
@@ -143,10 +143,10 @@ export class AddSubscriptionsModalComponent {
         this.cd.detectChanges();
         this.ngxService.stop();
       }),
-      this.trainerStateService.getTrainerPricing().subscribe((trainerPricing) => {
+      this.trainerStateService.getAllTrainerPricing().subscribe((trainerPricing) => {
         this.ngxService.start();
         this.trainerPricing = trainerPricing;
-        this.trainerStateService.setTrainerPricingSubject(trainerPricing);
+        this.trainerStateService.setAllTrainerPricingSubject(trainerPricing);
         this.cd.detectChanges();
         this.ngxService.stop();
       }),

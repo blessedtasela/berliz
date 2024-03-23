@@ -42,6 +42,8 @@ import { FooterModule } from './footer/footer.module';
 import { LoginModule } from './login/login.module';
 import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb.component';
 import { BreadcrumbModule, BreadcrumbService } from 'xng-breadcrumb';
+import { PartnerModule } from './partner/partner.module';
+import { TrainerModule } from './trainer/trainer.module';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   text: "Loading....",
@@ -69,6 +71,7 @@ const dbConfig: DBConfig = {
   }]
 };
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -91,6 +94,8 @@ const dbConfig: DBConfig = {
     SharedModule,
     FeatherModule,
     DashboardModule,
+    PartnerModule,
+    TrainerModule,
     RouterModule,
     AppRoutingModule,
     ContactUsModule,
@@ -109,7 +114,7 @@ const dbConfig: DBConfig = {
     FooterModule,
     LoginModule,
     BreadcrumbModule,
-    NgxIndexedDBModule.forRoot(dbConfig)
+    NgxIndexedDBModule.forRoot(dbConfig),
   ],
   exports: [],
 
@@ -120,9 +125,9 @@ const dbConfig: DBConfig = {
       provide: RxStompService,
       useFactory: rxStompServiceFactory,
     },
-   BreadcrumbService
+    BreadcrumbService
   ],
 
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

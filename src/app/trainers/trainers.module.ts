@@ -19,9 +19,16 @@ import { TrainerAlbumComponent } from './trainer-album/trainer-album.component';
 import { ChatWithTrainerComponent } from './chat-with-trainer/chat-with-trainer.component';
 import { ChatWithTrainerPopUpComponent } from './chat-with-trainer-pop-up/chat-with-trainer-pop-up.component';
 import { TrainerLocationsComponent } from './trainer-locations/trainer-locations.component';
-import { TrainerIntroductionComponent } from './trainer-introduction/trainer-introduction.component';
 import { TrainerHeaderComponent } from './trainer-header/trainer-header.component';
 import { TrainerPartnerFormComponent } from './trainer-partner-form/trainer-partner-form.component';
+import { TrainersAlbumComponent } from './trainers-album/trainers-album.component';
+import { TrainersBenefitsComponent } from './trainers-benefits/trainers-benefits.component';
+import { TrainersCategoriesComponent } from './trainers-categories/trainers-categories.component';
+import { TrainersClientReviewsComponent } from './trainers-client-reviews/trainers-client-reviews.component';
+import { TrainersDetailsHeroComponent } from './trainers-details-hero/trainers-details-hero.component';
+import { TrainersFeatureVideosComponent } from './trainers-feature-videos/trainers-feature-videos.component';
+import { TrainersHeaderComponent } from './trainers-header/trainers-header.component';
+import { TrainersIntroductionComponent } from './trainers-introduction/trainers-introduction.component';
 
 @NgModule({
   declarations: [
@@ -39,9 +46,16 @@ import { TrainerPartnerFormComponent } from './trainer-partner-form/trainer-part
     ChatWithTrainerComponent,
     ChatWithTrainerPopUpComponent,
     TrainerLocationsComponent,
-    TrainerIntroductionComponent,
     TrainerHeaderComponent,
     TrainerPartnerFormComponent,
+    TrainersAlbumComponent,
+    TrainersBenefitsComponent,
+    TrainersCategoriesComponent,
+    TrainersClientReviewsComponent,
+    TrainersDetailsHeroComponent,
+    TrainersFeatureVideosComponent,
+    TrainersHeaderComponent,
+    TrainersIntroductionComponent,
   ],
   imports: [
     CommonModule,

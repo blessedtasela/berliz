@@ -5,7 +5,7 @@
     <div class="rounded-md mx-auto">
         <form [formGroup]="addTrainerForm">
             <div class="" [ngClass]="{'border-white': addTrainerForm.invalid && invalidForm }">
-                <header class="text-center m-4">
+                <header class="text-center">
                     <h1 class="font-bold font-sans text-xl text-yellow-500">Complete Trainer Application</h1>
                     <p class="font-sans text-sm text-white italic font-bold">Get ready to transform lives!
                     </p>
@@ -88,7 +88,7 @@
                         </div>
                     </div>
                     <div class="col-span-2 mx-auto">
-                        <div class="grid grid-cols-2">
+                        <div class="grid grid-cols-2 md:grid-cols-4 text-white">
                             <div *ngFor="let cat of categories; let i = index" class="mx-auto flex items-center">
                                 <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
                                     class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"

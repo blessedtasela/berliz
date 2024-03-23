@@ -106,8 +106,6 @@ export class AddPartnerModalComponent implements AfterViewInit {
 
 
   addPartner(): void {
-    this.ngxService.start();
-    this.ngxService.stop()
     const requestData = new FormData();
     requestData.append('email', this.addPartnerForm.get('email')?.value);
     requestData.append('certificate', this.selectedCertificate);
@@ -121,10 +119,10 @@ export class AddPartnerModalComponent implements AfterViewInit {
     if (this.addPartnerForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
-      this.ngxService.stop();
     } else {
       this.partnerService.addPartner(requestData)
         .subscribe((response: any) => {
+          this.ngxService.start()
           this.addPartnerForm.reset();
           this.partnerService.setPartnerFormIndex(0);
           this.invalidForm = false;

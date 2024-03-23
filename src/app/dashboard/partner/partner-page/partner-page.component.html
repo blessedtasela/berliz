@@ -1,9 +1,0 @@
-<app-null-partner *ngIf="!partner" [user]="user" [partnerData]="partner" (onEmit)="emitData()"></app-null-partner>
-<app-partner-application *ngIf="partner" [trainer]="trainer" [center]="center" [partnerData]="partner" [user]="user"
-    (onEmit)="emitData()">
-</app-partner-application>
-<app-center *ngIf="center " [centerData]="center" [user]="user" [partnerData]="partner"
-    (onEmit)="emitData()"></app-center>
-<app-trainer *ngIf="trainer " [trainerData]="trainer" [user]="user" [partnerData]="partner"
-    (onEmit)="emitData()"></app-trainer>
-<app-partner-data [partnerData]="partner" (onEmit)="emitData()"></app-partner-data>

@@ -1,90 +1,63 @@
-<section class="mt-20">
-    <div class="flex justify-center mb-20">
-        <h1 class="p-4 font-sans text-gray-200 text-xl font-bold uppercase
-        bg-red-700 hover:bg-red-800 hero-button font-sans text-left mx-8
-        rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
-            Top Categories
-        </h1>
-    </div>
-    <div class="mt-10 m-16 -mb-3 bg-gray-100 w-80 rounded-md relative mx-auto">
-        <h1 class="font-sans font-bold text-md text-red-600 capitalize text-center">
-            Discover more with us
-        </h1>
-    </div>
-    <div class="bg-gray-950 rounded-md">
-        <div class="justify-items-center items-center">
-            <p class="font-bold text-sm text-center font-sans py-5 text-white">
-                Amazing peaks, just for you.
-            </p>
-        </div>
-        <div class="flex flex-wrap">
-            <div class="mb-2 px-2 space-y-1 w-full">
-                <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-10 mb-5 p-5">
-                    <div class="flex justify-center items-center  transition-all duration-300
-                transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                        *ngFor="let category of categoriesResult; let i = index"
-                        [class.hidden]="!showFullData && i >= 9">
-                        <div class="text-justify justify-items-center">
-                            <div
-                                class=" flex flex-col justify-center items-center bg-gray-100 rounded-md min-h-[400px] min-w-[300px]">
-                                <div class="p-2">
-                                    <img class="w-24" [src]="'../../../assets/icons/' + category.photo +'.png'">
-                                </div>
-                                <p
-                                    class="p-2 text-center text-md font-sans font-bold lg:text-md text-red-600 uppercase">
-                                    {{ category.name }}
-                                </p>
-                                <span class="p-2 text-center text-sm font-sans font-bold text-gray-600">Tags: </span>
-                                <p class="p-2 text-center text-sm font-sans font-bold text-gray-600">
-                                    <ng-container *ngFor="let tag of category.tagSet; let ix = index"
-                                        class=" cursor-pointer">
-                                        {{ tag.name }} {{ ix < (category.tagSet.length - 1) ? "/" : "" }}
-                                            </ng-container>
-                                </p>
-                                <p class="mt-1 text-sm lg:text-sm w-full text-center font-sans mb-2">
-                                    {{ category.description }}
-                                </p>
-                                <div class="flex items-center mt-2"
-                                    *ngIf="isLikedCategory(category) && category.likes > 1">
-                                    <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCategory(category)"
-                                        class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
-                                    <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                                        you and {{ category.likes - 1 }} people like this center.
-                                    </p>
-                                </div>
-                                <div class="flex items-center mt-2"
-                                    *ngIf="isLikedCategory(category)  && category.likes === 1">
-                                    <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCategory(category)"
-                                        class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
-                                    <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                                        you like this category.
-                                    </p>
-                                </div>
-                                <div class="flex items-center mt-2" *ngIf="!isLikedCategory(category)">
-                                    <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCategory(category)"
-                                        class="font-bold text-gray-600 mr-4 mt-1 cursor-pointer"></i-feather>
-                                    <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                                        {{ category.likes }} people like this category.
-                                    </p>
-                                </div>
-                                <button
-                                    class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
-                            rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105  cursor-pointer">
-                                    <a [routerLink]="['/categories', category.id, formatStringToUrl(category.name)]">
-                                        Know more
-                                    </a>
-                                </button>
-                            </div>
+<section class="mt-20 font-sans">
+    <div class="bg-white rounded-md">
+        <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-10 mb-5 p-5">
+            <div class="flex justify-center items-center  transition-all duration-300
+                             transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+                *ngFor="let category of categoriesResult; let i = index" [class.hidden]="!showFullData && i >= 9">
+                <div class="flex justify-center items-center w-80">
+                    <div
+                        class=" flex flex-col justify-center items-center bg-gray-100 rounded-md min-h-[400px] min-w-[300px]">
+                        <div class="p-2">
+                            <img class="w-24" [src]="'../../../assets/icons/' + category.photo +'.png'">
                         </div>
+                        <p class="p-2 text-center text-md  font-bold lg:text-md text-red-600 uppercase">
+                            {{ category.name }}
+                        </p>
+                        <span class="p-2 text-center text-sm  font-bold text-gray-600">Tags: </span>
+                        <p class="p-2 text-center text-sm  font-bold text-gray-600">
+                            <ng-container *ngFor="let tag of category.tagSet; let ix = index" class=" cursor-pointer">
+                                {{ tag.name }} {{ ix < (category.tagSet.length - 1) ? "/" : "" }} </ng-container>
+                        </p>
+                        <p class="mt-1 text-sm lg:text-sm w-full text-center  mb-2">
+                            {{ category.description }}
+                        </p>
+                        <div class="flex items-center mt-2" *ngIf="category.likes > 1">
+                            <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCategory(category)"
+                                class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
+                            <p class="mt-1 text-sm  font-bold text-gray-600 text-right mb-2">
+                                {{ category.likes }} people like this center.
+                            </p>
+                        </div>
+                        <div class="flex items-center mt-2" *ngIf="category.likes === 1">
+                            <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCategory(category)"
+                                class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
+                            <p class="mt-1 text-sm  font-bold text-gray-600 text-right  mb-2">
+                                one person likes this category.
+                            </p>
+                        </div>
+                        <div class="flex items-center mt-2" *ngIf="category.likes < 1">
+                            <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCategory(category)"
+                                class="font-bold text-gray-600 mr-4 mt-1 cursor-pointer"></i-feather>
+                            <p class="mt-1 text-sm  font-bold text-gray-600 text-right mb-2">
+                                {{ category.likes }} people like this category.
+                            </p>
+                        </div>
+                        <button
+                            class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button 
+                            rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105  cursor-pointer">
+                            <a [routerLink]="['/categories', category.id, formatStringToUrl(category.name)]">
+                                Know more
+                            </a>
+                        </button>
                     </div>
                 </div>
-                <div [class.hidden]="categoriesResult.length  <= 9">
-                    <button (click)="toggleData()"
-                        class="p-1 px-2 text-sm mt-16 bg-white text-yellow-500 italic rounded-md font-sans mx-auto flex justify-center">
-                        {{ !showFullData ? 'see more' : 'see less'}}
-                    </button>
-                </div>
             </div>
+        </div>
+        <div [class.hidden]="categoriesResult.length  <= 9">
+            <button (click)="toggleData()"
+                class="p-1 px-2 text-sm mt-16 bg-white text-yellow-500 italic rounded-md  mx-auto flex justify-center">
+                {{ !showFullData ? 'see more' : 'see less'}}
+            </button>
         </div>
     </div>
 </section>

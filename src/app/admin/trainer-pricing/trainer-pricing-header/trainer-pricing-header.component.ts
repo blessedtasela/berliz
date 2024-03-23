@@ -32,13 +32,13 @@ export class TrainerPricingHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.trainerStateService.getTrainerPricing().subscribe((trainerPricing) => {
+    this.trainerStateService.getAllTrainerPricing().subscribe((trainerPricing) => {
       this.ngxService.start()
       console.log('cached false')
       this.trainerPricingData = trainerPricing;
       this.totalTrainerPricing = this.trainerPricingData.length
       this.trainerPricingLength = this.trainerPricingData.length
-      this.trainerStateService.setTrainerPricingSubject(this.trainerPricingData);
+      this.trainerStateService.setAllTrainerPricingSubject(this.trainerPricingData);
       this.ngxService.stop()
     });
   }

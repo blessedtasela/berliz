@@ -24,7 +24,6 @@ import { ActivateAccountComponent } from './dashboard/user/activate-account/acti
 import { ProgressPageComponent } from './dashboard/user/progress/progress-page/progress-page.component';
 import { ResetPasswordComponent } from './dashboard/user/reset-password/reset-password.component';
 import { RunNowPageComponent } from './dashboard/user/run-now/run-now-page/run-now-page.component';
-import { PartnerPageComponent } from './dashboard/partner/partner-page/partner-page.component';
 import { ProfilePageComponent } from './dashboard/user/profile-page/profile-page.component';
 import { ProfileSettingsComponent } from './dashboard/user/profile-settings/profile-settings.component';
 import { MyTodosComponent } from './dashboard/todo-lists/my-todos/my-todos.component';
@@ -55,6 +54,9 @@ import { SubscriptionsComponent } from './admin/subscriptions/subscriptions/subs
 import { TrainerPricingComponent } from './admin/trainer-pricing/trainer-pricing/trainer-pricing.component';
 import { QuickSignupComponent } from './login/quick-signup/quick-signup.component';
 import { BreadcrumbService } from 'xng-breadcrumb';
+import { PartnerComponent } from './partner/partner/partner.component';
+import { TrainerDetailsComponent } from './trainer/trainer-details/trainer-details.component';
+import { PartnerRouteComponent } from './partner/partner-route/partner-route.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -83,7 +85,7 @@ const routes: Routes = [
     path: 'products', component: ProductsPageComponent, children: productChildRoutes
   },
 
-  // protected components
+  // dashboard protected components
   {
     path: 'dashboard', component: DashboardComponent,
     canActivate: [RouteGuardService],
@@ -113,7 +115,7 @@ const routes: Routes = [
             'center', 'driver', 'store', 'client',]
         },
         children: [
-          // admin components #protected
+          // workspace components #protected
           {
             path: '',
             redirectTo: '',
@@ -217,18 +219,41 @@ const routes: Routes = [
               expectedRole: ['admin']
             },
           },
-
-          // users protected routes
           {
-            path: 'profile', component: ProfilePageComponent,
+            // workspace components #protected
+            path: 'partnership', component: PartnerRouteComponent,
             canActivate: [RouteGuardService],
             data: {
               expectedRole: ['admin', 'user', 'partner', 'trainer',
                 'center', 'driver', 'store', 'client',]
-            }
+            },
+            children: [
+              {
+                path: '',
+                redirectTo: '',
+                pathMatch: 'full',
+              },
+              {
+                path: '', component: PartnerComponent,
+                canActivate: [RouteGuardService],
+                data: {
+                  expectedRole: ['admin', 'user', 'partner', 'trainer',
+                    'center', 'driver', 'store', 'client',]
+                },
+              },
+              {
+                path: 'trainer-details', component: TrainerDetailsComponent,
+                canActivate: [RouteGuardService],
+                data: {
+                  expectedRole: ['admin', 'user', 'partner', 'trainer',
+                    'center', 'driver', 'store', 'client',]
+                },
+              },
+            ],
           },
+          // users protected routes
           {
-            path: 'partnership', component: PartnerPageComponent,
+            path: 'profile', component: ProfilePageComponent,
             canActivate: [RouteGuardService],
             data: {
               expectedRole: ['admin', 'user', 'partner', 'trainer',
@@ -312,12 +337,36 @@ const routes: Routes = [
         }
       },
       {
-        path: 'partnership', component: PartnerPageComponent,
+        // partnership components #protected
+        path: 'partnership', component: PartnerRouteComponent,
         canActivate: [RouteGuardService],
         data: {
           expectedRole: ['admin', 'user', 'partner', 'trainer',
             'center', 'driver', 'store', 'client',]
-        }
+        },
+        children: [
+          {
+            path: '',
+            redirectTo: '',
+            pathMatch: 'full',
+          },
+          {
+            path: '', component: PartnerComponent,
+            canActivate: [RouteGuardService],
+            data: {
+              expectedRole: ['admin', 'user', 'partner', 'trainer',
+                'center', 'driver', 'store', 'client',]
+            },
+          },
+          {
+            path: 'trainer-details', component: TrainerDetailsComponent,
+            canActivate: [RouteGuardService],
+            data: {
+              expectedRole: ['admin', 'user', 'partner', 'trainer',
+                'center', 'driver', 'store', 'client',]
+            },
+          },
+        ],
       },
       {
         path: 'settings', component: ProfileSettingsComponent,
@@ -486,14 +535,13 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, {
       // Restore the last scroll position
-      scrollPositionRestoration: "enabled",
+      scrollPositionRestoration: 'enabled',
 
       // Enable scrolling to anchors
       anchorScrolling: "enabled",
     }
     ),
     ProductsModule,
-    ScrollingModule,
   ],
   exports: [
     RouterModule

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PartnerModule } from './partner/partner.module';
 import { UserModule } from './user/user.module';
 import { IconsModule } from '../icons/icons.module';
 import { FeatherModule } from 'angular-feather';
@@ -45,7 +44,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
     CommonModule,
-    PartnerModule,
     TodoListsModule,
     UserModule,
     IconsModule,

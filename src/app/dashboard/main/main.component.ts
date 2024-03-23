@@ -45,6 +45,7 @@ export class MainComponent {
   }
 
   ngOnInit() {
+    this.ngxService.start()
     this.handleEmitEvent()
     const showTodaysTodo = this.stateService.getTodaysTodo();
     if (showTodaysTodo !== "true") {
@@ -53,15 +54,14 @@ export class MainComponent {
         this.stateService.setTodaysTodo("true");
       }, 1000);
     };
+    this.ngxService.stop()
   }
 
   handleEmitEvent() {
     this.subscriptions.push(
       this.userStateService.getUser().subscribe((user) => {
-        this.ngxService.start()
         this.userData = user;
         this.userStateService.setUserSubject(user);
-        this.ngxService.stop()
       }),
       this.dashboardStateService.getDashBoard().subscribe((data) => {
         this.ngxService.start()
