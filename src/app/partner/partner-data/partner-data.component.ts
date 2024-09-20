@@ -6,6 +6,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { UpdatePartnerFileModalComponent } from 'src/app/admin/partners/update-partner-file-modal/update-partner-file-modal.component';
 import { Partners } from 'src/app/models/partners.interface';
+import { Trainers } from 'src/app/models/trainers.interface';
 import { Role } from 'src/app/models/users.interface';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { PartnerService } from 'src/app/services/partner.service';
@@ -43,13 +44,12 @@ export class PartnerDataComponent {
 
   ngOnInit(): void {
     this.updatePartnerForm = this.formBuilder.group({
-      'email': [],
-      'id': new FormControl(this.partnerData?.id, [Validators.required]),
-      'motivation': new FormControl(this.partnerData?.motivation, Validators.compose([Validators.required, Validators.minLength(9)])),
-      'facebookUrl': new FormControl(this.partnerData?.facebookUrl, Validators.compose([Validators.required, Validators.pattern('^(https?:\\/\\/)?(www\\.)?facebook\\.com\\/.+$')])),
-      'instagramUrl': new FormControl(this.partnerData?.instagramUrl, Validators.compose([Validators.required, Validators.pattern('^(https?:\\/\\/)?(www\\.)?instagram\\.com\\/.+$')])),
-      'youtubeUrl': new FormControl(this.partnerData?.youtubeUrl, Validators.pattern('^(https?:\\/\\/)?(www\\.)?youtube\\.com\\/.+$')),
-      'role': new FormControl(this.partnerData?.role, [Validators.required, Validators.minLength(3)]),
+      'id': this.partnerData?.id,
+      'motivation': [this.partnerData?.motivation, Validators.compose([Validators.required, Validators.minLength(9)])],
+      'facebookUrl': [this.partnerData?.facebookUrl, Validators.compose([Validators.required, Validators.pattern('^(https?:\\/\\/)?(www\\.)?facebook\\.com\\/.+$')])],
+      'instagramUrl': [this.partnerData?.instagramUrl, Validators.compose([Validators.required, Validators.pattern('^(https?:\\/\\/)?(www\\.)?instagram\\.com\\/.+$')])],
+      'youtubeUrl': [this.partnerData?.youtubeUrl, Validators.pattern('^(https?:\\/\\/)?(www\\.)?youtube\\.com\\/.+$')],
+      'role': [this.partnerData?.role, [Validators.required, Validators.minLength(3)]],
     });
   }
 
@@ -74,6 +74,16 @@ export class PartnerDataComponent {
     this.ngxService.stop();
   }
 
+  updateFormValues(partner: Partners) {
+    this.updatePartnerForm.patchValue({
+      id: partner.id,
+      motivation: partner.motivation,
+      role: partner.role,
+      facebookUrl: partner.facebookUrl,
+      instagramUrl: partner.instagramUrl,
+      youtubeUrl: partner.youtubeUrl
+    });
+  }
   openUrl(url: any) {
     window.open(url, '_blank');
   }
@@ -134,11 +144,11 @@ export class PartnerDataComponent {
     });
   }
 
-
   updatePartner(): void {
     if (this.updatePartnerForm.invalid) {
       this.invalidForm = true
-      this.responseMessage = "Invalid form"
+      this.responseMessage = "Invalid form";
+      return;
     } else {
       this.partnerService.updatePartner(this.updatePartnerForm.value)
         .subscribe((response: any) => {
@@ -147,7 +157,8 @@ export class PartnerDataComponent {
           this.invalidForm = false;
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.onEmit.emit()
+          this.onEmit.emit();
+          this.updateFormValues(this.updatePartnerForm.value);
           this.ngxService.stop();
         }, (error: any) => {
           console.error("error");

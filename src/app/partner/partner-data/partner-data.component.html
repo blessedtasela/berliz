@@ -27,16 +27,13 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                             <div class="mx-auto w-full">
                                 <span class="ml-4 font-bold text-gray-600 italic"> Email</span>
-                                <input formControlName="email" id="email" [value]="partnerData.user.email"
-                                    [(ngModel)]="partnerData.user.email"
+                                <input [value]="partnerData.user.email"
                                     class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                                     placeholder="User email" type="text" readonly>
-                                <input formControlName="id" id="id" [value]="partnerData.id" hidden
-                                    [(ngModel)]="partnerData.id">
                             </div>
                             <div class="mx-auto w-full">
                                 <span class="ml-4 font-bold text-gray-600 italic"> Partnership</span>
-                                <select formControlName="role" id="role" [(ngModel)]="partnerData.role"
+                                <select formControlName="role" id="role"
                                     class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                                     [ngClass]="{'border-red-400': updatePartnerForm.get('role')?.invalid && updatePartnerForm.get('role')?.touched }">
                                     <option selected disabled [value]="partnerData.role" class="font-sans">
@@ -53,16 +50,16 @@
                             </div>
                             <div class="mx-auto md:col-span-2 w-full">
                                 <span class="ml-4 font-bold text-gray-600 italic"> Motivation</span>
-                                <textarea formControlName="motivation" id="motivation" [value]="partnerData.motivation"
-                                    [(ngModel)]="partnerData.motivation" [readOnly]="partnerData.status==='true'"
+                                <textarea formControlName="motivation" id="motivation"
+                                    [readOnly]="partnerData.status==='true'"
                                     class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                                     placeholder="Motivation here" rows="5" cols="30"></textarea>
                             </div>
                         </div>
                         <div class="mx-auto">
                             <span class="ml-4 font-bold text-gray-600 italic"> Facebook url</span>
-                            <input formControlName="facebookUrl" id="facebookUrl" [value]="partnerData.facebookUrl"
-                                [(ngModel)]="partnerData.facebookUrl" [readOnly]="partnerData.status==='true'"
+                            <input formControlName="facebookUrl" id="facebookUrl"
+                                [readOnly]="partnerData.status==='true'"
                                 class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                                 [ngClass]="{'border-red-400': updatePartnerForm.get('facebookUrl')?.invalid && updatePartnerForm.get('facebookUrl')?.touched }"
                                 placeholder="https://www.facebook.com/my-profile/" type="text">
@@ -70,16 +67,15 @@
                         </div>
                         <div class="mx-auto">
                             <span class="ml-4 font-bold text-gray-600 italic"> Instagram url</span>
-                            <input formControlName="instagramUrl" id="instagramUrl" [value]="partnerData.instagramUrl"
-                                [(ngModel)]="partnerData.instagramUrl" [readOnly]="partnerData.status==='true'"
+                            <input formControlName="instagramUrl" id="instagramUrl"
+                                [readOnly]="partnerData.status==='true'"
                                 class="w-full px-4 py-2 m-2 rounded-md bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                                 [ngClass]="{'border-red-400': updatePartnerForm.get('instagramUrl')?.invalid && updatePartnerForm.get('instagramUrl')?.touched }"
                                 placeholder="https://www.instagram.com/my-profile/" type="text">
                         </div>
                         <div class="mx-auto">
                             <span class="ml-4 font-bold text-gray-600 italic"> Youtube url</span>
-                            <input formControlName="youtubeUrl" id="youtubeUrl" [value]="partnerData.youtubeUrl"
-                                [(ngModel)]="partnerData.youtubeUrl" [readOnly]="partnerData.status==='true'"
+                            <input formControlName="youtubeUrl" id="youtubeUrl" [readOnly]="partnerData.status==='true'"
                                 class="w-full px-4 py-2 m-2 rounded-md bg-gray-100  focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                                 [ngClass]="{'border-red-400': updatePartnerForm.get('youtubeUrl')?.invalid && updatePartnerForm.get('youtubeUrl')?.touched }"
                                 placeholder="https://www.youtube.com/my-profile/" type="text">
@@ -103,8 +99,9 @@
                             </button>
                         </div>
                         <div *ngIf="partnerData?.certificate" class="flex justify-center">
-                            <button class="text-sm bg-gray-950 text-white py-1 mb-5 px-2 hover:bg-gray-900 rounded-md font-sans mx-auto
-                transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
+                            <button
+                                class="text-sm bg-gray-950 text-white py-1 mb-5 px-2 hover:bg-gray-900 rounded-md font-sans mx-auto
+                            transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
                                 (click)="openViewCertificate()">
                                 open certificate
                             </button>

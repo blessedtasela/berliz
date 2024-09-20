@@ -23,9 +23,7 @@ export function emailExtensionValidator(validExtensions: string[]): ValidatorFn 
 
 export function fileValidator(control: AbstractControl): ValidationErrors | null {
   const fileInput = control.value;
-  console.log(fileInput, ' fileInput')
   if (!fileInput || fileInput.length === 0) {
-    console.log('file is null')
     return null;
   }
 
@@ -69,6 +67,16 @@ export function dataURItoBlob(dataURI: string): Blob {
   }
   return new Blob([ab], { type: mimeString });
 }
+
+export function minArrayLength(min: number): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control || !control.value || !Array.isArray(control.value)) {
+      return null;
+    }
+    return control.value.length >= min ? null : { minArrayLength: true };
+  };
+}
+
 
 
 export const genericError = "An error occured while connecting to the server";

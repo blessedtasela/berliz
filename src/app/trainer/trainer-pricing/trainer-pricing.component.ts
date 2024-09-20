@@ -1,4 +1,5 @@
-import { DatePipe } from '@angular/common';
+import { group } from '@angular/animations';
+import { DatePipe, formatDate } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -18,36 +19,42 @@ export class TrainerPricingComponent {
   @Output() emitEvent = new EventEmitter();
   updateTrainerPricingForm!: FormGroup;
   invalidForm: boolean = false;
-  isChecked: boolean = false;
   responseMessage: any;
-  selectedImage: any;
-  imageChangedEvent: any = '';
-  croppedImage: any = '';
-  showCropper: boolean = false;
   @Input() trainerPricing!: TrainerPricing;
-  selectedCategoriesId: any;
   subscriptions: Subscription[] = [];
 
-  constructor(private formBuilder: FormBuilder,
+  pricingFields = [
+    { name: 'priceOnline', label: 'Price Online', placeholder: '$59.99' },
+    { name: 'pricePersonal', label: 'Price Personal', placeholder: '$59.99' },
+    { name: 'priceHybrid', label: 'Price Hybrid', placeholder: '$59.99' },
+    { name: 'discount3Months', label: 'Discount 3 Months', placeholder: '9.99 %' },
+    { name: 'discount6Months', label: 'Discount 6 Months', placeholder: '9.99 %' },
+    { name: 'discount9Months', label: 'Discount 9 Months', placeholder: '9.99 %' },
+    { name: 'discount12Months', label: 'Discount 12 Months', placeholder: '9.99 %' },
+    { name: 'discount2Programs', label: 'Discount 2 Programs', placeholder: '9.99 %' },
+  ];
+
+  constructor(
+    private formBuilder: FormBuilder,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private trainerService: TrainerService,
     private trainerStateService: TrainerStateService,
-    private datePipe: DatePipe) {
-  }
+    private datePipe: DatePipe
+  ) { }
 
   ngOnInit(): void {
     this.trainerPricing = this.trainerPricing || {};
     this.updateTrainerPricingForm = this.formBuilder.group({
-      'id': this.trainerPricing.id,
-      'priceOnline': new FormControl(this.trainerPricing.priceOnline, Validators.compose([Validators.required, Validators.minLength(2)])),
-      'pricePersonal': new FormControl(this.trainerPricing.pricePersonal, Validators.compose([Validators.required, Validators.minLength(2)])),
-      'priceHybrid': new FormControl(this.trainerPricing.priceHybrid, Validators.compose([Validators.required, Validators.minLength(2)])),
-      'discount3Months': new FormControl(this.trainerPricing.discount3Months, Validators.compose([Validators.required, Validators.minLength(2)])),
-      'discount6Months': new FormControl(this.trainerPricing.discount6Months, Validators.compose([Validators.required, Validators.minLength(2)])),
-      'discount9Months': new FormControl(this.trainerPricing.discount9Months, Validators.compose([Validators.required, Validators.minLength(2)])),
-      'discount12Months': new FormControl(this.trainerPricing.discount12Months, Validators.compose([Validators.required, Validators.minLength(2)])),
-      'discount2Programs': new FormControl(this.trainerPricing.discount2Programs, Validators.compose([Validators.required, Validators.minLength(2)])),
+      id: [this.trainerPricing.id],
+      priceOnline: [this.trainerPricing.priceOnline, Validators.required],
+      pricePersonal: [this.trainerPricing.pricePersonal, Validators.required],
+      priceHybrid: [this.trainerPricing.priceHybrid, Validators.required],
+      discount3Months: [this.trainerPricing.discount3Months, Validators.required],
+      discount6Months: [this.trainerPricing.discount6Months, Validators.required],
+      discount9Months: [this.trainerPricing.discount9Months, Validators.required],
+      discount12Months: [this.trainerPricing.discount12Months, Validators.required],
+      discount2Programs: [this.trainerPricing.discount2Programs, Validators.required],
     });
   }
 
@@ -61,7 +68,7 @@ export class TrainerPricingComponent {
     this.subscriptions.push(
       this.trainerStateService.getMyTrainerPricing().subscribe((trainerPricing) => {
         this.trainerPricing = trainerPricing;
-      }),
+      })
     );
   }
 
@@ -70,64 +77,71 @@ export class TrainerPricingComponent {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
+  updateFormValues(trainerPricing: TrainerPricing) {
+    this.updateTrainerPricingForm.patchValue({
+      id: trainerPricing.id,
+      priceOnline: trainerPricing.priceOnline,
+      pricePersonal: trainerPricing.pricePersonal,
+      priceHybrid: trainerPricing.priceHybrid,
+      discount3Months: trainerPricing.discount3Months,
+      discount6Months: trainerPricing.discount6Months,
+      discount9Months: trainerPricing.discount9Months,
+      discount12Months: trainerPricing.discount12Months,
+      discount2Programs: trainerPricing.discount2Programs
+    });
+  }
+
   updateTrainerPricing(): void {
     if (this.updateTrainerPricingForm.invalid) {
       this.invalidForm = true;
-      this.responseMessage = "Invalid form. Please complete all sections";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      this.responseMessage = 'Invalid form. Please complete all sections';
+      this.snackBarService.openSnackBar(this.responseMessage, 'error');
       return; // Exit early if the form is invalid
     }
+
+    const trainerPricing = this.updateTrainerPricingForm.value;
 
     this.ngxService.start();
     if (this.trainerPricing.id) {
       // Update existing trainer pricing
-      this.updateTrainerPricingForm.patchValue({
-        id: this.trainerPricing.id
-      });
-
-      this.trainerService.updateTrainerPricing(this.updateTrainerPricingForm.value)
-        .subscribe((response: any) => {
+      this.trainerService.updateTrainerPricing(trainerPricing).subscribe(
+        (response: any) => {
           this.updateTrainerPricingForm.reset();
           this.invalidForm = false;
           this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.showCropper = false
-          this.handleEmitEvent()
+          this.snackBarService.openSnackBar(this.responseMessage, '');
+          this.handleEmitEvent();
           this.emitEvent.emit();
-          this.isChecked = false;
+          this.updateFormValues(trainerPricing)
           this.ngxService.stop();
-        }, (error: any) => {
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
+        },
+        (error: any) => {
+          console.error('error');
+          this.responseMessage = error.error?.message || genericError;
+          this.snackBarService.openSnackBar(this.responseMessage, 'error');
           this.ngxService.stop();
-        });
+        }
+      );
     } else {
       // Add new trainer pricing
-      this.trainerService.addTrainerPricing(this.updateTrainerPricingForm.value)
-        .subscribe((response: any) => {
+      this.trainerService.addTrainerPricing(trainerPricing).subscribe(
+        (response: any) => {
           this.updateTrainerPricingForm.reset();
           this.invalidForm = false;
           this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.showCropper = false
-          this.handleEmitEvent()
+          this.snackBarService.openSnackBar(this.responseMessage, '');
+          this.handleEmitEvent();
           this.emitEvent.emit();
+          this.updateFormValues(trainerPricing)
           this.ngxService.stop();
-        }, (error: any) => {
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
+        },
+        (error: any) => {
+          console.error('error');
+          this.responseMessage = error.error?.message || genericError;
+          this.snackBarService.openSnackBar(this.responseMessage, 'error');
           this.ngxService.stop();
-        });
+        }
+      );
     }
   }
 
@@ -135,5 +149,3 @@ export class TrainerPricingComponent {
     this.updateTrainerPricingForm.reset();
   }
 }
-
-

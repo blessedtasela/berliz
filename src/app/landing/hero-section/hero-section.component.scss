@@ -1,15 +1,15 @@
-.slideshow-container {
-@apply relative w-full h-60;
-}
+// .slideshow-container {
+// @apply relative w-full h-60;
+// }
 
-.slideshow {
-    @apply flex transition-transform duration-30 ease-in-out;
-}
+// .slideshow {
+//     @apply flex transition-transform duration-30 ease-in-out;
+// }
 
-.slide {
-    @apply flex-none w-full
-}
+// .slide {
+//     @apply flex-none w-full
+// }
 
-.prev, .next {
-    @apply absolute top-1/2 transform -translate-y-1/2 p-2 text-2xl text-white bg-black bg-opacity-100
-}
+// .prev, .next {
+//     @apply absolute top-1/2 transform -translate-y-1/2 p-2 text-2xl text-white bg-black bg-opacity-100
+// }

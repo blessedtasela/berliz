@@ -4,6 +4,7 @@ import { PartnerService } from './partner.service';
 import { SnackBarService } from './snack-bar.service';
 import { Observable, tap, catchError, of, BehaviorSubject } from 'rxjs';
 import { genericError } from 'src/validators/form-validators.module';
+import { Trainers } from '../models/trainers.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -38,16 +39,9 @@ export class PartnerStateService {
 
   getPartner(): Observable<Partners> {
     return this.partnerService.getPartner().pipe(
-      tap((response: any) => {
-        return response;
-      }), catchError((error: any) => {
-       console.log(error, 'error');
-        if (error.error?.message) {
-          this.responseMessage = error.error?.message;
-        } else {
-          this.responseMessage = genericError;
-        }
-        console.log(this.responseMessage, 'error');
+      tap((response: any) => response),
+      catchError((error: any) => {
+        this.handleErrors(error);
         return of();
       })
     );
@@ -100,4 +94,14 @@ export class PartnerStateService {
       })
     );
   }
+
+    private handleErrors(error: any): void {
+    if (error.error?.message) {
+      this.responseMessage = error.error?.message;
+    } else {
+      this.responseMessage = genericError;
+    }
+    console.log(this.responseMessage, 'error');
+  }
+
 }

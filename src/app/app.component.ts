@@ -27,7 +27,7 @@ export class AppComponent {
 
   isPageError(): boolean {
     const loginRoutes = ['/**',];
-    return loginRoutes.some(route => this.router.url.includes(route));
+    return  this.router.url.startsWith('/**');
   }
 
 }

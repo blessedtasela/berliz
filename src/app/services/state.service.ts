@@ -93,28 +93,32 @@ export class StateService {
       {
         id: 1,
         title: "Personalized Training Programs",
-        description: "Take your fitness journey to the next level with personalized one-on-one training sessions with our Trainers from all over the world",
+        description: "Take your fitness journey to the next level with personalized one-on-one training " +
+          "sessions with our Trainers from all over the world.",
         subTitle: "Ignite Your Potential with Berliz",
         iconUrl: "Map"
       },
       {
         id: 2,
         title: "Nutritional Guidance",
-        description: "Our professionals will assist you in creating a balanced meal plan that complements your fitness routine, helping you reach your desired physique.",
+        description: "Our professionals will assist you in creating a balanced meal plan that complements " +
+          "your fitness routine, helping you reach your desired physique.",
         subTitle: "Satisfy Your Passion with Berliz",
         iconUrl: "Activity"
       },
       {
         id: 3,
         title: "Flexible Membership Options",
-        description: "Choose a membership plan that suits your needs. We offer flexible options, including standard, exclusive, and premium membership.",
+        description: "Choose a membership plan that suits your needs. We offer flexible options, " +
+          "including: standard, exclusive, and premium membership.",
         subTitle: "Discover a World of Limitless Services",
         iconUrl: "Layers"
       },
       {
         id: 4,
         title: "Community Support",
-        description: "Join a vibrant fitness community where you can connect with like-minded individuals, share your achievements, and find motivation and support along your fitness journey.",
+        description: "Join a vibrant fitness community where you can connect with like-minded " +
+          "individuals, share your achievements, and find motivation and support along your fitness journey.",
         subTitle: "Uncover Your Potentials with Us",
         iconUrl: "Users"
       }

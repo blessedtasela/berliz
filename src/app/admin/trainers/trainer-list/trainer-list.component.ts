@@ -33,19 +33,18 @@ export class TrainerListComponent {
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
+    this.ngxService.start();
     this.watchLikeTrainer()
     this.watchUpdatePhoto()
     this.watchUpdateStatus()
     this.watchUpdateTrainer()
+    this.ngxService.stop();
   }
 
   handleEmitEvent() {
     this.trainerStateService.getAllTrainers().subscribe((trainer) => {
-      this.ngxService.start();
       this.trainersData = trainer;
       this.totalTrainers = this.trainersData.length;
-      this.trainerStateService.setAllTrainersSubject(this.trainersData);
-      this.ngxService.stop();
     });
   }
 

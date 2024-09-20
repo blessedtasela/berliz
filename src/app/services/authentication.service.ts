@@ -55,5 +55,40 @@ export class AuthenticationService {
     return false;
   }
 
+  isUser(): boolean {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken: any = jwt_decode(token);
+      return decodedToken.role === 'user';
+    }
+    return false;
+  }
+
+  isPartner(): boolean {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken: any = jwt_decode(token);
+      return decodedToken.role === 'partner';
+    }
+    return false;
+  }
+
+  isCenter(): boolean {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken: any = jwt_decode(token);
+      return decodedToken.role === 'center';
+    }
+    return false;
+  }
+
+  isTrainer(): boolean {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken: any = jwt_decode(token);
+      return decodedToken.role === 'trainer';
+    }
+    return false;
+  }
 
 }

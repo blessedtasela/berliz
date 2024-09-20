@@ -115,7 +115,7 @@ export class TrainerService {
     }
   
     getMyTrainerBenefits() {
-      return this.httpClient.get(this.url + "/trainer/getMyTrainerBenefits");
+      return this.httpClient.get(this.url + "/trainer/getMyTrainerBenefit");
     }
   
     addTrainerIntroduction(data: any) {
@@ -184,8 +184,8 @@ export class TrainerService {
       return this.httpClient.get(this.url + "/trainer/getAllTrainerFeatureVideos");
     }
   
-    getMyTrainerFeatureVideos() {
-      return this.httpClient.get(this.url + "/trainer/getMyTrainerFeatureVideos");
+    getMyTrainerFeatureVideo() {
+      return this.httpClient.get(this.url + "/trainer/getMyTrainerFeatureVideo");
     }
   
     likeTrainerReview(id: number) {

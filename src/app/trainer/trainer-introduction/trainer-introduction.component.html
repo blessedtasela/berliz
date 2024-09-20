@@ -41,11 +41,11 @@
                     <div class="mx-auto p-2 w-full">
                         <span class="sr-only">Introduction</span>
                         <span class="ml-4 font-bold text-gray-600 italic">introduction</span>
-                        <textarea formControlName="introduction" [value]="trainerIntroduction.introduction"
-                            [(ngModel)]="trainerIntroduction.introduction"
+                        <textarea formControlName="introduction"
                             class="w-full text-sm px-4 py-2 m-2 rounded-md bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                             [ngClass]="{'border-red-400': updateTrainerIntroductionForm.get('introduction')?.invalid && updateTrainerIntroductionForm.get('introduction')?.dirty }"
-                            placeholder="Please introduce yourself in a concise manner, using no more than 1000 words. Highlight your achievements, qualifications, and experience, providing potential clients with a clear understanding of your expertise and professionalism."
+                            placeholder="Please introduce yourself in a concise manner, using no more than 1000 words. Highlight your achievements, qualifications, and experience,
+                             providing potential clients with a clear understanding of your expertise and professionalism."
                             rows="20" cols="60"></textarea>
                         <div *ngIf="updateTrainerIntroductionForm.get('introduction')?.invalid && updateTrainerIntroductionForm.get('introduction')?.dirty"
                             class="text-red-500 mx-2">
@@ -67,10 +67,10 @@
                                         onerror="this.src='../../../assets/icons/user.png';">
                                 </div>
                             </div>
-                            <input formControlName="coverPhoto"
+                            <input 
                                 class="border-b-2 px-4 py-2 rounded-md m-2 border-gray-400  hover:border-gray-400 focus:border-gray-400 focus:outline-none
-                        block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
-                        file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
+                                 block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
+                                 file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
                                 [ngClass]="{'border-gray-950': updateTrainerIntroductionForm.get('coverPhoto')?.invalid && updateTrainerIntroductionForm.get('coverPhoto')?.dirty }"
                                 (change)="onImgSelected($event)" type="file" accept="/image">
                         </div>

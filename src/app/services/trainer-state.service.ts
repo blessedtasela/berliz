@@ -29,14 +29,20 @@ export class TrainerStateService {
   private myTrainerPricingSubject = new BehaviorSubject<any>(null);
   public myTrainerPricingData$: Observable<TrainerPricing> = this.myTrainerPricingSubject.asObservable();
 
+  private allTrainerIntroductionsSubject = new BehaviorSubject<any>(null);
+  public allTrainerIntroductionsData$: Observable<any> = this.allTrainerIntroductionsSubject.asObservable();
+
   private myTrainerIntroductionSubject = new BehaviorSubject<any>(null);
   public myTrainerIntroductionData$: Observable<any> = this.myTrainerIntroductionSubject.asObservable();
 
   private myTrainerPhotoAlbumsSubject = new BehaviorSubject<any>(null);
   public myTrainerPhotoAlbumsData$: Observable<TrainerPhotoAlbum> = this.myTrainerPhotoAlbumsSubject.asObservable();
 
-  private myTrainerBenefitsSubject = new BehaviorSubject<any>(null);
-  public myTrainerBenefitsData$: Observable<TrainerBenefits> = this.myTrainerBenefitsSubject.asObservable();
+  private allTrainerBenefitsSubject = new BehaviorSubject<any>(null);
+  public allTrainerBenefitsData$: Observable<TrainerBenefits> = this.allTrainerBenefitsSubject.asObservable();
+
+  private myTrainerBenefitSubject = new BehaviorSubject<any>(null);
+  public myTrainerBenefitData$: Observable<TrainerBenefits> = this.myTrainerBenefitSubject.asObservable();
 
   private myTrainerVideoAlbumsSubject = new BehaviorSubject<any | null>(null);
   public myTrainerVideoAlbumsData$: Observable<TrainerVideoAlbum> = this.myTrainerVideoAlbumsSubject.asObservable();
@@ -47,8 +53,11 @@ export class TrainerStateService {
   private myActiveClientsSubject = new BehaviorSubject<any>(null);
   public myActiveClientsData$: Observable<TrainerClients> = this.myActiveClientsSubject.asObservable();
 
-  private myTrainerFeatureVideosSubject = new BehaviorSubject<any>(null);
-  public myTrainerFeatureVideosData$: Observable<TrainerFeatureVideo> = this.myTrainerFeatureVideosSubject.asObservable();
+  private myTrainerFeatureVideoSubject = new BehaviorSubject<any>(null);
+  public myTrainerFeatureVideoData$: Observable<TrainerFeatureVideo> = this.myTrainerFeatureVideoSubject.asObservable();
+
+  private allTrainerFeatureVideosSubject = new BehaviorSubject<any>(null);
+  public allTrainerFeatureVideosData$: Observable<TrainerFeatureVideo[]> = this.allTrainerFeatureVideosSubject.asObservable();
 
   private trainerReviewLikesSubject = new BehaviorSubject<any>(null);
   public trainerReviewLikesData$: Observable<TrainerReview> = this.trainerReviewLikesSubject.asObservable();
@@ -97,6 +106,12 @@ export class TrainerStateService {
     this.myTrainerPricingSubject.next(data);
   }
 
+  setAllTrainerIntroductionsSubject(trainerIntroduction: TrainerIntrodution) {
+    if (trainerIntroduction !== null) {
+      this.allTrainerIntroductionsSubject.next(trainerIntroduction);
+    }
+  }
+
   setMyTrainerIntroductionSubject(trainerIntroduction: TrainerIntrodution) {
     if (trainerIntroduction !== null) {
       this.myTrainerIntroductionSubject.next(trainerIntroduction);
@@ -107,8 +122,16 @@ export class TrainerStateService {
     this.myTrainerPhotoAlbumsSubject.next(data);
   }
 
-  setMyTrainerBenefitsSubject(data: any) {
-    this.myTrainerBenefitsSubject.next(data);
+  setAllTrainerBenefitsSubject(trainerBenefit: TrainerBenefits) {
+    if (trainerBenefit !== null) {
+      this.allTrainerBenefitsSubject.next(trainerBenefit);
+    }
+  }
+
+  setMyTrainerBenefitSubject(trainerBenefit: TrainerBenefits) {
+    if (trainerBenefit !== null) {
+      this.myTrainerBenefitSubject.next(trainerBenefit);
+    }
   }
 
   setMyTrainerVideoAlbumsSubject(data: any) {
@@ -123,8 +146,14 @@ export class TrainerStateService {
     this.myActiveClientsSubject.next(data);
   }
 
-  setMyTrainerFeatureVideosSubject(data: any) {
-    this.myTrainerFeatureVideosSubject.next(data);
+  setMyTrainerFeatureVideoSubject(trainerFeatureVideo: TrainerFeatureVideo) {
+    if (trainerFeatureVideo !== null)
+      this.myTrainerFeatureVideoSubject.next(trainerFeatureVideo);
+  }
+
+  setAllTrainerFeatureVideosSubject(trainerFeatureVideos: TrainerFeatureVideo) {
+    if (trainerFeatureVideos !== null)
+      this.allTrainerFeatureVideosSubject.next(trainerFeatureVideos);
   }
 
   setTrainerReviewLikesSubject(data: any) {
@@ -235,6 +264,21 @@ export class TrainerStateService {
     );
   }
 
+  getAllTrainerIntroductions(): Observable<TrainerIntrodution> {
+    return this.trainerService.getAllTrainerIntroductions().pipe(
+      tap((response: any) => {
+        if (response) {
+          this.setMyTrainerIntroductionSubject(response);
+          return response;
+        }
+      }),
+      catchError((error) => {
+        this.handleErrors(error);
+        return of();
+      })
+    );
+  }
+
   getMyTrainerIntroduction(): Observable<TrainerIntrodution> {
     return this.trainerService.getMyTrainerIntroduction().pipe(
       tap((response: any) => {
@@ -250,7 +294,71 @@ export class TrainerStateService {
     );
   }
 
-  // Add other get APIs here...
+  getAllTrainerBenefits(): Observable<TrainerBenefits[]> {
+    return this.trainerService.getAllTrainerBenefits().pipe(
+      tap((response: any) => {
+        if (response) {
+          this.setAllTrainerBenefitsSubject(response.sort((a: TrainerBenefits, b: TrainerBenefits) => {
+            const dateA = new Date(a.date).getTime();
+            const dateB = new Date(b.date).getTime();
+            return dateB - dateA;
+          }));
+        }
+      }),
+      catchError((error) => {
+        this.handleErrors(error);
+        return of([]);
+      })
+    );
+  }
+
+  getMyTrainerBenefits(): Observable<TrainerBenefits> {
+    return this.trainerService.getMyTrainerBenefits().pipe(
+      tap((response: any) => {
+        if (response) {
+          this.setMyTrainerBenefitSubject(response);
+          return response;
+        }
+      }),
+      catchError((error) => {
+        this.handleErrors(error);
+        return of();
+      })
+    );
+  }
+
+  getAllTrainerFeatureVideos(): Observable<TrainerFeatureVideo[]> {
+    return this.trainerService.getAllTrainerFeatureVideos().pipe(
+      tap((response: any) => {
+        if (response) {
+          this.setAllTrainerFeatureVideosSubject(response.sort((a: TrainerFeatureVideo, b: TrainerFeatureVideo) => {
+            const dateA = new Date(a.date).getTime();
+            const dateB = new Date(b.date).getTime();
+            return dateB - dateA;
+          }));
+        }
+      }),
+      catchError((error) => {
+        this.handleErrors(error);
+        return of([]);
+      })
+    );
+  }
+
+  getMyTrainerFeatureVideo(): Observable<TrainerFeatureVideo> {
+    return this.trainerService.getMyTrainerFeatureVideo().pipe(
+      tap((response: any) => {
+        if (response) {
+          this.setMyTrainerBenefitSubject(response);
+          return response;
+        }
+      }),
+      catchError((error) => {
+        this.handleErrors(error);
+        return of();
+      })
+    );
+  }
 
   private handleErrors(error: any): void {
     if (error.error?.message) {

@@ -38,8 +38,7 @@ export class LandingPageComponent implements OnInit {
   }
 
   @HostListener('window:scroll', [])
-  onWindowScroll() {
-  }
+  onWindowScroll() {}
 
   handleEmitEvent() {
     this.newsletterStateService.getAllNewsletters().subscribe((newsletter) => {

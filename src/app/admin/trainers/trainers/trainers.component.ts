@@ -20,6 +20,7 @@ export class TrainersComponent {
   }
 
   ngOnInit(): void {
+    this.ngxService.start()
     this.trainerStateService.allTrainersData$.subscribe((cachedData) => {
       if (!cachedData) {
         this.handleEmitEvent()
@@ -29,17 +30,15 @@ export class TrainersComponent {
         this.trainersLength = cachedData.length
       }
     });
+    this.ngxService.stop()
   }
 
   handleEmitEvent() {
     this.trainerStateService.getAllTrainers().subscribe((allTrainers) => {
-      this.ngxService.start()
       console.log('isCachedData false')
       this.trainersData = allTrainers;
       this.totalTrainers = allTrainers.length
       this.trainersLength = allTrainers.length
-      this.trainerStateService.setAllTrainersSubject(this.trainersData);
-      this.ngxService.stop()
     });
   }
 

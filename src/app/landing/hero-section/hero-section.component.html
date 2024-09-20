@@ -1,4 +1,4 @@
-<section class="flex bg-gray-100 p-2 hero rounded-md font-mono">
+<section class="flex bg-gray-100 p-4 md:p-2 h-screen hero rounded-md font-mono">
     <div class="grid lg:grid-cols-2 items-center justify-items-center gap-5 cursor-pointer "
         *ngFor="let h of heroes; let i = index" [class.hidden]=" i !== heroIndex">
         <div class="flex flex-col justify-center items-center overflow-hidden transition-auto duration-3000 ease-in-out flex-none">
@@ -6,7 +6,7 @@
                 {{ h.title }} <span class="font-bold text-red-600">Berliz</span>
             </p>
             <P class="mt-2 px-4 lg:px-8 text-justify text-md lg:text-lg italic text-gray-800">
-                Become our member today and Unlock a World of Unlimited Services
+                Become our Member Today and Unlock a World of Unlimited Services
             </P>
             <button class="mt-8 text-md lg:text-lg bg-red-600 text-white py-1 px-3 hover:bg-red-700 hero-button 
                 transition-all duration-300 transform hover:scale-105 focus:scale-105">

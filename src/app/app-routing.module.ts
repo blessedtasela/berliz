@@ -79,12 +79,6 @@ const routes: Routes = [
   { path: 'login/reset-password', component: ResetPasswordComponent },
   { path: 'login/activate-account', component: ActivateAccountComponent },
 
-
-  // nested components
-  {
-    path: 'products', component: ProductsPageComponent, children: productChildRoutes
-  },
-
   // dashboard protected components
   {
     path: 'dashboard', component: DashboardComponent,
@@ -526,6 +520,12 @@ const routes: Routes = [
       },
     ],
   },
+
+   // nested components
+   {
+    path: 'products', component: ProductsPageComponent, children: productChildRoutes
+  },
+
   //handles other exceptions
   { path: '**', component: PageNotFoundComponent },
 

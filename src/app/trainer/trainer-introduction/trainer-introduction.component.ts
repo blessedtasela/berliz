@@ -1,10 +1,11 @@
-import { DatePipe } from '@angular/common';
+import { group } from '@angular/animations';
+import { DatePipe, formatDate } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription, Observable, map, catchError, of } from 'rxjs';
-import { TrainerIntrodution } from 'src/app/models/trainers.interface';
+import { Subscription, Observable, map, catchError, of, pipe } from 'rxjs';
+import { TrainerIntrodution, TrainerPricing } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
@@ -41,9 +42,9 @@ export class TrainerIntroductionComponent {
   ngOnInit(): void {
     this.trainerIntroduction = this.trainerIntroduction || {};
     this.updateTrainerIntroductionForm = this.formBuilder.group({
-      'id': this.trainerIntroduction?.id,
-      'introduction': new FormControl(this.trainerIntroduction.introduction, Validators.compose([Validators.required, Validators.minLength(500)])),
-      'coverPhoto': new FormControl(this.trainerIntroduction.coverPhoto, Validators.compose([Validators.required])),
+      id: this.trainerIntroduction?.id,
+      introduction: [this.trainerIntroduction.introduction, Validators.compose([Validators.required, Validators.minLength(500)])],
+      coverPhoto: [Validators.required]
     });
   }
 
@@ -53,13 +54,12 @@ export class TrainerIntroductionComponent {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
-
   handleEmitEvent() {
     this.subscriptions.push(
-      this.trainerStateService.getMyTrainerIntroduction().subscribe((trainerIntroduction) => {
+      this.trainerStateService.getMyTrainerIntroduction().subscribe(trainerIntroduction => {
         this.trainerIntroduction = trainerIntroduction;
         this.trainerStateService.setMyTrainerIntroductionSubject(trainerIntroduction);
-      }),
+      })
     );
   }
 
@@ -93,6 +93,14 @@ export class TrainerIntroductionComponent {
     }
   }
 
+  updateFormValues(trainerIntroduction: TrainerIntrodution) {
+    this.updateTrainerIntroductionForm.patchValue({
+      id: trainerIntroduction.id,
+      introduction: trainerIntroduction.introduction,
+      coverPhoto: trainerIntroduction.coverPhoto,
+    });
+  }
+
   imageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.blob;
   }
@@ -116,8 +124,6 @@ export class TrainerIntroductionComponent {
     this.showCropper = false;
   }
 
-
-
   formatDate(dateString: any): any {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');
@@ -129,23 +135,25 @@ export class TrainerIntroductionComponent {
         return !!trainerIntroduction;
       }),
       catchError(() => {
-        // If an error occurs (e.g., trainer introduction not found), it does not exist
         return of(false);
       })
     );
   }
 
   updateTrainerIntroduction(): void {
-    if (this.updateTrainerIntroductionForm.invalid) {
+    if (this.updateTrainerIntroductionForm.invalid || !this.croppedImage) {
       this.invalidForm = true;
       this.responseMessage = "Invalid form. Please complete all sections";
       this.snackBarService.openSnackBar(this.responseMessage, "error");
-      return; // Exit early if the form is invalid
+      return;
     }
 
     const requestData = new FormData();
     requestData.append('introduction', this.updateTrainerIntroductionForm.get('introduction')?.value);
     requestData.append('coverPhoto', this.croppedImage);
+
+    const trainerIntroduction = this.updateTrainerIntroductionForm.value;
+
 
     this.ngxService.start();
     if (this.trainerIntroduction.id) {
@@ -162,6 +170,8 @@ export class TrainerIntroductionComponent {
           this.showCropper = false
           this.handleEmitEvent()
           this.emitEvent.emit();
+          this.updateFormValues(trainerIntroduction);
+          this.croppedImage = null;
           this.isChecked = false;
           this.ngxService.stop();
         }, (error: any) => {
@@ -184,6 +194,8 @@ export class TrainerIntroductionComponent {
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.showCropper = false
           this.handleEmitEvent()
+          this.updateFormValues(trainerIntroduction);
+          this.croppedImage = null;
           this.emitEvent.emit();
           this.ngxService.stop();
         }, (error: any) => {

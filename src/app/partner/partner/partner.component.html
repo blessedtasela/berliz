@@ -1,9 +1,18 @@
-<app-partner-null *ngIf="!partner" [user]="user" [partnerData]="partner" (onEmit)="emitData()"></app-partner-null>
-<app-partner-application *ngIf="partner" [trainer]="trainer" [center]="center" [partnerData]="partner" [user]="user"
-    (onEmit)="emitData()">
-</app-partner-application>
-<app-center *ngIf="center " [centerData]="center" [user]="user" [partnerData]="partner"
-    (onEmit)="emitData()"></app-center>
-<app-trainer *ngIf="trainer " [trainerData]="trainer" [user]="user" [partnerData]="partner"
-    (onEmit)="emitData()"></app-trainer>
-<app-partner-data [partnerData]="partner" (onEmit)="emitData()"></app-partner-data>
+<div *ngIf="componentLoaded; else loading">
+
+    <app-partner-null *ngIf="!partner" [user]="user" [partnerData]="partner" (onEmit)="emitData()"></app-partner-null>
+    <app-partner-application *ngIf="partner" [trainer]="trainer" [center]="center" [partnerData]="partner" [user]="user"
+        (onEmit)="emitData()">
+    </app-partner-application>
+    <app-center *ngIf="center " [centerData]="center" [user]="user" [partnerData]="partner"
+        (onEmit)="emitData()"></app-center>
+    <app-trainer *ngIf="trainer " [trainerData]="trainer" [user]="user" [partnerData]="partner"
+        (onEmit)="emitData()"></app-trainer>
+    <app-partner-data [partnerData]="partner" (onEmit)="emitData()"></app-partner-data>
+
+</div>
+
+<ng-template #loading>
+    <!-- Show a loader or message while data is being loaded -->
+    <p>Loading data, please wait...</p>
+</ng-template>

@@ -46,11 +46,11 @@ export class TrainerDataComponent {
     this.selectedCategoriesId = this.trainer.categorySet.map(category => category.id);
     this.updateTrainerForm = this.formBuilder.group({
       'id': this.trainer?.id,
-      'name': new FormControl(this.trainer.name, Validators.compose([Validators.required, Validators.minLength(3)])),
-      'motto': new FormControl(this.trainer.motto, Validators.compose([Validators.required, Validators.minLength(10)])),
-      'address': new FormControl(this.trainer.address, Validators.compose([Validators.required, Validators.minLength(10)])),
-      'experience': new FormControl(this.trainer.experience, Validators.compose([Validators.required, Validators.minLength(1)])),
-      'likes': new FormControl(this.trainer.likes, Validators.compose([Validators.required, Validators.minLength(1)])),
+      'name': [this.trainer.name, Validators.compose([Validators.required, Validators.minLength(3)])],
+      'motto': [this.trainer.motto, Validators.compose([Validators.required, Validators.minLength(10)])],
+      'address': [this.trainer.address, Validators.compose([Validators.required, Validators.minLength(10)])],
+      'experience': [this.trainer.experience, Validators.compose([Validators.required, Validators.minLength(1)])],
+      'likes': [this.trainer.likes, Validators.compose([Validators.required, Validators.minLength(1)])],
       'categoryIds': this.formBuilder.array(this.selectedCategoriesId, this.validateCheckbox()),
     });
   }
@@ -62,7 +62,6 @@ export class TrainerDataComponent {
   ngOnDestroy() {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
-
 
   handleEmitEvent() {
     this.subscriptions.push(
@@ -86,6 +85,17 @@ export class TrainerDataComponent {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
+  updateFormValues(trainer: Trainers) {
+    this.updateTrainerForm.patchValue({
+      id: trainer.id,
+      name: trainer.name,
+      motto: trainer.motto,
+      address: trainer.address,
+      likes: trainer.likes,
+      experience: trainer.experience,
+      categoryIds: trainer.categoryIds
+    });
+  }
 
   validateCheckbox(): ValidatorFn {
     return (formArray: AbstractControl) => {
@@ -116,7 +126,6 @@ export class TrainerDataComponent {
       ...this.updateTrainerForm.value,
       categoryIds: categoryToStrings
     };
-
     if (this.updateTrainerForm.invalid) {
       this.ngxService.start();
       this.invalidForm = true;
@@ -131,6 +140,7 @@ export class TrainerDataComponent {
           this.invalidForm = false;
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");
+          this.updateFormValues(this.updateTrainerForm.value)
           this.ngxService.stop();
           this.emitEvent.emit();
         }, (error: any) => {

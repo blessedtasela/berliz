@@ -31,6 +31,7 @@ export interface Trainers {
   date: Date;
   lastUpdate: Date;
   status: string;
+  categoryIds: [];
 }
 
 export interface TrainerPricing {
@@ -104,7 +105,7 @@ export interface TrainerCategory {
 export interface TrainerBenefits {
   id: number;
   trainerId: number;
-  benefit: string;
+  benefits: string[];
   date: Date;
   lastUpdate: Date;
 }

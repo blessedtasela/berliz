@@ -1,1 +1,64 @@
-<p>trainer-benefits works!</p>
+<div class="bg-gray-100 font-sans rounded-lg">
+    <div class="flex items-center justify-center">
+        <div class="bg-white p-6 mt-20 mb-10 lg-rounded w-full">
+            <form [formGroup]="updateTrainerBenefitForm">
+                <header class="justify-start p-2 text-gray-950 font-bold font-sans">
+                    <h1 class="text-xl text-red-600">Trainer's Benefits
+                        <span *ngIf="!trainerBenefit.id" class="text-sm mx-2 text-gray-700 italic">
+                            (action required)</span>
+                    </h1>
+                    <span class="text-md flex text-gray-700">
+                        Date registered: {{ trainerBenefit.date ? formatDate(trainerBenefit.date) : 'N/A' }}
+                    </span>
+                </header>
+                <div class="border-b-2"></div>
+                <div class="invalid-form">
+                    <span *ngIf="updateTrainerBenefitForm.invalid && invalidForm" class="mx-2 text-red-600">
+                        At least 5 Benefits and Input fields cannot be empty
+                    </span>
+                    <span *ngIf="updateTrainerBenefitForm.valid && invalidForm" class="mx-2 text-gray-600">
+                        Eerything looks good!
+                    </span>
+                </div>
+                <div class="flex flex-col items-center justify-center gap-2 w-full p-2 text-gray-950">
+                    <div class="mx-auto p-2 w-full">
+                        <span class="sr-only">Add Benefit</span>
+                        <div formArrayName="benefits">
+                            <div *ngFor="let benefit of getBenefits().controls; let i = index" [formGroupName]="i">
+                                <div class="w-full flex items-center space-x-2">
+                                    <span class="font-bold text-gray-600 italic">{{ i + 1 }}.</span>
+                                    <input formControlName="benefit"
+                                        class="w-full text-sm px-4 py-2 m-2 rounded-md bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                                        [ngClass]="{'border-red-400': benefit.invalid && (benefit.dirty || invalidForm) }"
+                                        placeholder="e.g Increased strength and flexibility guaranteed" type="text">
+                                    <button type="button" (click)="removeBenefitField(i)"
+                                        *ngIf="getBenefits().length > 1">
+                                        <i-feather name="x" class="text-sm font-bold text-red-600"></i-feather>
+                                    </button>
+                                </div>
+                                <span *ngIf="benefit.invalid && (benefit.dirty || invalidForm)"
+                                    class="mx-2 text-red-600">
+                                    At least 15 characters
+                                </span>
+                            </div>
+                        </div>
+                        <button type="button" class="bg-gray-200 text-sm text-red-600 p-1 px-2 rounded-md mt-2"
+                            (click)="addBenefitField()">
+                            Add More Benefits
+                        </button>
+                        <div *ngIf="getBenefits().length === 0" class="text-red-500 mx-2">
+                            At least one benefit is required
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center col-span-2">
+                        <button
+                            class="bg-red-600 rounded-md mx-auto m-2 py-1 px-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
+                            type="submit" (click)="updateTrainerBenefit()">
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

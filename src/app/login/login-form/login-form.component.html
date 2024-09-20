@@ -5,7 +5,6 @@
             <button (click)="clear()">
                 <feather-icon name="rotate-ccw" class="-mb-2 ml-2" style="width: 17px;"></feather-icon>
             </button>
-
         </h3>
         <h3 class="text-red-600 ml-16 col-span-2 font-bold text-sm mx-auto">
             Enter login details below
@@ -19,7 +18,7 @@
                     Please enter email and password
                 </span>
                 <div class="mx-auto mt-4">
-                    <input formControlName="email" id="loginEmail"
+                    <input formControlName="email"
                         class="border-b-2 border-gray-500 w-64 md:w-96 hover:border-gray-700 focus:border-gray-800 focus:outline-none"
                         [ngClass]="{'border-red-600': loginForm.get('email')?.invalid && loginForm.get('email')?.touched }"
                         placeholder="Enter email" type="text">
@@ -29,7 +28,7 @@
                     </div>
                 </div>
                 <div class="mx-auto mt-6">
-                    <input formControlName="password" id="loginPassword"
+                    <input formControlName="password" 
                         class="border-b-2 border-gray-500 w-64 md:w-96 hover:border-gray-700 focus:border-gray-800 focus:outline-none"
                         [ngClass]="{'border-red-600': loginForm.get('password')?.invalid && loginForm.get('password')?.touched }"
                         placeholder="Password" type="password">
@@ -59,7 +58,7 @@
 </section>
 <div class="grid grid-cols p-4">
     <div class="flex items-center justify-center">
-        <div>
+        <form>
             <span>
                 Didn't receive activation mail? Enter your email address to receive confirmation code
                 <button class="p-1 px-2 bg-red-600 text-sm md:text-md text-white rounded-md"
@@ -67,10 +66,9 @@
                     Send
                 </button>
             </span>
-            <input id="activationEmail" #activationEmail
+            <input #activationEmail
                 class="mt-6 border-b-2 border-gray-500 w-64 md:w-96 hover:border-gray-700 focus:border-gray-800 focus:outline-none"
                 placeholder="Enter your email here" type="text">
-        </div>
-
+        </form>
     </div>
 </div>

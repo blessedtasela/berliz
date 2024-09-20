@@ -1,7 +1,7 @@
 <div class="bg-gray-100 font-sans rounded-lg">
     <div class="flex items-center justify-center">
         <div class="bg-white p-6 mt-20 mb-10 lg-rounded">
-            <form [formGroup]="updateTrainerPricingForm">
+            <form [formGroup]="updateTrainerPricingForm" (ngSubmit)="updateTrainerPricing()">
                 <header class="justify-start p-2 text-gray-950 font-bold font-sans">
                     <h1 class="text-xl text-red-600">Trainer's Price
                         <span *ngIf="!trainerPricing.id" class="text-sm mx-2 text-gray-700 italic">
@@ -17,127 +17,27 @@
                         Input fields cannot be empty
                     </span>
                     <span *ngIf="updateTrainerPricingForm.valid && invalidForm" class="mx-2 text-gray-600">
-                        Eerything's up to date
+                        Everything's up to date
                     </span>
                 </div>
                 <div class="grid grid-cols md:grid-cols-2 items-center justify-center gap-2 w-full p-2 text-gray-950">
-                    <div class="mx-auto p-2 w-full">
-                        <span class="sr-only">Price Online</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Price Online</span>
-                        <input formControlName="priceOnline" [value]="trainerPricing.priceOnline"
-                            [(ngModel)]="trainerPricing.priceOnline"
+                    <div *ngFor="let field of pricingFields" class="mx-auto p-2 w-full">
+                        <span class="sr-only">{{ field.label }}</span>
+                        <span class="ml-4 font-bold text-gray-600 italic">{{ field.label }}</span>
+                        <input [formControlName]="field.name"
                             class="w-full text-sm px-4 py-2 m-2 rounded-md bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': updateTrainerPricingForm.get('priceOnline')?.invalid && updateTrainerPricingForm.get('priceOnline')?.dirty }"
-                            placeholder="$59.99"
-                            type="number">
-                        <div *ngIf="updateTrainerPricingForm.get('priceOnline')?.invalid && updateTrainerPricingForm.get('priceOnline')?.dirty"
+                            [ngClass]="{'border-red-400': updateTrainerPricingForm.get(field.name)?.invalid && updateTrainerPricingForm.get(field.name)?.dirty }"
+                            [placeholder]="field.placeholder" type="number">
+                        <div *ngIf="updateTrainerPricingForm.get(field.name)?.invalid && (invalidForm || updateTrainerPricingForm.get(field.name)?.dirty)"
                             class="text-red-500 mx-2">
-                            Price Online is required
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2 w-full">
-                        <span class="sr-only">Price Personal</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Price Personal</span>
-                        <input formControlName="pricePersonal" [value]="trainerPricing.pricePersonal"
-                            [(ngModel)]="trainerPricing.pricePersonal"
-                            class="w-full text-sm px-4 py-2 m-2 rounded-md bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': updateTrainerPricingForm.get('pricePersonal')?.invalid && updateTrainerPricingForm.get('pricePersonal')?.dirty }"
-                            placeholder="$59.99"
-                            type="number">
-                        <div *ngIf="updateTrainerPricingForm.get('pricePersonal')?.invalid && updateTrainerPricingForm.get('pricePersonal')?.dirty"
-                            class="text-red-500 mx-2">
-                            Price Personal is required
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2 w-full">
-                        <span class="sr-only">Price Hybrid</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Price Hybrid</span>
-                        <input formControlName="priceHybrid" [value]="trainerPricing.priceHybrid"
-                            [(ngModel)]="trainerPricing.priceHybrid"
-                            class="w-full text-sm px-4 py-2 m-2 rounded-md bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': updateTrainerPricingForm.get('priceHybrid')?.invalid && updateTrainerPricingForm.get('priceHybrid')?.dirty }"
-                            placeholder="$59.99"
-                            type="number">
-                        <div *ngIf="updateTrainerPricingForm.get('priceHybrid')?.invalid && updateTrainerPricingForm.get('priceHybrid')?.dirty"
-                            class="text-red-500 mx-2">
-                            Price Hybrid is required
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2 w-full">
-                        <span class="sr-only">Discount 3 Months</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Discount 3 Months</span>
-                        <input formControlName="discount3Months" [value]="trainerPricing.discount3Months"
-                            [(ngModel)]="trainerPricing.discount3Months"
-                            class="w-full text-sm px-4 py-2 m-2 rounded-md bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': updateTrainerPricingForm.get('discount3Months')?.invalid && updateTrainerPricingForm.get('discount3Months')?.dirty }"
-                            placeholder="9.99 %"
-                            type="number">
-                        <div *ngIf="updateTrainerPricingForm.get('discount3Months')?.invalid && updateTrainerPricingForm.get('discount3Months')?.dirty"
-                            class="text-red-500 mx-2">
-                            Discount 3 Months is required
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2 w-full">
-                        <span class="sr-only">Discount 6 Months</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Discount 6 Months</span>
-                        <input formControlName="discount6Months" [value]="trainerPricing.discount6Months"
-                            [(ngModel)]="trainerPricing.discount6Months"
-                            class="w-full text-sm px-4 py-2 m-2 rounded-md bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': updateTrainerPricingForm.get('discount6Months')?.invalid && updateTrainerPricingForm.get('discount6Months')?.dirty }"
-                            placeholder="9.99 %"
-                            type="number">
-                        <div *ngIf="updateTrainerPricingForm.get('discount6Months')?.invalid && updateTrainerPricingForm.get('discount6Months')?.dirty"
-                            class="text-red-500 mx-2">
-                            Discount 6 months is required
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2 w-full">
-                        <span class="sr-only">Discount 9 Months</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Discount 9 Months</span>
-                        <input formControlName="discount9Months" [value]="trainerPricing.discount9Months"
-                            [(ngModel)]="trainerPricing.discount9Months"
-                            class="w-full text-sm px-4 py-2 m-2 rounded-md bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': updateTrainerPricingForm.get('discount9Months')?.invalid && updateTrainerPricingForm.get('discount9Months')?.dirty }"
-                            placeholder="9.99 %"
-                            type="number">
-                        <div *ngIf="updateTrainerPricingForm.get('discount9Months')?.invalid && updateTrainerPricingForm.get('discount9Months')?.dirty"
-                            class="text-red-500 mx-2">
-                            Discount 9 months is required
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2 w-full">
-                        <span class="sr-only">Discount 12 Months</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Discount 12 Months</span>
-                        <input formControlName="discount12Months" [value]="trainerPricing.discount12Months"
-                            [(ngModel)]="trainerPricing.discount12Months"
-                            class="w-full text-sm px-4 py-2 m-2 rounded-md bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': updateTrainerPricingForm.get('discount12Months')?.invalid && updateTrainerPricingForm.get('discount12Months')?.dirty }"
-                            placeholder="9.99 %"
-                            type="number">
-                        <div *ngIf="updateTrainerPricingForm.get('discount12Months')?.invalid && updateTrainerPricingForm.get('discount12Months')?.dirty"
-                            class="text-red-500 mx-2">
-                            Discount 12 Months is required
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2 w-full">
-                        <span class="sr-only">Discount 2 Programs</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Discount 2 Programs</span>
-                        <input formControlName="discount2Programs" [value]="trainerPricing.discount2Programs"
-                            [(ngModel)]="trainerPricing.discount2Programs"
-                            class="w-full text-sm px-4 py-2 m-2 rounded-md bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': updateTrainerPricingForm.get('discount2Programs')?.invalid && updateTrainerPricingForm.get('discount2Programs')?.dirty }"
-                            placeholder="9.99 %"
-                            type="number">
-                        <div *ngIf="updateTrainerPricingForm.get('discount2Programs')?.invalid && updateTrainerPricingForm.get('discount2Programs')?.dirty"
-                            class="text-red-500 mx-2">
-                            Discount 2 Programs is required
+                            {{ field.label }} is required
                         </div>
                     </div>
                     <div class="flex items-center justify-center col-span-2">
                         <button
                             class="bg-red-600 rounded-md mx-auto m-2 py-1 px-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                            type="submit" (click)="updateTrainerPricing()">
-                            save
+                            type="submit">
+                            Save
                         </button>
                     </div>
                 </div>
