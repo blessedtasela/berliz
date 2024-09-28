@@ -350,7 +350,7 @@ export class TrainerStateService {
       tap((response: any) => {
         if (response) {
           this.setMyTrainerBenefitSubject(response);
-          return response;
+      
         }
       }),
       catchError((error) => {

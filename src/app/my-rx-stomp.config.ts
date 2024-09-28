@@ -1,11 +1,11 @@
 import { RxStomp, RxStompConfig } from '@stomp/rx-stomp';
-import { brokerURL } from 'src/environments/environment';
+import { environment } from 'src/environments/environment';
 const token = localStorage.getItem('token');
 
 export const myRxStompConfig: RxStompConfig = {
   
   // Which server?
-  brokerURL: brokerURL,
+  brokerURL: environment.brokerURL,
 
   // How often to heartbeat?
   // Interval in milliseconds, set to 0 to disable

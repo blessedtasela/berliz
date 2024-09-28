@@ -41,14 +41,14 @@
                         <span class="ml-4 font-bold text-gray-600 italic">Cover video</span>
                         <div class="flex">
                             <div class="shrink-0 group relative" *ngIf="trainerFeatureVideo.video">
-                                <img class="h-16 w-16 object-cover rounded-full cursor-pointer"
-                                    [src]="'data:video;base64,' + trainerFeatureVideo.video"
-                                    onerror="this.src='../../../assets/icons/user.png';" alt="Display video" />
+                                <video class="h-16 w-16 object-cover rounded-full cursor-pointer"
+                                    [src]="trainerFeatureVideo.video"
+                                    onerror="this.src='../../../assets/icons/user.png';" alt="Display video" ></video>
                                 <div class="hidden group-hover:block fixed top-1/2 left-1/2 transform -translate-x-1/2
                                     -translate-y-1/2 bg-black bg-opacity-50 p-4 rounded-lg ">
-                                    <img [src]="'data:video;base64,' + trainerFeatureVideo.video"
+                                    <video [src]="trainerFeatureVideo.video"
                                         class="rounded-md p-1 object-cover "
-                                        onerror="this.src='../../../assets/icons/user.png';">
+                                        onerror="this.src='../../../assets/icons/user.png';"></video>
                                 </div>
                             </div>
                             <input
