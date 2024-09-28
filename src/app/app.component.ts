@@ -33,7 +33,7 @@ export class AppComponent {
 
 
   isTopbar(): boolean {
-    const topbarRoutes = ['/home', '/centers', '/trainers', '/about', '/categories', '/contact'];
+    const topbarRoutes = ['/home', '/centers', '/trainers', '/about', '/services', '/contact'];
     return topbarRoutes.some(route => this.router.url?.startsWith(route));
   }
 

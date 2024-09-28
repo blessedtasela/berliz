@@ -71,8 +71,8 @@ const routes: Routes = [
   { path: 'trainers/:id/:name', component: TrainersDetailsComponent, canActivate: [TrainerGuard] },
   { path: 'centers', component: CenterPageComponent },
   { path: 'centers/:id/:name', component: CenterDetailComponent, canActivate: [CenterGuard] },
-  { path: 'categories', component: CategoriesComponent },
-  { path: 'categories/:id/:name', component: CategoryDetailsComponent, canActivate: [CategoryGuard] },
+  { path: 'services', component: CategoriesComponent },
+  { path: 'services/:id/:name', component: CategoryDetailsComponent, canActivate: [CategoryGuard] },
   { path: 'testimonials', component: TestimonialPageComponent },
   { path: 'equipments', component: EquipmentPageComponent },
   { path: 'report-problem', component: ReportProblemPageComponent },
@@ -190,7 +190,7 @@ const routes: Routes = [
             }
           },
           {
-            path: 'categories', component: CategoryComponent, canActivate: [RouteGuardService],
+            path: 'services', component: CategoryComponent, canActivate: [RouteGuardService],
             data: {
               expectedRole: ['admin']
             },
@@ -495,7 +495,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'categories', component: CategoryComponent, canActivate: [RouteGuardService],
+        path: 'services', component: CategoryComponent, canActivate: [RouteGuardService],
         data: {
           expectedRole: ['admin']
         },
