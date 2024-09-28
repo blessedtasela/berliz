@@ -1,0 +1,5 @@
+User-agent: *    # This means all search engine bots
+Allow: /         # Allow crawling of all pages
+Disallow: /admin # Disallow crawling of the admin section
+
+Sitemap: http://berliz.netlify.app/sitemap.xml  # Path to your sitemap

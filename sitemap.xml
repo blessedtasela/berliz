@@ -4,48 +4,40 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-  <!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
-
   <url>
     <loc>https://berliz.netlify.app/</loc>
     <lastmod>2024-09-28T07:04:51+00:00</lastmod>
-    <changefreq>always</changefreq>  <!-- Frequency of changes -->
-    <priority>1.0</priority>          <!-- Importance of the page -->
+    <changefreq>always</changefreq>
+    <priority>1.0</priority>
   </url>
-  
   <url>
     <loc>https://berliz.netlify.app/about</loc>
     <lastmod>2024-09-27T07:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
   <url>
     <loc>https://berliz.netlify.app/services</loc>
     <lastmod>2024-09-26T07:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-
   <url>
     <loc>https://berliz.netlify.app/contact</loc>
     <lastmod>2024-09-25T07:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-
   <url>
     <loc>https://berliz.netlify.app/trainers</loc>
     <lastmod>2024-09-24T07:00:00+00:00</lastmod>
     <changefreq>always</changefreq>
     <priority>0.9</priority>
   </url>
-  
   <url>
     <loc>https://berliz.netlify.app/centers</loc>
     <lastmod>2024-09-23T07:00:00+00:00</lastmod>
     <changefreq>always</changefreq>
-    <priority>0.6</priority>
+    <priority>1.0</priority>
   </url>
-
 </urlset>
