@@ -138,13 +138,6 @@ export class StateService {
     return value;
   }
 
-  setPauseNewsletter(value: boolean) {
-    this.showNewsletter = value
-  }
-
-  getPauseNewsletter() {
-    return this.showNewsletter;
-  }
 
   setTodaysTodo(value: string) {
     localStorage.setItem("todaysTodo", value)

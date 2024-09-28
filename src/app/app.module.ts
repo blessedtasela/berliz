@@ -17,7 +17,7 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { SharedModule } from './shared/shared.module';
 import { FeatherModule } from 'angular-feather';
 import { DashboardModule } from './dashboard/dashboard.module';
-import { RouterModule } from '@angular/router';
+import { RouterModule, UrlSerializer } from '@angular/router';
 import { ContactUsModule } from './contact-us/contact-us.module';
 import { AppRoutingModule } from './app-routing.module';
 import { CentersModule } from './centers/centers.module';
@@ -44,6 +44,7 @@ import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb
 import { BreadcrumbModule, BreadcrumbService } from 'xng-breadcrumb';
 import { PartnerModule } from './partner/partner.module';
 import { TrainerModule } from './trainer/trainer.module';
+import { UrlLowerCaseSerializer } from 'url-lower-case-serializer';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   text: "Loading....",
@@ -119,13 +120,22 @@ const dbConfig: DBConfig = {
   exports: [],
 
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorInterceptor, multi: true },
-    DatePipe,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptorInterceptor,
+      multi: true
+    },
     {
       provide: RxStompService,
       useFactory: rxStompServiceFactory,
     },
-    BreadcrumbService
+    {
+      provide: UrlSerializer,
+      useClass: UrlLowerCaseSerializer
+    },
+    BreadcrumbService,
+    DatePipe,
+
   ],
 
   bootstrap: [AppComponent],

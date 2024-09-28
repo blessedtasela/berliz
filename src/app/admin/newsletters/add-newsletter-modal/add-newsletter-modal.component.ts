@@ -46,8 +46,7 @@ export class AddNewsletterModalComponent {
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.onAddNewsletter.emit();
-          this.stateService.setShowNewsletter("true");
-          this.stateService.setPauseNewsletter(true)
+          this.stateService.setShowNewsletter("false");
           this.dialogRef.close("News letter added successfully");
         }, (error: any) => {
           this.ngxService.stop();

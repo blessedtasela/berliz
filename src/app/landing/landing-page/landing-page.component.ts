@@ -17,6 +17,7 @@ import { NewsletterPopupComponent } from 'src/app/shared/newsletter-popup/newsle
 export class LandingPageComponent implements OnInit {
   promotions: Promotions[] = [];
   offers: Offers[] = [];
+  timeoutNewsletter = 5000;
 
   constructor(private stateService: StateService,
     private dialog: MatDialog,
@@ -28,17 +29,16 @@ export class LandingPageComponent implements OnInit {
 
   ngOnInit(): void {
     const showNewsletter = this.stateService.getShowNewsletter();
-    const pauseNewsletter = this.stateService.getPauseNewsletter();
-    if (showNewsletter !== "true" && pauseNewsletter !== true) {
-      this.stateService.setPauseNewsletter(true)
+    if (showNewsletter !== 'true') {
       setTimeout(() => {
         this.openAddNewsletter();
-      }, 5000);
+        this.stateService.setShowNewsletter('true')
+      }, this.timeoutNewsletter);
     }
   }
 
   @HostListener('window:scroll', [])
-  onWindowScroll() {}
+  onWindowScroll() { }
 
   handleEmitEvent() {
     this.newsletterStateService.getAllNewsletters().subscribe((newsletter) => {
