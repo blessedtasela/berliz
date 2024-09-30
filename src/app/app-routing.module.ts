@@ -59,6 +59,8 @@ import { TrainerDetailsComponent } from './trainer/trainer-details/trainer-detai
 import { PartnerRouteComponent } from './partner/partner-route/partner-route.component';
 
 const routes: Routes = [
+ 
+
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: LandingPageComponent },
   { path: 'contact', component: ContactUsPageComponent },
