@@ -26,9 +26,9 @@ export class NavigationBarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.subscribeToCloseNavBarOnMouseDown()
+    // this.subscribeToCloseNavBarOnMouseDown()
     this.subscribeToCloseNavBarOnScroll()
-    this.subscribeToCloseNavBarOnClick()
+    // this.subscribeToCloseNavBarOnClick()
   }
 
   handleEmitEvent() {

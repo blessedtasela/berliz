@@ -1,26 +1,31 @@
 <ngx-ui-loader></ngx-ui-loader>
-<div *ngIf="isTopbar()">
-    <app-navigation-bar></app-navigation-bar>
-    <router-outlet></router-outlet>
-    <app-footer></app-footer>
-</div>
-<div *ngIf="isLogin()">
-    <router-outlet></router-outlet>
-</div>
-<div *ngIf="isSidebar()">
-    <div class="relative min-h-screen flex">
-        <app-top-bar></app-top-bar>
-        <app-side-bar class="mt-2"></app-side-bar>
-        <div class="flex p-4 full-width">
-            <div class="width rounded-lg mt-24">
-                <router-outlet></router-outlet>
-                <app-footer></app-footer>
+<div *ngIf="(!isTopbar() || !isSidebar() || !isLogin()); else pageNotFound">
+    <div *ngIf="isTopbar()">
+        <app-navigation-bar></app-navigation-bar>
+        <router-outlet></router-outlet>
+        <app-footer></app-footer>
+    </div>
+    <div *ngIf="isLogin()">
+        <router-outlet></router-outlet>
+    </div>
+    <div *ngIf="isSidebar()">
+        <div class="relative min-h-screen flex">
+            <app-top-bar></app-top-bar>
+            <app-side-bar class="mt-2"></app-side-bar>
+            <div class="flex p-4 full-width">
+                <div class="width rounded-lg mt-24">
+                    <router-outlet></router-outlet>
+                    <app-footer></app-footer>
+                </div>
             </div>
         </div>
     </div>
+
+
 </div>
-<div *ngIf="!isSidebar() || !isSidebar() || !isLogin()">
+
+<ng-template #pageNotFound>
     <app-navigation-bar></app-navigation-bar>
     <router-outlet></router-outlet>
     <app-footer></app-footer>
-</div>
+</ng-template>

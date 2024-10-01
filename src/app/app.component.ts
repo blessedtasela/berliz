@@ -10,6 +10,8 @@ import { environment } from 'src/environments/environment';
 })
 export class AppComponent {
   title = 'berliz';
+  currentRoute: any;
+
   constructor(private router: Router, private metaService: MetaService) { }
 
   ngOnInit(): void {
@@ -31,6 +33,9 @@ export class AppComponent {
     });
   }
 
+  isActive(path: string): boolean {
+    return this.currentRoute?.startsWith('/' + path);
+  }
 
   isTopbar(): boolean {
     const topbarRoutes = ['/home', '/centers', '/trainers', '/about', '/services', '/contact'];
