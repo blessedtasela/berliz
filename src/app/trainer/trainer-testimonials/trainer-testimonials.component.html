@@ -1,0 +1,45 @@
+<div class="bg-gray-100 font-sans rounded-lg">
+    <div class="flex items-center justify-center">
+        <div class="bg-white p-6 mt-20 mb-10 lg-rounded">
+            <div class="justify-start p-2 text-gray-950 font-bold font-sans">
+                <h1 class="text-xl text-red-600">Testimonials </h1>
+            </div>
+            <div class="justify-between flex p-2">
+                <h1 class="text-md text-gray-600">Search testimonials </h1>
+                <h1 class="text-md text-gray-600">Sort testimonials </h1>
+            </div>
+            <div class="border-b-2"></div>
+            <div class="font-mono text-xl mb-5 text-center" *ngIf="trainerTestimonials.length ===0">
+                You currently have no client.
+            </div>
+            <div class="mt-20 flex justify-center mb-2 space-y-1 mx-auto p-1 font-mono"
+                *ngIf="trainerTestimonials.length !==0">
+                <div class="grid grid-cols-2 lg:grid-cols-6 md:grid-cols-4 gap-10 items-center mx-auto p-6">
+                    <section *ngFor="let trainerTestimonial of trainerTestimonials; let i = index"
+                        [ngClass]="{ 'hidden' : i >= 1 && !showAllTestimonials }">
+                        <div class="flex  items-center justify-center
+                                transition-all duration-300  hover:scale-105 focus:scale-105">
+                            <div class="justify-center items-center gap-2">
+                                <a href="../../../assets/trainers/t10.jpg">
+                                    <img src="../../../assets/trainers/t10.jpg" class="w-16 md:w-20 rounded-full" />
+                                </a>
+                            </div>
+                            <div class="items-center justify-items-center gap-2">
+                                <p class="w-full text-center text-sm p-4 text-red-600 font-bold font-mono">
+                                    John Gideon
+                                </p>
+                                <p>{{trainerTestimonial.testimonial}}</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div *ngFor="let review of trainerTestimonials; let i = index" class="flex">
+                <button class="mt-2 p-1 px-2 text-gray-600 bg-gray-100 text-sm rounded-md items-center justify-center"
+                    (click)="allReviews()" [ngClass]="{ 'hidden' : i <= 1 && !showAllTestimonials }">
+                    {{ !showAllTestimonials ? 'See more' : 'See less' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

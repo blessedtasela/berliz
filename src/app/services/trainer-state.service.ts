@@ -38,6 +38,9 @@ export class TrainerStateService {
   private myTrainerPhotoAlbumsSubject = new BehaviorSubject<any>(null);
   public myTrainerPhotoAlbumsData$: Observable<TrainerPhotoAlbum> = this.myTrainerPhotoAlbumsSubject.asObservable();
 
+  private allTrainerPhotoAlbumsSubject = new BehaviorSubject<any>(null);
+  public allTrainerPhotoAlbumsData$: Observable<TrainerPhotoAlbum> = this.allTrainerPhotoAlbumsSubject.asObservable();
+
   private allTrainerBenefitsSubject = new BehaviorSubject<any>(null);
   public allTrainerBenefitsData$: Observable<TrainerBenefits> = this.allTrainerBenefitsSubject.asObservable();
 
@@ -118,8 +121,13 @@ export class TrainerStateService {
     }
   }
 
-  setMyTrainerPhotoAlbumsSubject(data: any) {
-    this.myTrainerPhotoAlbumsSubject.next(data);
+  setMyTrainerPhotoAlbumsSubject(trainerPhotoAlbum: TrainerPhotoAlbum) {
+    this.myTrainerPhotoAlbumsSubject.next(trainerPhotoAlbum);
+  }
+
+  setAllTrainerPhotoAlbumsSubject(trainerPhotoAlbums: TrainerPhotoAlbum) {
+    if (trainerPhotoAlbums !== null)
+      this.allTrainerPhotoAlbumsSubject.next(trainerPhotoAlbums);
   }
 
   setAllTrainerBenefitsSubject(trainerBenefit: TrainerBenefits) {
@@ -350,7 +358,41 @@ export class TrainerStateService {
       tap((response: any) => {
         if (response) {
           this.setMyTrainerBenefitSubject(response);
-      
+
+        }
+      }),
+      catchError((error) => {
+        this.handleErrors(error);
+        return of();
+      })
+    );
+  }
+
+
+  getAllTrainerPhotoAlbums(): Observable<TrainerPhotoAlbum[]> {
+    return this.trainerService.getAllTrainerPhotoAlbums().pipe(
+      tap((response: any) => {
+        if (response) {
+          this.setAllTrainerPhotoAlbumsSubject(response.sort((a: TrainerPhotoAlbum, b: TrainerPhotoAlbum) => {
+            const dateA = new Date(a.date).getTime();
+            const dateB = new Date(b.date).getTime();
+            return dateB - dateA;
+          }));
+        }
+      }),
+      catchError((error) => {
+        this.handleErrors(error);
+        return of([]);
+      })
+    );
+  }
+
+  getMyTrainerPhotoAlbum(): Observable<TrainerPhotoAlbum> {
+    return this.trainerService.getMyTrainerPhotoAlbums().pipe(
+      tap((response: any) => {
+        if (response) {
+          this.setMyTrainerPhotoAlbumsSubject(response);
+
         }
       }),
       catchError((error) => {

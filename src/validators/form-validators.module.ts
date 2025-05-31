@@ -78,6 +78,18 @@ export function minArrayLength(min: number): ValidatorFn {
 }
 
 
+export const videoSizeValidator = (videoFile: File): { [key: string]: any } | null => {
+  const maxSizeInMB = 20;
+  const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+
+  if (videoFile.size > maxSizeInBytes) {
+    // Return an object with the error key and message (Angular style)
+    return { videoSizeError: `Video size exceeds ${maxSizeInMB} MB. Please upload a smaller video.` };
+
+  }
+
+  return null;  // File size is valid
+};
 
 export const genericError = "An error occured while connecting to the server";
 

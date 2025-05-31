@@ -24,7 +24,7 @@
                     <div class="mx-auto p-2 w-full">
                         <span class="sr-only">motivation</span>
                         <span class="ml-4 font-bold text-gray-600 italic">motivation</span>
-                        <textarea formControlName="motivation"
+                        <textarea formControlName="motivation" id="motivation"
                             class="w-full text-sm px-4 py-2 m-2 rounded-md bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                             [ngClass]="{'border-red-400': updateTrainerFeatureVideoForm.get('motivation')?.invalid && updateTrainerFeatureVideoForm.get('motivation')?.dirty }"
                             placeholder="Share your motivational message here. Inspire your clients by highlighting your journey, achievements, and what drives you to excel 
@@ -41,25 +41,29 @@
                         <span class="ml-4 font-bold text-gray-600 italic">Cover video</span>
                         <div class="flex">
                             <div class="shrink-0 group relative" *ngIf="trainerFeatureVideo.video">
+                                <!-- Thumbnail video with trainer name as aria-label and title -->
                                 <video class="h-16 w-16 object-cover rounded-full cursor-pointer"
                                     [src]="trainerFeatureVideo.video"
-                                    onerror="this.src='../../../assets/icons/user.png';" alt="Display video" ></video>
+                                    onerror="this.src='../../../assets/icons/user.png';"
+                                    [attr.aria-label]="trainerFeatureVideo.trainer.name + ' feature video'"
+                                    [title]="trainerFeatureVideo.trainer.name + ' feature video'" [autoplay]="true" [muted]="true"></video>
+
+                                <!-- Hover effect to show the larger video with controls -->
                                 <div class="hidden group-hover:block fixed top-1/2 left-1/2 transform -translate-x-1/2
-                                    -translate-y-1/2 bg-black bg-opacity-50 p-4 rounded-lg ">
-                                    <video [src]="trainerFeatureVideo.video"
-                                        class="rounded-md p-1 object-cover "
-                                        onerror="this.src='../../../assets/icons/user.png';"></video>
+                                    -translate-y-1/2 bg-black bg-opacity-50 p-4 rounded-lg cursor-pointer">
+                                    <video [src]="trainerFeatureVideo.video" class="rounded-md p-1 object-cover"
+                                        onerror="this.src='../../../assets/icons/user.png';" [autoplay]="true" [muted]="true"></video>
                                 </div>
-                            </div>
-                            <input
+                            </div> 
+                            <input id="videoUrl"
                                 class="border-b-2 px-4 py-2 rounded-md m-2 border-gray-400  hover:border-gray-400 focus:border-gray-400 focus:outline-none
                                  block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
                                  file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
                                 [ngClass]="{'border-gray-950': updateTrainerFeatureVideoForm.get('video')?.invalid && updateTrainerFeatureVideoForm.get('video')?.dirty }"
-                                (change)="onVidSelected($event)" type="file" accept="/image">
+                                (change)="onVidSelected($event)" type="file" accept="/video">
                         </div>
                         <div *ngIf="trainerFeatureVideo.video" class="ml-4 font-bold text-gray-600 italic">
-                            <input type="checkbox" (change)="onCurrentVideoSelected($event)" [checked]="isChecked">
+                            <input type="checkbox" (change)="onCurrentVideoSelected($event)" [checked]="isChecked" id="currentVideo">
                             select current video
                         </div>
                         <div *ngIf="updateTrainerFeatureVideoForm.get('video')?.invalid && updateTrainerFeatureVideoForm.get('video')?.dirty"

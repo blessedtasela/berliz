@@ -3,9 +3,10 @@
         <div class="bg-white p-6 mt-20 mb-10 lg-rounded">
             <form [formGroup]="updateTrainerPricingForm" (ngSubmit)="updateTrainerPricing()">
                 <header class="justify-start p-2 text-gray-950 font-bold font-sans">
-                    <h1 class="text-xl text-red-600">Trainer's Price
+                    <h1 class="text-xl text-red-600">Pricing
                         <span *ngIf="!trainerPricing.id" class="text-sm mx-2 text-gray-700 italic">
-                            (action required)</span>
+                            (action required)
+                        </span>
                     </h1>
                     <span class="text-md flex text-gray-700">
                         Date registered: {{ trainerPricing.date ? formatDate(trainerPricing.date) : 'N/A' }}
@@ -24,7 +25,7 @@
                     <div *ngFor="let field of pricingFields" class="mx-auto p-2 w-full">
                         <span class="sr-only">{{ field.label }}</span>
                         <span class="ml-4 font-bold text-gray-600 italic">{{ field.label }}</span>
-                        <input [formControlName]="field.name"
+                        <input [formControlName]="field.name" id="pricing{{field.name}}"
                             class="w-full text-sm px-4 py-2 m-2 rounded-md bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                             [ngClass]="{'border-red-400': updateTrainerPricingForm.get(field.name)?.invalid && updateTrainerPricingForm.get(field.name)?.dirty }"
                             [placeholder]="field.placeholder" type="number">

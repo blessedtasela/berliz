@@ -16,6 +16,10 @@ import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { TrainerIntroductionComponent } from './trainer-introduction/trainer-introduction.component';
+import { TrainerTestimonialsComponent } from './trainer-testimonials/trainer-testimonials.component';
+import { TrainerClientsComponent } from './trainer-clients/trainer-clients.component';
+import { TrainerSubscriptionsComponent } from './trainer-subscriptions/trainer-subscriptions.component';
+import { NgxFileDropComponent, NgxFileDropModule } from 'ngx-file-drop';
 
 @NgModule({
   declarations: [
@@ -28,7 +32,10 @@ import { TrainerIntroductionComponent } from './trainer-introduction/trainer-int
     TrainerVideoAlbumComponent,
     TrainerPricingComponent,
     TrainerReviewComponent,
-    TrainerOutletComponent
+    TrainerOutletComponent,
+    TrainerTestimonialsComponent,
+    TrainerClientsComponent,
+    TrainerSubscriptionsComponent,
   ],
   imports: [
     CommonModule,
@@ -38,7 +45,8 @@ import { TrainerIntroductionComponent } from './trainer-introduction/trainer-int
     RouterModule,
     IconsModule,
     FormsModule,
-    ImageCropperModule
+    ImageCropperModule,
+    NgxFileDropModule,
   ]
 })
 export class TrainerModule { }

@@ -27,7 +27,7 @@
                             <div *ngFor="let benefit of getBenefits().controls; let i = index" [formGroupName]="i">
                                 <div class="w-full flex items-center space-x-2">
                                     <span class="font-bold text-gray-600 italic">{{ i + 1 }}.</span>
-                                    <input formControlName="benefit"
+                                    <input formControlName="benefit" id="benefitField_{{i}}"
                                         class="w-full text-sm px-4 py-2 m-2 rounded-md bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                                         [ngClass]="{'border-red-400': benefit.invalid && (benefit.dirty || invalidForm) }"
                                         placeholder="e.g Increased strength and flexibility guaranteed" type="text">
@@ -51,7 +51,7 @@
                         </div>
                     </div>
                     <div class="flex items-center justify-center col-span-2">
-                        <button
+                        <button id="addBenefit"
                             class="bg-red-600 rounded-md mx-auto m-2 py-1 px-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
                             type="submit" (click)="updateTrainerBenefit()">
                             Save

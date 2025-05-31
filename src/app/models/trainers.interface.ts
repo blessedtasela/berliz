@@ -1,3 +1,4 @@
+import { Categories } from "./categories.interface";
 import { Clients } from "./clients.interface";
 
 export interface Trainers {
@@ -112,8 +113,8 @@ export interface TrainerBenefits {
 
 export interface TrainerReview {
   id: number;
-  trainer: Trainers;
-  client: Clients;
+  // trainer: Trainers;
+  // client: Clients;
   frontBefore: any;
   frontAfter: any;
   sideBefore: any;
@@ -127,14 +128,15 @@ export interface TrainerReview {
   status: string;
 }
 
-export interface TrainerClientSubscription {
+export interface TrainerSubscription {
   id: number;
-  clientId: number;
-  trainerId: number;
+  // trainer: Trainers;
+  // client: Clients;
+   // categories: Categories[];
   plan: string;
   mode: string;
-  categories: string;
-  date: string;
+  date: Date;
+  lastUpdate: Date;
 }
 
 export interface TrainerFeatureVideo {
@@ -164,9 +166,15 @@ export interface TrainerIntrodution {
 
 export interface TrainerClients {
   id: number;
-  trainer: Trainers;
-  photo: any;
-  comment: string;
+  // client: Clients[];
+  // trainer: Trainers;
+}
+
+export interface TrainerTestimonials{
+  id: number;
+  // trainer: Trainers;
+  // client: Clients;
+  testimonial: string;
   date: Date;
   lastUpdate: Date;
 }

@@ -45,6 +45,7 @@ import { BreadcrumbModule, BreadcrumbService } from 'xng-breadcrumb';
 import { PartnerModule } from './partner/partner.module';
 import { TrainerModule } from './trainer/trainer.module';
 import { UrlLowerCaseSerializer } from 'url-lower-case-serializer';
+import { NgxFileDropModule } from 'ngx-file-drop';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   text: "Loading....",
@@ -116,6 +117,7 @@ const dbConfig: DBConfig = {
     LoginModule,
     BreadcrumbModule,
     NgxIndexedDBModule.forRoot(dbConfig),
+    NgxFileDropModule,
   ],
   exports: [],
 

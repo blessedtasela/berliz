@@ -1,1 +1,70 @@
-<p>trainer-review works!</p>
+<div class="bg-gray-100 font-sans rounded-lg">
+    <div class="flex items-center justify-center">
+        <div class="bg-white p-6 mt-20 mb-10 lg-rounded">
+            <div class="justify-start p-2 text-gray-950 font-bold font-sans">
+                <h1 class="text-xl text-red-600">Client Reviews </h1>
+            </div>
+            <div class="justify-between flex p-2">
+                <h1 class="text-md text-gray-600">Search Reviews </h1>
+                <h1 class="text-md text-gray-600">Sort Reviews </h1>
+            </div>
+            <div class="border-b-2"></div>
+            <div class="font-mono text-xl mb-5 text-center" *ngIf="trainerReviews.length ===0">
+                You currently have no reviews.
+            </div>
+            <div class="mt-20 flex justify-center mb-2 space-y-1 mx-auto p-1 font-mono"
+                *ngIf="trainerReviews.length !==0">
+                <div class="grid lg:grid-cols-2 gap-20 items-center mx-auto p-6">
+                    <section *ngFor="let trainerReview of trainerReviews; let i = index" [ngClass] ="{ 'hidden' : i >= 1 && !showAllReviews }">
+                        <div
+                            class="w-80 lg:w-full bg-gray-100 rounded-md cursor-pointer flex items-center justify-center
+                                transition-all duration-300 transform m-w-12 hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
+                            <div class="grid lg:grid-cols items-center justify-items-center">
+                                <div class="order-2 lg:order-1 grid grid-cols justify-center items-center gap-1">
+                                    <p class="w-full text-center text-sm p-4 text-gray-900 font-mono">
+                                        {{ trainerReview.review}}
+                                    </p>
+                                    <p class="w-full text-center text-sm p-4 text-gray-900 font-mono">
+                                        Last updated on {{ trainerReview.lastUpdate}}
+                                    </p>
+                                    <div class=" flex justify-center items-center gap-5">
+                                        <img [src]="trainerReview.frontBefore" class="aspect-square rounded-md">
+                                        <a [href]="trainerReview.frontBefore"></a>
+                                        <img [src]="trainerReview.frontAfter" class="aspect-square rounded-md">
+                                        <a [href]="trainerReview.frontBefore"></a>
+                                    </div>
+                                    <div class=" flex justify-center items-center gap-5">
+                                        <img [src]="trainerReview.sideBefore" class="aspect-square rounded-md">
+                                        <a [href]="trainerReview.sideBefore"></a>
+                                        <img [src]="trainerReview.sideAfter" class="aspect-square rounded-md">
+                                        <a [href]="trainerReview.sideAfter"></a>
+                                    </div>
+                                    <div class=" flex justify-center items-center gap-5">
+                                        <img [src]="trainerReview.backBefore" class="aspect-square rounded-md">
+                                        <a [href]="trainerReview.backAfter"></a>
+                                        <img [src]="trainerReview.backBefore" class="aspect-square rounded-md">
+                                        <a [href]="trainerReview.backAfter"></a>
+                                    </div>
+                                    <button *ngIf="trainerReview.status ==='active'"
+                                        class="text-sm bg-red-600 text-white p-1 m-6  hover:bg-red-700 rounded-md font-mono">
+                                        disactivate
+                                    </button>
+                                    <button *ngIf="trainerReview.status !=='active'"
+                                        class="text-sm bg-red-600 text-white p-1 m-6  hover:bg-red-700 rounded-md font-mono">
+                                        activate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div *ngFor="let review of trainerReviews; let i = index" class="flex">
+                <button class="mt-2 p-1 px-2 text-gray-600 bg-gray-100 text-sm rounded-md items-center justify-center"
+                (click)="allReviews()"  [ngClass] ="{ 'hidden' : i <= 0 && !showAllReviews }" >
+                    {{ !showAllReviews ? 'See more' : 'See less' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

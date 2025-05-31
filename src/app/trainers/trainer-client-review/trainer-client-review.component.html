@@ -15,9 +15,9 @@
             <img src="{{ review.frontAfter }}" class="aspect-square rounded-r-md cursor-pointer">
         </div>
             <p class="text-gray-950 text-sm p-4 font-sans text-center">{{ review.review }}</p>
-            <p class="text-red-600 text-md  mb-4 font-sans font-bold uppercase"> 
+            <!-- <p class="text-red-600 text-md  mb-4 font-sans font-bold uppercase"> 
                 {{ review.client.user.firstname }}   {{ review.client.user.lastname }}
-            </p>
+            </p> -->
         </div>
         </div>
         <div *ngFor="let review of trainerReview; let i = index">

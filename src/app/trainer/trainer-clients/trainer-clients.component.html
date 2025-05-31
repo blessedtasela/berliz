@@ -2,30 +2,30 @@
     <div class="flex items-center justify-center">
         <div class="bg-white p-6 mt-20 mb-10 lg-rounded">
             <div class="justify-start p-2 text-gray-950 font-bold font-sans">
-                <h1 class="text-xl text-red-600">Likes </h1>
+                <h1 class="text-xl text-red-600">Clients </h1>
             </div>
             <div class="justify-between flex p-2">
-                <h1 class="text-md text-gray-600">Search likes </h1>
-                <h1 class="text-md text-gray-600">Sort likes </h1>
+                <h1 class="text-md text-gray-600">Search client </h1>
+                <h1 class="text-md text-gray-600">Sort client </h1>
             </div>
             <div class="border-b-2"></div>
-            <div class="font-mono text-xl mb-5 text-center" *ngIf="trainerLikes.length ===0">
+            <div class="font-mono text-xl mb-5 text-center" *ngIf="trainerClients.length ===0">
                 You currently have no client.
             </div>
             <div class="mt-20 flex justify-center mb-2 space-y-1 mx-auto p-1 font-mono"
-                *ngIf="trainerLikes.length !==0">
+                *ngIf="trainerClients.length !==0">
                 <div class="grid grid-cols-2 lg:grid-cols-6 md:grid-cols-4 gap-10 items-center mx-auto p-6">
-                    <section *ngFor="let like of trainerLikes; let i = index"
-                        [ngClass]="{ 'hidden' : i >= 8 && !showAllReviews }">
+                    <section *ngFor="let trainerClient of trainerClients; let i = index"
+                        [ngClass]="{ 'hidden' : i >= 1 && !showAllReviews }">
                         <div class="flex items-center justify-center
                                 transition-all duration-300  hover:scale-105 focus:scale-105">
                             <div class="grid items-center justify-items-center gap-2">
                                 <p class="w-full text-center text-sm p-4 text-red-600 font-bold font-mono">
-                                    {{ like.user.firstname }} {{ like.user.lastname }}
+                                    John Gideon
                                 </p>
                                 <div class="justify-center items-center gap-2">
-                                    <a href="{{like.user.profilePhoto}}">
-                                        <img src="{{like.user.profilePhoto}}" class="w-16 md:w-20 rounded-full" />
+                                    <a href="../../../assets/trainers/t10.jpg">
+                                        <img src="../../../assets/trainers/t10.jpg" class="w-16 md:w-20 rounded-full" />
                                     </a>
                                 </div>
                             </div>
@@ -33,9 +33,9 @@
                     </section>
                 </div>
             </div>
-            <div *ngFor="let review of trainerLikes; let i = index" class="flex">
+            <div *ngFor="let review of trainerClients; let i = index" class="flex">
                 <button class="mt-2 p-1 px-2 text-gray-600 bg-gray-100 text-sm rounded-md items-center justify-center"
-                    (click)="allReviews()" [ngClass]="{ 'hidden' : i <= 8 && !showAllReviews }">
+                    (click)="allReviews()" [ngClass]="{ 'hidden' : i <= 1 && !showAllReviews }">
                     {{ !showAllReviews ? 'See more' : 'See less' }}
                 </button>
             </div>

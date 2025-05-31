@@ -43,7 +43,7 @@ export class PartnerComponent implements OnInit {
   ngOnInit() {
     this.ngxService.start();
     this.handleWatchEvents();
-    this.loadData();
+    this.handleEmitEvent();
     console.log("in onInit")
     this.ngxService.stop();
   }
