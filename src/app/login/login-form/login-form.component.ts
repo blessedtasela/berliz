@@ -101,6 +101,13 @@ export class LoginFormComponent {
           this.invalidForm = false;
           localStorage.setItem('token', response.access_token);
           localStorage.setItem('refresh_token', response.refresh_token);
+          this.userService.startRefreshTokenTimer();
+          // this.userService.setLoginFormIndex(0);
+          // this.userService.setPartnerFormIndex(0);
+          this.loginInterface = response;
+          this.invalidLogin = '';
+          this.invalidForm = false;
+          this.responseMessage = '';
           this.ngxService.stop();
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Component, HostListener } from '@angular/core';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { MetaService } from './services/meta.service';
 import { environment } from 'src/environments/environment';
 
@@ -11,10 +11,37 @@ import { environment } from 'src/environments/environment';
 export class AppComponent {
   title = 'berliz';
   currentRoute: any;
+  private lastScrollY: number = 0;
 
   constructor(private router: Router, private metaService: MetaService) { }
 
+  @HostListener('window:beforeunload')
+  saveScrollPosition() {
+    localStorage.setItem('scrollY', window.scrollY.toString());
+  }
+
   ngOnInit(): void {
+
+    // Restore scroll on refresh
+    const savedY = localStorage.getItem('scrollY');
+    if (savedY) {
+      setTimeout(() => window.scrollTo(0, +savedY), 50);
+    }
+
+    // Save scroll before navigation
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.lastScrollY = window.scrollY;
+      }
+
+      if (event instanceof NavigationEnd) {
+        // Wait for the view to settle before restoring scroll
+        setTimeout(() => {
+          window.scrollTo({ top: this.lastScrollY, behavior: 'smooth' });
+        }, 50);
+      }
+    });
+
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         const currentRoute = this.router.url;

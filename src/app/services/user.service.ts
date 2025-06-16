@@ -182,4 +182,24 @@ export class UserService {
     console.log('current index:', this.signUpFormIndex);
   }
 
+  startRefreshTokenTimer() {
+  // 59 minutes = 59 * 60 * 1000 ms
+  const refreshInterval = 59 * 60 * 1000;
+
+  setTimeout(() => {
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (refreshToken) {
+      this.refreshToken({ token: refreshToken }).subscribe({
+        next: (response: any) => {
+          localStorage.setItem('token', response.access_token);
+          localStorage.setItem('refresh_token', response.refresh_token);
+        },
+        error: (err) => {
+          console.error('Token refresh failed:', err);
+          // Handle: redirect to login, show modal, etc.
+        }
+      });
+    }
+  }, refreshInterval);
+}
 }

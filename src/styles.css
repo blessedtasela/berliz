@@ -9,10 +9,12 @@
   background-image: url('./assets/landing/hero-bg-6.jpg');
 }
 
-html,
-body {
-  height: 100%;
+html, body {
+  height: auto;
+  min-height: 100%;
+  overflow: auto;
 }
+
 
 .disabled-horizontal-icon {
   opacity: 0.5; /* or any other styling to visually indicate it's disabled */

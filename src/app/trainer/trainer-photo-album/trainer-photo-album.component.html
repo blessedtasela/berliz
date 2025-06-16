@@ -1,6 +1,7 @@
-<div class="bg-gray-100 font-sans w-full">
+<div class="bg-gray-100 font-sans">
     <div class="flex items-center justify-center">
-        <div class="bg-white p-6 mt-20 mb-10 lg-rounded">
+        <div class="w-full bg-white p-6 mt-20 mb-10 lg-rounded">
+
             <form [formGroup]="updateTrainerPhotoAlbumForm">
                 <header class="justify-start p-2 text-gray-950 font-bold font-sans">
                     <h1 class="text-xl text-red-600">Photo Album
@@ -15,19 +16,24 @@
                 <div class="mt-4 mb-2 block text-sm font-semibold text-gray-950 mb-1">
                     Select up to 15 Photos.
                 </div>
-                <div class="invalid-form">
-                    <span *ngIf="updateTrainerPhotoAlbumForm.invalid && invalidForm" class="mx-2 text-red-600">
-                        Please complete all sections
-                    </span>
-                    <span *ngIf="updateTrainerPhotoAlbumForm.valid && invalidForm" class="mx-2 text-gray-600">
-                        Eerything's up to date
-                    </span>
+                <div class=" mt-2 mb-2 italic text-xs">
+                    <div *ngIf="updateTrainerPhotoAlbumForm.invalid && invalidForm" class="text-red-600">
+                        Please ensure you have selected at least 9 photos and added a comment of at least 500 characters.
+                    </div>
+                    <div *ngIf="updateTrainerPhotoAlbumForm.valid && !invalidForm" class="text-gray-950">
+                        Everything's up to date
+                    </div>
+                    <div class="absolute right-10 -mt-5 text-xs cursor-pointer transform hover:font-bold focus:font-bold"
+                        role="button" tabindex="0" (click)="removeAllImages()">
+                        clear (x)
+                    </div>
                 </div>
+
                 <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                     <ng-container *ngFor="let i of indexArray">
                         <label
                             class="relative block w-full aspect-square border-2 border-dashed rounded-md cursor-pointer hover:border-red-600 transition-all overflow-hidden">
-                            <input type="file" accept="image/*" multiple (change)="onImageSelected($event, i)"
+                            <input type="file" accept="image/*" multiple (change)="onImageSelected($event)"
                                 class="hidden" />
                             <div class="flex items-center justify-center w-full h-full text-sm text-gray-500">
                                 <ng-container *ngIf="imagePreviews[i]; else placeholder">
@@ -49,24 +55,25 @@
                 <div class="text-sm text-gray-600 mt-2">
                     Selected photos: {{imgCount}}
                 </div>
-                <div *ngIf="imgCount < 9" class="text-xs text-red-600 italic">
+                <div *ngIf="imgCount < 9 && invalidForm" class="text-xs text-red-600 italic">
                     You must select at least 9 photos
                 </div>
 
                 <div class="mt-4">
                     <label for="comment" class="block text-sm font-semibold text-gray-950 mb-1">Photo
                         Inspiration</label>
-                    <textarea id="comment" formControlName="comment" rows="4"
+                    <textarea id="comment" formControlName="comment" rows="8"
                         placeholder="Describe the inspiration behind these photos..."
-                        class="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent resize-none"></textarea>
+                        class="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent resize-none"
+                        [ngClass]="{'border-red-400': updateTrainerPhotoAlbumForm.get('comment')?.invalid && updateTrainerPhotoAlbumForm.get('comment')?.dirty }"></textarea>
                     <div *ngIf="updateTrainerPhotoAlbumForm.get('comment')?.invalid && invalidForm"
-                        class="text-sm text-red-600 mt-1">
-                        Comment is required
+                        class="text-sm text-red-600 mt-1 text-xs italic">
+                        Comment is required and at least 500 characters long
                     </div>
                 </div>
 
                 <div class="flex-cols items-center justify-center gap-2 w-full p-2 text-gray-950">
-                    <button [disabled]="isSaveDisabled"
+                    <button
                         class="bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-md mx-auto m-2 col-span-2 py-1 px-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
                         type="submit" (click)="updateTrainerPhotoAlbum()">
                         Save

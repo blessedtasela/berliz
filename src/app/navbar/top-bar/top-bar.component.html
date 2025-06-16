@@ -3,8 +3,11 @@
     <!-- Branding and Sidebar Toggle Button -->
     <div class="flex items-center cursor-pointer z-2">
         <div class="flex items-center p-2 cursor-pointer">
-            <img src="../../../assets/landing/logo.png" style="width: 30px;" class="block md:hidden">
-            <img src="../../../assets/landing/berliz.png" style="width: 120px;" class="hidden md:block">
+            <a [routerLink]="['/home']" class="flex items-center">
+                <img src="../../../assets/landing/logo.png" style="width: 30px;" class="block md:hidden">
+                <img src="../../../assets/landing/berliz.png" style="width: 120px;" class="hidden md:block">
+            </a>
+
             <div class="hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
                     rounded-md p-1 mr-2">
                 <a [routerLink]="['/dashboard/my-notifications']">

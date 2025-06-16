@@ -1,6 +1,6 @@
-<div class="bg-gray-100 font-sans rounded-lg">
+<div class="bg-gray-100 font-sans">
     <div class="flex items-center justify-center">
-        <div class="bg-white p-6 mt-20 mb-10 lg-rounded">
+        <div class="bg-white p-6 mt-20 mb-10 w-full">
             <form [formGroup]="updateTrainerPricingForm" (ngSubmit)="updateTrainerPricing()">
                 <header class="justify-start p-2 text-gray-950 font-bold font-sans">
                     <h1 class="text-xl text-red-600">Pricing
@@ -13,7 +13,7 @@
                     </span>
                 </header>
                 <div class="border-b-2"></div>
-                <div class="invalid-form">
+                <div class="invalid-form text-sm font-semibold">
                     <span *ngIf="updateTrainerPricingForm.invalid && invalidForm" class="mx-2 text-red-600">
                         Input fields cannot be empty
                     </span>
@@ -21,16 +21,16 @@
                         Everything's up to date
                     </span>
                 </div>
-                <div class="grid grid-cols md:grid-cols-2 items-center justify-center gap-2 w-full p-2 text-gray-950">
+                <div class="grid grid-cols md:grid-cols-2 items-center justify-center gap-2 w-full p-2 text-sm font-semibold text-gray-950">
                     <div *ngFor="let field of pricingFields" class="mx-auto p-2 w-full">
                         <span class="sr-only">{{ field.label }}</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">{{ field.label }}</span>
+                        <span class="ml-4 italic">{{ field.label }}</span>
                         <input [formControlName]="field.name" id="pricing{{field.name}}"
-                            class="w-full text-sm px-4 py-2 m-2 rounded-md bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
+                            class="w-full text-sm px-4 py-2 m-2 rounded-md blovk focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
                             [ngClass]="{'border-red-400': updateTrainerPricingForm.get(field.name)?.invalid && updateTrainerPricingForm.get(field.name)?.dirty }"
                             [placeholder]="field.placeholder" type="number">
                         <div *ngIf="updateTrainerPricingForm.get(field.name)?.invalid && (invalidForm || updateTrainerPricingForm.get(field.name)?.dirty)"
-                            class="text-red-500 mx-2">
+                            class="text-red-500 mx-2 text-sm font-semibold">
                             {{ field.label }} is required
                         </div>
                     </div>

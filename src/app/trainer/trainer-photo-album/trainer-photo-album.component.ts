@@ -10,6 +10,7 @@ import { TrainerService } from 'src/app/services/trainer.service';
 import { genericError, videoSizeValidator } from 'src/validators/form-validators.module';
 import { DatePipe } from '@angular/common';
 import { StrapiService } from 'src/app/services/strapi.service';
+import { FileUploadService } from 'src/app/services/test.service';
 
 @Component({
   selector: 'app-trainer-photo-album',
@@ -26,19 +27,22 @@ export class TrainerPhotoAlbumComponent {
   @Output() emitEvent = new EventEmitter();
   updateTrainerPhotoAlbumForm!: FormGroup;
   invalidForm: boolean = false;
-  isChecked: boolean = false;
   responseMessage: any;
-  selectedVideo: any;
   @Input() trainerPhotoAlbum!: TrainerPhotoAlbum;
   subscriptions: Subscription[] = [];
   imgCount: number = 0;
+
+  selectedFile: File | null = null;
   constructor(private formBuilder: FormBuilder,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private trainerService: TrainerService,
     private trainerStateService: TrainerStateService,
     private strapiService: StrapiService,
-    private datePipe: DatePipe) {
+    private datePipe: DatePipe,
+    private fileUploadService: FileUploadService) {
+    // Initialize selectedImages with null values
+    this.selectedImages = Array(this.MAX_IMAGES).fill(null);
   }
 
   ngOnInit(): void {
@@ -57,24 +61,47 @@ export class TrainerPhotoAlbumComponent {
   ngOnDestroy() {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
+  onImageSelected(event: any): void {
+    const files: FileList = event.target.files;
+    const maxPhotos = 15;
 
-  onImageSelected(event: any, index: number): void {
-    const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-      this.selectedImages[index] = file;
-      this.imgCount = this.selectedImages.filter(img => !!img).length;
-      // Preview
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.imagePreviews[index] = e.target.result;
-      };
-      reader.readAsDataURL(file);
+    // Convert FileList to an array and limit to maxPhotos (15)
+    const allowedFiles = Array.from(files).slice(0, maxPhotos);
+
+    // Go through the allowed files and add them to the first available empty slot
+    for (let i = 0; i < allowedFiles.length; i++) {
+      const file = allowedFiles[i];
+
+      // Find the first empty slot in selectedImages array
+      const emptyIndex = this.selectedImages.findIndex((img) => !img);
+
+      // If we find an empty index, replace it
+      if (emptyIndex !== -1) {
+        this.selectedImages[emptyIndex] = file;
+
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.imagePreviews[emptyIndex] = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
     }
+
+    // Count selected images (non-empty ones)
+    this.imgCount = this.selectedImages.filter((img) => img).length;
+
+    // If less than 9 images selected, form will be invalid
+    this.invalidForm = this.imgCount < 9;
   }
+
 
   removeImage(index: number): void {
     this.selectedImages[index] = null;
     this.imagePreviews[index] = '';
+    this.imgCount = this.selectedImages.filter((img) => img).length;
+
+    // If less than 9 images selected, form will be invalid
+    this.invalidForm = this.imgCount < 9;
   }
 
   get isSaveDisabled(): boolean {
@@ -106,71 +133,37 @@ export class TrainerPhotoAlbumComponent {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
-  uploadImagesToStrapi(): Promise<any[]> {
-    const uploadPromises = this.selectedImages
-      .filter((file): file is File => file !== null) // type guard: ensures 'file' is File, not null
-      .map(file => {
-        const formData = new FormData();
-        formData.append('files', file); // now this is safe
-        return this.strapiService.uploadToStrapi(formData).toPromise();
-      });
-
-    return Promise.all(uploadPromises);
-  }
-
   updateTrainerPhotoAlbum(): void {
-    if (this.updateTrainerPhotoAlbumForm.invalid) {
+    if (this.updateTrainerPhotoAlbumForm.invalid || this.imgCount < 9) {
       this.invalidForm = true;
       this.responseMessage = "Invalid form. Please complete all sections";
       this.snackBarService.openSnackBar(this.responseMessage, "error");
       return;
     }
 
-    if (this.selectedVideo === null) {
-      this.invalidForm = true;
-      this.responseMessage = "Invalid form. Please select or input video";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
-      return;
-    }
-
-    const validationError = videoSizeValidator(this.selectedVideo);
-    if (validationError) {
-      this.invalidForm = true;
-      this.responseMessage = validationError['videoSizeError'];
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
-      return;
-    }
-
     this.ngxService.start();
+    const requestData = new FormData();
+    requestData.append('comment', this.updateTrainerPhotoAlbumForm.get('comment')?.value);
 
-    this.uploadImagesToStrapi().then(uploadedImageResponses => {
-      // Flatten and extract image metadata (URLs, IDs, etc.)
-      const uploadedImageMetadata = uploadedImageResponses.map(resp => resp[0]); // If each response returns an array
+    // Append each selected image to the FormData
+    this.selectedImages
+      .filter(img => img !== null)
+      .forEach((img: any) => {
+        requestData.append('photos', img); // 'photos' must match what your Spring Boot expects
+      });
 
-      const requestData = new FormData();
-      requestData.append('motivation', this.updateTrainerPhotoAlbumForm.get('motivation')?.value);
-      requestData.append('video', this.selectedVideo);
+    // If the trainerPhotoAlbum has an ID, update it; otherwise, create a new one
+    if (this.trainerPhotoAlbum.id) {
+      requestData.append('id', this.trainerPhotoAlbum.id.toString());
+      requestData.append('trainerId', this.trainerPhotoAlbum.trainer.id.toString());
+      this.trainerService.updateTrainerPhotoAlbum(requestData)
+        .subscribe(this.handleSuccess.bind(this), this.handleError.bind(this));
+    } else {
+      // If no ID, create a new album
+      this.trainerService.addTrainerPhotoAlbum(requestData)
+        .subscribe(this.handleSuccess.bind(this), this.handleError.bind(this));
+    }
 
-      // Attach image metadata (as JSON string, or however your backend expects it)
-      requestData.append('images', JSON.stringify(uploadedImageMetadata));
-
-      const trainerPhotoAlbum = this.updateTrainerPhotoAlbumForm.value;
-
-      if (this.trainerPhotoAlbum.id) {
-        requestData.append('id', this.trainerPhotoAlbum.id.toString());
-        requestData.append('trainerId', this.trainerPhotoAlbum.trainer.id.toString());
-        this.trainerService.updateTrainerPhotoAlbum(requestData)
-          .subscribe(this.handleSuccess.bind(this), this.handleError.bind(this));
-      } else {
-        this.trainerService.addTrainerPhotoAlbum(requestData)
-          .subscribe(this.handleSuccess.bind(this), this.handleError.bind(this));
-      }
-    }).catch(err => {
-      console.error('Image upload failed', err);
-      this.responseMessage = "Failed to upload image(s)";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
-      this.ngxService.stop();
-    });
   }
 
   private handleSuccess(response: any): void {
@@ -181,7 +174,12 @@ export class TrainerPhotoAlbumComponent {
     this.handleEmitEvent();
     this.emitEvent.emit();
     this.updateFormValues(this.updateTrainerPhotoAlbumForm.value);
-    this.isChecked = false;
+    this.invalidForm = false;
+    this.responseMessage = "";
+    this.imageMetadataFromStrapi = [];
+    this.imagePreviews = [];
+    this.selectedImages = Array(this.MAX_IMAGES).fill(null); // Reset selected images
+    this.imgCount = 0; // Reset image count
     this.ngxService.stop();
   }
 
@@ -196,8 +194,39 @@ export class TrainerPhotoAlbumComponent {
     this.ngxService.stop();
   }
 
+  removeAllImages(): void {
+    this.selectedImages = Array(this.MAX_IMAGES).fill(null);
+    this.imagePreviews = [];
+    this.imgCount = 0; // Reset image count
+    this.invalidForm = true; // Set form invalid since no images are selected
+  }
 
   clear() {
     this.updateTrainerPhotoAlbumForm.reset();
+    this.removeAllImages();
+    this.invalidForm = false;
+    this.responseMessage = "";
   }
+
+  // // Method to handle file selection
+  // onFileSelected(event: any): void {
+  //   this.selectedFile = event.target.files[0];
+  // }
+
+  // // Method to upload the selected file
+  // onUpload(): void {
+  //   if (this.selectedFile) {
+  //     this.fileUploadService.uploadFile(this.selectedFile
+  //     ).subscribe(
+  //       (response) => {
+  //         console.log('File uploaded successfully!', response);
+  //       },
+  //       (error) => {
+  //         console.error('Error uploading file:', error);
+  //       }
+  //     );
+  //   }
+  // }
+
 }
+

@@ -15,9 +15,9 @@
 </div>
 
 
-<div class="bg-gray-100 font-sans rounded-lg">
+<div class="bg-gray-100 font-sans rounded-t-lg">
     <div class="flex items-center justify-center">
-        <div class="bg-white p-6 mt-20 mb-10 lg-rounded">
+        <div class="bg-white p-6 mt-20 mb-10 w-full">
             <form [formGroup]="updateTrainerIntroductionForm">
                 <header class="justify-start p-2 text-gray-950 font-bold font-sans">
                     <h1 class="text-xl text-red-600">Trainer's Introduction
@@ -40,21 +40,22 @@
                 <div class="flex-cols items-center justify-center gap-2 w-full p-2 text-gray-950">
                     <div class="mx-auto p-2 w-full">
                         <span class="sr-only">Introduction</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">introduction</span>
-                        <textarea formControlName="introduction" id="introduction"
-                            class="w-full text-sm px-4 py-2 m-2 rounded-md bg-gray-200 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': updateTrainerIntroductionForm.get('introduction')?.invalid && updateTrainerIntroductionForm.get('introduction')?.dirty }"
+                        <label for="introduction"
+                            class="block text-sm font-semibold text-gray-950 mb-1">Introduction</label>
+                        <textarea id="introduction" formControlName="introduction" rows="12"
                             placeholder="Please introduce yourself in a concise manner, using no more than 1000 words. Highlight your achievements, qualifications, and experience,
                              providing potential clients with a clear understanding of your expertise and professionalism."
-                            rows="20" cols="60"></textarea>
-                        <div *ngIf="updateTrainerIntroductionForm.get('introduction')?.invalid && updateTrainerIntroductionForm.get('introduction')?.dirty"
-                            class="text-red-500 mx-2">
+                            class="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent resize-none"
+                            [ngClass]="{'border-red-400': updateTrainerIntroductionForm.get('introduction')?.invalid && updateTrainerIntroductionForm.get('introduction')?.dirty }"></textarea>
+                        <div *ngIf="updateTrainerIntroductionForm.get('introduction')?.invalid && invalidForm"
+                            class="text-sm text-red-600 mt-1 text-xs italic">
                             At least 500 characters
                         </div>
                     </div>
                     <div class="mx-auto ">
                         <span class="sr-only">Cover Photo</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Cover Photo</span>
+                        <label for="coverPhoto" class="block text-sm font-semibold text-gray-950 mb-1">Cover
+                            Photo</label>
                         <div class="flex">
                             <div class="shrink-0 group relative" *ngIf="trainerIntroduction.coverPhoto">
                                 <img class="h-16 w-16 object-cover rounded-full cursor-pointer"
@@ -67,19 +68,21 @@
                                         onerror="this.src='../../../assets/icons/user.png';">
                                 </div>
                             </div>
-                            <input  id="coverPhoto"
+                            <input id="coverPhoto"
                                 class="border-b-2 px-4 py-2 rounded-md m-2 border-gray-400  hover:border-gray-400 focus:border-gray-400 focus:outline-none
                                  block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
                                  file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
                                 [ngClass]="{'border-gray-950': updateTrainerIntroductionForm.get('coverPhoto')?.invalid && updateTrainerIntroductionForm.get('coverPhoto')?.dirty }"
                                 (change)="onImgSelected($event)" type="file" accept="/image">
                         </div>
-                        <div *ngIf="trainerIntroduction.coverPhoto" class="ml-4 font-bold text-gray-600 italic">
-                            <input type="checkbox" (change)="onCurrentPhotoSelected($event)" [checked]="isChecked" id="currentPhoto" >
-                            select current photo
+                        <div *ngIf="trainerIntroduction.coverPhoto"
+                            class="flex items-center gap-2 text-sm font-semibold text-gray-950 italic">
+                            <input type="checkbox" (change)="onCurrentPhotoSelected($event)" [checked]="isChecked"
+                                id="currentPhoto">
+                            <label for="currentPhoto">Select current photo</label>
                         </div>
                         <div *ngIf="updateTrainerIntroductionForm.get('coverPhoto')?.invalid && updateTrainerIntroductionForm.get('coverPhoto')?.dirty"
-                            class="text-red-500 mx-2">
+                            class="text-red-500 mx-2 block text-sm font-semibold">
                             cover photo is required
                         </div>
                     </div>

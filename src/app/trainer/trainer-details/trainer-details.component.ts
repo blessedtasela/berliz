@@ -26,10 +26,8 @@ export class TrainerDetailsComponent implements OnInit {
     private trainerStateService: TrainerStateService,) { }
 
   ngOnInit() {
-    this.ngxService.start()
     this.handleWatchService()
     this.loadData()
-    this.ngxService.stop()
   }
 
   ngAfterViewInit() {
