@@ -34,10 +34,10 @@ export class HeroSectionComponent implements OnInit {
     ]
 
     this.heroes = [
-      { id: 1, title: "Inspire and Transform Your Body with", image: "../../../assets/landing/landing-page-hero.jpg" },
-      { id: 2, title: "Explore and Discover New Levels with ", image: "../../../assets/landing/gym-coach.jpg" },
-      { id: 3, title: "Unleash Your Potentials with ", image: "../../../assets/landing/combat-sport.jpg" },
-      { id: 4, title: "Fuel Your Body, Transform Your Life with ", image: "../../../assets/landing/gym-meal.jpg" }
+      { id: 1, title: "Inspire and Transform Your Body with", image: "../../../assets/landing/blessed-1.jpg" },
+      { id: 2, title: "Explore and Discover New Levels with ", image: "../../../assets/landing/blessed-2.jpg" },
+      { id: 3, title: "Unleash Your Potentials with ", image: "../../../assets/landing/blessed-3.jpg" },
+      { id: 4, title: "Fuel Your Body, Transform Your Life with ", image: "../../../assets/landing/blessed-4.jpg" }
     ]
   }
 

@@ -11,6 +11,17 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 export class NavigationBarComponent implements OnInit {
   menuStatus: boolean = false;
   currentRoute: any;
+  navLinks = [
+  { label: 'Home', path: '/home' },
+  { label: 'Contact', path: '/contact' },
+  { label: 'About', path: '/about' },
+  { label: 'Centers', path: '/centers' },
+  { label: 'Services', path: '/services' },
+  { label: 'Trainers', path: '/trainers' },
+  // Optional: products
+  // { label: 'Products', path: '/products' }
+];
+
 
   constructor(private router: Router,
     private authService: AuthenticationService,) {

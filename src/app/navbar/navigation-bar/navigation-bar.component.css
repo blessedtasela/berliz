@@ -22,3 +22,12 @@
 .menu-transition {
   transition: opacity 3s ease-in-out, transform 3s ease-in-out;
 }
+
+.logo-blend {
+  /* Helps fade light edges into dark backgrounds */
+  mix-blend-mode: darken;
+
+  /* Optional soft gradient mask to feather edges */
+  -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+  mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+}

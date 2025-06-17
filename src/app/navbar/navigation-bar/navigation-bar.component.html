@@ -1,132 +1,61 @@
-<nav class="py-0 bg-white shadow-lg flex items-center justify-between nav-menu w-full font-mono">
-    <div class="flex justify-between items-center w-full justify-end">
-        <div class="p-1 cursor-pointer">
-            <img style="width: 140px;" src="../../../assets/berliz-nav-logo.jpeg" [routerLink]="['/home']"
-                alt="Berliz Logo">
-        </div>
-        <div *ngIf="menuStatus; else alignJustify">
-            <div class="lg:hidden block mx-2 cursor-pointer hover:drop-shadow-2xl transition-all 
-                duration-1000 ease-in-out transform hover:scale-105 cursor-pointer 
-                border-2 border-gray-500 rounded-lg p-1 mr-4">
-                <i-feather name="x" class="min-w-[30px] text-gray-700  font-bold drop-shadow-xl"
-                    (click)="navMenu('x')"></i-feather>
-            </div>
-        </div>
-        <ng-template #alignJustify>
-            <div class="lg:hidden block mx-2 cursor-pointer hover:drop-shadow-2xl transition-all
-                duration-1000 ease-in-out transform hover:scale-105 cursor-pointer 
-                border-2 border-gray-500 rounded-lg p-1  mr-4">
-                <i-feather name="align-justify" (click)="navMenu('align-justify')"
-                    class="min-w-[30px] text-gray-700  font-bold drop-shadow-xl"></i-feather>
-            </div>
-        </ng-template>
-    </div>
-    <ul class="lg:flex lg:items-center z-[-1] lg:z-auto lg:static absolute bg-white w-full 
-        left-0 lg:w-auto lg:py-0 py-1 lg:pl-0 pl-7 top-[50px] lg:opacity-100 opacity-0
-        transition-all duration-1000 ease-in-out transform menu-transition" id="navbarView"
-        [ngClass]="{'opacity-100 z-1000 block': menuStatus, 'opacity-0 hidden': !menuStatus}">
-        <li class="mx-8 my-5 lg:my-0 hover:drop-shadow-2xl transition-all duration-300 
-                ease-in-out transform hover:scale-105 focus:scale-105">
-            <div class="text-lg hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-white hover:text-white p-2 rounded-lg lg:w-full w-24': isActive('home') || isActive('/')}">
-                <a [routerLink]="['/home']">
-                    Home
-                </a>
-            </div>
-        </li>
-        <li class="mx-8 my-5 lg:my-0 hover:drop-shadow-2xl transition-all duration-300 
-                ease-in-out transform hover:scale-110 focus:scale-105">
-            <div class="text-lg hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-white hover:text-white p-2 rounded-lg lg:w-full w-24': isActive('contact')}">
-                <a [routerLink]="['/contact']">
-                    Contact
-                </a>
-            </div>
-        </li>
-        <li class="mx-8 my-5 lg:my-0 hover:drop-shadow-2xl transition-all duration-300
-             transform hover:scale-110 focus:scale-105">
-            <div class="text-lg hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-white hover:text-white p-2 rounded-lg lg:w-full w-24': isActive('about')}">
-                <a [routerLink]="['/about']">
-                    About
-                </a>
-            </div>
-        </li>
-        <li class="mx-8 my-5 lg:my-0 hidden hover:drop-shadow-2xl transition-all duration-300
-                 transform hover:scale-110 focus:scale-105">
-            <div class="text-lg hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-white hover:text-white p-2 rounded-lg lg:w-full w-24': isActive('products')}">
-                <a [routerLink]="['/products']">
-                    Products
-                </a>
-            </div>
-        </li>
-        <li class="mx-8 my-5 lg:my-0 hover:drop-shadow-2xl transition-all duration-300
-                 transform hover:scale-110 focus:scale-105">
-            <div class="text-lg hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-white hover:text-white p-2 rounded-lg lg:w-full w-24': isActive('centers') }">
-                <a [routerLink]="['/centers']">
-                    Centers
-                </a>
-            </div>
-        </li>
-        <li class="hidden mx-8 my-5 lg:my-0 hover:drop-shadow-2xl transition-all duration-300
-                 transform hover:scale-110 focus:scale-105">
-            <div class="text-lg hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-white hover:text-white p-2 rounded-lg lg:w-full w-24': isActive('new-products') }">
-                <a [routerLink]="['/products']" [ngClass]="{'shadow:bg-gray-200': isActive('products')}">
-                    Products
-                </a>
-            </div>
-        </li>
-        <li class="mx-8 my-5 lg:my-0 hover:drop-shadow-2xl transition-all duration-300 
-                transform hover:scale-110 focus:scale-105">
-            <div class="text-lg hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-white hover:text-white p-2 rounded-lg lg:w-full w-24': isActive('services') }">
-                <a [routerLink]="['/services']">
-                    Services
-                </a>
-            </div>
-        </li>
-        <li class="mx-8 my-5 lg:my-0 hover:drop-shadow-2xl transition-all duration-300
-                 transform hover:scale-110 focus:scale-105">
-            <div class="text-lg hover:text-red-600 duration-500"
-                [ngClass]="{'bg-red-500 text-white hover:text-white p-2 rounded-lg lg:w-full w-24': isActive('trainers')}">
-                <a [routerLink]="['/trainers']">
-                    Trainers
-                </a>
-            </div>
-        </li>
-        <li class="hover:drop-shadow-2xl transition-all duration-500 transform hover:scale-110 focus:scale-105"
-            *ngIf="!getUser()">
-            <button
-                class="bg-gray-200 text-red-600 px-6 mb-2 py-1 mx-4 hover:bg-gray-300 rounded-lg duration-500 whitespace-nowrap"
-                [ngClass]="{'shadow:bg-gray-200': isActive('sign-up')}">
-                <a [routerLink]="['/sign-up']">
-                    Sign up
-                </a>
-            </button>
-        </li>
-        <li class="hover:drop-shadow-2xl transition-all duration-500 transform hover:scale-110 focus:scale-105"
-            *ngIf="!getUser()">
-            <button
-                class="bg-red-600 text-white  px-6 mb-2 py-1 mx-4 hover:bg-red-700 rounded-lg duration-500 whitespace-nowrap"
-                [ngClass]="{'shadow:bg-gray-200': isActive('login')}">
-                <a [routerLink]="['/login']">
-                    Login
-                </a>
-            </button>
-        </li>
-        <li class="hover:drop-shadow-2xl transition-all duration-500 transform hover:scale-110 focus:scale-105"
-            *ngIf="getUser()">
-            <button
-                class="bg-red-600 text-white  px-6 mb-2 py-1 mx-4 hover:bg-red-700 rounded duration-500 whitespace-nowrap"
-                [ngClass]="{'shadow:bg-gray-200': isActive('dashboard')}">
-                <a [routerLink]="['/dashboard']">
-                    dashboard
-                </a>
-            </button>
-        </li>
-    </ul>
+<nav class="fixed top-0 left-0 w-full z-50 bg-black backdrop-blur-md shadow-md">
 
+      <!-- Logo centered vertically and horizontally -->
+    <div class="fixed top-0 left-0 w-[150px] -mt-6">
+      <a [routerLink]="['/home']" class="flex items-center ">
+        <img src="../../../assets/berliz-bg-less-1.png" alt="Berliz Logo" class="rounded-md" />
+      </a>
+    </div>
+  <!-- Navbar container -->
+  <div class="flex flex-col lg:flex-row items-center justify-center py-2 px-4 lg:px-10 mt-8 space-y-4 lg:space-y-0">
+    
+  
+
+    <!-- Mobile Menu Toggle (visible only on small screens) -->
+    <div class="lg:hidden">
+      <button (click)="navMenu(menuStatus ? 'x' : 'align-justify')"
+        class="p-2 border border-gray-400 rounded-lg text-white hover:bg-red-600 transition-all duration-300">
+        <i-feather [name]="menuStatus ? 'x' : 'align-justify'" class="text-2xl"></i-feather>
+      </button>
+    </div>
+
+    <!-- Navigation Links -->
+    <ul
+      class="flex flex-col lg:flex-row items-center justify-center lg:space-x-6 space-y-4 lg:space-y-0 text-white text-sm font-semibold transition-all duration-500 ease-in-out"
+      [ngClass]="{
+        'opacity-100 translate-y-0 visible': menuStatus,
+        'opacity-0 -translate-y-5 invisible lg:opacity-100 lg:translate-y-0 lg:visible': !menuStatus
+      }">
+
+      <li *ngFor="let link of navLinks" class="group">
+        <a [routerLink]="[link.path]"
+          class="px-4 py-2 block rounded-md transition duration-300 group-hover:bg-red-600 group-hover:text-white"
+          [ngClass]="{
+            'bg-red-600 text-white': isActive(link.path),
+            'text-white hover:text-red-400': !isActive(link.path)
+          }">
+          {{ link.label }}
+        </a>
+      </li>
+
+      <li *ngIf="!getUser()">
+        <a [routerLink]="['/sign-up']"
+          class="bg-gray-200 text-red-600 px-4 py-2 rounded-md hover:bg-gray-300 transition duration-300 whitespace-nowrap block">
+          Sign Up
+        </a>
+      </li>
+      <li *ngIf="!getUser()">
+        <a [routerLink]="['/login']"
+          class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 whitespace-nowrap block">
+          Login
+        </a>
+      </li>
+      <li *ngIf="getUser()">
+        <a [routerLink]="['/dashboard']"
+          class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 whitespace-nowrap block">
+          Dashboard
+        </a>
+      </li>
+    </ul>
+  </div>
 </nav>
