@@ -1,16 +1,16 @@
 .nav-menu {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 5;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-  }
-  
-.spacer{
-    flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 5;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.spacer {
+  flex: 1;
 }
 
 .button-line {
@@ -30,4 +30,9 @@
   /* Optional soft gradient mask to feather edges */
   -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
   mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+}
+
+
+.m-top {
+  margin-top: auto
 }
