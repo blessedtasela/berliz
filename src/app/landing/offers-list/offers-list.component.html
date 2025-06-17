@@ -1,20 +1,29 @@
-<div class="mt-40 m-16 -mb-4 bg-gray-100 w-80 rounded-md relative mx-auto">
-    <h1 class="font-bold text-md md:text-xl text-red-600 text-center">
-        Welcome to Berliz
-    </h1>
-</div>
-<section class="bg-red-600 rounded-md p-1">
-    <div class="justify-items-center items-center">
-        <p class="font-bold text-sm text-center font-sans py-5 text-white">
-            Your Path to Fitness Success!
+<!-- Title Banner -->
+<div class="m-auto min-h-screen">
+
+
+
+    <!-- Offers Section -->
+    <!-- <section class="bg-gradient-to-br from-black via-gray-900 to-red-900 py-12 px-4 sm:px-8 rounded-md shadow-lg"> -->
+    <section class="py-12 px-4 sm:px-8 rounded-md shadow-lg text-white"
+        style="background: linear-gradient(to bottom, black, rgb(27, 25, 25), rgb(63, 38, 38), rgb(27, 25, 25), black);">
+
+        <h2 class="text-center text-white text-2xl md:text-3xl font-extrabold tracking-tight">
+            Discover What <span class="text-red-600">Berliz</span> Offers
+        </h2>
+        <!-- Subtitle -->
+        <p class="text-center text-sm sm:text-base text-red-100 italic mb-10 max-w-xl mx-auto">
+            Explore our elite fitness services — designed to ignite discipline, elevate strength, and sculpt your best
+            self.
         </p>
-    </div>
-    <div class="flex flex-wrap">
-        <div class="w-full mb-2 px-2 p-10 flex justify-center">
-            <div class="grid lg:grid-cols-4 grid-cols-2 gap-5">
-                <app-offers *ngFor="let offer of offersList" [offers]="offer">
-                </app-offers>
+
+        <!-- Offer Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
+            <div class="w-full max-w-xs h-72" *ngFor="let offer of offersList">
+                <app-offers [offers]="offer"></app-offers>
             </div>
         </div>
-    </div>
-</section>
+
+    </section>
+
+</div>

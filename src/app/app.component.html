@@ -2,7 +2,9 @@
 <div *ngIf="(!isTopbar() || !isSidebar() || !isLogin()); else pageNotFound">
     <div *ngIf="isTopbar()">
         <app-navigation-bar></app-navigation-bar>
-        <router-outlet></router-outlet>
+        <div class="bg-black">
+            <router-outlet></router-outlet>
+        </div>
         <app-footer></app-footer>
     </div>
     <div *ngIf="isLogin()">

@@ -1,5 +1,5 @@
-<section
-    class="relative min-h-screen pt-24 lg:pt-12 bg-gradient-to-br from-black via-gray-900 to-red-900 flex items-center justify-center font-sans text-white overflow-hidden">
+<section   style="background: linear-gradient(to bottom, black, rgb(27, 25, 25), rgb(63, 38, 38), rgb(27, 25, 25), black);"
+    class="relative min-h-screen lg:h-screen py-24 lg:py-0 px-2 rounded-md shadow-lg items-center justify-center overflow-visible lg:overflow-hidden text-white">
 
     <!-- 🔥 Cinematic Fire Background -->
     <div class="absolute inset-0 z-0">
@@ -20,7 +20,7 @@
 
         <!-- Left Text & CTA -->
         <div class="flex flex-col justify-center text-center lg:text-left space-y-5">
-            <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight">
+            <h1 class="text-5xl md:text-5xl font-extrabold tracking-tight">
                 {{ h.title }} <span class="text-red-600">Berliz</span>
             </h1>
             <p class="text-md md:text-lg text-red-100 italic max-w-2xl">
@@ -61,7 +61,7 @@
         <!-- Right Image -->
         <div class="relative flex justify-center">
             <figure class="group mt-12">
-                <img [src]="h.image" alt="Berliz training image" class="w-full h-screen object-cover rounded-md shadow-md
+                <img [src]="h.image" alt="Berliz training image" class="w-full object-cover rounded-md shadow-md
                     group-hover:shadow-2xl transform transition-all duration-300 group-hover:scale-105" />
                 <figcaption class="flex md:hidden justify-between mt-4 text-white">
                     <button (click)="changeHero(-1)" class="text-2xl text-gray-300 hover:text-red-600">&#9668;</button>

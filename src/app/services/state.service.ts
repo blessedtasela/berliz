@@ -18,8 +18,8 @@ export class StateService {
       {
         id: 1,
         title: "Boxing",
-        subTitle: "The art of real combat",
-        description: "Ignite Your Potential with Berliz",
+        subTitle: "Unleash Your Inner Fighter",
+        description: "Step into the ring with confidence. At Berliz, every jab is purpose, every sweat builds legacy.",
         imageUrl: "../../../assets/landing/hero-boxing.jpg",
         button: "Join us now",
         buttonUrl: ""
@@ -27,8 +27,8 @@ export class StateService {
       {
         id: 2,
         title: "Body Building",
-        subTitle: "The art of real combat",
-        description: "Satisfy Your Passion with Berliz",
+        subTitle: "Sculpt Strength. Build Legacy.",
+        description: "Chisel your physique with intention. At Berliz, we build bodies that speak power and discipline.",
         imageUrl: "../../../assets/landing/hero-body-building.jpg",
         button: "Join us today",
         buttonUrl: ""
@@ -36,8 +36,8 @@ export class StateService {
       {
         id: 3,
         title: "Dieting",
-        subTitle: "The art of real combat",
-        description: "Discover a World of Limitless Services",
+        subTitle: "Fuel the Machine",
+        description: "Discipline starts in the kitchen. Master your fuel, master your form — the Berliz way.",
         imageUrl: "../../../assets/landing/hero-diet.jpg",
         button: "Become a member",
         buttonUrl: ""
@@ -45,8 +45,8 @@ export class StateService {
       {
         id: 4,
         title: "Calisthenics",
-        subTitle: "The art of real combat",
-        description: "Uncover Your Potentials with Us",
+        subTitle: "Bodyweight. Battlefield.",
+        description: "Redefine what your body can do. Unlock raw power with focused calisthenics at Berliz.",
         imageUrl: "../../../assets/landing/hero-calisthenics.jpg",
         button: "Join us now",
         buttonUrl: ""
@@ -54,17 +54,17 @@ export class StateService {
       {
         id: 5,
         title: "Crossfit",
-        subTitle: "The art of real combat",
-        description: "Unlock Your Potentials with Us",
+        subTitle: "Forge Resilience",
+        description: "Train like an athlete. Berliz CrossFit pushes limits and hardens the will.",
         imageUrl: "../../../assets/landing/hero-crossfit.jpg",
         button: "Join our community",
         buttonUrl: ""
       },
       {
         id: 6,
-        title: "Brazilian Jiu-jistu",
-        subTitle: "The art of real combat",
-        description: "Embrace Your Power",
+        title: "Brazilian Jiu-jitsu",
+        subTitle: "Discipline Over Domination",
+        description: "Control the mat, control your mind. Embrace tactical strength with Berliz BJJ.",
         imageUrl: "../../../assets/landing/hero-bjj.jpg",
         button: "Join us today",
         buttonUrl: ""
@@ -72,17 +72,17 @@ export class StateService {
       {
         id: 7,
         title: "Schedule Runs",
-        subTitle: "The art of real combat",
-        description: "Unleash Your Limitless",
+        subTitle: "Momentum in Motion",
+        description: "Run with purpose. Join guided runs that build endurance, grit, and community.",
         imageUrl: "../../../assets/landing/hero-run.jpg",
         button: "Sign up today",
         buttonUrl: ""
       },
       {
         id: 8,
-        title: "Weight loss",
-        subTitle: "The art of real combat",
-        description: "Transform Your Life With Us",
+        title: "Weight Loss",
+        subTitle: "Transform the Frame",
+        description: "This isn’t about losing pounds. It’s about gaining power, confidence, and control — the Berliz transformation.",
         imageUrl: "../../../assets/landing/hero-weight-loss.jpg",
         button: "Join us now",
         buttonUrl: ""
@@ -93,36 +93,33 @@ export class StateService {
       {
         id: 1,
         title: "Personalized Training Programs",
-        description: "Take your fitness journey to the next level with personalized one-on-one training " +
-          "sessions with our Trainers from all over the world.",
-        subTitle: "Ignite Your Potential with Berliz",
+        description: "Unlock elite-level coaching with our global network of Berliz trainers. Every session is tailored to your goals, grit, and growth.",
+        subTitle: "Train with Purpose, Transform with Power",
         iconUrl: "Map"
       },
       {
         id: 2,
         title: "Nutritional Guidance",
-        description: "Our professionals will assist you in creating a balanced meal plan that complements " +
-          "your fitness routine, helping you reach your desired physique.",
-        subTitle: "Satisfy Your Passion with Berliz",
+        description: "Fuel like a warrior. Our pros craft precise meal plans to optimize strength, endurance, and fat loss for sustainable results.",
+        subTitle: "Discipline Starts on the Plate",
         iconUrl: "Activity"
       },
       {
         id: 3,
         title: "Flexible Membership Options",
-        description: "Choose a membership plan that suits your needs. We offer flexible options, " +
-          "including: standard, exclusive, and premium membership.",
-        subTitle: "Discover a World of Limitless Services",
+        description: "Whether you’re all-in or just beginning, Berliz offers membership tiers that flex with your lifestyle — without compromise.",
+        subTitle: "No Excuses. Just Options.",
         iconUrl: "Layers"
       },
       {
         id: 4,
         title: "Community Support",
-        description: "Join a vibrant fitness community where you can connect with like-minded " +
-          "individuals, share your achievements, and find motivation and support along your fitness journey.",
-        subTitle: "Uncover Your Potentials with Us",
+        description: "You’re not alone. Connect with the Berliz tribe — push each other, grow together, and celebrate every milestone.",
+        subTitle: "Forge Bonds. Fuel Growth.",
         iconUrl: "Users"
       }
     ];
+
   }
 
   setData(data: any) {

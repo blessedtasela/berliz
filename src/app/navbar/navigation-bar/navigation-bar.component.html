@@ -38,15 +38,15 @@
                 </a>
             </li>
 
-            <li *ngIf="!getUser()">
+            <!-- <li *ngIf="!getUser()">
                 <a [routerLink]="['/sign-up']"
                     class="bg-white text-red-600 px-4 py-2 rounded-md hover:bg-red-700 hover:text-white transition duration-300 whitespace-nowrap inline-block">
                     Sign Up
                 </a>
-            </li>
+            </li> -->
             <li *ngIf="!getUser()">
                 <a [routerLink]="['/login']"
-                    class="bg-white text-white px-4 py-2 rounded-md hover:bg-red-700 hover:text-white transition duration-300 whitespace-nowrap inline-block">
+                    class="bg-white text-red-600 px-4 py-2 rounded-md hover:bg-red-700 hover:text-white transition duration-300 whitespace-nowrap inline-block">
                     Login
                 </a>
             </li>

@@ -1,19 +1,20 @@
-<div class="w-full flex justify-between items-center cursor-pointer font-sans
-transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
-    <div class="items-center justify-items-center">
-        <div class="max-w-[300px] min-h-[400px] lg:max-w-[250px] lg:min-h-[300px]  flex flex-col justify-center items-center bg-gray-100 rounded-md md:aspect-square mx-2">
-            <div class="">
-                <i-feather name="{{ offers.iconUrl}}"
-                style="width: 30px; height: 30px;" >
-            </i-feather>
-            </div>
-                <p class="p-2 text-center text-md font-bold lg:text-md text-red-600 text-transform: uppercase">
-                 {{ offers.title }}
-                </p>
-                <p class="mt-1 text-sm text-justify w-full text-center font-sans p-2">
-                    {{ offers.description }}
-                </p> 
-            </div>
-        </div>
-</div>
+<!-- Offer Card -->
+<div
+  class="h-full w-full max-w-xs bg-white/5 border border-gray-700 backdrop-blur-md text-white p-6 rounded-xl
+         transition-transform transform hover:scale-105 hover:shadow-xl flex flex-col items-center justify-center text-center space-y-4">
 
+  <!-- Icon -->
+  <div>
+    <i-feather [name]="offers.iconUrl" class="text-red-600" style="width: 32px; height: 32px;"></i-feather>
+  </div>
+
+  <!-- Title -->
+  <h3 class="text-lg uppercase text-red-600">
+    {{ offers.title }}
+  </h3>
+
+  <!-- Description -->
+  <p class="text-sm text-white">
+    {{ offers.description }}
+  </p>
+</div>
