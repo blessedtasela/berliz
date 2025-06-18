@@ -1,11 +1,11 @@
+<section class="py-12 px-4 sm:px-8 rounded-md shadow-lg text-white"
+    style="background: linear-gradient(to bottom, black, rgb(27, 25, 25), rgb(63, 38, 38), rgb(27, 25, 25), black);">
+    <h2 class="text-white text-4xl font-extrabold text-center mb-16 font-sans uppercase tracking-wide">
+        Berliz <span class="text-red-600">Spot</span>light
+    </h2>
 
-    <h1 class="font-sans text-4xl mb-5 text-center mt-40">
-        Our promotions
-    </h1>
-    <div class="mt-20 flex justify-center mb-2 space-y-1 mx-auto p-1">
-        <div class="grid lg:grid-cols-2 gap-20 items-center mx-auto p-6">
-            <app-promotions *ngFor="let promotion of promotionsList" 
-            [promotions]="promotion">
-            </app-promotions>
-        </div>
-    </div>
+     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 place-items-center">
+    <app-promotions *ngFor="let promotion of promotionsList" [promotions]="promotion">
+    </app-promotions>
+  </div>
+</section>

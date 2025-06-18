@@ -71,13 +71,14 @@ export class StateService {
       },
       {
         id: 7,
-        title: "Schedule Runs",
-        subTitle: "Momentum in Motion",
-        description: "Run with purpose. Join guided runs that build endurance, grit, and community.",
-        imageUrl: "../../../assets/landing/hero-run.jpg",
-        button: "Sign up today",
+        title: "Personal Trainers",
+        subTitle: "One-on-One. All In.",
+        description: "Get matched with elite Berliz-certified personal trainers who craft every rep around your goals, pace, and lifestyle — in person or online.",
+        imageUrl: "../../../assets/landing/hero-personal-trainer.jpg",
+        button: "Find your coach",
         buttonUrl: ""
-      },
+      }
+      ,
       {
         id: 8,
         title: "Weight Loss",
@@ -86,37 +87,76 @@ export class StateService {
         imageUrl: "../../../assets/landing/hero-weight-loss.jpg",
         button: "Join us now",
         buttonUrl: ""
+      },
+      {
+        id: 9,
+        title: "Martial Arts Schools",
+        subTitle: "Discipline Meets Legacy",
+        description: "Berliz connects you to top-tier martial arts academies. From Muay Thai to Karate, train where skill meets spirit.",
+        imageUrl: "../../../assets/landing/hero-martial-arts.jpg",
+        button: "Find a school",
+        buttonUrl: ""
+      },
+      {
+        id: 10,
+        title: "Virtual Coaching",
+        subTitle: "Train Anywhere, Anytime",
+        description: "No gym? No problem. Berliz brings expert trainers to your screen with real-time coaching that pushes results.",
+        imageUrl: "../../../assets/landing/hero-virtual-coach.jpg",
+        button: "Get started",
+        buttonUrl: ""
+      },
+      {
+        id: 11,
+        title: "Fitness Centers Near You",
+        subTitle: "Train Local, Go Global",
+        description: "Browse verified gyms and training hubs in your area. Berliz bridges the gap between passion and location.",
+        imageUrl: "../../../assets/landing/hero-gyms.jpg",
+        button: "Explore now",
+        buttonUrl: ""
+      },
+      {
+        id: 12,
+        title: "Fitness Marketplace",
+        subTitle: "Gear Up. Level Up.",
+        description: "Explore premium fitness gear, supplements, and apparel curated for every discipline. The Berliz marketplace fuels your grind with quality and style.",
+        imageUrl: "../../../assets/landing/hero-marketplace.jpg",
+        button: "Shop Now",
+        buttonUrl: ""
       }
+
+
     ];
 
     this.offers = [
       {
         id: 1,
         title: "Personalized Training Programs",
-        description: "Unlock elite-level coaching with our global network of Berliz trainers. Every session is tailored to your goals, grit, and growth.",
+        description: "Train your way. From elite martial artists to personal fitness coaches, Berliz connects you with certified trainers tailored to your style, goals, and intensity.",
         subTitle: "Train with Purpose, Transform with Power",
         iconUrl: "Map"
       },
       {
         id: 2,
         title: "Nutritional Guidance",
-        description: "Fuel like a warrior. Our pros craft precise meal plans to optimize strength, endurance, and fat loss for sustainable results.",
+        description: "Optimize performance with precision-crafted meal plans. Whether cutting, bulking, or balancing, Berliz pros deliver nutrition that works as hard as you do.",
         subTitle: "Discipline Starts on the Plate",
         iconUrl: "Activity"
       },
       {
         id: 3,
         title: "Flexible Membership Options",
-        description: "Whether you’re all-in or just beginning, Berliz offers membership tiers that flex with your lifestyle — without compromise.",
+        description: "Berliz fits your flow — from day passes to pro-tier subscriptions. Join your gym, martial arts school, or online coach all through one seamless platform.",
         subTitle: "No Excuses. Just Options.",
         iconUrl: "Layers"
       },
       {
         id: 4,
         title: "Community Support",
-        description: "You’re not alone. Connect with the Berliz tribe — push each other, grow together, and celebrate every milestone.",
+        description: "Surround yourself with high-performance people. Berliz connects you to a thriving community of trainees, trainers, and wellness warriors worldwide.",
         subTitle: "Forge Bonds. Fuel Growth.",
         iconUrl: "Users"
+        ,
       }
     ];
 

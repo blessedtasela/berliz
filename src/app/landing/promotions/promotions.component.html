@@ -1,25 +1,33 @@
-<div class="w-80 lg:w-full bg-gray-100 rounded-md cursor-pointer flex items-center justify-center
-transition-all duration-300 transform m-w-12 hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
-    <div class="grid lg:grid-cols-2 items-center justify-items-center">
-        <div class="order-2 lg:order-1 grid grid-cols justify-center items-center gap-1">
-            <p class="w-full text-center text-md font-bold text-red-600 text-transform: uppercase font-sans">
-                {{ promotions.title}}
-            </p>
+<!-- Promotion Card -->
+<div
+  class="w-full h-full max-w-sm bg-gradient-to-b from-zinc-900 via-black to-zinc-900 
+  rounded-xl overflow-hidden border border-zinc-800 shadow-xl hover:scale-105 
+  transform transition-all duration-300 flex flex-col justify-between p-6">
 
-            <P class="w-full text-center font-sans text-sm font-bold text-transform: uppercase">
-                {{ promotions.subTitle}}
-            </P>
+  <!-- Text Content -->
+  <div class="text-white text-center flex flex-col gap-3">
+    <p class="text-red-600 text-sm uppercase tracking-widest font-bold">
+      {{ promotions.subTitle }}
+    </p>
 
-            <p class="mt-1 text-sm w-full text-center font-sans">
-                {{ promotions.description}}
-            </p>
-            <button class="text-sm bg-red-600 text-white p-1 m-6  hover:bg-red-700 rounded-md font-sans"
-                [routerLink]="['/sign-up']">
-                {{ promotions.button}}
-            </button>
-        </div>
-        <div class="order-1 lg:order-2 flex justify-end">
-            <img class="w-full object-cover rounded-md mb-4 lg:mb-0" src="{{ promotions.imageUrl }}">
-        </div>
-    </div>
+    <h3 class="text-xl font-extrabold uppercase tracking-tight">
+      {{ promotions.title }}
+    </h3>
+
+    <p class="text-sm text-gray-300">
+      {{ promotions.description }}
+    </p>
+
+    <a [routerLink]="['/sign-up']"
+      class="inline-block mt-2 bg-white text-red-600 px-4 py-2 rounded-md text-sm font-semibold 
+      hover:bg-red-600 hover:text-white transition">
+      {{ promotions.button }}
+    </a>
+  </div>
+
+  <!-- Image at Bottom -->
+  <div class="mt-6">
+    <img [src]="promotions.imageUrl" alt="{{ promotions.title }}"
+      class="w-full h-40 object-cover rounded-md shadow-md border border-zinc-700" />
+  </div>
 </div>
