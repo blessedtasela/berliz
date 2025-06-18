@@ -7,17 +7,19 @@ import { Route, Router } from '@angular/router';
   styleUrls: ['./footer.component.css']
 })
 export class FooterComponent {
-constructor(private router: Router) {
 
-}
+  currentYear: number = new Date().getFullYear();
+  constructor(private router: Router) {
 
-goToSection(sectionId: string) {
-const element = document.querySelector(`#${sectionId}`);
-if (element){
-  this.router.navigate(['/trainers']);
-  element.scrollIntoView({
-    behavior: 'smooth'
-  })
-}
-}
+  }
+
+  goToSection(sectionId: string) {
+    const element = document.querySelector(`#${sectionId}`);
+    if (element) {
+      this.router.navigate(['/trainers']);
+      element.scrollIntoView({
+        behavior: 'smooth'
+      })
+    }
+  }
 }

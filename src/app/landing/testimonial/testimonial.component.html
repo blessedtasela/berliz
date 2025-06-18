@@ -1,48 +1,62 @@
-<div class="justify-between mt-40 font-sans flex flex-col justify-center items-center">
-    <div class="font sans text-4xl mb-5 text-center">
-        Testimonial
-    </div>
-    <button class="text-md bg-red-600 text-white py-2 mb-5 px-5 hover:bg-red-700 rounded-md font-sans mx-auto
-    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
-        <a [routerLink]="['/testimonials']"> See more </a>
-    </button>
+<!-- Header Section -->
+<div class="mt-40 font-sans flex flex-col items-center text-center space-y-4">
+  <h2 class="text-4xl md:text-5xl font-extrabold text-white uppercase tracking-wide">
+    What <span class="text-red-600">Our </span>Clients <span class="text-red-600">Say</span>
+  </h2>
+
+  <button
+    class="text-sm bg-white text-red-600 py-2 px-6 rounded-md font-semibold uppercase tracking-wider hover:bg-red-600 hover:text-white 
+           transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
+    <a [routerLink]="['/testimonials']">See More</a>
+  </button>
 </div>
-<section class="grid md:grid-cols-2 grid-cols w-full rounded-md mt-20 p-2">
-    <div class="flex">
-        <img src="../../../assets/trainers/t10.jpg" class="md:rounded-l-md rounded-t-md">
-    </div>
-    <div class="bg-gray-950 md:rounded-r-md rounded-b-md p-8">
-        <p class="text-red-600 font-sans font-bold text-md md:text-xl uppercase mb-4">Testimonies</p>
-        <p class="text-gray-200 font-sans font-bold md:text-4xl text-2xl uppercase">What our client says</p>
-        <div *ngFor="let t of testimonials; let i = index" [class.hidden]="i !== testimonialIndex">
-            <p class="text-gray-200 font-sans md:text-md text-sm my-8">
-                <span class="text-red-600 md:text-6xl font-bold ml-2">&#8220;</span>
-                <span class="ml-2">{{ t.testimonial }}</span>
-                <span class="text-red-600 md:text-2xl font-bold ml-2">&#8221;</span>
-            </p>
-            <div class="grid grid-cols-2 items-center">
-                <img class="rounded-full w-48" src="../../../assets/trainers/t15.jpg">
-                <div class="grid grid-cols-1 m-8">
-                    <div class="text-gray-200 font-sans font-bold text-md flex">
-                        {{ t.user.firstname }}
-                    </div>
-                    <div class="text-gray-200 font-sans text-sm flex">
-                        {{t.date }}
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid grid-cols-2">
-                <button class="mt-6 text-sm bg-red-600 text-white py-2 px-5 hover:bg-red-700 rounded-md font-sans mx-auto ml-4
-            transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold">
-                    {{t.center}}
-                </button>
-                <div class="mt-6 flex justify-end">
-                    <span (click)="toggleTestimonial(-1)"
-                        class="text-red-600 text-2xl md:text-4xl font-bold cursor-pointer mx-3">&#8592;</span>
-                    <span (click)="toggleTestimonial(+1)"
-                        class="text-red-600 text-2xl md:text-4xl font-bold cursor-pointer mx-3">&#8594;</span>
-                </div>
-            </div>
+
+<!-- Testimonial Section -->
+<section class="grid md:grid-cols-2 grid-cols-1 w-full mt-16 p-4 md:p-8 gap-0">
+  <!-- Image -->
+  <div class="flex">
+    <img src="../../../assets/trainers/t10.jpg" alt="Client" class="w-full object-cover md:rounded-l-md" />
+  </div>
+
+  <!-- Testimonial Content -->
+  <div class="bg-gradient-to-b from-zinc-900 to-black md:rounded-r-md rounded-b-md p-6 md:p-10 text-white space-y-4">
+    <p class="text-red-600 font-semibold uppercase tracking-widest text-sm md:text-base">
+      Testimonies
+    </p>
+
+    <h3 class="text-2xl md:text-4xl font-extrabold uppercase tracking-tight">
+      Real Stories. Real Results.
+    </h3>
+
+    <div *ngFor="let t of testimonials; let i = index" [class.hidden]="i !== testimonialIndex">
+      <p class="text-gray-200 font-light text-sm md:text-base leading-relaxed my-6 relative">
+        <span class="text-red-600 text-5xl font-bold absolute left-[-10px] top-[-10px]">&#8220;</span>
+        <span class="ml-6 block">{{ t.testimonial }}</span>
+        <span class="text-red-600 text-2xl font-bold absolute right-[-10px] bottom-[-10px]">&#8221;</span>
+      </p>
+
+      <!-- Client Info -->
+      <div class="grid grid-cols-2 items-center gap-4 mt-4">
+        <img src="../../../assets/trainers/t15.jpg" alt="{{ t.user.firstname }}" class="rounded-full w-24 h-24 object-cover border-2 border-red-600" />
+        <div>
+          <p class="font-bold text-md">{{ t.user.firstname }}</p>
+          <p class="text-gray-400 text-sm">{{ t.date }}</p>
         </div>
+      </div>
+
+      <!-- Center Name & Navigation Arrows -->
+      <div class="grid grid-cols-2 items-center mt-6">
+        <button
+          class="bg-red-600 text-white py-2 px-4 rounded-md text-sm font-bold uppercase tracking-wide hover:bg-red-700 
+                 transition-all duration-300 transform hover:scale-105">
+          {{ t.center }}
+        </button>
+
+        <div class="flex justify-end space-x-4 text-2xl font-bold">
+          <span (click)="toggleTestimonial(-1)" class="cursor-pointer text-red-600 hover:text-white transition">&#8592;</span>
+          <span (click)="toggleTestimonial(+1)" class="cursor-pointer text-red-600 hover:text-white transition">&#8594;</span>
+        </div>
+      </div>
     </div>
+  </div>
 </section>

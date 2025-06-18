@@ -6,10 +6,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./sub-footer.component.css']
 })
 export class SubFooterComponent {
+  currentYear: number = new Date().getFullYear();
 
   constructor() { }
   openBlessedTasela() {
-      window.open('https://blessed-tasela.netlify.app/', '_blank');
-    
+    window.open('https://blessed-tasela.netlify.app/', '_blank');
+
   }
 }

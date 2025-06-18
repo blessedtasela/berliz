@@ -1,10 +1,11 @@
 <ngx-ui-loader></ngx-ui-loader>
-<div *ngIf="(!isTopbar() || !isSidebar() || !isLogin()); else pageNotFound">
+<div *ngIf="(!isTopbar() || !isSidebar() || !isLogin()); else pageNotFound" class="bg-black">
     <div *ngIf="isTopbar()">
         <app-navigation-bar></app-navigation-bar>
-        <div class="bg-black">
+        <div>
             <router-outlet></router-outlet>
         </div>
+
         <app-footer></app-footer>
     </div>
     <div *ngIf="isLogin()">

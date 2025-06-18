@@ -93,7 +93,7 @@ export class StateService {
         title: "Martial Arts Schools",
         subTitle: "Discipline Meets Legacy",
         description: "Berliz connects you to top-tier martial arts academies. From Muay Thai to Karate, train where skill meets spirit.",
-        imageUrl: "../../../assets/landing/hero-martial-arts.jpg",
+        imageUrl: "../../../assets/landing/hero-martial-school.jpg",
         button: "Find a school",
         buttonUrl: ""
       },
@@ -111,7 +111,7 @@ export class StateService {
         title: "Fitness Centers Near You",
         subTitle: "Train Local, Go Global",
         description: "Browse verified gyms and training hubs in your area. Berliz bridges the gap between passion and location.",
-        imageUrl: "../../../assets/landing/hero-gyms.jpg",
+        imageUrl: "../../../assets/landing/hero-gym-centers.jpg",
         button: "Explore now",
         buttonUrl: ""
       },
