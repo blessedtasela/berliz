@@ -9,38 +9,12 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'berliz';
+  title = 'Berliz';
   currentRoute: any;
-  private lastScrollY: number = 0;
 
   constructor(private router: Router, private metaService: MetaService) { }
 
-  @HostListener('window:beforeunload')
-  saveScrollPosition() {
-    localStorage.setItem('scrollY', window.scrollY.toString());
-  }
-
   ngOnInit(): void {
-
-    // Restore scroll on refresh
-    const savedY = localStorage.getItem('scrollY');
-    if (savedY) {
-      setTimeout(() => window.scrollTo(0, +savedY), 50);
-    }
-
-    // Save scroll before navigation
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        this.lastScrollY = window.scrollY;
-      }
-
-      if (event instanceof NavigationEnd) {
-        // Wait for the view to settle before restoring scroll
-        setTimeout(() => {
-          window.scrollTo({ top: this.lastScrollY, behavior: 'smooth' });
-        }, 50);
-      }
-    });
 
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -79,9 +53,18 @@ export class AppComponent {
     return loginRoutes.some(route => this.router.url.includes(route));
   }
 
-  isPageError(): boolean {
-    const loginRoutes = ['/**',];
-    return this.router.url.startsWith('/**');
+  isPageNotFound(): boolean {
+    const notFoundRoutes = ['/**'];
+    return notFoundRoutes.some(route => this.router.url.startsWith(route));
   }
+
+  getActiveLayout(): 'topbar' | 'login' | 'sidebar' {
+    const url = this.router.url;
+
+    if (url.startsWith('/dashboard')) return 'sidebar';
+    if (url.startsWith('/login') || url.startsWith('/sign-up')) return 'login';
+    return 'topbar'; // default public routes
+  }
+
 
 }

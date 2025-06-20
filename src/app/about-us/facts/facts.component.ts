@@ -28,7 +28,7 @@ export class FactsComponent {
       { id: 1, name: "Our Partners", iconUrl: "../../../assets/icons/group.png", value: 65, counterValue: 0 },
       { id: 2, name: "Our Centers", iconUrl: "../../../assets/icons/gym.png", value: 23, counterValue: 0 },
       { id: 3, name: "Our Members", iconUrl: "../../../assets/icons/networking.png", value: 400, counterValue: 0 },
-      { id: 4, name: "Categories", iconUrl: "../../../assets/icons/wrestling.png", value: 400, counterValue: 0 },
+      { id: 4, name: "Our Services", iconUrl: "../../../assets/icons/wrestling.png", value: 400, counterValue: 0 },
     ]
 
   }

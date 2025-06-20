@@ -1,17 +1,23 @@
 <ngx-ui-loader></ngx-ui-loader>
-<div *ngIf="(!isTopbar() || !isSidebar() || !isLogin()); else pageNotFound" class="bg-black">
-    <div *ngIf="isTopbar()">
-        <app-navigation-bar></app-navigation-bar>
-        <div>
-            <router-outlet></router-outlet>
-        </div>
 
-        <app-footer></app-footer>
-    </div>
-    <div *ngIf="isLogin()">
+<ng-container [ngSwitch]="getActiveLayout()">
+
+    <!-- Topbar layout -->
+    <ng-container *ngSwitchCase="'topbar'">
+        <div class="bg-black">
+            <app-navigation-bar></app-navigation-bar>
+            <router-outlet></router-outlet>
+            <app-footer></app-footer>
+        </div>
+    </ng-container>
+
+    <!-- Login layout -->
+    <ng-container *ngSwitchCase="'login'">
         <router-outlet></router-outlet>
-    </div>
-    <div *ngIf="isSidebar()">
+    </ng-container>
+
+    <!-- Sidebar layout -->
+    <ng-container *ngSwitchCase="'sidebar'">
         <div class="relative min-h-screen flex">
             <app-top-bar></app-top-bar>
             <app-side-bar class="mt-2"></app-side-bar>
@@ -22,13 +28,13 @@
                 </div>
             </div>
         </div>
-    </div>
+    </ng-container>
+
+</ng-container>
 
 
-</div>
-
-<ng-template #pageNotFound>
+<!-- <div *ngIf="isPageNotFound()">
     <app-navigation-bar></app-navigation-bar>
     <router-outlet></router-outlet>
     <app-footer></app-footer>
-</ng-template>
+</div> -->

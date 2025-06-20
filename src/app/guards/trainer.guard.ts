@@ -29,4 +29,16 @@ export class TrainerGuard implements CanActivate {
 
     return true; // Allow access to the TrainerDetailsComponent
   }
+
+//   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+//   const idParam = route.paramMap.get('id');
+//   if (!idParam) return false;
+
+//   const id = +idParam;
+//   if (isNaN(id) || id <= 0) return false;
+
+//   // You can later fetch and validate if trainer exists, if needed
+//   return true;
+// }
+
 }

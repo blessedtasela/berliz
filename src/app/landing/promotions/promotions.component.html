@@ -1,33 +1,31 @@
 <!-- Promotion Card -->
-<div
-  class="w-full h-full max-w-sm bg-gradient-to-b from-zinc-900 via-black to-zinc-900 
+<div class="w-full h-full max-w-sm bg-gradient-to-b from-zinc-900 via-black to-zinc-900 
   rounded-xl overflow-hidden border border-zinc-800 shadow-xl hover:scale-105 
   transform transition-all duration-300 flex flex-col justify-between p-6">
 
-  <!-- Text Content -->
-  <div class="text-white text-center flex flex-col gap-3">
-    <p class="text-red-600 text-sm uppercase tracking-widest font-bold">
-      {{ promotions.subTitle }}
-    </p>
+    <!-- Text Content -->
+    <div class="text-white text-center flex flex-col gap-3">
+        <p class="text-red-600 text-sm uppercase tracking-widest font-bold">
+            {{ promotions.subTitle }}
+        </p>
 
-    <h3 class="text-xl font-extrabold uppercase tracking-tight">
-      {{ promotions.title }}
-    </h3>
+        <h3 class="text-xl font-extrabold uppercase tracking-tight">
+            {{ promotions.title }}
+        </h3>
 
-    <p class="text-sm text-gray-300">
-      {{ promotions.description }}
-    </p>
+        <p class="text-sm text-gray-300">
+            {{ promotions.description }}
+        </p>
 
-    <a [routerLink]="['/sign-up']"
-      class="inline-block mt-2 bg-white text-red-600 px-4 py-2 rounded-md text-sm font-semibold 
+        <a [routerLink]="[promotions.buttonUrl ]" class="inline-block mt-2 bg-white text-red-600 px-4 py-2 rounded-md text-sm font-semibold 
       hover:bg-red-600 hover:text-white transition">
-      {{ promotions.button }}
-    </a>
-  </div>
+            {{ promotions.button }}
+        </a>
+    </div>
 
-  <!-- Image at Bottom -->
-  <div class="mt-6">
-    <img [src]="promotions.imageUrl" alt="{{ promotions.title }}"
-      class="w-full h-40 object-cover rounded-md shadow-md border border-zinc-700" />
-  </div>
+    <!-- Image at Bottom -->
+    <div class="mt-6">
+        <img [src]="promotions.imageUrl" alt="{{ promotions.title }}"
+            class="w-full h-40 object-cover rounded-md shadow-md border border-zinc-700" />
+    </div>
 </div>

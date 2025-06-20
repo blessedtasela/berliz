@@ -57,9 +57,10 @@ import { BreadcrumbService } from 'xng-breadcrumb';
 import { PartnerComponent } from './partner/partner/partner.component';
 import { TrainerDetailsComponent } from './trainer/trainer-details/trainer-details.component';
 import { PartnerRouteComponent } from './partner/partner-route/partner-route.component';
+import { ExercisesPageComponent } from './exercises/exercises-page/exercises-page.component';
 
 const routes: Routes = [
- 
+
 
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: LandingPageComponent },
@@ -77,6 +78,7 @@ const routes: Routes = [
   { path: 'services/:id/:name', component: CategoryDetailsComponent, canActivate: [CategoryGuard] },
   { path: 'testimonials', component: TestimonialPageComponent },
   { path: 'equipments', component: EquipmentPageComponent },
+  { path: 'exercises', component: ExercisesPageComponent },
   { path: 'report-problem', component: ReportProblemPageComponent },
   { path: 'login/reset-password', component: ResetPasswordComponent },
   { path: 'login/activate-account', component: ActivateAccountComponent },
@@ -523,9 +525,9 @@ const routes: Routes = [
     ],
   },
 
-   // nested components
-   {
-    path: 'products', component: ProductsPageComponent, children: productChildRoutes
+  // nested components
+  {
+    path: 'shop', component: ProductsPageComponent, children: productChildRoutes
   },
 
   //handles other exceptions

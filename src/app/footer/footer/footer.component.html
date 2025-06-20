@@ -1,54 +1,59 @@
 <section class="bg-black text-white mt-24 rounded-t-md py-10 px-6 lg:px-16 w-full">
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
-    <!-- Contact Info -->
-    <div>
-      <h2 class="text-lg font-bold uppercase text-red-600 tracking-wide">Get in Touch</h2>
-      <div class="mt-4 text-sm font-sans space-y-2">
-        <p>288 East Hastings Street,<br>Vancouver BC V6A 0H7</p>
-        <app-phone></app-phone>
-        <app-email></app-email>
-        <app-social></app-social>
-      </div>
-    </div>
+        <!-- Contact Info -->
+        <div>
+            <h2 class="text-lg font-bold uppercase text-red-600 tracking-wide">Get in Touch</h2>
+            <div class="mt-4 text-sm font-sans space-y-2">
+                <p>288 East Hastings Street,<br>Vancouver BC V6A 0H7</p>
+                <app-phone></app-phone>
+                <app-email></app-email>
+                <app-social></app-social>
+            </div>
+        </div>
 
-    <!-- Partners -->
-    <div>
-      <h2 class="text-lg font-bold uppercase text-red-600 tracking-wide">Partners</h2>
-      <ul class="mt-4 text-sm font-sans space-y-2">
-        <li>
-          <a [routerLink]="['/centers']" class="hover:text-red-600 transition-all duration-300">Gym Centers</a>
-        </li>
-        <li>
-          <a [routerLink]="['/trainers']" class="hover:text-red-600 transition-all duration-300">Trainers</a>
-        </li>
-        <li>
-          <a [routerLink]="['/categories']" class="hover:text-red-600 transition-all duration-300">Categories</a>
-        </li>
-        <li>
-          <a [routerLink]="['/exercises']" class="hover:text-red-600 transition-all duration-300">Exercises</a>
-        </li>
-      </ul>
-    </div>
+        <!-- Partners -->
+        <div>
+            <h2 class="text-lg font-bold uppercase text-red-600 tracking-wide">Partners</h2>
+            <ul class="mt-4 text-sm font-sans space-y-2">
+                <li>
+                    <a [routerLink]="['/centers']" class="hover:text-red-600 transition-all duration-300">Gym
+                        Centers</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/trainers']" class="hover:text-red-600 transition-all duration-300">Trainers</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/services']" class="hover:text-red-600 transition-all duration-300">Services</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/exercises']"
+                        class="hover:text-red-600 transition-all duration-300">Exercises</a>
+                </li>
+            </ul>
+        </div>
 
-    <!-- Quick Links -->
-    <div>
-      <h2 class="text-lg font-bold uppercase text-red-600 tracking-wide">Quick Links</h2>
-      <ul class="mt-4 text-sm font-sans space-y-2">
-        <li><a [routerLink]="['/testimonials']" class="hover:text-red-600 transition-all duration-300">Testimonial</a></li>
-        <li><a [routerLink]="['/dashboard']" class="hover:text-red-600 transition-all duration-300">Dashboard</a></li>
-        <li><a [routerLink]="['/my-tasks']" class="hover:text-red-600 transition-all duration-300">Tasks</a></li>
-        <li><a [routerLink]="['/my-todos']" class="hover:text-red-600 transition-all duration-300">To-do List</a></li>
-        <li><a [routerLink]="['/report-problem']" class="hover:text-red-600 transition-all duration-300">Report a Problem</a></li>
-      </ul>
-    </div>
+        <!-- Quick Links -->
+        <div>
+            <h2 class="text-lg font-bold uppercase text-red-600 tracking-wide">Quick Links</h2>
+            <ul class="mt-4 text-sm font-sans space-y-2">
+                <li><a [routerLink]="['/testimonials']"
+                        class="hover:text-red-600 transition-all duration-300">Testimonial</a></li>
+                <li><a [routerLink]="['/dashboard']"
+                        class="hover:text-red-600 transition-all duration-300">Dashboard</a></li>
+                <li><a [routerLink]="['/equipments']"
+                        class="hover:text-red-600 transition-all duration-300">Equipments</a></li>
+                <li><a [routerLink]="['/report-problem']" class="hover:text-red-600 transition-all duration-300">Report
+                        a Problem</a></li>
+            </ul>
+        </div>
 
-    <!-- Newsletter -->
-    <div>
-      <app-newsletter></app-newsletter>
+        <!-- Newsletter -->
+        <div>
+            <app-newsletter></app-newsletter>
+        </div>
+
     </div>
-    
-  </div>
 </section>
 
 <app-sub-footer></app-sub-footer>

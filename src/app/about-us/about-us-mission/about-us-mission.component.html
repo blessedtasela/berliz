@@ -1,41 +1,28 @@
-<section class="w-full rounded-md cursor-pointer mt-20 mx-auto">
-    <div class="grid lg:grid-cols-2 mx-auto">
-        <p class="font-sans w-full text-center text-xl md:text-4xl font-bold text-red-600 uppercase sm:mb-3">
-            Our Mission
-        </p>
-        <P class="font-sans w-full text-center text-sm md:text-md font-bold lg:text-md capitalize">
-            ....... Shaping the fitness industry
-        </P>
-        <div class="order-1 flex justify-center items-center mt-2 lg:mt-0 p-2">
-            <img class="w-[400px] h-[400px] object-cover m-2 lg:w-[500px] lg:h-[450px] rounded-md mb-4 lg:mb-0
-            transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                src="../../../assets/landing/about-vision.jpg">
+<section class="w-full mt-20 px-4">
+    <div class="grid lg:grid-cols-2 gap-6 items-center max-w-6xl mx-auto">
+        <div class="flex justify-center order-2 lg:order-1">
+            <img src="../../../assets/landing/about-vision.jpg" alt="Berliz Mission"
+                class="w-[400px] lg:w-[500px] h-[400px] lg:h-[450px] object-cover rounded-md shadow-lg transform hover:scale-105 transition" />
         </div>
-        <div class="ml-5 order-1 grid grid-cols-1 text-justify items-center bg-gray-100 m-8 rounded-md mx-auto mr-5">
-            <p class="text-sm w-100 font-sans mx-5 mb-5 lg:mb-0">
-                <span class="font-bold text-4xl">O</span>ur mission is to empower individuals in their
-                pursuit of health and fitness by providing unparalleled access to a global network of gym clubs,
-                cutting-edge training programs, and expert guidance.
+        <div class="space-y-4 order-1 lg:order-2 text-white">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-red-600 uppercase font-sans text-center lg:text-left">
+                Our Mission</h2>
+            <p class="text-sm md:text-base leading-relaxed">
+                <strong class="text-xl">A</strong>t Berliz, our mission is to inspire and empower
+                individuals on their path to optimal wellness by making fitness accessible, personalized, and
+                transformative.
             </p>
-            <p class="text-sm w-100 font-sans mx-5 mb-5 lg:mb-0">
-                We prioritize personalization, recognizing that each individual is unique and deserves a tailored
-                fitness experience. By providing
-                personalized training plans, tailored dietary guidance, and customized recommendations, we support users
-                in achieving their specific goals. Our core values drive our mission and shape our approach to fitness.
-                We also value accessibility, striving to make health and fitness
-                accessible to all. Our platform removes barriers and ensures that users can easily find and access
-                top-quality facilities, regardless of their location. We promote inclusivity and believe that
-                everyone should have the opportunity to lead a healthy and active lifestyle.
+            <p class="text-sm md:text-base  leading-relaxed">
+                We believe that every journey is unique. That’s why we offer tailored workout plans, diet guidance, and
+                a community-driven ecosystem that supports every step of your transformation — no matter your starting
+                point.
             </p>
-            <p class="text-sm w-100 font-sans mx-5 mb-5 lg:mb-0">
-                At Berliz, our mission is to empower individuals on their path to wellness. We leverage technology and
-                strategic partnerships to provide convenient access to a global network of fitness facilities, training
-                programs, and expert guidance. Our core values of personalization, accessibility, and community guide
-                our commitment to delivering an exceptional user experience. Join us at Berliz and unlock your fitness
-                potential as we reimagine your fitness journey together.
+            <p class="text-sm md:text-base  leading-relaxed">
+                By leveraging cutting-edge technology and a commitment to inclusivity, Berliz breaks barriers and
+                redefines what’s possible in fitness.
             </p>
-            <button class="text-sm bg-red-600 text-white py-1 mb-5 px-2 hover:bg-red-700 rounded-md font-sans mx-auto
-                transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
+            <button [routerLink]="['/sign-up']"
+                class="bg-white text-red-600 px-6 py-2 rounded-md font-semibold transition transform hover:bg-red-600 hover:text-white">
                 Join Now
             </button>
         </div>

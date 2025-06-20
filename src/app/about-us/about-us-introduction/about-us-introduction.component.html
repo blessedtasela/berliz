@@ -1,39 +1,29 @@
-<section class="w-full rounded-md cursor-pointer mt-20 mx-auto">
-    <div class="grid lg:grid-cols-2 mx-auto">
-        <p class="w-full text-center text-xl md:text-4xl font-sans font-bold text-red-600 uppercase sm:mb-3">
-            Welcome to Berliz
-        </p>
-        <P class="w-full text-center font-sans text-sm md:text-md font-bold lg:text-md capitalize ">
-            ....... Unlock Your Potentials
-        </P>
-        <div class="order-1 flex justify-center items-center mt-2 lg:mt-0">
-            <img class="w-[400px] h-[400px] object-cover m-2 lg:w-[500px] lg:h-[450px] rounded-md mb-4 lg:mb-0
-            transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                src="../../../assets/landing/gym-cross.jpg">
-        </div>
-        <div class="ml-5 order-1 grid grid-cols-1 text-justify items-center bg-gray-100 m-8 rounded-md mx-auto mr-5">
-            <p class="text-sm w-100 font-sans mx-5 mb-5 lg:mb-0">
-                <span class="font-bold text-4xl">W</span>e are revolutionizing the fitness industry with our innovative platform.
-                We take pride in seamlessly connecting you with a world of fitness possibilities that are just a tap
-                away. With our user-friendly application, we make it simple for you to take control of
-                your health and fitness goals.
+<section class="w-full mt-20 px-4 text-white">
+    <div class="grid lg:grid-cols-2 gap-6 items-center max-w-6xl mx-auto">
+        <div class="text-center lg:text-left space-y-4">
+            <h2 class="text-3xl md:text-4xl text-red-600 font-extrabold uppercase font-sans">Welcome to Berliz</h2>
+            <p class="text-md md:text-lg font-medium italic">...Unlock your full potential</p>
+            <p class="text-sm md:text-base leading-relaxed">
+                <strong class="text-xl">W</strong>e are revolutionizing the fitness industry by seamlessly
+                connecting you to world-class facilities, expert trainers, and a supportive community — all within a
+                tap. Berliz empowers you to take control of your health and fitness journey through our innovative and
+                user-friendly platform.
             </p>
-            <p class="text-sm w-100 font-sans mx-5 mb-5 lg:mb-0">
-                We are commited to delivering a comprehensive suite of services tailored to your unique needs. We have
-                curated a wide network of gym clubs, ensuring that you have access to top-quality facilities that
-                elevate your fitness experience. Our team of expert trainers is dedicated to supporting and guiding you
-                as you work towards achieving your fitness goals. Moreover, our engaged community provides an invaluable
-                source of support, motivation, and encouragement throughout your fitness journey.
+            <p class="text-sm md:text-base leading-relaxed">
+                Whether you're a beginner or a seasoned athlete, our curated network of gyms, certified coaches, and
+                engaged community ensures your goals are not only achievable but sustainable.
             </p>
-            <p class="text-sm w-100 font-sans mx-5 mb-5 lg:mb-0">
-                Join us at Berliz and experience the future of fitness. Discover the convenience, expertise, and
-                community that set us apart in the industry. Together, we can achieve your health and fitness
-                aspirations like never before.
+            <p class="text-sm md:text-base leading-relaxed">
+                Join Berliz today and experience a smarter, more connected way to achieve your fitness aspirations.
             </p>
-            <button class="text-sm font-sans bg-red-600 text-white py-1 mb-5 px-2 hover:bg-red-700 rounded-md mx-auto
-                transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
+            <button [routerLink]="['/sign-up']"
+                class="bg-red-600 bg-white text-red-600 hover:text-white hover:bg-red-600 px-6 py-2 rounded-md font-semibold transition transform hover:scale-105">
                 Join Now
             </button>
+        </div>
+        <div class="flex justify-center">
+            <img src="../../../assets/landing/gym-cross.jpg" alt="Berliz Gym"
+                class="w-[400px] lg:w-[500px] h-[400px] lg:h-[450px] object-cover rounded-md shadow-lg transform hover:scale-105 transition" />
         </div>
     </div>
 </section>

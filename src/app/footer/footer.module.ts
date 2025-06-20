@@ -11,6 +11,7 @@ import { NewsletterComponent } from './newsletter/newsletter.component';
 import { PhoneComponent } from './phone/phone.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SocialComponent } from './social/social.component';
+import { UnderConstructionComponent } from './under-construction/under-construction.component';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { SocialComponent } from './social/social.component';
     EmailComponent,
     NewsletterComponent,
     PhoneComponent,
-    SocialComponent
+    SocialComponent,
+    UnderConstructionComponent
   ],
   imports: [
     CommonModule,
@@ -32,7 +34,8 @@ import { SocialComponent } from './social/social.component';
     ReactiveFormsModule,
   ],
   exports: [
-    FooterComponent
+    FooterComponent,
+    UnderConstructionComponent
   ]
 })
 export class FooterModule { }
