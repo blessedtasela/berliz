@@ -19,9 +19,7 @@ export class CategoriesComponent {
     private rxStompService: RxStompService,) { }
 
   ngOnInit(): void {
-    this.ngxService.start()
     this.handleEmitEvent()
-    this.ngxService.stop()
     this.watchLikeCategory()
     this.watchUpdateCategory()
     this.watchUpdateStatus()

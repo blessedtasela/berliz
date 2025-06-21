@@ -74,11 +74,31 @@ export class CenterSearchComponent {
       );
   }
 
-  onSearchCriteriaChange(event: any): void {
+  searchByButton(): void {
+    const query = this.searchQuery?.trim();
+
+    if (!query) {
+      this.snackbarService.openSnackBar('Please enter a search term.', 'error');
+      return;
+    }
+
     this.ngxService.start();
-    this.selectedSearchCriteria = event.target.value;
-    this.search(this.searchQuery);
-    this.ngxService.stop()
+
+    this.search(query).subscribe(
+      (results) => {
+        this.allCenters.emit(results);
+        this.ngxService.stop();
+      },
+      (error) => {
+        this.snackbarService.openSnackBar('Search failed.', 'error');
+        this.ngxService.stop();
+      }
+    );
+  }
+
+  // Function to handle the search select change event
+  onSearchCriteriaChange(): void {
+    this.searchByButton();
   }
 
   search(query: string): Observable<Centers[]> {

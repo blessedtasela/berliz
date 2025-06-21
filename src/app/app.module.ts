@@ -46,6 +46,7 @@ import { PartnerModule } from './partner/partner.module';
 import { TrainerModule } from './trainer/trainer.module';
 import { UrlLowerCaseSerializer } from 'url-lower-case-serializer';
 import { NgxFileDropModule } from 'ngx-file-drop';
+import { UnderConstructionPageComponent } from './under-construction-page/under-construction-page.component';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   text: "Loading....",
@@ -82,6 +83,7 @@ const dbConfig: DBConfig = {
     RefreshTokenOverlayComponent,
     ResfreshTokenModalComponent,
     RouterBreadcrumbComponent,
+    UnderConstructionPageComponent,
   ],
   imports: [
     BrowserModule,

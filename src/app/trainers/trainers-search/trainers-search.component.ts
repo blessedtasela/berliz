@@ -1,11 +1,10 @@
 import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
+import { fromEvent, debounceTime, map, tap, switchMap, Observable, of, Subscription } from 'rxjs';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerStateService } from 'src/app/services/trainer-state.service';
-import { TrainerService } from 'src/app/services/trainer.service';
 
 @Component({
   selector: 'app-trainers-search',
@@ -14,44 +13,49 @@ import { TrainerService } from 'src/app/services/trainer.service';
 })
 export class TrainersSearchComponent {
   @Input() trainers: Trainers[] = [];
-  activeTrainers: Trainers[] = [];
   @Output() allTrainers: EventEmitter<Trainers[]> = new EventEmitter<Trainers[]>();
-  searchQuery: string = '';
-  selectedSearchCriteria: any = 'name';
 
-  constructor(private trainerStateService: TrainerStateService,
+  activeTrainers: Trainers[] = [];
+  searchQuery: string = '';
+  selectedSearchCriteria: string = 'name';
+
+  private trainerSub: Subscription | undefined;
+
+  constructor(
+    private trainerStateService: TrainerStateService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef,
-    private rxStompService: RxStompService) { }
+    private rxStompService: RxStompService
+  ) {}
 
   ngOnInit(): void {
-    this.watchUpdateTrainerStatus()
+    this.trainerStateService.activeTrainersData$.subscribe((data) => {
+      this.activeTrainers = data;
+      this.trainers = data;
+      this.allTrainers.emit(data);
+    });
+    this.watchUpdateTrainerStatus();
   }
 
   ngAfterViewInit(): void {
     this.initializeSearch();
   }
 
-  handleEmitEvent() {
-    this.trainerStateService.getActiveTrainers().subscribe((trainers) => {
-      this.initializeSearch();
-      this.trainers = trainers
-      this.activeTrainers = this.trainers
-    });
-  }
-
   initializeSearch(): void {
-    fromEvent(this.elementRef.nativeElement.querySelector('input'), 'keyup')
+    const input = this.elementRef.nativeElement.querySelector('input');
+
+    if (!input) return;
+
+    fromEvent(input, 'keyup')
       .pipe(
         debounceTime(300),
         map((e: any) => e.target.value),
         tap((query: string) => {
+          this.searchQuery = query;
           this.ngxService.start();
         }),
-        switchMap((query: string) => {
-          return this.search(query);
-        })
+        switchMap((query: string) => this.search(query))
       )
       .subscribe(
         (results: Trainers[]) => {
@@ -59,50 +63,68 @@ export class TrainersSearchComponent {
           this.allTrainers.emit(results);
         },
         (error: any) => {
-          this.snackbarService.openSnackBar(error, 'error');
+          this.snackbarService.openSnackBar('Search failed.', 'error');
           this.ngxService.stop();
         }
       );
   }
 
-  onSearchCriteriaChange(event: any): void {
-    this.ngxService.start();
-    this.selectedSearchCriteria = event.target.value;
-    this.search(this.searchQuery);
-    this.ngxService.stop()
-  }
-
   search(query: string): Observable<Trainers[]> {
-    this.trainerStateService.activeTrainersData$.subscribe((cachedData) => {
-      this.activeTrainers = cachedData;
-    });
-    query = query.toLowerCase();
-    if (query.trim() === '') {
-      this.trainers = this.activeTrainers;
+    const lowerQuery = query.trim().toLowerCase();
+
+    if (!lowerQuery) {
+      return of(this.activeTrainers);
     }
-    this.trainers = this.activeTrainers.filter((trainer: Trainers) => {
+
+    const filtered = this.activeTrainers.filter((trainer: Trainers) => {
       switch (this.selectedSearchCriteria) {
         case 'name':
-          return trainer.name.toLowerCase().includes(query);
+          return trainer.name.toLowerCase().includes(lowerQuery);
         case 'category':
-          return trainer.categorySet.some(category => category.name.toLowerCase().includes(query));
+          return trainer.categorySet.some(cat => cat.name.toLowerCase().includes(lowerQuery));
         case 'address':
-          return trainer.address.toLowerCase().includes(query);
+          return trainer.address.toLowerCase().includes(lowerQuery);
         default:
-          return this.activeTrainers;
+          return false;
       }
     });
-    return of(this.trainers);
+
+    return of(filtered);
   }
 
-  watchUpdateTrainerStatus() {
+  searchByButton(): void {
+    const query = this.searchQuery?.trim();
+    if (!query) {
+      this.snackbarService.openSnackBar('Please enter a search term.', 'error');
+      return;
+    }
+
+    this.ngxService.start();
+    this.search(query).subscribe(
+      (results) => {
+        this.allTrainers.emit(results);
+        this.ngxService.stop();
+      },
+      (error) => {
+        this.snackbarService.openSnackBar('Search failed.', 'error');
+        this.ngxService.stop();
+      }
+    );
+  }
+
+  onSearchCriteriaChange(): void {
+    this.searchByButton();
+  }
+
+  watchUpdateTrainerStatus(): void {
     this.rxStompService.watch('/topic/updateTrainerStatus').subscribe((message) => {
       const receivedTrainer: Trainers = JSON.parse(message.body);
       if (receivedTrainer.status === 'false') {
         this.trainers.push(receivedTrainer);
       } else {
-        this.trainers = this.trainers.filter(trainer => trainer.id !== receivedTrainer.id);
+        this.trainers = this.trainers.filter(t => t.id !== receivedTrainer.id);
       }
+      this.allTrainers.emit(this.trainers);
     });
   }
 }

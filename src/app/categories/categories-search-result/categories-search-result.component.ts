@@ -17,6 +17,7 @@ import { genericError } from 'src/validators/form-validators.module';
 export class CategoriesSearchResultComponent {
   @Input() categoriesResult: Categories[] = [];
   showFullData: boolean = false;
+  visibleItems: number = 12;
   @Input() totalCategories: number = 0;
   responseMessage: any;
   user!: Users;
@@ -48,8 +49,9 @@ export class CategoriesSearchResultComponent {
     this.subscriptions.forEach(sub => sub.unsubscribe())
   }
 
-  toggleData() {
+  toggleData(): void {
     this.showFullData = !this.showFullData;
+    this.visibleItems = this.showFullData ? this.categoriesResult.length : 12;
   }
 
   formatDate(dateString: any): any {

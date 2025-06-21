@@ -44,19 +44,19 @@
                     Sign Up
                 </a>
             </li> -->
-            <li *ngIf="!getUser()">
+            <li *ngIf="!getUser()" class="py-4 lg:py-0">
                 <a [routerLink]="['/login']"
                     class="bg-white text-red-600 px-4 py-2 rounded-md hover:bg-red-700 hover:text-white transition duration-300 whitespace-nowrap inline-block">
                     Login
                 </a>
             </li>
-            <li *ngIf="getUser()">
+            <li *ngIf="getUser()" lass="py-4 lg:py-0">
                 <a [routerLink]="['/dashboard']"
                     class="bg-white text-red-600 px-4 py-2 rounded-md hover:bg-red-700 hover:text-white transition duration-300 whitespace-nowrap inline-block">
                     Dashboard
                 </a>
             </li>
-            <li>
+            <li lass="py-4 lg:py-0">
                 <a [routerLink]="['/shop']"
                     class="bg-white text-red-600 px-4 py-2 rounded-md hover:bg-red-700 hover:text-white transition duration-300 whitespace-nowrap inline-flex items-center gap-2">
                     <i-feather name="shopping-cart"></i-feather>

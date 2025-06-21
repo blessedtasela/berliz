@@ -11,9 +11,9 @@
       <div>
         <h3 class="flex justify-center items-center gap-1">
           <span class="hidden md:inline">&copy;</span>
-          Designed with 
-          <span class="text-red-600">&hearts;</span> 
-          by 
+          Designed with
+          <span class="text-red-600">&hearts;</span>
+          by
           <span class="text-red-600 font-bold cursor-pointer" (click)="openBlessedTasela()">
             Blessed Tasela
           </span>
@@ -22,12 +22,11 @@
 
       <!-- Column 3: Links -->
       <div class="flex flex-wrap justify-center gap-4 text-sm">
-        <a href="#" class="hover:text-red-600 transition">FAQs</a>
-        <a href="#" class="hover:text-red-600 transition">Terms</a>
-        <a href="#" class="hover:text-red-600 transition">Privacy</a>
-        <a href="#" class="hover:text-red-600 transition">Help</a>
+        <a [routerLink]="['/faqs']" class="hover:text-red-600 transition">FAQs</a>
+        <a [routerLink]="['/terms']" class="hover:text-red-600 transition">Terms</a>
+        <a [routerLink]="['/privacy']" class="hover:text-red-600 transition">Privacy</a>
+        <a [routerLink]="['/help-center']" class="hover:text-red-600 transition">Help</a>
       </div>
-
     </div>
   </div>
 </section>

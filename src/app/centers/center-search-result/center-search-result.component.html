@@ -1,85 +1,123 @@
-<section class="mx-auto mb-2 px-2 space-y-1 mt-20">
-    <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-20">
-        <section class="flex justify-between items-center
-                 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-xl"
-            *ngFor="let center of centersResult; let i = index" [ngClass]="{ 'hidden' : i >= 12 && !showFullData }">
-            <div class="w-full bg-gray-100 rounded-md aspect-square m-5 md:min-h-[750px]">
-                <div class="flex flex-col justify-center items-center">
-                    <img class="rounded-md object-cover" [src]="'data:image;base64, ' + center.photo">
-                    <div class="p-2">
-                        <p
-                            class="text-center text-lg font-sans font-bold lg:text-xl text-red-600 text-transform: uppercase mt-3">
-                            {{ center.name }}
-                        </p>
-                        <p class="mt-1 text-sm text-center font-sans italic font-bold text-gray-600 p-1">
-                            <ng-container *ngFor="let category of center.categorySet; let ix = index">
-                                {{ category.name }} {{ ix < (center.categorySet.length - 1) ? "/" : "" }}
-                                    </ng-container>
-                        </p>
-                        <p class="text-red-600 font-bold font-sans text-sm text-left p-2">
-                            + {{ center.experience }} years
-                        </p>
-                        <p class="text-gray-800 font-bold font-sans text-sm text-center p-2">
-                            {{ center.motto }}
-                        </p>
-                        <p class="text-gray-600 font-bold italic font-sans text-sm text-right p-2">
-                            {{ center.address }}
-                            <span (click)="openUrl(center.location)">
-                                <i-feather name="map-pin" style="width: 20px;"
-                                    class="font-bold text-red-600 ml-2 -mb-2 cursor-pointer">
-                                </i-feather>
-                            </span>
-                        </p>
-                    </div>
-                    <div class="flex items-center mt-2" *ngIf="isLikedCenter(center) && center.likes > 2">
-                        <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCenter(center)"
-                            class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
-                            <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                            you and {{ center.likes - 1 }} people like this center.
-                        </p> 
-                    </div>
-                    <div class="flex items-center mt-2" *ngIf="isLikedCenter(center) && center.likes === 2">
-                        <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCenter(center)"
-                            class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
-                            <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                            you and {{ center.likes - 1 }} person like this center.
-                        </p> 
-                    </div>
-                    <div class="flex items-center mt-2" *ngIf="isLikedCenter(center)  && center.likes === 1">
-                        <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCenter(center)"
-                            class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
-                            <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                                you like this center.
-                            </p>  
-                    </div>
-                    <div class="flex items-center mt-2" *ngIf="!isLikedCenter(center) && center.likes > 1">
-                        <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCenter(center)"
-                            class="font-bold text-gray-600 mr-4 mt-1 cursor-pointer"></i-feather>
-                        <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                            {{ center.likes }} people like this center.
-                        </p>
-                    </div>
-                    <div class="flex items-center mt-2" *ngIf="!isLikedCenter(center) && center.likes === 1">
-                        <i-feather name="thumbs-up" style="width: 20px;" (click)="likeCenter(center)"
-                            class="font-bold text-gray-600 mr-4 mt-1 cursor-pointer"></i-feather>
-                        <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                            {{ center.likes }} person like this center.
-                        </p>
-                    </div>
-                    <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
-                rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
-                        <a [routerLink]="['/centers', center.id, formatStringtoUrl(center.name)]">
-                            Know more
-                        </a>
-                    </button>
-                </div>
-            </div>
-        </section>
+<section class="py-12 px-4 sm:px-8 rounded-md shadow-lg text-white"
+    style="background: linear-gradient(to bottom, black, rgb(27, 25, 25), rgb(45, 23, 23), rgb(27, 25, 25), black);">
+
+    <!-- Section Title -->
+    <div class="mb-10 text-center">
+        <h2 class="text-center text-white text-2xl md:text-3xl font-extrabold tracking-tight">
+            Top <span class="text-red-600">Centers</span>
+        </h2>
+        <p class="text-center text-sm sm:text-base text-white italic mb-10 max-w-xl mx-auto">
+            Discover our trusted and professional training centers
+        </p>
     </div>
-    <div class="p-3" [ngClass]="{ 'hidden': centersResult.length <= 12 }">
-        <button
-            class="p-1 px-2 bg-gray-100 text-red-600 font-sans font-bold rounded-md mx-auto flex justify-center mt-2">
-            {{ !showFullData ? 'See more' : 'See less' }}
-        </button>
+
+
+    <!-- Cards Grid -->
+    <div class="max-w-7xl mx-auto px-6 py-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <ng-container *ngIf="centersResult.length > 0; else comingSoonCenter">
+                <ng-container *ngFor="let center of centersResult.slice(0, visibleCenters)">
+
+                    <!-- Center Card -->
+                    <div class="w-full h-full max-w-sm bg-gradient-to-b from-zinc-900 via-black to-zinc-900 rounded-xl overflow-hidden 
+          border border-zinc-800 shadow-xl hover:scale-105 transform transition-all duration-300 
+          flex flex-col justify-between p-6 mx-auto">
+
+                        <!-- Image -->
+                        <div>
+                            <img [src]="'data:image;base64,' + center.photo" [alt]="center.name"
+                                class="w-full h-48 object-cover rounded-md border border-zinc-700 bg-white shadow-sm" />
+                        </div>
+
+                        <!-- Content -->
+                        <div class="text-white text-center flex flex-col gap-2 mt-4">
+                            <h3 class="text-xl text-red-600 font-extrabold uppercase tracking-tight">
+                                {{ center.name }}
+                            </h3>
+
+                            <p class="text-white text-xs uppercase tracking-widest font-bold">
+                                <ng-container *ngIf="center.categorySet.length > 0; else defaultCenterTag">
+                                    <ng-container *ngFor="let cat of center.categorySet; let i = index">
+                                        {{ cat.name }}<span *ngIf="i < center.categorySet.length - 1"> / </span>
+                                    </ng-container>
+                                </ng-container>
+                                <ng-template #defaultCenterTag>General</ng-template>
+                            </p>
+
+                            <p class="text-sm text-red-500 font-bold">
+                                + {{ center.experience }} years
+                            </p>
+
+                            <p class="text-sm text-white italic">
+                                {{ center.motto }}
+                            </p>
+
+                            <p class="text-sm text-gray-300">
+                                {{ center.address }}
+                                <span (click)="openUrl(center.location)">
+                                    <i-feather name="map-pin"
+                                        class="ml-1 w-4 h-4 text-red-500 cursor-pointer"></i-feather>
+                                </span>
+                            </p>
+
+                            <!-- Likes Info -->
+                            <div class="flex justify-center items-center mt-2">
+                                <i-feather name="thumbs-up" (click)="likeCenter(center)"
+                                    class="w-5 h-5 mr-2 cursor-pointer" [ngClass]="{
+                  'text-red-600': isLikedCenter(center),
+                  'text-gray-500': !isLikedCenter(center)
+                }">
+                                </i-feather>
+                                <p class="text-sm text-gray-300 font-medium">
+                                    <ng-container *ngIf="isLikedCenter(center)">
+                                        <ng-container *ngIf="center.likes === 1">You like this center.</ng-container>
+                                        <ng-container *ngIf="center.likes === 2">You and 1 person like this
+                                            center.</ng-container>
+                                        <ng-container *ngIf="center.likes > 2">You and {{ center.likes - 1 }} others
+                                            like
+                                            this center.</ng-container>
+                                    </ng-container>
+                                    <ng-container *ngIf="!isLikedCenter(center)">
+                                        {{ center.likes }} {{ center.likes === 1 ? 'person' : 'people' }} like this
+                                        center.
+                                    </ng-container>
+                                </p>
+                            </div>
+
+                            <!-- Know More Button -->
+                            <a [routerLink]="['/centers', center.id, formatStringtoUrl(center.name)]" class="inline-block mt-4 bg-white text-red-600 px-4 py-2 rounded-md text-sm font-semibold 
+              hover:bg-red-600 hover:text-white transition">
+                                Know more
+                            </a>
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-container>
+
+        <ng-template #comingSoonCenter>
+  <div
+    class="col-span-full flex flex-col justify-center items-center text-white bg-gradient-to-br from-zinc-900 via-black to-zinc-900 
+    border border-zinc-800 shadow-xl rounded-xl p-6 md:p-10 text-center max-w-5xl mx-auto">
+    
+    <img 
+      src="../../../assets/landing/hero-gym-centers.jpg" 
+      alt="Coming Soon" 
+      class="w-full max-h-64 object-cover rounded-md mb-6 opacity-80 shadow-md" 
+    />
+    
+    <h3 class="text-lg md:text-xl font-bold text-red-600">Centers Coming Soon</h3>
+    <p class="text-sm md:text-base text-white mt-2">We’re setting up new wellness centers near you!</p>
+  </div>
+</ng-template>
+
+        </div>
+
+        <!-- Toggle Button -->
+        <div class="mt-10 text-center" *ngIf="centersResult.length > 12">
+            <button (click)="toggleCenterData()" class="inline-block bg-white text-red-600 border border-red-600 px-6 py-2 rounded-md font-semibold 
+        hover:bg-red-600 hover:text-white transition-all duration-300">
+                {{ showFullData ? 'Show Less' : 'Show More' }}
+            </button>
+        </div>
     </div>
 </section>

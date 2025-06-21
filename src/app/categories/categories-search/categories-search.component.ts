@@ -99,13 +99,6 @@ export class CategoriesSearchComponent {
     this.sortCategoriesData();
   }
 
-  // Function to handle the search select change event
-  onSearchCriteriaChange(event: any): void {
-    this.ngxService.start();
-    this.selectedSearchCriteria = event.target.value;
-    this.search(this.searchQuery);
-    this.ngxService.stop()
-  }
 
   search(query: string): Observable<Categories[]> {
     this.categoryStateService.activeCategoriesData$.subscribe((cachedData) => {
@@ -131,8 +124,35 @@ export class CategoriesSearchComponent {
           return false;
       }
     });
+
     return of(this.filteredCategories);
   }
 
+  searchByButton(): void {
+    const query = this.searchQuery?.trim();
+
+    if (!query) {
+      this.snackbarService.openSnackBar('Please enter a search term.', 'error');
+      return;
+    }
+
+    this.ngxService.start();
+
+    this.search(query).subscribe(
+      (results) => {
+        this.results.emit(results);
+        this.ngxService.stop();
+      },
+      (error) => {
+        this.snackbarService.openSnackBar('Search failed.', 'error');
+        this.ngxService.stop();
+      }
+    );
+  }
+
+  // Function to handle the search select change event
+  onSearchCriteriaChange(): void {
+    this.searchByButton();
+  }
 }
 

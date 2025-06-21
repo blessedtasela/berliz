@@ -22,6 +22,7 @@ export class CenterSearchResultComponent {
   centerLikes: CenterLike[] = [];
   subscriptions: Subscription[] = []
   @Input() totalCenters: number = 0;
+  visibleCenters: number = 12;
 
   constructor(private datePipe: DatePipe,
     private userStateService: UserStateService,
@@ -75,10 +76,10 @@ export class CenterSearchResultComponent {
     )
   }
 
-  toggleData() {
+  toggleCenterData(): void {
     this.showFullData = !this.showFullData;
+    this.visibleCenters = this.showFullData ? this.centersResult.length : 12;
   }
-
   formatDate(dateString: any): any {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');

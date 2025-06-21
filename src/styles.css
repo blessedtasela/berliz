@@ -6,8 +6,12 @@
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
 .hero-bg {
-  background-image: url('./assets/landing/hero-bg-6.jpg');
+  background-image: url('./assets/landing/hero-bg.jpg');
+  background-repeat:repeat-x;     /* Prevents tiling */
+  background-position: center;      /* Centers the image */
+  background-color: black;        /* Optional fallback background */           
 }
+
 
 html, body {
   height: auto;

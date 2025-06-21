@@ -23,6 +23,7 @@ export class TrainersSearchResultComponent implements OnInit {
   user!: Users;
   responseMessage: any;
   trainerlikes: TrainerLike[] = [];
+  visibleItems: number = 12;
 
   constructor(private datePipe: DatePipe,
     private userStateService: UserStateService,
@@ -70,8 +71,9 @@ export class TrainersSearchResultComponent implements OnInit {
     });
   }
 
-  toggleData() {
+  toggleData(): void {
     this.showFullData = !this.showFullData;
+    this.visibleItems = this.showFullData ? this.trainersResult.length : 12;
   }
 
   formatDate(dateString: any): any {

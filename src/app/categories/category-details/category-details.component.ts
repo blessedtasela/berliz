@@ -14,7 +14,7 @@ export class CategoryDetailsComponent {
   categoryIntro: CategoryIntroduction | undefined;
   categoryBenefit: CategoryBenefits | undefined;
   categoryTag: CategoryTags | undefined;
-  
-  
+  categoryTrainer: CategoryBenefits | undefined;
+  categoryCenter: CategoryTags | undefined;
 
 }

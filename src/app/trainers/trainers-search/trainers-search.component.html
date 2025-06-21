@@ -1,30 +1,36 @@
-<span class="sr-only">Search</span>
-<div class="grid grid-cols-1">
-    <div class="flex justify-center items-center mt-10">
-        <input
-            class="placeholder:italic placeholder:text-gray-400 border border-gray-400 rounded-md py-1 px-4 hover:border-gray-500 hover:drop-shadow-2xl focus:border-gray-600 focus:outline-none cursor-pointer max-w-64"
-            placeholder="Search" [(ngModel)]="searchQuery">
-        <span class="cursor-pointer">
-            <i-feather name="Search" class="ml-2 text-gray-500" style="width: 28px;"></i-feather>
-        </span>
+<div class="w-full max-w-xl mx-auto mt-12 px-4 font-sans">
+    <!-- Search Box -->
+    <div
+        class="flex items-center bg-white shadow-md rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-berliz-primary">
+        <input type="text" [(ngModel)]="searchQuery" placeholder="Find trainers by name, services, or location"
+            class="w-full px-4 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none"
+            aria-label="Search" />
+        <button type="button" class="p-2 text-berliz-primary hover:text-berliz-accent transition-colors duration-200"
+            (click)="searchByButton()">
+            <i-feather name="Search" class="w-5 h-5"></i-feather>
+        </button>
     </div>
-    <div class="flex justify-center items-center cursor-pointer mt-2 -ml-8">
-        <h1 class="mr-2 text-gray-500">Select criteria</h1>
-        <select
-            class="cursor-pointer border border-gray-400 rounded-md hover:border-gray-500 hover:drop-shadow-2xl focus:border-gray-600 focus:outline-none text-gray-700">
-            <option class="text-gray-500" value="name">Name</option>
-            <option class="text-gray-500" value="category">Category</option>
-            <option class="text-gray-500" value="address">Address</option>
+
+
+    <!-- Criteria Selector -->
+    <div class="flex items-center justify-center gap-2 mt-4">
+        <label for="trainerCriteria" class="text-sm text-white">Search by:</label>
+        <select id="trainerCriteria" [(ngModel)]="selectedSearchCriteria" (change)="onSearchCriteriaChange()"
+            class="border border-gray-300 rounded-md px-3 py-1 text-sm text-gray-700 focus:border-berliz-primary focus:ring-1 focus:ring-berliz-primary transition">
+            <option value="name">Name</option>
+            <option value="category">Services</option>
+            <option value="address">Address</option>
         </select>
     </div>
-</div>
-<div *ngIf="trainers.length > 0" class="flex flex-col items-center justify-center">
-    <div class="m-4 text-center text-gray-700 font-bold text-md">
-        {{ trainers.length }} Results Found
+
+    <!-- Only show results feedback when a search is active -->
+    <div *ngIf="searchQuery && searchQuery.trim() !== ''">
+        <div *ngIf="trainers.length > 0" class="text-center mt-6 text-white font-medium">
+            {{ trainers.length }} Results Found
+        </div>
+        <div *ngIf="trainers.length === 0" class="text-center mt-6 text-red-600">
+            No Results Found. Please Try Again.
+        </div>
     </div>
-</div>
-<div *ngIf="trainers.length === 0" class="flex flex-col items-center justify-center">
-    <div class="m-4 text-center text-gray-700 font-bold text-md">
-        No Results Found. Please Try Again
-    </div>
+
 </div>

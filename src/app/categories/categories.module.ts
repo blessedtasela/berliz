@@ -15,6 +15,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CategoriesComponent } from './categories/categories.component';
 import { CategoriesSearchComponent } from './categories-search/categories-search.component';
 import { CategoriesSearchResultComponent } from './categories-search-result/categories-search-result.component';
+import { CategoryTrainersComponent } from './category-trainers/category-trainers.component';
+import { CategoryCentersComponent } from './category-centers/category-centers.component';
 
 
 
@@ -29,7 +31,9 @@ import { CategoriesSearchResultComponent } from './categories-search-result/cate
     CategoryVoteComponent,
     CategoriesComponent,
     CategoriesSearchComponent,
-    CategoriesSearchResultComponent
+    CategoriesSearchResultComponent,
+    CategoryTrainersComponent,
+    CategoryCentersComponent
   ],
   imports: [
     CommonModule,

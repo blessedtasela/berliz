@@ -1,66 +1,109 @@
-<section class="mx-auto mb-2 px-2 space-y-1 mt-20">
-    <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-20">
-        <section class="flex justify-between items-center cursor-pointer
-                 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:shadow-md"
-            *ngFor="let trainer of trainersResult; let i = index" [ngClass]="{ 'hidden' : i >= 12 && !showFullData }">
-            <div class="w-full bg-gray-100 rounded-md aspect-square m-5 md:min-h-[750px]">
-                <div class="flex flex-col justify-center items-center">
-                    <img class="rounded-md object-cover" [src]="'data:image;base64, ' + trainer.photo">
-                    <div class="p-2">
-                        <p
-                            class="text-center text-lg font-sans font-bold lg:text-xl text-red-600 text-transform: uppercase mt-3">
-                            {{ trainer.name }}
-                        </p>
-                        <p class="mt-1 text-sm text-center font-sans italic font-bold text-gray-600 p-1">
-                            <ng-container *ngFor="let category of trainer.categorySet; let ix = index">
-                                {{ category.name }} {{ ix < (trainer.categorySet.length - 1) ? "/" : "" }}
-                                    </ng-container>
-                        </p>
-                        <p class="text-red-600 font-bold font-sans text-sm text-left p-2">
-                            + {{ trainer.experience }} years
-                        </p>
-                        <p class="text-gray-800 font-bold font-sans text-sm text-center p-2">
-                            {{ trainer.motto }}
-                        </p>
-                        <p class="text-gray-600 font-bold italic font-sans text-sm text-right p-2">
-                            {{ trainer.address }}
-                        </p>
-                    </div>
-                    <div class="flex items-center mt-2" *ngIf="isLikedTrainer(trainer) && trainer.likes > 1">
-                        <i-feather name="thumbs-up" style="width: 20px;" (click)="updateTrainerLike(trainer)"
-                            class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
-                        <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                            you and {{ trainer.likes - 1 }} people like this trainer.
-                        </p>
-                    </div>
-                    <div class="flex items-center mt-2" *ngIf="isLikedTrainer(trainer)  && trainer.likes === 1">
-                        <i-feather name="thumbs-up" style="width: 20px;" (click)="updateTrainerLike(trainer)"
-                            class="font-bold text-red-600 mr-4 mt-1 cursor-pointer"></i-feather>
-                        <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                            you like this trainer.
-                        </p>
-                    </div>
-                    <div class="flex items-center mt-2" *ngIf="!isLikedTrainer(trainer)">
-                        <i-feather name="thumbs-up" style="width: 20px;" (click)="updateTrainerLike(trainer)"
-                            class="font-bold text-gray-600 mr-4 mt-1 cursor-pointer"></i-feather>
-                        <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                            {{ trainer.likes }} people like this trainer.
-                        </p>
-                    </div>
-                    <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
-                rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
-                        <a [routerLink]="['/trainers', trainer.id, formatStringtoUrl(trainer.name)]">
-                            Know more
-                        </a>
-                    </button>
-                </div>
-            </div>
-        </section>
+<section class="py-12 px-4 sm:px-8 rounded-md shadow-lg text-white"
+    style="background: linear-gradient(to bottom, black, rgb(27, 25, 25), rgb(45, 23, 23), rgb(27, 25, 25), black);">
+
+    <!-- Section Title -->
+    <div class="mb-10 text-center">
+        <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+            Meet Our <span class="text-red-600">Top Trainers</span>
+        </h2>
+        <p class="text-sm sm:text-base italic mb-10 max-w-xl mx-auto text-white">
+            Certified and passionate fitness professionals ready to guide you.
+        </p>
     </div>
-    <div class="p-3" [ngClass]="{ 'hidden': trainersResult.length <= 12 }">
-        <button
-            class="p-1 px-2 bg-gray-100 text-red-600 font-sans font-bold rounded-md mx-auto flex justify-center mt-2">
-            {{ !showFullData ? 'See more' : 'See less' }}
-        </button>
+
+    <!-- Cards Grid -->
+    <div class="max-w-7xl mx-auto px-6 py-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <ng-container *ngIf="trainersResult.length > 0; else comingSoonCenter">
+                <ng-container *ngFor="let trainer of trainersResult.slice(0, visibleItems)">
+                    <!-- Trainer Card -->
+                    <div class="w-full h-full max-w-sm bg-gradient-to-b from-zinc-900 via-black to-zinc-900 rounded-xl overflow-hidden 
+          border border-zinc-800 shadow-xl hover:scale-105 transform transition-all duration-300 
+          flex flex-col justify-between p-6 mx-auto">
+
+                        <!-- Image -->
+                        <img [src]="'data:image;base64, ' + trainer.photo" [alt]="trainer.name"
+                            class="w-full h-48 object-cover rounded-md border border-zinc-700 bg-white shadow-sm" />
+
+                        <!-- Content -->
+                        <div class="text-white text-center flex flex-col gap-2 mt-4">
+                            <h3 class="text-xl text-red-600 font-extrabold uppercase tracking-tight">
+                                {{ trainer.name }}
+                            </h3>
+
+                            <p class="text-white text-xs uppercase tracking-widest font-bold">
+                                <ng-container *ngIf="trainer.categorySet.length > 0; else defaultTrainerCat">
+                                    <ng-container *ngFor="let cat of trainer.categorySet; let i = index">
+                                        {{ cat.name }}<span *ngIf="i < trainer.categorySet.length - 1"> / </span>
+                                    </ng-container>
+                                </ng-container>
+                                <ng-template #defaultTrainerCat>Fitness</ng-template>
+                            </p>
+
+                            <p class="text-sm text-red-500 font-bold">
+                                + {{ trainer.experience }} years
+                            </p>
+
+                            <p class="text-sm text-white italic">
+                                {{ trainer.motto }}
+                            </p>
+
+                            <p class="text-sm text-gray-300">
+                                {{ trainer.address }}
+                            </p>
+
+                            <!-- Likes Info -->
+                            <div class="flex justify-center items-center mt-2">
+                                <i-feather name="thumbs-up" (click)="updateTrainerLike(trainer)"
+                                    class="w-5 h-5 mr-2 cursor-pointer" [ngClass]="{
+                  'text-red-600': isLikedTrainer(trainer),
+                  'text-gray-500': !isLikedTrainer(trainer)
+                }">
+                                </i-feather>
+                                <p class="text-sm text-gray-300 font-medium">
+                                    <ng-container *ngIf="isLikedTrainer(trainer)">
+                                        <ng-container *ngIf="trainer.likes === 1">You like this trainer.</ng-container>
+                                        <ng-container *ngIf="trainer.likes > 1">You and {{ trainer.likes - 1 }} others
+                                            like this trainer.</ng-container>
+                                    </ng-container>
+                                    <ng-container *ngIf="!isLikedTrainer(trainer)">
+                                        {{ trainer.likes }} {{ trainer.likes === 1 ? 'person' : 'people' }} like this
+                                        trainer.
+                                    </ng-container>
+                                </p>
+                            </div>
+
+                            <!-- Know More Button -->
+                            <a [routerLink]="['/trainers', trainer.id, formatStringtoUrl(trainer.name)]" class="inline-block mt-4 bg-white text-red-600 px-4 py-2 rounded-md text-sm font-semibold 
+              hover:bg-red-600 hover:text-white transition">
+                                Know more
+                            </a>
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-container>
+
+            <ng-template #comingSoonCenter>
+                <div class="col-span-full flex flex-col justify-center items-center text-white bg-gradient-to-br from-zinc-900 via-black to-zinc-900 
+    border border-zinc-800 shadow-xl rounded-xl p-6 md:p-10 text-center max-w-5xl mx-auto">
+
+                    <img src="../../../assets/landing/hero-bjj.jpg" alt="Coming Soon"
+                        class="w-full max-h-64 object-cover rounded-md mb-6 opacity-80 shadow-md" />
+
+                    <h3 class="text-lg font-bold text-red-600">Trainers Coming Soon</h3>
+                    <p class="text-sm text-white mt-2">We’re working on bringing you the best fitness coaches!
+                    </p>
+                </div>
+            </ng-template>
+        </div>
+
+        <!-- Toggle Button -->
+        <div class="mt-10 text-center" *ngIf="trainersResult.length > 12">
+            <button (click)="toggleData()" class="inline-block bg-white text-red-600 border border-red-600 px-6 py-2 rounded-md font-semibold 
+        hover:bg-red-600 hover:text-white transition-all duration-300">
+                {{ showFullData ? 'Show Less' : 'Show More' }}
+            </button>
+        </div>
     </div>
 </section>

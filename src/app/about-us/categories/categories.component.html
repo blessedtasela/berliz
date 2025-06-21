@@ -1,72 +1,69 @@
-<section class="mt-40">
-    <!-- <div class="flex justify-center ">
-        <h1 class="p-4 font-sans text-gray-200 text-xl font-bold uppercase
-        bg-red-700 hover:bg-red-800 hero-button font-sans text-left mx-8
-        rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
-            Top Categories
-        </h1>
-    </div> -->
-    <div class="m-16 -mb-3 bg-gray-100 w-80 rounded-md relative mx-auto">
-        <h1 class="font-sans font-bold text-md text-red-600 uppercase text-center">
-            Our services
-        </h1>
+<section class="py-12 px-4 sm:px-8 rounded-md shadow-lg text-white"
+    style="background: linear-gradient(to bottom, black, rgb(27, 25, 25), rgb(45, 23, 23), rgb(27, 25, 25), black);">
+
+    <!-- Section Title -->
+    <div class="mb-10 text-center">
+
+        <h2 class="text-center text-white text-2xl md:text-3xl font-extrabold tracking-tight">
+            Top <span class="text-red-600">Services</span>
+        </h2>
+        <!-- Subtitle -->
+        <p class="text-center text-sm sm:text-base text-white italic mb-10 max-w-xl mx-auto">
+            Explore our most loved and engaging services
+        </p>
     </div>
-    <div class="bg-gray-950 rounded-md">
-        <div class="justify-items-center items-center">
-            <p class="font-bold text-sm text-center font-sans py-5 text-white">
-                Amazing peaks, just for you.
-            </p>
-        </div>
-        <div class="flex flex-wrap">
-            <div class="mb-2 px-2 space-y-1 w-full">
-                <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-10 mb-5 p-5">
-                    <div class="flex justify-center items-center cursor-pointer  transition-all duration-300
-                transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                        *ngFor="let category of categoriesData; let i = index"
-                        [class.hidden]="!showFullData && i >= 9">
-                        <div class="text-justify justify-items-center">
-                            <div
-                                class=" flex flex-col justify-center items-center bg-gray-100 rounded-md min-h-[400px] min-w-[300px]">
-                                <div class="p-2">
-                                    <img class="w-24" [src]="'../../../assets/icons/' + category.photo +'.png'">
-                                </div>
-                                <p
-                                    class="p-2 text-center text-md font-sans font-bold lg:text-md text-red-600 uppercase">
-                                    {{ category.name }}
-                                </p>
-                                <span class="p-2 text-center text-sm font-sans font-bold text-gray-600">Tags: </span>
-                                <p class="p-2 text-center text-sm font-sans font-bold text-gray-600">
-                                    <ng-container *ngFor="let tag of category.tagSet; let ix = index">
-                                        {{ tag.name }} {{ ix < (category.tagSet.length - 1) ? "/" : "" }}
-                                            </ng-container>
-                                </p>
-                                <p class="mt-1 text-sm lg:text-sm w-full text-center font-sans mb-2">
-                                    {{ category.description }}
-                                </p>
-                                <div class="flex -ml-20 mt-2">
-                                    <i-feather name="thumbs-up" style="width: 20px;"
-                                        class="font-bold text-red-600 mr-4 mt-1"></i-feather>
-                                    <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                                        {{ category.likes }} people like this sport.
-                                    </p>
-                                </div>
-                                <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
-                            rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
-                                    <a [routerLink]="['/categories', category.id, (category.name)]">
-                                        Know more
-                                    </a>
-                                </button>
-                            </div>
-                        </div>
+
+    <!-- Cards Grid -->
+    <div class="max-w-7xl mx-auto px-6 py-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <ng-container *ngFor="let category of categoriesData.slice(0, 6)">
+                <!-- Card -->
+
+
+                <div class="w-full h-full max-w-sm bg-gradient-to-b from-zinc-900 via-black to-zinc-900 rounded-xl overflow-hidden 
+                 border border-zinc-800 shadow-xl hover:scale-105 transform transition-all duration-300 
+                 flex flex-col justify-between p-6 mx-auto">
+                    <!-- Text Content -->
+
+                    <div class="text-white text-center flex flex-col gap-3">
+                        <h3 class="text-xl text-red-600 font-extrabold uppercase tracking-tight">
+                            {{ category.name }}
+                        </h3>
+                        <p class="text-white text-xs uppercase tracking-widest font-bold">
+                            <ng-container *ngIf="category.tagSet.length > 0; else defaultTag">
+                                <ng-container *ngFor="let tag of category.tagSet; let i = index">
+                                    {{ tag.name }}<span *ngIf="i < category.tagSet.length - 1"> / </span>
+                                </ng-container>
+                            </ng-container>
+                            <ng-template #defaultTag>Featured</ng-template>
+                        </p>
+
+
+                        <p class="text-sm text-white line-clamp-4">
+                            {{ category.description }}
+                        </p>
+
+                        <a [routerLink]="['/services', category.id, category.name]" class="inline-block mt-2 bg-white text-red-600 px-4 py-2 rounded-md text-sm font-semibold 
+                     hover:bg-red-600 hover:text-white transition">
+                            Know more
+                        </a>
+                    </div>
+
+                    <!-- Image at Bottom -->
+                    <div class="mt-6">
+                        <img [src]="'../../../assets/icons/' + category.photo + '.png'" alt="{{ category.name }}"
+                            class="w-full h-40 object-contain rounded-md shadow-md border border-zinc-700 bg-white p-2" />
                     </div>
                 </div>
-                <div [class.hidden]="categoriesData.length  <= 9">
-                    <button (click)="toggleData()"
-                        class="p-1 px-2 text-sm mt-16 bg-white text-yellow-500 italic rounded-md font-sans mx-auto flex justify-center">
-                        {{ !showFullData ? 'see more' : 'see less'}}
-                    </button>
-                </div>
-            </div>
+            </ng-container>
+        </div>
+
+        <!-- View All Button -->
+        <div class="mt-10 text-center">
+            <a [routerLink]="['/services']" class="inline-block bg-white text-red-600 border border-red-600 px-6 py-2 rounded-md font-semibold 
+               hover:bg-red-600 hover:text-white transition-all duration-300">
+                View all services
+            </a>
         </div>
     </div>
 </section>

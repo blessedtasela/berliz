@@ -58,6 +58,10 @@ import { PartnerComponent } from './partner/partner/partner.component';
 import { TrainerDetailsComponent } from './trainer/trainer-details/trainer-details.component';
 import { PartnerRouteComponent } from './partner/partner-route/partner-route.component';
 import { ExercisesPageComponent } from './exercises/exercises-page/exercises-page.component';
+import { FaqsPageComponent } from './faqs/faqs-page/faqs-page.component';
+import { HelpCenterPageComponent } from './help-center/help-center-page/help-center-page.component';
+import { TermsPageComponent } from './terms/terms-page/terms-page.component';
+import { PrivacyPageComponent } from './privacy/privacy-page/privacy-page.component';
 
 const routes: Routes = [
 
@@ -80,6 +84,10 @@ const routes: Routes = [
   { path: 'equipments', component: EquipmentPageComponent },
   { path: 'exercises', component: ExercisesPageComponent },
   { path: 'report-problem', component: ReportProblemPageComponent },
+  { path: 'faqs', component: FaqsPageComponent },
+  { path: 'help-center', component: HelpCenterPageComponent },
+  { path: 'terms', component: TermsPageComponent },
+  { path: 'privacy', component: PrivacyPageComponent },
   { path: 'login/reset-password', component: ResetPasswordComponent },
   { path: 'login/activate-account', component: ActivateAccountComponent },
 
