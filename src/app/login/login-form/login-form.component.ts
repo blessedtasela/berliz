@@ -4,11 +4,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import * as e from 'cors';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { FacebookAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { ForgotPasswordModalComponent } from 'src/app/dashboard/user/forgot-password-modal/forgot-password-modal.component';
 import { Login } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
   selector: 'app-login-form',
@@ -31,13 +33,14 @@ export class LoginFormComponent {
     private dialog: MatDialog,
     private userService: UserService,
     private ngxService: NgxUiLoaderService,
-    private snackBarService: SnackBarService) {
+    private snackBarService: SnackBarService,
+    private auth: AuthenticationService) {
     this.invalidLogin = ''
   }
 
   openForgotPassword() {
     const dialogRef = this.dialog.open(ForgotPasswordModalComponent, {
-      width: '600px',
+      maxWidth: '400px',
       disableClose: true
     });
 
@@ -60,11 +63,18 @@ export class LoginFormComponent {
     })
   }
 
+  onEnterKey(event: any) {
+    // If the focus is on the social login button, prevent the default behavior
+    if (event.target instanceof HTMLButtonElement) {
+      event.preventDefault();
+    }
+  }
+
   sendActivationMail(data: HTMLInputElement) {
     const email = data.value;
     const validEmail = [email, Validators.compose([Validators.email, emailExtensionValidator(['com', 'org'])])];
     if (!validEmail || email == '') {
-      this.snackBarService.openSnackBar("Invalid email", "error");
+      this.snackBarService.openSnackBar("Please enter a valid email", "error");
       return;
     }
     this.userService.sendActivationToken(email)
@@ -130,8 +140,43 @@ export class LoginFormComponent {
     }
   }
 
+  loginWithGoogle() {
+    this.snackBarService.openSnackBar("Google login not implemented yet", "error");
+    const provider = new GoogleAuthProvider();
+    // signInWithPopup(this.auth, provider)
+    //   .then((result) => {
+    //     const user = result.user;
+    //     console.log('Google login success', user);
+    //     this.snackBar.open('Logged in with Google!', 'Close', { duration: 3000 });
+    //     this.router.navigate(['/dashboard']);
+    //   })
+    //   .catch((error) => {
+    //     console.error('Google login error', error);
+    //     this.snackBar.open('Google login failed', 'Close', { duration: 3000 });
+    //   });
+  }
+
+  loginWithFacebook() {
+    this.snackBarService.openSnackBar("Facebook login not implemented yet", "error");
+    const provider = new FacebookAuthProvider();
+    // signInWithPopup(this.auth, provider)
+    //   .then((result) => {
+    //     const user = result.user;
+    //     console.log('Facebook login success', user);
+    //     this.snackBarService.open('Logged in with Facebook!', 'Close', { duration: 3000 });
+    //     this.router.navigate(['/dashboard']);
+    //   })
+    //   .catch((error) => {
+    //     console.error('Facebook login error', error);
+    //     this.snackBarService.open('Facebook login failed', 'Close', { duration: 3000 });
+    //   });
+  }
+
   clear() {
     this.loginForm.reset();
+    this.invalidForm = false;
+    this.invalidLogin = '';
+    this.responseMessage = '';
   }
 
 }

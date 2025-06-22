@@ -19,7 +19,7 @@ export class SnackBarService {
       horizontalPosition: 'center',
       verticalPosition: 'top',
       duration: 4000,
-      panelClass: [panelClass],
+      panelClass: [panelClass, 'custom-snackbar'],
       data: { htmlContent: sanitizedCloseBtn }
     });
   }

@@ -47,35 +47,38 @@ export class CenterPartnerFormComponent {
     });
   }
 
-  onCVSelected(event: any): void {
-    if (event.target.files && event.target.files.length > 0) {
-      this.selectedCV = event.target.files[0];
+  onCertificateSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      this.selectedCertificate = file.name;
+      this.addPartnerForm.get('certificate')?.setValue(file);
     }
   }
 
-  onCertificateSelected(event: any): void {
-    if (event.target.files && event.target.files.length > 0) {
-      this.selectedCertificate = event.target.files[0];
+  onCVSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      this.selectedCV = file.name;
+      this.addPartnerForm.get('cv')?.setValue(file);
     }
   }
 
   addPartner(): void {
     const requestData = new FormData();
     requestData.append('email', this.user?.email);
-    requestData.append('certificate', this.selectedCertificate);
+    requestData.append('certificate', this.addPartnerForm.get('certificate')?.value);
     requestData.append('motivation', this.addPartnerForm.get('motivation')?.value);
-    requestData.append('cv', this.selectedCV);
+    requestData.append('cv', this.addPartnerForm.get('cv')?.value);
     requestData.append('facebookUrl', this.addPartnerForm.get('facebookUrl')?.value);
     requestData.append('instagramUrl', this.addPartnerForm.get('instagramUrl')?.value);
     requestData.append('youtubeUrl', this.addPartnerForm.get('youtubeUrl')?.value);
     requestData.append('role', this.addPartnerForm.get('role')?.value);
 
     if (this.addPartnerForm.invalid) {
-      this.ngxService.start();
+      this.responseMessage = '';
       this.invalidForm = true;
-      this.responseMessage = "Invalid form. Please complete all sections";
+      this.responseMessage = "Invalid form. Please complete all required sections";
       this.snackBarService.openSnackBar(this.responseMessage, "error");
-      this.ngxService.stop();
     } else {
       this.ngxService.start();
       this.partnerService.addPartner(requestData)
@@ -103,5 +106,8 @@ export class CenterPartnerFormComponent {
 
   clear() {
     this.addPartnerForm.reset();
+    this.selectedCV = null;
+    this.selectedCertificate = null;
+    this.invalidForm = false;
   }
 }

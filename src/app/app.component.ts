@@ -62,7 +62,7 @@ export class AppComponent {
     const url = this.router.url;
 
     if (url.startsWith('/dashboard')) return 'sidebar';
-    if (url.startsWith('/login') || url.startsWith('/sign-up')) return 'login';
+    if (url.startsWith('/login') || url.startsWith('/sign-up') || url.startsWith('/quick-sign-up')) return 'login';
     return 'topbar'; // default public routes
   }
 

@@ -47,6 +47,9 @@ import { TrainerModule } from './trainer/trainer.module';
 import { UrlLowerCaseSerializer } from 'url-lower-case-serializer';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { UnderConstructionPageComponent } from './under-construction-page/under-construction-page.component';
+import { AngularFireModule } from '@angular/fire/compat';
+import { environment } from '../environments/environment';
+
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   text: "Loading....",
@@ -120,6 +123,8 @@ const dbConfig: DBConfig = {
     BreadcrumbModule,
     NgxIndexedDBModule.forRoot(dbConfig),
     NgxFileDropModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireModule,
   ],
   exports: [],
 

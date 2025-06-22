@@ -48,12 +48,14 @@
             </ng-container>
         </div>
 
-        <!-- Toggle Button (Show More / Show Less) -->
-        <div class="mt-10 text-center">
-            <button (click)="toggleData()" class="inline-block bg-white text-red-600 border border-red-600 px-6 py-2 rounded-md font-semibold 
-                hover:bg-red-600 hover:text-white transition-all duration-300">
-                {{ showFullData ? 'Show Less' : 'Show More' }}
-            </button>
+          <!-- Toggle Button -->
+        <div *ngIf="categoriesResult.length > 0">
+            <div class="mt-10 text-center" *ngIf="categoriesResult.length > 12">
+                <button (click)="toggleData()" class="inline-block bg-white text-red-600 border border-red-600 px-6 py-2 rounded-md font-semibold 
+        hover:bg-red-600 hover:text-white transition-all duration-300">
+                    {{ showFullData ? 'Show Less' : 'Show More' }}
+                </button>
+            </div>
         </div>
     </div>
 </section>

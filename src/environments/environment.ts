@@ -16,7 +16,13 @@ export const environment = {
     //  brokerURL : 'wss://berliz-server-fd9efef771e8.herokuapp.com/stomp',
     brokerURL: 'ws://localhost:8001/stomp',
     //  brokerURL : 'ws://192.168.43.56:8001/stomp',
-    
+    firebase: {
+        apiKey: 'YOUR_API_KEY',
+        authDomain: 'your-app.firebaseapp.com',
+        projectId: 'your-app',
+        appId: 'your-app-id',
+        // ...
+    },
 };
 
 

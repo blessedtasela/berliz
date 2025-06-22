@@ -1,10 +1,15 @@
-<div class="flex items-center justify-center h-screen">
-    <div class="w-full space-y-8 rounded-b-md md:rounded-r-md p-4 md:p-6 grid grid-cols md:grid-cols-2">
-        <div class="flex items-center justify-center">
-            <app-login-hero></app-login-hero>
-        </div>
-        <div class="flex items-center justify-center">
-            <app-login-form></app-login-form>
-        </div>
+<div class="min-h-screen bg-zinc-900 flex items-center justify-center px-4 py-8">
+  <div class="grid md:grid-cols-2 w-full max-w-5xl rounded-xl overflow-hidden shadow-md bg-white">
+    
+    <!-- Hero Section -->
+    <div class="hidden md:block">
+      <app-login-hero></app-login-hero>
     </div>
+
+    <!-- Form Section -->
+    <div class="flex items-center justify-center p-6 md:p-10">
+      <app-login-form></app-login-form>
+    </div>
+    
+  </div>
 </div>

@@ -168,3 +168,8 @@ z-index: 20;
   z-index: 999;
   /* Ensure the buttons appear above other content */
 }
+
+.custom-snackbar .mat-simple-snackbar-action {
+  color: red;
+  font-weight: bold;
+}

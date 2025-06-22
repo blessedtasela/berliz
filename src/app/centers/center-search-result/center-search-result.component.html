@@ -94,30 +94,28 @@
                 </ng-container>
             </ng-container>
 
-        <ng-template #comingSoonCenter>
-  <div
-    class="col-span-full flex flex-col justify-center items-center text-white bg-gradient-to-br from-zinc-900 via-black to-zinc-900 
+            <ng-template #comingSoonCenter>
+                <div class="col-span-full flex flex-col justify-center items-center text-white bg-gradient-to-br from-zinc-900 via-black to-zinc-900 
     border border-zinc-800 shadow-xl rounded-xl p-6 md:p-10 text-center max-w-5xl mx-auto">
-    
-    <img 
-      src="../../../assets/landing/hero-gym-centers.jpg" 
-      alt="Coming Soon" 
-      class="w-full max-h-64 object-cover rounded-md mb-6 opacity-80 shadow-md" 
-    />
-    
-    <h3 class="text-lg md:text-xl font-bold text-red-600">Centers Coming Soon</h3>
-    <p class="text-sm md:text-base text-white mt-2">We’re setting up new wellness centers near you!</p>
-  </div>
-</ng-template>
+
+                    <img src="../../../assets/landing/hero-gym-centers.jpg" alt="Coming Soon"
+                        class="w-full max-h-64 object-cover rounded-md mb-6 opacity-80 shadow-md" />
+
+                    <h3 class="text-lg md:text-xl font-bold text-red-600">Centers Coming Soon</h3>
+                    <p class="text-sm md:text-base text-white mt-2">We’re setting up new wellness centers near you!</p>
+                </div>
+            </ng-template>
 
         </div>
 
         <!-- Toggle Button -->
-        <div class="mt-10 text-center" *ngIf="centersResult.length > 12">
-            <button (click)="toggleCenterData()" class="inline-block bg-white text-red-600 border border-red-600 px-6 py-2 rounded-md font-semibold 
+        <div *ngIf="centersResult.length > 0">
+            <div class="mt-10 text-center" *ngIf="centersResult.length > 12">
+                <button (click)="toggleCenterData()" class="inline-block bg-white text-red-600 border border-red-600 px-6 py-2 rounded-md font-semibold 
         hover:bg-red-600 hover:text-white transition-all duration-300">
-                {{ showFullData ? 'Show Less' : 'Show More' }}
-            </button>
+                    {{ showFullData ? 'Show Less' : 'Show More' }}
+                </button>
+            </div>
         </div>
     </div>
 </section>
