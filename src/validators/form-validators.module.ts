@@ -91,6 +91,32 @@ export const videoSizeValidator = (videoFile: File): { [key: string]: any } | nu
   return null;  // File size is valid
 };
 
+export function fullNameValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value?.trim();
+
+    if (!value) {
+      return { fullNameInvalid: 'Name is required' };
+    }
+
+    const names = value.split(' ').filter((n: string) => n); // Filter out empty segments
+
+    if (names.length < 2) {
+
+      return { fullNameInvalid: 'Please enter at least two names' };
+
+    }
+
+    const invalidName = names.find((n: string) => n.length < 3);
+    if (invalidName) {
+      return { fullNameInvalid: 'Each name must be at least 3 characters long' };
+    }
+
+    return null;
+  };
+}
+
+
 export const genericError = "An error occured while connecting to the server";
 
 export const UNAUTHORIZED = "You are not authorized to access this page!";

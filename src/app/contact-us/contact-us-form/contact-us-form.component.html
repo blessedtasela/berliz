@@ -14,7 +14,7 @@
     <form [formGroup]="contactUsForm" class="bg-gray-100 rounded-b-2xl px-6 py-4 space-y-5">
       <!-- Validation Message -->
       <div class="text-sm">
-        <span *ngIf="!contactUsForm.invalid && invalidForm" class="text-green-600 block text-center">
+        <span *ngIf="!contactUsForm.invalid && !invalidForm" class="text-green-600 block text-center">
           Everything looks good!
         </span>
         <span *ngIf="contactUsForm.invalid && invalidForm" class="text-red-600 block text-center">
@@ -27,10 +27,14 @@
         <input formControlName="name" type="text" placeholder="Full Name"
           class="w-full px-4 py-2 rounded-md bg-white border border-gray-300 focus:outline-none focus:border-red-600 transition"
           [ngClass]="{ 'border-red-400': contactUsForm.get('name')?.invalid && contactUsForm.get('name')?.touched }" />
-        <div *ngIf="contactUsForm.get('name')?.invalid && contactUsForm.get('name')?.dirty"
+
+        <div
+          *ngIf="contactUsForm.get('name')?.invalid && contactUsForm.get('name')?.dirty &&
+           contactUsForm.get('name')?.errors?.['fullNameInvalid']"
           class="text-xs text-red-500 mt-1">
-          Please enter your full name.
+          {{ contactUsForm.get('name')?.errors?.['fullNameInvalid'] }}
         </div>
+
       </div>
 
       <!-- Email -->
@@ -62,9 +66,10 @@
           Clear
         </button>
         <button type="submit" (click)="submitForm()" [disabled]="contactUsForm.invalid"
+          [ngClass]="{'opacity-50 cursor-not-allowed': contactUsForm.invalid}"
           class="px-5 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition font-semibold flex items-center gap-2">
-          <ng-container *ngIf="contactUsForm.invalid">Please fill in valid Information</ng-container>
-          <ng-container *ngIf="!contactUsForm.invalid"> <i-feather name="send" class="w-4 h-4"></i-feather>
+          <!-- <ng-container *ngIf="contactUsForm.invalid">Complete form</ng-container> -->
+          <ng-container> <i-feather name="send" class="w-4 h-4"></i-feather>
             Submit</ng-container>
         </button>
       </div>

@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ContactUsService } from 'src/app/services/contact-us.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
+import { emailExtensionValidator, fullNameValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
   selector: 'app-contact-us-form',
@@ -24,7 +24,7 @@ export class ContactUsFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.contactUsForm = this.formBuilder.group({
-      'name': ['', [Validators.required, Validators.minLength(6)]],
+      'name': ['', [Validators.required, fullNameValidator()]],
       'email': ['', [Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])]],
       'message': ['', [Validators.required, Validators.minLength(20)]]
     });

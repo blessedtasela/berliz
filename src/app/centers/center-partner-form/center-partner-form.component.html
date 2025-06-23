@@ -16,7 +16,7 @@
                 <span *ngIf="!addPartnerForm.invalid && invalidForm" class="text-green-600 font-medium">
                     Everything looks good!
                 </span>
-                <span *ngIf="addPartnerForm.invalid && invalidForm" class="text-red-600 font-medium">
+                <span *ngIf="addPartnerForm.invalid && addPartnerForm.dirty" class="text-red-600 font-medium">
                     Please complete all required fields.
                 </span>
             </div>
@@ -34,19 +34,30 @@
                             (change)="onCertificateSelected($event)"
                             class="absolute inset-0 opacity-0 cursor-pointer" />
                     </div>
-
-                    <p class="text-xs text-white mt-1 italic">PDF only</p>
-
-                    <!-- File Preview -->
-                    <p *ngIf="selectedCertificate" class="text-xs mt-1 text-green-400 truncate max-w-[140px]">
-                        {{ selectedCertificate }}
-                    </p>
-
-                    <div *ngIf="addPartnerForm.get('certificate')?.invalid && invalidForm"
+                    <!-- Wrapper -->
+                    <div class="mt-2 flex flex-col items-center text-center">
+                        <!-- Default Message -->
+                        <p *ngIf="!selectedCertificate" class="text-xs text-black italic">
+                            Select PDF file
+                        </p>
+                        <!-- File Selected -->
+                        <div *ngIf="selectedCertificate" class="flex flex-col items-center">
+                            <p class="text-xs text-green-500 truncate max-w-[160px] flex items-center gap-1">
+                                <!-- <feather-icon name="file-text" class="w-2 h-2 text-red-600"></feather-icon> -->
+                                {{ selectedCertificate }}
+                            </p>
+                            <button type="button" (click)="selectedCertificate = null"
+                                class="text-red-600 hover:underline text-xs mt-1">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                    <div *ngIf="addPartnerForm.get('certificate')?.invalid && addPartnerForm.get('certificate')?.dirty"
                         class="text-xs text-red-400 mt-1">
-                        Certificate is required
+                        Upload a valid Certificate file
                     </div>
                 </div>
+
 
                 <!-- CV Upload -->
                 <div class="text-center">
@@ -58,16 +69,27 @@
                         <input type="file" accept=".pdf" formControlName="cv" (change)="onCVSelected($event)"
                             class="absolute inset-0 opacity-0 cursor-pointer" />
                     </div>
-
-                    <p class="text-xs text-white mt-1 italic">PDF only</p>
-
-                    <!-- File Preview -->
-                    <p *ngIf="selectedCV" class="text-xs mt-1 text-green-400 truncate max-w-[140px]">
-                        {{ selectedCV }}
-                    </p>
-
-                    <div *ngIf="addPartnerForm.get('cv')?.invalid && invalidForm" class="text-xs text-red-400 mt-1">
-                        CV is required
+                    <!-- Wrapper -->
+                    <div class="mt-2 flex flex-col items-center text-center">
+                        <!-- Default Message -->
+                        <p *ngIf="!selectedCV" class="text-xs text-black italic">
+                            Select PDF file
+                        </p>
+                        <!-- File Selected -->
+                        <div *ngIf="selectedCV" class="flex flex-col items-center">
+                            <p class="text-xs text-green-500 truncate max-w-[160px] flex items-center gap-1">
+                                <!-- <feather-icon name="file-text" class="w-2 h-2 text-red-600"></feather-icon> -->
+                                {{ selectedCV }}
+                            </p>
+                            <button type="button" (click)="selectedCV = null"
+                                class="text-red-600 hover:underline text-xs mt-1">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                    <div *ngIf="addPartnerForm.get('cv')?.invalid && addPartnerForm.get('cv')?.dirty"
+                        class="text-xs text-red-400 mt-1">
+                        Upload a valid CV file
                     </div>
                 </div>
 
@@ -79,7 +101,8 @@
                     placeholder="Tell us why you want to be a Berliz partner and what role in at least 50 words"
                     class="w-full px-4 py-3 rounded-md bg-white border border-gray-300 focus:outline-none focus:border-red-600 text-gray-800 placeholder-gray-500"
                     [ngClass]="{ 'border-red-400': addPartnerForm.get('motivation')?.invalid && addPartnerForm.get('motivation')?.dirty }"></textarea>
-                <div *ngIf="addPartnerForm.get('motivation')?.invalid && invalidForm" class="text-xs text-red-500 mt-1">
+                <div *ngIf="(addPartnerForm.get('motivation')?.invalid && invalidForm) ||addPartnerForm.get('motivation')?.dirty"
+                    class="text-xs text-red-500 mt-1">
                     At least 50 words are required
                 </div>
             </div>
@@ -89,7 +112,7 @@
                 <input formControlName="facebookUrl" type="text" placeholder="Facebook URL"
                     class="w-full px-4 py-3 rounded-md bg-white border border-gray-300 focus:outline-none focus:border-red-600 text-gray-800"
                     [ngClass]="{ 'border-red-400': addPartnerForm.get('facebookUrl')?.invalid && addPartnerForm.get('facebookUrl')?.dirty }" />
-                <div *ngIf="addPartnerForm.get('facebookUrl')?.invalid && invalidForm"
+                <div *ngIf="(addPartnerForm.get('facebookUrl')?.invalid && invalidForm) ||addPartnerForm.get('facebookUrl')?.dirty"
                     class="text-xs text-red-500 mt-1">
                     Please enter a valid Facebook URL
                 </div>
@@ -100,7 +123,7 @@
                 <input formControlName="instagramUrl" type="text" placeholder="Instagram URL"
                     class="w-full px-4 py-3 rounded-md bg-white border border-gray-300 focus:outline-none focus:border-red-600 text-gray-800"
                     [ngClass]="{ 'border-red-400': addPartnerForm.get('instagramUrl')?.invalid && addPartnerForm.get('instagramUrl')?.dirty }" />
-                <div *ngIf="addPartnerForm.get('instagramUrl')?.invalid && invalidForm"
+                <div *ngIf="(addPartnerForm.get('instagramUrl')?.invalid && invalidForm) ||addPartnerForm.get('instagramUrl')?.dirty"
                     class="text-xs text-red-500 mt-1">
                     Please enter a valid Instagram URL
                 </div>
@@ -125,11 +148,11 @@
                 </button>
 
                 <button type="submit" (click)="addPartner()" [disabled]="addPartnerForm.invalid"
+                    [ngClass]="{'opacity-50 cursor-not-allowed': addPartnerForm.invalid}"
                     class="px-5 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition font-semibold flex items-center gap-2">
 
-                    <ng-container *ngIf="addPartnerForm.invalid">Please fill in valid Information</ng-container>
-                    <ng-container *ngIf="!addPartnerForm.invalid"> <i-feather name="send"
-                            class="w-4 h-4"></i-feather>Submit</ng-container>
+                    <!-- <ng-container *ngIf="addPartnerForm.invalid">Complete form</ng-container> -->
+                    <ng-container> <i-feather name="send" class="w-4 h-4"></i-feather>Submit</ng-container>
                 </button>
             </div>
         </form>
