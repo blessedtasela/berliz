@@ -28,12 +28,9 @@
 
 
             <li *ngFor="let link of navLinks" class="group py-1 lg:py-0">
-                <a [routerLink]="[link.path]"
-                    class=" px-4 py-2 inline-block rounded-md transition duration-300 group-hover:bg-red-600 group-hover:text-white"
-                    [ngClass]="{
-            'bg-red-600 text-white': isActive(link.path),
-            'text-white hover:text-red-400': !isActive(link.path)
-          }">
+                <a [routerLink]="link.path" routerLinkActive="bg-red-600 text-white"
+                    [routerLinkActiveOptions]="{ exact: false }"
+                    class="px-4 py-2 rounded-md transition duration-300 hover:bg-red-600 hover:text-white">
                     {{ link.label }}
                 </a>
             </li>

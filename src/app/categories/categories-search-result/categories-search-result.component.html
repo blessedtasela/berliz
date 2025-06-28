@@ -14,41 +14,76 @@
     <!-- Cards Grid -->
     <div class="max-w-7xl mx-auto px-6 py-10">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <ng-container *ngFor="let category of categoriesResult.slice(0, visibleItems)">
-                <!-- Card -->
-                <div class="w-full h-full max-w-sm bg-gradient-to-b from-zinc-900 via-black to-zinc-900 rounded-xl overflow-hidden 
+            <ng-container *ngIf="categoriesResult.length > 0; else defaultServices">
+                <!-- Loop through categories -->
+                <ng-container *ngFor="let category of categoriesResult.slice(0, visibleItems)">
+                    <!-- Card -->
+                    <div class="w-full h-full max-w-sm bg-gradient-to-b from-zinc-900 via-black to-zinc-900 rounded-xl overflow-hidden 
                     border border-zinc-800 shadow-xl hover:scale-105 transform transition-all duration-300 
                     flex flex-col justify-between p-6 mx-auto">
-                    <div class="text-white text-center flex flex-col gap-3">
-                        <h3 class="text-xl text-red-600 font-extrabold uppercase tracking-tight">
-                            {{ category.name }}
-                        </h3>
-                        <p class="text-white text-xs uppercase tracking-widest font-bold">
-                            <ng-container *ngIf="category.tagSet.length > 0; else defaultTag">
-                                <ng-container *ngFor="let tag of category.tagSet; let i = index">
-                                    {{ tag.name }}<span *ngIf="i < category.tagSet.length - 1"> / </span>
+                        <div class="text-white text-center flex flex-col gap-3">
+                            <h3 class="text-xl text-red-600 font-extrabold uppercase tracking-tight">
+                                {{ category.name }}
+                            </h3>
+                            <p class="text-white text-xs uppercase tracking-widest font-bold">
+                                <ng-container *ngIf="category.tagSet.length > 0; else defaultTag">
+                                    <ng-container *ngFor="let tag of category.tagSet; let i = index">
+                                        {{ tag.name }}<span *ngIf="i < category.tagSet.length - 1"> / </span>
+                                    </ng-container>
                                 </ng-container>
-                            </ng-container>
-                            <ng-template #defaultTag>Featured</ng-template>
-                        </p>
-                        <p class="text-sm text-white line-clamp-4">
-                            {{ category.description }}
-                        </p>
-                        <a [routerLink]="['/services', category.id, category.name]" class="inline-block mt-2 bg-white text-red-600 px-4 py-2 rounded-md text-sm font-semibold 
+                                <ng-template #defaultTag>Featured</ng-template>
+                            </p>
+                            <p class="text-sm text-white line-clamp-4">
+                                {{ category.description }}
+                            </p>
+                            <a [routerLink]="['/services', category.id, category.name]" class="inline-block mt-2 bg-white text-red-600 px-4 py-2 rounded-md text-sm font-semibold 
                         hover:bg-red-600 hover:text-white transition">
-                            Know more
-                        </a>
-                    </div>
+                                Know more
+                            </a>
+                        </div>
 
-                    <div class="mt-6">
-                        <img [src]="'../../../assets/icons/' + category.photo + '.png'" [alt]="category.name"
-                            class="w-full h-40 object-contain rounded-md shadow-md border border-zinc-700 bg-white p-2" />
+                        <div class="mt-6">
+                            <img [src]="'../../../assets/icons/' + category.photo + '.png'" [alt]="category.name"
+                                class="w-full h-40 object-contain rounded-md shadow-md border border-zinc-700 bg-white p-2" />
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-container>
+
+
+            <!-- Default Services (if categories are empty) -->
+            <ng-template #defaultServices>
+                <div class="col-span-full flex justify-center">
+                    <div class="w-full max-w-sm bg-gradient-to-b from-zinc-900 via-black to-zinc-900 rounded-xl overflow-hidden 
+        border border-zinc-800 shadow-xl flex flex-col justify-between p-6">
+
+                        <!-- Card Content -->
+                        <div class="text-white text-center flex flex-col gap-3">
+                            <h3 class="text-xl text-red-600 font-extrabold uppercase tracking-tight">
+                                Personal Training
+                            </h3>
+                            <p class="text-white text-xs uppercase tracking-widest font-bold">Top Rated / Customized</p>
+                            <p class="text-sm text-white line-clamp-4">
+                                Our expert trainers offer one-on-one sessions tailored to your fitness goals.
+                            </p>
+                            <div routerLink="/services" class="inline-block mt-2 bg-white text-red-600 px-4 py-2 rounded-md text-sm font-semibold 
+            hover:bg-red-600 hover:text-white transition">
+                                Stay Tuned
+                            </div>
+                        </div>
+
+                        <!-- Image -->
+                        <div class="mt-6">
+                            <img src="../../../assets/icons/personal-trainer.png" alt="Default Service"
+                                class="w-full h-40 object-contain rounded-md shadow-md border border-zinc-700 bg-white p-2" />
+                        </div>
                     </div>
                 </div>
-            </ng-container>
+            </ng-template>
+
         </div>
 
-          <!-- Toggle Button -->
+        <!-- Toggle Button -->
         <div *ngIf="categoriesResult.length > 0">
             <div class="mt-10 text-center" *ngIf="categoriesResult.length > 12">
                 <button (click)="toggleData()" class="inline-block bg-white text-red-600 border border-red-600 px-6 py-2 rounded-md font-semibold 
