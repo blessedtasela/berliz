@@ -1,79 +1,94 @@
 <section class="w-full max-w-md space-y-6 text-gray-800 dark:text-gray-200 font-sans">
-  <!-- Title -->
-  <div class="text-center">
-    <h2 class="text-xl font-bold">Login to Continue</h2>
-    <p class="text-sm text-red-600 font-semibold">Enter login details below</p>
-  </div>
-
-  <!-- Reactive Form -->
-  <form [formGroup]="loginForm" (ngSubmit)="login()" class="space-y-6" (keydown.enter)="onEnterKey($event)">
-    <!-- Email -->
-    <div>
-      <input
-        formControlName="email"
-        type="email"
-        placeholder="Email address"
-        class="w-full px-4 py-3 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-red-600 transition"
-        [ngClass]="{ 'border-red-600': loginForm.get('email')?.invalid && loginForm.get('email')?.touched }"
-      />
-    </div>
-
-    <!-- Password -->
-    <div>
-      <input
-        formControlName="password"
-        type="password"
-        placeholder="Password"
-        class="w-full px-4 py-3 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-red-600 transition"
-        [ngClass]="{ 'border-red-600': loginForm.get('password')?.invalid && loginForm.get('password')?.touched }"
-      />
-    </div>
-
-    <!-- Submit Button -->
+    <!-- Title -->
     <div class="text-center">
-      <button
-        type="submit"
-        [disabled]="loginForm.invalid"
-        class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md transition flex items-center justify-center">
-        <ng-container *ngIf="loginForm.invalid">Please fill in valid credentials</ng-container>
-        <ng-container *ngIf="!loginForm.invalid">Login</ng-container>
-      </button>
+        <h2 class="text-xl font-bold">Login to Continue</h2>
+        <p class="text-sm text-red-600 font-semibold">Enter login details below</p>
     </div>
 
-    <!-- Forgot/Signup Links -->
-    <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 font-semibold">
-      <span (click)="openForgotPassword()" class="cursor-pointer hover:underline">Forgot password?</span>
-      <a [routerLink]="['/sign-up']" class="text-red-600 hover:underline">Sign up!</a>
-    </div>
+    <!-- Reactive Form -->
+    <form [formGroup]="loginForm" class="space-y-6">
+        <!-- Email -->
+        <div>
+            <input formControlName="email" type="email" placeholder="Email address"
+                class="w-full px-4 py-3 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-red-600 transition"
+                [ngClass]="{ 'border-red-600': loginForm.get('email')?.invalid && loginForm.get('email')?.dirty }" />
+            <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.dirty"
+                class="text-xs text-red-500 mt-1">
+                Please enter a valid email address.
+            </div>
+        </div>
+        <!-- Password -->
+        <div>
+            <input formControlName="password" type="password" placeholder="Password"
+                class="w-full px-4 py-3 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-red-600 transition"
+                [ngClass]="{ 'border-red-600': loginForm.get('password')?.invalid && loginForm.get('password')?.dirty }" />
+            <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.dirty"
+                class="text-xs text-red-500 mt-1">
+                Password must be at least 8 characters.
+            </div>
+        </div>
 
-    <!-- Social Logins -->
-    <div class="pt-4 border-t border-gray-300 dark:border-gray-600 text-center">
-      <p class="text-xs text-gray-500 dark:text-gray-400">Or sign in with</p>
-      <div class="flex justify-center gap-4 mt-3">
-        <button (click)="loginWithGoogle()" class="bg-white dark:bg-gray-800 border dark:border-gray-700 px-4 py-2 rounded-md shadow hover:shadow-md flex items-center justify-center">
-          <img src="assets/icons/google.png" alt="Google" class="h-5 w-5 inline" />
-        </button>
-        <button (click)="loginWithFacebook()" class="bg-white dark:bg-gray-800 border dark:border-gray-700 px-4 py-2 rounded-md shadow hover:shadow-md flex items-center justify-center">
-          <img src="assets/icons/facebook.png" alt="Facebook" class="h-5 w-5 inline" />
-        </button>
-      </div>
-    </div>
-  </form>
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button type="submit" [disabled]="loginForm.invalid" (click)="login()"
+                [ngClass]="{'opacity-50 cursor-not-allowed': loginForm.invalid}"
+                class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md transition flex items-center justify-center">
+                Login
+            </button>
+        </div>
 
-  <!-- Activation Email Resend -->
-  <div class="mt-6 text-sm text-center">
-    <p class="mb-2">Didn't receive activation mail?</p>
-    <form (submit)="sendActivationMail(activationEmail)">
-      <div class="flex items-center justify-center space-x-2">
-        <input #activationEmail
-          type="text"
-          placeholder="Enter your email"
-          class="w-64 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-red-600 text-sm" />
-        <button type="submit"
-          class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-semibold">
-          Send
-        </button>
-      </div>
+        <!-- Forgot/Signup Links -->
+        <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 font-semibold">
+            <span (click)="openForgotPassword()" class="cursor-pointer hover:underline">Forgot password?</span>
+            <a [routerLink]="['/sign-up']" class="text-red-600 hover:underline">Sign up!</a>
+        </div>
+
+        <!-- Social Logins -->
+        <div class="pt-4 border-t border-gray-300 dark:border-gray-600 text-center">
+            <p class="text-xs text-gray-500 dark:text-gray-400">Or sign in with</p>
+            <div class="flex justify-center gap-4 mt-3">
+                <button (click)="loginWithGoogle()"
+                    class="bg-white dark:bg-gray-800 border dark:border-gray-700 px-4 py-2 rounded-md shadow hover:shadow-md flex items-center justify-center">
+                    <img src="assets/icons/google.png" alt="Google" class="h-5 w-5 inline" />
+                </button>
+                <button (click)="loginWithFacebook()"
+                    class="bg-white dark:bg-gray-800 border dark:border-gray-700 px-4 py-2 rounded-md shadow hover:shadow-md flex items-center justify-center">
+                    <img src="assets/icons/facebook.png" alt="Facebook" class="h-5 w-5 inline" />
+                </button>
+            </div>
+        </div>
     </form>
-  </div>
+
+    <!-- Activation Email Resend -->
+    <div class="mt-6 text-sm text-center">
+        <p class="mb-2">Didn't receive your activation email?</p>
+        <!-- Bind this form to ngForm so we can access its controls too -->
+        <form #activationForm="ngForm" (ngSubmit)="sendActivationMail(activationEmail.value)">
+            <div class="flex flex-col items-center space-y-2">
+                <div class="flex items-center justify-center space-x-2">
+                    <input name="activationEmail" ngModel #activationEmail="ngModel" type="email" required email
+                        placeholder="Enter your email"
+                        class="w-64 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-red-600 text-sm" />
+
+                    <button type="submit" [disabled]="activationForm.invalid"
+                        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-semibold disabled:opacity-50">
+                        Send
+                    </button>
+                </div>
+
+                <!-- Validation Errors -->
+                <div class="text-left justify-start w-full">
+                    <ng-container *ngIf="activationEmail.invalid && (activationEmail.dirty || activationEmail.touched)">
+                        <div *ngIf="activationEmail.errors?.['required']" class="text-xs text-red-500">
+                            Email is required.
+                        </div>
+                        <div *ngIf="activationEmail.errors?.['email']" class="text-xs text-red-500">
+                            Please enter a valid email address.
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </form>
+    </div>
+
 </section>

@@ -25,19 +25,19 @@
             <div class="flex items-center justify-center space-x-6">
                 <!-- Certificate Upload -->
                 <div class="text-center">
-                    <label class="block font-bold text-black mb-2">Certificate</label>
+                    <label class="block font-bold text-black mb-2"></label>
                     <div
-                        class="w-36 h-36 border-2 border-dashed border-black rounded-lg flex items-center justify-center cursor-pointer relative hover:shadow-md transition">
-                        <feather-icon name="file-text" class="text-red-600 w-10 h-10"></feather-icon>
+                        class="w-24 h-24 border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center cursor-pointer relative hover:shadow-md transition">
+                        <feather-icon name="file-text" class="text-gray-400 w-6 h-6"></feather-icon>
                         <input type="file" accept=".pdf" formControlName="certificate"
                             (change)="onCertificateSelected($event)"
-                            class="absolute inset-0 opacity-0 cursor-pointer" />
+                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                     </div>
                     <!-- Wrapper -->
                     <div class="mt-2 flex flex-col items-center text-center">
                         <!-- Default Message -->
                         <p *ngIf="!selectedCertificate" class="text-xs text-black italic">
-                            Select PDF file
+                            Upload Certification
                         </p>
                         <!-- File Selected -->
                         <div *ngIf="selectedCertificate" class="flex flex-col items-center">
@@ -59,18 +59,18 @@
 
                 <!-- CV Upload -->
                 <div class="text-center">
-                    <label class="block font-bold text-black mb-2">Upload CV</label>
+                    <label class="block font-bold text-black mb-2"></label>
                     <div
-                        class="w-36 h-36 border-2 border-dashed border-black rounded-lg flex items-center justify-center cursor-pointer relative hover:shadow-md transition">
-                        <feather-icon name="file-text" class="text-red-600 w-10 h-10"></feather-icon>
+                        class="w-24 h-24 border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center cursor-pointer relative hover:shadow-md transition">
+                        <feather-icon name="file-text" class="text-gray-400 w-6 h-6"></feather-icon>
                         <input type="file" accept=".pdf" formControlName="cv" (change)="onCVSelected($event)"
-                            class="absolute inset-0 opacity-0 cursor-pointer" />
+                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                     </div>
                     <!-- Wrapper -->
                     <div class="mt-2 flex flex-col items-center text-center">
                         <!-- Default Message -->
                         <p *ngIf="!selectedCV" class="text-xs text-black italic">
-                            Select PDF file
+                            Select Resume
                         </p>
                         <!-- File Selected -->
                         <div *ngIf="selectedCV" class="flex flex-col items-center">
@@ -86,7 +86,7 @@
                     </div>
                     <div *ngIf="addPartnerForm.get('cv')?.invalid && addPartnerForm.get('cv')?.dirty"
                         class="text-xs text-red-400 mt-1">
-                        Upload a valid CV file
+                        Upload a valid Resume file
                     </div>
                 </div>
             </div>

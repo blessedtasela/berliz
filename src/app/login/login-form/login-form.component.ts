@@ -38,16 +38,7 @@ export class LoginFormComponent {
     this.invalidLogin = ''
   }
 
-  openForgotPassword() {
-    const dialogRef = this.dialog.open(ForgotPasswordModalComponent, {
-      maxWidth: '400px',
-      disableClose: true
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
-  }
+ 
 
 
   ngOnInit(): void {
@@ -177,6 +168,17 @@ export class LoginFormComponent {
     this.invalidForm = false;
     this.invalidLogin = '';
     this.responseMessage = '';
+  }
+
+ openForgotPassword() {
+    const dialogRef = this.dialog.open(ForgotPasswordModalComponent, {
+      maxWidth: '400px',
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 
 }
