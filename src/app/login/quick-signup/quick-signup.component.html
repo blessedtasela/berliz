@@ -9,7 +9,7 @@
     <!-- Form Section -->
     <div class="flex items-center justify-center p-6 md:p-10">
       <div class="rounded-md mx-auto p-4">
-        
+
         <!-- Headline and CTA -->
         <p class="text-center text-sm font-semibold text-black md:text-base mb-8">
           Enter your details below and sign up quickly. Finish your registration later.
@@ -17,63 +17,54 @@
 
         <!-- Quick Signup Form -->
         <form [formGroup]="quickSignupForm" (ngSubmit)="quickSignup()" class="space-y-6">
-          
+
           <!-- Email -->
           <div>
-            <input 
-              formControlName="email" 
-              type="text" 
-              placeholder="Enter email"
+            <input formControlName="email" type="text" placeholder="Enter email"
               class="w-full px-4 py-3 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-red-600 transition"
-              [ngClass]="{'border-red-600': quickSignupForm.get('email')?.invalid && quickSignupForm.get('email')?.touched }"
-            />
-            <div *ngIf="quickSignupForm.get('email')?.invalid && quickSignupForm.get('email')?.dirty" class="text-sm text-red-600 mt-1">
+              [ngClass]="{'border-red-600': quickSignupForm.get('email')?.invalid && quickSignupForm.get('email')?.touched }" />
+            <div *ngIf="quickSignupForm.get('email')?.invalid && quickSignupForm.get('email')?.dirty"
+              class="text-sm text-red-600 mt-1">
               Invalid email format
             </div>
           </div>
 
           <!-- Password -->
           <div>
-            <input 
-              formControlName="password" 
-              type="password" 
-              placeholder="Enter password"
+            <input formControlName="password" type="password" placeholder="Enter password"
               class="w-full px-4 py-3 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-red-600 transition"
-              [ngClass]="{'border-red-600': quickSignupForm.get('password')?.invalid && quickSignupForm.get('password')?.touched }"
-            />
-            <div *ngIf="quickSignupForm.get('password')?.invalid && (quickSignupForm.get('password')?.dirty || quickSignupForm.get('password')?.touched)" class="text-sm text-red-600 mt-1">
+              [ngClass]="{'border-red-600': quickSignupForm.get('password')?.invalid && quickSignupForm.get('password')?.touched }" />
+            <div
+              *ngIf="quickSignupForm.get('password')?.invalid && (quickSignupForm.get('password')?.dirty || quickSignupForm.get('password')?.touched)"
+              class="text-sm text-red-600 mt-1">
               Password must be at least 8 characters
             </div>
           </div>
 
           <!-- Confirm Password -->
           <div>
-            <input 
-              formControlName="confirmPassword" 
-              type="password" 
-              placeholder="Confirm password"
+            <input formControlName="confirmPassword" type="password" placeholder="Confirm password"
               class="w-full px-4 py-3 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-red-600 transition"
-              [ngClass]="{'border-red-600': quickSignupForm.get('confirmPassword')?.invalid && quickSignupForm.get('confirmPassword')?.touched }"
-            />
-            <div *ngIf="quickSignupForm.hasError('passwordMismatch') && quickSignupForm.get('confirmPassword')?.dirty" class="text-sm text-red-600 mt-1">
+              [ngClass]="{'border-red-600': quickSignupForm.get('confirmPassword')?.invalid && quickSignupForm.get('confirmPassword')?.touched }" />
+            <div *ngIf="quickSignupForm.hasError('passwordMismatch') && quickSignupForm.get('confirmPassword')?.dirty"
+              class="text-sm text-red-600 mt-1">
               Passwords do not match
             </div>
           </div>
 
           <!-- Submit Button -->
           <div class="text-center">
-            <button 
-              type="submit" 
-              [disabled]="quickSignupForm.invalid"
+            <button type="submit" [disabled]="quickSignupForm.invalid"
+              [ngClass]="{'opacity-50 cursor-not-allowed': quickSignupForm.invalid}"
               class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md transition transform hover:scale-105 focus:scale-105">
-              <ng-container *ngIf="quickSignupForm.invalid">Please fill in valid credentials</ng-container>
-              <ng-container *ngIf="!quickSignupForm.invalid">Quick Signup</ng-container>
+              <ng-container>Signup</ng-container>
             </button>
           </div>
 
           <!-- Sign-Up Completion Link -->
           <div class="flex items-center justify-center mt-4 mx-auto text-gray-950 font-bold">
-            <a [routerLink]="['/sign-up']" class="cursor-pointer flex justify-center text-red-600 hover:underline transform hover:scale-105 transition duration-300">
+            <a [routerLink]="['/sign-up']"
+              class="cursor-pointer flex justify-center text-red-600 hover:underline transform hover:scale-105 transition duration-300">
               Complete your registration now!
             </a>
           </div>

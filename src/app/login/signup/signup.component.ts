@@ -42,11 +42,8 @@ export class SignupComponent {
       {
         firstname: ['', [Validators.required, Validators.minLength(2)]],
         lastname: ['', [Validators.required, Validators.minLength(2)]],
-        phone: ['', [Validators.required, Validators.minLength(9)]],
-        dob: ['', [
-          Validators.required,
-          Validators.pattern(/^[0-9]{8}$/)  // exactly 8 digits
-        ]],
+        phone: ['', [Validators.required, Validators.minLength(8)], Validators.pattern(/^\d+$/)],
+        dob: ['', Validators.required,],
         gender: ['', Validators.required],
         country: ['', Validators.required],
 
@@ -75,6 +72,13 @@ export class SignupComponent {
   f(name: string): AbstractControl {
     return this.signupForm.get(name)!;
   }
+
+  filterNumbersOnly(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.replace(/\D/g, ''); // Remove non-digits
+    this.f('phone')?.setValue(input.value); // Update form control
+  }
+
 
   // Check if all fields in the given step are valid
   isStepValid(step: number): boolean {
@@ -183,6 +187,7 @@ export class SignupComponent {
     // const control = this.signupForm.get('profilePhoto')!;
     // control.markAsTouched();
     // control.updateValueAndValidity();
+
 
 
     // generate preview
