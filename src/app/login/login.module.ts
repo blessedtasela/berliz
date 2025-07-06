@@ -11,6 +11,7 @@ import { SignupModalComponent } from './signup-modal/signup-modal.component';
 import { QuickSignupComponent } from './quick-signup/quick-signup.component';
 import { NavbarBreadcrumbComponent } from '../navbar/navbar-breadcrumb/navbar-breadcrumb.component';
 import { NavbarModule } from '../navbar/navbar.module';
+import { SharedModule } from '../shared/shared.module';
 
 
 
@@ -29,7 +30,8 @@ import { NavbarModule } from '../navbar/navbar.module';
     ReactiveFormsModule,
     IconsModule,
     RouterModule,
-    NavbarModule
+    NavbarModule,
+    SharedModule
   ]
 })
 export class LoginModule { }

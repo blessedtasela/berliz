@@ -65,7 +65,7 @@ export class UpdateUserModalComponent {
       console.log("Can't validate");
     } else {
       this.formIndex += n;
-      this.userService.setLoginFormIndex(this.formIndex);
+      this.userService.setSignupFormIndex(this.formIndex);
     }
   }
 
@@ -100,7 +100,7 @@ export class UpdateUserModalComponent {
       this.userService.updateUser(this.updateUserForm.value)
         .subscribe((response: any) => {
           this.updateUserForm.reset();
-          this.userService.setLoginFormIndex(0);
+          this.userService.setSignupFormIndex(0);
           this.invalidForm = false;
           this.dialogRef.close('Account updated successfully');
           this.ngxService.stop();

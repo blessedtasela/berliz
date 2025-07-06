@@ -41,6 +41,34 @@ export function fileValidator(control: AbstractControl): ValidationErrors | null
   return { invalidSize: true };
 }
 
+export function imageValidator(
+  allowedTypes: string[] = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'],
+  maxSizeInMB: number = 2
+): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const file = control.value;
+
+    if (!file) return null; // Required validator will catch empty
+
+    // If coming from file input, it could be a FileList or File
+    const selectedFile = file instanceof File ? file : file?.[0];
+
+    if (!selectedFile) return null;
+
+    // File type check
+    if (!allowedTypes.includes(selectedFile.type)) {
+      return { invalidType: true };
+    }
+
+    // File size check (convert bytes to MB)
+    const maxSizeBytes = maxSizeInMB * 1024 * 1024;
+    if (selectedFile.size > maxSizeBytes) {
+      return { fileTooLarge: true };
+    }
+
+    return null;
+  };
+}
 
 export function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password')?.value || control.get('newPassword')?.value;

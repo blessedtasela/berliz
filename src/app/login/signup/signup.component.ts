@@ -9,7 +9,8 @@ import {
   fileValidator,
   emailExtensionValidator,
   passwordMatchValidator,
-  genericError
+  genericError,
+  imageValidator
 } from 'src/validators/form-validators.module';
 
 @Component({
@@ -36,13 +37,15 @@ export class SignupComponent {
   ) { }
 
   ngOnInit(): void {
+
     this.formIndex = this.getIndex();
+    console.log('FORM INDEX', this.formIndex)
     this.getCountriesData();
     this.signupForm = this.fb.group(
       {
         firstname: ['', [Validators.required, Validators.minLength(2)]],
         lastname: ['', [Validators.required, Validators.minLength(2)]],
-        phone: ['', [Validators.required, Validators.minLength(8)], Validators.pattern(/^\d+$/)],
+        phone: ['', [Validators.required, Validators.minLength(8)], ],
         dob: ['', Validators.required,],
         gender: ['', Validators.required],
         country: ['', Validators.required],
@@ -51,7 +54,7 @@ export class SignupComponent {
         city: ['', [Validators.required, Validators.minLength(3)]],
         postalCode: ['', [Validators.required, Validators.minLength(5)]],
         address: ['', [Validators.required, Validators.minLength(8)]],
-        profilePhoto: ['', [Validators.required, fileValidator]],
+        profilePhoto: ['', [Validators.required, imageValidator()]],
 
         email: [
           '',
@@ -73,10 +76,15 @@ export class SignupComponent {
     return this.signupForm.get(name)!;
   }
 
-  filterNumbersOnly(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    input.value = input.value.replace(/\D/g, ''); // Remove non-digits
-    this.f('phone')?.setValue(input.value); // Update form control
+  allowOnlyDigits(event: KeyboardEvent) {
+    const charCode = event.key;
+
+    if (!/^\d$/.test(charCode)) {
+      event.preventDefault();
+
+      // Optional: show a message (e.g. via snackbar, or set a flag)
+      // this.digitOnlyMessage = "Only digits are allowed";
+    }
   }
 
 
@@ -121,7 +129,7 @@ export class SignupComponent {
 
     if (this.formIndex < 2) {
       this.formIndex++;
-      this.userService.setLoginFormIndex(this.formIndex);
+      this.userService.setSignupFormIndex(this.formIndex);
     } else {
       this.submitForm();
     }
@@ -130,7 +138,7 @@ export class SignupComponent {
   prevStep(): void {
     if (this.formIndex > 0) {
       this.formIndex--;
-      this.userService.setLoginFormIndex(this.formIndex);
+      this.userService.setSignupFormIndex(this.formIndex);
       this.invalidForm = false;
     }
   }
@@ -173,31 +181,28 @@ export class SignupComponent {
 
 
   onImgSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0] ?? null;
-    if (!file) return;
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0] ?? null;
+  if (!file) return;
 
-    // store file for backend
-    this.selectedImage = file;
+  this.selectedImage = file;
 
-    // 1️⃣ patch into the form
-    // this.signupForm.patchValue({ profilePhoto: file });
+  // Patch the file into the form control
+  this.signupForm.patchValue({ profilePhoto: file });
 
-    // 2️⃣ re‑validate
-    // const control = this.signupForm.get('profilePhoto')!;
-    // control.markAsTouched();
-    // control.updateValueAndValidity();
+  // Trigger validation
+  const control = this.signupForm.get('profilePhoto')!;
+  control.markAsTouched();
+  control.updateValueAndValidity();
 
+  // Generate image preview
+  const reader = new FileReader();
+  reader.onload = (e: any) => {
+    this.imagePreview = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
 
-
-    // generate preview
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      this.imagePreview = e.target.result;
-    };
-    reader.readAsDataURL(file);
-
-  }
 
   removeImage(): void {
     // clear preview & file
@@ -215,8 +220,10 @@ export class SignupComponent {
   submitForm(): void {
     if (this.signupForm.invalid) {
       this.invalidForm = true;
+      this.snackBarService.openSnackBar('Please complete all sections', 'error');
       return;
     }
+
     this.ngxService.start();
     const data = new FormData();
     Object.keys(this.signupForm.controls).forEach(key => {
@@ -244,6 +251,6 @@ export class SignupComponent {
   clear() {
     this.signupForm.reset();
     this.formIndex = 0;
-    localStorage.removeItem('signUpFormIndex');
+    this.userService.removeSignupFormIndex(this.formIndex);
   }
 }

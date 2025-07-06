@@ -87,7 +87,7 @@ export class AdminUpdateUserModalComponent {
       this.userService.updateSuperUser(this.updateUserForm.value)
         .subscribe((response: any) => {
           this.updateUserForm.reset();
-          this.userService.setLoginFormIndex(0);
+          this.userService.setSignupFormIndex(0);
           this.invalidForm = false;
           this.dialogRef.close();
           this.ngxService.stop();

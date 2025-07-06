@@ -77,7 +77,7 @@ export class SignupModalComponent {
       console.log("Can't validate");
     } else {
       this.formIndex += n;
-      this.userService.setLoginFormIndex(this.formIndex);
+      this.userService.setSignupFormIndex(this.formIndex);
     }
   }
 
@@ -93,7 +93,7 @@ export class SignupModalComponent {
       console.log("can't validate");
     } else
       this.formIndex += n;
-    this.userService.setLoginFormIndex(this.formIndex);
+    this.userService.setSignupFormIndex(this.formIndex);
   }
 
   toggleThirdIndex(n: number) {
@@ -106,12 +106,12 @@ export class SignupModalComponent {
       console.log("can't validate");
     } else
       this.formIndex += n;
-    this.userService.setLoginFormIndex(this.formIndex);
+    this.userService.setSignupFormIndex(this.formIndex);
   }
 
   toggleIndex(n: number) {
     this.formIndex += n;
-    this.userService.setLoginFormIndex(this.formIndex);
+    this.userService.setSignupFormIndex(this.formIndex);
   }
 
   getIndex() {
@@ -163,7 +163,7 @@ export class SignupModalComponent {
       this.userService.signup(requestData)
         .subscribe((response: any) => {
           this.signupForm.reset();
-          this.userService.setLoginFormIndex(0);
+          this.userService.setSignupFormIndex(0);
           this.invalidForm = false;
           this.dialogRef.close('User account added successfully');
           this.responseMessage = response?.message;

@@ -36,8 +36,8 @@
                             <input formControlName="lastname" placeholder="Last Name"
                                 class="w-full px-4 py-3 rounded-md border focus:outline-none" [ngClass]="{'border-red-600': f('lastname').invalid && f('lastname').dirty,
                                  'border-gray-300': f('lastname').valid}" />
-                            <div *ngIf="f('lastname').invalid && f('lastname').dirty"
-                                class="text-xs text-red-500 mt-1">Last name is required</div>
+                            <div *ngIf="f('lastname').invalid && f('lastname').dirty" class="text-xs text-red-500 mt-1">
+                                Last name is required</div>
                         </div>
                     </div>
 
@@ -57,19 +57,18 @@
                     <!-- Phone -->
                     <div>
                         <input formControlName="phone" type="tel" placeholder="Phone"
-                                 class="w-full px-4 py-3 rounded-md border focus:outline-none" [ngClass]="{
+                            (keypress)="allowOnlyDigits($event)"
+                            class="w-full px-4 py-3 rounded-md border focus:outline-none" [ngClass]="{
                                 'border-red-600': f('phone').invalid && f('phone').dirty,
                              'border-gray-300': f('phone').valid
-                             }" maxlength="15" inputmode="numeric" pattern="[0-9]*" (input)="filterNumbersOnly($event)" />
+                             }" maxlength="15" inputmode="numeric" pattern="[0-9]*" />
 
-                        <div *ngIf="f('phone').errors?.['required'] && f('phone').dirty"
-                            class="text-xs text-red-500 mt-1">
-                            Phone number is required
+                        <div *ngIf="f('phone').invalid && f('phone').dirty" class="text-xs text-red-500 mt-1">
+                            <span *ngIf="f('phone').errors?.['required']">Phone is required.</span>
+                            <span *ngIf="f('phone').errors?.['minlength']">Must be at least 9 digits.</span>
+                            <span *ngIf="f('phone').errors?.['pattern']">Only digits are allowed.</span>
                         </div>
-                        <div *ngIf="f('phone').errors?.['minlength'] && f('phone').dirty"
-                            class="text-xs text-red-500 mt-1">
-                            Must be at least 8 digits
-                        </div>
+
                     </div>
 
 
@@ -84,17 +83,19 @@
 
                     <!-- Gender -->
                     <div>
-                        <label class="block mb-1 font-semibold">Gender</label>
+                        <!-- <label class="block mb-1 font-semibold">Gender</label> -->
                         <div class="flex gap-4">
                             <label class="flex-1 text-center py-2 rounded-full border cursor-pointer transition
                            hover:bg-red-600 hover:text-white" [class.bg-red-600]="signupForm.value.gender==='Male'"
                                 [class.text-white]="signupForm.value.gender==='Male'">
-                                <input type="radio" formControlName="gender" value="Male" class="hidden" /> Male
+                                <input type="radio" formControlName="gender" value="Male" class="opacity-0 absolute" />
+                                Male
                             </label>
                             <label class="flex-1 text-center py-2 rounded-full border cursor-pointer transition
                            hover:bg-red-600 hover:text-white" [class.bg-red-600]="signupForm.value.gender==='Female'"
                                 [class.text-white]="signupForm.value.gender==='Female'">
-                                <input type="radio" formControlName="gender" value="Female" class="hidden" /> Female
+                                <input type="radio" formControlName="gender" value="Female"
+                                    class="opacity-0 absolute" /> Female
                             </label>
                         </div>
                         <div *ngIf="f('gender').invalid && f('gender').dirty" class="text-xs text-red-500 mt-1">Please
@@ -134,8 +135,8 @@
                         <input formControlName="postalCode" type="text" placeholder="Postal Code"
                             class="w-full px-4 py-3 rounded-md border focus:outline-none" [ngClass]="{'border-red-600': f('postalCode').invalid && f('postalCode').dirty,
                        'border-gray-300': f('postalCode').valid}" />
-                        <div *ngIf="f('postalCode').invalid && f('postalCode').dirty"
-                            class="text-xs text-red-500 mt-1">Must be at least 5 characters</div>
+                        <div *ngIf="f('postalCode').invalid && f('postalCode').dirty" class="text-xs text-red-500 mt-1">
+                            Must be at least 5 characters</div>
                     </div>
 
                     <!-- Full Address -->
@@ -152,7 +153,7 @@
                         <label class="block mb-1 font-semibold">Profile Photo</label>
                         <div
                             class="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-red-600 transition relative overflow-hidden">
-                            <input formControlName="profilePhoto" type="file" accept="image/*"
+                            <input type="file" accept="image/*"
                                 (change)="onImgSelected($event)"
                                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                             <!-- preview if set, otherwise camera icon -->
@@ -168,13 +169,16 @@
                             class="mt-2 text-xs text-red-600 hover:underline">
                             Remove
                         </button>
-
                         <!-- Validation -->
-                        <div *ngIf="!selectedImage && !imagePreview" class="text-xs text-red-500 mt-1 text-center">
-                            Photo is required
-                        </div>
-                    </div>
+                        <app-validation-message
+                            *ngIf="f('profilePhoto').touched && f('profilePhoto').invalid && !selectedImage && !imagePreview"
+                            [control]="f('profilePhoto')" [message]="'Profile photo is required'">
+                        </app-validation-message>
 
+                        <app-validation-message *ngIf="f('profilePhoto').errors?.['fileTooLarge']"
+                            [control]="f('profilePhoto')" [message]="'Image must be under 2MB'">
+                        </app-validation-message>
+                    </div>
                 </div>
 
 

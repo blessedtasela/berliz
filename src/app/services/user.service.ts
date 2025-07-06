@@ -159,11 +159,18 @@ export class UserService {
     return this.httpClient.delete(this.url + `/user/delete/${id}`);
   }
 
-  setLoginFormIndex(index: number) {
+  setSignupFormIndex(index: number) {
     this.signUpFormIndex = index;
     localStorage.setItem("signUpFormIndex", index.toString());
     console.log('current index:', this.signUpFormIndex);
   }
+
+  removeSignupFormIndex(index: number) {
+    this.signUpFormIndex = index;
+    localStorage.removeItem("signUpFormIndex");
+    console.log('current index:', this.signUpFormIndex);
+  }
+
 
   clearLogOutLocalStorage() {
     localStorage.removeItem('todaysTodo');
@@ -183,23 +190,23 @@ export class UserService {
   }
 
   startRefreshTokenTimer() {
-  // 59 minutes = 59 * 60 * 1000 ms
-  const refreshInterval = 59 * 60 * 1000;
+    // 59 minutes = 59 * 60 * 1000 ms
+    const refreshInterval = 59 * 60 * 1000;
 
-  setTimeout(() => {
-    const refreshToken = localStorage.getItem('refresh_token');
-    if (refreshToken) {
-      this.refreshToken({ token: refreshToken }).subscribe({
-        next: (response: any) => {
-          localStorage.setItem('token', response.access_token);
-          localStorage.setItem('refresh_token', response.refresh_token);
-        },
-        error: (err) => {
-          console.error('Token refresh failed:', err);
-          // Handle: redirect to login, show modal, etc.
-        }
-      });
-    }
-  }, refreshInterval);
-}
+    setTimeout(() => {
+      const refreshToken = localStorage.getItem('refresh_token');
+      if (refreshToken) {
+        this.refreshToken({ token: refreshToken }).subscribe({
+          next: (response: any) => {
+            localStorage.setItem('token', response.access_token);
+            localStorage.setItem('refresh_token', response.refresh_token);
+          },
+          error: (err) => {
+            console.error('Token refresh failed:', err);
+            // Handle: redirect to login, show modal, etc.
+          }
+        });
+      }
+    }, refreshInterval);
+  }
 }
