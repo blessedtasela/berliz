@@ -1,12 +1,10 @@
-import { Component, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { CountryService } from 'src/app/services/country.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import {
-  fileValidator,
   emailExtensionValidator,
   passwordMatchValidator,
   genericError,
@@ -22,7 +20,6 @@ export class SignupComponent {
   signupForm!: FormGroup;
   invalidForm = false;
   formIndex = 0;
-  countries: { name: string; states: string[] }[] = [];
   responseMessage: string = '';
   selectedImage: File | null = null;
   imagePreview: string = '';
@@ -30,39 +27,34 @@ export class SignupComponent {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private countryService: CountryService,
     private router: Router,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService
   ) { }
 
   ngOnInit(): void {
-
     this.formIndex = this.getIndex();
-    console.log('FORM INDEX', this.formIndex)
-    this.getCountriesData();
+
     this.signupForm = this.fb.group(
       {
         firstname: ['', [Validators.required, Validators.minLength(2)]],
         lastname: ['', [Validators.required, Validators.minLength(2)]],
-        phone: ['', [Validators.required, Validators.minLength(8)], ],
-        dob: ['', Validators.required,],
         gender: ['', Validators.required],
-        country: ['', Validators.required],
-
-        state: ['', [Validators.required, Validators.minLength(3)]],
-        city: ['', [Validators.required, Validators.minLength(3)]],
-        postalCode: ['', [Validators.required, Validators.minLength(5)]],
-        address: ['', [Validators.required, Validators.minLength(8)]],
+        dob: ['', Validators.required],
         profilePhoto: ['', [Validators.required, imageValidator()]],
+
+        location: this.fb.group({
+          country: ['', Validators.required],
+          state: ['', Validators.required],
+          city: ['', Validators.required],
+          postalCode: ['', [Validators.required, Validators.minLength(5)]],
+          address: ['', [Validators.required, Validators.minLength(8)]],
+          phone: ['', [Validators.required, Validators.minLength(8)]]
+        }),
 
         email: [
           '',
-          [
-            Validators.required,
-            Validators.email,
-            emailExtensionValidator(['com', 'org'])
-          ]
+          [Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])]
         ],
         password: ['', [Validators.required, Validators.minLength(8)]],
         confirmPassword: ['', [Validators.required, Validators.minLength(8)]]
@@ -71,61 +63,34 @@ export class SignupComponent {
     );
   }
 
-  // Shortcut to access form controls in template
   f(name: string): AbstractControl {
     return this.signupForm.get(name)!;
   }
 
-  allowOnlyDigits(event: KeyboardEvent) {
-    const charCode = event.key;
-
-    if (!/^\d$/.test(charCode)) {
-      event.preventDefault();
-
-      // Optional: show a message (e.g. via snackbar, or set a flag)
-      // this.digitOnlyMessage = "Only digits are allowed";
-    }
-  }
-
-
-  // Check if all fields in the given step are valid
   isStepValid(step: number): boolean {
     if (step === 0) {
       return (
         this.f('firstname').valid &&
         this.f('lastname').valid &&
-        this.f('phone').valid &&
-        this.f('dob').valid &&
         this.f('gender').valid &&
-        this.f('country').valid
-      );
-    }
-    if (step === 1) {
-      return (
-        this.f('state').valid &&
-        this.f('city').valid &&
-        this.f('postalCode').valid &&
-        this.f('address').valid &&
+        this.f('dob').valid &&
         this.f('profilePhoto').valid
       );
     }
-    // step === 2
+    if (step === 1) {
+      return this.signupForm.get('location')?.valid ?? false;
+    }
     return (
       this.f('email').valid &&
       this.f('password').valid &&
-      this.f('confirmPassword').valid
+      this.f('confirmPassword').valid &&
+      !this.signupForm.hasError('passwordMismatch')
     );
   }
 
-  // Called on form submit / Next button
   handleNextOrSubmit(): void {
     this.invalidForm = !this.isStepValid(this.formIndex);
-    if (this.invalidForm) {
-      // show top‑of‑section banner
-      return;
-    }
-    // clear any banner
-    this.invalidForm = false;
+    if (this.invalidForm) return;
 
     if (this.formIndex < 2) {
       this.formIndex++;
@@ -133,6 +98,10 @@ export class SignupComponent {
     } else {
       this.submitForm();
     }
+  }
+
+  get locationForm(): FormGroup {
+    return this.signupForm.get('location') as FormGroup;
   }
 
   prevStep(): void {
@@ -148,64 +117,25 @@ export class SignupComponent {
     return stored ? +stored : 0;
   }
 
-  getCountriesData() {
-    this.countryService.getCountriesData().subscribe(
-      (res: any) => {
-        if (res && res.length) {
-          this.countries = res.map((c: any) => ({
-            name: c.name.common,
-            states: c.subdivisions ? Object.keys(c.subdivisions) : []
-          }));
-        } else {
-          this.useFallbackCountries();
-        }
-      },
-      err => {
-        // network or API error
-        this.useFallbackCountries();
-      }
-    );
-  }
-
-  // fallback hard‑coded list
-  private useFallbackCountries() {
-    this.countries = [
-      { name: 'United States', states: ['California', 'New York', 'Texas'] },
-      { name: 'Canada', states: ['Ontario', 'Quebec', 'British Columbia'] },
-      { name: 'United Kingdom', states: ['England', 'Scotland', 'Wales'] },
-      { name: 'Australia', states: ['New South Wales', 'Victoria', 'Queensland'] },
-      { name: 'Germany', states: ['Bavaria', 'Berlin', 'Hesse'] }
-    ];
-  }
-
-
-
   onImgSelected(event: Event): void {
-  const input = event.target as HTMLInputElement;
-  const file = input.files?.[0] ?? null;
-  if (!file) return;
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    if (!file) return;
 
-  this.selectedImage = file;
+    this.selectedImage = file;
+    this.signupForm.patchValue({ profilePhoto: file });
+    const control = this.signupForm.get('profilePhoto')!;
+    control.markAsTouched();
+    control.updateValueAndValidity();
 
-  // Patch the file into the form control
-  this.signupForm.patchValue({ profilePhoto: file });
-
-  // Trigger validation
-  const control = this.signupForm.get('profilePhoto')!;
-  control.markAsTouched();
-  control.updateValueAndValidity();
-
-  // Generate image preview
-  const reader = new FileReader();
-  reader.onload = (e: any) => {
-    this.imagePreview = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.imagePreview = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
 
   removeImage(): void {
-    // clear preview & file
     if (this.imagePreview) {
       URL.revokeObjectURL(this.imagePreview);
       this.imagePreview = '';
@@ -227,10 +157,13 @@ export class SignupComponent {
     this.ngxService.start();
     const data = new FormData();
     Object.keys(this.signupForm.controls).forEach(key => {
+      const value = this.f(key).value;
       if (key === 'profilePhoto') {
         data.append(key, this.selectedImage!);
+      } else if (key === 'location') {
+        Object.entries(value).forEach(([k, v]) => data.append(k, v as string));
       } else {
-        data.append(key, this.f(key).value);
+        data.append(key, value);
       }
     });
 

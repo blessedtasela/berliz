@@ -1,0 +1,93 @@
+<div [formGroup]="form" class="space-y-4">
+    <!-- Country and Flag -->
+    <div class="flex gap-4 items-center">
+        <div>
+            <label for="country" class="sr-only">Country</label>
+            <select id="country" formControlName="country" class="w-full px-4 py-3 rounded-md border focus:outline-none"
+                [ngClass]="{'border-red-600': form.get('country')?.invalid && form.get('country')?.touched, 'border-gray-300': form.get('country')?.valid}"
+                aria-describedby="countryError">
+                <option value="" disabled selected hidden>Select Country</option>
+                <option *ngFor="let c of countries$ | async" [value]="c.code">
+                    {{ c.name }} ({{ c.dialCode }})
+                </option>
+            </select>
+            <div *ngIf="form.get('country')?.invalid && form.get('country')?.touched" id="countryError"
+                class="text-xs text-red-500 mt-1">
+                Country is required
+            </div>
+        </div>
+        <div class="flex justify-center sm:justify-start" *ngIf="form.get('country')?.value">
+            <img *ngIf="selectedCountryFlag" [src]="selectedCountryFlag" [alt]="form.get('country')?.value + ' flag'"
+                class="w-10 h-6 rounded border" />
+        </div>
+    </div>
+
+    <!-- State / Province -->
+    <div>
+        <label for="state" class="sr-only">State / Province</label>
+        <select id="state" formControlName="state" class="w-full px-4 py-3 rounded-md border focus:outline-none"
+            [ngClass]="{'border-red-600': form.get('state')?.invalid && form.get('state')?.touched, 'border-gray-300': form.get('state')?.valid}"
+            aria-describedby="stateError">
+            <option value="" disabled selected hidden>Select State / Province</option>
+            <option *ngFor="let state of states$ | async" [value]="state">{{ state }}</option>
+        </select>
+        <div *ngIf="form.get('state')?.invalid && form.get('state')?.touched" id="stateError"
+            class="text-xs text-red-500 mt-1">
+            State is required
+        </div>
+    </div>
+
+    <!-- City -->
+    <div>
+        <label for="city" class="sr-only">City</label>
+        <select id="city" formControlName="city" class="w-full px-4 py-3 rounded-md border focus:outline-none"
+            [ngClass]="{'border-red-600': form.get('city')?.invalid && form.get('city')?.touched, 'border-gray-300': form.get('city')?.valid}"
+            aria-describedby="cityError">
+            <option value="" disabled selected hidden>Select City</option>
+            <option *ngFor="let city of cities$ | async" [value]="city">{{ city }}</option>
+        </select>
+        <div *ngIf="form.get('city')?.invalid && form.get('city')?.touched" id="cityError"
+            class="text-xs text-red-500 mt-1">
+            City is required
+        </div>
+    </div>
+
+    <!-- Postal Code -->
+    <div>
+        <label for="postalCode" class="sr-only">Postal Code</label>
+        <input id="postalCode" formControlName="postalCode" type="text" placeholder="Postal Code"
+            class="w-full px-4 py-3 rounded-md border focus:outline-none"
+            [ngClass]="{'border-red-600': form.get('postalCode')?.invalid && form.get('postalCode')?.touched, 'border-gray-300': form.get('postalCode')?.valid}"
+            aria-describedby="postalCodeError" />
+        <div *ngIf="form.get('postalCode')?.invalid && form.get('postalCode')?.touched" id="postalCodeError"
+            class="text-xs text-red-500 mt-1">
+            Postal code is required and should be minimum 5 characters
+        </div>
+    </div>
+
+    <!-- Address -->
+    <div>
+        <label for="address" class="sr-only">Address</label>
+        <input id="address" formControlName="address" type="text" placeholder="Street Address"
+            class="w-full px-4 py-3 rounded-md border focus:outline-none"
+            [ngClass]="{'border-red-600': form.get('address')?.invalid && form.get('address')?.touched, 'border-gray-300': form.get('address')?.valid}"
+            aria-describedby="addressError" />
+        <div *ngIf="form.get('address')?.invalid && form.get('address')?.touched" id="addressError"
+            class="text-xs text-red-500 mt-1">
+            Address is required and should be minimum 8 characters
+        </div>
+    </div>
+
+    <!-- Phone -->
+    <div>
+        <label for="phone-input" class="sr-only">Phone</label>
+        <input id="phone-input" formControlName="phone" type="tel" placeholder="Phone Number"
+            class="w-full px-4 py-3 rounded-md border focus:outline-none"
+            [ngClass]="{'border-red-600': form.get('phone')?.invalid && form.get('phone')?.touched, 'border-gray-300': form.get('phone')?.valid}"
+            aria-describedby="phoneError" />
+        <div *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched" id="phoneError"
+            class="text-xs text-red-500 mt-1">
+            Phone is required and should be minimum 8 characters
+        </div>
+    </div>
+</div>
