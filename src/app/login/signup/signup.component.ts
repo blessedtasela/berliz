@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
+import { LocationFormComponent } from 'src/app/shared/location-form/location-form.component';
 import {
   emailExtensionValidator,
   passwordMatchValidator,
@@ -23,6 +24,7 @@ export class SignupComponent {
   responseMessage: string = '';
   selectedImage: File | null = null;
   imagePreview: string = '';
+  @ViewChild(LocationFormComponent) locationFormComponent!: LocationFormComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -155,6 +157,7 @@ export class SignupComponent {
     }
 
     this.ngxService.start();
+  //  const fullPhone = this.locationFormComponent.getFullPhoneNumber();
     const data = new FormData();
     Object.keys(this.signupForm.controls).forEach(key => {
       const value = this.f(key).value;
@@ -167,6 +170,7 @@ export class SignupComponent {
       }
     });
 
+    console.log('Submitting signup data:', data);
     this.userService.signup(data).subscribe(
       (resp: any) => {
         this.snackBarService.openSnackBar(resp.message, '');
@@ -180,6 +184,8 @@ export class SignupComponent {
       }
     );
   }
+
+
 
   clear() {
     this.signupForm.reset();

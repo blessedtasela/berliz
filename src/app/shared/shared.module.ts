@@ -16,6 +16,8 @@ import { UpdateTrainerPhotoModalComponent } from './update-trainer-photo-modal/u
 import { NewsletterPopupComponent } from './newsletter-popup/newsletter-popup.component';
 import { ValidationMessageComponent } from './validation-message/validation-message.component';
 import { LocationFormComponent } from './location-form/location-form.component';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 
 
 
@@ -39,12 +41,25 @@ import { LocationFormComponent } from './location-form/location-form.component';
     ReactiveFormsModule,
     FeatherModule,
     IconsModule,
-    NgxExtendedPdfViewerModule
+    NgxExtendedPdfViewerModule,
+    NgSelectModule,
+    NgxMaskDirective,
+    NgxMaskPipe,
+    FormsModule
   ],
   exports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FeatherModule,
     NewsletterPopupComponent,
     ValidationMessageComponent,
     LocationFormComponent,
-  ]
+    NgSelectModule,
+    NgxMaskDirective,
+    NgxMaskPipe
+  ],
+  providers: [
+    provideNgxMask(),
+  ],
 })
 export class SharedModule { }

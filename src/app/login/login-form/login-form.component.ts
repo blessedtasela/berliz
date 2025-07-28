@@ -38,9 +38,6 @@ export class LoginFormComponent {
     this.invalidLogin = ''
   }
 
- 
-
-
   ngOnInit(): void {
     this.loginForm = this.fb.group({
       'email': ['', Validators.compose([Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])])],
@@ -52,6 +49,10 @@ export class LoginFormComponent {
     }, (error: any) => {
       console.log(error)
     })
+  }
+
+  get email() {
+    return this.loginForm.get('email');
   }
 
   onEnterKey(event: any) {
@@ -89,7 +90,6 @@ export class LoginFormComponent {
 
   }
 
-
   login(): void {
     if (this.loginForm.invalid) {
       this.invalidForm = true;
@@ -111,8 +111,8 @@ export class LoginFormComponent {
           this.responseMessage = '';
           this.ngxService.stop();
           this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
           this.router.navigate(['/dashboard']);
+          this.snackBarService.openSnackBar(this.responseMessage, "");
           this.loginForm.reset;
           this.ngxService.stop();
         },
@@ -170,7 +170,7 @@ export class LoginFormComponent {
     this.responseMessage = '';
   }
 
- openForgotPassword() {
+  openForgotPassword() {
     const dialogRef = this.dialog.open(ForgotPasswordModalComponent, {
       maxWidth: '400px',
       disableClose: true
