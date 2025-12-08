@@ -1,96 +1,95 @@
 <form [formGroup]="form" class="space-y-5 text-black">
-    <!-- Country Dropdown + Flag -->
-    <div class="flex items-center gap-4">
-        <div class="w-full relative">
-            <label for="country" class="sr-only">Country</label>
-            <ng-select id="country" formControlName="country" [items]="countries" bindLabel="name" bindValue="code"
-                [placeholder]="countryPlaceholder" [searchable]="true" [clearable]="true" [dropdownPosition]="'auto'"
-                [appendTo]="'body'" [addTag]="true" class="w-full country-select" (change)="onCountryChange($event)"
-                (focus)="onItemFocus()" (blur)="onCountryBlur()" [ngClass]="{
-    'border-red-600': form.get('country')?.invalid && form.get('country')?.dirty
-  }">
-                <ng-template ng-option-tmp let-item="item">
-                    <img [src]="item.flag" alt="{{ item.name }} flag" class="inline w-5 h-3 mr-2 rounded-sm" />
-                    {{ item.name }} ({{ item.dialCode }})
-                </ng-template>
-            </ng-select>
-            <p *ngIf="form.get('country')?.invalid && form.get('country')?.touched" class="text-xs text-red-600 mt-1">
-                Country is required
-            </p>
-        </div>
-        <div *ngIf="selectedCountryFlag">
-            <img [src]="selectedCountryFlag" alt="Flag" class="w-10 h-6 rounded border border-black" />
-        </div>
-    </div>
 
-    <!-- State Dropdown -->
-    <div>
-        <label for="state" class="sr-only">State / Province</label>
-        <ng-select id="state" formControlName="state" [items]="states" bindLabel="name" bindValue="name"
-            placeholder="Select State / Province" [searchable]="true" [clearable]="true"
-            [disabled]="states.length === 0" [dropdownPosition]="'auto'" [appendTo]="'body'" class="w-full"></ng-select>
-        <p *ngIf="form.get('state')?.invalid && form.get('state')?.touched" class="text-xs text-red-600 mt-1">
-            State is required
-        </p>
+  <!-- Country Dropdown + Flag -->
+  <div class="flex items-center gap-4">
+    <div class="w-full relative">
+      <label for="country" class="sr-only">Country</label>
+      <ng-select id="country" formControlName="country" [items]="countries" bindLabel="name" bindValue="code"
+        [placeholder]="countryPlaceholder" [searchable]="true" [clearable]="true" [dropdownPosition]="'auto'"
+        [appendTo]="'body'" [addTag]="true" class="w-full country-select"
+        (focus)="onItemFocus('country')" (blur)="onItemBlur('country')"
+        [ngClass]="{'border-red-600': form.get('country')?.invalid && form.get('country')?.dirty}">
+        <ng-template ng-option-tmp let-item="item">
+          <img [src]="item.flag" alt="{{ item.name }} flag" class="inline w-5 h-3 mr-2 rounded-sm" />
+          {{ item.name }} ({{ item.dialCode }})
+        </ng-template>
+      </ng-select>
+      <p *ngIf="form.get('country')?.invalid && form.get('country')?.touched" class="text-xs text-red-600 mt-1">
+        Country is required
+      </p>
     </div>
-
-    <!-- City Dropdown -->
-    <div>
-        <label for="city" class="sr-only">City</label>
-        <ng-select id="city" formControlName="city" [items]="cities" bindLabel="name" bindValue="name"
-            placeholder="Select City" [searchable]="true" [clearable]="true" [disabled]="cities.length === 0"
-            [dropdownPosition]="'auto'" [appendTo]="'body'" class="w-full"></ng-select>
-        <p *ngIf="form.get('city')?.invalid && form.get('city')?.touched" class="text-xs text-red-600 mt-1">
-            City is required
-        </p>
+    <div *ngIf="selectedCountryFlag">
+      <img [src]="selectedCountryFlag" alt="Flag" class="w-10 h-6 rounded border border-black" />
     </div>
+  </div>
 
-    <!-- Address -->
-    <div>
-        <label for="address" class="sr-only">Address</label>
-        <input id="address" formControlName="address" type="text" placeholder="Street Address"
-            class="w-full px-4 py-3 rounded-md border focus:outline-none" [ngClass]="{
-        'border-red-600': form.get('address')?.invalid && form.get('address')?.touched,
-      }" />
-        <p *ngIf="form.get('address')?.invalid && form.get('address')?.touched" class="text-xs text-red-600 mt-1">
-            Address is required (min 8 chars)
-        </p>
+  <!-- State Dropdown -->
+  <div>
+    <label for="state" class="sr-only">State / Province</label>
+    <ng-select id="state" formControlName="state" [items]="states" bindLabel="name" bindValue="name"
+      placeholder="Select State / Province" [searchable]="true" [clearable]="true"
+      [disabled]="states.length === 0" [dropdownPosition]="'auto'" [appendTo]="'body'" class="w-full"
+      (focus)="onItemFocus('state')" (blur)="onItemBlur('state')"></ng-select>
+    <p *ngIf="form.get('state')?.invalid && form.get('state')?.touched" class="text-xs text-red-600 mt-1">
+      State is required
+    </p>
+  </div>
+
+  <!-- City Dropdown -->
+  <div>
+    <label for="city" class="sr-only">City</label>
+    <ng-select id="city" formControlName="city" [items]="cities" bindLabel="name" bindValue="name"
+      placeholder="Select City" [searchable]="true" [clearable]="true" [disabled]="cities.length === 0"
+      [dropdownPosition]="'auto'" [appendTo]="'body'" class="w-full"
+      (focus)="onItemFocus('city')" (blur)="onItemBlur('city')"></ng-select>
+    <p *ngIf="form.get('city')?.invalid && form.get('city')?.touched" class="text-xs text-red-600 mt-1">
+      City is required
+    </p>
+  </div>
+
+  <!-- Address -->
+  <div>
+    <label for="address" class="sr-only">Address</label>
+    <input id="address" formControlName="address" type="text" placeholder="Street Address"
+      class="w-full px-4 py-3 rounded-md border focus:outline-none"
+      [ngClass]="{'border-red-600': form.get('address')?.invalid && form.get('address')?.touched}" />
+    <p *ngIf="form.get('address')?.invalid && form.get('address')?.touched" class="text-xs text-red-600 mt-1">
+      Address is required (min 8 chars)
+    </p>
+  </div>
+
+  <!-- Postal Code -->
+  <div>
+    <label for="postalCode" class="sr-only">Postal Code</label>
+    <input id="postalCode" formControlName="postalCode" type="text" placeholder="Postal Code"
+      class="w-full px-4 py-3 rounded-md border focus:outline-none"
+      [ngClass]="{'border-red-600': form.get('postalCode')?.invalid && form.get('postalCode')?.touched}" />
+    <p *ngIf="form.get('postalCode')?.invalid && form.get('postalCode')?.touched" class="text-xs text-red-600 mt-1">
+      Postal code is required (min 5 chars)
+    </p>
+  </div>
+
+  <!-- Phone Input -->
+  <div>
+    <label for="phone" class="sr-only">Phone</label>
+    <div class="flex items-center gap-2 border rounded-md bg-white px-3 py-2 text-black"
+      [ngClass]="{'border-red-600': form.get('phone')?.invalid && form.get('phone')?.touched}">
+      <ng-select [items]="countries" bindLabel="dialCode" bindValue="dialCode" [(ngModel)]="selectedDialCode"
+        [searchable]="true" [clearable]="false" [dropdownPosition]="'auto'" [appendTo]="'body'"
+        class="w-32 text-sm border-r border-gray-300 pr-2"
+        (focus)="onItemFocus('phone')" (blur)="onItemBlur('phone')"
+        (change)="onDialSelect($event)">
+        <ng-template ng-option-tmp let-item="item">
+          <img [src]="item.flag" alt="{{ item.name }} flag" class="inline w-5 h-3 mr-2 rounded-sm" />
+          {{ item.dialCode }}
+        </ng-template>
+      </ng-select>
+      <input id="phone" type="text" formControlName="phone" [mask]="phoneMask" placeholder="Phone number"
+        class="w-full px-4 py-3 rounded-md focus:outline-none" maxlength="15" />
     </div>
+    <p *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched" class="text-xs text-red-600 mt-1">
+      Phone must be 8 to 15 digits
+    </p>
+  </div>
 
-    <!-- Postal Code -->
-    <div>
-        <label for="postalCode" class="sr-only">Postal Code</label>
-        <input id="postalCode" formControlName="postalCode" type="text" placeholder="Postal Code"
-            class="w-full px-4 py-3 rounded-md border focus:outline-none" [ngClass]="{
-        'border-red-600': form.get('postalCode')?.invalid && form.get('postalCode')?.touched,
-      }" />
-        <p *ngIf="form.get('postalCode')?.invalid && form.get('postalCode')?.touched" class="text-xs text-red-600 mt-1">
-            Postal code is required (min 5 chars)
-        </p>
-    </div>
-
-    <!-- Phone Input -->
-    <div>
-        <label for="phone" class="sr-only">Phone</label>
-        <div class="flex items-center gap-2 border rounded-md bg-white px-3 py-2 text-black" [ngClass]="{
-        'border-red-600': form.get('phone')?.invalid && form.get('phone')?.touched,
-      }">
-            <!-- Country code selector -->
-            <ng-select [items]="countries" bindLabel="dialCode" bindValue="dialCode" [(ngModel)]="selectedDialCode"
-                [searchable]="true" [clearable]="false" [dropdownPosition]="'auto'" [appendTo]="'body'"
-                class="w-32 text-sm border-r border-gray-300 pr-2">
-                <ng-template ng-option-tmp let-item="item">
-                    <img [src]="item.flag" alt="{{ item.name }} flag" class="inline w-5 h-3 mr-2 rounded-sm" />
-                    {{ item.dialCode }}
-                </ng-template>
-            </ng-select>
-
-            <!-- Phone Number Input -->
-            <input id="phone" type="text" formControlName="phone" [mask]="phoneMask" placeholder="Phone number"
-                class="w-full px-4 py-3 rounded-md focus:outline-none" maxlength="15" />
-        </div>
-        <p *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched" class="text-xs text-red-600 mt-1">
-            Phone must be 8 to 15 digits
-        </p>
-    </div>
 </form>
