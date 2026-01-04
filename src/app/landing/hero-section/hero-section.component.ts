@@ -34,11 +34,11 @@ export class HeroSectionComponent implements OnInit {
     ]
 
     this.heroes = [
-      { id: 1, title: "Inspire and Transform Your Body with", image: "../../../assets/trainers/blessed-1.jpeg" },
-      { id: 2, title: "Explore and Discover New Levels with ", image: "../../../assets/trainers/blessed-2.jpeg" },
-      { id: 3, title: "Unleash Your Potentials with ", image: "../../../assets/trainers/blessed-3.jpeg" },
-      { id: 4, title: "Fuel Your Body, Transform Your Life with ", image: "../../../assets/trainers/blessed-diaz.jpeg" }
-    ]
+      { id: 1, title: "Inspire and Transform Your Body with", image: "../../../assets/landing/landing10.jpeg" },
+      { id: 2, title: "Explore and Discover New Levels with ", image: "../../../assets/landing/landing12.jpeg" },
+      { id: 3, title: "Unleash Your Potentials with ", image: "../../../assets/landing/landing5.jpeg" },
+      { id: 4, title: "Fuel Your Body, Transform Your Life with ", image: "../../../assets/landing/landing8.jpeg" }
+    ]   
   }
 
   animateCounter() {
