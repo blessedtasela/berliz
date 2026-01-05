@@ -1,27 +1,86 @@
-# Berliz
+# Berliz — Frontend Application
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.1.
+[![Netlify Status](https://api.netlify.com/api/v1/badges/your-netlify-badge/deploy-status)](https://app.netlify.com/sites/berliz/deploys)
 
-## Development server
+Berliz is a **fitness and combat sports web platform** that lets users track workouts, monitor progress, and engage with fitness content. This frontend is built with **Angular** and **Tailwind CSS**, and is hosted on **Netlify** with **Cloudflare** managing the domain and SSL.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## 🚀 Live Demo
+[https://berliz.fitness](https://berliz.fitness)
 
-## Code scaffolding
+## 🛠️ Technologies
+- **Angular** — Frontend framework  
+- **TypeScript** — Application logic  
+- **Tailwind CSS** — Responsive design and styling  
+- **Netlify** — Hosting and deployment  
+- **Cloudflare** — DNS management and SSL
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## 📁 Project Structure
+```text
+.angular/                  # Angular CLI cache
+src/                       # Source code
+  app/                     # Main Angular app
+  assets/                  # Static assets (images, icons, fonts)
+  environments/            # API & environment config
+angular.json               # Angular CLI configuration
+netlify.toml               # Netlify deployment configuration
+package.json               # Dependencies and scripts
+tsconfig.json              # TypeScript configuration
+robots.txt                 # Web crawler instructions
+sitemap.xml                # Sitemap for search engines
+🚦 Features Implemented
+Angular app scaffolded with Angular CLI
 
-## Build
+Hosted on Netlify with a custom domain (berliz.fitness)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Environment configuration supported via .env
 
-## Running unit tests
+Basic routing implemented
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Responsive UI for desktop and mobile
 
-## Running end-to-end tests
+Static SEO files (robots.txt and sitemap.xml) included
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+📌 Setup Instructions
+Clone the repository
 
-## Further help
+bash
+Copy code
+git clone https://github.com/blessedtasela/berliz.git
+cd berliz
+Install dependencies
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+bash
+Copy code
+npm install
+Configure environment variables
+Create a .env file in the root (do not commit it):
+
+ini
+Copy code
+API_URL=https://api.berliz.fitness
+Run the development server
+
+bash
+Copy code
+ng serve
+Visit http://localhost:4200
+
+Build for production
+
+bash
+Copy code
+ng build --prod
+The production-ready files are generated in dist/.
+
+Run tests
+
+bash
+Copy code
+ng test
+📚 Notes
+Hosted on Netlify; domain managed via Cloudflare
+
+Environment variables are sensitive — do not push .env to GitHub
+
+SEO and bot control are handled via robots.txt and sitemap.xml
+
