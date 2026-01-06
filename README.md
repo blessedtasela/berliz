@@ -1,6 +1,6 @@
 # Berliz — Frontend Application
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/your-netlify-badge/deploy-status)](https://app.netlify.com/sites/berliz/deploys)
+[![Build Status](https://img.shields.io/badge/status-active-brightgreen)]()
 
 Berliz is a **fitness and combat sports web platform** that allows users to track workouts, view progress, and engage with fitness content. The frontend is built using **Angular**, styled with **Tailwind CSS**, and deployed via **Netlify**.
 
