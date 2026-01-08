@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class ContactUsService {
-  url = environment.apiUrl;
+  url = environment.api;
 
   constructor(private httpClient: HttpClient,
     private router: Router) { }

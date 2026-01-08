@@ -7,7 +7,7 @@ import { BodyParts } from '../models/muscle-groups.interface';
   providedIn: 'root'
 })
 export class MuscleGroupService {
-  url = environment.apiUrl;
+  url = environment.api;
   bodyParts: BodyParts[];
   
   constructor(private httpClient: HttpClient) { 

@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class PartnerService {
-  url = environment.apiUrl;
+  url = environment.api;
   partnerFormIndex: any;
 
   constructor(private httpClient: HttpClient,

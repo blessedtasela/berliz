@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class FileUploadService {
-  private apiUrl = 'http://localhost:1337/api/upload/'; // URL of the Strapi upload endpoint
+  private api = 'http://localhost:1337/api/upload/'; // URL of the Strapi upload endpoint
 
   constructor(private http: HttpClient) {}
 
@@ -19,7 +19,7 @@ uploadFile(file: File, ): Observable<any> {
   //   Authorization: `Bearer ${jwt}`,
   // });
 
-  return this.http.post(this.apiUrl, formData);
+  return this.http.post(this.api, formData);
 }
 
 }

@@ -6,7 +6,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class CenterService {
-  url = environment.apiUrl;
+  url = environment.api;
 
   constructor(private httpClient: HttpClient) { }
 

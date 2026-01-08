@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 })
 export class UserService {
   signUpFormIndex: number = 1;
-  url = environment.apiUrl;
+  url = environment.api;
   partnerFormIndex: number = 0;
 
   constructor(private httpClient: HttpClient,

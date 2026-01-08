@@ -6,6 +6,7 @@ Berliz is a **fitness and combat sports web platform** that allows users to trac
 
 ## 🚀 Live Demo
 ### Check out the live application:
+
 #### [https://berliz.fitness](https://berliz.fitness)
 
 ## 🛠️ Technologies & Libraries
@@ -13,7 +14,7 @@ Berliz is a **fitness and combat sports web platform** that allows users to trac
 - **TypeScript** — Language for frontend logic  
 - **Tailwind CSS** — Styling and responsive design  
 - **Angular Router** — Routing and navigation  
-- **RxJS** — Reactive programming for handling streams  
+- **RxJS** — Reactive programming for handling streams S 
 - **Netlify** — Hosting and deployment  
 - **Cloudflare** — DNS management and SSL  
 - **Axios / HttpClient** — API requests to backend  

@@ -2,9 +2,9 @@ export const berlizUrl = 'https://www.berliz.fitness';
 
 export const environment = {
     production: false,
-    // apiUrl: 'https://berliz-server-fd9efef771e8.herokuapp.com',
-    apiUrl: 'http://localhost:8001',
-    // apiUrl: 'http://192.168.43.56:8001',
+    // api: 'https://berliz-server-fd9efef771e8.herokuapp.com',
+    api: 'http://localhost:8001',
+    // api: 'http://192.168.43.56:8001',
 
     baseUrl: berlizUrl,
     assetsUrl: `${berlizUrl}/assets/berliz-files/`,

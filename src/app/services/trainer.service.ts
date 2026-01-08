@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class TrainerService {
-  url = environment.apiUrl;
+  url = environment.api;
   trainerEventEmitter = new EventEmitter();
 
 

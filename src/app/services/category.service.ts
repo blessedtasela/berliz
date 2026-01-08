@@ -8,7 +8,7 @@ import { Icons } from '../models/categories.interface';
   providedIn: 'root'
 })
 export class CategoryService {
-  url = environment.apiUrl;
+  url = environment.api;
   icons: Icons[];
 
   constructor(private httpClient: HttpClient) {

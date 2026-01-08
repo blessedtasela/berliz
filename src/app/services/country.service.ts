@@ -9,7 +9,7 @@ export class CountryService {
   constructor(private http: HttpClient) { }
 
   getCountriesData() {
-    const apiUrl = 'https://restcountries.com/v3.1/all';
-    return this.http.get(apiUrl);
+    const api = 'https://restcountries.com/v3.1/all';
+    return this.http.get(api);
   }
 }

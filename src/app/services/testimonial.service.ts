@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 })
 export class TestimonialService {
 
-  url = environment.apiUrl;
+  url = environment.api;
 
   constructor(private httpClient: HttpClient) { }
 
