@@ -1,4 +1,4 @@
-export const berlizUrl = 'https://www.berliz.fitness';
+export const berliz = 'https://www.berliz.fitness';
 
 export const environment = {
     production: false,
@@ -6,8 +6,8 @@ export const environment = {
     api: 'http://localhost:8001',
     // api: 'http://192.168.43.56:8001',
 
-    baseUrl: berlizUrl,
-    assetsUrl: `${berlizUrl}/assets/berliz-files/`,
+    baseUrl: berliz,
+    assetsUrl: `${berliz}/assets/berliz-files/`,
     socialUrls: {
         facebook: 'https://www.facebook.com/berlizfitness',
         instagram: 'https://www.instagram.com/berlizfitness',
