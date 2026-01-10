@@ -4,6 +4,12 @@
 @tailwind utilities;
 
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import "~@ng-select/ng-select/themes/default.theme.css";
+
+.ng-select.ng-select-focused .ng-placeholder,
+.ng-select.ng-select-opened .ng-placeholder {
+  opacity: 0;
+}
 
 .hero-bg {
   background-image: url('./assets/landing/hero-bg.jpg');

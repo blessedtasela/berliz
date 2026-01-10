@@ -1,8 +1,18 @@
 import {
-  Component, AfterViewInit, forwardRef, Input, OnChanges, SimpleChanges, OnDestroy
+  Component,
+  AfterViewInit,
+  forwardRef,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  OnDestroy
 } from '@angular/core';
 import {
-  FormGroup, NG_VALUE_ACCESSOR, ControlValueAccessor, Validators
+  FormGroup,
+  NG_VALUE_ACCESSOR,
+  ControlValueAccessor,
+  Validators,
+  FormBuilder
 } from '@angular/forms';
 import { LocationService, Country } from 'src/app/services/location.service';
 import { Subscription, of } from 'rxjs';
@@ -20,207 +30,205 @@ import { tap, switchMap } from 'rxjs/operators';
     }
   ]
 })
-export class LocationFormComponent implements AfterViewInit, OnChanges, OnDestroy, ControlValueAccessor {
+export class LocationFormComponent
+  implements AfterViewInit, OnChanges, OnDestroy, ControlValueAccessor {
+
   @Input() form!: FormGroup;
 
   countries: Country[] = [];
   states: string[] = [];
   cities: string[] = [];
 
-  phoneMask = '000000000000000'; // max 15 digits
   selectedDialCode: string = '';
   selectedCountryFlag: string | null = null;
-  phoneDialError: string = '';
 
-  private defaultPlaceholders: Record<string, string> = {
-    country: 'Select Country',
-    state: 'Select State / Province',
-    city: 'Select City',
-    address: 'Enter Address',
-    postalCode: 'Enter Postal Code',
-    phone: 'xxx-xxx-xxxx',
-    dial: '+123...',
+  private subscriptions = new Subscription();
+  private countryMap = new Map<string, Country>();
+
+  private onChange = (_: any) => { };
+  private onTouched = () => { };
+
+  /** PHONE FORMAT RULES */
+  private phoneFormats: Record<
+    string,
+    { max: number; format: (v: string) => string }
+  > = {
+    '+1': {
+      max: 10,
+      format: v =>
+        v.length <= 3
+          ? v
+          : v.length <= 6
+            ? `(${v.slice(0, 3)}) ${v.slice(3)}`
+            : `(${v.slice(0, 3)}) ${v.slice(3, 6)} ${v.slice(6)}`
+    },
+    '+234': {
+      max: 11,
+      format: v =>
+        v.length <= 4
+          ? v
+          : v.length <= 7
+            ? `${v.slice(0, 4)} ${v.slice(4)}`
+            : `${v.slice(0, 4)} ${v.slice(4, 7)} ${v.slice(7)}`
+    }
   };
 
-  countryPlaceholder = this.defaultPlaceholders['country'];
-  statePlaceholder = this.defaultPlaceholders['state'];
-  cityPlaceholder = this.defaultPlaceholders['city'];
-  addressPlaceholder = this.defaultPlaceholders['address'];
-  postalPlaceholder = this.defaultPlaceholders['postalCode'];
-  phonePlaceholder = this.defaultPlaceholders['phone'];
-  dialPlaceholder = this.defaultPlaceholders['dial'];
-
-  private countryMap = new Map<string, Country>();
-  private subscriptions = new Subscription();
-  private onChange = (_: any) => {};
-  private onTouched = () => {};
-
-  constructor(private locationService: LocationService) {}
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['form'] && this.form) this.initializeFormListeners();
+  constructor(private locationService: LocationService, private fb: FormBuilder) {
+    // Initialize form with null for selects to show placeholder correctly
+    this.form = this.fb.group({
+      country: [null, Validators.required],
+      state: [null],
+      city: [null],
+      address: [''],
+      postalCode: [''],
+      phone: ['']
+    });
   }
 
-  ngAfterViewInit(): void {}
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['form'] && this.form) {
+      this.initializeFormListeners();
+    }
+  }
+
+  ngAfterViewInit(): void { }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 
-  // Focus/Blur
-  onItemFocus(controlName: string): void {
-    const control = this.form.get(controlName);
-    if (control && !control.value)
-      (this as any)[`${controlName}Placeholder`] = 'Start typing...';
+  /* ===================== SEARCH FUNCTIONS ===================== */
+  searchCountryByName(term: string, item: Country): boolean {
+    return item.name.toLowerCase().includes(term.toLowerCase());
   }
 
-  onItemBlur(controlName: string): void {
-    const control = this.form.get(controlName);
-    (this as any)[`${controlName}Placeholder`] =
-      control && control.value
-        ? ''
-        : this.defaultPlaceholders[controlName];
+  searchDialCodeOnly(term: string, item: Country): boolean {
+    return item.dialCode.replace('+', '').includes(term.replace(/\D/g, ''));
   }
 
-  searchCountry(term: string, item: Country): boolean {
-    term = term.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(term) ||
-      item.code.toLowerCase().includes(term) ||
-      item.dialCode.toLowerCase().includes(term)
-    );
+  /* ===================== PHONE INPUT ===================== */
+  onPhoneInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let raw = input.value.replace(/\D/g, '');
+
+    const cfg = this.phoneFormats[this.selectedDialCode];
+
+    if (cfg) {
+      raw = raw.slice(0, cfg.max);
+      input.value = cfg.format(raw);
+    } else {
+      raw = raw.slice(0, 15);
+      input.value = raw;
+    }
+
+    this.form.get('phone')?.setValue(raw, { emitEvent: false });
   }
 
-  onDialSelect(selectedDial: string): void {
-    const matched = this.countries.find(c => c.dialCode === selectedDial);
-    if (matched) {
-      this.selectedCountryFlag = matched.flag;
-      this.dialPlaceholder = '';
-      this.phoneDialError = '';
-      this.form.get('country')?.setValue(matched.code, { emitEvent: true });
+  private reformatPhone(): void {
+    const phoneCtrl = this.form.get('phone');
+    if (!phoneCtrl) return;
+
+    const raw = phoneCtrl.value?.replace(/\D/g, '');
+    if (!raw) return;
+
+    const cfg = this.phoneFormats[this.selectedDialCode];
+    if (cfg) {
+      phoneCtrl.setValue(raw, { emitEvent: false });
     }
   }
 
-  private updatePlaceholder(controlName: string, value: any) {
-    (this as any)[`${controlName}Placeholder`] = value
-      ? ''
-      : this.defaultPlaceholders[controlName];
-  }
-
+  /* ===================== INITIALIZE FORM LISTENERS ===================== */
   private initializeFormListeners(): void {
-    const countryControl = this.form.get('country');
-    const stateControl = this.form.get('state');
-    const cityControl = this.form.get('city');
-    const addressControl = this.form.get('address');
-    const postalControl = this.form.get('postalCode');
-    const phoneControl = this.form.get('phone');
+    const countryCtrl = this.form.get('country');
+    const stateCtrl = this.form.get('state');
+    const cityCtrl = this.form.get('city');
+    const phoneCtrl = this.form.get('phone');
 
-    if (!countryControl || !stateControl || !cityControl || !addressControl || !postalControl || !phoneControl) return;
+    if (!countryCtrl || !stateCtrl || !cityCtrl || !phoneCtrl) return;
 
-    phoneControl.setValidators([Validators.required, Validators.pattern(/^\d{8,15}$/)]);
+    phoneCtrl.setValidators([
+      Validators.required,
+      Validators.pattern(/^\d{8,15}$/)
+    ]);
 
     // Load countries
     this.subscriptions.add(
-      this.locationService.countries$.pipe(
-        tap(countries => {
-          this.countries = countries;
-          countries.forEach(c => this.countryMap.set(c.code, c));
-        })
-      ).subscribe()
+      this.locationService.countries$
+        .pipe(
+          tap(countries => {
+            this.countries = countries;
+            countries.forEach(c => this.countryMap.set(c.code, c));
+          })
+        )
+        .subscribe()
     );
 
-    // Country changes
+    // When country changes → reset state and city
     this.subscriptions.add(
-      countryControl.valueChanges.subscribe(code => {
-        this.updatePlaceholder('country', code);
+      countryCtrl.valueChanges.subscribe(code => {
         const country = this.countryMap.get(code);
 
-        if (country) {
-          this.selectedDialCode = country.dialCode.startsWith('+') ? country.dialCode : `+${country.dialCode}`;
-          this.dialPlaceholder = '';
-          this.selectedCountryFlag = country.flag || null;
-          this.phoneDialError = '';
-
-          this.form.patchValue({ state: '', city: '', postalCode: '', phone: '' }, { emitEvent: false });
-          this.states = [];
-          this.cities = [];
-          ['state', 'city', 'postalCode', 'phone'].forEach(n => this.updatePlaceholder(n, ''));
-        } else {
-          this.selectedDialCode = '';
-          this.dialPlaceholder = this.defaultPlaceholders['dial'];
-          this.selectedCountryFlag = null;
-        }
-      })
-    );
-
-    // Phone input changes
-    this.subscriptions.add(
-      phoneControl.valueChanges.subscribe(value => {
-        this.updatePlaceholder('phone', value);
-        if (value && value.startsWith('+')) {
-          const match = value.match(/^\+\d{1,4}/);
-          const dial = match ? match[0] : '';
-          if (dial) {
-            const matched = this.countries.find(c => c.dialCode === dial);
-            if (matched) {
-              this.selectedDialCode = matched.dialCode;
-              this.selectedCountryFlag = matched.flag;
-              this.dialPlaceholder = '';
-              this.phoneDialError = '';
-              this.form.get('country')?.setValue(matched.code, { emitEvent: true });
-            } else {
-              this.phoneDialError = 'Unknown country code — please select a valid dial.';
-              this.selectedDialCode = '';
-              this.selectedCountryFlag = null;
-            }
-          }
-        }
-      })
-    );
-
-    // State changes
-    this.subscriptions.add(
-      stateControl.valueChanges.subscribe(state => {
-        this.updatePlaceholder('state', state);
-        cityControl.setValue('');
-        this.updatePlaceholder('city', '');
+        // reset children
+        stateCtrl.setValue(null, { emitEvent: false });
+        cityCtrl.setValue(null, { emitEvent: false });
+        this.states = [];
         this.cities = [];
+
+        if (country) {
+          this.selectedCountryFlag = country.flag || null;
+
+          // load states for selected country
+          this.locationService.getStates(country.name).subscribe(states => {
+            this.states = states;
+            stateCtrl.setValue(null, { emitEvent: false }); // ensure placeholder shows
+          });
+        }
       })
     );
 
-    // Address / Postal / City placeholders
-    this.subscriptions.add(addressControl.valueChanges.subscribe(v => this.updatePlaceholder('address', v)));
-    this.subscriptions.add(postalControl.valueChanges.subscribe(v => this.updatePlaceholder('postalCode', v)));
-    this.subscriptions.add(cityControl.valueChanges.subscribe(v => this.updatePlaceholder('city', v)));
-
-    // Load states
+    // When state changes → reset city
     this.subscriptions.add(
-      countryControl.valueChanges.pipe(
-        switchMap(code => {
-          const name = this.countryMap.get(code)?.name;
-          return name ? this.locationService.getStates(name) : of([]);
-        })
-      ).subscribe(states => (this.states = states))
+      stateCtrl.valueChanges.subscribe(state => {
+        cityCtrl.setValue(null, { emitEvent: false });
+        this.cities = [];
+
+        const countryName = this.countryMap.get(countryCtrl.value)?.name;
+        if (state && countryName) {
+          this.locationService.getCities(countryName, state).subscribe(cities => {
+            this.cities = cities;
+            cityCtrl.setValue(null, { emitEvent: false }); // ensure placeholder shows
+          });
+        }
+      })
     );
 
-    // Load cities
+    // Reformat phone
     this.subscriptions.add(
-      stateControl.valueChanges.pipe(
-        switchMap(state => {
-          const code = countryControl.value;
-          const name = this.countryMap.get(code)?.name;
-          return state && name ? this.locationService.getCities(name, state) : of([]);
-        })
-      ).subscribe(cities => (this.cities = cities))
+      this.form.valueChanges.subscribe(() => {
+        this.reformatPhone();
+      })
     );
   }
 
-  // ControlValueAccessor
-  writeValue(val: any): void { if (val && this.form) this.form.patchValue(val); }
+  /* ===================== CVA ===================== */
+  writeValue(val: any): void {
+    if (val && this.form) {
+      this.form.patchValue(val, { emitEvent: false });
+    }
+  }
+
   registerOnChange(fn: any): void {
     this.onChange = fn;
-    if (this.form) this.subscriptions.add(this.form.valueChanges.subscribe(this.onChange));
+    this.subscriptions.add(
+      this.form.valueChanges.subscribe(this.onChange)
+    );
   }
-  registerOnTouched(fn: any): void { this.onTouched = fn; }
-  setDisabledState?(isDisabled: boolean): void { isDisabled ? this.form.disable() : this.form.enable(); }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    isDisabled ? this.form.disable() : this.form.enable();
+  }
 }
