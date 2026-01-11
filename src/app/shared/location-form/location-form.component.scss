@@ -1,54 +1,80 @@
-// ng-select styling to match Berliz theme
-
+/* Base ng-select */
 ::ng-deep .ng-select {
     font-size: 1rem;
     background-color: white;
-    border: 1px solid #e5e7eb; // gray-200
+    border: 1px solid #e5e7eb; /* gray-200 */
     border-radius: 0.375rem;
-    border-width: 1px;
     height: 42px;
-    color: #111827; // gray-900
+    color: #111827; /* gray-900 */
+    box-shadow: none;
 }
 
+/* Container inside ng-select */
+::ng-deep .ng-select .ng-select-container {
+    border: none;
+    background-color: transparent;
+    min-height: 42px;
+    box-shadow: none;
+    outline: none;
+}
+
+/* Single select height */
 .ng-select.ng-select-single .ng-select-container {
     height: 42px;
 }
 
-::ng-deep .ng-select .ng-select-container {
-    border: none;
-    background-color: transparent;
-    box-shadow: none;
-    min-height: 42px;
-}
-
+/* Dropdown panel */
 ::ng-deep .ng-dropdown-panel {
     background-color: white;
     z-index: 1050;
-    border: 1px solid #e5e7eb; // gray-200
+    border: 1px solid #e5e7eb; /* gray-200 */
     border-radius: 0.375rem;
     overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: none;
 }
 
+/* Individual option */
 ::ng-deep .ng-option {
     padding: 0.75rem 1rem;
     font-size: 0.95rem;
-    color: #111827;
+    color: #111827; /* gray-900 */
     background-color: white;
 }
 
+/* Hovered option */
 ::ng-deep .ng-option:hover {
-    background-color: #fee2e2; // red-100
-    border-radius: 0.375rem;
-    color: #000;
+    background-color: #fecaca; /* red-200 */
+    color: #111827;
 }
 
+/* Selected option */
 ::ng-deep .ng-option-selected {
-    background-color: #dc2626; // red-600
-    color: white;
-    border-radius: 0.375rem;
+    background-color: #ef4444 !important; /* red-500 */
+    color: white !important;
 }
 
+/* Currently marked option (keyboard or mouse navigation) */
+::ng-deep .ng-option.ng-option-marked,
+::ng-deep .ng-option.ng-option-selected.ng-option-marked {
+    background-color: #fecaca !important; /* red-500 */
+    color: black !important;
+}
+
+/* Remove default blue focus outline and shadow */
+::ng-deep .ng-select.ng-select-focused,
+::ng-deep .ng-select:focus-within,
+::ng-deep .ng-select.ng-select-focused .ng-select-container {
+    box-shadow: none !important;
+    outline: none !important;
+    border-color: #e5e7eb !important; /* gray-200 */
+}
+
+/* Arrow color */
 ::ng-deep .ng-select .ng-arrow-wrapper {
     color: #000;
 }
+
+::ng-deep .ng-select .ng-value-container input {
+    caret-color: transparent; /* hides the cursor */
+}
+

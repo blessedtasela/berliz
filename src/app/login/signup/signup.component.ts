@@ -46,9 +46,10 @@ export class SignupComponent {
         profilePhoto: ['', [Validators.required, imageValidator()]],
 
         location: this.fb.group({
-          country: ['', Validators.required],
-          state: ['', Validators.required],
-          city: ['', Validators.required],
+          country: [null, Validators.required],
+          state: [null, Validators.required],
+          city: [null, Validators.required],
+          countryCode: [null, Validators.required],
           postalCode: ['', [Validators.required, Validators.minLength(5)]],
           address: ['', [Validators.required, Validators.minLength(8)]],
           phone: ['', [Validators.required, Validators.minLength(8)]]
@@ -157,7 +158,7 @@ export class SignupComponent {
     }
 
     this.ngxService.start();
-  //  const fullPhone = this.locationFormComponent.getFullPhoneNumber();
+    //  const fullPhone = this.locationFormComponent.getFullPhoneNumber();
     const data = new FormData();
     Object.keys(this.signupForm.controls).forEach(key => {
       const value = this.f(key).value;
