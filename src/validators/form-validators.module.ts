@@ -43,7 +43,7 @@ export function fileValidator(control: AbstractControl): ValidationErrors | null
 
 export function imageValidator(
   allowedTypes: string[] = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'],
-  maxSizeInMB: number = 2
+  maxSizeInMB: number = 5
 ): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const file = control.value;

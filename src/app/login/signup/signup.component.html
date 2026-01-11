@@ -89,7 +89,7 @@
               [control]="f('profilePhoto')" [message]="'Profile photo is required'">
             </app-validation-message>
             <app-validation-message *ngIf="f('profilePhoto').errors?.['fileTooLarge']" [control]="f('profilePhoto')"
-              [message]="'Image must be under 2MB'">
+              [message]="'Image must be under 5MB'">
             </app-validation-message>
           </div>
         </div>
