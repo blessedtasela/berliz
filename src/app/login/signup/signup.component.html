@@ -24,14 +24,14 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <input formControlName="firstname" placeholder="First Name"
+              <input formControlName="firstname" placeholder="First Name" id="firstname"
                 class="w-full px-4 py-3 rounded-md border focus:outline-none"
                 [ngClass]="{'border-red-600': f('firstname').invalid && f('firstname').dirty, 'border-gray-300': f('firstname').valid}" />
               <div *ngIf="f('firstname').invalid && f('firstname').dirty" class="text-xs text-red-500 mt-1">First name
                 is required</div>
             </div>
             <div>
-              <input formControlName="lastname" placeholder="Last Name"
+              <input formControlName="lastname" placeholder="Last Name" id="lastname"
                 class="w-full px-4 py-3 rounded-md border focus:outline-none"
                 [ngClass]="{'border-red-600': f('lastname').invalid && f('lastname').dirty, 'border-gray-300': f('lastname').valid}" />
               <div *ngIf="f('lastname').invalid && f('lastname').dirty" class="text-xs text-red-500 mt-1">Last name is
@@ -41,7 +41,7 @@
 
           <!-- DOB -->
           <div>
-            <input formControlName="dob" type="date" class="w-full px-4 py-3 rounded-md border focus:outline-none"
+            <input formControlName="dob" type="date" class="w-full px-4 py-3 rounded-md border focus:outline-none" id="dob"
               [ngClass]="{'border-red-600': f('dob').invalid && f('dob').dirty, 'border-gray-300': f('dob').valid}" />
             <div *ngIf="f('dob').invalid && f('dob').dirty" class="text-xs text-red-500 mt-1">
               Please select your birth date

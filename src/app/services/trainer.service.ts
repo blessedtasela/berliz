@@ -94,8 +94,8 @@ export class TrainerService {
       return this.httpClient.get(this.url + "/trainer/getAllTrainerPhotoAlbums");
     }
   
-    getMyTrainerPhotoAlbums() {
-      return this.httpClient.get(this.url + "/trainer/getMyTrainerPhotoAlbums");
+    getMyTrainerPhotosAlbum() {
+      return this.httpClient.get(this.url + "/trainer/getMyTrainerPhotosAlbum");
     }
   
     addTrainerBenefit(data: any) {
@@ -150,12 +150,12 @@ export class TrainerService {
       return this.httpClient.delete(this.url + `/trainer/deleteTrainerVideoAlbum/${id}`);
     }
   
-    getAllTrainerVideoAlbums() {
-      return this.httpClient.get(this.url + "/trainer/getAllTrainerVideoAlbums");
+    getAllTrainerVideosAlbum() {
+      return this.httpClient.get(this.url + "/trainer/getAllTrainerVideosAlbum");
     }
   
-    getMyTrainerVideoAlbums() {
-      return this.httpClient.get(this.url + "/trainer/getMyTrainerVideoAlbums");
+    getMyTrainerVideosAlbum() {
+      return this.httpClient.get(this.url + "/trainer/getMyTrainerVideosAlbum");
     }
   
     getMyClients() {
@@ -163,8 +163,6 @@ export class TrainerService {
     }
   
     getMyActiveClients() {
-  
-  
       return this.httpClient.get(this.url + "/trainer/getMyActiveClients");
     }
   

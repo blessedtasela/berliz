@@ -36,7 +36,6 @@
               "node_modules/intl-tel-input/build/css/intlTelInput.min.css"
             ],
             "scripts": [
-              "node_modules/chart.js/dist/chart.js",
               "node_modules/intl-tel-input/build/js/intlTelInput.min.js"
 
             ]

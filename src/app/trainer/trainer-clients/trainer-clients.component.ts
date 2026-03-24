@@ -36,11 +36,7 @@ export class TrainerClientsComponent {
   }
 
   handleEmitEvent() {
-    this.newsletterStateService.getAllNewsletters().subscribe((newsletter) => {
-      this.ngxService.start()
-      this.newsletterStateService.setAllNewsletterSubject(newsletter);
-      this.ngxService.stop()
-    });
+   
   }
 
   allReviews() {

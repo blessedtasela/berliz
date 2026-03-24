@@ -21,12 +21,12 @@ export class TrainerReviewComponent {
     private newsletterStateService: NewsletterStateService,) {
     this.trainerReviews = [{
       id: 1,
-      frontBefore: 'src/assets/trainers/t3.jpg',
-      frontAfter: 'src/assets/trainers/t18.jpg',
-      sideBefore: 'src/assets/trainers/t18.jpg',
-      sideAfter: 'src/assets/trainers/t3.jpg',
-      backBefore: 'src/assets/trainers/t18.jpg',
-      backAfter: 'src/assets/trainers/t3.jpg',
+      frontBefore: 'assets/trainers/t3.jpg',
+      frontAfter: 'assets/trainers/t18.jpg',
+      sideBefore: 'assets/trainers/t18.jpg',
+      sideAfter: 'assets/trainers/t3.jpg',
+      backBefore: 'assets/trainers/t18.jpg',
+      backAfter: 'assets/trainers/t3.jpg',
       review: 'Delighted in his work',
       likes: 0,
       date: new Date,
@@ -35,12 +35,12 @@ export class TrainerReviewComponent {
     },
     {
       id: 2,
-      frontBefore: '/src/assets/trainers/t18.jpg',
-      frontAfter: 'src/assets/trainers/t3.jpg',
-      sideBefore: 'src/assets/trainers/t18.jpg',
-      sideAfter: 'src/assets/trainers/t3.jpg',
-      backBefore: 'src/assets/trainers/t3.jpg',
-      backAfter: 'src/assets/trainers/t18.jpg',
+      frontBefore: 'assets/trainers/t18.jpg',
+      frontAfter: 'assets/trainers/t3.jpg',
+      sideBefore: 'assets/trainers/t18.jpg',
+      sideAfter: 'assets/trainers/t3.jpg',
+      backBefore: 'assets/trainers/t3.jpg',
+      backAfter: 'assets/trainers/t18.jpg',
       review: 'What a awesome coach',
       likes: 0,
       date: new Date,
@@ -55,11 +55,7 @@ export class TrainerReviewComponent {
   }
 
   handleEmitEvent() {
-    this.newsletterStateService.getAllNewsletters().subscribe((newsletter) => {
-      this.ngxService.start()
-      this.newsletterStateService.setAllNewsletterSubject(newsletter);
-      this.ngxService.stop()
-    });
+  
   }
 
   allReviews() {

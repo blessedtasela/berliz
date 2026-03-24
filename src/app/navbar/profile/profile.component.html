@@ -1,4 +1,5 @@
-<div *ngIf="showCropper" class="fixed p-4 md:p-1 inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50">
+<div *ngIf="showCropper"
+    class="fixed p-4 md:p-1 inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50">
     <div class="bg-white p-4  rounded-lg w-full max-w-md image-cropper-container">
         <image-cropper class="image-cropper" [imageChangedEvent]="imageChangedEvent"
             (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()" (cropperReady)="cropperReady()"
@@ -27,7 +28,7 @@
             </h3>
             <h4 class="flex items-center justify-center text-gray-400 capitalize text-sm"> {{ userData.role }}</h4>
         </div>
-        <img [src]="'data:image;base64, ' + userData.profilePhoto" width="30px"
+        <img [src]="'data:image/*;base64,' + userData.profilePhoto" width="30px"
             class="cursor-pointer object-cover rounded-full" (click)="toggleProfile()" (click)="stopPropagation($event)"
             onerror="this.src='../../../assets/icons/user.png';">
         <i-feather name="chevron-down" class="text-gray-600 cursor-pointer" (click)="toggleProfile()"
@@ -40,11 +41,11 @@
         class="absolute top-[100%] right-0 bg-white rounded-md w-64 text-sm border border-gray-300 shadow-lg">
         <div class="flex justify-center p-2">
             <div class="shrink-0">
-                <img [src]="'data:image;base64, ' + userData.profilePhoto" width="50px"
+                <img [src]="'data:image/*;base64,' + userData.profilePhoto" width="50px"
                     class="object-cover rounded-full" onerror="this.src='../../../assets/icons/user.png';">
             </div>
             <div class="bottom-0 right-0">
-                <div class="flex flex-col">
+                <!-- <div class="flex flex-col">
                     <label for="fileInput-{{userData.id}}" class="">
                         <i-feather name="Edit" class="font-bold text-red-600 mr-4 cursor-pointer" style="width: 10px;">
                         </i-feather>
@@ -56,35 +57,36 @@
                                 style="width: 10px;">
                             </i-feather>
                         </div>
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="flex justify-center">
-            <p class="p-1 text-lg  hover:drop-shadow-2xl hover:scale-105 font-bold">
+            <p class="p-1 text-lg  hover:drop-shadow-2xl font-bold">
                 {{ userData.firstname }} {{ userData.lastname }}
             </p>
         </div>
         <div class="flex justify-center">
-            <p class="text-sm cursor-pointer hover:drop-shadow-2xl hover:scale-105 italic mb-2 hover:text-red-600">
+            <h4 class="flex justify-center text-gray-900 capitalize text-sm"> {{ userData.role }}</h4>
+            <!-- <p class="text-sm cursor-pointer hover:drop-shadow-2xl hover:scale-105 italic mb-2 hover:text-red-600">
                 {{ userData.email }}
-            </p>
+            </p> -->
         </div>
-        <h4 class="flex justify-center text-gray-400 capitalize text-sm"> {{ userData.role }}</h4>
+
         <p class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105"
             (click)="openChangePassword()">
             Change password
         </p>
         <p
             class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105">
-            <a routerLink="/dashboard/profile"  (click)="closeDropdown()"> Account information</a>
+            <a routerLink="/dashboard/profile" (click)="closeDropdown()"> Account information</a>
         </p>
         <p
-        class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105">
-        <a routerLink="/dashboard/partnership"  (click)="closeDropdown()"> Partnership</a>
-    </p>
+            class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105">
+            <a routerLink="/dashboard/partnership" (click)="closeDropdown()"> Partnership</a>
+        </p>
         <p
             class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105">
-            <a routerLink="/dashboard/settings"  (click)="closeDropdown()"> Account settings</a>
+            <a routerLink="/dashboard/settings" (click)="closeDropdown()"> Account settings</a>
         </p>
         <p class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105 flex items-center justify-center"
             (click)="logout()">

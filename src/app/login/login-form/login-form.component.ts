@@ -95,11 +95,10 @@ export class LoginFormComponent {
     if (this.loginForm.invalid) {
       this.invalidForm = true;
       this.responseMessage = 'Invalid form';
-      this.ngxService.stop();
     } else {
-      this.ngxService.start();
       this.userService.login(this.loginForm.value)
         .subscribe((response: any) => {
+          this.ngxService.start();
           this.invalidForm = false;
           localStorage.setItem('token', response.access_token);
           localStorage.setItem('refresh_token', response.refresh_token);
@@ -110,10 +109,10 @@ export class LoginFormComponent {
           this.invalidLogin = '';
           this.invalidForm = false;
           this.responseMessage = '';
-          this.ngxService.stop();
           this.responseMessage = response?.message;
           this.router.navigate(['/dashboard']);
-          this.snackBarService.openSnackBar(this.responseMessage, "");
+          if (this.responseMessage === "")
+            this.snackBarService.openSnackBar(this.responseMessage, "");
           this.loginForm.reset;
           this.ngxService.stop();
         },

@@ -5,7 +5,7 @@
             *ngFor="let trainer of trainersResult; let i = index" [ngClass]="{ 'hidden' : i >= 12 && !showFullData }">
             <div class="w-full bg-gray-100 rounded-md aspect-square m-5 md:min-h-[750px]">
                 <div class="flex flex-col justify-center items-center">
-                    <img class="rounded-md object-cover" [src]="'data:image;base64, ' + trainer.photo">
+                    <img class="rounded-md object-cover" [src]="'data:image/*;base64,' + trainer.photo">
                     <div class="p-2">
                         <p
                             class="text-center text-lg font-sans font-bold lg:text-xl text-red-600 text-transform: uppercase mt-3">

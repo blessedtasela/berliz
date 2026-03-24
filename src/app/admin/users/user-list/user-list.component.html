@@ -35,12 +35,12 @@
                     <td class="border-b border-gray-400 px-4 py-2">
                         <div class="group relative">
                             <!-- Default image -->
-                            <img [src]="'data:image;base64,' + user.profilePhoto" class="rounded-full"
+                            <img [src]="'data:image/*;base64,' + user.profilePhoto" class="rounded-full"
                                 onerror="this.src='../../../assets/icons/user.png';" style="width: 40px;">
                             <!-- Image preview on mouseover -->
                             <div class="hidden group-hover:block fixed top-1/2 left-1/2 transform -translate-x-1/2
                              -translate-y-1/2 bg-black bg-opacity-50 p-4 rounded-lg ">
-                                <img [src]="'data:image;base64,' + user.profilePhoto" class="rounded-md p-2 w-96 h-96"
+                                <img [src]="'data:image/*;base64,' + user.profilePhoto" class="rounded-md p-2 w-96 h-96"
                                     onerror="this.src='../../../assets/icons/user.png';">
                             </div>
                         </div>

@@ -1,13 +1,25 @@
-<div *ngIf="componentLoaded">
+<div *ngIf="
+    trainerIntroduction &&
+    trainerPricing &&
+    trainerBenefit &&
+    trainerFeatureVideo &&
+    trainerPhotoAlbum &&
+    trainerVideoAlbum;
+    else loading
+">
     <app-trainer-introduction [trainerIntroduction]="trainerIntroduction"></app-trainer-introduction>
     <app-trainer-pricing [trainerPricing]="trainerPricing"></app-trainer-pricing>
     <app-trainer-benefits [trainerBenefit]="trainerBenefit"></app-trainer-benefits>
     <app-trainer-feature-videos [trainerFeatureVideo]="trainerFeatureVideo"></app-trainer-feature-videos>
-    <app-trainer-photo-album></app-trainer-photo-album>
-    <app-trainer-video-album></app-trainer-video-album>
+    <app-trainer-photo-album [trainerPhotoAlbum]="trainerPhotoAlbum"></app-trainer-photo-album>
+    <app-trainer-video-album [trainerVideoAlbum]="trainerVideoAlbum"></app-trainer-video-album>
     <app-trainer-clients></app-trainer-clients>
     <app-trainer-review></app-trainer-review>
     <app-trainer-testimonials></app-trainer-testimonials>
     <app-trainer-subscriptions></app-trainer-subscriptions>
     <app-trainer-like></app-trainer-like>
 </div>
+
+<ng-template #loading>
+    <p>Loading trainer details...</p>
+</ng-template>

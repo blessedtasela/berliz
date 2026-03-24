@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription, Observable, map, catchError, of } from 'rxjs';
-import { TrainerFeatureVideo } from 'src/app/models/trainers.interface';
+import { TrainerVideoAlbum } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
@@ -23,7 +23,7 @@ export class TrainerVideoAlbumComponent {
   isChecked: boolean = false;
   responseMessage: any;
   selectedVideo: any;
-  @Input() trainerFeatureVideo!: TrainerFeatureVideo;
+  @Input() trainerVideoAlbum!: TrainerVideoAlbum;
   subscriptions: Subscription[] = [];
 
   constructor(private formBuilder: FormBuilder,
@@ -35,11 +35,11 @@ export class TrainerVideoAlbumComponent {
   }
 
   ngOnInit(): void {
-    console.log(this.trainerFeatureVideo)
-    this.trainerFeatureVideo = this.trainerFeatureVideo || {};
+    console.log(this.trainerVideoAlbum)
+    this.trainerVideoAlbum = this.trainerVideoAlbum || {};
     this.updateTrainerVideoAlbum = this.formBuilder.group({
-      id: this.trainerFeatureVideo?.id,
-      motivation: [this.trainerFeatureVideo.motivation, Validators.compose([Validators.required, Validators.minLength(500)])],
+      id: this.trainerVideoAlbum?.id,
+      comment: [this.trainerVideoAlbum.comment, Validators.compose([Validators.required, Validators.minLength(500)])],
       video: [null, Validators.required]
     });
 
@@ -53,9 +53,9 @@ export class TrainerVideoAlbumComponent {
 
   handleEmitEvent() {
     this.subscriptions.push(
-      this.trainerStateService.getMyTrainerFeatureVideo().subscribe(trainerFeatureVideo => {
-        this.trainerFeatureVideo = trainerFeatureVideo;
-        this.trainerStateService.setMyTrainerFeatureVideoSubject(trainerFeatureVideo);
+      this.trainerStateService.getMyTrainerVideoAlbum().subscribe(trainerVideoAlbum => {
+        this.trainerVideoAlbum = trainerVideoAlbum;
+        this.trainerStateService.setMyTrainerVideoAlbumsSubject(trainerVideoAlbum);
       })
     );
   }
@@ -73,7 +73,7 @@ export class TrainerVideoAlbumComponent {
 
   onCurrentVideoSelected(event: any) {
     if (event.target.checked) {
-      const videoUrl = this.trainerFeatureVideo.video; // This is the URL from the backend
+      const videoUrl = this.trainerVideoAlbum.video; // This is the URL from the backend
       if (videoUrl) {
         // Fetch the video content from the URL
         fetch(videoUrl)
@@ -104,11 +104,11 @@ export class TrainerVideoAlbumComponent {
     }
   }
 
-  updateFormValues(trainerFeatureVideo: TrainerFeatureVideo) {
+  updateFormValues(trainerVideoAlbum: TrainerVideoAlbum) {
     this.updateTrainerVideoAlbum.patchValue({
-      id: trainerFeatureVideo.id,
-      motivation: trainerFeatureVideo.motivation,
-      video: trainerFeatureVideo.video,
+      id: trainerVideoAlbum.id,
+      comment: trainerVideoAlbum.comment,
+      video: trainerVideoAlbum.video,
     });
   }
 
@@ -117,10 +117,10 @@ export class TrainerVideoAlbumComponent {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
-  checkTrainerFeatureVideoExists(): Observable<boolean> {
-    return this.trainerStateService.getMyTrainerFeatureVideo().pipe(
-      map((trainerFeatureVideo: TrainerFeatureVideo) => {
-        return !!trainerFeatureVideo;
+  checktrainerVideoAlbumExists(): Observable<boolean> {
+    return this.trainerStateService.getMyTrainerVideoAlbum().pipe(
+      map((trainerVideoAlbum: TrainerVideoAlbum) => {
+        return !!trainerVideoAlbum;
       }),
       catchError(() => {
         return of(false);
@@ -129,7 +129,7 @@ export class TrainerVideoAlbumComponent {
   }
 
 
-  updateTrainerFeatureVideo(): void {
+  updatetrainerVideoAlbum(): void {
     if (this.updateTrainerVideoAlbum.invalid) {
       this.invalidForm = true;
       this.responseMessage = "Invalid form. Please complete all sections";
@@ -153,19 +153,19 @@ export class TrainerVideoAlbumComponent {
     }
 
     const requestData = new FormData();
-    requestData.append('motivation', this.updateTrainerVideoAlbum.get('motivation')?.value);
+    requestData.append('comment', this.updateTrainerVideoAlbum.get('comment')?.value);
     requestData.append('video', this.selectedVideo);
 
-    const trainerFeatureVideo = this.updateTrainerVideoAlbum.value;
+    const trainerVideoAlbum = this.updateTrainerVideoAlbum.value;
 
 
     this.ngxService.start();
-    if (this.trainerFeatureVideo.id) {
-      console.log(this.trainerFeatureVideo.id)
-      // Update existing trainer motivation
-      requestData.append('id', this.trainerFeatureVideo.id.toString());
-      requestData.append('trainerId', this.trainerFeatureVideo.trainer.id.toString());
-      this.trainerService.updateTrainerFeatureVideo(requestData)
+    if (this.trainerVideoAlbum.id) {
+      console.log(this.trainerVideoAlbum.id)
+      // Update existing trainer comment
+      requestData.append('id', this.trainerVideoAlbum.id.toString());
+      requestData.append('trainerId', this.trainerVideoAlbum.trainer.id.toString());
+      this.trainerService.updateTrainerVideoAlbum(requestData)
         .subscribe((response: any) => {
           this.updateTrainerVideoAlbum.reset();
           this.invalidForm = false;
@@ -173,7 +173,7 @@ export class TrainerVideoAlbumComponent {
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.handleEmitEvent()
           this.emitEvent.emit();
-          this.updateFormValues(trainerFeatureVideo);
+          this.updateFormValues(trainerVideoAlbum);
           this.isChecked = false;
           this.ngxService.stop();
         }, (error: any) => {
@@ -187,15 +187,15 @@ export class TrainerVideoAlbumComponent {
           this.ngxService.stop();
         });
     } else {
-      // Add new trainer motivation
-      this.trainerService.addTrainerFeatureVideo(requestData)
+      // Add new trainer comment
+      this.trainerService.addTrainerVideoAlbum(requestData)
         .subscribe((response: any) => {
           this.updateTrainerVideoAlbum.reset();
           this.invalidForm = false;
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.handleEmitEvent()
-          this.updateFormValues(trainerFeatureVideo);
+          this.updateFormValues(trainerVideoAlbum);
           this.emitEvent.emit();
           this.ngxService.stop();
         }, (error: any) => {

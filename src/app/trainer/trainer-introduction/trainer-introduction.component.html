@@ -59,11 +59,11 @@
                         <div class="flex">
                             <div class="shrink-0 group relative" *ngIf="trainerIntroduction.coverPhoto">
                                 <img class="h-16 w-16 object-cover rounded-full cursor-pointer"
-                                    [src]="'data:image;base64,' + trainerIntroduction.coverPhoto"
+                                    [src]="'data:image/*;base64,' + trainerIntroduction.coverPhoto"
                                     onerror="this.src='../../../assets/icons/user.png';" alt="Display photo" />
                                 <div class="hidden group-hover:block fixed top-1/2 left-1/2 transform -translate-x-1/2
                                     -translate-y-1/2 bg-black bg-opacity-50 p-4 rounded-lg ">
-                                    <img [src]="'data:image;base64,' + trainerIntroduction.coverPhoto"
+                                    <img [src]="'data:image/*;base64,' + trainerIntroduction.coverPhoto || 'assets/icons/user.png'"
                                         class="rounded-md p-1 object-cover "
                                         onerror="this.src='../../../assets/icons/user.png';">
                                 </div>

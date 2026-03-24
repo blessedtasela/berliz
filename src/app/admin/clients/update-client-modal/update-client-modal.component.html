@@ -42,7 +42,7 @@
             <div class="grid grid-cols md:grid-cols-2 p-1 gap-2">
                 <div class="mx-auto w-full grid grid-cols-4  rounded-lg text-gray-700">
                     <div class="rounded-lg object-cover flex col-span-4 flex">
-                        <img [src]="'data:image;base64, ' + client.user.profilePhoto"
+                        <img [src]="'data:image/*;base64,' + client.user.profilePhoto"
                             (onerror)="'../../../../assets/icons/customer.png'" class="rounded-lg">
                     </div>
                     <div *ngIf="updateClientForm.get('categoryIds')?.invalid && invalidForm"

@@ -105,11 +105,11 @@ export class TopBarComponent {
       this.notificationStateService.getMyNotifications().subscribe((notifications) => {
         if (notifications && notifications.length > 0) {
           this.notificationLength = notifications.filter(notification => !notification.read).length;
-          console.log(this.notificationLength);
+          // console.log(this.notificationLength);
         } else {
           // Handle the case when there are no notifications
           this.notificationLength = 0;
-          console.log('No notifications available.');
+          // console.log('No notifications available.');
         }
       })
     );

@@ -21,7 +21,7 @@
                 </div>
                 <div class="grid grid-cols md:grid-cols-2 rounded-lg p-2 gap-2">
                     <div class="rounded-lg object-cover gap-5">
-                        <img [src]="'data:image;base64, ' + center.photo" class="rounded-lg"
+                        <img [src]="'data:image/*;base64,' + center.photo" class="rounded-lg"
                             onerror="this.src='../../../assets/icons/user.png';">
                         <div class="grid grid-cols-2 md:grid-cols-4">
                             <div *ngFor="let cat of categories; let i = index" class="mx-auto flex items-center">

@@ -155,6 +155,10 @@ export class UserService {
     return this.httpClient.get(this.url + "/user/getActiveUsers")
   }
 
+  check() {
+    return this.httpClient.get(this.url + "/user/14")
+  }
+
   deleteUser(id: number) {
     return this.httpClient.delete(this.url + `/user/delete/${id}`);
   }

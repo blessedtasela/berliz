@@ -4,12 +4,12 @@
             <form [formGroup]="updateTrainerVideoAlbum">
                 <header class="justify-start p-2 text-gray-950 font-bold font-sans">
                     <h1 class="text-xl text-red-600">Video Album
-                        <span *ngIf="!trainerFeatureVideo.id" class="text-sm mx-2 text-gray-700 italic">
+                        <span *ngIf="!trainerVideoAlbum.id" class="text-sm mx-2 text-gray-700 italic">
                             (action required)
                         </span>
                     </h1>
                     <span class="text-md flex text-gray-700">
-                        Date registered: {{ trainerFeatureVideo.date ? formatDate(trainerFeatureVideo.date) : 'N/A' }}
+                        Date registered: {{ trainerVideoAlbum.date ? formatDate(trainerVideoAlbum.date) : 'N/A' }}
                     </span>
                 </header>
                 <div class="border-b-2"></div>
@@ -26,15 +26,15 @@
                         <span class="sr-only">Photo 1</span>
                         <span class="ml-4 font-bold text-gray-600 italic">Cover video</span>
                         <div class="flex">
-                            <div class="shrink-0 group relative" *ngIf="trainerFeatureVideo.video">
+                            <div class="shrink-0 group relative" *ngIf="trainerVideoAlbum.video">
                                 <!-- Thumbnail video with trainer name as aria-label and title -->
                                 <video class="h-16 w-16 object-cover rounded-full cursor-pointer"
-                                    [src]="trainerFeatureVideo.video"
+                                    [src]="trainerVideoAlbum.video"
                                     onerror="this.src='../../../assets/icons/user.png';"
-                                    [attr.aria-label]="trainerFeatureVideo.trainer.name + ' feature video'"
-                                    [title]="trainerFeatureVideo.trainer.name + ' feature video'" [autoplay]="true"
+                                    [attr.aria-label]="trainerVideoAlbum.trainer.name + ' feature video'"
+                                    [title]="trainerVideoAlbum.trainer.name + ' feature video'" [autoplay]="true"
                                     [muted]="true">
-                                    <a href="trainerFeatureVideo.video"></a>
+                                    <a href="trainerVideoAlbum.video"></a>
                                 </video>
                             </div>
                             <input id="videoUrl"
@@ -52,7 +52,7 @@
                     <div class="">
                         <button
                             class="bg-red-600 rounded-md mx-auto m-2 col-span-2 py-1 px-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                            type="submit" (click)="updateTrainerFeatureVideo()">
+                            type="submit" (click)="updatetrainerVideoAlbum()">
                             save
                         </button>
                     </div>

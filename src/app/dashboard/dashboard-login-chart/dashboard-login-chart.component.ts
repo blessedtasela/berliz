@@ -1,44 +1,72 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, Input, ElementRef, ViewChild, AfterViewInit, OnDestroy, OnChanges } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { DashboardStateService } from 'src/app/services/dashboard-state.service';
 
 @Component({
   selector: 'app-dashboard-login-chart',
   templateUrl: './dashboard-login-chart.component.html',
   styleUrls: ['./dashboard-login-chart.component.css']
 })
+export class DashboardLoginChartComponent implements AfterViewInit, OnChanges, OnDestroy {
+  @Input() data: any;
 
+  @ViewChild('loginCanvas', { static: true }) loginCanvas!: ElementRef<HTMLCanvasElement>;
 
-export class DashboardLoginChartComponent {
-  @Input() public chart: any;
-  @Input() public data: any;
+  private chart: any;
 
-  constructor(private dashboardStateService: DashboardStateService,
-    private ngxService: NgxUiLoaderService) { }
-
-  ngOnInit() {
-    // this.dashboardStateService.dashboardData$.subscribe((cachedData) => {
-    //   if (cachedData === null) {
-    //     this.handleEmitEvent()
-    //   } else {
-    //     this.data = cachedData;
-    //     if (!this.chartCreated) {
-    //       this.createLogDeviceChart();
-    //       this.chartCreated = true;
-    //     }
-    //   }
-    // })
+  ngAfterViewInit() {
+    this.tryCreateChart();
   }
 
-  handleEmitEvent() {
-    this.dashboardStateService.getDashBoard().subscribe((data) => {
-      this.ngxService.start()
-      console.log("isCached false")
-      this.data = data
-      this.dashboardStateService.setDashboardSubject(this.data);
-      this.ngxService.stop()
-    })
+  ngOnChanges() {
+    this.tryCreateChart();
   }
 
+  private tryCreateChart() {
+    if (!this.data || !this.loginCanvas) return;
+
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
+    this.createLoginChart();
+  }
+
+  private createLoginChart() {
+    Chart.register(...registerables);
+
+    // Replace with real values if your API provides device stats
+    const labels = ['Desktop', 'Android', 'iPhone'];
+    const values = [450, 350, 200];
+
+    this.chart = new Chart(this.loginCanvas.nativeElement, {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [
+          {
+            data: values,
+            backgroundColor: [
+              'limegreen',
+              'rgba(63, 67, 71, 0.7)',
+              'rgba(220, 38, 38, 0.7)'
+            ],
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        aspectRatio: 1.5,
+        plugins: {
+          legend: { display: true }
+        }
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+  }
 }

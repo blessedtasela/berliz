@@ -31,7 +31,7 @@ export class RouteGuardService {
     ];
 
     const token: any = localStorage.getItem('token');
-
+ 
     let tokenPayload: any;
     try {
       tokenPayload = jwt_decode(token);
@@ -55,7 +55,7 @@ export class RouteGuardService {
 
     this.snackBarService.openSnackBar(UNAUTHORIZED, 'error');
     this.router.navigate(['/dashboard']);
-    console.log('canActivate', this.authService.isAuthenticated());
+ 
     return false;
   }
 }

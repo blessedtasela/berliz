@@ -11,6 +11,7 @@ import { CenterTrainers } from '../models/centers.interface';
   providedIn: 'root'
 })
 export class TrainerStateService {
+
   private activeTrainersSubject = new BehaviorSubject<any>(null);
   public activeTrainersData$: Observable<Trainers[]> = this.activeTrainersSubject.asObservable();
 
@@ -388,7 +389,7 @@ export class TrainerStateService {
   }
 
   getMyTrainerPhotoAlbum(): Observable<TrainerPhotoAlbum> {
-    return this.trainerService.getMyTrainerPhotoAlbums().pipe(
+    return this.trainerService.getMyTrainerPhotosAlbum().pipe(
       tap((response: any) => {
         if (response) {
           this.setMyTrainerPhotoAlbumsSubject(response);
@@ -402,6 +403,20 @@ export class TrainerStateService {
     );
   }
 
+  getMyTrainerVideoAlbum(): Observable<TrainerVideoAlbum> {
+    return this.trainerService.getMyTrainerVideosAlbum().pipe(
+      tap((response: any) => {
+        if (response) {
+          this.setMyTrainerVideoAlbumsSubject(response);
+
+        }
+      }),
+      catchError((error) => {
+        this.handleErrors(error);
+        return of();
+      })
+    );
+  }
   private handleErrors(error: any): void {
     if (error.error?.message) {
       this.responseMessage = error.error?.message;

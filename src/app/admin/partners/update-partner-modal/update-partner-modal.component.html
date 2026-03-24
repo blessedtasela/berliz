@@ -12,7 +12,7 @@
             <div *ngIf="formIndex === 0">
                 <div class="grid grid-cols md:grid-cols-2 p-1">
                     <div class="flex items-center justify-center object-cover">
-                        <img [src]="'data:image;base64,' + partnerData.user.photo"
+                        <img [src]="'data:image/*;base64,' + partnerData.user.photo"
                             onerror="this.src='../../../assets/icons/user.png';" class="rounded-lg">
                     </div>
                     <div class="grid grid-cols gap-4 rounded-lg bg-gray-200 p-2 px-4">
@@ -90,7 +90,7 @@
             <div *ngIf="formIndex === 1">
                 <div class="grid grid-cols md:grid-cols-2 p-1 gap-2">
                     <div class="flex items-center justify-center object-cover">
-                        <img [src]="'data:image;base64,' + partnerData.user.photo"
+                        <img [src]="'data:image/*;base64,' + partnerData.user.photo"
                             onerror="this.src='../../../assets/icons/user.png';" class="rounded-lg">
                     </div>
                     <div class="bg-gray-200 grid grid-cols gap-4 rounded-lg p-2 bg-gray-200">
