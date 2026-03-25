@@ -82,8 +82,8 @@ export class MainComponent {
 
   openTodaysTodo() {
     const dialogRef = this.dialog.open(TodaysTodoModalComponent, {
-      width: '600px',
-      height: '400px',
+      minWidth: '400px',
+      minHeight: '200px',
       disableClose: true
     });
 

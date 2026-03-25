@@ -1,43 +1,66 @@
-<section class="w-full bg-gradient-to-r from-gray-950 via-gray-800 to-gray-950">
-    <div class="p-2 flex text-white items-center justify-center">
-        <div class="text-yellow-600 font-bold absolute top-0 right-0 p-2">
-            <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
-        </div>
-        <section class="mt-4">
-            <form [formGroup]="addTodoForm">
-                <header class="flex justify-center items-center font-bold font-sans">
-                    <p class="italic text-md text-silver-300">Hello, {{ email }}! ✨</p>
-                </header>
-                <div class="invalid-form">
-                    <span *ngIf="!addTodoForm.invalid && invalidForm" class="mx-2 text-yellow-500">
-                        Everything looks good on your quest!
-                    </span>
-                    <span *ngIf="addTodoForm.invalid && invalidForm" class="mx-2 text-red-500">
-                        Please complete all the quest details!
-                    </span>
-                </div>
-                <div class="grid grid-cols-1 p-2 gap-2">
-                    <div class="">
-                        <textarea formControlName="task"
-                            class="w-full p-2 placeholder-silver-500 focus:outline-none hover:border-gray-700 bg-gradient-to-r from-gray-950 via-gray-800 to-gray-950 rounded-md"
-                            [ngClass]="{'border-red-400': addTodoForm.get('task')?.invalid && addTodoForm.get('task')?.dirty }"
-                            placeholder="What are you doing today?" cols="12" rows="5"></textarea>
-                        <div *ngIf="addTodoForm.get('task')?.invalid && addTodoForm.get('task')?.dirty"
-                            class="text-yellow-500 mx-2">
-                            Description must be at least 20 characters!
-                        </div>
-                    </div>
-                    <div class="rounded-full bg-yellow-600 mx-auto m-2 cursor-pointer" (click)="addTodo()">
-                        <button type="submit"
-                            class="py-1 px-2 font-bold font-sans text-gray-950 text-sm flex items-center justify-center">
-                            Add task!
-                        </button>
-                    </div>
-                    <div class="text-yellow-700 font-bold p-2 flex items-center justify-center">
-                        <i-feather name="award" style="width: 100px;"></i-feather>
-                    </div>
-                </div>
-            </form>
-        </section>
-    </div>
-</section>
+<section class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+
+    <!-- WAIT for user -->
+    <ng-container *ngIf="user$ | async as user">
+  
+      <div class="bg-black border border-red-600/40 w-full max-w-md p-6 rounded-lg shadow-2xl text-white relative">
+  
+        <!-- Close button -->
+        <button (click)="closeDialog()"
+          class="absolute top-3 right-3 p-1text-gray-400 hover:text-red-500 transition">
+          <i-feather name="x"></i-feather>
+        </button>
+  
+        <!-- Header -->
+        <h2 class="text-2xl font-extrabold text-center mb-1 tracking-wide">
+          <span class="text-white">WELCOME</span>
+          <span class="text-red-600"> {{ user.firstname | uppercase }}</span>
+        </h2>
+  
+        <p class="text-center text-gray-200 mb-6 text-sm tracking-wide italic">
+          Discipline builds power, add a new task today!
+        </p>
+  
+        <!-- FORM -->
+        <form [formGroup]="addTodoForm" class="space-y-5">
+  
+          <!-- Task textarea -->
+          <div>
+            <label class="block text-xs font-bold tracking-widest text-gray-200 mb-2">
+              TASK DESCRIPTION
+            </label>
+  
+            <textarea
+              formControlName="task"
+              rows="5"
+              placeholder="Enter task details here......."
+              class="w-full p-3 bg-white border border-gray-700 rounded-md text-black 
+                     focus:outline-none
+                     transition"
+              [ngClass]="{
+                'border-red-500': addTodoForm.get('task')?.invalid && addTodoForm.get('task')?.dirty
+              }"
+            ></textarea>
+  
+            <p *ngIf="addTodoForm.get('task')?.invalid && addTodoForm.get('task')?.dirty"
+              class="text-red-400 text-xs mt-2 tracking-wide">
+             At Least 20 characters required.....
+            </p>
+          </div>
+  
+          <!-- Submit button -->
+          <button
+            type="button"
+            (click)="addTodo()"
+            class="w-full bg-red-600 hover:bg-red-700 active:scale-95 
+                   transition-all duration-200 text-white font-bold py-2 rounded-md
+                   tracking-widest shadow-lg shadow-red-900/40">
+            ADD TASK
+          </button>
+  
+        </form>
+      </div>
+  
+    </ng-container>
+  
+  </section>
