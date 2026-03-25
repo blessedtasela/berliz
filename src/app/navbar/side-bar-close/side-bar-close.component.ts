@@ -17,6 +17,10 @@ export class SideBarCloseComponent {
   @Input() userData!: Users;
   currentRouteName: string | null = null;
   @Input() notificationLength: number = 0;
+  tooltipClasses = "group-hover:opacity-100 transition-opacity duration-200 z-50 group-hover:bg-white" +
+    "group-hover:font-bold group-hover:border group-hover:border-gray-200 group-hover:rounded-md " +
+    "group-hover:shadow-md group-hover:whitespace-nowrap group-hover:px-2 group-hover:py-1 " +
+    "group-hover:text-xs group-hover:text-black";
 
   constructor(private router: Router,
     private dialog: MatDialog,
@@ -30,8 +34,11 @@ export class SideBarCloseComponent {
     });
   }
 
-  isActive(path: string): boolean {
-    return this.currentRoute?.startsWith('/' + path);
+  isActive(route: string, exact: boolean = false): boolean {
+    if (exact) {
+      return this.currentRoute === route;
+    }
+    return this.currentRoute?.startsWith(route);
   }
 
   isNotActive(): boolean {

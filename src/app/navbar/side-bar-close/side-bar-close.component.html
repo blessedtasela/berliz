@@ -1,140 +1,73 @@
-<nav class="mt-1 font-sans text-gray-950 font-bold space-y-3">
-    <!-- Dashboard Link -->
-    <div class="cursor-pointer p-1 duration-300 hover:bg-gray-100 w-12 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-200 rounded-md': isActive('dashboard') && !isNotActive()}"
-        (mouseover)="setRouterName('Dashboard')" (mouseout)="clearRouterName()">
-        <h1 class="flex items-center justify-center">
-            <a routerLink="/dashboard" class="text-md">
-                <feather-icon name="package" class="text-xl cursor-pointer" style="width: 30px;"></feather-icon>
-                <span class="fixed ml-4 text-gray-500 italic text-sm" *ngIf="currentRouteName==='Dashboard'">
-                    {{ currentRouteName }}
-                </span>
-            </a>
-        </h1>
-    </div>jjjjj
-    <!-- Tasks Link -->
-    <div class="cursor-pointer p-1 duration-300 hover:bg-gray-100 w-12 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-200 rounded-md px-2 ': isActive('dashboard/my-tasks')}"
-        (mouseover)="setRouterName('My-tasks')" (mouseout)="clearRouterName()">
-        <h1 class="flex items-center justify-center">
-            <a routerLink="/dashboard/my-tasks" class="text-md">
-                <feather-icon name="activity" class="text-xl " style="width: 26px;"></feather-icon>
-                <span class="fixed ml-4 text-gray-500 italic text-sm" *ngIf="currentRouteName==='My-tasks'">
-                    {{ currentRouteName }}
-                </span>
-            </a>
-        </h1>
-    </div>
-    <!-- Notifications Link -->
-    <div class="cursor-pointer p-1 duration-300 hover:bg-gray-100 w-12 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-200 rounded-md px-2 bg-w-full': isActive('dashboard/my-notifications')}"
-        (mouseover)="setRouterName('My-notifications')" (mouseout)="clearRouterName()">
-        <h1 class="flex items-center justify-center">
-            <a routerLink="/dashboard/my-notifications" class="text-md">
-                <feather-icon name="inbox" class="text-xl cursor-pointer" style="width: 26px;"></feather-icon>
-                <span class="fixed ml-4 text-gray-500 italic text-sm" *ngIf="currentRouteName==='My-notifications'">
-                    {{ currentRouteName }}
-                </span>
-                <span *ngIf="notificationLength > 0"
-                    class="text-sm text-red-600 font-bold ml-0.5 rounded-full -mt-1 fixed">
-                    {{ notificationLength }}
-                </span>
-            </a>
-        </h1>
-    </div>
-    <!-- Workspace Link -->
-    <div class="cursor-pointer p-1 duration-300 hover:bg-gray-100 w-12 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-200 rounded-md px-2 bg-w-full': isActive('dashboard/workspace')}"
-        (mouseover)="setRouterName('Workspace')" (mouseout)="clearRouterName()">
-        <h1 class="flex items-center justify-center">
-            <a routerLink="/dashboard/workspace" class="text-md">
-                <feather-icon name="globe" class="text-xl " style="width: 26px;"></feather-icon>
-                <span class="capitalize fixed ml-4 text-gray-500 italic text-sm" *ngIf="currentRouteName==='Workspace'">
-                    {{ currentRouteName }}
-                </span>
-            </a>
-        </h1>
-    </div>
-    <!-- Profile Link -->
-    <div class="cursor-pointer p-1 duration-300 hover:bg-gray-100 w-12 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-200 rounded-md px-2 bg-w-full': isActive('dashboard/profile')}"
-        (mouseover)="setRouterName('Profile')" (mouseout)="clearRouterName()">
-        <h1 class="flex items-center justify-center">
-            <a routerLink="/dashboard/profile" class="text-md">
-                <feather-icon name="user" class="text-xl " style="width: 26px;"></feather-icon>
-                <span class="fixed ml-4 text-gray-500 italic text-sm" *ngIf="currentRouteName==='Profile'">
-                    {{ currentRouteName }}
-                </span>
-            </a>
-        </h1>
-    </div>
-    <!-- Separator Line -->
-    <hr class="text-gray-200 my-6">
-    <!-- To-do List Link -->
-    <div class="cursor-pointer p-1 duration-300 hover:bg-gray-100 w-12 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-200 rounded-md px-2 bg-w-full': isActive('dashboard/my-todos')}"
-        (mouseover)="setRouterName('My-todos')" (mouseout)="clearRouterName()">
+<nav class="mt-2 font-sans space-y-3">
 
-        <h1 class="flex items-center justify-center">
-            <a routerLink="/dashboard/my-todos" class="text-md">
-                <feather-icon name="calendar" class="text-xl " style="width: 26px;"></feather-icon>
-                <span class="fixed ml-4 text-gray-500 italic text-sm" *ngIf="currentRouteName==='My-todos'">
-                    {{ currentRouteName }}
-                </span>
-            </a>
-        </h1>
+    <!-- MENU ITEMS -->
+    <ng-container *ngFor="let item of [
+      {name:'Dashboard', icon:'package', route:'/dashboard', exact:true},
+      {name:'Tasks', icon:'activity', route:'/dashboard/my-tasks'},
+      {name:'Notifications', icon:'inbox', route:'/dashboard/my-notifications'},
+      {name:'Workspace', icon:'globe', route:'/dashboard/workspace'},
+      {name:'Profile', icon:'user', route:'/dashboard/profile'},
+      {name:'Todos', icon:'calendar', route:'/dashboard/my-todos'},
+      {name:'Subscriptions', icon:'airplay', route:'/dashboard/my-subscriptions'},
+      {name:'Faqs', icon:'message-square', route:'/dashboard/my-faqs'},
+      {name:'Settings', icon:'settings', route:'/dashboard/settings'}
+    ]">
+  
+      <div
+        class="relative flex flex-col items-center justify-center cursor-pointer group w-12 py-2 rounded-md 
+        transform transition-all duration-600 hover:scale-105 hover:bg-white hover:border hover:border-gray-200 
+        hover:shadow-md hover:rounded-md"
+        [ngClass]="{'bg-white border border-gray-200 rounded-md shadow-md': isActive(item.route, item.exact)}"
+        (mouseover)="setRouterName(item.name)" (mouseout)="clearRouterName()">
+  
+        <!-- LABEL TOOLTIP -->
+        <span
+          *ngIf="currentRouteName === item.name"
+          class="absolute z-50 text-xs font-bold text-gray-900 bg-white border border-gray-200 rounded-md shadow-md whitespace-nowrap px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          style="top: 50%; transform: translateY(-50%); left: 100%;">
+          {{ item.name }}
+        </span>
+  
+        <!-- ICON LINK -->
+        <a [routerLink]="item.route" class="relative flex items-center justify-center w-full">
+          <feather-icon
+            [name]="item.icon"
+            class="text-gray-950 group-hover:text-black transition-all duration-200"
+            style="width: 26px;">
+          </feather-icon>
+  
+          <!-- NOTIFICATION BADGE -->
+          <span *ngIf="item.name === 'Notifications' && notificationLength > 0"
+            class="absolute -top-1 -right-2 bg-red-600 text-white text-[8px] px-1.5 py-[1px] rounded-full font-bold">
+            {{ notificationLength }}
+          </span>
+        </a>
+  
+      </div>
+  
+    </ng-container>
+  
+    <!-- LOGOUT BUTTON -->
+    <div
+    class="relative flex flex-col items-center justify-center cursor-pointer group w-12 py-2 rounded-md 
+    transform transition-all duration-600 hover:scale-105 hover:bg-white hover:border hover:border-gray-200 
+    hover:shadow-md hover:rounded-md"
+      (click)="logout()" (mouseover)="setRouterName('Logout')" (mouseout)="clearRouterName()">
+  
+      <!-- TOOLTIP -->
+      <span
+        class="absolute z-50 text-xs font-bold text-gray-900 bg-white border border-gray-200 rounded-md px-2 py-1 shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+        style="top: 50%; transform: translateY(-50%); left: 100%;">
+        Logout
+      </span>
+  
+      <!-- ICON -->
+      <feather-icon
+        name="log-out"
+        class="text-gray-900 group-hover:text-black transition-all duration-200"
+        style="width: 26px;">
+      </feather-icon>
+  
     </div>
-    <!-- Subscriptions Link -->
-    <div class="cursor-pointer p-1 duration-300 hover:bg-gray-100 w-12 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-200 rounded-md px-2 bg-w-full': isActive('dashboard/my-subscriptions')}"
-        (mouseover)="setRouterName('My-subscriptions')" (mouseout)="clearRouterName()">
-
-        <h1 class="flex items-center justify-center">
-            <a routerLink="/dashboard/my-subscriptions" class="text-md">
-                <feather-icon name="Airplay" class="text-xl " style="width: 24px;"></feather-icon>
-                <span class="fixed ml-4 text-gray-500 italic text-sm" *ngIf="currentRouteName==='My-subscriptions'">
-                    {{ currentRouteName }}
-                </span>
-            </a>
-        </h1>
-    </div>
-    <!-- FAQs Link -->
-    <div class="cursor-pointer p-1 duration-300 hover:bg-gray-100 w-12 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-200 rounded-md px-2 bg-w-full': isActive('dashboard/my-faqs')}"
-        (mouseover)="setRouterName('My-faqs')" (mouseout)="clearRouterName()">
-
-        <h1 class="flex items-center justify-center">
-            <a routerLink="/dashboard/my-faqs" class="text-md">
-                <feather-icon name="message-square" class="text-xl " style="width: 26px;"></feather-icon>
-                <span class="fixed ml-4 text-gray-500 italic text-sm" *ngIf="currentRouteName==='My-faqs'">
-                    {{ currentRouteName }}
-                </span>
-            </a>
-        </h1>
-    </div>
-    <!-- Settings Link -->
-    <div class="cursor-pointer p-1 duration-300 hover:bg-gray-100 w-12 hover:rounded-md hover:p-2"
-        [ngClass]="{'bg-gray-200 rounded-md px-2 bg-w-full': isActive('dashboard/settings')}"
-        (mouseover)="setRouterName('Settings')" (mouseout)="clearRouterName()">
-        <h1 class="flex items-center justify-center">
-            <a routerLink="/dashboard/settings" class="text-md">
-                <feather-icon name="settings" class="text-xl " style="width: 26px;"></feather-icon>
-                <span class="fixed ml-4 text-gray-500 italic text-sm" *ngIf="currentRouteName==='Settings'">
-                    {{ currentRouteName }}
-                </span>
-            </a>
-        </h1>
-    </div>
-    <!-- Logout Link -->
-    <div class="cursor-pointer p-1 duration-300 hover:bg-gray-100 w-12 hover:rounded-md hover:p-2"
-        (mouseover)="setRouterName('Logout')" (mouseout)="clearRouterName()" (click)="logout()">
-        <h1 class="flex items-center justify-center">
-            <a class="text-md">
-                <feather-icon name="log-out" class="text-xl"></feather-icon>
-                <span class="fixed ml-4 text-gray-500 italic text-sm" *ngIf="currentRouteName==='Logout'">
-                    {{ currentRouteName }}
-                </span>
-            </a>
-        </h1>
-    </div>
-</nav>
+  
+  </nav>
