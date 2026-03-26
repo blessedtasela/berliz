@@ -1,49 +1,69 @@
 <!-- Top Navigation Bar -->
-<div class="bg-white flex justify-between fixed w-full p-1 nav-z rounded-b-md text-gray-950 shadow-lg">
-    <!-- Branding and Sidebar Toggle Button -->
-    <div class="flex items-center cursor-pointer z-2">
-        <div class="flex items-center p-2 cursor-pointer">
+<div class="bg-white fixed top-0 left-0 w-full shadow-md z-50">
+
+    <div class="h-14 flex items-center justify-between px-4">
+
+        <!-- LEFT: Logo + Notifications -->
+        <div class="flex items-center gap-4">
+
+            <!-- Logo -->
             <a [routerLink]="['/home']" class="flex items-center">
-                <img src="../../../assets/landing/logo.png" style="width: 30px;" class="block md:hidden">
-                <img src="../../../assets/landing/berliz.png" style="width: 120px;" class="hidden md:block">
+                <img src="../../../assets/landing/logo.png" class="w-8 block md:hidden">
+                <img src="../../../assets/landing/berliz.png" class="w-28 hidden md:block">
             </a>
 
-            <div class="hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
-                    rounded-md p-1 mr-2">
-                <a [routerLink]="['/dashboard/my-notifications']">
-                    <i-feather name="bell" class="mt-2 w-24 md:w-36 text-gray-700 font-bold drop-shadow-xl"
-                        (click)="toggleSidebar()" (click)="stopPropagation($event)"></i-feather>
-                    <span *ngIf="notificationLength > 0"
-                        class="text-sm text-white font-bold bg-red-600 px-1 rounded-full fixed">
-                        {{ notificationLength }}
-                    </span>
-                </a>
+            <!-- Notifications -->
+            <div class="relative" (click)="toggleSidebar()" (click)="stopPropagation($event)">
+                <i-feather name="bell" class="text-gray-700" style="width: 22px;"></i-feather>
+
+                <!-- Small badge, not on icon -->
+                <span *ngIf="notificationLength > 0"
+                    class="absolute -top-1 -right-3 bg-red-600 text-white text-[8px] px-1.5 py-[1px] rounded-full font-bold">
+                    {{ notificationLength }}
+                </span>
             </div>
+
         </div>
-    </div>
-    <!-- Search and Profile Icons -->
-    <app-search (categoriesResults)="handleCategorySearchResults($event)"
-        (exerciseResults)="handleExerciseSearchResults($event)"
-        (contactUsResults)="handleContactUsSearchResults($event)"
-        (muscleGroupResults)="handleMuscleGroupSearchResults($event)"
-        (trainersResults)="handleTrainerSearchResults($event)" (usersResults)="handleUserSearchResults($event)"
-        (partnersResults)="handlePartnerSearchResults($event)" (centerssResults)="handleCenterSearchResults($event)"
-        (newslettersResult)="handleNewsletterSearchResults($event)" (tagsResults)="handleTagSearchResults($event)"
-        (myTodoResults)="handleMyTodoSearchResults($event)" (todoListResults)="handleTodoListSearchResults($event)"
-        (clientssResults)="handleClientSearchResults($event)" (membersResult)="handleMemberSearchResults($event)"
-        (paymentsResults)="handlePaymentSearchResults($event)"
-        (subscriptionsResults)="handleSubscriptionSearchResults($event)"
-        (subTasksResults)="handlesubTaskSearchResults($event)" (tasksResults)="handleTaskSearchResults($event)"
-        (testimonialsResults)="handleTestimonialSearchResults($event)" [searchComponent]="searchComponent"></app-search>
-    <div class="flex justify-end mr-2 gap-1 md:gap-4 border-2 rounded-full border-gray-300">
-        <div class="flex items-center p-2 cursor-pointer hover:drop-shadow-2xl transition-all 
-                duration-300 ease-in-out transform hover:scale-105 cursor-pointer">
-            <div class="h-6 bg-gray-200 rounded-full" [routerLink]="['/home']">
-                <feather-icon name="home" class=" p-1 font-bold text-gray-800" style="width: 22px;"></feather-icon>
+
+        <!-- CENTER: Search -->
+        <div class="flex-1 flex justify-center px-4">
+            <app-search (categoriesResults)="handleCategorySearchResults($event)"
+                (exerciseResults)="handleExerciseSearchResults($event)"
+                (contactUsResults)="handleContactUsSearchResults($event)"
+                (muscleGroupResults)="handleMuscleGroupSearchResults($event)"
+                (trainersResults)="handleTrainerSearchResults($event)" (usersResults)="handleUserSearchResults($event)"
+                (partnersResults)="handlePartnerSearchResults($event)"
+                (centerssResults)="handleCenterSearchResults($event)"
+                (newslettersResult)="handleNewsletterSearchResults($event)"
+                (tagsResults)="handleTagSearchResults($event)" (myTodoResults)="handleMyTodoSearchResults($event)"
+                (todoListResults)="handleTodoListSearchResults($event)"
+                (clientssResults)="handleClientSearchResults($event)"
+                (membersResult)="handleMemberSearchResults($event)"
+                (paymentsResults)="handlePaymentSearchResults($event)"
+                (subscriptionsResults)="handleSubscriptionSearchResults($event)"
+                (subTasksResults)="handlesubTaskSearchResults($event)" (tasksResults)="handleTaskSearchResults($event)"
+                (testimonialsResults)="handleTestimonialSearchResults($event)" [searchComponent]="searchComponent">
+            </app-search>
+        </div>
+
+        <!-- RIGHT: Home + Profile -->
+        <div class="flex items-center gap-4 rounded-full px-4 bg-white shadow-lg transition-all whitespace-nowrap">
+
+            <!-- Home Icon Circle -->
+            <div class="w-9 h-9 flex items-center justify-center rounded-full bg-white 
+             border border-gray-300 shadow-sm cursor-pointer hover:shadow-md transition-all" [routerLink]="['/home']">
+                <feather-icon name="home" class="text-gray-800" style="width: 20px;"></feather-icon>
             </div>
-        </div>
-        <div class="flex items-center justify-center">
+
+            <!-- Profile Avatar Circle -->
+            <!-- <div class="w-9 h-9 rounded-full overflow-hidden bg-white 
+             border border-gray-300 shadow-sm hover:shadow-md transition-all cursor-pointer">
+                <img [src]="profilePhoto" alt="Profile" class="w-full h-full object-cover">
+            </div> -->
+            <!-- Profile (avatar circle) -->
             <app-profile [search]="isSearch" [userData]="userData"></app-profile>
         </div>
+
     </div>
+
 </div>

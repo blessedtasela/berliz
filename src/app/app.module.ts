@@ -9,8 +9,8 @@ import { ScrollModule } from './scroll/scroll.module';
 import { NgxUiLoaderConfig, SPINNER, NgxUiLoaderModule } from 'ngx-ui-loader';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { TokenInterceptorInterceptor } from './services/token-interceptor.interceptor';
-import { FormsModule } from '@angular/forms';
-import { DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule, DatePipe } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ExamplePdfViewerComponent } from './example-pdf-viewer/example-pdf-viewer.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
@@ -125,6 +125,8 @@ const dbConfig: DBConfig = {
     NgxFileDropModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireModule,
+    ReactiveFormsModule,
+    CommonModule,
   ],
   exports: [],
 

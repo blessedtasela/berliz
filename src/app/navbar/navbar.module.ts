@@ -8,7 +8,7 @@ import { SidebarNavigationComponent } from './sidebar-navigation/sidebar-navigat
 import { SearchComponent } from './search/search.component';
 import { ProfileComponent } from './profile/profile.component';
 import { SearchCategoryComponent } from './search-category/search-category.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SearchContactUsComponent } from './search-contact-us/search-contact-us.component';
 import { SearchTrainerComponent } from './search-trainer/search-trainer.component';
 import { SearchUserComponent } from './search-user/search-user.component';
@@ -74,14 +74,18 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     FormsModule,
     BreadcrumbModule,
     MatIconModule,
-    ImageCropperModule
+    ImageCropperModule,
+    ReactiveFormsModule
   ],
   exports: [
     NavigationBarComponent,
     SidebarNavigationComponent,
     TopBarComponent,
     SideBarComponent,
-    NavbarBreadcrumbComponent
+    NavbarBreadcrumbComponent,
+    SideBarOpenComponent,
+    SideBarCloseComponent
+  
   ],
   providers: [
   ]
