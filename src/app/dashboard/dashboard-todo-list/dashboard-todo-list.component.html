@@ -5,7 +5,7 @@
     </h1>
     <p class="text-gray-500 italic font-sans text-sm mt-1">
         You currently have no tasks. Click
-        <a routerLink="/my-todos" class="text-red-600 font-bold hover:underline hover:text-red-700 transition">
+        <a routerLink="/dashboard/my-todos" class="text-red-600 font-bold hover:underline hover:text-red-700 transition">
             here
         </a>
         to add one now.
@@ -15,7 +15,7 @@
 <!-- Header -->
 <div *ngIf="todoData.length > 0" class="flex justify-between items-center mb-3">
     <h1 class="text-gray-800 text-xl font-bold font-sans">My Todos</h1>
-    <a routerLink="/my-todos" class="text-red-600 text-sm font-semibold hover:underline">
+    <a routerLink="/dashboard/my-todos" class="text-red-600 text-sm font-semibold hover:underline">
         View All
     </a>
 </div>
@@ -40,10 +40,10 @@
             </div>
 
             <!-- Due Date -->
-            <div class="text-xs mt-1" [ngClass]="{
-             'text-red-600 font-semibold': isDueNow(todo),
-             'text-red-400 font-semibold': isDueSoon(todo),
-             'text-gray-700 font-semibold': !isDueSoon(todo) && !isDueNow(todo)
+            <div class="text-xs mt-1 font-bold" [ngClass]="{
+             'text-red-600 ': isDueNow(todo),
+             'text-red-500 ': isDueSoon(todo),
+             'text-gray-700 ': !isDueSoon(todo) && !isDueNow(todo)
            }">
                 {{ getDueLabel(todo) }}
             </div>
