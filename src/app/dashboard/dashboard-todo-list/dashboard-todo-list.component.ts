@@ -90,6 +90,51 @@ export class DashboardTodoListComponent {
     });
   }
 
+  isDueNow(todo: TodoList): boolean {
+  const now = new Date();
+  const due = new Date(todo.dueDate);
+  return due <= now;
+}
+
+isDueSoon(todo: TodoList): boolean {
+  const now = new Date();
+  const due = new Date(todo.dueDate);
+  const diff = due.getTime() - now.getTime();
+  const days = diff / (1000 * 60 * 60 * 24);
+  return days > 0 && days <= 3;
+}
+
+getDueLabel(todo: TodoList): string {
+  const now = new Date();
+  const due = new Date(todo.dueDate);
+  const diff = due.getTime() - now.getTime();
+
+  if (diff <= 0) {
+    return 'Due now';
+  }
+
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(diff / (1000 * 60));
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const weeks = Math.floor(days / 7);
+
+  if (seconds < 60) return `Due in ${seconds}s`;
+  if (minutes < 60) return `Due in ${minutes}m`;
+  if (hours < 24) return `Due in ${hours}h`;
+  if (days < 7) return `Due in ${days}d`;
+  return `Due in ${weeks}w`;
+}
+
+openTodoDetails(todo: TodoList) {
+  // // open modal like notifications
+  // this.dialog.open(TodoDetailsComponent, {
+  //   data: todo,
+  //   width: '400px',
+  //   panelClass: 'berliz-dialog'
+  // });
+}
+
 }
 
 

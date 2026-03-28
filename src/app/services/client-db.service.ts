@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
-import { Notifications } from '../models/announcements.interface';
+import { Notifications } from '../models/Notifications.interface';
 
 @Injectable({
   providedIn: 'root'

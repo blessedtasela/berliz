@@ -1,5 +1,15 @@
-import { Component, Input, ElementRef, ViewChild, AfterViewInit, OnDestroy, OnChanges } from '@angular/core';
-import { Chart, registerables } from 'chart.js';
+import {
+  Component,
+  Input,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+  OnDestroy,
+  OnChanges,
+  HostListener
+} from '@angular/core';
+
+import { Chart, registerables } from 'chart.js/auto';
 
 @Component({
   selector: 'app-dashboard-login-chart',
@@ -9,9 +19,10 @@ import { Chart, registerables } from 'chart.js';
 export class DashboardLoginChartComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() data: any;
 
-  @ViewChild('loginCanvas', { static: true }) loginCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('loginCanvas', { static: true })
+  loginCanvas!: ElementRef<HTMLCanvasElement>;
 
-  private chart: any;
+  private chart!: Chart<'doughnut', number[], string>;
 
   ngAfterViewInit() {
     this.tryCreateChart();
@@ -22,7 +33,7 @@ export class DashboardLoginChartComponent implements AfterViewInit, OnChanges, O
   }
 
   private tryCreateChart() {
-    if (!this.data || !this.loginCanvas) return;
+    if (!this.loginCanvas) return;
 
     if (this.chart) {
       this.chart.destroy();
@@ -34,11 +45,10 @@ export class DashboardLoginChartComponent implements AfterViewInit, OnChanges, O
   private createLoginChart() {
     Chart.register(...registerables);
 
-    // Replace with real values if your API provides device stats
     const labels = ['Desktop', 'Android', 'iPhone'];
     const values = [450, 350, 200];
 
-    this.chart = new Chart(this.loginCanvas.nativeElement, {
+    this.chart = new Chart<'doughnut', number[], string>(this.loginCanvas.nativeElement, {
       type: 'doughnut',
       data: {
         labels,
@@ -56,12 +66,19 @@ export class DashboardLoginChartComponent implements AfterViewInit, OnChanges, O
       },
       options: {
         responsive: true,
-        aspectRatio: 1.5,
+        maintainAspectRatio: false,   // ⭐ IMPORTANT
         plugins: {
           legend: { display: true }
         }
       }
     });
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    if (this.chart) {
+      setTimeout(() => this.chart.resize(), 50);
+    }
   }
 
   ngOnDestroy() {

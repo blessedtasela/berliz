@@ -1,56 +1,75 @@
-<div class="justify-center items-center p-1 mt-4 overflow-x-scroll" *ngIf="todoData.length === 0">
-    <h1 class="text-gray-500 italic font-sans">
+<!-- Empty State -->
+<div *ngIf="todoData.length === 0" class="flex flex-col items-center text-center p-6">
+    <h1 class="text-gray-500 italic font-sans text-lg">
         Your Todo Tasks will appear here
     </h1>
-    <h1 class="text-gray-500 italic font-sans text-sm">
-        You currenty have no to-do tasks. Click
-        <span class=" text-red-600  hover:drop-shadow-2xl transition-all duration-1000 ease-in-out transform hover:scale-105 
-            rounded-md font-bold cursor-pointer" routerLink="/my-todos">
+    <p class="text-gray-500 italic font-sans text-sm mt-1">
+        You currently have no tasks. Click
+        <a routerLink="/my-todos" class="text-red-600 font-bold hover:underline hover:text-red-700 transition">
             here
-        </span> to add one now|
-    </h1>
+        </a>
+        to add one now.
+    </p>
 </div>
-<div class="flex justify-center items-center" *ngIf="todoData.length > 0">
-    <h1 class="text-gray-500 text-xl capitalize font-bold italic font-sans">
-       My Todos
-    </h1>
-    </div>
-<div class="h-64 justify-center items-center p-1 mt-4 overflow-x-scroll overflow-y-scroll font-sans" *ngIf="todoData.length > 0">
-    <div class="min-w-[300px]">
-        <table class="table-auto border-collapse rounded-lg text-gray-950 font-sans container">
-            <tbody class="rounded-lg">
-                <tr *ngFor="let todo of todoData; let i = index" class="">
-                    <td class="border-b border-gray-400 px-4 py-2 text-bold">{{ i + 1 }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        <div class="grid grid-cols">
-                            <div class="text-gray-700 font-bold text-sm">
-                                {{ todo.task }}
-                            </div>
-                            <div class="grid grid-cols text-sm italic text-gray-400">
-                                <span class="flex flex-cols">
-                                    <i-feather name="calendar" class="font-bold text-red-600 mr-2 mt-1 cursor-pointer"
-                                        style="width: 15px;">
-                                    </i-feather>
-                                    created on {{ formatDate(todo.date) }}
-                                </span>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="border-b border-gray-400 px-4 py-2 text-sm">
-                        <div class="grid grid-cols md:grid-cols-2">
-                            <div *ngIf="todo.status==='completed'" class="font-bold italic text-blue-500 mt-0 md:mt-3">
-                                {{ todo.status }}
-                            </div>
-                            <div *ngIf="todo.status==='pending'" class="font-bold italic text-red-700 mt-0 md:mt-3">
-                                {{ todo.status }}
-                            </div>
-                            <div *ngIf="todo.status==='in-progress'" class="font-bold italic text-green-600 mt-0 md:mt-3">
-                                {{ todo.status }}
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+
+<!-- Header -->
+<div *ngIf="todoData.length > 0" class="flex justify-between items-center mb-3">
+    <h1 class="text-gray-800 text-xl font-bold font-sans">My Todos</h1>
+    <a routerLink="/my-todos" class="text-red-600 text-sm font-semibold hover:underline">
+        View All
+    </a>
+</div>
+
+<!-- Todo List -->
+<div *ngIf="todoData.length > 0" class="grid grid-cols-1 gap-3 min-h-64 overflow-y-auto pr-1">
+
+    <div *ngFor="let todo of todoData" (click)="openTodoDetails(todo)"
+        class="flex items-start justify-between p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition cursor-pointer">
+
+        <!-- Left: Task Info -->
+        <div class="flex flex-col">
+            <div class="text-gray-800 font-semibold text-sm">
+                {{ todo.task }}
+            </div>
+
+            <!-- Created Date -->
+            <div class="flex items-center text-xs text-gray-400 mt-1">
+                <i-feather name="calendar" class="text-red-600 mr-1 block"
+                    style="width: 14px; height: 14px;"></i-feather>
+                {{ todo.date | timeAgo }}
+            </div>
+
+            <!-- Due Date -->
+            <div class="text-xs mt-1" [ngClass]="{
+             'text-red-600 font-semibold': isDueNow(todo),
+             'text-red-400 font-semibold': isDueSoon(todo),
+             'text-gray-700 font-semibold': !isDueSoon(todo) && !isDueNow(todo)
+           }">
+                {{ getDueLabel(todo) }}
+            </div>
+        </div>
+
+        <!-- Right: Status Badge -->
+        <div>
+            <span *ngIf="todo.status === 'completed'"
+                class="px-2 py-1 text-xs font-bold rounded-md bg-green-100 text-green-600">
+                Completed
+            </span>
+
+            <span *ngIf="todo.status === 'not-started'"
+                class="px-2 py-1 text-xs font-bold rounded-md bg-gray-100 text-gray-600">
+                Not Started
+            </span>
+
+            <span *ngIf="todo.status === 'in-progress'"
+                class="px-2 py-1 text-xs font-bold rounded-md bg-yellow-100 text-yellow-600">
+                In Progress
+            </span>
+
+            <span *ngIf="todo.status === 'due'" class="px-2 py-1 text-xs font-bold rounded-md bg-red-100 text-red-600">
+                Due
+            </span>
+        </div>
+
     </div>
 </div>

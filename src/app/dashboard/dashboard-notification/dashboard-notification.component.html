@@ -1,45 +1,50 @@
-<div class="justify-center items-center p-1 mt-4" *ngIf="notifications.length === 0">
-    <h1 class="text-gray-700 italic font-sans font-bold text-2xl">
-        All notifications would appear here
-        <i-feather name="message-square" class="text-red-600 font-bold ml-4"></i-feather>
-    </h1>
-</div>
-<div class="justify-center items-center p-1 mt-4 overflow-x-scroll font-sans" *ngIf="notifications.length > 0">
-    <div class="min-w-[300px]">
-        <table class="table-auto border-collapse rounded-lg text-gray-950 font-sans container">
-            <tbody class="rounded-lg">
-                <tr *ngFor="let todo of notifications; let i = index" class="">
-                    <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        <div class="grid grid-cols">
-                            <div>
-                                {{ todo.task }}
-                            </div>
-                            <div class="grid grid-cols md:grid-cols-2 text-sm italic text-gray-400">
-                                <span class="flex flex-cols">
-                                    <i-feather name="calendar" class="font-bold text-gray-950 mr-2 mt-1 cursor-pointer"
-                                        style="width: 15px;">
-                                    </i-feather>
-                                    created on {{ formatDate(todo.date) }}
-                                </span>
-                                <span class="flex flex-cols">
-                                    <i-feather name="calendar" class="font-bold text-red-600 mr-2 mt-1 cursor-pointer"
-                                        style="width: 15px;">
-                                    </i-feather>
-                                    last updated {{ formatDate(todo.lastUpdate) }}
-                                </span>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="border-b border-gray-400 px-4 py-2 text-sm">
-                        <div class="grid grid-cols md:grid-cols-2">
-                            <div class="font-bold italic text-gray-700 mt-0 md:mt-3">
-                                task {{ todo.status }}
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+<div class="mt-6 font-sans space-y-3" *ngIf="notifications.length > 0">
+
+    <div *ngFor="let n of notifications | slice:0:4" (click)="openNotificationModal(n)" 
+    class="p-2 rounded-lg cursor-pointer transition-all duration-300 text-sm
+           bg-white shadow-sm hover:shadow-md flex items-start gap-3" [ngClass]="{
+      'bg-red-50 shadow-md': !n.read
+    }">
+
+        <!-- Bullet dot -->
+        <span class="w-2 h-2 rounded-full mt-2" [ngClass]="{
+        'bg-red-600': !n.read,
+        'bg-gray-400': n.read
+      }"></span>
+
+        <!-- Notification content -->
+        <div class="flex-1">
+
+            <!-- Notification text -->
+            <p class="text-gray-900 font-semibold line-clamp-3">
+                {{ n.notification }}
+            </p>
+
+            <!-- Read more button -->
+            <button *ngIf="n.notification.length > 120" class="text-red-600 text-xs font-semibold mt-1 hover:underline"
+                (click)="openNotificationModal(n); $event.stopPropagation()">
+                Read more →
+            </button>
+
+            <!-- Date -->
+            <p class="text-gray-500 text-xs mt-2 flex items-center" [title]="n.date | date:'medium'">
+                Added {{ n.date | timeAgo }}
+            </p>
+        </div>
+
     </div>
+
+    <!-- View All Link -->
+    <div class="flex justify-end mt-2">
+        <a routerLink="/dashboard/my-notifications" class="text-red-600 font-semibold hover:underline text-xs">
+            View all notifications →
+        </a>
+    </div>
+
+</div>
+
+<!-- EMPTY STATE -->
+<div class="mt-6 text-center text-gray-600 font-sans" *ngIf="notifications.length === 0">
+    <i-feather name="check-circle" class="w-8 h-8 text-gray-400 mx-auto mb-2"></i-feather>
+    <p class="text-lg font-semibold">You currently have no unread notifications</p>
 </div>

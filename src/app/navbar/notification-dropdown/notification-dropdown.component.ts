@@ -1,26 +1,30 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+
 import { Notifications } from 'src/app/models/Notifications.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { NotificationDetailsComponent } from 'src/app/shared/notification-details/notification-details.component';
-import { TimeAgoPipe } from 'src/app/shared/pipes/time-ago.pipe';
 
 @Component({
-  selector: 'app-dashboard-notification',
-  templateUrl: './dashboard-notification.component.html',
-  styleUrls: ['./dashboard-notification.component.css']
+  selector: 'notification-dropdown-component',
+  templateUrl: './notification-dropdown.component.html',
+  styleUrls: ['./notification-dropdown.component.css']
 })
-export class DashboardNotificationComponent implements OnInit, OnDestroy {
+export class NotificationDropdownComponent implements OnInit, OnDestroy {
 
   notifications: Notifications[] = [];
   subscriptions: Subscription[] = [];
+  @Output() close = new EventEmitter<void>();
+
+  visibleCount = 10;
+  maxVisible = 50;
 
   constructor(
-    private rxStompService: RxStompService,
     private notificationStateService: NotificationStateService,
+    private rxStompService: RxStompService,
     private dialog: MatDialog,
     private router: Router
   ) { }
@@ -30,25 +34,15 @@ export class DashboardNotificationComponent implements OnInit, OnDestroy {
     this.watchNotificationEvents();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
-  }
-
-  formatDate(dateString: any): string {
-    return new Date(dateString).toDateString();
-  }
-
-  private updateNotificationList() {
-    this.notifications = this.notifications
-      .filter(n => !n.read)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 10);
   }
 
   private loadInitialNotifications() {
     const sub = this.notificationStateService.getMyNotifications().subscribe(data => {
-      this.notifications = data || [];
-      this.updateNotificationList();
+      this.notifications = (data || [])
+        .filter(n => !n.read)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     });
 
     this.subscriptions.push(sub);
@@ -66,7 +60,6 @@ export class DashboardNotificationComponent implements OnInit, OnDestroy {
         const received: Notifications = JSON.parse(message.body);
         this.handleNotificationEvent(t.type as any, received);
       });
-
       this.subscriptions.push(sub);
     });
   }
@@ -74,47 +67,41 @@ export class DashboardNotificationComponent implements OnInit, OnDestroy {
   private handleNotificationEvent(type: 'new' | 'update' | 'delete', received: Notifications) {
     switch (type) {
       case 'new':
-        this.notifications.push(received);
+        this.notifications.unshift(received);
         break;
-
       case 'update':
         const index = this.notifications.findIndex(n => n.id === received.id);
         if (index !== -1) this.notifications[index] = received;
         break;
-
       case 'delete':
         this.notifications = this.notifications.filter(n => n.id !== received.id);
         break;
     }
 
-    this.updateNotificationList();
+    this.notifications = this.notifications.filter(n => !n.read);
   }
 
-  /** Open modal + mark as read */
-  openNotificationModal(n: Notifications) {
-    const dialogRef = this.dialog.open(NotificationDetailsComponent, {
-      width: 'auto',
-      maxWidth: '90vw',
-      maxHeight: '90vh',
-      autoFocus: false,
-      data: n,
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      this.markAsRead(n);
-    });
+  loadMore() {
+    this.visibleCount = Math.min(this.visibleCount + 10, this.maxVisible);
   }
 
-  private markAsRead(n: Notifications) {
-    n.read = true;
-
-    this.notifications = this.notifications.filter(x => x.id !== n.id);
-
+  openNotification(n: Notifications) {
     this.rxStompService.publish({
       destination: '/app/markNotificationRead',
       body: JSON.stringify({ id: n.id })
     });
 
-    this.updateNotificationList();
+    n.read = true;
+    this.notifications = this.notifications.filter(x => !x.read);
+
+    this.dialog.open(NotificationDetailsComponent, {
+      width: '450px',
+      data: n,
+      panelClass: 'berliz-modal'
+    });
+  }
+
+  goToAllNotifications() {
+    this.router.navigate(['/dashboard/my-notifications']);
   }
 }

@@ -34,6 +34,7 @@ import { SideBarCloseComponent } from './side-bar-close/side-bar-close.component
 import { NavbarBreadcrumbComponent } from './navbar-breadcrumb/navbar-breadcrumb.component';
 import { BreadcrumbModule } from 'xng-breadcrumb';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { NotificationDropdownComponent } from './notification-dropdown/notification-dropdown.component';
 
 
 @NgModule({
@@ -66,6 +67,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     SideBarOpenComponent,
     SideBarCloseComponent,
     NavbarBreadcrumbComponent,
+    NotificationDropdownComponent,
   ],
   imports: [
     CommonModule,
@@ -84,7 +86,8 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     SideBarComponent,
     NavbarBreadcrumbComponent,
     SideBarOpenComponent,
-    SideBarCloseComponent
+    SideBarCloseComponent,
+    NotificationDropdownComponent
   
   ],
   providers: [

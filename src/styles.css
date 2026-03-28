@@ -179,3 +179,36 @@ z-index: 20;
   color: red;
   font-weight: bold;
 }
+
+.berliz-modal .mat-dialog-container {
+  border-radius: 12px;
+  padding: 0;
+}
+
+.badge-pulse {
+  animation: badgePulse 1.4s ease-out infinite;
+}
+
+@keyframes badgePulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  }
+  70% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 6px rgba(220, 38, 38, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+}
+
+.global-blur-overlay {
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 900; /* above content, below dialogs */
+  pointer-events: none;
+}

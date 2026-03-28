@@ -22,6 +22,7 @@ import { MainComponent } from './main/main.component';
 import { WorkspaceRouteComponent } from './workspace-route/workspace-route.component';
 import { TodaysTodoModalComponent } from './todays-todo-modal/todays-todo-modal.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from '../shared/shared.module';
 
 
 
@@ -52,7 +53,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     NavbarModule,
     FooterModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SharedModule
   ]
 })
 export class DashboardModule { }

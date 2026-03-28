@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { DashboardStateService } from 'src/app/services/dashboard-state.service';
 import jwt_decode from "jwt-decode";
+import { NotificationStateService } from 'src/app/services/notification-state.service';
 
 @Component({
   selector: 'app-dashboard-action',
@@ -17,7 +18,9 @@ export class DashboardActionComponent {
   userRole: any
 
   constructor(private ngxService: NgxUiLoaderService,
-    private dashboardStateService: DashboardStateService) {
+    private dashboardStateService: DashboardStateService,
+   private notificationStateService: NotificationStateService
+) {
     this.tokenPayload = jwt_decode(this.token);
     this.userRole = this.tokenPayload?.role
   }
@@ -34,11 +37,9 @@ export class DashboardActionComponent {
 
   handleEmitEvent() {
     this.dashboardStateService.getDashBoard().subscribe((data) => {
-      this.ngxService.start()
       console.log("isCached false")
       this.data = data
       this.dashboardStateService.setDashboardSubject(this.data);
-      this.ngxService.stop()
     })
   }
 

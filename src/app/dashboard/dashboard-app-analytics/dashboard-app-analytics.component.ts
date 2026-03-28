@@ -1,5 +1,15 @@
-import { Component, Input, ElementRef, ViewChild, OnInit, OnDestroy } from '@angular/core';
-import { Chart, registerables } from 'chart.js';
+import {
+  Component,
+  Input,
+  ElementRef,
+  ViewChild,
+  OnInit,
+  OnDestroy,
+  HostListener
+} from '@angular/core';
+
+import { Chart, registerables } from 'chart.js/auto';
+
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { DashboardStateService } from 'src/app/services/dashboard-state.service';
 import { Subscription } from 'rxjs';
@@ -12,9 +22,10 @@ import { Subscription } from 'rxjs';
 export class DashboardAppAnalyticsComponent implements OnInit, OnDestroy {
   @Input() data: any;
 
-  @ViewChild('analyticCanvas', { static: true }) analyticCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('analyticCanvas', { static: true })
+  analyticCanvas!: ElementRef<HTMLCanvasElement>;
 
-  private chart!: any;
+private chart!: Chart<'line', number[], string>;
   private subscriptions: Subscription[] = [];
   private chartCreated = false;
 
@@ -49,46 +60,62 @@ export class DashboardAppAnalyticsComponent implements OnInit, OnDestroy {
 
   private fetchDashboardData() {
     const sub = this.dashboardStateService.getDashBoard().subscribe((data) => {
-      this.ngxService.start();
       this.data = data;
       this.dashboardStateService.setDashboardSubject(data);
-      this.ngxService.stop();
     });
 
     this.subscriptions.push(sub);
   }
 
-  private createAnalyticChart() {
-    if (!this.data) return;
+ private createAnalyticChart() {
+  if (!this.data) return;
 
-    const labels = Object.keys(this.data);
-    const values = Object.values(this.data);
+  const labels = Object.keys(this.data);
+  const values = Object.values(this.data).map(v => Number(v)); // ⭐ FIX
 
-    Chart.register(...registerables);
+  Chart.register(...registerables);
 
-    this.chart = new Chart(this.analyticCanvas.nativeElement, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'Total',
-            data: values,
-            backgroundColor: 'limegreen',
-            borderColor: 'limegreen',
-            borderWidth: 2,
-            tension: 0.3,
-            fill: false
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        aspectRatio: 1.5,
-        plugins: {
-          legend: { display: true }
+  if (this.chart) {
+    this.chart.destroy();
+  }
+
+  this.chart = new Chart<'line', number[], string>(this.analyticCanvas.nativeElement, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Total',
+          data: values,
+          backgroundColor: 'limegreen',
+          borderColor: 'limegreen',
+          borderWidth: 2,
+          tension: 0.3,
+          fill: false
         }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true }
+      },
+      scales: {
+        x: { ticks: { color: '#666' } },
+        y: { ticks: { color: '#666' } }
       }
-    });
+    }
+  });
+}
+
+  // ⭐ FORCE CHART TO RESIZE WHEN WINDOW RESIZES
+  @HostListener('window:resize')
+  onResize() {
+    if (this.chart) {
+      setTimeout(() => {
+        this.chart.resize();
+      }, 50); // allow grid layout to settle
+    }
   }
 }

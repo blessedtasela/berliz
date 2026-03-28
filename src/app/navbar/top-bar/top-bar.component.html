@@ -13,14 +13,27 @@
             </a>
 
             <!-- Notifications -->
-            <div class="relative" (click)="toggleSidebar()" (click)="stopPropagation($event)">
-                <i-feather name="bell" class="text-gray-700" style="width: 22px;"></i-feather>
+            <div class="relative">
+                <div (click)="toggleNotificationDropdown()" class="cursor-pointer relative">
+                    <i-feather name="bell" class="text-gray-700" style="width: 22px;"></i-feather>
 
-                <!-- Small badge, not on icon -->
-                <span *ngIf="notificationLength > 0"
-                    class="absolute -top-1 -right-3 bg-red-600 text-white text-[8px] px-1.5 py-[1px] rounded-full font-bold">
-                    {{ notificationLength }}
-                </span>
+                    <span *ngIf="notificationLength > 0"
+                        class="absolute -top-1 -right-3 bg-red-600 text-white text-[8px] 
+                        px-1.5 py-[1px] rounded-full font-bold badge-pulse">
+                        {{ notificationLength }}
+                    </span>
+                </div>
+
+                <!-- Backdrop blur -->
+                <div *ngIf="notificationDropdown" class="fixed inset-0 bg-black/10 backdrop-blur-sm z-40"
+                    (click)="closeNotificationDropdown()">
+                </div>
+
+                <!-- DROPDOWN -->
+                <div *ngIf="notificationDropdown" class="absolute  mt-3 w-96 z-50">
+                    <notification-dropdown-component (close)="closeNotificationDropdown()">
+                    </notification-dropdown-component>
+                </div>
             </div>
 
         </div>
@@ -50,20 +63,14 @@
         <div class="flex items-center gap-4 rounded-full px-4 bg-white shadow-lg transition-all whitespace-nowrap">
 
             <!-- Home Icon Circle -->
-            <div class="w-9 h-9 flex items-center justify-center rounded-full bg-white 
-             border border-gray-300 shadow-sm cursor-pointer hover:shadow-md transition-all" [routerLink]="['/home']">
+            <div class="w-9 h-9 flex items-center justify-center rounded-full bg-white border border-gray-300 shadow-sm cursor-pointer hover:shadow-md transition-all"
+                [routerLink]="['/home']">
                 <feather-icon name="home" class="text-gray-800" style="width: 20px;"></feather-icon>
             </div>
 
-            <!-- Profile Avatar Circle -->
-            <!-- <div class="w-9 h-9 rounded-full overflow-hidden bg-white 
-             border border-gray-300 shadow-sm hover:shadow-md transition-all cursor-pointer">
-                <img [src]="profilePhoto" alt="Profile" class="w-full h-full object-cover">
-            </div> -->
-            <!-- Profile (avatar circle) -->
+            <!-- Profile -->
             <app-profile [search]="isSearch" [userData]="userData"></app-profile>
         </div>
 
     </div>
-
 </div>

@@ -9,7 +9,6 @@ import { IconsModule } from '../icons/icons.module';
 import { CenterSearchComponent } from './center-search/center-search.component';
 import { CenterDetailComponent } from './center-detail/center-detail.component';
 import { CenterSearchResultComponent } from './center-search-result/center-search-result.component';
-import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { ChatWithCenterComponent } from './chat-with-center/chat-with-center.component';
 import { ChatWithCenterPopUpComponent } from './chat-with-center-pop-up/chat-with-center-pop-up.component';
@@ -27,8 +26,8 @@ import { CenterSubscriptionFormComponent } from './center-subscription-form/cent
 import { CenterReviewFormComponent } from './center-review-form/center-review-form.component';
 import { CenterLocationsComponent } from './center-locations/center-locations.component';
 import { CenterHeaderComponent } from './center-header/center-header.component';
-import { SharedModule } from '../shared/shared.module';
 import { CenterPartnerFormComponent } from './center-partner-form/center-partner-form.component';
+import { CenterFormComponent } from './center-form/center-form.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +52,8 @@ import { CenterPartnerFormComponent } from './center-partner-form/center-partner
     CenterReviewFormComponent,
     CenterLocationsComponent,
     CenterHeaderComponent,
-    CenterPartnerFormComponent
+    CenterPartnerFormComponent,
+    CenterFormComponent
   ],
   imports: [
     CommonModule,
@@ -61,9 +61,9 @@ import { CenterPartnerFormComponent } from './center-partner-form/center-partner
     NavbarModule,
     FooterModule,
     IconsModule,
-    BrowserModule,
     RouterModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
   ]

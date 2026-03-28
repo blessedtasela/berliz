@@ -1,17 +1,28 @@
-import { Component, Input, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { Chart, registerables } from 'chart.js';
+import {
+  Component,
+  Input,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+  OnDestroy,
+  OnChanges,
+  HostListener
+} from '@angular/core';
+
+import { Chart, registerables } from 'chart.js/auto';
 
 @Component({
   selector: 'app-dashboard-activity-chart',
   templateUrl: './dashboard-activity-chart.component.html',
   styleUrls: ['./dashboard-activity-chart.component.css']
 })
-export class DashboardActivityChartComponent implements AfterViewInit, OnDestroy {
+export class DashboardActivityChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() data: any;
 
-  @ViewChild('activityCanvas', { static: true }) activityCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('activityCanvas', { static: true })
+  activityCanvas!: ElementRef<HTMLCanvasElement>;
 
-  private chart: any;
+  private chart!: Chart<'bar', number[], string>;
 
   ngAfterViewInit() {
     this.tryCreateChart();
@@ -22,7 +33,7 @@ export class DashboardActivityChartComponent implements AfterViewInit, OnDestroy
   }
 
   private tryCreateChart() {
-    if (!this.data || !this.activityCanvas) return;
+    if (!this.activityCanvas) return;
 
     if (this.chart) {
       this.chart.destroy();
@@ -32,12 +43,12 @@ export class DashboardActivityChartComponent implements AfterViewInit, OnDestroy
   }
 
   private createActivityChart() {
-    const labels = ['Date', 'Days Spent', 'Total Hours', 'Locations Visited', 'Places Explored', 'Log Count'];
-    const values = [10, 5, 20, 8, 15, 50]; // Replace with real data if needed
-
     Chart.register(...registerables);
 
-    this.chart = new Chart(this.activityCanvas.nativeElement, {
+    const labels = ['Date', 'Days Spent', 'Total Hours', 'Locations Visited', 'Places Explored', 'Log Count'];
+    const values = [10, 5, 20, 8, 15, 50];
+
+    this.chart = new Chart<'bar', number[], string>(this.activityCanvas.nativeElement, {
       type: 'bar',
       data: {
         labels,
@@ -53,12 +64,25 @@ export class DashboardActivityChartComponent implements AfterViewInit, OnDestroy
       },
       options: {
         responsive: true,
-        aspectRatio: 1.5,
+        maintainAspectRatio: false,   // ⭐ IMPORTANT
         plugins: {
           legend: { display: true }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            suggestedMax: Math.max(...values) + 5
+          }
         }
       }
     });
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    if (this.chart) {
+      setTimeout(() => this.chart.resize(), 50);
+    }
   }
 
   ngOnDestroy() {

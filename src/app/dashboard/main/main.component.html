@@ -1,31 +1,33 @@
+<!-- Dashboard Action Cards -->
 <app-dashboard-action [data]="data"></app-dashboard-action>
 
 <!-- Success Message -->
-<div *ngIf="successMessage" class="mt-4 p-3 bg-green-100 text-green-800 rounded">
+<div *ngIf="successMessage" class="mt-4 p-3 bg-green-100 text-green-800 rounded-md border border-green-300 shadow-sm">
     Todo added successfully.
-    <a routerLink="/dashboard/my-todos" class="text-red-600 font-bold italic ml-1">
+    <a routerLink="/dashboard/my-todos" class="text-red-600 font-semibold italic ml-1">
         View all todos
     </a>
 </div>
 
 <!-- First Row: Analytics + Login Chart -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
     <app-dashboard-app-analytics [data]="data"></app-dashboard-app-analytics>
     <app-dashboard-login-chart [data]="data"></app-dashboard-login-chart>
 </div>
 
 <!-- Notifications -->
-<app-dashboard-notification class="mt-6"></app-dashboard-notification>
-
+<div class="mt-8">
+    <app-dashboard-notification></app-dashboard-notification>
+</div>
 
 <!-- Admin-only Widgets -->
-<div *ngIf="userData?.role === 'admin'" class="mt-6 space-y-4">
+<div *ngIf="userData.role === 'admin'" class="mt-8 space-y-6">
     <app-dashboard-top-users></app-dashboard-top-users>
     <app-dashboard-now-active hidden></app-dashboard-now-active>
 </div>
 
 <!-- Activity Chart + Todo List -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
     <app-dashboard-activity-chart [data]="data"></app-dashboard-activity-chart>
     <app-dashboard-todo-list [todoData]="myTodo"></app-dashboard-todo-list>
 </div>

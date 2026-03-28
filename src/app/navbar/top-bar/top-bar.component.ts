@@ -1,8 +1,23 @@
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import {
+  Component,
+  OnInit,
+  HostListener,
+  EventEmitter,
+  Output,
+  Input
+} from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
+
+
+
+import { UserService } from 'src/app/services/user.service';
+import { UserStateService } from 'src/app/services/user-state.service';
+import { NotificationStateService } from 'src/app/services/notification-state.service';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { Categories } from 'src/app/models/categories.interface';
 import { Centers } from 'src/app/models/centers.interface';
 import { Clients } from 'src/app/models/clients.interface';
@@ -20,47 +35,47 @@ import { Testimonials } from 'src/app/models/testimonials.model';
 import { TodoList } from 'src/app/models/todoList.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
-import { NotificationStateService } from 'src/app/services/notification-state.service';
-import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserStateService } from 'src/app/services/user-state.service';
-import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-top-bar',
   templateUrl: './top-bar.component.html',
   styleUrls: ['./top-bar.component.css']
+
 })
-export class TopBarComponent {
-  openMenu: boolean = false;
-  mdScreen: boolean = false;
+export class TopBarComponent implements OnInit {
+  openMenu = false;
+  mdScreen = false;
   userData!: Users;
-  responseMessage: any;
-  profilePhoto: any;
-  currentRoute: any;
-  notificationLength: number = 0
-  subscriptions: Subscription[] = []
-  @Input() isSearch: boolean = false;
-  @Output() categoriesResults: EventEmitter<Categories[]> = new EventEmitter<Categories[]>()
-  @Output() contactUsResults: EventEmitter<ContactUs[]> = new EventEmitter<ContactUs[]>()
-  @Output() trainersResults: EventEmitter<Trainers[]> = new EventEmitter<Trainers[]>()
-  @Output() usersResults: EventEmitter<Users[]> = new EventEmitter<Users[]>()
-  @Output() partnersResults: EventEmitter<Partners[]> = new EventEmitter<Partners[]>()
-  @Output() centersResult: EventEmitter<Centers[]> = new EventEmitter<Centers[]>()
-  @Output() newslettersResult: EventEmitter<Newsletter[]> = new EventEmitter<Newsletter[]>();
-  @Output() tagsResults: EventEmitter<Tags[]> = new EventEmitter<Tags[]>();
-  @Output() myTodoResults: EventEmitter<TodoList[]> = new EventEmitter<TodoList[]>();
-  @Output() todoListResults: EventEmitter<TodoList[]> = new EventEmitter<TodoList[]>();
-  @Output() muscleGroupResults: EventEmitter<MuscleGroups[]> = new EventEmitter<MuscleGroups[]>();
-  @Output() exerciseResults: EventEmitter<Exercises[]> = new EventEmitter<Exercises[]>();
-  @Output() clientsResult: EventEmitter<Clients[]> = new EventEmitter<Clients[]>()
-  @Output() membersResult: EventEmitter<Members[]> = new EventEmitter<Members[]>()
-  @Output() paymentsResult: EventEmitter<Payments[]> = new EventEmitter<Payments[]>()
-  @Output() subscriptionsResults: EventEmitter<Subscriptions[]> = new EventEmitter<Subscriptions[]>()
-  @Output() subTasksResult: EventEmitter<SubTasks[]> = new EventEmitter<SubTasks[]>()
-  @Output() tasksResults: EventEmitter<Tasks[]> = new EventEmitter<Tasks[]>();
-  @Output() testimonialsResult: EventEmitter<Testimonials[]> = new EventEmitter<Testimonials[]>();
-  @Input() searchComponent: string = ''
+  profilePhoto: string | null = null;
+  currentRoute: string | null = null;
+
+  notificationLength = 0;
+  notificationDropdown = false;
+
+  subscriptions: Subscription[] = [];
+
+  @Input() isSearch = false;
+  @Input() searchComponent = '';
+
+  @Output() categoriesResults = new EventEmitter<Categories[]>();
+  @Output() contactUsResults = new EventEmitter<ContactUs[]>();
+  @Output() trainersResults = new EventEmitter<Trainers[]>();
+  @Output() usersResults = new EventEmitter<Users[]>();
+  @Output() partnersResults = new EventEmitter<Partners[]>();
+  @Output() centersResult = new EventEmitter<Centers[]>();
+  @Output() newslettersResult = new EventEmitter<Newsletter[]>();
+  @Output() tagsResults = new EventEmitter<Tags[]>();
+  @Output() myTodoResults = new EventEmitter<TodoList[]>();
+  @Output() todoListResults = new EventEmitter<TodoList[]>();
+  @Output() muscleGroupResults = new EventEmitter<MuscleGroups[]>();
+  @Output() exerciseResults = new EventEmitter<Exercises[]>();
+  @Output() clientsResult = new EventEmitter<Clients[]>();
+  @Output() membersResult = new EventEmitter<Members[]>();
+  @Output() paymentsResult = new EventEmitter<Payments[]>();
+  @Output() subscriptionsResults = new EventEmitter<Subscriptions[]>();
+  @Output() subTasksResult = new EventEmitter<SubTasks[]>();
+  @Output() tasksResults = new EventEmitter<Tasks[]>();
+  @Output() testimonialsResult = new EventEmitter<Testimonials[]>();
 
   constructor(
     private router: Router,
@@ -70,8 +85,9 @@ export class TopBarComponent {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private notificationStateService: NotificationStateService,
-    private rxStompService: RxStompService) {
-    this.currentRoute = this.router.url
+    private rxStompService: RxStompService
+  ) {
+    this.currentRoute = this.router.url;
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.currentRoute = event.url;
@@ -81,38 +97,41 @@ export class TopBarComponent {
 
   ngOnInit() {
     this.onResize();
-    this.subscribeToCloseSideBar()
+    this.subscribeToCloseSideBar();
     this.handleEmitEvent();
-    this.watchReadNotification()
-    this.watchNotification()
-    this.watchGetNotificationFromMap()
-    this.watchNotificationBulkAction()
-    this.watchDeleteNotification()
-    this.watchActivateAccount()
-    this.watchDeactivateAccount()
-    this.watchUpdateProfilePhoto()
-    this.watchUpdateUser()
-    this.watchUpdateUserRole()
-    this.watchUpdateUserStatus()
+    this.registerNotificationTopics();
+    this.watchUpdateProfilePhoto();
+    this.watchUpdateUser();
+    this.watchUpdateUserRole();
+    this.watchUpdateUserStatus();
   }
 
   handleEmitEvent() {
     this.subscriptions.push(
-      this.userStateService.getUser().subscribe((user) => {
+      this.userStateService.getUser().subscribe(user => {
         this.userData = user;
-        this.profilePhoto = 'data:image/jpeg;base64,' + this.userData.profilePhoto;
-      }),
-      this.notificationStateService.getMyNotifications().subscribe((notifications) => {
-        if (notifications && notifications.length > 0) {
-          this.notificationLength = notifications.filter(notification => !notification.read).length;
-          // console.log(this.notificationLength);
+        if (this.userData?.profilePhoto) {
+          this.profilePhoto = 'data:image/*;base64,' + this.userData.profilePhoto;
         } else {
-          // Handle the case when there are no notifications
+          this.profilePhoto = null;
+        }
+      }),
+      this.notificationStateService.getMyNotifications().subscribe(notifications => {
+        if (notifications && notifications.length > 0) {
+          this.notificationLength = notifications.filter(n => !n.read).length;
+        } else {
           this.notificationLength = 0;
-          // console.log('No notifications available.');
         }
       })
     );
+  }
+
+  toggleNotificationDropdown() {
+    this.notificationDropdown = !this.notificationDropdown;
+  }
+
+  closeNotificationDropdown() {
+    this.notificationDropdown = false;
   }
 
   toggleSidebar(): void {
@@ -121,12 +140,12 @@ export class TopBarComponent {
   }
 
   isActive(path: string): boolean {
-    return this.currentRoute?.startsWith('/' + path);
+    return this.currentRoute?.startsWith('/' + path) ?? false;
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize(): void {
-    this.openMenu = window.innerWidth >= 768; // Change the breakpoint as needed
+    this.openMenu = window.innerWidth >= 768;
   }
 
   subscribeToCloseSideBar() {
@@ -151,44 +170,44 @@ export class TopBarComponent {
   }
 
   handleCategorySearchResults(results: Categories[]): void {
-    this.categoriesResults.emit(results)
+    this.categoriesResults.emit(results);
   }
 
   handleContactUsSearchResults(results: ContactUs[]): void {
-    this.contactUsResults.emit(results)
+    this.contactUsResults.emit(results);
     this.isSearch = true;
   }
 
   handleTrainerSearchResults(results: Trainers[]): void {
-    this.trainersResults.emit(results)
+    this.trainersResults.emit(results);
   }
 
   handleUserSearchResults(results: Users[]): void {
-    this.usersResults.emit(results)
+    this.usersResults.emit(results);
   }
 
   handlePartnerSearchResults(results: Partners[]): void {
-    this.partnersResults.emit(results)
+    this.partnersResults.emit(results);
   }
 
   handleCenterSearchResults(results: Centers[]): void {
-    this.centersResult.emit(results)
+    this.centersResult.emit(results);
   }
 
   handleNewsletterSearchResults(results: Newsletter[]): void {
-    this.newslettersResult.emit(results)
+    this.newslettersResult.emit(results);
   }
 
   handleTagSearchResults(results: Tags[]) {
-    this.tagsResults.emit(results)
+    this.tagsResults.emit(results);
   }
 
   handleMyTodoSearchResults(results: TodoList[]) {
-    this.myTodoResults.emit(results)
+    this.myTodoResults.emit(results);
   }
 
   handleTodoListSearchResults(results: TodoList[]) {
-    this.todoListResults.emit(results)
+    this.todoListResults.emit(results);
   }
 
   handleMuscleGroupSearchResults(results: MuscleGroups[]) {
@@ -200,7 +219,7 @@ export class TopBarComponent {
   }
 
   handlePaymentSearchResults(results: Payments[]) {
-    this.paymentsResult.emit(results)
+    this.paymentsResult.emit(results);
   }
 
   handleClientSearchResults(results: Clients[]) {
@@ -212,7 +231,7 @@ export class TopBarComponent {
   }
 
   handleSubscriptionSearchResults(results: Subscriptions[]) {
-    this.subscriptionsResults.emit(results)
+    this.subscriptionsResults.emit(results);
   }
 
   handlesubTaskSearchResults(results: SubTasks[]) {
@@ -227,72 +246,48 @@ export class TopBarComponent {
     this.testimonialsResult.emit(results);
   }
 
-  watchGetNotificationFromMap() {
-    this.rxStompService.watch('/topic/getNotificationFromMap').subscribe((message) => {
-      this.handleEmitEvent();
-    });
-  }
+  private registerNotificationTopics() {
+    const topics = [
+      '/topic/getNotificationFromMap',
+      '/topic/notification',
+      '/topic/notificationBulkAction',
+      '/topic/readNotification',
+      '/topic/deleteNotification',
+      '/topic/activateAccount',
+      '/topic/deactivateAccount',
+      '/topic/updateUserStatus',
+      '/topic/updateUserRole',
+      '/topic/updateUser'
+    ];
 
-  watchNotification() {
-    this.rxStompService.watch('/topic/notification').subscribe((message) => {
-      this.handleEmitEvent();
-    });
-  }
-
-  watchNotificationBulkAction() {
-    this.rxStompService.watch('/topic/notificationBulkAction').subscribe((message) => {
-      this.handleEmitEvent();
-    });
-  }
-
-  watchReadNotification() {
-    this.rxStompService.watch('/topic/readNotification').subscribe((message) => {
-      this.handleEmitEvent();
-    });
-  }
-
-  watchDeleteNotification() {
-    this.rxStompService.watch('/topic/deleteNotification').subscribe((message) => {
-      this.handleEmitEvent();
-      // const receivedNewsletter: Notifications = JSON.parse(message.body);
-      // this.notificationData = this.notificationData.filter(Notification => Notification.id !== receivedNewsletter.id);
-      // this.totalNotifications = this.notificationData.length;
-    });
-  }
-
-  watchActivateAccount() {
-    this.rxStompService.watch('/topic/activateAccount').subscribe((message) => {
-      this.handleEmitEvent()
-    });
-  }
-
-  watchDeactivateAccount() {
-    this.rxStompService.watch('/topic/deactivateAccount').subscribe((message) => {
-      this.handleEmitEvent()
-    });
-  }
-
-  watchUpdateUserStatus() {
-    this.rxStompService.watch('/topic/updateUserStatus').subscribe((message) => {
-      this.handleEmitEvent()
-    });
-  }
-
-  watchUpdateUserRole() {
-    this.rxStompService.watch('/topic/updateUserRole').subscribe((message) => {
-      this.handleEmitEvent()
-    });
-  }
-
-  watchUpdateUser() {
-    this.rxStompService.watch('/topic/updateUser').subscribe((message) => {
-      this.handleEmitEvent()
+    topics.forEach(topic => {
+      this.rxStompService.watch(topic).subscribe(() => {
+        this.handleEmitEvent();
+      });
     });
   }
 
   watchUpdateProfilePhoto() {
-    this.rxStompService.watch('/topic/updateProfilePhoto').subscribe((message) => {
-      this.handleEmitEvent()
+    this.rxStompService.watch('/topic/updateProfilePhoto').subscribe(() => {
+      this.handleEmitEvent();
+    });
+  }
+
+  watchUpdateUser() {
+    this.rxStompService.watch('/topic/updateUser').subscribe(() => {
+      this.handleEmitEvent();
+    });
+  }
+
+  watchUpdateUserRole() {
+    this.rxStompService.watch('/topic/updateUserRole').subscribe(() => {
+      this.handleEmitEvent();
+    });
+  }
+
+  watchUpdateUserStatus() {
+    this.rxStompService.watch('/topic/updateUserStatus').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 }

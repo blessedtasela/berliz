@@ -87,7 +87,7 @@ export class SidebarNavigationComponent implements OnInit {
     return this.currentRoute?.startsWith('/' + path);
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize(): void {
     this.openMenu = window.innerWidth >= 768; // Change the breakpoint as needed
   }

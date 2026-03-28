@@ -25,6 +25,7 @@ export class TodoFormComponent {
   ngOnInit(): void {
     this.addTodoForm = this.formBuilder.group({
       'task': ['', Validators.compose([Validators.required, Validators.minLength(20)])],
+      'dueDate': ['', Validators.required]
     });
   }
 
@@ -33,11 +34,9 @@ export class TodoFormComponent {
 
   addTodo(): void {
     if (this.addTodoForm.invalid) {
-      this.ngxService.start();
       this.invalidForm = true;
       this.responseMessage = "Invalid form. Please complete all sections";
       this.snackBarService.openSnackBar(this.responseMessage, "error");
-      this.ngxService.stop();
     } else {
       this.ngxService.start();
       this.todoService.addTodo(this.addTodoForm.value)

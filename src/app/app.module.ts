@@ -49,6 +49,7 @@ import { NgxFileDropModule } from 'ngx-file-drop';
 import { UnderConstructionPageComponent } from './under-construction-page/under-construction-page.component';
 import { AngularFireModule } from '@angular/fire/compat';
 import { environment } from '../environments/environment';
+import { TimeAgoPipe } from './shared/pipes/time-ago.pipe';
 
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {

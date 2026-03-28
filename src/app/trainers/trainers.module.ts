@@ -29,6 +29,7 @@ import { TrainersDetailsHeroComponent } from './trainers-details-hero/trainers-d
 import { TrainersFeatureVideosComponent } from './trainers-feature-videos/trainers-feature-videos.component';
 import { TrainersHeaderComponent } from './trainers-header/trainers-header.component';
 import { TrainersIntroductionComponent } from './trainers-introduction/trainers-introduction.component';
+import { TrainersListComponent } from './trainers-list/trainers-list.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { TrainersIntroductionComponent } from './trainers-introduction/trainers-
     TrainersFeatureVideosComponent,
     TrainersHeaderComponent,
     TrainersIntroductionComponent,
+    TrainersListComponent
   ],
   imports: [
     CommonModule,

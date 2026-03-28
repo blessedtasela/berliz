@@ -18,6 +18,8 @@ import { ValidationMessageComponent } from './validation-message/validation-mess
 import { LocationFormComponent } from './location-form/location-form.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
+import { NotificationDetailsComponent } from './notification-details/notification-details.component';
+import { TimeAgoPipe } from './pipes/time-ago.pipe';
 
 
 
@@ -34,7 +36,9 @@ import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
     UpdateTrainerPhotoModalComponent,
     NewsletterPopupComponent,
     ValidationMessageComponent,
-    LocationFormComponent
+    LocationFormComponent,
+    NotificationDetailsComponent,
+    TimeAgoPipe
   ],
   imports: [
     CommonModule,
@@ -56,7 +60,8 @@ import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
     LocationFormComponent,
     NgSelectModule,
     NgxMaskDirective,
-    NgxMaskPipe
+    NgxMaskPipe,
+    TimeAgoPipe
   ],
   providers: [
     provideNgxMask(),

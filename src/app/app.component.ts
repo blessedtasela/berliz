@@ -2,6 +2,8 @@ import { Component, HostListener } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { MetaService } from './services/meta.service';
 import { environment } from 'src/environments/environment';
+import { BlurService } from './services/blur.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-root',
@@ -11,8 +13,13 @@ import { environment } from 'src/environments/environment';
 export class AppComponent {
   title = 'Berliz';
   currentRoute: any;
+  isBlurred = false;
 
-  constructor(private router: Router, private metaService: MetaService) { }
+  constructor(private router: Router,
+    private metaService: MetaService,
+    private blurService: BlurService,
+    private dialog: MatDialog
+  ) { }
 
   ngOnInit(): void {
 
@@ -32,6 +39,18 @@ export class AppComponent {
         // Add more conditions for other routes as needed
       }
     });
+
+    this.blurService.blur$.subscribe(v => this.isBlurred = v);
+
+    this.dialog.afterOpened.subscribe(() => {
+      this.blurService.enable();
+    });
+
+    this.dialog.afterAllClosed.subscribe(() => {
+      this.blurService.disable();
+    });
+
+
   }
 
   isActive(path: string): boolean {

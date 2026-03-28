@@ -44,10 +44,8 @@ export class MainComponent {
   }
 
   ngOnInit() {
-    this.ngxService.start();
     this.loadAllData();
     this.handleTodaysTodoPopup();
-    this.ngxService.stop();
   }
 
   private loadAllData() {
