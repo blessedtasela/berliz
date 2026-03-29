@@ -6,6 +6,8 @@ import { CenterPricingsDetailsModalComponent } from './center-pricings-details-m
 import { CenterPricingsListComponent } from './center-pricings-list/center-pricings-list.component';
 import { CenterPricingsComponent } from './center-pricings/center-pricings.component';
 import { CenterPricingsHeaderComponent } from './center-pricings-header/center-pricings-header.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 
@@ -19,7 +21,10 @@ import { CenterPricingsHeaderComponent } from './center-pricings-header/center-p
     CenterPricingsHeaderComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    SharedModule
   ]
 })
 export class CenterPricingModule { }

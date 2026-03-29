@@ -11,6 +11,7 @@ import { TodoService } from 'src/app/services/todo.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
 import { EditTodoComponent } from '../todo-lists/edit-todo/edit-todo.component';
+import { TodoDetailsModalComponent } from 'src/app/shared/todo-details-modal/todo-details-modal.component';
 
 @Component({
   selector: 'app-dashboard-todo-list',
@@ -24,7 +25,8 @@ export class DashboardTodoListComponent {
 
   constructor(private todoStateService: TodoStateService,
     private ngxService: NgxUiLoaderService,
-    private rxStompService: RxStompService) { }
+    private rxStompService: RxStompService,
+  private dialog: MatDialog) { }
 
   ngOnInit(): void {
     // this.todoStateService.myTodoData$.subscribe((cachedData) => {
@@ -127,12 +129,12 @@ getDueLabel(todo: TodoList): string {
 }
 
 openTodoDetails(todo: TodoList) {
-  // // open modal like notifications
-  // this.dialog.open(TodoDetailsComponent, {
-  //   data: todo,
-  //   width: '400px',
-  //   panelClass: 'berliz-dialog'
-  // });
+  // open modal like notifications
+  this.dialog.open(TodoDetailsModalComponent, {
+    data: todo,
+    width: '400px',
+    panelClass: 'berliz-dialog'
+  });
 }
 
 }

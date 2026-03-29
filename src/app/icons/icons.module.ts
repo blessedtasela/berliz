@@ -64,6 +64,25 @@ import {
   MoreHorizontal,
   MoreVertical,
   RotateCcw,
+  CheckCircle,
+  CheckSquare,
+  UserCheck,
+  UserX,
+  UserMinus,
+  Circle,
+  Square,
+  Cloud,
+  CloudRain,
+  CloudSnow,
+  CloudLightning,
+  CloudDrizzle,
+  CloudOff,
+  Sun,
+  Moon,
+  Wind,
+  Umbrella,
+  Sunrise,
+  Sunset
 } from 'angular-feather/icons';
 
 // Select some icons (use an object, not an array)
@@ -129,7 +148,26 @@ const icons = {
   Calendar,
   MoreHorizontal,
   MoreVertical,
-  RotateCcw
+  RotateCcw,
+  CheckCircle,
+  CheckSquare,
+  UserCheck,
+  UserX,
+  UserMinus,
+  Circle,
+  Square,
+  Cloud,
+  CloudRain,
+  CloudSnow,
+  CloudLightning,
+  CloudDrizzle,
+  CloudOff,
+  Sun,
+  Moon,
+  Wind,
+  Umbrella,
+  Sunrise,
+  Sunset
 };
 
 @NgModule({

@@ -21,7 +21,7 @@
 </div>
 
 <!-- Admin-only Widgets -->
-<div *ngIf="userData.role === 'admin'" class="mt-8 space-y-6">
+<div *ngIf="userData?.role === 'admin'" class="mt-8 space-y-6">
     <app-dashboard-top-users></app-dashboard-top-users>
     <app-dashboard-now-active hidden></app-dashboard-now-active>
 </div>

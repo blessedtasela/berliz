@@ -7,6 +7,8 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { NotificationDetailsComponent } from 'src/app/shared/notification-details/notification-details.component';
 import { TimeAgoPipe } from 'src/app/shared/pipes/time-ago.pipe';
+import { NotificationService } from 'src/app/services/notification.service';
+import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 @Component({
   selector: 'app-dashboard-notification',
@@ -22,7 +24,9 @@ export class DashboardNotificationComponent implements OnInit, OnDestroy {
     private rxStompService: RxStompService,
     private notificationStateService: NotificationStateService,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService,
+    private snackbarService: SnackBarService
   ) { }
 
   ngOnInit(): void {
@@ -106,15 +110,32 @@ export class DashboardNotificationComponent implements OnInit, OnDestroy {
   }
 
   private markAsRead(n: Notifications) {
+    // Optimistic UI update
     n.read = true;
+    const originalList = [...this.notifications];
 
+    // Remove from UI immediately
     this.notifications = this.notifications.filter(x => x.id !== n.id);
 
-    this.rxStompService.publish({
-      destination: '/app/markNotificationRead',
-      body: JSON.stringify({ id: n.id })
-    });
+    // Call backend
+    this.notificationService.readNotification(n.id).subscribe({
+      next: () => {
+        // Notify backend via WebSocket
+        this.rxStompService.publish({
+          destination: '/app/markNotificationRead',
+          body: JSON.stringify({ id: n.id })
+        });
 
-    this.updateNotificationList();
+        // Refresh unread count or list
+        this.updateNotificationList();
+      },
+      error: () => {
+        // Revert UI if backend fails
+        this.notifications = originalList;
+        n.read = false;
+
+        this.snackbarService.openSnackBar('Failed to mark notification as read.', 'error');
+      }
+    });
   }
 }

@@ -18,7 +18,7 @@ import { TodoList } from 'src/app/models/todoList.interface';
   styleUrls: ['./main.component.css']
 })
 export class MainComponent {
-  userData!: Users;
+userData: Users | null = null;
   data: any;
   myTodo: TodoList[] = [];
   currentRoute: string = '';

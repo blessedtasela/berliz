@@ -11,19 +11,20 @@ import { CentersComponent } from './centers/centers.component';
 import { UpdateCenterModalComponent } from './update-center-modal/update-center-modal.component';
 import { FooterModule } from 'src/app/footer/footer.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
+import { CenterPricingModule } from '../center-pricing/center-pricing.module';
 
 
 
 @NgModule({
-  declarations: 
-  [
-    AddCenterModalComponent,
-    CenterDetailsModalComponent,
-    CenterHeaderComponent,
-    CenterListComponent,
-    CentersComponent,
-    UpdateCenterModalComponent
-  ],
+  declarations:
+    [
+      AddCenterModalComponent,
+      CenterDetailsModalComponent,
+      CenterHeaderComponent,
+      CenterListComponent,
+      CentersComponent,
+      UpdateCenterModalComponent
+    ],
 
   imports: [
     CommonModule,
@@ -32,7 +33,8 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
     ReactiveFormsModule,
     MatDialogModule,
     FooterModule,
-    NavbarModule
+    NavbarModule,
+    CenterPricingModule
   ]
 })
 export class CentersModule { }

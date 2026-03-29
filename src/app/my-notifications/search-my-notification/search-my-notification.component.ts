@@ -38,7 +38,7 @@ export class SearchMyNotificationComponent {
         debounceTime(300),
         map((e: any) => e.target.value),
         tap(() => {
-          this.ngxService.start();
+        
         }),
         switchMap((query: string) => {
           return this.search(query);
@@ -46,12 +46,10 @@ export class SearchMyNotificationComponent {
       )
       .subscribe(
         (results: Notifications[]) => {
-          this.ngxService.stop();
           this.results.emit(results);
         },
         (error: any) => {
           this.snackbarService.openSnackBar(error, 'error');
-          this.ngxService.stop();
         }
       );
   }

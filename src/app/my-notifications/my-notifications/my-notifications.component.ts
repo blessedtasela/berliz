@@ -39,10 +39,8 @@ export class MyNotificationsComponent {
 
   ngOnInit(): void {
     console.log(this.notificationData)
-    this.ngxService.start();
     this.subscribeToCloseNotificationAction()
     this.isNotificationChecked = this.notificationData.map(notification => notification.checked === true);
-    this.ngxService.stop();
   }
 
   ngOnDestroy() {
@@ -139,10 +137,8 @@ export class MyNotificationsComponent {
     };
     const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((res: any) => {
-      this.ngxService.start();
       this.notificationService.deleteNotification(id)
         .subscribe((response: any) => {
-          this.ngxService.stop();
           this.responseMessage = response.message;
           this.snackbarService.openSnackBar(this.responseMessage, '');
           this.handleEmitEvent()
@@ -156,7 +152,6 @@ export class MyNotificationsComponent {
           })
         })
     }, (error) => {
-      this.ngxService.stop();
       this.snackbarService.openSnackBar(error, 'error');
       if (error.error?.message) {
         this.responseMessage = error.error?.message;
@@ -233,10 +228,8 @@ export class MyNotificationsComponent {
     };
     const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((res: any) => {
-      this.ngxService.start();
       this.notificationService.bulkAction(payload).subscribe(
         (response: any) => {
-          this.ngxService.stop();
           this.responseMessage = response.message;
           this.snackbarService.openSnackBar(this.responseMessage, '');
           this.handleEmitEvent();
@@ -255,7 +248,6 @@ export class MyNotificationsComponent {
           });
         },
         (error) => {
-          this.ngxService.stop();
           this.snackbarService.openSnackBar(error, 'error');
           if (error.error?.message) {
             this.responseMessage = error.error?.message;

@@ -30,7 +30,6 @@ export class MyNotificationsPageComponent {
   }
 
   ngOnInit(): void {
-    this.ngxService.start()
     this.handleEmitEvent()
     this.isAdmin = this.authService.isAdmin()
     this.watchReadNotification()
@@ -38,7 +37,6 @@ export class MyNotificationsPageComponent {
     this.watchGetNotificationFromMap()
     this.watchNotificationBulkAction()
     this.watchDeleteNotification()
-    this.ngxService.stop()
   }
 
   ngOnDestroy() {

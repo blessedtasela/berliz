@@ -20,6 +20,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { NotificationDetailsComponent } from './notification-details/notification-details.component';
 import { TimeAgoPipe } from './pipes/time-ago.pipe';
+import { TodoDetailsModalComponent } from './todo-details-modal/todo-details-modal.component';
 
 
 
@@ -38,7 +39,8 @@ import { TimeAgoPipe } from './pipes/time-ago.pipe';
     ValidationMessageComponent,
     LocationFormComponent,
     NotificationDetailsComponent,
-    TimeAgoPipe
+    TimeAgoPipe,
+    TodoDetailsModalComponent
   ],
   imports: [
     CommonModule,
