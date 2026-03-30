@@ -51,7 +51,8 @@ import { TodoDetailsModalComponent } from './todo-details-modal/todo-details-mod
     NgSelectModule,
     NgxMaskDirective,
     NgxMaskPipe,
-    FormsModule
+    FormsModule,
+    FeatherModule
   ],
   exports: [
     CommonModule,

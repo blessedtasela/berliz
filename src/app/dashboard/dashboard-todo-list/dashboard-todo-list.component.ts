@@ -132,7 +132,7 @@ openTodoDetails(todo: TodoList) {
   // open modal like notifications
   this.dialog.open(TodoDetailsModalComponent, {
     data: todo,
-    width: '400px',
+    width: '550px',
     panelClass: 'berliz-dialog'
   });
 }

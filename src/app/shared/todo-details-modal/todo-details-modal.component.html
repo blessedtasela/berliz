@@ -1,1 +1,158 @@
-<p>todo-details-modal works!</p>
+<div class="p-6 w-full font-sans text-gray-950">
+
+    <!-- Header -->
+    <div class="flex justify-between items-start mb-4">
+        <h2 class="text-xl font-bold">Todo Details</h2>
+
+        <!-- Premium Close Button -->
+        <button (click)="closeDialog()" class="flex items-center justify-center bg-white shadow-md rounded-full p-2 text-gray-700 font-bold
+             hover:bg-red-600 hover:text-white hover:scale-110 transition transform">
+            <i-feather name="x" style="width: 18px; height: 18px;"></i-feather>
+        </button>
+    </div>
+
+    <!-- Status Badge -->
+    <div class="mb-4">
+        <span *ngIf="data.status === 'completed'"
+            class="px-3 py-1 text-xs font-bold rounded-md bg-green-100 text-green-600">
+            Completed
+        </span>
+
+        <span *ngIf="data.status === 'not-started'"
+            class="px-3 py-1 text-xs font-bold rounded-md bg-gray-100 text-gray-600">
+            Not Started
+        </span>
+
+        <span *ngIf="data.status === 'in-progress'"
+            class="px-3 py-1 text-xs font-bold rounded-md bg-yellow-100 text-yellow-600">
+            In Progress
+        </span>
+
+        <span *ngIf="data.status === 'due'" class="px-3 py-1 text-xs font-bold rounded-md bg-red-100 text-red-600">
+            Due
+        </span>
+    </div>
+
+    <!-- READ-ONLY METADATA -->
+    <div class="space-y-3 text-sm mb-6">
+
+        <!-- Created -->
+        <div class="flex items-center gap-2 whitespace-nowrap">
+            <i-feather name="calendar" class="text-red-600" style="width: 16px;"></i-feather>
+            <span>
+                Created:
+                <span class="font-semibold">{{ data.date | timeAgo }}</span>
+            </span>
+        </div>
+
+        <!-- Last Updated -->
+        <div class="flex items-center gap-2">
+            <i-feather name="clock" class="text-gray-500" style="width: 16px;"></i-feather>
+            <span>
+                Last Update:
+                <span class="font-semibold">
+                    {{ data.lastUpdate ? (data.lastUpdate | timeAgo) : 'N/A' }}
+                </span>
+            </span>
+        </div>
+
+        <!-- Due Date Label -->
+        <div class="flex items-center gap-2">
+            <i-feather name="alert-circle" [ngClass]="{
+                   'text-red-600': isDueNow(data),
+                   'text-red-500': isDueSoon(data),
+                   'text-gray-500': !isDueNow(data) && !isDueSoon(data)
+                 }" style="width: 16px;">
+            </i-feather>
+
+            <span>
+                Due:
+                <span class="font-semibold">{{ getDueLabel(data) }}</span>
+            </span>
+        </div>
+
+    </div>
+
+    <!-- EDITABLE FORM -->
+    <form [formGroup]="updateTodoForm" class="space-y-4">
+
+        <!-- Task -->
+        <div>
+            <label class="text-sm font-semibold">Task</label>
+            <textarea rows="3" formControlName="task"
+                class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-red-500 outline-none"></textarea>
+        </div>
+
+        <!-- Status -->
+        <div>
+            <label class="text-sm font-semibold">Status</label>
+            <select formControlName="status"
+                class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-red-500 outline-none">
+                <option value="not-started">Not Started</option>
+                <option value="in-progress">In Progress</option>
+                <option value="due">Due</option>
+                <option value="completed">Completed</option>
+            </select>
+        </div>
+
+        <!-- Due Date -->
+        <div>
+            <label class="text-sm font-semibold">Due Date</label>
+            <input type="date" formControlName="dueDate"
+                class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-red-500 outline-none" />
+        </div>
+
+    </form>
+
+    <!-- ACTION BUTTONS -->
+
+    <!-- Desktop / Medium+ -->
+    <div class="hidden md:flex justify-end gap-3 mt-6">
+
+        <!-- Close -->
+        <button (click)="closeDialog()"
+            class="flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
+            <i-feather name="x" style="width: 14px;"></i-feather>
+            Close
+        </button>
+
+        <!-- Mark Complete -->
+        <button
+            class="flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition"
+            *ngIf="updateTodoForm.value.status !== 'completed'" (click)="markComplete()">
+            <i-feather name="check" style="width: 14px;"></i-feather>
+            Mark Complete
+        </button>
+
+        <!-- Update -->
+        <button
+            class="flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+            (click)="updateTodo()">
+            <i-feather name="edit" style="width: 14px;"></i-feather>
+            Update
+        </button>
+
+    </div>
+
+    <!-- Mobile -->
+    <div class="flex md:hidden justify-end gap-3 mt-6">
+
+        <!-- Mark Complete -->
+        <button
+            class="flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition"
+            *ngIf="updateTodoForm.value.status !== 'completed'" (click)="markComplete()">
+            <i-feather name="check" style="width: 14px;"></i-feather>
+            Done
+        </button>
+
+        <!-- Update -->
+        <button
+            class="flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+            (click)="updateTodo()">
+            <i-feather name="edit" style="width: 14px;"></i-feather>
+            Update
+        </button>
+
+    </div>
+
+</div>

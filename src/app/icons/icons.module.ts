@@ -82,7 +82,13 @@ import {
   Wind,
   Umbrella,
   Sunrise,
-  Sunset
+  Sunset,
+  Clock,
+  AlertCircle,
+  Check,
+  XOctagon,
+  BellOff,
+
 } from 'angular-feather/icons';
 
 // Select some icons (use an object, not an array)
@@ -167,7 +173,12 @@ const icons = {
   Wind,
   Umbrella,
   Sunrise,
-  Sunset
+  Sunset,
+  Clock,
+  AlertCircle,
+  Check,
+  XOctagon,
+  BellOff,
 };
 
 @NgModule({
