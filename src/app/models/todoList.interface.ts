@@ -1,12 +1,14 @@
 import { Users } from "./users.interface";
 
+export type TodoStatus = "pending" | "in-progress" | "due" | "completed";
+
 export interface TodoList {
     id: number;
     task: string;
     user: Users;
     date: Date;
     lastUpdate: Date;
-    status: string;
+    status: TodoStatus;
     dueDate: Date;
     checked: boolean;
 }

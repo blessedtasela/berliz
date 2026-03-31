@@ -2,18 +2,17 @@ import { Pipe, PipeTransform, ChangeDetectorRef, NgZone, OnDestroy } from '@angu
 
 @Pipe({
   name: 'timeAgo',
-  pure: false // IMPORTANT: allows live updates
+  pure: false
 })
 export class TimeAgoPipe implements PipeTransform, OnDestroy {
   private timer: any;
 
-  constructor(private cdRef: ChangeDetectorRef, private ngZone: NgZone) {}
+  constructor(private cdRef: ChangeDetectorRef, private ngZone: NgZone) {
+    this.startTimer();
+  }
 
   transform(value: string | Date): string {
     if (!value) return '';
-
-    this.removeTimer();
-    this.createTimer();
 
     const now = new Date();
     const past = new Date(value);
@@ -51,25 +50,19 @@ export class TimeAgoPipe implements PipeTransform, OnDestroy {
     return `${diffInMonths} month${diffInMonths > 1 ? 's' : ''} ago`;
   }
 
-  private createTimer() {
+  private startTimer() {
     if (this.timer) return;
 
-    // run outside Angular to avoid performance issues
     this.ngZone.runOutsideAngular(() => {
       this.timer = setInterval(() => {
         this.ngZone.run(() => this.cdRef.markForCheck());
-      }, 60000); // update every 60 seconds
+      }, 60000); // update every minute
     });
   }
 
-  private removeTimer() {
+  ngOnDestroy() {
     if (this.timer) {
       clearInterval(this.timer);
-      this.timer = null;
     }
-  }
-
-  ngOnDestroy() {
-    this.removeTimer();
   }
 }

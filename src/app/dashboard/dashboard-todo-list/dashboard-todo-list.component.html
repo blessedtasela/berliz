@@ -5,7 +5,8 @@
     </h1>
     <p class="text-gray-500 italic font-sans text-sm mt-1">
         You currently have no tasks. Click
-        <a routerLink="/dashboard/my-todos" class="text-red-600 font-bold hover:underline hover:text-red-700 transition">
+        <a routerLink="/dashboard/my-todos"
+            class="text-red-600 font-bold hover:underline hover:text-red-700 transition">
             here
         </a>
         to add one now.
@@ -21,55 +22,53 @@
 </div>
 
 <!-- Todo List -->
-<div *ngIf="todoData.length > 0" class="grid grid-cols-1 gap-3 min-h-64 overflow-y-auto pr-1">
+<div *ngFor="let todo of todoData" (click)="openTodoDetails(todo)"
+    class="p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition cursor-pointer flex flex-col gap-1">
 
-    <div *ngFor="let todo of todoData" (click)="openTodoDetails(todo)"
-        class="flex items-start justify-between p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition cursor-pointer">
+    <!-- Task -->
+    <div class="text-gray-800 font-semibold text-sm">
+        {{ todo.task }}
+    </div>
 
-        <!-- Left: Task Info -->
-        <div class="flex flex-col">
-            <div class="text-gray-800 font-semibold text-sm">
-                {{ todo.task }}
-            </div>
+    <!-- Created Date -->
+    <div class="flex items-center text-xs text-gray-400">
+        <i-feather name="calendar" class="text-red-600 mr-1" style="width: 14px; height: 14px;"></i-feather>
+        {{ todo.date | timeAgo }}
+    </div>
 
-            <!-- Created Date -->
-            <div class="flex items-center text-xs text-gray-400 mt-1">
-                <i-feather name="calendar" class="text-red-600 mr-1 block"
-                    style="width: 14px; height: 14px;"></i-feather>
-                {{ todo.date | timeAgo }}
-            </div>
+    <!-- Bottom Row: Due Date (left) + Status (right) -->
+    <div class="flex justify-between items-center mt-1">
 
-            <!-- Due Date -->
-            <div class="text-xs mt-1 font-bold" [ngClass]="{
-             'text-red-600 ': isDueNow(todo),
-             'text-red-500 ': isDueSoon(todo),
-             'text-gray-700 ': !isDueSoon(todo) && !isDueNow(todo)
-           }">
-                {{ getDueLabel(todo) }}
-            </div>
+        <!-- Due Date -->
+        <div class="text-xs font-bold" [ngClass]="{
+                'text-red-600': isDueNow(todo),
+                'text-red-500': isDueSoon(todo),
+                'text-gray-700': !isDueSoon(todo) && !isDueNow(todo)
+             }">
+            {{ getDueLabel(todo) }}
         </div>
 
-        <!-- Right: Status Badge -->
-        <div>
-            <span *ngIf="todo.status === 'completed'"
-                class="px-2 py-1 text-xs font-bold rounded-md bg-green-100 text-green-600">
-                Completed
-            </span>
+        <!-- Status Badge -->
+        <span *ngIf="todo.status === 'completed'"
+            class="px-2 py-1 text-xs font-bold rounded-md bg-green-100 text-green-600">
+            Completed
+        </span>
 
-            <span *ngIf="todo.status === 'not-started'"
-                class="px-2 py-1 text-xs font-bold rounded-md bg-gray-100 text-gray-600">
-                Not Started
-            </span>
+        <span *ngIf="todo.status === 'pending'"
+            class="px-2 py-1 text-xs font-bold rounded-md bg-gray-100 text-gray-600">
+            Not Started
+        </span>
 
-            <span *ngIf="todo.status === 'in-progress'"
-                class="px-2 py-1 text-xs font-bold rounded-md bg-yellow-100 text-yellow-600">
-                In Progress
-            </span>
+        <span *ngIf="todo.status === 'in-progress'"
+            class="px-2 py-1 text-xs font-bold rounded-md bg-yellow-100 text-yellow-600">
+            In Progress
+        </span>
 
-            <span *ngIf="todo.status === 'due'" class="px-2 py-1 text-xs font-bold rounded-md bg-red-100 text-red-600">
-                Due
-            </span>
-        </div>
+        <span *ngIf="todo.status === 'due'" class="px-2 py-1 text-xs font-bold rounded-md bg-red-100 text-red-600">
+            Due
+        </span>
 
     </div>
+
+
 </div>
