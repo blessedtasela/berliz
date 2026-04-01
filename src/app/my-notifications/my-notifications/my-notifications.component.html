@@ -1,105 +1,112 @@
-<div class="justify-center items-center p-1 mt-2 overflow-x-scroll" *ngIf="notificationData.length === 0">
-    <h1 class="text-gray-500 italic font-sans">
+<!-- EMPTY STATE -->
+<div *ngIf="notificationData.length === 0" class="flex flex-col items-center justify-center py-10 text-center">
+    <h1 class="text-gray-500 italic font-sans text-lg">
         Notifications will appear here
     </h1>
 </div>
-<div class="flex justify-between p-2 font-bold">
-    <div class="text-gray-500 italic font-sans">
-        {{ notificationData.length }} / {{notificationsLength }}
+
+<!-- HEADER BAR -->
+<div *ngIf="notificationData.length > 0"
+    class="flex justify-between items-center px-4 py-3 bg-white sticky top-0 z-10 border-b">
+
+    <!-- Pagination -->
+    <div class="flex items-center gap-2 text-gray-600 text-sm font-sans">
+        <span>{{ startIndex }}–{{ endIndex }} of {{ notificationsLength }}</span>
+
+        <button class="p-1 rounded hover:bg-gray-200" (click)="prevPage()">
+            <i-feather name="chevron-left" style="width: 16px;"></i-feather>
+        </button>
+
+        <button class="p-1 rounded hover:bg-gray-200" (click)="nextPage()">
+            <i-feather name="chevron-right" style="width: 16px;"></i-feather>
+        </button>
     </div>
-    <div class="text-gray-500 italic font-sans">
-        <div class="grid grid-cols">
-            <div class="flex flex-cols gap-2">
-                <span *ngIf="!isSelectAllChecked()" class="mt-1">
-                    Select all
-                </span>
-                <span *ngIf="isSelectAllChecked()" class="mt-1">
-                    Unselect all
-                </span>
-                <input type="checkbox" [checked]="isSelectAllChecked()" (change)="toggleSelectAll($event)">
-                <i-feather name="more-horizontal" (click)="toggleBulkAction(); stopPropagation($event);"
-                    class="font-bold text-gray-950 mr-2 mt-2 cursor-pointer" style="width: 16px;"
-                    [ngClass]="{'disabled-horizontal-icon': selectedNotificationIds.length === 0}">
-                </i-feather>
+
+    <!-- Bulk Actions -->
+    <div class="relative flex items-center gap-2">
+
+        <input type="checkbox" [checked]="isSelectAllChecked()" (change)="toggleSelectAll($event)"
+            class="cursor-pointer">
+
+        <i-feather name="more-horizontal" (click)="toggleBulkAction(); stopPropagation($event)"
+            class="cursor-pointer text-gray-700 hover:text-black transition" style="width: 18px;">
+        </i-feather>
+
+        <!-- Bulk Menu -->
+        <div *ngIf="showBulkAction"
+            class="absolute right-0 mt-10 bg-white border border-gray-300 rounded-lg shadow-lg w-40 text-sm z-20">
+
+            <p class="px-3 py-2 font-semibold text-gray-700 border-b">
+                With selected:
+            </p>
+
+            <p (click)="submitBulkAction('read')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                Mark as read
+            </p>
+
+            <p (click)="submitBulkAction('unread')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                Mark as unread
+            </p>
+
+            <p (click)="submitBulkAction('delete')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer text-red-600">
+                Delete
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- NOTIFICATION LIST (Instagram x Berliz style) -->
+<div class="flex flex-col gap-3 px-3 py-3">
+
+    <div *ngFor="let n of notificationData; let i = index"
+        class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex items-start gap-3 cursor-pointer hover:shadow-md transition"
+        (click)="readNotification(n.id)">
+
+        <!-- LEFT: Icon bubble -->
+        <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+            <i-feather name="bell" class="text-gray-600" style="width: 18px;">
+            </i-feather>
+        </div>
+
+        <!-- MIDDLE: Text -->
+        <div class="flex flex-col flex-1">
+            <span class="font-semibold text-gray-900 text-sm leading-tight" [ngClass]="{ 'font-bold': !n.read }">
+                {{ n.notification.length > 100 ? n.notification.slice(0, 100) + '…' : n.notification }}
+            </span>
+
+            <span class="text-xs text-gray-400 mt-1">
+                {{ formatDate(n.date) }}
+            </span>
+        </div>
+
+        <!-- RIGHT: Actions -->
+        <div class="flex flex-col items-center gap-2">
+
+            <input type="checkbox" [checked]="n.checked" (click)="toggleSelect($event, n)" class="cursor-pointer">
+
+            <i-feather name="more-horizontal" (click)="openMenu(i); stopPropagation($event)"
+                class="cursor-pointer text-gray-700 hover:text-black transition" style="width: 18px;">
+            </i-feather>
+
+            <!-- Row Menu -->
+            <div *ngIf="menuOpen[i]"
+                class="absolute right-4 mt-12 bg-white border border-gray-300 rounded-lg shadow-lg w-32 text-sm z-20">
+
+                <p (click)="deleteNotification(n.id)" class="px-3 py-2 hover:bg-gray-100 cursor-pointer text-red-600">
+                    Delete
+                </p>
+
+                <p (click)="readNotification(n.id)" class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                    Mark as read
+                </p>
             </div>
         </div>
     </div>
-    <div [ngClass]="{'hidden': !showBulkAction}" id="notificationAction"
-        class="absolute grid grid-cols right-8 md:right-16 bg-white rounded-md w-30 text-sm border border-gray-300 shadow-lg">
-        <p class="flex flex items-center justify-center font-bold">
-            With selected, do?
-        </p>
-        <p (click)="submitBulkAction('read')"
-            class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105">
-            Mark as read ✅
-        </p>
-        <p (click)="submitBulkAction('unread')"
-            class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105">
-            Mark as unread
-        </p>
-        <p (click)="submitBulkAction('delete')"
-            class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105">
-            Delete notifications
-        </p>
-    </div>
 </div>
-<div class="justify-center items-center -mt-4 p-1 overflow-x-scroll font-sans" *ngIf="notificationData.length > 0">
-    <div class="min-w-[300px]">
-        <table class="table-auto border-collapse rounded-lg text-gray-950 font-sans container">
-            <tbody class="rounded-lg">
-                <tr *ngFor="let notification of notificationData; let i = index" class="text-sm text-gray-600"
-                    [ngClass]="{'bg-gray-200 bg-opacity-50 bg-rounded-lg': notification.read === false}">
-                    <td class="cursor-pointer" (click)="readNotification(notification.id)">
-                        <div class="flex justify-between p-2">
-                            <div class="font-bold block md:hidden">
-                                {{ notification.notification.length > 30 ? notification.notification.slice(0, 30) +
-                                '.......' : notification.notification }}
-                            </div>
-                            <div class="font-bold hidden md:block lg:hidden">
-                                {{ notification.notification.length > 45 ? notification.notification.slice(0, 45) +
-                                '.......' : notification.notification }}
-                            </div>
-                            <div class="font-bold hidden lg:block">
-                                {{ notification.notification.length > 70 ? notification.notification.slice(0, 70) +
-                                '.......' : notification.notification }}
-                            </div>
-                            <div class="flex flex-cols text-sm italic text-gray-400">
-                                {{ formatDate(notification.date) }}
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-4 py-2 text-sm">
-                        <div class="grid grid-cols">
-                            <div class="grid grid-cols">
-                                <div class="grid grid-cols sm:grid-cols-2 gap-2">
-                                    <i-feather name="more-horizontal" (click)="openMenu(i); stopPropagation($event);"
-                                        class="font-bold text-gray-950 mr-2 mt-2 cursor-pointer" style="width: 16px;">
-                                    </i-feather>
-                                    <div class="flex flex-cols">
-                                        <input type="checkbox" class="" (change)="toggleSelect($event, notification);"
-                                            [checked]="notification.checked">
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols text-sm italic text-gray-950">
-                                    <div class="flex flex-cols">
-                                        <div [ngClass]="{'hidden': !menuOpen[i]}" id="notificationAction"
-                                            class="absolute grid grid-cols right-8 md:right-16 bg-white rounded-md w-30 text-sm border border-gray-300 shadow-lg">
-                                            <p (click)="deleteNotification(notification.id)"
-                                                class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105">
-                                                Delete
-                                            </p>
-                                            <p (click)="readNotification(notification.id)"
-                                                class="p-1 mx-2 text-md cursor-pointer duration-300 hover:drop-shadow-4xl hover:text-red-600 hover:scale-105">
-                                                Mark as read ✅
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+
+<!-- SCROLL TO BOTTOM ARROW -->
+<div *ngIf="showScrollArrow"
+    class="fixed bottom-6 right-6 bg-red-600 text-white p-3 rounded-full shadow-lg cursor-pointer hover:bg-red-700 transition"
+    (click)="scrollToBottom()">
+    <i-feather name="arrow-down" style="width: 20px;"></i-feather>
 </div>

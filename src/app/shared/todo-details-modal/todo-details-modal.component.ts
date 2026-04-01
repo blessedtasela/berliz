@@ -24,8 +24,8 @@ export class TodoDetailsModalComponent implements OnInit {
   statusOptions: { label: string; value: TodoStatus }[] = [
     { label: "Not Started", value: "pending" },
     { label: "In Progress", value: "in-progress" },
-    { label: "Due", value: "due" },
-    { label: "Completed", value: "completed" }
+    { label: "Completed", value: "completed" },
+    { label: "Cancelled", value: "cancelled" }
   ];
 
   constructor(
@@ -40,120 +40,128 @@ export class TodoDetailsModalComponent implements OnInit {
   ngOnInit() {
     this.initForm();
 
-    // Handle disabling of dueDate when completed
+    if (this.data.status === 'cancelled') {
+      this.updateTodoForm.disable();
+    }
+
     this.updateTodoForm.get('status')?.valueChanges.subscribe(status => {
       const dueDateControl = this.updateTodoForm.get('dueDate');
       status === 'completed' ? dueDateControl?.disable() : dueDateControl?.enable();
     });
   }
 
-  // ---------------------------------------------------------
-  // FORM INITIALIZATION
-  // ---------------------------------------------------------
   initForm() {
     this.updateTodoForm = this.fb.group({
       id: [this.data.id],
-      task: [this.data.task, [Validators.required, Validators.minLength(3)]],
+      task: [this.data.task, [Validators.required, Validators.minLength(20)]],
       status: [this.data.status, Validators.required],
-
-      // Use local YYYY-MM-DD for <input type="date">
       dueDate: [
         { value: this.formatDate(this.data.dueDate), disabled: this.data.status === 'completed' }
       ],
-
       checked: [this.data.checked]
     });
   }
 
-  // ---------------------------------------------------------
-  // DATE HELPERS (timezone safe)
-  // ---------------------------------------------------------
-  private toLocalDate(dateInput: any): Date {
-    if (!dateInput) return new Date(); // fallback today
-
-    if (dateInput instanceof Date) return dateInput; // already a Date
-
-    if (typeof dateInput === 'string') {
-      // strip time if present in ISO string
-      const [year, month, day] = dateInput.split('T')[0].split('-').map(Number);
-      return new Date(year, month - 1, day); // local date, no timezone shift
-    }
-
-    if (typeof dateInput === 'number') return new Date(dateInput); // timestamp
-
-    return new Date(dateInput); // fallback for other formats
-  }
-
   formatDate(date: any): string {
-    const d = this.toLocalDate(date);
+    const d = new Date(date);
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`; // YYYY-MM-DD
+    return `${year}-${month}-${day}`;
   }
 
-  formatFullDate(date: any): string {
-    const d = this.toLocalDate(date);
-    return d.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric"
-    });
+  blockIfCancelled(): boolean {
+    if (this.data.status === 'cancelled') {
+      this.snackbar.openSnackBar("This task has been cancelled and cannot be edited.", "error");
+      return true;
+    }
+    return false;
   }
 
   // ---------------------------------------------------------
-  // STATUS + DUE DATE LOGIC
+  // DUE ENGINE
   // ---------------------------------------------------------
+
   isDueNow(todo: TodoList): boolean {
-    if (!todo.dueDate) return false;
+    if (todo.status === 'completed' || todo.status === 'cancelled') return false;
+
     const now = new Date();
-    const due = this.toLocalDate(todo.dueDate);
+    const due = new Date(todo.dueDate);
+
     return due <= now;
   }
 
   isDueSoon(todo: TodoList): boolean {
-    if (!todo.dueDate) return false;
+    if (todo.status === 'completed' || todo.status === 'cancelled') return false;
+
     const now = new Date();
-    const due = this.toLocalDate(todo.dueDate);
+    const due = new Date(todo.dueDate);
+
     const diff = due.getTime() - now.getTime();
     const days = diff / (1000 * 60 * 60 * 24);
-    return days > 0 && days <= 3;
+
+    return days > 0 && days <= 7;
   }
 
   getDueLabel(todo: TodoList): string {
-    if (!todo.dueDate) return 'No due date';
-
     const now = new Date();
-    const due = this.toLocalDate(todo.dueDate);
+    const due = new Date(todo.dueDate);
+
+    if (todo.status === 'completed') return "Completed";
+    if (todo.status === 'cancelled') return "Cancelled";
+
     const diff = due.getTime() - now.getTime();
+    const absDiff = Math.abs(diff);
 
-    if (diff <= 0) return 'Now';
-
-    const seconds = Math.floor(diff / 1000);
-    const minutes = Math.floor(diff / (1000 * 60));
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const seconds = Math.floor(absDiff / 1000);
+    const minutes = Math.floor(absDiff / (1000 * 60));
+    const hours = Math.floor(absDiff / (1000 * 60 * 60));
+    const days = Math.floor(absDiff / (1000 * 60 * 60 * 24));
     const weeks = Math.floor(days / 7);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(days / 365);
 
-    if (seconds < 60) return `In ${seconds}s`;
-    if (minutes < 60) return `In ${minutes}m`;
-    if (hours < 24) return `In ${hours}h`;
-    if (days < 7) return `In ${days}d`;
-    return `In ${weeks}w`;
+    if (diff <= 0) {
+      if (hours < 24) return "Due today";
+      if (days === 1) return "Overdue by 1 day";
+      if (days < 7) return `Overdue by ${days} days`;
+      if (weeks < 4) return `Overdue by ${weeks} weeks`;
+      if (months < 12) return `Overdue by ${months} months`;
+      return `Overdue by ${years} years`;
+    }
+
+    if (seconds < 60) return `Due in ${seconds}s`;
+    if (minutes < 60) return `Due in ${minutes}m`;
+    if (hours < 24) return `Due in ${hours}h`;
+    if (days < 7) return `Due in ${days}d`;
+    if (weeks < 4) return `Due in ${weeks}w`;
+    if (months < 12) return `Due in ${months} months`;
+    return `Due in ${years} years`;
   }
 
-  isCompleted(): boolean {
-    return this.updateTodoForm.get('status')?.value === 'completed';
+  getDueColor(todo: TodoList): string {
+    if (todo.status === 'completed') return 'text-green-600';
+    if (todo.status === 'cancelled') return 'text-gray-500';
+    if (this.isDueNow(todo)) return 'text-red-700';
+    if (todo.status === 'in-progress') return 'text-yellow-600';
+    if (todo.status === 'pending') return 'text-black';
+
+    return 'text-gray-500';
   }
 
   // ---------------------------------------------------------
-  // UPDATE TODO (BACKEND API)
+  // UPDATE TODO
   // ---------------------------------------------------------
+
   updateTodo(): void {
+    if (this.data.status === 'cancelled') {
+      this.snackbar.openSnackBar("Cancelled tasks cannot be updated.", "error");
+      return;
+    }
+
     if (this.updateTodoForm.invalid) {
       this.invalidForm = true;
-      this.responseMessage = "Invalid form. Please complete all sections";
+      this.responseMessage = "Invalid form. Please complete all sections.";
       this.snackbar.openSnackBar(this.responseMessage, "error");
       return;
     }
@@ -162,51 +170,49 @@ export class TodoDetailsModalComponent implements OnInit {
 
     const formValue = this.updateTodoForm.value;
 
+    const rawDueDate = formValue.dueDate ?? this.formatDate(this.data.dueDate);
+
     const payload = {
       ...formValue,
-
-      // Convert local YYYY-MM-DD to ISO string (no timezone shift)
-      dueDate:
-        formValue.status === "completed"
-          ? new Date(this.data.dueDate).toISOString()
-          : new Date(formValue.dueDate + "T00:00:00").toISOString()
+      dueDate: new Date(rawDueDate + "T00:00:00").toISOString()
     };
 
-    this.todoService.updateTodoList(payload)
-      .subscribe({
-        next: (response: any) => {
-          this.updateTodoForm.reset();
-          this.invalidForm = false;
-          this.responseMessage = response?.message;
+    this.todoService.updateTodoList(payload).subscribe({
+      next: (response: any) => {
+        this.updateTodoForm.reset();
+        this.invalidForm = false;
+        this.responseMessage = response?.message;
 
-          this.emitEvent.emit();
-          this.onUpdateTodo.emit();
+        this.emitEvent.emit();
+        this.onUpdateTodo.emit();
 
-          this.dialogRef.close("task updated successfully");
-          this.snackbar.openSnackBar(this.responseMessage, "");
+        this.dialogRef.close("task updated successfully");
+        this.snackbar.openSnackBar(this.responseMessage, "");
 
-          this.ngxService.stop();
-        },
-        error: (error: any) => {
-          this.ngxService.stop();
-
-          this.responseMessage = error.error?.message || genericError;
-          this.snackbar.openSnackBar(this.responseMessage, "error");
-        }
-      });
+        this.ngxService.stop();
+      },
+      error: (error: any) => {
+        this.ngxService.stop();
+        this.responseMessage = error.error?.message || genericError;
+        this.snackbar.openSnackBar(this.responseMessage, "error");
+      }
+    });
   }
 
-  // ---------------------------------------------------------
-  // MARK COMPLETE
-  // ---------------------------------------------------------
   markComplete() {
+    if (this.blockIfCancelled()) return;
     this.updateTodoForm.patchValue({ status: 'completed', checked: true });
+
     this.updateTodo();
   }
 
-  // ---------------------------------------------------------
-  // CLOSE MODAL
-  // ---------------------------------------------------------
+  restartTask() {
+    this.updateTodoForm.enable();
+    this.data.status = 'pending'
+    this.updateTodoForm.patchValue({ status: 'pending', checked: false });
+    this.updateTodo();
+  }
+
   closeDialog() {
     this.dialogRef.close();
   }

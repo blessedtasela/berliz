@@ -12,18 +12,18 @@
 
     <!-- Notification text -->
     <p class="text-gray-800 whitespace-pre-line leading-relaxed text-[15px]">
-        {{ data.notification }}
+        {{ data.notificationData.notification }}
     </p>
 
     <!-- Date -->
     <div class="mt-6 text-gray-500 text-sm flex items-center justify-center">
         <i-feather name="calendar" class="w-4 h-4 mr-2"></i-feather>
-        {{ data.date | date:'fullDate' }}
+        {{ data.notificationData.date | date:'fullDate' }}
     </div>
 
     <!-- Bottom close button -->
     <div class="flex justify-center mt-8">
-        <div (click)="closeModal()" class="text-red-600 font-semibold hover:text-red-700 px-2 cursor-pointer
+        <div (click)="close()" class="text-red-600 font-semibold hover:text-red-700 px-2 cursor-pointer
         rounded-md border border-white bg-white hover:scale-105 shadow-lg transition-all duration-300">
             Close
     </div>

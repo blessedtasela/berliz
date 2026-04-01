@@ -23,10 +23,10 @@
 
 <!-- Todo List -->
 <div *ngFor="let todo of todoData" (click)="openTodoDetails(todo)"
-    class="p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition cursor-pointer flex flex-col gap-1">
+    class="p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition cursor-pointer flex flex-col gap-2">
 
     <!-- Task -->
-    <div class="text-gray-800 font-semibold text-sm">
+    <div class="text-gray-900 font-semibold text-sm leading-snug">
         {{ todo.task }}
     </div>
 
@@ -36,15 +36,11 @@
         {{ todo.date | timeAgo }}
     </div>
 
-    <!-- Bottom Row: Due Date (left) + Status (right) -->
+    <!-- Bottom Row -->
     <div class="flex justify-between items-center mt-1">
 
-        <!-- Due Date -->
-        <div class="text-xs font-bold" [ngClass]="{
-                'text-red-600': isDueNow(todo),
-                'text-red-500': isDueSoon(todo),
-                'text-gray-700': !isDueSoon(todo) && !isDueNow(todo)
-             }">
+        <!-- Due Label -->
+        <div class="text-xs font-bold" [ngClass]="getDueColor(todo)">
             {{ getDueLabel(todo) }}
         </div>
 
@@ -55,20 +51,20 @@
         </span>
 
         <span *ngIf="todo.status === 'pending'"
-            class="px-2 py-1 text-xs font-bold rounded-md bg-gray-100 text-gray-600">
+            class="px-2 py-1 text-xs font-bold rounded-md bg-gray-100 text-gray-800">
             Not Started
         </span>
 
         <span *ngIf="todo.status === 'in-progress'"
-            class="px-2 py-1 text-xs font-bold rounded-md bg-yellow-100 text-yellow-600">
+            class="px-2 py-1 text-xs font-bold rounded-md bg-yellow-100 text-yellow-700">
             In Progress
         </span>
 
-        <span *ngIf="todo.status === 'due'" class="px-2 py-1 text-xs font-bold rounded-md bg-red-100 text-red-600">
-            Due
+        <span *ngIf="todo.status === 'cancelled'"
+            class="px-2 py-1 text-xs font-bold rounded-md bg-gray-300 text-gray-700">
+            Cancelled
         </span>
 
     </div>
-
 
 </div>

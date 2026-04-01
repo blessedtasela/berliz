@@ -1,6 +1,8 @@
-import { Component, Inject } from '@angular/core';
+import { Component, EventEmitter, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Notifications } from 'src/app/models/Notifications.interface';
+import { NotificationService } from 'src/app/services/notification.service';
+import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
   selector: 'app-notification-details',
@@ -9,12 +11,29 @@ import { Notifications } from 'src/app/models/Notifications.interface';
 })
 export class NotificationDetailsComponent {
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: Notifications,
-    private dialogRef: MatDialogRef<NotificationDetailsComponent>
-  ) {}
+  emitEVent = new EventEmitter();
+  responseMessage: any;
 
-  closeModal() {
+constructor(
+  @Inject(MAT_DIALOG_DATA) public data: { notificationData: Notifications },
+  private dialogRef: MatDialogRef<NotificationDetailsComponent>,
+  private notificationService: NotificationService
+) {}
+
+
+  markAsRead() {
+    this.notificationService.readNotification(this.data.notificationData.id).subscribe({
+      next: () => {
+        this.emitEVent.emit();
+        this.dialogRef.close(true);
+      },
+      error: (error) => {
+        this.responseMessage = error.error?.message || genericError;
+      }
+    });
+  }
+
+  close() {
     this.dialogRef.close();
   }
 }

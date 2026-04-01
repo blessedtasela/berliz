@@ -1,6 +1,6 @@
 import { Users } from "./users.interface";
 
-export type TodoStatus = "pending" | "in-progress" | "due" | "completed";
+export type TodoStatus = "pending" | "in-progress" | "cancelled" | "completed";
 
 export interface TodoList {
     id: number;

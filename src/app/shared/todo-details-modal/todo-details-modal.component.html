@@ -4,18 +4,23 @@
     <div class="flex justify-between items-start mb-4">
         <h2 class="text-xl font-bold">Todo Details</h2>
 
-        <!-- Premium Close Button -->
         <button (click)="closeDialog()" class="flex items-center justify-center bg-white shadow-md rounded-full p-2 text-gray-700 font-bold
-             hover:bg-red-600 hover:text-white hover:scale-110 transition transform">
+                   hover:bg-red-600 hover:text-white hover:scale-110 transition">
             <i-feather name="x" style="width: 18px; height: 18px;"></i-feather>
         </button>
     </div>
 
     <!-- Status Badge -->
     <div class="mb-4">
+
         <span *ngIf="data.status === 'completed'"
             class="px-3 py-1 text-xs font-bold rounded-md bg-green-100 text-green-600">
             Completed
+        </span>
+
+        <span *ngIf="data.status === 'cancelled'"
+            class="px-3 py-1 text-xs font-bold rounded-md bg-gray-300 text-gray-700">
+            Cancelled
         </span>
 
         <span *ngIf="data.status === 'pending'"
@@ -28,75 +33,80 @@
             In Progress
         </span>
 
-        <span *ngIf="data.status === 'due'" class="px-3 py-1 text-xs font-bold rounded-md bg-red-100 text-red-600">
+        <!-- Due Soon -->
+        <span *ngIf="(data.status === 'pending' || data.status === 'in-progress') && isDueSoon(data) && !isDueNow(data)"
+            class="px-3 py-1 text-xs font-bold rounded-md bg-yellow-100 text-yellow-700">
+            Due Soon
+        </span>
+
+        <!-- Due -->
+        <span *ngIf="(data.status === 'pending' || data.status === 'in-progress') && isDueNow(data)"
+            class="px-3 py-1 text-xs font-bold rounded-md bg-red-100 text-red-600">
             Due
         </span>
+
     </div>
 
-    <!-- READ-ONLY METADATA -->
+    <!-- Metadata -->
     <div class="space-y-3 text-sm mb-6">
 
-        <!-- Created -->
         <div class="flex items-center gap-2">
-            <div class="flex items-center">
-                <i-feather name="calendar" class="text-red-600" style="width: 16px; height: 16px;"></i-feather>
-            </div>
-            <span>
-                Created:
-                <span class="font-semibold">{{ data.date | timeAgo }}</span>
-            </span>
+            <i-feather name="calendar" class="text-red-600" style="width: 16px; height: 16px;"></i-feather>
+            <span>Created: <span class="font-semibold">{{ data.date | timeAgo }}</span></span>
         </div>
 
-        <!-- Last Updated -->
         <div class="flex items-center gap-2">
-            <div class="flex items-center">
-                <i-feather name="clock" class="text-gray-500" style="width: 16px; height: 16px;"></i-feather>
-            </div>
-            <span>
-                Last Update:
+            <i-feather name="clock" class="text-gray-500" style="width: 16px; height: 16px;"></i-feather>
+            <span>Last Update:
                 <span class="font-semibold">
                     {{ data.lastUpdate ? (data.lastUpdate | timeAgo) : 'N/A' }}
                 </span>
             </span>
         </div>
 
-        <!-- Due Date Label -->
         <div class="flex items-center gap-2">
-            <div class="flex items-center">
-                <i-feather name="alert-triangle" [class]="
-        isDueNow(data) ? 'text-red-700' :
-        isDueSoon(data) ? 'text-yellow-500' :
-        'text-gray-500'
-      " style="width: 16px; height: 16px;"></i-feather>
-            </div>
+            <i-feather name="alert-triangle" [ngClass]="getDueColor(data)"
+                style="width: 16px; height: 16px;"></i-feather>
 
-            <span>
-                Due:
-                <span class="font-semibold">{{ getDueLabel(data) }}</span>
+            <span [ngClass]="getDueColor(data)" class="font-semibold">
+                {{ getDueLabel(data) }}
             </span>
+
         </div>
 
     </div>
 
-    <!-- EDITABLE FORM -->
-    <form [formGroup]="updateTodoForm" class="space-y-4">
+    <!-- Form -->
+    <form [formGroup]="updateTodoForm" class="space-y-4" [class.opacity-50]="data.status === 'cancelled'">
 
         <!-- Task -->
         <div>
             <label class="text-sm font-semibold">Task</label>
-            <textarea rows="3" formControlName="task"
-                class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-red-500 outline-none"></textarea>
+
+            <textarea rows="3" formControlName="task" (click)="blockIfCancelled()" class="w-full mt-1 p-2 border rounded-md outline-none
+                             focus:ring-2 focus:ring-gray-300 focus:border-gray-300 transition" [ngClass]="{
+                        'border-red-500 focus:border-red-500 focus:ring-red-500':
+                          updateTodoForm.get('task')?.invalid &&
+                          (updateTodoForm.get('task')?.touched || updateTodoForm.get('task')?.dirty)
+                      }"></textarea>
+
+            <span *ngIf="
+                updateTodoForm.get('task')?.errors?.['minlength'] &&
+                (updateTodoForm.get('task')?.touched || updateTodoForm.get('task')?.dirty)
+            " class="text-xs text-red-600 font-semibold">
+                Task must be at least 20 characters.
+            </span>
         </div>
 
         <!-- Status -->
         <div>
             <label class="text-sm font-semibold">Status</label>
-            <select formControlName="status"
-                class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-red-500 outline-none">
+
+            <select formControlName="status" (click)="blockIfCancelled()" class="w-full mt-1 p-2 border rounded-md outline-none
+                           focus:ring-2 focus:ring-gray-300 focus:border-gray-300 transition">
                 <option *ngFor="let s of statusOptions" [value]="s.value">
                     {{ s.label }}
                 </option>
-
             </select>
         </div>
 
@@ -104,15 +114,14 @@
         <div class="flex flex-col gap-1">
             <label class="text-sm font-semibold text-gray-900">Due Date</label>
 
-            <input type="date" formControlName="dueDate" class="w-full p-2 border border-gray-300 rounded-md
-         focus:ring-2 focus:ring-red-500 focus:border-red-500
-         transition shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed" />
-            <!-- Human-readable formatted date -->
+            <input type="date" formControlName="dueDate" (click)="blockIfCancelled()" class="w-full p-2 border border-gray-300 rounded-md outline-none
+                          focus:ring-2 focus:ring-gray-300 focus:border-gray-300 transition
+                          disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed" />
+
             <div class="text-xs text-gray-500 italic">
-                {{ formatFullDate(updateTodoForm.get('dueDate')?.value) }}
+                {{ updateTodoForm.get('dueDate')?.value | date:'fullDate' }}
             </div>
 
-            <!-- Warning message -->
             <div *ngIf="updateTodoForm.value.status === 'completed'" class="text-xs text-red-600 font-semibold mt-1">
                 Due date cannot be changed after a task is completed.
             </div>
@@ -120,54 +129,38 @@
 
     </form>
 
-    <!-- ACTION BUTTONS -->
+    <!-- Action Buttons -->
+    <div class="flex justify-end gap-3 mt-6">
 
-    <!-- Desktop / Medium+ -->
-    <div class="hidden md:flex justify-end gap-3 mt-6">
-
-        <!-- Close -->
-        <button (click)="closeDialog()"
-            class="flex items-center justify-center gap-2 leading-none px-4 py-3 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
-            <i-feather name="x" class="leading-none" style="width: 16px; height: 16px;"></i-feather>
-            Close
+        <!-- Restart (Cancelled Only) -->
+        <button *ngIf="data.status === 'cancelled'" (click)="restartTask()"
+            class="flex items-center justify-center gap-2 px-4 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition">
+            <i-feather name="refresh-ccw" style="width: 16px; height: 16px;"></i-feather>
+            Restart Task
         </button>
 
-        <!-- Mark Complete -->
-        <button
-            class="flex items-center justify-center gap-2 leading-none px-4 py-3 rounded-md bg-green-600 text-white hover:bg-green-700 transition"
-            *ngIf="updateTodoForm.value.status !== 'completed'" (click)="markComplete()">
-            <i-feather name="check" class="leading-none" style="width: 16px; height: 16px;"></i-feather>
-            Mark Complete
-        </button>
+        <!-- Normal Buttons -->
+        <ng-container *ngIf="data.status !== 'cancelled'">
 
-        <!-- Update -->
-        <button
-            class="flex items-center justify-center gap-2 leading-none px-4 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
-            (click)="updateTodo()">
-            <i-feather name="edit" class="leading-none" style="width: 16px; height: 16px;"></i-feather>
-            Update
-        </button>
+            <button (click)="closeDialog()"
+                class="flex items-center justify-center gap-2 px-4 py-3 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
+                <i-feather name="x" style="width: 16px; height: 16px;"></i-feather>
+                Close
+            </button>
 
-    </div>
+            <button *ngIf="updateTodoForm.value.status !== 'completed'" (click)="markComplete()"
+                class="flex items-center justify-center gap-2 px-4 py-3 rounded-md bg-green-600 text-white hover:bg-green-700 transition">
+                <i-feather name="check" style="width: 16px; height: 16px;"></i-feather>
+                Mark Complete
+            </button>
 
-    <!-- Mobile -->
-    <div class="flex md:hidden justify-end gap-3 mt-6">
+            <button (click)="updateTodo()"
+                class="flex items-center justify-center gap-2 px-4 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition">
+                <i-feather name="edit" style="width: 16px; height: 16px;"></i-feather>
+                Update
+            </button>
 
-        <!-- Mark Complete -->
-        <button
-            class="flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition"
-            *ngIf="updateTodoForm.value.status !== 'completed'" (click)="markComplete()">
-            <i-feather name="check" style="width: 14px; height: 14px;"></i-feather>
-            Done
-        </button>
-
-        <!-- Update -->
-        <button
-            class="flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
-            (click)="updateTodo()">
-            <i-feather name="edit" style="width: 14px; height: 14px;"></i-feather>
-            Update
-        </button>
+        </ng-container>
 
     </div>
 
