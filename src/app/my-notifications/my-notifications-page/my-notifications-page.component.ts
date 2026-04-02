@@ -46,7 +46,6 @@ export class MyNotificationsPageComponent {
   handleEmitEvent() {
     this.subscriptions.push(
       this.notificationStateService.getMyNotifications().subscribe((myNotifications) => {
-        console.log('isCachedData false')
         this.notificationData = myNotifications;
         this.totalNotifications = myNotifications.length
         this.notificationsLength = myNotifications.length

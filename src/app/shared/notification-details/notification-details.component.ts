@@ -14,15 +14,19 @@ export class NotificationDetailsComponent {
   emitEVent = new EventEmitter();
   responseMessage: any;
 
-constructor(
-  @Inject(MAT_DIALOG_DATA) public data: { notificationData: Notifications },
-  private dialogRef: MatDialogRef<NotificationDetailsComponent>,
-  private notificationService: NotificationService
-) {}
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: Notifications,
+    private dialogRef: MatDialogRef<NotificationDetailsComponent>,
+    private notificationService: NotificationService
+  ) {
+    dialogRef.backdropClick().subscribe(() => {
+      dialogRef.close(true);
+    });
+  }
 
 
   markAsRead() {
-    this.notificationService.readNotification(this.data.notificationData.id).subscribe({
+    this.notificationService.readNotification(this.data.id).subscribe({
       next: () => {
         this.emitEVent.emit();
         this.dialogRef.close(true);
@@ -34,6 +38,6 @@ constructor(
   }
 
   close() {
-    this.dialogRef.close();
+    this.dialogRef.close(true);
   }
 }

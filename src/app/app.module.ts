@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ScrollModule } from './scroll/scroll.module';
 import { NgxUiLoaderConfig, SPINNER, NgxUiLoaderModule } from 'ngx-ui-loader';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -128,6 +128,8 @@ const dbConfig: DBConfig = {
     AngularFireModule,
     ReactiveFormsModule,
     CommonModule,
+    BrowserAnimationsModule,
+    NoopAnimationsModule,
   ],
   exports: [],
 

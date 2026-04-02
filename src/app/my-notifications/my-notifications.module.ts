@@ -8,6 +8,7 @@ import { IconsModule } from '../icons/icons.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { MyNotificationDetailModalComponent } from './my-notification-detail-modal/my-notification-detail-modal.component';
 import { SearchMyNotificationComponent } from './search-my-notification/search-my-notification.component';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,9 @@ import { SearchMyNotificationComponent } from './search-my-notification/search-m
     NavbarModule,
     FooterModule,
     FormsModule,
-     ReactiveFormsModule
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    NoopAnimationsModule,
   ]
 })
 export class MyNotificationsModule { }
