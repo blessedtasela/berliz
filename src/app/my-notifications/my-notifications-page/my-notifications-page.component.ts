@@ -54,7 +54,7 @@ export class MyNotificationsPageComponent {
     );
   }
 
-  handleSearchResults(results: Notifications[]): void {
+  handleSearchResults(results: Notifications[] = []): void {
     this.notificationData = results;
     this.totalNotifications = results.length;
   }

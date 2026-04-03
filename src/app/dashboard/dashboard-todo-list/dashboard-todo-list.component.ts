@@ -22,7 +22,7 @@ export class DashboardTodoListComponent implements OnInit, OnDestroy {
     private todoState: TodoStateService,
     private rxStomp: RxStompService,
     private ngx: NgxUiLoaderService,
-    private dialog: MatDialog
+    private dialogRef: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -34,17 +34,22 @@ export class DashboardTodoListComponent implements OnInit, OnDestroy {
     });
 
     // Initial load
-    this.todoState.getMyTodos().subscribe(todos => {
-      this.todoState.setmyTodosSubject(todos);
-    });
+    this.loadTodos();
 
     // WebSocket listeners
     this.initializeWebSocketListeners();
   }
 
+
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
     this.wsSub?.unsubscribe();
+  }
+
+  loadTodos() {
+    this.todoState.getMyTodos().subscribe(todos => {
+      this.todoState.setmyTodosSubject(todos);
+    });
   }
 
   // ---------------------------------------------------------
@@ -99,11 +104,17 @@ export class DashboardTodoListComponent implements OnInit, OnDestroy {
   // UI HELPERS
   // ---------------------------------------------------------
   openTodoDetails(todo: TodoList) {
-    this.dialog.open(TodoDetailsModalComponent, {
+    const dialogRef = this.dialogRef.open(TodoDetailsModalComponent, {
       data: todo,
       width: '550px',
       panelClass: 'berliz-dialog'
     });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadTodos(); // <--- REFRESH DASHBOARD HERE
+      }
+    });
+
   }
 
   isDueNow(todo: TodoList): boolean {

@@ -99,6 +99,8 @@ import {
   BellOff,
   RefreshCcw,
   RefreshCw,
+  ArrowRight,
+  ArrowUp,
 } from 'angular-feather/icons';
 
 // Select some icons (use an object, not an array)
@@ -200,6 +202,8 @@ const icons = {
   BellOff,
   RefreshCcw,
   RefreshCw,
+  ArrowRight,
+  ArrowUp,
 };
 
 @NgModule({

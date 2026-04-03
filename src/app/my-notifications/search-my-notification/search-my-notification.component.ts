@@ -1,5 +1,5 @@
-import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
-import { debounceTime, fromEvent, map, switchMap, tap, of, Observable } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, EventEmitter, NgZone, OnInit, Output } from '@angular/core';
+import { debounceTime, fromEvent, map, switchMap, of, Observable } from 'rxjs';
 import { Notifications } from 'src/app/models/Notifications.interface';
 import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -9,137 +9,193 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
   templateUrl: './search-my-notification.component.html',
   styleUrls: ['./search-my-notification.component.css']
 })
-export class SearchMyNotificationComponent {
-
-  myNotifications: Notifications[] = [];
-  filteredMyNotifications: Notifications[] = [];
-
-  searchQuery: string = '';
-  sortBy: string = 'all';
-
-  startDate: string | null = null;
-  endDate: string | null = null;
+export class SearchMyNotificationComponent implements OnInit, AfterViewInit {
 
   @Output() results = new EventEmitter<Notifications[]>();
 
+  myNotifications: Notifications[] = [];
+  filtered: Notifications[] = [];
+
+  searchQuery = '';
+  selectedSorts: string[] = [];
+
+  drawerOpen = false;
+
+  startDate: string | null = null;
+  endDate: string | null = null;
+  dateRangeError: string | null = null;
+
+  // PRIORITY FIRST
   sortOptions = [
-    { key: 'all', label: 'All' },
-    { key: 'today', label: 'Today' },
-    { key: 'yesterday', label: 'Yesterday' },
-    { key: 'week', label: 'This Week' },
-    { key: 'month', label: 'This Month' }
+    { key: 'all', label: 'All', priority: true },
+    { key: 'unread', label: 'Unread', priority: true },
+    { key: 'read', label: 'Read', priority: true },
+    { key: 'today', label: 'Today', priority: true },
+    { key: 'yesterday', label: 'Yesterday', priority: true },
+
+    // SECONDARY
+    { key: 'week', label: 'This Week', priority: false },
+    { key: 'month', label: 'This Month', priority: false },
+    { key: 'range', label: 'Date Range', priority: false }
   ];
 
+  visibleSortOptions: { key: string; label: string; priority: boolean; }[] = [];
+  showMoreButton = true;
+
   constructor(
-    private snackbar: SnackBarService,
     private notificationState: NotificationStateService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private ngZone: NgZone,
+    private snackbar: SnackBarService
   ) { }
 
   ngOnInit(): void {
     this.notificationState.myNotificationData$.subscribe(data => {
       this.myNotifications = data;
-      this.filteredMyNotifications = data;
-      this.results.emit(this.myNotifications || []);
+      this.filtered = data;
+      this.safeEmit(data);
 
+      this.updateVisibleOptions();
     });
   }
 
   ngAfterViewInit(): void {
-    this.initializeSearch();
-  }
-
-  // ---------------------------------------------------------
-  // SEARCH INITIALIZATION
-  // ---------------------------------------------------------
-  initializeSearch(): void {
     const input = this.elementRef.nativeElement.querySelector('input');
-
     if (!input) return;
 
     fromEvent(input, 'keyup')
       .pipe(
         debounceTime(200),
         map((e: any) => e.target.value),
-        switchMap(query => this.search(query))
+        switchMap(q => this.applyAllFilters(q))
       )
-      .subscribe(results => {
-        this.results.emit(results);
-      });
-  }
+      .subscribe(res => this.safeEmit(res));
 
-  // ---------------------------------------------------------
-  // SEARCH LOGIC
-  // ---------------------------------------------------------
-  search(query: string): Observable<Notifications[]> {
-    this.searchQuery = query.toLowerCase();
-
-    let results = this.myNotifications;
-
-    // TEXT FILTER
-    if (this.searchQuery.trim() !== '') {
-      results = results.filter(n =>
-        n.notification.toLowerCase().includes(this.searchQuery)
-      );
-    }
-
-    // SORT FILTER
-    results = this.applySort(results);
-
-    // DATE RANGE FILTER
-    if (this.startDate && this.endDate) {
-      results = this.applyDateRangeFilter(results);
-    }
-
-    this.filteredMyNotifications = results;
-    return of(results);
-  }
-
-  // ---------------------------------------------------------
-  // SORTING LOGIC
-  // ---------------------------------------------------------
-  setSort(key: string): void {
-    this.sortBy = key;
-    this.search(this.searchQuery).subscribe(results => {
-      this.results.emit(results);
+    window.addEventListener('resize', () => {
+      this.ngZone.run(() => this.updateVisibleOptions());
     });
   }
 
-  applySort(list: Notifications[]): Notifications[] {
+  private safeEmit(list: Notifications[]) {
+    this.results.emit(list ?? []);
+  }
+
+  updateVisibleOptions(): void {
+    const width = window.innerWidth;
+
+    if (width < 640) {
+      // PHONES ONLY → show 3 priority chips
+      this.visibleSortOptions = this.sortOptions.slice(0, 3);
+    } else {
+      // TABLETS + LAPTOPS + DESKTOPS → show 5 priority chips
+      this.visibleSortOptions = this.sortOptions.slice(0, 5);
+    }
+
+    this.toggleDrawer(); // Close drawer on resize to prevent stuck open state
+  }
+
+  toggleDrawer(): void {
+    this.drawerOpen = !this.drawerOpen;
+  }
+
+  toggleSort(key: string): void {
+
+    if (key === 'range') {
+      // Date range is additive, not exclusive
+      if (!this.selectedSorts.includes('range')) {
+        this.selectedSorts.push('range');
+      }
+      return; // Do NOT apply instantly
+    }
+
+    // Normal toggle for all other filters
+    if (this.selectedSorts.includes(key)) {
+      this.selectedSorts = this.selectedSorts.filter(k => k !== key);
+    } else {
+      this.selectedSorts.push(key);
+    }
+
+    // Apply instantly for all except date range
+    this.applyAllFilters(this.searchQuery).subscribe(res => this.safeEmit(res));
+  }
+
+  // RESET FILTERS
+  resetFilters(): void {
+    this.selectedSorts = [];
+    this.startDate = null;
+    this.endDate = null;
+
+    this.applyAllFilters(this.searchQuery).subscribe(res => this.safeEmit(res));
+  }
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.resetFilters();
+  }
+
+  // MASTER FILTER PIPELINE
+  applyAllFilters(query: string): Observable<Notifications[]> {
+    let list = [...this.myNotifications];
+
+    // TEXT FILTER
+    if (query.trim() !== '') {
+      list = list.filter(n =>
+        n.notification.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+
+    // SORT FILTERS (read/unread/today/etc)
+    list = this.applySortFilters(list);
+
+    // DATE RANGE (additive)
+    if (this.selectedSorts.includes('range') && this.startDate && this.endDate) {
+      list = this.applyDateRangeFilter(list);
+    }
+
+
+    this.filtered = list ?? [];
+    return of(this.filtered);
+
+  }
+
+  // MULTI-SELECT SORTING
+  applySortFilters(list: Notifications[]): Notifications[] {
     const now = new Date();
 
     return list.filter(n => {
       const d = new Date(n.date);
 
-      switch (this.sortBy) {
-        case 'today':
-          return d.toDateString() === now.toDateString();
+      return this.selectedSorts.every(sort => {
+        switch (sort) {
 
-        case 'yesterday':
-          const y = new Date(now);
-          y.setDate(now.getDate() - 1);
-          return d.toDateString() === y.toDateString();
+          case 'all':
+            return true;
 
-        case 'week':
-          const diff = (now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24);
-          return diff <= 7;
+          case 'unread':
+            return !n.read;
 
-        case 'month':
-          return d.getMonth() === now.getMonth() &&
-            d.getFullYear() === now.getFullYear();
+          case 'read':
+            return n.read;
 
-        default:
-          return true;
-      }
-    });
-  }
+          case 'today':
+            return d.toDateString() === now.toDateString();
 
-  // ---------------------------------------------------------
-  // DATE RANGE FILTER
-  // ---------------------------------------------------------
-  applyDateRange(): void {
-    this.search(this.searchQuery).subscribe(results => {
-      this.results.emit(results);
+          case 'yesterday':
+            const y = new Date(now);
+            y.setDate(now.getDate() - 1);
+            return d.toDateString() === y.toDateString();
+
+          case 'week':
+            return (now.getTime() - d.getTime()) / 86400000 <= 7;
+
+          case 'month':
+            return d.getMonth() === now.getMonth() &&
+              d.getFullYear() === now.getFullYear();
+
+          default:
+            return true;
+        }
+      });
     });
   }
 
@@ -153,16 +209,69 @@ export class SearchMyNotificationComponent {
     });
   }
 
-  // ---------------------------------------------------------
-  // CLEAR SEARCH
-  // ---------------------------------------------------------
-  clearSearch(): void {
-    this.searchQuery = '';
-    this.startDate = null;
-    this.endDate = null;
-    this.sortBy = 'all';
 
-    this.filteredMyNotifications = this.myNotifications;
-    this.results.emit(this.myNotifications);
+  applyDateRange(): void {
+    const error = this.validateDateRange();
+
+    if (error) {
+      this.dateRangeError = error;
+      // this.snackbar.openSnackBar(error, "error");
+      return;
+    }
+
+    this.dateRangeError = null;
+
+    this.applyAllFilters(this.searchQuery)
+      .subscribe(res => this.safeEmit(res));
   }
+
+
+  // 🔍 Pure validation function
+  validateDateRange(): string | null {
+    if (!this.startDate || !this.endDate) {
+      return "Please select both start and end dates.";
+    }
+
+    const start = this.normalizeDate(this.startDate);
+    const end = this.normalizeDate(this.endDate);
+    const today = this.normalizeDate(new Date());
+
+    if (end < start) {
+      return "End date cannot be before the start date.";
+    }
+
+    if (start > today || end > today) {
+      return "Please select dates up to today.";
+    }
+
+    return null; // ✅ valid
+  }
+
+
+  // ✅ Getter (NO side effects)
+  get isDateRangeValid(): boolean {
+    return this.validateDateRange() === null;
+  }
+
+
+  // 🧠 Normalize date (removes time)
+  private normalizeDate(date: Date | string): Date {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+
+  // ✨ Optional: clear error when user changes date
+  onDateChange(): void {
+    this.dateRangeError = null;
+  }
+
+  // ACTIVE FILTER SUMMARY
+  get activeFilters(): string[] {
+    return this.selectedSorts
+      .filter(k => k !== 'range')
+      .map(k => this.sortOptions.find(o => o.key === k)?.label || '');
+  }
+
 }

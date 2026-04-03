@@ -12,6 +12,7 @@ import { QuickSignupComponent } from './quick-signup/quick-signup.component';
 import { NavbarBreadcrumbComponent } from '../navbar/navbar-breadcrumb/navbar-breadcrumb.component';
 import { NavbarModule } from '../navbar/navbar.module';
 import { SharedModule } from '../shared/shared.module';
+import { FooterModule } from "src/app/footer/footer.module";
 
 
 
@@ -31,7 +32,8 @@ import { SharedModule } from '../shared/shared.module';
     IconsModule,
     RouterModule,
     NavbarModule,
-    SharedModule
-  ]
+    SharedModule,
+    FooterModule
+]
 })
 export class LoginModule { }

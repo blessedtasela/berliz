@@ -10,7 +10,7 @@
     </div>
 
     <!-- List -->
-    <div class="max-h-[70vh] overflow-y-auto px-3 py-3 space-y-3">
+    <div class="max-h-[70vh] overflow-y-auto px-3 py-3 space-y-3 text-sm">
 
         <div *ngFor="let n of notifications | slice:0:visibleCount" (click)="openNotification(n)"
             class="p-3 rounded-lg cursor-pointer transition-all duration-200 bg-white hover:bg-gray-50 shadow-sm flex items-start gap-3"

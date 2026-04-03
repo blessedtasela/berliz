@@ -3,15 +3,13 @@
     <!-- SEARCH BAR -->
     <div class="flex items-center">
         <div class="w-full flex items-center gap-3 bg-white border border-gray-200 rounded-full px-4 py-2
-             shadow-sm hover:shadow-md transition-all duration-150">
+         shadow-sm hover:shadow-md transition-all duration-150">
 
-            <i-feather name="search" class="text-red-600" style="width: 20px; height: 20px;">
-            </i-feather>
+            <i-feather name="search" class="text-red-600" style="width: 20px; height: 20px;"></i-feather>
 
             <input [(ngModel)]="searchQuery" type="text" placeholder="Search notifications..." class="w-full bg-transparent text-gray-900 placeholder:text-gray-400
-               focus:outline-none focus:ring-0 font-medium" />
+             focus:outline-none font-medium" />
 
-            <!-- CLEAR BUTTON -->
             <button *ngIf="searchQuery" (click)="clearSearch()" class="text-gray-400 hover:text-gray-600 transition">
                 <i-feather name="x" style="width: 18px; height: 18px;"></i-feather>
             </button>
@@ -19,26 +17,100 @@
         </div>
     </div>
 
-    <!-- SORTING BAR -->
-    <div class="flex items-center gap-2 overflow-x-auto">
+    <!-- ACTIVE FILTER SUMMARY -->
+    <div *ngIf="activeFilters.length > 0 || selectedSorts.includes('range')" class="text-center text-xs text-gray-600">
 
-        <button *ngFor="let option of sortOptions" (click)="setSort(option.key)" [ngClass]="{
-        'bg-red-600 text-white shadow-md': sortBy === option.key,
-        'bg-gray-100 text-gray-700': sortBy !== option.key
-      }" class="px-4 py-1 rounded-full text-sm font-semibold transition-all whitespace-nowrap">
+        <span *ngIf="activeFilters.length > 0">
+            Active: {{ activeFilters.join(', ') }}
+        </span>
+
+        <span *ngIf="selectedSorts.includes('range') && startDate && endDate">
+            • Date Range ({{ startDate }} → {{ endDate }})
+        </span>
+
+    </div>
+
+    <!-- RESET FILTERS CHIP -->
+    <div *ngIf="selectedSorts.length > 0 || searchQuery" class="flex justify-center">
+        <button (click)="resetFilters()" class="px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-xs font-semibold">
+            Reset Filters
+        </button>
+    </div>
+
+    <!-- SORTING CHIPS (PRIORITY + RESPONSIVE) -->
+    <div class="flex items-center justify-center gap-2 flex-nowrap">
+
+        <button *ngFor="let option of visibleSortOptions" (click)="toggleSort(option.key)" [ngClass]="{
+              'bg-red-600 text-white shadow-md': selectedSorts.includes(option.key),
+              'bg-gray-100 text-gray-700': !selectedSorts.includes(option.key)
+            }"
+            class="px-3 py-1 rounded-full text-xs font-semibold transition-all whitespace-nowrap flex items-center gap-1">
+
+            <!-- CHECKMARK -->
+            <i-feather *ngIf="selectedSorts.includes(option.key)" name="check"
+                style="width: 12px; height: 12px;"></i-feather>
+
             {{ option.label }}
         </button>
 
-        <!-- DATE RANGE PICKER -->
-        <div class="flex items-center gap-2 ml-2">
-            <input type="date" [(ngModel)]="startDate" class="border border-gray-300 rounded-lg px-2 py-1 text-sm" />
+        <!-- MORE BUTTON -->
+        <button *ngIf="showMoreButton" (click)="toggleDrawer()"
+            class="px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-xs font-semibold">
+            •••
+        </button>
 
-            <input type="date" [(ngModel)]="endDate" class="border border-gray-300 rounded-lg px-2 py-1 text-sm" />
+    </div>
 
-            <button (click)="applyDateRange()"
-                class="px-3 py-1 bg-black text-white rounded-lg text-sm font-semibold hover:bg-gray-800 transition">
-                Apply
+    <!-- EXPANDED SORTING DRAWER -->
+    <div *ngIf="drawerOpen" class="bg-white border border-gray-200 rounded-xl p-4 shadow-md">
+
+        <div class="flex flex-wrap gap-2 items-center justify-center">
+
+            <button *ngFor="let option of sortOptions" (click)="toggleSort(option.key)" [ngClass]="{
+                'bg-red-600 text-white shadow-md': selectedSorts.includes(option.key),
+                'bg-gray-100 text-gray-700': !selectedSorts.includes(option.key)
+              }"
+                class="px-3 py-1 rounded-full text-xs font-semibold transition-all whitespace-nowrap flex items-center gap-1">
+
+                <!-- CHECKMARK -->
+                <i-feather *ngIf="selectedSorts.includes(option.key)" name="check"
+                    style="width: 12px; height: 12px;"></i-feather>
+
+                {{ option.label }}
             </button>
+
+        </div>
+
+        <!-- DATE RANGE -->
+        <div *ngIf="selectedSorts.includes('range')" class="flex flex-col items-center gap-2 mt-3">
+
+            <div class="flex items-center gap-2">
+
+                <input type="date" [(ngModel)]="startDate" [ngClass]="{
+             'border-red-500': dateRangeError,
+             'border-gray-300': !dateRangeError
+           }" class="border rounded-lg px-2 py-1 text-xs" />
+
+                <i-feather name="arrow-right" class="text-gray-500" style="width: 12px; height: 12px;"></i-feather>
+
+                <input type="date" [(ngModel)]="endDate" [ngClass]="{
+             'border-red-500': dateRangeError,
+             'border-gray-300': !dateRangeError
+           }" class="border rounded-lg px-2 py-1 text-xs" />
+
+            </div>
+
+            <!-- INLINE ERROR MESSAGE -->
+            <div *ngIf="dateRangeError" class="text-red-600 text-xs font-medium text-center">
+                {{ dateRangeError }}
+            </div>
+
+            <!-- APPLY BUTTON -->
+            <button (click)="applyDateRange()"
+                class="mt-2 w-full bg-black hover:bg-gray-800 text-white rounded-lg py-2 text-xs font-semibold transition">
+                Apply Date Range
+            </button>
+
         </div>
 
     </div>
