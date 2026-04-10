@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Notifications } from 'src/app/models/Notifications.interface';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -11,96 +10,87 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
   templateUrl: './my-notifications-page.component.html',
   styleUrls: ['./my-notifications-page.component.css']
 })
-export class MyNotificationsPageComponent {
-  notificationData: Notifications[] = [];
-  totalNotifications: number = 0;
-  notificationsLength: number = 0;
-  allNotificationData: Notifications[] = [];
-  allTotalNotifications: number = 0;
-  allNotificationsLength: number = 0;
-  searchComponent: string = 'myNotification';
-  isSearch: boolean = true;
-  subscriptions: Subscription[] = [];
-  isAdmin: boolean = false;
+export class MyNotificationsPageComponent implements OnInit, OnDestroy {
 
-  constructor(private ngxService: NgxUiLoaderService,
+  notificationData: Notifications[] = [];   // displayed list
+  rawNotifications: Notifications[] = [];   // full list from server
+  totalNotifications = 0;
+
+  isSearch = false;
+  isAdmin = false;
+
+  private subscriptions: Subscription[] = [];
+
+  constructor(
     private notificationStateService: NotificationStateService,
     private authService: AuthenticationService,
-    private rxStompService: RxStompService) {
-  }
+    private rxStompService: RxStompService
+  ) { }
 
   ngOnInit(): void {
-    this.handleEmitEvent()
-    this.isAdmin = this.authService.isAdmin()
-    this.watchReadNotification()
-    this.watchNotification()
-    this.watchGetNotificationFromMap()
-    this.watchNotificationBulkAction()
-    this.watchDeleteNotification()
+    this.isAdmin = this.authService.isAdmin();
+
+    // Initial load
+    this.loadNotifications();
+
+    // Watch all websocket events with one helper
+    this.webSocketListeners();
   }
 
-  ngOnDestroy() {
-    this.subscriptions.forEach(subscription => (subscription.unsubscribe()));
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  handleEmitEvent() {
+  /** Load notifications from state service */
+  private loadNotifications(): void {
     this.subscriptions.push(
-      this.notificationStateService.getMyNotifications().subscribe((myNotifications) => {
-        this.notificationData = myNotifications;
-        this.totalNotifications = myNotifications.length
-        this.notificationsLength = myNotifications.length
+      this.notificationStateService.getMyNotifications().subscribe(myNotifications => {
+        this.rawNotifications = myNotifications;
+
+        // Only overwrite UI if user is NOT filtering
+        this.rawNotifications = myNotifications;
+
+        // ONLY update UI if no filter is active
+        if (!this.isSearch) {
+          this.notificationData = [...myNotifications];
+          this.totalNotifications = myNotifications.length;
+        }
+
         this.notificationStateService.setmyNotificationsSubject(myNotifications);
-      }),
+      })
     );
   }
 
-  handleSearchResults(results: Notifications[] = []): void {
+  /** Generic websocket watcher */
+  private watchWebsocket(topic: string): void {
+    this.subscriptions.push(
+      this.rxStompService.watch(topic).subscribe(() => {
+        this.loadNotifications();
+      })
+    );
+  }
+
+  /** Child component sends filtered results */
+  handleSearchResults(results: Notifications[]): void {
+    this.isSearch = true;
     this.notificationData = results;
     this.totalNotifications = results.length;
+    console.log('PARENT RECEIVED:', this.notificationData.length); // 👈 add this
   }
 
-  handleAllSearchResults(results: Notifications[]): void {
-    this.allNotificationData = results;
-    this.allTotalNotifications = results.length;
+  /** Reset search and show full list again */
+  clearSearch(): void {
+    this.isSearch = false;
+    this.notificationData = this.rawNotifications;
+    this.totalNotifications = this.rawNotifications.length;
   }
 
-  emitData() {
-    this.handleEmitEvent();
-  }
-
-  watchGetNotificationFromMap() {
-    this.rxStompService.watch('/topic/getNotificationFromMap').subscribe((message) => {
-      this.handleEmitEvent();
-    });
-  }
-
-  watchNotification() {
-    this.rxStompService.watch('/topic/notification').subscribe((message) => {
-      this.handleEmitEvent();
-    });
-  }
-
-  watchNotificationBulkAction() {
-    this.rxStompService.watch('/topic/notificationBulkAction').subscribe((message) => {
-      this.handleEmitEvent();
-    });
-  }
-
-  watchReadNotification() {
-    this.rxStompService.watch('/topic/readNotification').subscribe((message) => {
-      this.handleEmitEvent();
-    });
-  }
-
-  watchDeleteNotification() {
-    this.rxStompService.watch('/topic/deleteNotification').subscribe((message) => {
-      this.handleEmitEvent();
-      // const receivedNewsletter: Notifications = JSON.parse(message.body);
-      // this.notificationData = this.notificationData.filter(Notification => Notification.id !== receivedNewsletter.id);
-      // this.totalNotifications = this.notificationData.length;
-    });
+  webSocketListeners() {
+    this.watchWebsocket('/topic/getNotificationFromMap');
+    this.watchWebsocket('/topic/notification');
+    this.watchWebsocket('/topic/notificationBulkAction');
+    this.watchWebsocket('/topic/readNotification');
+    this.watchWebsocket('/topic/deleteNotification');
   }
 
 }
-
-

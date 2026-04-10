@@ -101,6 +101,14 @@ import {
   RefreshCw,
   ArrowRight,
   ArrowUp,
+  Plus,
+  PlusCircle,
+  Edit2,
+  Edit3,
+  FilePlus,
+  FolderPlus,
+  Folder,
+  File,
 } from 'angular-feather/icons';
 
 // Select some icons (use an object, not an array)
@@ -204,6 +212,14 @@ const icons = {
   RefreshCw,
   ArrowRight,
   ArrowUp,
+  Plus,
+  PlusCircle,
+  Edit2,
+  Edit3,
+  FilePlus,
+  FolderPlus,
+  Folder,
+  File,
 };
 
 @NgModule({

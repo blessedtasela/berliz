@@ -53,21 +53,29 @@ export class SearchMyNotificationComponent implements OnInit, AfterViewInit {
     this.notificationState.myNotificationData$.subscribe(data => {
       this.myNotifications = data;
       this.filtered = data;
-      this.safeEmit(data);
+      // this.safeEmit(data);
 
       this.updateVisibleOptions();
     });
   }
 
   ngAfterViewInit(): void {
+    this.listenToSearchInput();
+  }
+
+  listenToSearchInput(): void {
     const input = this.elementRef.nativeElement.querySelector('input');
     if (!input) return;
 
     fromEvent(input, 'keyup')
       .pipe(
         debounceTime(200),
-        map((e: any) => e.target.value),
-        switchMap(q => this.applyAllFilters(q))
+        map((e: any) => {
+          this.searchQuery = e.target.value; // 🔥 KEEP STATE IN SYNC
+          return e.target.value;
+        }),
+
+        switchMap(() => this.applyAllFilters(this.searchQuery))
       )
       .subscribe(res => this.safeEmit(res));
 
@@ -77,6 +85,7 @@ export class SearchMyNotificationComponent implements OnInit, AfterViewInit {
   }
 
   private safeEmit(list: Notifications[]) {
+    console.log('🔥 EMIT:', list.length);
     this.results.emit(list ?? []);
   }
 
@@ -160,14 +169,30 @@ export class SearchMyNotificationComponent implements OnInit, AfterViewInit {
 
   // MULTI-SELECT SORTING
   applySortFilters(list: Notifications[]): Notifications[] {
+    console.log('Applying sort filters:', this.selectedSorts);
+    console.log('Selected sorts:', this.selectedSorts);
+    if (this.selectedSorts.length === 0) {
+      return list;
+    }
+
     const now = new Date();
 
     return list.filter(n => {
       const d = new Date(n.date);
+      const normalize = (date: Date) => {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        return d.getTime();
+      };
 
-      return this.selectedSorts.every(sort => {
+      const today = normalize(now);
+      const yesterday = normalize(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1));
+      const itemDate = normalize(d);
+
+      return this.selectedSorts.some(sort => {
+
         switch (sort) {
-
+          // default to not showing item if sort key is unrecognized
           case 'all':
             return true;
 
@@ -181,7 +206,7 @@ export class SearchMyNotificationComponent implements OnInit, AfterViewInit {
             return d.toDateString() === now.toDateString();
 
           case 'yesterday':
-            const y = new Date(now);
+            const y = new Date();
             y.setDate(now.getDate() - 1);
             return d.toDateString() === y.toDateString();
 
@@ -198,6 +223,8 @@ export class SearchMyNotificationComponent implements OnInit, AfterViewInit {
       });
     });
   }
+
+
 
   applyDateRangeFilter(list: Notifications[]): Notifications[] {
     const start = new Date(this.startDate!);

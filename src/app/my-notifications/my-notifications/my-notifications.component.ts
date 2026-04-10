@@ -78,12 +78,11 @@ export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
   // ---------------------------------------------------------
   ngOnInit(): void {
     this.subscribeToOutsideClicks();
-    this.initializeWebSocketListeners();
+    // this.initializeWebSocketListeners();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['notificationData'] && this.notificationData.length > 0) {
-      // Reset full list from parent input
+    if (changes['notificationData']) {
       this.allNotificationData = [...this.notificationData];
       this.notificationsLength = this.allNotificationData.length;
       this.totalNotifications = this.allNotificationData.length;
@@ -107,52 +106,32 @@ export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
 
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      if (this.focusedIndex === null) this.focusedIndex = 0;
-      else this.focusedIndex = Math.min(this.focusedIndex + 1, flatList.length - 1);
+      if (this.focusedIndex === null) {
+        this.focusedIndex = flatList[0]?.index ?? null;
+      } else {
+        const currentPos = flatList.findIndex(n => n.index === this.focusedIndex);
+        const next = Math.min(currentPos + 1, flatList.length - 1);
+        this.focusedIndex = flatList[next]?.index ?? this.focusedIndex;
+      }
     }
 
     if (event.key === 'ArrowUp') {
       event.preventDefault();
-      if (this.focusedIndex === null) this.focusedIndex = 0;
-      else this.focusedIndex = Math.max(this.focusedIndex - 1, 0);
+      if (this.focusedIndex === null) {
+        this.focusedIndex = flatList[0]?.index ?? null;
+      } else {
+        const currentPos = flatList.findIndex(n => n.index === this.focusedIndex);
+        const prev = Math.max(currentPos - 1, 0);
+        this.focusedIndex = flatList[prev]?.index ?? this.focusedIndex;
+      }
     }
 
     if (event.key === 'Enter' && this.focusedIndex !== null) {
-      const n = flatList[this.focusedIndex];
+      const n = flatList.find(item => item.index === this.focusedIndex);
       if (n) this.readNotification(n.id);
     }
   }
 
-  // ---------------------------------------------------------
-  // WEBSOCKET LISTENER
-  // ---------------------------------------------------------
-  initializeWebSocketListeners(): void {
-    const sub = this.rxStomp.watch('/topic/notifications').subscribe(msg => {
-      const event = JSON.parse(msg.body);
-
-      switch (event.type) {
-        case 'ADD':
-          this.allNotificationData.unshift(event.data);
-          break;
-
-        case 'UPDATE':
-          this.updateNotification(event.data);
-          break;
-
-        case 'DELETE':
-          this.allNotificationData = this.allNotificationData.filter(n => n.id !== event.data.id);
-          break;
-      }
-
-      this.notificationsLength = this.allNotificationData.length;
-      this.totalNotifications = this.allNotificationData.length;
-
-      this.updatePage();
-      this.notificationState.setmyNotificationsSubject([...this.allNotificationData]);
-    });
-
-    this.subs.push(sub);
-  }
 
   updateNotification(updated: Notifications): void {
     const index = this.allNotificationData.findIndex(n => n.id === updated.id);
@@ -456,4 +435,31 @@ export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
       this.updatePage();
     }
   }
+
+  getNotificationMeta(n: Notifications): { icon: string; color: string; label: string } {
+    const text = n.notification.toLowerCase();
+
+    if (text.includes('cancelled')) {
+      return { icon: 'x-circle', color: 'text-red-600', label: 'Cancelled' };
+    }
+
+    if (text.includes('completed')) {
+      return { icon: 'check-circle', color: 'text-green-600', label: 'Completed' };
+    }
+
+    if (text.includes('pending')) {
+      return { icon: 'clock', color: 'text-amber-500', label: 'Pending' };
+    }
+
+    if (text.includes('added') || text.includes('set a todo') || text.includes('have added')) {
+      return { icon: 'plus-circle', color: 'text-blue-600', label: 'New todo' };
+    }
+
+    if (text.includes('update')) {
+      return { icon: 'edit-3', color: 'text-purple-600', label: 'Updated' };
+    }
+
+    return { icon: 'bell', color: 'text-gray-500', label: 'Notification' };
+  }
+
 }
