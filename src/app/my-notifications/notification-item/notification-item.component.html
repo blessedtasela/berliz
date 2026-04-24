@@ -13,9 +13,10 @@
             <i-feather [name]="meta.icon" [ngClass]="meta.color" class="w-4 h-4 mt-1"></i-feather>
 
             <div class="flex-1">
-                <p class="text-gray-900 text-sm">
-                    {{ item.notification }}
+                <p class="text-gray-900 text-sm" [innerHTML]="highlight(item.notification, searchQuery)">
+                    
                 </p>
+
                 <p class="text-gray-500 text-xs mt-1">
                     {{ item.date | date:'short' }}
                 </p>

@@ -22,7 +22,7 @@ export class NotificationStateService {
   constructor(
     private notificationService: NotificationService,
     private snackbarService: SnackBarService
-  ) {}
+  ) { }
 
   // SETTERS
   setMyNotifications(data: Notifications[]) {
@@ -69,63 +69,69 @@ export class NotificationStateService {
 
   // FILTERING LOGIC
   filter(state: FilterState): Notifications[] {
-  let list = [...(this.myNotificationSubject.value ?? [])];
+    let list = [...(this.myNotificationSubject.value ?? [])];
 
-  // -----------------------------
-  // TEXT SEARCH
-  // -----------------------------
-  if (state.query?.trim()) {
-    const q = state.query.toLowerCase();
-    list = list.filter(n =>
-      n.notification.toLowerCase().includes(q)
-    );
+    // -----------------------------
+    // TEXT SEARCH
+    // -----------------------------
+    if (state.query?.trim()) {
+      const words = state.query
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(w => w.length > 0);
+
+      list = list.filter(n => {
+        const text = n.notification.toLowerCase();
+        return words.every(w => text.includes(w));
+      });
+    }
+
+
+    // -----------------------------
+    // EXACT DATE FILTER
+    // -----------------------------
+    if (state.selectedSorts?.includes('exact-date') && state.exactDate) {
+      const target = new Date(state.exactDate).setHours(0, 0, 0, 0);
+
+      list = list.filter(n => {
+        const d = new Date(n.date).setHours(0, 0, 0, 0);
+        return d === target;
+      });
+    }
+
+    // -----------------------------
+    // DATE RANGE FILTER
+    // -----------------------------
+    if (
+      state.selectedSorts?.includes('range') &&
+      state.startDate &&
+      state.endDate
+    ) {
+      const start = new Date(state.startDate).setHours(0, 0, 0, 0);
+      const end = new Date(state.endDate).setHours(23, 59, 59, 999);
+
+      list = list.filter(n => {
+        const d = new Date(n.date).getTime();
+        return d >= start && d <= end;
+      });
+    }
+
+    // -----------------------------
+    // SORTING
+    // -----------------------------
+    if (state.selectedSorts?.includes('sort-by-date')) {
+      list = list.sort((a, b) => {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      });
+    }
+
+    return list;
   }
-
-  // -----------------------------
-  // EXACT DATE FILTER
-  // -----------------------------
-  if (state.selectedSorts?.includes('exact-date') && state.exactDate) {
-    const target = new Date(state.exactDate).setHours(0, 0, 0, 0);
-
-    list = list.filter(n => {
-      const d = new Date(n.date).setHours(0, 0, 0, 0);
-      return d === target;
-    });
-  }
-
-  // -----------------------------
-  // DATE RANGE FILTER
-  // -----------------------------
-  if (
-    state.selectedSorts?.includes('range') &&
-    state.startDate &&
-    state.endDate
-  ) {
-    const start = new Date(state.startDate).setHours(0, 0, 0, 0);
-    const end = new Date(state.endDate).setHours(23, 59, 59, 999);
-
-    list = list.filter(n => {
-      const d = new Date(n.date).getTime();
-      return d >= start && d <= end;
-    });
-  }
-
-  // -----------------------------
-  // SORTING
-  // -----------------------------
-  if (state.selectedSorts?.includes('sort-by-date')) {
-    list = list.sort((a, b) => {
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
-    });
-  }
-
-  return list;
-}
 
 
   private applySortFilters(list: Notifications[], state: FilterState): Notifications[] {
     const now = new Date();
-    const normalize = (d: Date) => new Date(d.setHours(0,0,0,0)).getTime();
+    const normalize = (d: Date) => new Date(d.setHours(0, 0, 0, 0)).getTime();
 
     const today = normalize(new Date());
     const yesterday = normalize(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1));
@@ -136,15 +142,15 @@ export class NotificationStateService {
 
       return state.selectedSorts.some(sort => {
         switch (sort) {
-          case 'all':        return true;
-          case 'unread':     return !n.read;
-          case 'read':       return n.read;
-          case 'today':      return itemDate === today;
-          case 'yesterday':  return itemDate === yesterday;
-          case 'week':       return (now.getTime() - baseDate.getTime()) <= 7 * 86400000;
-          case 'month':      return baseDate.getMonth() === now.getMonth();
-          case 'recent':     return (now.getTime() - baseDate.getTime()) <= 3 * 86400000;
-          default:           return false;
+          case 'all': return true;
+          case 'unread': return !n.read;
+          case 'read': return n.read;
+          case 'today': return itemDate === today;
+          case 'yesterday': return itemDate === yesterday;
+          case 'week': return (now.getTime() - baseDate.getTime()) <= 7 * 86400000;
+          case 'month': return baseDate.getMonth() === now.getMonth();
+          case 'recent': return (now.getTime() - baseDate.getTime()) <= 3 * 86400000;
+          default: return false;
         }
       });
     });

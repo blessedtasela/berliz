@@ -14,6 +14,7 @@ export class NotificationListComponent {
   @Input() endIndex = 0;
   @Input() total = 0;
   @Input() selectAll = false;
+  @Input() searchQuery = '';
 
   @Output() prev = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();

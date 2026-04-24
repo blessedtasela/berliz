@@ -8,6 +8,7 @@ import { Notifications } from 'src/app/models/Notifications.interface';
 })
 export class NotificationSectionComponent {
   @Input() title = '';
+  @Input() searchQuery = '';
   @Input() items: (Notifications & { index: number })[] = [];
 
   @Output() open = new EventEmitter<Notifications>();

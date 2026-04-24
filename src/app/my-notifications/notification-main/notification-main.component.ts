@@ -1,5 +1,5 @@
 // notification-main.component.ts
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NotificationSection, Notifications } from 'src/app/models/Notifications.interface';
@@ -15,7 +15,7 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
   templateUrl: './notification-main.component.html'
 })
 export class NotificationMainComponent implements OnInit, OnDestroy {
-
+  @Input() searchQuery = '';
   allNotifications: Notifications[] = [];
   filteredNotifications: Notifications[] = [];
   pagedNotifications: Notifications[] = [];
@@ -61,7 +61,6 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
     this.updatePage();
     this.selectedNotificationIds = [];
   }
-
 
   // pagination
   get notificationsLength() {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FilterState } from 'src/app/models/FilterState.interface';
 
 @Component({
@@ -7,9 +7,10 @@ import { FilterState } from 'src/app/models/FilterState.interface';
 })
 export class SearchPanelComponent implements OnInit {
 
+  @Input() searchQuery: string = '';
+  @Output() searchQueryChange = new EventEmitter<string>();
   @Output() stateChange = new EventEmitter<FilterState>();
 
-  searchQuery = '';
   selectedSorts: string[] = [];
   startDate: string | null = null;
   endDate: string | null = null;
@@ -63,8 +64,10 @@ export class SearchPanelComponent implements OnInit {
 
   onQueryChange(value: string) {
     this.searchQuery = value;
+    this.searchQueryChange.emit(value); // <-- THIS updates notification-main
     this.emitState();
   }
+
 
   clearSearch() {
     this.searchQuery = '';

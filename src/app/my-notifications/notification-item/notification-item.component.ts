@@ -8,6 +8,7 @@ import { Notifications } from 'src/app/models/Notifications.interface';
 })
 export class NotificationItemComponent {
   @Input() item!: Notifications;
+  @Input() searchQuery: string = '';
 
   @Output() open = new EventEmitter<Notifications>();
   @Output() toggle = new EventEmitter<Notifications>();
@@ -32,4 +33,23 @@ export class NotificationItemComponent {
     }
     return { icon: 'bell', color: 'text-gray-500', label: 'Notification' };
   }
+
+  highlight(text: string, query: string): string {
+  if (!query) return text;
+
+  // Split into words, escape regex chars
+  const words = query
+    .split(/\s+/)
+    .filter(w => w.trim().length > 0)
+    .map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+
+  if (words.length === 0) return text;
+
+  const regex = new RegExp(words.join('|'), 'gi');
+
+  return text.replace(regex, match =>
+    `<span class="text-red-600 font-semibold">${match}</span>`
+  );
+}
+
 }

@@ -5,7 +5,8 @@
         {{ title }}
     </h3>
     <hr>
-    <notification-item *ngFor="let item of items" [item]="item" (open)="open.emit(item)" (toggle)="toggle.emit(item)">
+    <notification-item *ngFor="let item of items" [item]="item" (open)="open.emit(item)" (toggle)="toggle.emit(item)"
+        [searchQuery]="searchQuery">
     </notification-item>
 
 </div>

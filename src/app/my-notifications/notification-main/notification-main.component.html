@@ -2,14 +2,14 @@
 <div class="flex flex-col gap-4">
 
     <!-- Search / filters -->
-    <app-search-panel (stateChange)="onFilterStateChange($event)">
+    <app-search-panel (stateChange)="onFilterStateChange($event)" [(searchQuery)] = "searchQuery">
     </app-search-panel>
 
     <!-- List -->
     <notification-list [sections]="sections" [startIndex]="startIndex" [endIndex]="endIndex"
         [total]="notificationsLength" [selectAll]="isSelectAllChecked()" (prev)="prevPage()" (next)="nextPage()"
         (toggleSelectAll)="onToggleSelectAll()" (bulkAction)="onBulkAction($event)" (open)="onOpenNotification($event)"
-        (toggle)="onToggleItem($event)">
+        (toggle)="onToggleItem($event)" [searchQuery] = "searchQuery">
     </notification-list>
 
 </div>

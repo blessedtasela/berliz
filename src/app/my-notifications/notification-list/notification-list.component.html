@@ -12,7 +12,7 @@
 
     <!-- Sections -->
     <div class="flex flex-col gap-6 px-3 py-3">
-        <notification-section *ngFor="let section of sections" [title]="section.label" [items]="section.items"
+        <notification-section *ngFor="let section of sections" [title]="section.label" [items]="section.items" [searchQuery]="searchQuery"
             (open)="open.emit($event)" (toggle)="toggle.emit($event)">
         </notification-section>
     </div>
