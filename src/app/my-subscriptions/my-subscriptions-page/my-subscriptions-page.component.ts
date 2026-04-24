@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SubscriptionStateService } from 'src/app/services/subscription-state.service';
 
@@ -25,7 +25,7 @@ export class MySubscriptionsPageComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private subscriptionStateService: SubscriptionStateService,
-    private authService: AuthenticationService,
+    private authService: AuthService,
     private rxStompService: RxStompService) {
   }
 

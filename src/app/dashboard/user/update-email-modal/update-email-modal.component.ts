@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Users } from 'src/app/models/users.interface';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
@@ -31,7 +31,7 @@ export class UpdateEmailModalComponent {
     private snackbarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private rxStompService: RxStompService,
-    private authService: AuthenticationService) {
+    private authService: AuthService) {
     this.userData = this.data.userData;
   }
 

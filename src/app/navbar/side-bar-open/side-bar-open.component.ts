@@ -3,6 +3,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NavigationEnd, Router } from '@angular/router';
 import { forkJoin, merge, Subject } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
+import { AuthService } from 'src/app/services/auth.service';
 import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -43,7 +44,8 @@ export class SideBarOpenComponent {
     private userStateService: UserStateService,
     private snackbarService: SnackBarService,
     private notificationStateService: NotificationStateService,
-    private rxStompService: RxStompService
+    private rxStompService: RxStompService,
+    private authService: AuthService
   ) {
     this.currentRoute = this.router.url;
 
@@ -58,6 +60,9 @@ export class SideBarOpenComponent {
   }
 
   ngOnInit() {
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
     this.onResize();
     this.refreshUserData();
 
@@ -84,7 +89,7 @@ export class SideBarOpenComponent {
       });
   }
 
-  
+
   // -----------------------------
   // ROUTE HELPERS
   // -----------------------------

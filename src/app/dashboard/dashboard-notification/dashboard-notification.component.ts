@@ -9,6 +9,7 @@ import { NotificationDetailsComponent } from 'src/app/shared/notification-detail
 import { TimeAgoPipe } from 'src/app/shared/pipes/time-ago.pipe';
 import { NotificationService } from 'src/app/services/notification.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-dashboard-notification',
@@ -24,12 +25,15 @@ export class DashboardNotificationComponent implements OnInit, OnDestroy {
     private rxStompService: RxStompService,
     private notificationStateService: NotificationStateService,
     private dialog: MatDialog,
-    private router: Router,
+    private authService: AuthService,
     private notificationService: NotificationService,
     private snackbarService: SnackBarService
   ) { }
 
   ngOnInit(): void {
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
     this.loadInitialNotifications();
     this.watchNotificationEvents();
   }

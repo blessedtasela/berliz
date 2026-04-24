@@ -1,1 +1,43 @@
-<p>search-panel works!</p>
+<div class="w-full px-3 py-3 flex flex-col gap-3">
+
+  <app-search-bar
+    [(query)]="searchQuery"
+    (queryChange)="onQueryChange($event)"
+    (clear)="clearSearch()">
+  </app-search-bar>
+
+  <app-filter-summary
+    [activeFilters]="activeFilters"
+    [selectedSorts]="selectedSorts"
+    [startDate]="startDate"
+    [endDate]="endDate"
+    [hasSearch]="!!searchQuery"
+    (reset)="resetFilters()">
+  </app-filter-summary>
+
+  <app-filter-chips
+    [visibleSortOptions]="visibleSortOptions"
+    [selectedSorts]="selectedSorts"
+    [showMoreButton]="showMoreButton"
+    (toggleSort)="toggleSort($event)"
+    (toggleDrawer)="toggleDrawer()">
+  </app-filter-chips>
+
+  <app-date-range-drawer
+    [drawerOpen]="drawerOpen"
+    [sortOptions]="sortOptions"
+    [selectedSorts]="selectedSorts"
+    [startDate]="startDate"
+    [endDate]="endDate"
+    [dateRangeError]="dateRangeError"
+     [exactDate]="exactDate"
+    [exactDateError]="exactDateError"
+    (toggleSort)="toggleSort($event)"
+    (startDateChange)="startDate = $event; onDateRangeChange()"
+    (endDateChange)="endDate = $event; onDateRangeChange()"
+    (applyDateRange)="applyDateRange()"
+      (exactDateChange)="exactDate = $event; onDateRangeChange()"
+    (applyExactDate)="applyExactDate()">
+  </app-date-range-drawer>
+
+</div>

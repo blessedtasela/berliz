@@ -1,0 +1,12 @@
+<!-- notification-pagination.component.html -->
+<div class="flex items-center gap-2 text-gray-600 text-sm font-sans">
+    <span>{{ startIndex }} - {{ endIndex }} of {{ total }}</span>
+
+    <button class="p-1 rounded hover:bg-gray-200" (click)="prev.emit()">
+        <i-feather name="chevron-left" class="w-4 h-4"></i-feather>
+    </button>
+
+    <button class="p-1 rounded hover:bg-gray-200" (click)="next.emit()">
+        <i-feather name="chevron-right" class="w-4 h-4"></i-feather>
+    </button>
+</div>

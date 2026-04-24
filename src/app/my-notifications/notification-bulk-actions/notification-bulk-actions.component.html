@@ -1,0 +1,35 @@
+<!-- Bulk Actions -->
+<div class="relative flex items-center gap-2">
+
+    <!-- Select All -->
+    <button (click)="toggleMenu($event)"  class="w-5 h-5 rounded-full border flex items-center justify-center
+               border-gray-400 hover:border-red-500 bg-white transition">
+        <div *ngIf="selectAll" class="w-3 h-3 rounded-full bg-red-500"></div>
+    </button>
+
+    <!-- Bulk menu trigger -->
+    <button (click)="toggleMenu($event)" class="cursor-pointer text-gray-700 hover:text-black transition">
+        <i-feather name="more-horizontal" class="align-middle" style="width: 18px; height: 18px;"></i-feather>
+    </button>
+
+    <!-- Bulk Menu -->
+    <div *ngIf="menuOpen" (click)="$event.stopPropagation()"
+        class="absolute right-0 mt-10 bg-white border border-gray-300 rounded-lg shadow-lg w-40 text-sm z-20">
+
+        <p class="px-3 py-2 font-semibold text-gray-700 border-b">
+            With selected:
+        </p>
+
+        <p (click)="onBulk('read')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
+            Mark as read
+        </p>
+
+        <p (click)="onBulk('unread')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
+            Mark as unread
+        </p>
+
+        <p (click)="onBulk('delete')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer text-red-600">
+            Delete
+        </p>
+    </div>
+</div>

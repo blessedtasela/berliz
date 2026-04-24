@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Observable } from 'rxjs';
 import { Users } from 'src/app/models/users.interface';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TodoService } from 'src/app/services/todo.service';
 import { UserStateService } from 'src/app/services/user-state.service';
@@ -32,7 +32,7 @@ export class TodaysTodoModalComponent {
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private todoService: TodoService,
-    private authService: AuthenticationService,
+    private authService: AuthService,
     private userStateService: UserStateService,
     private router: Router
   ) {}

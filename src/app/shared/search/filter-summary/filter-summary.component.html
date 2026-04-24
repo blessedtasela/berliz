@@ -1,1 +1,18 @@
-<p>filter-summary works!</p>
+<div *ngIf="activeFilters.length > 0 || selectedSorts.includes('range')" 
+     class="text-center text-xs text-gray-600">
+
+  <span *ngIf="activeFilters.length > 0">
+    Active: {{ activeFilters.join(', ') }}
+  </span>
+
+  <span *ngIf="selectedSorts.includes('range') && startDate && endDate">
+    • Date Range ({{ startDate }} → {{ endDate }})
+  </span>
+</div>
+
+<div *ngIf="selectedSorts.length > 0 || hasSearch" class="flex justify-center">
+  <button (click)="reset.emit()" 
+          class="px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-xs font-semibold">
+    Reset Filters
+  </button>
+</div>

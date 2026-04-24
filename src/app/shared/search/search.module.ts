@@ -6,6 +6,9 @@ import { FilterSummaryComponent } from './filter-summary/filter-summary.componen
 import { FilterChipsComponent } from './filter-chips/filter-chips.component';
 import { DateRangeDrawerComponent } from './date-range-drawer/date-range-drawer.component';
 import { DateJoinedDrawerComponent } from './date-joined-drawer/date-joined-drawer.component';
+import { IconsModule } from 'src/app/icons/icons.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
@@ -19,7 +22,15 @@ import { DateJoinedDrawerComponent } from './date-joined-drawer/date-joined-draw
     DateJoinedDrawerComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    IconsModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    NoopAnimationsModule,
+  ],
+  exports: [
+    SearchPanelComponent
   ]
 })
 export class SearchModule { }

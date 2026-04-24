@@ -1,1 +1,67 @@
-<p>date-range-drawer works!</p>
+<div *ngIf="drawerOpen" class="bg-white border border-gray-200 rounded-xl p-4 shadow-md">
+
+    <div class="flex flex-wrap gap-2 items-center justify-center">
+
+        <button *ngFor="let option of sortOptions" (click)="toggleSort.emit(option.key)" [ngClass]="{
+              'bg-red-600 text-white shadow-md': selectedSorts.includes(option.key),
+              'bg-gray-100 text-gray-700': !selectedSorts.includes(option.key)
+            }"
+            class="px-3 py-1 rounded-full text-xs font-semibold transition-all whitespace-nowrap flex items-center gap-1">
+
+            <i-feather *ngIf="selectedSorts.includes(option.key)" name="check"
+                style="width: 12px; height: 12px;"></i-feather>
+
+            {{ option.label }}
+        </button>
+
+    </div>
+
+    <div *ngIf="selectedSorts.includes('exact-date')" class="flex flex-col items-center gap-2 mt-3">
+
+        <input type="date" [ngModel]="exactDate" (ngModelChange)="exactDateChange.emit($event)" [ngClass]="{
+               'border-red-500': exactDateError,
+               'border-gray-300': !exactDateError
+             }" class="border rounded-lg px-2 py-1 text-xs" />
+        <button (click)="applyExactDate.emit();" [disabled]="exactDateError || !exactDate" [ngClass]="{
+    'opacity-50 cursor-not-allowed bg-gray-500': exactDateError || !exactDate,
+    'bg-black hover:bg-gray-800 text-white': !(exactDateError || !exactDate)
+  }" class="mt-2 w-full rounded-lg py-2 text-xs font-semibold transition">
+            Apply Exact Date
+        </button>
+
+
+    </div>
+
+    <div *ngIf="selectedSorts.includes('range')" class="flex flex-col items-center gap-2 mt-3">
+
+        <div class="flex items-center gap-2">
+
+            <input type="date" [ngModel]="startDate" (ngModelChange)="startDateChange.emit($event); " [ngClass]="{
+               'border-red-500': dateRangeError,
+               'border-gray-300': !dateRangeError
+             }" class="border rounded-lg px-2 py-1 text-xs" />
+
+            <i-feather name="arrow-right" class="text-gray-500" style="width: 12px; height: 12px;"></i-feather>
+
+            <input type="date" [ngModel]="endDate" (ngModelChange)="endDateChange.emit($event); " [ngClass]="{
+               'border-red-500': dateRangeError,
+               'border-gray-300': !dateRangeError
+             }" class="border rounded-lg px-2 py-1 text-xs" />
+
+        </div>
+
+        <div *ngIf="dateRangeError" class="text-red-600 text-xs font-medium text-center">
+            {{ dateRangeError }}
+        </div>
+
+
+        <button (click)="applyDateRange.emit()" [disabled]="dateRangeError || !startDate || !endDate" [ngClass]="{
+    'opacity-50 cursor-not-allowed bg-gray-500': dateRangeError || !startDate || !endDate,
+    'bg-black hover:bg-gray-800 text-white': !(dateRangeError || !startDate || !endDate)
+  }" class="mt-2 w-full rounded-lg py-2 text-xs font-semibold transition">
+            Apply Date Range
+        </button>
+
+    </div>
+
+</div>

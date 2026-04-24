@@ -5,7 +5,7 @@ import { Centers } from 'src/app/models/centers.interface';
 import { Partners } from 'src/app/models/partners.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { CenterStateService } from 'src/app/services/center-state.service';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -34,7 +34,7 @@ export class PartnerComponent implements OnInit, OnDestroy {
     private trainerStateService: TrainerStateService,
     private ngxService: NgxUiLoaderService,
     private rxStompService: RxStompService,
-    private authService: AuthenticationService
+    private authService: AuthService
   ) { }
 
   ngOnInit() {

@@ -222,7 +222,7 @@ export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
       this.updatePage();
       this.selectedNotificationIds = [];
 
-      this.notificationState.setmyNotificationsSubject(data);
+      this.notificationState.setMyNotifications(data);
     });
 
     this.subs.push(sub);

@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { AuthenticationGuard } from './authentication.guard';
-import { AuthenticationService } from '../services/authentication.service'; 
+import { AuthService } from '../services/auth.service'; 
 
 describe('AuthenticationGuard', () => {
   let guard: AuthenticationGuard;
   let mockRouter: Partial<Router>;
-  let mockAuthService: Partial<AuthenticationService>;
+  let mockAuthService: Partial<AuthService>;
 
   beforeEach(() => {
     mockRouter = {
@@ -21,7 +21,7 @@ describe('AuthenticationGuard', () => {
       providers: [
         AuthenticationGuard,
         { provide: Router, useValue: mockRouter },
-        { provide: AuthenticationService, useValue: mockAuthService }
+        { provide: AuthService, useValue: mockAuthService }
       ]
     });
 

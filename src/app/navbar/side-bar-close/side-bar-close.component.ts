@@ -4,6 +4,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { Subject } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
 import { Users } from 'src/app/models/users.interface';
+import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
@@ -35,7 +36,8 @@ export class SideBarCloseComponent implements OnDestroy {
     private router: Router,
     private dialog: MatDialog,
     private userService: UserService,
-    private snackbarService: SnackBarService
+    private snackbarService: SnackBarService,
+    private authService: AuthService
   ) {
     this.currentRoute = this.router.url;
 
@@ -47,6 +49,12 @@ export class SideBarCloseComponent implements OnDestroy {
       .subscribe((event: any) => {
         this.currentRoute = event.url;
       });
+  }
+
+  ngOnInit() {
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
   }
 
   // -----------------------------

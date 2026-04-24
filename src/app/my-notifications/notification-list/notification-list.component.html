@@ -1,0 +1,26 @@
+<!-- notification-list.component.html -->
+<div tabindex="0" class="outline-none">
+
+    <!-- Empty state -->
+    <notification-empty-state *ngIf="sections.length === 0"></notification-empty-state>
+
+    <!-- Header -->
+    <notification-header-bar *ngIf="sections.length > 0" [startIndex]="startIndex" [endIndex]="endIndex" [total]="total"
+        [selectAll]="selectAll" (prev)="prev.emit()" (next)="next.emit()" (toggleSelectAll)="toggleSelectAll.emit()"
+        (bulkAction)="bulkAction.emit($event)">
+    </notification-header-bar>
+
+    <!-- Sections -->
+    <div class="flex flex-col gap-6 px-3 py-3">
+        <notification-section *ngFor="let section of sections" [title]="section.label" [items]="section.items"
+            (open)="open.emit($event)" (toggle)="toggle.emit($event)">
+        </notification-section>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex justify-between items-center px-4 py-3 bg-white sticky top-0 z-20">
+        <notification-pagination [startIndex]="startIndex" [endIndex]="endIndex" [total]="total" (prev)="prev.emit()"
+            (next)="next.emit()">
+        </notification-pagination>
+    </div>
+</div>

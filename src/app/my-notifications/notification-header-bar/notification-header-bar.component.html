@@ -1,0 +1,12 @@
+<!-- notification-header-bar.component.html -->
+<div class="flex justify-between items-center px-4 py-3 bg-white sticky top-0 z-20">
+
+    <notification-pagination [startIndex]="startIndex" [endIndex]="endIndex" [total]="total" (prev)="prev.emit()"
+        (next)="next.emit()">
+    </notification-pagination>
+
+    <notification-bulk-actions [selectAll]="selectAll" (toggleSelectAll)="toggleSelectAll.emit()"
+        (bulkAction)="bulkAction.emit($event)">
+    </notification-bulk-actions>
+
+</div>

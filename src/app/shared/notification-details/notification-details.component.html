@@ -1,25 +1,32 @@
-<div class="relative max-w-lg w-full max-h-[80vh] overflow-y-auto p-6 font-sans">
+<div class="max-w-md w-full max-h-[80vh] overflow-y-auto p-6 mx-auto">
 
-    <!-- Title -->
-    <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
-        Notification Details
-    </h2>
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+            <i-feather name="bell" class="w-5 h-5 text-red-600"></i-feather>
+            <h2 class="text-lg font-semibold text-gray-900">Notification</h2>
+        </div>
+
+        <button (click)="close()" class="text-gray-400 hover:text-gray-600 transition">
+            <i-feather name="x" class="w-5 h-5"></i-feather>
+        </button>
+    </div>
 
     <!-- Notification text -->
-    <p class="text-gray-800 whitespace-pre-line leading-relaxed text-[15px] text-center">
+    <p class="text-gray-700 text-[15px] leading-relaxed text-center">
         {{ data.notification }}
     </p>
 
     <!-- Date -->
-    <div class="mt-6 text-gray-500 text-sm flex items-center justify-center">
-        <i-feather name="calendar" class="w-4 h-4 mr-2"></i-feather>
+    <div class="mt-5 flex items-center justify-center text-gray-500 text-sm">
+        <i-feather name="calendar" class="w-4 h-4 mr-1"></i-feather>
         {{ data.date | date:'fullDate' }}
     </div>
 
     <!-- Bottom close button -->
-    <div class="flex justify-center mt-10">
-        <button (click)="close()" class="px-6 py-2 rounded-md border border-white bg-white text-red-600 font-semibold
-                   hover:text-red-700 hover:shadow-md hover:scale-105 transition-all duration-300">
+    <div class="flex justify-center mt-8">
+        <button (click)="close()" class="px-5 py-2 rounded-md text-red-600 font-medium
+             hover:bg-red-50 hover:scale-[1.03] transition-all duration-200">
             Close
         </button>
     </div>

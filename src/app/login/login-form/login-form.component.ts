@@ -10,7 +10,7 @@ import { Login } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-login-form',
@@ -34,22 +34,30 @@ export class LoginFormComponent {
     private userService: UserService,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
-    private auth: AuthenticationService) {
+    private auth: AuthService) {
     this.invalidLogin = ''
   }
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      'email': ['', Validators.compose([Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])])],
-      'password': ['', Validators.compose([Validators.required, Validators.minLength(8)])],
+      email: ['', Validators.compose([Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])])],
+      password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
     });
 
-    this.userService.checkToken().subscribe(() => {
-      this.router.navigate(['/dashboard']);
-    }, (error: any) => {
-      console.log(error)
-    })
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      this.userService.checkToken().subscribe({
+        next: () => this.router.navigate(['/dashboard']),
+        error: () => {
+          // token invalid/expired → clear it and stay on login
+          localStorage.removeItem('token');
+          localStorage.removeItem('refresh_token');
+        }
+      });
+    }
   }
+
 
   get email() {
     return this.loginForm.get('email');
@@ -103,16 +111,18 @@ export class LoginFormComponent {
           localStorage.setItem('token', response.access_token);
           localStorage.setItem('refresh_token', response.refresh_token);
           this.userService.startRefreshTokenTimer();
-          // this.userService.setLoginFormIndex(0);
-          // this.userService.setPartnerFormIndex(0);
           this.loginInterface = response;
           this.invalidLogin = '';
           this.invalidForm = false;
           this.responseMessage = '';
           this.responseMessage = response?.message;
           this.router.navigate(['/dashboard']);
-          if (this.responseMessage === "")
+          if (response.message) {
             this.snackBarService.openSnackBar(this.responseMessage, "");
+          }
+          else {
+            this.snackBarService.openSnackBar("Login successful!", "");
+          }
           this.loginForm.reset;
           this.ngxService.stop();
         },

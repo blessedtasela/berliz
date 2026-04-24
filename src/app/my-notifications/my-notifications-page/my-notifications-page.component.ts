@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { FilterState } from 'src/app/models/FilterState.interface';
 import { Notifications } from 'src/app/models/Notifications.interface';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 
@@ -23,7 +24,7 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
 
   constructor(
     private notificationStateService: NotificationStateService,
-    private authService: AuthenticationService,
+    private authService: AuthService,
     private rxStompService: RxStompService
   ) { }
 
@@ -41,6 +42,11 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
+  onFilterStateChange(state: FilterState) {
+    this.notificationData = this.notificationStateService.filter(state);
+  }
+
+
   /** Load notifications from state service */
   private loadNotifications(): void {
     this.subscriptions.push(
@@ -56,7 +62,7 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
           this.totalNotifications = myNotifications.length;
         }
 
-        this.notificationStateService.setmyNotificationsSubject(myNotifications);
+        this.notificationStateService.setMyNotifications(myNotifications);
       })
     );
   }

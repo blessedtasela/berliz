@@ -8,6 +8,7 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
 import { Subscription } from 'rxjs';
 import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-side-bar',
@@ -31,7 +32,9 @@ export class SideBarComponent {
     private userStateService: UserStateService,
     private snackbarService: SnackBarService,
     private notificationStateService: NotificationStateService,
-    private rxStompService: RxStompService) {
+    private rxStompService: RxStompService,
+    private authService: AuthService
+  ) {
     this.currentRoute = this.router.url
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -42,6 +45,9 @@ export class SideBarComponent {
   }
 
   ngOnInit() {
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
     this.onResize();
     this.subscribeToCloseSideBar()
     this.handleEmitEvent();

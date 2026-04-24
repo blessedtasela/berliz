@@ -132,36 +132,48 @@ export class DashboardTodoListComponent implements OnInit, OnDestroy {
   }
 
   getDueLabel(todo: TodoList): string {
-    const now = new Date();
-    const due = new Date(todo.dueDate);
-    const diff = due.getTime() - now.getTime();
-    const abs = Math.abs(diff);
+  const now = new Date();
+  const due = new Date(todo.dueDate);
 
-    const seconds = Math.floor(abs / 1000);
-    const minutes = Math.floor(abs / (1000 * 60));
-    const hours = Math.floor(abs / (1000 * 60 * 60));
-    const days = Math.floor(abs / (1000 * 60 * 60 * 24));
-    const weeks = Math.floor(days / 7);
-    const months = Math.floor(days / 30);
-    const years = Math.floor(days / 365);
+  const diff = due.getTime() - now.getTime();
+  const abs = Math.abs(diff);
 
-    if (diff <= 0) {
-      if (hours < 24) return "Due today";
-      if (days === 1) return "Overdue by 1 day";
-      if (days < 7) return `Overdue by ${days} days`;
-      if (weeks < 4) return `Overdue by ${weeks} weeks`;
-      if (months < 12) return `Overdue by ${months} months`;
-      return `Overdue by ${years} years`;
-    }
+  const seconds = Math.floor(abs / 1000);
+  const minutes = Math.floor(abs / (1000 * 60));
+  const hours = Math.floor(abs / (1000 * 60 * 60));
+  const days = Math.floor(abs / (1000 * 60 * 60 * 24));
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30);
+  const years = Math.floor(days / 365);
 
-    if (seconds < 60) return `Due in ${seconds}s`;
-    if (minutes < 60) return `Due in ${minutes}m`;
-    if (hours < 24) return `Due in ${hours}h`;
-    if (days < 7) return `Due in ${days}d`;
-    if (weeks < 4) return `Due in ${weeks}w`;
-    if (months < 12) return `Due in ${months} months`;
-    return `Due in ${years} years`;
+  const plural = (value: number, unit: string) =>
+    value === 1 ? `${value} ${unit}` : `${value} ${unit}s`;
+
+  const isOverdue = diff <= 0;
+
+  // -----------------------------
+  // OVERDUE LOGIC
+  // -----------------------------
+  if (isOverdue) {
+    if (hours < 24) return "Due today";
+
+    if (days < 7) return `Overdue by ${plural(days, "day")}`;
+    if (days < 30) return `Overdue by ${plural(weeks, "week")}`;
+    if (days < 365) return `Overdue by ${plural(months, "month")}`;
+    return `Overdue by ${plural(years, "year")}`;
   }
+
+  // -----------------------------
+  // UPCOMING LOGIC
+  // -----------------------------
+  if (seconds < 60) return `Due in ${plural(seconds, "second")}`;
+  if (minutes < 60) return `Due in ${plural(minutes, "minute")}`;
+  if (hours < 24) return `Due in ${plural(hours, "hour")}`;
+  if (days < 7) return `Due in ${plural(days, "day")}`;
+  if (days < 30) return `Due in ${plural(weeks, "week")}`;
+  if (days < 365) return `Due in ${plural(months, "month")}`;
+  return `Due in ${plural(years, "year")}`;
+}
 
   getDueColor(todo: TodoList): string {
     if (todo.status === 'completed') return 'text-green-600';

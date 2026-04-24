@@ -1,1 +1,23 @@
-<p>filter-chips works!</p>
+<div class="flex items-center justify-center gap-2 flex-nowrap">
+
+  <button *ngFor="let option of visibleSortOptions"
+          (click)="toggleSort.emit(option.key)"
+          [ngClass]="{
+            'bg-red-600 text-white shadow-md': selectedSorts.includes(option.key),
+            'bg-gray-100 text-gray-700': !selectedSorts.includes(option.key)
+          }"
+          class="px-3 py-1 rounded-full text-xs font-semibold transition-all whitespace-nowrap flex items-center gap-1">
+
+    <i-feather *ngIf="selectedSorts.includes(option.key)" 
+               name="check" style="width: 12px; height: 12px;"></i-feather>
+
+    {{ option.label }}
+  </button>
+
+  <button *ngIf="showMoreButton" 
+          (click)="toggleDrawer.emit()"
+          class="px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-xs font-semibold">
+    •••
+  </button>
+
+</div>

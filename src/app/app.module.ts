@@ -8,7 +8,6 @@ import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform
 import { ScrollModule } from './scroll/scroll.module';
 import { NgxUiLoaderConfig, SPINNER, NgxUiLoaderModule } from 'ngx-ui-loader';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { TokenInterceptorInterceptor } from './services/token-interceptor.interceptor';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -50,6 +49,7 @@ import { UnderConstructionPageComponent } from './under-construction-page/under-
 import { AngularFireModule } from '@angular/fire/compat';
 import { environment } from '../environments/environment';
 import { TimeAgoPipe } from './shared/pipes/time-ago.pipe';
+import { AuthInterceptor } from './services/auth.interceptor';
 
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
@@ -136,7 +136,7 @@ const dbConfig: DBConfig = {
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: TokenInterceptorInterceptor,
+      useClass: AuthInterceptor,
       multi: true
     },
     {

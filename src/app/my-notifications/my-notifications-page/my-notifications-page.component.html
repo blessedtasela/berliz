@@ -1,15 +1,10 @@
-<div>
+<div class="flex flex-col gap-4">
 
-   <!-- SEARCH + SORT (sticky) -->
-   <div class="sticky top-0 z-20 bg-white pb-2">
-      <app-search-my-notification (results)="handleSearchResults($event)" (clear)="clearSearch()">
-      </app-search-my-notification>
-   </div>
+   <app-search-panel (stateChange)="onFilterStateChange($event)">
+   </app-search-panel>
 
-   <!-- SCROLLABLE NOTIFICATION LIST -->
-   <div >
-      <app-my-notifications [notificationData]="notificationData" [totalNotifications]="totalNotifications">
-      </app-my-notifications>
-   </div>
+   <app-my-notifications [notificationData]="notificationData" [totalNotifications]="totalNotifications">
+   </app-my-notifications>
+
 
 </div>

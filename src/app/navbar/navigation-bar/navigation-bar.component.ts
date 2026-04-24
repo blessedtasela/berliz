@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-navigation-bar',
@@ -24,7 +24,7 @@ export class NavigationBarComponent implements OnInit {
 
 
   constructor(private router: Router,
-    private authService: AuthenticationService,) {
+    private authService: AuthService,) {
     this.currentRoute = this.router.url;
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {

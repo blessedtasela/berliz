@@ -11,7 +11,7 @@ import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { UpdateTrainerPricingModalComponent } from '../update-trainer-pricing-modal/update-trainer-pricing-modal.component';
 import { TrainerPricingDetailsModalComponent } from '../trainer-pricing-details-modal/trainer-pricing-details-modal.component';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-trainer-pricing-list',
@@ -31,7 +31,7 @@ export class TrainerPricingListComponent {
     private dialog: MatDialog,
     private rxStompService: RxStompService,
     public trainerStateService: TrainerStateService,
-    private authService: AuthenticationService) {
+    private authService: AuthService) {
   }
 
   ngOnInit() {

@@ -1,8 +1,13 @@
 <ngx-ui-loader></ngx-ui-loader>
 
-<ng-container [ngSwitch]="getActiveLayout()">
+<ng-container [ngSwitch]="activeLayout">
 
-    <!-- Topbar layout -->
+    <!-- LOGIN LAYOUT -->
+    <ng-container *ngSwitchCase="'login'">
+        <router-outlet></router-outlet>
+    </ng-container>
+
+    <!-- TOPBAR LAYOUT -->
     <ng-container *ngSwitchCase="'topbar'">
         <div class="bg-black">
             <app-navigation-bar></app-navigation-bar>
@@ -11,16 +16,12 @@
         </div>
     </ng-container>
 
-    <!-- Login layout -->
-    <ng-container *ngSwitchCase="'login'">
-        <router-outlet></router-outlet>
-    </ng-container>
-
-    <!-- Sidebar layout -->
+    <!-- SIDEBAR LAYOUT -->
     <ng-container *ngSwitchCase="'sidebar'">
         <div class="relative min-h-screen flex">
             <app-top-bar></app-top-bar>
             <app-side-bar class="mt-2"></app-side-bar>
+
             <div class="flex p-4 full-width">
                 <div class="width rounded-lg mt-24">
                     <router-outlet></router-outlet>
@@ -31,11 +32,5 @@
     </ng-container>
 
 </ng-container>
+
 <div *ngIf="isBlurred" class="global-blur-overlay"></div>
-
-
-<!-- <div *ngIf="isPageNotFound()">
-    <app-navigation-bar></app-navigation-bar>
-    <router-outlet></router-outlet>
-    <app-footer></app-footer>
-</div> -->

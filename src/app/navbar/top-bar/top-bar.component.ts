@@ -35,6 +35,7 @@ import { Testimonials } from 'src/app/models/testimonials.model';
 import { TodoList } from 'src/app/models/todoList.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-top-bar',
@@ -85,7 +86,8 @@ export class TopBarComponent implements OnInit {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private notificationStateService: NotificationStateService,
-    private rxStompService: RxStompService
+    private rxStompService: RxStompService,
+    private authService: AuthService
   ) {
     this.currentRoute = this.router.url;
     this.router.events.subscribe(event => {
@@ -96,6 +98,9 @@ export class TopBarComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
     this.onResize();
     this.subscribeToCloseSideBar();
     this.handleEmitEvent();
