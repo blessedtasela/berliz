@@ -12,11 +12,7 @@ import { FeatherModule } from 'angular-feather';
 import { FooterModule } from 'src/app/footer/footer.module';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
-import { ProfileSettingsComponent } from './profile-settings/profile-settings.component';
-import { ProfilePageComponent } from './profile-page/profile-page.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
-import { MyProfileComponent } from './my-profile/my-profile.component';
-import { UpdateEmailModalComponent } from './update-email-modal/update-email-modal.component';
 
 @NgModule({
   declarations: [
@@ -26,10 +22,7 @@ import { UpdateEmailModalComponent } from './update-email-modal/update-email-mod
     ResetPasswordComponent,
     ActivateAccountComponent,
     UpdateUserModalComponent,
-    ProfileSettingsComponent,
-    ProfilePageComponent,
-    MyProfileComponent,
-    UpdateEmailModalComponent,
+
   ],
   imports: [
     CommonModule,

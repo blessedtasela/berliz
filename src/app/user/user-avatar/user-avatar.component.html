@@ -1,0 +1,10 @@
+<div class="relative flex items-center justify-center">
+    <img [src]="src" class="shadow-lg ring-4 ring-red-500 ring-offset-2 rounded-full w-28 h-28 object-cover bg-white" />
+
+    <label for="avatarFileInput"
+        class="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow cursor-pointer hover:bg-gray-100">
+        <i-feather name="Camera" class="text-red-600 w-4 h-4"></i-feather>
+    </label>
+
+    <input id="avatarFileInput" type="file" accept="image/*" class="hidden" (change)="onFileChange($event)" />
+</div>

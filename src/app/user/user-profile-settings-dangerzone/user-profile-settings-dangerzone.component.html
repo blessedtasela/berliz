@@ -1,0 +1,18 @@
+<div class="mt-6 flex flex-wrap items-center gap-3 px-2">
+  <div class="flex items-center gap-2">
+    <i-feather name="Alert-Triangle" class="text-red-600 w-4 h-4"></i-feather>
+    <button
+      class="rounded-lg py-1.5 px-3 bg-gray-900 text-white text-xs md:text-sm font-semibold
+             hover:bg-black transition"
+      (click)="onDeactivate()">
+      Deactivate account
+    </button>
+  </div>
+
+  <button
+    class="rounded-lg py-1.5 px-3 bg-red-600 text-white text-xs md:text-sm font-semibold
+           hover:bg-red-700 transition"
+    (click)="onUpdateEmail()">
+    Update email
+  </button>
+</div>

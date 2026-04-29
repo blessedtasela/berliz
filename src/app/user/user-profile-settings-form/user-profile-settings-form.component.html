@@ -1,0 +1,179 @@
+<div class="rounded-2xl mx-auto bg-gray-50 border border-gray-200 shadow-sm">
+    <form [formGroup]="form" (ngSubmit)="onSubmitClick()">
+        <!-- Header -->
+        <header class="text-center py-4 border-b border-gray-200">
+            <h1 class="text-lg font-semibold text-gray-900">Personal Information</h1>
+            <p class="text-red-600 italic text-xs mt-1">Update account information</p>
+        </header>
+
+        <!-- Validation summary -->
+        <div class="px-4 pt-3 pb-1 text-xs">
+            <span *ngIf="!form.invalid && invalidForm" class="text-gray-400">Everything looks good</span>
+            <span *ngIf="form.invalid && invalidForm" class="text-red-500">Please complete all sections</span>
+        </div>
+
+        <!-- Form fields -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 pb-4" *ngIf="user">
+
+            <!-- Firstname -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Firstname</label>
+                <input formControlName="firstname" class="w-full px-3 py-2 rounded-md bg-white border text-sm
+                 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    placeholder="First name" type="text" />
+                <div *ngIf="(form.get('firstname')?.invalid && form.get('firstname')?.touched) || (invalidForm && form.get('firstname')?.invalid)"
+                    class="text-xs text-red-500 mt-1">
+                    First name is required
+                </div>
+            </div>
+
+            <!-- Lastname -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Lastname</label>
+                <input formControlName="lastname" class="w-full px-3 py-2 rounded-md bg-white border text-sm
+                 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    placeholder="Last name" type="text" />
+                <div *ngIf="(form.get('lastname')?.invalid && form.get('lastname')?.touched) || (invalidForm && form.get('lastname')?.invalid)"
+                    class="text-xs text-red-500 mt-1">
+                    Last name is required
+                </div>
+            </div>
+
+            <!-- Email (readonly) -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Email</label>
+                <input formControlName="email" class="w-full px-3 py-2 rounded-md bg-gray-100 border text-sm
+                 border-gray-300 focus:outline-none" placeholder="Email" type="text" readonly />
+            </div>
+
+            <!-- Phone -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Telephone</label>
+                <input formControlName="phone" class="w-full px-3 py-2 rounded-md bg-white border text-sm
+                 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    placeholder="+123 000 000 000" type="tel" />
+                <div *ngIf="(form.get('phone')?.invalid && form.get('phone')?.touched) || (invalidForm && form.get('phone')?.invalid)"
+                    class="text-xs text-red-500 mt-1">
+                    Must be at least 8 characters
+                </div>
+            </div>
+
+            <!-- DOB -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Date of birth</label>
+                <input formControlName="dob" class="w-full px-3 py-2 rounded-md bg-white border text-sm
+                 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    type="date" />
+                <div *ngIf="(form.get('dob')?.invalid && form.get('dob')?.touched) || (invalidForm && form.get('dob')?.invalid)"
+                    class="text-xs text-red-500 mt-1">
+                    Please select your birth date
+                </div>
+            </div>
+
+            <!-- Gender -->
+            <div class="flex flex-col">
+                <span class="block text-xs font-semibold text-gray-600 mb-1">Gender</span>
+                <div class="flex items-center gap-4 text-sm">
+                    <label class="inline-flex items-center gap-1 cursor-pointer">
+                        <input type="radio" class="accent-red-600" [checked]="form.get('gender')?.value === 'Male'"
+                            (change)="onGenderSelect('Male')" />
+                        <span>Male</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1 cursor-pointer">
+                        <input type="radio" class="accent-red-600" [checked]="form.get('gender')?.value === 'Female'"
+                            (change)="onGenderSelect('Female')" />
+                        <span>Female</span>
+                    </label>
+                </div>
+                <div *ngIf="(form.get('gender')?.invalid && form.get('gender')?.touched) || (invalidForm && form.get('gender')?.invalid)"
+                    class="text-xs text-red-500 mt-1">
+                    Please select a gender
+                </div>
+            </div>
+
+            <!-- Country -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Country</label>
+                <select formControlName="country" class="w-full px-3 py-2 rounded-md bg-white border text-sm
+                 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                    <option *ngFor="let country of countries" [value]="country.name">
+                        {{ country.name }}
+                    </option>
+                </select>
+                <div *ngIf="(form.get('country')?.invalid && form.get('country')?.touched) || (invalidForm && form.get('country')?.invalid)"
+                    class="text-xs text-red-500 mt-1">
+                    Select your country
+                </div>
+            </div>
+
+            <!-- State -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">State</label>
+                <input formControlName="state" class="w-full px-3 py-2 rounded-md bg-white border text-sm
+                 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    placeholder="State" type="text" />
+                <div *ngIf="(form.get('state')?.invalid && form.get('state')?.touched) || (invalidForm && form.get('state')?.invalid)"
+                    class="text-xs text-red-500 mt-1">
+                    Select your state
+                </div>
+            </div>
+
+            <!-- City -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">City</label>
+                <input formControlName="city" class="w-full px-3 py-2 rounded-md bg-white border text-sm
+                 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    placeholder="City" type="text" />
+                <div *ngIf="(form.get('city')?.invalid && form.get('city')?.touched) || (invalidForm && form.get('city')?.invalid)"
+                    class="text-xs text-red-500 mt-1">
+                    Please select your city
+                </div>
+            </div>
+
+            <!-- Postal Code -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Postal code</label>
+                <input formControlName="postalCode" class="w-full px-3 py-2 rounded-md bg-white border text-sm
+                 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    placeholder="Postal code" type="number" />
+                <div *ngIf="(form.get('postalCode')?.invalid && form.get('postalCode')?.touched) || (invalidForm && form.get('postalCode')?.invalid)"
+                    class="text-xs text-red-500 mt-1">
+                    Please enter a valid postal code
+                </div>
+            </div>
+
+            <!-- Address -->
+            <div class="md:col-span-2">
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Address</label>
+                <textarea formControlName="address" rows="3" class="w-full px-3 py-2 rounded-md bg-white border text-sm
+                 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    placeholder="Write your address here"></textarea>
+                <div *ngIf="(form.get('address')?.invalid && form.get('address')?.touched) || (invalidForm && form.get('address')?.invalid)"
+                    class="text-xs text-red-500 mt-1">
+                    Address is required
+                </div>
+            </div>
+
+            <!-- Bio -->
+            <div class="md:col-span-2">
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Bio</label>
+                <textarea formControlName="bio" rows="4" class="w-full px-3 py-2 rounded-md bg-white border text-sm
+                 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    placeholder="Tell us about yourself"></textarea>
+                <div *ngIf="(form.get('bio')?.invalid && form.get('bio')?.touched) || (invalidForm && form.get('bio')?.invalid)"
+                    class="text-xs text-red-500 mt-1">
+                    Bio is required
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Submit -->
+        <div class="flex justify-center py-4 border-t border-gray-200">
+            <button type="submit" class="bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded-md
+               hover:bg-red-700 transition-all duration-200 hover:shadow-md">
+                Update
+            </button>
+        </div>
+    </form>
+</div>

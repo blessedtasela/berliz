@@ -33,4 +33,5 @@
 
 </ng-container>
 
-<div *ngIf="isBlurred" class="global-blur-overlay"></div>
+<div *ngIf="isBlurred$ | async" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[999] transition-all duration-300">
+</div>

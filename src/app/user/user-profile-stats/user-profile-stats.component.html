@@ -1,0 +1,22 @@
+<!-- If stats exist and have values -->
+<div
+  *ngIf="stats && (stats | keyvalue).length > 0; else noStats"
+  class="mt-4 inline-flex items-center justify-center gap-3 border border-gray-200 bg-white px-4 py-2 rounded-lg shadow-sm text-sm font-medium text-gray-800">
+
+  <ng-container *ngFor="let item of stats | keyvalue; let last = last">
+    <span>
+      <span class="font-semibold text-gray-900">{{ item.value }}</span>
+      <span class="ml-1 text-gray-400">{{ item.key }}</span>
+    </span>
+
+    <span *ngIf="!last" class="h-4 w-px bg-gray-200 mx-2"></span>
+  </ng-container>
+</div>
+
+<!-- Fallback UI -->
+<ng-template #noStats>
+  <div
+    class="mt-4 text-center text-gray-400 italic text-sm bg-white border border-gray-200 px-2 py-1 rounded-lg shadow-sm">
+    No profile stats available yet
+  </div>
+</ng-template>

@@ -1,0 +1,33 @@
+<app-user-profile-photo-cropper *ngIf="showCropper" [imageChangedEvent]="imageChangedEvent"
+    (cropped)="onPhotoCropped($event)" (upload)="onPhotoUpload()" (cancel)="onCancelCrop()">
+</app-user-profile-photo-cropper>
+
+<div *ngIf="user" class="bg-gray-100 rounded-2xl mt-4 overflow-hidden shadow-sm">
+    <app-user-profile-banner></app-user-profile-banner>
+
+    <div class="relative -mt-16 flex flex-col items-center px-4 pb-6">
+        <app-user-avatar [photo]="user.profilePhoto" (imageSelected)="onImgSelected($event)">
+        </app-user-avatar>
+
+        <app-user-profile-identity [firstname]="user.firstname" [lastname]="user.lastname" [role]="user.role">
+        </app-user-profile-identity>
+
+        <app-user-profile-stats [stats]="profileData">
+        </app-user-profile-stats>
+
+        <div class="w-full mt-6 border-t border-gray-200 pt-6">
+            <app-user-bio-edit [form]="bioForm" (save)="onSaveBio()">
+            </app-user-bio-edit>
+        </div>
+
+        <div class="w-full mt-4 flex flex-col md:flex-row md:justify-between gap-4">
+            <app-user-account-info [joined]="formatDate(user.date)" [status]="user.status">
+            </app-user-account-info>
+
+            <button class="self-center md:self-end text-sm bg-red-600 text-white py-2 px-4 rounded-md font-medium
+               hover:bg-red-700 transition-all duration-200 hover:shadow-md" [routerLink]="['/dashboard/settings']">
+                Go to settings
+            </button>
+        </div>
+    </div>
+</div>

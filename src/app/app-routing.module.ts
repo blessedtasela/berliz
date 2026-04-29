@@ -19,11 +19,7 @@ import { CategoryGuard } from './guards/category.guard';
 import { CategoriesComponent } from './categories/categories/categories.component';
 import { AboutUsComponent } from './about-us/about-us/about-us.component';
 import { ActivateAccountComponent } from './dashboard/user/activate-account/activate-account.component';
-import { ProgressPageComponent } from './dashboard/user/progress/progress-page/progress-page.component';
 import { ResetPasswordComponent } from './dashboard/user/reset-password/reset-password.component';
-import { RunNowPageComponent } from './dashboard/user/run-now/run-now-page/run-now-page.component';
-import { ProfilePageComponent } from './dashboard/user/profile-page/profile-page.component';
-import { ProfileSettingsComponent } from './dashboard/user/profile-settings/profile-settings.component';
 import { MyTodosComponent } from './dashboard/todo-lists/my-todos/my-todos.component';
 import { CategoryComponent } from './admin/categories/category/category.component';
 import { AdminContactUsComponent } from './admin/contact-us/admin-contact-us/admin-contact-us.component';
@@ -34,8 +30,6 @@ import { PartnersComponent } from './admin/partners/partners/partners.component'
 import { TodoListsComponent } from './admin/todo-lists/todo-lists/todo-lists.component';
 import { MuscleGroupsComponent } from './admin/muscle-groups/muscle-groups/muscle-groups.component';
 import { ExercisesComponent } from './admin/exercises/exercises/exercises.component';
-import { WorkspaceComponent } from './dashboard/workspace/workspace.component';
-import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
 import { TasksComponent } from './admin/tasks/tasks/tasks.component';
 import { MyNotificationsPageComponent } from './my-notifications/my-notifications-page/my-notifications-page.component';
 import { MySubscriptionsPageComponent } from './my-subscriptions/my-subscriptions-page/my-subscriptions-page.component';
@@ -43,10 +37,8 @@ import { MyFaqsPageComponent } from './my-faqs/my-faqs-page/my-faqs-page.compone
 import { MyTasksPageComponent } from './my-tasks/my-tasks-page/my-tasks-page.component';
 import { TrainersComponent } from './admin/trainers/trainers/trainers.component';
 import { LoginComponent } from './login/login/login.component';
-import { MainComponent } from './dashboard/main/main.component';
 import { CentersComponent } from './admin/centers/centers/centers.component';
 import { ClientsComponent } from './admin/clients/clients/clients.component';
-import { WorkspaceRouteComponent } from './dashboard/workspace-route/workspace-route.component';
 import { SignupComponent } from './login/signup/signup.component';
 import { SubscriptionsComponent } from './admin/subscriptions/subscriptions/subscriptions.component';
 import { TrainerPricingComponent } from './admin/trainer-pricing/trainer-pricing/trainer-pricing.component';
@@ -62,6 +54,15 @@ import { TermsPageComponent } from './terms/terms-page/terms-page.component';
 import { PrivacyPageComponent } from './privacy/privacy-page/privacy-page.component';
 import { AuthGuard } from './services/auth.guard';
 import { NotificationMainComponent } from './my-notifications/notification-main/notification-main.component';
+import { HubRouteComponent } from './hub/hub-route/hub-route.component';
+import { HubMainComponent } from './hub/hub-main/hub-main.component';
+import { UserRouteComponent } from './user/user-route/user-route.component';
+import { UserProfileComponent } from './user/user-profile/user-profile.component';
+import { UserProfileSettingsComponent } from './user/user-profile-settings/user-profile-settings.component';
+import { DashboardMainComponent } from './dashboard/dashboard-main/dashboard-main.component';
+import { DashboardRouteComponent } from './dashboard/dashboard-route/dashboard-route.component';
+
+
 
 const routes: Routes = [
 
@@ -93,42 +94,44 @@ const routes: Routes = [
 
   // dashboard protected components
   {
-    path: 'dashboard', component: DashboardComponent,
+    path: 'dashboard', component: DashboardRouteComponent,
     canActivate: [AuthGuard],
     data: {
       expectedRole: ['admin', 'user', 'partner', 'trainer',
         'center', 'driver', 'store', 'client',],
     },
     children: [
-      // user components
+      // users components
       {
         path: '',
         redirectTo: '',
         pathMatch: 'full',
       },
       {
-        path: '', component: MainComponent, canActivate: [AuthGuard],
+        path: '', component: DashboardMainComponent, canActivate: [AuthGuard],
         data: {
           expectedRole: ['admin', 'user', 'partner', 'trainer',
             'center', 'driver', 'store', 'client',]
         },
       },
+
+      // Dashboard Hub components #protected
       {
-        path: 'workspace', component: WorkspaceRouteComponent,
+        path: 'hub', component: HubRouteComponent,
         canActivate: [AuthGuard],
         data: {
           expectedRole: ['admin', 'user', 'partner', 'trainer',
             'center', 'driver', 'store', 'client',]
         },
         children: [
-          // workspace components #protected
+          // hub components #protected
           {
             path: '',
             redirectTo: '',
             pathMatch: 'full',
           },
           {
-            path: '', component: WorkspaceComponent,
+            path: '', component: HubMainComponent,
             canActivate: [AuthGuard],
             data: {
               expectedRole: ['admin', 'user', 'partner', 'trainer',
@@ -226,7 +229,7 @@ const routes: Routes = [
             },
           },
           {
-            // workspace components #protected
+            // hub components #protected
             path: 'partnership', component: PartnerRouteComponent,
             canActivate: [AuthGuard],
             data: {
@@ -258,38 +261,18 @@ const routes: Routes = [
             ],
           },
           // users protected routes
+
+
+          // User profile and settings #protected
           {
-            path: 'profile', component: ProfilePageComponent,
+            path: 'settings', component: UserProfileSettingsComponent,
             canActivate: [AuthGuard],
             data: {
               expectedRole: ['admin', 'user', 'partner', 'trainer',
                 'center', 'driver', 'store', 'client',]
             }
           },
-          {
-            path: 'settings', component: ProfileSettingsComponent,
-            canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            }
-          },
-          {
-            path: 'run-now', component: RunNowPageComponent,
-            canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            }
-          },
-          {
-            path: 'progress', component: ProgressPageComponent,
-            canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            }
-          },
+
           {
             path: 'my-notifications', component: MyNotificationsPageComponent,
             canActivate: [AuthGuard],
@@ -332,10 +315,52 @@ const routes: Routes = [
           },
         ],
       },
+      // User profile and settings routes #protected
+      {
+
+        path: '', component: UserRouteComponent,
+        canActivate: [AuthGuard],
+        data: {
+          expectedRole: ['admin', 'user', 'partner', 'trainer',
+            'center', 'driver', 'store', 'client',]
+        },
+        children: [
+          // profile components #protected
+          {
+            path: '',
+            redirectTo: '',
+            pathMatch: 'full',
+          },
+          {
+            path: '', component: UserProfileComponent,
+            canActivate: [AuthGuard],
+            data: {
+              expectedRole: ['admin', 'user', 'partner', 'trainer',
+                'center', 'driver', 'store', 'client',]
+            },
+          },
+          {
+            path: 'profile', component: UserProfileComponent,
+            canActivate: [AuthGuard],
+            data: {
+              expectedRole: ['admin', 'user', 'partner', 'trainer',
+                'center', 'driver', 'store', 'client',]
+            },
+          },
+          {
+            path: 'settings', component: UserProfileSettingsComponent,
+            canActivate: [AuthGuard],
+            data: {
+              expectedRole: ['admin', 'user', 'partner', 'trainer',
+                'center', 'driver', 'store', 'client',]
+            }
+          },
+        ],
+      },
 
       // users protected routes
       {
-        path: 'profile', component: ProfilePageComponent,
+        path: 'profile', component: UserProfileComponent,
         canActivate: [AuthGuard],
         data: {
           expectedRole: ['admin', 'user', 'partner', 'trainer',
@@ -375,23 +400,7 @@ const routes: Routes = [
         ],
       },
       {
-        path: 'settings', component: ProfileSettingsComponent,
-        canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin', 'user', 'partner', 'trainer',
-            'center', 'driver', 'store', 'client',]
-        }
-      },
-      {
-        path: 'run-now', component: RunNowPageComponent,
-        canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin', 'user', 'partner', 'trainer',
-            'center', 'driver', 'store', 'client',]
-        }
-      },
-      {
-        path: 'progress', component: ProgressPageComponent,
+        path: 'settings', component: UserProfileSettingsComponent,
         canActivate: [AuthGuard],
         data: {
           expectedRole: ['admin', 'user', 'partner', 'trainer',

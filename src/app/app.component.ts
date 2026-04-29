@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { BlurService } from './services/blur.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-root',
@@ -10,11 +11,12 @@ import { BlurService } from './services/blur.service';
 export class AppComponent {
   title = 'Berliz';
   activeLayout: 'login' | 'topbar' | 'sidebar' = 'login';
-  isBlurred = false;
+  isBlurred$ = this.blurService.blur$;
 
   constructor(
     private router: Router,
-    private blurService: BlurService
+    private blurService: BlurService,
+    private dialog: MatDialog
   ) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -22,10 +24,15 @@ export class AppComponent {
       }
     });
 
-    this.blurService.blur$.subscribe(state => {
-      this.isBlurred = state;
+    this.dialog.afterOpened.subscribe(() => {
+      this.blurService.enable();
+    });
+
+    this.dialog.afterAllClosed.subscribe(() => {
+      this.blurService.disable();
     });
   }
+
 
   private updateLayout(url: string) {
 
@@ -45,7 +52,11 @@ export class AppComponent {
       url.startsWith('/pricing') ||
       url.startsWith('/about') ||
       url.startsWith('/contact') ||
-      url.startsWith('/blog')
+      url.startsWith('/blog') ||
+      url.startsWith('/home') ||
+      url.startsWith('/services') ||
+      url.startsWith('/centers') ||
+      url.startsWith('/trainers')
     ) {
       this.activeLayout = 'topbar';
       return;

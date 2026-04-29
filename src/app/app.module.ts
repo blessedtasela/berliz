@@ -50,6 +50,8 @@ import { AngularFireModule } from '@angular/fire/compat';
 import { environment } from '../environments/environment';
 import { TimeAgoPipe } from './shared/pipes/time-ago.pipe';
 import { AuthInterceptor } from './services/auth.interceptor';
+import { HubModule } from './hub/hub.module';
+import { UserModule } from './user/user.module';
 
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
@@ -130,6 +132,8 @@ const dbConfig: DBConfig = {
     CommonModule,
     BrowserAnimationsModule,
     NoopAnimationsModule,
+    HubModule,
+    UserModule
   ],
   exports: [],
 

@@ -1,0 +1,12 @@
+<div class="flex flex-col md:flex-row gap-4 text-sm text-gray-600">
+  <div>
+    You joined Berliz on
+    <span class="font-semibold text-gray-900">{{ joined }}</span>
+  </div>
+  <div>
+    Account status:
+    <span class="font-semibold" [ngClass]="statusClass">
+      {{ statusLabel }}
+    </span>
+  </div>
+</div>

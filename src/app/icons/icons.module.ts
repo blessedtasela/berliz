@@ -109,6 +109,11 @@ import {
   FolderPlus,
   Folder,
   File,
+  ChevronsDown,
+  ChevronsLeft,
+  ChevronsRight,
+  ChevronsUp,
+
 } from 'angular-feather/icons';
 
 // Select some icons (use an object, not an array)
@@ -220,6 +225,10 @@ const icons = {
   FolderPlus,
   Folder,
   File,
+  ChevronsDown,
+  ChevronsLeft,
+  ChevronsRight,
+  ChevronsUp,
 };
 
 @NgModule({

@@ -13,7 +13,7 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AdminUpdateUserRoleModalComponent } from '../admin-update-user-role-modal/admin-update-user-role-modal.component';
 import { UserDetailsModalComponent } from '../user-details-modal/user-details-modal.component';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
-import { UpdateEmailModalComponent } from 'src/app/dashboard/user/update-email-modal/update-email-modal.component';
+import { UpdateEmailModalComponent } from 'src/app/shared/update-email-modal/update-email-modal.component';
 
 @Component({
   selector: 'app-user-list',

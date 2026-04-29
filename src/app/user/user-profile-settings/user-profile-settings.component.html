@@ -1,0 +1,9 @@
+<div class="max-w-4xl mx-auto space-y-6">
+    <app-user-profile-settings-form *ngIf="user && updateUserForm" [user]="user" [form]="updateUserForm"
+        [countries]="countries" [invalidForm]="invalidForm" (submitForm)="onSubmitForm()"
+        (genderChange)="onGenderChange($event)">
+    </app-user-profile-settings-form>
+
+    <app-user-profile-settings-dangerzone (deactivate)="deactivateAccount()" (updateEmail)="openUpdateEmail()">
+    </app-user-profile-settings-dangerzone>
+</div>

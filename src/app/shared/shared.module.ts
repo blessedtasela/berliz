@@ -21,6 +21,11 @@ import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { NotificationDetailsComponent } from './notification-details/notification-details.component';
 import { TimeAgoPipe } from './pipes/time-ago.pipe';
 import { TodoDetailsModalComponent } from './todo-details-modal/todo-details-modal.component';
+import { UpdateEmailModalComponent } from './update-email-modal/update-email-modal.component';
+import { UpdateUserModalComponent } from './update-user-modal/update-user-modal.component';
+import { ChangePasswordModalComponent } from './change-password-modal/change-password-modal.component';
+import { ResetPasswordModalComponent } from './reset-password-modal/reset-password-modal.component';
+import { ForgotPasswordModalComponent } from './forgot-password-modal/forgot-password-modal.component';
 
 
 
@@ -40,7 +45,12 @@ import { TodoDetailsModalComponent } from './todo-details-modal/todo-details-mod
     LocationFormComponent,
     NotificationDetailsComponent,
     TimeAgoPipe,
-    TodoDetailsModalComponent
+    TodoDetailsModalComponent,
+    UpdateEmailModalComponent,
+    UpdateUserModalComponent,
+    ChangePasswordModalComponent,
+    ResetPasswordModalComponent,
+    ForgotPasswordModalComponent
   ],
   imports: [
     CommonModule,
