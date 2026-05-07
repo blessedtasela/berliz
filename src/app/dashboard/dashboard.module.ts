@@ -20,6 +20,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { DashboardMainComponent } from './dashboard-main/dashboard-main.component';
 import { DashboardRouteComponent } from './dashboard-route/dashboard-route.component';
+import { DashboardSubscriptionAnalyticsComponent } from './dashboard-subscription-analytics/dashboard-subscription-analytics.component';
 
 
 
@@ -35,7 +36,8 @@ import { DashboardRouteComponent } from './dashboard-route/dashboard-route.compo
     DashboardActivityChartComponent,
     TodaysTodoModalComponent,
     DashboardMainComponent,
-    DashboardRouteComponent
+    DashboardRouteComponent,
+    DashboardSubscriptionAnalyticsComponent
   ],
   imports: [
     CommonModule,

@@ -1,6 +1,12 @@
 <!-- notification-list.component.html -->
 <div tabindex="0" class="outline-none">
 
+    <!-- Selection Mode Banner -->
+    <div *ngIf="selectedCount > 0"
+        class="sticky top-0 z-30 bg-red-600 text-white text-sm font-semibold py-2 px-4 rounded-b-lg shadow animate-pulse">
+        {{ selectedCount }} selected — choose action
+    </div>
+
     <!-- Empty state -->
     <notification-empty-state *ngIf="sections.length === 0"></notification-empty-state>
 
@@ -12,8 +18,11 @@
 
     <!-- Sections -->
     <div class="flex flex-col gap-6 px-3 py-3">
-        <notification-section *ngFor="let section of sections" [title]="section.label" [items]="section.items" [searchQuery]="searchQuery"
-            (open)="open.emit($event)" (toggle)="toggle.emit($event)">
+        <notification-section *ngFor="let section of sections" [title]="section.label" [items]="section.items"
+            [searchQuery]="searchQuery" (open)="open.emit($event)" (toggle)="toggle.emit($event)"
+            (markRead)="markRead.emit($event)" (markUnread)="markUnread.emit($event)"
+            (deleteItem)="deleteItem.emit($event)" (toggleSelectAll)="toggleSelectAll.emit()"
+            [selectionMode]="selectionMode">
         </notification-section>
     </div>
 

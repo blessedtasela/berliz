@@ -3,7 +3,8 @@
   <app-search-bar
     [(query)]="searchQuery"
     (queryChange)="onQueryChange($event)"
-    (clear)="clearSearch()">
+    (clear)="clearSearch()"
+    [placeholder]="placeholder">
   </app-search-bar>
 
   <app-filter-summary

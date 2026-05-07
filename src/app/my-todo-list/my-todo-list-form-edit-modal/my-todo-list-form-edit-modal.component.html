@@ -1,0 +1,36 @@
+<div class="p-6 w-full max-w-md">
+
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Edit Task</h2>
+
+    <form [formGroup]="form" class="space-y-4">
+
+        <div>
+            <label class="text-sm font-semibold">Task</label>
+            <input formControlName="task" type="text"
+                class="w-full px-4 py-2 rounded-lg border text-sm focus:ring-red-500 focus:border-red-500" />
+        </div>
+
+        <div>
+            <label class="text-sm font-semibold">Due Date</label>
+            <input formControlName="dueDate" type="date"
+                class="w-full px-4 py-2 rounded-lg border text-sm focus:ring-red-500 focus:border-red-500" />
+        </div>
+
+        <div>
+            <label class="text-sm font-semibold">Priority</label>
+            <select formControlName="priority"
+                class="w-full px-4 py-2 rounded-lg border text-sm focus:ring-red-500 focus:border-red-500">
+                <option value="low">Low</option>
+                <option value="normal">Normal</option>
+                <option value="high">High</option>
+            </select>
+        </div>
+
+    </form>
+
+    <div class="flex justify-end gap-2 mt-6">
+        <button class="px-3 py-1.5 text-sm border rounded-md" (click)="close()">Cancel</button>
+        <button class="px-4 py-1.5 text-sm bg-red-600 text-white rounded-md" (click)="save()">Save</button>
+    </div>
+
+</div>

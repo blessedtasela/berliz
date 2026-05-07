@@ -11,6 +11,8 @@ import { TodoStateService } from 'src/app/services/todo-state.service';
 import { UserStateService } from 'src/app/services/user-state.service';
 import { TodaysTodoModalComponent } from '../todays-todo-modal/todays-todo-modal.component';
 import { Users } from 'src/app/models/users.interface';
+import { SubscriptionStateService } from 'src/app/services/subscription-state.service';
+import { Subscriptions } from 'src/app/models/subscriptions.interface';
 
 @Component({
   selector: 'app-dashboard-main',
@@ -22,6 +24,7 @@ export class DashboardMainComponent {
   userData: Users | null = null;
   data: any;
   myTodo: TodoList[] = [];
+  mySubscriptions: Subscriptions[] = [];
   currentRoute: string = '';
   successMessage = false;
 
@@ -33,6 +36,7 @@ export class DashboardMainComponent {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private todoStateService: TodoStateService,
+    private subscriptionStateService: SubscriptionStateService,
     private dashboardStateService: DashboardStateService,
     private dialog: MatDialog,
     private stateService: StateService
@@ -64,6 +68,10 @@ export class DashboardMainComponent {
       this.todoStateService.getMyTodos().subscribe(myTodo => {
         this.myTodo = myTodo;
         this.todoStateService.setmyTodosSubject(myTodo);
+      }),
+
+      this.subscriptionStateService.getMySubscriptions().subscribe(subscriptions => {
+        this.mySubscriptions = subscriptions;
       })
     );
   }

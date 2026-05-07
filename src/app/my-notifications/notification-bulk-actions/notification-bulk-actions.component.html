@@ -1,35 +1,47 @@
 <!-- Bulk Actions -->
 <div class="relative flex items-center gap-2">
 
-    <!-- Select All -->
-    <button (click)="toggleMenu($event)"  class="w-5 h-5 rounded-full border flex items-center justify-center
-               border-gray-400 hover:border-red-500 bg-white transition">
-        <div *ngIf="selectAll" class="w-3 h-3 rounded-full bg-red-500"></div>
-    </button>
+    <!-- Right: select all + bulk menu trigger -->
+    <div class="flex items-center gap-4">
 
-    <!-- Bulk menu trigger -->
-    <button (click)="toggleMenu($event)" class="cursor-pointer text-gray-700 hover:text-black transition">
-        <i-feather name="more-horizontal" class="align-middle" style="width: 18px; height: 18px;"></i-feather>
-    </button>
+        <!-- Select all control -->
+        <button type="button" class="flex items-center gap-2 text-xs text-gray-700 hover:text-gray-900"
+            (click)="toggleSelectAll.emit()">
 
-    <!-- Bulk Menu -->
-    <div *ngIf="menuOpen" (click)="$event.stopPropagation()"
-        class="absolute right-0 mt-10 bg-white border border-gray-300 rounded-lg shadow-lg w-40 text-sm z-20">
+            <span class="w-4 h-4 rounded-full border border-gray-400 flex items-center justify-center">
+                <span *ngIf="selectAll" class="w-2 h-2 rounded-full bg-red-600"></span>
+            </span>
 
-        <p class="px-3 py-2 font-semibold text-gray-700 border-b">
-            With selected:
-        </p>
+        </button>
 
-        <p (click)="onBulk('read')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-            Mark as read
-        </p>
+        <!-- Bulk Menu -->
 
-        <p (click)="onBulk('unread')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
-            Mark as unread
-        </p>
+        <div class="relative flex items-center gap-2">
+            <!-- Bulk menu trigger -->
+            <i-feather name="more-horizontal" class="cursor-pointer text-gray-600 hover:text-gray-900"
+                (click)="toggleMenu($event)">
+            </i-feather>
 
-        <p (click)="onBulk('delete')" class="px-3 py-2 hover:bg-gray-100 cursor-pointer text-red-600">
-            Delete
-        </p>
+            <div *ngIf="menuOpen" (click)="$event.stopPropagation()"
+                class="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-20 text-sm py-1">
+
+                <div class="px-3 py-1.5 text-gray-700">
+                    With Selected:
+                </div>
+
+                <button class="w-full text-left px-3 py-1.5 hover:bg-gray-50" (click)="onBulk('read')">
+                    Mark as read
+                </button>
+                <button class="w-full text-left px-3 py-1.5 hover:bg-gray-50" (click)="onBulk('unread')">
+                    Mark as unread
+
+                </button>
+
+                <button class="w-full text-left px-3 py-1.5 text-red-600 hover:bg-red-50" (click)="onBulk('delete')">
+                    Delete notifications
+                </button>
+            </div>
+
+        </div>
+
     </div>
-</div>

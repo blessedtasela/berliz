@@ -4,7 +4,7 @@ import { genericError } from 'src/validators/form-validators.module';
 import { NotificationService } from './notification.service';
 import { SnackBarService } from './snack-bar.service';
 import { Notifications } from '../models/Notifications.interface';
-import { FilterState } from '../models/FilterState.interface';
+import { FilterState, SearchSortOption } from '../models/FilterState.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +18,17 @@ export class NotificationStateService {
   public allNotificationsData$ = this.allNotificationsSubject.asObservable();
 
   responseMessage: any;
+  notificationSortOptions: SearchSortOption[] = [
+    { key: 'all', label: 'All', priority: true },
+    { key: 'unread', label: 'Unread', priority: true },
+    { key: 'read', label: 'Read', priority: true },
+    { key: 'today', label: 'Today', priority: true },
+    { key: 'yesterday', label: 'Yesterday', priority: true },
+    { key: 'week', label: 'This Week', priority: false },
+    { key: 'month', label: 'This Month', priority: false },
+    { key: 'range', label: 'Date Range', priority: false },
+    { key: 'exact-date', label: 'Exact Date', priority: false }
+  ];
 
   constructor(
     private notificationService: NotificationService,
@@ -67,9 +78,17 @@ export class NotificationStateService {
     this.snackbarService.openSnackBar(this.responseMessage, 'error');
   }
 
-  // FILTERING LOGIC
-  filter(state: FilterState): Notifications[] {
-    let list = [...(this.myNotificationSubject.value ?? [])];
+
+  // FILTERING
+  filter(state: FilterState, source: 'my' | 'all'): Notifications[] {
+
+
+    const baseList =
+      source === 'my'
+        ? this.myNotificationSubject.value ?? []
+        : this.allNotificationsSubject.value ?? [];
+
+    let list = [...baseList];
 
     // -----------------------------
     // TEXT SEARCH
@@ -85,7 +104,6 @@ export class NotificationStateService {
         return words.every(w => text.includes(w));
       });
     }
-
 
     // -----------------------------
     // EXACT DATE FILTER
@@ -117,7 +135,16 @@ export class NotificationStateService {
     }
 
     // -----------------------------
-    // SORTING
+    // SORT FILTERS (today, week, unread, etc.)
+    // -----------------------------
+    if (state.selectedSorts?.some(s =>
+      ['all', 'unread', 'read', 'today', 'yesterday', 'week', 'month', 'recent'].includes(s)
+    )) {
+      list = this.applySortFilters(list, state);
+    }
+
+    // -----------------------------
+    // SORT BY DATE (newest first)
     // -----------------------------
     if (state.selectedSorts?.includes('sort-by-date')) {
       list = list.sort((a, b) => {
@@ -127,6 +154,7 @@ export class NotificationStateService {
 
     return list;
   }
+
 
 
   private applySortFilters(list: Notifications[], state: FilterState): Notifications[] {

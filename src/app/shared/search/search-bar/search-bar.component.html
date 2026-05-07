@@ -4,17 +4,10 @@
 
     <i-feather name="search" class="text-red-600" style="width: 20px; height: 20px;"></i-feather>
 
-    <input 
-      [(ngModel)]="query"
-      (ngModelChange)="queryChange.emit($event)"
-      
-      type="text"
-      placeholder="Search notifications..."
-      class="w-full bg-transparent text-gray-900 placeholder:text-gray-400
+    <input [(ngModel)]="query" (ngModelChange)="queryChange.emit($event)" type="text" [placeholder]="placeholder" class="w-full bg-transparent text-gray-900 placeholder:text-gray-400
              focus:outline-none font-medium" />
 
-    <button *ngIf="query" (click)="clear.emit()" 
-      class="text-gray-400 hover:text-gray-600 transition">
+    <button *ngIf="query" (click)="clear.emit()" class="text-gray-400 hover:text-gray-600 transition">
       <i-feather name="x" style="width: 18px; height: 18px;"></i-feather>
     </button>
 

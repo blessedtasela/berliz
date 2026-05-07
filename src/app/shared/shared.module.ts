@@ -26,6 +26,7 @@ import { UpdateUserModalComponent } from './update-user-modal/update-user-modal.
 import { ChangePasswordModalComponent } from './change-password-modal/change-password-modal.component';
 import { ResetPasswordModalComponent } from './reset-password-modal/reset-password-modal.component';
 import { ForgotPasswordModalComponent } from './forgot-password-modal/forgot-password-modal.component';
+import { RenewSubscriptionModalComponent } from './renew-subscription-modal/renew-subscription-modal.component';
 
 
 
@@ -50,7 +51,8 @@ import { ForgotPasswordModalComponent } from './forgot-password-modal/forgot-pas
     UpdateUserModalComponent,
     ChangePasswordModalComponent,
     ResetPasswordModalComponent,
-    ForgotPasswordModalComponent
+    ForgotPasswordModalComponent,
+    RenewSubscriptionModalComponent
   ],
   imports: [
     CommonModule,
@@ -62,7 +64,8 @@ import { ForgotPasswordModalComponent } from './forgot-password-modal/forgot-pas
     NgxMaskDirective,
     NgxMaskPipe,
     FormsModule,
-    FeatherModule
+    FeatherModule,
+    FormsModule
   ],
   exports: [
     CommonModule,

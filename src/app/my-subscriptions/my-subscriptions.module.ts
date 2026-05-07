@@ -7,8 +7,20 @@ import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { MySubscriptionDetailModalComponent } from './my-subscription-detail-modal/my-subscription-detail-modal.component';
-import { SubscriptionPlansComponent } from './subscription-plans/subscription-plans.component';
 import { SubscriptionFormComponent } from './subscription-form/subscription-form.component';
+import { MySubscriptionsMainComponent } from './my-subscriptions-main/my-subscriptions-main.component';
+import { MySubscriptionsPlansComponent } from './my-subscriptions-plans/my-subscriptions-plans.component';
+import { MySubscriptionsListComponent } from './my-subscriptions-list/my-subscriptions-list.component';
+import { MySubscriptionsEmptyComponent } from './my-subscriptions-empty/my-subscriptions-empty.component';
+import { MySubscriptionsDueComponent } from './my-subscriptions-due/my-subscriptions-due.component';
+import { MySubscriptionsActiveComponent } from './my-subscriptions-active/my-subscriptions-active.component';
+import { MySubscriptionsActionComponent } from './my-subscriptions-action/my-subscriptions-action.component';
+import { MySubscriptionsExpiredComponent } from './my-subscriptions-expired/my-subscriptions-expired.component';
+import { MySubscriptionsBulkActionComponent } from './my-subscriptions-bulk-action/my-subscriptions-bulk-action.component';
+import { FeatherModule } from 'angular-feather';
+import { MySubscriptionsFormComponent } from './my-subscriptions-form/my-subscriptions-form.component';
+import { MySubscriptionsTimelineComponent } from './my-subscriptions-timeline/my-subscriptions-timeline.component';
+import { MySubscriptionsAnalyticsComponent } from './my-subscriptions-analytics/my-subscriptions-analytics.component';
 
 
 
@@ -17,8 +29,19 @@ import { SubscriptionFormComponent } from './subscription-form/subscription-form
     MySubscriptionsComponent,
     MySubscriptionsPageComponent,
     MySubscriptionDetailModalComponent,
-    SubscriptionPlansComponent,
-    SubscriptionFormComponent
+    SubscriptionFormComponent,
+    MySubscriptionsMainComponent,
+    MySubscriptionsPlansComponent,
+    MySubscriptionsListComponent,
+    MySubscriptionsEmptyComponent,
+    MySubscriptionsDueComponent,
+    MySubscriptionsActiveComponent,
+    MySubscriptionsActionComponent,
+    MySubscriptionsExpiredComponent,
+    MySubscriptionsBulkActionComponent,
+    MySubscriptionsFormComponent,
+    MySubscriptionsTimelineComponent,
+    MySubscriptionsAnalyticsComponent
   ],
   imports: [
     CommonModule,
@@ -26,7 +49,8 @@ import { SubscriptionFormComponent } from './subscription-form/subscription-form
     NavbarModule,
     FooterModule,
     FormsModule,
-     ReactiveFormsModule
+    ReactiveFormsModule,
+    FeatherModule
   ]
 })
 export class MySubscriptionsModule { }

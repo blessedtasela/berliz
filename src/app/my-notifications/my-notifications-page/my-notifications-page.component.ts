@@ -43,7 +43,7 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
   }
 
   onFilterStateChange(state: FilterState) {
-    this.notificationData = this.notificationStateService.filter(state);
+    this.notificationData = this.notificationStateService.filter(state, 'my');
   }
 
 

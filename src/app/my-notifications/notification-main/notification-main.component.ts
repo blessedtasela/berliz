@@ -3,7 +3,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NotificationSection, Notifications } from 'src/app/models/Notifications.interface';
-import { FilterState } from 'src/app/models/FilterState.interface';
+import { FilterState, SearchSortOption } from 'src/app/models/FilterState.interface';
 import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -15,14 +15,16 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
   templateUrl: './notification-main.component.html'
 })
 export class NotificationMainComponent implements OnInit, OnDestroy {
+
   @Input() searchQuery = '';
+  placeholder = 'Search notifications...';
   allNotifications: Notifications[] = [];
   filteredNotifications: Notifications[] = [];
   pagedNotifications: Notifications[] = [];
   sections: NotificationSection[] = [];
 
   selectedNotificationIds: number[] = [];
-
+  notificationSortOptions: SearchSortOption[] = [];
   currentPage = 1;
   pageSize = 50;
 
@@ -33,7 +35,9 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
     private notificationService: NotificationService,
     private snackbar: SnackBarService,
     private dialog: MatDialog
-  ) { }
+  ) {
+    this.notificationSortOptions = notificationState.notificationSortOptions;
+  }
 
   ngOnInit(): void {
     const sub = this.notificationState.getMyNotifications().subscribe(data => {
@@ -56,7 +60,7 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
 
   // from search panel
   onFilterStateChange(state: FilterState): void {
-    this.filteredNotifications = this.notificationState.filter(state);
+    this.filteredNotifications = this.notificationState.filter(state, 'my');
     this.currentPage = 1;
     this.updatePage();
     this.selectedNotificationIds = [];
@@ -160,20 +164,50 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
 
   onToggleSelectAll(): void {
     const allSelected = this.isSelectAllChecked();
-    this.pagedNotifications.forEach(n => (n.checked = !allSelected));
 
+    this.sections.forEach(section => {
+      section.items.forEach((n: any) => {
+        n.checked = !allSelected;
+      });
+    });
+
+    // If you still keep pagedNotifications, sync it:
+    this.pagedNotifications = this.sections.flatMap((s: any) => s.items);
+
+    // Update selected ids
     if (!allSelected) {
       const idsToAdd = this.pagedNotifications
         .map(n => n.id)
         .filter(id => !this.selectedNotificationIds.includes(id));
+
       this.selectedNotificationIds = [...this.selectedNotificationIds, ...idsToAdd];
     } else {
       const idsOnPage = this.pagedNotifications.map(n => n.id);
+
       this.selectedNotificationIds = this.selectedNotificationIds.filter(
         id => !idsOnPage.includes(id)
       );
     }
   }
+
+
+  get selectionMode(): boolean {
+    return this.selectedNotificationIds.length > 0;
+  }
+
+  // onToggleItem(notification: Notifications): void {
+  //   const id = notification.id;
+
+  //   const exists = this.selectedNotificationIds.includes(id);
+
+  //   if (exists) {
+  //     this.selectedNotificationIds =
+  //       this.selectedNotificationIds.filter(x => x !== id);
+  //   } else {
+  //     this.selectedNotificationIds =
+  //       [...this.selectedNotificationIds, id];
+  //   }
+  // }
 
   onToggleItem(notification: Notifications): void {
     notification.checked = !notification.checked;
@@ -182,14 +216,13 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
         this.selectedNotificationIds.push(notification.id);
       }
     } else {
-      this.selectedNotificationIds = this.selectedNotificationIds.filter(
-        id => id !== notification.id
-      );
+      this.selectedNotificationIds =
+        this.selectedNotificationIds.filter(id => id !== notification.id);
     }
   }
 
   // open details
-  onOpenNotification(notification: Notifications): void {
+  openDetails(notification: Notifications): void {
     const dialogRef = this.dialog.open(NotificationDetailsComponent, {
       width: '500px',
       data: notification
@@ -277,6 +310,47 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
       this.updatePage();
       this.selectedNotificationIds = [];
     });
+    this.subs.push(sub);
+  }
+
+  onMarkRead(notification: Notifications) {
+    const dialogRef = this.dialog.open(PromptModalComponent, {
+      data: {
+        message: 'Mark this notification as read?',
+        confirmation: true,
+        disableClose: true
+      }
+    });
+
+    const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
+      this.notificationService.readNotification(notification.id).subscribe((res: any) => {
+        this.snackbar.openSnackBar(res.message || 'Notification marked as read', '');
+        this.refreshNotifications();
+        dialogRef.close();
+      });
+    });
+
+    this.subs.push(sub);
+  }
+
+  onMarkUnread(notification: Notifications) {
+    const dialogRef = this.dialog.open(PromptModalComponent, {
+      data: {
+        message: 'Mark this notification as unread?',
+        confirmation: true,
+        disableClose: true
+      }
+    });
+
+    const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
+      const payload = { action: 'unread', ids: notification.id.toString() };
+      this.notificationService.bulkAction(payload).subscribe((res: any) => {
+        this.snackbar.openSnackBar(res.message || 'Notification marked as unread', '');
+        this.refreshNotifications();
+        dialogRef.close();
+      });
+    });
+
     this.subs.push(sub);
   }
 

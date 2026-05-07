@@ -15,7 +15,6 @@ import {
 export class NotificationBulkActionsComponent implements AfterViewInit {
 
   @Input() selectAll = false;
-
   @Output() toggleSelectAll = new EventEmitter<void>();
   @Output() bulkAction = new EventEmitter<string>();
 
@@ -57,7 +56,6 @@ export class NotificationBulkActionsComponent implements AfterViewInit {
   subscribeToOutsideClicks(): void {
     document.addEventListener('click', () => {
       this.closeMenu();
-      this.selectAll = false;
     });
   }
 

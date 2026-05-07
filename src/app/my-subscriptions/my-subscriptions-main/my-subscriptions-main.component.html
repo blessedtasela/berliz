@@ -1,0 +1,10 @@
+<section class="mt-6 font-sans space-y-6">
+    <app-my-subscriptions-analytics [subscriptions]="subscriptionsList"></app-my-subscriptions-analytics>
+
+    <app-my-subscriptions-list [subscriptions]="subscriptionsList" (refresh)="handleRefresh()">
+    </app-my-subscriptions-list>
+
+    <app-my-subscriptions-plans></app-my-subscriptions-plans>
+
+    <app-my-subscriptions-timeline [subscriptions]="subscriptionsList"></app-my-subscriptions-timeline>
+</section>

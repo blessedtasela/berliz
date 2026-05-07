@@ -10,8 +10,13 @@ export class NotificationSectionComponent {
   @Input() title = '';
   @Input() searchQuery = '';
   @Input() items: (Notifications & { index: number })[] = [];
+  @Input() selectionMode: boolean = false;
 
+  @Output() toggleSelectAll = new EventEmitter<void>();
   @Output() open = new EventEmitter<Notifications>();
   @Output() toggle = new EventEmitter<Notifications>();
+  @Output() markRead = new EventEmitter<Notifications>();
+  @Output() markUnread = new EventEmitter<Notifications>();
+  @Output() deleteItem = new EventEmitter<Notifications>();
 
 }

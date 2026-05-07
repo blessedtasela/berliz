@@ -20,19 +20,16 @@ import { CategoriesComponent } from './categories/categories/categories.componen
 import { AboutUsComponent } from './about-us/about-us/about-us.component';
 import { ActivateAccountComponent } from './dashboard/user/activate-account/activate-account.component';
 import { ResetPasswordComponent } from './dashboard/user/reset-password/reset-password.component';
-import { MyTodosComponent } from './dashboard/todo-lists/my-todos/my-todos.component';
 import { CategoryComponent } from './admin/categories/category/category.component';
 import { AdminContactUsComponent } from './admin/contact-us/admin-contact-us/admin-contact-us.component';
 import { UsersComponent } from './admin/users/users/users.component';
 import { TagsComponent } from './admin/tags/tags/tags.component';
 import { NewslettersComponent } from './admin/newsletters/newsletters/newsletters.component';
 import { PartnersComponent } from './admin/partners/partners/partners.component';
-import { TodoListsComponent } from './admin/todo-lists/todo-lists/todo-lists.component';
 import { MuscleGroupsComponent } from './admin/muscle-groups/muscle-groups/muscle-groups.component';
 import { ExercisesComponent } from './admin/exercises/exercises/exercises.component';
 import { TasksComponent } from './admin/tasks/tasks/tasks.component';
 import { MyNotificationsPageComponent } from './my-notifications/my-notifications-page/my-notifications-page.component';
-import { MySubscriptionsPageComponent } from './my-subscriptions/my-subscriptions-page/my-subscriptions-page.component';
 import { MyFaqsPageComponent } from './my-faqs/my-faqs-page/my-faqs-page.component';
 import { MyTasksPageComponent } from './my-tasks/my-tasks-page/my-tasks-page.component';
 import { TrainersComponent } from './admin/trainers/trainers/trainers.component';
@@ -61,6 +58,9 @@ import { UserProfileComponent } from './user/user-profile/user-profile.component
 import { UserProfileSettingsComponent } from './user/user-profile-settings/user-profile-settings.component';
 import { DashboardMainComponent } from './dashboard/dashboard-main/dashboard-main.component';
 import { DashboardRouteComponent } from './dashboard/dashboard-route/dashboard-route.component';
+import { MySubscriptionsMainComponent } from './my-subscriptions/my-subscriptions-main/my-subscriptions-main.component';
+import { MyTodoListMainComponent } from './my-todo-list/my-todo-list-main/my-todo-list-main.component';
+import { TodoListsComponent } from './admin/todo-lists/todo-lists/todo-lists.component';
 
 
 
@@ -290,7 +290,7 @@ const routes: Routes = [
             }
           },
           {
-            path: 'my-subscriptions', component: MySubscriptionsPageComponent,
+            path: 'my-subscriptions', component: MySubscriptionsMainComponent,
             canActivate: [AuthGuard],
             data: {
               expectedRole: ['admin', 'user', 'partner', 'trainer',
@@ -306,7 +306,7 @@ const routes: Routes = [
             }
           },
           {
-            path: 'my-todos', component: MyTodosComponent,
+            path: 'my-todos', component: MyTodoListMainComponent,
             canActivate: [AuthGuard],
             data: {
               expectedRole: ['admin', 'user', 'partner', 'trainer',
@@ -424,7 +424,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'my-subscriptions', component: MySubscriptionsPageComponent,
+        path: 'my-subscriptions', component: MySubscriptionsMainComponent,
         canActivate: [AuthGuard],
         data: {
           expectedRole: ['admin', 'user', 'partner', 'trainer',
@@ -440,7 +440,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'my-todos', component: MyTodosComponent,
+        path: 'my-todos', component: MyTodoListMainComponent,
         canActivate: [AuthGuard],
         data: {
           expectedRole: ['admin', 'user', 'partner', 'trainer',

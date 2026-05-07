@@ -11,6 +11,11 @@
   opacity: 0;
 }
 
+/* safer global text handling */
+* {
+  overflow-wrap: anywhere;
+}
+
 .hero-bg {
   background-image: url('./assets/landing/hero-bg.jpg');
   background-repeat:repeat-x;     /* Prevents tiling */

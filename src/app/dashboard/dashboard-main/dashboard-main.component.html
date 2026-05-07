@@ -15,9 +15,11 @@
     <app-dashboard-login-chart [data]="data"></app-dashboard-login-chart>
 </div>
 
-<!-- Notifications -->
+<!-- Notifications  + Todo List-->
 <div class="mt-8">
     <app-dashboard-notification></app-dashboard-notification>
+    <app-dashboard-todo-list [todoData]="myTodo"></app-dashboard-todo-list>
+
 </div>
 
 <!-- Admin-only Widgets -->
@@ -26,8 +28,8 @@
     <app-dashboard-now-active hidden></app-dashboard-now-active>
 </div>
 
-<!-- Activity Chart + Todo List -->
+<!-- Activity Chart + Subscription Analytics-->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
     <app-dashboard-activity-chart [data]="data"></app-dashboard-activity-chart>
-    <app-dashboard-todo-list [todoData]="myTodo"></app-dashboard-todo-list>
+    <app-dashboard-subscription-analytics [subscriptions]="mySubscriptions"></app-dashboard-subscription-analytics>
 </div>

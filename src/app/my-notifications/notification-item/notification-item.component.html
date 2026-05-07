@@ -1,29 +1,57 @@
-<!-- notification-item.component.html -->
-<div class="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer" (click)="open.emit(item)">
+<div class="relative flex items-start gap-3 p-3 rounded-lg cursor-pointer transition" [ngClass]="{
+    'bg-gray-100 shadow-inner': item.checked,
+    'hover:bg-gray-50': !item.checked
+  }"  [class.opacity-50]="item.checked" (click)="onItemClick($event)"
+    (mousedown)="startPress($event)" (mouseup)="cancelPress()" (mouseleave)="cancelPress()">
 
-    <div class="flex items-center justify-center w-full gap-4">
-        <!-- Checkbox -->
-        <button (click)="toggle.emit(item); $event.stopPropagation()"
+    <!-- Checkbox (ONLY thing that works in selection mode) -->
+    <div>
+        <button (click)="onToggleClick($event)"
             class="mt-1 w-4 h-4 border rounded-full flex items-center justify-center">
             <div *ngIf="item.checked" class="w-2 h-2 bg-red-600 rounded"></div>
         </button>
-
-        <!-- Icon + content -->
-        <div class="flex-1 flex gap-2">
-            <i-feather [name]="meta.icon" [ngClass]="meta.color" class="w-4 h-4 mt-1"></i-feather>
-
-            <div class="flex-1">
-                <p class="text-gray-900 text-sm" [innerHTML]="highlight(item.notification, searchQuery)">
-                    
-                </p>
-
-                <p class="text-gray-500 text-xs mt-1">
-                    {{ item.date | date:'short' }}
-                </p>
-            </div>
-        </div>
-
-        <!-- Unread dot -->
-        <div *ngIf="!item.read" class="w-2 h-2 bg-red-600 rounded-full mt-2"></div>
     </div>
+
+    <!-- Icon + content -->
+    <div class="flex-1 flex gap-2">
+        <i-feather [name]="meta.icon" [ngClass]="meta.color" class="w-4 h-4 mt-1"></i-feather>
+
+        <div class="flex-1">
+            <p class="text-gray-900 text-sm break-all hyphens-auto" [innerHTML]="highlight(item.notification, searchQuery)">
+            </p>
+
+            <p class="text-gray-500 text-xs mt-1">
+                {{ item.date | date:'short' }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Unread dot -->
+    <div *ngIf="!item.read" class="w-2 h-2 bg-red-600 rounded-full mt-2"></div>
+
+    <!-- More menu -->
+    <div class="relative ml-2">
+
+        <i-feather name="more-horizontal" class="cursor-pointer text-gray-600 hover:text-gray-900"
+            [class.pointer-events-none]="selectionMode" [class.opacity-30]="selectionMode" (click)="toggleMenu($event)">
+        </i-feather>
+        <!-- Dropdown -->
+        <div *ngIf="menuOpen && !selectionMode"
+            class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-20 text-sm py-1">
+
+            <button class="w-full text-left px-3 py-1.5 hover:bg-gray-50" (click)="markAsRead($event)">
+                Mark as read
+            </button>
+
+            <button class="w-full text-left px-3 py-1.5 hover:bg-gray-50" (click)="markAsUnread($event)">
+                Mark as unread
+            </button>
+
+            <button class="w-full text-left px-3 py-1.5 text-red-600 hover:bg-red-50" (click)="delete($event)">
+                Delete
+            </button>
+
+        </div>
+    </div>
+
 </div>

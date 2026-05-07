@@ -5,3 +5,9 @@ export interface FilterState {
   endDate: string | null;
   exactDate: string | null;
 }
+
+export interface SearchSortOption {
+  key: string;
+  label: string;
+  priority?: boolean;
+}

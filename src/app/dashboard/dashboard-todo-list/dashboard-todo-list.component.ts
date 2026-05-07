@@ -180,7 +180,7 @@ export class DashboardTodoListComponent implements OnInit, OnDestroy {
     if (todo.status === 'cancelled') return 'text-gray-500';
     if (this.isDueNow(todo)) return 'text-red-600';
     if (this.isDueSoon(todo)) return 'text-yellow-600';
-    if (todo.status === 'in-progress') return 'text-yellow-600';
+    if (todo.status === 'in-progress') return 'text-blue-600';
     if (todo.status === 'pending') return 'text-gray-800';
     return 'text-gray-600';
   }

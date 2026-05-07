@@ -2,6 +2,8 @@ import { Users } from "./users.interface";
 
 export type TodoStatus = "pending" | "in-progress" | "cancelled" | "completed";
 
+export type Priority = 'high' | 'normal' | 'low' | 'due';
+
 export interface TodoList {
     id: number;
     task: string;
@@ -10,5 +12,6 @@ export interface TodoList {
     lastUpdate: Date;
     status: TodoStatus;
     dueDate: Date;
-    checked: boolean;
+    checked: boolean
+    priority: Priority;
 }

@@ -1,0 +1,51 @@
+<div class="flex flex-col gap-6">
+
+    <!-- Shared Search Panel -->
+    <app-search-panel (stateChange)="onFilterStateChange($event)" [(searchQuery)]="searchQuery"
+        [sortOptions]="todoSortOptions" [placeholder]="placeholder">
+    </app-search-panel>
+
+    <!-- TODO LIST FIRST WHEN FILTERING -->
+    <app-my-todo-lists *ngIf="isFiltering" [sections]="sections" [startIndex]="startIndex" [endIndex]="endIndex"
+        [total]="todosLength" [selectAll]="isSelectAllChecked()" (prev)="prevPage()" (next)="nextPage()"
+        (toggleSelectAll)="onToggleSelectAll()" (bulkAction)="onBulkAction($event)" (open)="onOpenTodo($event)"
+        (toggle)="onToggleItem($event)" (edit)="onEditTodo($event)" (delete)="onDeleteTodo($event)"
+        [searchQuery]="searchQuery">
+    </app-my-todo-lists>
+
+    <!-- NORMAL DASHBOARD CONTENT -->
+    <ng-container *ngIf="!isFiltering">
+
+        <!-- Analytics + Heatmap -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div class="w-full">
+                <app-my-todo-list-analytic-chart [todos]="allTodos">
+                </app-my-todo-list-analytic-chart>
+            </div>
+
+            <div class="w-full">
+                <app-my-todo-list-heatmap [todos]="allTodos">
+                </app-my-todo-list-heatmap>
+            </div>
+
+        </div>
+
+        <!-- Timeline -->
+        <app-my-todo-list-timeline [todos]="allTodos"></app-my-todo-list-timeline>
+
+        <!-- Add Todo Form -->
+        <app-my-todo-list-form (emitEvent)="refreshTodos()">
+        </app-my-todo-list-form>
+
+    </ng-container>
+
+    <!-- TODO LIST NORMAL POSITION -->
+    <app-my-todo-lists *ngIf="!isFiltering" [sections]="sections" [startIndex]="startIndex" [endIndex]="endIndex"
+        [total]="todosLength" [selectAll]="isSelectAllChecked()" (prev)="prevPage()" (next)="nextPage()"
+        (toggleSelectAll)="onToggleSelectAll()" (bulkAction)="onBulkAction($event)" (open)="onOpenTodo($event)"
+        (toggle)="onToggleItem($event)" (edit)="onEditTodo($event)" (delete)="onDeleteTodo($event)"
+        [searchQuery]="searchQuery">
+    </app-my-todo-lists>
+
+</div>

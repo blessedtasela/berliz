@@ -51,5 +51,12 @@ export class SubscriptionService {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     })
   }
+
+  renewSubscription(payload: { id: number; durationMonths: number }) {
+  return this.httpClient.post(
+    `${this.url}/renewSubscription`,
+    payload
+  );
+}
 }
 

@@ -15,13 +15,19 @@ export class NotificationListComponent {
   @Input() total = 0;
   @Input() selectAll = false;
   @Input() searchQuery = '';
-
+  @Input() selectionMode: boolean = false;
+  @Input() notificationsLength = 0;
+  
   @Output() prev = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
   @Output() toggleSelectAll = new EventEmitter<void>();
   @Output() bulkAction = new EventEmitter<string>();
   @Output() open = new EventEmitter<Notifications>();
   @Output() toggle = new EventEmitter<Notifications>();
+  @Output() markRead = new EventEmitter<Notifications>();
+  @Output() markUnread = new EventEmitter<Notifications>();
+  @Output() deleteItem = new EventEmitter<Notifications>();
+
 
   focusedIndex: number | null = null;
 
@@ -57,5 +63,13 @@ export class NotificationListComponent {
       const n = flatList.find(item => item.index === this.focusedIndex);
       if (n) this.open.emit(n);
     }
+  }
+
+  get selectedCount(): number {
+    let count = 0;
+    this.sections.forEach(s => {
+      count += s.items.filter((i: any) => i.checked).length;
+    });
+    return count;
   }
 }

@@ -1,0 +1,35 @@
+<div class="p-4 w-full max-w-md">
+  <h2 class="text-lg font-semibold text-gray-900 mb-2">
+    Renew subscription
+  </h2>
+  <p class="text-sm text-gray-600 mb-4">
+    {{ data.subscription.planName }} – current end date:
+    <span class="font-medium">
+      {{ data.subscription.endDate | date:'mediumDate' }}
+    </span>
+  </p>
+
+  <div class="space-y-3">
+    <label class="block text-sm text-gray-700">
+      Duration (months)
+    </label>
+    <input
+      type="number"
+      min="1"
+      class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+      [(ngModel)]="durationMonths" />
+  </div>
+
+  <div class="flex justify-end gap-2 mt-6">
+    <button
+      class="px-3 py-1.5 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100"
+      (click)="close()">
+      Cancel
+    </button>
+    <button
+      class="px-4 py-1.5 text-sm rounded-md bg-red-600 text-white hover:bg-red-700"
+      (click)="renew()">
+      Renew
+    </button>
+  </div>
+</div>

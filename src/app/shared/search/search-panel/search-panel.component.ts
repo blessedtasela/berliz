@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FilterState } from 'src/app/models/FilterState.interface';
+import { FilterState, SearchSortOption } from 'src/app/models/FilterState.interface';
 
 @Component({
   selector: 'app-search-panel',
@@ -8,6 +8,8 @@ import { FilterState } from 'src/app/models/FilterState.interface';
 export class SearchPanelComponent implements OnInit {
 
   @Input() searchQuery: string = '';
+  @Input() sortOptions: SearchSortOption[] = [];
+  @Input() placeholder: string = 'Search...';
   @Output() searchQueryChange = new EventEmitter<string>();
   @Output() stateChange = new EventEmitter<FilterState>();
 
@@ -20,20 +22,9 @@ export class SearchPanelComponent implements OnInit {
 
   drawerOpen = false;
   showMoreButton = true;
+  visibleSortOptions: SearchSortOption[] = [];
 
-  sortOptions = [
-    { key: 'all', label: 'All', priority: true },
-    { key: 'unread', label: 'Unread', priority: true },
-    { key: 'read', label: 'Read', priority: true },
-    { key: 'today', label: 'Today', priority: true },
-    { key: 'yesterday', label: 'Yesterday', priority: true },
-    { key: 'week', label: 'This Week', priority: false },
-    { key: 'month', label: 'This Month', priority: false },
-    { key: 'range', label: 'Date Range', priority: false },
-    { key: 'exact-date', label: 'Exact Date', priority: false }
-  ];
-
-  visibleSortOptions: any[] = [];
+  constructor() { }
 
   ngOnInit() {
     this.updateVisibleOptions();

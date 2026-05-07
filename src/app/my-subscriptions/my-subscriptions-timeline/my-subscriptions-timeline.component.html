@@ -1,0 +1,35 @@
+<div class="bg-white rounded-2xl border border-gray-200 p-4 mt-4">
+    <h3 class="text-sm font-semibold text-gray-900 mb-3">
+        Subscription timeline
+    </h3>
+
+    <div class="relative">
+        <div class="absolute left-3 top-0 bottom-0 w-px bg-gray-200"></div>
+
+        <div *ngFor="let sub of sorted; let i = index" class="relative pl-8 pb-4">
+            <div class="absolute left-1.5 top-1.5 w-3 h-3 rounded-full" [ngClass]="{
+             'bg-green-500': sub.status === 'true',
+             'bg-gray-400': sub.status === 'false'
+           }">
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-gray-900">
+                        {{ sub.planName || 'Subscription' }}
+                    </p>
+                    <p class="text-xs text-gray-500">
+                        {{ sub.startDate | date:'mediumDate' }} –
+                        {{ sub.endDate ? (sub.endDate | date:'mediumDate') : 'Ongoing' }}
+                    </p>
+                </div>
+                <span class="text-xs px-2 py-0.5 rounded-full" [ngClass]="{
+            'bg-green-50 text-green-700 border border-green-200': sub.status === 'true',
+            'bg-gray-100 text-gray-600 border border-gray-200': sub.status === 'false'
+          }">
+                    {{ sub.status === 'true' ? 'Active' : 'Expired' }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

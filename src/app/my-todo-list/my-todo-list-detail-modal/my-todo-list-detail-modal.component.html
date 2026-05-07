@@ -1,0 +1,24 @@
+<div class="p-6 w-full max-w-md font-sans">
+
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Task Details</h2>
+
+    <p class="text-gray-900 font-semibold text-lg leading-snug">
+        {{ data.task }}
+    </p>
+
+    <div class="mt-4 text-sm text-gray-600 space-y-1">
+        <p><strong>Created by:</strong> {{ data.user.firstname }} {{ data.user.lastname }}</p>
+        <p><strong>Created:</strong> {{ data.date | date:'medium' }}</p>
+        <p><strong>Updated:</strong> {{ data.lastUpdate | date:'medium' }}</p>
+        <p><strong>Due:</strong> {{ data.dueDate | date:'medium' }}</p>
+        <p><strong>Priority:</strong> {{ data.priority }}</p>
+        <p><strong>Status:</strong> {{ data.status }}</p>
+    </div>
+
+    <div class="flex justify-end mt-6">
+        <button class="px-4 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 transition" (click)="close()">
+            Close
+        </button>
+    </div>
+
+</div>

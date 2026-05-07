@@ -8,4 +8,5 @@ export class SearchBarComponent {
   @Input() query = '';
   @Output() queryChange = new EventEmitter<string>();
   @Output() clear = new EventEmitter<void>();
+  @Input() placeholder: string = 'Search...';
 }

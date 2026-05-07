@@ -1,7 +1,10 @@
-<div class="mt-6 font-sans space-y-3" *ngIf="notifications.length > 0">
+<div class="flex justify-between items-center mb-3">
+    <h1 class="text-gray-800 text-xl font-bold font-sans">Notifications </h1>
+</div>
 
-    <div *ngFor="let n of notifications | slice:0:4" (click)="openNotificationModal(n)" 
-    class="p-2 rounded-lg cursor-pointer transition-all duration-300 text-sm
+<div class="mt-6 font-sans space-y-3 mb-6" *ngIf="notifications.length > 0">
+
+    <div *ngFor="let n of notifications | slice:0:4" (click)="openNotificationModal(n)" class="p-2 rounded-lg cursor-pointer transition-all duration-300 text-sm
            bg-white shadow-sm hover:shadow-md flex items-start gap-3" [ngClass]="{
       'bg-red-50 shadow-md': !n.read
     }">
@@ -44,7 +47,7 @@
 </div>
 
 <!-- EMPTY STATE -->
-<div class="mt-6 text-center text-gray-600 font-sans" *ngIf="notifications.length === 0">
+<div class="mt-6 mb-6 text-center text-gray-600 font-sans" *ngIf="notifications.length === 0">
     <i-feather name="check-circle" class="w-8 h-8 text-gray-400 mx-auto mb-2"></i-feather>
     <p class="text-lg font-semibold">You currently have no unread notifications</p>
 </div>
