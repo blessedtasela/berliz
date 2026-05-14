@@ -1,48 +1,88 @@
-<div class="bg-white border rounded-2xl p-4">
+<!-- heatmap -->
+<div class="bg-white border border-gray-200 rounded-2xl p-4 font-sans
+         flex flex-col max-h-[350px] overflow-hidden gap-3">
 
-    <!-- HEADER -->
-    <div class="flex justify-between items-center mb-3">
-        <button (click)="prevMonth()">←</button>
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-4 shrink-0">
 
-        <h3 class="text-sm font-semibold">
-            {{ currentDate | date:'MMMM yyyy' }} 🔥
-        </h3>
+        <button (click)="prevMonth()"
+            class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition">
+            <i-feather name="chevron-left" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+        </button>
 
-        <button (click)="nextMonth()">→</button>
+        <div class="flex flex-col items-center">
+            <h3 class="text-sm font-semibold text-gray-800">
+                {{ currentDate | date:'MMMM yyyy' }}
+            </h3>
+            <span class="text-[10px] text-gray-400">{{ todos.length }} tasks this month</span>
+        </div>
+
+        <button (click)="nextMonth()"
+            class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition">
+            <i-feather name="chevron-right" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+        </button>
+
     </div>
 
-    <!-- DAYS LABEL -->
-    <div class="grid grid-cols-7 text-[10px] text-gray-500 mb-1">
-        <div>Su</div>
-        <div>Mo</div>
-        <div>Tu</div>
-        <div>We</div>
-        <div>Th</div>
-        <div>Fr</div>
-        <div>Sa</div>
-    </div>
+    <!-- Scrollable content -->
+    <div class="flex-1 overflow-y-auto min-h-0 pr-1">
 
-    <!-- GRID -->
-    <div class="grid grid-cols-7 gap-1">
+        <!-- Day labels -->
+        <div class="grid grid-cols-7 mb-1.5">
+            <div *ngFor="let d of ['Su','Mo','Tu','We','Th','Fr','Sa']"
+                class="text-center text-[10px] font-semibold text-gray-400">
+                {{ d }}
+            </div>
+        </div>
 
-        <ng-container *ngFor="let week of weeks">
+        <!-- Grid -->
+        <div class="grid grid-cols-7 gap-0.5">
+            <ng-container *ngFor="let week of weeks">
+                <ng-container *ngFor="let day of week">
 
-            <ng-container *ngFor="let day of week">
+                    <div class="w-6 h-6 rounded-md flex items-center justify-center text-[8px]
+               font-bold cursor-pointer transition
+               hover:ring-1 hover:ring-offset-1 hover:ring-red-300"
+                        [ngClass]="[day.intensity, !day.inMonth ? 'opacity-25' : '']" [title]="day.label">
 
-                <div class="w-7 h-7 rounded-md flex items-center justify-center text-[9px] font-bold cursor-pointer"
-                    [ngClass]="day.intensity" [title]="day.label" [class.opacity-30]="!day.inMonth">
+                        <ng-container *ngIf="day.isStreak">
+                            <i-feather name="zap" style="width:8px;height:8px;" class="text-white"></i-feather>
+                        </ng-container>
 
-                    <span *ngIf="day.isStreak">🔥</span>
+                        <ng-container *ngIf="!day.isStreak && day.count > 0">
+                            {{ day.count }}
+                        </ng-container>
 
-                    <span *ngIf="!day.isStreak && day.count > 0">
-                        {{ day.count }}
-                    </span>
+                        <ng-container *ngIf="!day.count && isToday(day.date)">
+                            <span class="w-1 h-1 rounded-full bg-red-400 block"></span>
+                        </ng-container>
 
-                </div>
+                    </div>
 
+                </ng-container>
             </ng-container>
-
-        </ng-container>
+        </div>
 
     </div>
+
+    <!-- Legend -->
+    <div class="flex items-center justify-between mt-3 shrink-0">
+
+        <div class="flex items-center gap-1.5">
+            <span class="text-[10px] text-gray-400">Less</span>
+            <div class="w-3 h-3 rounded-sm bg-gray-100"></div>
+            <div class="w-3 h-3 rounded-sm bg-red-200"></div>
+            <div class="w-3 h-3 rounded-sm bg-red-400"></div>
+            <div class="w-3 h-3 rounded-sm bg-red-600"></div>
+            <div class="w-3 h-3 rounded-sm bg-orange-500"></div>
+            <span class="text-[10px] text-gray-400">More</span>
+        </div>
+
+        <div class="flex items-center gap-1 text-[10px] text-gray-400">
+            <i-feather name="zap" style="width:10px;height:10px;" class="text-orange-500"></i-feather>
+            <span>3+ day streak</span>
+        </div>
+
+    </div>
+
 </div>

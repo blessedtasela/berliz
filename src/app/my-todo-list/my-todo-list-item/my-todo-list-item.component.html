@@ -1,81 +1,146 @@
-<div class="p-3 border border-gray-200 rounded-xl bg-white
-         hover:shadow-sm hover:-translate-y-0.5 transition
-         cursor-pointer flex flex-col gap-2" (click)="open.emit(todo)">
+<div class="relative p-3 border rounded-xl bg-white transition cursor-pointer flex flex-col gap-3 overflow-visible"
+  [ngClass]="{
+    'border-red-200 bg-red-50 shadow-sm': todo.checked,
+    'border-gray-200 hover:shadow-sm hover:-translate-y-0.5': !todo.checked,
+    'opacity-60': todo.status === 'cancelled',
+    'z-50': menuOpen,
+    'z-0': !menuOpen
+  }" (click)="onItemClick($event)" (mousedown)="startPress($event)" (mouseup)="cancelPress()"
+  (mouseleave)="cancelPress()">
 
-    <!-- Top row: task + menu -->
-    <div class="flex justify-between items-start gap-3">
+  <!-- Selection indicator -->
+  <div *ngIf="todo.checked"
+    class="absolute top-2 right-2 w-5 h-5 bg-red-600 rounded-full flex items-center justify-center shadow">
+    <i-feather name="check" class="text-white" style="width:12px;height:12px;"></i-feather>
+  </div>
 
-        <div class="flex-1">
-            <div class="text-gray-900 font-medium text-sm md:text-base leading-snug break-all hyphens-auto"
-                [innerHTML]="highlight(todo.task)">
-            </div>
+  <!-- Top row -->
+  <div class="flex items-start gap-3">
 
-            <div class="mt-1 text-xs text-gray-500 flex flex-wrap gap-2 items-center">
-                <span>Created by {{ todo.user.firstname }} {{ todo.user.lastname }}</span>
-                <span>•</span>
-                <span>Created {{ todo.date | date:'mediumDate' }}</span>
-                <span>•</span>
-                <span>Updated {{ todo.lastUpdate | date:'mediumDate' }}</span>
-            </div>
-        </div>
+    <!-- Checkbox -->
+    <button (click)="onToggleTodo($event)"
+      class="mt-1 w-4 h-4 rounded-full border border-gray-300 hover:border-red-400 flex items-center justify-center shrink-0 transition">
+      <div *ngIf="todo.checked" class="w-2 h-2 bg-red-600 rounded-full"></div>
+    </button>
 
-        <!-- Right: status + menu -->
-        <div class="flex flex-col items-end gap-2">
+    <!-- Content -->
+    <div class="flex-1 min-w-0">
 
-            <!-- Status pill -->
-            <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold" [ngClass]="{
+      <div class="text-gray-900 font-medium text-sm leading-snug break-words" [innerHTML]="highlight(todo.task)">
+      </div>
+
+      <div class="mt-1.5 text-xs text-gray-400 flex flex-wrap gap-2 items-center">
+        By:<span>{{ todo.userFirstname }} {{ todo.userLastname }}</span>
+        <span>·</span>
+        <span>Created: {{ todo.date | date:'mediumDate' }}</span>
+        <span>·</span>
+        <span>Updated: {{ todo.lastUpdate | date:'mediumDate' }}</span>
+      </div>
+
+    </div>
+
+    <!-- Right: status + menu -->
+    <div class="flex flex-col items-end gap-2 shrink-0 overflow-visible">
+
+      <!-- Status badge -->
+      <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold" [ngClass]="{
           'bg-green-100 text-green-700': todo.status === 'completed',
-          'bg-blue-100 text-blue-700': todo.status === 'in-progress',
-          'bg-red-100 text-red-700': todo.status === 'pending',
-          'bg-gray-200 text-gray-700': todo.status === 'cancelled'
+          'bg-blue-100 text-blue-700':   todo.status === 'in-progress',
+          'bg-red-100 text-red-600':     todo.status === 'pending',
+          'bg-gray-200 text-gray-500':   todo.status === 'cancelled'
         }">
-                {{ todo.status }}
-            </span>
+        {{ todo.status }}
+      </span>
 
-            <!-- Menu -->
-            <div class="relative">
-                <i-feather name="more-horizontal" class="cursor-pointer text-gray-600 hover:text-gray-900"
-                    (click)="toggleMenu($event); ">
-                </i-feather>
+      <!-- Menu -->
+      <div class="relative overflow-visible">
 
-                <div *ngIf="menuOpen" (click)="$event.stopPropagation()"
-                    class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-20 text-sm py-1">
+        <button (click)="toggleMenu($event)"
+          class="w-6 h-6 rounded-md hover:bg-gray-100 flex items-center justify-center transition"
+          [class.pointer-events-none]="selectionMode" [class.opacity-30]="selectionMode">
+          <i-feather name="more-horizontal" style="width:14px;height:14px;" class="text-gray-500"></i-feather>
+        </button>
 
-                    <button class="w-full text-left px-3 py-1.5 hover:bg-gray-50" (click)="onEdit($event)">
-                        Edit
-                    </button>
+        <!-- Dropdown -->
+        <div *ngIf="menuOpen && !selectionMode" (click)="$event.stopPropagation()"
+          class="absolute right-0 top-full mt-1.5 w-48 bg-white border border-gray-200 rounded-xl shadow-2xl z-[100] text-sm py-1">
 
-                    <button class="w-full text-left px-3 py-1.5 hover:bg-gray-50" (click)="onMarkComplete($event)">
-                        Mark as completed
-                    </button>
+          <button class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2" (click)="onEdit($event)">
+            ✏️ Edit
+          </button>
 
-                    <button class="w-full text-left px-3 py-1.5 text-red-600 hover:bg-red-50"
-                        (click)="onDelete($event)">
-                        Delete
-                    </button>
+          <button *ngIf="todo.status === 'pending'"
+            class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
+            (click)="onQuickAction('in-progress', $event)">
+            ▶️ Start task
+          </button>
 
-                </div>
-            </div>
+          <button *ngIf="todo.status === 'in-progress'"
+            class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
+            (click)="onQuickAction('pause', $event)">
+            ⏸️ Pause task
+          </button>
+
+          <button *ngIf="todo.status === 'completed' || todo.status === 'cancelled'"
+            class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
+            (click)="onQuickAction('pending', $event)">
+            🔄 Restart task
+          </button>
+
+          <button *ngIf="todo.status !== 'completed'"
+            class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
+            (click)="onQuickAction('completed', $event)">
+            ✅ Mark complete
+          </button>
+
+          <button *ngIf="todo.status === 'in-progress'"
+            class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
+            (click)="onQuickAction('cancelled', $event)">
+            🚫 Cancel task
+          </button>
+
+          <div class="border-t border-gray-100 my-1"></div>
+
+          <button class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 flex items-center gap-2"
+            (click)="onDelete($event)">
+            🗑️ Delete
+          </button>
 
         </div>
+
+      </div>
+
     </div>
 
-    <!-- Bottom row: due + priority -->
-    <div class="flex justify-between items-center mt-1 text-xs text-gray-500">
+  </div>
 
-        <div>
-            Due {{ todo.dueDate | date:'mediumDate' }}
-        </div>
+  <!-- Bottom row -->
+  <div class="flex justify-between items-center pt-1 border-t border-gray-100 text-xs">
 
-        <!-- Priority badge (Berliz theme) -->
-        <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold" [ngClass]="{
-        'bg-emerald-100 text-emerald-700': todo.priority === 'low',
-        'bg-sky-100 text-sky-700': todo.priority === 'normal',
-        'bg-red-100 text-red-700 border border-red-300': todo.priority === 'high'
+    <!-- Due date -->
+    <span class="flex items-center gap-1 font-medium" [ngClass]="{
+        'text-red-600':    isOverdue(todo),
+        'text-yellow-600': isDueSoon(todo) && !isOverdue(todo),
+        'text-gray-400':   !isOverdue(todo) && !isDueSoon(todo)
       }">
-            {{ todo.priority | titlecase }}
-        </span>
+      <i-feather name="calendar" style="width:11px;height:11px;"></i-feather>
+      Due {{ todo.dueDate | date:'mediumDate' }}
+    </span>
 
-    </div>
+    <!-- Priority -->
+    <span class="flex items-center gap-1 font-semibold text-[11px]" [ngClass]="{
+        'text-emerald-700': todo.priority.toLowerCase() === 'low',
+        'text-sky-700':     todo.priority.toLowerCase() === 'normal',
+        'text-red-600':     todo.priority.toLowerCase() === 'high'
+      }">
+      <ng-container [ngSwitch]="todo.priority.toLowerCase()">
+        <span *ngSwitchCase="'low'">🟢</span>
+        <span *ngSwitchCase="'normal'">🔵</span>
+        <span *ngSwitchCase="'high'">🔴</span>
+      </ng-container>
+      {{ todo.priority | titlecase }}
+    </span>
+
+  </div>
 
 </div>

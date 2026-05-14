@@ -40,34 +40,58 @@ export class MyTodoListAnalyticChartComponent implements AfterViewInit, OnDestro
     const pending = this.todos.filter(t => t.status === 'pending').length;
     const inProgress = this.todos.filter(t => t.status === 'in-progress').length;
 
-    const labels = ['Completed', 'In Progress', 'Pending'];
-    const values = [completed, inProgress, pending];
+    if (this.chart) this.chart.destroy();
 
     this.chart = new Chart(this.todoChart.nativeElement, {
       type: 'bar',
       data: {
-        labels,
-        datasets: [
-          {
-            label: 'Tasks',
-            data: values,
-            backgroundColor: [
-              'rgba(34,197,94,0.4)',
-              'rgba(59,130,246,0.4)',
-              'rgba(239,68,68,0.4)'
-            ],
-            borderColor: [
-              'rgba(34,197,94,1)',
-              'rgba(59,130,246,1)',
-              'rgba(239,68,68,1)'
-            ],
-            borderWidth: 2
-          }
-        ]
+        labels: ['Completed', 'In Progress', 'Pending'],
+        datasets: [{
+          label: 'Tasks',
+          data: [completed, inProgress, pending],
+          backgroundColor: [
+            'rgba(34,197,94,0.15)',
+            'rgba(59,130,246,0.15)',
+            'rgba(239,68,68,0.15)'
+          ],
+          borderColor: [
+            'rgba(34,197,94,1)',
+            'rgba(59,130,246,1)',
+            'rgba(239,68,68,1)'
+          ],
+          borderWidth: 2,
+          borderRadius: 8,
+          borderSkipped: false
+        }]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => ` ${ctx.parsed.y} tasks`
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            border: { display: false },
+            ticks: { font: { size: 11 }, color: '#9ca3af' }
+          },
+          y: {
+            beginAtZero: true,
+            border: { display: false },
+            grid: { color: 'rgba(0,0,0,0.04)' },
+            ticks: {
+              stepSize: 1,
+              font: { size: 11 },
+              color: '#9ca3af'
+            }
+          }
+        }
       }
     });
   }

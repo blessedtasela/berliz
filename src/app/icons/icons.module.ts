@@ -113,6 +113,13 @@ import {
   ChevronsLeft,
   ChevronsRight,
   ChevronsUp,
+  Lock,
+  Unlock,
+  Flag,
+  Sliders,
+  Shield,
+  ShieldOff,
+  ShoppingBag,
 
 } from 'angular-feather/icons';
 
@@ -229,6 +236,13 @@ const icons = {
   ChevronsLeft,
   ChevronsRight,
   ChevronsUp,
+  Lock,
+  Unlock,
+  Flag,
+  Sliders,
+  Shield,
+  ShieldOff,
+  ShoppingBag,
 };
 
 @NgModule({

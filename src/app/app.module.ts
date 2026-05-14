@@ -52,6 +52,7 @@ import { TimeAgoPipe } from './shared/pipes/time-ago.pipe';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { HubModule } from './hub/hub.module';
 import { UserModule } from './user/user.module';
+import { MyTodoListModule } from './my-todo-list/my-todo-list.module';
 
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
@@ -133,7 +134,8 @@ const dbConfig: DBConfig = {
     BrowserAnimationsModule,
     NoopAnimationsModule,
     HubModule,
-    UserModule
+    UserModule,
+    MyTodoListModule
   ],
   exports: [],
 

@@ -28,6 +28,7 @@ export class NotificationItemComponent implements OnChanges {
 
   menuOpen = false;
   pressTimer: any;
+  private longPressTriggered = false;
 
   static activeMenu: NotificationItemComponent | null = null;
 
@@ -64,39 +65,42 @@ export class NotificationItemComponent implements OnChanges {
   // CLICK
   // -----------------------------------
 
-  onItemClick(event: MouseEvent) {
-    event.stopPropagation();
-    this.cancelPress();
-
-    if (this.selectionMode) {
-      this.toggle.emit(this.item); // ✅ only toggle
-      return;
-    }
-
-    this.open.emit(this.item); // ✅ only open in normal mode
-  }
-
   onToggleClick(event: MouseEvent) {
     event.stopPropagation();
     this.toggle.emit(this.item);
   }
 
-  //   onToggleClick(notification: Notifications, event: MouseEvent): void {
-  //   event.stopPropagation();
-  //   this.onToggleItem(notification);
-  // }
+  onItemClick(event: MouseEvent): void {
+    event.stopPropagation();
 
-  // -----------------------------------
+    this.cancelPress();
+
+    // prevent open after long press
+    if (this.longPressTriggered) {
+      this.longPressTriggered = false;
+      return;
+    }
+
+    if (this.selectionMode) {
+      this.toggle.emit(this.item);
+      return;
+    }
+
+    this.open.emit(this.item);
+  }
+  // ---------------------------------------------------------
   // LONG PRESS
-  // -----------------------------------
-  startPress(event: MouseEvent) {
+  // ---------------------------------------------------------
+
+  startPress(event: MouseEvent): void {
     if (this.selectionMode) return;
 
+    this.longPressTriggered = false;
+
     this.pressTimer = setTimeout(() => {
-      if (!this.selectionMode) {
-        this.toggle.emit(this.item);
-      }
-    }, 400);
+      this.longPressTriggered = true;
+      this.toggle.emit(this.item);
+    }, 1000);
   }
 
   cancelPress() {

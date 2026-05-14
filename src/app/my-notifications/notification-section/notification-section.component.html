@@ -5,16 +5,10 @@
         {{ title }}
     </h3>
     <hr>
-<notification-item
-  *ngFor="let item of items"
-  [item]="item"
-  [searchQuery]="searchQuery"
-  (open)="open.emit($event)"
-  (toggle)="toggle.emit($event)"
-  (markRead)="markRead.emit(item)"
-  (markUnread)="markUnread.emit(item)"
-  (deleteItem)="deleteItem.emit(item)"
-  [selectionMode]="selectionMode">
-</notification-item>
+    <notification-item *ngFor="let item of items" [item]="item" [searchQuery]="searchQuery" (open)="open.emit($event)"
+        (toggle)="toggle.emit($event)" (markRead)="markRead.emit(item)" (markUnread)="markUnread.emit(item)"
+        (deleteItem)="deleteItem.emit(item)" [selectionMode]="selectionMode">
+    </notification-item>
 
+    
 </div>

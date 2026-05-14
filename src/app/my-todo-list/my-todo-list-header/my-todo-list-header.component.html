@@ -1,0 +1,85 @@
+<div class="flex justify-between items-center mb-4 px-1">
+
+    <!-- LEFT: pagination info -->
+    <div class="flex items-center gap-2">
+
+        <button
+            class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition flex items-center justify-center"
+            (click)="prev.emit()" [disabled]="startIndex === 1">
+            <i-feather name="chevron-left" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+        </button>
+
+        <span class="text-xs text-gray-500">
+            <span class="font-semibold text-gray-900">{{ startIndex }}</span>
+            –
+            <span class="font-semibold text-gray-900">{{ endIndex }}</span>
+            <span class="text-gray-400"> of </span>
+            <span class="font-semibold text-gray-900">{{ total }}</span>
+        </span>
+
+        <button
+            class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition flex items-center justify-center"
+            (click)="next.emit()" [disabled]="endIndex === total">
+            <i-feather name="chevron-right" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+        </button>
+
+    </div>
+
+    <!-- RIGHT: select all + bulk menu -->
+    <div class="flex items-center gap-3">
+
+        <!-- Select all -->
+        <label class="flex items-center gap-1.5 cursor-pointer select-none group">
+            <input type="checkbox" [checked]="selectAll" (change)="toggleSelectAll.emit()" class="hidden peer" />
+            <div
+                class="w-4 h-4 rounded border border-gray-300 group-hover:border-red-400 peer-checked:bg-red-600 peer-checked:border-red-600 flex items-center justify-center transition">
+                <svg *ngIf="selectAll" class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" stroke-width="3"
+                    viewBox="0 0 24 24">
+                    <path d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <span class="text-xs text-gray-600 font-medium">Select all</span>
+        </label>
+
+        <!-- Bulk menu -->
+        <div class="relative">
+
+            <button class="w-7 h-7 rounded-lg border flex items-center justify-center transition" [ngClass]="selectionMode
+          ? 'border-red-200 bg-red-50 hover:bg-red-100 text-red-600'
+          : 'border-gray-200 bg-white text-gray-400 opacity-40 pointer-events-none'" (click)="toggleBulkMenu($event)">
+                <i-feather name="more-horizontal" style="width:14px;height:14px;"></i-feather>
+            </button>
+
+            <!-- Dropdown -->
+            <div *ngIf="showBulk" (click)="$event.stopPropagation()"
+                class="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-2xl z-[100] text-sm py-1">
+
+                <button class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
+                    (click)="doBulk('in-progress')">
+                    🚀 Begin tasks
+                </button>
+
+                <button class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
+                    (click)="doBulk('completed')">
+                    ✅ Complete tasks
+                </button>
+
+                <button class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
+                    (click)="doBulk('pending')">
+                    🔄 Restart tasks
+                </button>
+
+                <div class="border-t border-gray-100 my-1"></div>
+
+                <button class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 flex items-center gap-2"
+                    (click)="doBulk('delete')">
+                    🗑️ Delete tasks
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

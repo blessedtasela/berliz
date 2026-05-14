@@ -15,4 +15,14 @@ export class MyTodoListTimelineComponent {
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
   }
+
+  isOverdue(t: TodoList): boolean {
+    return new Date(t.dueDate).getTime() < Date.now() &&
+      t.status !== 'completed' && t.status !== 'cancelled';
+  }
+
+  isDueSoon(t: TodoList): boolean {
+    const diff = new Date(t.dueDate).getTime() - Date.now();
+    return diff > 0 && diff <= 2 * 24 * 60 * 60 * 1000;
+  }
 }

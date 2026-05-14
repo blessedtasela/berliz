@@ -1,85 +1,90 @@
 <section class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 font-sans">
 
-    <header class="text-center mb-6">
-        <h1 class="text-2xl font-extrabold text-gray-900">Add a New Task</h1>
-        <p class="text-sm text-red-600 italic">Stay disciplined. Stay consistent.</p>
+    <!-- Header -->
+    <header class="mb-6">
+        <h2 class="text-base font-bold text-gray-900">Add a new task</h2>
+        <p class="text-xs text-red-500 italic mt-0.5">Stay disciplined. Stay consistent.</p>
     </header>
 
-    <form [formGroup]="addTodoForm" (ngSubmit)="addTodo()" class="space-y-5">
+    <form [formGroup]="addTodoForm" (ngSubmit)="addTodo()" class="flex flex-col gap-4">
 
         <!-- Task -->
-        <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Task</label>
-            <input formControlName="task" type="text" placeholder="e.g. 50 pushups daily for 30 days" class="w-full px-4 py-2 rounded-lg border text-sm
-               focus:ring-1 focus:ring-red-500 focus:border-red-500
-               transition-all" [ngClass]="{
-    'border-red-500': isInvalid('task'),
-    'border-gray-300': !isInvalid('task')
-  }" />
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                Task
+            </label>
+            <input formControlName="task" type="text" placeholder="e.g. 50 pushups daily for 30 days" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="{
+          'border-red-400 bg-red-50': isInvalid('task'),
+          'border-gray-200 bg-gray-50': !isInvalid('task')
+        }" />
             <p *ngIf="addTodoForm.get('task')?.invalid && addTodoForm.get('task')?.dirty"
-                class="text-red-500 text-xs mt-1">
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Must be at least 20 characters
             </p>
         </div>
 
         <!-- Due Date -->
-        <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Due Date</label>
-            <input formControlName="dueDate" type="date" class="w-full px-4 py-2 rounded-lg border text-sm
-               focus:ring-1 focus:ring-red-500 focus:border-red-500
-               transition-all" [ngClass]="{
-    'border-red-500': isInvalid('dueDate'),
-    'border-gray-300': !isInvalid('dueDate')
-  }" />
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                Due date
+            </label>
+            <input formControlName="dueDate" type="date" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="{
+          'border-red-400 bg-red-50': isInvalid('dueDate'),
+          'border-gray-200 bg-gray-50': !isInvalid('dueDate')
+        }" />
             <p *ngIf="addTodoForm.get('dueDate')?.invalid && addTodoForm.get('dueDate')?.dirty"
-                class="text-red-500 text-xs mt-1">
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Please select a due date
             </p>
         </div>
 
         <!-- Priority -->
-        <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
+        <div class="flex flex-col gap-2">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">
                 Priority
             </label>
 
             <div class="flex gap-2">
 
-                <button type="button" (click)="setPriority('low')"
-                    class="px-3 py-1 rounded-full text-xs font-semibold border transition" [ngClass]="{
-                'bg-green-100 text-green-700 border-green-300': addTodoForm.value.priority === 'low',
-                'bg-white text-gray-600 border-gray-300': addTodoForm.value.priority !== 'low' 
-                
-            }">
-                    Low
+                <button type="button" (click)="setPriority('LOW')"
+                    class="px-3 py-1 rounded-full text-xs font-semibold border transition" [ngClass]="addTodoForm.value.priority === 'LOW'
+        ? 'bg-green-100 text-green-700 border-green-300 ring-2 ring-green-200'
+        : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'">
+                    🟢 Low
                 </button>
 
-                <button type="button" (click)="setPriority('normal')"
-                    class="px-3 py-1 rounded-full text-xs font-semibold border transition" [ngClass]="{
-                'bg-gray-100 text-gray-800 border-gray-300': addTodoForm.value.priority === 'normal',
-                'bg-white text-gray-600 border-gray-300': addTodoForm.value.priority !== 'normal'
-            }">
-                    Normal
+                <button type="button" (click)="setPriority('NORMAL')"
+                    class="px-3 py-1 rounded-full text-xs font-semibold border transition" [ngClass]="addTodoForm.value.priority === 'NORMAL'
+        ? 'bg-blue-100 text-blue-700 border-blue-300 ring-2 ring-blue-200'
+        : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'">
+                    🔵 Normal
                 </button>
 
-                <button type="button" (click)="setPriority('high')"
-                    class="px-3 py-1 rounded-full text-xs font-semibold border transition" [ngClass]="{
-                'bg-red-100 text-red-700 border-red-300': addTodoForm.value.priority === 'high',
-                'bg-white text-gray-600 border-gray-300': addTodoForm.value.priority !== 'high'
-            }">
-                    High 🔥
+                <button type="button" (click)="setPriority('HIGH')"
+                    class="px-3 py-1 rounded-full text-xs font-semibold border transition" [ngClass]="addTodoForm.value.priority === 'HIGH'
+        ? 'bg-red-100 text-red-700 border-red-300 ring-2 ring-red-200'
+        : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'">
+                    🔥 High
                 </button>
 
             </div>
-            <div *ngIf="isInvalid('priority') || addTodoForm.get('priority')?.dirty" class="text-red-500 text-xs mt-1">
+
+            <p *ngIf="isInvalid('priority') && addTodoForm.get('priority')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Please select a priority
-            </div>
+            </p>
         </div>
 
         <!-- Submit -->
-        <button type="submit"
-            class="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-lg font-semibold text-sm transition-all">
-            Add Task
+        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white py-2.5 rounded-xl
+             font-semibold text-sm transition-all flex items-center justify-center gap-2 mt-1">
+            <i-feather name="plus-circle" style="width:15px;height:15px;"></i-feather>
+            Add task
         </button>
 
     </form>

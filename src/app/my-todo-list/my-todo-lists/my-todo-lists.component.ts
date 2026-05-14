@@ -14,34 +14,22 @@ export class MyTodoListsComponent {
   @Input() total = 0;
   @Input() selectAll = false;
   @Input() searchQuery = '';
+  @Input() selectionMode: boolean = false;
 
   @Output() prev = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
   @Output() toggleSelectAll = new EventEmitter<void>();
+  @Output() quickAction = new EventEmitter<{ action: string; id: number }>();
   @Output() bulkAction = new EventEmitter<string>();
-  @Output() open = new EventEmitter<TodoList>();
-  @Output() toggle = new EventEmitter<TodoList>();
-  @Output() edit = new EventEmitter<TodoList>();
+  @Output() openTodo = new EventEmitter<TodoList>();
+  @Output() toggleTodo = new EventEmitter<TodoList>();
+  @Output() editTodo = new EventEmitter<TodoList>();
   @Output() markComplete = new EventEmitter<TodoList>();
-  @Output() delete = new EventEmitter<TodoList>();
+  @Output() deleteTodo = new EventEmitter<TodoList>();
 
   showBulk = false;
   static activeMenu: MyTodoListsComponent | null = null;
 
   constructor() { }
 
-  toggleBulkMenu(event: Event) {
-    event.stopPropagation();
-    this.showBulk = !this.showBulk;
-  }
-
-  doBulk(action: string) {
-    this.bulkAction.emit(action);
-    this.showBulk = false;
-  }
-
-  @HostListener('document:click')
-  handleOutsideClick() {
-    this.showBulk = false;
-  }
 }

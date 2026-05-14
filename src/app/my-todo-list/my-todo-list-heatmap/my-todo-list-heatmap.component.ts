@@ -125,4 +125,11 @@ export class MyTodoListHeatmapComponent implements OnChanges {
 
     return 'bg-red-600';
   }
+
+  isToday(date: Date): boolean {
+    const t = new Date();
+    return date.getDate() === t.getDate() &&
+      date.getMonth() === t.getMonth() &&
+      date.getFullYear() === t.getFullYear();
+  }
 }

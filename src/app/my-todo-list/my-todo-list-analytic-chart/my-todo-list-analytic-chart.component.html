@@ -1,3 +1,38 @@
-<div class="bg-white border border-gray-200 rounded-2xl p-4 h-full w-full">
-    <canvas #todoChart></canvas>
+<!-- chart -->
+<div class="bg-white border border-gray-200 rounded-2xl p-4 font-sans flex flex-col max-h-[350px] gap-3 h-full">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+        <h3 class="text-sm font-semibold text-gray-800">Task breakdown</h3>
+        <span class="text-[10px] text-gray-400 font-medium">{{ todos.length }} total</span>
+    </div>
+
+    <!-- Legend pills -->
+    <div class="flex flex-wrap gap-2">
+
+        <span
+            class="flex items-center gap-1 text-[10px] font-semibold text-green-700 bg-green-50 border border-green-100 px-2 py-0.5 rounded-full">
+            <span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
+            Completed
+        </span>
+
+        <span
+            class="flex items-center gap-1 text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full">
+            <span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
+            In Progress
+        </span>
+
+        <span
+            class="flex items-center gap-1 text-[10px] font-semibold text-red-700 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">
+            <span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span>
+            Pending
+        </span>
+
+    </div>
+
+    <!-- Chart -->
+    <div class="relative flex-1 min-h-[160px]">
+        <canvas #todoChart></canvas>
+    </div>
+
 </div>

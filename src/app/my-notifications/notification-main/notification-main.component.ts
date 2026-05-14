@@ -195,19 +195,6 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
     return this.selectedNotificationIds.length > 0;
   }
 
-  // onToggleItem(notification: Notifications): void {
-  //   const id = notification.id;
-
-  //   const exists = this.selectedNotificationIds.includes(id);
-
-  //   if (exists) {
-  //     this.selectedNotificationIds =
-  //       this.selectedNotificationIds.filter(x => x !== id);
-  //   } else {
-  //     this.selectedNotificationIds =
-  //       [...this.selectedNotificationIds, id];
-  //   }
-  // }
 
   onToggleItem(notification: Notifications): void {
     notification.checked = !notification.checked;

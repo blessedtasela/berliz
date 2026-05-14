@@ -1,4 +1,4 @@
-<!-- Dashboard Action Cards -->
+<!-- Action Cards -->
 <app-dashboard-action [data]="data"></app-dashboard-action>
 
 <!-- Success Message -->
@@ -9,27 +9,27 @@
     </a>
 </div>
 
-<!-- First Row: Analytics + Login Chart -->
+<!-- Analytics + Login Chart -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
     <app-dashboard-app-analytics [data]="data"></app-dashboard-app-analytics>
     <app-dashboard-login-chart [data]="data"></app-dashboard-login-chart>
 </div>
 
-<!-- Notifications  + Todo List-->
-<div class="mt-8">
+<!-- Notifications + Todo List (side by side) -->
+<div class="grid grid-cols-1 gap-6 mt-8 items-start">
     <app-dashboard-notification></app-dashboard-notification>
     <app-dashboard-todo-list [todoData]="myTodo"></app-dashboard-todo-list>
-
 </div>
 
-<!-- Admin-only Widgets -->
+<!-- Admin-only -->
 <div *ngIf="userData?.role === 'admin'" class="mt-8 space-y-6">
     <app-dashboard-top-users></app-dashboard-top-users>
     <app-dashboard-now-active hidden></app-dashboard-now-active>
 </div>
 
-<!-- Activity Chart + Subscription Analytics-->
+<!-- Activity + Subscription -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
     <app-dashboard-activity-chart [data]="data"></app-dashboard-activity-chart>
-    <app-dashboard-subscription-analytics [subscriptions]="mySubscriptions"></app-dashboard-subscription-analytics>
+    <app-dashboard-subscription-analytics [subscriptions]="mySubscriptions">
+    </app-dashboard-subscription-analytics>
 </div>

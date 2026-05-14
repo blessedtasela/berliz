@@ -6,6 +6,9 @@
         [(searchQuery)]="searchQuery" [placeholder]="placeholder">
     </app-search-panel>
 
+    <!-- Metrics -->
+    <app-my-notification-metrics [notifications]="allNotifications"></app-my-notification-metrics>
+
     <!-- List -->
     <notification-list [sections]="sections" [startIndex]="startIndex" [endIndex]="endIndex"
         [total]="notificationsLength" [selectAll]="isSelectAllChecked()" (prev)="prevPage()" (next)="nextPage()"

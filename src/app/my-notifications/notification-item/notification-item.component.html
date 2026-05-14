@@ -1,57 +1,79 @@
-<div class="relative flex items-start gap-3 p-3 rounded-lg cursor-pointer transition" [ngClass]="{
-    'bg-gray-100 shadow-inner': item.checked,
-    'hover:bg-gray-50': !item.checked
-  }"  [class.opacity-50]="item.checked" (click)="onItemClick($event)"
-    (mousedown)="startPress($event)" (mouseup)="cancelPress()" (mouseleave)="cancelPress()">
+<div class="relative flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition" [ngClass]="{
+    'border-red-200 bg-red-50 shadow-sm': item.checked,
+    'border-gray-200 bg-white hover:shadow-sm hover:-translate-y-0.5': !item.checked,
+    'opacity-60': item.read && !item.checked,
+    'z-50': menuOpen,
+    'z-0': !menuOpen
+  }" style="overflow: visible;" (click)="onItemClick($event)" (mousedown)="startPress($event)"
+    (mouseup)="cancelPress()" (mouseleave)="cancelPress()">
 
-    <!-- Checkbox (ONLY thing that works in selection mode) -->
-    <div>
-        <button (click)="onToggleClick($event)"
-            class="mt-1 w-4 h-4 border rounded-full flex items-center justify-center">
-            <div *ngIf="item.checked" class="w-2 h-2 bg-red-600 rounded"></div>
-        </button>
+    <!-- Checkbox -->
+    <button (click)="onToggleClick($event)" class="mt-0.5 w-4 h-4 rounded-full border border-gray-300 hover:border-red-400
+           flex items-center justify-center shrink-0 transition">
+        <div *ngIf="item.checked" class="w-2 h-2 bg-red-600 rounded-full"></div>
+    </button>
+
+    <!-- Icon -->
+    <i-feather [name]="meta.icon" [ngClass]="meta.color" style="width:15px;height:15px;" class="mt-0.5 shrink-0">
+    </i-feather>
+
+    <!-- Content -->
+    <div class="flex-1 min-w-0">
+
+        <p class="text-gray-900 text-xs font-medium leading-snug break-words"
+            [innerHTML]="highlight(item.notification, searchQuery)">
+        </p>
+
+        <p class="text-gray-400 text-[10px] mt-1.5 flex items-center gap-1">
+            <i-feather name="clock" style="width:10px;height:10px;"></i-feather>
+            {{ item.date | date:'short' }}
+        </p>
+
     </div>
 
-    <!-- Icon + content -->
-    <div class="flex-1 flex gap-2">
-        <i-feather [name]="meta.icon" [ngClass]="meta.color" class="w-4 h-4 mt-1"></i-feather>
+    <!-- Right: unread dot + menu -->
+    <div class="flex flex-col items-end gap-2 shrink-0">
 
-        <div class="flex-1">
-            <p class="text-gray-900 text-sm break-all hyphens-auto" [innerHTML]="highlight(item.notification, searchQuery)">
-            </p>
-
-            <p class="text-gray-500 text-xs mt-1">
-                {{ item.date | date:'short' }}
-            </p>
+        <!-- Unread dot -->
+        <div *ngIf="!item.read" class="w-2 h-2 bg-red-600 rounded-full mt-0.5">
         </div>
-    </div>
+        <div *ngIf="item.read" class="w-2 h-2 rounded-full mt-0.5">
+        </div>
 
-    <!-- Unread dot -->
-    <div *ngIf="!item.read" class="w-2 h-2 bg-red-600 rounded-full mt-2"></div>
+        <!-- Menu trigger -->
+        <div class="relative overflow-visible">
 
-    <!-- More menu -->
-    <div class="relative ml-2">
-
-        <i-feather name="more-horizontal" class="cursor-pointer text-gray-600 hover:text-gray-900"
-            [class.pointer-events-none]="selectionMode" [class.opacity-30]="selectionMode" (click)="toggleMenu($event)">
-        </i-feather>
-        <!-- Dropdown -->
-        <div *ngIf="menuOpen && !selectionMode"
-            class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-20 text-sm py-1">
-
-            <button class="w-full text-left px-3 py-1.5 hover:bg-gray-50" (click)="markAsRead($event)">
-                Mark as read
+            <button (click)="toggleMenu($event)"
+                class="w-6 h-6 rounded-md hover:bg-gray-100 flex items-center justify-center transition"
+                [class.pointer-events-none]="selectionMode" [class.opacity-30]="selectionMode">
+                <i-feather name="more-horizontal" style="width:13px;height:13px;" class="text-gray-500"></i-feather>
             </button>
 
-            <button class="w-full text-left px-3 py-1.5 hover:bg-gray-50" (click)="markAsUnread($event)">
-                Mark as unread
-            </button>
+            <!-- Dropdown -->
+            <div *ngIf="menuOpen && !selectionMode" (click)="$event.stopPropagation()"
+                class="absolute right-0 top-full mt-1.5 w-44 bg-white border border-gray-200 rounded-xl shadow-2xl z-[100] text-sm py-1">
 
-            <button class="w-full text-left px-3 py-1.5 text-red-600 hover:bg-red-50" (click)="delete($event)">
-                Delete
-            </button>
+                <button class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
+                    (click)="markAsRead($event)">
+                    ✅ Mark as read
+                </button>
+
+                <button class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
+                    (click)="markAsUnread($event)">
+                    🔵 Mark as unread
+                </button>
+
+                <div class="border-t border-gray-100 my-1"></div>
+
+                <button class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 flex items-center gap-2"
+                    (click)="delete($event)">
+                    🗑️ Delete
+                </button>
+
+            </div>
 
         </div>
+
     </div>
 
 </div>

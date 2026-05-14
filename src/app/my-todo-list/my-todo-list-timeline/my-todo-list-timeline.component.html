@@ -1,18 +1,92 @@
-<div class="bg-white border rounded-2xl p-4 font-sans">
+<div class="bg-white border border-gray-200 rounded-2xl p-4 font-sans">
 
-    <h3 class="text-sm font-semibold mb-3">Timeline</h3>
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-sm font-semibold text-gray-800">Timeline</h3>
+        <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wide">
+            {{ sortedTodos.length }} tasks
+        </span>
+    </div>
 
-    <!-- scroll container -->
-    <div class="relative max-h-[180px] overflow-y-auto pr-2">
+    <!-- Empty state -->
+    <div *ngIf="sortedTodos.length === 0" class="flex flex-col items-center py-6 gap-2">
+        <i-feather name="clock" class="text-gray-300" style="width:32px;height:32px;"></i-feather>
+        <p class="text-gray-400 text-xs italic">No tasks to display</p>
+    </div>
 
-        <div class="absolute left-3 top-0 bottom-0 w-px bg-gray-200"></div>
+    <!-- Timeline -->
+    <div *ngIf="sortedTodos.length > 0" class="relative max-h-[400px] overflow-y-auto pr-2">
 
-        <div *ngFor="let t of sortedTodos.slice(0, 10)" class="relative pl-8 pb-4">
+        <!-- Vertical line -->
+        <div class="absolute left-[7px] top-0 bottom-0 w-px bg-gray-200"></div>
 
-            <div class="absolute left-2 top-2 w-2 h-2 rounded-full bg-red-600"></div>
+        <div *ngFor="let t of sortedTodos.slice(0, 10); let last = last" class="relative pl-8 pb-4" [class.pb-0]="last">
 
-            <p class="font-medium text-sm break-all">{{ t.task }}</p>
-            <p class="text-xs text-gray-500">{{ t.date | date:'medium' }}</p>
+            <!-- Dot -->
+            <div class="absolute left-0 top-1.5 w-[15px] h-[15px] rounded-full border-2 border-white shadow-sm flex items-center justify-center"
+                [ngClass]="{
+          'bg-green-500':  t.status === 'completed',
+          'bg-blue-500':   t.status === 'in-progress',
+          'bg-red-500':    isOverdue(t),
+          'bg-yellow-400': isDueSoon(t) && !isOverdue(t),
+          'bg-gray-300':   t.status === 'cancelled',
+          'bg-gray-400':   t.status === 'pending' && !isOverdue(t) && !isDueSoon(t)
+        }">
+            </div>
+
+            <!-- Card -->
+            <div
+                class="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 flex flex-col gap-1 hover:border-gray-300 transition">
+
+                <!-- Task + status badge -->
+                <div class="flex justify-between items-start gap-2">
+                    <p class="text-gray-900 text-xs font-semibold leading-snug flex-1 break-words">
+                        {{ t.task }}
+                    </p>
+                    <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full shrink-0" [ngClass]="{
+              'bg-green-100 text-green-700':  t.status === 'completed',
+              'bg-blue-100 text-blue-700':    t.status === 'in-progress',
+              'bg-red-100 text-red-600':      t.status === 'pending',
+              'bg-gray-200 text-gray-500':    t.status === 'cancelled'
+            }">
+                        {{ t.status }}
+                    </span>
+                </div>
+
+                <!-- Meta row -->
+                <div class="flex justify-between items-center gap-2 flex-wrap">
+
+                    <!-- Created date -->
+                    <span class="text-[10px] text-gray-400 flex items-center gap-1">
+                        <i-feather name="calendar" style="width:10px;height:10px;"></i-feather>
+                        {{ t.date | date:'MMM d, y' }}
+                    </span>
+
+                    <!-- Due label -->
+                    <span class="text-[10px] font-semibold" [ngClass]="{
+              'text-red-500':    isOverdue(t),
+              'text-yellow-600': isDueSoon(t) && !isOverdue(t),
+              'text-green-600':  t.status === 'completed',
+              'text-gray-400':   t.status === 'cancelled',
+              'text-blue-500':   t.status === 'in-progress' && !isOverdue(t) && !isDueSoon(t),
+              'text-gray-500':   t.status === 'pending' && !isOverdue(t) && !isDueSoon(t)
+            }">
+                        Due {{ t.dueDate | date:'MMM d' }}
+                    </span>
+
+                    <!-- Priority -->
+                    <span class="text-[10px] font-semibold flex items-center gap-0.5" [ngClass]="{
+              'text-red-500':   t.priority.toLowerCase() === 'high',
+              'text-blue-500':  t.priority.toLowerCase() === 'normal',
+              'text-green-600': t.priority.toLowerCase() === 'low'
+            }">
+                        <i-feather name="flag" style="width:9px;height:9px;"></i-feather>
+                        {{ t.priority | titlecase }}
+                    </span>
+
+                </div>
+
+            </div>
 
         </div>
 

@@ -1,53 +1,99 @@
-<div class="flex justify-between items-center mb-3">
-    <h1 class="text-gray-800 text-xl font-bold font-sans">Notifications </h1>
-</div>
+<div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 font-sans flex flex-col gap-4">
 
-<div class="mt-6 font-sans space-y-3 mb-6" *ngIf="notifications.length > 0">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <h2 class="text-gray-800 text-base font-bold">Notifications</h2>
+    <a routerLink="/dashboard/my-notifications"
+      class="text-red-600 text-xs font-semibold hover:underline">
+      View all
+    </a>
+  </div>
 
-    <div *ngFor="let n of notifications | slice:0:4" (click)="openNotificationModal(n)" class="p-2 rounded-lg cursor-pointer transition-all duration-300 text-sm
-           bg-white shadow-sm hover:shadow-md flex items-start gap-3" [ngClass]="{
-      'bg-red-50 shadow-md': !n.read
-    }">
+  <!-- Metrics row -->
+  <div class="grid grid-cols-3 gap-2" *ngIf="notifications.length > 0">
 
-        <!-- Bullet dot -->
-        <span class="w-2 h-2 rounded-full mt-2" [ngClass]="{
-        'bg-red-600': !n.read,
-        'bg-gray-400': n.read
-      }"></span>
+    <div class="flex flex-col items-center bg-gray-100 rounded-xl py-2 px-1 border border-gray-100">
+      <span class="text-lg font-bold text-gray-800">{{ totalCount }}</span>
+      <span class="text-[10px] text-gray-500 mt-0.5">Total</span>
+    </div>
 
-        <!-- Notification content -->
-        <div class="flex-1">
+    <div class="flex flex-col items-center bg-red-50 rounded-xl py-2 px-1 border border-red-100">
+      <span class="text-lg font-bold text-red-600">{{ unreadCount }}</span>
+      <span class="text-[10px] text-red-400 mt-0.5">Unread</span>
+    </div>
 
-            <!-- Notification text -->
-            <p class="text-gray-900 font-semibold line-clamp-3">
-                {{ n.notification }}
-            </p>
+    <div class="flex flex-col items-center bg-green-50 rounded-xl py-2 px-1 border border-green-100">
+      <span class="text-lg font-bold text-green-700">{{ readCount }}</span>
+      <span class="text-[10px] text-green-500 mt-0.5">Read</span>
+    </div>
 
-            <!-- Read more button -->
-            <button *ngIf="n.notification.length > 120" class="text-red-600 text-xs font-semibold mt-1 hover:underline"
-                (click)="openNotificationModal(n); $event.stopPropagation()">
-                Read more →
-            </button>
+  </div>
 
-            <!-- Date -->
-            <p class="text-gray-500 text-xs mt-2 flex items-center" [title]="n.date | date:'medium'">
-                Added {{ n.date | timeAgo }}
-            </p>
-        </div>
+  <!-- Empty state -->
+  <div *ngIf="notifications.length === 0"
+    class="flex flex-col items-center text-center py-10 gap-2">
+    <i-feather name="check-circle" class="text-gray-300" style="width:40px;height:40px;"></i-feather>
+    <p class="text-gray-500 text-sm italic">No unread notifications</p>
+    <a routerLink="/dashboard/my-notifications"
+      class="text-red-600 text-xs font-semibold hover:underline">
+      View all notifications →
+    </a>
+  </div>
+
+  <!-- Notification list (scrollable, max 12) -->
+  <div *ngIf="notifications.length > 0"
+    class="flex flex-col gap-2 overflow-y-auto pr-1"
+    style="max-height: 380px;">
+
+    <div *ngFor="let n of notifications | slice:0:12"
+      (click)="openNotificationModal(n)"
+      class="p-3 rounded-xl cursor-pointer transition border flex items-start gap-3"
+      [ngClass]="n.read
+        ? 'bg-white border-gray-200 hover:border-gray-300'
+        : 'bg-red-50 border-red-100 hover:border-red-300'">
+
+      <!-- Unread dot -->
+      <span class="w-2 h-2 rounded-full mt-1.5 shrink-0"
+        [ngClass]="n.read ? 'bg-gray-300' : 'bg-red-600'">
+      </span>
+
+      <!-- Content -->
+      <div class="flex-1 min-w-0">
+
+        <p class="text-gray-900 text-xs font-semibold leading-snug line-clamp-2">
+          {{ n.notification }}
+        </p>
+
+        <button *ngIf="n.notification.length > 100"
+          class="text-red-600 text-[10px] font-semibold mt-0.5 hover:underline"
+          (click)="openNotificationModal(n); $event.stopPropagation()">
+          Read more →
+        </button>
+
+        <p class="text-gray-400 text-[10px] mt-1.5" [title]="n.date | date:'medium'">
+          {{ n.date | timeAgo }}
+        </p>
+
+      </div>
+
+      <!-- Unread badge -->
+      <span *ngIf="!n.read"
+        class="shrink-0 text-[9px] font-semibold bg-red-600 text-white px-1.5 py-0.5 rounded-full mt-0.5">
+        New
+      </span>
 
     </div>
 
-    <!-- View All Link -->
-    <div class="flex justify-end mt-2">
-        <a routerLink="/dashboard/my-notifications" class="text-red-600 font-semibold hover:underline text-xs">
-            View all notifications →
-        </a>
-    </div>
+  </div>
 
-</div>
+  <!-- More indicator -->
+  <div *ngIf="notifications.length > 12"
+    class="text-center text-[11px] text-gray-400">
+    +{{ notifications.length - 12 }} more —
+    <a routerLink="/dashboard/my-notifications"
+      class="text-red-600 font-semibold hover:underline">
+      view all
+    </a>
+  </div>
 
-<!-- EMPTY STATE -->
-<div class="mt-6 mb-6 text-center text-gray-600 font-sans" *ngIf="notifications.length === 0">
-    <i-feather name="check-circle" class="w-8 h-8 text-gray-400 mx-auto mb-2"></i-feather>
-    <p class="text-lg font-semibold">You currently have no unread notifications</p>
 </div>

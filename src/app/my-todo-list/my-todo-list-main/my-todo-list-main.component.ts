@@ -23,13 +23,20 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
   pagedTodos: TodoList[] = [];
   sections: any[] = [];
   selectedSorts: string[] = [];
-
   selectedTodoIds: number[] = [];
-
   currentPage = 1;
   pageSize = 50;
 
   private subs: Subscription[] = [];
+
+  actionMessages: Record<string, string> = {
+    delete: 'delete',
+    pause: 'pause',
+    completed: 'mark as completed',
+    'in-progress': 'start',
+    pending: 'restart',
+    cancelled: 'cancel'
+  };
 
 
   constructor(
@@ -96,7 +103,7 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
   }
 
   nextPage(): void {
-    const maxPage = Math.ceil(this.todosLength / this.pageSize);
+    const maxPage = Math.ceil(this.filteredTodos.length / this.pageSize);
     if (this.currentPage < maxPage) {
       this.currentPage++;
       this.updatePage();
@@ -104,89 +111,73 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
   }
 
   private updatePage(): void {
-    const maxPage = Math.ceil(this.todosLength / this.pageSize);
-    if (this.currentPage > maxPage) {
-      this.currentPage = maxPage === 0 ? 1 : maxPage;
-    }
-
     const start = (this.currentPage - 1) * this.pageSize;
     const end = start + this.pageSize;
 
-    this.pagedTodos = this.filteredTodos.slice(start, end);
-    this.buildSections();
+    const paged = this.filteredTodos.slice(start, end);
+
+    this.buildSections(paged);
   }
 
-  // GROUPING
-  private buildSections(): void {
+  private buildSections(pagedTodos: TodoList[]): void {
+
     const now = new Date();
+    const todayStr = now.toDateString();
 
+    const tomorrow = new Date(now);
+    tomorrow.setDate(now.getDate() + 1);
+    const tomorrowStr = tomorrow.toDateString();
+
+    const overdue: TodoList[] = [];
     const today: TodoList[] = [];
-    const yesterday: TodoList[] = [];
-    const thisWeek: TodoList[] = [];
-    const older: TodoList[] = [];
+    const tomorrowList: TodoList[] = [];
+    const upcoming: TodoList[] = [];
+    const completed: TodoList[] = [];
+    const cancelled: TodoList[] = [];
 
-    const isToday = (d: Date) => d.toDateString() === now.toDateString();
-    const isYesterday = (d: Date) => {
-      const y = new Date(now);
-      y.setDate(now.getDate() - 1);
-      return d.toDateString() === y.toDateString();
-    };
-    const isThisWeek = (d: Date) => {
-      const diff = now.getTime() - d.getTime();
-      return diff <= 7 * 86400000 && diff > 2 * 86400000;
-    };
+    for (const todo of pagedTodos) {
 
-    this.pagedTodos.forEach(t => {
-      const d = new Date(t.date);
-      if (isToday(d)) today.push(t);
-      else if (isYesterday(d)) yesterday.push(t);
-      else if (isThisWeek(d)) thisWeek.push(t);
-      else older.push(t);
-    });
+      const due = new Date(todo.dueDate);
 
-    const groups = [
-      { label: 'Today', items: today },
-      { label: 'Yesterday', items: yesterday },
-      { label: 'This Week', items: thisWeek },
-      { label: 'Older', items: older }
-    ];
+      if (todo.status === 'completed') {
+        completed.push(todo);
+        continue;
+      }
 
-    this.sections = groups.filter(g => g.items.length > 0);
+      if (todo.status === 'cancelled') {
+        cancelled.push(todo);
+        continue;
+      }
+
+      const dueStr = due.toDateString();
+
+      if (due.getTime() < now.getTime() && dueStr !== todayStr) {
+        overdue.push(todo);
+      }
+      else if (dueStr === todayStr) {
+        today.push(todo);
+      }
+      else if (dueStr === tomorrowStr) {
+        tomorrowList.push(todo);
+      }
+      else {
+        upcoming.push(todo);
+      }
+    }
+
+    this.sections = [
+      { label: 'Overdue', items: overdue },
+      { label: 'Due Today', items: today },
+      { label: 'Due Tomorrow', items: tomorrowList },
+      { label: 'Upcoming', items: upcoming },
+      { label: 'Completed', items: completed },
+      { label: 'Cancelled', items: cancelled }
+    ].filter(g => g.items.length > 0);
   }
 
   // SELECTION
   isSelectAllChecked(): boolean {
     return this.pagedTodos.length > 0 && this.pagedTodos.every(t => t.checked);
-  }
-
-  onToggleSelectAll(): void {
-    const allSelected = this.isSelectAllChecked();
-    this.pagedTodos.forEach(t => (t.checked = !allSelected));
-
-    if (!allSelected) {
-      const idsToAdd = this.pagedTodos
-        .map(t => t.id)
-        .filter(id => !this.selectedTodoIds.includes(id));
-      this.selectedTodoIds = [...this.selectedTodoIds, ...idsToAdd];
-    } else {
-      const idsOnPage = this.pagedTodos.map(t => t.id);
-      this.selectedTodoIds = this.selectedTodoIds.filter(
-        id => !idsOnPage.includes(id)
-      );
-    }
-  }
-
-  onToggleItem(todo: TodoList): void {
-    todo.checked = !todo.checked;
-    if (todo.checked) {
-      if (!this.selectedTodoIds.includes(todo.id)) {
-        this.selectedTodoIds.push(todo.id);
-      }
-    } else {
-      this.selectedTodoIds = this.selectedTodoIds.filter(
-        id => id !== todo.id
-      );
-    }
   }
 
   // OPEN DETAILS
@@ -196,38 +187,43 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
 
   // EDIT
   onEditTodo(todo: TodoList): void {
+
     const dialogRef = this.dialog.open(TodoDetailsModalComponent, {
       width: '500px',
       data: todo
     });
 
     dialogRef.afterClosed().subscribe(result => {
+
       if (!result) return;
 
-      const payload = { ...todo, ...result };
-
-      this.todoService.updateTodoList(payload).subscribe(() => {
-        this.refreshTodos();
-        this.snackbar.openSnackBar('Task updated', '');
-      });
+      this.refreshTodos();
+      this.snackbar.openSnackBar('Todo updated', 'success');
     });
   }
 
-  // MARK COMPLETE
+  // BULK ACTION
   onBulkAction(action: string): void {
 
     if (this.selectedTodoIds.length === 0) {
-      this.snackbar.openSnackBar('Select at least one Task', '');
+      this.snackbar.openSnackBar('Please select a task', '');
       return;
     }
 
-    const dialogRef = this.dialog.open(PromptModalComponent, {
-      data: {
-        message: `Are you sure you want to ${action} selected tasks?`,
-        confirmation: true,
-        disableClose: true
+    const formattedAction =
+      this.actionMessages[action] || action;
+
+    const dialogRef = this.dialog.open(
+      PromptModalComponent,
+      {
+        data: {
+          message: `Are you sure you want to ${formattedAction} selected ` +
+            `${this.selectedTodoIds.length === 1 ? 'task' : 'tasks'}?`,
+          confirmation: true,
+          disableClose: true
+        }
       }
-    });
+    );
 
     const payload = {
       action,
@@ -237,6 +233,33 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
 
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
       this.todoService.bulkAction(payload).subscribe((res: any) => {
+        this.snackbar.openSnackBar(res.message || 'Action completed', '');
+        this.refreshTodos();
+        dialogRef.close();
+      });
+    });
+
+    this.subs.push(sub);
+  }
+
+  // QUICK ACTION
+  onQuickAction(payload: { action: string; id: number }): void {
+    const { action, id } = payload;
+
+    const formattedAction = this.actionMessages[action] || action;
+
+    const dialogRef = this.dialog.open(PromptModalComponent, {
+      data: {
+        message: `Are you sure you want to ${formattedAction} this task?`,
+        confirmation: true,
+        disableClose: true
+      }
+    });
+
+    const apiPayload = { action, ids: String(id) }; // just the one todo
+
+    const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
+      this.todoService.quickAction(apiPayload).subscribe((res: any) => {
         this.snackbar.openSnackBar(res.message || 'Action completed', '');
         this.refreshTodos();
         dialogRef.close();
@@ -278,4 +301,49 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
 
     this.subs.push(sub);
   }
+
+  get selectionMode(): boolean {
+    return this.selectedTodoIds.length > 0;
+  }
+
+  onToggleTodo(todo: TodoList): void {
+    todo.checked = !todo.checked;
+
+    if (todo.checked) {
+      if (!this.selectedTodoIds.includes(todo.id)) {
+        this.selectedTodoIds.push(todo.id);
+      }
+    } else {
+      this.selectedTodoIds =
+        this.selectedTodoIds.filter(id => id !== todo.id);
+    }
+  }
+
+
+  onToggleSelectAll(): void {
+    const allSelected = this.isSelectAllChecked();
+
+    this.sections.forEach(section => {
+      section.items.forEach((t: any) => {
+        t.checked = !allSelected;
+      });
+    });
+
+    this.pagedTodos = this.sections.flatMap((s: any) => s.items);
+
+    if (!allSelected) {
+      const idsToAdd = this.pagedTodos
+        .map(t => t.id)
+        .filter(id => !this.selectedTodoIds.includes(id));
+
+      this.selectedTodoIds = [...this.selectedTodoIds, ...idsToAdd];
+    } else {
+      const idsOnPage = this.pagedTodos.map(t => t.id);
+
+      this.selectedTodoIds = this.selectedTodoIds.filter(
+        id => !idsOnPage.includes(id)
+      );
+    }
+  }
+
 }

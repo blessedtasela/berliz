@@ -18,7 +18,7 @@
                 <tr *ngFor="let todo of todoListData; let i = index" class="bg-gray-100 hover:bg-gray-200">
                     <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">
-                        <a href="mailto:{{ todo.user.email }}"> {{ todo.user.email }}</a>
+                        <a href="mailto:{{ todo.userEmail }}"> {{ todo.userEmail }}</a>
                     </td>
                     <td class="border-b border-gray-400 px-4 py-2">{{ todo.task }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(todo.date) }}</td>

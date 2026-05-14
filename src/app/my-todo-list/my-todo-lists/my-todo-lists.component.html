@@ -1,75 +1,37 @@
 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 font-sans">
 
-  <!-- Header -->
-  <div class="flex justify-between items-center mb-4">
+  <app-my-todo-list-header [startIndex]="startIndex" [endIndex]="endIndex" [total]="total" [selectAll]="selectAll"
+    (toggleSelectAll)="toggleSelectAll.emit()" (bulkAction)="bulkAction.emit($event)" (prev)="prev.emit()"
+    [selectionMode]="selectionMode" (next)="next.emit()">
+  </app-my-todo-list-header>
 
-    <div class="text-xs text-gray-500">
-      Showing <span class="font-semibold">{{ startIndex }}</span> -
-      <span class="font-semibold">{{ endIndex }}</span> of
-      <span class="font-semibold">{{ total }}</span> tasks
-    </div>
+  <!-- ONLY ONE SOURCE OF RENDERING -->
+  <app-my-todo-list-section *ngFor="let section of sections" [label]="section.label" [items]="section.items"
+    [searchQuery]="searchQuery" [selectionMode]="selectionMode" (openTodo)="openTodo.emit($event)"
+    (toggleTodo)="toggleTodo.emit($event)" (editTodo)="editTodo.emit($event)" (deleteTodo)="deleteTodo.emit($event)"
+    (quickAction)="quickAction.emit($event)">
+  </app-my-todo-list-section>
 
-    <div class="flex items-center gap-4">
-      <label class="flex items-center gap-2 text-xs text-gray-600">
-        <input type="checkbox" [checked]="selectAll" (change)="toggleSelectAll.emit()"
-          class="w-3 h-3 rounded border-gray-300 text-red-600 focus:ring-red-500" />
-        Select all
-      </label>
 
-      <div class="relative">
-        <div class="flex items-center gap-4">
-          <i-feather name="more-horizontal" class="cursor-pointer text-gray-600 hover:text-gray-900"
-            (click)="toggleBulkMenu($event);">
-          </i-feather>
-        </div>
-        <div *ngIf="showBulk" (click)="$event.stopPropagation()"
-          class="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-20 text-sm py-1">
+  <!-- 🔥 CLEAN PAGINATION (CENTERED BETWEEN END + FOOTER SPACE) -->
+  <div class="sticky bottom-0 z-20 bg-white border-t border-gray-200 px-4 py-3">
 
-          <button class="w-full text-left px-3 py-1.5 hover:bg-gray-50" (click)="doBulk('in-progress')">
-            Begin tasks
-          </button>
+    <div class="flex items-center justify-center gap-6 text-xs text-gray-600">
 
-          <button class="w-full text-left px-3 py-1.5 hover:bg-gray-50" (click)="doBulk('completed')">
-            Complete tasks
-          </button>
+      <button class="px-3 py-1 border rounded-md hover:bg-gray-50 disabled:opacity-40" (click)="prev.emit()"
+        [disabled]="startIndex === 1">
+        Prev
+      </button>
 
-          <button class="w-full text-left px-3 py-1.5 hover:bg-gray-50" (click)="doBulk('pending')">
-            Restart tasks
-          </button>
-
-          <button class="w-full text-left px-3 py-1.5 text-red-600 hover:bg-red-50" (click)="doBulk('delete')">
-            Delete tasks
-          </button>
-        </div>
-
+      <div class="font-medium text-gray-700">
+        {{ startIndex }} - {{ endIndex }} of {{ total }}
       </div>
-    </div>
-  </div>
 
-  <!-- Sections -->
-  <div *ngFor="let section of sections" class="mb-6">
+      <button class="px-3 py-1 border rounded-md hover:bg-gray-50 disabled:opacity-40" (click)="next.emit()"
+        [disabled]="endIndex === total">
+        Next
+      </button>
 
-    <h3 class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">
-      {{ section.label }}
-    </h3>
-
-    <div class="flex flex-col gap-2">
-      <app-my-todo-list-item *ngFor="let todo of section.items" [todo]="todo" [searchQuery]="searchQuery"
-        (open)="open.emit($event)" (toggle)="toggle.emit($event)" (edit)="edit.emit($event)"
-        (markComplete)="markComplete.emit($event)" (delete)="delete.emit($event)">
-      </app-my-todo-list-item>
     </div>
 
   </div>
-
-  <!-- Pagination -->
-  <div class="flex justify-between items-center mt-4 text-xs text-gray-600">
-    <button class="px-3 py-1 border rounded-md hover:bg-gray-50" (click)="prev.emit()">
-      Prev
-    </button>
-    <button class="px-3 py-1 border rounded-md hover:bg-gray-50" (click)="next.emit()">
-      Next
-    </button>
-  </div>
-
-</div>

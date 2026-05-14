@@ -77,9 +77,9 @@ export class SearchTodoListComponent {
         case 'status':
           return myTodos.status.toLowerCase().includes(query);
         case 'userId':
-          return myTodos.user.id.toString().includes(query);
+          return myTodos.userId.toString().includes(query);
         case 'email':
-          return myTodos.user.email.toLowerCase().includes(query);
+          return myTodos.userEmail.toLowerCase().includes(query);
         case 'lastUpdate':
           return myTodos.lastUpdate.toDateString().includes(query);
         default:

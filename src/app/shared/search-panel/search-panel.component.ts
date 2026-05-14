@@ -1,11 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FilterState, SearchSortOption } from 'src/app/models/FilterState.interface';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { SearchSortOption, FilterState } from 'src/app/models/FilterState.interface';
 
 @Component({
-  selector: 'app-search-panel-test',
-  templateUrl: './search-panel.component.html'
+  selector: 'app-search-panel',
+  templateUrl: './search-panel.component.html',
+  styleUrls: ['./search-panel.component.css']
 })
-export class SearchPanelComponent implements OnInit {
+export class SearchPanelComponent {
 
   @Input() searchQuery: string = '';
   @Input() sortOptions: SearchSortOption[] = [];

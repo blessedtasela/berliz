@@ -1,6 +1,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { Component, EventEmitter, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { PromptData } from 'src/app/models/Prompt.interface';
 
 @Component({
   selector: 'app-prompt-modal',
@@ -9,11 +10,11 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class PromptModalComponent implements OnInit {
   onEmitStatusChange = new EventEmitter();
-  details: any;
+  details!: PromptData;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public dialogData: any,
+  constructor(@Inject(MAT_DIALOG_DATA) public dialogData: PromptData,
     public dialogRef: MatDialogRef<PromptModalComponent>) { }
-    
+
   ngOnInit(): void {
     if (this.dialogData && this.dialogData.confirmation) {
       this.details = this.dialogData;
@@ -21,10 +22,11 @@ export class PromptModalComponent implements OnInit {
   }
 
   handleChangeAction() {
-    this.onEmitStatusChange.emit();
+    this.onEmitStatusChange.emit(true);
+    this.dialogRef.close(true);
   }
 
   closeDialog() {
-    this.dialogRef.close('Dialog closed without performing any action');
+    this.dialogRef.close(false);
   }
 }

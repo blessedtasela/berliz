@@ -64,11 +64,7 @@ export class TodoStateService {
   getMyTodos(): Observable<TodoList[]> {
     return this.todoService.getmyTodos().pipe(
       map((response: any) => {
-        return response.sort((a: TodoList, b: TodoList) => {
-          const dateA = new Date(a.date).getTime();
-          const dateB = new Date(b.date).getTime();
-          return dateB - dateA;
-        })
+        return this.sortTodos(response);
       }),
       catchError((error) => {
         console.log(error, 'error');
@@ -84,19 +80,70 @@ export class TodoStateService {
     );
   }
 
-  sortByPriority(todos: TodoList[]): TodoList[] {
 
-    const order: Record<Priority, number> = {
+  private sortTodos(list: TodoList[]): TodoList[] {
+    const now = new Date().getTime();
+
+    const sectionOrder: Record<string, number> = {
+      overdue: 0,
+      upcoming: 1,
+      today: 2,
+      tomorrow: 3,
+      completed: 4,
+      cancelled: 5
+    };
+
+    const priorityOrder: Record<string, number> = {
       high: 0,
       normal: 1,
       low: 2,
       due: 3
     };
-    return [...todos].sort((a, b) =>
-      (order[a.priority] ?? 99) - (order[b.priority] ?? 99)
-    );
+
+    return [...list].sort((a, b) => {
+
+      const aDue = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
+      const bDue = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
+
+      const aSection = this.getSection(a, now);
+      const bSection = this.getSection(b, now);
+
+      // 1. SECTION ORDER (MOST IMPORTANT FIX)
+      if (sectionOrder[aSection] !== sectionOrder[bSection]) {
+        return sectionOrder[aSection] - sectionOrder[bSection];
+      }
+
+      // 2. PRIORITY ORDER
+      const aP = priorityOrder[a.priority] ?? 99;
+      const bP = priorityOrder[b.priority] ?? 99;
+
+      if (aP !== bP) return aP - bP;
+
+      // 3. DUE DATE
+      return aDue - bDue;
+    });
   }
 
+  private getSection(todo: TodoList, now: number): string {
+
+    const due = todo.dueDate ? new Date(todo.dueDate).getTime() : Infinity;
+
+    if (todo.status === 'cancelled') return 'cancelled';
+    if (todo.status === 'completed') return 'completed';
+
+    if (due < now) return 'overdue';
+
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+
+    if (due <= today.getTime()) return 'today';
+    if (due <= tomorrow.getTime()) return 'tomorrow';
+
+    return 'upcoming';
+  }
 
   filter(state: FilterState, source: 'my' | 'all'): TodoList[] {
 

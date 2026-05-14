@@ -19,6 +19,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class DashboardNotificationComponent implements OnInit, OnDestroy {
 
   notifications: Notifications[] = [];
+  allNotifications: Notifications[] = [];
   subscriptions: Subscription[] = [];
 
   constructor(
@@ -50,12 +51,13 @@ export class DashboardNotificationComponent implements OnInit, OnDestroy {
     this.notifications = this.notifications
       .filter(n => !n.read)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 10);
+      .slice(0, 12);
   }
 
   private loadInitialNotifications() {
     const sub = this.notificationStateService.getMyNotifications().subscribe(data => {
       this.notifications = data || [];
+      this.allNotifications = data || [];
       this.updateNotificationList();
     });
 
@@ -141,5 +143,17 @@ export class DashboardNotificationComponent implements OnInit, OnDestroy {
         this.snackbarService.openSnackBar('Failed to mark notification as read.', 'error');
       }
     });
+  }
+
+  get totalCount(): number {
+    return this.allNotifications.length;
+  }
+
+  get unreadCount(): number {
+    return this.allNotifications.filter(n => !n.read).length;
+  }
+
+  get readCount(): number {
+    return this.allNotifications.filter(n => n.read).length;
   }
 }

@@ -18,6 +18,8 @@ import { NotificationBulkActionsComponent } from './notification-bulk-actions/no
 import { NotificationSectionComponent } from './notification-section/notification-section.component';
 import { NotificationPaginationComponent } from './notification-pagination/notification-pagination.component';
 import { FeatherModule } from 'angular-feather';
+import { SharedModule } from '../shared/shared.module';
+import { MyNotificationMetricsComponent } from './my-notification-metrics/my-notification-metrics.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,8 @@ import { FeatherModule } from 'angular-feather';
     NotificationItemComponent,
     NotificationBulkActionsComponent,
     NotificationSectionComponent,
-    NotificationPaginationComponent
+    NotificationPaginationComponent,
+    MyNotificationMetricsComponent
   ],
   imports: [
     CommonModule,
@@ -42,8 +45,9 @@ import { FeatherModule } from 'angular-feather';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     NoopAnimationsModule,
-    SearchModule,
-    FeatherModule
-  ]
+    SharedModule,
+    FeatherModule,
+    SearchModule
+]
 })
 export class MyNotificationsModule { }

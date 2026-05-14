@@ -27,6 +27,7 @@ import { ChangePasswordModalComponent } from './change-password-modal/change-pas
 import { ResetPasswordModalComponent } from './reset-password-modal/reset-password-modal.component';
 import { ForgotPasswordModalComponent } from './forgot-password-modal/forgot-password-modal.component';
 import { RenewSubscriptionModalComponent } from './renew-subscription-modal/renew-subscription-modal.component';
+import { SearchPanelComponent } from './search-panel/search-panel.component';
 
 
 
@@ -52,7 +53,8 @@ import { RenewSubscriptionModalComponent } from './renew-subscription-modal/rene
     ChangePasswordModalComponent,
     ResetPasswordModalComponent,
     ForgotPasswordModalComponent,
-    RenewSubscriptionModalComponent
+    RenewSubscriptionModalComponent,
+    SearchPanelComponent
   ],
   imports: [
     CommonModule,
@@ -77,7 +79,8 @@ import { RenewSubscriptionModalComponent } from './renew-subscription-modal/rene
     NgSelectModule,
     NgxMaskDirective,
     NgxMaskPipe,
-    TimeAgoPipe
+    TimeAgoPipe,
+    SearchPanelComponent
   ],
   providers: [
     provideNgxMask(),

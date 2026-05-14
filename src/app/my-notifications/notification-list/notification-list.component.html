@@ -1,35 +1,54 @@
-<!-- notification-list.component.html -->
-<div tabindex="0" class="outline-none">
+<div tabindex="0" class="outline-none flex flex-col">
 
-    <!-- Selection Mode Banner -->
-    <div *ngIf="selectedCount > 0"
-        class="sticky top-0 z-30 bg-red-600 text-white text-sm font-semibold py-2 px-4 rounded-b-lg shadow animate-pulse">
-        {{ selectedCount }} selected — choose action
-    </div>
+  <!-- Selection banner -->
+  <div *ngIf="selectedCount > 0"
+    class="sticky top-0 z-30 bg-red-600 text-white text-xs font-semibold py-2 px-4 rounded-b-xl shadow flex items-center justify-between">
+    <span>{{ selectedCount }} selected</span>
+    <span class="opacity-75">choose an action below</span>
+  </div>
 
-    <!-- Empty state -->
-    <notification-empty-state *ngIf="sections.length === 0"></notification-empty-state>
+  <!-- Empty state -->
+  <notification-empty-state *ngIf="sections.length === 0"></notification-empty-state>
 
-    <!-- Header -->
-    <notification-header-bar *ngIf="sections.length > 0" [startIndex]="startIndex" [endIndex]="endIndex" [total]="total"
-        [selectAll]="selectAll" (prev)="prev.emit()" (next)="next.emit()" (toggleSelectAll)="toggleSelectAll.emit()"
-        (bulkAction)="bulkAction.emit($event)">
-    </notification-header-bar>
+  <!-- Header -->
+  <notification-header-bar *ngIf="sections.length > 0" [startIndex]="startIndex" [endIndex]="endIndex" [total]="total"
+    [selectAll]="selectAll" (prev)="prev.emit()" (next)="next.emit()" (toggleSelectAll)="toggleSelectAll.emit()"
+    (bulkAction)="bulkAction.emit($event)">
+  </notification-header-bar>
 
-    <!-- Sections -->
-    <div class="flex flex-col gap-6 px-3 py-3">
-        <notification-section *ngFor="let section of sections" [title]="section.label" [items]="section.items"
-            [searchQuery]="searchQuery" (open)="open.emit($event)" (toggle)="toggle.emit($event)"
-            (markRead)="markRead.emit($event)" (markUnread)="markUnread.emit($event)"
-            (deleteItem)="deleteItem.emit($event)" (toggleSelectAll)="toggleSelectAll.emit()"
-            [selectionMode]="selectionMode">
-        </notification-section>
-    </div>
+  <!-- Sections -->
+  <div class="flex flex-col gap-4 px-3 py-3">
+    <notification-section *ngFor="let section of sections" [title]="section.label" [items]="section.items"
+      [searchQuery]="searchQuery" [selectionMode]="selectionMode" (open)="open.emit($event)"
+      (toggle)="toggle.emit($event)" (markRead)="markRead.emit($event)" (markUnread)="markUnread.emit($event)"
+      (deleteItem)="deleteItem.emit($event)" (toggleSelectAll)="toggleSelectAll.emit()">
+    </notification-section>
+  </div>
 
-    <!-- Pagination -->
-    <div class="flex justify-between items-center px-4 py-3 bg-white sticky top-0 z-20">
-        <notification-pagination [startIndex]="startIndex" [endIndex]="endIndex" [total]="total" (prev)="prev.emit()"
-            (next)="next.emit()">
-        </notification-pagination>
-    </div>
+  <!-- Pagination -->
+  <div *ngIf="sections.length > 0"
+    class="sticky bottom-0 z-20 bg-white border-t border-gray-100 px-4 py-3 flex items-center justify-center gap-4">
+
+    <button
+      class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition flex items-center justify-center"
+      (click)="prev.emit()" [disabled]="startIndex === 1">
+      <i-feather name="chevron-left" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+    </button>
+
+    <span class="text-xs text-gray-500">
+      <span class="font-semibold text-gray-900">{{ startIndex }}</span>
+      –
+      <span class="font-semibold text-gray-900">{{ endIndex }}</span>
+      <span class="text-gray-400"> of </span>
+      <span class="font-semibold text-gray-900">{{ total }}</span>
+    </span>
+
+    <button
+      class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition flex items-center justify-center"
+      (click)="next.emit()" [disabled]="endIndex === total">
+      <i-feather name="chevron-right" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+    </button>
+
+  </div>
+
 </div>

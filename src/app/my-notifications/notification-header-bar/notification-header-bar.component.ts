@@ -1,5 +1,5 @@
 // notification-header-bar.component.ts
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'notification-header-bar',
@@ -15,4 +15,23 @@ export class NotificationHeaderBarComponent {
   @Output() next = new EventEmitter<void>();
   @Output() toggleSelectAll = new EventEmitter<void>();
   @Output() bulkAction = new EventEmitter<string>();
+
+  menuOpen = false;
+
+  constructor() { }
+
+  toggleMenu(event: MouseEvent) {
+    event.stopPropagation();
+    this.menuOpen = !this.menuOpen;
+  }
+
+  doBulk(action: string) {
+    this.bulkAction.emit(action);
+    this.menuOpen = false;
+  }
+
+  @HostListener('document:click')
+  handleOutsideClick() {
+    this.menuOpen = false;
+  }
 }
