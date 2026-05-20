@@ -1,35 +1,41 @@
-<!-- Action Cards -->
-<app-dashboard-action [data]="data"></app-dashboard-action>
+<div class="flex flex-col gap-6 font-sans">
 
-<!-- Success Message -->
-<div *ngIf="successMessage" class="mt-4 p-3 bg-green-100 text-green-800 rounded-md border border-green-300 shadow-sm">
-    Todo added successfully.
-    <a routerLink="/dashboard/my-todos" class="text-red-600 font-semibold italic ml-1">
-        View all todos
-    </a>
-</div>
+    <!-- Success message -->
+    <div *ngIf="successMessage"
+        class="flex items-center gap-3 px-4 py-3 bg-green-50 border border-green-100 rounded-xl text-xs">
+        <i-feather name="check-circle" class="text-green-600 shrink-0" style="width:14px;height:14px;"></i-feather>
+        <span class="text-green-700 font-medium">Todo added successfully.</span>
+        <a routerLink="/dashboard/my-todos"
+            class="ml-auto text-red-600 font-semibold hover:underline whitespace-nowrap">
+            View all →
+        </a>
+    </div>
 
-<!-- Analytics + Login Chart -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-    <app-dashboard-app-analytics [data]="data"></app-dashboard-app-analytics>
-    <app-dashboard-login-chart [data]="data"></app-dashboard-login-chart>
-</div>
+    <!-- Action cards -->
+    <app-dashboard-action [data]="data"></app-dashboard-action>
 
-<!-- Notifications + Todo List (side by side) -->
-<div class="grid grid-cols-1 gap-6 mt-8 items-start">
-    <app-dashboard-notification></app-dashboard-notification>
-    <app-dashboard-todo-list [todoData]="myTodo"></app-dashboard-todo-list>
-</div>
+    <!-- Analytics + Login chart -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <app-dashboard-app-analytics [data]="data"></app-dashboard-app-analytics>
+        <app-dashboard-login-chart [data]="data"></app-dashboard-login-chart>
+    </div>
 
-<!-- Admin-only -->
-<div *ngIf="userData?.role === 'admin'" class="mt-8 space-y-6">
-    <app-dashboard-top-users></app-dashboard-top-users>
-    <app-dashboard-now-active hidden></app-dashboard-now-active>
-</div>
+    <!-- Notifications + Todos -->
+    <div class="grid grid-cols-1 gap-4 items-start">
+        <app-dashboard-notification></app-dashboard-notification>
+        <app-dashboard-todo-list [todoData]="myTodo"></app-dashboard-todo-list>
+    </div>
 
-<!-- Activity + Subscription -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-    <app-dashboard-activity-chart [data]="data"></app-dashboard-activity-chart>
-    <app-dashboard-subscription-analytics [subscriptions]="mySubscriptions">
-    </app-dashboard-subscription-analytics>
+    <!-- Admin only -->
+    <ng-container *ngIf="userData?.role === 'admin'">
+        <app-dashboard-top-users></app-dashboard-top-users>
+    </ng-container>
+
+    <!-- Activity + Subscription -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <app-dashboard-activity-chart [data]="data"></app-dashboard-activity-chart>
+        <app-dashboard-subscription-analytics [subscriptions]="mySubscriptions">
+        </app-dashboard-subscription-analytics>
+    </div>
+
 </div>

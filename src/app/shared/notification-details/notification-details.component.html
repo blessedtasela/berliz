@@ -1,32 +1,36 @@
-<div class="max-w-md w-full max-h-[80vh] overflow-y-auto p-6 mx-auto">
+<div class="max-w-md w-full max-h-[80vh] overflow-y-auto p-6 mx-auto flex flex-col gap-5">
 
     <!-- Header -->
-    <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center gap-2">
-            <i-feather name="bell" class="w-5 h-5 text-red-600"></i-feather>
-            <h2 class="text-lg font-semibold text-gray-900">Notification</h2>
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center">
+                <i-feather name="bell" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+            </div>
+            <h2 class="text-sm font-bold text-gray-900">Notification</h2>
         </div>
-
-        <button (click)="close()" class="text-gray-400 hover:text-gray-600 transition">
-            <i-feather name="x" class="w-5 h-5"></i-feather>
+        <button (click)="close()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
         </button>
     </div>
 
-    <!-- Notification text -->
-    <p class="text-gray-700 text-[15px] leading-relaxed text-center">
-        {{ data.notification }}
-    </p>
+    <!-- Body -->
+    <div class="bg-gray-50 border border-gray-100 rounded-xl px-4 py-4">
+        <p class="text-gray-800 text-sm leading-relaxed">
+            {{ data.notification }}
+        </p>
+    </div>
 
     <!-- Date -->
-    <div class="mt-5 flex items-center justify-center text-gray-500 text-sm">
-        <i-feather name="calendar" class="w-4 h-4 mr-1"></i-feather>
+    <div class="flex items-center gap-1.5 text-xs text-gray-400">
+        <i-feather name="calendar" style="width:12px;height:12px;"></i-feather>
         {{ data.date | date:'fullDate' }}
     </div>
 
-    <!-- Bottom close button -->
-    <div class="flex justify-center mt-8">
-        <button (click)="close()" class="px-5 py-2 rounded-md text-red-600 font-medium
-             hover:bg-red-50 hover:scale-[1.03] transition-all duration-200">
+    <!-- Close -->
+    <div class="flex justify-end">
+        <button (click)="close()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+             hover:bg-gray-50 transition">
             Close
         </button>
     </div>

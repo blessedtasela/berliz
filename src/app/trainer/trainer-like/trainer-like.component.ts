@@ -13,28 +13,31 @@ import { UserStateService } from 'src/app/services/user-state.service';
   templateUrl: './trainer-like.component.html',
   styleUrls: ['./trainer-like.component.css']
 })
+
 export class TrainerLikeComponent {
   trainerLikes: TrainerLike[] = [];
   showAllReviews: boolean = false;
 
-  constructor(private userStateService: UserStateService,
+  constructor(
+    private userStateService: UserStateService,
     private trainerStateService: TrainerStateService,
     private dialog: MatDialog,
     private ngxService: NgxUiLoaderService,
-    private newsletterStateService: NewsletterStateService,) {
+    private newsletterStateService: NewsletterStateService
+  ) {
     userStateService.getUser().subscribe(user => {
       trainerStateService.getTrainer().subscribe(trainer => {
         this.trainerLikes = [
           {
             id: 1,
-            user: user, // Actual user object
-            trainer: trainer, // Actual trainer object
+            user: user,
+            trainer: trainer,
             date: new Date(),
           },
           {
             id: 2,
-            user: user, // Actual user object
-            trainer: trainer, // Actual trainer object
+            user: user,
+            trainer: trainer,
             date: new Date(),
           },
         ];
@@ -43,17 +46,24 @@ export class TrainerLikeComponent {
   }
 
   ngOnInit(): void {
-    this.handleEmitEvent()
+    this.handleEmitEvent();
   }
 
-  handleEmitEvent() {
-   
-  }
+  handleEmitEvent() { }
 
   allReviews() {
     this.showAllReviews = !this.showAllReviews;
   }
+
+  getProfilePhoto(photo: string): string {
+    if (!photo) {
+      return 'assets/default-profile.png';
+    }
+
+    if (photo.startsWith('data:image')) {
+      return photo;
+    }
+
+    return 'data:image/png;base64,' + photo;
+  }
 }
-
-
-

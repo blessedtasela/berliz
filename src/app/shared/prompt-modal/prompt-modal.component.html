@@ -1,28 +1,37 @@
-<div class="p-4">
-    <div>
-        <div class="text-red-600 text-right font-bold">
-            <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer ml-20"></i-feather>
-        </div>
-        <div class="font-bold text-xl font-sans text-left text-gray-950 -mt-4">
-            Warning!!!
-        </div>
-    </div>
-    <div>
-        <h3 class="text-md m-2 font-sans text-gray-950">
-            Are you sure you want to <span class="">{{ details.message }}</span>
-        </h3>
+<div class="p-6 flex flex-col gap-5 w-full max-w-sm">
 
-        <div class="flex justify-end gap-4">
-            <button
-                class="p-2 px-2 text-gray-200 font-sans font-bold text-sm bg-red-600 rounded-md hover:drop-shadow-2xl hover:scale-110 focus:scale-110 focus:outline-none"
-                (click)="handleChangeAction()">
-                Yes
-            </button>
-            <button
-                class="p-2 px-2 text-gray-200 font-sans font-bold text-sm bg-gray-950 rounded-md hover:drop-shadow-2xl hover:scale-110 focus:scale-110 focus:outline-none"
-                (click)="closeDialog()">
-                No
-            </button>
+    <!-- Icon + title -->
+    <div class="flex items-start justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="alert-triangle" class="text-red-600" style="width:18px;height:18px;"></i-feather>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Are you sure?</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">This action may be irreversible</p>
+            </div>
         </div>
+        <button (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
     </div>
+
+    <!-- Message -->
+    <p class="text-sm text-gray-700 leading-relaxed bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+        {{ details.message }}
+    </p>
+
+    <!-- Actions -->
+    <div class="flex gap-2 justify-end">
+        <button (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+             hover:bg-gray-50 transition">
+            Cancel
+        </button>
+        <button (click)="handleChangeAction()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+             hover:bg-red-700 active:scale-[0.98] transition">
+            Confirm
+        </button>
+    </div>
+
 </div>

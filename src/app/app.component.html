@@ -18,16 +18,18 @@
 
     <!-- SIDEBAR LAYOUT -->
     <ng-container *ngSwitchCase="'sidebar'">
-        <div class="relative min-h-screen flex">
-            <app-top-bar></app-top-bar>
-            <app-side-bar class="mt-2"></app-side-bar>
+        <div class="relative min-h-screen bg-gray-50">
 
-            <div class="flex p-4 full-width">
-                <div class="width rounded-lg mt-24">
+            <app-top-bar></app-top-bar>
+            <app-side-bar></app-side-bar>
+
+            <div class="pt-14 transition-all duration-300" [ngClass]="sidebarOpen ? 'pl-60' : 'pl-14'">
+                <div class="p-4">
                     <router-outlet></router-outlet>
                     <app-footer></app-footer>
                 </div>
             </div>
+
         </div>
     </ng-container>
 

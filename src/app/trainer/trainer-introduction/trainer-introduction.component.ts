@@ -1,218 +1,365 @@
-import { group } from '@angular/animations';
-import { DatePipe, formatDate } from '@angular/common';
+// updated trainer-introduction.component.ts
+
+import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription, Observable, map, catchError, of, pipe } from 'rxjs';
-import { TrainerIntrodution, TrainerPricing } from 'src/app/models/trainers.interface';
+import { take } from 'rxjs';
+
+import {
+  TrainerIntroduction,
+  PhotoResponse
+} from 'src/app/models/trainers.interface';
+
+import { MediaOwnerType } from 'src/app/models/Media.enum';
+
+import {
+  StrapiUploadResponse
+} from 'src/app/models/Strapi.interface';
+
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { StrapiService } from 'src/app/services/strapi.service';
 import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
-import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
   selector: 'app-trainer-introduction',
   templateUrl: './trainer-introduction.component.html',
   styleUrls: ['./trainer-introduction.component.css']
 })
-
 export class TrainerIntroductionComponent {
-  @Output() emitEvent = new EventEmitter();
-  updateTrainerIntroductionForm!: FormGroup;
-  invalidForm: boolean = false;
-  isChecked: boolean = false;
-  responseMessage: any;
-  selectedImage: any;
-  imageChangedEvent: any = '';
-  croppedImage: any = '';
-  showCropper: boolean = false;
-  @Input() trainerIntroduction!: TrainerIntrodution;
-  selectedCategoriesId: any;
-  subscriptions: Subscription[] = [];
 
-  constructor(private formBuilder: FormBuilder,
-    private ngxService: NgxUiLoaderService,
-    private snackBarService: SnackBarService,
+  @Input() trainerIntroduction!: TrainerIntroduction;
+  @Output() emitEvent = new EventEmitter();
+
+  updateTrainerIntroductionForm!: FormGroup;
+
+  imageChangedEvent: any = null;
+  croppedImageBlob: Blob | null = null;
+  selectedFile: File | null = null;
+
+  photoRequest: PhotoResponse | null = null;
+
+  showCropper = false;
+  invalidForm = false;
+  isChecked = false;
+  showPreviewModal = false;
+  originalValue: any;
+
+  // 🔥 Stable preview URL used directly in template
+  previewUrl: string = 'assets/avatar.png';
+
+  constructor(
+    private fb: FormBuilder,
+    private loader: NgxUiLoaderService,
+    private snackbar: SnackBarService,
     private trainerService: TrainerService,
-    private trainerStateService: TrainerStateService,
-    private datePipe: DatePipe) {
-  }
+    private trainerState: TrainerStateService,
+    private strapi: StrapiService,
+    private datePipe: DatePipe
+  ) { }
 
   ngOnInit(): void {
-    this.trainerIntroduction = this.trainerIntroduction || {};
-    this.updateTrainerIntroductionForm = this.formBuilder.group({
+
+    if (!this.trainerIntroduction) {
+      console.error('trainerIntroduction input is missing!');
+    }
+
+    console.log(this.trainerIntroduction);
+    this.updateTrainerIntroductionForm = this.fb.group({
       id: this.trainerIntroduction?.id,
-      introduction: [this.trainerIntroduction.introduction, Validators.compose([Validators.required, Validators.minLength(500)])],
-      coverPhoto: [Validators.required]
+      introduction: [
+        this.trainerIntroduction?.introduction || '',
+        [
+          Validators.required,
+          Validators.minLength(900),
+          Validators.maxLength(1200)
+        ]
+      ],
+      photoRequest: [
+        this.trainerIntroduction?.photoResponse || null,
+        Validators.required
+      ]
     });
+
+    this.originalValue = this.updateTrainerIntroductionForm.getRawValue();
+    this.photoRequest = this.trainerIntroduction?.photoResponse || null;
+
+    // 🔥 Initialize previewUrl once, stable for first render
+    if (this.trainerIntroduction?.photoResponse?.photoUrl) {
+      this.previewUrl = this.normalizeUrl(this.trainerIntroduction.photoResponse.photoUrl);
+    } else {
+      this.previewUrl = 'assets/avatar.png';
+    }
   }
 
-  ngAfterViewInit() { }
+  // 🔥 Helper to normalize URLs (blob / http / relative)
+  private normalizeUrl(url: string): string {
+    if (!url) return 'assets/avatar.png';
 
-  ngOnDestroy() {
-    this.subscriptions.forEach(subscription => subscription.unsubscribe());
-  }
+    if (url.startsWith('blob:')) {
+      return url;
+    }
 
-  handleEmitEvent() {
-    this.subscriptions.push(
-      this.trainerStateService.getMyTrainerIntroduction().subscribe(trainerIntroduction => {
-        this.trainerIntroduction = trainerIntroduction;
-        this.trainerStateService.setMyTrainerIntroductionSubject(trainerIntroduction);
-      })
-    );
+    return url.startsWith('http')
+      ? url
+      : `http://localhost:1337${url}`;
   }
 
   onImgSelected(event: any): void {
-    const selectedImage = event.target.files[0];
-    if (selectedImage) {
-      this.imageChangedEvent = event;
-      this.showCropper = true;
-    }
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    this.imageChangedEvent = event;
+    this.showCropper = true;
   }
 
-  onCurrentPhotoSelected(event: any) {
-    if (event.target.checked) {
-      const base64Data = this.trainerIntroduction.coverPhoto;
-      if (base64Data) {
-        const byteCharacters = atob(base64Data); // Decode base64 data
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'image/jpeg' });
-        const file = new File([blob], 'coverPhoto.jpg', { type: 'image/jpeg' }); // Create a File object
-        this.croppedImage = file;
-        this.updateTrainerIntroductionForm.get('coverPhoto')?.setErrors(null);
-        this.isChecked = true
-      }
-    } else {
-      this.croppedImage = null;
-      this.updateTrainerIntroductionForm.get('coverPhoto')?.setValue(null);
-    }
+  imageCropped(event: ImageCroppedEvent): void {
+    this.croppedImageBlob = event.blob || null;
   }
 
-  updateFormValues(trainerIntroduction: TrainerIntrodution) {
-    this.updateTrainerIntroductionForm.patchValue({
-      id: trainerIntroduction.id,
-      introduction: trainerIntroduction.introduction,
-      coverPhoto: trainerIntroduction.coverPhoto,
-    });
+  loadImageFailed(): void {
+    this.snackbar.openSnackBar('Failed to load image', 'error');
   }
 
-  imageCropped(event: ImageCroppedEvent) {
-    this.croppedImage = event.blob;
-  }
-
-  imageLoaded() {
-    // This method is called when the image is loaded in the cropper
-    // You can perform any actions you need when the image is loaded, such as displaying the cropper
-  }
-
-  cropperReady() {
-    // This method is called when the cropper is ready
-    // You can perform any actions you need when the cropper is ready
-  }
-
-  loadImageFailed() {
-    // This method is called if there is an error loading the image in the cropper
-    // You can handle the error and display a message to the user
-  }
-
-  cancelUpload() {
+  cancelUpload(): void {
     this.showCropper = false;
+    this.imageChangedEvent = null;
+    this.croppedImageBlob = null;
   }
 
-  formatDate(dateString: any): any {
-    const date = new Date(dateString);
-    return this.datePipe.transform(date, 'dd/MM/yyyy');
-  }
+  submitCropToUpload(): void {
 
-  checkTrainerIntroductionExists(): Observable<boolean> {
-    return this.trainerStateService.getMyTrainerIntroduction().pipe(
-      map((trainerIntroduction: TrainerIntrodution) => {
-        return !!trainerIntroduction;
-      }),
-      catchError(() => {
-        return of(false);
-      })
-    );
-  }
-
-  updateTrainerIntroduction(): void {
-    if (this.updateTrainerIntroductionForm.invalid || !this.croppedImage) {
-      this.invalidForm = true;
-      this.responseMessage = "Invalid form. Please complete all sections";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+    if (!this.croppedImageBlob) {
+      this.snackbar.openSnackBar('Please crop image first', 'error');
       return;
     }
 
-    const requestData = new FormData();
-    requestData.append('introduction', this.updateTrainerIntroductionForm.get('introduction')?.value);
-    requestData.append('coverPhoto', this.croppedImage);
+    const file = new File(
+      [this.croppedImageBlob],
+      this.photoRequest?.name || `cropped_${Date.now()}.jpeg`,
+      {
+        type: this.croppedImageBlob.type || 'image/jpeg'
+      }
+    );
 
-    const trainerIntroduction = this.updateTrainerIntroductionForm.value;
+    this.selectedFile = file;
 
+    this.updateTrainerIntroductionForm.patchValue({
+      photoRequest: file
+    });
 
-    this.ngxService.start();
-    if (this.trainerIntroduction.id) {
-      console.log(this.trainerIntroduction.id)
-      // Update existing trainer introduction
-      requestData.append('id', this.trainerIntroduction.id.toString());
-      requestData.append('trainerId', this.trainerIntroduction.trainer.id.toString());
-      this.trainerService.updateTrainerIntroduction(requestData)
-        .subscribe((response: any) => {
-          this.updateTrainerIntroductionForm.reset();
-          this.invalidForm = false;
-          this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.showCropper = false
-          this.handleEmitEvent()
-          this.emitEvent.emit();
-          this.updateFormValues(trainerIntroduction);
-          this.croppedImage = null;
-          this.isChecked = false;
-          this.ngxService.stop();
-        }, (error: any) => {
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
-          this.ngxService.stop();
-        });
+    // 🔥 Update previewUrl with a stable blob URL (next tick)
+    setTimeout(() => {
+      this.previewUrl = URL.createObjectURL(this.selectedFile!);
+    });
+
+    this.showCropper = false;
+  }
+
+  // ❌ previewImage() removed – we now use previewUrl directly in template
+
+  onCurrentPhotoSelected(event: any): void {
+
+    if (event.target.checked) {
+
+      this.photoRequest =
+        this.trainerIntroduction?.photoResponse || null;
+
+      this.updateTrainerIntroductionForm.patchValue({
+        photoRequest: this.photoRequest
+      });
+
+      // 🔥 Update previewUrl based on existing photo
+      setTimeout(() => {
+        if (this.trainerIntroduction?.photoResponse?.photoUrl) {
+          this.previewUrl = this.normalizeUrl(this.trainerIntroduction.photoResponse.photoUrl);
+        } else {
+          this.previewUrl = 'assets/avatar.png';
+        }
+      });
+
+      this.isChecked = true;
+
     } else {
-      // Add new trainer introduction
-      this.trainerService.addTrainerIntroduction(requestData)
-        .subscribe((response: any) => {
-          this.updateTrainerIntroductionForm.reset();
-          this.invalidForm = false;
-          this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.showCropper = false
-          this.handleEmitEvent()
-          this.updateFormValues(trainerIntroduction);
-          this.croppedImage = null;
-          this.emitEvent.emit();
-          this.ngxService.stop();
-        }, (error: any) => {
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
-          this.ngxService.stop();
-        });
+
+      this.photoRequest = null;
+
+      this.updateTrainerIntroductionForm.patchValue({
+        photoRequest: null
+      });
+
+      // 🔥 Reset preview
+      setTimeout(() => {
+        this.previewUrl = 'assets/avatar.png';
+      });
+
+      this.isChecked = false;
     }
   }
 
+  updateTrainerIntroduction(): void {
 
-  clear() {
-    this.updateTrainerIntroductionForm.reset();
+    if (this.updateTrainerIntroductionForm.invalid) {
+
+      this.invalidForm = true;
+
+      this.snackbar.openSnackBar(
+        'Please complete all required fields',
+        'error'
+      );
+
+      return;
+    }
+
+    this.loader.start();
+
+    if (this.selectedFile) {
+      this.uploadNewImage();
+    } else {
+      this.saveToBackend();
+    }
+  }
+
+  private uploadNewImage(): void {
+
+    this.strapi.uploadToStrapi(this.selectedFile!)
+      .pipe(take(1))
+      .subscribe({
+
+        next: (res: StrapiUploadResponse[]) => {
+
+          const file = res?.[0];
+
+          if (!file) {
+            throw new Error('No file returned from Strapi');
+          }
+
+          // 🔥 Update uploadedPhoto and previewUrl
+          this.photoRequest = {
+            id: 0,
+            strapiId: file.id,
+            photoUrl: file.url,
+            name: file.name,
+            mimeType: file.mime,
+            byteSize: file.size,
+            ownerId: 0,
+            mediaOwnerType: MediaOwnerType.TRAINER_INTRODUCTION
+          };
+
+          this.previewUrl = this.normalizeUrl(file.url);
+
+          this.saveToBackend();
+
+        },
+
+        error: err => {
+
+          this.loader.stop();
+
+          this.snackbar.openSnackBar(
+            err?.error?.message || 'Strapi upload failed',
+            'error'
+          );
+        }
+      });
+  }
+
+  private saveToBackend(): void {
+
+    const payload = {
+      id: this.updateTrainerIntroductionForm.get('id')?.value,
+      trainerId: this.trainerIntroduction?.trainerId,
+      introduction: this.updateTrainerIntroductionForm
+        .get('introduction')
+        ?.value,
+      photoRequest: this.photoRequest
+    };
+
+    console.log('FINAL PAYLOAD SENT:', payload);
+
+    const request$ = payload.id
+      ? this.trainerService.updateTrainerIntroduction(payload)
+      : this.trainerService.addTrainerIntroduction(payload);
+
+    request$
+      .pipe(take(1))
+      .subscribe({
+
+        next: (res: any) => {
+
+          this.snackbar.openSnackBar(res?.message, '');
+          this.emitEvent.emit();
+          this.loader.stop();
+          this.clear(res);
+        },
+
+        error: (err: any) => {
+          this.loader.stop();
+          this.snackbar.openSnackBar(
+            err?.error?.message || 'Backend save failed',
+            'error'
+          );
+        }
+      });
+  }
+
+  clear(updated: TrainerIntroduction): void {
+
+    // 1️⃣ Update local trainerIntroduction with backend response
+    this.trainerIntroduction = updated;
+
+    // 2️⃣ Update form with backend response
+    this.updateTrainerIntroductionForm.patchValue({
+      id: updated.id,
+      introduction: updated.introduction,
+      photoRequest: updated.photoResponse
+    });
+
+    // 3️⃣ Update preview image
+    if (updated.photoResponse?.photoUrl) {
+      this.previewUrl = this.normalizeUrl(updated.photoResponse.photoUrl);
+    } else {
+      this.previewUrl = 'assets/avatar.png';
+    }
+
+    // 4️⃣ Reset local state
+    this.photoRequest = updated.photoResponse || null;
+    this.selectedFile = null;
+    this.croppedImageBlob = null;
+    this.imageChangedEvent = null;
+    this.isChecked = false;
+    this.invalidForm = false;
+
+    // 5️⃣ Reset form state
+    this.updateTrainerIntroductionForm.markAsPristine();
+    this.updateTrainerIntroductionForm.markAsUntouched();
+    this.updateTrainerIntroductionForm.updateValueAndValidity();
+    this.originalValue = this.updateTrainerIntroductionForm.getRawValue();
+  }
+
+  formatDate(dateString: any): any {
+
+    const date = new Date(dateString);
+
+    return this.datePipe.transform(
+      date,
+      'dd/MM/yyyy'
+    );
+  }
+
+  hasChanges(): boolean {
+
+    const current =
+      JSON.stringify(
+        this.updateTrainerIntroductionForm.getRawValue()
+      );
+
+    const original =
+      JSON.stringify(this.originalValue);
+
+    return current !== original;
   }
 }

@@ -65,510 +65,226 @@ import { TodoListsComponent } from './admin/todo-lists/todo-lists/todo-lists.com
 
 
 const routes: Routes = [
-
-
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home', component: LandingPageComponent },
-  { path: 'contact', component: ContactUsPageComponent },
+  { path: 'home', component: LandingPageComponent, data: { breadcrumb: 'Home' } },
+  { path: 'contact', component: ContactUsPageComponent, data: { breadcrumb: 'Contact' } },
   { path: 'contact-us', redirectTo: 'contact' },
-  { path: 'about', component: AboutUsComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'sign-up', component: SignupComponent },
-  { path: 'quick-sign-up', component: QuickSignupComponent },
-  { path: 'trainers', component: TrainersPageComponent },
-  { path: 'trainers/:id/:name', component: TrainersDetailsComponent, canActivate: [TrainerGuard] },
-  { path: 'centers', component: CenterPageComponent },
-  { path: 'centers/:id/:name', component: CenterDetailComponent, canActivate: [CenterGuard] },
-  { path: 'services', component: CategoriesComponent },
-  { path: 'services/:id/:name', component: CategoryDetailsComponent, canActivate: [CategoryGuard] },
-  { path: 'testimonials', component: TestimonialPageComponent },
-  { path: 'equipments', component: EquipmentPageComponent },
-  { path: 'exercises', component: ExercisesPageComponent },
-  { path: 'report-problem', component: ReportProblemPageComponent },
-  { path: 'faqs', component: FaqsPageComponent },
-  { path: 'help-center', component: HelpCenterPageComponent },
-  { path: 'terms', component: TermsPageComponent },
-  { path: 'privacy', component: PrivacyPageComponent },
-  { path: 'login/reset-password', component: ResetPasswordComponent },
-  { path: 'login/activate-account', component: ActivateAccountComponent },
+  { path: 'about', component: AboutUsComponent, data: { breadcrumb: 'About' } },
+  { path: 'login', component: LoginComponent, data: { breadcrumb: 'Login' } },
+  { path: 'sign-up', component: SignupComponent, data: { breadcrumb: 'Sign Up' } },
+  { path: 'quick-sign-up', component: QuickSignupComponent, data: { breadcrumb: 'Quick Sign Up' } },
+  { path: 'trainers', component: TrainersPageComponent, data: { breadcrumb: 'Trainers' } },
+  { path: 'trainers/:id/:name', component: TrainersDetailsComponent, canActivate: [TrainerGuard], data: { breadcrumb: { alias: 'trainerName' } } },
+  { path: 'centers', component: CenterPageComponent, data: { breadcrumb: 'Centers' } },
+  { path: 'centers/:id/:name', component: CenterDetailComponent, canActivate: [CenterGuard], data: { breadcrumb: { alias: 'centerName' } } },
+  { path: 'services', component: CategoriesComponent, data: { breadcrumb: 'Services' } },
+  { path: 'services/:id/:name', component: CategoryDetailsComponent, canActivate: [CategoryGuard], data: { breadcrumb: { alias: 'serviceName' } } },
+  { path: 'testimonials', component: TestimonialPageComponent, data: { breadcrumb: 'Testimonials' } },
+  { path: 'equipments', component: EquipmentPageComponent, data: { breadcrumb: 'Equipment' } },
+  { path: 'exercises', component: ExercisesPageComponent, data: { breadcrumb: 'Exercises' } },
+  { path: 'report-problem', component: ReportProblemPageComponent, data: { breadcrumb: 'Report Problem' } },
+  { path: 'faqs', component: FaqsPageComponent, data: { breadcrumb: 'FAQs' } },
+  { path: 'help-center', component: HelpCenterPageComponent, data: { breadcrumb: 'Help Center' } },
+  { path: 'terms', component: TermsPageComponent, data: { breadcrumb: 'Terms' } },
+  { path: 'privacy', component: PrivacyPageComponent, data: { breadcrumb: 'Privacy' } },
+  { path: 'login/reset-password', component: ResetPasswordComponent, data: { breadcrumb: 'Reset Password' } },
+  { path: 'login/activate-account', component: ActivateAccountComponent, data: { breadcrumb: 'Activate Account' } },
+  { path: 'shop', component: ProductsPageComponent, children: productChildRoutes, data: { breadcrumb: 'Shop' } },
 
-  // dashboard protected components
+  // ── DASHBOARD ──────────────────────────────────────────
   {
-    path: 'dashboard', component: DashboardRouteComponent,
+    path: 'dashboard',
+    component: DashboardRouteComponent,
     canActivate: [AuthGuard],
     data: {
-      expectedRole: ['admin', 'user', 'partner', 'trainer',
-        'center', 'driver', 'store', 'client',],
+      breadcrumb: 'Dashboard',
+      expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
     },
     children: [
-      // users components
+
+      // Dashboard home
       {
         path: '',
-        redirectTo: '',
-        pathMatch: 'full',
-      },
-      {
-        path: '', component: DashboardMainComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin', 'user', 'partner', 'trainer',
-            'center', 'driver', 'store', 'client',]
-        },
-      },
-
-      // Dashboard Hub components #protected
-      {
-        path: 'hub', component: HubRouteComponent,
+        component: DashboardMainComponent,
         canActivate: [AuthGuard],
         data: {
-          expectedRole: ['admin', 'user', 'partner', 'trainer',
-            'center', 'driver', 'store', 'client',]
+          breadcrumb: null, // don't double up on "Dashboard"
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+
+      // Profile
+      {
+        path: 'profile',
+        component: UserProfileComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Profile',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+
+      // Settings
+      {
+        path: 'settings',
+        component: UserProfileSettingsComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Settings',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+
+      // Notifications
+      {
+        path: 'my-notifications',
+        component: NotificationMainComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Notifications',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+
+      // Tasks
+      {
+        path: 'my-tasks',
+        component: MyTasksPageComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Tasks',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+
+      // Subscriptions
+      {
+        path: 'my-subscriptions',
+        component: MySubscriptionsMainComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Subscriptions',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+
+      // FAQs
+      {
+        path: 'my-faqs',
+        component: MyFaqsPageComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'FAQs',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+
+      // Todos
+      {
+        path: 'my-todos',
+        component: MyTodoListMainComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'To-do List',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+
+      // Partnership
+      {
+        path: 'partnership',
+        component: PartnerRouteComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Partnership',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
         },
         children: [
-          // hub components #protected
+          { path: '', component: PartnerComponent, canActivate: [AuthGuard], data: { breadcrumb: null, expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
+          { path: 'trainer-details', component: TrainerDetailsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Details', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } }
+        ]
+      },
+
+      // ── HUB ──────────────────────────────────────────
+      {
+        path: 'hub',
+        component: HubRouteComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Hub',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        },
+        children: [
+          { path: '', component: HubMainComponent, canActivate: [AuthGuard], data: { breadcrumb: null, expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
+
+          // Admin hub routes
+          { path: 'users', component: UsersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Users', expectedRole: ['admin'] } },
+          { path: 'newsletters', component: NewslettersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Newsletters', expectedRole: ['admin'] } },
+          { path: 'partners', component: PartnersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Partners', expectedRole: ['admin'] } },
+          { path: 'contact-us', component: AdminContactUsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Contact Us', expectedRole: ['admin'] } },
+          { path: 'trainers', component: TrainersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainers', expectedRole: ['admin'] } },
+          { path: 'centers', component: CentersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Centers', expectedRole: ['admin'] } },
+          { path: 'tags', component: TagsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Tags', expectedRole: ['admin'] } },
+          { path: 'todo-lists', component: TodoListsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Todo Lists', expectedRole: ['admin'] } },
+          { path: 'muscle-groups', component: MuscleGroupsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Muscle Groups', expectedRole: ['admin'] } },
+          { path: 'exercises', component: ExercisesComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Exercises', expectedRole: ['admin'] } },
+          { path: 'tasks', component: TasksComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Tasks', expectedRole: ['admin'] } },
+          { path: 'services', component: CategoryComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Services', expectedRole: ['admin'] } },
+          { path: 'clients', component: ClientsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Clients', expectedRole: ['admin'] } },
+          { path: 'subscriptions', component: SubscriptionsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Subscriptions', expectedRole: ['admin'] } },
+          { path: 'trainer-pricing', component: TrainerPricingComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Pricing', expectedRole: ['admin'] } },
+          { path: 'settings', component: UserProfileSettingsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Settings', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
+          { path: 'my-notifications', component: MyNotificationsPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Notifications', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
+          { path: 'my-tasks', component: MyTasksPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Tasks', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
+          { path: 'my-subscriptions', component: MySubscriptionsMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Subscriptions', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
+          { path: 'my-faqs', component: MyFaqsPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'FAQs', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
+          { path: 'my-todos', component: MyTodoListMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'To-do List', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
+
           {
-            path: '',
-            redirectTo: '',
-            pathMatch: 'full',
-          },
-          {
-            path: '', component: HubMainComponent,
+            path: 'partnership',
+            component: PartnerRouteComponent,
             canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            },
-          },
-          {
-            path: 'users', component: UsersComponent, canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin']
-            }
-          },
-          {
-            path: 'newsletters', component: NewslettersComponent, canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin']
-            }
-          },
-          {
-            path: 'partners', component: PartnersComponent, canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin']
-            }
-          },
-          {
-            path: 'contact-us', component: AdminContactUsComponent, canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin']
-            }
-          },
-          {
-            path: 'trainers', component: TrainersComponent, canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin']
-            }
-          },
-          {
-            path: 'centers', component: CentersComponent, canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin']
-            }
-          },
-          {
-            path: 'tags', component: TagsComponent, canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin']
-            }
-          },
-          {
-            path: 'todo-lists', component: TodoListsComponent, canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin']
-            }
-          },
-          {
-            path: 'muscle-groups', component: MuscleGroupsComponent, canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin']
-            }
-          },
-          {
-            path: 'exercises', component: ExercisesComponent, canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin']
-            }
-          },
-          {
-            path: 'tasks', component: TasksComponent, canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin']
-            }
-          },
-          {
-            path: 'services', component: CategoryComponent, canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin']
-            },
-          },
-          {
-            path: 'clients', component: ClientsComponent, canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin']
-            },
-          },
-          {
-            path: 'subscriptions', component: SubscriptionsComponent, canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin']
-            },
-          },
-          {
-            path: 'trainer-pricing', component: TrainerPricingComponent, canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin']
-            },
-          },
-          {
-            // hub components #protected
-            path: 'partnership', component: PartnerRouteComponent,
-            canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            },
+            data: { breadcrumb: 'Partnership', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] },
             children: [
-              {
-                path: '',
-                redirectTo: '',
-                pathMatch: 'full',
-              },
-              {
-                path: '', component: PartnerComponent,
-                canActivate: [AuthGuard],
-                data: {
-                  expectedRole: ['admin', 'user', 'partner', 'trainer',
-                    'center', 'driver', 'store', 'client',]
-                },
-              },
-              {
-                path: 'trainer-details', component: TrainerDetailsComponent,
-                canActivate: [AuthGuard],
-                data: {
-                  expectedRole: ['admin', 'user', 'partner', 'trainer',
-                    'center', 'driver', 'store', 'client',]
-                },
-              },
-            ],
-          },
-          // users protected routes
-
-
-          // User profile and settings #protected
-          {
-            path: 'settings', component: UserProfileSettingsComponent,
-            canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            }
-          },
-
-          {
-            path: 'my-notifications', component: MyNotificationsPageComponent,
-            canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            }
-          },
-          {
-            path: 'my-tasks', component: MyTasksPageComponent,
-            canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            }
-          },
-          {
-            path: 'my-subscriptions', component: MySubscriptionsMainComponent,
-            canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            }
-          },
-          {
-            path: 'my-faqs', component: MyFaqsPageComponent,
-            canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            }
-          },
-          {
-            path: 'my-todos', component: MyTodoListMainComponent,
-            canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            }
-          },
-        ],
-      },
-      // User profile and settings routes #protected
-      {
-
-        path: '', component: UserRouteComponent,
-        canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin', 'user', 'partner', 'trainer',
-            'center', 'driver', 'store', 'client',]
-        },
-        children: [
-          // profile components #protected
-          {
-            path: '',
-            redirectTo: '',
-            pathMatch: 'full',
-          },
-          {
-            path: '', component: UserProfileComponent,
-            canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            },
-          },
-          {
-            path: 'profile', component: UserProfileComponent,
-            canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            },
-          },
-          {
-            path: 'settings', component: UserProfileSettingsComponent,
-            canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            }
-          },
-        ],
+              { path: '', component: PartnerComponent, canActivate: [AuthGuard], data: { breadcrumb: null, expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
+              { path: 'trainer-details', component: TrainerDetailsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Details', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } }
+            ]
+          }
+        ]
       },
 
-      // users protected routes
-      {
-        path: 'profile', component: UserProfileComponent,
-        canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin', 'user', 'partner', 'trainer',
-            'center', 'driver', 'store', 'client',]
-        }
-      },
-      {
-        // partnership components #protected
-        path: 'partnership', component: PartnerRouteComponent,
-        canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin', 'user', 'partner', 'trainer',
-            'center', 'driver', 'store', 'client',]
-        },
-        children: [
-          {
-            path: '',
-            redirectTo: '',
-            pathMatch: 'full',
-          },
-          {
-            path: '', component: PartnerComponent,
-            canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            },
-          },
-          {
-            path: 'trainer-details', component: TrainerDetailsComponent,
-            canActivate: [AuthGuard],
-            data: {
-              expectedRole: ['admin', 'user', 'partner', 'trainer',
-                'center', 'driver', 'store', 'client',]
-            },
-          },
-        ],
-      },
-      {
-        path: 'settings', component: UserProfileSettingsComponent,
-        canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin', 'user', 'partner', 'trainer',
-            'center', 'driver', 'store', 'client',]
-        }
-      },
-      {
-        path: 'my-notifications', component: NotificationMainComponent,
-        canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin', 'user', 'partner', 'trainer',
-            'center', 'driver', 'store', 'client',]
-        }
-      },
-      {
-        path: 'my-tasks', component: MyTasksPageComponent,
-        canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin', 'user', 'partner', 'trainer',
-            'center', 'driver', 'store', 'client',]
-        }
-      },
-      {
-        path: 'my-subscriptions', component: MySubscriptionsMainComponent,
-        canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin', 'user', 'partner', 'trainer',
-            'center', 'driver', 'store', 'client',]
-        }
-      },
-      {
-        path: 'my-faqs', component: MyFaqsPageComponent,
-        canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin', 'user', 'partner', 'trainer',
-            'center', 'driver', 'store', 'client',]
-        }
-      },
-      {
-        path: 'my-todos', component: MyTodoListMainComponent,
-        canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin', 'user', 'partner', 'trainer',
-            'center', 'driver', 'store', 'client',]
-        }
-      },
-
-      // admin components #protected
-      {
-        path: 'users', component: UsersComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin']
-        }
-      },
-      {
-        path: 'newsletters', component: NewslettersComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin']
-        }
-      },
-      {
-        path: 'partners', component: PartnersComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin']
-        }
-      },
-      {
-        path: 'contact-us', component: AdminContactUsComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin']
-        }
-      },
-      {
-        path: 'trainers', component: TrainersComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin']
-        }
-      },
-      {
-        path: 'centers', component: CentersComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin']
-        }
-      },
-      {
-        path: 'tags', component: TagsComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin']
-        }
-      },
-      {
-        path: 'todo-lists', component: TodoListsComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin']
-        }
-      },
-      {
-        path: 'muscle-groups', component: MuscleGroupsComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin']
-        }
-      },
-      {
-        path: 'exercises', component: ExercisesComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin']
-        }
-      },
-      {
-        path: 'tasks', component: TasksComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin']
-        }
-      },
-      {
-        path: 'services', component: CategoryComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin']
-        },
-      },
-      {
-        path: 'clients', component: ClientsComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin']
-        },
-      },
-      {
-        path: 'subscriptions', component: SubscriptionsComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin']
-        },
-      },
-      {
-        path: 'trainer-pricing', component: TrainerPricingComponent, canActivate: [AuthGuard],
-        data: {
-          expectedRole: ['admin']
-        },
-      },
-    ],
+      // ── ADMIN (direct dashboard children) ────────────
+      { path: 'users', component: UsersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Users', expectedRole: ['admin'] } },
+      { path: 'newsletters', component: NewslettersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Newsletters', expectedRole: ['admin'] } },
+      { path: 'partners', component: PartnersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Partners', expectedRole: ['admin'] } },
+      { path: 'contact-us', component: AdminContactUsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Contact Us', expectedRole: ['admin'] } },
+      { path: 'trainers', component: TrainersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainers', expectedRole: ['admin'] } },
+      { path: 'centers', component: CentersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Centers', expectedRole: ['admin'] } },
+      { path: 'tags', component: TagsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Tags', expectedRole: ['admin'] } },
+      { path: 'todo-lists', component: TodoListsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Todo Lists', expectedRole: ['admin'] } },
+      { path: 'muscle-groups', component: MuscleGroupsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Muscle Groups', expectedRole: ['admin'] } },
+      { path: 'exercises', component: ExercisesComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Exercises', expectedRole: ['admin'] } },
+      { path: 'tasks', component: TasksComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Tasks', expectedRole: ['admin'] } },
+      { path: 'services', component: CategoryComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Services', expectedRole: ['admin'] } },
+      { path: 'clients', component: ClientsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Clients', expectedRole: ['admin'] } },
+      { path: 'subscriptions', component: SubscriptionsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Subscriptions', expectedRole: ['admin'] } },
+      { path: 'trainer-pricing', component: TrainerPricingComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Pricing', expectedRole: ['admin'] } },
+    ]
   },
 
-  // nested components
-  {
-    path: 'shop', component: ProductsPageComponent, children: productChildRoutes
-  },
-
-  //handles other exceptions
-  { path: '**', component: PageNotFoundComponent },
-
-]
+  { path: '**', component: PageNotFoundComponent }
+];
 
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {
-      // Restore the last scroll position
       scrollPositionRestoration: 'enabled',
-
-      // Enable scrolling to anchors
-      anchorScrolling: "enabled",
-    }
-    ),
-    ProductsModule,
+      anchorScrolling: 'enabled'
+    }),
+    ProductsModule
   ],
-  exports: [
-    RouterModule
-  ],
-  providers: [
-    AuthGuard,
-  ]
+  exports: [RouterModule],
+  providers: [AuthGuard]
 })
 export class AppRoutingModule { }
+

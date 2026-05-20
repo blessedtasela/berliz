@@ -11,8 +11,8 @@
         <div class="text-gray-200 text-center bg-gray-100 rounded-md m-2"
          *ngFor="let review of trainerReview; let i = index" [ngClass] ="{ 'hidden' : i >= 4 && !showAllReviews }">
             <div class="grid grid-cols-2 ">
-            <img src="{{ review.frontBefore }}" class="aspect-square rounded-l-md cursor-pointer">
-            <img src="{{ review.frontAfter }}" class="aspect-square rounded-r-md cursor-pointer">
+            <img src="{{ review.photoFrontBefore }}" class="aspect-square rounded-l-md cursor-pointer">
+            <img src="{{ review.photoFrontAfter }}" class="aspect-square rounded-r-md cursor-pointer">
         </div>
             <p class="text-gray-950 text-sm p-4 font-sans text-center">{{ review.review }}</p>
             <!-- <p class="text-red-600 text-md  mb-4 font-sans font-bold uppercase"> 

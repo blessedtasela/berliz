@@ -1,100 +1,207 @@
-<div *ngIf="showCropper"
-    class="fixed p-4 md:p-1 inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50">
-    <div class="bg-white p-4 rounded-lg w-full max-w-md image-cropper-container">
-        <image-cropper class="image-cropper" [imageChangedEvent]="imageChangedEvent"
-            (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()" (cropperReady)="cropperReady()"
-            (loadImageFailed)="loadImageFailed()" [maintainAspectRatio]="true" [aspectRatio]="1/1"
-            [resizeToWidth]="256">
-        </image-cropper>
-        <div class="mt-4 flex justify-center text-sm">
-            <button class="px-2 p-1 mr-4 bg-red-600 text-white rounded-md"
-                (click)="updateTrainerIntroduction()">Submit</button>
-            <button class="px-2 p-1 bg-blue-600 text-white rounded-md" (click)="cancelUpload()">Cancel</button>
-        </div>
+<!-- Preview modal -->
+<div *ngIf="showPreviewModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+    (click)="showPreviewModal = false">
+    <div class="relative" (click)="$event.stopPropagation()">
+        <img [src]="previewUrl"
+            class="max-w-[280px] max-h-[280px] rounded-2xl object-cover shadow-2xl border border-white/20"
+            onerror="this.src='assets/avatar.png';" />
+        <button (click)="showPreviewModal = false" class="absolute -top-2.5 -right-2.5 w-7 h-7 rounded-full bg-gray-900 border-2 border-white
+             flex items-center justify-center text-white hover:bg-red-600 transition">
+            <i-feather name="x" style="width:12px;height:12px;"></i-feather>
+        </button>
     </div>
 </div>
 
+<!-- CROPPER MODAL -->
+<ng-container *ngIf="showCropper">
+    <div class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/40 p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-5 flex flex-col gap-4">
 
-<div class="bg-gray-white font-sans rounded-t-lg">
-    <div class="flex items-center justify-center">
-        <div class="bg-white p-2 mt-5 mb-5 w-full">
-            <form [formGroup]="updateTrainerIntroductionForm">
-                <header class="justify-start p-2 text-gray-950 font-bold font-sans">
-                    <h1 class="text-xl text-red-600">Trainer's Introduction
-                        <span *ngIf="!trainerIntroduction.id" class="text-sm mx-2 text-gray-700 italic">
-                            (action required)</span>
-                    </h1>
-                    <span class="text-md flex text-gray-700">
-                        Date registered: {{ trainerIntroduction.date ? formatDate(trainerIntroduction.date) : 'N/A' }}
-                    </span>
-                </header>
-                <div class="border-b-2"></div>
-                <div class="invalid-form">
-                    <span *ngIf="updateTrainerIntroductionForm.invalid && invalidForm" class="mx-2 text-red-600">
-                        Input fields cannot be empty
-                    </span>
-                    <span *ngIf="updateTrainerIntroductionForm.valid && invalidForm" class="mx-2 text-gray-600">
-                        Eerything's up to date
-                    </span>
-                </div>
-                <div class="flex-cols items-center justify-center gap-2 w-full p-2 text-gray-950">
-                    <div class="mx-auto p-2 w-full">
-                        <span class="sr-only">Introduction</span>
-                        <label for="introduction"
-                            class="block text-sm font-semibold text-gray-950 mb-1">Introduction</label>
-                        <textarea id="introduction" formControlName="introduction" rows="12"
-                            placeholder="Please introduce yourself in a concise manner, using no more than 1000 words. Highlight your achievements, qualifications, and experience,
-                             providing potential clients with a clear understanding of your expertise and professionalism."
-                            class="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent resize-none"
-                            [ngClass]="{'border-red-400': updateTrainerIntroductionForm.get('introduction')?.invalid && updateTrainerIntroductionForm.get('introduction')?.dirty }"></textarea>
-                        <div *ngIf="updateTrainerIntroductionForm.get('introduction')?.invalid && invalidForm"
-                            class="text-sm text-red-600 mt-1 text-xs italic">
-                            At least 500 characters
-                        </div>
-                    </div>
-                    <div class="mx-auto ">
-                        <span class="sr-only">Cover Photo</span>
-                        <label for="coverPhoto" class="block text-sm font-semibold text-gray-950 mb-1">Cover
-                            Photo</label>
-                        <div class="flex">
-                            <div class="shrink-0 group relative" *ngIf="trainerIntroduction.coverPhoto">
-                                <img class="h-16 w-16 object-cover rounded-full cursor-pointer"
-                                    [src]="'data:image/*;base64,' + trainerIntroduction.coverPhoto"
-                                    onerror="this.src='../../../assets/icons/user.png';" alt="Display photo" />
-                                <div class="hidden group-hover:block fixed top-1/2 left-1/2 transform -translate-x-1/2
-                                    -translate-y-1/2 bg-black bg-opacity-50 p-4 rounded-lg ">
-                                    <img [src]="'data:image/*;base64,' + trainerIntroduction.coverPhoto || 'assets/icons/user.png'"
-                                        class="rounded-md p-1 object-cover "
-                                        onerror="this.src='../../../assets/icons/user.png';">
-                                </div>
-                            </div>
-                            <input id="coverPhoto"
-                                class="border-b-2 px-4 py-2 rounded-md m-2 border-gray-400  hover:border-gray-400 focus:border-gray-400 focus:outline-none
-                                 block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
-                                 file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
-                                [ngClass]="{'border-gray-950': updateTrainerIntroductionForm.get('coverPhoto')?.invalid && updateTrainerIntroductionForm.get('coverPhoto')?.dirty }"
-                                (change)="onImgSelected($event)" type="file" accept="/image">
-                        </div>
-                        <div *ngIf="trainerIntroduction.coverPhoto"
-                            class="flex items-center gap-2 text-sm font-semibold text-gray-950 italic">
-                            <input type="checkbox" (change)="onCurrentPhotoSelected($event)" [checked]="isChecked"
-                                id="currentPhoto">
-                            <label for="currentPhoto">Select current photo</label>
-                        </div>
-                        <div *ngIf="updateTrainerIntroductionForm.get('coverPhoto')?.invalid && updateTrainerIntroductionForm.get('coverPhoto')?.dirty"
-                            class="text-red-500 mx-2 block text-sm font-semibold">
-                            cover photo is required
-                        </div>
-                    </div>
-                    <div class="">
-                        <button
-                            class="bg-red-600 rounded-md mx-auto m-2 col-span-2 py-1 px-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                            type="submit" (click)="updateTrainerIntroduction()">
-                            save
-                        </button>
-                    </div>
-                </div>
-            </form>
+            <div class="flex items-center justify-between">
+                <h2 class="text-sm font-bold text-gray-900">Crop cover photo</h2>
+                <button (click)="cancelUpload()"
+                    class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600">
+                    <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+                </button>
+            </div>
+
+            <!-- ⭐ IMPORTANT: cropper inside ng-container -->
+            <image-cropper class="rounded-xl overflow-hidden border border-gray-200"
+                [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="1 / 1"
+                [resizeToWidth]="512" format="jpeg" (imageCropped)="imageCropped($event)"
+                (loadImageFailed)="loadImageFailed()">
+            </image-cropper>
+
+            <div class="flex justify-end gap-2 pt-1 border-t border-gray-100">
+                <button (click)="cancelUpload()"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
+                    Cancel
+                </button>
+                <button (click)="submitCropToUpload()"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition">
+                    Save photo
+                </button>
+            </div>
+
         </div>
     </div>
+</ng-container>
+
+
+<!-- MAIN -->
+<div class="bg-white font-sans rounded-xl border border-gray-200 p-4 flex flex-col gap-4  mt-4">
+
+    <form [formGroup]="updateTrainerIntroductionForm" class="flex flex-col gap-4">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                    Trainer introduction
+                    <span *ngIf="!trainerIntroduction.id"
+                        class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">
+                        Action required
+                    </span>
+                </h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">
+                    Registered:
+                    <span class="text-gray-600 font-medium">
+                        {{ trainerIntroduction.date ? formatDate(trainerIntroduction.date) : 'N/A' }}
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Validation banner -->
+        <div *ngIf="invalidForm">
+            <p *ngIf="updateTrainerIntroductionForm.invalid"
+                class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
+                <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+                Please complete all required fields.
+            </p>
+            <p *ngIf="updateTrainerIntroductionForm.valid"
+                class="text-[11px] text-green-700 bg-green-50 border border-green-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
+                <i-feather name="check-circle" style="width:12px;height:12px;"></i-feather>
+                Everything looks good.
+            </p>
+        </div>
+
+        <!-- Introduction -->
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                Introduction
+            </label>
+
+            <textarea formControlName="introduction" rows="12" maxlength="1200"
+                placeholder="Introduce yourself concisely. Highlight achievements, qualifications, and experience."
+                class="w-full px-3 py-2.5 bg-gray-50 border rounded-xl text-gray-900 text-sm
+           focus:outline-none focus:ring-2 focus:border-transparent
+           resize-none transition placeholder:text-gray-400" [ngClass]="{
+      'border-red-300 focus:ring-red-400':   updateTrainerIntroductionForm.get('introduction')?.invalid && invalidForm,
+      'border-green-400 focus:ring-green-400': updateTrainerIntroductionForm.get('introduction')?.valid && 
+      (updateTrainerIntroductionForm.get('introduction')?.value?.length || 0) >= 250 &&  
+      updateTrainerIntroductionForm.get('introduction')?.dirty,
+      'border-gray-200 focus:ring-red-500':  !invalidForm && !updateTrainerIntroductionForm.get('introduction')?.valid
+    }">
+  </textarea>
+
+            <div class="flex justify-between items-center">
+
+                <p *ngIf="updateTrainerIntroductionForm.get('introduction')?.invalid && invalidForm"
+                    class="text-[11px] text-red-500 flex items-center gap-1">
+                    <i-feather name="alert-circle" class="text-red-500" style="width:11px;height:11px;"></i-feather>
+                    Minimum 250 characters required.
+                </p>
+
+                <p *ngIf="updateTrainerIntroductionForm.get('introduction')?.valid &&
+                 updateTrainerIntroductionForm.get('introduction')?.dirty"
+                    class="text-[11px] text-green-600 flex items-center gap-1">
+                    <i-feather name="check-circle" class="text-green-600" style="width:11px;height:11px;"></i-feather>
+                    Looks good.
+                </p>
+
+                <span class="text-[10px] ml-auto font-semibold" [ngClass]="{
+        'text-red-500':   (updateTrainerIntroductionForm.get('introduction')?.value?.length || 0) < 900,
+        'text-green-600': (updateTrainerIntroductionForm.get('introduction')?.value?.length || 0) >= 900 && 
+        (updateTrainerIntroductionForm.get('introduction')?.value?.length || 0) < 900,
+        'text-gray-400':  (updateTrainerIntroductionForm.get('introduction')?.value?.length || 0) === 900
+      }">
+                    {{ updateTrainerIntroductionForm.get('introduction')?.value?.length || 0 }} / 1200
+                </span>
+
+            </div>
+        </div>
+
+        <!-- Cover photo -->
+        <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                Cover photo
+            </label>
+
+            <div class="flex items-center gap-4 p-3 bg-gray-50 border border-gray-200 rounded-xl">
+
+                <!-- Preview -->
+                <div class="relative shrink-0">
+                    <img [src]="previewUrl" class="w-14 h-14 rounded-xl object-cover border border-gray-200"
+                        onerror="this.src='assets/avatar.png';" />
+
+                    <button type="button" (click)="showPreviewModal = true" class="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full bg-gray-900 border-2 border-white
+           flex items-center justify-center shadow transition hover:bg-red-600">
+                        <i-feather name="eye" style="width:9px;height:9px;" class="text-white"></i-feather>
+                    </button>
+                </div>
+
+                <!-- File input + checkbox -->
+                <div class="flex-1 flex flex-col gap-2">
+                    <input type="file" accept="image/*" (change)="onImgSelected($event)" class="block w-full text-xs text-gray-600 cursor-pointer
+                   file:mr-3 file:py-1.5 file:px-3 file:rounded-full
+                   file:border-0 file:text-xs file:font-semibold
+                   file:bg-red-50 file:text-red-600 hover:file:bg-red-100
+                   focus:outline-none transition" />
+
+                    <div *ngIf="trainerIntroduction.photoResponse" class="flex items-center gap-2">
+                        <input type="checkbox" id="currentPhoto" [checked]="isChecked"
+                            (change)="onCurrentPhotoSelected($event)"
+                            class="w-3.5 h-3.5 accent-red-600 cursor-pointer" />
+                        <label for="currentPhoto" class="text-xs text-gray-600 cursor-pointer">
+                            Use current photo
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <p *ngIf="updateTrainerIntroductionForm.get('coverPhoto')?.invalid && invalidForm"
+                class="text-[11px] text-red-500 flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Cover photo is required.
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Save -->
+        <div class="flex items-center justify-between">
+            <div class="flex">
+                <span *ngIf="hasChanges()" class="text-xs text-blue-600 font-semibold">
+                    Unsaved changes
+                </span>
+
+                <span *ngIf="!hasChanges()" class="text-xs text-gray-400">
+                    No changes made
+                </span>
+            </div>
+            <div class="flex">
+                <button type="button" (click)="updateTrainerIntroduction()" class="px-4 py-2 bg-red-600 text-white rounded-xl text-xs font-semibold
+               hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                    <i-feather name="save" style="width:13px;height:13px;"></i-feather>
+                    Save changes
+                </button>
+            </div>
+        </div>
+    </form>
+
 </div>

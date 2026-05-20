@@ -52,6 +52,7 @@ export class TopBarComponent implements OnInit {
 
   notificationLength = 0;
   notificationDropdown = false;
+  isMobileSearchOpen = false;
 
   subscriptions: Subscription[] = [];
 
@@ -131,6 +132,15 @@ export class TopBarComponent implements OnInit {
     );
   }
 
+
+  openMobileSearch() {
+    this.isMobileSearchOpen = true;
+  }
+
+  closeMobileSearch() {
+    this.isMobileSearchOpen = false;
+  }
+
   toggleNotificationDropdown() {
     this.notificationDropdown = !this.notificationDropdown;
   }
@@ -152,6 +162,11 @@ export class TopBarComponent implements OnInit {
   onResize(): void {
     this.openMenu = window.innerWidth >= 768;
   }
+
+  get hasSearch(): boolean {
+    return !!this.searchComponent;
+  }
+
 
   subscribeToCloseSideBar() {
     document.addEventListener('mousedown', (event) => {

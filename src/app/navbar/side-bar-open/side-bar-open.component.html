@@ -1,60 +1,49 @@
-<!-- Sidebar Navigation -->
-<nav class="font-sans text-white bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 py-4">
+<nav class="flex flex-col gap-0.5 px-3 font-sans">
 
-    <!-- MENU ITEM TEMPLATE -->
-    <ng-container *ngFor="let item of [
-      {name:'Dashboard', icon:'package', route:'/dashboard', exact:true},
-      {name:'Tasks', icon:'activity', route:'/dashboard/my-tasks'},
-      {name:'Notifications', icon:'inbox', route:'/dashboard/my-notifications'},
-      {name:'Hub', icon:'globe', route:'/dashboard/hub'},
-      {name:'Profile', icon:'user', route:'/dashboard/profile'},
-      {separator:true,icon:'', route:''},
-      {name:'To-do list', icon:'calendar', route:'/dashboard/my-todos'},
-      {name:'Subscriptions', icon:'airplay', route:'/dashboard/my-subscriptions'},
-      {name:'FAQs', icon:'message-square', route:'/dashboard/my-faqs'},
-      {name:'Settings', icon:'settings', route:'/dashboard/settings'}
-    ]">
-        <!-- SEPARATOR -->
-        <ng-container *ngIf="item.separator">
-            <hr class="border-gray-700 my-4 mx-6" />
-        </ng-container>
+  <ng-container *ngFor="let item of [
+    {name:'Dashboard', icon:'package', route:'/dashboard', exact:true},
+    {name:'Tasks', icon:'activity', route:'/dashboard/my-tasks'},
+    {name:'Notifications', icon:'inbox', route:'/dashboard/my-notifications'},
+    {name:'Hub', icon:'globe', route:'/dashboard/hub'},
+    {name:'Profile', icon:'user', route:'/dashboard/profile'},
+    {separator:true},
+    {name:'To-do list', icon:'calendar', route:'/dashboard/my-todos'},
+    {name:'Subscriptions', icon:'airplay', route:'/dashboard/my-subscriptions'},
+    {name:'FAQs', icon:'message-square', route:'/dashboard/my-faqs'},
+    {name:'Settings', icon:'settings', route:'/dashboard/settings'}
+  ]">
 
+    <!-- Separator -->
+    <div *ngIf="item.separator" class="border-t border-gray-800 my-2 mx-1"></div>
 
-        <!-- MENU ITEM -->
-        <div *ngIf="!item.separator"
-            class="flex items-center px-6 py-3 cursor-pointer transition-all duration-200 rounded-md" [ngClass]="{
-          'bg-gray-800 border-l-4 border-red-600': isActive(item.route, item.exact),
-          'hover:bg-gray-800': !isActive(item.route, item.exact)
-        }">
+    <!-- Nav item -->
+    <a *ngIf="!item.separator" [routerLink]="item.route"
+      class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition"
+      [ngClass]="isActive(item.route || '', item.exact)
+        ? 'bg-red-600/20 border border-red-600/30 text-red-400'
+        : 'text-white hover:bg-gray-800 hover:text-white'">
 
-            <!-- ICON -->
-            <feather-icon [name]="item.icon" class="text-white" style="width: 24px;">
-            </feather-icon>
+      <feather-icon [name]="item.icon || ''" style="width:17px;"
+        [ngClass]="isActive(item.route || '', item.exact) ? 'text-red-400' : 'text-white'">
+      </feather-icon>
 
-            <!-- LABEL -->
-            <a [routerLink]="item.route" class="ml-4 text-sm font-medium tracking-wide">
-                {{ item.name }}
-            </a>
+      <span class="flex-1">{{ item.name }}</span>
 
-            <!-- NOTIFICATION BADGE -->
-            <span *ngIf="item.name === 'Notifications'"
-                class="ml-3 bg-red-600 text-white text-[10px] px-2 py-[1px] rounded-full font-bold badge-pulse">
-                {{ notificationLength }}
-            </span>
+      <span *ngIf="item.name === 'Notifications' && notificationLength > 0"
+        class="bg-red-600 text-white text-[9px] px-1.5 py-px rounded-full font-bold badge-pulse">
+        {{ notificationLength }}
+      </span>
 
-        </div>
+    </a>
 
-    </ng-container>
+  </ng-container>
 
-    <!-- LOGOUT -->
-    <div class="flex items-center px-6 py-3 mt-10 cursor-pointer hover:bg-gray-800 transition-all duration-200 rounded-md"
-        (click)="logout()">
-
-        <feather-icon name="log-out" class="text-white" style="width: 22px;"></feather-icon>
-
-        <span class="ml-4 text-sm font-medium tracking-wide">
-            Log out
-        </span>
-    </div>
+  <!-- Logout -->
+  <button (click)="logout()"
+    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+           text-white hover:bg-red-600/10 hover:text-red-400 transition mt-2 w-full text-left">
+    <feather-icon name="log-out" style="width:17px;" class="text-white"></feather-icon>
+    Log out
+  </button>
 
 </nav>

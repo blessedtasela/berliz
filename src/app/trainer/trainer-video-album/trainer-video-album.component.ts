@@ -73,31 +73,33 @@ export class TrainerVideoAlbumComponent {
 
   onCurrentVideoSelected(event: any) {
     if (event.target.checked) {
-      const videoUrl = this.trainerVideoAlbum.video; // This is the URL from the backend
+
+      const videoUrl = this.trainerVideoAlbum?.videoResponses?.[0]?.videoUrl;
+
       if (videoUrl) {
-        // Fetch the video content from the URL
         fetch(videoUrl)
           .then(response => {
             if (!response.ok) {
               throw new Error('Network response was not ok');
             }
-            return response.blob(); // Convert response to Blob
+            return response.blob();
           })
           .then(blob => {
-            const file = new File([blob], 'video.mp4', { type: 'video/mp4' }); // Convert Blob to File
-            this.selectedVideo = file; // Set the selected video to the File object
+            const file = new File([blob], 'video.mp4', { type: 'video/mp4' });
+            this.selectedVideo = file;
 
-            // Update the form control value with the File object
             this.updateTrainerVideoAlbum.patchValue({
               video: file
             });
-            this.updateTrainerVideoAlbum.get('video')?.updateValueAndValidity(); // Update validity
+
+            this.updateTrainerVideoAlbum.get('video')?.updateValueAndValidity();
             this.isChecked = false;
           })
           .catch(error => {
             console.error('Error fetching video:', error);
           });
       }
+
     } else {
       this.updateTrainerVideoAlbum.get('video')?.setValue(null);
       this.isChecked = false;
@@ -108,7 +110,7 @@ export class TrainerVideoAlbumComponent {
     this.updateTrainerVideoAlbum.patchValue({
       id: trainerVideoAlbum.id,
       comment: trainerVideoAlbum.comment,
-      video: trainerVideoAlbum.video,
+      video: trainerVideoAlbum.videoResponses,
     });
   }
 
@@ -164,7 +166,7 @@ export class TrainerVideoAlbumComponent {
       console.log(this.trainerVideoAlbum.id)
       // Update existing trainer comment
       requestData.append('id', this.trainerVideoAlbum.id.toString());
-      requestData.append('trainerId', this.trainerVideoAlbum.trainer.id.toString());
+      requestData.append('trainerId', this.trainerVideoAlbum.trainerId.toString());
       this.trainerService.updateTrainerVideoAlbum(requestData)
         .subscribe((response: any) => {
           this.updateTrainerVideoAlbum.reset();

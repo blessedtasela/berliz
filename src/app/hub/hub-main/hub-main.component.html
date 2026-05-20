@@ -1,4 +1,15 @@
-<div class="max-w-6xl mx-auto px-6 py-10 space-y-10">
+<div class="font-sans flex flex-col gap-6">
+
+    <!-- Header -->
     <app-hub-header></app-hub-header>
-    <hub-grid [items]="data"></hub-grid>
+
+    <!-- Grid -->
+    <hub-grid *ngIf="data" [items]="data"></hub-grid>
+
+    <!-- Empty -->
+    <div *ngIf="!data" class="flex flex-col items-center py-16 gap-2 text-center">
+        <i-feather name="layout" class="text-gray-300" style="width:36px;height:36px;"></i-feather>
+        <p class="text-sm text-gray-400 italic">No hub data available</p>
+    </div>
+
 </div>

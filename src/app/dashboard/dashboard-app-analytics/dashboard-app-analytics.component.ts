@@ -25,14 +25,14 @@ export class DashboardAppAnalyticsComponent implements OnInit, OnDestroy {
   @ViewChild('analyticCanvas', { static: true })
   analyticCanvas!: ElementRef<HTMLCanvasElement>;
 
-private chart!: Chart<'line', number[], string>;
+  private chart!: Chart<'line', number[], string>;
   private subscriptions: Subscription[] = [];
   private chartCreated = false;
 
   constructor(
     private dashboardStateService: DashboardStateService,
     private ngxService: NgxUiLoaderService
-  ) {}
+  ) { }
 
   ngOnInit() {
     const sub = this.dashboardStateService.dashboardData$.subscribe((cachedData) => {
@@ -67,47 +67,61 @@ private chart!: Chart<'line', number[], string>;
     this.subscriptions.push(sub);
   }
 
- private createAnalyticChart() {
-  if (!this.data) return;
+  private createAnalyticChart() {
+    if (!this.data) return;
 
-  const labels = Object.keys(this.data);
-  const values = Object.values(this.data).map(v => Number(v)); // ⭐ FIX
+    const labels = Object.keys(this.data);
+    const values = Object.values(this.data).map(v => Number(v));
 
-  Chart.register(...registerables);
+    Chart.register(...registerables);
+    if (this.chart) this.chart.destroy();
 
-  if (this.chart) {
-    this.chart.destroy();
-  }
-
-  this.chart = new Chart<'line', number[], string>(this.analyticCanvas.nativeElement, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
+    this.chart = new Chart<'line', number[], string>(this.analyticCanvas.nativeElement, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
           label: 'Total',
           data: values,
-          backgroundColor: 'limegreen',
-          borderColor: 'limegreen',
+          backgroundColor: 'rgba(220,38,38,0.08)',
+          borderColor: 'rgba(220,38,38,1)',
           borderWidth: 2,
-          tension: 0.3,
-          fill: false
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: true }
+          tension: 0.4,
+          fill: true,
+          pointBackgroundColor: 'rgba(220,38,38,1)',
+          pointRadius: 4,
+          pointHoverRadius: 6
+        }]
       },
-      scales: {
-        x: { ticks: { color: '#666' } },
-        y: { ticks: { color: '#666' } }
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#111827',
+            titleColor: '#f9fafb',
+            bodyColor: '#d1d5db',
+            padding: 10,
+            cornerRadius: 8
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            border: { display: false },
+            ticks: { font: { size: 11 }, color: '#9ca3af' }
+          },
+          y: {
+            beginAtZero: true,
+            border: { display: false },
+            grid: { color: 'rgba(0,0,0,0.04)' },
+            ticks: { font: { size: 11 }, color: '#9ca3af', stepSize: 1 }
+          }
+        }
       }
-    }
-  });
-}
+    });
+  }
 
   // ⭐ FORCE CHART TO RESIZE WHEN WINDOW RESIZES
   @HostListener('window:resize')

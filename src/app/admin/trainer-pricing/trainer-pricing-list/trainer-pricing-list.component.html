@@ -21,10 +21,10 @@
                     class="bg-gray-100 hover:bg-gray-200">
                     <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">
-                        <a href="mailto:{{ trainerPricing.trainer.partner.user.email }}"> {{
-                            trainerPricing.trainer.partner.user.email }}</a>
+                        <a href="mailto:{{ trainerPricing.trainerName }}"> {{
+                            trainerPricing.trainerName }}</a>
                     </td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ trainerPricing.trainer.name }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ trainerPricing.trainerName }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(trainerPricing.date) }}</td>
                     <td class="border-b border-gray-400 px-4 py-2 font-bold">{{ trainerPricing.id }}</td>
                    <td class="border-b border-gray-400 px-4 py-2">{{ trainerPricing.priceOnline }} usd</td>

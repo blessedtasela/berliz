@@ -18,7 +18,7 @@
         <img src="../../../../assets/landing/hero-bg-4.jpg" class="w-full h-64 object-cover overflow-hidden rounded-lg">
     </div>
     <div *ngIf="user" class="relative overflow-visible -mt-16 flex items-center justify-center">
-        <img [src]="'data:image/*;base64,' + trainerData.photo" onerror="this.src='../../../assets/icons/user.png';"
+        <img [src]="'data:image/*;base64,' + trainerData.photoResponse" onerror="this.src='../../../assets/icons/user.png';"
             class="shadow-lg ring-offset-2 ring-red-500 ring-4 rounded-full w-32">
         <label for="fileInput" class="absolute bottom-0 ml-36">
             <i-feather name="Camera" class="font-bold text-red-600 cursor-pointer"></i-feather>
@@ -32,13 +32,13 @@
         <div *ngIf="user" class="text-gray-950  text-2xl text-center">
             {{ user.firstname }} {{ user.lastname }}
         </div>
-        <div *ngIf="user?.role!=='user' && trainerData.status !== 'false'"
+        <div *ngIf="user.role!=='user' && trainerData.status !== 'false'"
             class="Capitalize italic text-gray-400 font-bold text-md mb-2 text-center">
-            {{ trainerData.partner.user.role }}
+            {{ trainerData.partnerId }} (udt)
         </div>
-        <div *ngIf="user?.role!=='user' && trainerData.status !== 'true'"
+        <div *ngIf="user.role!=='user' && trainerData.status !== 'true'"
             class="Capitalize italic text-gray-400 font-bold text-md mb-2 text-center">
-            {{ trainerData.partner.user.role }} (action required)
+            {{ trainerData.partnerId }} (udt) (action required)
         </div>
         <div
             class="flex items-center justify-center gap-1 md:gap-4 m-4  border-2 p-1 md:p-2 rounded-lg border-gray-200 shadow-sm font-bold text-md">

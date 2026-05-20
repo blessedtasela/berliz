@@ -1,17 +1,28 @@
-<div class="relative">
-    <button (click)="toggle()" class="p-1.5 rounded-full hover:bg-gray-100 text-gray-700">
-        <i-feather name="more-horizontal" class="w-4 h-4"></i-feather>
+<div class="relative overflow-visible">
+
+    <button (click)="toggle(); $event.stopPropagation()"
+        class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-100 flex items-center justify-center transition">
+        <i-feather name="more-horizontal" style="width:14px;height:14px;" class="text-gray-500"></i-feather>
     </button>
 
-    <div *ngIf="open" class="absolute right-0 mt-2 bg-white border border-gray-200 rounded-md shadow-lg w-40 z-20">
-        <button class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50" (click)="viewDetails()">
-            View details
+    <div *ngIf="open" (click)="$event.stopPropagation()"
+        class="absolute right-0 top-full mt-1.5 w-44 bg-white border border-gray-200 rounded-xl shadow-2xl z-[100] text-sm py-1">
+
+        <button class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2" (click)="viewDetails()">
+            👁️ View details
         </button>
-        <button class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50" (click)="delete()">
-            Delete
+
+        <button class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2" (click)="renew()">
+            🔄 Renew
         </button>
-        <button class="w-full text-left px-3 py-2 text-sm text-green-600 hover:bg-green-50" (click)="renew()">
-            Renew
+
+        <div class="border-t border-gray-100 my-1"></div>
+
+        <button class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 flex items-center gap-2"
+            (click)="delete()">
+            🗑️ Delete
         </button>
+
     </div>
+
 </div>

@@ -120,6 +120,16 @@ import {
   Shield,
   ShieldOff,
   ShoppingBag,
+  Save,
+  Grid,
+  GitPullRequest,
+  GitMerge,
+  GitBranch,
+  GitCommit,
+  Briefcase,
+  Battery,
+  BatteryCharging,
+  Bookmark,
 
 } from 'angular-feather/icons';
 
@@ -243,6 +253,18 @@ const icons = {
   Shield,
   ShieldOff,
   ShoppingBag,
+  Save,
+  Grid,
+  GitPullRequest,
+  GitMerge,
+  GitBranch,
+  GitCommit,
+  Briefcase,
+  Battery,
+  BatteryCharging,
+  Bookmark,
+
+
 };
 
 @NgModule({

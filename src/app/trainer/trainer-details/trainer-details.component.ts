@@ -4,7 +4,7 @@ import { forkJoin, skip, Subscription } from 'rxjs';
 import {
   TrainerBenefits,
   TrainerFeatureVideo,
-  TrainerIntrodution,
+  TrainerIntroduction,
   TrainerPhotoAlbum,
   TrainerPricing,
   TrainerVideoAlbum
@@ -19,7 +19,7 @@ import { TrainerStateService } from 'src/app/services/trainer-state.service';
 })
 export class TrainerDetailsComponent implements OnInit {
 
-  trainerIntroduction!: TrainerIntrodution;
+  trainerIntroduction!: TrainerIntroduction;
   trainerPricing!: TrainerPricing;
   trainerBenefit!: TrainerBenefits;
   trainerFeatureVideo!: TrainerFeatureVideo;
@@ -44,8 +44,7 @@ export class TrainerDetailsComponent implements OnInit {
   }
 
   loadData() {
-    this.ngxService.start();
-
+  
     forkJoin({
       trainerIntroduction: this.trainerStateService.getMyTrainerIntroduction(),
       trainerPricing: this.trainerStateService.getMyTrainerPricing(),
@@ -69,9 +68,9 @@ export class TrainerDetailsComponent implements OnInit {
         this.trainerPhotoAlbum = trainerPhotoAlbum;
         this.trainerVideoAlbum = trainerVideoAlbum;
 
-        this.ngxService.stop();
       }
     );
+
   }
 
   handleWatchService() {

@@ -30,6 +30,7 @@ import { TrainersFeatureVideosComponent } from './trainers-feature-videos/traine
 import { TrainersHeaderComponent } from './trainers-header/trainers-header.component';
 import { TrainersIntroductionComponent } from './trainers-introduction/trainers-introduction.component';
 import { TrainersListComponent } from './trainers-list/trainers-list.component';
+import { TrainersMainComponent } from './trainers-main/trainers-main.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { TrainersListComponent } from './trainers-list/trainers-list.component';
     TrainersFeatureVideosComponent,
     TrainersHeaderComponent,
     TrainersIntroductionComponent,
-    TrainersListComponent
+    TrainersListComponent,
+    TrainersMainComponent
   ],
   imports: [
     CommonModule,

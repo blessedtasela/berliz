@@ -8,7 +8,7 @@ import { Subscriptions } from 'src/app/models/subscriptions.interface';
   styleUrls: ['./dashboard-subscription-analytics.component.css']
 })
 export class DashboardSubscriptionAnalyticsComponent {
- @Input() subscriptions: Subscriptions[] = [];
+  @Input() subscriptions: Subscriptions[] = [];
 
   total = 0;
   active = 0;
@@ -55,42 +55,60 @@ export class DashboardSubscriptionAnalyticsComponent {
   private createChart() {
     Chart.register(...registerables);
 
-    const labels = ['Active', 'Expiring Soon', 'Expired'];
+    const labels = ['Active', 'Expiring soon', 'Expired'];
     const values = [this.active, this.expiringSoon, this.expired];
 
     this.chart = new Chart<'bar', number[], string>(this.analyticsCanvas.nativeElement, {
       type: 'bar',
       data: {
         labels,
-        datasets: [
-          {
-            label: 'Subscriptions',
-            data: values,
-            backgroundColor: [
-              'rgba(34, 197, 94, 0.4)',   // green
-              'rgba(234, 179, 8, 0.4)',   // yellow
-              'rgba(107, 114, 128, 0.4)'  // gray
-            ],
-            borderColor: [
-              'rgba(34, 197, 94, 1)',
-              'rgba(234, 179, 8, 1)',
-              'rgba(107, 114, 128, 1)'
-            ],
-            borderWidth: 2
-          }
-        ]
+        datasets: [{
+          label: 'Subscriptions',
+          data: values,
+          backgroundColor: [
+            'rgba(34,197,94,0.12)',
+            'rgba(234,179,8,0.12)',
+            'rgba(156,163,175,0.12)'
+          ],
+          borderColor: [
+            'rgba(34,197,94,1)',
+            'rgba(234,179,8,1)',
+            'rgba(156,163,175,1)'
+          ],
+          borderWidth: 2,
+          borderRadius: 8,
+          borderSkipped: false
+        }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#111827',
+            titleColor: '#f9fafb',
+            bodyColor: '#d1d5db',
+            padding: 10,
+            cornerRadius: 8
+          }
+        },
         scales: {
-          y: { beginAtZero: true }
+          x: {
+            grid: { display: false },
+            border: { display: false },
+            ticks: { font: { size: 11 }, color: '#9ca3af' }
+          },
+          y: {
+            beginAtZero: true,
+            border: { display: false },
+            grid: { color: 'rgba(0,0,0,0.04)' },
+            ticks: { font: { size: 11 }, color: '#9ca3af', stepSize: 1 }
+          }
         }
       }
     });
   }
-
   @HostListener('window:resize')
   onResize() {
     if (this.chart) setTimeout(() => this.chart.resize(), 50);

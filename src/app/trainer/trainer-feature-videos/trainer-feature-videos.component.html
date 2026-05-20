@@ -3,7 +3,7 @@
         <div class="bg-white p-2 mt-5 mb-5 text-gray-950 w-full">
             <form [formGroup]="updateTrainerFeatureVideoForm">
                 <header class="justify-start p-2 text-gray-950 font-bold">
-                    <h1 class="text-xl text-red-600">Trainer's Motivation
+                    <h1 class="text-xl text-red-600">Trainer's Feature Video
                         <span *ngIf="!trainerFeatureVideo.id" class="text-sm mx-2 text-gray-700 italic">
                             (action required)</span>
                     </h1>
@@ -45,8 +45,8 @@
                                 <video class="h-16 w-16 object-cover rounded-full cursor-pointer"
                                     [src]="trainerFeatureVideo.video"
                                     onerror="this.src='../../../assets/icons/user.png';"
-                                    [attr.aria-label]="trainerFeatureVideo.trainer.name + ' feature video'"
-                                    [title]="trainerFeatureVideo.trainer.name + ' feature video'" [autoplay]="true"
+                                    [attr.aria-label]="trainerFeatureVideo.trainerName + ' feature video'"
+                                    [title]="trainerFeatureVideo.trainerName + ' feature video'" [autoplay]="true"
                                     [muted]="true"></video>
 
                                 <!-- Hover effect to show the larger video with controls -->

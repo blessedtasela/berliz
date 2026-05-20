@@ -26,13 +26,13 @@
                         <span class="sr-only">Photo 1</span>
                         <span class="ml-4 font-bold text-gray-600 italic">Cover video</span>
                         <div class="flex">
-                            <div class="shrink-0 group relative" *ngIf="trainerVideoAlbum.video">
+                            <div class="shrink-0 group relative" *ngIf="trainerVideoAlbum.videoResponses">
                                 <!-- Thumbnail video with trainer name as aria-label and title -->
                                 <video class="h-16 w-16 object-cover rounded-full cursor-pointer"
-                                    [src]="trainerVideoAlbum.video"
+                                    [src]="trainerVideoAlbum.videoResponses[0].videoUrl" autoplay loop [muted]="true"
                                     onerror="this.src='../../../assets/icons/user.png';"
-                                    [attr.aria-label]="trainerVideoAlbum.trainer.name + ' feature video'"
-                                    [title]="trainerVideoAlbum.trainer.name + ' feature video'" [autoplay]="true"
+                                    [attr.aria-label]="trainerVideoAlbum.trainerName + ' feature video'"
+                                    [title]="trainerVideoAlbum.trainerName + ' feature video'" [autoplay]="true"
                                     [muted]="true">
                                     <a href="trainerVideoAlbum.video"></a>
                                 </video>

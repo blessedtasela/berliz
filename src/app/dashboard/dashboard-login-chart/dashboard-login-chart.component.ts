@@ -52,23 +52,41 @@ export class DashboardLoginChartComponent implements AfterViewInit, OnChanges, O
       type: 'doughnut',
       data: {
         labels,
-        datasets: [
-          {
-            data: values,
-            backgroundColor: [
-              'limegreen',
-              'rgba(63, 67, 71, 0.7)',
-              'rgba(220, 38, 38, 0.7)'
-            ],
-            borderWidth: 1
-          }
-        ]
+        datasets: [{
+          data: values,
+          backgroundColor: [
+            'rgba(220,38,38,0.85)',
+            'rgba(17,24,39,0.75)',
+            'rgba(156,163,175,0.6)'
+          ],
+          borderColor: ['#fff', '#fff', '#fff'],
+          borderWidth: 2,
+          hoverOffset: 6
+        }]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,   // ⭐ IMPORTANT
+        maintainAspectRatio: false,
+        cutout: '65%',
         plugins: {
-          legend: { display: true }
+          legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+              font: { size: 11 },
+              color: '#6b7280',
+              padding: 16,
+              usePointStyle: true,
+              pointStyleWidth: 8
+            }
+          },
+          tooltip: {
+            backgroundColor: '#111827',
+            titleColor: '#f9fafb',
+            bodyColor: '#d1d5db',
+            padding: 10,
+            cornerRadius: 8
+          }
         }
       }
     });

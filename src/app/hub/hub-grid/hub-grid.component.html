@@ -1,8 +1,4 @@
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-  <hub-card 
-    *ngFor="let item of items | keyvalue"
-    [label]="item.key"
-    [value]="item.value"
-    [link]="formatUrl(item.key)">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+  <hub-card *ngFor="let item of items | keyvalue" [label]="item.key" [value]="item.value" [link]="formatUrl(item.key)">
   </hub-card>
 </div>

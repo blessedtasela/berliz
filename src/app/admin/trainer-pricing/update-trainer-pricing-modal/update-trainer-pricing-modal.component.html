@@ -6,7 +6,7 @@
         <form [formGroup]="updateTrainerPricingForm">
             <header class="text-center m-2 text-gray-700 font-sans text-sm font-bold">
                 <h1 class="text-xl">Update Trainer Pricing</h1>
-                <p class="text-sm italic text-red-600">{{ trainerPricing.trainer.name }} - {{ trainerPricing.id }}</p>
+                <p class="text-sm italic text-red-600">{{ trainerPricing.trainerName }} - {{ trainerPricing.id }}</p>
             </header>
             <div class="invalid-form">
                 <span *ngIf="!updateTrainerPricingForm.invalid && invalidForm" class="mx-2 text-gray-700">
@@ -18,7 +18,7 @@
             </div>
             <div class="grid grid-cols md:grid-cols-2 rounded-lg p-2 gap-2">
                 <div class="rounded-lg object-cover gap-5">
-                    <img [src]="'data:image/*;base64,' + trainerPricing.trainer.photo" class="rounded-lg"
+                    <img [src]="'data:image/*;base64,' + trainerPricing.trainerName" class="rounded-lg"
                         onerror="this.src='../../../assets/icons/user.png';">
                     <div class="bg-gray-200 gap-6 rounded-lg">
                         <div class="mx-auto p-2">

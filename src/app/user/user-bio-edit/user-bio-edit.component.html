@@ -1,24 +1,18 @@
-<form [formGroup]="form" class="space-y-3">
-  <div>
-    <div class="flex items-center justify-between mb-1">
-      <span class="text-sm font-semibold text-gray-600 italic">Bio</span>
-    </div>
-    <textarea
-      formControlName="bio"
-      rows="5"
-      class="w-full px-3 py-2 rounded-md bg-gray-50 border border-gray-300 text-sm
-             focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500
-             placeholder:text-gray-400"
-      placeholder="Write a short description about you, your values, and what you aim to achieve in the fitness and sports industry">
-    </textarea>
-  </div>
+<form [formGroup]="form" class="flex flex-col gap-2">
 
-  <div class="flex justify-end">
-    <button
-      type="button"
-      (click)="onSaveClick()"
-      class="text-sm font-semibold text-red-600 hover:text-red-700">
+  <div class="flex items-center justify-between">
+    <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Bio</label>
+    <button type="button" (click)="onSaveClick()"
+      class="text-xs font-semibold text-red-600 hover:text-red-700 flex items-center gap-1 transition">
+      <i-feather name="save" style="width:12px;height:12px;"></i-feather>
       Save
     </button>
   </div>
+
+  <textarea formControlName="bio" rows="4"
+    placeholder="Write a short description about you, your values, and what you aim to achieve..." class="w-full px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-900
+           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
+           resize-none transition placeholder:text-gray-400">
+  </textarea>
+
 </form>

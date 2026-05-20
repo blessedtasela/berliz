@@ -43,7 +43,7 @@ export class TrainerDataComponent {
 
   ngOnInit(): void {
     this.handleEmitEvent();
-    this.selectedCategoriesId = this.trainer.categorySet.map(category => category.id);
+    this.selectedCategoriesId = this.trainer.categories.map(category => category.id);
     this.updateTrainerForm = this.formBuilder.group({
       'id': this.trainer?.id,
       'name': [this.trainer.name, Validators.compose([Validators.required, Validators.minLength(3)])],
@@ -93,7 +93,7 @@ export class TrainerDataComponent {
       address: trainer.address,
       likes: trainer.likes,
       experience: trainer.experience,
-      categoryIds: trainer.categoryIds
+      categoryIds: trainer.categories.map(category => category.id)
     });
   }
 

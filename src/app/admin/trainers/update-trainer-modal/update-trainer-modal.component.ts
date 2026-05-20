@@ -40,7 +40,7 @@ export class UpdateTrainerModalComponent {
   }
 
   ngOnInit(): void {
-    this.selectedCategoriesId = this.trainer.categorySet.map(category => category.id);
+    this.selectedCategoriesId = this.trainer.categories.map(category => category.id);
     this.updateTrainerForm = this.formBuilder.group({
       'id': this.trainer?.id,
       'name': new FormControl(this.trainer.name, Validators.compose([Validators.required, Validators.minLength(3)])),

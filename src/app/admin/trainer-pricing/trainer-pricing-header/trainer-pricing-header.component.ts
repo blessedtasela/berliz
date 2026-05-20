@@ -52,9 +52,9 @@ export class TrainerPricingHeaderComponent {
           return dateA.getTime() - dateB.getTime();
         });
         break;
-      case 'email':
+      case 'trainerName':
         this.trainerPricingData.sort((a, b) => {
-          return a.trainer.partner.user.email.localeCompare(b.trainer.partner.user.email);
+          return a.trainerName.localeCompare(b.trainerName);
         });
         break;
       case 'id':

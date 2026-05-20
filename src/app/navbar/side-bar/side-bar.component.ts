@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 
 @Component({
   selector: 'app-side-bar',
@@ -33,7 +34,8 @@ export class SideBarComponent {
     private snackbarService: SnackBarService,
     private notificationStateService: NotificationStateService,
     private rxStompService: RxStompService,
-    private authService: AuthService
+    private authService: AuthService,
+    private sidebarState: SidebarStateService
   ) {
     this.currentRoute = this.router.url
     this.router.events.subscribe(event => {
@@ -42,6 +44,20 @@ export class SideBarComponent {
       }
 
     });
+  }
+
+
+  toggleSidebar(): void {
+    this.openMenu = !this.openMenu;
+    this.mdScreen = !this.mdScreen;
+    this.sidebarState.setOpen(this.openMenu); // ← add this
+  }
+
+  // also set initial state on resize
+  @HostListener('window:resize')
+  onResize(): void {
+    this.openMenu = window.innerWidth >= 768;
+    this.sidebarState.setOpen(this.openMenu);
   }
 
   ngOnInit() {
@@ -92,11 +108,6 @@ export class SideBarComponent {
     return paths.some(route => this.currentRoute?.startsWith(route));
   }
 
-  @HostListener('window:resize')
-  onResize(): void {
-    this.openMenu = window.innerWidth >= 768; // Change the breakpoint as needed
-  }
-
   subscribeToCloseSideBar() {
     document.addEventListener('click', (event) => {
       if (!this.isClickInsideDropdown(event) && window.innerWidth < 768) {
@@ -116,11 +127,6 @@ export class SideBarComponent {
 
   stopPropagation(event: Event): void {
     event.stopPropagation();
-  }
-
-  toggleSidebar(): void {
-    this.openMenu = !this.openMenu;
-    this.mdScreen = !this.mdScreen;
   }
 
   logout() {

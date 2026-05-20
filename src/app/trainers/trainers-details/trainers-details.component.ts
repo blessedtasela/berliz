@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import {TrainerReview, TrainerPhotoAlbum, TrainerBenefits, TrainerCategory, TrainerFeatureVideo, TrainerHeroAlbum, TrainerIntrodution, TrainerStatistics, TrainerSubscriptionForm } from 'src/app/models/trainers.interface';
+import {TrainerReview, TrainerPhotoAlbum, TrainerBenefits, 
+  TrainerCategory, TrainerFeatureVideo, TrainerHeroAlbum, TrainerIntroduction, TrainerStatistics, TrainerSubscriptionForm } from 'src/app/models/trainers.interface';
 
 @Component({
   selector: 'app-trainers-details',
@@ -17,7 +18,7 @@ export class TrainersDetailsComponent {
   trainerReview: TrainerReview | any;
   trainerSubscription: TrainerSubscriptionForm | any;
   trainerPhotoAlbum: TrainerPhotoAlbum | any;
-  trainerIntroduction: TrainerIntrodution | any;
+  trainerIntroduction: TrainerIntroduction | any;
   trainerwhatsapp: TrainerSubscriptionForm | any;
   
  

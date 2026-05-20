@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { BlurService } from './services/blur.service';
 import { MatDialog } from '@angular/material/dialog';
+import { SidebarStateService } from './services/sidebar-state.service';
 
 @Component({
   selector: 'app-root',
@@ -12,12 +13,17 @@ export class AppComponent {
   title = 'Berliz';
   activeLayout: 'login' | 'topbar' | 'sidebar' = 'login';
   isBlurred$ = this.blurService.blur$;
+  sidebarOpen = false;
 
   constructor(
     private router: Router,
     private blurService: BlurService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private sidebarState: SidebarStateService
   ) {
+    this.sidebarState.sidebarOpen$.subscribe(open => {
+      this.sidebarOpen = open;
+    });
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.updateLayout(event.urlAfterRedirects);

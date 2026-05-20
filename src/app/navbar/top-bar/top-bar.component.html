@@ -1,36 +1,37 @@
-<!-- Top Navigation Bar -->
-<div class="bg-white fixed top-0 left-0 w-full shadow-md z-50">
+<div class="bg-white fixed top-0 left-0 w-full border-b border-gray-200 z-50">
+    <div class="h-14 flex items-center justify-between px-4 gap-3">
 
-    <div class="h-14 flex items-center justify-between px-4">
+        <!-- LEFT: Logo + Bell -->
+        <div class="flex items-center gap-3 shrink-0">
 
-        <!-- LEFT: Logo + Notifications -->
-        <div class="flex items-center gap-4">
-
-            <!-- Logo -->
             <a [routerLink]="['/home']" class="flex items-center">
-                <img src="../../../assets/landing/logo.png" class="w-8 block md:hidden">
-                <img src="../../../assets/landing/berliz.png" class="w-28 hidden md:block">
+                <img src="../../../assets/landing/logo.png" class="w-7 h-7 object-contain block md:hidden" />
+                <img src="../../../assets/landing/berliz.png" class="h-7 w-auto object-contain hidden md:block" />
             </a>
 
-            <!-- Notifications -->
-            <div class="relative">
-                <div (click)="toggleNotificationDropdown()" class="cursor-pointer relative">
-                    <i-feather name="bell" class="text-gray-700" style="width: 22px;"></i-feather>
+            <!-- Breadcrumb — hidden on mobile, shows on md+ -->
+            <div class="flex flex-wrap items-center max-w-full">
+                <span class="text-gray-300 mx-2">|</span>
+                <app-navbar-breadcrumb></app-navbar-breadcrumb>
+            </div>
 
-                    <span *ngIf="notificationLength > 0"
-                        class="absolute -top-1 -right-3 bg-red-600 text-white text-[8px] 
-                        px-1.5 py-[1px] rounded-full font-bold badge-pulse">
+
+            <!-- Bell -->
+            <div class="relative">
+                <button (click)="toggleNotificationDropdown()" class="w-8 h-8 rounded-xl border border-gray-200 bg-white hover:bg-gray-50
+                 flex items-center justify-center transition relative">
+                    <i-feather name="bell" class="text-gray-700" style="width:16px;height:16px;"></i-feather>
+                    <span *ngIf="notificationLength > 0" class="absolute -top-1 -right-1 bg-red-600 text-white text-[8px]
+                   px-1.5 py-px rounded-full font-bold leading-none badge-pulse">
                         {{ notificationLength }}
                     </span>
-                </div>
+                </button>
 
-                <!-- Backdrop blur -->
                 <div *ngIf="notificationDropdown" class="fixed inset-0 bg-black/10 backdrop-blur-sm z-40"
                     (click)="closeNotificationDropdown()">
                 </div>
 
-                <!-- DROPDOWN -->
-                <div *ngIf="notificationDropdown" class="absolute  mt-3 w-96 z-50">
+                <div *ngIf="notificationDropdown" class="absolute left-0 mt-2 w-96 z-50">
                     <notification-dropdown-component (close)="closeNotificationDropdown()">
                     </notification-dropdown-component>
                 </div>
@@ -39,7 +40,7 @@
         </div>
 
         <!-- CENTER: Search -->
-        <div class="flex-1 flex justify-center px-4">
+        <div class="flex-1 flex justify-center min-w-0">
             <app-search (categoriesResults)="handleCategorySearchResults($event)"
                 (exerciseResults)="handleExerciseSearchResults($event)"
                 (contactUsResults)="handleContactUsSearchResults($event)"
@@ -60,15 +61,13 @@
         </div>
 
         <!-- RIGHT: Home + Profile -->
-        <div class="flex items-center gap-4 rounded-full px-4 bg-white shadow-lg transition-all whitespace-nowrap">
+        <div class="flex items-center gap-2 shrink-0">
+            <button [routerLink]="['/home']" class="w-8 h-8 rounded-xl border border-gray-200 bg-white hover:bg-gray-50
+               flex items-center justify-center transition">
+                <feather-icon name="home" class="text-gray-700"
+                    style="width:16px;height:16px;width:16px;"></feather-icon>
+            </button>
 
-            <!-- Home Icon Circle -->
-            <div class="w-9 h-9 flex items-center justify-center rounded-full bg-white border border-gray-300 shadow-sm cursor-pointer hover:shadow-md transition-all"
-                [routerLink]="['/home']">
-                <feather-icon name="home" class="text-gray-800" style="width: 20px;"></feather-icon>
-            </div>
-
-            <!-- Profile -->
             <app-profile [search]="isSearch" [userData]="userData"></app-profile>
         </div>
 

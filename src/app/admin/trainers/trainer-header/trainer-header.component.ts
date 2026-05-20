@@ -69,7 +69,7 @@ export class TrainerHeaderComponent {
           break;
         case 'partnerId':
           this.trainersData.sort((a, b) => {
-            return a.partner.id - b.partner.id;
+            return a.partnerId - b.partnerId;
           });
           break;
       case 'likes':

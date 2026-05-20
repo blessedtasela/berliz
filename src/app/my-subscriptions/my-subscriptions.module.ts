@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MySubscriptionsComponent } from './my-subscriptions/my-subscriptions.component';
-import { MySubscriptionsPageComponent } from './my-subscriptions-page/my-subscriptions-page.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
@@ -27,7 +26,6 @@ import { MySubscriptionsAnalyticsComponent } from './my-subscriptions-analytics/
 @NgModule({
   declarations: [
     MySubscriptionsComponent,
-    MySubscriptionsPageComponent,
     MySubscriptionDetailModalComponent,
     SubscriptionFormComponent,
     MySubscriptionsMainComponent,

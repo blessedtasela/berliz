@@ -15,7 +15,8 @@
             <div class="mt-20 flex justify-center mb-2 space-y-1 mx-auto p-1 font-mono"
                 *ngIf="trainerReviews.length !==0">
                 <div class="grid lg:grid-cols-2 gap-20 items-center mx-auto p-6">
-                    <section *ngFor="let trainerReview of trainerReviews; let i = index" [ngClass] ="{ 'hidden' : i >= 1 && !showAllReviews }">
+                    <section *ngFor="let trainerReview of trainerReviews; let i = index"
+                        [ngClass]="{ 'hidden' : i >= 1 && !showAllReviews }">
                         <div
                             class="w-80 lg:w-full bg-gray-100 rounded-md cursor-pointer flex items-center justify-center
                                 transition-all duration-300 transform m-w-12 hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
@@ -27,23 +28,34 @@
                                     <p class="w-full text-center text-sm p-4 text-gray-900 font-mono">
                                         Last updated on {{ trainerReview.lastUpdate}}
                                     </p>
-                                    <div class=" flex justify-center items-center gap-5">
-                                        <img [src]="trainerReview.frontBefore" class="aspect-square rounded-md">
-                                        <a [href]="trainerReview.frontBefore"></a>
-                                        <img [src]="trainerReview.frontAfter" class="aspect-square rounded-md">
-                                        <a [href]="trainerReview.frontBefore"></a>
+                                    <div class="flex justify-center items-center gap-5">
+                                        <img [src]="trainerReview.photoFrontBefore.photoUrl"
+                                            class="aspect-square rounded-md">
+                                        <a [href]="trainerReview.photoFrontBefore.photoUrl"></a>
+
+                                        <img [src]="trainerReview.photoFrontAfter.photoUrl"
+                                            class="aspect-square rounded-md">
+                                        <a [href]="trainerReview.photoFrontAfter.photoUrl"></a>
                                     </div>
-                                    <div class=" flex justify-center items-center gap-5">
-                                        <img [src]="trainerReview.sideBefore" class="aspect-square rounded-md">
-                                        <a [href]="trainerReview.sideBefore"></a>
-                                        <img [src]="trainerReview.sideAfter" class="aspect-square rounded-md">
-                                        <a [href]="trainerReview.sideAfter"></a>
+
+                                    <div class="flex justify-center items-center gap-5">
+                                        <img [src]="trainerReview.photoSideBefore.photoUrl"
+                                            class="aspect-square rounded-md">
+                                        <a [href]="trainerReview.photoSideBefore.photoUrl"></a>
+
+                                        <img [src]="trainerReview.photoSideAfter.photoUrl"
+                                            class="aspect-square rounded-md">
+                                        <a [href]="trainerReview.photoSideAfter.photoUrl"></a>
                                     </div>
-                                    <div class=" flex justify-center items-center gap-5">
-                                        <img [src]="trainerReview.backBefore" class="aspect-square rounded-md">
-                                        <a [href]="trainerReview.backAfter"></a>
-                                        <img [src]="trainerReview.backBefore" class="aspect-square rounded-md">
-                                        <a [href]="trainerReview.backAfter"></a>
+
+                                    <div class="flex justify-center items-center gap-5">
+                                        <img [src]="trainerReview.photoBackBefore.photoUrl"
+                                            class="aspect-square rounded-md">
+                                        <a [href]="trainerReview.photoBackBefore.photoUrl"></a>
+
+                                        <img [src]="trainerReview.photoBackAfter.photoUrl"
+                                            class="aspect-square rounded-md">
+                                        <a [href]="trainerReview.photoBackAfter.photoUrl"></a>
                                     </div>
                                     <button *ngIf="trainerReview.status ==='active'"
                                         class="text-sm bg-red-600 text-white p-1 m-6  hover:bg-red-700 rounded-md font-mono">
@@ -61,7 +73,7 @@
             </div>
             <div *ngFor="let review of trainerReviews; let i = index" class="flex">
                 <button class="mt-2 p-1 px-2 text-gray-600 bg-gray-100 text-sm rounded-md items-center justify-center"
-                (click)="allReviews()"  [ngClass] ="{ 'hidden' : i <= 0 && !showAllReviews }" >
+                    (click)="allReviews()" [ngClass]="{ 'hidden' : i <= 0 && !showAllReviews }">
                     {{ !showAllReviews ? 'See more' : 'See less' }}
                 </button>
             </div>

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { TrainerIntrodution } from 'src/app/models/trainers.interface';
+import { TrainerIntroduction } from 'src/app/models/trainers.interface';
 
 @Component({
   selector: 'app-trainers-introduction',
@@ -7,5 +7,5 @@ import { TrainerIntrodution } from 'src/app/models/trainers.interface';
   styleUrls: ['./trainers-introduction.component.css']
 })
 export class TrainersIntroductionComponent {
-  @Input() trainerIntroduction: TrainerIntrodution | any;
+  @Input() trainerIntroduction: TrainerIntroduction | any;
 }

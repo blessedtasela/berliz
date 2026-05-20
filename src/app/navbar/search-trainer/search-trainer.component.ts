@@ -84,9 +84,9 @@ export class SearchTrainerComponent implements OnInit, AfterViewInit {
         case 'email':
           return trainer.id.toString().includes(query);
         case 'userId':
-          return trainer.partner.user.id.toString().includes(query);
+          return trainer.userId.toString().includes(query);
         case 'partnerId':
-          return trainer.partner.id.toString().includes(query);
+          return trainer.partnerId.toString().includes(query);
         case 'status':
           return trainer.status.toLowerCase().includes(query);
         default:

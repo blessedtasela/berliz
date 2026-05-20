@@ -25,7 +25,8 @@
                                 </p>
                                 <div class="justify-center items-center gap-2">
                                     <a href="{{like.user.profilePhoto}}">
-                                        <img src="{{like.user.profilePhoto}}" class="w-16 md:w-20 rounded-full" />
+                                        <img [src]="getProfilePhoto(like.user.profilePhoto)"
+                                            class="w-16 md:w-20 rounded-full" />
                                     </a>
                                 </div>
                             </div>

@@ -19,7 +19,7 @@
                 <tr *ngFor="let trainer of trainersData; let i = index" class="bg-gray-100 hover:bg-gray-200">
                     <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">
-                        <img [src]="'data:image/*;base64,' + trainer.photo " class="rounded-full"
+                        <img [src]="'data:image/*;base64,' + trainer.photoResponse " class="rounded-full"
                             onerror="this.src='../../../assets/icons/user.png';" style="width: 40px;">
                         <label for="fileInput-{{trainer.id}}" class="">
                             <i-feather name="Edit" class="font-bold text-red-600 mr-4 cursor-pointer"
@@ -36,7 +36,7 @@
                         {{ trainer.likes }}
                     </td>
                     <td class="border-b border-gray-400 px-4 py-2">
-                        {{ trainer.partner.user.email }}
+                        {{ trainer.partnerId }}
                     </td>
                     <th class="border-b border-gray-400 px-4 py-2 font-bold">{{ trainer.id }}</th>
                     <td class="border-b border-gray-400 px-4 py-2">{{ trainer.status }}</td>

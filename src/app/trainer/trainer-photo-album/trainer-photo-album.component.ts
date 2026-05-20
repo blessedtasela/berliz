@@ -51,7 +51,7 @@ export class TrainerPhotoAlbumComponent {
     this.updateTrainerPhotoAlbumForm = this.formBuilder.group({
       id: this.trainerPhotoAlbum?.id,
       comment: [this.trainerPhotoAlbum.comment, Validators.compose([Validators.required, Validators.minLength(500)])],
-      trainer: this.trainerPhotoAlbum.trainer,
+      trainerId: this.trainerPhotoAlbum.trainerId,
     });
 
   }
@@ -155,7 +155,7 @@ export class TrainerPhotoAlbumComponent {
     // If the trainerPhotoAlbum has an ID, update it; otherwise, create a new one
     if (this.trainerPhotoAlbum.id) {
       requestData.append('id', this.trainerPhotoAlbum.id.toString());
-      requestData.append('trainerId', this.trainerPhotoAlbum.trainer.id.toString());
+      requestData.append('trainerId', this.trainerPhotoAlbum.trainerId.toString());
       this.trainerService.updateTrainerPhotoAlbum(requestData)
         .subscribe(this.handleSuccess.bind(this), this.handleError.bind(this));
     } else {

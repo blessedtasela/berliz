@@ -53,6 +53,7 @@ import { AuthInterceptor } from './services/auth.interceptor';
 import { HubModule } from './hub/hub.module';
 import { UserModule } from './user/user.module';
 import { MyTodoListModule } from './my-todo-list/my-todo-list.module';
+import { MyTrainerModule } from './my-trainer/my-trainer.module';
 
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
@@ -135,7 +136,10 @@ const dbConfig: DBConfig = {
     NoopAnimationsModule,
     HubModule,
     UserModule,
-    MyTodoListModule
+    MyTodoListModule,
+    MyTrainerModule,
+    MyNotificationsModule,
+    MySubscriptionsModule
   ],
   exports: [],
 

@@ -191,32 +191,25 @@ export class AddSubscriptionsModalComponent {
       console.log('Trainer or center is null');
       return;
     }
-  
+
     const selectedTrainerPricing = this.trainerPricing.find(
-      (trainerPricing) => trainerPricing.trainer.id === this.selectedTrainer.id
+      (trainerPricing) => trainerPricing.trainerId === this.selectedTrainer.id
     );
+
     const selectedCenterPricing = this.centerPricing.find(
       (centerPricing) => centerPricing.center.id === this.selectedCenter.id
     );
-  
+
     if (!selectedTrainerPricing || !selectedCenterPricing) {
       console.log('Trainer or center pricing not found');
       return;
     }
-  
+
     const selectedMode = this.addSubscriptionForm.get('mode')?.value;
-    const selectedMonths = this.addSubscriptionForm.get('months')?.value;
+    const selectedMonths = Number(this.addSubscriptionForm.get('months')?.value);
     const selectedCategoriesCount = this.addSubscriptionForm.get('categoryIds')?.value.length;
-  
-    console.log('Selected Mode:', selectedMode);
-    console.log('Selected Months:', selectedMonths);
-    console.log('Selected Categories:', selectedCategoriesCount);
-  
-    const calculateDiscount = (
-      basePrice: number,
-      discountPercentage: number,
-      months: number
-    ): number => {
+
+    const calculateDiscount = (basePrice: number, discountPercentage: number, months: number): number => {
       let discountedPrice = basePrice;
       if (months > 1) {
         discountedPrice -= (basePrice * discountPercentage) / 100;
@@ -224,12 +217,11 @@ export class AddSubscriptionsModalComponent {
       }
       return discountedPrice;
     };
-  
+
     const calculate2ProgramsDiscount = (basePrice: number, discountPercentage: number): number => {
       return basePrice - (basePrice * discountPercentage) / 100;
     };
-  
-    // Calculate trainer price
+
     interface GetTrainerPrice {
       priceOnline: number;
       priceHybrid: number;
@@ -238,47 +230,70 @@ export class AddSubscriptionsModalComponent {
       discount6Months: number;
       discount9Months: number;
       discount12Months: number;
+      discount2Programs: number;
     }
+
+    const priceKey =
+      selectedMode === 'online'
+        ? 'priceOnline'
+        : selectedMode === 'hybrid'
+          ? 'priceHybrid'
+          : 'pricePersonal';
+
+    const discountKey = `discount${selectedMonths}Months` as keyof GetTrainerPrice;
+
+    const trainerBasePrice = selectedTrainerPricing[priceKey] as unknown as number;
+    const trainerDiscountValue = selectedTrainerPricing[discountKey] as unknown as number;
+
     let trainerDiscount = calculateDiscount(
-      selectedTrainerPricing[`price${selectedMode.charAt(0).toUpperCase() + selectedMode.slice(1)}` as keyof GetTrainerPrice],
-      selectedTrainerPricing[`discount${selectedMonths}Months` as keyof GetTrainerPrice],
-      +selectedMonths
+      trainerBasePrice,
+      trainerDiscountValue,
+      selectedMonths
     );
-  
-    // Apply discount for 2 categories
+
     if (selectedCategoriesCount === 2) {
-      trainerDiscount = calculate2ProgramsDiscount(trainerDiscount, selectedTrainerPricing.discount2Programs);
+      trainerDiscount = calculate2ProgramsDiscount(
+        trainerDiscount,
+        selectedTrainerPricing.discount2Programs as unknown as number
+      );
     }
-  
+
     console.log('Trainer Price after discount:', trainerDiscount);
-  
-    // Calculate center price
+
     interface GetCenterPrice {
       price: number;
       discount3Months: number;
       discount6Months: number;
       discount9Months: number;
       discount12Months: number;
+      discount2Programs: number;
     }
+
+    const centerBasePrice = selectedCenterPricing.price as unknown as number;
+    const centerDiscountValue =
+      selectedCenterPricing[`discount${selectedMonths}Months` as keyof GetCenterPrice] as unknown as number;
+
     let centerDiscount = calculateDiscount(
-      selectedCenterPricing.price,
-      selectedCenterPricing[`discount${selectedMonths}Months` as keyof GetCenterPrice],
-      +selectedMonths
+      centerBasePrice,
+      centerDiscountValue,
+      selectedMonths
     );
-  
-    // Apply discount for 2 categories
+
     if (selectedCategoriesCount === 2) {
-      centerDiscount = calculate2ProgramsDiscount(centerDiscount, selectedCenterPricing.discount2Programs);
+      centerDiscount = calculate2ProgramsDiscount(
+        centerDiscount,
+        selectedCenterPricing.discount2Programs
+      );
     }
-  
+
     console.log('Center Price after discount:', centerDiscount);
-  
-    // Update a property in your component to store the total amount and bind it in your template
+
     this.totalAmount = trainerDiscount + centerDiscount;
-  
+
     console.log('Total Amount after discount for center and trainer:', this.totalAmount);
   }
-  
+
+
   formatTotalAmount(amount: any) {
     return amount.toFixed(2);
   }

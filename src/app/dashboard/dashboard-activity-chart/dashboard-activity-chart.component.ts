@@ -45,39 +45,52 @@ export class DashboardActivityChartComponent implements AfterViewInit, OnDestroy
   private createActivityChart() {
     Chart.register(...registerables);
 
-    const labels = ['Date', 'Days Spent', 'Total Hours', 'Locations Visited', 'Places Explored', 'Log Count'];
+    const labels = ['Date', 'Days Spent', 'Total Hours', 'Locations', 'Places', 'Log Count'];
     const values = [10, 5, 20, 8, 15, 50];
 
     this.chart = new Chart<'bar', number[], string>(this.activityCanvas.nativeElement, {
       type: 'bar',
       data: {
         labels,
-        datasets: [
-          {
-            label: 'Activity Log',
-            data: values,
-            backgroundColor: 'rgba(54, 162, 235, 0.4)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 2
-          }
-        ]
+        datasets: [{
+          label: 'Activity',
+          data: values,
+          backgroundColor: 'rgba(220,38,38,0.12)',
+          borderColor: 'rgba(220,38,38,1)',
+          borderWidth: 2,
+          borderRadius: 8,
+          borderSkipped: false
+        }]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,   // ⭐ IMPORTANT
+        maintainAspectRatio: false,
         plugins: {
-          legend: { display: true }
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#111827',
+            titleColor: '#f9fafb',
+            bodyColor: '#d1d5db',
+            padding: 10,
+            cornerRadius: 8
+          }
         },
         scales: {
+          x: {
+            grid: { display: false },
+            border: { display: false },
+            ticks: { font: { size: 11 }, color: '#9ca3af' }
+          },
           y: {
             beginAtZero: true,
-            suggestedMax: Math.max(...values) + 5
+            border: { display: false },
+            grid: { color: 'rgba(0,0,0,0.04)' },
+            ticks: { font: { size: 11 }, color: '#9ca3af', stepSize: 1 }
           }
         }
       }
     });
   }
-
   @HostListener('window:resize')
   onResize() {
     if (this.chart) {

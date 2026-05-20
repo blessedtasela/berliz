@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, of, tap } from 'rxjs';
 import { TrainerService } from './trainer.service';
 import { SnackBarService } from './snack-bar.service';
-import { TrainerBenefits, TrainerClients, TrainerFeatureVideo, TrainerIntrodution, TrainerPhotoAlbum, TrainerPricing, TrainerReview, TrainerVideoAlbum, Trainers } from '../models/trainers.interface';
+import { TrainerBenefits, TrainerClients, TrainerFeatureVideo, TrainerIntroduction, TrainerPhotoAlbum, TrainerPricing, TrainerReview, TrainerVideoAlbum, Trainers } from '../models/trainers.interface';
 import { TrainerLike } from '../models/users.interface';
 import { genericError } from 'src/validators/form-validators.module';
 import { CenterTrainers } from '../models/centers.interface';
@@ -110,13 +110,13 @@ export class TrainerStateService {
     this.myTrainerPricingSubject.next(data);
   }
 
-  setAllTrainerIntroductionsSubject(trainerIntroduction: TrainerIntrodution) {
+  setAllTrainerIntroductionsSubject(trainerIntroduction: TrainerIntroduction) {
     if (trainerIntroduction !== null) {
       this.allTrainerIntroductionsSubject.next(trainerIntroduction);
     }
   }
 
-  setMyTrainerIntroductionSubject(trainerIntroduction: TrainerIntrodution) {
+  setMyTrainerIntroductionSubject(trainerIntroduction: TrainerIntroduction) {
     if (trainerIntroduction !== null) {
       this.myTrainerIntroductionSubject.next(trainerIntroduction);
     }
@@ -273,7 +273,7 @@ export class TrainerStateService {
     );
   }
 
-  getAllTrainerIntroductions(): Observable<TrainerIntrodution> {
+  getAllTrainerIntroductions(): Observable<TrainerIntroduction> {
     return this.trainerService.getAllTrainerIntroductions().pipe(
       tap((response: any) => {
         if (response) {
@@ -288,7 +288,7 @@ export class TrainerStateService {
     );
   }
 
-  getMyTrainerIntroduction(): Observable<TrainerIntrodution> {
+  getMyTrainerIntroduction(): Observable<TrainerIntroduction> {
     return this.trainerService.getMyTrainerIntroduction().pipe(
       tap((response: any) => {
         if (response) {

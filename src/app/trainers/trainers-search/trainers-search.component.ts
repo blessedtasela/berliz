@@ -19,7 +19,7 @@ export class TrainersSearchComponent {
   searchQuery: string = '';
   selectedSearchCriteria: string = 'name';
 
-  private trainerSub: Subscription | undefined;
+  private trainerSub?: Subscription;
 
   constructor(
     private trainerStateService: TrainerStateService,
@@ -30,11 +30,13 @@ export class TrainersSearchComponent {
   ) {}
 
   ngOnInit(): void {
-    this.trainerStateService.activeTrainersData$.subscribe((data) => {
-      this.activeTrainers = data;
-      this.trainers = data;
-      this.allTrainers.emit(data);
-    });
+    this.trainerSub = this.trainerStateService.activeTrainersData$
+      .subscribe((data: Trainers[]) => {
+        this.activeTrainers = [...data];
+        this.trainers = [...data];
+        this.allTrainers.emit(this.trainers);
+      });
+
     this.watchUpdateTrainerStatus();
   }
 
@@ -44,7 +46,6 @@ export class TrainersSearchComponent {
 
   initializeSearch(): void {
     const input = this.elementRef.nativeElement.querySelector('input');
-
     if (!input) return;
 
     fromEvent(input, 'keyup')
@@ -57,16 +58,16 @@ export class TrainersSearchComponent {
         }),
         switchMap((query: string) => this.search(query))
       )
-      .subscribe(
-        (results: Trainers[]) => {
+      .subscribe({
+        next: (results: Trainers[]) => {
           this.ngxService.stop();
           this.allTrainers.emit(results);
         },
-        (error: any) => {
-          this.snackbarService.openSnackBar('Search failed.', 'error');
+        error: () => {
           this.ngxService.stop();
+          this.snackbarService.openSnackBar('Search failed.', 'error');
         }
-      );
+      });
   }
 
   search(query: string): Observable<Trainers[]> {
@@ -79,11 +80,13 @@ export class TrainersSearchComponent {
     const filtered = this.activeTrainers.filter((trainer: Trainers) => {
       switch (this.selectedSearchCriteria) {
         case 'name':
-          return trainer.name.toLowerCase().includes(lowerQuery);
+          return trainer.name?.toLowerCase().includes(lowerQuery);
         case 'category':
-          return trainer.categorySet.some(cat => cat.name.toLowerCase().includes(lowerQuery));
+          return trainer.categories?.some(cat =>
+            cat.name?.toLowerCase().includes(lowerQuery)
+          );
         case 'address':
-          return trainer.address.toLowerCase().includes(lowerQuery);
+          return trainer.address?.toLowerCase().includes(lowerQuery);
         default:
           return false;
       }
@@ -100,16 +103,17 @@ export class TrainersSearchComponent {
     }
 
     this.ngxService.start();
-    this.search(query).subscribe(
-      (results) => {
+
+    this.search(query).subscribe({
+      next: (results) => {
         this.allTrainers.emit(results);
         this.ngxService.stop();
       },
-      (error) => {
-        this.snackbarService.openSnackBar('Search failed.', 'error');
+      error: () => {
         this.ngxService.stop();
+        this.snackbarService.openSnackBar('Search failed.', 'error');
       }
-    );
+    });
   }
 
   onSearchCriteriaChange(): void {
@@ -117,14 +121,22 @@ export class TrainersSearchComponent {
   }
 
   watchUpdateTrainerStatus(): void {
-    this.rxStompService.watch('/topic/updateTrainerStatus').subscribe((message) => {
-      const receivedTrainer: Trainers = JSON.parse(message.body);
-      if (receivedTrainer.status === 'false') {
-        this.trainers.push(receivedTrainer);
-      } else {
-        this.trainers = this.trainers.filter(t => t.id !== receivedTrainer.id);
-      }
-      this.allTrainers.emit(this.trainers);
-    });
+    this.rxStompService.watch('/topic/updateTrainerStatus')
+      .subscribe((message) => {
+        const receivedTrainer: Trainers = JSON.parse(message.body);
+
+        if (receivedTrainer.status === 'false') {
+          this.trainers = [...this.trainers, receivedTrainer];
+        } else {
+          this.trainers = this.trainers.filter(t => t.id !== receivedTrainer.id);
+        }
+
+        this.activeTrainers = [...this.trainers];
+        this.allTrainers.emit(this.trainers);
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.trainerSub?.unsubscribe();
   }
 }

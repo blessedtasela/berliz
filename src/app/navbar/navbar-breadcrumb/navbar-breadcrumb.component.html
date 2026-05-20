@@ -1,8 +1,6 @@
-<div class="flex flex-cols font-bold text-sm text-white italic">
-    <xng-breadcrumb [separator]="iconTemplate"></xng-breadcrumb>
-    <ng-template #iconTemplate>
-        <span class="px-2 text-gray-200">
-            >
-        </span>
+<div class="flex flex-wrap items-center font-sans text-xs text-gray-400 max-w-full">
+    <xng-breadcrumb [separator]="sep"></xng-breadcrumb>
+    <ng-template #sep>
+        <i-feather name="chevron-right" style="width:11px;height:11px;" class="text-gray-300 mx-0.5"></i-feather>
     </ng-template>
 </div>

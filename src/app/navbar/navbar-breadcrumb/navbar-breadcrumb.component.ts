@@ -16,10 +16,12 @@ export class NavbarBreadcrumbComponent {
     private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
-    // console.log('RouterBreadcrumbComponent initialized');
-    // this.breadcrumbService.getBreadcrumbsObservable().subscribe(breadcrumbs => {
-    //   this.breadcrumbs = breadcrumbs;
-    // });
-    // this.cdr.detectChanges();
+    this.breadcrumbService.breadcrumbs$.subscribe(breadcrumbs => {
+      this.breadcrumbs = breadcrumbs.map((b: any) => ({
+        label: b.label,
+        url: b.routeLink
+      }));
+      this.cdr.detectChanges();
+    });
   }
 }

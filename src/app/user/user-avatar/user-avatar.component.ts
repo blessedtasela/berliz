@@ -9,6 +9,7 @@ export class UserAvatarComponent {
 
   @Input() photo!: string | null;
   @Output() imageSelected = new EventEmitter<any>();
+  showModal = false;
 
   onFileChange(event: any) {
     this.imageSelected.emit(event);

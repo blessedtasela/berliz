@@ -8,15 +8,15 @@
                 - {{
                 trainerData.id }}</p>
             <p class="text-gray-700 font-sans font-bold text-md">
-                {{ trainerData.partner.user.email }} - user id - {{
-                trainerData.partner.user.id }}
+                {{ trainerData.name }} - user id - {{
+                trainerData.userId }} - partner id - {{ trainerData.id }}
             </p>
             <p class="text-red-600 font-sans font-bold text-sm italic">
                 created at {{ formatDate(trainerData.date) }}
             </p>
             <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
                 <div class="rounded-lg object-cover flex">
-                    <img [src]="'data:image/*;base64,' + trainerData.photo " class="bg-gray-200 rounded-lg p-2"
+                    <img [src]="'data:image/*;base64,' + trainerData.photoResponse " class="bg-gray-200 rounded-lg p-2"
                         onerror="this.src='../../../assets/icons/user.png';">
                 </div>
                 <div class="grid grid-cols m-2 p-2 gap-2 flex text-justify text-md ">
@@ -24,8 +24,8 @@
                         {{ trainerData.motto }}
                     </p>
                     <p class="text-gray-500 font-sans font-bold text-sm flex italic text-center">
-                        <ng-container *ngFor="let category of trainerData.categorySet; let i = index">
-                            {{ category.name }} {{ i < (trainerData.categorySet.length - 1) ? "/" : "" }}
+                        <ng-container *ngFor="let category of trainerData.categories; let i = index">
+                            {{ category.name }} {{ i < (trainerData.categories.length - 1) ? "/" : "" }}
                                 </ng-container>
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex text-justify">
@@ -41,7 +41,7 @@
                         Last Update: {{ formatDate(trainerData.lastUpdate) }}
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Patner id: {{ trainerData.partner.id }}
+                        Patner id: {{ trainerData.partnerId }}
                     </p>
                 </div>
             </div>

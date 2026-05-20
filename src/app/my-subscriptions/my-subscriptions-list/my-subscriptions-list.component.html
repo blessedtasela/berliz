@@ -1,28 +1,41 @@
-<!-- Empty -->
-<app-my-subscriptions-empty *ngIf="subscriptions.length === 0"></app-my-subscriptions-empty>
+<div class="flex flex-col gap-4">
 
-<!-- Active -->
-<div *ngIf="active.length > 0" class="space-y-3 mb-4">
-    <h2 class="text-sm font-semibold text-green-600 uppercase tracking-wide">Active</h2>
-    <app-my-subscriptions-active *ngFor="let sub of active" [subscription]="sub" (refresh)="onRefresh()">
-    </app-my-subscriptions-active>
+    <ng-container *ngIf="subscriptions.length > 0">
+
+        <!-- Active -->
+        <div *ngIf="active.length > 0" class="flex flex-col gap-2">
+            <span class="text-[11px] font-semibold text-green-600 uppercase tracking-wide flex items-center gap-1">
+                <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
+                Active
+            </span>
+            <app-my-subscriptions-active *ngFor="let sub of active" [subscription]="sub" (refresh)="onRefresh()">
+            </app-my-subscriptions-active>
+        </div>
+
+        <!-- Expiring soon -->
+        <div *ngIf="due.length > 0" class="flex flex-col gap-2">
+            <span class="text-[11px] font-semibold text-yellow-600 uppercase tracking-wide flex items-center gap-1">
+                <i-feather name="alert-triangle" style="width:11px;height:11px;"></i-feather>
+                Expiring soon
+            </span>
+            <app-my-subscriptions-due *ngFor="let sub of due" [subscription]="sub" (refresh)="onRefresh()">
+            </app-my-subscriptions-due>
+        </div>
+
+        <!-- Expired -->
+        <div *ngIf="expired.length > 0" class="flex flex-col gap-2">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide flex items-center gap-1">
+                <i-feather name="x-circle" style="width:11px;height:11px;"></i-feather>
+                Expired
+            </span>
+            <app-my-subscriptions-expired *ngFor="let sub of expired" [subscription]="sub" (refresh)="onRefresh()">
+            </app-my-subscriptions-expired>
+        </div>
+
+        <!-- Bulk -->
+        <app-my-subscriptions-bulk-action [subscriptions]="subscriptions" (refresh)="onRefresh()">
+        </app-my-subscriptions-bulk-action>
+
+    </ng-container>
+
 </div>
-
-<!-- Due Soon -->
-<div *ngIf="due.length > 0" class="space-y-3 mb-4">
-    <h2 class="text-sm font-semibold text-yellow-500 uppercase tracking-wide">Expiring soon</h2>
-    <app-my-subscriptions-due *ngFor="let sub of due" [subscription]="sub" (refresh)="onRefresh()">
-    </app-my-subscriptions-due>
-</div>
-
-<!-- Expired -->
-<div *ngIf="expired.length > 0" class="space-y-3 mb-4">
-    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Expired</h2>
-    <app-my-subscriptions-expired *ngFor="let sub of expired" [subscription]="sub" (refresh)="onRefresh()">
-    </app-my-subscriptions-expired>
-</div>
-
-<!-- Bulk -->
-<app-my-subscriptions-bulk-action *ngIf="subscriptions.length > 0" [subscriptions]="subscriptions"
-    (refresh)="onRefresh()">
-</app-my-subscriptions-bulk-action>

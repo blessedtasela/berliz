@@ -71,7 +71,7 @@ export class TrainerFeatureVideosComponent implements OnInit {
 
   onCurrentVideoSelected(event: any) {
     if (event.target.checked) {
-      const videoUrl = this.trainerFeatureVideo.video; // This is the URL from the backend
+      const videoUrl = this.trainerFeatureVideo.video.videoUrl; // This is the URL from the backend
       if (videoUrl) {
         // Fetch the video content from the URL
         fetch(videoUrl)
@@ -162,7 +162,7 @@ export class TrainerFeatureVideosComponent implements OnInit {
       console.log(this.trainerFeatureVideo.id)
       // Update existing trainer motivation
       requestData.append('id', this.trainerFeatureVideo.id.toString());
-      requestData.append('trainerId', this.trainerFeatureVideo.trainer.id.toString());
+      requestData.append('trainerId', this.trainerFeatureVideo.trainerId.toString());
       this.trainerService.updateTrainerFeatureVideo(requestData)
         .subscribe((response: any) => {
           this.updateTrainerFeatureVideoForm.reset();
