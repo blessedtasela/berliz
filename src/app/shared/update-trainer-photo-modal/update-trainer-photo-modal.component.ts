@@ -54,7 +54,7 @@ export class UpdateTrainerPhotoModalComponent {
       this.ngxService.stop();
 
     } else {
-      this.trainerService.updatePhoto(requestData)
+      this.trainerService.updateTrainerPhoto(requestData)
         .subscribe(
           (response: any) => {
             this.dialogRef.close();

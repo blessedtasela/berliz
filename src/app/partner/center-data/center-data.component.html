@@ -1,100 +1,116 @@
-<section class="">
+<div class="bg-white border border-gray-200 rounded-xl font-sans">
+
     <form [formGroup]="updateCenterForm">
-        <header class="justify-start p-2 text-gray-950 font-bold font-sans">
-            <h1 class=" text-xl text-red-600">center's Profile</h1>
-            <span class="text-md flex text-gray-700">
-                Date registered: {{ formatDate(center.date) }}
-            </span>
-        </header>
-        <div class="border-b-2"></div>
-        <div class="invalid-form">
-            <span *ngIf="updateCenterForm.invalid && invalidForm" class="mx-2 text-red-600">
-                Input fields cannot be empty
-            </span>
-            <span *ngIf="updateCenterForm.valid && invalidForm" class="mx-2 text-gray-600">
-                Eerything's up to date
-            </span>
+
+        <!-- Header -->
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Center profile</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">
+                    Registered: <span class="text-gray-600 font-medium">{{ formatDate(center.date) }}</span>
+                </p>
+            </div>
         </div>
-        <div class="grid grid-cols-4 gap-1 flex items-center p-2">
-            <div class="mx-auto p-2 col-span-4 md:col-span-2 w-full">
-                <span class="sr-only">Display Name</span>
-                <span class="ml-4 font-bold text-gray-600 italic">Display Name</span>
-                <input formControlName="name" [value]="center.name" [(ngModel)]="center.name"
-                    class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                    [ngClass]="{'border-red-400': updateCenterForm.get('name')?.invalid && updateCenterForm.get('name')?.dirty }"
-                    placeholder="Display name Team Berliz" type="text">
-                <div *ngIf="updateCenterForm.get('name')?.invalid && updateCenterForm.get('name')?.dirty"
-                    class="text-red-500 mx-2">
+
+        <!-- Validation -->
+        <div *ngIf="invalidForm" class="px-4 pt-3">
+            <p *ngIf="updateCenterForm.invalid"
+                class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
+                <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+                Please complete all required fields.
+            </p>
+        </div>
+
+        <!-- Fields -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 py-4">
+
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Display name</label>
+                <input formControlName="name" type="text" placeholder="Team Berliz" class="w-full px-3 py-2 rounded-xl bg-gray-50 border text-sm text-gray-900
+                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="updateCenterForm.get('name')?.invalid && updateCenterForm.get('name')?.dirty
+            ? 'border-red-300' : 'border-gray-200'" />
+                <p *ngIf="updateCenterForm.get('name')?.invalid && updateCenterForm.get('name')?.dirty"
+                    class="text-[11px] text-red-500 flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
                     Display name is required
-                </div>
+                </p>
             </div>
-            <div class="mx-auto p-2 col-span-4 md:col-span-2 w-full">
-                <span class="sr-only">Expereince</span>
-                <span class="ml-4 font-bold text-gray-600 italic">Expereince</span>
-                <input formControlName="experience" [value]="center.experience" [(ngModel)]="center.experience"
-                    class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                    [ngClass]="{'border-red-400': updateCenterForm.get('experience')?.invalid && updateCenterForm.get('experience')?.dirty }"
-                    placeholder="experience" type="number">
-                <div *ngIf="updateCenterForm.get('experience')?.invalid && updateCenterForm.get('experience')?.dirty"
-                    class="text-red-500 mx-2">
-                    Expereince is required
-                </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Experience
+                    (years)</label>
+                <input formControlName="experience" type="number" placeholder="5" class="w-full px-3 py-2 rounded-xl bg-gray-50 border text-sm text-gray-900
+                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="updateCenterForm.get('experience')?.invalid && updateCenterForm.get('experience')?.dirty
+            ? 'border-red-300' : 'border-gray-200'" />
             </div>
-            <div class="mx-auto p-2 col-span-4 w-full">
-                <span class="sr-only">Location</span>
-                <span class="ml-4 font-bold text-gray-600 italic">Location</span>
-                <span class="sr-only">Location url</span>
-                <input formControlName="location" [(ngModel)]="center.location"
-                    class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                    [ngClass]="{'border-red-400': updateCenterForm.get('location')?.invalid && updateCenterForm.get('location')?.dirty }"
-                    placeholder="Enter location url" type="text">
-                <div *ngIf="updateCenterForm.get('location')?.invalid && updateCenterForm.get('location')?.dirty"
-                    class="text-red-500 mx-2">
-                    Location is required
-                </div>
+
+            <div class="md:col-span-2 flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Location URL</label>
+                <input formControlName="location" type="text" placeholder="Enter Google Maps URL" class="w-full px-3 py-2 rounded-xl bg-gray-50 border text-sm text-gray-900
+                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="updateCenterForm.get('location')?.invalid && updateCenterForm.get('location')?.dirty
+            ? 'border-red-300' : 'border-gray-200'" />
             </div>
-            <div class="mx-auto p-2 col-span-4 md:col-span-2 w-full">
-                <span class="sr-only">Motto</span>
-                <span class="ml-4 font-bold text-gray-600 italic">Motto</span>
-                <textarea formControlName="motto" [value]="center.motto" [(ngModel)]="center.motto"
-                    class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                    [ngClass]="{'border-red-400': updateCenterForm.get('mtoo')?.invalid && updateCenterForm.get('motto')?.dirty }"
-                    placeholder="Write a short bio about discipline or motto" rows="5" cols="25"></textarea>
-                <div *ngIf="updateCenterForm.get('motto')?.invalid && updateCenterForm.get('motto')?.dirty"
-                    class="text-red-500 mx-2">
-                    At least 30 characters
-                </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Motto</label>
+                <textarea formControlName="motto" rows="4" placeholder="Write your discipline or motto" class="w-full px-3 py-2.5 rounded-xl bg-gray-50 border text-sm text-gray-900
+                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
+                 resize-none transition placeholder:text-gray-400" [ngClass]="updateCenterForm.get('motto')?.invalid && updateCenterForm.get('motto')?.dirty
+            ? 'border-red-300' : 'border-gray-200'">
+        </textarea>
+                <p *ngIf="updateCenterForm.get('motto')?.invalid && updateCenterForm.get('motto')?.dirty"
+                    class="text-[11px] text-red-500 flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
+                    At least 10 characters required
+                </p>
             </div>
-            <div class="mx-auto p-2 col-span-4 md:col-span-2 w-full">
-                <span class="sr-only">Address</span>
-                <span class="ml-4 font-bold text-gray-600 italic">Address</span>
-                <textarea formControlName="address" [value]="center.address" [(ngModel)]="center.address"
-                    class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                    [ngClass]="{'border-red-400': updateCenterForm.get('address')?.invalid && updateCenterForm.get('address')?.dirty }"
-                    placeholder="Write your street address or location here" rows="5" cols="25"></textarea>
-                <div *ngIf="updateCenterForm.get('address')?.invalid && updateCenterForm.get('address')?.dirty"
-                    class="text-red-500 mx-2">
-                    At least 10 characters
-                </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Address</label>
+                <textarea formControlName="address" rows="4" placeholder="Street address or location" class="w-full px-3 py-2.5 rounded-xl bg-gray-50 border text-sm text-gray-900
+                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
+                 resize-none transition placeholder:text-gray-400" [ngClass]="updateCenterForm.get('address')?.invalid && updateCenterForm.get('address')?.dirty
+            ? 'border-red-300' : 'border-gray-200'">
+        </textarea>
+                <p *ngIf="updateCenterForm.get('address')?.invalid && updateCenterForm.get('address')?.dirty"
+                    class="text-[11px] text-red-500 flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
+                    At least 10 characters required
+                </p>
             </div>
-            <div *ngFor="let cat of categories; let i = index"
-                class="mx-auto flex items-center col-span-2 md:col-span-1">
-                <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
-                    [checked]="selectedCategoriesId.includes(cat.id)"
-                    class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                    placeholder="tags" type="checkbox" [value]="cat.id">
-                {{ cat.name }}
-                <div *ngIf="updateCenterForm.get('categoryIds')?.invalid && invalidForm" class="text-red-500 mx-2">
+
+            <!-- Categories -->
+            <div class="md:col-span-2 flex flex-col gap-2">
+                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Categories</label>
+                <div class="flex flex-wrap gap-2">
+                    <label *ngFor="let cat of categories"
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-xl border cursor-pointer transition text-xs font-medium"
+                        [ngClass]="selectedCategoriesId.includes(cat.id)
+              ? 'bg-red-50 border-red-200 text-red-700'
+              : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'">
+                        <input formArrayName="categoryIds" type="checkbox"
+                            [checked]="selectedCategoriesId.includes(cat.id)" [value]="cat.id"
+                            (change)="onCheckboxChanged($event)" class="accent-red-600 w-3 h-3" />
+                        {{ cat.name }}
+                    </label>
+                </div>
+                <p *ngIf="updateCenterForm.get('categoryIds')?.invalid && invalidForm"
+                    class="text-[11px] text-red-500 flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
                     Select at least one category
-                </div>
+                </p>
             </div>
-            <div class="col-span-4">
-                <button
-                    class="bg-red-600 rounded-md mx-auto m-2 col-span-2 py-1 px-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                    type="submit" (click)="updatecenter()">
-                    save
-                </button>
-            </div>
+
         </div>
+
+        <div class="flex justify-end px-4 py-3 border-t border-gray-100">
+            <button type="button" (click)="updatecenter()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+               hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                <i-feather name="save" style="width:13px;height:13px;"></i-feather>
+                Save changes
+            </button>
+        </div>
+
     </form>
-</section>
+
+</div>

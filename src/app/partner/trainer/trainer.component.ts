@@ -4,17 +4,22 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
+
 import { UpdateTrainerModalComponent } from 'src/app/admin/trainers/update-trainer-modal/update-trainer-modal.component';
+import { MediaOwnerType } from 'src/app/models/Media.enum';
+import { StrapiUploadResponse } from 'src/app/models/Strapi.interface';
 import { Partners } from 'src/app/models/partners.interface';
-import { Trainers } from 'src/app/models/trainers.interface';
+import { PhotoResponse, Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { StrapiService } from 'src/app/services/strapi.service';
 import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { UpdateTrainerPhotoModalComponent } from 'src/app/shared/update-trainer-photo-modal/update-trainer-photo-modal.component';
-import { fileValidator, genericError } from 'src/validators/form-validators.module';
+import { environment } from 'src/environments/environment';
+import { imageValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
   selector: 'app-trainer',
@@ -22,18 +27,22 @@ import { fileValidator, genericError } from 'src/validators/form-validators.modu
   styleUrls: ['./trainer.component.css']
 })
 export class TrainerComponent {
+
   @Input() trainerData!: Trainers;
   @Input() user!: Users;
   @Input() partnerData!: Partners;
-  @Output() onEmit = new EventEmitter;
+  @Output() onEmit = new EventEmitter();
+
   subscriptions: Subscription[] = [];
-  responseMessage: any;
-  invalidForm: boolean = false;
-  selectedImage: any;
-  imageChangedEvent: any = '';
-  croppedImage: any = '';
-  showCropper: boolean = false;
   updateTrainerPhotoForm!: FormGroup;
+  imageChangedEvent: any = null;
+  croppedImageBlob: Blob | null = null;
+  selectedFile: File | null = null;
+  photoRequest: PhotoResponse | null = null;
+  showImageModal = false;
+  showCropper = false;
+  responseMessage: any;
+  previewUrl: string = 'assets/icons/user.png';
 
   constructor(
     private dialog: MatDialog,
@@ -43,148 +52,154 @@ export class TrainerComponent {
     private datePipe: DatePipe,
     private trainerService: TrainerService,
     private snackBarService: SnackBarService,
-    private formbuilder: FormBuilder,) { }
+    private formbuilder: FormBuilder,
+    private strapiService: StrapiService
+  ) { }
 
-    ngOnInit(): void {
-      this.updateTrainerPhotoForm = this.formbuilder.group({
-        'photo': ['', [Validators.required, fileValidator]],
-        'id': [this.trainerData.id],
-      })
-    }
-    
+  ngOnInit(): void {
 
-  ngOnDestroy() {
-    this.subscriptions.forEach(subscription => subscription.unsubscribe())
+    this.updateTrainerPhotoForm = this.formbuilder.group({
+      photo: ['', [Validators.required, imageValidator]],
+      id: [this.trainerData.id],
+    });
+
+    this.setInitialImage();
   }
 
-  handleEmitEvent() {
-    this.ngxService.start();
-    this.subscriptions.push(
-      this.trainerStateService.getTrainer().subscribe((trainer) => {
-        this.trainerData = trainer;
-        this.trainerStateService.setTrainerSubject(trainer)
-      }),
-      this.partnerStateService.getPartner().subscribe((partner) => {
-        this.partnerData = partner;
-        this.partnerStateService.setPartnerSubject(this.partnerData);
-      }),
-    );
-    this.ngxService.stop();
+  private setInitialImage(): void {
+    const url = this.trainerData?.photoResponse?.photoUrl;
+
+    this.previewUrl = url
+      ? this.normalizeUrl(url)
+      : 'assets/icons/user.png';
   }
 
-  emitData(): void {
-    this.handleEmitEvent()
-    console.log('data emitted: ')
+  private normalizeUrl(url: string): string {
+    if (!url) return 'assets/icons/user.png';
+    if (url.startsWith('http') || url.startsWith('blob:')) return url;
+    return `${environment.strapiUrl}${url}`;
   }
 
   onImgSelected(event: any): void {
-    const selectedImage = event.target.files[0];
-    if (selectedImage) {
-      this.imageChangedEvent = event;
-      this.showCropper = true;
-    }
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    this.imageChangedEvent = event;
+    this.showCropper = true;
   }
 
-  imageCropped(event: ImageCroppedEvent) {
-    this.croppedImage = event.blob;
+  imageCropped(event: ImageCroppedEvent): void {
+
+    if (!event.blob) return;
+
+    this.croppedImageBlob = event.blob;
+
+    this.selectedFile = new File(
+      [event.blob],
+      `trainer_${Date.now()}.jpg`,
+      { type: event.blob.type || 'image/jpeg' }
+    );
   }
 
-  imageLoaded() {
-    // This method is called when the image is loaded in the cropper
-    // You can perform any actions you need when the image is loaded, such as displaying the cropper
-  }
-
-  cropperReady() {
-    // This method is called when the cropper is ready
-    // You can perform any actions you need when the cropper is ready
-  }
-
-  loadImageFailed() {
-    // This method is called if there is an error loading the image in the cropper
-    // You can handle the error and display a message to the user
-  }
-
-  cancelUpload() {
+  cancelUpload(): void {
     this.showCropper = false;
-  }
-  
-  openUpdateTrainer() {
-    const dialogRef = this.dialog.open(UpdateTrainerModalComponent, {
-      width: '800px',
-      data: {
-        trainerData: this.trainerData,
-      },
-      panelClass: 'mat-dialog-height',
-    });
-    const childComponentInstance = dialogRef.componentInstance as UpdateTrainerModalComponent;
-    childComponentInstance.onUpdateTrainerEmit.subscribe(() => {
-      this.handleEmitEvent();
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log(`Dialog result: ${result}`);
-      } else {
-        console.log('Dialog closed without updating partner');
-      }
-    });
-  }
-
-  openUpdateCoverPhoto() {
-    const dialogRef = this.dialog.open(UpdateTrainerPhotoModalComponent, {
-      width: '400px',
-      data: {
-        trainerData: this.trainerData,
-      },
-      panelClass: 'mat-dialog-height',
-    });
-    const childComponentInstance = dialogRef.componentInstance as UpdateTrainerPhotoModalComponent;
-    childComponentInstance.onUpdatePhotoEmit.subscribe(() => {
-      this.handleEmitEvent();
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log(`Dialog result: ${result}`);
-      } else {
-        console.log('Dialog closed without updating partner');
-      }
-    });
+    this.imageChangedEvent = null;
+    this.croppedImageBlob = null;
+    this.selectedFile = null;
   }
 
   updatePhoto(): void {
+
+    if (!this.selectedFile) {
+      this.snackBarService.openSnackBar('Please select a photo', 'error');
+      return;
+    }
+
     this.ngxService.start();
-    const requestData = new FormData();
-    requestData.append('id', this.updateTrainerPhotoForm.get('id')?.value);
-    requestData.append('photo', this.croppedImage);
-    this.trainerService.updatePhoto(requestData)
-      .subscribe(
-        (response: any) => {
-          this.ngxService.stop();
-          this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.showCropper = false;
-          this.handleEmitEvent()
-          this.onEmit.emit()
-        }, (error: any) => {
-          this.ngxService.stop();
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
+
+    // STEP 1: Upload to Strapi
+    this.strapiService.uploadToStrapi(this.selectedFile)
+      .pipe(take(1))
+      .subscribe({
+
+        next: (res: StrapiUploadResponse[]) => {
+
+          const file = res?.[0];
+
+          if (!file) {
+            this.ngxService.stop();
+            this.snackBarService.openSnackBar('Upload failed', 'error');
+            return;
           }
-          this.snackBarService.openSnackBar(this.responseMessage, 'error');
-        });
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
+
+          // STEP 2: Build PhotoRequest
+          this.photoRequest = {
+            id: 0,
+            strapiId: file.id,
+            photoUrl: file.url,
+            name: file.name,
+            mimeType: file.mime,
+            byteSize: file.size,
+            ownerId: this.trainerData.id,
+            mediaOwnerType: MediaOwnerType.TRAINER
+          };
+
+          this.previewUrl = this.normalizeUrl(file.url);
+
+          // STEP 3: Send to backend
+          this.savePhotoToBackend();
+        },
+
+        error: () => {
+          this.ngxService.stop();
+          this.snackBarService.openSnackBar('Strapi upload failed', 'error');
+        }
+      });
   }
 
+  private savePhotoToBackend(): void {
+
+    const payload = {
+      id: this.trainerData.id,
+      photoRequest: this.photoRequest
+    };
+
+    this.trainerService.updateTrainerPhoto(payload)
+      .pipe(take(1))
+      .subscribe({
+        next: (res: any) => {
+          this.ngxService.stop();
+          this.snackBarService.openSnackBar(res?.message, '');
+          this.trainerData.photoResponse = res?.photoResponse;
+          this.showCropper = false;
+          this.onEmit.emit();
+        },
+
+        error: (err: any) => {
+          this.ngxService.stop();
+          this.snackBarService.openSnackBar(
+            err?.error?.message || genericError,
+            'error'
+          );
+        }
+      });
+  }
 
   formatDate(dateString: any): any {
-    const date = new Date(dateString);
-    return this.datePipe.transform(date, 'dd/MM/yyyy');
+    return this.datePipe.transform(new Date(dateString), 'dd/MM/yyyy');
   }
 
   openUrl(url: any) {
     window.open(url, '_blank');
+  }
+
+  openImagePreview() {
+    if (!this.previewUrl) return;
+    this.showImageModal = true;
+  }
+
+  closeImagePreview() {
+    this.showImageModal = false;
   }
 
 }

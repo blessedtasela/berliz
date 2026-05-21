@@ -15,12 +15,14 @@ import { genericError } from 'src/validators/form-validators.module';
   styleUrls: ['./my-trainer-pricing.component.css']
 })
 export class MyTrainerPricingComponent {
+
   @Output() emitEvent = new EventEmitter();
   updateTrainerPricingForm!: FormGroup;
   invalidForm: boolean = false;
   responseMessage: any;
   @Input() trainerPricing!: TrainerPricing;
   subscriptions: Subscription[] = [];
+  originalValue: any;
 
   pricingFields = [
     { name: 'priceOnline', label: 'Price Online', placeholder: '$59.99' },
@@ -32,6 +34,7 @@ export class MyTrainerPricingComponent {
     { name: 'discount12Months', label: 'Discount 12 Months', placeholder: '9.99 %' },
     { name: 'discount2Programs', label: 'Discount 2 Programs', placeholder: '9.99 %' },
   ];
+
 
   constructor(
     private formBuilder: FormBuilder,
@@ -55,6 +58,8 @@ export class MyTrainerPricingComponent {
       discount12Months: [this.trainerPricing.discount12Months, Validators.required],
       discount2Programs: [this.trainerPricing.discount2Programs, Validators.required],
     });
+
+    this.originalValue = this.updateTrainerPricingForm.getRawValue();
   }
 
   ngAfterViewInit() { }
@@ -105,17 +110,19 @@ export class MyTrainerPricingComponent {
       // Update existing trainer pricing
       this.trainerService.updateTrainerPricing(trainerPricing).subscribe(
         (response: any) => {
-          this.updateTrainerPricingForm.reset();
           this.invalidForm = false;
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, '');
-          this.handleEmitEvent();
+
+          // 🔥 Update UI with backend response
+          this.updateFormValues(response);
+          this.trainerPricing = response;
+
+          this.originalValue = this.updateTrainerPricingForm.getRawValue();
           this.emitEvent.emit();
-          this.updateFormValues(trainerPricing)
           this.ngxService.stop();
         },
         (error: any) => {
-          console.error('error');
           this.responseMessage = error.error?.message || genericError;
           this.snackBarService.openSnackBar(this.responseMessage, 'error');
           this.ngxService.stop();
@@ -131,7 +138,9 @@ export class MyTrainerPricingComponent {
           this.snackBarService.openSnackBar(this.responseMessage, '');
           this.handleEmitEvent();
           this.emitEvent.emit();
-          this.updateFormValues(trainerPricing)
+          this.updateFormValues(response);
+          this.trainerPricing = response;
+          this.originalValue = this.updateTrainerPricingForm.getRawValue();
           this.ngxService.stop();
         },
         (error: any) => {
@@ -142,9 +151,23 @@ export class MyTrainerPricingComponent {
         }
       );
     }
+
   }
 
   clear() {
     this.updateTrainerPricingForm.reset();
+  }
+
+  hasChanges(): boolean {
+
+    const current =
+      JSON.stringify(
+        this.updateTrainerPricingForm.getRawValue()
+      );
+
+    const original =
+      JSON.stringify(this.originalValue);
+
+    return current !== original;
   }
 }

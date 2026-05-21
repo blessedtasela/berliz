@@ -36,13 +36,19 @@ export interface Trainers {
   status: string;
   date: Date;
   lastUpdate: Date;
-  photoResponse: PhotoResponse;
   partnerId: number;
   userId: number;
   userFirstname: string;
   userLastname: string;
   userEmail: string;
   categories: Categories[];
+  photoResponse: PhotoResponse;
+  message?: string;
+}
+
+export interface UpdateTrainerPhotoRequest {
+  id: number;
+  photoRequest: PhotoResponse;
 }
 
 export interface TrainerPricing {
@@ -59,6 +65,7 @@ export interface TrainerPricing {
   discount2Programs: string;
   date: Date;
   lastUpdate: Date;
+  message?: string;
 }
 
 export interface TrainerBenefits {

@@ -130,6 +130,7 @@ import {
   Battery,
   BatteryCharging,
   Bookmark,
+  Loader,
 
 } from 'angular-feather/icons';
 
@@ -263,7 +264,7 @@ const icons = {
   Battery,
   BatteryCharging,
   Bookmark,
-
+  Loader,
 
 };
 

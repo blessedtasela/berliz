@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
+import { AuthService } from 'src/app/services/auth.service';
 import { CategoryStateService } from 'src/app/services/category-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerStateService } from 'src/app/services/trainer-state.service';
@@ -29,6 +30,7 @@ export class TrainerDataComponent {
   selectedCategoriesId: any;
   user!: Users;
   subscriptions: Subscription[] = [];
+  originalValue: any;
 
   constructor(private formBuilder: FormBuilder,
     private ngxService: NgxUiLoaderService,
@@ -38,11 +40,12 @@ export class TrainerDataComponent {
     private categoryStateService: CategoryStateService,
     private trainerService: TrainerService,
     private trainerStateService: TrainerStateService,
-    private datePipe: DatePipe) {
-  }
+    private datePipe: DatePipe,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
     this.handleEmitEvent();
+    this.user = this.user || { role: null };
     this.selectedCategoriesId = this.trainer.categories.map(category => category.id);
     this.updateTrainerForm = this.formBuilder.group({
       'id': this.trainer?.id,
@@ -53,6 +56,8 @@ export class TrainerDataComponent {
       'likes': [this.trainer.likes, Validators.compose([Validators.required, Validators.minLength(1)])],
       'categoryIds': this.formBuilder.array(this.selectedCategoriesId, this.validateCheckbox()),
     });
+
+    this.originalValue = this.updateTrainerForm.getRawValue();
   }
 
   ngAfterViewInit() {
@@ -120,45 +125,65 @@ export class TrainerDataComponent {
   }
 
   updateTrainer(): void {
-    const selectedCategoryIds = this.updateTrainerForm.value.categoryIds;
-    const categoryToStrings = selectedCategoryIds.join(',');
-    const formData = {
-      ...this.updateTrainerForm.value,
-      categoryIds: categoryToStrings
-    };
     if (this.updateTrainerForm.invalid) {
-      this.ngxService.start();
       this.invalidForm = true;
       this.responseMessage = "Invalid form. Please complete all sections";
       this.snackBarService.openSnackBar(this.responseMessage, "error");
-      this.ngxService.stop();
-    } else {
-      this.ngxService.start();
-      this.trainerService.updateTrainer(formData)
-        .subscribe((response: any) => {
-          this.updateTrainerForm.reset();
-          this.invalidForm = false;
-          this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.updateFormValues(this.updateTrainerForm.value)
-          this.ngxService.stop();
-          this.emitEvent.emit();
-        }, (error: any) => {
-          this.ngxService.start();
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
-          this.ngxService.stop();
-        })
+      return;
     }
+
+    this.invalidForm = false;
+
+    const formValue = this.updateTrainerForm.value;
+
+    const payload = {
+      id: this.trainer.id,
+      partnerId: this.trainer.partnerId,
+      name: formValue.name,
+      motto: formValue.motto,
+      address: formValue.address,
+      experience: formValue.experience,
+      status: formValue.status,
+      categoryIds: formValue.categoryIds,
+      photoRequest: this.trainer.photoResponse
+    };
+
+    this.ngxService.start();
+    this.trainerService.updateTrainer(payload).subscribe({
+      next: (response: any) => {
+        this.responseMessage = response?.message;
+        this.snackBarService.openSnackBar(this.responseMessage, "");
+        this.updateFormValues(response);
+        this.originalValue = this.updateTrainerForm.getRawValue();
+        this.trainer = response;
+        this.emitEvent.emit();
+        this.ngxService.stop();
+      },
+
+      error: (error: any) => {
+        this.responseMessage = error.error?.message || genericError;
+        this.snackBarService.openSnackBar(this.responseMessage, "error");
+        this.ngxService.stop();
+      }
+    });
   }
+
 
   clear() {
     this.updateTrainerForm.reset();
+  }
+
+  hasChanges(): boolean {
+
+    const current =
+      JSON.stringify(
+        this.updateTrainerForm.getRawValue()
+      );
+
+    const original =
+      JSON.stringify(this.originalValue);
+
+    return current !== original;
   }
 }
 

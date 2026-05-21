@@ -171,7 +171,6 @@ export class PartnerDataComponent {
         });
     }
     this.ngxService.stop();
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
 
   clear() {

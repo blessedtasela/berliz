@@ -15,151 +15,175 @@ import { minArrayLength, genericError } from 'src/validators/form-validators.mod
   styleUrls: ['./my-trainer-benefits.component.css']
 })
 export class MyTrainerBenefitsComponent {
+
   @Output() emitEvent = new EventEmitter();
-  updateTrainerBenefitForm!: FormGroup;
-  invalidForm: boolean = false;
-  responseMessage: any;
-  selectedtrainerBenefit: any;
   @Input() trainerBenefit!: TrainerBenefits;
+
+  updateTrainerBenefitForm!: FormGroup;
+  invalidForm = false;
+  responseMessage: string = '';
   subscriptions: Subscription[] = [];
 
-  constructor(private formBuilder: FormBuilder,
-    private ngxService: NgxUiLoaderService,
-    private snackBarService: SnackBarService,
+  originalValue: any;
+
+  constructor(
+    private fb: FormBuilder,
+    private loader: NgxUiLoaderService,
+    private snackbar: SnackBarService,
     private trainerService: TrainerService,
-    private trainerStateService: TrainerStateService,
-    private datePipe: DatePipe) {
-  }
+    private trainerState: TrainerStateService,
+    private datePipe: DatePipe
+  ) { }
 
   ngOnInit(): void {
     this.trainerBenefit = this.trainerBenefit || {};
     this.initForm();
+    this.originalValue = this.updateTrainerBenefitForm.getRawValue();
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
+  }
+
+  // -----------------------------
+  // INIT FORM
+  // -----------------------------
   initForm(): void {
-    this.updateTrainerBenefitForm = this.formBuilder.group({
-      'id': this.trainerBenefit.id,
-      'benefits': this.formBuilder.array(this.initBenefits(), minArrayLength(5))
+    this.updateTrainerBenefitForm = this.fb.group({
+      id: [this.trainerBenefit.id],
+      benefits: this.fb.array(this.initBenefits(), minArrayLength(5))
     });
   }
 
-  ngAfterViewInit() { }
-
-  ngOnDestroy() {
-    this.subscriptions.forEach(subscription => subscription.unsubscribe());
-  }
-
   initBenefits(): FormGroup[] {
-    return this.trainerBenefit.benefits?.map((benefit: string) => this.newBenefit(benefit)) || [this.newBenefit()];
+    return this.trainerBenefit.benefits?.map(b => this.newBenefit(b)) || [this.newBenefit()];
   }
 
-  handleEmitEvent() {
-    this.subscriptions.push(
-      this.trainerStateService.getMyTrainerBenefits().subscribe((trainerBenefit) => {
-        this.trainerBenefit = trainerBenefit;
-      }),
-    );
+  newBenefit(value: string = ''): FormGroup {
+    return this.fb.group({
+      benefit: [value, [Validators.required, Validators.minLength(15)]]
+    });
   }
 
   getBenefits(): FormArray {
     return this.updateTrainerBenefitForm.get('benefits') as FormArray;
   }
 
-  newBenefit(benefit: string = ''): FormGroup {
-    return this.formBuilder.group({
-      'benefit': [benefit, [Validators.required, Validators.minLength(15)]],
-    });
-  }
-
-  addBenefitField() {
+  addBenefitField(): void {
     this.getBenefits().push(this.newBenefit());
   }
 
-  setBenefitsArray(benefits: string[]): void {
-    const benefitsArray = this.getBenefits();
-    benefitsArray.clear();
-    benefits.forEach(benefit => benefitsArray.push(this.newBenefit(benefit)));
+  removeBenefitField(index: number): void {
+    this.getBenefits().removeAt(index);
   }
 
-  removeBenefitField(index: number) {
-    this.getBenefits().removeAt(index);
+  setBenefitsArray(benefits: string[]): void {
+    const arr = this.getBenefits();
+    arr.clear();
+    benefits.forEach(b => arr.push(this.newBenefit(b)));
+  }
+
+  // -----------------------------
+  // UPDATE BENEFITS
+  // -----------------------------
+  updateTrainerBenefit(): void {
+
+    if (this.updateTrainerBenefitForm.invalid) {
+      this.invalidForm = true;
+      this.responseMessage = "Invalid form. Please complete all sections";
+      this.snackbar.openSnackBar(this.responseMessage, "error");
+      return;
+    }
+
+    // 1️⃣ Extract benefits
+    const benefits = this.updateTrainerBenefitForm.value.benefits.map((b: any) => b.benefit.trim());
+
+    // 2️⃣ Check duplicates (case-insensitive)
+    const lower = benefits.map((b: any) => b.toLowerCase());
+    const hasDuplicates = new Set(lower).size !== lower.length;
+
+    if (hasDuplicates) {
+
+      this.invalidForm = true;
+      this.snackbar.openSnackBar(
+        "Duplicate benefits detected. Please remove repeated items.",
+        "error"
+      );
+      return;
+    }
+
+    const payload = {
+      id: this.trainerBenefit.id,
+      benefits: benefits
+    };
+
+    this.loader.start();
+    const request$ = this.trainerBenefit.id
+      ? this.trainerService.updateTrainerBenefit(payload)
+      : this.trainerService.addTrainerBenefit(payload);
+
+    request$.subscribe({
+      next: (response: any) => {
+        this.invalidForm = false;
+        this.responseMessage = response?.message;
+        this.snackbar.openSnackBar(this.responseMessage, "");
+
+        // ⭐ Update UI using backend DTO
+        this.updateUIFromResponse(response);
+        this.emitEvent.emit();
+        this.loader.stop();
+      },
+
+      error: (err: any) => {
+        console.error("🔥 Backend error:", err);
+        this.responseMessage = err.error?.message || genericError;
+        this.snackbar.openSnackBar(this.responseMessage, "error");
+        this.loader.stop();
+      }
+    });
+  }
+
+  // -----------------------------
+  // UPDATE UI FROM BACKEND RESPONSE
+  // -----------------------------
+  updateUIFromResponse(updated: TrainerBenefits): void {
+
+    // 1️⃣ Update local component state
+    this.trainerBenefit = updated;
+
+    // 2️⃣ Update form fields
+    this.updateTrainerBenefitForm.patchValue({
+      id: updated.id
+    });
+
+    // 3️⃣ Update benefits array
+    this.setBenefitsArray(updated.benefits);
+
+    // 4️⃣ Reset form state
+    this.updateTrainerBenefitForm.markAsPristine();
+    this.updateTrainerBenefitForm.markAsUntouched();
+    this.updateTrainerBenefitForm.updateValueAndValidity();
+
+    // 5️⃣ Save new original value for change detection
+    this.originalValue = this.updateTrainerBenefitForm.getRawValue();
+  }
+
+  // -----------------------------
+  // CHANGE DETECTION
+  // -----------------------------
+  hasChanges(): boolean {
+    const current = JSON.stringify(this.updateTrainerBenefitForm.getRawValue());
+    const original = JSON.stringify(this.originalValue);
+    return current !== original;
+  }
+
+  clear(): void {
+    this.updateTrainerBenefitForm.reset();
   }
 
   formatDate(dateString: any): any {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
-
-  updateTrainerBenefit(): void {
-    if (this.updateTrainerBenefitForm.invalid) {
-      this.invalidForm = true;
-      this.responseMessage = "Invalid form. Please complete all sections";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
-      return;
-    }
-
-    // Transform form data before sending
-    const benefits = this.updateTrainerBenefitForm.value.benefits.map((benefit: any) => benefit.benefit);
-    const benefitString = benefits.join('#');
-    const transformedData = {
-      id: this.trainerBenefit.id,
-      benefits: benefitString
-    };
-
-    console.log("printing form data: ", transformedData)
-
-    this.ngxService.start();
-    if (this.trainerBenefit.id) {
-
-      // Update existing trainer pricing
-      this.trainerService.updateTrainerBenefit(transformedData)
-        .subscribe((response: any) => {
-          this.updateTrainerBenefitForm.reset();
-          this.invalidForm = false;
-          this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.handleEmitEvent()
-          this.emitEvent.emit();
-          this.setBenefitsArray(benefits)
-          this.ngxService.stop();
-        }, (error: any) => {
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
-          this.ngxService.stop();
-        });
-    } else {
-      // Add new trainer pricing
-      this.trainerService.addTrainerBenefit(transformedData)
-        .subscribe((response: any) => {
-          this.updateTrainerBenefitForm.reset();
-          this.invalidForm = false;
-          this.responseMessage = response?.message;
-          this.trainerBenefit.benefits = benefits;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.handleEmitEvent()
-          this.emitEvent.emit();
-          this.ngxService.stop();
-        }, (error: any) => {
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
-          this.ngxService.stop();
-        });
-    }
-  }
-
-  clear() {
-    this.updateTrainerBenefitForm.reset();
-  }
 }
-
 

@@ -13,6 +13,8 @@ import { IconsModule } from '../icons/icons.module';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { RouterModule } from '@angular/router';
 import { PartnerRouteComponent } from './partner-route/partner-route.component';
+import { PartnerMainComponent } from './partner-main/partner-main.component';
+import { PartnerFormComponent } from './partner-form/partner-form.component';
 
 
 
@@ -26,7 +28,9 @@ import { PartnerRouteComponent } from './partner-route/partner-route.component';
     PartnerDataComponent,
     TrainerComponent,
     TrainerDataComponent,
-    PartnerRouteComponent
+    PartnerRouteComponent,
+    PartnerMainComponent,
+    PartnerFormComponent
   ],
   imports: [
     CommonModule,

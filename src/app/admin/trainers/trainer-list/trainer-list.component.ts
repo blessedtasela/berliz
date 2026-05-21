@@ -199,7 +199,7 @@ export class TrainerListComponent {
     const requestData = new FormData();
     requestData.append('photo', this.selectedImage);
     requestData.append('id', id.toString());
-    this.trainerService.updatePhoto(requestData)
+    this.trainerService.updateTrainerPhoto(requestData)
       .subscribe(
         (response: any) => {
           this.ngxService.stop();

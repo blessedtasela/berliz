@@ -28,12 +28,13 @@ export class MyTrainerIntroductionComponent {
   croppedImageBlob: Blob | null = null;
   selectedFile: File | null = null;
 
-  uploadedPhoto: PhotoResponse | null = null;
+  photoRequest: PhotoResponse | null = null;
 
   showCropper = false;
   invalidForm = false;
   isChecked = false;
   showPreviewModal = false;
+  originalValue: any;
 
   // 🔥 Stable preview URL used directly in template
   previewUrl: string = 'assets/avatar.png';
@@ -49,13 +50,7 @@ export class MyTrainerIntroductionComponent {
   ) { }
 
   ngOnInit(): void {
-
-    if (!this.trainerIntroduction) {
-      console.error('trainerIntroduction input is missing!');
-    }
-
-    console.log(this.trainerIntroduction);
-
+    
     this.updateTrainerIntroductionForm = this.fb.group({
       id: this.trainerIntroduction?.id,
       introduction: [
@@ -66,13 +61,14 @@ export class MyTrainerIntroductionComponent {
           Validators.maxLength(1200)
         ]
       ],
-      coverPhoto: [
+      photoRequest: [
         this.trainerIntroduction?.photoResponse || null,
         Validators.required
       ]
     });
 
-    this.uploadedPhoto = this.trainerIntroduction?.photoResponse || null;
+    this.originalValue = this.updateTrainerIntroductionForm.getRawValue();
+    this.photoRequest = this.trainerIntroduction?.photoResponse || null;
 
     // 🔥 Initialize previewUrl once, stable for first render
     if (this.trainerIntroduction?.photoResponse?.photoUrl) {
@@ -127,7 +123,7 @@ export class MyTrainerIntroductionComponent {
 
     const file = new File(
       [this.croppedImageBlob],
-      'trainer-cover-photo.jpg',
+      this.photoRequest?.name || `cropped_${Date.now()}.jpeg`,
       {
         type: this.croppedImageBlob.type || 'image/jpeg'
       }
@@ -136,7 +132,7 @@ export class MyTrainerIntroductionComponent {
     this.selectedFile = file;
 
     this.updateTrainerIntroductionForm.patchValue({
-      coverPhoto: file
+      photoRequest: file
     });
 
     // 🔥 Update previewUrl with a stable blob URL (next tick)
@@ -153,11 +149,11 @@ export class MyTrainerIntroductionComponent {
 
     if (event.target.checked) {
 
-      this.uploadedPhoto =
+      this.photoRequest =
         this.trainerIntroduction?.photoResponse || null;
 
       this.updateTrainerIntroductionForm.patchValue({
-        coverPhoto: this.uploadedPhoto
+        photoRequest: this.photoRequest
       });
 
       // 🔥 Update previewUrl based on existing photo
@@ -173,10 +169,10 @@ export class MyTrainerIntroductionComponent {
 
     } else {
 
-      this.uploadedPhoto = null;
+      this.photoRequest = null;
 
       this.updateTrainerIntroductionForm.patchValue({
-        coverPhoto: null
+        photoRequest: null
       });
 
       // 🔥 Reset preview
@@ -225,23 +221,22 @@ export class MyTrainerIntroductionComponent {
             throw new Error('No file returned from Strapi');
           }
 
-          // 🔥 Update uploadedPhoto and previewUrl in a stable way
-          setTimeout(() => {
-            this.uploadedPhoto = {
-              id: 0,
-              strapiId: file.id,
-              photoUrl: file.url,
-              name: file.name,
-              mimeType: file.mime,
-              byteSize: file.size,
-              ownerId: 0,
-              mediaOwnerType: MediaOwnerType.TRAINER_INTRODUCTION
-            };
+          // 🔥 Update uploadedPhoto and previewUrl
+          this.photoRequest = {
+            id: 0,
+            strapiId: file.id,
+            photoUrl: file.url,
+            name: file.name,
+            mimeType: file.mime,
+            byteSize: file.size,
+            ownerId: 0,
+            mediaOwnerType: MediaOwnerType.TRAINER_INTRODUCTION
+          };
 
-            this.previewUrl = this.normalizeUrl(file.url);
-          });
+          this.previewUrl = this.normalizeUrl(file.url);
 
           this.saveToBackend();
+
         },
 
         error: err => {
@@ -264,7 +259,7 @@ export class MyTrainerIntroductionComponent {
       introduction: this.updateTrainerIntroductionForm
         .get('introduction')
         ?.value,
-      photo: this.uploadedPhoto
+      photoRequest: this.photoRequest
     };
 
     console.log('FINAL PAYLOAD SENT:', payload);
@@ -280,18 +275,13 @@ export class MyTrainerIntroductionComponent {
         next: (res: any) => {
 
           this.snackbar.openSnackBar(res?.message, '');
-
           this.emitEvent.emit();
-
           this.loader.stop();
-
-          this.clear();
+          this.clear(res);
         },
 
         error: (err: any) => {
-
           this.loader.stop();
-
           this.snackbar.openSnackBar(
             err?.error?.message || 'Backend save failed',
             'error'
@@ -300,44 +290,38 @@ export class MyTrainerIntroductionComponent {
       });
   }
 
-  clear(): void {
+  clear(updated: TrainerIntroduction): void {
 
-    this.trainerIntroduction = {
-      ...this.trainerIntroduction,
-      photoResponse: this.uploadedPhoto!
-    };
+    // 1️⃣ Update local trainerIntroduction with backend response
+    this.trainerIntroduction = updated;
 
+    // 2️⃣ Update form with backend response
+    this.updateTrainerIntroductionForm.patchValue({
+      id: updated.id,
+      introduction: updated.introduction,
+      photoRequest: updated.photoResponse
+    });
+
+    // 3️⃣ Update preview image
+    if (updated.photoResponse?.photoUrl) {
+      this.previewUrl = this.normalizeUrl(updated.photoResponse.photoUrl);
+    } else {
+      this.previewUrl = 'assets/avatar.png';
+    }
+
+    // 4️⃣ Reset local state
+    this.photoRequest = updated.photoResponse || null;
     this.selectedFile = null;
     this.croppedImageBlob = null;
     this.imageChangedEvent = null;
-
     this.isChecked = false;
     this.invalidForm = false;
 
-    // 🔥 Keep previewUrl in sync with final uploadedPhoto
-    setTimeout(() => {
-      if (this.uploadedPhoto?.photoUrl) {
-        this.previewUrl = this.normalizeUrl(this.uploadedPhoto.photoUrl);
-      } else {
-        this.previewUrl = 'assets/avatar.png';
-      }
-    });
-
+    // 5️⃣ Reset form state
     this.updateTrainerIntroductionForm.markAsPristine();
     this.updateTrainerIntroductionForm.markAsUntouched();
     this.updateTrainerIntroductionForm.updateValueAndValidity();
-
-    Object.keys(this.updateTrainerIntroductionForm.controls)
-      .forEach(key => {
-
-        const control =
-          this.updateTrainerIntroductionForm.get(key);
-
-        control?.setErrors(null);
-        control?.markAsPristine();
-        control?.markAsUntouched();
-        control?.updateValueAndValidity();
-      });
+    this.originalValue = this.updateTrainerIntroductionForm.getRawValue();
   }
 
   formatDate(dateString: any): any {
@@ -348,5 +332,18 @@ export class MyTrainerIntroductionComponent {
       date,
       'dd/MM/yyyy'
     );
+  }
+
+  hasChanges(): boolean {
+
+    const current =
+      JSON.stringify(
+        this.updateTrainerIntroductionForm.getRawValue()
+      );
+
+    const original =
+      JSON.stringify(this.originalValue);
+
+    return current !== original;
   }
 }

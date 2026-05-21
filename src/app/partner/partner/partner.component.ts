@@ -102,7 +102,18 @@ export class PartnerComponent implements OnInit, OnDestroy {
       '/topic/updatePartner',
       '/topic/rejectPartnerApplication',
       '/topic/updateProfilePhoto',
-      '/topic/updateUser'
+      '/topic/updateUser',
+      '/topic/addTrainer',
+      '/topic/updateTrainer',
+      '/topic/deleteTrainer',
+      '/topic/addCenter',
+      '/topic/updateCenter',
+      '/topic/deleteCenter',
+      '/topic/updateCenterPhoto',
+      '/topic/updateTrainerPhoto',
+      '/topic/updatePartnerPhoto',
+      '/topic/updateCv',
+      '/topic/updateCertificate'
     ];
 
     topics.forEach(topic => {

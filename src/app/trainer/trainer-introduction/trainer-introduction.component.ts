@@ -62,11 +62,6 @@ export class TrainerIntroductionComponent {
 
   ngOnInit(): void {
 
-    if (!this.trainerIntroduction) {
-      console.error('trainerIntroduction input is missing!');
-    }
-
-    console.log(this.trainerIntroduction);
     this.updateTrainerIntroductionForm = this.fb.group({
       id: this.trainerIntroduction?.id,
       introduction: [

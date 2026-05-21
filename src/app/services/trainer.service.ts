@@ -30,8 +30,8 @@ export class TrainerService {
       return this.httpClient.put(this.url + "/trainer/update", data);
     }
   
-    updatePhoto(data: any) {
-      return this.httpClient.put(this.url + "/trainer/updatePhoto", data);
+    updateTrainerPhoto(data: any) {
+      return this.httpClient.put(this.url + "/trainer/updateTrainerPhoto", data);
     }
   
     deleteTrainer(id: number) {
@@ -115,7 +115,7 @@ export class TrainerService {
     }
   
     getMyTrainerBenefits() {
-      return this.httpClient.get(this.url + "/trainer/getMyTrainerBenefit");
+      return this.httpClient.get(this.url + "/trainer/getMyTrainerBenefits");
     }
   
     addTrainerIntroduction(data: any) {

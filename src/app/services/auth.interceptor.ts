@@ -13,7 +13,6 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { UserService } from './user.service';
 import { AuthService } from './auth.service';
-import * as e from 'cors';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -24,7 +23,6 @@ export class AuthInterceptor implements HttpInterceptor {
     private router: Router
   ) { }
 
-  // PUBLIC ENDPOINTS
   private isPublicRequest(url: string): boolean {
     const publicEndpoints = [
       '/user/login',
@@ -46,31 +44,22 @@ export class AuthInterceptor implements HttpInterceptor {
     return publicEndpoints.some(route => url.includes(route));
   }
 
-  // STRAPI REQUESTS (never touch)
   private isStrapiRequest(url: string): boolean {
     return url.includes('localhost:1337');
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-    // 1. Never modify Strapi requests
     if (this.isStrapiRequest(request.url)) {
       return next.handle(request);
     }
 
     const token = this.authService.getToken();
 
-    // 2. Public requests → no auth needed
-    if (this.isPublicRequest(request.url)) {
+    if (this.isPublicRequest(request.url) || !token) {
       return next.handle(request);
     }
 
-    // 3. No token → continue without logout
-    if (!token) {
-      return next.handle(request);
-    }
-
-    // 4. Attach token
     const authRequest = request.clone({
       setHeaders: { Authorization: `Bearer ${token}` }
     });
@@ -78,22 +67,17 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(authRequest).pipe(
       catchError((error: HttpErrorResponse) => {
 
-        // ============================
-        // CASE A: ACCESS TOKEN EXPIRED
-        // ============================
+        // 401 handling
         if (error.status === 401) {
 
-          const errorMessage = error.error?.message?.toLowerCase() || '';
+          const msg = (error.error?.message || '').toLowerCase();
 
           const isTokenExpired =
-            errorMessage.includes('expired') ||
-            errorMessage.includes('invalid token') ||
-            errorMessage.includes('jwt') ||
-            errorMessage.includes('token');
+            msg.includes('jwt expired') ||
+            msg.includes('token expired') ||
+            msg.includes('refresh token expired');
 
-          // ============================
-          // CASE A: TOKEN EXPIRED → REFRESH
-          // ============================
+          // ✅ only here we try refresh / logout
           if (isTokenExpired) {
 
             const refreshToken = this.authService.getRefreshToken();
@@ -106,14 +90,11 @@ export class AuthInterceptor implements HttpInterceptor {
 
             return this.userService.refreshToken({ token: refreshToken }).pipe(
               switchMap((response: any) => {
-
                 localStorage.setItem('token', response.access_token);
                 localStorage.setItem('refresh_token', response.refresh_token);
 
                 const retryRequest = request.clone({
-                  setHeaders: {
-                    Authorization: `Bearer ${response.access_token}`
-                  }
+                  setHeaders: { Authorization: `Bearer ${response.access_token}` }
                 });
 
                 return next.handle(retryRequest);
@@ -126,39 +107,17 @@ export class AuthInterceptor implements HttpInterceptor {
             );
           }
 
-          if (!isTokenExpired) {
-            // Do NOT logout or redirect
-            return throwError(() => error);
-          }
-
-
-          // ============================
-          // CASE B: USER VISITS UNAUTHORIZED PAGE
-          // ============================
-          if (error.status === 401 && errorMessage.includes('access denied')) {
-            this.router.navigate(['/dashboard']);
-            return throwError(() => error);
-          }
-
-          // ============================
-          // CASE C: OTHER 401 ERRORS
-          // DO NOT LOGOUT OR REDIRECT
-          // ============================
+          // ❌ not a token problem → do NOT logout, just bubble error
           return throwError(() => error);
         }
 
-
-        // ============================
-        // CASE C: LOGIN FAILURE
-        // ============================
-        if (request.url.includes('/user/login')) {
+        // 403 → forbidden, but no logout
+        if (error.status === 403) {
+          this.router.navigate(['/dashboard']);
           return throwError(() => error);
         }
 
-        // ============================
-        // CASE D: ALL OTHER ERRORS
-        // Never logout
-        // ============================
+        // all other errors: just bubble
         return throwError(() => error);
       })
     );

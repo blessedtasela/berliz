@@ -1,18 +1,24 @@
-<div *ngIf="componentLoaded; else loading">
+<div *ngIf="componentLoaded; else loading" class="flex flex-col gap-4 font-sans">
+    <app-partner-null *ngIf="!partner" [user]="user" [partnerData]="partner" (onEmit)="emitData()">
+    </app-partner-null>
 
-    <app-partner-null *ngIf="!partner" [user]="user" [partnerData]="partner" (onEmit)="emitData()"></app-partner-null>
-    <app-partner-application *ngIf="partner" [trainer]="trainer" [center]="center" [partnerData]="partner" [user]="user"
-        (onEmit)="emitData()">
+    <app-partner-application *ngIf="partner && !trainer && !center" [trainer]="trainer" [center]="center"
+        [partnerData]="partner" [user]="user" (onEmit)="emitData()">
     </app-partner-application>
-    <app-center *ngIf="center " [centerData]="center" [user]="user" [partnerData]="partner"
-        (onEmit)="emitData()"></app-center>
-    <app-trainer *ngIf="trainer " [trainerData]="trainer" [user]="user" [partnerData]="partner"
-        (onEmit)="emitData()"></app-trainer>
-    <app-partner-data [partnerData]="partner" (onEmit)="emitData()"></app-partner-data>
 
+    <app-center *ngIf="center" [centerData]="center" [user]="user" [partnerData]="partner" (onEmit)="emitData()">
+    </app-center>
+
+    <app-trainer *ngIf="trainer" [trainerData]="trainer" [user]="user" [partnerData]="partner" (onEmit)="emitData()">
+    </app-trainer>
+
+    <app-partner-data *ngIf="partner" [partnerData]="partner" (onEmit)="emitData()">
+    </app-partner-data>
 </div>
 
 <ng-template #loading>
-    <!-- Show a loader or message while data is being loaded -->
-    <p>Loading data, please wait...</p>
+    <div class="flex flex-col items-center justify-center py-20 gap-3">
+        <i-feather name="loader" class="text-gray-300 animate-spin" style="width:32px;height:32px;"></i-feather>
+        <p class="text-xs text-gray-400 italic">Loading your partnership data...</p>
+    </div>
 </ng-template>
