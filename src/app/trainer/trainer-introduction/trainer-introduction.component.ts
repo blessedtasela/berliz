@@ -8,9 +8,8 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { take } from 'rxjs';
 
 import {
-  TrainerIntroduction,
   PhotoResponse
-} from 'src/app/models/trainers.interface';
+} from 'src/app/models/Media.interface';
 
 import { MediaOwnerType } from 'src/app/models/Media.enum';
 
@@ -22,6 +21,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
+import { TrainerIntroduction } from 'src/app/models/trainers.interface';
 
 @Component({
   selector: 'app-trainer-introduction',

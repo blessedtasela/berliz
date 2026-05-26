@@ -15,8 +15,8 @@ import { TrainerService } from 'src/app/services/trainer.service';
   styleUrls: ['./search-trainer.component.css']
 })
 export class SearchTrainerComponent implements OnInit, AfterViewInit {
-  trainersData: Trainers[] = [];
-  filteredTrainersData: Trainers[] = [];
+  trainersData: Trainers[] | null = [];
+  filteredTrainersData: Trainers[] | null = [];
   searchQuery: string = '';
   selectedSearchCriteria: any = 'name';
   @Output() results: EventEmitter<Trainers[]> = new EventEmitter<Trainers[]>()
@@ -71,7 +71,7 @@ export class SearchTrainerComponent implements OnInit, AfterViewInit {
     if (query.trim() === '') {
       this.filteredTrainersData = this.trainersData;
     }
-    this.filteredTrainersData = this.trainersData.filter((trainer: Trainers) => {
+    this.filteredTrainersData = this.trainersData?.filter((trainer: Trainers) => {
       switch (this.selectedSearchCriteria) {
         case 'name':
           return trainer.name.toLowerCase().includes(query);
@@ -92,7 +92,7 @@ export class SearchTrainerComponent implements OnInit, AfterViewInit {
         default:
           return false;
       }
-    });
+    }) || [];
     return of(this.filteredTrainersData);
   }
 

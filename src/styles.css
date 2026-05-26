@@ -18,22 +18,21 @@
 
 .hero-bg {
   background-image: url('./assets/landing/hero-bg.jpg');
-  background-repeat:repeat-x;     /* Prevents tiling */
-  background-position: center;      /* Centers the image */
-  background-color: black;        /* Optional fallback background */           
+  background-repeat: repeat-x;
+  background-position: center;
+  background-color: black;
 }
 
-
-html, body {
+html,
+body {
   height: auto;
   min-height: 100%;
   overflow: auto;
 }
 
-
 .disabled-horizontal-icon {
-  opacity: 0.5; /* or any other styling to visually indicate it's disabled */
-  pointer-events: none; /* Disable pointer events to prevent interactions */
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 body {
@@ -48,57 +47,104 @@ body {
   }
 }
 
-.top-z{
-z-index: 20;
+.top-z {
+  z-index: 20;
 }
 
-.nav-z{
+.nav-z {
   z-index: 50;
-  }
+}
 
-  .side-z{
-    z-index: 40;
-  }
+.side-z {
+  z-index: 40;
+}
 
-.full-width{
+.full-width {
   width: 100%;
 }
 
-.snack-bar-error {
-  background-color: #e61515; 
-  color: #d9dcdf; 
-  opacity: 50px;
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 2px;
-  border-radius: 2%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+/* ─── Berliz Snackbar base ───────────────────────────────────────────────── */
+
+.berliz-snackbar.mat-mdc-snack-bar-container {
+  margin-top: 72px;
+  border-radius: 12px !important;
+  min-width: 280px !important;
+  max-width: 420px !important;
+  padding: 0 !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06) !important;
 }
 
-.snack-bar-success {
-  background-color: #099e11; 
-  color: #d9dcdf; 
-  opacity: 50px;
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 2px;
-  border-radius: 2%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.berliz-snackbar .mdc-snackbar__surface {
+  border-radius: 12px !important;
+  padding: 12px 16px !important;
+  min-width: unset !important;
+  box-shadow: none !important;
 }
 
-.mat-snack-bar-container {
-  padding-right: 24px; /* Add space for X mark */
+.berliz-snackbar .mdc-snackbar__label {
+  font-family: 'Inter', Roboto, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  padding: 0 !important;
+  line-height: 1.5 !important;
 }
 
-.mat-snack-bar-action {
-  cursor: pointer;
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 12px;
-  font-size: 20px;
-  line-height: 1;
+.berliz-snackbar .mdc-snackbar__actions {
+  padding: 0 !important;
+  margin-left: 12px !important;
+  align-self: center !important;
 }
+
+.berliz-snackbar .mat-mdc-snack-bar-action {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  min-width: unset !important;
+  padding: 0 6px !important;
+  letter-spacing: 0 !important;
+  border-radius: 6px !important;
+  line-height: 24px !important;
+  height: 24px !important;
+}
+
+/* ─── Success ────────────────────────────────────────────────────────────── */
+
+.snack-bar-success.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  background-color: #f0fdf4 !important;
+  border: 1px solid #bbf7d0 !important;
+}
+
+.snack-bar-success .mdc-snackbar__label {
+  color: #15803d !important;
+}
+
+.snack-bar-success .mat-mdc-snack-bar-action {
+  color: #15803d !important;
+}
+
+.snack-bar-success .mat-mdc-snack-bar-action:hover {
+  background-color: #dcfce7 !important;
+}
+
+/* ─── Error ──────────────────────────────────────────────────────────────── */
+
+.snack-bar-error.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  background-color: #fff1f2 !important;
+  border: 1px solid #fecdd3 !important;
+}
+
+.snack-bar-error .mdc-snackbar__label {
+  color: #be123c !important;
+}
+
+.snack-bar-error .mat-mdc-snack-bar-action {
+  color: #be123c !important;
+}
+
+.snack-bar-error .mat-mdc-snack-bar-action:hover {
+  background-color: #ffe4e6 !important;
+}
+
+/* ─── Misc utilities ─────────────────────────────────────────────────────── */
 
 .list-styleImage {
   list-style-type: none;
@@ -109,80 +155,54 @@ z-index: 20;
   background-size: 16px 16px;
 }
 
-.width{
+.width {
   width: 50px;
   flex: auto;
 }
 
-.mat-dialog-height{
+.mat-dialog-height {
   max-height: 600px;
 }
 
-/* Add this style to your CSS file */
 .custom-checkbox {
-  /* Remove the default browser styles */
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-
-  /* Set the size of the checkbox */
   width: 18px;
   height: 18px;
-
-  /* Style the checkbox border */
-  border: 2px solid #808080; /* Gray border */
+  border: 2px solid #808080;
   border-radius: 3px;
-
-  /* Style the checkmark/indicator */
-  background-color: #fff; /* White background */
+  background-color: #fff;
 }
 
-/* Style the checkbox when it's checked */
 .custom-checkbox:checked {
-  background-color: #808080; /* Gray background */
-  border-color: #808080; /* Gray border */
+  background-color: #808080;
+  border-color: #808080;
 }
 
-/* Optionally, you can add a hover effect */
 .custom-checkbox:hover {
-  border-color: #606060; /* Darker gray on hover */
+  border-color: #606060;
 }
 
-/* Adjustments for large images */
 .image-cropper-container {
   max-height: 80vh;
-  /* Maximum height for the image cropper container */
   overflow: auto;
-  /* Enable scrolling if the image cropper exceeds the maximum height */
 }
 
 .image-cropper {
   max-width: 100%;
-  /* Ensure the image cropper does not exceed the container width */
 }
 
 .cropped-image {
   max-width: 100%;
-  /* Ensure the cropped image fits within the container width */
 }
 
-/* Ensure the buttons remain visible even for large images */
 .actions-container {
   position: fixed;
-  /* Fixed positioning to keep the buttons visible */
   bottom: 1rem;
-  /* Adjust as needed */
   left: 50%;
-  /* Center horizontally */
   transform: translateX(-50%);
-  /* Center horizontally */
   z-index: 999;
-  /* Ensure the buttons appear above other content */
-}
-
-.custom-snackbar .mat-simple-snackbar-action {
-  color: red;
-  font-weight: bold;
 }
 
 .berliz-modal .mat-dialog-container {
@@ -199,10 +219,12 @@ z-index: 20;
     transform: scale(1);
     box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
   }
+
   70% {
     transform: scale(1.1);
     box-shadow: 0 0 0 6px rgba(220, 38, 38, 0);
   }
+
   100% {
     transform: scale(1);
     box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
@@ -214,6 +236,56 @@ z-index: 20;
   inset: 0;
   backdrop-filter: blur(6px);
   background: rgba(0, 0, 0, 0.15);
-  z-index: 900; /* above content, below dialogs */
+  z-index: 900;
   pointer-events: none;
+}
+
+/* ─── NGX UI Loader — berliz style ──────────────────────────────────────── */
+
+/* Overlay: subtle blur only, no heavy frosting */
+ngx-ui-loader .ngx-overlay {
+  backdrop-filter: blur(2px) !important;
+  -webkit-backdrop-filter: blur(2px) !important;
+}
+
+/* ── Spinner dots: soft warm white, NOT red ─────────────────────────────── */
+/* ngx-ui-loader .ngx-foreground-spinner>div,
+ngx-ui-loader .ngx-foreground-spinner>div>div,
+ngx-ui-loader .ball-spin-fade-rotating>div,
+ngx-ui-loader .ball-spin-clockwise>div,
+ngx-ui-loader .ball-spin-clockwise-fade>div,
+ngx-ui-loader .ball-spin-fade>div {
+  background-color: rgba(255, 255, 255, 0.80) !important;
+} */
+
+/* ── Text label ─────────────────────────────────────────────────────────── */
+.ngx-ui-loader-text {
+  font-family: 'Inter', Roboto, sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: rgba(255, 255, 255, 0.65) !important;
+  margin-top: 10px !important;
+}
+
+/* ── Background spinner: completely hidden ──────────────────────────────── */
+ngx-ui-loader .ngx-background-spinner>div {
+  background-color: transparent !important;
+}
+
+/* ── Smooth fade-in/out, no flash ───────────────────────────────────────── */
+ngx-ui-loader .ngx-foreground-spinner {
+  will-change: opacity;
+  transition: opacity 0.15s ease;
+}
+
+/* ── Logo (if used) ─────────────────────────────────────────────────────── */
+ngx-ui-loader .ngx-foreground-spinner .logo-position-center-center img,
+ngx-ui-loader .logo-container img {
+  width: 44px !important;
+  height: 44px !important;
+  object-fit: contain !important;
+  border-radius: 10px !important;
+  opacity: 0.90 !important;
 }

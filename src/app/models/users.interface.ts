@@ -32,13 +32,6 @@ export interface Login {
     password: string
 }
 
-export interface TrainerLike {
-    id: number,
-    user: Users;
-    trainer: Trainers;
-    date: Date;
-}
-
 export interface Role {
     id: number,
     role: string

@@ -5,8 +5,9 @@ import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { take } from 'rxjs';
 import { MediaOwnerType } from 'src/app/models/Media.enum';
+import { PhotoResponse } from 'src/app/models/Media.interface';
 import { StrapiUploadResponse } from 'src/app/models/Strapi.interface';
-import { PhotoResponse, TrainerIntroduction } from 'src/app/models/trainers.interface';
+import { TrainerIntroduction } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { TrainerStateService } from 'src/app/services/trainer-state.service';
@@ -50,7 +51,7 @@ export class MyTrainerIntroductionComponent {
   ) { }
 
   ngOnInit(): void {
-    
+
     this.updateTrainerIntroductionForm = this.fb.group({
       id: this.trainerIntroduction?.id,
       introduction: [

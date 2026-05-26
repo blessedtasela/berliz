@@ -27,15 +27,23 @@ export class TrainersSearchComponent {
     private snackbarService: SnackBarService,
     private elementRef: ElementRef,
     private rxStompService: RxStompService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.trainerSub = this.trainerStateService.activeTrainersData$
-      .subscribe((data: Trainers[]) => {
+      .subscribe((data: Trainers[] | null) => {
+        if (!data) {
+          this.activeTrainers = [];
+          this.trainers = [];
+          this.allTrainers.emit([]);
+          return;
+        }
+
         this.activeTrainers = [...data];
         this.trainers = [...data];
         this.allTrainers.emit(this.trainers);
       });
+
 
     this.watchUpdateTrainerStatus();
   }

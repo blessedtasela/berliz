@@ -55,7 +55,7 @@
 
                             <!-- Likes Info -->
                             <div class="flex justify-center items-center mt-2">
-                                <i-feather name="thumbs-up" (click)="updateTrainerLike(trainer)"
+                                <i-feather name="thumbs-up" (click)="updateTrainerLikes(trainer)"
                                     class="w-5 h-5 mr-2 cursor-pointer" [ngClass]="{
                   'text-red-600': isLikedTrainer(trainer),
                   'text-gray-500': !isLikedTrainer(trainer)

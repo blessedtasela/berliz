@@ -1,6 +1,6 @@
 export interface PartnerDetails{
     centerLikes: number;
-    trainerLikes: number;
+    TrainerLikess: number;
     trainerCenterCount: number;
     centerTrainerCount: number;
 }

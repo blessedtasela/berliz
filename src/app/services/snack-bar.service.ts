@@ -1,27 +1,52 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { DomSanitizer } from '@angular/platform-browser';
+import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class SnackBarService {
 
-  constructor(private snackBar: MatSnackBar,
-    private sanitizer: DomSanitizer) { }
+  private currentRef: MatSnackBarRef<any> | null = null;
 
-  openSnackBar(message: string, action: string) {
-    const panelClass = action === 'error' ? 'snack-bar-error' : 'snack-bar-success';
-    const closeBtn = `X`;
-    const sanitizedCloseBtn = this.sanitizer.bypassSecurityTrustHtml(closeBtn);
-    this.snackBar.open(message, closeBtn + '', {
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      duration: 4000,
-      panelClass: [panelClass, 'custom-snackbar'],
-      data: { htmlContent: sanitizedCloseBtn }
-    });
+  constructor(private snackBar: MatSnackBar) { }
+
+  openSnackBar(message: string, action: string): void {
+    // Always dismiss any open snackbar first — prevents stuck overlays
+    this.dismiss();
+
+    if (!message) return;
+
+    const isError = action === 'error';
+    const panelClass = isError ? 'snack-bar-error' : 'snack-bar-success';
+
+    try {
+      this.currentRef = this.snackBar.open(message, '✕', {
+        horizontalPosition: 'right',
+        verticalPosition: 'top',
+        duration: isError ? 6000 : 4000,
+        panelClass: [panelClass, 'berliz-snackbar'],
+      });
+
+      this.currentRef.afterDismissed().subscribe(() => {
+        this.currentRef = null;
+      });
+
+    } catch {
+      // Fallback: if MatSnackBar itself fails, do nothing — don't let the
+      // snackbar error cascade into the calling component
+    }
   }
 
+  dismiss(): void {
+    try {
+      if (this.currentRef) {
+        this.currentRef.dismiss();
+        this.currentRef = null;
+      }
+      // Also dismiss anything that MatSnackBar is holding
+      this.snackBar.dismiss();
+    } catch {
+      // Silently ignore — overlay may already be gone
+    }
+  }
 }

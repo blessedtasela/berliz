@@ -21,9 +21,11 @@ export class StrapiService {
     const formData = new FormData();
     formData.append('files', file, file.name);
 
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.bearerToken}`
-    });
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.bearerToken}`
+    );
+
 
     return this.http.post<any>(
       this.uploadUrl,

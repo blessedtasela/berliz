@@ -3,17 +3,7 @@
 import { Categories } from "./categories.interface";
 import { Clients } from "./clients.interface";
 import { MediaOwnerType } from "./Media.enum";
-
-export interface PhotoResponse {
-  id: number;
-  strapiId: number;
-  photoUrl: string;
-  name: string;
-  mimeType: string;
-  byteSize: number;
-  ownerId: number;
-  mediaOwnerType: MediaOwnerType;
-}
+import { PhotoResponse } from "./Media.interface";
 
 export interface VideoResponse {
   id: number;
@@ -145,7 +135,7 @@ export interface TrainerReviewLike {
   date: Date;
 }
 
-export interface TrainerLike {
+export interface TrainerLikes {
   id: number;
   trainerId: number;
   trainerName: string;
@@ -195,6 +185,8 @@ export interface TrainerSubscription {
   plan: string;
   mode: string;
   date: Date;
+  client: Clients;
+  trainer: Trainers;
   lastUpdate: Date;
 }
 
@@ -216,4 +208,7 @@ export interface TrainerTestimonials {
   testimonial: string;
   date: Date;
   lastUpdate: Date;
+  client: Clients;
+  trainer: Trainers;
+  expanded?: boolean;
 }

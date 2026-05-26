@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TrainerLikeComponent } from './trainer-like.component';
 
-describe('TrainerLikeComponent', () => {
+describe('TrainerLikesComponent', () => {
   let component: TrainerLikeComponent;
   let fixture: ComponentFixture<TrainerLikeComponent>;
 

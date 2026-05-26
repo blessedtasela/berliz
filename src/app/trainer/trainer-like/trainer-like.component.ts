@@ -1,69 +1,90 @@
-import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { TrainerSubscription } from 'src/app/models/trainers.interface';
-import { TrainerLike } from 'src/app/models/users.interface';
-import { NewsletterStateService } from 'src/app/services/newsletter-state.service';
-import { StateService } from 'src/app/services/state.service';
+import { DatePipe } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { TrainerLikes } from 'src/app/models/trainers.interface';
 import { TrainerStateService } from 'src/app/services/trainer-state.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+
+// Matches TrainerMapper.trainerLikeResponseToDTO:
+// id, date, userId, username, userEmail, trainerId, trainerName
 
 @Component({
   selector: 'app-trainer-like',
   templateUrl: './trainer-like.component.html',
   styleUrls: ['./trainer-like.component.css']
 })
+export class TrainerLikeComponent implements OnInit, OnDestroy {
 
-export class TrainerLikeComponent {
-  trainerLikes: TrainerLike[] = [];
-  showAllReviews: boolean = false;
+  trainerLikes: TrainerLikes[] = [];
+  showAll: boolean = false;
+  searchTerm: string = '';
+  sortOrder: 'asc' | 'desc' | 'newest' | 'oldest' = 'newest';
+  pageSize: number = 16;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(
-    private userStateService: UserStateService,
     private trainerStateService: TrainerStateService,
-    private dialog: MatDialog,
-    private ngxService: NgxUiLoaderService,
-    private newsletterStateService: NewsletterStateService
-  ) {
-    userStateService.getUser().subscribe(user => {
-      trainerStateService.getTrainer().subscribe(trainer => {
-        this.trainerLikes = [
-          {
-            id: 1,
-            user: user,
-            trainer: trainer,
-            date: new Date(),
-          },
-          {
-            id: 2,
-            user: user,
-            trainer: trainer,
-            date: new Date(),
-          },
-        ];
-      });
-    });
-  }
+    private datePipe: DatePipe
+  ) {}
 
   ngOnInit(): void {
     this.handleEmitEvent();
   }
 
-  handleEmitEvent() { }
-
-  allReviews() {
-    this.showAllReviews = !this.showAllReviews;
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  getProfilePhoto(photo: string): string {
-    if (!photo) {
-      return 'assets/default-profile.png';
+  handleEmitEvent(): void {
+    this.subscriptions.push(
+      this.trainerStateService.getMyTrainerLikes().subscribe(likes => {
+        this.trainerLikes = likes ?? [];
+      })
+    );
+  }
+
+  filteredLikes(): TrainerLikes[] {
+    let result = [...this.trainerLikes];
+
+    if (this.searchTerm.trim()) {
+      const term = this.searchTerm.toLowerCase();
+      result = result.filter(l =>
+        (l.username ?? '').toLowerCase().includes(term) ||
+        (l.userEmail ?? '').toLowerCase().includes(term)
+      );
     }
 
-    if (photo.startsWith('data:image')) {
-      return photo;
-    }
+    result.sort((a, b) => {
+      if (this.sortOrder === 'asc') {
+        return (a.username ?? '').localeCompare(b.username ?? '');
+      } else if (this.sortOrder === 'desc') {
+        return (b.username ?? '').localeCompare(a.username ?? '');
+      } else if (this.sortOrder === 'newest') {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      } else {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      }
+    });
 
-    return 'data:image/png;base64,' + photo;
+    return result;
+  }
+
+  visibleLikes(): TrainerLikes[] {
+    const all = this.filteredLikes();
+    return this.showAll ? all : all.slice(0, this.pageSize);
+  }
+
+  toggleShowAll(): void {
+    this.showAll = !this.showAll;
+  }
+
+  // Likes don't expose a profile photo URL from the mapper;
+  // fallback to avatar. Override if your backend adds photoUrl later.
+  getProfilePhoto(userId: number): string {
+    return 'assets/avatar.png';
+  }
+
+  formatDate(date: any): string {
+    return this.datePipe.transform(new Date(date), 'dd/MM/yyyy') ?? '';
   }
 }

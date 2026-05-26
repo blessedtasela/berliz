@@ -8,9 +8,10 @@ import { Subscription, take } from 'rxjs';
 
 import { UpdateTrainerModalComponent } from 'src/app/admin/trainers/update-trainer-modal/update-trainer-modal.component';
 import { MediaOwnerType } from 'src/app/models/Media.enum';
+import { PhotoResponse } from 'src/app/models/Media.interface';
 import { StrapiUploadResponse } from 'src/app/models/Strapi.interface';
 import { Partners } from 'src/app/models/partners.interface';
-import { PhotoResponse, Trainers } from 'src/app/models/trainers.interface';
+import {  Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';

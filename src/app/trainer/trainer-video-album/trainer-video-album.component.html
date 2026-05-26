@@ -1,63 +1,134 @@
-<div class="bg-white font-sans rounded-lg">
-    <div class="flex items-center justify-center">
-        <div class="bg-white p-2 mt-5 mb-5 lg-rounded">
-            <form [formGroup]="updateTrainerVideoAlbum">
-                <header class="justify-start p-2 text-gray-950 font-bold font-sans">
-                    <h1 class="text-xl text-red-600">Video Album
-                        <span *ngIf="!trainerVideoAlbum.id" class="text-sm mx-2 text-gray-700 italic">
-                            (action required)
-                        </span>
-                    </h1>
-                    <span class="text-md flex text-gray-700">
-                        Date registered: {{ trainerVideoAlbum.date ? formatDate(trainerVideoAlbum.date) : 'N/A' }}
+<div class="bg-white font-sans rounded-xl border border-gray-200 p-4 flex flex-col gap-4 mt-4">
+
+    <form [formGroup]="updateTrainerVideoAlbum" class="flex flex-col gap-4">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                    Video Album
+                    <span *ngIf="!trainerVideoAlbum.id"
+                        class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">
+                        Action required
                     </span>
-                </header>
-                <div class="border-b-2"></div>
-                <div class="invalid-form">
-                    <span *ngIf="updateTrainerVideoAlbum.invalid && invalidForm" class="mx-2 text-red-600">
-                        Input fields cannot be empty
+                </h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">
+                    Registered:
+                    <span class="text-gray-600 font-medium">
+                        {{ trainerVideoAlbum.date ? formatDate(trainerVideoAlbum.date) : 'N/A' }}
                     </span>
-                    <span *ngIf="updateTrainerVideoAlbum.valid && invalidForm" class="mx-2 text-gray-600">
-                        Eerything's up to date
-                    </span>
-                </div>
-                <div class="flex-cols items-center justify-center gap-2 w-full p-2 text-gray-950">
-                    <div class="mx-auto ">
-                        <span class="sr-only">Photo 1</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Cover video</span>
-                        <div class="flex">
-                            <div class="shrink-0 group relative" *ngIf="trainerVideoAlbum.videoResponses">
-                                <!-- Thumbnail video with trainer name as aria-label and title -->
-                                <video class="h-16 w-16 object-cover rounded-full cursor-pointer"
-                                    [src]="trainerVideoAlbum.videoResponses[0].videoUrl" autoplay loop [muted]="true"
-                                    onerror="this.src='../../../assets/icons/user.png';"
-                                    [attr.aria-label]="trainerVideoAlbum.trainerName + ' feature video'"
-                                    [title]="trainerVideoAlbum.trainerName + ' feature video'" [autoplay]="true"
-                                    [muted]="true">
-                                    <a href="trainerVideoAlbum.video"></a>
-                                </video>
-                            </div>
-                            <input id="videoUrl"
-                                class="border-b-2 px-4 py-2 rounded-md m-2 border-gray-400  hover:border-gray-400 focus:border-gray-400 focus:outline-none
-                                 block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
-                                 file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
-                                [ngClass]="{'border-gray-950': updateTrainerVideoAlbum.get('video')?.invalid && updateTrainerVideoAlbum.get('video')?.dirty }"
-                                (change)="onVidSelected($event)" type="file" accept="/video">
-                        </div>
-                        <div *ngIf="updateTrainerVideoAlbum.get('video')?.invalid && updateTrainerVideoAlbum.get('video')?.dirty"
-                            class="text-red-500 mx-2">
-                            cover video is required
-                        </div>
-                    </div>
-                    <div class="">
-                        <button
-                            class="bg-red-600 rounded-md mx-auto m-2 col-span-2 py-1 px-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                            type="submit" (click)="updatetrainerVideoAlbum()">
-                            save
-                        </button>
-                    </div>
-                </div>
-            </form>
+                </p>
+            </div>
         </div>
-    </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Validation banner -->
+        <div *ngIf="invalidForm">
+            <p *ngIf="updateTrainerVideoAlbum.invalid"
+                class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
+                <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+                Please complete all required fields.
+            </p>
+            <p *ngIf="updateTrainerVideoAlbum.valid"
+                class="text-[11px] text-gray-500 bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
+                <i-feather name="check-circle" style="width:12px;height:12px;"></i-feather>
+                Everything's up to date.
+            </p>
+        </div>
+
+        <!-- Comment -->
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                Comment
+            </label>
+            <textarea formControlName="comment" rows="5" maxlength="2000"
+                placeholder="Describe the inspiration behind these videos (min. 500 characters)." class="w-full px-3 py-2.5 bg-gray-50 border rounded-xl text-gray-900 text-sm
+               focus:outline-none focus:ring-2 focus:border-transparent resize-none
+               transition placeholder:text-gray-400" [ngClass]="{
+          'border-red-300 focus:ring-red-400': updateTrainerVideoAlbum.get('comment')?.invalid && invalidForm,
+          'border-green-400 focus:ring-green-400': updateTrainerVideoAlbum.get('comment')?.valid && updateTrainerVideoAlbum.get('comment')?.dirty,
+          'border-gray-200 focus:ring-red-500': !invalidForm
+        }">
+      </textarea>
+            <div class="flex justify-between items-center">
+                <p *ngIf="updateTrainerVideoAlbum.get('comment')?.invalid && invalidForm"
+                    class="text-[11px] text-red-500 flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Minimum 500 characters required.
+                </p>
+                <span class="text-[10px] ml-auto font-semibold" [ngClass]="(updateTrainerVideoAlbum.get('comment')?.value?.length || 0) < 500
+            ? 'text-red-500' : 'text-green-600'">
+                    {{ updateTrainerVideoAlbum.get('comment')?.value?.length || 0 }} / 2000
+                </span>
+            </div>
+        </div>
+
+        <!-- Cover video -->
+        <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                Cover Video
+            </label>
+
+            <div class="flex items-center gap-4 p-3 bg-gray-50 border border-gray-200 rounded-xl">
+
+                <!-- Thumbnail preview -->
+                <div class="relative shrink-0 group"
+                    *ngIf="trainerVideoAlbum.videoResponses && trainerVideoAlbum.videoResponses.length > 0">
+                    <video [src]="trainerVideoAlbum.videoResponses[0].videoUrl" autoplay muted loop
+                        class="w-14 h-14 rounded-xl object-cover border border-gray-200 cursor-pointer"
+                        onerror="this.src='assets/avatar.png';"
+                        [attr.aria-label]="trainerVideoAlbum.trainerName + ' video album'">
+                    </video>
+                    <div class="hidden group-hover:flex fixed inset-0 z-50 items-center justify-center
+                      bg-black/60 backdrop-blur-sm" (click)="$event.stopPropagation()">
+                        <video [src]="trainerVideoAlbum.videoResponses[0].videoUrl"
+                            class="max-w-sm rounded-2xl shadow-2xl border border-white/20" autoplay muted controls>
+                        </video>
+                    </div>
+                </div>
+
+                <!-- File input + checkbox -->
+                <div class="flex-1 flex flex-col gap-2">
+                    <input type="file" accept="video/*" (change)="onVidSelected($event)" class="block w-full text-xs text-gray-600 cursor-pointer
+                   file:mr-3 file:py-1.5 file:px-3 file:rounded-full
+                   file:border-0 file:text-xs file:font-semibold
+                   file:bg-red-50 file:text-red-600 hover:file:bg-red-100
+                   focus:outline-none transition"
+                        [ngClass]="{'border-red-300': updateTrainerVideoAlbum.get('video')?.invalid && invalidForm}" />
+
+                    <div *ngIf="trainerVideoAlbum.videoResponses.length" class="flex items-center gap-2">
+                        <input type="checkbox" id="currentVideo" [checked]="isChecked"
+                            (change)="onCurrentVideoSelected($event)"
+                            class="w-3.5 h-3.5 accent-red-600 cursor-pointer" />
+                        <label for="currentVideo" class="text-xs text-gray-600 cursor-pointer">
+                            Use current video
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <p *ngIf="updateTrainerVideoAlbum.get('video')?.invalid && invalidForm"
+                class="text-[11px] text-red-500 flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Cover video is required.
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Save -->
+        <div class="flex justify-end">
+            <button type="button" (click)="updatetrainerVideoAlbum()" class="px-4 py-2 bg-red-600 text-white rounded-xl text-xs font-semibold
+               hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2"
+                [disabled]="updateTrainerVideoAlbum.invalid"
+                [ngClass]="{ 'opacity-40 cursor-not-allowed': updateTrainerVideoAlbum.invalid }">
+                <i-feather name="save" style="width:13px;height:13px;"></i-feather>
+                Save changes
+            </button>
+        </div>
+
+    </form>
+
 </div>

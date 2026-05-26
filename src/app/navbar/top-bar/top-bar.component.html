@@ -31,10 +31,11 @@
                     (click)="closeNotificationDropdown()">
                 </div>
 
-                <div *ngIf="notificationDropdown" class="absolute left-0 mt-2 w-96 z-50">
+                <div *ngIf="notificationDropdown" class="fixed top-16 left-4 min-w-[90px] z-50">
                     <notification-dropdown-component (close)="closeNotificationDropdown()">
                     </notification-dropdown-component>
                 </div>
+
             </div>
 
         </div>

@@ -1,45 +1,74 @@
-<div class="bg-white font-sans rounded-lg">
-    <div class="flex items-center justify-center">
-        <div class="bg-white p-2 mt-5 mb-5 lg-rounded">
-            <div class="justify-start p-2 text-gray-950 font-bold font-sans">
-                <h1 class="text-xl text-red-600">Likes </h1>
+<div class="bg-white font-sans rounded-xl border border-gray-200 p-4 flex flex-col gap-4 mt-4">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-sm font-bold text-gray-900">Likes</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                {{ trainerLikes.length }} like{{ trainerLikes.length !== 1 ? 's' : '' }} total
+            </p>
+        </div>
+
+        <!-- Search + Sort -->
+        <div class="flex items-center gap-2">
+            <div class="relative">
+                <i-feather name="search" class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
+                    style="width:12px;height:12px;">
+                </i-feather>
+                <input type="text" [(ngModel)]="searchTerm" placeholder="Search likes" class="pl-7 pr-3 py-1.5 text-xs rounded-xl border border-gray-200 bg-gray-50
+                 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent
+                 text-gray-700 placeholder:text-gray-400 w-36 transition" />
             </div>
-            <div class="justify-between flex p-2">
-                <h1 class="text-md text-gray-600">Search likes </h1>
-                <h1 class="text-md text-gray-600">Sort likes </h1>
-            </div>
-            <div class="border-b-2"></div>
-            <div class="font-mono text-xl mb-5 text-center" *ngIf="trainerLikes.length ===0">
-                You currently have no client.
-            </div>
-            <div class="mt-20 flex justify-center mb-2 space-y-1 mx-auto p-1 font-mono"
-                *ngIf="trainerLikes.length !==0">
-                <div class="grid grid-cols-2 lg:grid-cols-6 md:grid-cols-4 gap-10 items-center mx-auto p-6">
-                    <section *ngFor="let like of trainerLikes; let i = index"
-                        [ngClass]="{ 'hidden' : i >= 8 && !showAllReviews }">
-                        <div class="flex items-center justify-center
-                                transition-all duration-300  hover:scale-105 focus:scale-105">
-                            <div class="grid items-center justify-items-center gap-2">
-                                <p class="w-full text-center text-sm p-4 text-red-600 font-bold font-mono">
-                                    {{ like.user.firstname }} {{ like.user.lastname }}
-                                </p>
-                                <div class="justify-center items-center gap-2">
-                                    <a href="{{like.user.profilePhoto}}">
-                                        <img [src]="getProfilePhoto(like.user.profilePhoto)"
-                                            class="w-16 md:w-20 rounded-full" />
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-            </div>
-            <div *ngFor="let review of trainerLikes; let i = index" class="flex">
-                <button class="mt-2 p-1 px-2 text-gray-600 bg-gray-100 text-sm rounded-md items-center justify-center"
-                    (click)="allReviews()" [ngClass]="{ 'hidden' : i <= 8 && !showAllReviews }">
-                    {{ !showAllReviews ? 'See more' : 'See less' }}
-                </button>
-            </div>
+
+            <select [(ngModel)]="sortOrder" class="py-1.5 px-2 text-xs rounded-xl border border-gray-200 bg-gray-50
+               focus:outline-none focus:ring-2 focus:ring-red-400 text-gray-600 transition">
+                <option value="asc">A → Z</option>
+                <option value="desc">Z → A</option>
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+            </select>
         </div>
     </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <!-- Empty state -->
+    <div *ngIf="filteredLikes().length === 0"
+        class="flex flex-col items-center justify-center py-10 gap-2 text-gray-400">
+        <i-feather name="heart" style="width:28px;height:28px;"></i-feather>
+        <p class="text-xs font-medium">No likes found.</p>
+    </div>
+
+    <!-- Grid -->
+    <div *ngIf="filteredLikes().length > 0" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+        <div *ngFor="let like of visibleLikes()" class="flex flex-col items-center gap-1.5 group cursor-pointer"
+            [title]="like.username">
+
+            <div class="relative">
+                <img [src]="getProfilePhoto(like.userId)" onerror="this.src='assets/avatar.png';" class="w-12 h-12 rounded-xl object-cover border border-gray-200
+                 group-hover:border-red-400 transition-all duration-200
+                 group-hover:scale-105 group-hover:shadow-md" />
+                <!-- Heart badge -->
+                <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-red-600 rounded-full
+                     flex items-center justify-center shadow">
+                    <i-feather name="heart" class="text-white" style="width:8px;height:8px;"></i-feather>
+                </span>
+            </div>
+
+            <p class="text-[10px] font-semibold text-gray-700 text-center leading-tight truncate w-full text-center">
+                {{ like.username }}
+            </p>
+            <p class="text-[9px] text-gray-400">{{ formatDate(like.date) }}</p>
+        </div>
+    </div>
+
+    <!-- See more / less -->
+    <div *ngIf="filteredLikes().length > pageSize" class="flex justify-start">
+        <button (click)="toggleShowAll()" class="text-xs text-gray-500 bg-gray-100 hover:bg-gray-200 px-3 py-1.5
+             rounded-xl font-semibold flex items-center gap-1.5 transition">
+            <i-feather [name]="showAll ? 'chevron-up' : 'chevron-down'" style="width:11px;height:11px;"></i-feather>
+            {{ showAll ? 'See less' : 'See all ' + filteredLikes().length + ' likes' }}
+        </button>
+    </div>
+
 </div>

@@ -2,7 +2,8 @@ import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Observable, tap, catchError, of } from 'rxjs';
 import { Trainers } from 'src/app/models/trainers.interface';
-import { TrainerLike, Users } from 'src/app/models/users.interface';
+import { TrainerLikes } from 'src/app/models/trainers.interface';
+import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerStateService } from 'src/app/services/trainer-state.service';
@@ -22,7 +23,7 @@ export class TrainersSearchResultComponent implements OnInit {
   @Input() totalTrainers: number = 0;
   user!: Users;
   responseMessage: any;
-  trainerlikes: TrainerLike[] = [];
+  trainerLikes: TrainerLikes[] = [];
   visibleItems: number = 12;
 
   constructor(private datePipe: DatePipe,
@@ -39,9 +40,9 @@ export class TrainersSearchResultComponent implements OnInit {
     this.watchUpdateTrainer()
     this.trainerStateService.likeTrainersData$.subscribe((cachedData) => {
       if (!cachedData) {
-        this.handleTrainerLikeEmit()
+        this.handleTrainerLikesEmit()
       } else {
-        this.trainerlikes = cachedData;
+        this.trainerLikes = cachedData;
       }
     });
     this.userSubscription()
@@ -61,13 +62,13 @@ export class TrainersSearchResultComponent implements OnInit {
     this.userStateService.getUser().subscribe((user) => {
       this.user = user;
     })
-    this.handleTrainerLikeEmit()
+    this.handleTrainerLikesEmit()
   }
 
-  handleTrainerLikeEmit() {
-    this.trainerStateService.getTrainerLikes().subscribe((likes) => {
-      this.trainerlikes = likes
-      this.trainerStateService.setLikeTrainersSubject(this.trainerlikes);
+  handleTrainerLikesEmit() {
+    this.trainerStateService.getMyTrainerLikes().subscribe((likes) => {
+      this.trainerLikes = likes
+      this.trainerStateService.setLikeTrainersSubject(this.trainerLikes);
     });
   }
 
@@ -85,7 +86,7 @@ export class TrainersSearchResultComponent implements OnInit {
     return string.replace(/ /g, "-");
   }
 
-  updateTrainerLike(trainer: Trainers) {
+  updateTrainerLikes(trainer: Trainers) {
     this.trainerService.likeTrainer(trainer.id).subscribe(
       (response: any) => {
         this.responseMessage = response.message;
@@ -105,8 +106,8 @@ export class TrainersSearchResultComponent implements OnInit {
   }
 
   isLikedTrainer(trainer: Trainers): boolean {
-    return this.trainerlikes.some((trainerLike) =>
-      trainerLike.user.id === this.user?.id && trainerLike.trainer.id === trainer.id
+    return this.trainerLikes.some((trainerLikes) =>
+      trainerLikes.userId === this.user?.id && trainerLikes.trainerId === trainer.id
     );
   }
 

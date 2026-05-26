@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -54,18 +54,32 @@ import { HubModule } from './hub/hub.module';
 import { UserModule } from './user/user.module';
 import { MyTodoListModule } from './my-todo-list/my-todo-list.module';
 import { MyTrainerModule } from './my-trainer/my-trainer.module';
+import { GlobalErrorHandlerService } from './services/global-error-handler.service';
 
 
-const ngxUiLoaderConfig: NgxUiLoaderConfig = {
-  text: "Loading....",
-  textColor: "#FFFFFF",
-  textPosition: "center-center",
-  bgsColor: "gray",
-  fgsColor: "gray",
-  fgsType: SPINNER.squareJellyBox,
-  fgsSize: 100,
-  hasProgressBar: false
-}
+export const ngxUiLoaderConfig: NgxUiLoaderConfig = {
+  text: 'Loading...',
+  textColor: 'rgba(255,255,255,0.65)',
+  textPosition: 'center-center',
+
+  // Foreground spinner — soft warm white, not red
+  fgsColor: 'rgba(255,255,255,0.80)',
+  fgsType: SPINNER.ballSpinFadeRotating,
+  fgsSize: 52,
+
+  // No background spinner
+  bgsColor: 'transparent',
+  bgsOpacity: 0,
+
+  // Overlay — dark gray, subtle blur (not heavy)
+  overlayColor: 'rgba(17, 24, 39, 0.45)',   // gray-900 / 45% — lighter than before
+  overlayBorderRadius: '0',
+
+  hasProgressBar: false,
+  blur: 2,          // was 4 — reduced to stay subtle
+  gap: 20,
+  fastFadeOut: true,
+};
 
 const dbConfig: DBConfig = {
   name: 'BerlizClient',
@@ -156,6 +170,10 @@ const dbConfig: DBConfig = {
     {
       provide: UrlSerializer,
       useClass: UrlLowerCaseSerializer
+    },
+    {
+      provide: ErrorHandler,
+      useClass: GlobalErrorHandlerService
     },
     BreadcrumbService,
     DatePipe,
