@@ -22,7 +22,7 @@ export class TrainerDetailsComponent implements OnInit {
   trainerIntroduction!: TrainerIntroduction;
   trainerPricing!: TrainerPricing;
   trainerBenefit!: TrainerBenefits;
-  trainerFeatureVideo!: TrainerFeatureVideo;
+  trainerFeatureVideo!: TrainerFeatureVideo[];
   trainerPhotoAlbum!: TrainerPhotoAlbum;
   trainerVideoAlbum!: TrainerVideoAlbum;
 
@@ -49,7 +49,7 @@ export class TrainerDetailsComponent implements OnInit {
       trainerIntroduction: this.trainerStateService.getMyTrainerIntroduction(),
       trainerPricing: this.trainerStateService.getMyTrainerPricing(),
       trainerBenefit: this.trainerStateService.getMyTrainerBenefits(),
-      trainerFeatureVideo: this.trainerStateService.getMyTrainerFeatureVideo(),
+      trainerFeatureVideo: this.trainerStateService.getMyTrainerFeatureVideos(),
       trainerPhotoAlbum: this.trainerStateService.getMyTrainerPhotoAlbum(),
       trainerVideoAlbum: this.trainerStateService.getMyTrainerVideoAlbum(),
     }).subscribe(

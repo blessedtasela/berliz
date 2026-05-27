@@ -1,15 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { BlurService } from './services/blur.service';
 import { MatDialog } from '@angular/material/dialog';
 import { SidebarStateService } from './services/sidebar-state.service';
+import { ScrollRestorationService } from './services/scroll-restoration.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'Berliz';
   activeLayout: 'login' | 'topbar' | 'sidebar' = 'login';
   isBlurred$ = this.blurService.blur$;
@@ -19,7 +20,8 @@ export class AppComponent {
     private router: Router,
     private blurService: BlurService,
     private dialog: MatDialog,
-    private sidebarState: SidebarStateService
+    private sidebarState: SidebarStateService,
+    private scrollRestoration: ScrollRestorationService,
   ) {
     this.sidebarState.sidebarOpen$.subscribe(open => {
       this.sidebarOpen = open;
@@ -39,7 +41,9 @@ export class AppComponent {
     });
   }
 
-
+  ngOnInit() {
+    this.scrollRestoration.init();
+  }
   private updateLayout(url: string) {
 
     // LOGIN ROUTES

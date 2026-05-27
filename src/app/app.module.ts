@@ -18,7 +18,7 @@ import { FeatherModule } from 'angular-feather';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { RouterModule, UrlSerializer } from '@angular/router';
 import { ContactUsModule } from './contact-us/contact-us.module';
-import { AppRoutingModule } from './app-routing.module';
+import { AppRoutingModule, routes } from './app-routing.module';
 import { CentersModule } from './centers/centers.module';
 import { TrainersModule } from './trainers/trainers.module';
 import { TestimonialModule } from './testimonial/testimonial.module';
@@ -153,7 +153,12 @@ const dbConfig: DBConfig = {
     MyTodoListModule,
     MyTrainerModule,
     MyNotificationsModule,
-    MySubscriptionsModule
+    MySubscriptionsModule,
+    // RouterModule.forRoot(routes, {
+    //   scrollPositionRestoration: 'enabled',
+    //   anchorScrolling: 'disabled',
+    //   onSameUrlNavigation: 'reload'
+    // }),
   ],
   exports: [],
 

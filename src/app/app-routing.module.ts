@@ -64,7 +64,7 @@ import { TodoListsComponent } from './admin/todo-lists/todo-lists/todo-lists.com
 
 
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: LandingPageComponent, data: { breadcrumb: 'Home' } },
   { path: 'contact', component: ContactUsPageComponent, data: { breadcrumb: 'Contact' } },

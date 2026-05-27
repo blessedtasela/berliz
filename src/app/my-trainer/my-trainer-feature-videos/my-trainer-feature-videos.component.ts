@@ -28,14 +28,12 @@ export interface VideoSlot {
 }
 
 const TOTAL_SLOTS = 4;
-
 @Component({
-  selector: 'app-trainer-feature-videos',
-  templateUrl: './trainer-feature-videos.component.html',
-  styleUrls: ['./trainer-feature-videos.component.css']
+  selector: 'app-my-trainer-feature-videos',
+  templateUrl: './my-trainer-feature-videos.component.html',
+  styleUrls: ['./my-trainer-feature-videos.component.css']
 })
-export class TrainerFeatureVideosComponent implements OnInit, OnDestroy {
-
+export class MyTrainerFeatureVideosComponent {
   @Input() trainerFeatureVideos: TrainerFeatureVideo[] = [];
   @Output() emitEvent = new EventEmitter();
 

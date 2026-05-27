@@ -178,8 +178,8 @@ export class TrainerService {
     return this.httpClient.get<TrainerFeatureVideo[]>(`${this.url}/trainer/getAllTrainerFeatureVideos`);
   }
 
-  getMyTrainerFeatureVideo() {
-    return this.httpClient.get<TrainerFeatureVideo>(`${this.url}/trainer/getMyTrainerFeatureVideo`);
+  getMyTrainerFeatureVideos() {
+    return this.httpClient.get<TrainerFeatureVideo[]>(`${this.url}/trainer/getMyTrainerFeatureVideos`);
   }
 
   // ─────────────────────────────

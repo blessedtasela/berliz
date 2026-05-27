@@ -76,8 +76,8 @@ export class TrainerStateService {
   private allTrainerFeatureVideosSubject = new BehaviorSubject<TrainerFeatureVideo[] | null>(null);
   allTrainerFeatureVideosData$: Observable<TrainerFeatureVideo[] | null> = this.allTrainerFeatureVideosSubject.asObservable();
 
-  private myTrainerFeatureVideoSubject = new BehaviorSubject<TrainerFeatureVideo | null>(null);
-  myTrainerFeatureVideoData$: Observable<TrainerFeatureVideo | null> = this.myTrainerFeatureVideoSubject.asObservable();
+  private myTrainerFeatureVideoSubject = new BehaviorSubject<TrainerFeatureVideo[] | null>(null);
+  myTrainerFeatureVideoData$: Observable<TrainerFeatureVideo[] | null> = this.myTrainerFeatureVideoSubject.asObservable();
 
   // ─── Photo Album ─────────────────────────────────────────────────────────────
 
@@ -158,7 +158,7 @@ export class TrainerStateService {
   setMyTrainerBenefitSubject(data: TrainerBenefits): void { this.myTrainerBenefitSubject.next(data); }
 
   setAllTrainerFeatureVideosSubject(data: TrainerFeatureVideo[]): void { this.allTrainerFeatureVideosSubject.next(data); }
-  setMyTrainerFeatureVideoSubject(data: TrainerFeatureVideo): void { this.myTrainerFeatureVideoSubject.next(data); }
+  setMyTrainerFeatureVideoSubject(data: TrainerFeatureVideo[]): void { this.myTrainerFeatureVideoSubject.next(data); }
 
   setAllTrainerPhotoAlbumsSubject(data: TrainerPhotoAlbum): void { this.allTrainerPhotoAlbumsSubject.next(data); }
   setMyTrainerPhotoAlbumsSubject(data: TrainerPhotoAlbum): void { this.myTrainerPhotoAlbumsSubject.next(data); }
@@ -285,10 +285,14 @@ export class TrainerStateService {
     );
   }
 
-  getMyTrainerFeatureVideo(): Observable<TrainerFeatureVideo> {
-    return this.trainerService.getMyTrainerFeatureVideo().pipe(
-      tap((res: TrainerFeatureVideo) => { if (res) this.setMyTrainerFeatureVideoSubject(res); }),
-      catchError(err => { this.handleError(err); return of(); })
+  getMyTrainerFeatureVideos(): Observable<TrainerFeatureVideo[]> {
+    return this.trainerService.getMyTrainerFeatureVideos().pipe(
+      tap((res: TrainerFeatureVideo[]) => {
+        if (res) this.setMyTrainerFeatureVideoSubject(
+          res.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        );
+      }),
+      catchError(err => { this.handleError(err); return of([]); })
     );
   }
 

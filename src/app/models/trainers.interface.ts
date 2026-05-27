@@ -7,13 +7,20 @@ import { PhotoResponse } from "./Media.interface";
 
 export interface VideoResponse {
   id: number;
-  strapiId: string;
+  strapiId: number;
+  publicId: string;
   videoUrl: string;
+  secureUrl: string;
+  playbackUrl: string;
   name: string;
   mimeType: string;
+  format: string;
   byteSize: number;
-  ownerId: number;
+  duration: number;
   mediaOwnerType: MediaOwnerType;
+  ownerId: number;
+  date: Date;
+  lastUpdate: Date;
 }
 
 export interface Trainers {
@@ -101,12 +108,21 @@ export interface TrainerVideoAlbum {
 
 export interface TrainerFeatureVideo {
   id: number;
-  trainerId: number;
-  trainerName: string;
+
+  title: string;
   motivation: string;
-  video: VideoResponse;
+  thumbnailUrl: string;
+  position: number;
+  featured: boolean;
+  views: number;
+  likes: number;
+  status: string;
   date: Date;
   lastUpdate: Date;
+  message: string;
+  videoResponse: VideoResponse;
+  trainerId: number;
+  trainerName: string;
 }
 
 export interface TrainerReview {

@@ -148,6 +148,15 @@ import {
   PhoneIncoming,
   Crop,
   Move,
+  Video,
+  VideoOff,
+  Voicemail,
+  Play,
+  PlayCircle,
+  Paperclip,
+  Pause,
+  PhoneCall,
+  PauseCircle,
 
 } from 'angular-feather/icons';
 
@@ -299,6 +308,15 @@ const icons = {
   PhoneIncoming,
   Crop,
   Move,
+  Video,
+  VideoOff,
+  Voicemail,
+  Play,
+  PlayCircle,
+  Paperclip,
+  Pause,
+  PhoneCall,
+  PauseCircle,
 
 };
 
