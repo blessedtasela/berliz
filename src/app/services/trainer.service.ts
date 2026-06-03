@@ -187,19 +187,19 @@ export class TrainerService {
   // ─────────────────────────────
 
   addTrainerPhotoAlbum(data: any) {
-    return this.httpClient.put<TrainerPhotoAlbum>(`${this.url}/trainer/addTrainerPhotoAlbum`, data);
+    return this.httpClient.post<TrainerPhotoAlbum>(`${this.url}/trainer/addTrainerPhotosAlbum`, data);
   }
 
   updateTrainerPhotoAlbum(data: any) {
-    return this.httpClient.put<TrainerPhotoAlbum>(`${this.url}/trainer/updateTrainerPhotoAlbum`, data);
+    return this.httpClient.put<TrainerPhotoAlbum>(`${this.url}/trainer/updateTrainerPhotosAlbum`, data);
   }
 
   deleteTrainerPhotoAlbum(id: number) {
-    return this.httpClient.delete<void>(`${this.url}/trainer/deleteTrainerPhotoAlbum/${id}`);
+    return this.httpClient.delete<void>(`${this.url}/trainer/deleteTrainerPhotosAlbum/${id}`);
   }
 
   getAllTrainerPhotoAlbums() {
-    return this.httpClient.get<TrainerPhotoAlbum[]>(`${this.url}/trainer/getAllTrainerPhotoAlbums`);
+    return this.httpClient.get<TrainerPhotoAlbum[]>(`${this.url}/trainer/getAllTrainerPhotosAlbums`);
   }
 
   getMyTrainerPhotosAlbum() {

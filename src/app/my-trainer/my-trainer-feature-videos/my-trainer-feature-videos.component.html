@@ -223,17 +223,23 @@
                     </span>
                     <span *ngIf="uploadedCount < 2"
                         class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">
-                        Min. 2 required
+                        Action Required. Min: 2 videos req.
                     </span>
                 </h2>
                 <p class="text-[11px] text-gray-400 mt-0.5">
-                    Each video requires a motivation text between 300–500 characters.
+                    Registered:
+                    <span class="text-gray-600 font-medium">
+                        {{ registeredDate ? (registeredDate | date:'mediumDate') : 'N/A' }}
+                    </span>
                 </p>
+
             </div>
         </div>
 
         <div class="border-t border-gray-100"></div>
-
+        <p class="text-[11px] text-gray-400 mt-0.5">
+            Each video requires a motivation text between 300–500 characters.
+        </p>
         <!-- Global validation -->
         <div *ngIf="invalidForm && uploadedCount < 2"
             class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 flex items-center gap-1.5">

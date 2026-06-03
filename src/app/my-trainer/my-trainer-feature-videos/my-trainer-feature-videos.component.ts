@@ -223,6 +223,11 @@ export class MyTrainerFeatureVideosComponent {
     return this.featureVideosForm.get(`motivation_${i}`);
   }
 
+  get registeredDate(): Date | null {
+    if (!this.trainerFeatureVideos?.length) return null;
+
+    return this.trainerFeatureVideos[this.trainerFeatureVideos.length - 1].date;
+  }
   // ── Editor ────────────────────────────────────────────────────────────────
 
   openEditorForSlot(i: number): void {

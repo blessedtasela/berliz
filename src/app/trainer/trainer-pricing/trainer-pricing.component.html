@@ -15,7 +15,7 @@
                 <p class="text-[11px] text-gray-400 mt-0.5">
                     Registered:
                     <span class="text-gray-600 font-medium">
-                        {{ trainerPricing.date ? formatDate(trainerPricing.date) : 'N/A' }}
+                        {{ trainerPricing.date | date:'mediumDate' : 'N/A' }}
                     </span>
                 </p>
             </div>

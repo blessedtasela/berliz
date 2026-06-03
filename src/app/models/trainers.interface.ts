@@ -91,9 +91,10 @@ export interface TrainerPhotoAlbum {
   trainerId: number;
   trainerName: string;
   comment: string;
-  photos: PhotoResponse[];
+  photoResponses: PhotoResponse[];
   date: Date;
   lastUpdate: Date;
+  message: string;
 }
 
 export interface TrainerVideoAlbum {
@@ -108,7 +109,6 @@ export interface TrainerVideoAlbum {
 
 export interface TrainerFeatureVideo {
   id: number;
-
   title: string;
   motivation: string;
   thumbnailUrl: string;

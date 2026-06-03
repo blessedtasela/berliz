@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { forkJoin, skip, Subscription } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import {
   TrainerBenefits,
   TrainerFeatureVideo,
@@ -17,7 +17,7 @@ import { TrainerStateService } from 'src/app/services/trainer-state.service';
   templateUrl: './trainer-details.component.html',
   styleUrls: ['./trainer-details.component.css']
 })
-export class TrainerDetailsComponent implements OnInit {
+export class TrainerDetailsComponent implements OnInit, OnDestroy {
 
   trainerIntroduction!: TrainerIntroduction;
   trainerPricing!: TrainerPricing;
@@ -26,25 +26,31 @@ export class TrainerDetailsComponent implements OnInit {
   trainerPhotoAlbum!: TrainerPhotoAlbum;
   trainerVideoAlbum!: TrainerVideoAlbum;
 
+  // Controls *ngIf — only true once ALL data is loaded
+  dataReady = false;
+
   subscriptions: Subscription[] = [];
 
   constructor(
     private ngxService: NgxUiLoaderService,
     private rxStompService: RxStompService,
-    private trainerStateService: TrainerStateService
-  ) {}
+    private trainerStateService: TrainerStateService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.handleWatchService();
     this.loadData();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  loadData() {
-  
+  loadData(): void {
+    this.dataReady = false;
+    this.ngxService.start();
+
     forkJoin({
       trainerIntroduction: this.trainerStateService.getMyTrainerIntroduction(),
       trainerPricing: this.trainerStateService.getMyTrainerPricing(),
@@ -52,8 +58,8 @@ export class TrainerDetailsComponent implements OnInit {
       trainerFeatureVideo: this.trainerStateService.getMyTrainerFeatureVideos(),
       trainerPhotoAlbum: this.trainerStateService.getMyTrainerPhotoAlbum(),
       trainerVideoAlbum: this.trainerStateService.getMyTrainerVideoAlbum(),
-    }).subscribe(
-      ({
+    }).subscribe({
+      next: ({
         trainerIntroduction,
         trainerPricing,
         trainerBenefit,
@@ -61,37 +67,52 @@ export class TrainerDetailsComponent implements OnInit {
         trainerPhotoAlbum,
         trainerVideoAlbum
       }) => {
-        this.trainerIntroduction = trainerIntroduction;
-        this.trainerPricing = trainerPricing;
-        this.trainerBenefit = trainerBenefit;
-        this.trainerFeatureVideo = trainerFeatureVideo;
-        this.trainerPhotoAlbum = trainerPhotoAlbum;
-        this.trainerVideoAlbum = trainerVideoAlbum;
+        // ── Spread every object so Angular detects a new reference ──────────
+        // Without spread, if the backend returns the same shape, Angular won't
+        // see a change and ngOnChanges in children won't fire.
+        this.trainerIntroduction = { ...trainerIntroduction };
+        this.trainerPricing = { ...trainerPricing };
+        this.trainerBenefit = { ...trainerBenefit };
+        this.trainerFeatureVideo = [...trainerFeatureVideo];
+        this.trainerVideoAlbum = { ...trainerVideoAlbum };
 
+        // Photo album — spread AND spread the nested photoResponses array
+        // so the child's ngOnChanges sees a truly new reference
+        this.trainerPhotoAlbum = {
+          ...trainerPhotoAlbum,
+          photoResponses: trainerPhotoAlbum.photoResponses
+            ? [...trainerPhotoAlbum.photoResponses]
+            : []
+        };
+
+        // Only show children after all data is ready
+        this.dataReady = true;
+        this.ngxService.stop();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('[TrainerDetails] loadData error:', err);
+        this.ngxService.stop();
       }
-    );
-
+    });
   }
 
-  handleWatchService() {
+  handleWatchService(): void {
     const topics = [
-      '/topic/getTrainerIntroductionFromMap',
-      '/topic/getTrainerPricingFromMap',
-      '/topic/getTrainerBenefitFromMap',
-      '/topic/getTrainerFeatureVideoFromMap',
-      '/topic/getTrainerPhotoAlbumFromMap',
-      '/topic/getTrainerVideoAlbumFromMap'
+      '/topic/trainerIntroduction',
+      '/topic/trainerPricing',
+      '/topic/trainerBenefit',
+      '/topic/trainerFeatureVideo',
+      '/topic/trainerPhotoAlbum',
+      '/topic/trainerVideoAlbum',
     ];
-  
+
     topics.forEach(topic => {
-      const sub = this.rxStompService.watch(topic)
-        .pipe(skip(1))  // ⬅️ ignore the initial empty message
-        .subscribe(() => {
-          this.loadData();
-        });
-  
+      const sub = this.rxStompService.watch(topic).subscribe(message => {
+        if (!message?.body) return; // skip empty/initial messages
+        this.loadData();
+      });
       this.subscriptions.push(sub);
     });
-  
   }
 }

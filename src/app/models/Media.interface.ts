@@ -9,7 +9,7 @@ export interface PhotoResponse {
   byteSize: number;
   ownerId: number;
   mediaOwnerType: MediaOwnerType;
-    message?: string;
+  message?: string;
 }
 
 export interface VideoResponse {
