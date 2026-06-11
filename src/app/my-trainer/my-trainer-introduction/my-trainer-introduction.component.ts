@@ -20,6 +20,7 @@ import { TrainerService } from 'src/app/services/trainer.service';
 })
 export class MyTrainerIntroductionComponent {
 
+
   @Input() trainerIntroduction!: TrainerIntroduction;
   @Output() emitEvent = new EventEmitter();
 
@@ -29,7 +30,7 @@ export class MyTrainerIntroductionComponent {
   croppedImageBlob: Blob | null = null;
   selectedFile: File | null = null;
 
-  photoRequest: PhotoResponse | null = null;
+  photo: PhotoResponse | null = null;
 
   showCropper = false;
   invalidForm = false;
@@ -62,21 +63,22 @@ export class MyTrainerIntroductionComponent {
           Validators.maxLength(1200)
         ]
       ],
-      photoRequest: [
-        this.trainerIntroduction?.photoResponse || null,
+      photo: [
+        this.trainerIntroduction?.photo || null,
         Validators.required
       ]
     });
 
     this.originalValue = this.updateTrainerIntroductionForm.getRawValue();
-    this.photoRequest = this.trainerIntroduction?.photoResponse || null;
+    this.photo = this.trainerIntroduction?.photo || null;
 
     // 🔥 Initialize previewUrl once, stable for first render
-    if (this.trainerIntroduction?.photoResponse?.photoUrl) {
-      this.previewUrl = this.normalizeUrl(this.trainerIntroduction.photoResponse.photoUrl);
+    if (this.trainerIntroduction?.photo?.photoUrl) {
+      this.previewUrl = this.normalizeUrl(this.trainerIntroduction.photo.photoUrl);
     } else {
       this.previewUrl = 'assets/avatar.png';
     }
+
   }
 
   // 🔥 Helper to normalize URLs (blob / http / relative)
@@ -124,7 +126,7 @@ export class MyTrainerIntroductionComponent {
 
     const file = new File(
       [this.croppedImageBlob],
-      this.photoRequest?.name || `cropped_${Date.now()}.jpeg`,
+      this.photo?.name || `cropped_${Date.now()}.jpeg`,
       {
         type: this.croppedImageBlob.type || 'image/jpeg'
       }
@@ -133,7 +135,7 @@ export class MyTrainerIntroductionComponent {
     this.selectedFile = file;
 
     this.updateTrainerIntroductionForm.patchValue({
-      photoRequest: file
+      photo: file
     });
 
     // 🔥 Update previewUrl with a stable blob URL (next tick)
@@ -150,17 +152,17 @@ export class MyTrainerIntroductionComponent {
 
     if (event.target.checked) {
 
-      this.photoRequest =
-        this.trainerIntroduction?.photoResponse || null;
+      this.photo =
+        this.trainerIntroduction?.photo || null;
 
       this.updateTrainerIntroductionForm.patchValue({
-        photoRequest: this.photoRequest
+        photo: this.photo
       });
 
       // 🔥 Update previewUrl based on existing photo
       setTimeout(() => {
-        if (this.trainerIntroduction?.photoResponse?.photoUrl) {
-          this.previewUrl = this.normalizeUrl(this.trainerIntroduction.photoResponse.photoUrl);
+        if (this.trainerIntroduction?.photo?.photoUrl) {
+          this.previewUrl = this.normalizeUrl(this.trainerIntroduction.photo.photoUrl);
         } else {
           this.previewUrl = 'assets/avatar.png';
         }
@@ -170,10 +172,10 @@ export class MyTrainerIntroductionComponent {
 
     } else {
 
-      this.photoRequest = null;
+      this.photo = null;
 
       this.updateTrainerIntroductionForm.patchValue({
-        photoRequest: null
+        photo: null
       });
 
       // 🔥 Reset preview
@@ -208,48 +210,59 @@ export class MyTrainerIntroductionComponent {
     }
   }
 
-  private uploadNewImage(): void {
+  private async uploadNewImage(): Promise<void> {
 
-    this.strapi.uploadToStrapi(this.selectedFile!)
-      .pipe(take(1))
-      .subscribe({
+    try {
 
-        next: (res: StrapiUploadResponse[]) => {
+      this.loader.start();
 
-          const file = res?.[0];
+      const fileToUpload = this.selectedFile as File;
 
-          if (!file) {
-            throw new Error('No file returned from Strapi');
-          }
+      const res: any[] =
+        (await this.strapi
+          .uploadToStrapi(fileToUpload)
+          .pipe(take(1))
+          .toPromise()) ?? [];
 
-          // 🔥 Update uploadedPhoto and previewUrl
-          this.photoRequest = {
-            id: 0,
-            strapiId: file.id,
-            photoUrl: file.url,
-            name: file.name,
-            mimeType: file.mime,
-            byteSize: file.size,
-            ownerId: 0,
-            mediaOwnerType: MediaOwnerType.TRAINER_INTRODUCTION
-          };
+      const uploaded = res?.[0];
 
-          this.previewUrl = this.normalizeUrl(file.url);
+      if (!uploaded) {
+        throw new Error('No file returned from Strapi');
+      }
 
-          this.saveToBackend();
+      this.photo = {
+        id: 0,
+        strapiId: uploaded.id,
+        photoUrl: uploaded.url,
+        name: uploaded.name,
+        mimeType: uploaded.mime,
+        byteSize: uploaded.size,
+        ownerId: 0,
+        mediaOwnerType: MediaOwnerType.TRAINER_INTRODUCTION,
 
-        },
+        // Optional fields (only if your Strapi response contains them)
+        publicId: uploaded.publicId,
+        secureUrl: uploaded.secureUrl,
+        format: uploaded.format,
+        playbackUrl: uploaded.playbackUrl,
+        duration: uploaded.duration,
+        date: new Date(),
+        lastUpdate: uploaded.lastUpdate ? new Date(uploaded.lastUpdate) : new Date()
+      };
 
-        error: err => {
+      this.previewUrl = this.normalizeUrl(uploaded.url);
 
-          this.loader.stop();
+      this.saveToBackend();
 
-          this.snackbar.openSnackBar(
-            err?.error?.message || 'Strapi upload failed',
-            'error'
-          );
-        }
-      });
+    } catch (err: any) {
+
+      this.loader.stop();
+
+      this.snackbar.openSnackBar(
+        err?.error?.message || err?.message || 'Strapi upload failed',
+        'error'
+      );
+    }
   }
 
   private saveToBackend(): void {
@@ -260,7 +273,7 @@ export class MyTrainerIntroductionComponent {
       introduction: this.updateTrainerIntroductionForm
         .get('introduction')
         ?.value,
-      photoRequest: this.photoRequest
+      photo: this.photo
     };
 
     console.log('FINAL PAYLOAD SENT:', payload);
@@ -300,18 +313,18 @@ export class MyTrainerIntroductionComponent {
     this.updateTrainerIntroductionForm.patchValue({
       id: updated.id,
       introduction: updated.introduction,
-      photoRequest: updated.photoResponse
+      photo: updated.photo
     });
 
     // 3️⃣ Update preview image
-    if (updated.photoResponse?.photoUrl) {
-      this.previewUrl = this.normalizeUrl(updated.photoResponse.photoUrl);
+    if (updated.photo?.photoUrl) {
+      this.previewUrl = this.normalizeUrl(updated.photo.photoUrl);
     } else {
       this.previewUrl = 'assets/avatar.png';
     }
 
     // 4️⃣ Reset local state
-    this.photoRequest = updated.photoResponse || null;
+    this.photo = updated.photo || null;
     this.selectedFile = null;
     this.croppedImageBlob = null;
     this.imageChangedEvent = null;

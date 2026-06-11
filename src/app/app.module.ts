@@ -42,7 +42,6 @@ import { LoginModule } from './login/login.module';
 import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb.component';
 import { BreadcrumbModule, BreadcrumbService } from 'xng-breadcrumb';
 import { PartnerModule } from './partner/partner.module';
-import { TrainerModule } from './trainer/trainer.module';
 import { UrlLowerCaseSerializer } from 'url-lower-case-serializer';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { UnderConstructionPageComponent } from './under-construction-page/under-construction-page.component';
@@ -59,12 +58,12 @@ import { GlobalErrorHandlerService } from './services/global-error-handler.servi
 
 export const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   text: 'Loading...',
-  textColor: 'rgba(255,255,255,0.65)',
+  textColor: 'white',
   textPosition: 'center-center',
 
   // Foreground spinner — soft warm white, not red
-  fgsColor: 'rgba(255,255,255,0.80)',
-  fgsType: SPINNER.ballSpinFadeRotating,
+  fgsColor: 'white',
+  fgsType: SPINNER.squareJellyBox,
   fgsSize: 52,
 
   // No background spinner
@@ -72,7 +71,7 @@ export const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   bgsOpacity: 0,
 
   // Overlay — dark gray, subtle blur (not heavy)
-  overlayColor: 'rgba(17, 24, 39, 0.45)',   // gray-900 / 45% — lighter than before
+  overlayColor: 'rgba(32, 32, 34, 0.45)',   // gray-900 / 45% — lighter than before
   overlayBorderRadius: '0',
 
   hasProgressBar: false,
@@ -121,7 +120,6 @@ const dbConfig: DBConfig = {
     FeatherModule,
     DashboardModule,
     PartnerModule,
-    TrainerModule,
     RouterModule,
     AppRoutingModule,
     ContactUsModule,
@@ -154,6 +152,7 @@ const dbConfig: DBConfig = {
     MyTrainerModule,
     MyNotificationsModule,
     MySubscriptionsModule,
+    MyTrainerModule,
     // RouterModule.forRoot(routes, {
     //   scrollPositionRestoration: 'enabled',
     //   anchorScrolling: 'disabled',

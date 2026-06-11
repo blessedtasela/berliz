@@ -1,44 +1,38 @@
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
+import { CanActivate, Router, ActivatedRouteSnapshot } from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
 })
 export class TrainerGuard implements CanActivate {
-  constructor( private router: Router) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    const idParam = route.paramMap.get('id'); // Get the 'id' parameter from the route
-    if (!idParam) {
-      return false;
-    }
-    const id = +idParam; // Convert the string ID to a number using the '+' operator
+  constructor(private router: Router) { }
 
-    if (isNaN(id) || id <= 0) {
-      return false;
-    }
+  canActivate(route: ActivatedRouteSnapshot): boolean {
 
+    const name = route.paramMap.get('name');
 
-    if (!0) {
-      // If the trainer with the given 'id' doesn't exist, redirect to trainers page
-      window.alert("Trainer does not exit");
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    // 1. Must exist
+    if (!name) {
       this.router.navigate(['/trainers']);
       return false;
     }
 
-    return true; // Allow access to the TrainerDetailsComponent
+    // 2. Must be at least 2 characters
+    if (name.trim().length < 2) {
+      window.alert("Invalid trainer name");
+      this.router.navigate(['/trainers']);
+      return false;
+    }
+
+    // 3. Optional: validate allowed characters (letters, numbers, hyphens)
+    const valid = /^[a-zA-Z0-9\-]+$/.test(name);
+    if (!valid) {
+      window.alert("Invalid trainer name format");
+      this.router.navigate(['/trainers']);
+      return false;
+    }
+
+    return true;
   }
-
-//   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-//   const idParam = route.paramMap.get('id');
-//   if (!idParam) return false;
-
-//   const id = +idParam;
-//   if (isNaN(id) || id <= 0) return false;
-
-//   // You can later fetch and validate if trainer exists, if needed
-//   return true;
-// }
-
 }

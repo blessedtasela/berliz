@@ -42,7 +42,6 @@ import { TrainerPricingComponent } from './admin/trainer-pricing/trainer-pricing
 import { QuickSignupComponent } from './login/quick-signup/quick-signup.component';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { PartnerComponent } from './partner/partner/partner.component';
-import { TrainerDetailsComponent } from './trainer/trainer-details/trainer-details.component';
 import { PartnerRouteComponent } from './partner/partner-route/partner-route.component';
 import { ExercisesPageComponent } from './exercises/exercises-page/exercises-page.component';
 import { FaqsPageComponent } from './faqs/faqs-page/faqs-page.component';
@@ -61,6 +60,7 @@ import { DashboardRouteComponent } from './dashboard/dashboard-route/dashboard-r
 import { MySubscriptionsMainComponent } from './my-subscriptions/my-subscriptions-main/my-subscriptions-main.component';
 import { MyTodoListMainComponent } from './my-todo-list/my-todo-list-main/my-todo-list-main.component';
 import { TodoListsComponent } from './admin/todo-lists/todo-lists/todo-lists.component';
+import { MyTrainerMainComponent } from './my-trainer/my-trainer-main/my-trainer-main.component';
 
 
 
@@ -74,7 +74,7 @@ export const routes: Routes = [
   { path: 'sign-up', component: SignupComponent, data: { breadcrumb: 'Sign Up' } },
   { path: 'quick-sign-up', component: QuickSignupComponent, data: { breadcrumb: 'Quick Sign Up' } },
   { path: 'trainers', component: TrainersPageComponent, data: { breadcrumb: 'Trainers' } },
-  { path: 'trainers/:id/:name', component: TrainersDetailsComponent, canActivate: [TrainerGuard], data: { breadcrumb: { alias: 'trainerName' } } },
+  { path: 'trainers/:name', component: TrainersDetailsComponent, canActivate: [TrainerGuard], data: { breadcrumb: { alias: 'trainerName' } } },
   { path: 'centers', component: CenterPageComponent, data: { breadcrumb: 'Centers' } },
   { path: 'centers/:id/:name', component: CenterDetailComponent, canActivate: [CenterGuard], data: { breadcrumb: { alias: 'centerName' } } },
   { path: 'services', component: CategoriesComponent, data: { breadcrumb: 'Services' } },
@@ -201,7 +201,7 @@ export const routes: Routes = [
         },
         children: [
           { path: '', component: PartnerComponent, canActivate: [AuthGuard], data: { breadcrumb: null, expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
-          { path: 'trainer-details', component: TrainerDetailsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Details', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } }
+          { path: 'trainer-details', component: MyTrainerMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Details', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } }
         ]
       },
 
@@ -247,7 +247,7 @@ export const routes: Routes = [
             data: { breadcrumb: 'Partnership', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] },
             children: [
               { path: '', component: PartnerComponent, canActivate: [AuthGuard], data: { breadcrumb: null, expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
-              { path: 'trainer-details', component: TrainerDetailsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Details', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } }
+              { path: 'trainer-details', component: MyTrainerMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Details', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } }
             ]
           }
         ]

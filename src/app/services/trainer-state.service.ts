@@ -102,8 +102,8 @@ export class TrainerStateService {
 
   // ─── Subscriptions ───────────────────────────────────────────────────────────
 
-  private myTrainerSubscriptionsSubject = new BehaviorSubject<TrainerSubscription[] | null>(null);
-  myTrainerSubscriptionsData$: Observable<TrainerSubscription[] | null> = this.myTrainerSubscriptionsSubject.asObservable();
+  private myTrainerSubscriptionSubject = new BehaviorSubject<TrainerSubscription | null>(null);
+  myTrainerSubscriptionData$: Observable<TrainerSubscription | null> = this.myTrainerSubscriptionSubject.asObservable();
 
   // ─── Reviews ─────────────────────────────────────────────────────────────────
 
@@ -168,7 +168,7 @@ export class TrainerStateService {
   setMyClientsSubject(data: TrainerClients[]): void { this.myClientsSubject.next(data); }
   setMyActiveClientsSubject(data: TrainerClients[]): void { this.myActiveClientsSubject.next(data); }
 
-  setMyTrainerSubscriptionsSubject(data: TrainerSubscription[]): void { this.myTrainerSubscriptionsSubject.next(data); }
+  setMyTrainerSubscriptionSubject(data: TrainerSubscription): void { this.myTrainerSubscriptionSubject.next(data); }
 
   setMyTrainerReviewsSubject(data: TrainerReview[]): void { this.myTrainerReviewsSubject.next(data); }
   setAllTrainerReviewsSubject(data: TrainerReview[]): void { this.allTrainerReviewsSubject.next(data); }
@@ -335,17 +335,19 @@ export class TrainerStateService {
     );
   }
 
-  getMyTrainerSubscriptions(): Observable<TrainerSubscription[]> {
-    return this.trainerService.getMyTrainerSubscriptions().pipe(
-      tap((res: TrainerSubscription[]) => {
-        if (res) this.setMyTrainerSubscriptionsSubject(
-          res.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-        );
+  getMyTrainerSubscription(): Observable<TrainerSubscription> {
+    return this.trainerService.getMyTrainerSubscription().pipe(
+      tap((res: TrainerSubscription) => {
+        if (res) {
+          this.setMyTrainerSubscriptionSubject(res);
+        }
       }),
-      catchError(err => { this.handleError(err); return of([]); })
+      catchError(err => {
+        this.handleError(err);
+        return of();
+      })
     );
   }
-
   getMyTrainerReviews(): Observable<TrainerReview[]> {
     return this.trainerService.getMyTrainerReviews().pipe(
       tap((res: TrainerReview[]) => {

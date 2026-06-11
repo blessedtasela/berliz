@@ -210,16 +210,16 @@ export class TrainerService {
   // VIDEO ALBUM
   // ─────────────────────────────
 
-  addTrainerVideoAlbum(data: any) {
-    return this.httpClient.post<TrainerVideoAlbum>(`${this.url}/trainer/addTrainerVideoAlbum`, data);
+  addTrainerVideosAlbum(data: any) {
+    return this.httpClient.post<TrainerVideoAlbum>(`${this.url}/trainer/addTrainerVideosAlbum`, data);
   }
 
-  updateTrainerVideoAlbum(data: any) {
-    return this.httpClient.put<TrainerVideoAlbum>(`${this.url}/trainer/updateTrainerVideoAlbum`, data);
+  updateTrainerVideosAlbum(data: any) {
+    return this.httpClient.put<TrainerVideoAlbum>(`${this.url}/trainer/updateTrainerVideosAlbum`, data);
   }
 
-  deleteTrainerVideoAlbum(id: number) {
-    return this.httpClient.delete<void>(`${this.url}/trainer/deleteTrainerVideoAlbum/${id}`);
+  deleteTrainerVideosAlbum(id: number) {
+    return this.httpClient.delete<void>(`${this.url}/trainer/deleteTrainerVideosAlbum/${id}`);
   }
 
   getAllTrainerVideosAlbum() {
@@ -246,12 +246,38 @@ export class TrainerService {
   // SUBSCRIPTIONS
   // ─────────────────────────────
 
-  getMyTrainerSubscriptions() {
-    return this.httpClient.get<TrainerSubscription[]>(`${this.url}/trainer/getMyTrainerSubscriptions`);
+  addTrainerSubscription(request: any) {
+    return this.httpClient.post<TrainerSubscription>(
+      `${this.url}/trainer/addTrainerSubscription`, request);
+  }
+
+  updateTrainerSubscription(request: any) {
+    return this.httpClient.put<TrainerSubscription>(
+      `${this.url}/trainer/updateTrainerSubscription`, request);
+  }
+
+  getMyTrainerSubscription() {
+    return this.httpClient.get<TrainerSubscription>(
+      `${this.url}/trainer/getMyTrainerSubscription`);
   }
 
   getAllTrainerSubscriptions() {
-    return this.httpClient.get<TrainerSubscription[]>(`${this.url}/trainer/getAllTrainerSubscriptions`);
+    return this.httpClient.get<TrainerSubscription[]>(
+      `${this.url}/trainer/getAllTrainerSubscriptions`);
+  }
+
+  getActiveTrainerSubscriptions() {
+    return this.httpClient.get<TrainerSubscription[]>(
+      `${this.url}/trainer/getActiveTrainerSubscriptions`);
+  }
+
+  updateTrainerSubscriptionStatus(status: string, activationCode: string) {
+    return this.httpClient.put<TrainerSubscription>(
+      `${this.url}/trainer/updateTrainerSubscriptionStatus/${status}/${activationCode}`, null);
+  }
+
+  deleteTrainerSubscription() {
+    return this.httpClient.delete(`${this.url}/trainer/deleteTrainerSubscription`);
   }
 
   // ─────────────────────────────

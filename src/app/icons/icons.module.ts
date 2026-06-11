@@ -157,6 +157,11 @@ import {
   Pause,
   PhoneCall,
   PauseCircle,
+  Volume,
+  Volume1,
+  Volume2,
+  VolumeX,
+  Info,
 
 } from 'angular-feather/icons';
 
@@ -317,7 +322,12 @@ const icons = {
   Pause,
   PhoneCall,
   PauseCircle,
-
+  Volume,
+  Volume1,
+  Volume2,
+  VolumeX,
+  Info,
+  
 };
 
 @NgModule({

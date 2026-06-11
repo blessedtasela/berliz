@@ -411,7 +411,14 @@ export class VideoCropperService {
             mimeType:       uploaded.mime,
             byteSize:       uploaded.size,
             ownerId:        0,
-            mediaOwnerType: MediaOwnerType.TRAINER_FEATURE_VIDEO
+            mediaOwnerType: MediaOwnerType.TRAINER_FEATURE_VIDEO,
+            publicId:       uploaded.publicId,
+            secureUrl:      uploaded.secureUrl,
+            playbackUrl:    uploaded.playbackUrl,
+            format:           uploaded.format,
+            duration:         uploaded.duration,
+            date:             new Date(),
+            lastUpdate:       new Date()
           };
 
           const resolvedUrl = uploaded.url.startsWith('http')

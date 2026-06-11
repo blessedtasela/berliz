@@ -13,10 +13,9 @@
                     </span>
                 </h2>
                 <p class="text-[11px] text-gray-400 mt-0.5">
-                    Registered:
-                    <span class="text-gray-600 font-medium">
-                        {{ trainerBenefit.date | date:'mediumDate' : 'N/A' }}
-                    </span>
+                    {{ trainerBenefit.date
+                    ? 'Registered on ' + formatDate(trainerBenefit.date)
+                    : 'No benefits information found' }}
                 </p>
             </div>
         </div>

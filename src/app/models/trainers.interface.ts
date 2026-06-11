@@ -3,25 +3,9 @@
 import { Categories } from "./categories.interface";
 import { Clients } from "./clients.interface";
 import { MediaOwnerType } from "./Media.enum";
-import { PhotoResponse } from "./Media.interface";
+import { PhotoResponse, VideoResponse } from "./Media.interface";
 
-export interface VideoResponse {
-  id: number;
-  strapiId: number;
-  publicId: string;
-  videoUrl: string;
-  secureUrl: string;
-  playbackUrl: string;
-  name: string;
-  mimeType: string;
-  format: string;
-  byteSize: number;
-  duration: number;
-  mediaOwnerType: MediaOwnerType;
-  ownerId: number;
-  date: Date;
-  lastUpdate: Date;
-}
+
 
 export interface Trainers {
   id: number;
@@ -29,6 +13,8 @@ export interface Trainers {
   motto: string;
   address: string;
   experience: string;
+  activationUniqueId: string;
+  activationUniqueIdUsed: boolean;
   likes: number;
   status: string;
   date: Date;
@@ -79,7 +65,7 @@ export interface TrainerIntroduction {
   trainerId: number;
   trainerName: string;
   introduction: string;
-  photoResponse: PhotoResponse;
+  photo: PhotoResponse;
   date: Date;
   lastUpdate: Date;
 
@@ -91,7 +77,7 @@ export interface TrainerPhotoAlbum {
   trainerId: number;
   trainerName: string;
   comment: string;
-  photoResponses: PhotoResponse[];
+  photos: PhotoResponse[];
   date: Date;
   lastUpdate: Date;
   message: string;
@@ -102,7 +88,7 @@ export interface TrainerVideoAlbum {
   trainerId: number;
   trainerName: string;
   comment: string;
-  videoResponses: VideoResponse[];
+  videos: VideoResponse[];
   date: Date;
   lastUpdate: Date;
 }
@@ -120,7 +106,7 @@ export interface TrainerFeatureVideo {
   date: Date;
   lastUpdate: Date;
   message: string;
-  videoResponse: VideoResponse;
+  video: VideoResponse;
   trainerId: number;
   trainerName: string;
 }
@@ -197,13 +183,24 @@ export interface TrainerCategory {
 }
 
 export interface TrainerSubscription {
+
   id: number;
-  plan: string;
-  mode: string;
+  trainerId: number;
+  trainerName: string;
+  durationTier: string; // MONTH_TO_MONTH | QUARTERLY | etc.
+  startDate: Date;
+  endDate: Date;
   date: Date;
-  client: Clients;
-  trainer: Trainers;
   lastUpdate: Date;
+  amount: number;
+  currency: string;
+  paymentMethod: string;
+  transactionId: string;
+  status: string; // ACTIVE | PENDING | EXPIRED | CANCELLED
+  autoRenew: boolean;
+  activatedByAdminId?: number;
+  notes?: string;
+  cancellationReason?: string;
 }
 
 export interface TrainerSubscriptionForm {

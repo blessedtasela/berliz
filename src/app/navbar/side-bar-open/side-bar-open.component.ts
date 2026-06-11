@@ -133,7 +133,7 @@ export class SideBarOpenComponent {
   logout() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      message: 'Logout',
+      message: 'Are you sure you want to log out?',
       confirmation: true
     };
 

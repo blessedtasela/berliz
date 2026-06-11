@@ -23,8 +23,9 @@
           flex flex-col justify-between p-6 mx-auto">
 
                         <!-- Image -->
-                        <img [src]="'data:image/*;base64,' + trainer.photoResponse" [alt]="trainer.name"
-                            class="w-full h-48 object-cover rounded-md border border-zinc-700 bg-white shadow-sm" />
+                        <img [src]="strapiUrl + trainer?.photoResponse?.photoUrl" [alt]="trainer?.name"
+                            class="w-full h-48 object-cover rounded-md border border-zinc-700 bg-white shadow-sm"
+                            (error)="onImageError($event)" />
 
                         <!-- Content -->
                         <div class="text-white text-center flex flex-col gap-2 mt-4">
@@ -75,8 +76,8 @@
                             </div>
 
                             <!-- Know More Button -->
-                            <a [routerLink]="['/trainers', trainer.id, formatStringtoUrl(trainer.name)]" class="inline-block mt-4 bg-white text-red-600 px-4 py-2 rounded-md text-sm font-semibold 
-              hover:bg-red-600 hover:text-white transition">
+                            <a [routerLink]="['/trainers', formatStringtoUrl(trainer.name)]" class="inline-block mt-4 bg-white text-red-600 px-4 py-2 rounded-md text-sm font-semibold 
+                                    hover:bg-red-600 hover:text-white transition">
                                 Know more
                             </a>
                         </div>

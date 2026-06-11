@@ -188,8 +188,8 @@ export class UserProfileSettingsComponent {
   openUpdateEmail() {
     const dialogRef = this.dialog.open(UpdateEmailModalComponent, {
       minWidth: '400px',
-      disableClose: false,
-      data: { userData: this.user }
+      disableClose: true,
+      data: { userData: this.user },
     });
 
     dialogRef.componentInstance.onUpdateEMail

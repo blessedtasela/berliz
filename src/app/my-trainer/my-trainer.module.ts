@@ -11,6 +11,17 @@ import { IconsModule } from '../icons/icons.module';
 import { FeatherModule } from 'angular-feather';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { MyTrainerFeatureVideosComponent } from './my-trainer-feature-videos/my-trainer-feature-videos.component';
+import { MyTrainerCentersComponent } from './my-trainer-centers/my-trainer-centers.component';
+import { MyTrainerSubscriptionsComponent } from './my-trainer-subscriptions/my-trainer-subscriptions.component';
+import { MyTrainerClientsComponent } from './my-trainer-clients/my-trainer-clients.component';
+import { MyTrainerReviewComponent } from './my-trainer-review/my-trainer-review.component';
+import { MyTrainerLikeComponent } from './my-trainer-like/my-trainer-like.component';
+import { MyTrainerTestimonialsComponent } from './my-trainer-testimonials/my-trainer-testimonials.component';
+import { NgxFileDropModule } from 'ngx-file-drop';
+import { RouterModule } from '@angular/router';
+import { FooterModule } from '../footer/footer.module';
+import { NavbarModule } from '../navbar/navbar.module';
+import { MyTrainerSubModalComponent } from './my-trainer-sub-modal/my-trainer-sub-modal.component';
 
 
 
@@ -22,15 +33,25 @@ import { MyTrainerFeatureVideosComponent } from './my-trainer-feature-videos/my-
     MyTrainerPricingComponent,
     MyTrainerPhotoAlbumComponent,
     MyTrainerVideoAlbumComponent,
-    MyTrainerFeatureVideosComponent
+    MyTrainerFeatureVideosComponent,
+    MyTrainerCentersComponent,
+    MyTrainerSubscriptionsComponent,
+    MyTrainerClientsComponent,
+    MyTrainerReviewComponent,
+    MyTrainerLikeComponent,
+    MyTrainerTestimonialsComponent,
+    MyTrainerSubModalComponent
   ],
   imports: [
     CommonModule,
+    NavbarModule,
+    FooterModule,
     ReactiveFormsModule,
-    FormsModule,
+    RouterModule,
     IconsModule,
-    FeatherModule,
-    ImageCropperModule
+    FormsModule,
+    ImageCropperModule,
+    NgxFileDropModule,
   ]
 })
 export class MyTrainerModule { }

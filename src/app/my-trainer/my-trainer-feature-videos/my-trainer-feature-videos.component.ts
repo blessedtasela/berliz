@@ -22,7 +22,7 @@ export interface VideoSlot {
   savedId: number | null;
   previewUrl: string;
   uploaded: boolean;          // Strapi upload done this session
-  videoResponse: VideoResponse | null;
+  video: VideoResponse | null;
   originalMotivation: string;
   touched: boolean;          // ← true once the user starts editing this slot
 }
@@ -110,14 +110,14 @@ export class MyTrainerFeatureVideosComponent {
       if (existing) {
         return {
           savedId: existing.id ?? null,
-          previewUrl: this.resolveVideoUrl(existing.videoResponse?.videoUrl),
+          previewUrl: this.resolveVideoUrl(existing.video?.videoUrl),
           uploaded: false,
-          videoResponse: existing.videoResponse ? this.mapVideoToResponse(existing.videoResponse) : null,
+          video: existing.video ? this.mapVideoToResponse(existing.video) : null,
           originalMotivation: existing.motivation ?? '',
           touched: false   // already saved — not dirty yet
         };
       }
-      return { savedId: null, previewUrl: '', uploaded: false, videoResponse: null, originalMotivation: '', touched: false };
+      return { savedId: null, previewUrl: '', uploaded: false, video: null, originalMotivation: '', touched: false };
     });
   }
 
@@ -504,17 +504,28 @@ export class MyTrainerFeatureVideosComponent {
           }
 
           const videoResponse: VideoResponse = {
-            id: 0, strapiId: uploaded.id, videoUrl: uploaded.url,
-            name: uploaded.name, mimeType: uploaded.mime,
-            byteSize: uploaded.size, ownerId: 0,
-            mediaOwnerType: MediaOwnerType.TRAINER_FEATURE_VIDEO
+            id: uploaded.id,
+            strapiId: uploaded.strapiId,
+            videoUrl: uploaded.url,
+            name: uploaded.name,
+            mimeType: uploaded.mime,
+            byteSize: uploaded.size,
+            ownerId: 0,
+            mediaOwnerType: uploaded.mediaOwnerType,
+            duration: uploaded.duration,
+            format: uploaded.format,
+            playbackUrl: uploaded.playbackUrl,
+            secureUrl: uploaded.secureUrl,
+            date: uploaded.date,
+            lastUpdate: uploaded.lastUpdate,
+            publicId: uploaded.publicId
           };
 
           const slotIdx = this.activeSlot!;
           this.revokeBlobUrl(this.slots[slotIdx].previewUrl);
           this.slots[slotIdx].previewUrl = this.resolveVideoUrl(uploaded.url);
           this.slots[slotIdx].uploaded = true;
-          this.slots[slotIdx].videoResponse = videoResponse;
+          this.slots[slotIdx].video = videoResponse;
           this.slots[slotIdx].touched = true;  // video uploaded = slot is now touched
 
           this.editorStep = 'idle';
@@ -556,7 +567,7 @@ export class MyTrainerFeatureVideosComponent {
       trainerId: this.trainerFeatureVideos?.[0]?.trainerId,
       motivation,
       position: i,
-      videoRequest: slot.videoResponse
+      videoRequest: slot.video
     };
 
     this.loader.start();
@@ -639,7 +650,7 @@ export class MyTrainerFeatureVideosComponent {
           this.revokeBlobUrl(slot.previewUrl);
           this.slots[i] = {
             savedId: null, previewUrl: '', uploaded: false,
-            videoResponse: null, originalMotivation: '', touched: false
+            video: null, originalMotivation: '', touched: false
           };
           this.getMotivationControl(i)?.setValue('');
           this.snackbar.openSnackBar(`Video ${i + 1} deleted`, '');
@@ -675,9 +686,21 @@ export class MyTrainerFeatureVideosComponent {
 
   private mapVideoToResponse(video: any): VideoResponse {
     return {
-      id: video.id, strapiId: video.strapiId, videoUrl: video.videoUrl,
-      name: video.name, mimeType: video.mimeType, byteSize: video.byteSize,
-      ownerId: video.ownerId, mediaOwnerType: video.mediaOwnerType
+      id: video.id,
+      strapiId: video.strapiId,
+      videoUrl: video.videoUrl,
+      name: video.name,
+      mimeType: video.mimeType,
+      byteSize: video.byteSize,
+      ownerId: video.ownerId,
+      mediaOwnerType: video.mediaOwnerType,
+      duration: video.duration,
+      format: video.format,
+      playbackUrl: video.playbackUrl,
+      secureUrl: video.secureUrl,
+      date: video.date,
+      lastUpdate: video.lastUpdate,
+      publicId: video.publicId
     };
   }
 

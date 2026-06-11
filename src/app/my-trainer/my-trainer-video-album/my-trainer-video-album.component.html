@@ -1,1 +1,461 @@
-<p>my-trainer-video-album works!</p>
+<!-- ── Video preview modal ───────────────────────────────────────────── -->
+<div *ngIf="showPreviewModal && previewModalUrl"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+    (click)="showPreviewModal = false; previewModalUrl = ''">
+    <div class="relative" (click)="$event.stopPropagation()">
+        <video [src]="previewModalUrl"
+            class="max-h-[85vh] max-w-[85vw] rounded-2xl object-contain border border-white/20 shadow-2xl" autoplay
+            muted loop controls playsinline (error)="onVideoError($event)">
+        </video>
+        <button (click)="showPreviewModal = false; previewModalUrl = ''" class="absolute -top-3 -right-3 w-7 h-7 rounded-full bg-gray-900 border-2 border-white
+                   flex items-center justify-center text-white hover:bg-red-600 transition">
+            <i-feather name="x" style="width:12px;height:12px;"></i-feather>
+        </button>
+    </div>
+</div>
+
+<!-- ── Trimmer modal ─────────────────────────────────────────────────── -->
+<div *ngIf="trimStep !== 'idle'"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+
+    <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col overflow-hidden max-h-[92vh]"
+        (click)="$event.stopPropagation()">
+
+        <!-- Modal header -->
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
+            <div>
+                <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                    <span class="text-[10px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                        Video {{ activeSlotIndex + 1 }} of {{ MAX_VIDEOS }}
+                    </span>
+                    {{ trimStep === 'trimming' ? 'Trim Video' :
+                    trimStep === 'previewing' ? 'Preview' :
+                    trimStep === 'size-warning' ? 'File Too Large' :
+                    'Uploading...' }}
+                </h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">
+                    {{ trimStep === 'trimming' ? 'Select ' + MIN_DURATION + '–' + MAX_DURATION + 's. Audio is
+                    automatically removed.' :
+                    trimStep === 'previewing' ? 'Review your trimmed clip before saving.' :
+                    trimStep === 'size-warning' ? 'Video exceeds ' + MAX_FILE_MB + ' MB.' :
+                    'Uploading to media server...' }}
+                </p>
+            </div>
+            <button *ngIf="trimStep !== 'uploading-single'" type="button" (click)="cancelTrimmer()"
+                class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 shrink-0">
+                <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+            </button>
+        </div>
+
+        <div class="flex flex-col gap-4 p-5 overflow-y-auto">
+
+            <!-- ── TRIM STEP ─────────────────────────────────────────── -->
+            <ng-container *ngIf="trimStep === 'trimming'">
+
+                <video id="albumTrimPreview" [src]="editorPreviewUrl" (loadedmetadata)="onVideoMetaLoaded($event)"
+                    (error)="onVideoError($event)"
+                    class="w-full rounded-xl border border-gray-200 bg-black max-h-48 object-contain" muted playsinline
+                    controls>
+                </video>
+
+                <!-- Duration display -->
+                <div class="flex items-center justify-between text-[11px]">
+                    <span class="text-gray-500">
+                        Source: <strong class="text-gray-700">{{ videoDuration }}s</strong>
+                    </span>
+                    <span class="font-semibold px-2.5 py-0.5 rounded-full border text-[10px]" [ngClass]="trimValid
+                            ? 'bg-green-50 text-green-700 border-green-100'
+                            : 'bg-red-50 text-red-600 border-red-100'">
+                        {{ trimDuration }}s selected
+                    </span>
+                </div>
+
+                <!-- Mute notice -->
+                <div class="flex items-center gap-2 text-[11px] text-blue-600 bg-blue-50
+                            border border-blue-100 rounded-xl px-3 py-2">
+                    <i-feather name="volume-x" style="width:12px;height:12px;"></i-feather>
+                    Audio will be automatically removed from the clip.
+                </div>
+
+                <!-- Sliders -->
+                <div class="flex flex-col gap-3">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between text-[11px] text-gray-500">
+                            <span class="font-semibold uppercase tracking-wide">Start</span>
+                            <span class="font-medium text-gray-700">{{ trimStart }}s</span>
+                        </div>
+                        <input type="range" min="0" [max]="Math.max(0, videoDuration - MIN_DURATION)" step="0.5"
+                            [(ngModel)]="trimStart"
+                            (ngModelChange)="trimEnd = Math.max(trimEnd, trimStart + MIN_DURATION); validateTrim()"
+                            class="w-full accent-red-600" />
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between text-[11px] text-gray-500">
+                            <span class="font-semibold uppercase tracking-wide">End</span>
+                            <span class="font-medium text-gray-700">{{ trimEnd }}s</span>
+                        </div>
+                        <input type="range" [min]="trimStart + MIN_DURATION"
+                            [max]="Math.min(videoDuration, trimStart + MAX_DURATION)" step="0.5" [(ngModel)]="trimEnd"
+                            (ngModelChange)="validateTrim()" class="w-full accent-red-600" />
+                    </div>
+                </div>
+
+                <!-- Timeline bar -->
+                <div class="relative h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div class="absolute h-full bg-red-500 rounded-full transition-all"
+                        [style.left.%]="videoDuration ? (trimStart / videoDuration) * 100 : 0"
+                        [style.width.%]="videoDuration ? ((trimEnd - trimStart) / videoDuration) * 100 : 0">
+                    </div>
+                </div>
+
+                <!-- Error -->
+                <p *ngIf="trimError" class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl
+                           px-3 py-2 flex items-center gap-1.5">
+                    <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+                    {{ trimError }}
+                </p>
+
+                <div class="flex justify-between items-center pt-1 border-t border-gray-100">
+                    <button type="button" (click)="cancelTrimmer()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200
+                               text-gray-600 hover:bg-gray-50 transition">
+                        Cancel
+                    </button>
+                    <button type="button" (click)="processAndPreview()" [disabled]="!trimValid" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                               hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2"
+                        [ngClass]="{ 'opacity-40 cursor-not-allowed': !trimValid }">
+                        <i-feather name="scissors" style="width:13px;height:13px;"></i-feather>
+                        Apply trim
+                    </button>
+                </div>
+
+            </ng-container>
+
+            <!-- ── PREVIEW STEP ──────────────────────────────────────── -->
+            <ng-container *ngIf="trimStep === 'previewing'">
+
+                <div *ngIf="processingVideo" class="flex flex-col items-center justify-center py-10 gap-3">
+                    <i-feather name="loader" style="width:28px;height:28px;"
+                        class="text-red-500 animate-spin"></i-feather>
+                    <p class="text-xs text-gray-500">Processing video, please wait...</p>
+                </div>
+
+                <ng-container *ngIf="!processingVideo">
+                    <video [src]="videoPreviewUrl" (error)="onVideoError($event)"
+                        class="w-full rounded-xl border border-gray-200 bg-black max-h-64 object-contain" autoplay muted
+                        loop playsinline>
+                    </video>
+
+                    <div class="flex items-center justify-between text-[11px] text-gray-500">
+                        <span class="flex items-center gap-1 text-green-600 font-semibold">
+                            <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
+                            {{ trimDuration }}s · muted · ready
+                        </span>
+                        <button type="button" (click)="backToTrim()"
+                            class="text-gray-400 hover:text-gray-600 flex items-center gap-1 transition text-[11px]">
+                            <i-feather name="chevron-left" style="width:11px;height:11px;"></i-feather>
+                            Re-trim
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between pt-1 border-t border-gray-100">
+                        <button type="button" (click)="cancelTrimmer()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200
+                                   text-gray-600 hover:bg-gray-50 transition">
+                            Cancel
+                        </button>
+                        <button type="button" (click)="confirmTrimmedVideo()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                                   hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                            <i-feather name="check" style="width:13px;height:13px;"></i-feather>
+                            Use this clip
+                        </button>
+                    </div>
+                </ng-container>
+
+            </ng-container>
+
+            <!-- ── SIZE WARNING ──────────────────────────────────────── -->
+            <ng-container *ngIf="trimStep === 'size-warning'">
+                <div class="flex flex-col items-center gap-3 py-4 text-center">
+                    <div class="w-14 h-14 rounded-full bg-yellow-50 border border-yellow-100
+                                flex items-center justify-center">
+                        <i-feather name="alert-triangle" style="width:22px;height:22px;"
+                            class="text-yellow-500"></i-feather>
+                    </div>
+                    <p class="text-sm font-bold text-gray-900">Video too large</p>
+                    <p class="text-[11px] text-gray-500">
+                        Your trimmed video is
+                        <strong>{{ overSizeMB.toFixed(1) }} MB</strong> —
+                        exceeds the {{ MAX_FILE_MB }} MB limit.
+                    </p>
+                    <div class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-left">
+                        <p class="text-[11px] text-gray-600 leading-relaxed">
+                            Choose <strong>Optimize</strong> to reduce quality (~500 Kbps), or
+                            <strong>Upload new</strong> to start over with a smaller clip.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2 border-t border-gray-100 pt-3">
+                    <button type="button" (click)="optimizeVideo()" [disabled]="optimizing" class="w-full px-4 py-2.5 rounded-xl text-xs font-semibold bg-red-600 text-white
+                               hover:bg-red-700 active:scale-[0.98] transition flex items-center
+                               justify-center gap-2" [ngClass]="{ 'opacity-40 cursor-not-allowed': optimizing }">
+                        <i-feather *ngIf="!optimizing" name="zap" style="width:13px;height:13px;"></i-feather>
+                        <i-feather *ngIf="optimizing" name="loader" style="width:13px;height:13px;"
+                            class="animate-spin"></i-feather>
+                        {{ optimizing ? 'Optimizing...' : 'Optimize video' }}
+                    </button>
+                    <button type="button" (click)="rejectAndUploadNew()" [disabled]="optimizing" class="w-full px-4 py-2.5 rounded-xl text-xs font-semibold border border-gray-200
+                               text-gray-600 hover:bg-gray-50 transition flex items-center
+                               justify-center gap-2" [ngClass]="{ 'opacity-40 cursor-not-allowed': optimizing }">
+                        <i-feather name="upload" style="width:13px;height:13px;"></i-feather>
+                        Upload a new video
+                    </button>
+                </div>
+            </ng-container>
+
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════ MAIN CARD ═══════════════════ -->
+<div class="bg-white font-sans rounded-xl border border-gray-200 p-4 flex flex-col gap-4 mt-4">
+
+    <form [formGroup]="updateTrainerVideoAlbumForm" class="flex flex-col gap-4">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                    Video Album
+                    <span class="text-[10px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                        {{ videoCount }} / {{ MAX_VIDEOS }} selected
+                    </span>
+                    <span *ngIf="!trainerVideoAlbum.id" class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100
+                               px-2 py-0.5 rounded-full">
+                        Action required
+                    </span>
+                </h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">
+                    {{ trainerVideoAlbum.date
+                    ? 'Registered on ' + formatDate(trainerVideoAlbum.date)
+                    : 'No videos registered yet' }}
+                </p>
+            </div>
+
+            <button *ngIf="videoCount > 0" type="button" (click)="removeAll()"
+                class="text-[11px] text-red-500 hover:underline flex items-center gap-1 transition">
+                <i-feather name="trash-2" style="width:11px;height:11px;"></i-feather>
+                Clear all
+            </button>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Info line -->
+        <p class="text-[11px] text-gray-400">
+            Select {{ MIN_VIDEOS }}–{{ MAX_VIDEOS }} videos. Each clip must be
+            {{ MIN_DURATION }}–{{ MAX_DURATION }}s, muted, and under {{ MAX_FILE_MB }} MB.
+        </p>
+
+        <!-- Validation banners -->
+        <div *ngIf="invalidForm" class="flex flex-col gap-1">
+            <p *ngIf="videoCount < MIN_VIDEOS" class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl
+                       px-3 py-2 flex items-center gap-1.5">
+                <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+                At least {{ MIN_VIDEOS }} videos required. You have {{ videoCount }}.
+            </p>
+            <p *ngIf="videoCount >= MIN_VIDEOS && !allUploaded" class="text-[11px] text-orange-600 bg-orange-50 border border-orange-100 rounded-xl
+                       px-3 py-2 flex items-center gap-1.5">
+                <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+                Please upload all videos to the media server before saving.
+            </p>
+            <p *ngIf="updateTrainerVideoAlbumForm.get('comment')?.invalid" class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl
+                       px-3 py-2 flex items-center gap-1.5">
+                <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+                Please add a comment (min. 500 characters).
+            </p>
+        </div>
+
+        <!-- Counter bar -->
+        <div class="flex items-center justify-between text-[11px]">
+            <span class="text-gray-500">
+                Min <strong class="text-gray-700">{{ MIN_VIDEOS }}</strong> ·
+                Max <strong class="text-gray-700">{{ MAX_VIDEOS }}</strong>
+            </span>
+            <span class="font-semibold" [ngClass]="videoCount < MIN_VIDEOS ? 'text-red-500' : 'text-green-600'">
+                {{ videoCount }} / {{ MAX_VIDEOS }}
+            </span>
+        </div>
+
+        <!-- Upload progress bar -->
+        <div *ngIf="uploadingAll" class="flex flex-col gap-1">
+            <div class="flex justify-between text-[11px] text-gray-500">
+                <span>Uploading videos...</span>
+                <span class="font-semibold text-gray-700">{{ uploadProgress }}%</span>
+            </div>
+            <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-red-500 rounded-full transition-all duration-300"
+                    [style.width.%]="uploadProgress">
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Video grid ──────────────────────────────────────────────── -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+
+            <ng-container *ngFor="let slot of slots; let i = index">
+
+                <!-- Filled slot -->
+                <div *ngIf="slot.previewUrl"
+                    class="relative group aspect-video rounded-xl overflow-hidden border-2 transition" [ngClass]="{
+                        'border-gray-300': slot.uploaded && !slot.uploading,
+                        'border-orange-300': slot.touched && !slot.uploaded && !slot.uploading,
+                        'border-blue-300':  slot.uploading,
+                        'border-red-200':   slot.touched && !slot.uploaded,
+                        'border-red-300': slot.touched && !slot.uploading
+                    }">
+
+                    <video [src]="slot.previewUrl" class="w-full h-full object-cover bg-black" autoplay muted loop
+                        playsinline (error)="onVideoError($event)">
+                    </video>
+
+                    <!-- Uploading spinner -->
+                    <div *ngIf="slot.uploading"
+                        class="absolute inset-0 bg-black/50 flex items-center justify-center rounded-xl">
+                        <i-feather name="loader" style="width:20px;height:20px;"
+                            class="text-white animate-spin"></i-feather>
+                    </div>
+
+                    <!-- Hover overlay -->
+                    <div *ngIf="!slot.uploading" class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100
+                               transition-all duration-200 rounded-xl flex items-center justify-center gap-1.5">
+
+                        <!-- Preview -->
+                        <button type="button" (click)="openPreview(slot.previewUrl)" class="w-7 h-7 rounded-full bg-white/90 flex items-center justify-center
+                                   text-gray-700 hover:bg-white transition shadow">
+                            <i-feather name="play" style="width:12px;height:12px;"></i-feather>
+                        </button>
+
+                        <!-- Re-trim (only if raw file is available) -->
+                        <button *ngIf="slot.rawFile" type="button" (click)="openTrimmerForSlot(i)" class="w-7 h-7 rounded-full bg-white/90 flex items-center justify-center
+                                   text-gray-700 hover:bg-white transition shadow">
+                            <i-feather name="scissors" style="width:12px;height:12px;"></i-feather>
+                        </button>
+
+                        <!-- Remove -->
+                        <button type="button" (click)="removeSlot(i)" class="w-7 h-7 rounded-full bg-white/90 flex items-center justify-center
+                                   text-red-600 hover:bg-red-50 transition shadow">
+                            <i-feather name="x" style="width:12px;height:12px;"></i-feather>
+                        </button>
+
+                    </div>
+
+                    <!-- Uploaded tick -->
+                    <div *ngIf="slot.uploaded && !slot.uploading" class="absolute bottom-1 right-1 w-4 h-4 rounded-full
+                               flex items-center justify-center shadow">
+                        <i-feather name="check" style="width:8px;height:8px;" class="text-white font-bold"></i-feather>
+                    </div>
+
+                    <!-- Pending badge -->
+                    <div *ngIf="slot.touched && !slot.uploaded && !slot.uploading" class="absolute bottom-1 left-1 text-[9px] font-semibold bg-orange-500 text-white
+                               px-1.5 py-0.5 rounded-full">
+                        Pending
+                    </div>
+
+                    <!-- Muted badge -->
+                    <div class="absolute top-1 left-1 w-5 h-5 rounded-full bg-black/50
+                                flex items-center justify-center">
+                        <i-feather name="volume-x" style="width:9px;height:9px;" class="text-white"></i-feather>
+                    </div>
+
+                </div>
+
+                <!-- Empty slot — clicking opens file picker which then opens trimmer -->
+                <label *ngIf="!slot.previewUrl" class="relative aspect-video rounded-xl border-2 border-dashed cursor-pointer
+                           flex flex-col items-center justify-center gap-1.5 transition-all bg-gray-50/50
+                           hover:border-red-400 hover:bg-red-50/20 border-gray-200"
+                    [ngClass]="{ 'border-red-200': invalidForm && i < MIN_VIDEOS }">
+                    <!-- Each slot gets its own hidden file input bound to that slot index -->
+                    <input type="file" accept="video/*" (change)="onVideoSelected($event, i)" class="hidden" />
+                    <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                        <i-feather name="video" style="width:14px;height:14px;" class="text-gray-400"></i-feather>
+                    </div>
+                    <span class="text-[9px] text-gray-400">Add video</span>
+                    <span class="text-[8px] text-gray-300">{{ MIN_DURATION }}–{{ MAX_DURATION }}s</span>
+                </label>
+
+            </ng-container>
+
+        </div>
+
+        <!-- Comment -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">
+                Comment
+            </label>
+            <textarea formControlName="comment" rows="8" maxlength="1200"
+                placeholder="Describe the inspiration behind these videos (min. 900 characters)." class="w-full px-3 py-2.5 bg-gray-50 border rounded-xl text-gray-900 text-sm
+                       focus:outline-none focus:ring-2 focus:border-transparent resize-none
+                       transition placeholder:text-gray-400" [ngClass]="{
+                    'border-red-300   focus:ring-red-400':   commentControl?.invalid && (commentControl?.dirty || invalidForm),
+                    'border-green-400 focus:ring-green-400': commentControl?.valid && commentControl?.dirty,
+                    'border-gray-200  focus:ring-gray-500':   !(commentControl?.invalid && (commentControl?.dirty || invalidForm))
+                }">
+            </textarea>
+            <div class="flex justify-between items-center">
+                <p *ngIf="commentControl?.invalid && (commentControl?.dirty || invalidForm)"
+                    class="text-[11px] text-red-500 flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Minimum 900 characters required.
+                </p>
+                <p *ngIf="commentControl?.valid && commentControl?.dirty"
+                    class="text-[11px] text-green-600 flex items-center gap-1">
+                    <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
+                    Looks good.
+                </p>
+                <span class="text-[10px] ml-auto font-semibold" [ngClass]="{
+                        'text-gray-400':  (commentControl?.value?.length || 0) === 0,
+                        'text-red-500':   (commentControl?.value?.length || 0) > 0 &&
+                         (commentControl?.value?.length || 0) < 900,
+                        'text-gray-600': (commentControl?.value?.length || 0) >= 900
+                    }">
+                    {{ commentControl?.value?.length || 0 }} / 1200
+                </span>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Footer -->
+        <div class="flex items-center justify-between">
+
+            <div class="flex flex-col gap-0.5">
+                <span *ngIf="canSaveAll" class="text-xs text-green-600 font-semibold flex items-center gap-1">
+                    <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
+                    Ready to save
+                </span>
+                <span *ngIf="formReady && !hasChanges()" class="text-xs text-gray-400">
+                    No changes detected
+                </span>
+                <span *ngIf="!formReady && commentControl?.invalid && hasChanges()"
+                    class="text-xs text-red-500 flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Comment is required
+                </span>
+                <span *ngIf="!formReady && videoCount < MIN_VIDEOS && hasChanges()" class="text-xs text-gray-400">
+                    {{ MIN_VIDEOS - videoCount }} more
+                    video{{ MIN_VIDEOS - videoCount !== 1 ? 's' : '' }} needed
+                </span>
+            </div>
+
+            <button type="button" (click)="updateTrainerVideoAlbumFn()" [disabled]="!canSaveAll"
+                class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2" [ngClass]="{
+                    'bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]': canSaveAll,
+                    'bg-gray-100 text-gray-400 cursor-not-allowed':               !canSaveAll
+                }">
+                <i-feather name="save" style="width:13px;height:13px;"></i-feather>
+                Save changes
+            </button>
+
+        </div>
+
+    </form>
+</div>

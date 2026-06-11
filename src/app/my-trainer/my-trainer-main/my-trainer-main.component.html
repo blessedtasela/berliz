@@ -1,1 +1,227 @@
-<p>my-trainer-main works!</p>
+<!-- ══════════════════════════════════════════════════════════
+     SUBSCRIPTION INACTIVE BANNER
+     Shown when no active subscription exists
+     ══════════════════════════════════════════════════════════ -->
+<div *ngIf="dataReady && (!trainerSubscription || !hasActiveSubscription)"
+    class="mt-6 rounded-xl border border-red-200 bg-red-50 p-5 flex flex-col gap-3">
+
+    <div class="flex items-start gap-3">
+        <div class="w-9 h-9 rounded-full bg-red-100 border border-red-200 flex items-center justify-center shrink-0">
+            <i-feather name="alert-triangle" style="width:16px;height:16px;" class="text-red-600"></i-feather>
+        </div>
+        <div>
+            <p class="text-sm font-bold text-red-700">
+                {{ subscriptionExpired ? 'Subscription Expired' : 'No Active Subscription' }}
+            </p>
+            <p class="text-[11px] text-red-500 mt-0.5 leading-relaxed">
+                <ng-container *ngIf="subscriptionExpired; else noSub">
+                    Your Berliz subscription has expired. Renew to keep your profile active and visible to clients.
+                </ng-container>
+
+                <ng-template #noSub>
+                    You need an active Berliz subscription to become visible to clients.
+                    <button (click)="openSubscriptionModal()"
+                        class="text-red-600 underline font-semibold hover:text-red-700">
+                        Subscribe now for free
+                    </button>
+                    or contact support or your admin to get set up.
+                </ng-template>
+            </p>
+
+        </div>
+    </div>
+
+    <div class="border-t border-red-100 pt-3">
+        <p class="text-[11px] text-red-400 italic">
+            Your profile will remain hidden from clients until your subscription is active.
+            Use this one time code for activation:
+            <span class="font-bold">{{trainer.activationUniqueId}}</span>
+        </p>
+    </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     PROFILE INACTIVE — show checklist of what's still needed
+     Shown when trainer is not yet active (status !== 'true')
+     ══════════════════════════════════════════════════════════ -->
+<div *ngIf="dataReady && !isActive" class="mt-4 rounded-xl border border-gray-200 bg-gray-50 p-5 flex flex-col gap-4">
+
+    <div class="flex items-center justify-between">
+        <div>
+            <p class="text-sm font-bold text-gray-800">Profile Completion</p>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                Complete all sections to activate your profile.
+            </p>
+        </div>
+        <span class="text-xs font-bold px-3 py-1 rounded-full" [ngClass]="allSectionsComplete
+                ? 'bg-green-100 text-green-700 border border-green-200'
+                : 'bg-gray-200 text-gray-600'">
+            {{ completedSections }} / {{ totalSections }}
+        </span>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+        <div class="h-full rounded-full transition-all duration-500" [style.width.%]="progressPercent"
+            [ngClass]="progressPercent === 100 ? 'bg-green-500' : 'bg-red-500'">
+        </div>
+    </div>
+
+    <!-- Checklist -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+
+        <div class="flex items-center gap-2 p-2.5 rounded-lg border transition" [ngClass]="profileCompletion.introduction
+                ? 'bg-green-50 border-green-200'
+                : 'bg-white border-gray-200'">
+            <div class="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                [ngClass]="profileCompletion.introduction ? 'bg-green-500' : 'bg-gray-200'">
+                <i-feather name="check" style="width:10px;height:10px;" class="text-white"></i-feather>
+            </div>
+            <span class="text-[11px] font-semibold"
+                [ngClass]="profileCompletion.introduction ? 'text-green-700' : 'text-gray-500'">
+                Introduction
+            </span>
+        </div>
+
+        <div class="flex items-center gap-2 p-2.5 rounded-lg border transition" [ngClass]="profileCompletion.pricing
+                ? 'bg-green-50 border-green-200'
+                : 'bg-white border-gray-200'">
+            <div class="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                [ngClass]="profileCompletion.pricing ? 'bg-green-500' : 'bg-gray-200'">
+                <i-feather name="check" style="width:10px;height:10px;" class="text-white"></i-feather>
+            </div>
+            <span class="text-[11px] font-semibold"
+                [ngClass]="profileCompletion.pricing ? 'text-green-700' : 'text-gray-500'">
+                Pricing
+            </span>
+        </div>
+
+        <div class="flex items-center gap-2 p-2.5 rounded-lg border transition" [ngClass]="profileCompletion.benefits
+                ? 'bg-green-50 border-green-200'
+                : 'bg-white border-gray-200'">
+            <div class="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                [ngClass]="profileCompletion.benefits ? 'bg-green-500' : 'bg-gray-200'">
+                <i-feather name="check" style="width:10px;height:10px;" class="text-white"></i-feather>
+            </div>
+            <span class="text-[11px] font-semibold"
+                [ngClass]="profileCompletion.benefits ? 'text-green-700' : 'text-gray-500'">
+                Benefits (min. 5)
+            </span>
+        </div>
+
+        <div class="flex items-center gap-2 p-2.5 rounded-lg border transition" [ngClass]="profileCompletion.featureVideos
+                ? 'bg-green-50 border-green-200'
+                : 'bg-white border-gray-200'">
+            <div class="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                [ngClass]="profileCompletion.featureVideos ? 'bg-green-500' : 'bg-gray-200'">
+                <i-feather name="check" style="width:10px;height:10px;" class="text-white"></i-feather>
+            </div>
+            <span class="text-[11px] font-semibold"
+                [ngClass]="profileCompletion.featureVideos ? 'text-green-700' : 'text-gray-500'">
+                Feature Videos (min. 2)
+            </span>
+        </div>
+
+        <div class="flex items-center gap-2 p-2.5 rounded-lg border transition" [ngClass]="profileCompletion.photoAlbum
+                ? 'bg-green-50 border-green-200'
+                : 'bg-white border-gray-200'">
+            <div class="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                [ngClass]="profileCompletion.photoAlbum ? 'bg-green-500' : 'bg-gray-200'">
+                <i-feather name="check" style="width:10px;height:10px;" class="text-white"></i-feather>
+            </div>
+            <span class="text-[11px] font-semibold"
+                [ngClass]="profileCompletion.photoAlbum ? 'text-green-700' : 'text-gray-500'">
+                Photo Album
+            </span>
+        </div>
+
+        <div class="flex items-center gap-2 p-2.5 rounded-lg border transition" [ngClass]="profileCompletion.videoAlbum
+                ? 'bg-green-50 border-green-200'
+                : 'bg-white border-gray-200'">
+            <div class="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                [ngClass]="profileCompletion.videoAlbum ? 'bg-green-500' : 'bg-gray-200'">
+                <i-feather name="check" style="width:10px;height:10px;" class="text-white"></i-feather>
+            </div>
+            <span class="text-[11px] font-semibold"
+                [ngClass]="profileCompletion.videoAlbum ? 'text-green-700' : 'text-gray-500'">
+                Video Album
+            </span>
+        </div>
+
+    </div>
+
+    <!-- All done — waiting for activation -->
+    <div *ngIf="allSectionsComplete" class="flex items-center gap-2 text-[11px] text-green-700 bg-green-50
+               border border-green-100 rounded-xl px-3 py-2.5">
+        <i-feather name="check-circle" style="width:12px;height:12px;"></i-feather>
+        All sections complete! You will receive a confirmation email once your profile is activated.
+    </div>
+
+    <!-- Not all done -->
+    <div *ngIf="!allSectionsComplete" class="flex items-center gap-2 text-[11px] text-gray-500 bg-white
+               border border-gray-200 rounded-xl px-3 py-2.5">
+        <i-feather name="info" style="width:12px;height:12px;"></i-feather>
+        Complete the remaining {{ totalSections - completedSections }}
+        section{{ totalSections - completedSections !== 1 ? 's' : '' }} above to activate your profile.
+    </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     ACTIVE BADGE
+     ══════════════════════════════════════════════════════════ -->
+<div *ngIf="dataReady && isActive && hasActiveSubscription" class="mt-4 flex items-center gap-2 text-[11px] text-green-700 bg-green-50
+           border border-green-100 rounded-xl px-4 py-3">
+    <i-feather name="check-circle" style="width:13px;height:13px;"></i-feather>
+    <span class="font-semibold">Profile Active</span>
+    <span class="text-gray-400 mx-1">·</span>
+    <span class="text-gray-500">
+        Subscription valid until
+        <strong class="text-gray-700">
+            {{ trainerSubscription.endDate | date:'mediumDate' }}
+        </strong>
+    </span>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MAIN CONTENT
+     ══════════════════════════════════════════════════════════ -->
+<div *ngIf="dataReady; else loading">
+
+    <app-my-trainer-introduction [trainerIntroduction]="trainerIntroduction">
+    </app-my-trainer-introduction>
+
+    <app-my-trainer-pricing [trainerPricing]="trainerPricing">
+    </app-my-trainer-pricing>
+
+    <app-my-trainer-benefits [trainerBenefit]="trainerBenefit">
+    </app-my-trainer-benefits>
+
+    <app-my-trainer-feature-videos [trainerFeatureVideos]="trainerFeatureVideo">
+    </app-my-trainer-feature-videos>
+
+    <app-my-trainer-photo-album [trainerPhotoAlbum]="trainerPhotoAlbum">
+    </app-my-trainer-photo-album>
+
+    <app-my-trainer-video-album [trainerVideoAlbum]="trainerVideoAlbum">
+    </app-my-trainer-video-album>
+
+    <app-my-trainer-subscriptions [trainerSubscription]="trainerSubscription" [trainer]="trainer">
+    </app-my-trainer-subscriptions>
+
+    <app-my-trainer-clients></app-my-trainer-clients>
+    <app-my-trainer-review></app-my-trainer-review>
+    <app-my-trainer-centers></app-my-trainer-centers>
+    <app-my-trainer-testimonials></app-my-trainer-testimonials>
+    <app-my-trainer-like></app-my-trainer-like>
+
+</div>
+
+<ng-template #loading>
+    <div class="flex flex-col items-center justify-center py-20 gap-3">
+        <i-feather name="loader" class="text-gray-300 animate-spin" style="width:32px;height:32px;">
+        </i-feather>
+        <p class="text-xs text-gray-400 italic">Loading your trainer data...</p>
+    </div>
+</ng-template>

@@ -11,7 +11,7 @@ import { MediaOwnerType } from 'src/app/models/Media.enum';
 import { PhotoResponse } from 'src/app/models/Media.interface';
 import { StrapiUploadResponse } from 'src/app/models/Strapi.interface';
 import { Partners } from 'src/app/models/partners.interface';
-import {  Trainers } from 'src/app/models/trainers.interface';
+import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -109,53 +109,68 @@ export class TrainerComponent {
     this.selectedFile = null;
   }
 
-  updatePhoto(): void {
+  async updatePhoto(): Promise<void> {
 
     if (!this.selectedFile) {
       this.snackBarService.openSnackBar('Please select a photo', 'error');
       return;
     }
 
-    this.ngxService.start();
+    try {
 
-    // STEP 1: Upload to Strapi
-    this.strapiService.uploadToStrapi(this.selectedFile)
-      .pipe(take(1))
-      .subscribe({
+      this.ngxService.start();
 
-        next: (res: StrapiUploadResponse[]) => {
+      const fileToUpload = this.selectedFile as File;
 
-          const file = res?.[0];
+      const res: any[] =
+        (await this.strapiService
+          .uploadToStrapi(fileToUpload)
+          .pipe(take(1))
+          .toPromise()) ?? [];
 
-          if (!file) {
-            this.ngxService.stop();
-            this.snackBarService.openSnackBar('Upload failed', 'error');
-            return;
-          }
+      const uploaded = res?.[0];
 
-          // STEP 2: Build PhotoRequest
-          this.photoRequest = {
-            id: 0,
-            strapiId: file.id,
-            photoUrl: file.url,
-            name: file.name,
-            mimeType: file.mime,
-            byteSize: file.size,
-            ownerId: this.trainerData.id,
-            mediaOwnerType: MediaOwnerType.TRAINER
-          };
+      if (!uploaded) {
+        throw new Error('No file returned from Strapi');
+      }
 
-          this.previewUrl = this.normalizeUrl(file.url);
+      this.photoRequest = {
+        id: 0,
+        strapiId: uploaded.id,
+        photoUrl: uploaded.url,
+        name: uploaded.name,
+        mimeType: uploaded.mime,
+        byteSize: uploaded.size,
+        ownerId: 0,
+        mediaOwnerType: MediaOwnerType.TRAINER_INTRODUCTION,
 
-          // STEP 3: Send to backend
-          this.savePhotoToBackend();
-        },
+        // Optional fields
+        publicId: uploaded.publicId,
+        secureUrl: uploaded.secureUrl,
+        format: uploaded.format,
+        playbackUrl: uploaded.playbackUrl,
+        duration: uploaded.duration,
 
-        error: () => {
-          this.ngxService.stop();
-          this.snackBarService.openSnackBar('Strapi upload failed', 'error');
-        }
-      });
+        date: new Date(),
+        lastUpdate: uploaded.lastUpdate
+          ? new Date(uploaded.lastUpdate)
+          : new Date()
+      };
+
+      this.previewUrl = this.normalizeUrl(uploaded.url);
+
+      // Send to backend
+      this.savePhotoToBackend();
+
+    } catch (err: any) {
+      this.ngxService.stop();
+      this.snackBarService.openSnackBar(
+        err?.error?.message ||
+        err?.message ||
+        'Strapi upload failed',
+        'error'
+      );
+    }
   }
 
   private savePhotoToBackend(): void {

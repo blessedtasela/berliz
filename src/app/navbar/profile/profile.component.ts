@@ -185,7 +185,7 @@ export class ProfileComponent {
     console.log('logging out')
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      message: 'Logout',
+      message: 'Are you sure you want to logout?',
       confirmation: true
     };
     const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);

@@ -227,12 +227,10 @@
                     </span>
                 </h2>
                 <p class="text-[11px] text-gray-400 mt-0.5">
-                    Registered:
-                    <span class="text-gray-600 font-medium">
-                        {{ registeredDate ? (registeredDate | date:'mediumDate') : 'N/A' }}
-                    </span>
+                    {{ trainerFeatureVideos[0].date
+                    ? 'Registered on ' + formatDate(trainerFeatureVideos[0].date)
+                    : 'No feature videos registered yet' }}
                 </p>
-
             </div>
         </div>
 

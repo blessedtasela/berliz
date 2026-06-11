@@ -1,66 +1,159 @@
-<section class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+<!-- ── Backdrop ───────────────────────────────────────────────────────────── -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
 
-    <!-- WAIT for user -->
-    <ng-container *ngIf="user$ | async as user">
-  
-      <div class="bg-black border border-red-600/40 w-full max-w-md p-6 rounded-lg shadow-2xl text-white relative">
-  
-        <!-- Close button -->
-        <button (click)="closeDialog()"
-          class="absolute top-3 right-3 p-1text-gray-400 hover:text-red-500 transition">
-          <i-feather name="x"></i-feather>
+  <!-- WAIT for user -->
+  <ng-container *ngIf="user$ | async as user">
+
+    <!-- Card -->
+    <div class="bg-white rounded-xl border border-gray-200 w-full max-w-md shadow-2xl flex flex-col overflow-hidden"
+      (click)="$event.stopPropagation()">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <div>
+          <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+            New Task
+            <span class="text-[10px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+              Today
+            </span>
+          </h2>
+          <p class="text-[11px] text-gray-400 mt-0.5">
+            Welcome back,
+            <span class="text-red-600 font-semibold">{{ user.firstname }}</span>
+            — discipline builds power.
+          </p>
+        </div>
+        <button type="button" (click)="closeDialog()" class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center
+                 transition text-gray-400 shrink-0">
+          <i-feather name="x" style="width:14px;height:14px;"></i-feather>
         </button>
-  
-        <!-- Header -->
-        <h2 class="text-2xl font-extrabold text-center mb-1 tracking-wide">
-          <span class="text-white">WELCOME</span>
-          <span class="text-red-600"> {{ user.firstname | uppercase }}</span>
-        </h2>
-  
-        <p class="text-center text-gray-200 mb-6 text-sm tracking-wide italic">
-          Discipline builds power, add a new task today!
-        </p>
-  
-        <!-- FORM -->
-        <form [formGroup]="addTodoForm" class="space-y-5">
-  
-          <!-- Task textarea -->
-          <div>
-            <label class="block text-xs font-bold tracking-widest text-gray-200 mb-2">
-              TASK DESCRIPTION
-            </label>
-  
-            <textarea
-              formControlName="task"
-              rows="5"
-              placeholder="Enter task details here......."
-              class="w-full p-3 bg-white border border-gray-700 rounded-md text-black 
-                     focus:outline-none
-                     transition"
-              [ngClass]="{
-                'border-red-500': addTodoForm.get('task')?.invalid && addTodoForm.get('task')?.dirty
-              }"
-            ></textarea>
-  
-            <p *ngIf="addTodoForm.get('task')?.invalid && addTodoForm.get('task')?.dirty"
-              class="text-red-400 text-xs mt-2 tracking-wide">
-             At Least 20 characters required.....
-            </p>
-          </div>
-  
-          <!-- Submit button -->
-          <button
-            type="button"
-            (click)="addTodo()"
-            class="w-full bg-red-600 hover:bg-red-700 active:scale-95 
-                   transition-all duration-200 text-white font-bold py-2 rounded-md
-                   tracking-widest shadow-lg shadow-red-900/40">
-            ADD TASK
-          </button>
-  
-        </form>
       </div>
-  
-    </ng-container>
-  
-  </section>
+
+      <!-- Body -->
+   <form [formGroup]="addTodoForm" class="flex flex-col gap-4 p-5">
+
+  <!-- Task textarea (UNCHANGED) -->
+  <div class="flex flex-col gap-1.5">
+    <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+      Task Description
+    </label>
+
+    <textarea formControlName="task" rows="6" maxlength="500"
+      placeholder="Describe your task in detail (min. 20 characters)."
+      class="w-full px-3 py-2.5 bg-gray-50 border rounded-xl text-gray-900 text-sm
+             focus:outline-none focus:ring-2 focus:border-transparent resize-none
+             transition placeholder:text-gray-400"
+      [ngClass]="{
+        'border-red-300 focus:ring-red-400':
+          addTodoForm.get('task')?.invalid && addTodoForm.get('task')?.dirty,
+        'border-green-400 focus:ring-green-400':
+          addTodoForm.get('task')?.valid && addTodoForm.get('task')?.dirty,
+        'border-gray-200 focus:ring-red-500':
+          !addTodoForm.get('task')?.dirty
+      }">
+    </textarea>
+  </div>
+
+  <!-- ───────────────────────────────────────────── -->
+  <!-- DUE DATE (ADDED) -->
+  <!-- ───────────────────────────────────────────── -->
+  <div class="flex flex-col gap-1.5">
+    <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+      Due Date
+    </label>
+
+    <input type="date"
+      formControlName="dueDate"
+      class="w-full px-3 py-2.5 bg-gray-50 border rounded-xl text-sm text-gray-900
+             focus:outline-none focus:ring-2 focus:border-transparent transition"
+      [ngClass]="{
+        'border-red-300 focus:ring-red-400':
+          addTodoForm.get('dueDate')?.invalid && addTodoForm.get('dueDate')?.dirty,
+        'border-gray-200 focus:ring-red-500':
+          !addTodoForm.get('dueDate')?.dirty
+      }"
+    />
+  </div>
+
+  <!-- ───────────────────────────────────────────── -->
+  <!-- PRIORITY (ADDED - same style as your first UI) -->
+  <!-- ───────────────────────────────────────────── -->
+  <div class="flex flex-col gap-2">
+    <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+      Priority
+    </label>
+
+    <div class="flex gap-2">
+
+      <button type="button"
+        (click)="setPriority('LOW')"
+        class="px-3 py-1 rounded-full text-xs font-semibold border transition"
+        [ngClass]="addTodoForm.value.priority === 'LOW'
+          ? 'bg-green-100 text-green-700 border-green-300 ring-2 ring-green-200'
+          : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'">
+        🟢 Low
+      </button>
+
+      <button type="button"
+        (click)="setPriority('NORMAL')"
+        class="px-3 py-1 rounded-full text-xs font-semibold border transition"
+        [ngClass]="addTodoForm.value.priority === 'NORMAL'
+          ? 'bg-blue-100 text-blue-700 border-blue-300 ring-2 ring-blue-200'
+          : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'">
+        🔵 Normal
+      </button>
+
+      <button type="button"
+        (click)="setPriority('HIGH')"
+        class="px-3 py-1 rounded-full text-xs font-semibold border transition"
+        [ngClass]="addTodoForm.value.priority === 'HIGH'
+          ? 'bg-red-100 text-red-700 border-red-300 ring-2 ring-red-200'
+          : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'">
+        🔥 High
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ───────────────────────────────────────────── -->
+  <!-- STATUS FOOTER (UNCHANGED) -->
+  <!-- ───────────────────────────────────────────── -->
+  <div class="border-t border-gray-100"></div>
+
+  <div class="flex items-center justify-between">
+
+    <div class="flex flex-col gap-0.5">
+      <span *ngIf="addTodoForm.valid"
+        class="text-xs text-green-600 font-semibold flex items-center gap-1">
+        <i-feather name="check-circle" style="width:13px;height:13px;"></i-feather>
+        Ready to add
+      </span>
+
+      <span *ngIf="addTodoForm.invalid && addTodoForm.dirty"
+        class="text-xs text-red-500 flex items-center gap-1">
+        <i-feather name="alert-circle" style="width:13px;height:13px;"></i-feather>
+        Missing required fields
+      </span>
+    </div>
+
+    <button type="button"
+      (click)="addTodo()"
+      [disabled]="addTodoForm.invalid"
+      class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2"
+      [ngClass]="{
+        'bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]': addTodoForm.valid,
+        'bg-gray-100 text-gray-400 cursor-not-allowed': addTodoForm.invalid
+      }">
+
+      <i-feather name="plus" style="width:13px;height:13px;"></i-feather>
+      Add Task
+    </button>
+
+  </div>
+
+</form>
+    </div>
+
+  </ng-container>
+
+</div>

@@ -10,6 +10,7 @@ import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { UserStateService } from 'src/app/services/user-state.service';
 import { WebSocketService } from 'src/app/services/web-socket.service';
+import { environment } from 'src/environments/environment';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -25,6 +26,8 @@ export class TrainersSearchResultComponent implements OnInit {
   responseMessage: any;
   trainerLikes: TrainerLikes[] = [];
   visibleItems: number = 12;
+  strapiUrl = environment.strapiUrl; // or environment.strapiUrl
+
 
   constructor(private datePipe: DatePipe,
     private userStateService: UserStateService,
@@ -110,6 +113,12 @@ export class TrainersSearchResultComponent implements OnInit {
       trainerLikes.userId === this.user?.id && trainerLikes.trainerId === trainer.id
     );
   }
+
+
+  onImageError(event: any) {
+    event.target.src = 'assets/avatar.png';
+  }
+
 
   watchLikeTrainer() {
     this.rxStompService.watch('/topic/likeTrainer').subscribe((message) => {

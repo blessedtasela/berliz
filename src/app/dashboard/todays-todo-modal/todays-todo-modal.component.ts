@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Inject, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Observable } from 'rxjs';
+import { TodoPriority } from 'src/app/models/todoList.interface';
 import { Users } from 'src/app/models/users.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -16,14 +17,16 @@ import { genericError } from 'src/validators/form-validators.module';
   templateUrl: './todays-todo-modal.component.html',
   styleUrls: ['./todays-todo-modal.component.css']
 })
-export class TodaysTodoModalComponent {
-  invalidForm: boolean = false;
+export class TodaysTodoModalComponent implements OnInit {
+
+  invalidForm = false;
   responseMessage: any;
   addTodoForm!: FormGroup;
+
   @Output() emitEvent = new EventEmitter();
 
   email: any;
-  user$!: Observable<Users>; // ✅ Observable instead of plain object
+  user$!: Observable<Users>;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -35,52 +38,82 @@ export class TodaysTodoModalComponent {
     private authService: AuthService,
     private userStateService: UserStateService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.email = this.authService.getCurrentUserEmail();
 
     this.addTodoForm = this.formBuilder.group({
       task: ['', [Validators.required, Validators.minLength(20)]],
+      dueDate: ['', Validators.required],
+      priority: ['NORMAL', Validators.required],
     });
-
-    // ✅ No subscribe
     this.user$ = this.userStateService.getUser();
   }
 
   addTodo(): void {
     if (this.addTodoForm.invalid) {
       this.invalidForm = true;
-      this.responseMessage = "Invalid form. Please complete all sections";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      this.addTodoForm.markAllAsTouched();
+      this.snackBarService.openSnackBar('Please enter a task with at least 20 characters.', 'error');
       return;
     }
 
+    const formValue = this.addTodoForm.getRawValue();
+
+    const rawDueDate =
+      formValue.dueDate ||
+      this.formatDate(formValue.dueDate);
+
+    const payload = {
+      task: formValue.task,
+      status: 'pending',
+      priority: formValue.priority as TodoPriority,
+      dueDate: new Date(rawDueDate + 'T00:00:00').toISOString()
+    };
+
+
     this.ngxService.start();
 
-    this.todoService.addTodo(this.addTodoForm.value).subscribe(
-      (response: any) => {
+    this.todoService.addTodo(payload).subscribe({
+      next: (response: any) => {
         this.addTodoForm.reset();
         this.invalidForm = false;
         this.responseMessage = response?.message;
         this.emitEvent.emit();
-        this.snackBarService.openSnackBar(this.responseMessage, "");
+        this.snackBarService.openSnackBar(this.responseMessage, '');
         this.dialogRef.close();
         this.ngxService.stop();
       },
-      (error: any) => {
-        if (error.error?.message) {
-          this.responseMessage = error.error?.message;
-        } else {
-          this.responseMessage = genericError;
-        }
-        this.snackBarService.openSnackBar(this.responseMessage, "error");
+      error: (error: any) => {
+        this.responseMessage = error.error?.message || genericError;
+        this.snackBarService.openSnackBar(this.responseMessage, 'error');
         this.ngxService.stop();
       }
-    );
+    });
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close();
+  }
+
+  setPriority(priority: 'LOW' | 'NORMAL' | 'HIGH') {
+    this.addTodoForm.patchValue({ priority });
+  }
+
+  formatDate(date: any): string {
+
+    if (!date) return '';
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(
+      d.getMonth() + 1
+    ).padStart(2, '0');
+
+    const day = String(
+      d.getDate()
+    ).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 }
