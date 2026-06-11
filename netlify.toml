@@ -7,3 +7,9 @@
   for = "/sitemap.xml"
   [headers.values]
     Content-Type = "application/xml"
+[build]
+  command = "npm run build"
+  publish = "dist/berliz"
+
+[build.environment]
+  NODE_VERSION = "20"

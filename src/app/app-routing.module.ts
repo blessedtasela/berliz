@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CenterPageComponent } from './centers/center-page/center-page.component';
 import { LandingPageComponent } from './landing/landing-page/landing-page.component';
-import { TrainersPageComponent } from './trainers/trainers-page/trainers-page.component';
 import { ContactUsPageComponent } from './contact-us/contact-us-page/contact-us-page.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { TestimonialPageComponent } from './testimonial/testimonial-page/testimonial-page.component';
@@ -61,6 +60,7 @@ import { MySubscriptionsMainComponent } from './my-subscriptions/my-subscription
 import { MyTodoListMainComponent } from './my-todo-list/my-todo-list-main/my-todo-list-main.component';
 import { TodoListsComponent } from './admin/todo-lists/todo-lists/todo-lists.component';
 import { MyTrainerMainComponent } from './my-trainer/my-trainer-main/my-trainer-main.component';
+import { TrainersMainComponent } from './trainers/trainers-main/trainers-main.component';
 
 
 
@@ -73,7 +73,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent, data: { breadcrumb: 'Login' } },
   { path: 'sign-up', component: SignupComponent, data: { breadcrumb: 'Sign Up' } },
   { path: 'quick-sign-up', component: QuickSignupComponent, data: { breadcrumb: 'Quick Sign Up' } },
-  { path: 'trainers', component: TrainersPageComponent, data: { breadcrumb: 'Trainers' } },
+  { path: 'trainers', component: TrainersMainComponent, data: { breadcrumb: 'Trainers' } },
   { path: 'trainers/:name', component: TrainersDetailsComponent, canActivate: [TrainerGuard], data: { breadcrumb: { alias: 'trainerName' } } },
   { path: 'centers', component: CenterPageComponent, data: { breadcrumb: 'Centers' } },
   { path: 'centers/:id/:name', component: CenterDetailComponent, canActivate: [CenterGuard], data: { breadcrumb: { alias: 'centerName' } } },

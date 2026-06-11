@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TrainersPageComponent } from './trainers-page/trainers-page.component';
 import { TrainersDetailsComponent } from './trainers-details/trainers-details.component';
 import { TrainersHeroComponent } from './trainers-hero/trainers-hero.component';
 import { NavbarModule } from '../navbar/navbar.module';
@@ -34,7 +33,6 @@ import { TrainersMainComponent } from './trainers-main/trainers-main.component';
 
 @NgModule({
   declarations: [
-    TrainersPageComponent,
     TrainersDetailsComponent,
     TrainersHeroComponent,
     TrainersSearchResultComponent,
