@@ -1,20 +1,31 @@
+// scripts/copy-ffmpeg-worker.js
 const fs = require('fs');
 const path = require('path');
 
-const src = path.join(__dirname, '../node_modules/@ffmpeg/ffmpeg/dist/esm');
-const dest = path.join(__dirname, '../src/assets/ffmpeg');
+const root = path.resolve(__dirname, '..');
+const destDir = path.join(root, 'src', 'assets', 'ffmpeg');
 
-if (!fs.existsSync(dest)) {
-  fs.mkdirSync(dest, { recursive: true });
+if (!fs.existsSync(destDir)) {
+  fs.mkdirSync(destDir, { recursive: true });
 }
 
-['worker.js', 'const.js', 'errors.js'].forEach(file => {
-  const from = path.join(src, file);
-  const to = path.join(dest, file);
-  if (fs.existsSync(from)) {
-    fs.copyFileSync(from, to);
-    console.log(`[ffmpeg-setup] Copied ${file} → src/assets/ffmpeg/`);
-  } else {
-    console.warn(`[ffmpeg-setup] WARNING: ${file} not found in node_modules`);
+const candidates = [
+  path.join(root, 'node_modules', '@ffmpeg', 'core', 'dist', 'esm', 'ffmpeg-core.js'),
+  path.join(root, 'node_modules', '@ffmpeg', 'core', 'dist', 'esm', 'ffmpeg-core.wasm'),
+  path.join(root, 'node_modules', '@ffmpeg', 'core', 'dist', 'esm', 'ffmpeg-core.worker.js'),
+];
+
+let copied = false;
+
+for (const src of candidates) {
+  if (fs.existsSync(src)) {
+    const dest = path.join(destDir, path.basename(src));
+    fs.copyFileSync(src, dest);
+    console.log('Copied', src, '->', dest);
+    copied = true;
   }
-});
+}
+
+if (!copied) {
+  console.warn('No ffmpeg worker found to copy; skipping.');
+}
