@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, FormA
 import { MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { CategoryStateService } from 'src/app/services/category-state.service';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -23,7 +23,7 @@ export class AddTrainerModalComponent {
   categories: Categories[] = [];
   responseMessage: any;
   selectedPhoto: any;
-  activePartners: Partners[] = [];
+  activePartners: Partner[] = [];
   displayPhoto: any = "../../../assets/icons/user.png";
 
   constructor(private formBuilder: FormBuilder,

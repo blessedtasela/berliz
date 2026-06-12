@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { Role, Users } from 'src/app/models/users.interface';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { PartnerService } from 'src/app/services/partner.service';
@@ -20,7 +20,7 @@ import { fileValidator, genericError } from 'src/validators/form-validators.modu
 export class PartnerNullComponent {
   @Input() user!: Users;
   profilePhoto: any;
-  @Input() partnerData!: Partners;
+  @Input() partnerData!: Partner;
   @Output() onEmit = new EventEmitter()
   responseMessage: any;
   invalidForm: boolean = false;

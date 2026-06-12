@@ -7,7 +7,7 @@ import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
 import { AddPartnerModalComponent } from '../add-partner-modal/add-partner-modal.component';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { UserStateService } from 'src/app/services/user-state.service';
 
 
@@ -21,7 +21,7 @@ export class UpdatePartnerModalComponent {
   updatePartnerForm!: FormGroup;
   invalidForm: boolean = false;
   formIndex: number = 0;
-  partnerData: Partners;
+  partnerData: Partner;
   users: Users[] = [];
   responseMessage: any;
   roles: Role[] = [{
@@ -61,7 +61,7 @@ export class UpdatePartnerModalComponent {
     })
     this.updatePartnerForm = this.formBuilder.group({
       'id': new FormControl(this.partnerData?.id, [Validators.required]),
-      'email': new FormControl(this.partnerData?.user.email, Validators.compose([Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])])),
+      'email': new FormControl(this.partnerData?.email, Validators.compose([Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])])),
       'motivation': new FormControl(this.partnerData?.motivation, Validators.compose([Validators.required, Validators.minLength(9)])),
       'facebookUrl': new FormControl(this.partnerData?.facebookUrl, Validators.compose([Validators.required, Validators.pattern('^(https?:\\/\\/)?(www\\.)?facebook\\.com\\/.+$')])),
       'instagramUrl': new FormControl(this.partnerData?.instagramUrl, Validators.compose([Validators.required, Validators.pattern('^(https?:\\/\\/)?(www\\.)?instagram\\.com\\/.+$')])),

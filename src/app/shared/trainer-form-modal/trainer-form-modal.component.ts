@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, FormA
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { CategoryStateService } from 'src/app/services/category-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
@@ -18,7 +18,7 @@ export class TrainerFormModalComponent {
   onAddTrainerEmit = new EventEmitter();
   addTrainerForm!: FormGroup;
   invalidForm: boolean = false;
-  partner!: Partners;
+  partner!: Partner;
   categories: Categories[] = [];
   responseMessage: any;
   selectedPhoto: any;

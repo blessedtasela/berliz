@@ -2,7 +2,7 @@ import { Component, ElementRef, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { genericError } from 'src/validators/form-validators.module';
 import { UpdatePartnerModalComponent } from '../update-partner-modal/update-partner-modal.component';
@@ -21,7 +21,7 @@ import { PartnerDetailsModalComponent } from '../partner-details-modal/partner-d
 })
 export class PartnerListComponent {
   responseMessage: any;
-  @Input() partnersData: Partners[] = [];
+  @Input() partnersData: Partner[] = [];
   @Input() totalPartners: number = 0
   showFullData: boolean = false;
 
@@ -177,12 +177,11 @@ export class PartnerListComponent {
 
   openViewCertificate(id: number) {
     const partner = this.partnersData.find(partner => partner.id === id);
-    const certificate = partner?.certificate;
     if (partner) {
       const dialogRef = this.dialog.open(ViewCertificateModalComponent, {
         width: '800px',
         data: {
-          partnerData: certificate,
+          partnerData: partner,
         },
         panelClass: 'mat-dialog-height',
       });
@@ -198,12 +197,11 @@ export class PartnerListComponent {
 
   openViewCV(id: number) {
     const partner = this.partnersData.find(partner => partner.id === id);
-    const cv = partner?.cv;
     if (partner) {
       const dialogRef = this.dialog.open(ViewCvModalComponent, {
         width: '800px',
         data: {
-          partnerData: cv,
+          partnerData: partner,
         },
         panelClass: 'mat-dialog-height',
       });
@@ -224,7 +222,7 @@ export class PartnerListComponent {
 
   watchUpdatePartner() {
     this.rxStompService.watch('/topic/updatePartner').subscribe((message) => {
-      const receivedPartner: Partners = JSON.parse(message.body);
+      const receivedPartner: Partner = JSON.parse(message.body);
       const partnerId = this.partnersData.findIndex(partners => partners.id === receivedPartner.id)
       this.partnersData[partnerId] = receivedPartner
     });
@@ -232,7 +230,7 @@ export class PartnerListComponent {
 
   watchUpdatePartnerStatus() {
     this.rxStompService.watch('/topic/updatePartnerStatus').subscribe((message) => {
-      const receivedPartner: Partners = JSON.parse(message.body);
+      const receivedPartner: Partner = JSON.parse(message.body);
       const partnerId = this.partnersData.findIndex(partners => partners.id === receivedPartner.id)
       this.partnersData[partnerId] = receivedPartner
     });
@@ -247,7 +245,7 @@ export class PartnerListComponent {
 
   watchUpdatePartnerFile() {
     this.rxStompService.watch('/topic/updatePartnerFile').subscribe((message) => {
-      const receivedPartner: Partners = JSON.parse(message.body);
+      const receivedPartner: Partner = JSON.parse(message.body);
       const partnerId = this.partnersData.findIndex(partners => partners.id === receivedPartner.id)
       this.partnersData[partnerId] = receivedPartner
     });

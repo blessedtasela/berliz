@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Partners } from '../models/partners.interface';
+import { Partner } from '../models/partners.interface';
 import { PartnerService } from './partner.service';
 import { SnackBarService } from './snack-bar.service';
 import { Observable, tap, catchError, of, BehaviorSubject } from 'rxjs';
@@ -11,11 +11,11 @@ import { Trainers } from '../models/trainers.interface';
 })
 export class PartnerStateService {
   private activePartnersSubject = new BehaviorSubject<any>(null);
-  public activePartnersData$: Observable<Partners[]> = this.activePartnersSubject.asObservable();
+  public activePartnersData$: Observable<Partner[]> = this.activePartnersSubject.asObservable();
   private allPartnersSubject = new BehaviorSubject<any>(null);
-  public allPartnersData$: Observable<Partners[]> = this.allPartnersSubject.asObservable();
+  public allPartnersData$: Observable<Partner[]> = this.allPartnersSubject.asObservable();
   private partnerSubject = new BehaviorSubject<any>(null);
-  public partnerData$: Observable<Partners> = this.partnerSubject.asObservable();
+  public partnerData$: Observable<Partner> = this.partnerSubject.asObservable();
   responseMessage: any;
 
   constructor(private partnerService: PartnerService,
@@ -25,19 +25,19 @@ export class PartnerStateService {
 
   }
 
-  setPartnerSubject(data: Partners) {
+  setPartnerSubject(data: Partner) {
     this.partnerSubject.next(data);
   }
 
-  setActivePartnerssSubject(data: Partners[]) {
+  setActivePartnerssSubject(data: Partner[]) {
     this.activePartnersSubject.next(data);
   }
 
-  setAllPartnersSubject(data: Partners[]) {
+  setAllPartnersSubject(data: Partner[]) {
     this.allPartnersSubject.next(data);
   }
 
-  getPartner(): Observable<Partners> {
+  getPartner(): Observable<Partner> {
     return this.partnerService.getPartner().pipe(
       tap((response: any) => response),
       catchError((error: any) => {
@@ -47,14 +47,14 @@ export class PartnerStateService {
     );
   }
 
-  getAllPartners(): Observable<Partners[]> {
+  getAllPartners(): Observable<Partner[]> {
     return this.partnerService.getAllPartners().pipe(
       tap((response: any) => {
         for (const partner of response) {
           partner.cv = "data:application/pdf;base64," + partner.cv;
           partner.certificate = "data:application/pdf;base64," + partner.certificate;
         }
-        return response.sort((a: Partners, b: Partners) => {
+        return response.sort((a: Partner, b: Partner) => {
           const dateA = new Date(a.date).getTime();
           const dateB = new Date(b.date).getTime();
           return dateB - dateA;
@@ -73,7 +73,7 @@ export class PartnerStateService {
     );
   }
 
-  getActivePartners(): Observable<Partners[]> {
+  getActivePartners(): Observable<Partner[]> {
     return this.partnerService.getActivePartners().pipe(
       tap((response: any) => {
         for (const partner of response) {

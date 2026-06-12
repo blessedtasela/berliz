@@ -27,7 +27,7 @@
                         [ngClass]="{'border-red-400': addCenterForm.get('id')?.invalid && addCenterForm.get('id')?.dirty }"
                         type="text">
                         <option selected hidden class="font-sans">Please select partner </option>
-                        <option *ngFor="let partner of activePartners" [value]="partner.id">{{ partner.user.email }}
+                        <option *ngFor="let partner of activePartners" [value]="partner.id">{{ partner.email }}
                         </option>
                     </select>
                     <div *ngIf="addCenterForm.get('id')?.invalid && addCenterForm.get('id')?.dirty"

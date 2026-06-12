@@ -9,7 +9,7 @@ import { UserStateService } from 'src/app/services/user-state.service';
 import { ContactUs } from 'src/app/models/contact-us.model';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { UserService } from 'src/app/services/user.service';
 import { Centers } from 'src/app/models/centers.interface';
 import { Newsletter } from 'src/app/models/newsletter.model';
@@ -41,7 +41,7 @@ export class SidebarNavigationComponent implements OnInit {
   @Output() contactUsResults: EventEmitter<ContactUs[]> = new EventEmitter<ContactUs[]>()
   @Output() trainersResults: EventEmitter<Trainers[]> = new EventEmitter<Trainers[]>()
   @Output() usersResults: EventEmitter<Users[]> = new EventEmitter<Users[]>()
-  @Output() partnersResults: EventEmitter<Partners[]> = new EventEmitter<Partners[]>()
+  @Output() partnersResults: EventEmitter<Partner[]> = new EventEmitter<Partner[]>()
   @Output() centersResult: EventEmitter<Centers[]> = new EventEmitter<Centers[]>()
   @Output() newslettersResult: EventEmitter<Newsletter[]> = new EventEmitter<Newsletter[]>();
   @Output() tagsResults: EventEmitter<Tags[]> = new EventEmitter<Tags[]>();
@@ -137,7 +137,7 @@ export class SidebarNavigationComponent implements OnInit {
     this.usersResults.emit(results)
   }
 
-  handlePartnerSearchResults(results: Partners[]): void {
+  handlePartnerSearchResults(results: Partner[]): void {
     this.partnersResults.emit(results)
   }
 

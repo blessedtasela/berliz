@@ -26,7 +26,7 @@ import { Exercises } from 'src/app/models/exercise.interface';
 import { Members } from 'src/app/models/members.interface';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
 import { Newsletter } from 'src/app/models/newsletter.model';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { Payments } from 'src/app/models/payment.interface';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { Tags } from 'src/app/models/tags.interface';
@@ -63,7 +63,7 @@ export class TopBarComponent implements OnInit {
   @Output() contactUsResults = new EventEmitter<ContactUs[]>();
   @Output() trainersResults = new EventEmitter<Trainers[]>();
   @Output() usersResults = new EventEmitter<Users[]>();
-  @Output() partnersResults = new EventEmitter<Partners[]>();
+  @Output() partnersResults = new EventEmitter<Partner[]>();
   @Output() centersResult = new EventEmitter<Centers[]>();
   @Output() newslettersResult = new EventEmitter<Newsletter[]>();
   @Output() tagsResults = new EventEmitter<Tags[]>();
@@ -206,7 +206,7 @@ export class TopBarComponent implements OnInit {
     this.usersResults.emit(results);
   }
 
-  handlePartnerSearchResults(results: Partners[]): void {
+  handlePartnerSearchResults(results: Partner[]): void {
     this.partnersResults.emit(results);
   }
 

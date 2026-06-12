@@ -47,7 +47,7 @@
                             type="text">
                             <option selected hidden class="font-sans">Please select partner </option>
                             <option *ngFor="let partner of activePartners" [value]="partner.id">{{
-                                partner.user.email }}
+                                partner.email }}
                             </option>
                         </select>
                         <div *ngIf="addTrainerForm.get('id')?.invalid && addTrainerForm.get('id')?.dirty"

@@ -10,7 +10,7 @@ import { UpdateTrainerModalComponent } from 'src/app/admin/trainers/update-train
 import { MediaOwnerType } from 'src/app/models/Media.enum';
 import { PhotoResponse } from 'src/app/models/Media.interface';
 import { StrapiUploadResponse } from 'src/app/models/Strapi.interface';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
@@ -31,7 +31,7 @@ export class TrainerComponent {
 
   @Input() trainerData!: Trainers;
   @Input() user!: Users;
-  @Input() partnerData!: Partners;
+  @Input() partnerData!: Partner;
   @Output() onEmit = new EventEmitter();
 
   subscriptions: Subscription[] = [];

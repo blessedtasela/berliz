@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner} from 'src/app/models/partners.interface';
 import { Users } from 'src/app/models/users.interface';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { UserStateService } from 'src/app/services/user-state.service';
@@ -14,7 +14,7 @@ import { PartnerFormModalComponent } from 'src/app/shared/partner-form-modal/par
   styleUrls: ['./center-header.component.css']
 })
 export class CenterHeaderComponent {
-  partner!: Partners;
+  partner!: Partner;
   user!: Users;
 
   constructor(private dialog: MatDialog,

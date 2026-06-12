@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { PartnerStateService } from 'src/app/services/partner-state.service';
   styleUrls: ['./partners.component.css']
 })
 export class PartnersComponent {
-  partnersData: Partners[] = [];
+  partnersData: Partner[] = [];
   totalPartners: number = 0;
   partnersLength: number = 0;
   searchComponent: string = 'partner'
@@ -43,7 +43,7 @@ export class PartnersComponent {
     });
   }
 
-  handleSearchResults(results: Partners[]): void {
+  handleSearchResults(results: Partner[]): void {
     this.partnersData = results;
     this.totalPartners = results.length;
   }

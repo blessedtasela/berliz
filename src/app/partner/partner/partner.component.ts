@@ -1,12 +1,13 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription, forkJoin, Observable } from 'rxjs';
+
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { CenterStateService } from 'src/app/services/center-state.service';
+import { FallbackService } from 'src/app/services/fall-back.service';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { TrainerStateService } from 'src/app/services/trainer-state.service';
@@ -21,20 +22,24 @@ export class PartnerComponent implements OnInit, OnDestroy {
 
   center!: Centers;
   trainer!: Trainers;
-  partner!: Partners;
+  partner!: Partner;
   user!: Users;
 
   subscriptions: Subscription[] = [];
-  componentLoaded = false;
+
+  dataReady = false;
+  totalRequests = 0;
+  completedRequests = 0;
 
   constructor(
     private userStateService: UserStateService,
     private partnerStateService: PartnerStateService,
     private centerStateService: CenterStateService,
     private trainerStateService: TrainerStateService,
-    private ngxService: NgxUiLoaderService,
     private rxStompService: RxStompService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef,
+    public fallback: FallbackService,
   ) { }
 
   ngOnInit() {
@@ -50,49 +55,74 @@ export class PartnerComponent implements OnInit, OnDestroy {
     this.loadData();
   }
 
+  // ───────────────────────────────────────────────────────────────
+  // MARK REQUEST COMPLETE
+  // ───────────────────────────────────────────────────────────────
+  private markRequestCompleted() {
+    this.completedRequests++;
+
+    if (this.completedRequests >= this.totalRequests) {
+      this.fallback.done();
+    }
+  }
+
+  // ───────────────────────────────────────────────────────────────
+  // LOADERS
+  // ───────────────────────────────────────────────────────────────
+
+  private loadUser(): void {
+    this.userStateService.getUser().subscribe({
+      next: res => { this.user = res; this.markRequestCompleted(); },
+      error: () => this.markRequestCompleted()
+    });
+  }
+
+  private loadPartner(): void {
+    this.partnerStateService.getPartner().subscribe({
+      next: res => { this.partner = res; this.markRequestCompleted(); },
+      error: () => this.markRequestCompleted()
+    });
+  }
+
+  private loadCenter(): void {
+    this.centerStateService.getCenter().subscribe({
+      next: res => { this.center = res; this.markRequestCompleted(); },
+      error: () => this.markRequestCompleted()
+    });
+  }
+
+  private loadTrainer(): void {
+    this.trainerStateService.getTrainer().subscribe({
+      next: res => { this.trainer = res; this.markRequestCompleted(); },
+      error: () => this.markRequestCompleted()
+    });
+  }
+
+  // ───────────────────────────────────────────────────────────────
+  // LOAD DATA (MAIN)
+  // ───────────────────────────────────────────────────────────────
+
   loadData() {
+    this.fallback.start();
+    this.dataReady = false;
+    this.completedRequests = 0;
+
     const isCenter = this.authService.isCenter();
     const isTrainer = this.authService.isTrainer();
 
-    type PartnerData =
-      | { user: Users; partner: Partners; center: Centers }
-      | { user: Users; partner: Partners; trainer: Trainers };
+    this.totalRequests = isCenter ? 3 : isTrainer ? 3 : 2;
 
-    let request$: Observable<PartnerData>;
+    this.loadUser();
+    this.loadPartner();
 
-    if (isCenter) {
-      request$ = forkJoin({
-        user: this.userStateService.getUser(),
-        partner: this.partnerStateService.getPartner(),
-        center: this.centerStateService.getCenter()
-      });
-    } else if (isTrainer) {
-      request$ = forkJoin({
-        user: this.userStateService.getUser(),
-        partner: this.partnerStateService.getPartner(),
-        trainer: this.trainerStateService.getTrainer()
-      });
-    } else {
-      return;
-    }
-
-    const sub = request$.subscribe({
-      next: (data: any) => {
-        this.user = data.user;
-        this.partner = data.partner;
-
-        if ('center' in data) this.center = data.center;
-        if ('trainer' in data) this.trainer = data.trainer;
-
-        this.componentLoaded = true;
-      },
-      error: (err: unknown) => {
-        console.error('Error loading data:', err);
-      }
-    });
-
-    this.subscriptions.push(sub);
+    if (isCenter) this.loadCenter();
+    if (isTrainer) this.loadTrainer();
   }
+
+
+  // ───────────────────────────────────────────────────────────────
+  // WATCH EVENTS
+  // ───────────────────────────────────────────────────────────────
 
   setupWatchEvents() {
     const topics = [

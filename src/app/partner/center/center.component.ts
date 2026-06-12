@@ -7,7 +7,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { UpdateCenterModalComponent } from 'src/app/admin/centers/update-center-modal/update-center-modal.component';
 import { Centers } from 'src/app/models/centers.interface';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { Users } from 'src/app/models/users.interface';
 import { CenterStateService } from 'src/app/services/center-state.service';
 import { CenterService } from 'src/app/services/center.service';
@@ -23,7 +23,7 @@ import { fileValidator, genericError } from 'src/validators/form-validators.modu
 export class CenterComponent {
   @Input() centerData!: Centers;
   @Input() user!: Users;
-  @Input() partnerData!: Partners;
+  @Input() partnerData!: Partner;
   @Output() onEmit = new EventEmitter;
   subscriptions: Subscription[] = [];
   responseMessage: any;

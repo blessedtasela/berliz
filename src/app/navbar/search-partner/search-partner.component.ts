@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 
@@ -11,11 +11,11 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
   styleUrls: ['./search-partner.component.css']
 })
 export class SearchPartnerComponent {
-  partnersData: Partners[] = [];
-  filteredPartnersData: Partners[] = [];
+  partnersData: Partner[] = [];
+  filteredPartnersData: Partner[] = [];
   searchQuery: string = '';
   selectedSearchCriteria: any = 'email';
-  @Output() results: EventEmitter<Partners[]> = new EventEmitter<Partners[]>()
+  @Output() results: EventEmitter<Partner[]> = new EventEmitter<Partner[]>()
 
   constructor(private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
@@ -41,7 +41,7 @@ export class SearchPartnerComponent {
         })
       )
       .subscribe(
-        (results: Partners[]) => {
+        (results: Partner[]) => {
           this.ngxService.stop();
           this.results.emit(results);
         },
@@ -57,7 +57,7 @@ export class SearchPartnerComponent {
     this.search(this.searchQuery);
   }
 
-  search(query: string): Observable<Partners[]> {
+  search(query: string): Observable<Partner[]> {
     this.partnerStateService.allPartnersData$.subscribe((cachedData) => {
       this.partnersData = cachedData;
     });
@@ -65,14 +65,14 @@ export class SearchPartnerComponent {
     if (query.trim() === '') {
       this.filteredPartnersData = this.partnersData;
     }
-    this.filteredPartnersData = this.partnersData.filter((partner: Partners) => {
+    this.filteredPartnersData = this.partnersData.filter((partner: Partner) => {
       switch (this.selectedSearchCriteria) {
         case 'motivation':
           return partner.motivation.toLowerCase().includes(query);
         case 'id':
           return partner.id.toString().includes(query);
         case 'email':
-          return partner.user.email.toLowerCase().includes(query);
+          return partner.email.toLowerCase().includes(query);
         case 'role':
           return partner.role.toLowerCase().includes(query);
         case 'status':

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { AddPartnerModalComponent } from '../add-partner-modal/add-partner-modal.component';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -12,7 +12,7 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
   styleUrls: ['./partner-header.component.css']
 })
 export class PartnerHeaderComponent {
-  @Input() partnersData: Partners[] = [];
+  @Input() partnersData: Partner[] = [];
   selectedSortOption: string = 'date';
   @Input() partnersLength: number = 0;
   @Input() totalPartners: number = 0;
@@ -100,7 +100,7 @@ export class PartnerHeaderComponent {
 
   watchGetPartnerFromMap() {
     this.rxStompService.watch('/topic/getNewsletterFromMap').subscribe((message) => {
-      const receivedCategories: Partners = JSON.parse(message.body);
+      const receivedCategories: Partner = JSON.parse(message.body);
       this.partnersData.push(receivedCategories);
       this.partnersLength = this.partnersData.length;
       this.totalPartners = this.partnersData.length;
@@ -109,7 +109,7 @@ export class PartnerHeaderComponent {
 
   watchDeletePartner() {
     this.rxStompService.watch('/topic/deleteNewsletter').subscribe((message) => {
-      const receivedNewsletter: Partners = JSON.parse(message.body);
+      const receivedNewsletter: Partner = JSON.parse(message.body);
       this.partnersData = this.partnersData.filter(partners => partners.id !== receivedNewsletter.id);
       this.partnersLength = this.partnersData.length;
       this.totalPartners = this.partnersData.length;

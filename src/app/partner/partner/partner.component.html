@@ -1,24 +1,28 @@
-<div *ngIf="componentLoaded; else loading" class="flex flex-col gap-4 font-sans">
+<!-- GLOBAL LOADING STATE -->
+<app-skeleton-loader *ngIf="fallback.loading$ | async"></app-skeleton-loader>
+
+<!-- REAL CONTENT -->
+<div *ngIf="!(fallback.loading$ | async)" class="flex flex-col gap-4 font-sans">
+
+    <!-- No partner record -->
     <app-partner-null *ngIf="!partner" [user]="user" [partnerData]="partner" (onEmit)="emitData()">
     </app-partner-null>
 
+    <!-- Application submitted but not approved -->
     <app-partner-application *ngIf="partner && !trainer && !center" [trainer]="trainer" [center]="center"
         [partnerData]="partner" [user]="user" (onEmit)="emitData()">
     </app-partner-application>
 
+    <!-- Approved center -->
     <app-center *ngIf="center" [centerData]="center" [user]="user" [partnerData]="partner" (onEmit)="emitData()">
     </app-center>
 
+    <!-- Approved trainer -->
     <app-trainer *ngIf="trainer" [trainerData]="trainer" [user]="user" [partnerData]="partner" (onEmit)="emitData()">
     </app-trainer>
 
+    <!-- Partner details ALWAYS visible when partner exists -->
     <app-partner-data *ngIf="partner" [partnerData]="partner" (onEmit)="emitData()">
     </app-partner-data>
-</div>
 
-<ng-template #loading>
-    <div class="flex flex-col items-center justify-center py-20 gap-3">
-        <i-feather name="loader" class="text-gray-300 animate-spin" style="width:32px;height:32px;"></i-feather>
-        <p class="text-xs text-gray-400 italic">Loading your partnership data...</p>
-    </div>
-</ng-template>
+</div>

@@ -15,6 +15,7 @@ import { RouterModule } from '@angular/router';
 import { PartnerRouteComponent } from './partner-route/partner-route.component';
 import { PartnerMainComponent } from './partner-main/partner-main.component';
 import { PartnerFormComponent } from './partner-form/partner-form.component';
+import { SharedModule } from '../shared/shared.module';
 
 
 
@@ -38,7 +39,8 @@ import { PartnerFormComponent } from './partner-form/partner-form.component';
     ReactiveFormsModule,
     IconsModule,
     ImageCropperModule,
-    RouterModule
+    RouterModule,
+    SharedModule,
   ]
 })
 export class PartnerModule { }

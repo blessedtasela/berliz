@@ -4,8 +4,8 @@ import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms'
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
-import { UpdatePartnerFileModalComponent } from 'src/app/admin/partners/update-partner-file-modal/update-partner-file-modal.component';
-import { Partners } from 'src/app/models/partners.interface';
+import { UpdatePartnerFileModalComponent } from 'src/app/shared/update-partner-file-modal/update-partner-file-modal.component';
+import { Partner } from 'src/app/models/partners.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Role } from 'src/app/models/users.interface';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
@@ -20,7 +20,7 @@ import { genericError } from 'src/validators/form-validators.module';
   styleUrls: ['./partner-data.component.css']
 })
 export class PartnerDataComponent {
-  @Input() partnerData!: Partners;
+  @Input() partnerData!: Partner;
   @Output() onEmit = new EventEmitter;
   updatePartnerForm!: FormGroup;
   invalidForm: boolean = false;
@@ -74,7 +74,7 @@ export class PartnerDataComponent {
     this.ngxService.stop();
   }
 
-  updateFormValues(partner: Partners) {
+  updateFormValues(partner: Partner) {
     this.updatePartnerForm.patchValue({
       id: partner.id,
       motivation: partner.motivation,
@@ -88,12 +88,11 @@ export class PartnerDataComponent {
     window.open(url, '_blank');
   }
 
-  openViewCV() {
-    const cv = 'data:application/pdf;base64,' + this.partnerData?.cv;
+  openViewResume() {
     const dialogRef = this.dialog.open(ViewCvModalComponent, {
       width: '800px',
       data: {
-        partnerData: cv,
+        partnerData: this.partnerData,
       },
       panelClass: 'mat-dialog-height',
     });
@@ -106,12 +105,11 @@ export class PartnerDataComponent {
     });
   }
 
-  openViewCertificate() {
-    const certificate = 'data:application/pdf;base64,' + this.partnerData?.certificate;
+  openViewCertification() {
     const dialogRef = this.dialog.open(ViewCvModalComponent, {
       width: '800px',
       data: {
-        partnerData: certificate,
+        partnerData: this.partnerData,
       },
       panelClass: 'mat-dialog-height',
     });
@@ -126,7 +124,7 @@ export class PartnerDataComponent {
 
   openUpdateFile() {
     const dialogRef = this.dialog.open(UpdatePartnerFileModalComponent, {
-      width: '500px',
+      width: '400px',
       data: {
         partnerData: this.partnerData,
       }
@@ -146,31 +144,40 @@ export class PartnerDataComponent {
 
   updatePartner(): void {
     if (this.updatePartnerForm.invalid) {
-      this.invalidForm = true
-      this.responseMessage = "Invalid form";
-      return;
-    } else {
-      this.partnerService.updatePartner(this.updatePartnerForm.value)
-        .subscribe((response: any) => {
-          this.ngxService.start();
-          this.updatePartnerForm.reset();
-          this.invalidForm = false;
-          this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.onEmit.emit();
-          this.updateFormValues(this.updatePartnerForm.value);
+      this.invalidForm = true;
+
+      if (this.updatePartnerForm.invalid) {
+        this.snackBarService.openSnackBar('Please fix the form before submitting.', 'error');
+        return;
+      }
+
+      this.ngxService.start();
+
+      const payload = {
+        id: this.updatePartnerForm.get('id')?.value,
+        certificationUrl: this.partnerData?.certificationUrl,
+        resumeUrl: this.partnerData?.resumeUrl,
+        email: this.partnerData?.email,
+        motivation: this.partnerData?.motivation,
+        facebookUrl: this.partnerData?.facebookUrl,
+        instagramUrl: this.partnerData?.instagramUrl,
+        youtubeUrl: this.partnerData?.youtubeUrl,
+        role: this.partnerData?.role
+      };
+
+      this.partnerService.updateFile(payload).subscribe({
+        next: (res: any) => {
           this.ngxService.stop();
-        }, (error: any) => {
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
-        });
+
+          this.snackBarService.openSnackBar(res?.message ?? 'Partner updated successfully', '');
+          this.updateFormValues(res);
+        },
+        error: (err: any) => {
+          this.ngxService.stop();
+          this.snackBarService.openSnackBar(err?.error?.message ?? genericError, 'error');
+        }
+      });
     }
-    this.ngxService.stop();
   }
 
   clear() {

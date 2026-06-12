@@ -8,7 +8,7 @@ import { Exercises } from 'src/app/models/exercise.interface';
 import { Members } from 'src/app/models/members.interface';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
 import { Newsletter } from 'src/app/models/newsletter.model';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { Payments } from 'src/app/models/payment.interface';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { Tags } from 'src/app/models/tags.interface';
@@ -29,7 +29,7 @@ export class SearchComponent {
   @Output() contactUsResults: EventEmitter<ContactUs[]> = new EventEmitter<ContactUs[]>()
   @Output() trainersResults: EventEmitter<Trainers[]> = new EventEmitter<Trainers[]>()
   @Output() usersResults: EventEmitter<Users[]> = new EventEmitter<Users[]>()
-  @Output() partnersResults: EventEmitter<Partners[]> = new EventEmitter<Partners[]>()
+  @Output() partnersResults: EventEmitter<Partner[]> = new EventEmitter<Partner[]>()
   @Output() centerssResults: EventEmitter<Centers[]> = new EventEmitter<Centers[]>()
   @Output() newslettersResult: EventEmitter<Newsletter[]> = new EventEmitter<Newsletter[]>();
   @Output() tagsResults: EventEmitter<Tags[]> = new EventEmitter<Tags[]>();
@@ -84,7 +84,7 @@ currentRoute: any;
     this.searchComponentChange.emit(this.searchComponent);
   }
 
-  handlePartnerSearchResults(results: Partners[]): void {
+  handlePartnerSearchResults(results: Partner[]): void {
     this.partnersResults.emit(results)
     this.searchComponentChange.emit(this.searchComponent);
   }

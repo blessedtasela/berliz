@@ -1,18 +1,28 @@
-export interface Partners {
+export interface Partner {
     id: number;
-    user: {
-        id: number;
-        email: string;
-        photo: any;
-    };
+
+    // User fields
+    userId: number;
+    firstname: string;
+    lastname: string;
+    email: string;
+    userStatus: string;
+
+    // Partner fields
     role: string;
-    certificate: any;
     motivation: string;
-    cv: any;
+
+    certificationUrl: string;
+    resumeUrl: string;
+
     facebookUrl: string;
     instagramUrl: string;
     youtubeUrl: string;
+
+    status: string;
+
     date: Date;
     lastUpdate: Date;
-    status: string;
+
+    message?: string;
 }

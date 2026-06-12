@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { PartnerStateService } from 'src/app/services/partner-state.service';
@@ -17,7 +17,7 @@ import { TrainerFormModalComponent } from 'src/app/shared/trainer-form-modal/tra
   styleUrls: ['./partner-application.component.css']
 })
 export class PartnerApplicationComponent {
-  @Input() partnerData!: Partners;
+  @Input() partnerData!: Partner;
   @Input() user!: Users;
   @Input() center!: Centers;
   @Input() trainer!: Trainers;

@@ -28,6 +28,8 @@ import { ResetPasswordModalComponent } from './reset-password-modal/reset-passwo
 import { ForgotPasswordModalComponent } from './forgot-password-modal/forgot-password-modal.component';
 import { RenewSubscriptionModalComponent } from './renew-subscription-modal/renew-subscription-modal.component';
 import { SearchPanelComponent } from './search-panel/search-panel.component';
+import { SkeletonLoaderComponent } from './skeleton-loader/skeleton-loader.component';
+import { UpdatePartnerFileModalComponent } from './update-partner-file-modal/update-partner-file-modal.component';
 
 
 
@@ -54,7 +56,9 @@ import { SearchPanelComponent } from './search-panel/search-panel.component';
     ResetPasswordModalComponent,
     ForgotPasswordModalComponent,
     RenewSubscriptionModalComponent,
-    SearchPanelComponent
+    SearchPanelComponent,
+    SkeletonLoaderComponent,
+    UpdatePartnerFileModalComponent,
   ],
   imports: [
     CommonModule,
@@ -80,7 +84,9 @@ import { SearchPanelComponent } from './search-panel/search-panel.component';
     NgxMaskDirective,
     NgxMaskPipe,
     TimeAgoPipe,
-    SearchPanelComponent
+    SearchPanelComponent,
+    SkeletonLoaderComponent,
+    UpdatePartnerFileModalComponent,
   ],
   providers: [
     provideNgxMask(),

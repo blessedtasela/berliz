@@ -2,14 +2,14 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Partners } from 'src/app/models/partners.interface';
+import { Partner } from 'src/app/models/partners.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { ViewCertificateModalComponent } from 'src/app/shared/view-certificate-modal/view-certificate-modal.component';
 import { ViewCvModalComponent } from 'src/app/shared/view-cv-modal/view-cv-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
-import { UpdatePartnerFileModalComponent } from '../update-partner-file-modal/update-partner-file-modal.component';
+import { UpdatePartnerFileModalComponent } from '../../../shared/update-partner-file-modal/update-partner-file-modal.component';
 
 @Component({
   selector: 'app-partner-details-modal',
@@ -17,7 +17,7 @@ import { UpdatePartnerFileModalComponent } from '../update-partner-file-modal/up
   styleUrls: ['./partner-details-modal.component.css']
 })
 export class PartnerDetailsModalComponent {
-  partnerData!: Partners;
+  partnerData!: Partner;
   responseMessage: any;
   onRejectApplicationEmit = new EventEmitter();
 
@@ -102,13 +102,12 @@ export class PartnerDetailsModalComponent {
   }
 
   openViewCertificate() {
-    const partner = this.partnerData;
-    const certificate = partner?.certificate;
+    const partner = this.partnerData
     if (partner) {
       const dialogRef = this.dialog.open(ViewCertificateModalComponent, {
         width: '800px',
         data: {
-          partnerData: certificate,
+          partnerData: partner,
         },
         panelClass: 'mat-dialog-height',
       });
@@ -123,13 +122,12 @@ export class PartnerDetailsModalComponent {
   }
 
   openViewCV() {
-    const partner = this.partnerData;
-    const cv = partner?.cv;
+    const partner = this.partnerData;;
     if (partner) {
       const dialogRef = this.dialog.open(ViewCvModalComponent, {
         width: '800px',
         data: {
-          partnerData: cv,
+          partnerData: partner,
         },
         panelClass: 'mat-dialog-height',
       });
