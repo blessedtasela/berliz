@@ -2,8 +2,9 @@ import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription, fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Clients } from 'src/app/models/clients.interface';
-import { ClientStateService } from 'src/app/services/client-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { Store } from '@ngrx/store';
+import { selectClients } from 'src/app/state/client/client.selectors';
 
 @Component({
   selector: 'app-search-client',
@@ -18,7 +19,7 @@ export class SearchClientComponent {
   @Output() results: EventEmitter<Clients[]> = new EventEmitter<Clients[]>()
   subscriptions: Subscription[] = []
 
-  constructor(private clientStateService: ClientStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) { }
@@ -66,7 +67,7 @@ export class SearchClientComponent {
 
   search(query: string): Observable<Clients[]> {
     this.subscriptions.push(
-      this.clientStateService.allClientsData$.subscribe((cachedData => {
+      this.store.select(selectClients).subscribe((cachedData => {
         this.clientsData = cachedData
       }))
     )
@@ -83,9 +84,8 @@ export class SearchClientComponent {
         case 'mode':
           return client.mode.toLowerCase().includes(query);
         case 'category':
-          return (
-            client.categories.length > 0 &&
-            client.categories.some((category) => category.name.toLowerCase().includes(query))
+          return client.subscriptions.some((subscription) =>
+            subscription.categories.some((category) => category.name.toLowerCase().includes(query))
           );
         case 'id':
           return client.id.toString().includes(query);

@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription, take } from 'rxjs';
@@ -13,10 +14,8 @@ import { StrapiUploadResponse } from 'src/app/models/Strapi.interface';
 import { Partner } from 'src/app/models/partners.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
-import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiService } from 'src/app/services/strapi.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { UpdateTrainerPhotoModalComponent } from 'src/app/shared/update-trainer-photo-modal/update-trainer-photo-modal.component';
 import { environment } from 'src/environments/environment';
@@ -30,7 +29,7 @@ import { imageValidator, genericError } from 'src/validators/form-validators.mod
 export class TrainerComponent {
 
   @Input() trainerData!: Trainers;
-  @Input() user!: Users;
+  @Input() user!: Users | null;
   @Input() partnerData!: Partner;
   @Output() onEmit = new EventEmitter();
 
@@ -48,8 +47,7 @@ export class TrainerComponent {
   constructor(
     private dialog: MatDialog,
     private ngxService: NgxUiLoaderService,
-    private trainerStateService: TrainerStateService,
-    private partnerStateService: PartnerStateService,
+    private store: Store,
     private datePipe: DatePipe,
     private trainerService: TrainerService,
     private snackBarService: SnackBarService,
@@ -143,13 +141,6 @@ export class TrainerComponent {
         byteSize: uploaded.size,
         ownerId: 0,
         mediaOwnerType: MediaOwnerType.TRAINER_INTRODUCTION,
-
-        // Optional fields
-        publicId: uploaded.publicId,
-        secureUrl: uploaded.secureUrl,
-        format: uploaded.format,
-        playbackUrl: uploaded.playbackUrl,
-        duration: uploaded.duration,
 
         date: new Date(),
         lastUpdate: uploaded.lastUpdate

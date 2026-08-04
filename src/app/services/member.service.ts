@@ -1,6 +1,9 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ApiResponse } from '../models/Api.interface';
+import { Members } from '../models/members.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -8,39 +11,34 @@ import { environment } from 'src/environments/environment';
 export class MemberService {
   url = environment.api;
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private http: HttpClient) { }
 
-  addMember(data: any) {
-    return this.httpClient.post(this.url + "/member/add", data);
+  addMember(data: any): Observable<ApiResponse<Members>> {
+    return this.http.post<ApiResponse<Members>>(`${this.url}/member/add`, data);
   }
 
-  updateMember(data: any) {
-    return this.httpClient.put(this.url + "/member/update", data, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    })
+  updateMember(data: any): Observable<ApiResponse<Members>> {
+    return this.http.put<ApiResponse<Members>>(`${this.url}/member/update`, data);
   }
 
-  updateStatus(id: number) {
-    return this.httpClient.put(this.url + `/member/updateStatus/${id}`, null, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  updateStatus(id: number): Observable<ApiResponse<Members>> {
+    return this.http.put<ApiResponse<Members>>(`${this.url}/member/updateStatus/${id}`, {});
   }
 
-  getMember() {
-    return this.httpClient.get(this.url + "/member/getMember")
+  getMember(id: number): Observable<ApiResponse<Members>> {
+    return this.http.get<ApiResponse<Members>>(`${this.url}/member/getMember/${id}`);
   }
 
-  getAllMembers() {
-    return this.httpClient.get(this.url + "/member/get")
+  getAllMembers(): Observable<ApiResponse<Members[]>> {
+    return this.http.get<ApiResponse<Members[]>>(`${this.url}/member/get`);
   }
 
-  getActiveMembers() {
-    return this.httpClient.get(this.url + "/member/getActiveMembers")
+  getActiveMembers(): Observable<ApiResponse<Members[]>> {
+    return this.http.get<ApiResponse<Members[]>>(`${this.url}/member/getActiveMembers`);
   }
 
-  deleteMember(id: number) {
-    return this.httpClient.delete(this.url + `/member/delete/${id}`);
+  deleteMember(id: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.url}/member/delete/${id}`);
   }
 
 }
-

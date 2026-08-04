@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SignupModalComponent } from 'src/app/login/signup-modal/signup-modal.component';
 import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectUsers } from 'src/app/state/user/user.selector';
 
 @Component({
   selector: 'app-user-header',
@@ -19,7 +20,7 @@ export class UserHeaderComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private userStateService: UserStateService,
+    private store: Store,
     private rxStompService: RxStompService) {
   }
 
@@ -29,12 +30,11 @@ export class UserHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.userStateService.getAllUsers().subscribe((allUsers) => {
+    this.store.select(selectUsers).subscribe((allUsers) => {
       this.ngxService.start()
       this.usersData = allUsers;
       this.totalUsers = this.usersData.length
       this.usersLength = this.usersData.length
-      this.userStateService.setAllUsersSubject(this.usersData);
       this.ngxService.stop()
     });
   }

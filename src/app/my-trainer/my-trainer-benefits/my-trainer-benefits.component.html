@@ -7,14 +7,14 @@
             <div>
                 <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
                     Trainer benefits
-                    <span *ngIf="!trainerBenefit.id"
+                    <span *ngIf="!trainerBenefit?.id"
                         class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">
                         Action required
                     </span>
                 </h2>
                 <p class="text-[11px] text-gray-400 mt-0.5">
-                    {{ trainerBenefit.date
-                    ? 'Registered on ' + formatDate(trainerBenefit.date)
+                    {{ trainerBenefit?.date
+                    ? 'Registered on ' + formatDate(trainerBenefit?.date)
                     : 'No benefits information found' }}
                 </p>
             </div>

@@ -1,12 +1,19 @@
-import { Centers } from "./centers.interface";
-import { Users } from "./users.interface";
-
 export interface Testimonials {
   id: number;
-  user: Users;
-  center: Centers;
+  userId: number;
+  userFirstname: string;
+  userLastname: string;
+  userEmail: string;
+  centerId: number;
+  centerName: string;
+  trainerId: number;
+  trainerName: string;
+  clientId: number;
+  clientName: string;
   testimonial: string;
+  likes: number;
   status: string;
   date: Date;
   lastUpdate: Date;
+  message?: string;
 }

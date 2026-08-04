@@ -59,14 +59,14 @@
             <div>
                 <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
                     Trainer introduction
-                    <span *ngIf="!trainerIntroduction.id"
+                    <span *ngIf="!trainerIntroduction?.id"
                         class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">
                         Action required
                     </span>
                 </h2>
                 <p class="text-[11px] text-gray-400 mt-0.5">
-                    {{ trainerIntroduction.date
-                    ? 'Registered on ' + formatDate(trainerIntroduction.date)
+                    {{ trainerIntroduction?.date
+                    ? 'Registered on ' + formatDate(trainerIntroduction?.date)
                     : 'No introduction registered yet' }}
                 </p>
             </div>
@@ -167,7 +167,7 @@
                    file:bg-red-50 file:text-red-600 hover:file:bg-red-100
                    focus:outline-none transition" />
 
-                    <div *ngIf="trainerIntroduction.photo" class="flex items-center gap-2">
+                    <div *ngIf="trainerIntroduction?.photo" class="flex items-center gap-2">
                         <input type="checkbox" id="currentPhoto" [checked]="isChecked"
                             (change)="onCurrentPhotoSelected($event)"
                             class="w-3.5 h-3.5 accent-red-600 cursor-pointer" />

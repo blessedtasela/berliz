@@ -13,7 +13,7 @@
                 *ngFor="let centerAnnouncement of centerAnnouncements; let i = index"
                 [ngClass]="{ 'hidden' : i >= 9 && !showAllAnnouncements }">
                 <div class="flex">
-                    <img class="rounded-md mx-auto" src="{{ centerAnnouncement.icon }}">
+                    <img class="rounded-md mx-auto" src="{{ centerAnnouncement.iconUrl }}">
                 </div>
                 <div class="p-4">
                     <p class="text-gray-950 font-bold font-sans text-sm text-left mb-2">

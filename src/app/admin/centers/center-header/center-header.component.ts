@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { Centers } from 'src/app/models/centers.interface';
-import { CenterStateService } from 'src/app/services/center-state.service';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AddCenterModalComponent } from '../add-center-modal/add-center-modal.component';
+import { Store } from '@ngrx/store';
+import { selectCenters } from 'src/app/state/center/center.selectors';
 
 @Component({
   selector: 'app-center-header',
@@ -21,7 +22,7 @@ export class CenterHeaderComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    public centerStateService: CenterStateService,
+    public store: Store,
     private rxStompService: RxStompService) { }
 
   ngOnInit() {
@@ -30,12 +31,11 @@ export class CenterHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.centerStateService.getAllCenters().subscribe((allCenters) => {
+    this.store.select(selectCenters).subscribe((allCenters) => {
       this.ngxService.start()
       this.centersData = allCenters;
       this.totalCenters = this.centersData.length
       this.centersLength = this.centersData.length
-      this.centerStateService.setAllCentersSubject(this.centersData);
       this.ngxService.stop()
     });
   }
@@ -71,7 +71,7 @@ export class CenterHeaderComponent {
         break;
       case 'partnerId':
         this.centersData.sort((a, b) => {
-          return a.partner.id - b.partner.id;
+          return a.partnerId - b.partnerId;
         });
         break;
       case 'likes':

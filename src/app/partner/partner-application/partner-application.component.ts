@@ -7,9 +7,11 @@ import { Centers } from 'src/app/models/centers.interface';
 import { Partner } from 'src/app/models/partners.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
-import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { CenterFormModalComponent } from 'src/app/shared/center-form-modal/center-form-modal.component';
 import { TrainerFormModalComponent } from 'src/app/shared/trainer-form-modal/trainer-form-modal.component';
+import { Store } from '@ngrx/store';
+import { loadMyPartner } from 'src/app/state/partner/partner.actions';
+import { selectMyPartner } from 'src/app/state/partner/partner.selectors';
 
 @Component({
   selector: 'app-partner-application',
@@ -18,15 +20,15 @@ import { TrainerFormModalComponent } from 'src/app/shared/trainer-form-modal/tra
 })
 export class PartnerApplicationComponent {
   @Input() partnerData!: Partner;
-  @Input() user!: Users;
-  @Input() center!: Centers;
-  @Input() trainer!: Trainers;
+  @Input() user!: Users | null;
+  @Input() center!: Centers | null;
+  @Input() trainer!: Trainers | null;
   @Output() onEmit = new EventEmitter;
   responseMessage: any;
   subscriptions: Subscription[] = [];
 
   constructor(
-    private partnerStateService: PartnerStateService,
+    private store: Store,
     private dialog: MatDialog,
     private ngxService: NgxUiLoaderService,
     private datePipe: DatePipe) { }
@@ -35,10 +37,10 @@ export class PartnerApplicationComponent {
 
   handleEmitEvent() {
     this.ngxService.start();
+    this.store.dispatch(loadMyPartner());
     this.subscriptions.push(
-      this.partnerStateService.getPartner().subscribe((partner) => {
-        this.partnerData = partner;
-        this.partnerStateService.setPartnerSubject(partner);
+      this.store.select(selectMyPartner).subscribe((partner) => {
+        if (partner) this.partnerData = partner;
       })
     );
     this.ngxService.stop();

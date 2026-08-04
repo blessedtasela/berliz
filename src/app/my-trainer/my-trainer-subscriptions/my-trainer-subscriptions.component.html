@@ -10,20 +10,20 @@
         <div>
             <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
                 Subscription
-                <span *ngIf="trainerSubscription && trainerSubscription.status === 'ACTIVE'" class="text-[10px] font-semibold text-green-700 bg-green-50 border border-green-200
+                <span *ngIf="trainerSubscription && effectiveStatus === 'ACTIVE'" class="text-[10px] font-semibold text-green-700 bg-green-50 border border-green-200
                  px-2 py-0.5 rounded-full flex items-center gap-1">
                     <i-feather name="check-circle" style="width:9px;height:9px;"></i-feather>
                     Active
                 </span>
-                <span *ngIf="trainerSubscription && trainerSubscription.status === 'EXPIRED'" class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100
+                <span *ngIf="trainerSubscription && effectiveStatus === 'EXPIRED'" class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100
                  px-2 py-0.5 rounded-full">
                     Expired
                 </span>
-                <span *ngIf="trainerSubscription && trainerSubscription.status === 'PENDING'" class="text-[10px] font-semibold text-yellow-700 bg-yellow-50 border border-yellow-200
+                <span *ngIf="trainerSubscription && effectiveStatus === 'PENDING'" class="text-[10px] font-semibold text-yellow-700 bg-yellow-50 border border-yellow-200
                  px-2 py-0.5 rounded-full">
                     Pending
                 </span>
-                <span *ngIf="trainerSubscription && trainerSubscription.status === 'CANCELLED'" class="text-[10px] font-semibold text-gray-500 bg-gray-100 border border-gray-200
+                <span *ngIf="trainerSubscription && effectiveStatus === 'CANCELLED'" class="text-[10px] font-semibold text-gray-500 bg-gray-100 border border-gray-200
                  px-2 py-0.5 rounded-full">
                     Cancelled
                 </span>
@@ -40,7 +40,7 @@
         </div>
 
         <!-- Add / Renew button -->
-        <button *ngIf="!trainerSubscription || trainerSubscription.status !== 'ACTIVE'" type="button"
+        <button *ngIf="!trainerSubscription || effectiveStatus !== 'ACTIVE'" type="button"
             (click)="showModal = true" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-red-600 text-white
              hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-1.5">
             <i-feather name="zap" style="width:11px;height:11px;"></i-feather>
@@ -61,7 +61,7 @@
             <p class="text-[11px] text-gray-400 mt-0.5 max-w-xs mx-auto leading-relaxed">
                 You need an active Berliz subscription to become visible to clients.
                 Use your activation code to get started. Use this one time code for activation
-                <span class="font-bold">{{trainer.activationUniqueId}}</span>
+                <span class="font-bold">{{trainer?.activationUniqueId}}</span>
             </p>
         </div>
         <button type="button" (click)="showModal = true" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
@@ -75,27 +75,27 @@
     <div *ngIf="trainerSubscription" class="flex flex-col gap-3">
 
         <!-- Status banner -->
-        <div *ngIf="trainerSubscription.status === 'ACTIVE'" class="flex items-center gap-2 text-[11px] text-green-700 bg-green-50
+        <div *ngIf="effectiveStatus === 'ACTIVE'" class="flex items-center gap-2 text-[11px] text-green-700 bg-green-50
              border border-green-100 rounded-xl px-3 py-2.5">
             <i-feather name="check-circle" style="width:12px;height:12px;"></i-feather>
             Subscription active — valid until
             <strong>{{ formatDate(trainerSubscription.endDate) }}</strong>
         </div>
 
-        <div *ngIf="trainerSubscription.status === 'EXPIRED'" class="flex items-center gap-2 text-[11px] text-red-600 bg-red-50
+        <div *ngIf="effectiveStatus === 'EXPIRED'" class="flex items-center gap-2 text-[11px] text-red-600 bg-red-50
              border border-red-100 rounded-xl px-3 py-2.5">
             <i-feather name="alert-triangle" style="width:12px;height:12px;"></i-feather>
             Your subscription expired on
             <strong>{{ formatDate(trainerSubscription.endDate) }}</strong>. Renew to stay visible.
         </div>
 
-        <div *ngIf="trainerSubscription.status === 'CANCELLED'" class="flex items-center gap-2 text-[11px] text-gray-600 bg-gray-50
+        <div *ngIf="effectiveStatus === 'CANCELLED'" class="flex items-center gap-2 text-[11px] text-gray-600 bg-gray-50
              border border-gray-200 rounded-xl px-3 py-2.5">
             <i-feather name="x-circle" style="width:12px;height:12px;"></i-feather>
             Subscription was cancelled.
         </div>
 
-        <div *ngIf="trainerSubscription.status === 'PENDING'" class="flex items-center gap-2 text-[11px] text-yellow-700 bg-yellow-50
+        <div *ngIf="effectiveStatus === 'PENDING'" class="flex items-center gap-2 text-[11px] text-yellow-700 bg-yellow-50
              border border-yellow-200 rounded-xl px-3 py-2.5">
             <i-feather name="clock" style="width:12px;height:12px;"></i-feather>
             Subscription is pending activation by an admin.
@@ -114,12 +114,12 @@
                 <div class="flex flex-col gap-0.5">
                     <span class="text-gray-400 uppercase tracking-wide text-[10px] font-semibold">Status</span>
                     <span class="font-semibold" [ngClass]="{
-              'text-green-700': trainerSubscription.status === 'ACTIVE',
-              'text-red-600':   trainerSubscription.status === 'EXPIRED' || trainerSubscription.status === 'CANCELLED',
-              'text-yellow-700':trainerSubscription.status === 'PENDING',
-              'text-gray-600':  !trainerSubscription.status
+              'text-green-700': effectiveStatus === 'ACTIVE',
+              'text-red-600':   effectiveStatus === 'EXPIRED' || effectiveStatus === 'CANCELLED',
+              'text-yellow-700':effectiveStatus === 'PENDING',
+              'text-gray-600':  !effectiveStatus
             }">
-                        {{ trainerSubscription.status }}
+                        {{ effectiveStatus }}
                     </span>
                 </div>
 

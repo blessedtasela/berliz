@@ -25,7 +25,7 @@
 
                         <!-- Image -->
                         <div>
-                            <img [src]="'data:image/*;base64,' + center.photo" [alt]="center.name"
+                            <img [src]="center.photoUrl" [alt]="center.name"
                                 class="w-full h-48 object-cover rounded-md border border-zinc-700 bg-white shadow-sm" />
                         </div>
 
@@ -36,9 +36,9 @@
                             </h3>
 
                             <p class="text-white text-xs uppercase tracking-widest font-bold">
-                                <ng-container *ngIf="center.categorySet.length > 0; else defaultCenterTag">
-                                    <ng-container *ngFor="let cat of center.categorySet; let i = index">
-                                        {{ cat.name }}<span *ngIf="i < center.categorySet.length - 1"> / </span>
+                                <ng-container *ngIf="center.categoryIds.length > 0; else defaultCenterTag">
+                                    <ng-container *ngFor="let categoryId of center.categoryIds; let i = index">
+                                        {{ categoryId }}<span *ngIf="i < center.categoryIds.length - 1"> / </span>
                                     </ng-container>
                                 </ng-container>
                                 <ng-template #defaultCenterTag>General</ng-template>

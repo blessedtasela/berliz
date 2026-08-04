@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { TestimonialsComponent } from './testimonials/testimonials.component';
 import { TestimonialsListComponent } from './testimonials-list/testimonials-list.component';
 import { TestimonialsHeaderComponent } from './testimonials-header/testimonials-header.component';
@@ -28,7 +29,8 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
     NavbarModule,
     ReactiveFormsModule,
     FormsModule,
-    IconsModule
+    IconsModule,
+    RouterModule.forChild([{ path: '', component: TestimonialsComponent }])
   ]
 })
 export class TestimonialsModule { }

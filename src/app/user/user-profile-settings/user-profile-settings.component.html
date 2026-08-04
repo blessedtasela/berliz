@@ -1,7 +1,8 @@
 <div class="max-w-4xl mx-auto space-y-6">
     <app-user-profile-settings-form *ngIf="user && updateUserForm" [user]="user" [form]="updateUserForm"
-        [countries]="countries" [invalidForm]="invalidForm" (submitForm)="onSubmitForm()"
-        (genderChange)="onGenderChange($event)">
+        [countries]="countries" [invalidForm]="invalidForm" (submitForm)="onSubmitForm()" [originalValue]="originalValue"
+        (genderChange)="onGenderChange($event)" (countryChange)="onCountryChange($event)"
+        (stateChange)="onStateChange($event)" [states]="states" [cities]="cities">
     </app-user-profile-settings-form>
 
     <app-user-profile-settings-dangerzone (deactivate)="deactivateAccount()" (updateEmail)="openUpdateEmail()">

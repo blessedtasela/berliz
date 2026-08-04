@@ -1,17 +1,19 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators, ValidatorFn, AbstractControl, FormArray } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { Centers } from 'src/app/models/centers.interface';
 import { Users } from 'src/app/models/users.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
-import { CenterStateService } from 'src/app/services/center-state.service';
 import { CenterService } from 'src/app/services/center.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectCurrentCenter } from 'src/app/state/center/center.selectors';
+import { selectUser } from 'src/app/state/user/user.selector';
 import { genericError } from 'src/validators/form-validators.module';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-center-data',
@@ -25,31 +27,29 @@ export class CenterDataComponent {
   categories: Categories[] = [];
   responseMessage: any;
   selectedPhoto: any;
-  @Input() center!: Centers;
+  @Input() center!: Centers |  null;
   selectedCategoriesId: any;
-  user!: Users;
+  user!: Users | null;
   subscriptions: Subscription[] = [];
 
   constructor(private formBuilder: FormBuilder,
     private ngxService: NgxUiLoaderService,
-    private userStateService: UserStateService,
+    private store: Store,
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,
-    private categoryStateService: CategoryStateService,
     private centerService: CenterService,
-    private centerStateService: CenterStateService,
     private datePipe: DatePipe) {
   }
 
   ngOnInit(): void {
-    this.selectedCategoriesId = this.center.categorySet.map(category => category.id);
+    this.selectedCategoriesId = this.center?.categoryIds;
     this.updateCenterForm = this.formBuilder.group({
       'id': this.center?.id,
-      'name': new FormControl(this.center.name, Validators.compose([Validators.required, Validators.minLength(3)])),
-      'motto': new FormControl(this.center.motto, Validators.compose([Validators.required, Validators.minLength(10)])),
-      'address': new FormControl(this.center.address, Validators.compose([Validators.required, Validators.minLength(10)])),
-      'location': new FormControl(this.center.address, Validators.compose([Validators.required, Validators.minLength(10)])),
-      'experience': new FormControl(this.center.experience, Validators.compose([Validators.required, Validators.minLength(1)])),
+      'name': new FormControl(this.center?.name, Validators.compose([Validators.required, Validators.minLength(3)])),
+      'motto': new FormControl(this.center?.motto, Validators.compose([Validators.required, Validators.minLength(10)])),
+      'address': new FormControl(this.center?.address, Validators.compose([Validators.required, Validators.minLength(10)])),
+      'location': new FormControl(this.center?.address, Validators.compose([Validators.required, Validators.minLength(10)])),
+      'experience': new FormControl(this.center?.experience, Validators.compose([Validators.required, Validators.minLength(1)])),
       'categoryIds': this.formBuilder.array(this.selectedCategoriesId, this.validateCheckbox()),
     });
   }
@@ -64,18 +64,16 @@ export class CenterDataComponent {
 
   handleEmitEvent() {
     this.ngxService.start()
+    this.store.dispatch(loadActiveCategories());
     this.subscriptions.push(
-      this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
+      this.store.select(selectActiveCategories).subscribe((activeCategories) => {
         this.categories = activeCategories;
-        this.categoryStateService.setActiveCategoriesSubject(activeCategories);
       }),
-      this.userStateService.getUser().subscribe((user) => {
+      this.store.select(selectUser).subscribe((user) => {
         this.user = user;
-        this.userStateService.setUserSubject(user);
       }),
-      this.centerStateService.getCenter().subscribe((center) => {
+      this.store.select(selectCurrentCenter).subscribe((center) => {
         this.center = center
-        this.centerStateService.setCenterSubject(center);
       })
     );
     this.ngxService.stop()

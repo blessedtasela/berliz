@@ -1,8 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Payments } from 'src/app/models/payment.interface';
-import { PaymentStateService } from 'src/app/services/payment-state.service';
+import { loadPayments } from 'src/app/state/payment/payment.actions';
+import { selectPayments } from 'src/app/state/payment/payment.selectors';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AddPaymentsModalComponent } from '../add-payments-modal/add-payments-modal.component';
 
@@ -21,23 +23,22 @@ export class PaymentsHeaderComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private paymentStateService: PaymentStateService,
+    public store: Store,
     private rxStompService: RxStompService) {
   }
 
   ngOnInit() {
-    this.watchDeleteCategory()
-    this.watchGetCategoryFromMap()
+    this.watchDeletePayment()
+    this.watchAddPayment()
   }
 
   handleEmitEvent() {
-    this.paymentStateService.getAllPayments().subscribe((allPayments) => {
-      this.ngxService.start()
-      console.log('cached false')
+    this.ngxService.start()
+    this.store.dispatch(loadPayments());
+    this.store.select(selectPayments).subscribe((allPayments) => {
       this.paymentsData = allPayments;
       this.totalPayments = this.paymentsData.length
       this.paymentsLength = this.paymentsData.length
-      this.paymentStateService.setAllPaymentsSubject(this.paymentsData);
       this.ngxService.stop()
     });
   }
@@ -53,12 +54,12 @@ export class PaymentsHeaderComponent {
         break;
       case 'email':
         this.paymentsData.sort((a, b) => {
-          return a.user.email.localeCompare(b.user.email);
+          return a.userEmail.localeCompare(b.userEmail);
         });
         break;
       case 'payer':
         this.paymentsData.sort((a, b) => {
-          return (a.payer.firstname.localeCompare || a.user.lastname)(b.payer.firstname || b.user.lastname);
+          return a.payerEmail.localeCompare(b.payerEmail);
         });
         break;
       case 'method':
@@ -111,21 +112,15 @@ export class PaymentsHeaderComponent {
     });
   }
 
-  watchDeleteCategory() {
-    this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
-      const receivedCategories: Payments = JSON.parse(message.body);
-      this.paymentsData = this.paymentsData.filter(payment => payment.id !== receivedCategories.id);
-      this.paymentsLength = this.paymentsData.length;
-      this.totalPayments = this.paymentsData.length
+  watchDeletePayment() {
+    this.rxStompService.watch('/topic/deletePayment').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 
-  watchGetCategoryFromMap() {
-    this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
-      const receivedCategories: Payments = JSON.parse(message.body);
-      this.paymentsData.push(receivedCategories);
-      this.paymentsLength = this.paymentsData.length;
-      this.totalPayments = this.paymentsData.length
+  watchAddPayment() {
+    this.rxStompService.watch('/topic/addPayment').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 }

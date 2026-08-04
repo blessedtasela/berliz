@@ -1,5 +1,4 @@
-import { Categories } from "./categories.interface";
-import { Users } from "./users.interface";
+import { PhotoResponse, VideoResponse } from "./Media.interface";
 
 export interface Centers {
   id: number;
@@ -8,42 +7,30 @@ export interface Centers {
   address: string;
   experience: string;
   location: string;
-  photo: string;
+  photoUrl: string;
   likes: number;
-  partner: {
-    id: number;
-    motivation: string;
-    user: {
-      id: number;
-      email: string;
-      role: string;
-    }
-  }
-  categorySet: {
-    id: number;
-    name: string;
-    description: string;
-    tagSet: {
-      id: number;
-      name: string;
-    }[];
-    likes: number;
-  }[];
+  status: string;
+  userId: number;
+  partnerId: number;
+  categoryIds: number[];
   date: Date;
   lastUpdate: Date;
-  status: string;
+  message?: string;
 }
 
-export interface CenterLike {
-  id: number,
-  user: Users;
-  center: Centers;
+export interface CenterLikes {
+  id: number;
+  centerId: number;
+  centerName: string;
+  userId: number;
+  userEmail: string;
   date: Date;
 }
 
 export interface CenterPricing {
   id: number;
-  center: Centers;
+  centerId: number;
+  centerName: string;
   price: number;
   discount3Months: number;
   discount6Months: number;
@@ -52,6 +39,7 @@ export interface CenterPricing {
   discount2Programs: number;
   date: Date;
   lastUpdate: Date;
+  message?: string;
 }
 
 export interface CenterStatistics {
@@ -91,30 +79,31 @@ export interface CenterCategory {
 
 export interface CenterEquipment {
   id: number;
-  center: Centers;
+  centerId: number;
+  centerName: string;
   name: string;
   description: string;
-  categories: Categories[];
-  image: any;
   stockNumber: number;
+  imageUrl: string;
+  sideViewUrl: string;
+  rearViewUrl: string;
+  frontViewUrl: string;
+  categoryIds: number[];
   lastUpdate: Date;
   date: Date;
+  message?: string;
 }
 
 export interface CenterTrainers {
   id: number;
   centerId: number;
-  trainers: {
-    id: number;
-    name: string;
-    categories: string[];
-    imageUrl: string;
-    motto: string;
-    experience: string;
-    ratings: number;
-    date: string;
-  }[];
-  date: string;
+  centerName: string;
+  trainerId: number;
+  trainerName: string;
+  status: string;
+  date: Date;
+  lastUpdate: Date;
+  message?: string;
 }
 
 export interface CenterPromotions {
@@ -125,33 +114,38 @@ export interface CenterPromotions {
   date: string;
 }
 
-export interface CenterAnnouncement {
+export interface CenterAnnouncements {
   id: number;
-  center: Centers;
+  centerId: number;
+  centerName: string;
   announcement: string;
-  icon: any;
+  iconUrl: string;
+  status: string;
   lastUpdate: Date;
   date: Date;
+  message?: string;
 }
 
 export interface CenterPhotoAlbum {
   id: number;
-  center: Centers;
-  uuid: string;
-  photo: any;
+  centerId: number;
+  centerName: string;
   comment: string;
+  photos: PhotoResponse[];
   lastUpdate: Date;
   date: Date;
+  message?: string;
 }
 
 export interface CenterVideoAlbum {
   id: number;
-  center: Centers;
-  name: string;
-  video: any;
+  centerId: number;
+  centerName: string;
   comment: string;
+  videos: VideoResponse[];
   lastUpdate: Date;
   date: Date;
+  message?: string;
 }
 
 export interface CenterSubscriptionForm {
@@ -164,31 +158,36 @@ export interface CenterSubscriptionForm {
 export interface CenterIntroduction {
   id: number;
   centerId: number;
+  centerName: string;
   introduction: string;
-  coverPhoto: any;
   lastUpdate: Date;
   date: Date;
+  message?: string;
 }
 
-export interface CenterReview {
+export interface CenterReviews {
   id: number;
-  center: Centers;
-  user: Users;
+  centerId: number;
+  centerName: string;
+  memberId: number;
+  memberName: string;
   comment: string;
   likes: number;
   status: string;
   date: Date;
   lastUpdate: Date;
+  message?: string;
 }
 
-export interface CenterLocation {
+export interface CenterLocations {
   id: number;
-  center: Centers;
+  centerId: number;
+  centerName: string;
   subName: string;
   locationUrl: string;
   address: string;
-  coverPhoto: any;
-  ratings: number;
+  coverPhotoUrl: string;
   lastUpdate: Date;
   date: Date;
+  message?: string;
 }

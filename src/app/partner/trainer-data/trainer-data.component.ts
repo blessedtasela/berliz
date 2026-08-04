@@ -1,18 +1,21 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators, ValidatorFn, AbstractControl, FormArray } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { AuthService } from 'src/app/services/auth.service';
-import { CategoryStateService } from 'src/app/services/category-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectCurrentTrainer } from 'src/app/state/trainer/trainer.selector';
+import { loadUser } from 'src/app/state/user/user.actions';
+import { selectUser } from 'src/app/state/user/user.selector';
 import { genericError } from 'src/validators/form-validators.module';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-trainer-data',
@@ -26,34 +29,32 @@ export class TrainerDataComponent {
   categories: Categories[] = [];
   responseMessage: any;
   selectedPhoto: any;
-  @Input() trainer!: Trainers;
+  @Input() trainer!: Trainers | null;
   selectedCategoriesId: any;
-  user!: Users;
+  user!: Users | null;
   subscriptions: Subscription[] = [];
   originalValue: any;
+  destroy$ = new Subject<void>();
 
   constructor(private formBuilder: FormBuilder,
     private ngxService: NgxUiLoaderService,
-    private userStateService: UserStateService,
+    private store: Store,
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,
-    private categoryStateService: CategoryStateService,
     private trainerService: TrainerService,
-    private trainerStateService: TrainerStateService,
     private datePipe: DatePipe,
     private authService: AuthService) { }
 
   ngOnInit(): void {
     this.handleEmitEvent();
-    this.user = this.user || { role: null };
-    this.selectedCategoriesId = this.trainer.categories.map(category => category.id);
+    this.selectedCategoriesId = this.trainer?.categories?.map(category => category.id) ?? [];
     this.updateTrainerForm = this.formBuilder.group({
-      'id': this.trainer?.id,
-      'name': [this.trainer.name, Validators.compose([Validators.required, Validators.minLength(3)])],
-      'motto': [this.trainer.motto, Validators.compose([Validators.required, Validators.minLength(10)])],
-      'address': [this.trainer.address, Validators.compose([Validators.required, Validators.minLength(10)])],
-      'experience': [this.trainer.experience, Validators.compose([Validators.required, Validators.minLength(1)])],
-      'likes': [this.trainer.likes, Validators.compose([Validators.required, Validators.minLength(1)])],
+      'id': this.trainer?.id ?? null,
+      'name': [this.trainer?.name ?? '', Validators.compose([Validators.required, Validators.minLength(3)])],
+      'motto': [this.trainer?.motto ?? '', Validators.compose([Validators.required, Validators.minLength(10)])],
+      'address': [this.trainer?.address ?? '', Validators.compose([Validators.required, Validators.minLength(10)])],
+      'experience': [this.trainer?.experience ?? '', Validators.compose([Validators.required, Validators.minLength(1)])],
+      'likes': [this.trainer?.likes ?? '', Validators.compose([Validators.required, Validators.minLength(1)])],
       'categoryIds': this.formBuilder.array(this.selectedCategoriesId, this.validateCheckbox()),
     });
 
@@ -68,22 +69,37 @@ export class TrainerDataComponent {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
-  handleEmitEvent() {
-    this.subscriptions.push(
-      this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
-        this.categories = activeCategories;
-        this.categoryStateService.setActiveCategoriesSubject(activeCategories);
-      }),
-      this.userStateService.getUser().subscribe((user) => {
-        this.user = user;
-        this.userStateService.setUserSubject(user);
-      }),
-      this.trainerStateService.getTrainer().subscribe((trainer) => {
-        this.trainer = trainer
-        this.trainerStateService.setTrainerSubject(trainer);
-      })
-    );
-  }
+ handleEmitEvent() {
+  // 1. Load categories
+  this.store.dispatch(loadActiveCategories());
+  const catSub = this.store.select(selectActiveCategories)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(activeCategories => {
+      this.categories = activeCategories;
+    });
+
+  // 2. Load user from store
+  this.store.dispatch(loadUser());
+
+  const userSub = this.store.select(selectUser)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(user => {
+      this.user = user;
+    });
+
+  // 3. Load trainer from store
+  // this.store.dispatch(loadTrainer());
+
+  // const trainerSub = this.store.select(selectCurrentTrainer)
+  //   .pipe(takeUntil(this.destroy$))
+  //   .subscribe(trainer => {
+  //     this.trainer = trainer;
+  //   });
+
+  // 4. Track subscriptions (only the ones that need manual cleanup)
+  this.subscriptions.push(catSub, userSub,);
+}
+
 
   formatDate(dateString: any): any {
     const date = new Date(dateString);
@@ -137,15 +153,15 @@ export class TrainerDataComponent {
     const formValue = this.updateTrainerForm.value;
 
     const payload = {
-      id: this.trainer.id,
-      partnerId: this.trainer.partnerId,
+      id: this.trainer?.id,
+      partnerId: this.trainer?.partnerId,
       name: formValue.name,
       motto: formValue.motto,
       address: formValue.address,
       experience: formValue.experience,
       status: formValue.status,
       categoryIds: formValue.categoryIds,
-      photoRequest: this.trainer.photoResponse
+      photoRequest: this.trainer?.photoResponse
     };
 
     this.ngxService.start();

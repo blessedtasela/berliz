@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { PaymentsComponent } from './payments/payments.component';
 import { PaymentsListComponent } from './payments-list/payments-list.component';
 import { PaymentsHeaderComponent } from './payments-header/payments-header.component';
@@ -28,7 +29,8 @@ import { IconsModule } from 'src/app/icons/icons.module';
     NavbarModule,
     ReactiveFormsModule,
     FormsModule,
-    IconsModule
+    IconsModule,
+    RouterModule.forChild([{ path: '', component: PaymentsComponent }])
   ]
 })
 export class PaymentsModule { }

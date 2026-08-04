@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { TrainerClients } from 'src/app/models/trainers.interface';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
+import { selectTrainerClients } from 'src/app/state/trainer/trainer.selector';
+import { loadTrainerClients } from 'src/app/state/trainer/trainer.actions';
 
 @Component({
   selector: 'app-my-trainer-clients',
@@ -18,7 +20,7 @@ export class MyTrainerClientsComponent {
 
   private subscriptions: Subscription[] = [];
 
-  constructor(private trainerStateService: TrainerStateService) { }
+  constructor(private store: Store) { }
 
   ngOnInit(): void {
     this.handleEmitEvent();
@@ -29,9 +31,10 @@ export class MyTrainerClientsComponent {
   }
 
   handleEmitEvent(): void {
+    this.store.dispatch(loadTrainerClients());
     this.subscriptions.push(
-      this.trainerStateService.getMyTrainerClients().subscribe(clients => {
-        this.trainerClients = clients ?? [];
+      this.store.select(selectTrainerClients).subscribe(clients => {
+        this.trainerClients = clients;
       })
     );
   }

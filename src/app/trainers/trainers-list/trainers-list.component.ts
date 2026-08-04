@@ -4,7 +4,6 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 
 @Component({
@@ -20,7 +19,6 @@ export class TrainersListComponent {
   @Input()totalTrainers: number = 0;
 
   constructor(private datePipe: DatePipe,
-    private trainerDataService: TrainerStateService,
     private trainerService: TrainerService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,

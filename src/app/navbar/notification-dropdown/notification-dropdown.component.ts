@@ -1,12 +1,13 @@
 import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 
 import { Notifications } from 'src/app/models/Notifications.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { NotificationDetailsComponent } from 'src/app/shared/notification-details/notification-details.component';
+import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
 
 @Component({
   selector: 'notification-dropdown-component',
@@ -23,7 +24,7 @@ export class NotificationDropdownComponent implements OnInit, OnDestroy {
   maxVisible = 50;
 
   constructor(
-    private notificationStateService: NotificationStateService,
+    private store: Store,
     private rxStompService: RxStompService,
     private dialog: MatDialog,
     private router: Router
@@ -39,7 +40,7 @@ export class NotificationDropdownComponent implements OnInit, OnDestroy {
   }
 
   private loadInitialNotifications() {
-    const sub = this.notificationStateService.getMyNotifications().subscribe(data => {
+    const sub = this.store.select(selectMyNotifications).subscribe(data => {
       this.notifications = (data || [])
         .filter(n => !n.read)
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());

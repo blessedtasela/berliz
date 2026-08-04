@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { CenterCategory, Centers } from 'src/app/models/centers.interface';
-import { CenterStateService } from 'src/app/services/center-state.service';
+import { selectActiveCenters } from 'src/app/state/center/center.selectors';
 
 @Component({
   selector: 'app-center-page',
@@ -17,11 +18,11 @@ export class CenterPageComponent implements OnInit {
   allCenters: Centers[] = [];
   subscription: Subscription = new Subscription;
 
-  constructor(private centerStateService: CenterStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService) { }
 
   ngOnInit(): void {
-    this.centerStateService.activeCentersData$.subscribe((cachedData) => {
+    this.store.select(selectActiveCenters).subscribe((cachedData) => {
       if (!cachedData) {
         this.handleEmitEvent()
       } else {
@@ -37,10 +38,9 @@ export class CenterPageComponent implements OnInit {
   }
   handleEmitEvent() {
     this.subscription.add(
-      this.centerStateService.getActiveCenters().subscribe((activeCenters) => {
+      this.store.select(selectActiveCenters).subscribe((activeCenters) => {
         console.log('isCachedData false')
         this.centers = activeCenters;
-        this.centerStateService.setActiveCentersSubject(this.centers);
       })
     );
   }

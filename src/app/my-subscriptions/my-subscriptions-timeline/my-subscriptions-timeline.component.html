@@ -14,7 +14,7 @@
             <div
                 class="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 flex justify-between items-start gap-2 hover:border-gray-300 transition">
                 <div>
-                    <p class="text-xs font-semibold text-gray-900">{{ sub.planName || 'Subscription' }}</p>
+                    <p class="text-xs font-semibold text-gray-900">{{ sub.plan || 'Subscription' }}</p>
                     <p class="text-[10px] text-gray-400 mt-0.5">
                         {{ sub.startDate | date:'mediumDate' }} –
                         {{ sub.endDate ? (sub.endDate | date:'mediumDate') : 'Ongoing' }}

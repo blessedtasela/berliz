@@ -1,0 +1,81 @@
+<div class="mt-6 p-6 rounded-2xl border border-gray-200 bg-white shadow-sm">
+
+  <!-- Header -->
+  <div class="flex items-start justify-between mb-4">
+    <div>
+      <h2 class="text-lg font-bold text-gray-900">
+        {{ section === 'terms' ? 'Terms of Service' : 'Community Guidelines' }}
+      </h2>
+      <p class="text-[11px] text-gray-400 mt-0.5">
+        {{ section === 'terms' ? 'Your agreement with Berliz' : 'Rules for safe participation' }}
+      </p>
+    </div>
+
+    <button
+      class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600"
+      (click)="close.emit()">
+      <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="text-sm text-gray-700 leading-relaxed flex flex-col gap-4 max-h-[60vh] overflow-y-auto pr-2">
+
+    <!-- Terms of Service -->
+    <ng-container *ngIf="section === 'terms'">
+
+      <p><strong>1. Acceptance of Terms</strong><br>
+      By using Berliz, you agree to these Terms of Service and confirm that all information you provide is accurate.</p>
+
+      <p><strong>2. Nature of the Platform</strong><br>
+      Berliz connects users with independent trainers and centers. Berliz does not employ trainers or guarantee outcomes.</p>
+
+      <p><strong>3. User Responsibilities</strong><br>
+      You agree to use the platform lawfully, respect others, and maintain accurate account information.</p>
+
+      <p><strong>4. Trainer & Center Responsibilities</strong><br>
+      Trainers and centers must provide accurate qualifications, maintain safety, and comply with local regulations.</p>
+
+      <p><strong>5. Payments & Billing</strong><br>
+      Payments may include platform fees and taxes. Berliz is not responsible for disputes between users and trainers.</p>
+
+      <p><strong>6. Health & Safety Disclaimer</strong><br>
+      Fitness and combat sports involve risk. You participate voluntarily and at your own discretion.</p>
+
+      <p><strong>7. Prohibited Activities</strong><br>
+      Misrepresentation, harassment, illegal activity, and platform misuse are strictly prohibited.</p>
+
+      <p><strong>8. Account Suspension</strong><br>
+      Berliz may suspend or terminate accounts that violate these terms.</p>
+
+    </ng-container>
+
+    <!-- Community Guidelines -->
+    <ng-container *ngIf="section === 'guidelines'">
+
+      <p><strong>1. Respect & Professionalism</strong><br>
+      Treat all users, trainers, and centers with respect. Harassment is not tolerated.</p>
+
+      <p><strong>2. Honesty & Transparency</strong><br>
+      Provide accurate information and avoid misleading claims.</p>
+
+      <p><strong>3. Safety First</strong><br>
+      Follow safe training practices and avoid reckless behavior.</p>
+
+      <p><strong>4. No Illegal Activity</strong><br>
+      Illegal substances, violence, and fraud are prohibited.</p>
+
+      <p><strong>5. Privacy & Confidentiality</strong><br>
+      Respect others’ personal information and do not share private data without consent.</p>
+
+      <p><strong>6. Quality & Accountability</strong><br>
+      Trainers must maintain safe environments and respond to concerns promptly.</p>
+
+      <p><strong>7. Reporting Violations</strong><br>
+      Users may report violations through the platform or by contacting support.</p>
+
+    </ng-container>
+
+  </div>
+
+</div>

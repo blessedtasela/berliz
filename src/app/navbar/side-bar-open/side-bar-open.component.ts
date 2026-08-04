@@ -1,52 +1,47 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NavigationEnd, Router } from '@angular/router';
-import { forkJoin, merge, Subject } from 'rxjs';
+import { merge, Subject } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
+
 import { AuthService } from 'src/app/services/auth.service';
-import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserStateService } from 'src/app/services/user-state.service';
 import { UserService } from 'src/app/services/user.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+
+import { Store } from '@ngrx/store';
+import { loadUser } from 'src/app/state/user/user.actions';
+import { selectUser } from 'src/app/state/user/user.selector';
+import { Notifications } from 'src/app/models/Notifications.interface';
+import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
 
 @Component({
   selector: 'app-side-bar-open',
   templateUrl: './side-bar-open.component.html',
   styleUrls: ['./side-bar-open.component.css']
 })
-export class SideBarOpenComponent {
+export class SideBarOpenComponent implements OnInit, OnDestroy {
 
   currentRoute: string | null = null;
   openMenu = false;
   mdScreen = false;
+
   userData: any;
-  responseMessage: string | null = null;
-  profilePhoto: string | null = null;
   notificationLength = 0;
 
   private destroy$ = new Subject<void>();
-
-  // merge all notification-related topics into a single stream
-  private notificationEvents$ = merge(
-    this.rxStompService.watch('/topic/notification'),
-    this.rxStompService.watch('/topic/readNotification'),
-    this.rxStompService.watch('/topic/deleteNotification'),
-    this.rxStompService.watch('/topic/notificationBulkAction'),
-    this.rxStompService.watch('/topic/getNotificationFromMap')
-  );
 
   constructor(
     private router: Router,
     private userService: UserService,
     private dialog: MatDialog,
-    private userStateService: UserStateService,
     private snackbarService: SnackBarService,
-    private notificationStateService: NotificationStateService,
     private rxStompService: RxStompService,
-    private authService: AuthService
+    private authService: AuthService,
+    private store: Store
   ) {
+
     this.currentRoute = this.router.url;
 
     this.router.events
@@ -59,42 +54,43 @@ export class SideBarOpenComponent {
       });
   }
 
-  ngOnInit() {
-    if (!this.authService.isAuthenticated()) {
-      return;
-    }
+  // -----------------------------
+  // INIT
+  // -----------------------------
+  ngOnInit(): void {
+    if (!this.authService.isAuthenticated()) return;
     this.onResize();
-    this.refreshUserData();
 
-    this.notificationEvents$
+    // Load user from store
+    this.store.dispatch(loadUser());
+
+    this.store.select(selectUser)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.refreshUserData());
+      .subscribe(user => {
+        this.userData = user;
+      });
+
+    // Initial notification load
+    this.refreshNotifications();
+
   }
 
-
-  private refreshUserData() {
-    forkJoin({
-      user: this.userStateService.getUser().pipe(take(1)),
-      notifications: this.notificationStateService.getMyNotifications().pipe(take(1))
-    }).pipe(take(1))
-      .subscribe(({ user, notifications }) => {
-        this.userData = user;
-        this.profilePhoto = user?.profilePhoto
-          ? 'data:image/jpeg;base64,' + user.profilePhoto
-          : null;
-
-        this.notificationLength = notifications
-          ? notifications.filter((n: any) => !n.read).length
-          : 0;
+  // -----------------------------
+  // NOTIFICATIONS
+  // -----------------------------
+  private refreshNotifications(): void {
+    this.store.select(selectMyNotifications)
+      .subscribe((notifications: Notifications[]) => {
+        this.notificationLength =
+          notifications?.filter(n => !n.read).length ?? 0;
       });
   }
 
 
   // -----------------------------
-  // ROUTE HELPERS
+  // ROUTING HELPERS
   // -----------------------------
-
-  isActive(route: string, exact: boolean = false): boolean {
+  isActive(route: string, exact = false): boolean {
     return exact
       ? this.currentRoute === route
       : this.currentRoute?.startsWith(route) ?? false;
@@ -111,14 +107,15 @@ export class SideBarOpenComponent {
       '/dashboard/profile',
       '/dashboard/settings'
     ];
-    return paths.some(route => this.currentRoute?.startsWith(route));
+
+    return paths.some(r => this.currentRoute?.startsWith(r));
   }
 
   isPath(path: string): boolean {
     return this.currentRoute === '/' + path;
   }
 
-  setRouterName(routeName: string) {
+  setRouterName(routeName: string): void {
     this.currentRoute = routeName;
   }
 
@@ -129,8 +126,8 @@ export class SideBarOpenComponent {
   // -----------------------------
   // LOGOUT
   // -----------------------------
+  logout(): void {
 
-  logout() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
       message: 'Are you sure you want to log out?',
@@ -144,20 +141,13 @@ export class SideBarOpenComponent {
       .subscribe(() => {
         dialogRef.close();
         this.userService.logout();
-        this.responseMessage = "You have successfully logged out";
-        this.snackbarService.openSnackBar(this.responseMessage, '');
+        this.snackbarService.openSnackBar('You have successfully logged out', '');
       });
   }
 
   // -----------------------------
-  // CLEANUP
+  // UI EVENTS
   // -----------------------------
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
   @HostListener('window:resize')
   onResize(): void {
     this.openMenu = window.innerWidth >= 768;
@@ -165,22 +155,14 @@ export class SideBarOpenComponent {
 
   @HostListener('document:click', ['$event'])
   handleDocumentClick(event: Event): void {
-    if (!this.isClickInsideDropdown(event) && window.innerWidth < 768) {
-      this.closeDropdown();
+    if (!this.isClickInsideSidebar(event) && window.innerWidth < 768) {
+      this.openMenu = false;
     }
   }
 
-  private isClickInsideDropdown(event: Event): boolean {
-    const dropdownElement = document.getElementById('sidebarView');
-    return !!dropdownElement && dropdownElement.contains(event.target as Node);
-  }
-
-  closeDropdown() {
-    this.openMenu = false;
-  }
-
-  stopPropagation(event: Event): void {
-    event.stopPropagation();
+  private isClickInsideSidebar(event: Event): boolean {
+    const el = document.getElementById('sidebarView');
+    return !!el && el.contains(event.target as Node);
   }
 
   toggleSidebar(): void {
@@ -188,4 +170,12 @@ export class SideBarOpenComponent {
     this.mdScreen = !this.mdScreen;
   }
 
+  stopPropagation(event: Event): void {
+    event.stopPropagation();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

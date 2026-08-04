@@ -3,8 +3,10 @@ import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
-import { MuscleGroupStateService } from 'src/app/services/muscle-group-state.service';
 import { MuscleGroupService } from 'src/app/services/muscle-group.service';
+import { Store } from '@ngrx/store';
+import { loadMuscleGroups } from 'src/app/state/muscle-group/muscle-group.actions';
+import { selectMuscleGroups } from 'src/app/state/muscle-group/muscle-group.selectors';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
@@ -30,7 +32,7 @@ export class MuscleGroupsListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private rxStompService: RxStompService,
-    public muscleGroupStateService: MuscleGroupStateService) {
+    private store: Store) {
   }
 
   ngOnInit() {
@@ -39,11 +41,11 @@ export class MuscleGroupsListComponent {
   }
 
   handleEmitEvent() {
-    this.muscleGroupStateService.getMuscleGroups().subscribe((allMuscleGroups) => {
-      this.ngxService.start()
+    this.ngxService.start()
+    this.store.dispatch(loadMuscleGroups());
+    this.store.select(selectMuscleGroups).subscribe((allMuscleGroups) => {
       this.muscleGroupsData = allMuscleGroups;
       this.totalMuscleGroups = this.muscleGroupsData.length
-      this.muscleGroupStateService.setAllMuscleGroupsSubject(this.muscleGroupsData);
       this.ngxService.stop()
     });
   }

@@ -53,7 +53,7 @@
                 </form>
             </div>
 
-            <p class="text-sm font-bold text-gray-900">{{ user.firstname }} {{ user.lastname }}</p>
+            <p class="text-sm font-bold text-gray-900">{{ user?.firstname }} {{ user?.lastname }}</p>
 
             <p class="text-[11px] flex items-center gap-1.5"
                 [ngClass]="trainerData.status === 'true' ? 'text-green-600' : 'text-yellow-600'">

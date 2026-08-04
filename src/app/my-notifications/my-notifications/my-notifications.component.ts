@@ -12,13 +12,14 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { Notifications } from 'src/app/models/Notifications.interface';
-import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { NotificationDetailsComponent } from 'src/app/shared/notification-details/notification-details.component';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { Store } from '@ngrx/store';
+import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
 
 @Component({
   selector: 'app-my-notifications',
@@ -65,7 +66,7 @@ export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
   focusedIndex: number | null = null;
 
   constructor(
-    private notificationState: NotificationStateService,
+    private store: Store,
     private notificationService: NotificationService,
     private snackbar: SnackBarService,
     private dialog: MatDialog,
@@ -209,7 +210,7 @@ export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   refreshNotifications(): void {
-    const sub = this.notificationState.getMyNotifications().subscribe(data => {
+    const sub = this.store.select(selectMyNotifications).subscribe(data => {
       this.allNotificationData = data;
       this.notificationsLength = data.length;
       this.totalNotifications = data.length;
@@ -221,8 +222,6 @@ export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
 
       this.updatePage();
       this.selectedNotificationIds = [];
-
-      this.notificationState.setMyNotifications(data);
     });
 
     this.subs.push(sub);
@@ -310,7 +309,7 @@ export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.notificationService.readNotification(id).subscribe(() => {
+        this.notificationService.markAsRead(id).subscribe(() => {
           this.refreshNotifications();
         });
       }
@@ -318,7 +317,7 @@ export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   markAsRead(id: number): void {
-    this.notificationService.readNotification(id).subscribe(() => {
+    this.notificationService.markAsRead(id).subscribe(() => {
       this.refreshNotifications();
     });
   }

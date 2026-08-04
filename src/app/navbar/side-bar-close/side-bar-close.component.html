@@ -6,19 +6,23 @@
     {name:'Notifications', icon:'inbox', route:'/dashboard/my-notifications'},
     {name:'Hub', icon:'globe', route:'/dashboard/hub'},
     {name:'Profile', icon:'user', route:'/dashboard/profile'},
+    {separator:true},
     {name:'Todos', icon:'calendar', route:'/dashboard/my-todos'},
     {name:'Subscriptions', icon:'airplay', route:'/dashboard/my-subscriptions'},
     {name:'FAQs', icon:'message-square', route:'/dashboard/my-faqs'},
     {name:'Settings', icon:'settings', route:'/dashboard/settings'}
   ]">
 
-    <a [routerLink]="item.route" class="relative group w-10 h-10 rounded-xl flex items-center justify-center transition"
-      [ngClass]="isActive(item.route, item.exact)
-        ? 'bg-red-50 border border-red-100'
+    <!-- Separator -->
+    <div *ngIf="item.separator" class="w-6 border-t border-gray-800 my-1"></div>
+
+    <a *ngIf="!item.separator" [routerLink]="item.route || ''" class="relative group w-10 h-10 rounded-xl flex items-center justify-center transition"
+      [ngClass]="isActive(item.route || '', item.exact)
+        ? 'bg-red-600/20 border border-red-600/30'
         : 'hover:bg-gray-800'">
 
-      <feather-icon [name]="item.icon" style="width:18px;"
-        [ngClass]="isActive(item.route, item.exact) ? 'text-red-600' : 'text-white'">
+      <feather-icon [name]="item.icon || ''" style="width:18px;"
+        [ngClass]="isActive(item.route || '', item.exact) ? 'text-red-400' : 'text-white'">
       </feather-icon>
 
       <!-- Notification badge -->

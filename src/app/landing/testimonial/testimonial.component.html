@@ -34,9 +34,9 @@
 
       <!-- Client Info -->
       <div class="grid grid-cols-2 items-center gap-4 mt-4">
-        <img src="../../../assets/trainers/t15.jpg" alt="{{ t.user.firstname }}" class="rounded-full w-24 h-24 object-cover border-2 border-red-600" />
+        <img src="../../../assets/trainers/t15.jpg" alt="{{ t.userFirstname }}" class="rounded-full w-24 h-24 object-cover border-2 border-red-600" />
         <div>
-          <p class="font-bold text-md">{{ t.user.firstname }}</p>
+          <p class="font-bold text-md">{{ t.userFirstname }}</p>
           <p class="text-gray-400 text-sm">{{ t.date }}</p>
         </div>
       </div>
@@ -46,7 +46,7 @@
         <button
           class="bg-red-600 text-white py-2 px-4 rounded-md text-sm font-bold uppercase tracking-wide hover:bg-red-700 
                  transition-all duration-300 transform hover:scale-105">
-          {{ t.center }}
+          {{ t.centerName }}
         </button>
 
         <div class="flex justify-end space-x-4 text-2xl font-bold">

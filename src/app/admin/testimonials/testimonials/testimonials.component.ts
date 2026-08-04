@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Testimonials } from 'src/app/models/testimonials.model';
-import { TestimonialStateService } from 'src/app/services/testimonial-state.service';
+import { loadTestimonials } from 'src/app/state/testimonial/testimonial.actions';
+import { selectTestimonials } from 'src/app/state/testimonial/testimonial.selectors';
 
 @Component({
   selector: 'app-testimonials',
@@ -14,33 +17,31 @@ export class TestimonialsComponent {
   testimonialsLength: number = 0;
   searchComponent: string = 'testimonial'
   isSearch: boolean = true;
+  subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
-    public testimonialStateService: TestimonialStateService) {
+    private store: Store) {
   }
 
   ngOnInit(): void {
-    this.testimonialStateService.allTestimonialsData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.testimonialsData = cachedData;
-        this.totalTestimonials = cachedData.length
-        this.testimonialsLength = cachedData.length
-      }
-    });
+    this.handleEmitEvent();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   handleEmitEvent() {
-    this.testimonialStateService.getAllTestimonials().subscribe((allTestimonials) => {
-      this.ngxService.start()
-      console.log('isCachedData false')
-      this.testimonialsData = allTestimonials;
-      this.totalTestimonials = allTestimonials.length
-      this.testimonialsLength = allTestimonials.length
-      this.testimonialStateService.setAllTestimonialsSubject(this.testimonialsData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadTestimonials());
+    this.subscriptions.push(
+      this.store.select(selectTestimonials).subscribe((allTestimonials) => {
+        this.testimonialsData = allTestimonials;
+        this.totalTestimonials = allTestimonials.length
+        this.testimonialsLength = allTestimonials.length
+        this.ngxService.stop()
+      })
+    );
   }
 
   handleSearchResults(results: Testimonials[]): void {
@@ -49,4 +50,3 @@ export class TestimonialsComponent {
   }
 
 }
-

@@ -1,10 +1,13 @@
 import { Component, Input } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
-import { MuscleGroupStateService } from 'src/app/services/muscle-group-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AddMuscleGroupModalComponent } from '../add-muscle-group-modal/add-muscle-group-modal.component';
+import { loadMuscleGroups } from 'src/app/state/muscle-group/muscle-group.actions';
+import { selectMuscleGroups } from 'src/app/state/muscle-group/muscle-group.selectors';
 
 @Component({
   selector: 'app-muscle-groups-header',
@@ -18,10 +21,11 @@ export class MuscleGroupsHeaderComponent {
   @Input() muscleGroupsData: MuscleGroups[] = [];
   @Input() totalMuscleGroups: number = 0;
   @Input() muscleGroupsLength: number = 0;
+  subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private muscleGroupStateService: MuscleGroupStateService,
+    private store: Store,
     private rxStompService: RxStompService) {
   }
 
@@ -30,16 +34,21 @@ export class MuscleGroupsHeaderComponent {
     this.watchGetMuscleGroupFromMap()
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
   handleEmitEvent() {
-    this.muscleGroupStateService.getMuscleGroups().subscribe((allMuscleGroups) => {
-      this.ngxService.start()
-      console.log('cached false')
-      this.muscleGroupsData = allMuscleGroups;
-      this.totalMuscleGroups = this.muscleGroupsData.length
-      this.muscleGroupsLength = this.muscleGroupsData.length
-      this.muscleGroupStateService.setAllMuscleGroupsSubject(this.muscleGroupsData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadMuscleGroups());
+    this.subscriptions.push(
+      this.store.select(selectMuscleGroups).subscribe((allMuscleGroups) => {
+        this.muscleGroupsData = allMuscleGroups;
+        this.totalMuscleGroups = this.muscleGroupsData.length
+        this.muscleGroupsLength = this.muscleGroupsData.length
+        this.ngxService.stop()
+      })
+    );
   }
 
   sortCategoriesData() {

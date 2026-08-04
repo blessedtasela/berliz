@@ -2,15 +2,18 @@ import { ChangeDetectorRef, Component, EventEmitter, OnInit } from '@angular/cor
 import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription, forkJoin, take } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
 import { AddMuscleGroupModalComponent } from '../../muscle-groups/add-muscle-group-modal/add-muscle-group-modal.component';
-import { CategoryStateService } from 'src/app/services/category-state.service';
 import { ExerciseService } from 'src/app/services/exercise.service';
-import { MuscleGroupStateService } from 'src/app/services/muscle-group-state.service';
+import { loadActiveMuscleGroups } from 'src/app/state/muscle-group/muscle-group.actions';
+import { selectActiveMuscleGroups } from 'src/app/state/muscle-group/muscle-group.selectors';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-add-exercises-modal',
@@ -28,8 +31,7 @@ export class AddExercisesModalComponent implements OnInit{
   categories: Categories[] = [];
 
   constructor(private formBuilder: FormBuilder,
-    private muscleGroupStateService: MuscleGroupStateService,
-    private categoryStateService: CategoryStateService,
+    private store: Store,
     private exerciseService: ExerciseService,
     public dialogRef: MatDialogRef<AddMuscleGroupModalComponent>,
     private ngxService: NgxUiLoaderService,
@@ -44,21 +46,7 @@ export class AddExercisesModalComponent implements OnInit{
         'categoryIds': this.formBuilder.array([], this.validateCheckbox()),
         'muscleGroupIds': this.formBuilder.array([], this.validateCheckbox()),
       });
-      forkJoin([
-        this.muscleGroupStateService.activeMuscleGroupsData$.pipe(take(1)),
-        this.categoryStateService.activeCategoriesData$.pipe(take(1))
-      ]).subscribe(([muscleGroupsData, categoriesData]) => {
-        if (muscleGroupsData === null) {
-          this.handleEmitEvent();
-        } else {
-          this.muscleGroups = muscleGroupsData;
-        }
-        if (categoriesData === null) {
-          this.handleEmitEvent();
-        } else {
-          this.categories = categoriesData;
-        }
-      });
+      this.handleEmitEvent();
     }
 
   ngOnDestroy() {
@@ -66,18 +54,16 @@ export class AddExercisesModalComponent implements OnInit{
   }
 
   handleEmitEvent() {
-    console.log("isCached false");
+    this.ngxService.start();
+    this.store.dispatch(loadActiveMuscleGroups());
+    this.store.dispatch(loadActiveCategories());
     this.subscriptions.push(
-      this.muscleGroupStateService.getActiveMuscleGroups().subscribe((muscleGroups) => {
-        this.ngxService.start();
+      this.store.select(selectActiveMuscleGroups).subscribe((muscleGroups) => {
         this.muscleGroups = muscleGroups;
-        this.muscleGroupStateService.setActiveMuscleGroupsSubject(muscleGroups);
         this.ngxService.stop();
       }),
-      this.categoryStateService.getActiveCategories().subscribe((categories) => {
-        this.ngxService.start();
+      this.store.select(selectActiveCategories).subscribe((categories) => {
         this.categories = categories;
-        this.categoryStateService.setActiveCategoriesSubject(categories);
         this.ngxService.stop();
       }),
     );

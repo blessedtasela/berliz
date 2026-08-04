@@ -2,6 +2,7 @@ import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Observable } from 'rxjs';
 import { TodoPriority } from 'src/app/models/todoList.interface';
@@ -9,7 +10,7 @@ import { Users } from 'src/app/models/users.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TodoService } from 'src/app/services/todo.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectUser } from 'src/app/state/user/user.selector';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -26,7 +27,7 @@ export class TodaysTodoModalComponent implements OnInit {
   @Output() emitEvent = new EventEmitter();
 
   email: any;
-  user$!: Observable<Users>;
+  user!: Users | null;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -36,7 +37,7 @@ export class TodaysTodoModalComponent implements OnInit {
     private snackBarService: SnackBarService,
     private todoService: TodoService,
     private authService: AuthService,
-    private userStateService: UserStateService,
+    private store: Store,
     private router: Router
   ) { }
 
@@ -48,7 +49,9 @@ export class TodaysTodoModalComponent implements OnInit {
       dueDate: ['', Validators.required],
       priority: ['NORMAL', Validators.required],
     });
-    this.user$ = this.userStateService.getUser();
+    this.store.select(selectUser).subscribe(user => {
+      this.user = user
+    });
   }
 
   addTodo(): void {

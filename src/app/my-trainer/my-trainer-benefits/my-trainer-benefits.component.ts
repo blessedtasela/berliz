@@ -1,11 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { TrainerBenefits } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { minArrayLength, genericError } from 'src/validators/form-validators.module';
 
@@ -17,7 +17,7 @@ import { minArrayLength, genericError } from 'src/validators/form-validators.mod
 export class MyTrainerBenefitsComponent {
 
   @Output() emitEvent = new EventEmitter();
-  @Input() trainerBenefit!: TrainerBenefits;
+  @Input() trainerBenefit!: TrainerBenefits | null;
 
   updateTrainerBenefitForm!: FormGroup;
   invalidForm = false;
@@ -31,12 +31,11 @@ export class MyTrainerBenefitsComponent {
     private loader: NgxUiLoaderService,
     private snackbar: SnackBarService,
     private trainerService: TrainerService,
-    private trainerState: TrainerStateService,
+    private store: Store,
     private datePipe: DatePipe
   ) { }
 
   ngOnInit(): void {
-    this.trainerBenefit = this.trainerBenefit || {};
     this.initForm();
     this.originalValue = this.updateTrainerBenefitForm.getRawValue();
   }
@@ -50,13 +49,13 @@ export class MyTrainerBenefitsComponent {
   // -----------------------------
   initForm(): void {
     this.updateTrainerBenefitForm = this.fb.group({
-      id: [this.trainerBenefit.id],
+      id: [this.trainerBenefit?.id],
       benefits: this.fb.array(this.initBenefits(), minArrayLength(5))
     });
   }
 
   initBenefits(): FormGroup[] {
-    return this.trainerBenefit.benefits?.map(b => this.newBenefit(b)) || [this.newBenefit()];
+    return this.trainerBenefit?.benefits?.map(b => this.newBenefit(b)) || [this.newBenefit()];
   }
 
   newBenefit(value: string = ''): FormGroup {
@@ -113,12 +112,12 @@ export class MyTrainerBenefitsComponent {
     }
 
     const payload = {
-      id: this.trainerBenefit.id,
+      id: this.trainerBenefit?.id,
       benefits: benefits
     };
 
     this.loader.start();
-    const request$ = this.trainerBenefit.id
+    const request$ = this.trainerBenefit?.id
       ? this.trainerService.updateTrainerBenefit(payload)
       : this.trainerService.addTrainerBenefit(payload);
 

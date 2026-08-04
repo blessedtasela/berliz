@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { MuscleGroupsComponent } from './muscle-groups/muscle-groups.component';
 import { AddMuscleGroupModalComponent } from './add-muscle-group-modal/add-muscle-group-modal.component';
 import { MuscleGroupsHeaderComponent } from './muscle-groups-header/muscle-groups-header.component';
@@ -30,7 +31,8 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
     ReactiveFormsModule,
     MatDialogModule,
     FooterModule,
-    NavbarModule
+    NavbarModule,
+    RouterModule.forChild([{ path: '', component: MuscleGroupsComponent }])
   ]
 })
 export class MuscleGroupsModule { }

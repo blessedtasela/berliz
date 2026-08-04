@@ -11,8 +11,10 @@ import {
 import { Chart, registerables } from 'chart.js/auto';
 
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { DashboardStateService } from 'src/app/services/dashboard-state.service';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+import { loadDashboard } from 'src/app/state/dashboard/dashboard.actions';
+import { selectDashboardData } from 'src/app/state/dashboard/dashboard.selectors';
 
 @Component({
   selector: 'app-dashboard-app-analytics',
@@ -30,12 +32,12 @@ export class DashboardAppAnalyticsComponent implements OnInit, OnDestroy {
   private chartCreated = false;
 
   constructor(
-    private dashboardStateService: DashboardStateService,
+    private store: Store,
     private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
-    const sub = this.dashboardStateService.dashboardData$.subscribe((cachedData) => {
+    const sub = this.store.select(selectDashboardData).subscribe((cachedData) => {
       if (cachedData === null) {
         this.fetchDashboardData();
       } else {
@@ -59,12 +61,7 @@ export class DashboardAppAnalyticsComponent implements OnInit, OnDestroy {
   }
 
   private fetchDashboardData() {
-    const sub = this.dashboardStateService.getDashBoard().subscribe((data) => {
-      this.data = data;
-      this.dashboardStateService.setDashboardSubject(data);
-    });
-
-    this.subscriptions.push(sub);
+    this.store.dispatch(loadDashboard());
   }
 
   private createAnalyticChart() {

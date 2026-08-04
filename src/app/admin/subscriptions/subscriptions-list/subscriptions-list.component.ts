@@ -5,10 +5,12 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { SubscriptionStateService } from 'src/app/services/subscription-state.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
 import { SubscriptionService } from 'src/app/services/subscription.service';
+import { Store } from '@ngrx/store';
+import { loadSubscriptions } from 'src/app/state/subscription/subscription.actions';
+import { selectSubscriptions } from 'src/app/state/subscription/subscription.selectors';
 import { UpdateSubscriptionsModalComponent } from '../update-subscriptions-modal/update-subscriptions-modal.component';
 import { SubscriptionDetailsModalComponent } from '../subscription-details-modal/subscription-details-modal.component';
 
@@ -29,23 +31,22 @@ export class SubscriptionsListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private rxStompService: RxStompService,
-    public subscriptionStateService: SubscriptionStateService) {
+    private store: Store) {
   }
 
   ngOnInit() {
-    this.watchGetCategoryFromMap()
-    this.watchLikeCategory()
-    this.watchUpdateCategory()
+    this.watchGetSubscriptionFromMap()
+    this.watchUpdateSubscription()
     this.watchUpdateStatus()
-    this.watchDeleteCategory()
+    this.watchDeleteSubscription()
   }
 
   handleEmitEvent() {
-    this.subscriptionStateService.getAllSubscriptions().subscribe((allSubscriptions) => {
-      this.ngxService.start()
+    this.ngxService.start()
+    this.store.dispatch(loadSubscriptions());
+    this.store.select(selectSubscriptions).subscribe((allSubscriptions) => {
       this.subscriptionsData = allSubscriptions;
       this.totalSubscriptions = this.subscriptionsData.length
-      this.subscriptionStateService.setAllSubscriptionsSubject(this.subscriptionsData);
       this.ngxService.stop()
     });
   }
@@ -187,41 +188,27 @@ export class SubscriptionsListComponent {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
-  watchLikeCategory() {
-    this.rxStompService.watch('/topic/likeCategory').subscribe((message) => {
-      const receivedCategories: Subscriptions = JSON.parse(message.body);
-      const categoryId = this.subscriptionsData.findIndex(subscription => subscription.id === receivedCategories.id)
-      this.subscriptionsData[categoryId] = receivedCategories
+  watchUpdateSubscription() {
+    this.rxStompService.watch('/topic/updateSubscription').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 
-  watchUpdateCategory() {
-    this.rxStompService.watch('/topic/updateCategory').subscribe((message) => {
-      const receivedCategories: Subscriptions = JSON.parse(message.body);
-      const categoryId = this.subscriptionsData.findIndex(subscription => subscription.id === receivedCategories.id)
-      this.subscriptionsData[categoryId] = receivedCategories
-    });
-  }
-
-  watchGetCategoryFromMap() {
-    this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
-      const receivedCategories: Subscriptions = JSON.parse(message.body);
-      this.subscriptionsData.push(receivedCategories);
+  watchGetSubscriptionFromMap() {
+    this.rxStompService.watch('/topic/getSubscriptionFromMap').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 
   watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
-      const receivedCategories: Subscriptions = JSON.parse(message.body);
-      const categoryId = this.subscriptionsData.findIndex(subscription => subscription.id === receivedCategories.id)
-      this.subscriptionsData[categoryId] = receivedCategories
+    this.rxStompService.watch('/topic/updateSubscriptionStatus').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 
-  watchDeleteCategory() {
-    this.rxStompService.watch('/topic/deleteCategory').subscribe((message) => {
-      const receivedCategories: Subscriptions = JSON.parse(message.body);
-      this.subscriptionsData = this.subscriptionsData.filter(subscription => subscription.id !== receivedCategories.id);
+  watchDeleteSubscription() {
+    this.rxStompService.watch('/topic/deleteSubscription').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 

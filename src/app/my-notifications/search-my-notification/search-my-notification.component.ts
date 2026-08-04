@@ -1,8 +1,9 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, NgZone, OnInit, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { debounceTime, fromEvent, map, switchMap, of, Observable } from 'rxjs';
 import { Notifications } from 'src/app/models/Notifications.interface';
-import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
 
 @Component({
   selector: 'app-search-my-notification',
@@ -43,14 +44,14 @@ export class SearchMyNotificationComponent implements OnInit, AfterViewInit {
   showMoreButton = true;
 
   constructor(
-    private notificationState: NotificationStateService,
+    private store: Store,
     private elementRef: ElementRef,
     private ngZone: NgZone,
     private snackbar: SnackBarService
   ) { }
 
   ngOnInit(): void {
-    this.notificationState.myNotificationData$.subscribe(data => {
+    this.store.select(selectMyNotifications).subscribe(data => {
       this.myNotifications = data;
       this.filtered = data;
       // this.safeEmit(data);

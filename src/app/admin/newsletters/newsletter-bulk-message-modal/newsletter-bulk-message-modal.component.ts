@@ -4,10 +4,12 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { NewsletterMessage } from 'src/app/models/newsletter.model';
-import { NewsletterStateService } from 'src/app/services/newsletter-state.service';
 import { NewsletterService } from 'src/app/services/newsletter.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { genericError } from 'src/validators/form-validators.module';
+import { Store } from '@ngrx/store';
+import { loadNewsletterMessages } from 'src/app/state/newsletter/newsletter.actions';
+import { selectNewsletterMessages } from 'src/app/state/newsletter/newsletter.selectors';
 
 @Component({
   selector: 'app-newsletter-bulk-message-modal',
@@ -26,7 +28,7 @@ export class NewsletterBulkMessageModalComponent {
 
   constructor(private formBuilder: FormBuilder,
     private newsletterService: NewsletterService,
-    private newsletterStateService: NewsletterStateService,
+    private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private dialogRef: MatDialogRef<NewsletterBulkMessageModalComponent>) {
@@ -40,24 +42,16 @@ export class NewsletterBulkMessageModalComponent {
       'body': ['', [Validators.required, Validators.minLength(50)]],
     });
 
-    this.newsletterStateService.newsletterMessageData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent();
-      } else {
-        this.savedMessages = cachedData
-      }
-    })
+    this.handleEmitEvent();
   }
 
   handleEmitEvent() {
-    this.subscription.add(this.newsletterStateService.getNewsletterMessages().subscribe((messages) => {
-      this.ngxService.start()
-      console.log("isCached false")
+    this.ngxService.start()
+    this.store.dispatch(loadNewsletterMessages());
+    this.subscription.add(this.store.select(selectNewsletterMessages).subscribe((messages) => {
       this.savedMessages = messages
-      this.newsletterStateService.setNewsletterMessageSubject(this.savedMessages);
       this.ngxService.stop()
-    }),
-    );
+    }));
   }
 
   ngOnDestroy() {

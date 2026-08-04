@@ -2,8 +2,9 @@ import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Trainers } from 'src/app/models/trainers.interface';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { AddTrainerModalComponent } from '../add-trainer-modal/add-trainer-modal.component';
+import { Store } from '@ngrx/store';
+import { selectTrainers } from 'src/app/state/trainer/trainer.selector';
 
 @Component({
   selector: 'app-trainer-header',
@@ -20,7 +21,7 @@ export class TrainerHeaderComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    public trainerStateService: TrainerStateService) {
+    public store: Store) {
   }
 
   ngOnInit() {
@@ -28,13 +29,10 @@ export class TrainerHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.trainerStateService.getAllTrainers().subscribe((allTrainers) => {
-      this.ngxService.start()
+    this.store.select(selectTrainers).subscribe((allTrainers) => {
       this.trainersData = allTrainers;
       this.totalTrainers = this.trainersData.length
       this.trainersLength = this.trainersData.length
-      this.trainerStateService.setAllTrainersSubject(this.trainersData);
-      this.ngxService.stop()
     });
   }
 
@@ -52,26 +50,26 @@ export class TrainerHeaderComponent {
           return a.motto.localeCompare(b.motto);
         });
         break;
-        case 'name':
-          this.trainersData.sort((a, b) => {
-            return a.name.localeCompare(b.name);
-          });
-          break;
+      case 'name':
+        this.trainersData.sort((a, b) => {
+          return a.name.localeCompare(b.name);
+        });
+        break;
       case 'id':
         this.trainersData.sort((a, b) => {
           return a.id - b.id;
         });
         break;
-        case 'address':
-          this.trainersData.sort((a, b) => {
-            return a.address.localeCompare(b.address);
-          });
-          break;
-        case 'partnerId':
-          this.trainersData.sort((a, b) => {
-            return a.partnerId - b.partnerId;
-          });
-          break;
+      case 'address':
+        this.trainersData.sort((a, b) => {
+          return a.address.localeCompare(b.address);
+        });
+        break;
+      case 'partnerId':
+        this.trainersData.sort((a, b) => {
+          return a.partnerId - b.partnerId;
+        });
+        break;
       case 'likes':
         this.trainersData.sort((a, b) => {
           return b.likes - a.likes;

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { FooterModule } from 'src/app/footer/footer.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -35,7 +36,8 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     MatDialogModule,
     FooterModule,
     NavbarModule,
-    ImageCropperModule
+    ImageCropperModule,
+    RouterModule.forChild([{ path: '', component: UsersComponent }])
   ]
 })
 export class UsersModule { }

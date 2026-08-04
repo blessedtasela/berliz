@@ -1,13 +1,16 @@
 import { ChangeDetectorRef, Component, EventEmitter, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, FormArray } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
 import { Partner } from 'src/app/models/partners.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
 import { CenterService } from 'src/app/services/center.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-center-form-modal',
@@ -22,13 +25,14 @@ partner!: Partner;
 categories: Categories[] = [];
 responseMessage: any;
 selectedPhoto: any;
+subscriptions: Subscription[] = [];
 
 constructor(private formBuilder: FormBuilder,
   public dialogRef: MatDialogRef<CenterFormModalComponent>,
   private ngxService: NgxUiLoaderService,
   private snackBarService: SnackBarService,
   private cdr: ChangeDetectorRef,
-  private categoryStateService: CategoryStateService,
+  private store: Store,
   private centerService: CenterService,
   @Inject(MAT_DIALOG_DATA) private data: any) {
   this.partner = this.data.partnerData;
@@ -49,11 +53,18 @@ ngOnInit(): void {
   this.handleEmitEvent();
 }
 
+ngOnDestroy(): void {
+  this.subscriptions.forEach(subscription => subscription.unsubscribe());
+}
+
 handleEmitEvent() {
-  this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
-    this.categories = activeCategories;
-    this.cdr.detectChanges();
-  });
+  this.store.dispatch(loadActiveCategories());
+  this.subscriptions.push(
+    this.store.select(selectActiveCategories).subscribe((activeCategories) => {
+      this.categories = activeCategories;
+      this.cdr.detectChanges();
+    })
+  );
 }
 
 closeDialog() {

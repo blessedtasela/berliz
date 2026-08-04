@@ -4,10 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, catchError, of } from 'rxjs';
 import { Newsletter } from 'src/app/models/newsletter.model';
-import { NewsletterStateService } from 'src/app/services/newsletter-state.service';
 import { NewsletterService } from 'src/app/services/newsletter.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { genericError } from 'src/validators/form-validators.module';
+import { Store } from '@ngrx/store';
+import { selectNewsletters } from 'src/app/state/newsletter/newsletter.selectors';
 
 @Component({
   selector: 'app-search-newsletter',
@@ -23,7 +24,7 @@ export class SearchNewsletterComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
-    private newsletterStateService: NewsletterStateService,
+    private store: Store,
     private elementRef: ElementRef) {
   }
 
@@ -65,7 +66,7 @@ export class SearchNewsletterComponent {
   }
 
   search(query: string): Observable<Newsletter[]> {
-    this.newsletterStateService.allNewsletterData$.subscribe((cachedData) => {
+    this.store.select(selectNewsletters).subscribe((cachedData) => {
       this.newsletterData = cachedData;
     })
     query = query.toLowerCase();

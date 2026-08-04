@@ -1,0 +1,5 @@
+# use this to generate store, then manually create state, and seletctor, then move into /src/state
+ng g @ngrx/schematics:feature {name of entity} --module app.module.ts --flat false
+name of entity
+
+eg. ng g @ngrx/schematics:feature center --module app.module.ts --flat false

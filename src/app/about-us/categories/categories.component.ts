@@ -1,7 +1,10 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-categories',
@@ -11,23 +14,26 @@ import { CategoryStateService } from 'src/app/services/category-state.service';
 export class CategoriesComponent {
   categoriesData: Categories[] = [];
   showFullData: boolean = false;
+  subscriptions: Subscription[] = [];
+
   constructor(private datePipe: DatePipe,
-    private categoryStateService: CategoryStateService) { }
+    private store: Store) { }
 
   ngOnInit(): void {
-    this.categoryStateService.allCategoriesData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.categoriesData = cachedData;
-      }
-    });
+    this.handleEmitEvent();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   handleEmitEvent() {
-    this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
-      this.categoriesData = activeCategories;
-    });
+    this.store.dispatch(loadActiveCategories());
+    this.subscriptions.push(
+      this.store.select(selectActiveCategories).subscribe((activeCategories) => {
+        this.categoriesData = activeCategories;
+      })
+    );
   }
 
 

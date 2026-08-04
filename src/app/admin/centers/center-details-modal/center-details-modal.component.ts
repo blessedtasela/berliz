@@ -1,12 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
-import { CenterStateService } from 'src/app/services/center-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UpdateTrainerPhotoModalComponent } from 'src/app/shared/update-trainer-photo-modal/update-trainer-photo-modal.component';
+import { selectCenters } from 'src/app/state/center/center.selectors';
 
 @Component({
   selector: 'app-center-details-modal',
@@ -23,7 +24,7 @@ export class CenterDetailsModalComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<CenterDetailsModalComponent>,
-    private centerStateService: CenterStateService,
+    private store: Store,
     private dialog: MatDialog,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
@@ -41,7 +42,7 @@ export class CenterDetailsModalComponent {
   handleEmit() {
     this.ngxService.start();
     this.subscriptions.push(
-      this.centerStateService.getAllCenters().subscribe((centers) => {
+      this.store.select(selectCenters).subscribe((centers) => {
         const center = centers.find(center => center.id == this.centerData.id);
         if (center)
           this.centerData = center

@@ -1,25 +1,26 @@
 import { Categories } from "./categories.interface";
 import { Centers } from "./centers.interface";
-import { Payments } from "./payment.interface";
 import { Trainers } from "./trainers.interface";
 import { Users } from "./users.interface";
+import { Clients } from "./clients.interface";
 
 export interface Subscriptions {
   id: number;
   user: Users;
   trainer: Trainers;
   center: Centers;
-  payment: Payments;
+  client: Clients;
   startDate: Date;
   endDate: Date;
   months: number;
+  amount: number;
   mode: string;
-  planName: string;
+  plan: string;
   categories: Categories[];
   date: Date;
   lastUpdate: Date;
   status: string;
-  checked: boolean;
+  checked?: boolean;
 }
 
 export interface RenewData {

@@ -4,13 +4,14 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { UpdateTrainerModalComponent } from '../update-trainer-modal/update-trainer-modal.component';
 import { TrainerDetailsModalComponent } from '../trainer-details-modal/trainer-details-modal.component';
+import { Store } from '@ngrx/store';
+import { selectTrainers } from 'src/app/state/trainer/trainer.selector';
 
 @Component({
   selector: 'app-trainer-list',
@@ -24,7 +25,7 @@ export class TrainerListComponent {
   @Input() totalTrainers: number = 0;
   selectedImage: any;
 
-  constructor(private trainerStateService: TrainerStateService,
+  constructor(private store: Store,
     private trainerService: TrainerService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
@@ -42,8 +43,8 @@ export class TrainerListComponent {
   }
 
   handleEmitEvent() {
-    this.trainerStateService.getAllTrainers().subscribe((trainer) => {
-      this.trainersData = trainer;
+    this.store.select(selectTrainers).subscribe((allTrainers) => {
+      this.trainersData = allTrainers;
       this.totalTrainers = this.trainersData.length;
     });
   }
@@ -120,7 +121,7 @@ export class TrainerListComponent {
     const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((res: any) => {
       this.ngxService.start();
-      this.trainerService.updateStatus(id)
+      this.trainerService.updateTrainerStatus(id)
         .subscribe((response: any) => {
           this.ngxService.stop();
           this.responseMessage = response.message;

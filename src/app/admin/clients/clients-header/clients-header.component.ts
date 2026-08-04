@@ -1,11 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { Clients } from 'src/app/models/clients.interface';
-import { ClientStateService } from 'src/app/services/client-state.service';
 import { AddClientModalComponent } from '../add-client-modal/add-client-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { take } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { loadClients } from 'src/app/state/client/client.actions';
+import { selectClients } from 'src/app/state/client/client.selectors';
 
 @Component({
   selector: 'app-clients-header',
@@ -22,7 +24,7 @@ export class ClientsHeaderComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private clientStateService: ClientStateService,
+    private store: Store,
     private rxStompService: RxStompService) {
   }
 
@@ -32,13 +34,12 @@ export class ClientsHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.clientStateService.getAllClients().subscribe((clients) => {
-      this.ngxService.start()
-      console.log('isCached false')
+    this.ngxService.start()
+    this.store.dispatch(loadClients());
+    this.store.select(selectClients).subscribe((clients) => {
       this.clientsData = clients;
       this.totalClients = this.clientsData.length
       this.clientsLength = this.clientsData.length
-      this.clientStateService.setAllClientsSubject(this.clientsData);
       this.ngxService.stop()
     });
   }
@@ -69,8 +70,8 @@ export class ClientsHeaderComponent {
         break;
       case 'category':
         this.clientsData.sort((a, b) => {
-          const nameA = a.categories[0].name.toLowerCase();
-          const nameB = b.categories[0].name.toLowerCase();
+          const nameA = (a.subscriptions[0]?.categories[0]?.name || '').toLowerCase();
+          const nameB = (b.subscriptions[0]?.categories[0]?.name || '').toLowerCase();
           if (nameA < nameB) {
             return -1;
           }

@@ -1,14 +1,15 @@
 import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription, forkJoin, take } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
 import { Users } from 'src/app/models/users.interface';
-import { CenterStateService } from 'src/app/services/center-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TestimonialService } from 'src/app/services/testimonial.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectCenters } from 'src/app/state/center/center.selectors';
+import { selectUsers } from 'src/app/state/user/user.selector';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -27,8 +28,7 @@ export class AddTestimonialsModalComponent {
 
   constructor(private formBuilder: FormBuilder,
     private testimonialService: TestimonialService,
-    private userStateService: UserStateService,
-    private centerStateService: CenterStateService,
+    private store: Store,
     public dialogRef: MatDialogRef<AddTestimonialsModalComponent>,
     private ngxService: NgxUiLoaderService,
     private cd: ChangeDetectorRef,
@@ -43,8 +43,8 @@ export class AddTestimonialsModalComponent {
       'tagIds': this.formBuilder.array([], this.validateCheckbox()),
     });
     forkJoin([
-      this.userStateService.activeUserData$.pipe(take(1)),
-      this.centerStateService.activeCentersData$.pipe(take(1))
+      this.store.select(selectUsers).pipe(take(1)),
+      this.store.select(selectCenters).pipe(take(1))
     ]).subscribe(([users, centers]) => {
       if (users === null) {
         this.handleEmitEvent();
@@ -66,17 +66,15 @@ export class AddTestimonialsModalComponent {
   handleEmitEvent() {
     console.log("isCached false");
     this.subscriptions.push(
-      this.userStateService.getActiveUsers().subscribe((users) => {
+      this.store.select(selectUsers).subscribe((users) => {
         this.ngxService.start();
         this.users = users;
-        this.userStateService.setActiveUsersSubject(users);
         this.cd.detectChanges(); // Manually trigger change detection
         this.ngxService.stop();
       }),
-      this.centerStateService.getActiveCenters().subscribe((centers) => {
+      this.store.select(selectCenters).subscribe((centers) => {
         this.ngxService.start();
         this.centers = centers;
-        this.centerStateService.setActiveCentersSubject(centers);
         this.cd.detectChanges(); // Manually trigger change detection
         this.ngxService.stop();
       })

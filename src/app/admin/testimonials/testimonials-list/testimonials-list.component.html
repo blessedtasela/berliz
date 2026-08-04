@@ -17,11 +17,11 @@
             <tbody>
                 <tr *ngFor="let category of testimonialsData; let i = index" class="bg-gray-100 hover:bg-gray-200">
                     <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ category.user.email }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ category.userEmail }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">{{ category.status }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(category.date) }}</td>
                     <td class="border-b border-gray-400 px-4 py-2 font-bold">{{ category.id }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ category.center.name }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ category.likes }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(category.lastUpdate) }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">
                         <div class="flex items-center p-2">

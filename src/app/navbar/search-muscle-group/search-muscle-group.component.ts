@@ -1,9 +1,10 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
-import { MuscleGroupStateService } from 'src/app/services/muscle-group-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { selectMuscleGroups } from 'src/app/state/muscle-group/muscle-group.selectors';
 
 @Component({
   selector: 'app-search-muscle-group',
@@ -21,7 +22,7 @@ export class SearchMuscleGroupComponent {
   constructor(private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef,
-    public muscleGroupStateService: MuscleGroupStateService) {
+    private store: Store) {
   }
 
   ngOnInit(): void {
@@ -56,7 +57,7 @@ export class SearchMuscleGroupComponent {
   }
 
   search(query: string): Observable<MuscleGroups[]> {
-    this.muscleGroupStateService.allMuscleGroupData$.subscribe((cachedData) => {
+    this.store.select(selectMuscleGroups).subscribe((cachedData) => {
       this.muscleGroupsData = cachedData;
     });
     query = query.toLowerCase();

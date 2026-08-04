@@ -1,13 +1,14 @@
 import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';import { AddPartnerModalComponent } from 'src/app/admin/partners/add-partner-modal/add-partner-modal.component';
+import { NgxUiLoaderService } from 'ngx-ui-loader'; import { AddPartnerModalComponent } from 'src/app/admin/partners/add-partner-modal/add-partner-modal.component';
 import { Role, Users } from 'src/app/models/users.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserStateService } from 'src/app/services/user-state.service';
 import { UserService } from 'src/app/services/user.service';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
+import { selectUser } from 'src/app/state/user/user.selector';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-partner-form-modal',
@@ -19,7 +20,7 @@ export class PartnerFormModalComponent {
   addPartnerForm!: FormGroup;
   formIndex: number = 0;
   invalidForm: boolean = false;
-  user!: Users;
+  user!: Users | null;
   responseMessage: any;
   selectedCV: any;
   selectedCertificate: any;
@@ -35,7 +36,7 @@ export class PartnerFormModalComponent {
 
   constructor(private fb: FormBuilder,
     private userService: UserService,
-    private userStateService: UserStateService,
+    private store: Store,
     public dialogRef: MatDialogRef<AddPartnerModalComponent>,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
@@ -52,24 +53,11 @@ export class PartnerFormModalComponent {
       'role': ['', [Validators.required, Validators.minLength(3)]],
     });
 
-    this.userStateService.allUsersData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.user = cachedData
-      } else {
-        this.handleEmitEvent();
-      }
-    })
-
-  }
-
-  handleEmitEvent() {
-    this.userStateService.getUser().subscribe((user) => {
-      this.ngxService.start()
-      this.user = user;
-      this.userStateService.setUserSubject(this.user);
-      this.ngxService.stop()
+    this.store.select(selectUser).subscribe(user => {
+      this.user = user
     });
   }
+
 
   closeDialog() {
     this.dialogRef.close('Dialog closed without adding a partner')
@@ -101,7 +89,7 @@ export class PartnerFormModalComponent {
 
   addPartner(): void {
     const requestData = new FormData();
-    requestData.append('email', this.user?.email);
+    requestData.append('email', this.user?.email ?? '');
     requestData.append('certificate', this.selectedCertificate);
     requestData.append('motivation', this.addPartnerForm.get('motivation')?.value);
     requestData.append('cv', this.selectedCV);

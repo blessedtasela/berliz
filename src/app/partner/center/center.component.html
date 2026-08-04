@@ -39,7 +39,7 @@
 
             <!-- Avatar + camera -->
             <div class="relative">
-                <img [src]="'data:image/*;base64,' + centerData.photo"
+                <img [src]="centerData.photoUrl"
                     onerror="this.src='../../../assets/icons/user.png';"
                     class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md" />
 
@@ -57,7 +57,7 @@
             <p class="text-sm font-bold text-gray-900">{{ centerData.name }}</p>
 
             <p class="text-[11px] text-gray-400 italic capitalize">
-                {{ centerData.partner.user.role }}
+                center partner
             </p>
 
             <!-- Stats -->

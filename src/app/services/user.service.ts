@@ -3,6 +3,9 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { environment } from 'src/environments/environment';
+import { Users } from '../models/users.interface';
+import { AuthResponse } from '../models/Auth.interface';
+import { ApiResponse } from '../models/Api.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -15,152 +18,194 @@ export class UserService {
   constructor(private httpClient: HttpClient,
     private router: Router) { }
 
-  signup(data: any) {
-    return this.httpClient.post(this.url + "/user/signup", data);
+  signup(data: any): Observable<ApiResponse<string>> {
+    return this.httpClient.post<ApiResponse<string>>(
+      this.url + "/user/signup",
+      data
+    );
   }
 
-  quickAdd(data: any) {
-    return this.httpClient.post(this.url + "/user/quickAdd", data, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  quickAdd(data: any): Observable<ApiResponse<string>> {
+    return this.httpClient.post<ApiResponse<string>>(
+      this.url + "/user/quickAdd",
+      data,
+      {
+        headers: new HttpHeaders().set('Content-Type', 'application/json')
+      }
+    );
   }
 
-  sendActivationToken(email: string) {
-    return this.httpClient.post(this.url + `/user/sendActivationToken/${email}`, null, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  sendActivationToken(email: string): Observable<ApiResponse<string>> {
+    return this.httpClient.post<ApiResponse<string>>(
+      this.url + `/user/sendActivationToken/${email}`,
+      null
+    );
   }
 
-  login(data: any) {
-    return this.httpClient.post(this.url + "/user/login", data, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  login(data: any): Observable<ApiResponse<AuthResponse>> {
+
+    return this.httpClient.post<ApiResponse<AuthResponse>>(
+      this.url + "/user/login",
+      data,
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/json')
+      }
+    );
+
   }
 
-  refreshToken(token: any) {
-    return this.httpClient.post(this.url + "/user/refreshToken", token);
+  refreshToken(
+    token: any
+  ): Observable<ApiResponse<AuthResponse>> {
+
+    return this.httpClient.post<ApiResponse<AuthResponse>>(
+      this.url + "/user/refreshToken",
+      token
+    );
+
   }
 
-  validateEmail(data: any) {
-    return this.httpClient.put(this.url + "/user/validateEmail", data, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    })
+  validateEmail(data: any): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/validateEmail",
+      data
+    );
   }
 
-  updateEmail(data: any) {
-    return this.httpClient.put(this.url + "/user/updateEmail", data, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    })
+  updateEmail(data: any): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/updateEmail",
+      data
+    );
   }
 
-  updateUser(data: any) {
-    return this.httpClient.put(this.url + "/user/update", data, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    })
+  updateUser(data: any): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/update",
+      data
+    );
   }
 
-  updateSuperUser(data: any) {
-    return this.httpClient.put(this.url + "/user/updateSuperUser", data, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    })
+  updateSuperUser(data: any): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/updateSuperUser",
+      data
+    );
   }
 
-  updateBio(data: any) {
-    return this.httpClient.put(this.url + "/user/updateBio", data, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    })
+  updateBio(data: any): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/updateBio",
+      data
+    );
   }
 
-  updateProfilePhoto(data: any) {
-    return this.httpClient.put(this.url + "/user/updateProfilePhoto", data);
+  updateProfilePhoto(data: any): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/updateProfilePhoto",
+      data
+    );
   }
 
-  removePhoto(id: number) {
-    return this.httpClient.put(this.url + `/user/removePhoto/${id}`, null, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  updateProfilePhotoAdmin(data: any): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/updateProfilePhotoAdmin",
+      data
+    );
   }
 
-  updateProfilePhotoAdmin(data: any) {
-    return this.httpClient.put(this.url + "/user/updateProfilePhotoAdmin", data);
+  removePhoto(id: number): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + `/user/removePhoto/${id}`,
+      null
+    );
   }
 
-  forgotPassword(data: any) {
-    return this.httpClient.post(this.url + "/user/forgotPassword", data, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  forgotPassword(data: any): Observable<ApiResponse<string>> {
+    return this.httpClient.post<ApiResponse<string>>(
+      this.url + "/user/forgotPassword",
+      data
+    );
   }
 
-  validatePasswordToken(data: any) {
-    return this.httpClient.post(this.url + "/user/validatePasswordToken", data, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  resetPassword(data: any): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/resetPassword",
+      data
+    );
   }
 
-  resetPassword(data: any) {
-    return this.httpClient.put(this.url + "/user/resetPassword", data, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  changePassword(data: any): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/changePassword",
+      data
+    );
   }
 
-  changePassword(data: any) {
-    return this.httpClient.put(this.url + "/user/changePassword", data, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  activateAccount(data: any): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/activateAccount",
+      data
+    );
   }
 
-  forcePasswordChange(id: number, password: string) {
-    return this.httpClient.put(this.url + `/user/forcePasswordChange/${id}/${password}`, null, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  deactivateAccount(): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/deactivateAccount",
+      {}
+    );
   }
 
-  activateAccount(data: any) {
-    return this.httpClient.put(this.url + "/user/activateAccount", data, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  updateStatus(id: number): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + `/user/updateUserStatus/${id}`,
+      null
+    );
   }
 
-  deactivateAccount() {
-    return this.httpClient.put(this.url + "/user/deactivateAccount", {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  updateUserRole(data: any): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/updateRole",
+      data
+    );
   }
 
-  updateStatus(id: number) {
-    return this.httpClient.put(this.url + `/user/updateStatus/${id}`, null, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  checkToken(): Observable<ApiResponse<string>> {
+    return this.httpClient.get<ApiResponse<string>>(
+      this.url + "/user/checkToken"
+    );
   }
 
-  updateUserRole(data: any) {
-    return this.httpClient.put(this.url + `/user/updateRole`, data, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  getUser(): Observable<ApiResponse<Users>> {
+    return this.httpClient.get<ApiResponse<Users>>(
+      this.url + "/user/getUser"
+    );
   }
 
-  checkToken() {
-    return this.httpClient.get(this.url + '/user/checkToken');
+  getAllUsers(): Observable<ApiResponse<Users[]>> {
+    return this.httpClient.get<ApiResponse<Users[]>>(
+      this.url + "/user/getAllUsers"
+    );
   }
 
-  getUser() {
-    return this.httpClient.get(this.url + "/user/getUser")
+  getActiveUsers(): Observable<ApiResponse<Users[]>> {
+    return this.httpClient.get<ApiResponse<Users[]>>(
+      this.url + "/user/getActiveUsers"
+    );
   }
 
-  getAllUsers() {
-    return this.httpClient.get(this.url + "/user/get")
+  deleteUser(id: number): Observable<ApiResponse<string>> {
+    return this.httpClient.delete<ApiResponse<string>>(
+      this.url + `/user/delete/${id}`
+    );
   }
 
-  getActiveUsers() {
-    return this.httpClient.get(this.url + "/user/getActiveUsers")
-  }
-
-  check() {
-    return this.httpClient.get(this.url + "/user/14")
-  }
-
-  deleteUser(id: number) {
-    return this.httpClient.delete(this.url + `/user/delete/${id}`);
+  forcePasswordChange(id: number, password: string): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + `/user/forcePasswordChange/${id}`,
+      { password }
+    );
   }
 
   setSignupFormIndex(index: number) {

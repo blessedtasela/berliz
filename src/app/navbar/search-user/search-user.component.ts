@@ -1,12 +1,10 @@
-import { DatePipe } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Users } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserStateService } from 'src/app/services/user-state.service';
-import { UserService } from 'src/app/services/user.service';
+import { Store } from '@ngrx/store';
+import { selectUser, selectUsers } from 'src/app/state/user/user.selector';
 
 @Component({
   selector: 'app-search-user',
@@ -20,7 +18,7 @@ export class SearchUserComponent {
   selectedSearchCriteria: any = 'name';
   @Output() results: EventEmitter<Users[]> = new EventEmitter<Users[]>()
 
-  constructor(private userStateService: UserStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) {
@@ -59,8 +57,8 @@ export class SearchUserComponent {
   }
 
   search(query: string): Observable<Users[]> {
-    this.userStateService.allUsersData$.subscribe((cachedData => {
-      this.usersData = cachedData
+    this.store.select(selectUsers).subscribe((user => {
+      this.usersData = user
     }))
     query = query.toLowerCase();
     if (query.trim() === '') {

@@ -3,9 +3,10 @@ import {
   ChangeDetectorRef, Component, Input,
   OnDestroy, OnInit
 } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { TrainerSubscription, Trainers } from 'src/app/models/trainers.interface';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
+import { selectMyTrainerSubscription } from 'src/app/state/trainer/trainer.selector';
 
 // Map backend enum values to human-readable labels
 const PLAN_LABELS: Record<string, string> = {
@@ -24,15 +25,15 @@ const PLAN_LABELS: Record<string, string> = {
 })
 export class MyTrainerSubscriptionsComponent implements OnInit, OnDestroy {
 
-  @Input() trainerSubscription!: TrainerSubscription;
-  @Input() trainer!: Trainers;
+  @Input() trainerSubscription!: TrainerSubscription | null;
+  @Input() trainer!: Trainers | null;
 
   showModal = false;
 
   private subscriptions: Subscription[] = [];
 
   constructor(
-    private trainerStateService: TrainerStateService,
+    private store: Store,
     private datePipe: DatePipe,
     private cdr: ChangeDetectorRef
   ) { }
@@ -50,9 +51,9 @@ export class MyTrainerSubscriptionsComponent implements OnInit, OnDestroy {
 
   private loadSubscription(): void {
     this.subscriptions.push(
-      this.trainerStateService.getMyTrainerSubscription().subscribe({
+      this.store.select(selectMyTrainerSubscription).subscribe({
         next: (sub) => {
-          this.trainerSubscription = sub ?? null;
+          this.trainerSubscription = sub;
           this.cdr.detectChanges();
         },
         error: () => {
@@ -67,6 +68,19 @@ export class MyTrainerSubscriptionsComponent implements OnInit, OnDestroy {
     return this.trainerSubscription.status?.toLowerCase() === 'active' &&
       new Date(this.trainerSubscription.endDate) > new Date();
 
+  }
+
+  // The backend's raw `status` field can lag behind reality until its expiry
+  // scheduler runs — a subscription can still say "ACTIVE" after its endDate
+  // has passed. Compute the real status client-side so the UI never shows
+  // "active" and "expired" for the same subscription at the same time.
+  get effectiveStatus(): string {
+    if (!this.trainerSubscription) return '';
+    if (this.trainerSubscription.status === 'ACTIVE' &&
+      new Date(this.trainerSubscription.endDate) <= new Date()) {
+      return 'EXPIRED';
+    }
+    return this.trainerSubscription.status;
   }
 
   // Called after modal saves successfully

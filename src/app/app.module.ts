@@ -1,4 +1,4 @@
-import { ErrorHandler, NgModule } from '@angular/core';
+import { ErrorHandler, NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -29,7 +29,6 @@ import { RxStompService } from './services/rx-stomp.service';
 import { rxStompServiceFactory } from './rx-stomp-service-factory';
 import { DBConfig } from 'ngx-indexed-db';
 import { NgxIndexedDBModule } from 'ngx-indexed-db';
-import { AdminModule } from './admin/admin.module';
 import { MyTasksModule } from './my-tasks/my-tasks.module';
 import { MySubscriptionsModule } from './my-subscriptions/my-subscriptions.module';
 import { MyNotificationsModule } from './my-notifications/my-notifications.module';
@@ -54,6 +53,51 @@ import { UserModule } from './user/user.module';
 import { MyTodoListModule } from './my-todo-list/my-todo-list.module';
 import { MyTrainerModule } from './my-trainer/my-trainer.module';
 import { GlobalErrorHandlerService } from './services/global-error-handler.service';
+import { LegalModule } from './legal/legal.module';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { WebSocketService } from './services/web-socket.service';
+import * as fromTrainer from './state/trainer/trainer.reducer';
+import { TrainerEffects } from './state/trainer/trainer.effects';
+import { ProductsModule } from './products/products.module';
+import { userFeatureKey, userReducer } from './state/user/user.reducer';
+import { categoryFeatureKey, categoryReducer } from './state/category/category.reducer';
+import { trainerFeatureKey, trainerReducer } from './state/trainer/trainer.reducer';
+import { centerFeatureKey, centerReducer } from './state/center/center.reducer';
+import { notificationFeatureKey, notificationReducer } from './state/notification/notification.reducer';
+import { CategoryEffects } from './state/category/category.effects';
+import { CenterEffects } from './state/center/center.effects';
+import { NotificationEffects } from './state/notification/notification.effects';
+import { UserEffects } from './state/user/user.effects';
+import { partnerFeatureKey, partnerReducer } from './state/partner/partner.reducer';
+import { PartnerEffects } from './state/partner/partner.effects';
+import { subscriptionFeatureKey, subscriptionReducer } from './state/subscription/subscription.reducer';
+import { SubscriptionEffects } from './state/subscription/subscription.effects';
+import { taskFeatureKey, taskReducer } from './state/task/task.reducer';
+import { TaskEffects } from './state/task/task.effects';
+import { todoFeatureKey, todoReducer } from './state/todo/todo.reducer';
+import { TodoEffects } from './state/todo/todo.effects';
+import { exerciseFeatureKey, exerciseReducer } from './state/exercise/exercise.reducer';
+import { ExerciseEffects } from './state/exercise/exercise.effects';
+import { muscleGroupFeatureKey, muscleGroupReducer } from './state/muscle-group/muscle-group.reducer';
+import { MuscleGroupEffects } from './state/muscle-group/muscle-group.effects';
+import { newsletterFeatureKey, newsletterReducer } from './state/newsletter/newsletter.reducer';
+import { NewsletterEffects } from './state/newsletter/newsletter.effects';
+import { tagFeatureKey, tagReducer } from './state/tag/tag.reducer';
+import { TagEffects } from './state/tag/tag.effects';
+import { contactUsFeatureKey, contactUsReducer } from './state/contact-us/contact-us.reducer';
+import { ContactUsEffects } from './state/contact-us/contact-us.effects';
+import { clientFeatureKey, clientReducer } from './state/client/client.reducer';
+import { ClientEffects } from './state/client/client.effects';
+import { dashboardFeatureKey, dashboardReducer } from './state/dashboard/dashboard.reducer';
+import { DashboardEffects } from './state/dashboard/dashboard.effects';
+import { testimonialFeatureKey, testimonialReducer } from './state/testimonial/testimonial.reducer';
+import { TestimonialEffects } from './state/testimonial/testimonial.effects';
+import { paymentFeatureKey, paymentReducer } from './state/payment/payment.reducer';
+import { PaymentEffects } from './state/payment/payment.effects';
+import { memberFeatureKey, memberReducer } from './state/member/member.reducer';
+import { MemberEffects } from './state/member/member.effects';
 
 
 export const ngxUiLoaderConfig: NgxUiLoaderConfig = {
@@ -114,6 +158,7 @@ const dbConfig: DBConfig = {
     NgxUiLoaderModule.forRoot(ngxUiLoaderConfig),
     MatSnackBarModule,
     FormsModule,
+    ProductsModule,
     MatDialogModule,
     NgxExtendedPdfViewerModule,
     SharedModule,
@@ -129,7 +174,6 @@ const dbConfig: DBConfig = {
     LandingPageModule,
     CategoriesModule,
     AboutUsModule,
-    AdminModule,
     MyTasksModule,
     MySubscriptionsModule,
     MyNotificationsModule,
@@ -149,15 +193,37 @@ const dbConfig: DBConfig = {
     HubModule,
     UserModule,
     MyTodoListModule,
-    MyTrainerModule,
-    MyNotificationsModule,
     MySubscriptionsModule,
     MyTrainerModule,
-    // RouterModule.forRoot(routes, {
-    //   scrollPositionRestoration: 'enabled',
-    //   anchorScrolling: 'disabled',
-    //   onSameUrlNavigation: 'reload'
-    // }),
+    LegalModule,
+
+    // Store and Effects Modules for NgRx
+    StoreModule.forRoot({}),
+    EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: !isDevMode(),
+    }),
+    StoreModule.forFeature(userFeatureKey, userReducer),
+    StoreModule.forFeature(categoryFeatureKey, categoryReducer),
+    StoreModule.forFeature(trainerFeatureKey, trainerReducer),
+    StoreModule.forFeature(centerFeatureKey, centerReducer),
+    StoreModule.forFeature(notificationFeatureKey, notificationReducer),
+    StoreModule.forFeature(partnerFeatureKey, partnerReducer),
+    StoreModule.forFeature(subscriptionFeatureKey, subscriptionReducer),
+    StoreModule.forFeature(taskFeatureKey, taskReducer),
+    StoreModule.forFeature(todoFeatureKey, todoReducer),
+    StoreModule.forFeature(exerciseFeatureKey, exerciseReducer),
+    StoreModule.forFeature(muscleGroupFeatureKey, muscleGroupReducer),
+    StoreModule.forFeature(newsletterFeatureKey, newsletterReducer),
+    StoreModule.forFeature(tagFeatureKey, tagReducer),
+    StoreModule.forFeature(contactUsFeatureKey, contactUsReducer),
+    StoreModule.forFeature(clientFeatureKey, clientReducer),
+    StoreModule.forFeature(dashboardFeatureKey, dashboardReducer),
+    StoreModule.forFeature(testimonialFeatureKey, testimonialReducer),
+    StoreModule.forFeature(paymentFeatureKey, paymentReducer),
+    StoreModule.forFeature(memberFeatureKey, memberReducer),
+
   ],
   exports: [],
 
@@ -181,7 +247,7 @@ const dbConfig: DBConfig = {
     },
     BreadcrumbService,
     DatePipe,
-
+    WebSocketService,
   ],
 
   bootstrap: [AppComponent],

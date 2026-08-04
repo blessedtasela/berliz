@@ -1,8 +1,9 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription, fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Payments } from 'src/app/models/payment.interface';
-import { PaymentStateService } from 'src/app/services/payment-state.service';
+import { selectPayments } from 'src/app/state/payment/payment.selectors';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 @Component({
@@ -18,7 +19,7 @@ export class SearchPaymentComponent {
   @Output() results: EventEmitter<Payments[]> = new EventEmitter<Payments[]>()
   subscriptions: Subscription[] = []
 
-  constructor(private paymentStateService: PaymentStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) { }
@@ -66,7 +67,7 @@ export class SearchPaymentComponent {
 
   search(query: string): Observable<Payments[]> {
     this.subscriptions.push(
-      this.paymentStateService.allPaymentsData$.subscribe((cachedData => {
+      this.store.select(selectPayments).subscribe((cachedData => {
         this.paymentsData = cachedData
       }))
     )
@@ -77,9 +78,9 @@ export class SearchPaymentComponent {
     this.filteredPaymentsData = this.paymentsData.filter((payment: Payments) => {
       switch (this.selectedSearchCriteria) {
         case 'payer':
-          return payment.user.firstname.toLowerCase().includes(query);
+          return payment.userFirstname.toLowerCase().includes(query);
         case 'email':
-          return payment.user.email.toLowerCase().includes(query);
+          return payment.userEmail.toLowerCase().includes(query);
         case 'amount':
           return payment.amount.toString().includes(query);
         case 'id':
@@ -96,4 +97,3 @@ export class SearchPaymentComponent {
   }
 
 }
-

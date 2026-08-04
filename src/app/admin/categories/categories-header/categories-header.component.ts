@@ -1,10 +1,13 @@
 import { Component, Input } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { AddCategoryModalComponent } from '../add-category-modal/add-category-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { loadCategories } from 'src/app/state/category/category.actions';
+import { selectCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-categories-header',
@@ -18,25 +21,31 @@ export class CategoriesHeaderComponent {
   @Input() categoriesData: Categories[] = [];
   @Input() totalCategories: number = 0;
   @Input() categoriesLength: number = 0;
+  subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private categoryStateService: CategoryStateService,
+    private store: Store,
     private rxStompService: RxStompService) {
   }
 
   ngOnInit() { }
 
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
   handleEmitEvent() {
-    this.categoryStateService.getCategories().subscribe((allCategories) => {
-      this.ngxService.start()
-      console.log('cached false')
-      this.categoriesData = allCategories;
-      this.totalCategories = this.categoriesData.length
-      this.categoriesLength = this.categoriesData.length
-      this.categoryStateService.setAllCategoriesSubject(this.categoriesData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadCategories());
+    this.subscriptions.push(
+      this.store.select(selectCategories).subscribe((allCategories) => {
+        this.categoriesData = allCategories;
+        this.totalCategories = this.categoriesData.length
+        this.categoriesLength = this.categoriesData.length
+        this.ngxService.stop()
+      })
+    );
   }
 
   sortCategoriesData() {
@@ -60,8 +69,8 @@ export class CategoriesHeaderComponent {
         break;
       case 'tag':
         this.categoriesData.sort((a, b) => {
-          const nameA = a.tagSet[0].name.toLowerCase();
-          const nameB = b.tagSet[0].name.toLowerCase();
+          const nameA = (a.tagNames[0] || '').toLowerCase();
+          const nameB = (b.tagNames[0] || '').toLowerCase();
           if (nameA < nameB) {
             return -1;
           }

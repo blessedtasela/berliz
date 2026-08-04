@@ -4,9 +4,13 @@ import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Partner } from 'src/app/models/partners.interface';
 import { Users } from 'src/app/models/users.interface';
-import { PartnerStateService } from 'src/app/services/partner-state.service';
-import { UserStateService } from 'src/app/services/user-state.service';
 import { PartnerFormModalComponent } from 'src/app/shared/partner-form-modal/partner-form-modal.component';
+import { Store } from '@ngrx/store';
+import { Subject, takeUntil } from 'rxjs';
+import { loadUser } from 'src/app/state/user/user.actions';
+import { selectUser } from 'src/app/state/user/user.selector';
+import { loadMyPartner } from 'src/app/state/partner/partner.actions';
+import { selectMyPartner } from 'src/app/state/partner/partner.selectors';
 
 @Component({
   selector: 'app-trainer-header',
@@ -15,24 +19,30 @@ import { PartnerFormModalComponent } from 'src/app/shared/partner-form-modal/par
 })
 export class TrainerHeaderComponent {
   partner!: Partner;
-  user!: Users;
+  user!: Users | null;
+  destroy$ = new Subject<void>();
 
   constructor(private dialog: MatDialog,
-    private partnerDataService: PartnerStateService,
     private ngxService: NgxUiLoaderService,
-    private userStateService: UserStateService,
+    private store: Store,
     private router: Router) { }
 
   ngOnInit() {
-    this.userStateService.getUser().subscribe((user) => {
-      this.user = user;
-    })
+    // Load user from store
+    this.store.dispatch(loadUser());
+
+    this.store.select(selectUser)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        this.user = user;
+      });
   }
 
   handleEmitEvent() {
-    this.partnerDataService.getPartner().subscribe((partnerData) => {
-      this.ngxService.start()
-      this.partner =partnerData;
+    this.ngxService.start()
+    this.store.dispatch(loadMyPartner());
+    this.store.select(selectMyPartner).subscribe((partnerData) => {
+      if (partnerData) this.partner = partnerData;
       this.ngxService.stop()
     });
   }

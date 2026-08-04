@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Categories } from 'src/app/models/categories.interface';
 import { SubTasks } from 'src/app/models/tasks.interface';
-import { TaskStateService } from 'src/app/services/task-state.service';
+import { loadSubTasks } from 'src/app/state/task/task.actions';
+import { selectSubTasks } from 'src/app/state/task/task.selectors';
 
 @Component({
   selector: 'app-sub-tasks',
@@ -15,38 +17,35 @@ export class SubTasksComponent {
   subTasksLength: number = 0;
   searchComponent: string = 'sub-task'
   isSearch: boolean = true;
+  subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
-    public taskStateService: TaskStateService) {
+    private store: Store) {
   }
 
   ngOnInit(): void {
-    this.taskStateService.subTasksData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.subTasksData = cachedData;
-        this.totalSubTasks = cachedData.length
-        this.subTasksLength = cachedData.length
-      }
-    });
+    this.handleEmitEvent();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   handleEmitEvent() {
-    this.taskStateService.getSubTasks().subscribe((subTasks) => {
-      this.ngxService.start()
-      console.log('isCachedData false')
-      this.subTasksData = subTasks;
-      this.totalSubTasks = subTasks.length
-      this.subTasksLength = subTasks.length
-      this.taskStateService.setSubTasksSubject(this.subTasksData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadSubTasks());
+    this.subscriptions.push(
+      this.store.select(selectSubTasks).subscribe((subTasks) => {
+        this.subTasksData = subTasks;
+        this.totalSubTasks = subTasks.length
+        this.subTasksLength = subTasks.length
+        this.ngxService.stop()
+      })
+    );
   }
 
   handleSearchResults(results: SubTasks[]): void {
     this.subTasksData = results;
     this.totalSubTasks = results.length;
   }
-
 }

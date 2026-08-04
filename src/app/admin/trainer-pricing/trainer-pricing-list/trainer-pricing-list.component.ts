@@ -7,11 +7,12 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { UpdateTrainerPricingModalComponent } from '../update-trainer-pricing-modal/update-trainer-pricing-modal.component';
 import { TrainerPricingDetailsModalComponent } from '../trainer-pricing-details-modal/trainer-pricing-details-modal.component';
 import { AuthService } from 'src/app/services/auth.service';
+import { Store } from '@ngrx/store';
+import { selectTrainerPricing } from 'src/app/state/trainer/trainer.selector';
 
 @Component({
   selector: 'app-trainer-pricing-list',
@@ -30,7 +31,7 @@ export class TrainerPricingListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private rxStompService: RxStompService,
-    public trainerStateService: TrainerStateService,
+    public store: Store,
     private authService: AuthService) {
   }
 
@@ -43,7 +44,7 @@ export class TrainerPricingListComponent {
   }
 
   handleEmitEvent() {
-    this.trainerStateService.getAllTrainerPricing().subscribe((trainerPricing) => {
+    this.store.select(selectTrainerPricing).subscribe((trainerPricing) => {
       this.trainerPricingData = trainerPricing;
       this.totalTrainerPricing = this.trainerPricingData.length
     });

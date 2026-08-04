@@ -18,3 +18,6 @@ npm install ngx-image-cropper --save
 npm install hammerjs
 npm install @syncfusion/ej2-angular-inputs
 
+## use this to generate store, then manually create state, and seletctor, then move into /src/state
+ng g @ngrx/schematics:feature {name of entity} --module app.module.ts --flat false
+name of entity

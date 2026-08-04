@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { Subscriptions } from '../models/subscriptions.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -11,52 +12,53 @@ export class SubscriptionService {
   constructor(private httpClient: HttpClient) { }
 
   addSubscription(data: any) {
-    return this.httpClient.post(this.url + "/subscription/add", data);
+    return this.httpClient.post<{ message: string }>(this.url + "/subscription/add", data);
   }
 
   updateSubscription(data: any) {
-    return this.httpClient.put(this.url + "/subscription/update", data, {
+    return this.httpClient.put<{ message: string }>(this.url + "/subscription/update", data, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     })
   }
 
   updateStatus(id: number) {
-    return this.httpClient.put(this.url + `/subscription/updateStatus/${id}`, null, {
+    return this.httpClient.put<{ message: string }>(this.url + `/subscription/updateStatus/${id}`, null, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     });
   }
 
-  getSubscription() {
-    return this.httpClient.get(this.url + "/subscription/getSubscription")
+  getSubscription(id: number) {
+    return this.httpClient.get<Subscriptions>(this.url + `/subscription/getSubscription/${id}`);
   }
 
   getAllSubscriptions() {
-    return this.httpClient.get(this.url + "/subscription/get")
+    return this.httpClient.get<Subscriptions[]>(this.url + "/subscription/get")
   }
 
   getMySubscriptions() {
-    return this.httpClient.get(this.url + "/subscription/getMySubscriptions")
+    return this.httpClient.get<Subscriptions[]>(this.url + "/subscription/getMySubscriptions")
   }
 
   getActiveSubscriptions() {
-    return this.httpClient.get(this.url + "/subscription/getActiveSubscriptions")
+    return this.httpClient.get<Subscriptions[]>(this.url + "/subscription/getActiveSubscriptions")
   }
 
   deleteSubscription(id: number) {
-    return this.httpClient.delete(this.url + `/subscription/delete/${id}`);
+    return this.httpClient.delete<{ message: string }>(this.url + `/subscription/delete/${id}`);
   }
 
   bulkAction(data: any) {
-    return this.httpClient.put(this.url + "/subscription/bulkAction", data, {
+    return this.httpClient.put<{ message: string }>(this.url + "/subscription/bulkAction", data, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     })
   }
 
   renewSubscription(payload: { id: number; durationMonths: number }) {
-  return this.httpClient.post(
-    `${this.url}/renewSubscription`,
-    payload
-  );
-}
+    return this.httpClient.put<{ message: string }>(
+      `${this.url}/subscription/renew`,
+      payload,
+      { headers: new HttpHeaders().set('Content-Type', 'application/json') }
+    );
+  }
 }
 

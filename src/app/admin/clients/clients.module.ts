@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { ClientsComponent } from './clients/clients.component';
 import { AddClientModalComponent } from './add-client-modal/add-client-modal.component';
 import { UpdateClientModalComponent } from './update-client-modal/update-client-modal.component';
@@ -30,7 +31,8 @@ import { FooterModule } from 'src/app/footer/footer.module';
     IconsModule,
     ReactiveFormsModule,
     NavbarModule,
-    FooterModule
+    FooterModule,
+    RouterModule.forChild([{ path: '', component: ClientsComponent }])
   ]
 })
 export class ClientsModule { }

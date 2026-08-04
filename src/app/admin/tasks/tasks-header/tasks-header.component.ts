@@ -1,10 +1,13 @@
 import { Component, Input } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Tasks } from 'src/app/models/tasks.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { TaskStateService } from 'src/app/services/task-state.service';
 import { AddTasksModalComponent } from '../add-tasks-modal/add-tasks-modal.component';
+import { loadTasks } from 'src/app/state/task/task.actions';
+import { selectTasks } from 'src/app/state/task/task.selectors';
 
 @Component({
   selector: 'app-tasks-header',
@@ -18,10 +21,11 @@ export class TasksHeaderComponent {
   @Input() tasksData: Tasks[] = [];
   @Input() totalTasks: number = 0;
   @Input() tasksLength: number = 0;
+  subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private taskStateService: TaskStateService,
+    private store: Store,
     private rxStompService: RxStompService) {
   }
 
@@ -30,16 +34,21 @@ export class TasksHeaderComponent {
     this.watchGetCategoryFromMap()
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
   handleEmitEvent() {
-    this.taskStateService.getAllTasks().subscribe((allTasks) => {
-      this.ngxService.start()
-      console.log('cached false')
-      this.tasksData = allTasks;
-      this.totalTasks = this.tasksData.length
-      this.tasksLength = this.tasksData.length
-      this.taskStateService.setAllTasksSubject(this.tasksData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadTasks());
+    this.subscriptions.push(
+      this.store.select(selectTasks).subscribe((allTasks) => {
+        this.tasksData = allTasks;
+        this.totalTasks = this.tasksData.length
+        this.tasksLength = this.tasksData.length
+        this.ngxService.stop()
+      })
+    );
   }
 
   sortTasksData() {
@@ -53,7 +62,7 @@ export class TasksHeaderComponent {
         break;
       case 'email':
         this.tasksData.sort((a, b) => {
-          return a.user.email.localeCompare(b.user.email);
+          return a.userEmail.localeCompare(b.userEmail);
         });
         break;
       case 'id':

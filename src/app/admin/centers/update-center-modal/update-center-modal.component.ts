@@ -5,12 +5,14 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { Centers } from 'src/app/models/centers.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
 import { CenterService } from 'src/app/services/center.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserStateService } from 'src/app/services/user-state.service';
 import { genericError } from 'src/validators/form-validators.module';
 import { Users } from 'src/app/models/users.interface';
+import { Store } from '@ngrx/store';
+import { selectUser } from 'src/app/state/user/user.selector';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-update-center-modal',
@@ -26,16 +28,15 @@ export class UpdateCenterModalComponent {
   selectedPhoto: any;
   center!: Centers;
   selectedCategoriesId: any;
-  user!: Users;
+  user!: Users | null;
   subscriptions: Subscription[] = []
 
   constructor(private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<UpdateCenterModalComponent>,
     private ngxService: NgxUiLoaderService,
-    private userStateService: UserStateService,
+    private store: Store,
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,
-    private categoryStateService: CategoryStateService,
     private centerService: CenterService,
     @Inject(MAT_DIALOG_DATA) private data: any) {
     this.center = this.data.centerData;
@@ -43,7 +44,7 @@ export class UpdateCenterModalComponent {
 
   ngOnInit(): void {
     this.handleEmitEvent();
-    this.selectedCategoriesId = this.center.categorySet.map(category => category.id);
+    this.selectedCategoriesId = this.center.categoryIds;
     this.updateCenterForm = this.formBuilder.group({
       'id': this.center?.id,
       'name': new FormControl(this.center.name, Validators.compose([Validators.required, Validators.minLength(3)])),
@@ -61,14 +62,13 @@ export class UpdateCenterModalComponent {
   }
 
   handleEmitEvent() {
+    this.store.dispatch(loadActiveCategories());
     this.subscriptions.push(
-      this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
+      this.store.select(selectActiveCategories).subscribe((activeCategories) => {
         this.categories = activeCategories;
-        this.categoryStateService.setActiveCategoriesSubject(activeCategories);
       }),
-      this.userStateService.getUser().subscribe((user) => {
+      this.store.select(selectUser).subscribe((user) => {
         this.user = user;
-        this.userStateService.setUserSubject(user)
       }),
     );
   }

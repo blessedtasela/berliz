@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FooterModule } from 'src/app/footer/footer.module';
@@ -33,7 +34,8 @@ import { UpdateNewsletterModalComponent } from './update-newsletter-modal/update
     ReactiveFormsModule,
     MatDialogModule,
     FooterModule,
-    NavbarModule
+    NavbarModule,
+    RouterModule.forChild([{ path: '', component: NewslettersComponent }])
   ]
 })
 export class NewslettersModule { }

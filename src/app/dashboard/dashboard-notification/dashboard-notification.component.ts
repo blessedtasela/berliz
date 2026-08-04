@@ -4,12 +4,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { Notifications } from 'src/app/models/Notifications.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { NotificationDetailsComponent } from 'src/app/shared/notification-details/notification-details.component';
 import { TimeAgoPipe } from 'src/app/shared/pipes/time-ago.pipe';
 import { NotificationService } from 'src/app/services/notification.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { Store } from '@ngrx/store';
+import { selectAllNotifications } from 'src/app/state/notification/notification.selector';
 
 @Component({
   selector: 'app-dashboard-notification',
@@ -24,7 +25,7 @@ export class DashboardNotificationComponent implements OnInit, OnDestroy {
 
   constructor(
     private rxStompService: RxStompService,
-    private notificationStateService: NotificationStateService,
+    private store: Store,
     private dialog: MatDialog,
     private authService: AuthService,
     private notificationService: NotificationService,
@@ -55,7 +56,7 @@ export class DashboardNotificationComponent implements OnInit, OnDestroy {
   }
 
   private loadInitialNotifications() {
-    const sub = this.notificationStateService.getMyNotifications().subscribe(data => {
+    const sub = this.store.select(selectAllNotifications).subscribe(data => {
       this.notifications = data || [];
       this.allNotifications = data || [];
       this.updateNotificationList();
@@ -124,7 +125,7 @@ export class DashboardNotificationComponent implements OnInit, OnDestroy {
     this.notifications = this.notifications.filter(x => x.id !== n.id);
 
     // Call backend
-    this.notificationService.readNotification(n.id).subscribe({
+    this.notificationService.markAsRead(n.id).subscribe({
       next: () => {
         // Notify backend via WebSocket
         this.rxStompService.publish({

@@ -2,11 +2,12 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, E
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Role, Users } from 'src/app/models/users.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectUsers } from 'src/app/state/user/user.selector';
 import { emailExtensionValidator, fileValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -43,7 +44,7 @@ export class AddPartnerModalComponent implements AfterViewInit {
 
   constructor(private fb: FormBuilder,
     private partnerService: PartnerService,
-    private userStateService: UserStateService,
+    private store: Store,
     private cdr: ChangeDetectorRef,
     public dialogRef: MatDialogRef<AddPartnerModalComponent>,
     private ngxService: NgxUiLoaderService,
@@ -65,12 +66,11 @@ export class AddPartnerModalComponent implements AfterViewInit {
       'role': ['', [Validators.required, Validators.minLength(3)]],
     });
 
-    this.userStateService.allUsersData$.subscribe((cachedData) => {
+    this.store.select(selectUsers).subscribe((cachedData) => {
       if (!cachedData) {
-        this.userStateService.getAllUsers().subscribe((user) => {
+        this.store.select(selectUsers).subscribe((user) => {
           this.ngxService.start();
           this.users = user;
-          this.userStateService.setAllUsersSubject(this.users);
           this.ngxService.stop();
         });
       } else {

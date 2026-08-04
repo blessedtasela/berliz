@@ -6,11 +6,13 @@ import { Subscription } from 'rxjs';
 import { TodoList } from 'src/app/models/todoList.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TodoStateService } from 'src/app/services/todo-state.service';
 import { TodoService } from 'src/app/services/todo.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
 import { UpdateTodoModalComponent } from '../update-todo-modal/update-todo-modal.component';
+import { Store } from '@ngrx/store';
+import { loadTodos } from 'src/app/state/todo/todo.actions';
+import { selectTodos } from 'src/app/state/todo/todo.selectors';
 
 @Component({
   selector: 'app-todo-list-list',
@@ -25,7 +27,7 @@ export class TodoListListComponent {
   subscription = new Subscription;
 
   constructor(private datePipe: DatePipe,
-    private todoStateService: TodoStateService,
+    private store: Store,
     private todoService: TodoService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
@@ -39,10 +41,10 @@ export class TodoListListComponent {
 
 
   handleEmitEvent() {
-    this.todoStateService.getAllTodos().subscribe((todoList) => {
+    this.store.dispatch(loadTodos());
+    this.store.select(selectTodos).subscribe((todoList) => {
       this.todoListData = todoList;
       this.totalTodoList = this.todoListData.length
-      this.todoStateService.setAllTodosSubject(this.todoListData);
     });
   }
 

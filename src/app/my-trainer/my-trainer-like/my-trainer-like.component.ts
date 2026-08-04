@@ -1,8 +1,10 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { TrainerLikes } from 'src/app/models/trainers.interface';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
+import { selectMyTrainerLikes } from 'src/app/state/trainer/trainer.selector';
+import { loadMyTrainerLikes } from 'src/app/state/trainer/trainer.actions';
 
 @Component({
   selector: 'app-my-trainer-like',
@@ -20,7 +22,7 @@ export class MyTrainerLikeComponent {
   private subscriptions: Subscription[] = [];
 
   constructor(
-    private trainerStateService: TrainerStateService,
+    private store: Store,
     private datePipe: DatePipe
   ) {}
 
@@ -33,8 +35,9 @@ export class MyTrainerLikeComponent {
   }
 
   handleEmitEvent(): void {
+    this.store.dispatch(loadMyTrainerLikes());
     this.subscriptions.push(
-      this.trainerStateService.getMyTrainerLikes().subscribe(likes => {
+      this.store.select(selectMyTrainerLikes).subscribe(likes => {
         this.trainerLikes = likes ?? [];
       })
     );

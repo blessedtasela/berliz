@@ -6,11 +6,14 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Partner } from 'src/app/models/partners.interface';
 import { Role, Users } from 'src/app/models/users.interface';
-import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { PartnerFormComponent } from 'src/app/shared/partner-form/partner-form.component';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
+import { Store } from '@ngrx/store';
+import { selectUser } from 'src/app/state/user/user.selector';
+import { loadMyPartner } from 'src/app/state/partner/partner.actions';
+import { selectMyPartner } from 'src/app/state/partner/partner.selectors';
 
 @Component({
   selector: 'app-partner-null',
@@ -18,15 +21,10 @@ import { fileValidator, genericError } from 'src/validators/form-validators.modu
   styleUrls: ['./partner-null.component.css']
 })
 export class PartnerNullComponent {
-  @Input() user!: Users;
+  @Input() user!: Users | null;
   profilePhoto: any;
   @Input() partnerData!: Partner;
   @Output() onEmit = new EventEmitter()
-  responseMessage: any;
-  invalidForm: boolean = false;
-  addPartnerForm!: FormGroup;
-  selectedCV: any;
-  selectedCertificate: any;
   subscriptions: Subscription[] = [];
   roles: Role[] = [{
     id: 1, role: 'center'
@@ -34,39 +32,40 @@ export class PartnerNullComponent {
     id: 2, role: 'trainer'
   },]
 
+  requirements = [
+    'A valid fitness or coaching certification (PDF)',
+    'An up-to-date resume or CV (PDF)',
+    'A motivation statement between 900 and 1200 characters',
+    'A Facebook profile URL',
+    'An Instagram profile URL',
+    'An optional YouTube profile or channel URL',
+    'At least 2 feature videos showcasing your expertise',
+    'Accurate personal and professional information',
+    'Agreement to comply with Berliz trainer standards and policies'
+  ];
   constructor(
-    private userStateService: UserStateService,
+    private store: Store,
     private dialog: MatDialog,
     private ngxService: NgxUiLoaderService,
     private datePipe: DatePipe,
     private formBuilder: FormBuilder,
     private snackbarService: SnackBarService,
-    private partnerService: PartnerService,
-    private partnerStateService: PartnerStateService) {
+    private partnerService: PartnerService) {
   }
 
   ngOnInit(): void {
-    this.addPartnerForm = this.formBuilder.group({
-      'certificate': ['', Validators.compose([Validators.required, fileValidator])],
-      'motivation': ['', Validators.compose([Validators.required, Validators.minLength(9)])],
-      'cv': ['', Validators.compose([Validators.required, fileValidator])],
-      'facebookUrl': ['', Validators.compose([Validators.required, Validators.pattern('^(https?:\\/\\/)?(www\\.)?facebook\\.com\\/.+$')])],
-      'instagramUrl': ['', Validators.compose([Validators.required, Validators.pattern('^(https?:\\/\\/)?(www\\.)?instagram\\.com\\/.+$')])],
-      'youtubeUrl': ['', Validators.pattern('^(https?:\\/\\/)?(www\\.)?youtube\\.com\\/.+$')],
-      'role': ['', Validators.compose([Validators.required, Validators.minLength(4)])],
-    });
+
   }
 
   handleEmitEvent() {
     this.ngxService.start();
+    this.store.dispatch(loadMyPartner());
     this.subscriptions.push(
-      this.userStateService.getUser().subscribe((user) => {
+      this.store.select(selectUser).subscribe((user) => {
         this.user = user;
-        this.userStateService.setUserSubject(user);
       }),
-      this.partnerStateService.getPartner().subscribe((partner) => {
-        this.partnerData = partner
-        this.partnerStateService.setPartnerSubject(partner);
+      this.store.select(selectMyPartner).subscribe((partner) => {
+        if (partner) this.partnerData = partner;
       })
     );
     this.ngxService.stop();
@@ -90,64 +89,32 @@ export class PartnerNullComponent {
     window.open(url, '_blank');
   }
 
-  onCVSelected(event: any): void {
-    if (event.target.files && event.target.files.length > 0) {
-      this.selectedCV = event.target.files[0];
+
+  openPartnerForm(): void {
+    const userEmail = this.user?.email;
+
+    if (!userEmail) {
+      this.snackbarService.openSnackBar(
+        'Please log in to become a partner.',
+        'error'
+      );
+      return;
     }
+
+    const dialogRef = this.dialog.open(PartnerFormComponent, {
+      width: '600px',
+      disableClose: true, // only explicit close button can close it
+      data: {
+        email: userEmail,
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      // only reload when something was actually saved
+      if (result === 'saved') {
+        this.partnerData = { ...this.partnerData }; // Trigger change detection
+      }
+    });
   }
 
-  onCertificateSelected(event: any): void {
-    if (event.target.files && event.target.files.length > 0) {
-      this.selectedCertificate = event.target.files[0];
-    }
-  }
-
-  addPartner(): void {
-    const requestData = new FormData();
-    requestData.append('email', this.user?.email);
-    requestData.append('certificate', this.selectedCertificate);
-    requestData.append('motivation', this.addPartnerForm.get('motivation')?.value);
-    requestData.append('cv', this.selectedCV);
-    requestData.append('facebookUrl', this.addPartnerForm.get('facebookUrl')?.value);
-    requestData.append('instagramUrl', this.addPartnerForm.get('instagramUrl')?.value);
-    requestData.append('youtubeUrl', this.addPartnerForm.get('youtubeUrl')?.value);
-    requestData.append('role', this.addPartnerForm.get('role')?.value);
-    if (this.addPartnerForm.invalid) {
-      this.invalidForm = true;
-      this.responseMessage = "Invalid form. Please complete all sections";
-      this.snackbarService.openSnackBar(this.responseMessage, "error");
-    } else {
-      this.ngxService.start();
-      this.partnerService.addPartner(requestData)
-        .subscribe((response: any) => {
-          this.addPartnerForm.reset();
-          this.partnerService.setPartnerFormIndex(0);
-          this.invalidForm = false;
-          this.responseMessage = response?.message;
-          this.snackbarService.openSnackBar(this.responseMessage, "");
-          this.ngxService.stop();
-          this.onEmit.emit();
-          this.handleEmitEvent();
-          window.scrollTo({
-            top: 100,
-            left: 0,
-            behavior: 'smooth' // Optional: adds smooth scrolling effect
-          });
-        }, (error: any) => {
-          this.ngxService.start();
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackbarService.openSnackBar(this.responseMessage, "error");
-          this.ngxService.stop();
-        })
-    }
-  }
-
-  clear() {
-    this.addPartnerForm.reset();
-  }
 }

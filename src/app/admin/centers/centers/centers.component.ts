@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
-import { CenterStateService } from 'src/app/services/center-state.service';
+import { loadCenters } from 'src/app/state/center/center.actions';
+import { selectCenters } from 'src/app/state/center/center.selectors';
 
 @Component({
   selector: 'app-centers',
@@ -18,19 +20,11 @@ export class CentersComponent {
   subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
-    public centerStateService: CenterStateService) {
+    public store: Store) {
   }
 
   ngOnInit(): void {
-    this.centerStateService.allCentersData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.centersData = cachedData;
-        this.totalCenters = cachedData.length
-        this.centersLength = cachedData.length
-      }
-    });
+    this.handleEmitEvent();
   }
 
   ngOnDestroy() {
@@ -39,16 +33,15 @@ export class CentersComponent {
 
   handleEmitEvent() {
     this.ngxService.start()
+    this.store.dispatch(loadCenters());
     this.subscriptions.push(
-      this.centerStateService.getAllCenters().subscribe((allCenters) => {
-        console.log('isCachedData false')
+      this.store.select(selectCenters).subscribe((allCenters) => {
         this.centersData = allCenters;
         this.totalCenters = allCenters.length
         this.centersLength = allCenters.length
-        this.centerStateService.setAllCentersSubject(this.centersData);
+        this.ngxService.stop()
       }),
     );
-    this.ngxService.stop()
   }
 
   handleSearchResults(results: Centers[]): void {

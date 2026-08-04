@@ -1,21 +1,21 @@
 import { Categories } from "./categories.interface";
-import { Subscriptions } from "./subscriptions.interface";
-import { Users } from "./users.interface";
 
 export interface Members {
-    id: number;
-    user: Users;
-    height: number;
-    weight: number;
-    bodyFat: number;
-    medicalConditions: string;
-    categories: Categories[]; 
-    subscriptions: Subscriptions[]; 
-    motivation: string;
-    targetWeight: number;
-    date: Date;
-    lastUpdate: Date;
-    status: string;
-  }
-
-  
+  id: number;
+  userId: number;
+  userFirstname: string;
+  userLastname: string;
+  userEmail: string;
+  height: number;
+  weight: number;
+  bodyFat: number;
+  medicalConditions: string;
+  categories: Categories[];
+  subscriptionIds: number[];
+  motivation: string;
+  targetWeight: number;
+  status: string;
+  date: Date;
+  lastUpdate: Date;
+  message?: string;
+}

@@ -8,9 +8,11 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
 import { TaskService } from 'src/app/services/task.service';
-import { TaskStateService } from 'src/app/services/task-state.service';
 import { UpdateTasksModalComponent } from '../update-tasks-modal/update-tasks-modal.component';
 import { TaskDetailsModalComponent } from '../task-details-modal/task-details-modal.component';
+import { Store } from '@ngrx/store';
+import { loadTasks } from 'src/app/state/task/task.actions';
+import { selectTasks } from 'src/app/state/task/task.selectors';
 
 @Component({
   selector: 'app-tasks-list',
@@ -29,7 +31,7 @@ export class TasksListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private rxStompService: RxStompService,
-    private taskStateService: TaskStateService) {
+    private store: Store) {
   }
 
   ngOnInit() {
@@ -39,11 +41,11 @@ export class TasksListComponent {
   }
 
   handleEmitEvent() {
-    this.taskStateService.getAllTasks().subscribe((allTasks) => {
-      this.ngxService.start()
+    this.ngxService.start()
+    this.store.dispatch(loadTasks());
+    this.store.select(selectTasks).subscribe((allTasks) => {
       this.tasksData = allTasks;
       this.totalTasks = this.tasksData.length
-      this.taskStateService.setAllTasksSubject(this.tasksData);
       this.ngxService.stop()
     });
   }

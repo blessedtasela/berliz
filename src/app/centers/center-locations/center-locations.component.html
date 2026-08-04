@@ -13,7 +13,7 @@
                 *ngFor="let centerLocation of centerLocations; let i = index"
                 [ngClass]="{ 'hidden' : i >= 9 && !showAllLocations }">
                 <div class="flex">
-                    <img class="rounded-md mx-auto" [src]="centerLocation.coverPhoto">
+                    <img class="rounded-md mx-auto" [src]="centerLocation.coverPhotoUrl">
                 </div>
                 <div class="p-4">
                     <p class="text-red-600 font-bold font-sans text-sm text-center mb-2 uppercase">
@@ -25,7 +25,7 @@
                     <div class="text-center">
                         <button class="m-4 text-sm  bg-red-600 text-gray-200 p-1 px-2 mt-3 hover:bg-red-700 hero-button font-sans
                         rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
-                            {{ centerLocation.ratings }} <i-feather name="Star" style="width: 14px;"
+                            <i-feather name="Star" style="width: 14px;"
                                 class="font-boldt ext-gray-200 ml-1 -mb-3"></i-feather>
                         </button>
                     </div>

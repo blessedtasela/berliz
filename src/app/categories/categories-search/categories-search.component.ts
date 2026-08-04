@@ -1,12 +1,13 @@
 import { query } from '@angular/animations';
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
+import { fromEvent, debounceTime, map, tap, switchMap, Observable, of, Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-categories-search',
@@ -20,14 +21,19 @@ export class CategoriesSearchComponent {
   searchQuery: string = '';
   selectedSearchCriteria: any = 'name';
   @Output() results: EventEmitter<Categories[]> = new EventEmitter<Categories[]>()
+  subscriptions: Subscription[] = [];
 
-  constructor(private categoryStateService: CategoryStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef,
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   ngAfterViewInit(): void {
@@ -74,8 +80,8 @@ export class CategoriesSearchComponent {
         break;
       case 'tag':
         this.filteredCategories.sort((a, b) => {
-          const nameA = a.tagSet[0].name.toLowerCase();
-          const nameB = b.tagSet[0].name.toLowerCase();
+          const nameA = (a.tagNames[0] || '').toLowerCase();
+          const nameB = (b.tagNames[0] || '').toLowerCase();
           if (nameA < nameB) {
             return -1;
           }
@@ -101,9 +107,11 @@ export class CategoriesSearchComponent {
 
 
   search(query: string): Observable<Categories[]> {
-    this.categoryStateService.activeCategoriesData$.subscribe((cachedData) => {
-      this.categories = cachedData;
-    });
+    this.subscriptions.push(
+      this.store.select(selectActiveCategories).subscribe((cachedData) => {
+        this.categories = cachedData;
+      })
+    );
     query = query.toLowerCase();
     if (query.trim() === '') {
       this.filteredCategories = this.categories;
@@ -119,7 +127,7 @@ export class CategoriesSearchComponent {
         case 'status':
           return category.status.toLowerCase().includes(query);
         case 'tag':
-          return category.tagSet.some(tag => tag.name.toLowerCase().includes(query));
+          return category.tagNames.some(name => name.toLowerCase().includes(query));
         default:
           return false;
       }

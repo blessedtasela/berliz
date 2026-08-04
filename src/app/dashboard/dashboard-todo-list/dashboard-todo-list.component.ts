@@ -1,10 +1,12 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { TodoList } from 'src/app/models/todoList.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { TodoStateService } from 'src/app/services/todo-state.service';
 import { TodoDetailsModalComponent } from 'src/app/shared/todo-details-modal/todo-details-modal.component';
+import { loadMyTodos } from 'src/app/state/todo/todo.actions';
+import { selectMyTodos } from 'src/app/state/todo/todo.selectors';
 
 @Component({
   selector: 'app-dashboard-todo-list',
@@ -18,13 +20,13 @@ export class DashboardTodoListComponent implements OnInit, OnDestroy {
   wsSub!: Subscription;
 
   constructor(
-    private todoState: TodoStateService,
+    private store: Store,
     private rxStomp: RxStompService,
     private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
-    this.sub = this.todoState.myTodoData$.subscribe(todos => {
+    this.sub = this.store.select(selectMyTodos).subscribe(todos => {
       if (todos) this.todoData = todos;
     });
 
@@ -38,9 +40,7 @@ export class DashboardTodoListComponent implements OnInit, OnDestroy {
   }
 
   loadTodos() {
-    this.todoState.getMyTodos().subscribe(todos => {
-      this.todoState.setmyTodosSubject(todos);
-    });
+    this.store.dispatch(loadMyTodos());
   }
 
   initializeWebSocketListeners() {
@@ -52,7 +52,6 @@ export class DashboardTodoListComponent implements OnInit, OnDestroy {
         case 'STATUS': this.todoData = this.todoData.map(t => t.id === event.data.id ? event.data : t); break;
         case 'DELETE': this.todoData = this.todoData.filter(t => t.id !== event.data.id); break;
       }
-      this.todoState.setmyTodosSubject([...this.todoData]);
     });
   }
 

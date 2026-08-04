@@ -1,6 +1,8 @@
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { CategoryStateService } from '../services/category-state.service'; // Update path if needed
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { CategoryService } from '../services/category.service';
 import { SnackBarService } from '../services/snack-bar.service';
 
 @Injectable({
@@ -11,27 +13,33 @@ export class CategoryGuard implements CanActivate {
   constructor(
     private router: Router,
     private snackBarService: SnackBarService,
-    private categoryStateService: CategoryStateService
+    private categoryService: CategoryService
   ) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     const idParam = route.paramMap.get('id');
-    if (!idParam) return false;
+    const id = idParam ? +idParam : NaN;
+    if (!idParam || isNaN(id) || id <= 0) {
+      this.router.navigate(['/services']);
+      return of(false);
+    }
 
-    const id = +idParam;
-    if (isNaN(id) || id <= 0) return false;
-
-    // Get current list of active categories from state
-    let categoryExists = false;
-    this.categoryStateService.getActiveCategories().subscribe(categories => {
-      categoryExists = categories.some(cat => cat.id === id);
-      if (!categoryExists) {
+    return this.categoryService.getCategory(id).pipe(
+      map(response => !!response?.data),
+      map(exists => {
+        if (!exists) {
+          this.snackBarService.openSnackBar('Category not found', 'error');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          this.router.navigate(['/services']);
+        }
+        return exists;
+      }),
+      catchError(() => {
         this.snackBarService.openSnackBar('Category not found', 'error');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         this.router.navigate(['/services']);
-      }
-    });
-
-    return true;
+        return of(false);
+      })
+    );
   }
 }

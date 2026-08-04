@@ -2,8 +2,9 @@ import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Partner } from 'src/app/models/partners.interface';
-import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { Store } from '@ngrx/store';
+import { selectPartners } from 'src/app/state/partner/partner.selectors';
 
 @Component({
   selector: 'app-search-partner',
@@ -20,7 +21,7 @@ export class SearchPartnerComponent {
   constructor(private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef,
-    private partnerStateService: PartnerStateService) { }
+    private store: Store) { }
 
   ngOnInit(): void { }
 
@@ -58,7 +59,7 @@ export class SearchPartnerComponent {
   }
 
   search(query: string): Observable<Partner[]> {
-    this.partnerStateService.allPartnersData$.subscribe((cachedData) => {
+    this.store.select(selectPartners).subscribe((cachedData) => {
       this.partnersData = cachedData;
     });
     query = query.toLowerCase();

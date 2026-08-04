@@ -1,12 +1,13 @@
 import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Users } from 'src/app/models/users.interface';
 import { PaymentService } from 'src/app/services/payment.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectUsers } from 'src/app/state/user/user.selector';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -25,7 +26,7 @@ export class AddPaymentsModalComponent {
 
   constructor(private formBuilder: FormBuilder,
     private paymentService: PaymentService,
-    private userStateService: UserStateService,
+    private store: Store,
     public dialogRef: MatDialogRef<AddPaymentsModalComponent>,
     private ngxService: NgxUiLoaderService,
     private cd: ChangeDetectorRef,
@@ -42,7 +43,7 @@ export class AddPaymentsModalComponent {
       'tagIds': this.formBuilder.array([], this.validateCheckbox()),
     });
 
-    this.userStateService.activeUserData$.subscribe((cachedData) => {
+    this.store.select(selectUsers).subscribe((cachedData) => {
       if (!cachedData) {
         this.handleEmitEvent();
       } else {
@@ -58,10 +59,9 @@ export class AddPaymentsModalComponent {
   handleEmitEvent() {
     console.log("isCached false");
     this.subscription.add(
-      this.userStateService.getAllUsers().subscribe((users) => {
+      this.store.select(selectUsers).subscribe((users) => {
         this.ngxService.start();
         this.users = users;
-        this.userStateService.setAllUsersSubject(users);
         this.cd.detectChanges(); // Manually trigger change detection
         this.ngxService.stop();
       })

@@ -1,9 +1,10 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { TodoList } from 'src/app/models/todoList.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TodoStateService } from 'src/app/services/todo-state.service';
+import { selectTodos } from 'src/app/state/todo/todo.selectors';
 
 @Component({
   selector: 'app-search-todo-list',
@@ -19,7 +20,7 @@ export class SearchTodoListComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
-    private todoStateService: TodoStateService,
+    private store: Store,
     private elementRef: ElementRef) {
   }
 
@@ -61,7 +62,7 @@ export class SearchTodoListComponent {
   }
 
   search(query: string): Observable<TodoList[]> {
-    this.todoStateService.allTodosData$.subscribe((cachedData) => {
+    this.store.select(selectTodos).subscribe((cachedData) => {
       this.todoList = cachedData;
     })
     query = query.toLowerCase();

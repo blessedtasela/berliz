@@ -2,16 +2,17 @@ import { ChangeDetectorRef, Component, EventEmitter, Inject } from '@angular/cor
 import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl, FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription, forkJoin, take } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
 import { ClientService } from 'src/app/services/client.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { SubscriptionStateService } from 'src/app/services/subscription-state.service';
 import { genericError } from 'src/validators/form-validators.module';
 import { AddClientModalComponent } from '../add-client-modal/add-client-modal.component';
 import { Users } from 'src/app/models/users.interface';
 import { Clients } from 'src/app/models/clients.interface';
+import { Store } from '@ngrx/store';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-update-client-modal',
@@ -29,8 +30,7 @@ export class UpdateClientModalComponent {
   subscriptions: Subscription[] = [];
 
   constructor(private formBuilder: FormBuilder,
-    private categoryStateService: CategoryStateService,
-    private subscriptionStateService: SubscriptionStateService,
+    private store: Store,
     private clientService: ClientService,
     public dialogRef: MatDialogRef<AddClientModalComponent>,
     private ngxService: NgxUiLoaderService,
@@ -42,7 +42,7 @@ export class UpdateClientModalComponent {
 
 
   ngOnInit(): void {
-    this.selectedCategoriesId = this.client.categories.map(category => category.id);
+    this.selectedCategoriesId = [];
     this.updateClientForm = this.formBuilder.group({
       'id': this.client?.id,
       'height': new FormControl(this.client.height, [Validators.required, Validators.minLength(2)]),
@@ -56,15 +56,7 @@ export class UpdateClientModalComponent {
       'motivation': new FormControl(this.client.motivation, [Validators.required, Validators.minLength(15)]),
       'targetWeight': new FormControl(this.client.targetWeight, [Validators.required, Validators.minLength(2)]),
     });
-    forkJoin([
-      this.categoryStateService.activeCategoriesData$.pipe(take(1)),
-    ]).subscribe(([categories]) => {
-      if (categories === null) {
-        this.handleEmitEvent();
-      } else {
-        this.categories = categories;
-      }
-    });
+    this.handleEmitEvent();
   }
 
   ngOnDestroy() {
@@ -74,12 +66,11 @@ export class UpdateClientModalComponent {
   }
 
   handleEmitEvent() {
-    console.log("isCached false");
+    this.ngxService.start();
+    this.store.dispatch(loadActiveCategories());
     this.subscriptions.push(
-      this.categoryStateService.getActiveCategories().subscribe((categories) => {
-        this.ngxService.start();
+      this.store.select(selectActiveCategories).subscribe((categories) => {
         this.categories = categories;
-        this.categoryStateService.setActiveCategoriesSubject(categories);
         this.cd.detectChanges();
         this.ngxService.stop();
       })

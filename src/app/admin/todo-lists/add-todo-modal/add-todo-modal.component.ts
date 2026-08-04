@@ -1,12 +1,13 @@
 import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Users } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TodoService } from 'src/app/services/todo.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectUsers } from 'src/app/state/user/user.selector';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -24,7 +25,7 @@ export class AddTodoModalComponent {
 
   constructor(private formBuilder: FormBuilder,
     private todoService: TodoService,
-    private userStateService: UserStateService,
+    private store: Store,
     public dialogRef: MatDialogRef<AddTodoModalComponent>,
     private ngxService: NgxUiLoaderService,
     private cd: ChangeDetectorRef,
@@ -36,7 +37,7 @@ export class AddTodoModalComponent {
       'email': ['', [Validators.required]],
     });
 
-    this.userStateService.allUsersData$.subscribe((cachedData) => {
+    this.store.select(selectUsers).subscribe((cachedData) => {
       if (!cachedData) {
         this.handleEmitEvent();
       } else {
@@ -52,10 +53,9 @@ export class AddTodoModalComponent {
   handleEmitEvent() {
     console.log("isCached false");
     this.subscription.add(
-      this.userStateService.getAllUsers().subscribe((users) => {
+      this.store.select(selectUsers).subscribe((users) => {
         this.ngxService.start();
         this.users = users;
-        this.userStateService.setAllUsersSubject(users);
         this.cd.detectChanges(); // Manually trigger change detection
         this.ngxService.stop();
       })

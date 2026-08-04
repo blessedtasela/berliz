@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { TasksComponent } from './tasks/tasks.component';
 import { TasksListComponent } from './tasks-list/tasks-list.component';
 import { TasksHeaderComponent } from './tasks-header/tasks-header.component';
@@ -28,7 +29,8 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
     NavbarModule,
     ReactiveFormsModule,
     FormsModule,
-    IconsModule
+    IconsModule,
+    RouterModule.forChild([{ path: '', component: TasksComponent }])
   ]
 })
 export class TasksModule { }

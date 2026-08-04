@@ -1,17 +1,21 @@
 
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
 import { Partner } from 'src/app/models/partners.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { AuthService } from 'src/app/services/auth.service';
-import { CenterStateService } from 'src/app/services/center-state.service';
 import { FallbackService } from 'src/app/services/fall-back.service';
-import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectCurrentCenter } from 'src/app/state/center/center.selectors';
+import { loadCenter } from 'src/app/state/center/center.actions';
+import { selectCurrentTrainer } from 'src/app/state/trainer/trainer.selector';
+import { loadMyTrainer } from 'src/app/state/trainer/trainer.actions';
+import { selectUser } from 'src/app/state/user/user.selector';
+import { loadMyPartner } from 'src/app/state/partner/partner.actions';
+import { selectMyPartner } from 'src/app/state/partner/partner.selectors';
 
 @Component({
   selector: 'app-partner',
@@ -20,22 +24,18 @@ import { UserStateService } from 'src/app/services/user-state.service';
 })
 export class PartnerComponent implements OnInit, OnDestroy {
 
-  center!: Centers;
-  trainer!: Trainers;
+  center!: Centers | null;
+  trainer: Trainers | null = null;
   partner!: Partner;
-  user!: Users;
-
-  subscriptions: Subscription[] = [];
+  user: Users | null = null;
 
   dataReady = false;
   totalRequests = 0;
   completedRequests = 0;
+  subscriptions: Subscription[] = [];
 
   constructor(
-    private userStateService: UserStateService,
-    private partnerStateService: PartnerStateService,
-    private centerStateService: CenterStateService,
-    private trainerStateService: TrainerStateService,
+    private store: Store,
     private rxStompService: RxStompService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
@@ -55,46 +55,36 @@ export class PartnerComponent implements OnInit, OnDestroy {
     this.loadData();
   }
 
-  // ───────────────────────────────────────────────────────────────
-  // MARK REQUEST COMPLETE
-  // ───────────────────────────────────────────────────────────────
-  private markRequestCompleted() {
-    this.completedRequests++;
-
-    if (this.completedRequests >= this.totalRequests) {
-      this.fallback.done();
-    }
-  }
 
   // ───────────────────────────────────────────────────────────────
   // LOADERS
   // ───────────────────────────────────────────────────────────────
 
   private loadUser(): void {
-    this.userStateService.getUser().subscribe({
-      next: res => { this.user = res; this.markRequestCompleted(); },
-      error: () => this.markRequestCompleted()
-    });
+    this.store.select(selectUser).subscribe(user => {
+      this.user = user
+    })
   }
 
   private loadPartner(): void {
-    this.partnerStateService.getPartner().subscribe({
-      next: res => { this.partner = res; this.markRequestCompleted(); },
-      error: () => this.markRequestCompleted()
+    this.store.dispatch(loadMyPartner());
+    this.store.select(selectMyPartner).subscribe(res => {
+      if (res) this.partner = res;
     });
   }
 
+
   private loadCenter(): void {
-    this.centerStateService.getCenter().subscribe({
-      next: res => { this.center = res; this.markRequestCompleted(); },
-      error: () => this.markRequestCompleted()
+    this.store.dispatch(loadCenter());
+    this.store.select(selectCurrentCenter).subscribe(res => {
+      this.center = res;
     });
   }
 
   private loadTrainer(): void {
-    this.trainerStateService.getTrainer().subscribe({
-      next: res => { this.trainer = res; this.markRequestCompleted(); },
-      error: () => this.markRequestCompleted()
+    this.store.dispatch(loadMyTrainer());
+    this.store.select(selectCurrentTrainer).subscribe(res => {
+      this.trainer = res;
     });
   }
 
@@ -103,21 +93,13 @@ export class PartnerComponent implements OnInit, OnDestroy {
   // ───────────────────────────────────────────────────────────────
 
   loadData() {
-    this.fallback.start();
-    this.dataReady = false;
-    this.completedRequests = 0;
-
-    const isCenter = this.authService.isCenter();
-    const isTrainer = this.authService.isTrainer();
-
-    this.totalRequests = isCenter ? 3 : isTrainer ? 3 : 2;
-
     this.loadUser();
     this.loadPartner();
-
-    if (isCenter) this.loadCenter();
-    if (isTrainer) this.loadTrainer();
+    this.loadCenter();
+    this.loadTrainer();
+    this.dataReady = true;
   }
+
 
 
   // ───────────────────────────────────────────────────────────────

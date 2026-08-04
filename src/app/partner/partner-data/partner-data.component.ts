@@ -8,11 +8,13 @@ import { UpdatePartnerFileModalComponent } from 'src/app/shared/update-partner-f
 import { Partner } from 'src/app/models/partners.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Role } from 'src/app/models/users.interface';
-import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { ViewCvModalComponent } from 'src/app/shared/view-cv-modal/view-cv-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
+import { Store } from '@ngrx/store';
+import { loadMyPartner } from 'src/app/state/partner/partner.actions';
+import { selectMyPartner } from 'src/app/state/partner/partner.selectors';
 
 @Component({
   selector: 'app-partner-data',
@@ -38,7 +40,7 @@ export class PartnerDataComponent {
     private snackBarService: SnackBarService,
     private formBuilder: FormBuilder,
     private partnerService: PartnerService,
-    private partnerStateService: PartnerStateService,
+    private store: Store,
     private dialog: MatDialog,
     private cd: ChangeDetectorRef) { }
 
@@ -64,10 +66,9 @@ export class PartnerDataComponent {
 
   handleEmitEvent() {
     this.ngxService.start();
-    console.log('cached false: ')
-    this.subscriptions.push(this.partnerStateService.getPartner().subscribe((partner) => {
-      this.partnerData = partner;
-      this.partnerStateService.setPartnerSubject(this.partnerData);
+    this.store.dispatch(loadMyPartner());
+    this.subscriptions.push(this.store.select(selectMyPartner).subscribe((partner) => {
+      if (partner) this.partnerData = partner;
       this.cd.detectChanges();
     }),
     );

@@ -1,14 +1,16 @@
 import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription, forkJoin, take } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { SubTasks } from 'src/app/models/tasks.interface';
 import { Users } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TaskStateService } from 'src/app/services/task-state.service';
 import { TaskService } from 'src/app/services/task.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectUsers } from 'src/app/state/user/user.selector';
+import { loadSubTasks } from 'src/app/state/task/task.actions';
+import { selectSubTasks } from 'src/app/state/task/task.selectors';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -28,8 +30,7 @@ export class AddTasksModalComponent {
 
   constructor(private formBuilder: FormBuilder,
     private taskService: TaskService,
-    private userStateService: UserStateService,
-    private taskStateService: TaskStateService,
+    private store: Store,
     public dialogRef: MatDialogRef<AddTasksModalComponent>,
     private ngxService: NgxUiLoaderService,
     private cd: ChangeDetectorRef,
@@ -44,21 +45,7 @@ export class AddTasksModalComponent {
       'tagIds': this.formBuilder.array([], this.validateCheckbox()),
     });
 
-    forkJoin([
-      this.userStateService.activeUserData$.pipe(take(1)),
-      this.taskStateService.subTasksData$.pipe(take(1))
-    ]).subscribe(([users, subTasks]) => {
-      if (users === null) {
-        this.handleEmitEvent()
-      } else {
-        this.users = users
-      }
-      if (subTasks === null) {
-        this.handleEmitEvent()
-      } else {
-        this.subTasks = subTasks
-      }
-    })
+    this.handleEmitEvent();
   }
 
   ngOnDestroy() {
@@ -66,23 +53,19 @@ export class AddTasksModalComponent {
   }
 
   handleEmitEvent() {
-    console.log("isCached false");
     this.subscriptions.push(
-      this.userStateService.getActiveUsers().subscribe((users) => {
+      this.store.select(selectUsers).subscribe((users) => {
         this.ngxService.start();
         this.users = users;
-        this.userStateService.setActiveUsersSubject(users);
         this.cd.detectChanges(); // Manually trigger change detection
         this.ngxService.stop();
       }),
-      this.taskStateService.getSubTasks().subscribe((subTasks) => {
-        this.ngxService.start();
+      this.store.select(selectSubTasks).subscribe((subTasks) => {
         this.subTasks = subTasks;
-        this.taskStateService.setSubTasksSubject(subTasks);
         this.cd.detectChanges(); // Manually trigger change detection
-        this.ngxService.stop();
       })
     );
+    this.store.dispatch(loadSubTasks());
   }
 
   onCheckboxChanged(event: any) {

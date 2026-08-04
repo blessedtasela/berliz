@@ -1,8 +1,10 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { TrainerTestimonials } from 'src/app/models/trainers.interface';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
+import { selectMyTrainerTestimonials } from 'src/app/state/trainer/trainer.selector';
+import { loadMyTrainerTestimonials } from 'src/app/state/trainer/trainer.actions';
 
 @Component({
   selector: 'app-my-trainer-testimonials',
@@ -20,7 +22,7 @@ export class MyTrainerTestimonialsComponent {
   private subscriptions: Subscription[] = [];
 
   constructor(
-    private trainerStateService: TrainerStateService,
+    private store: Store,
     private datePipe: DatePipe
   ) { }
 
@@ -33,8 +35,9 @@ export class MyTrainerTestimonialsComponent {
   }
 
   handleEmitEvent(): void {
+    this.store.dispatch(loadMyTrainerTestimonials());
     this.subscriptions.push(
-      this.trainerStateService.getMyTrainerTestimonials().subscribe(testimonials => {
+      this.store.select(selectMyTrainerTestimonials).subscribe(testimonials => {
         this.trainerTestimonials = (testimonials ?? []).map(t => ({
           ...t,
           expanded: false
@@ -49,7 +52,7 @@ export class MyTrainerTestimonialsComponent {
     if (this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
       result = result.filter(t => {
-        const clientName = `${t.client?.user?.firstname ?? ''} ${t.client?.user?.lastname ?? ''}`.toLowerCase();
+        const clientName = (t.clientName ?? '').toLowerCase();
         return (
           clientName.includes(term) ||
           (t.testimonial ?? '').toLowerCase().includes(term)
@@ -63,8 +66,8 @@ export class MyTrainerTestimonialsComponent {
       } else if (this.sortOrder === 'oldest') {
         return new Date(a.date).getTime() - new Date(b.date).getTime();
       } else {
-        const nameA = `${a.client?.user?.firstname ?? ''} ${a.client?.user?.lastname ?? ''}`;
-        const nameB = `${b.client?.user?.firstname ?? ''} ${b.client?.user?.lastname ?? ''}`;
+        const nameA = a.clientName ?? '';
+        const nameB = b.clientName ?? '';
         return nameA.localeCompare(nameB);
       }
     });

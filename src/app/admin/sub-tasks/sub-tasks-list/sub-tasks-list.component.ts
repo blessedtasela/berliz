@@ -6,10 +6,13 @@ import { SubTasks } from 'src/app/models/tasks.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
-import { genericError } from 'src/validators/form-validators.module';import { TaskStateService } from 'src/app/services/task-state.service';
+import { genericError } from 'src/validators/form-validators.module';
 import { TaskService } from 'src/app/services/task.service';
 import { UpdateSubTasksModalComponent } from '../update-sub-tasks-modal/update-sub-tasks-modal.component';
 import { SubTaskDetailsModalComponent } from '../sub-task-details-modal/sub-task-details-modal.component';
+import { Store } from '@ngrx/store';
+import { loadSubTasks } from 'src/app/state/task/task.actions';
+import { selectSubTasks } from 'src/app/state/task/task.selectors';
 
 @Component({
   selector: 'app-sub-tasks-list',
@@ -28,7 +31,7 @@ export class SubTasksListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private rxStompService: RxStompService,
-    public taskStateService: TaskStateService) {
+    private store: Store) {
   }
 
   ngOnInit() {
@@ -40,11 +43,11 @@ export class SubTasksListComponent {
   }
 
   handleEmitEvent() {
-    this.taskStateService.getSubTasks().subscribe((subTasks) => {
-      this.ngxService.start()
+    this.ngxService.start()
+    this.store.dispatch(loadSubTasks());
+    this.store.select(selectSubTasks).subscribe((subTasks) => {
       this.subTasksData = subTasks;
       this.totalSubTasks = this.subTasksData.length
-      this.taskStateService.setSubTasksSubject(this.subTasksData);
       this.ngxService.stop()
     });
   }

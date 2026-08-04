@@ -1,8 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { ContactUs } from 'src/app/models/contact-us.model';
-import { ContactUsStateService } from 'src/app/services/contact-us-state.service';
+import { loadContactUs } from 'src/app/state/contact-us/contact-us.actions';
+import { selectContactUsList } from 'src/app/state/contact-us/contact-us.selectors';
 
 @Component({
   selector: 'app-admin-contact-us',
@@ -15,34 +18,32 @@ export class AdminContactUsComponent {
   contactUsLength: number = 0;
   searchComponent: string = 'contactUs'
   isSearch: boolean = true;
+  subscriptions: Subscription[] = [];
 
-  constructor(private contactUsStateService: ContactUsStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,) {
   }
 
   ngOnInit(): void {
-    this.contactUsStateService.allContactUsData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.contactUsData = cachedData;
-        this.totalContactUs = cachedData.length
-        this.contactUsLength = cachedData.length
-      }
-    });
+    this.handleEmitEvent();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   handleEmitEvent() {
-    this.contactUsStateService.getAllContactUs().subscribe((contactUs) => {
-      console.log('isCachedData false')
-      this.ngxService.start()
-      this.contactUsData = contactUs;
-      this.totalContactUs = contactUs.length
-      this.contactUsLength = contactUs.length;
-      this.contactUsStateService.setAllContactUsSubject(this.contactUsData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadContactUs());
+    this.subscriptions.push(
+      this.store.select(selectContactUsList).subscribe((contactUs) => {
+        this.contactUsData = contactUs;
+        this.totalContactUs = contactUs.length
+        this.contactUsLength = contactUs.length;
+        this.ngxService.stop()
+      })
+    );
   }
 
   handleSearchResults(results: ContactUs[]): void {
@@ -52,4 +53,3 @@ export class AdminContactUsComponent {
 
 
 }
-

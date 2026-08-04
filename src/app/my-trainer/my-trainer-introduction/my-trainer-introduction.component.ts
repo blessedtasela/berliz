@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { take } from 'rxjs';
@@ -10,7 +11,6 @@ import { StrapiUploadResponse } from 'src/app/models/Strapi.interface';
 import { TrainerIntroduction } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiService } from 'src/app/services/strapi.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 
 @Component({
@@ -21,7 +21,7 @@ import { TrainerService } from 'src/app/services/trainer.service';
 export class MyTrainerIntroductionComponent {
 
 
-  @Input() trainerIntroduction!: TrainerIntroduction;
+  @Input() trainerIntroduction!: TrainerIntroduction | null;
   @Output() emitEvent = new EventEmitter();
 
   updateTrainerIntroductionForm!: FormGroup;
@@ -46,7 +46,7 @@ export class MyTrainerIntroductionComponent {
     private loader: NgxUiLoaderService,
     private snackbar: SnackBarService,
     private trainerService: TrainerService,
-    private trainerState: TrainerStateService,
+    private store: Store,
     private strapi: StrapiService,
     private datePipe: DatePipe
   ) { }
@@ -239,13 +239,6 @@ export class MyTrainerIntroductionComponent {
         byteSize: uploaded.size,
         ownerId: 0,
         mediaOwnerType: MediaOwnerType.TRAINER_INTRODUCTION,
-
-        // Optional fields (only if your Strapi response contains them)
-        publicId: uploaded.publicId,
-        secureUrl: uploaded.secureUrl,
-        format: uploaded.format,
-        playbackUrl: uploaded.playbackUrl,
-        duration: uploaded.duration,
         date: new Date(),
         lastUpdate: uploaded.lastUpdate ? new Date(uploaded.lastUpdate) : new Date()
       };

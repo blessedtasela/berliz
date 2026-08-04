@@ -3,10 +3,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ContactUsFormComponent } from 'src/app/contact-us/contact-us-form/contact-us-form.component';
 import { ContactUs } from 'src/app/models/contact-us.model';
-import { ContactUsStateService } from 'src/app/services/contact-us-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { AddContactUsModalComponent } from '../add-contact-us-modal/add-contact-us-modal.component';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { Store } from '@ngrx/store';
+import { loadContactUs } from 'src/app/state/contact-us/contact-us.actions';
+import { selectContactUsList } from 'src/app/state/contact-us/contact-us.selectors';
 
 @Component({
   selector: 'app-contact-us-header',
@@ -20,7 +22,7 @@ export class ContactUsHeaderComponent {
   @Input() contactUsLength: number = 0;
 
 
-  constructor(private contactUsStateService: ContactUsStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
     private rxStompService: RxStompService) {
@@ -32,12 +34,12 @@ export class ContactUsHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.contactUsStateService.getAllContactUs().subscribe((contactUs) => {
-      this.ngxService.start()
+    this.ngxService.start()
+    this.store.dispatch(loadContactUs());
+    this.store.select(selectContactUsList).subscribe((contactUs) => {
       this.contactUsData = contactUs;
       this.totalContactUs = this.contactUsData.length
       this.contactUsLength = this.contactUsData.length
-      this.contactUsStateService.setAllContactUsSubject(this.contactUsData);
       this.ngxService.stop()
     });
   }

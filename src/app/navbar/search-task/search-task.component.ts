@@ -1,9 +1,10 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
 import {  NgxUiLoaderService } from 'ngx-ui-loader';
+import { Store } from '@ngrx/store';
 import { Subscription, fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Tasks } from 'src/app/models/tasks.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TaskStateService } from 'src/app/services/task-state.service';
+import { selectTasks } from 'src/app/state/task/task.selectors';
 
 @Component({
   selector: 'app-search-task',
@@ -18,7 +19,7 @@ export class SearchTaskComponent {
   @Output() results: EventEmitter<Tasks[]> = new EventEmitter<Tasks[]>()
   subscriptions: Subscription [] = []
 
-  constructor(private taskStateService: TaskStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) { }
@@ -66,9 +67,9 @@ export class SearchTaskComponent {
 
   search(query: string): Observable<Tasks[]> {
     this.subscriptions.push(
-      this.taskStateService.allTasksData$.subscribe((cachedData => {
-      this.tasksData = cachedData
-    }))
+      this.store.select(selectTasks).subscribe((cachedData) => {
+        this.tasksData = cachedData;
+      })
     )
     query = query.toLowerCase();
     if (query.trim() === '') {
@@ -77,9 +78,9 @@ export class SearchTaskComponent {
     this.filteredCentersData = this.tasksData.filter((task: Tasks) => {
       switch (this.selectedSearchCriteria) {
         case 'email':
-          return task.user.email.toLowerCase().includes(query);
+          return task.userEmail.toLowerCase().includes(query);
         case 'trainer':
-          return task.trainer.name.toLowerCase().includes(query);
+          return task.trainerName?.toLowerCase().includes(query) ?? false;
           case 'description':
             return task.description.toLowerCase().includes(query);
         case 'priority':

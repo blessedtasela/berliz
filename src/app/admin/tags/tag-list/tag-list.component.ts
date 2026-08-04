@@ -4,8 +4,10 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Tags } from 'src/app/models/tags.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TagStateService } from 'src/app/services/tag-state.service';
 import { TagService } from 'src/app/services/tag.service';
+import { Store } from '@ngrx/store';
+import { loadTags } from 'src/app/state/tag/tag.actions';
+import { selectTags } from 'src/app/state/tag/tag.selectors';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
 import { UpdateTagModalComponent } from '../update-tag-modal/update-tag-modal.component';
@@ -26,16 +28,16 @@ export class TagListComponent {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private tagStateService: TagStateService,
+    private store: Store,
     private datePipe: DatePipe,) { }
 
   ngOnInit(): void { }
 
   handleEmitEvent() {
-    this.tagStateService.getAllTags().subscribe((tagsData) => {
-      this.ngxService.start();
+    this.ngxService.start();
+    this.store.dispatch(loadTags());
+    this.store.select(selectTags).subscribe((tagsData) => {
       this.tagsData = tagsData
-      this.tagStateService.setAllTagsSubject(this.tagsData);
       this.ngxService.stop();
     });
   }

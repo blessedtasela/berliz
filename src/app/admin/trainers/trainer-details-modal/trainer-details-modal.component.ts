@@ -1,11 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { UpdateTrainerPhotoModalComponent } from 'src/app/shared/update-trainer-photo-modal/update-trainer-photo-modal.component';
+import { selectTrainers } from 'src/app/state/trainer/trainer.selector';
 
 @Component({
   selector: 'app-trainer-details-modal',
@@ -21,7 +22,7 @@ export class TrainerDetailsModalComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<TrainerDetailsModalComponent>,
-    private trainerStateService: TrainerStateService,
+    private store: Store,
     private dialog: MatDialog,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
@@ -33,12 +34,10 @@ export class TrainerDetailsModalComponent {
   }
 
   handleEmit() {
-    this.trainerStateService.getAllTrainers().subscribe((trainers) => {
-      this.ngxService.start();
+    this.store.select(selectTrainers).subscribe((trainers) => {
       const trainer = trainers.find(trainer => trainer.id == this.trainerData.id);
       if (trainer)
         this.trainerData = trainer
-      this.ngxService.stop();
     });
   }
 

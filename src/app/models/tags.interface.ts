@@ -5,4 +5,5 @@ export interface Tags {
     date: Date;
     lastUpdate: Date;
     status: string;
+    message?: string;
 }

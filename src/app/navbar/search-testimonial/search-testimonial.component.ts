@@ -3,7 +3,8 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription, fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TestimonialStateService } from 'src/app/services/testimonial-state.service';
+import { Store } from '@ngrx/store';
+import { selectTestimonials } from 'src/app/state/testimonial/testimonial.selectors';
 
 @Component({
   selector: 'app-search-testimonial',
@@ -18,7 +19,7 @@ export class SearchTestimonialComponent {
   @Output() results: EventEmitter<Testimonials[]> = new EventEmitter<Testimonials[]>()
   subscriptions: Subscription [] = []
 
-  constructor(private testimonialStateService: TestimonialStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) { }
@@ -66,7 +67,7 @@ export class SearchTestimonialComponent {
 
   search(query: string): Observable<Testimonials[]> {
     this.subscriptions.push(
-      this.testimonialStateService.allTestimonialsData$.subscribe((cachedData => {
+      this.store.select(selectTestimonials).subscribe((cachedData => {
       this.testimonialsData = cachedData
     }))
     )
@@ -79,9 +80,9 @@ export class SearchTestimonialComponent {
         case 'testimonial':
           return testimonial.testimonial.toLowerCase().includes(query);
         case 'email':
-          return testimonial.user.email.toLowerCase().includes(query);
+          return testimonial.userEmail.toLowerCase().includes(query);
           case 'center':
-            return testimonial.center.name.toLowerCase().includes(query);
+            return testimonial.centerName.toLowerCase().includes(query);
         case 'status':
           return testimonial.status.toLowerCase().includes(query);
         case 'id':

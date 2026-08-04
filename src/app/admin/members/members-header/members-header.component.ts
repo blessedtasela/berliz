@@ -2,9 +2,11 @@ import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Members } from 'src/app/models/members.interface';
-import { MemberStateService } from 'src/app/services/member-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AddMembersModalComponent } from '../add-members-modal/add-members-modal.component';
+import { Store } from '@ngrx/store';
+import { loadMembers } from 'src/app/state/member/member.actions';
+import { selectMembers } from 'src/app/state/member/member.selectors';
 
 @Component({
   selector: 'app-members-header',
@@ -21,23 +23,22 @@ export class MembersHeaderComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private memberStateService: MemberStateService,
+    public store: Store,
     private rxStompService: RxStompService) {
   }
 
   ngOnInit() {
-    this.watchDeleteCategory()
-    this.watchGetCategoryFromMap()
+    this.watchDeleteMember()
+    this.watchAddMember()
   }
 
   handleEmitEvent() {
-    this.memberStateService.getAllMembers().subscribe((allMembers) => {
-      this.ngxService.start()
-      console.log('cached false')
+    this.ngxService.start()
+    this.store.dispatch(loadMembers());
+    this.store.select(selectMembers).subscribe((allMembers) => {
       this.membersData = allMembers;
       this.totalMembers = this.membersData.length
       this.membersLength = this.membersData.length
-      this.memberStateService.setAllMembersSubject(this.membersData);
       this.ngxService.stop()
     });
   }
@@ -53,7 +54,7 @@ export class MembersHeaderComponent {
         break;
       case 'name':
         this.membersData.sort((a, b) => {
-          return a.user.firstname.localeCompare(b.user.firstname);
+          return a.userFirstname.localeCompare(b.userFirstname);
         });
         break;
       case 'id':
@@ -114,21 +115,15 @@ export class MembersHeaderComponent {
     });
   }
 
-  watchDeleteCategory() {
-    this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
-      const receivedCategories: Members = JSON.parse(message.body);
-      this.membersData = this.membersData.filter(category => category.id !== receivedCategories.id);
-      this.membersLength = this.membersData.length;
-      this.totalMembers = this.membersData.length
+  watchDeleteMember() {
+    this.rxStompService.watch('/topic/deleteMember').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 
-  watchGetCategoryFromMap() {
-    this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
-      const receivedCategories: Members = JSON.parse(message.body);
-      this.membersData.push(receivedCategories);
-      this.membersLength = this.membersData.length;
-      this.totalMembers = this.membersData.length
+  watchAddMember() {
+    this.rxStompService.watch('/topic/addMember').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 }

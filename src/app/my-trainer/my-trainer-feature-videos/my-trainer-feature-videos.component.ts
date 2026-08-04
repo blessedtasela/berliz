@@ -10,11 +10,11 @@ import { TrainerFeatureVideo } from 'src/app/models/trainers.interface';
 import { VideoResponse } from 'src/app/models/Media.interface';
 import { MediaOwnerType } from 'src/app/models/Media.enum';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { genericError } from 'src/validators/form-validators.module';
 import { environment } from 'src/environments/environment';
+import { Store } from '@ngrx/store';
 
 type EditorStep = 'idle' | 'trimming' | 'previewing' | 'size-warning' | 'uploading';
 
@@ -79,7 +79,7 @@ export class MyTrainerFeatureVideosComponent {
     private loader: NgxUiLoaderService,
     private snackbar: SnackBarService,
     private trainerService: TrainerService,
-    private trainerStateService: TrainerStateService,
+    private store: Store,
     private strapiService: StrapiService,
     private datePipe: DatePipe,
     private cdr: ChangeDetectorRef

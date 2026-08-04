@@ -1,7 +1,39 @@
-<section class="w-full relative">
-  <div class="hero-bg justify-center w-full h-64 p-24 mt-4">
-    <h1 class="font-sans font-bold text-red-600 text-center w-full rounded-md uppercase text-4xl w-full">
-      Trainers
+<!-- ═══════════════════════════════════════════════
+     TRAINERS HERO — full-width cinematic banner
+     Dark overlay on a background image, red accent
+════════════════════════════════════════════════ -->
+<section class="relative w-full h-72 sm:h-80 overflow-hidden font-sans">
+
+  <!-- Background image -->
+  <div class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+    style="background-image: url('assets/landing/hero-bjj.jpg');">
+  </div>
+
+  <!-- Dark gradient overlay -->
+  <div class="absolute inset-0"
+    style="background: linear-gradient(135deg, rgba(0,0,0,0.82) 0%, rgba(80,0,0,0.55) 60%, rgba(0,0,0,0.75) 100%);">
+  </div>
+
+  <!-- Content -->
+  <div class="relative z-10 flex flex-col items-center justify-center h-full gap-3 px-4 text-center">
+
+    <!-- Eyebrow -->
+    <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+      Berliz Certified
+    </span>
+
+    <!-- Title -->
+    <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+      Find Your <span class="text-red-500">Trainer</span>
     </h1>
+
+    <!-- Sub -->
+    <p class="text-sm text-zinc-300 max-w-md leading-relaxed">
+      Certified professionals ready to guide you — in person, hybrid, or online.
+    </p>
+
+    <!-- Red rule accent -->
+    <div class="w-12 h-0.5 bg-red-600 rounded-full mt-1"></div>
+
   </div>
 </section>

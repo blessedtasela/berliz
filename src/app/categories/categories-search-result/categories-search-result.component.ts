@@ -1,12 +1,14 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Categories, CategoryLikes } from 'src/app/models/categories.interface';
 import { Users } from 'src/app/models/users.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
 import { CategoryService } from 'src/app/services/category.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
+import { selectUser } from 'src/app/state/user/user.selector';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -20,26 +22,25 @@ export class CategoriesSearchResultComponent {
   visibleItems: number = 12;
   @Input() totalCategories: number = 0;
   responseMessage: any;
-  user!: Users;
+  user!: Users | null;
   categoryLikes: CategoryLikes[] = [];
   subscriptions: Subscription[] = []
 
   constructor(private datePipe: DatePipe,
     private categoryService: CategoryService,
-    private categoryStateService: CategoryStateService,
-    private userStateService: UserStateService,
+    private store: Store,
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void { }
 
   handleEmitEvent() {
+    this.store.dispatch(loadActiveCategories());
     this.subscriptions.push(
-      this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
+      this.store.select(selectActiveCategories).subscribe((activeCategories) => {
         this.categoriesResult = activeCategories;
         this.totalCategories = activeCategories.length;
-        this.categoryStateService.setActiveCategoriesSubject(this.categoriesResult);
       }),
-      this.userStateService.getUser().subscribe((user) => {
+      this.store.select(selectUser).subscribe((user) => {
         this.user = user;
       }),
     );

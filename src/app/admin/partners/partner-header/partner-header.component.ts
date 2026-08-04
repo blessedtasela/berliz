@@ -2,9 +2,11 @@ import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Partner } from 'src/app/models/partners.interface';
-import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { AddPartnerModalComponent } from '../add-partner-modal/add-partner-modal.component';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { Store } from '@ngrx/store';
+import { loadPartners } from 'src/app/state/partner/partner.actions';
+import { selectPartners } from 'src/app/state/partner/partner.selectors';
 
 @Component({
   selector: 'app-partner-header',
@@ -19,7 +21,7 @@ export class PartnerHeaderComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private partnerStateService: PartnerStateService,
+    private store: Store,
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
@@ -28,12 +30,12 @@ export class PartnerHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.partnerStateService.getAllPartners().subscribe((partnersData) => {
-      this.ngxService.start();
+    this.ngxService.start();
+    this.store.dispatch(loadPartners());
+    this.store.select(selectPartners).subscribe((partnersData) => {
       this.partnersData = partnersData
       this.partnersLength = this.partnersData.length
       this.totalPartners = this.partnersData.length;
-      this.partnerStateService.setAllPartnersSubject(this.partnersData);
       this.ngxService.stop();
     });
   }

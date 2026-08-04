@@ -9,11 +9,11 @@ import { Subscription, take } from 'rxjs';
 import { TrainerVideoAlbum } from 'src/app/models/trainers.interface';
 import { MediaOwnerType } from 'src/app/models/Media.enum';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { genericError } from 'src/validators/form-validators.module';
 import { VideoResponse } from 'src/app/models/Media.interface';
+import { Store } from '@ngrx/store';
 
 interface VideoSlotItem {
   rawFile: File | null;
@@ -33,7 +33,7 @@ type TrimStep = 'idle' | 'trimming' | 'previewing' | 'size-warning' | 'uploading
 })
 export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestroy {
 
-  @Input() trainerVideoAlbum!: TrainerVideoAlbum;
+  @Input() trainerVideoAlbum!: TrainerVideoAlbum | null;
   @Output() emitEvent = new EventEmitter();
 
   // ── Form ──────────────────────────────────────────────────────────────────
@@ -82,7 +82,7 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
     private loader: NgxUiLoaderService,
     private snackbar: SnackBarService,
     private trainerService: TrainerService,
-    private trainerStateService: TrainerStateService,
+    private store: Store,
     private strapiService: StrapiService,
     private datePipe: DatePipe,
     private cdr: ChangeDetectorRef
@@ -106,10 +106,9 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
   }
 
   private initSlots(): void {
-    this.trainerVideoAlbum = this.trainerVideoAlbum || {};
     this.slots = Array.from({ length: this.MAX_VIDEOS }, () => this.emptySlot());
 
-    if (this.trainerVideoAlbum.videos?.length) {
+    if (this.trainerVideoAlbum?.videos?.length) {
       this.trainerVideoAlbum.videos.forEach((v, i) => {
         if (i < this.MAX_VIDEOS) {
           this.slots[i].previewUrl = this.resolveVideoUrl(v.videoUrl ?? '');
@@ -626,7 +625,9 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
     this.invalidForm = false;
 
     // ⭐ Replace old videos with the updated ones from backend
-    this.trainerVideoAlbum.videos = updated.videos;
+    if (this.trainerVideoAlbum) {
+      this.trainerVideoAlbum.videos = updated.videos;
+    }
 
     // ⭐ Re-populate slots with updated videos
     this.slots = this.slots.map((slot, index) => ({
@@ -635,13 +636,6 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
     }));
 
     this.cdr.detectChanges();
-
-    // Update global trainer state
-    this.subscriptions.push(
-      this.trainerStateService.getMyTrainerVideoAlbum().subscribe(album => {
-        if (album) this.trainerStateService.setMyTrainerVideoAlbumsSubject(album);
-      })
-    );
   }
 
   private resolveVideoUrl(url?: string): string {

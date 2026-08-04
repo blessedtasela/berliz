@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FooterModule } from 'src/app/footer/footer.module';
@@ -32,6 +33,7 @@ import { UpdateTrainerModalComponent } from './update-trainer-modal/update-train
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
+    RouterModule.forChild([{ path: '', component: TrainersComponent }])
   ]
 })
 export class TrainersModule { }

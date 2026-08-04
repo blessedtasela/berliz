@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CenterAnnouncement } from 'src/app/models/centers.interface';
+import { CenterAnnouncements } from 'src/app/models/centers.interface';
 
 @Component({
   selector: 'app-center-announcements',
@@ -7,12 +7,11 @@ import { CenterAnnouncement } from 'src/app/models/centers.interface';
   styleUrls: ['./center-announcements.component.css']
 })
 export class CenterAnnouncementsComponent {
-  @Input() centerAnnouncements: CenterAnnouncement[] = [];
+  @Input() centerAnnouncements: CenterAnnouncements[] = [];
   showAllAnnouncements: boolean = false;
 
-  constructor() {
+  constructor() { }
 
-  }
 
   allAnnouncements() {
     this.showAllAnnouncements = !this.showAllAnnouncements;

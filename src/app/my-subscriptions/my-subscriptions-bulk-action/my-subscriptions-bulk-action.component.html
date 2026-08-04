@@ -28,7 +28,7 @@
             <label *ngFor="let sub of subscriptions" class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" [checked]="isSelected(sub.id)"
                     (change)="toggleSelect(sub.id, $any($event.target).checked)" class="w-3.5 h-3.5 accent-red-600" />
-                <span class="text-xs text-gray-700">{{ sub.planName }}</span>
+                <span class="text-xs text-gray-700">{{ sub.plan }}</span>
                 <span class="text-[10px] ml-auto font-semibold"
                     [ngClass]="sub.status === 'true' ? 'text-green-600' : 'text-gray-400'">
                     {{ sub.status === 'true' ? 'Active' : 'Expired' }}

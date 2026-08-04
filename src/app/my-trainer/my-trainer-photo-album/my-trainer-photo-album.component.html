@@ -91,14 +91,14 @@
                     <span class="text-[10px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
                         {{ photoCount }} / {{ MAX_PHOTOS }} selected
                     </span>
-                    <span *ngIf="!trainerPhotoAlbum.id"
+                    <span *ngIf="!trainerPhotoAlbum?.id"
                         class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">
                         Action required
                     </span>
                 </h2>
                 <p class="text-[11px] text-gray-400 mt-0.5">
-                    {{ trainerPhotoAlbum.date
-                    ? 'Registered on ' + formatDate(trainerPhotoAlbum.date)
+                    {{ trainerPhotoAlbum?.date
+                    ? 'Registered on ' + formatDate(trainerPhotoAlbum?.date)
                     : 'No photos registered yet' }}
                 </p>
             </div>

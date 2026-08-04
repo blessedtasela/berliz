@@ -7,9 +7,11 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module'; import { TestimonialService } from 'src/app/services/testimonial.service';
-import { TestimonialStateService } from 'src/app/services/testimonial-state.service';
 import { UpdateTestimonialsModalComponent } from '../update-testimonials-modal/update-testimonials-modal.component';
 import { TestimonialDetailsModalComponent } from '../testimonial-details-modal/testimonial-details-modal.component';
+import { Store } from '@ngrx/store';
+import { loadTestimonials } from 'src/app/state/testimonial/testimonial.actions';
+import { selectTestimonials } from 'src/app/state/testimonial/testimonial.selectors';
 
 @Component({
   selector: 'app-testimonials-list',
@@ -28,7 +30,7 @@ export class TestimonialsListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private rxStompService: RxStompService,
-    public testimonialStateService: TestimonialStateService) {
+    private store: Store) {
   }
 
   ngOnInit() {
@@ -37,11 +39,11 @@ export class TestimonialsListComponent {
   }
 
   handleEmitEvent() {
-    this.testimonialStateService.getAllTestimonials().subscribe((allTestimonials) => {
-      this.ngxService.start()
+    this.ngxService.start()
+    this.store.dispatch(loadTestimonials());
+    this.store.select(selectTestimonials).subscribe((allTestimonials) => {
       this.testimonialsData = allTestimonials;
       this.totalTestimonials = this.testimonialsData.length
-      this.testimonialStateService.setAllTestimonialsSubject(this.testimonialsData);
       this.ngxService.stop()
     });
   }

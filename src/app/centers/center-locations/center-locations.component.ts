@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CenterLocation } from 'src/app/models/centers.interface';
+import { CenterLocations } from 'src/app/models/centers.interface';
 
 @Component({
   selector: 'app-center-locations',
@@ -7,7 +7,7 @@ import { CenterLocation } from 'src/app/models/centers.interface';
   styleUrls: ['./center-locations.component.css']
 })
 export class CenterLocationsComponent {
-  @Input() centerLocations: CenterLocation[] = [];
+  @Input() centerLocations: CenterLocations[] = [];
   showAllLocations: boolean = false;
   
   constructor() {

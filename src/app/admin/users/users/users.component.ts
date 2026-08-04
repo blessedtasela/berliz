@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectUsers } from 'src/app/state/user/user.selector';
 
 @Component({
   selector: 'app-user',
@@ -17,7 +18,7 @@ export class UsersComponent {
   isSearch: boolean = true;
 
   constructor(private ngxService: NgxUiLoaderService,
-    private userStateService: UserStateService,
+    private store: Store,
     private rxStompService: RxStompService) {
   }
 
@@ -32,27 +33,26 @@ export class UsersComponent {
     //     this.usersLength = cachedData.length
     //   }
     // });
-    this.watchActivateAccount()
-    this.watchChangePassword()
-    this.watchUpdateProfilePhoto()
-    this.watchUpdateUser()
-    this.watchUpdateUserBio()
-    this.watchUpdateUserRole()
-    this.watchUpdateUserStatus()
-    this.watchGetUserFromMap()
-    this.watchResetPassword()
-    this.watchDeleteUser()
-    this.watchUpdateUserEmail()
+    // this.watchActivateAccount()
+    // this.watchChangePassword()
+    // this.watchUpdateProfilePhoto()
+    // this.watchUpdateUser()
+    // this.watchUpdateUserBio()
+    // this.watchUpdateUserRole()
+    // this.watchUpdateUserStatus()
+    // this.watchGetUserFromMap()
+    // this.watchResetPassword()
+    // this.watchDeleteUser()
+    // this.watchUpdateUserEmail()
   }
 
   handleEmitEvent() {
-    this.userStateService.getAllUsers().subscribe((allUsers) => {
+    this.store.select(selectUsers).subscribe((allUsers) => {
       this.ngxService.start()
       console.log('isCachedData false')
       this.usersData = allUsers;
       this.totalUsers = allUsers.length
       this.usersLength = allUsers.length
-      this.userStateService.setAllUsersSubject(this.usersData);
       this.ngxService.stop()
     });
   }

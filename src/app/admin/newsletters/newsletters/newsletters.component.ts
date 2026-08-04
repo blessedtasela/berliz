@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { Newsletter } from 'src/app/models/newsletter.model';
-import { NewsletterStateService } from 'src/app/services/newsletter-state.service';
+import { loadNewsletters } from 'src/app/state/newsletter/newsletter.actions';
+import { selectNewsletters } from 'src/app/state/newsletter/newsletter.selectors';
 
 @Component({
   selector: 'app-newsletters',
@@ -15,34 +18,32 @@ export class NewslettersComponent {
   newsletterLength: number = 0;
   searchComponent: string = 'newsletter'
   isSearch: boolean = true;
+  subscriptions: Subscription[] = [];
 
-  constructor(private newsletterStateService: NewsletterStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,) {
   }
 
   ngOnInit(): void {
-    this.newsletterStateService.allNewsletterData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.newsletterData = cachedData;
-        this.totalNewsletters = cachedData.length
-        this.newsletterLength = cachedData.length
-      }
-    });
+    this.handleEmitEvent();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   handleEmitEvent() {
-    this.newsletterStateService.getAllNewsletters().subscribe((newsletter) => {
-      console.log('isCachedData false')
-      this.ngxService.start()
-      this.newsletterData = newsletter;
-      this.totalNewsletters = newsletter.length
-      this.newsletterLength = newsletter.length;
-      this.newsletterStateService.setAllNewsletterSubject(this.newsletterData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadNewsletters());
+    this.subscriptions.push(
+      this.store.select(selectNewsletters).subscribe((newsletter) => {
+        this.newsletterData = newsletter;
+        this.totalNewsletters = newsletter.length
+        this.newsletterLength = newsletter.length;
+        this.ngxService.stop()
+      })
+    );
   }
 
   handleSearchResults(results: Newsletter[]): void {

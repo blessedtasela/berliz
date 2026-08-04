@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { MembersComponent } from './members/members.component';
 import { MembersListComponent } from './members-list/members-list.component';
 import { MembersHeaderComponent } from './members-header/members-header.component';
@@ -28,7 +29,8 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
     IconsModule,
     FooterModule,
     NavbarModule,
-    FormsModule
+    FormsModule,
+    RouterModule.forChild([{ path: '', component: MembersComponent }])
   ]
 })
 export class MembersModule { }

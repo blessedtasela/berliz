@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Trainers } from 'src/app/models/trainers.interface';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
+import { selectCurrentTrainer, selectTrainers } from 'src/app/state/trainer/trainer.selector';
 
 @Component({
   selector: 'app-trainers-main',
@@ -8,14 +9,15 @@ import { TrainerStateService } from 'src/app/services/trainer-state.service';
   styleUrls: ['./trainers-main.component.css']
 })
 export class TrainersMainComponent {
- trainers: Trainers[] = [];
+  trainers: Trainers[] = [];
   countResult: number = 0;
   allTrainers: Trainers[] = [];
+  showPartnerForm = false;
 
-  constructor(private trainerStateService: TrainerStateService) { }
+  constructor(private store: Store) { }
 
   ngOnInit(): void {
-    this.trainerStateService.activeTrainersData$.subscribe((cachedData) => {
+    this.store.select(selectTrainers).subscribe((cachedData) => {
       if (!cachedData) {
         this.handleEmitEvent()
       } else {
@@ -25,10 +27,8 @@ export class TrainersMainComponent {
   }
 
   handleEmitEvent() {
-    this.trainerStateService.getActiveTrainers().subscribe((activeTrainers) => {
-      console.log('isCachedData false')
-      this.trainers = activeTrainers;
-      this.trainerStateService.setActiveTrainersSubject(this.trainers);
+    this.store.select(selectTrainers).subscribe((cachedData) => {
+      this.trainers = cachedData;
     });
   }
 

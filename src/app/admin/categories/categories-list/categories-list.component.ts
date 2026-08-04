@@ -2,8 +2,9 @@ import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
 import { CategoryService } from 'src/app/services/category.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
@@ -12,6 +13,8 @@ import { AddCategoryModalComponent } from '../add-category-modal/add-category-mo
 import { UpdateCategoryModalComponent } from '../update-category-modal/update-category-modal.component';
 import { CategoryDetailsModalComponent } from '../category-details-modal/category-details-modal.component';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { loadCategories } from 'src/app/state/category/category.actions';
+import { selectCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-categories-list',
@@ -23,25 +26,32 @@ export class CategoriesListComponent implements OnInit {
   showFullData: boolean = false;
   @Input() categoriesData: Categories[] = [];
   @Input() totalCategories: number = 0;
+  subscriptions: Subscription[] = [];
 
   constructor(private datePipe: DatePipe,
     private categoryService: CategoryService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    public categoryStateService: CategoryStateService) {
+    private store: Store) {
   }
 
   ngOnInit() { }
 
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
   handleEmitEvent() {
-    this.categoryStateService.getCategories().subscribe((allCategories) => {
-      this.ngxService.start()
-      this.categoriesData = allCategories;
-      this.totalCategories = this.categoriesData.length
-      this.categoryStateService.setAllCategoriesSubject(this.categoriesData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadCategories());
+    this.subscriptions.push(
+      this.store.select(selectCategories).subscribe((allCategories) => {
+        this.categoriesData = allCategories;
+        this.totalCategories = this.categoriesData.length
+        this.ngxService.stop()
+      })
+    );
   }
 
 

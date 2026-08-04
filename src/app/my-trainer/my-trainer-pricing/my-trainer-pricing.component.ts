@@ -1,12 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { TrainerPricing } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
+import { selectMyTrainerPricing } from 'src/app/state/trainer/trainer.selector';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -20,7 +21,7 @@ export class MyTrainerPricingComponent {
   updateTrainerPricingForm!: FormGroup;
   invalidForm: boolean = false;
   responseMessage: any;
-  @Input() trainerPricing!: TrainerPricing;
+  @Input() trainerPricing!: TrainerPricing | null;
   subscriptions: Subscription[] = [];
   originalValue: any;
 
@@ -41,22 +42,22 @@ export class MyTrainerPricingComponent {
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private trainerService: TrainerService,
-    private trainerStateService: TrainerStateService,
+    private store: Store,
     private datePipe: DatePipe
   ) { }
 
   ngOnInit(): void {
-    this.trainerPricing = this.trainerPricing || {};
+    this.trainerPricing = this.trainerPricing;
     this.updateTrainerPricingForm = this.formBuilder.group({
-      id: [this.trainerPricing.id],
-      priceOnline: [this.trainerPricing.priceOnline, Validators.required],
-      pricePersonal: [this.trainerPricing.pricePersonal, Validators.required],
-      priceHybrid: [this.trainerPricing.priceHybrid, Validators.required],
-      discount3Months: [this.trainerPricing.discount3Months, Validators.required],
-      discount6Months: [this.trainerPricing.discount6Months, Validators.required],
-      discount9Months: [this.trainerPricing.discount9Months, Validators.required],
-      discount12Months: [this.trainerPricing.discount12Months, Validators.required],
-      discount2Programs: [this.trainerPricing.discount2Programs, Validators.required],
+      id: [this.trainerPricing?.id],
+      priceOnline: [this.trainerPricing?.priceOnline, Validators.required],
+      pricePersonal: [this.trainerPricing?.pricePersonal, Validators.required],
+      priceHybrid: [this.trainerPricing?.priceHybrid, Validators.required],
+      discount3Months: [this.trainerPricing?.discount3Months, Validators.required],
+      discount6Months: [this.trainerPricing?.discount6Months, Validators.required],
+      discount9Months: [this.trainerPricing?.discount9Months, Validators.required],
+      discount12Months: [this.trainerPricing?.discount12Months, Validators.required],
+      discount2Programs: [this.trainerPricing?.discount2Programs, Validators.required],
     });
 
     this.originalValue = this.updateTrainerPricingForm.getRawValue();
@@ -70,7 +71,7 @@ export class MyTrainerPricingComponent {
 
   handleEmitEvent() {
     this.subscriptions.push(
-      this.trainerStateService.getMyTrainerPricing().subscribe((trainerPricing) => {
+      this.store.select(selectMyTrainerPricing).subscribe((trainerPricing) => {
         this.trainerPricing = trainerPricing;
       })
     );
@@ -106,7 +107,7 @@ export class MyTrainerPricingComponent {
     const trainerPricing = this.updateTrainerPricingForm.value;
 
     this.ngxService.start();
-    if (this.trainerPricing.id) {
+    if (this.trainerPricing?.id) {
       // Update existing trainer pricing
       this.trainerService.updateTrainerPricing(trainerPricing).subscribe(
         (response: any) => {

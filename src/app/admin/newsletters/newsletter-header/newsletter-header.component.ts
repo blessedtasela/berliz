@@ -2,10 +2,13 @@ import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Newsletter } from 'src/app/models/newsletter.model';
-import { NewsletterStateService } from 'src/app/services/newsletter-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { NewsletterBulkMessageModalComponent } from '../newsletter-bulk-message-modal/newsletter-bulk-message-modal.component';
 import { AddNewsletterModalComponent } from '../add-newsletter-modal/add-newsletter-modal.component';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
+import { loadNewsletters } from 'src/app/state/newsletter/newsletter.actions';
+import { selectNewsletters } from 'src/app/state/newsletter/newsletter.selectors';
 
 @Component({
   selector: 'app-newsletter-header',
@@ -17,9 +20,9 @@ export class NewsletterHeaderComponent {
   @Input() newsletterData: Newsletter[] = [];
   @Input() totalNewsletters: number = 0;
   @Input() newsletterLength: number = 0;
+  subscriptions: Subscription[] = [];
 
-
-  constructor(private newsletterStateService: NewsletterStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
     private rxStompService: RxStompService) { }
@@ -29,15 +32,21 @@ export class NewsletterHeaderComponent {
     this.watchGetNewsletterFromMap()
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
   handleEmitEvent() {
-    this.newsletterStateService.getAllNewsletters().subscribe((newsletter) => {
-      this.ngxService.start()
-      this.newsletterData = newsletter;
-      this.totalNewsletters = this.newsletterData.length
-      this.newsletterLength = this.newsletterData.length
-      this.newsletterStateService.setAllNewsletterSubject(this.newsletterData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadNewsletters());
+    this.subscriptions.push(
+      this.store.select(selectNewsletters).subscribe((newsletter) => {
+        this.newsletterData = newsletter;
+        this.totalNewsletters = this.newsletterData.length
+        this.newsletterLength = this.newsletterData.length
+        this.ngxService.stop()
+      })
+    );
   }
 
   sortNewsletterData() {

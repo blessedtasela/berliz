@@ -1,36 +1,37 @@
-<div class="relative">
-    <div class="text-red-600 absolute top-0 right-0 p-1">
+<div class="relative bg-white rounded-xl">
+    <div class="text-red-600 absolute top-0 right-0 p-2">
         <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
     </div>
-    <section class="p-2 flex flex-col justify-center items-center">
-        <div class="text-center">
+    <section class="p-4 flex flex-col justify-center items-center">
+        <div class="text-center w-full">
             <p class="text-gray-950 font-sans font-bold text-xl uppercase mt-4">{{ categoryData.name }} [ID {{
-                categoryData.id }}</p>
+                categoryData.id }}]</p>
             <p class="text-red-600 font-sans font-bold text-sm italic">
                 created at {{ formatDate(categoryData.date) }}
             </p>
-            <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
-                <div>
-                    <img class="w-16" class="bg-gray-200 rounded-md p-2"
-                        [src]="'../../../assets/icons/' + categoryData.photo +'.png'">
+            <div class="rounded-xl p-6 grid grid-cols md:grid-cols-2 gap-4">
+                <div class="flex items-start justify-center">
+                    <img class="rounded-xl border border-gray-200 w-full max-w-[220px] object-cover"
+                        [src]="categoryData.photoUrl || '../../../assets/icons/user.png'"
+                        onerror="this.src='../../../assets/icons/user.png';">
                 </div>
-                <div class="flex flex-col m-4 gap-2">
-                    <p class="font-bold">Description</p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                <div class="flex flex-col text-left gap-2">
+                    <p class="font-bold text-gray-950">Description</p>
+                    <p class="text-gray-700 font-sans text-md">
                         {{ categoryData.description }}
                     </p>
-                    <p class="font-bold">Tags</p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
-                        <ng-container *ngFor="let tag of categoryData.tagSet; let i = index">
-                            {{ tag.name }} {{ i < (categoryData.tagSet.length - 1) ? "/" : "" }} </ng-container>
+                    <p class="font-bold text-gray-950 mt-2">Tags</p>
+                    <p class="text-gray-700 font-sans text-md">
+                        <ng-container *ngFor="let tagName of categoryData.tagNames; let i = index">
+                            {{ tagName }} {{ i < (categoryData.tagNames.length - 1) ? "/" : "" }} </ng-container>
                     </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
+                    <p class="text-gray-700 font-sans font-bold text-md mt-2">
                         Liked by {{ categoryData.likes }} users
                     </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex mt-2">
-                        Category status: {{ categoryData.status ==='true' ? 'active' :'false' }}
+                    <p class="text-gray-700 font-sans font-bold text-md">
+                        Category status: {{ categoryData.status === 'true' ? 'active' : 'inactive' }}
                     </p>
-                    <p class="text-red-600 font-sans font-bold text-md flex mt-2">
+                    <p class="text-red-600 font-sans font-bold text-md">
                         Last Update: {{ formatDate(categoryData.lastUpdate) }}
                     </p>
                 </div>

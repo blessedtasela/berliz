@@ -5,7 +5,6 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription, take } from 'rxjs';
 import { Exercises } from 'src/app/models/exercise.interface';
 import { BodyParts } from 'src/app/models/muscle-groups.interface';
-import { ExerciseStateService } from 'src/app/services/exercise-state.service';
 import { MuscleGroupService } from 'src/app/services/muscle-group.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { genericError } from 'src/validators/form-validators.module';
@@ -26,7 +25,6 @@ export class AddMuscleGroupModalComponent {
 
   constructor(private formBuilder: FormBuilder,
     private muscleGroupService: MuscleGroupService,
-    private exerciseStateService: ExerciseStateService,
     public dialogRef: MatDialogRef<AddMuscleGroupModalComponent>,
     private ngxService: NgxUiLoaderService,
     private cd: ChangeDetectorRef,

@@ -1,15 +1,19 @@
 import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, FormArray, FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
 import { Partner } from 'src/app/models/partners.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
 import { CenterService } from 'src/app/services/center.service';
-import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerFormModalComponent } from 'src/app/shared/trainer-form-modal/trainer-form-modal.component';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
+import { loadActivePartners } from 'src/app/state/partner/partner.actions';
+import { selectActivePartners } from 'src/app/state/partner/partner.selectors';
 
 @Component({
   selector: 'app-add-center-modal',
@@ -25,15 +29,15 @@ export class AddCenterModalComponent {
   selectedPhoto: any;
   activePartners: Partner[] = [];
   displayPhoto: any = "../../../assets/icons/user.png";
+  subscriptions: Subscription[] = [];
 
   constructor(private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<TrainerFormModalComponent>,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,
-    private categoryStateService: CategoryStateService,
-    private centerService: CenterService,
-    private partnerStateService: PartnerStateService) { }
+    private store: Store,
+    private centerService: CenterService) { }
 
 
   ngOnInit(): void {
@@ -52,33 +56,21 @@ export class AddCenterModalComponent {
   }
 
 
-  onEmit(): void {
-    this.categoryStateService.allCategoriesData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.categories = cachedData;
-      }
-    });
-    this.partnerStateService.activePartnersData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.activePartners = cachedData;
-      }
-    });
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
-  handleEmitEvent() {
-    console.log('isCachedData false')
-    this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
-      this.categories = activeCategories;
-      this.categoryStateService.setActiveCategoriesSubject(activeCategories);
-    });
-    this.partnerStateService.getActivePartners().subscribe((activePartners) => {
-      this.activePartners = activePartners;
-      this.partnerStateService.setActivePartnerssSubject(activePartners);
-    });
+  onEmit(): void {
+    this.store.dispatch(loadActiveCategories());
+    this.store.dispatch(loadActivePartners());
+    this.subscriptions.push(
+      this.store.select(selectActiveCategories).subscribe((activeCategories) => {
+        this.categories = activeCategories;
+      }),
+      this.store.select(selectActivePartners).subscribe((activePartners) => {
+        this.activePartners = activePartners;
+      })
+    );
   }
 
 

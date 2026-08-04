@@ -1,10 +1,11 @@
 import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, map, debounceTime, tap, switchMap, distinctUntilChanged, Observable, of, Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
-import { CenterStateService } from 'src/app/services/center-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { selectActiveCenters } from 'src/app/state/center/center.selectors';
 
 @Component({
   selector: 'app-center-search',
@@ -19,7 +20,7 @@ export class CenterSearchComponent {
   selectedSearchCriteria: any = 'name';
   subscription!: Subscription;
 
-  constructor(private centerStateService: CenterStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef,
@@ -41,11 +42,10 @@ export class CenterSearchComponent {
   handleEmitEvent() {
     this.subscription = new Subscription();
     this.subscription.add(
-      this.centerStateService.getActiveCenters().subscribe((center) => {
+      this.store.select(selectActiveCenters).subscribe((center) => {
         this.initializeSearch();
         this.centers = center
         this.activeCenters = this.centers
-        this.centerStateService.setActiveCentersSubject(this.centers);
       })
     )
   }
@@ -102,7 +102,7 @@ export class CenterSearchComponent {
   }
 
   search(query: string): Observable<Centers[]> {
-    this.centerStateService.activeCentersData$.subscribe((cachedData) => {
+    this.store.select(selectActiveCenters).subscribe((cachedData) => {
       this.activeCenters = cachedData;
     });
     query = query.toLowerCase();
@@ -114,7 +114,7 @@ export class CenterSearchComponent {
         case 'name':
           return center.name.toLowerCase().includes(query);
         case 'category':
-          return center.categorySet.some(category => category.name.toLowerCase().includes(query));
+          return center.categoryIds.some(id => id.toString().includes(query));
         case 'address':
           return center.address.toLowerCase().includes(query);
         default:

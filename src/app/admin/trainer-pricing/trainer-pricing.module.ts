@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { AddTrainerPricingModalComponent } from './add-trainer-pricing-modal/add-trainer-pricing-modal.component';
 import { TrainerPricingDetailsModalComponent } from './trainer-pricing-details-modal/trainer-pricing-details-modal.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -31,6 +32,7 @@ import { UpdateTrainerPricingModalComponent } from './update-trainer-pricing-mod
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
+    RouterModule.forChild([{ path: '', component: TrainerPricingComponent }])
   ]
 })
 export class TrainerPricingModule { }

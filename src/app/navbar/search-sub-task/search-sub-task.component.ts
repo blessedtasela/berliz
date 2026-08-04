@@ -1,9 +1,10 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Store } from '@ngrx/store';
 import { Subscription, fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { SubTasks } from 'src/app/models/tasks.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TaskStateService } from 'src/app/services/task-state.service';
+import { selectSubTasks } from 'src/app/state/task/task.selectors';
 
 @Component({
   selector: 'app-search-sub-task',
@@ -18,7 +19,7 @@ export class SearchSubTaskComponent {
   @Output() results: EventEmitter<SubTasks[]> = new EventEmitter<SubTasks[]>()
   subscriptions: Subscription[] = []
 
-  constructor(private taskStateService: TaskStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) { }
@@ -66,9 +67,9 @@ export class SearchSubTaskComponent {
 
   search(query: string): Observable<SubTasks[]> {
     this.subscriptions.push(
-      this.taskStateService.subTasksData$.subscribe((cachedData => {
-        this.subTasksData = cachedData
-      }))
+      this.store.select(selectSubTasks).subscribe((cachedData) => {
+        this.subTasksData = cachedData;
+      })
     )
     query = query.toLowerCase();
     if (query.trim() === '') {
@@ -78,12 +79,8 @@ export class SearchSubTaskComponent {
       switch (this.selectedSearchCriteria) {
         case 'name':
           return subTask.name.toLowerCase().includes(query);
-        case 'trainer':
-          return subTask.task.trainer.name.toLowerCase().includes(query);
-        case 'email':
-          return subTask.task.user.email.toLowerCase().includes(query);
         case 'exercise':
-          return subTask.exercise.name.toLowerCase().includes(query);
+          return subTask.exerciseName?.toLowerCase().includes(query) ?? false;
         case 'id':
           return subTask.id.toString().includes(query);
         default:

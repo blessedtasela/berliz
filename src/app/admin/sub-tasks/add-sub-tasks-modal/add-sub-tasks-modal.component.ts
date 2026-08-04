@@ -4,10 +4,12 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Icons } from 'angular-feather/lib/icons.provider';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
 import { Tasks } from 'src/app/models/tasks.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TaskStateService } from 'src/app/services/task-state.service';
 import { TaskService } from 'src/app/services/task.service';
+import { loadActiveTasks } from 'src/app/state/task/task.actions';
+import { selectActiveTasks } from 'src/app/state/task/task.selectors';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -25,7 +27,7 @@ export class AddSubTasksModalComponent {
 
   constructor(private formBuilder: FormBuilder,
     private taskService: TaskService,
-    private taskStateService: TaskStateService,
+    private store: Store,
     public dialogRef: MatDialogRef<AddSubTasksModalComponent>,
     private ngxService: NgxUiLoaderService,
     private cd: ChangeDetectorRef,
@@ -41,13 +43,7 @@ export class AddSubTasksModalComponent {
       'tagIds': this.formBuilder.array([], this.validateCheckbox()),
     });
 
-    this.taskStateService.activeTasksData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent();
-      } else {
-        this.tasks = cachedData
-      }
-    })
+    this.handleEmitEvent();
   }
 
   ngOnDestroy() {
@@ -55,16 +51,13 @@ export class AddSubTasksModalComponent {
   }
 
   handleEmitEvent() {
-    console.log("isCached false");
     this.subscription.add(
-      this.taskStateService.getActiveTasks().subscribe((tasks) => {
-        this.ngxService.start();
+      this.store.select(selectActiveTasks).subscribe((tasks) => {
         this.tasks = tasks;
-        this.taskStateService.setActiveTasksSubject(tasks);
         this.cd.detectChanges(); // Manually trigger change detection
-        this.ngxService.stop();
       })
     );
+    this.store.dispatch(loadActiveTasks());
   }
 
 

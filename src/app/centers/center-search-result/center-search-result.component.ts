@@ -1,12 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input, SimpleChanges } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { CenterLike, Centers } from 'src/app/models/centers.interface';
+import { CenterLikes, Centers } from 'src/app/models/centers.interface';
 import { Users } from 'src/app/models/users.interface';
-import { CenterStateService } from 'src/app/services/center-state.service';
 import { CenterService } from 'src/app/services/center.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectCenterLikes, selectCenters } from 'src/app/state/center/center.selectors';
+import { selectUser, selectUsers } from 'src/app/state/user/user.selector';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -17,16 +18,15 @@ import { genericError } from 'src/validators/form-validators.module';
 export class CenterSearchResultComponent {
   @Input() centersResult: Centers[] = [];
   showFullData: boolean = false;
-  user!: Users;
+  user!: Users | null;
   responseMessage: any;
-  centerLikes: CenterLike[] = [];
+  centerLikes: CenterLikes[] = [];
   subscriptions: Subscription[] = []
   @Input() totalCenters: number = 0;
   visibleCenters: number = 12;
 
   constructor(private datePipe: DatePipe,
-    private userStateService: UserStateService,
-    private centerStateService: CenterStateService,
+    private store: Store,
     private centerService: CenterService,
     private rxStompService: RxStompService) { }
 
@@ -35,7 +35,7 @@ export class CenterSearchResultComponent {
     this.watchUpdatePhoto()
     this.watchUpdateCenterStatus()
     this.watchUpdateCenter()
-    this.centerStateService.likeCentersData$.subscribe((cachedData) => {
+    this.store.select(selectCenterLikes).subscribe((cachedData) => {
       if (!cachedData) {
         this.handleEmitEvent()
       } else {
@@ -52,26 +52,22 @@ export class CenterSearchResultComponent {
   }
 
   subscribeUser() {
-    this.userStateService.getUser().subscribe((user) => {
+    this.store.select(selectUser).subscribe((user) => {
       this.user = user;
-      this.userStateService.setUserSubject(user);
     })
   }
 
   handleEmitEvent() {
     this.subscriptions.push(
-      this.centerStateService.getActiveCenters().subscribe((activeCenters) => {
+      this.store.select(selectCenters).subscribe((activeCenters) => {
         this.centersResult = activeCenters;
         this.totalCenters = this.centersResult.length;
-        this.centerStateService.setActiveCentersSubject(this.centersResult);
       }),
-      this.userStateService.getUser().subscribe((user) => {
+      this.store.select(selectUser).subscribe((user) => {
         this.user = user;
-        this.userStateService.setUserSubject(user);
       }),
-      this.centerStateService.getCenterLikes().subscribe((likes) => {
+      this.store.select(selectCenterLikes).subscribe((likes) => {
         this.centerLikes = likes
-        this.centerStateService.setLikeCentersSubject(this.centerLikes);
       }),
     )
   }
@@ -114,7 +110,7 @@ export class CenterSearchResultComponent {
 
   isLikedCenter(center: Centers): boolean {
     return this.centerLikes.some((centerLikes) =>
-      centerLikes.user.id === this.user?.id && centerLikes.center.id === center.id
+      centerLikes.userId === this.user?.id && centerLikes.centerId === center.id
     );
   }
 

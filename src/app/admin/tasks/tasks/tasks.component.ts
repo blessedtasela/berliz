@@ -1,52 +1,51 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Tasks } from 'src/app/models/tasks.interface';
-import { TaskStateService } from 'src/app/services/task-state.service';
+import { loadTasks } from 'src/app/state/task/task.actions';
+import { selectTasks } from 'src/app/state/task/task.selectors';
 
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.css']
 })
-
 export class TasksComponent {
   tasksData: Tasks[] = [];
   totalTasks: number = 0;
   tasksLength: number = 0;
   searchComponent: string = 'task'
   isSearch: boolean = true;
+  subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
-    public taskStateService: TaskStateService) {
+    private store: Store) {
   }
 
   ngOnInit(): void {
-    this.taskStateService.allTasksData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.tasksData = cachedData;
-        this.totalTasks = cachedData.length
-        this.tasksLength = cachedData.length
-      }
-    });
+    this.handleEmitEvent();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   handleEmitEvent() {
-    this.taskStateService.getAllTasks().subscribe((allTasks) => {
-      this.ngxService.start()
-      console.log('isCachedData false')
-      this.tasksData = allTasks;
-      this.totalTasks = allTasks.length
-      this.tasksLength = allTasks.length
-      this.taskStateService.setAllTasksSubject(this.tasksData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadTasks());
+    this.subscriptions.push(
+      this.store.select(selectTasks).subscribe((allTasks) => {
+        this.tasksData = allTasks;
+        this.totalTasks = allTasks.length
+        this.tasksLength = allTasks.length
+        this.ngxService.stop()
+      })
+    );
   }
 
   handleSearchResults(results: Tasks[]): void {
     this.tasksData = results;
     this.totalTasks = results.length;
   }
-
 }

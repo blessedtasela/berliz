@@ -4,11 +4,12 @@ import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NotificationSection, Notifications } from 'src/app/models/Notifications.interface';
 import { FilterState, SearchSortOption } from 'src/app/models/FilterState.interface';
-import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { NotificationDetailsComponent } from 'src/app/shared/notification-details/notification-details.component';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { Store } from '@ngrx/store';
+import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
 
 @Component({
   selector: 'notification-main',
@@ -31,20 +32,17 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
   private subs: Subscription[] = [];
 
   constructor(
-    private notificationState: NotificationStateService,
+    private store: Store,
     private notificationService: NotificationService,
     private snackbar: SnackBarService,
     private dialog: MatDialog
   ) {
-    this.notificationSortOptions = notificationState.notificationSortOptions;
+
   }
 
   ngOnInit(): void {
-    const sub = this.notificationState.getMyNotifications().subscribe(data => {
+    const sub = this.store.select(selectMyNotifications).subscribe(data => {
       this.allNotifications = data;
-
-      // ⭐ Load full list into state service ONCE
-      this.notificationState.setMyNotifications(data);
 
       this.filteredNotifications = [...data];
       this.currentPage = 1;
@@ -60,10 +58,34 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
 
   // from search panel
   onFilterStateChange(state: FilterState): void {
-    this.filteredNotifications = this.notificationState.filter(state, 'my');
+    this.filteredNotifications = this.filterNotifications(state);
     this.currentPage = 1;
     this.updatePage();
     this.selectedNotificationIds = [];
+  }
+
+  private filterNotifications(state: FilterState): Notifications[] {
+    const query = state.query?.trim().toLowerCase() || '';
+    const selectedSorts = state.selectedSorts || [];
+    const startDate = state.startDate ? new Date(state.startDate) : null;
+    const endDate = state.endDate ? new Date(state.endDate) : null;
+    const exactDate = state.exactDate ? new Date(state.exactDate) : null;
+
+    return this.allNotifications.filter(notification => {
+      const text = (notification.notification || '').toLowerCase();
+      const matchesQuery = !query || text.includes(query);
+      const date = new Date(notification.date);
+      const matchesStart = !startDate || date >= startDate;
+      const matchesEnd = !endDate || date <= endDate;
+      const matchesExact = !exactDate || date.toDateString() === exactDate.toDateString();
+      const matchesSorts = selectedSorts.length === 0 || selectedSorts.every(sort => {
+        if (sort === 'read') return notification.read === true;
+        if (sort === 'unread') return notification.read === false;
+        return true;
+      });
+
+      return matchesQuery && matchesStart && matchesEnd && matchesExact && matchesSorts;
+    });
   }
 
   // pagination
@@ -217,7 +239,7 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.notificationService.readNotification(notification.id).subscribe(() => {
+        this.notificationService.markAsRead(notification.id).subscribe(() => {
           this.refreshNotifications();
         });
       }
@@ -257,14 +279,14 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
 
   // single actions
   onMarkAsRead(notification: Notifications): void {
-    this.notificationService.readNotification(notification.id).subscribe(() => {
+    this.notificationService.markAsRead(notification.id).subscribe(() => {
       this.refreshNotifications();
     });
   }
 
   onMarkAsUnread(notification: Notifications): void {
     const payload = { action: 'unread', ids: notification.id.toString() };
-    this.notificationService.bulkAction(payload).subscribe(() => {
+    this.notificationService.markAsUnread(notification.id).subscribe(() => {
       this.refreshNotifications();
     });
   }
@@ -290,7 +312,7 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
   }
 
   private refreshNotifications(): void {
-    const sub = this.notificationState.getMyNotifications().subscribe(data => {
+    const sub = this.store.select(selectMyNotifications).subscribe(data => {
       this.allNotifications = data;
       this.filteredNotifications = [...data];
       this.currentPage = 1;
@@ -310,7 +332,7 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
     });
 
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
-      this.notificationService.readNotification(notification.id).subscribe((res: any) => {
+      this.notificationService.markAsRead(notification.id).subscribe((res: any) => {
         this.snackbar.openSnackBar(res.message || 'Notification marked as read', '');
         this.refreshNotifications();
         dialogRef.close();

@@ -18,7 +18,7 @@
                     <div
                         class="grid grid-cols-2 justify-center rounded-md m-2">
                         <div class="w-24">
-                            <img class="rounded-md" src="{{ review.user.profilePhoto }}">
+                            <img class="rounded-md" src="../../../assets/icons/user.png">
                             <div class="flex mt-2">
                                 <i-feather name="heart" style="width: 40px;"
                                     class="font-bold text-red-600 mr-4 mt-1"></i-feather>
@@ -29,7 +29,7 @@
                         </div>
                         <div class="md:-ml-20">
                         <p class="mt-4 text-center text-md font-sans font-bold text-red-600 uppercase">
-                            {{ review.user.firstname }}  {{ review.user.lastname }}
+                            {{ review.memberName }}
                         </p>
                         <p class="mt-1 text-sm text-gray-950 w-full text-justify font-sans m-2 p-2">
                             {{ review.comment }}

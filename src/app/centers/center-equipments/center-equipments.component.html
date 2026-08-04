@@ -15,7 +15,7 @@
             [ngClass]="{ 'hidden' : i >= 9 && !showAllEquipments }">
             <div class="bg-gray-100 rounded-md m-5 min-h[900px] grid grid-cols md:grid-cols-2">
                 <div class="flex">
-                    <img class="rounded-md mx-auto" src="{{ centerEquipment.image }}">
+                    <img class="rounded-md mx-auto" src="{{ centerEquipment.imageUrl }}">
                 </div>
                 <div class="flex flex-col justify-center items-center p-4">
                     <div class="p-2">
@@ -23,8 +23,8 @@
                             {{ centerEquipment.name }}
                         </p>
                         <p class="mt-1 text-sm w-full text-gray-600 font-bold text-center font-sans italic">
-                            <ng-container *ngFor="let category of centerEquipment.categories; let ix = index">
-                                {{ category }} {{ ix < (centerEquipment.categories.length - 1) ? "/" : "" }}
+                            <ng-container *ngFor="let categoryId of centerEquipment.categoryIds; let ix = index">
+                                {{ categoryId }} {{ ix < (centerEquipment.categoryIds.length - 1) ? "/" : "" }}
                                     </ng-container>
                         </p>
                     </div>

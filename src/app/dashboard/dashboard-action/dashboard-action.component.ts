@@ -1,8 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { DashboardStateService } from 'src/app/services/dashboard-state.service';
 import jwt_decode from "jwt-decode";
-import { NotificationStateService } from 'src/app/services/notification-state.service';
+import { Store } from '@ngrx/store';
+import { loadDashboard } from 'src/app/state/dashboard/dashboard.actions';
+import { selectDashboardData } from 'src/app/state/dashboard/dashboard.selectors';
 
 @Component({
   selector: 'app-dashboard-action',
@@ -18,29 +19,24 @@ export class DashboardActionComponent {
   userRole: any
 
   constructor(private ngxService: NgxUiLoaderService,
-    private dashboardStateService: DashboardStateService,
-   private notificationStateService: NotificationStateService
+   private store: Store
 ) {
     this.tokenPayload = jwt_decode(this.token);
     this.userRole = this.tokenPayload?.role
   }
 
   ngOnInit(): void {
-    // this.dashboardStateService.dashboardData$.subscribe((CachedData) => {
-    //   if (!CachedData) {
-    //     this.handleEmitEvent()
-    //   } else {
-    //     this.data = CachedData;
-    //   }
-    // })
+    this.store.select(selectDashboardData).subscribe((data) => {
+      if (!data) {
+        this.handleEmitEvent()
+      } else {
+        this.data = data;
+      }
+    })
   }
 
   handleEmitEvent() {
-    this.dashboardStateService.getDashBoard().subscribe((data) => {
-      console.log("isCached false")
-      this.data = data
-      this.dashboardStateService.setDashboardSubject(this.data);
-    })
+    this.store.dispatch(loadDashboard());
   }
 
 

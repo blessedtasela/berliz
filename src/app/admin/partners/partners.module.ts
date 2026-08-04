@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FooterModule } from 'src/app/footer/footer.module';
@@ -31,7 +32,8 @@ import { SearchPartnerComponent } from './search-partner/search-partner.componen
     ReactiveFormsModule,
     MatDialogModule,
     FooterModule,
-    NavbarModule
+    NavbarModule,
+    RouterModule.forChild([{ path: '', component: PartnersComponent }])
   ]
 })
 export class PartnersModule { }

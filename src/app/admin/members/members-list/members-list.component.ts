@@ -8,9 +8,11 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
 import { MemberService } from 'src/app/services/member.service';
-import { MemberStateService } from 'src/app/services/member-state.service';
 import { UpdateMembersModalComponent } from '../update-members-modal/update-members-modal.component';
 import { MemberDetailsModalComponent } from '../member-details-modal/member-details-modal.component';
+import { Store } from '@ngrx/store';
+import { loadMembers } from 'src/app/state/member/member.actions';
+import { selectMembers } from 'src/app/state/member/member.selectors';
 
 @Component({
   selector: 'app-members-list',
@@ -23,30 +25,29 @@ export class MembersListComponent {
   @Input() membersData: Members[] = [];
   @Input() totalMembers: number = 0;
 
-  constructor(private datePipe: DatePipe,
+  constructor(private store: Store,
+    private datePipe: DatePipe,
     private memberService: MemberService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private rxStompService: RxStompService,
-    public memberStateService: MemberStateService) {
+    private rxStompService: RxStompService) {
   }
 
   ngOnInit() {
-    this.watchGetCategoryFromMap()
-    this.watchLikeCategory()
-    this.watchUpdateCategory()
+    this.watchAddMember()
+    this.watchUpdateMember()
     this.watchUpdateStatus()
-    this.watchDeleteCategory()
+    this.watchDeleteMember()
   }
 
   handleEmitEvent() {
-    this.memberStateService.getAllMembers().subscribe((allMembers) => {
-      this.ngxService.start()
+    this.ngxService.start();
+    this.store.dispatch(loadMembers());
+    this.store.select(selectMembers).subscribe((allMembers) => {
       this.membersData = allMembers;
       this.totalMembers = this.membersData.length
-      this.memberStateService.setAllMembersSubject(this.membersData);
-      this.ngxService.stop()
+      this.ngxService.stop();
     });
   }
 
@@ -187,41 +188,27 @@ export class MembersListComponent {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
-  watchLikeCategory() {
-    this.rxStompService.watch('/topic/likeCategory').subscribe((message) => {
-      const receivedCategories: Members = JSON.parse(message.body);
-      const categoryId = this.membersData.findIndex(member => member.id === receivedCategories.id)
-      this.membersData[categoryId] = receivedCategories
+  watchAddMember() {
+    this.rxStompService.watch('/topic/addMember').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 
-  watchUpdateCategory() {
-    this.rxStompService.watch('/topic/updateCategory').subscribe((message) => {
-      const receivedCategories: Members = JSON.parse(message.body);
-      const categoryId = this.membersData.findIndex(member => member.id === receivedCategories.id)
-      this.membersData[categoryId] = receivedCategories
-    });
-  }
-
-  watchGetCategoryFromMap() {
-    this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
-      const receivedCategories: Members = JSON.parse(message.body);
-      this.membersData.push(receivedCategories);
+  watchUpdateMember() {
+    this.rxStompService.watch('/topic/updateMember').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 
   watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
-      const receivedCategories: Members = JSON.parse(message.body);
-      const categoryId = this.membersData.findIndex(member => member.id === receivedCategories.id)
-      this.membersData[categoryId] = receivedCategories
+    this.rxStompService.watch('/topic/updateMemberStatus').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 
-  watchDeleteCategory() {
-    this.rxStompService.watch('/topic/deleteCategory').subscribe((message) => {
-      const receivedCategories: Members = JSON.parse(message.body);
-      this.membersData = this.membersData.filter(member => member.id !== receivedCategories.id);
+  watchDeleteMember() {
+    this.rxStompService.watch('/topic/deleteMember').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 

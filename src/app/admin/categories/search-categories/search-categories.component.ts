@@ -1,9 +1,10 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
+import { fromEvent, debounceTime, map, tap, switchMap, Observable, of, Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { selectCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-search-categories',
@@ -16,14 +17,19 @@ export class SearchCategoriesComponent {
   searchQuery: string = '';
   selectedSearchCriteria: any = 'name';
   @Output() results: EventEmitter<Categories[]> = new EventEmitter<Categories[]>()
+  subscriptions: Subscription[] = [];
 
-  constructor(private categoryStateService: CategoryStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) {
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   ngAfterViewInit(): void {
@@ -56,9 +62,11 @@ export class SearchCategoriesComponent {
   }
 
   search(query: string): Observable<Categories[]> {
-    this.categoryStateService.allCategoriesData$.subscribe((cachedData => {
-      this.categoriesData = cachedData
-    }))
+    this.subscriptions.push(
+      this.store.select(selectCategories).subscribe((cachedData) => {
+        this.categoriesData = cachedData;
+      })
+    );
     query = query.toLowerCase();
     if (query.trim() === '') {
       this.filteredCategoriesData = this.categoriesData;
@@ -68,7 +76,7 @@ export class SearchCategoriesComponent {
         case 'name':
           return category.name.toLowerCase().includes(query);
         case 'tag':
-          return category.tagSet.some(tag => tag.name.toLocaleLowerCase().includes(query));
+          return category.tagNames.some(name => name.toLocaleLowerCase().includes(query));
         case 'id':
           return category.id.toString().includes(query);
         case 'description':

@@ -5,10 +5,12 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { SubscriptionStateService } from 'src/app/services/subscription-state.service';
 import { genericError } from 'src/validators/form-validators.module';
 import { AddCategoryModalComponent } from '../../categories/add-category-modal/add-category-modal.component';
 import { MemberService } from 'src/app/services/member.service';
+import { Store } from '@ngrx/store';
+import { loadActiveSubscriptions } from 'src/app/state/subscription/subscription.actions';
+import { selectActiveSubscriptions } from 'src/app/state/subscription/subscription.selectors';
 
 @Component({
   selector: 'app-add-members-modal',
@@ -26,7 +28,7 @@ export class AddMembersModalComponent {
 
   constructor(private formBuilder: FormBuilder,
     private memberService: MemberService,
-    private subscriptionStateService: SubscriptionStateService,
+    private store: Store,
     public dialogRef: MatDialogRef<AddCategoryModalComponent>,
     private ngxService: NgxUiLoaderService,
     private cd: ChangeDetectorRef,
@@ -43,13 +45,7 @@ export class AddMembersModalComponent {
       'tagIds': this.formBuilder.array([], this.validateCheckbox()),
     });
 
-    this.subscriptionStateService.activeSubscriptionsData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent();
-      } else {
-        this.subscriptions = cachedData
-      }
-    })
+    this.handleEmitEvent();
   }
 
   ngOnDestroy() {
@@ -57,12 +53,11 @@ export class AddMembersModalComponent {
   }
 
   handleEmitEvent() {
-    console.log("isCached false");
+    this.ngxService.start();
+    this.store.dispatch(loadActiveSubscriptions());
     this.subscription.add(
-      this.subscriptionStateService.getActiveSubscriptions().subscribe((subs) => {
-        this.ngxService.start();
+      this.store.select(selectActiveSubscriptions).subscribe((subs) => {
         this.subscriptions = subs;
-        this.subscriptionStateService.setActiveSubscriptionsSubject(subs);
         this.cd.detectChanges(); // Manually trigger change detection
         this.ngxService.stop();
       })

@@ -1,9 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Subscription } from 'rxjs';
 import { Payments } from 'src/app/models/payment.interface';
-import { PaymentStateService } from 'src/app/services/payment-state.service';
+import { selectPayments } from 'src/app/state/payment/payment.selectors';
 import { PaymentService } from 'src/app/services/payment.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -22,32 +24,37 @@ export class PaymentsListComponent {
   showFullData: boolean = false;
   @Input() paymentsData: Payments[] = [];
   @Input() totalPayments: number = 0;
+  subscriptions: Subscription[] = []
 
   constructor(private datePipe: DatePipe,
+    private store: Store,
     private paymentService: PaymentService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private rxStompService: RxStompService,
-    public paymentStateService: PaymentStateService) {
+    private rxStompService: RxStompService) {
   }
 
   ngOnInit() {
-    this.watchGetCategoryFromMap()
-    this.watchLikeCategory()
-    this.watchUpdateCategory()
-    this.watchUpdateStatus()
-    this.watchDeleteCategory()
+    this.watchAddPayment()
+    this.watchUpdatePayment()
+    this.watchUpdatePaymentStatus()
+    this.watchDeletePayment()
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => (sub.unsubscribe()))
   }
 
   handleEmitEvent() {
-    this.paymentStateService.getAllPayments().subscribe((allPayments) => {
-      this.ngxService.start()
-      this.paymentsData = allPayments;
-      this.totalPayments = this.paymentsData.length
-      this.paymentStateService.setAllPaymentsSubject(this.paymentsData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start();
+    this.subscriptions.push(
+      this.store.select(selectPayments).subscribe((allPayments) => {
+        this.paymentsData = allPayments;
+        this.totalPayments = this.paymentsData.length
+        this.ngxService.stop()
+      }),
+    );
   }
 
 
@@ -187,43 +194,28 @@ export class PaymentsListComponent {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
-  watchLikeCategory() {
-    this.rxStompService.watch('/topic/likeCategory').subscribe((message) => {
-      const receivedCategories: Payments = JSON.parse(message.body);
-      const categoryId = this.paymentsData.findIndex(payment => payment.id === receivedCategories.id)
-      this.paymentsData[categoryId] = receivedCategories
+  watchAddPayment() {
+    this.rxStompService.watch('/topic/addPayment').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 
-  watchUpdateCategory() {
-    this.rxStompService.watch('/topic/updateCategory').subscribe((message) => {
-      const receivedCategories: Payments = JSON.parse(message.body);
-      const categoryId = this.paymentsData.findIndex(payment => payment.id === receivedCategories.id)
-      this.paymentsData[categoryId] = receivedCategories
+  watchUpdatePayment() {
+    this.rxStompService.watch('/topic/updatePayment').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 
-  watchGetCategoryFromMap() {
-    this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
-      const receivedCategories: Payments = JSON.parse(message.body);
-      this.paymentsData.push(receivedCategories);
+  watchUpdatePaymentStatus() {
+    this.rxStompService.watch('/topic/updatePaymentStatus').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 
-  watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
-      const receivedCategories: Payments = JSON.parse(message.body);
-      const categoryId = this.paymentsData.findIndex(payment => payment.id === receivedCategories.id)
-      this.paymentsData[categoryId] = receivedCategories
-    });
-  }
-
-  watchDeleteCategory() {
-    this.rxStompService.watch('/topic/deleteCategory').subscribe((message) => {
-      const receivedCategories: Payments = JSON.parse(message.body);
-      this.paymentsData = this.paymentsData.filter(payment => payment.id !== receivedCategories.id);
+  watchDeletePayment() {
+    this.rxStompService.watch('/topic/deletePayment').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 
 }
-

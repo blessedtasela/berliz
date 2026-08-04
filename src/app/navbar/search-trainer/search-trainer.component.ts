@@ -2,12 +2,12 @@ import { DatePipe } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
-import { TrainerService } from 'src/app/services/trainer.service';
+import { selectTrainers } from 'src/app/state/trainer/trainer.selector';
 
 @Component({
   selector: 'app-search-trainer',
@@ -15,13 +15,14 @@ import { TrainerService } from 'src/app/services/trainer.service';
   styleUrls: ['./search-trainer.component.css']
 })
 export class SearchTrainerComponent implements OnInit, AfterViewInit {
-  trainersData: Trainers[] | null = [];
+  trainersData!: Trainers[];
   filteredTrainersData: Trainers[] | null = [];
   searchQuery: string = '';
   selectedSearchCriteria: any = 'name';
   @Output() results: EventEmitter<Trainers[]> = new EventEmitter<Trainers[]>()
 
-  constructor(private trainerStateService: TrainerStateService,
+  constructor(
+    private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) { }
@@ -64,7 +65,7 @@ export class SearchTrainerComponent implements OnInit, AfterViewInit {
   }
 
   search(query: string): Observable<Trainers[]> {
-    this.trainerStateService.allTrainersData$.subscribe((cachedData => {
+    this.store.select(selectTrainers).subscribe((cachedData => {
       this.trainersData = cachedData
     }))
     query = query.toLowerCase();

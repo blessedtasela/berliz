@@ -1,10 +1,13 @@
 import { Component, Input } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { TodoList } from 'src/app/models/todoList.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { TodoStateService } from 'src/app/services/todo-state.service';
 import { AddTodoModalComponent } from '../add-todo-modal/add-todo-modal.component';
+import { loadTodos } from 'src/app/state/todo/todo.actions';
+import { selectTodos } from 'src/app/state/todo/todo.selectors';
 
 @Component({
   selector: 'app-todo-list-header',
@@ -16,9 +19,9 @@ export class TodoListHeaderComponent {
   @Input() todoListData: TodoList[] = [];
   @Input() totalTodoList: number = 0;
   @Input() todoListLength: number = 0;
+  subscriptions: Subscription[] = [];
 
-
-  constructor(private todoStateService: TodoStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
     private rxStompService: RxStompService) { }
@@ -28,13 +31,19 @@ export class TodoListHeaderComponent {
     this.ngxService.stop()
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
   handleEmitEvent() {
-    this.todoStateService.getAllTodos().subscribe((todo) => {
-      this.todoListData = todo;
-      this.totalTodoList = this.todoListData.length
-      this.todoListLength = this.todoListData.length
-      this.todoStateService.setAllTodosSubject(this.todoListData);
-    });
+    this.store.dispatch(loadTodos());
+    this.subscriptions.push(
+      this.store.select(selectTodos).subscribe((todo) => {
+        this.todoListData = todo;
+        this.totalTodoList = this.todoListData.length
+        this.todoListLength = this.todoListData.length
+      })
+    );
   }
 
   sortNewsletterData() {

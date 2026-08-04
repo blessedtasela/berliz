@@ -1,6 +1,6 @@
 <section class="rounded-md font-bold bg-gray-100">
     <div class="w-full items-center justify-items-center gap-5 cursor-pointer"
-        *ngFor="let a of album?.video; let i = index" [class.hidden]=" i !== albumIndex">
+        *ngFor="let a of album?.videos; let i = index" [class.hidden]=" i !== albumIndex">
         <div
             class="flex flex-col justify-center items-center transition-auto duration-3000 ease-in-out">
             <video class="md:object-cover w-full object-contain md:h-[600px] rounded-md hover:drop-shadow-2xl transition-all 
@@ -9,10 +9,10 @@
             </video>
             <div class="absolute  p-4">
                 <p class="md:m-5 w-full text-center text-xl md:text-4xl font-bold text-red-600 uppercase">
-                    {{ album?.name }}
+                    {{ album?.centerName }}
                 </p>
                 <p class="text-sm md:text-md w-full text-center font-sans text-gray-200">
-                    {{ a.comment }}
+                    {{ album?.comment }}
                 </p>
                 <div class="flex justify-center mt-5">
                     <button class="m-4 text-sm md:text-xl bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 

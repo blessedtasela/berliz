@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -10,6 +10,7 @@ import { AuthService } from 'src/app/services/auth.service';
 
 export class NavigationBarComponent implements OnInit {
   menuStatus: boolean = false;
+  scrolled: boolean = false;
   currentRoute: any;
   navLinks = [
   { label: 'Home', path: '/home' },
@@ -40,6 +41,12 @@ export class NavigationBarComponent implements OnInit {
     // this.subscribeToCloseNavBarOnMouseDown()
     this.subscribeToCloseNavBarOnScroll()
     // this.subscribeToCloseNavBarOnClick()
+    this.scrolled = window.scrollY > 8;
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    this.scrolled = window.scrollY > 8;
   }
 
   handleEmitEvent() {

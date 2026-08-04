@@ -35,7 +35,7 @@
         <p class="text-[11px] text-red-400 italic">
             Your profile will remain hidden from clients until your subscription is active.
             Use this one time code for activation:
-            <span class="font-bold">{{trainer.activationUniqueId}}</span>
+            <span class="font-bold">{{trainer?.activationUniqueId}}</span>
         </p>
     </div>
 
@@ -179,7 +179,7 @@
     <span class="text-gray-500">
         Subscription valid until
         <strong class="text-gray-700">
-            {{ trainerSubscription.endDate | date:'mediumDate' }}
+            {{ trainerSubscription?.endDate | date:'mediumDate' }}
         </strong>
     </span>
 </div>

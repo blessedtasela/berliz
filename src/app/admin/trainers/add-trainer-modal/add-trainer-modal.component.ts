@@ -4,12 +4,15 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
 import { Partner } from 'src/app/models/partners.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
-import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { TrainerFormModalComponent } from 'src/app/shared/trainer-form-modal/trainer-form-modal.component';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
+import { Store } from '@ngrx/store';
+import { loadActivePartners } from 'src/app/state/partner/partner.actions';
+import { selectActivePartners } from 'src/app/state/partner/partner.selectors';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-add-trainer-modal',
@@ -31,9 +34,8 @@ export class AddTrainerModalComponent {
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,
-    private categoryStateService: CategoryStateService,
     private trainerService: TrainerService,
-    private partnerStateService: PartnerStateService) { }
+    private store: Store) { }
 
 
   ngOnInit(): void {
@@ -52,31 +54,13 @@ export class AddTrainerModalComponent {
 
 
   onEmit(): void {
-    this.categoryStateService.allCategoriesData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.categories = cachedData;
-      }
-    });
-    this.partnerStateService.activePartnersData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.activePartners = cachedData;
-      }
-    });
-  }
-
-  handleEmitEvent() {
-    console.log('isCachedData false')
-    this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
+    this.store.dispatch(loadActiveCategories());
+    this.store.select(selectActiveCategories).subscribe((activeCategories) => {
       this.categories = activeCategories;
-      this.categoryStateService.setActiveCategoriesSubject(activeCategories);
     });
-    this.partnerStateService.getActivePartners().subscribe((activePartners) => {
+    this.store.dispatch(loadActivePartners());
+    this.store.select(selectActivePartners).subscribe((activePartners) => {
       this.activePartners = activePartners;
-      this.partnerStateService.setActivePartnerssSubject(activePartners);
     });
   }
 

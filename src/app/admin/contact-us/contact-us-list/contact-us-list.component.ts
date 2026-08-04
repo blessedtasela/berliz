@@ -8,8 +8,10 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
 import { UpdateContactUsModalComponent } from '../update-contact-us-modal/update-contact-us-modal.component';
-import { ContactUsStateService } from 'src/app/services/contact-us-state.service';
 import { ContactUsReviewModalComponent } from '../contact-us-review-modal/contact-us-review-modal.component';
+import { Store } from '@ngrx/store';
+import { loadContactUs } from 'src/app/state/contact-us/contact-us.actions';
+import { selectContactUsList } from 'src/app/state/contact-us/contact-us.selectors';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { ContactUsDetailsModalComponent } from '../contact-us-details-modal/contact-us-details-modal.component';
 
@@ -26,7 +28,7 @@ export class ContactUsListComponent {
 
   constructor(private datePipe: DatePipe,
     private contactUsService: ContactUsService,
-    private contactUsStateService: ContactUsStateService,
+    private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
@@ -44,11 +46,11 @@ export class ContactUsListComponent {
 
 
   handleEmitEvent() {
-    this.contactUsStateService.getAllContactUs().subscribe((contactUs) => {
-      this.ngxService.start()
+    this.ngxService.start()
+    this.store.dispatch(loadContactUs());
+    this.store.select(selectContactUsList).subscribe((contactUs) => {
       this.contactUsData = contactUs;
       this.totalContactUs = this.contactUsData.length
-      this.contactUsStateService.setAllContactUsSubject(this.contactUsData);
       this.ngxService.stop()
     });
   }

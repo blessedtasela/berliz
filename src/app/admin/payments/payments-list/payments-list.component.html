@@ -17,11 +17,11 @@
             <tbody>
                 <tr *ngFor="let payment of paymentsData; let i = index" class="bg-gray-100 hover:bg-gray-200">
                     <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ payment.user.email }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ payment.userEmail }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">{{ payment.status }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(payment.date) }}</td>
                     <td class="border-b border-gray-400 px-4 py-2 font-bold">{{ payment.id }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ payment.payer.firstname }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ payment.payerEmail }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(payment.lastUpdate) }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">
                         <div class="flex items-center p-2">

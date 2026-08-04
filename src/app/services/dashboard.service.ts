@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { PartnerDetails } from '../models/dashboard.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -13,18 +14,18 @@ export class DashboardService {
     private router: Router) { }
 
   getDashboardDetails() {
-    return this.httpClient.get(this.url + "/dashboard/details")
+    return this.httpClient.get<Record<string, any>>(this.url + "/dashboard/details")
 }
 
 getBerlizDetails() {
-  return this.httpClient.get(this.url + "/dashboard/berliz")
+  return this.httpClient.get<Record<string, any>>(this.url + "/dashboard/berliz")
 }
 
 getPartnerDetails() {
-  return this.httpClient.get(this.url + "/dashboard/getPartnerDetails")
+  return this.httpClient.get<PartnerDetails>(this.url + "/dashboard/getPartnerDetails")
 }
 
 getProfileData() {
-  return this.httpClient.get(this.url + "/dashboard/getProfileData")
+  return this.httpClient.get<Record<string, any>>(this.url + "/dashboard/getProfileData")
 }
 }

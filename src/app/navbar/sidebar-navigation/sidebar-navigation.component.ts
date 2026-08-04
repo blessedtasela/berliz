@@ -5,7 +5,6 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { Categories } from 'src/app/models/categories.interface';
-import { UserStateService } from 'src/app/services/user-state.service';
 import { ContactUs } from 'src/app/models/contact-us.model';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
@@ -23,6 +22,10 @@ import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { Payments } from 'src/app/models/payment.interface';
 import { Members } from 'src/app/models/members.interface';
 import { Clients } from 'src/app/models/clients.interface';
+import { Store } from '@ngrx/store';
+import { ObservableInput, Subject, takeUntil } from 'rxjs';
+import { loadUser } from 'src/app/state/user/user.actions';
+import { selectUser } from 'src/app/state/user/user.selector';
 
 @Component({
   selector: 'app-sidebar-navigation',
@@ -32,7 +35,7 @@ import { Clients } from 'src/app/models/clients.interface';
 export class SidebarNavigationComponent implements OnInit {
   openMenu: boolean = false;
   mdScreen: boolean = false;
-  userData!: any;
+  userData!: Users | null;
   responseMessage: any;
   profilePhoto: any;
   currentRoute: any;
@@ -57,13 +60,14 @@ export class SidebarNavigationComponent implements OnInit {
   @Output() tasksResults: EventEmitter<Tasks[]> = new EventEmitter<Tasks[]>();
   @Output() testimonialsResult: EventEmitter<Testimonials[]> = new EventEmitter<Testimonials[]>();
   @Input() searchComponent: string = ''
+  private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
     private userService: UserService,
     private dialog: MatDialog,
-    private userStateService: UserStateService,
     private ngxService: NgxUiLoaderService,
+    private store: Store,
     private snackbarService: SnackBarService) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -74,8 +78,16 @@ export class SidebarNavigationComponent implements OnInit {
 
   ngOnInit() {
     this.onResize();
-    this.subscribeToCloseSideBar()
-    this.handleEmitEvent();
+    this.subscribeToCloseSideBar();
+    // Load user from store
+    this.store.dispatch(loadUser());
+
+    this.store.select(selectUser)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        this.userData = user;
+      });
+
   }
 
   toggleSidebar(): void {
@@ -111,13 +123,6 @@ export class SidebarNavigationComponent implements OnInit {
 
   stopPropagation(event: Event): void {
     event.stopPropagation();
-  }
-
-  handleEmitEvent() {
-    this.userStateService.getUser().subscribe((user) => {
-      this.userData = user;
-      this.profilePhoto = 'data:image/jpeg;base64,' + this.userData.profilePhoto;
-    });
   }
 
   handleCategorySearchResults(results: Categories[]): void {

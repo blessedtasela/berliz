@@ -1,16 +1,17 @@
 import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl, FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { forkJoin, take } from 'rxjs';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { Categories } from 'src/app/models/categories.interface';
 import { Users } from 'src/app/models/users.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
 import { ClientService } from 'src/app/services/client.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { SubscriptionStateService } from 'src/app/services/subscription-state.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectUsers } from 'src/app/state/user/user.selector';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -28,9 +29,7 @@ export class AddClientModalComponent {
   subscriptions: Subscription[] = [];
 
   constructor(private formBuilder: FormBuilder,
-    private categoryStateService: CategoryStateService,
-    private userStateService: UserStateService,
-    private subscriptionStateService: SubscriptionStateService,
+    private store: Store,
     private clientService: ClientService,
     public dialogRef: MatDialogRef<AddClientModalComponent>,
     private ngxService: NgxUiLoaderService,
@@ -51,21 +50,7 @@ export class AddClientModalComponent {
       'motivation': ['', [Validators.required, Validators.minLength(15)]],
       'targetWeight': ['', [Validators.required, Validators.minLength(2)]],
     });
-    forkJoin([
-      this.categoryStateService.activeCategoriesData$.pipe(take(1)),
-      this.userStateService.activeUserData$.pipe(take(1))
-    ]).subscribe(([categories, users]) => {
-      if (categories === null) {
-        this.handleEmitEvent();
-      } else {
-        this.categories = categories;
-      }
-      if (users === null) {
-        this.handleEmitEvent();
-      } else {
-        this.users = users;
-      }
-    });
+    this.handleEmitEvent();
   }
 
   ngOnDestroy() {
@@ -75,23 +60,19 @@ export class AddClientModalComponent {
   }
 
   handleEmitEvent() {
-    console.log("isCached false");
+    this.ngxService.start();
+    this.store.dispatch(loadActiveCategories());
     this.subscriptions.push(
-      this.categoryStateService.getActiveCategories().subscribe((categories) => {
-        this.ngxService.start();
+      this.store.select(selectActiveCategories).subscribe((categories) => {
         this.categories = categories;
-        this.categoryStateService.setActiveCategoriesSubject(categories);
-        this.cd.detectChanges(); 
+        this.cd.detectChanges();
         this.ngxService.stop();
+      }),
+      this.store.select(selectUsers).subscribe((users) => {
+        this.users = users;
+        this.cd.detectChanges();
       })
-    ),
-    this.userStateService.getActiveUsers().subscribe((users) => {
-      this.ngxService.start();
-      this.users = users;
-      this.userStateService.setActiveUsersSubject(users);
-      this.cd.detectChanges(); 
-      this.ngxService.stop();
-    });
+    );
   }
 
 

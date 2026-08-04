@@ -2,15 +2,18 @@ import { ChangeDetectorRef, Component, EventEmitter, Inject } from '@angular/cor
 import { FormGroup, FormBuilder, FormControl, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription, forkJoin, take } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { Exercises } from 'src/app/models/exercise.interface';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
 import { ExerciseService } from 'src/app/services/exercise.service';
-import { MuscleGroupStateService } from 'src/app/services/muscle-group-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { genericError } from 'src/validators/form-validators.module';
+import { loadActiveMuscleGroups } from 'src/app/state/muscle-group/muscle-group.actions';
+import { selectActiveMuscleGroups } from 'src/app/state/muscle-group/muscle-group.selectors';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-update-exercises-modal',
@@ -31,8 +34,7 @@ export class UpdateExercisesModalComponent {
 
   constructor(private formBuilder: FormBuilder,
     private exerciseService: ExerciseService,
-    private muscleGroupStateService: MuscleGroupStateService,
-    private categoryStateService: CategoryStateService,
+    private store: Store,
     public dialogRef: MatDialogRef<UpdateExercisesModalComponent>,
     private ngxService: NgxUiLoaderService,
     private cd: ChangeDetectorRef,
@@ -60,21 +62,7 @@ export class UpdateExercisesModalComponent {
         'description': new FormControl(this.exerciseData.description, [Validators.required, Validators.minLength(20)]),
       });
     }
-    forkJoin([
-      this.muscleGroupStateService.activeMuscleGroupsData$.pipe(take(1)),
-      this.categoryStateService.activeCategoriesData$.pipe(take(1))
-    ]).subscribe(([muscleGroupsData, categoriesData]) => {
-      if (muscleGroupsData === null) {
-        this.handleEmitEvent();
-      } else {
-        this.muscleGroups = muscleGroupsData;
-      }
-      if (categoriesData === null) {
-        this.handleEmitEvent();
-      } else {
-        this.categories = categoriesData;
-      }
-    });
+    this.handleEmitEvent();
   }
 
   ngOnDestroy() {
@@ -82,18 +70,16 @@ export class UpdateExercisesModalComponent {
   }
 
   handleEmitEvent() {
-    console.log("isCached false");
+    this.ngxService.start();
+    this.store.dispatch(loadActiveMuscleGroups());
+    this.store.dispatch(loadActiveCategories());
     this.subscriptions.push(
-      this.muscleGroupStateService.getActiveMuscleGroups().subscribe((muscleGroups) => {
-        this.ngxService.start();
+      this.store.select(selectActiveMuscleGroups).subscribe((muscleGroups) => {
         this.muscleGroups = muscleGroups;
-        this.muscleGroupStateService.setActiveMuscleGroupsSubject(muscleGroups);
         this.ngxService.stop();
       }),
-      this.categoryStateService.getActiveCategories().subscribe((categories) => {
-        this.ngxService.start();
+      this.store.select(selectActiveCategories).subscribe((categories) => {
         this.categories = categories;
-        this.categoryStateService.setActiveCategoriesSubject(categories);
         this.ngxService.stop();
       }),
     );

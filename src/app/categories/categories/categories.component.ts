@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
-import { CategoryService } from 'src/app/services/category.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-categories',
@@ -13,8 +15,9 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 export class CategoriesComponent {
   categories: Categories[] = [];
   countResult: number = 0;
+  subscriptions: Subscription[] = [];
 
-  constructor(private categoryStateService: CategoryStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private rxStompService: RxStompService,) { }
 
@@ -25,22 +28,20 @@ export class CategoriesComponent {
     this.watchUpdateStatus()
     this.watchDeleteCategory()
     this.watchGetCategoryFromMap()
-    // this.categoryStateService.activeCategoriesData$.subscribe((cachedData) => {
-    //   if (!cachedData) {
-    //     this.handleEmitEvent()
-    //   } else {
-    //     this.categories = cachedData;
-    //   }
-    // });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   handleEmitEvent() {
-    this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
-      console.log('isCachedData false')
-      this.categories = activeCategories;
-      this.countResult = activeCategories.length;
-      this.categoryStateService.setActiveCategoriesSubject(this.categories);
-    });
+    this.store.dispatch(loadActiveCategories());
+    this.subscriptions.push(
+      this.store.select(selectActiveCategories).subscribe((activeCategories) => {
+        this.categories = activeCategories;
+        this.countResult = activeCategories.length;
+      })
+    );
   }
 
   handleSearchResults(results: Categories[]): void {

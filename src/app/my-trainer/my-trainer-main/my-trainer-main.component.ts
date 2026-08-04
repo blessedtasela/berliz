@@ -12,9 +12,11 @@ import {
   TrainerSubscription
 } from 'src/app/models/trainers.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { MyTrainerSubModalComponent } from '../my-trainer-sub-modal/my-trainer-sub-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
+import { selectCurrentTrainer, selectMyTrainerBenefit, selectMyTrainerFeatureVideos, selectMyTrainerIntroduction, selectMyTrainerPhotoAlbum, selectMyTrainerPricing, selectMyTrainerSubscription, selectMyTrainerVideoAlbum } from 'src/app/state/trainer/trainer.selector';
+import { loadMyTrainer, loadMyTrainerPricing, loadMyTrainerIntroduction, loadMyTrainerBenefits, loadMyTrainerFeatureVideos, loadMyTrainerPhotoAlbum, loadMyTrainerVideoAlbum, loadMyTrainerSubscription } from 'src/app/state/trainer/trainer.actions';
 
 // Which sections are completed — used to build the checklist
 export interface ProfileCompletion {
@@ -33,18 +35,18 @@ export interface ProfileCompletion {
 })
 export class MyTrainerMainComponent implements OnInit, OnDestroy {
 
-  trainerIntroduction!: TrainerIntroduction;
-  trainerPricing!: TrainerPricing;
-  trainerBenefit!: TrainerBenefits;
-  trainerFeatureVideo!: TrainerFeatureVideo[];
-  trainerPhotoAlbum!: TrainerPhotoAlbum;
-  trainerVideoAlbum!: TrainerVideoAlbum;
-  trainerSubscription!: TrainerSubscription;
-  trainer!: Trainers;
+  trainerIntroduction!: TrainerIntroduction | null;
+  trainerPricing!: TrainerPricing | null;
+  trainerBenefit!: TrainerBenefits | null;
+  trainerFeatureVideo: TrainerFeatureVideo[] = [];
+  trainerPhotoAlbum!: TrainerPhotoAlbum | null;
+  trainerVideoAlbum!: TrainerVideoAlbum | null;
+  trainerSubscription!: TrainerSubscription | null;
+  trainer!: Trainers | null;
 
   dataReady = false;
 
-  private totalRequests = 7;
+  private totalRequests = 8;
   private completedRequests = 0;
 
   // Computed after data loads
@@ -62,7 +64,7 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
   constructor(
     private ngxService: NgxUiLoaderService,
     private rxStompService: RxStompService,
-    private trainerStateService: TrainerStateService,
+    private store: Store,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog
   ) { }
@@ -89,7 +91,8 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
   }
 
   loadTrainer(): void {
-    this.trainerStateService.getTrainer().subscribe({
+    this.store.dispatch(loadMyTrainer());
+    this.store.select(selectCurrentTrainer).subscribe({
       next: res => {
         this.trainer = res;
         this.markRequestCompleted();
@@ -102,7 +105,8 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
   }
 
   loadPricing(): void {
-    this.trainerStateService.getMyTrainerPricing().subscribe({
+    this.store.dispatch(loadMyTrainerPricing());
+    this.store.select(selectMyTrainerPricing).subscribe({
       next: res => {
         this.trainerPricing = res;
         this.markRequestCompleted();
@@ -116,7 +120,8 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
 
 
   loadIntroduction(): void {
-    this.trainerStateService.getMyTrainerIntroduction().subscribe({
+    this.store.dispatch(loadMyTrainerIntroduction());
+    this.store.select(selectMyTrainerIntroduction).subscribe({
       next: res => {
         this.trainerIntroduction = res;
         console.log('Loaded introduction:', res);
@@ -130,7 +135,8 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
   }
 
   loadBenefits(): void {
-    this.trainerStateService.getMyTrainerBenefits().subscribe({
+    this.store.dispatch(loadMyTrainerBenefits());
+    this.store.select(selectMyTrainerBenefit).subscribe({
       next: res => {
         this.trainerBenefit = res;
         this.markRequestCompleted();
@@ -143,7 +149,8 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
   }
 
   loadFeatureVideos(): void {
-    this.trainerStateService.getMyTrainerFeatureVideos().subscribe({
+    this.store.dispatch(loadMyTrainerFeatureVideos());
+    this.store.select(selectMyTrainerFeatureVideos).subscribe({
       next: res => {
         this.trainerFeatureVideo = res;
         this.markRequestCompleted();
@@ -157,7 +164,8 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
 
 
   loadPhotoAlbum(): void {
-    this.trainerStateService.getMyTrainerPhotoAlbum().subscribe({
+    this.store.dispatch(loadMyTrainerPhotoAlbum());
+    this.store.select(selectMyTrainerPhotoAlbum).subscribe({
       next: res => {
         this.trainerPhotoAlbum = res;
         this.markRequestCompleted();
@@ -170,7 +178,8 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
   }
 
   loadVideoAlbum(): void {
-    this.trainerStateService.getMyTrainerVideoAlbum().subscribe({
+    this.store.dispatch(loadMyTrainerVideoAlbum());
+    this.store.select(selectMyTrainerVideoAlbum).subscribe({
       next: res => {
         this.trainerVideoAlbum = res;
         this.markRequestCompleted();
@@ -183,7 +192,8 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
   }
 
   loadSubscription(): void {
-    this.trainerStateService.getMyTrainerSubscription().subscribe({
+    this.store.dispatch(loadMyTrainerSubscription());
+    this.store.select(selectMyTrainerSubscription).subscribe({
       next: res => {
         this.trainerSubscription = res;
         this.markRequestCompleted();
@@ -230,8 +240,8 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
 
   get hasActiveSubscription(): boolean {
     if (!this.trainerSubscription) return false;
-      return this.trainerSubscription.status?.toLowerCase() === 'active' &&
-       new Date(this.trainerSubscription.endDate) > new Date();
+    return this.trainerSubscription.status?.toLowerCase() === 'active' &&
+      new Date(this.trainerSubscription.endDate) > new Date();
 
   }
 

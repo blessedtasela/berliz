@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { IconsModule } from 'src/app/icons/icons.module';
@@ -34,7 +35,8 @@ import { CenterPricingModule } from '../center-pricing/center-pricing.module';
     MatDialogModule,
     FooterModule,
     NavbarModule,
-    CenterPricingModule
+    CenterPricingModule,
+    RouterModule.forChild([{ path: '', component: CentersComponent }])
   ]
 })
 export class CentersModule { }

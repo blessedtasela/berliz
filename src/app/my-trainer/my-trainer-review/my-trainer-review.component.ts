@@ -1,11 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription, take } from 'rxjs';
 import { TrainerReview } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
+import { selectMyTrainerReviews } from 'src/app/state/trainer/trainer.selector';
+import { loadMyTrainerReviews } from 'src/app/state/trainer/trainer.actions';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -24,7 +26,7 @@ export class MyTrainerReviewComponent {
 
   constructor(
     private trainerService: TrainerService,
-    private trainerStateService: TrainerStateService,
+    private store: Store,
     private loader: NgxUiLoaderService,
     private snackbar: SnackBarService,
     private datePipe: DatePipe
@@ -39,10 +41,10 @@ export class MyTrainerReviewComponent {
   }
 
   loadReviews(): void {
+    this.store.dispatch(loadMyTrainerReviews());
     this.subscriptions.push(
-      this.trainerStateService.getMyTrainerReviews().subscribe(reviews => {
+      this.store.select(selectMyTrainerReviews).subscribe(reviews => {
         this.trainerReviews = reviews || [];
-        this.trainerStateService.setMyTrainerReviewsSubject(reviews);
       })
     );
   }

@@ -3,8 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
-import { SubscriptionStateService } from 'src/app/services/subscription-state.service';
 import { AddSubscriptionsModalComponent } from '../add-subscriptions-modal/add-subscriptions-modal.component';
+import { Store } from '@ngrx/store';
+import { loadSubscriptions } from 'src/app/state/subscription/subscription.actions';
+import { selectSubscriptions } from 'src/app/state/subscription/subscription.selectors';
 
 @Component({
   selector: 'app-subscriptions-header',
@@ -21,23 +23,22 @@ export class SubscriptionsHeaderComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private subscriptionStateService: SubscriptionStateService,
+    private store: Store,
     private rxStompService: RxStompService) {
   }
 
   ngOnInit() {
-    this.watchDeleteCategory()
-    this.watchGetCategoryFromMap()
+    this.watchDeleteSubscription()
+    this.watchGetSubscriptionFromMap()
   }
 
   handleEmitEvent() {
-    this.subscriptionStateService.getAllSubscriptions().subscribe((allSubscriptions) => {
-      this.ngxService.start()
-      console.log('cached false')
+    this.ngxService.start()
+    this.store.dispatch(loadSubscriptions());
+    this.store.select(selectSubscriptions).subscribe((allSubscriptions) => {
       this.subscriptionsData = allSubscriptions;
       this.totalSubscriptions = this.subscriptionsData.length
       this.subscriptionsLength = this.subscriptionsData.length
-      this.subscriptionStateService.setAllSubscriptionsSubject(this.subscriptionsData);
       this.ngxService.stop()
     });
   }
@@ -101,21 +102,15 @@ export class SubscriptionsHeaderComponent {
     });
   }
 
-  watchDeleteCategory() {
-    this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
-      const receivedCategories: Subscriptions = JSON.parse(message.body);
-      this.subscriptionsData = this.subscriptionsData.filter(subscription => subscription.id !== receivedCategories.id);
-      this.subscriptionsLength = this.subscriptionsData.length;
-      this.totalSubscriptions = this.subscriptionsData.length
+  watchDeleteSubscription() {
+    this.rxStompService.watch('/topic/deleteSubscription').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 
-  watchGetCategoryFromMap() {
-    this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
-      const receivedCategories: Subscriptions = JSON.parse(message.body);
-      this.subscriptionsData.push(receivedCategories);
-      this.subscriptionsLength = this.subscriptionsData.length;
-      this.totalSubscriptions = this.subscriptionsData.length
+  watchGetSubscriptionFromMap() {
+    this.rxStompService.watch('/topic/getSubscriptionFromMap').subscribe(() => {
+      this.handleEmitEvent();
     });
   }
 }

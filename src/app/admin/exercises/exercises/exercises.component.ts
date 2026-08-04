@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Exercises } from 'src/app/models/exercise.interface';
-import { ExerciseStateService } from 'src/app/services/exercise-state.service';
+import { loadExercises } from 'src/app/state/exercise/exercise.actions';
+import { selectExercises } from 'src/app/state/exercise/exercise.selectors';
 
 @Component({
   selector: 'app-exercises',
@@ -14,33 +17,31 @@ export class ExercisesComponent {
   exercisesLength: number = 0;
   searchComponent: string = 'exercise'
   isSearch: boolean = true;
+  subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
-    private exerciseStateService: ExerciseStateService) {
+    private store: Store) {
   }
 
   ngOnInit(): void {
-    this.exerciseStateService.allExerciseData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.exercisesData = cachedData;
-        this.totalExercises = cachedData.length
-        this.exercisesLength = cachedData.length
-      }
-    });
+    this.handleEmitEvent();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   handleEmitEvent() {
-    this.exerciseStateService.getExercises().subscribe((allExercises) => {
-      this.ngxService.start()
-      console.log('isCachedData false')
-      this.exercisesData = allExercises;
-      this.totalExercises = allExercises.length
-      this.exercisesLength = allExercises.length
-      this.exerciseStateService.setAllExercisesSubject(this.exercisesData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadExercises());
+    this.subscriptions.push(
+      this.store.select(selectExercises).subscribe((allExercises) => {
+        this.exercisesData = allExercises;
+        this.totalExercises = allExercises.length
+        this.exercisesLength = allExercises.length
+        this.ngxService.stop()
+      })
+    );
   }
 
   handleSearchResults(results: Exercises[]): void {

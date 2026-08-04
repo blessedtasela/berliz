@@ -8,13 +8,11 @@ import {
 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 
 
 
 import { UserService } from 'src/app/services/user.service';
-import { UserStateService } from 'src/app/services/user-state.service';
-import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -36,6 +34,10 @@ import { TodoList } from 'src/app/models/todoList.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { AuthService } from 'src/app/services/auth.service';
+import { selectUser } from 'src/app/state/user/user.selector';
+import { loadUser } from 'src/app/state/user/user.actions';
+import { Store } from '@ngrx/store';
+import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
 
 @Component({
   selector: 'app-top-bar',
@@ -46,13 +48,14 @@ import { AuthService } from 'src/app/services/auth.service';
 export class TopBarComponent implements OnInit {
   openMenu = false;
   mdScreen = false;
-  userData!: Users;
+  userData!: Users | null;
   profilePhoto: string | null = null;
   currentRoute: string | null = null;
 
   notificationLength = 0;
   notificationDropdown = false;
   isMobileSearchOpen = false;
+  destroy$ = new Subject<void>();
 
   subscriptions: Subscription[] = [];
 
@@ -83,10 +86,9 @@ export class TopBarComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private dialog: MatDialog,
-    private userStateService: UserStateService,
+    private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
-    private notificationStateService: NotificationStateService,
     private rxStompService: RxStompService,
     private authService: AuthService
   ) {
@@ -104,6 +106,7 @@ export class TopBarComponent implements OnInit {
     }
     this.onResize();
     this.subscribeToCloseSideBar();
+    this.store.dispatch(loadUser());
     this.handleEmitEvent();
     this.registerNotificationTopics();
     this.watchUpdateProfilePhoto();
@@ -112,24 +115,30 @@ export class TopBarComponent implements OnInit {
     this.watchUpdateUserStatus();
   }
 
-  handleEmitEvent() {
+  handleEmitEvent(): void {
+
     this.subscriptions.push(
-      this.userStateService.getUser().subscribe(user => {
+
+      this.store.select(selectUser).subscribe(user => {
         this.userData = user;
-        if (this.userData?.profilePhoto) {
-          this.profilePhoto = 'data:image/*;base64,' + this.userData.profilePhoto;
-        } else {
-          this.profilePhoto = null;
-        }
+
+        this.profilePhoto = user?.profilePhoto
+          ? `data:image/jpeg;base64,${user.profilePhoto}`
+          : null;
       }),
-      this.notificationStateService.getMyNotifications().subscribe(notifications => {
-        if (notifications && notifications.length > 0) {
-          this.notificationLength = notifications.filter(n => !n.read).length;
-        } else {
-          this.notificationLength = 0;
-        }
+
+      this.store.select(selectMyNotifications).subscribe(notifications => {
+        this.notificationLength =
+          notifications?.filter(notification => !notification.read).length ?? 0;
       })
+
     );
+
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 

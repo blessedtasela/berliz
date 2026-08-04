@@ -26,7 +26,7 @@ export class NotificationDetailsComponent {
 
 
   markAsRead() {
-    this.notificationService.readNotification(this.data.id).subscribe({
+    this.notificationService.markAsRead(this.data.id).subscribe({
       next: () => {
         this.emitEVent.emit();
         this.dialogRef.close(true);

@@ -1,9 +1,10 @@
 import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
+import { fromEvent, debounceTime, map, tap, switchMap, Observable, of, Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { selectCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-search-category',
@@ -16,15 +17,19 @@ export class SearchCategoryComponent {
   searchQuery: string = '';
   selectedSearchCriteria: any = 'name';
   @Output() results: EventEmitter<Categories[]> = new EventEmitter<Categories[]>()
-
+  subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef,
-    public categoryStateService: CategoryStateService) {
+    private store: Store) {
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   ngAfterViewInit(): void {
@@ -56,9 +61,11 @@ export class SearchCategoryComponent {
   }
 
   search(query: string): Observable<Categories[]> {
-    this.categoryStateService.allCategoriesData$.subscribe((cachedData) => {
-      this.categoriesData = cachedData;
-    });
+    this.subscriptions.push(
+      this.store.select(selectCategories).subscribe((cachedData) => {
+        this.categoriesData = cachedData;
+      })
+    );
     query = query.toLowerCase();
     if (query.trim() === '') {
       this.filteredCategoriesData = this.categoriesData;
@@ -75,8 +82,8 @@ export class SearchCategoryComponent {
           return category.status && category.status.toLowerCase().includes(query);
         case 'tag':
           return (
-            category.tagSet.length > 0 &&
-            category.tagSet.some((tag) => tag.name.toLowerCase().includes(query))
+            category.tagNames.length > 0 &&
+            category.tagNames.some((name) => name.toLowerCase().includes(query))
           );
         default:
           return false;

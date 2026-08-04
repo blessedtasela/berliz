@@ -20,6 +20,8 @@ import { NotificationPaginationComponent } from './notification-pagination/notif
 import { FeatherModule } from 'angular-feather';
 import { SharedModule } from '../shared/shared.module';
 import { MyNotificationMetricsComponent } from './my-notification-metrics/my-notification-metrics.component';
+import { notificationFeatureKey, notificationReducer } from '../state/notification/notification.reducer';
+import { StoreModule } from '@ngrx/store';
 
 @NgModule({
   declarations: [
@@ -47,7 +49,7 @@ import { MyNotificationMetricsComponent } from './my-notification-metrics/my-not
     NoopAnimationsModule,
     SharedModule,
     FeatherModule,
-    SearchModule
-]
+    SearchModule,
+  ]
 })
 export class MyNotificationsModule { }

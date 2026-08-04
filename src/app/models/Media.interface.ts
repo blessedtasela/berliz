@@ -3,15 +3,10 @@ import { MediaOwnerType } from "./Media.enum";
 export interface PhotoResponse {
   id: number;
   strapiId: number;
-  publicId: string;
   photoUrl: string;
   name: string;
-  secureUrl: string;
-  playbackUrl: string;
   mimeType: string;
-  format: string;
   byteSize: number;
-  duration: number;
   ownerId: number;
   mediaOwnerType: MediaOwnerType;
   message?: string;

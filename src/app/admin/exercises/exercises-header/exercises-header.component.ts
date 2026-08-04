@@ -1,12 +1,15 @@
 import { Component, Input } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
-import { ExerciseStateService } from 'src/app/services/exercise-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AddMuscleGroupModalComponent } from '../../muscle-groups/add-muscle-group-modal/add-muscle-group-modal.component';
 import { Exercises } from 'src/app/models/exercise.interface';
 import { AddExercisesModalComponent } from '../add-exercises-modal/add-exercises-modal.component';
+import { loadExercises } from 'src/app/state/exercise/exercise.actions';
+import { selectExercises } from 'src/app/state/exercise/exercise.selectors';
 
 @Component({
   selector: 'app-exercises-header',
@@ -20,10 +23,11 @@ export class ExercisesHeaderComponent {
   @Input() exercisesData: Exercises[] = [];
   @Input() totalExercises: number = 0;
   @Input() exercisesLength: number = 0;
+  subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private exerciseStateService: ExerciseStateService,
+    private store: Store,
     private rxStompService: RxStompService) {
   }
 
@@ -32,16 +36,21 @@ export class ExercisesHeaderComponent {
     this.watchGetExerciseFromMap()
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
   handleEmitEvent() {
-    this.exerciseStateService.getExercises().subscribe((allExercises) => {
-      this.ngxService.start()
-      console.log('cached false')
-      this.exercisesData = allExercises;
-      this.totalExercises = this.exercisesData.length
-      this.exercisesLength = this.exercisesData.length
-      this.exerciseStateService.setAllExercisesSubject(this.exercisesData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadExercises());
+    this.subscriptions.push(
+      this.store.select(selectExercises).subscribe((allExercises) => {
+        this.exercisesData = allExercises;
+        this.totalExercises = this.exercisesData.length
+        this.exercisesLength = this.exercisesData.length
+        this.ngxService.stop()
+      })
+    );
   }
 
   sortCategoriesData() {

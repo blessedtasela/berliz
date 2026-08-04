@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription, take } from 'rxjs';
@@ -9,8 +10,8 @@ import { PhotoResponse } from 'src/app/models/Media.interface';
 import { TrainerPhotoAlbum } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiService } from 'src/app/services/strapi.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
+import { selectMyTrainerPhotoAlbum } from 'src/app/state/trainer/trainer.selector';
 import { genericError } from 'src/validators/form-validators.module';
 
 // Each slot tracks raw file, preview, cropped blob, upload status
@@ -34,7 +35,7 @@ type CropStep = 'idle' | 'cropping' | 'uploading-all';
 
 export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestroy {
 
-  @Input() trainerPhotoAlbum!: TrainerPhotoAlbum;
+  @Input() trainerPhotoAlbum!: TrainerPhotoAlbum | null;
   @Output() emitEvent = new EventEmitter();
 
   // ── Form ──────────────────────────────────────────────────────────────────
@@ -69,7 +70,7 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
     private loader: NgxUiLoaderService,
     private snackbar: SnackBarService,
     private trainerService: TrainerService,
-    private trainerStateService: TrainerStateService,
+    private store: Store,
     private strapiService: StrapiService,
     private datePipe: DatePipe,
     private cdr: ChangeDetectorRef
@@ -95,10 +96,9 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
   }
 
   private initSlots(): void {
-    this.trainerPhotoAlbum = this.trainerPhotoAlbum || {};
     this.slots = Array.from({ length: this.MAX_PHOTOS }, () => this.emptySlot());
 
-    if (this.trainerPhotoAlbum.photos?.length) {
+    if (this.trainerPhotoAlbum?.photos?.length) {
       this.trainerPhotoAlbum.photos.forEach((p, i) => {
         if (i < this.MAX_PHOTOS) {
           this.slots[i].previewUrl = this.resolvePhotoUrl(p.photoUrl ?? '');
@@ -348,11 +348,6 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
           byteSize: uploaded.size,
           ownerId: 0,
           mediaOwnerType: MediaOwnerType.TRAINER_PHOTO_ALBUM,
-          publicId: uploaded.public_id,
-          secureUrl: uploaded.secure_url,
-          playbackUrl: uploaded.playback_url,
-          format: uploaded.format,
-          duration: uploaded.duration,
           date: new Date(),
           lastUpdate: uploaded.lastUpdate ? new Date(uploaded.lastUpdate) : new Date()
         };
@@ -417,8 +412,8 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
 
 
     const request$ = payload.id
-      ? this.trainerService.updateTrainerPhotoAlbum(payload)
-      : this.trainerService.addTrainerPhotoAlbum(payload);
+      ? this.trainerService.updateTrainerPhotosAlbum(payload)
+      : this.trainerService.addTrainerPhotosAlbum(payload);
 
     request$.pipe(take(1)).subscribe({
       next: (res: any) => {
@@ -447,22 +442,20 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
     this.invalidForm = false;
     this.cdr.detectChanges();
     this.markAsSaved(); // update canSaveAll state
-    this.subscriptions.push(
-      this.trainerStateService.getMyTrainerPhotoAlbum().subscribe(album => {
-        if (album) this.trainerStateService.setMyTrainerPhotoAlbumsSubject(album);
-      })
-    );
   }
 
   private markAsSaved(): void {
     this.originalValue =
       structuredClone(this.updateTrainerPhotoAlbumForm.getRawValue());
 
-    this.trainerPhotoAlbum.photos =
-      this.slots
-        .filter(s => s.uploadedResponse)
-        .map(s => s.uploadedResponse!);
+    if (this.trainerPhotoAlbum) {
+      this.trainerPhotoAlbum.photos =
+        this.slots
+          .filter(s => s.uploadedResponse)
+          .map(s => s.uploadedResponse!);
+    }
   }
+  
   private resolvePhotoUrl(url?: string): string {
     if (!url?.trim()) return '';
     if (url.startsWith('blob:') || url.startsWith('http')) return url;

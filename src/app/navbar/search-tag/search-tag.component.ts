@@ -3,7 +3,8 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Tags } from 'src/app/models/tags.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TagStateService } from 'src/app/services/tag-state.service';
+import { Store } from '@ngrx/store';
+import { selectTags } from 'src/app/state/tag/tag.selectors';
 
 @Component({
   selector: 'app-search-tag',
@@ -17,7 +18,7 @@ export class SearchTagComponent {
   selectedSearchCriteria: any = 'name';
   @Output() results: EventEmitter<Tags[]> = new EventEmitter<Tags[]>()
 
-  constructor(private tagStateService: TagStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) {
@@ -59,7 +60,7 @@ export class SearchTagComponent {
   }
 
   search(query: string): Observable<Tags[]> {
-    this.tagStateService.allTagsData$.subscribe((cachedData) => {
+    this.store.select(selectTags).subscribe((cachedData) => {
       this.tagsData = cachedData;
     })
     query = query.toLowerCase();

@@ -1,10 +1,11 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of, Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
-import { CenterStateService } from 'src/app/services/center-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { selectCenters } from 'src/app/state/center/center.selectors';
 
 @Component({
   selector: 'app-search-center',
@@ -19,7 +20,7 @@ export class SearchCenterComponent {
   @Output() results: EventEmitter<Centers[]> = new EventEmitter<Centers[]>()
   subscriptions: Subscription [] = []
 
-  constructor(private centerStateService: CenterStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) { }
@@ -67,10 +68,10 @@ export class SearchCenterComponent {
 
   search(query: string): Observable<Centers[]> {
     this.subscriptions.push(
-      this.centerStateService.allCentersData$.subscribe((cachedData => {
-      this.centersData = cachedData
-    }))
-    )
+      this.store.select(selectCenters).subscribe((cachedData) => {
+        this.centersData = cachedData;
+      })
+    );
     query = query.toLowerCase();
     if (query.trim() === '') {
       this.filteredCentersData = this.centersData;
@@ -90,9 +91,9 @@ export class SearchCenterComponent {
         case 'email':
           return trainer.id.toString().includes(query);
         case 'userId':
-          return trainer.partner.user.id.toString().includes(query);
+          return trainer.userId.toString().includes(query);
         case 'partnerId':
-          return trainer.partner.id.toString().includes(query);
+          return trainer.partnerId.toString().includes(query);
         case 'status':
           return trainer.status.toLowerCase().includes(query);
         default:

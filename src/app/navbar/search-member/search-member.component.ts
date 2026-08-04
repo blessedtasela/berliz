@@ -1,8 +1,9 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription, fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Members } from 'src/app/models/members.interface';
-import { MemberStateService } from 'src/app/services/member-state.service';
+import { selectMembers } from 'src/app/state/member/member.selectors';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 @Component({
@@ -18,7 +19,7 @@ export class SearchMemberComponent {
   @Output() results: EventEmitter<Members[]> = new EventEmitter<Members[]>()
   subscriptions: Subscription[] = []
 
-  constructor(private memberStateService: MemberStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) { }
@@ -66,7 +67,7 @@ export class SearchMemberComponent {
 
   search(query: string): Observable<Members[]> {
     this.subscriptions.push(
-      this.memberStateService.allMembersData$.subscribe((cachedData => {
+      this.store.select(selectMembers).subscribe((cachedData => {
         this.centersData = cachedData
       }))
     )
@@ -77,7 +78,7 @@ export class SearchMemberComponent {
     this.filteredMembersData = this.centersData.filter((member: Members) => {
       switch (this.selectedSearchCriteria) {
         case 'email':
-          return member.user.email.toLowerCase().includes(query);
+          return member.userEmail.toLowerCase().includes(query);
         case 'motivation':
           return member.motivation.toLowerCase().includes(query);
         case 'category':
@@ -88,7 +89,7 @@ export class SearchMemberComponent {
         case 'id':
           return member.id.toString().includes(query);
         case 'userId':
-          return member.user.id.toString().includes(query);
+          return member.userId.toString().includes(query);
         case 'status':
           return member.status.toLowerCase().includes(query);
         default:
@@ -99,4 +100,3 @@ export class SearchMemberComponent {
   }
 
 }
-

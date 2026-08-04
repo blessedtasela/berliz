@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Categories } from 'src/app/models/categories.interface';
+import { Subscription } from 'rxjs';
 import { Members } from 'src/app/models/members.interface';
-import { MemberStateService } from 'src/app/services/member-state.service';
+import { loadMembers } from 'src/app/state/member/member.actions';
+import { selectMembers } from 'src/app/state/member/member.selectors';
 
 @Component({
   selector: 'app-members',
@@ -15,33 +17,31 @@ export class MembersComponent {
   membersLength: number = 0;
   searchComponent: string = 'member'
   isSearch: boolean = true;
+  subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
-    public memberStateService: MemberStateService) {
+    public store: Store) {
   }
 
   ngOnInit(): void {
-    this.memberStateService.allMembersData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.membersData = cachedData;
-        this.totalMembers = cachedData.length
-        this.membersLength = cachedData.length
-      }
-    });
+    this.handleEmitEvent();
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(subscription => (subscription.unsubscribe()));
   }
 
   handleEmitEvent() {
-    this.memberStateService.getAllMembers().subscribe((allMembers) => {
-      this.ngxService.start()
-      console.log('isCachedData false')
-      this.membersData = allMembers;
-      this.totalMembers = allMembers.length
-      this.membersLength = allMembers.length
-      this.memberStateService.setAllMembersSubject(this.membersData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadMembers());
+    this.subscriptions.push(
+      this.store.select(selectMembers).subscribe((allMembers) => {
+        this.membersData = allMembers;
+        this.totalMembers = allMembers.length
+        this.membersLength = allMembers.length
+        this.ngxService.stop()
+      }),
+    );
   }
 
   handleSearchResults(results: Members[]): void {

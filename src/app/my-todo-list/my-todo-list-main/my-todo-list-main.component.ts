@@ -1,13 +1,16 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { TodoStateService } from 'src/app/services/todo-state.service';
 import { TodoService } from 'src/app/services/todo.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { TodoList } from 'src/app/models/todoList.interface';
 import { FilterState, SearchSortOption } from 'src/app/models/FilterState.interface';
 import { TodoDetailsModalComponent } from 'src/app/shared/todo-details-modal/todo-details-modal.component';
+import { loadMyTodos } from 'src/app/state/todo/todo.actions';
+import { selectMyTodos } from 'src/app/state/todo/todo.selectors';
+import { filterTodos } from 'src/app/state/todo/todo.utils';
 
 @Component({
   selector: 'app-my-todo-list-main',
@@ -17,7 +20,18 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
 
   @Input() searchQuery = '';
   placeholder: string = 'Search tasks...';
-  todoSortOptions: SearchSortOption[] = [];
+  todoSortOptions: SearchSortOption[] = [
+    { key: 'completed', label: 'Completed', priority: true },
+    { key: 'pending', label: 'Pending', priority: true },
+    { key: 'high', label: 'High Priority', priority: true },
+    { key: 'today', label: 'Today', priority: true },
+    { key: 'overdue', label: 'Overdue', priority: true },
+    { key: 'yesterday', label: 'Yesterday', priority: false },
+    { key: 'week', label: 'This Week', priority: false },
+    { key: 'month', label: 'This Month', priority: false },
+    { key: 'range', label: 'Date Range', priority: false },
+    { key: 'exact-date', label: 'Exact Date', priority: false }
+  ];
   allTodos: TodoList[] = [];
   filteredTodos: TodoList[] = [];
   pagedTodos: TodoList[] = [];
@@ -40,25 +54,22 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
 
 
   constructor(
-    private todoState: TodoStateService,
+    private store: Store,
     private todoService: TodoService,
     private snackbar: SnackBarService,
     private dialog: MatDialog
-  ) {
-    this.todoSortOptions = this.todoState.todoSortOptions;
-  }
+  ) { }
 
   ngOnInit(): void {
-    const sub = this.todoState.getMyTodos().subscribe(data => {
+    const sub = this.store.select(selectMyTodos).subscribe(data => {
       this.allTodos = data;
-      this.todoState.setmyTodosSubject(data);
-
       this.filteredTodos = [...data];
       this.currentPage = 1;
       this.updatePage();
     });
 
     this.subs.push(sub);
+    this.store.dispatch(loadMyTodos());
   }
 
   ngOnDestroy(): void {
@@ -76,7 +87,7 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
   onFilterStateChange(state: FilterState): void {
     this.searchQuery = state.query || '';
     this.selectedSorts = state.selectedSorts || [];
-    this.filteredTodos = this.todoState.filter(state, 'my');
+    this.filteredTodos = filterTodos(this.allTodos, state);
 
     this.currentPage = 1;
     this.updatePage();
@@ -291,7 +302,7 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
   }
 
   refreshTodos(): void {
-    const sub = this.todoState.getMyTodos().subscribe(data => {
+    const sub = this.store.select(selectMyTodos).subscribe(data => {
       this.allTodos = data;
       this.filteredTodos = [...data];
       this.currentPage = 1;
@@ -300,6 +311,7 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
     });
 
     this.subs.push(sub);
+    this.store.dispatch(loadMyTodos());
   }
 
   get selectionMode(): boolean {

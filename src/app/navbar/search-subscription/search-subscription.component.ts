@@ -3,7 +3,8 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription, fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { SubscriptionStateService } from 'src/app/services/subscription-state.service';
+import { Store } from '@ngrx/store';
+import { selectSubscriptions } from 'src/app/state/subscription/subscription.selectors';
 
 @Component({
   selector: 'app-search-subscription',
@@ -18,7 +19,7 @@ export class SearchSubscriptionComponent {
   @Output() results: EventEmitter<Subscriptions[]> = new EventEmitter<Subscriptions[]>()
   subscriptions: Subscription[] = []
 
-  constructor(private subscriptionStateService: SubscriptionStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) { }
@@ -66,7 +67,7 @@ export class SearchSubscriptionComponent {
 
   search(query: string): Observable<Subscriptions[]> {
     this.subscriptions.push(
-      this.subscriptionStateService.allSubscriptionsData$.subscribe((cachedData => {
+      this.store.select(selectSubscriptions).subscribe((cachedData => {
         this.centersData = cachedData
       }))
     )
@@ -84,8 +85,8 @@ export class SearchSubscriptionComponent {
           return trainer.trainer?.name.toLowerCase().includes(query);
         case 'id':
           return trainer.id.toString().includes(query);
-        case 'paymentId':
-          return trainer.payment.id.toString().includes(query);
+        case 'clientId':
+          return trainer.client?.id.toString().includes(query);
         case 'status':
           return trainer.status.toLowerCase().includes(query);
         default:

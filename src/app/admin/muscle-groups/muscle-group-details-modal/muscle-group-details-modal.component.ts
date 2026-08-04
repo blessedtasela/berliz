@@ -3,9 +3,10 @@ import { Component, EventEmitter, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
-import { MuscleGroupStateService } from 'src/app/services/muscle-group-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { selectMuscleGroups } from 'src/app/state/muscle-group/muscle-group.selectors';
 import { UpdateTrainerPhotoModalComponent } from 'src/app/shared/update-trainer-photo-modal/update-trainer-photo-modal.component';
 
 @Component({
@@ -22,7 +23,7 @@ export class MuscleGroupDetailsModalComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<MuscleGroupDetailsModalComponent>,
-    private muscleGroupStateService: MuscleGroupStateService,
+    private store: Store,
     private dialog: MatDialog,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
@@ -40,10 +41,10 @@ export class MuscleGroupDetailsModalComponent {
   handleEmit() {
     this.ngxService.start();
     this.subscriptions.push(
-      this.muscleGroupStateService.getMuscleGroups().subscribe((muscleGroups) => {
-        const muscleGroup = muscleGroups.find(muscleGroup => muscleGroup.id == this.muscleGroupData.id);
-        if (muscleGroup)
-          this.muscleGroupData = muscleGroup
+      this.store.select(selectMuscleGroups).subscribe((muscleGroups) => {
+        const found = muscleGroups.find(muscleGroup => muscleGroup.id == this.muscleGroupData.id);
+        if (found)
+          this.muscleGroupData = found
       }),
     );
     this.ngxService.stop();

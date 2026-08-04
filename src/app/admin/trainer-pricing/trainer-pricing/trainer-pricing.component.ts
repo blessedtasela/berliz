@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { TrainerPricing } from 'src/app/models/trainers.interface';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
+import { selectTrainerPricing } from 'src/app/state/trainer/trainer.selector';
 
 @Component({
   selector: 'app-trainer-pricing',
@@ -17,30 +18,24 @@ export class TrainerPricingComponent {
   isSearch: boolean = true;
 
   constructor(private ngxService: NgxUiLoaderService,
-    public trainerStateService: TrainerStateService) {
+    public store: Store) {
   }
 
   ngOnInit(): void {
-    this.trainerStateService.allTrainerPricingData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.trainerPricingData = cachedData;
-        this.totalTrainerPricing = cachedData.length
-        this.trainerPricingLength = cachedData.length
-      }
+    this.store.select(selectTrainerPricing).subscribe((cachedData) => {
+      this.trainerPricingData = cachedData;
+      this.totalTrainerPricing = cachedData.length
+      this.trainerPricingLength = cachedData.length
     });
   }
 
+
+
   handleEmitEvent() {
-    this.trainerStateService.getAllTrainerPricing().subscribe((trainerPricing) => {
-      this.ngxService.start()
-      console.log('isCachedData false')
+    this.store.select(selectTrainerPricing).subscribe((trainerPricing) => {
       this.trainerPricingData = trainerPricing;
       this.totalTrainerPricing = trainerPricing.length
       this.trainerPricingLength = trainerPricing.length
-      this.trainerStateService.setAllTrainerPricingSubject(this.trainerPricingData);
-      this.ngxService.stop()
     });
   }
 

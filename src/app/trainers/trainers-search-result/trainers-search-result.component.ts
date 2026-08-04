@@ -1,158 +1,141 @@
-import { DatePipe } from '@angular/common';
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { Observable, tap, catchError, of } from 'rxjs';
-import { Trainers } from 'src/app/models/trainers.interface';
-import { TrainerLikes } from 'src/app/models/trainers.interface';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { Trainers, TrainerLikes } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
-import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { TrainerService } from 'src/app/services/trainer.service';
-import { UserStateService } from 'src/app/services/user-state.service';
-import { WebSocketService } from 'src/app/services/web-socket.service';
+import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { environment } from 'src/environments/environment';
 import { genericError } from 'src/validators/form-validators.module';
+import { TrainerPartnerFormComponent } from '../trainer-partner-form/trainer-partner-form.component';
+import { MatDialog } from '@angular/material/dialog';
+import { PartnerFormComponent } from 'src/app/shared/partner-form/partner-form.component';
+import { Store } from '@ngrx/store';
+import { selectUser } from 'src/app/state/user/user.selector';
+import { selectCurrentTrainer, selectTrainerLikes } from 'src/app/state/trainer/trainer.selector';
+
 
 @Component({
   selector: 'app-trainers-search-result',
   templateUrl: './trainers-search-result.component.html',
   styleUrls: ['./trainers-search-result.component.css']
 })
-export class TrainersSearchResultComponent implements OnInit {
+export class TrainersSearchResultComponent implements OnInit, OnDestroy {
+
   @Input() trainersResult: Trainers[] = [];
-  showFullData: boolean = false;
-  @Input() totalTrainers: number = 0;
-  user!: Users;
-  responseMessage: any;
+
+  readonly PAGE_SIZE = 12;
+  readonly strapiUrl = environment.strapiUrl;
+
+  showAll = false;
+  get visibleCount() {
+    return this.showAll
+      ? this.trainersResult.length
+      : Math.min(this.PAGE_SIZE, this.trainersResult.length);
+  }
+
+  user!: Users | null;
   trainerLikes: TrainerLikes[] = [];
-  visibleItems: number = 12;
-  strapiUrl = environment.strapiUrl; // or environment.strapiUrl
 
+  private subs: Subscription[] = [];
 
-  constructor(private datePipe: DatePipe,
-    private userStateService: UserStateService,
-    private trainerStateService: TrainerStateService,
+  constructor(
+    private store: Store,
     private trainerService: TrainerService,
-    private snackbarService: SnackBarService,
-    private rxStompService: RxStompService,) { }
+    private snackbar: SnackBarService,
+    private dialog: MatDialog
+  ) { }
 
   ngOnInit(): void {
-    this.watchLikeTrainer()
-    this.watchUpdatePhoto()
-    this.watchUpdateTrainerStatus()
-    this.watchUpdateTrainer()
-    this.trainerStateService.likeTrainersData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleTrainerLikesEmit()
-      } else {
-        this.trainerLikes = cachedData;
+    // User
+    this.subs.push(this.store.select(selectUser).subscribe(u => this.user = u));
+
+    // Likes cache
+    this.subs.push(
+      this.store.select(selectTrainerLikes).subscribe(cached => {
+        this.trainerLikes = cached;
+      })
+    );
+
+
+
+
+
+    this.visibleCount; // trigger getter for initial value
+  }
+
+  openPartnerForm(): void {
+    const userEmail = this.user?.email;
+
+    if (!userEmail) {
+      this.snackbar.openSnackBar(
+        'Please log in to become a trainer.',
+        'error'
+      );
+      return;
+    }
+
+    const dialogRef = this.dialog.open(PartnerFormComponent, {
+      width: '600px',
+      disableClose: true, // only explicit close button can close it
+      data: {
+        email: userEmail,
+        role: 'trainer'
       }
     });
-    this.userSubscription()
-  }
 
-  userSubscription() {
-    this.userStateService.getUser().subscribe((user) => {
-      this.user = user;
-    })
-  }
-
-  handleEmitEvent() {
-    this.trainerStateService.getActiveTrainers().subscribe((activeTrainers) => {
-      this.trainersResult = activeTrainers;
-      this.trainerStateService.setActiveTrainersSubject(this.trainersResult);
-    });
-    this.userStateService.getUser().subscribe((user) => {
-      this.user = user;
-    })
-    this.handleTrainerLikesEmit()
-  }
-
-  handleTrainerLikesEmit() {
-    this.trainerStateService.getMyTrainerLikes().subscribe((likes) => {
-      this.trainerLikes = likes
-      this.trainerStateService.setLikeTrainersSubject(this.trainerLikes);
+    dialogRef.afterClosed().subscribe((result: any) => {
+      // only reload when something was actually saved
+      if (result === 'saved') {
+        this.trainersResult = [...this.trainersResult]; // Trigger change detection
+      }
     });
   }
 
-  toggleData(): void {
-    this.showFullData = !this.showFullData;
-    this.visibleItems = this.showFullData ? this.trainersResult.length : 12;
+  private loadLikes(): void {
+    this.store.select(selectTrainerLikes).subscribe(likes => {
+      this.trainerLikes = likes;
+    });
   }
 
-  formatDate(dateString: any): any {
-    const date = new Date(dateString);
-    return this.datePipe.transform(date, 'dd/MM/yyyy');
+  /** Replace an existing card in the list with updated data */
+  private updateCardInList(trainer: Trainers): void {
+    const idx = this.trainersResult.findIndex(t => t.id === trainer.id);
+    if (idx !== -1) {
+      const updated = [...this.trainersResult];
+      updated[idx] = trainer;
+      this.trainersResult = updated;
+    }
   }
 
-  formatStringtoUrl(string: any) {
-    return string.replace(/ /g, "-");
-  }
-
-  updateTrainerLikes(trainer: Trainers) {
-    this.trainerService.likeTrainer(trainer.id).subscribe(
-      (response: any) => {
-        this.responseMessage = response.message;
-        this.handleEmitEvent()
-        this.snackbarService.openSnackBar(this.responseMessage, '');
+  likeTrainer(trainer: Trainers): void {
+    this.trainerService.likeTrainer(trainer.id).subscribe({
+      next: (res: any) => {
+        this.snackbar.openSnackBar(res?.message, '');
+        this.loadLikes();
       },
-      (error: any) => {
-        if (error.error?.message) {
-          this.responseMessage = error.error?.message;
-        } else {
-          this.responseMessage = genericError;
-        }
-        console.log('error message', this.responseMessage);
-        window.alert('please login to continue')
+      error: () => {
+        this.snackbar.openSnackBar('Please log in to like a trainer.', 'error');
       }
-    );
+    });
   }
 
-  isLikedTrainer(trainer: Trainers): boolean {
-    return this.trainerLikes.some((trainerLikes) =>
-      trainerLikes.userId === this.user?.id && trainerLikes.trainerId === trainer.id
-    );
+  isLiked(trainer: Trainers): boolean {
+    return this.trainerLikes.some(l => l.userId === this.user?.id && l.trainerId === trainer.id);
   }
 
+  toggleShowMore(): void {
+    this.showAll = !this.showAll;
+  }
 
-  onImageError(event: any) {
+  formatUrl(name: string): string {
+    return name?.replace(/ /g, '-') ?? '';
+  }
+
+  onImageError(event: any): void {
     event.target.src = 'assets/avatar.png';
   }
 
-
-  watchLikeTrainer() {
-    this.rxStompService.watch('/topic/likeTrainer').subscribe((message) => {
-      const receivedTrainer: Trainers = JSON.parse(message.body);
-      const trainerId = this.trainersResult.findIndex(trainer => trainer.id === receivedTrainer.id)
-      this.trainersResult[trainerId] = receivedTrainer
-    });
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
   }
-
-  watchUpdateTrainer() {
-    this.rxStompService.watch('/topic/updateTrainer').subscribe((message) => {
-      const receivedTrainer: Trainers = JSON.parse(message.body);
-      const trainerId = this.trainersResult.findIndex(trainer => trainer.id === receivedTrainer.id)
-      this.trainersResult[trainerId] = receivedTrainer
-    });
-  }
-
-  watchUpdateTrainerStatus() {
-    this.rxStompService.watch('/topic/updateTrainerStatus').subscribe((message) => {
-      const receivedTrainer: Trainers = JSON.parse(message.body);
-      if (receivedTrainer.status === 'true') {
-        this.trainersResult.push(receivedTrainer);
-      } else {
-        this.trainersResult = this.trainersResult.filter(trainer => trainer.id !== receivedTrainer.id);
-      }
-    });
-  }
-
-  watchUpdatePhoto() {
-    this.rxStompService.watch('/topic/updatePhoto').subscribe((message) => {
-      const receivedTrainer: Trainers = JSON.parse(message.body);
-      const trainerId = this.trainersResult.findIndex(trainer => trainer.id === receivedTrainer.id)
-      this.trainersResult[trainerId] = receivedTrainer
-    });
-  }
-
 }

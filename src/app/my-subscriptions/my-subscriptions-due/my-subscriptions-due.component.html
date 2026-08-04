@@ -2,7 +2,7 @@
     class="relative p-3 border border-yellow-200 rounded-xl bg-yellow-50 flex items-start justify-between gap-3 hover:shadow-sm transition">
     <div class="w-2 h-2 rounded-full bg-yellow-400 mt-1.5 shrink-0"></div>
     <div class="flex-1 min-w-0">
-        <p class="text-sm font-semibold text-gray-900">{{ subscription.planName }}</p>
+        <p class="text-sm font-semibold text-gray-900">{{ subscription.plan }}</p>
         <p class="text-[10px] text-gray-500 mt-0.5">
             Ends: {{ subscription.endDate | date:'mediumDate' }}
         </p>

@@ -7,17 +7,17 @@ import { CenterTrainers } from 'src/app/models/centers.interface';
   styleUrls: ['./center-trainers.component.css']
 })
 export class CenterTrainersComponent {
-  @Input() centerTrainers: CenterTrainers | undefined;
+  @Input() centerTrainers: CenterTrainers[] = [];
   showAllTrainers: boolean = false;
 
-  constructor(private elementRef: ElementRef){}
+  constructor(private elementRef: ElementRef) { }
 
   scrollToComponent() {
     const targetElement = this.elementRef.nativeElement.querySelector('#targetComponent');
     targetElement.scrollIntoView({ behavior: 'smooth' });
   }
 
-  allTrainers(){
-    this.showAllTrainers =! this.showAllTrainers;
+  allTrainers() {
+    this.showAllTrainers = !this.showAllTrainers;
   }
 }

@@ -1,5 +1,3 @@
-import { User } from "angular-feather/icons";
-import { Categories } from "./categories.interface";
 import { Users } from "./users.interface";
 import { Subscriptions } from "./subscriptions.interface";
 
@@ -13,8 +11,7 @@ export interface Clients {
     dietaryPreferences: string;
     dietaryRestrictions: string;
     caloriesIntake: number;
-    categories: Categories[];
-    subscriptions: Subscriptions[];  
+    subscriptions: Subscriptions[];
     mode: string;
     motivation: string;
     targetWeight: number;

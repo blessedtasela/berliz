@@ -4,7 +4,7 @@
     </div>
     <section class="p-2 flex flex-col justify-center items-center">
         <div class="text-center">
-            <p class="text-gray-950 font-sans font-bold text-xl uppercase mt-4">{{ testimonialData.user.email }} [ID {{
+            <p class="text-gray-950 font-sans font-bold text-xl uppercase mt-4">{{ testimonialData.userEmail }} [ID {{
                 testimonialData.id }}</p>
             <p class="text-red-600 font-sans font-bold text-sm italic">
                 created at {{ formatDate(testimonialData.date) }}
@@ -12,17 +12,14 @@
             <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
                 <div>
                     <img class="w-16" class="bg-gray-200 rounded-md p-2"
-                        [src]="'../../../assets/icons/' + testimonialData.user.profilePhoto">
+                        src="../../../assets/icons/user.png">
                 </div>
                 <div class="flex flex-col m-4 gap-2">
                     <p class="text-gray-700 font-sans font-bold text-md flex">
                         {{ testimonialData.testimonial }}
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex">
-                       ???
-                    </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
-                      center {{ testimonialData.center.name }}
+                      center {{ testimonialData.centerName }}
                     </p>
                     <p class="text-gray-700 font-sans font-bold text-md flex mt-2">
                         Category status: {{ testimonialData.status ==='true' ? 'active' :'false' }}

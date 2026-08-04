@@ -3,8 +3,10 @@ import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Exercises } from 'src/app/models/exercise.interface';
-import { ExerciseStateService } from 'src/app/services/exercise-state.service';
 import { ExerciseService } from 'src/app/services/exercise.service';
+import { Store } from '@ngrx/store';
+import { loadExercises } from 'src/app/state/exercise/exercise.actions';
+import { selectExercises } from 'src/app/state/exercise/exercise.selectors';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
@@ -32,7 +34,7 @@ export class ExercisesListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private rxStompService: RxStompService,
-    public exerciseStateService: ExerciseStateService) {
+    private store: Store) {
   }
 
   ngOnInit() {
@@ -41,11 +43,11 @@ export class ExercisesListComponent {
   }
 
   handleEmitEvent() {
-    this.exerciseStateService.getExercises().subscribe((allExercises) => {
-      this.ngxService.start()
+    this.ngxService.start()
+    this.store.dispatch(loadExercises());
+    this.store.select(selectExercises).subscribe((allExercises) => {
       this.exercisesData = allExercises;
       this.totalExercises = this.exercisesData.length
-      this.exerciseStateService.setAllExercisesSubject(this.exercisesData);
       this.ngxService.stop()
     });
   }

@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Partner } from 'src/app/models/partners.interface';
-import { PartnerStateService } from 'src/app/services/partner-state.service';
+import { loadPartners } from 'src/app/state/partner/partner.actions';
+import { selectPartners } from 'src/app/state/partner/partner.selectors';
 
 @Component({
   selector: 'app-partners',
@@ -14,33 +17,31 @@ export class PartnersComponent {
   partnersLength: number = 0;
   searchComponent: string = 'partner'
   isSearch: boolean = true;
+  subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
-    private partnerStateService: PartnerStateService) {
+    private store: Store) {
   }
 
   ngOnInit(): void {
-    this.partnerStateService.allPartnersData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.partnersData = cachedData;
-        this.totalPartners = cachedData.length
-        this.partnersLength = cachedData.length
-      }
-    });
+    this.handleEmitEvent();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   handleEmitEvent() {
-    this.partnerStateService.getAllPartners().subscribe((allPartners) => {
-      this.ngxService.start()
-      console.log('isCachedData false')
-      this.partnersData = allPartners;
-      this.totalPartners = allPartners.length
-      this.partnersLength = allPartners.length
-      this.partnerStateService.setAllPartnersSubject(this.partnersData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadPartners());
+    this.subscriptions.push(
+      this.store.select(selectPartners).subscribe((allPartners) => {
+        this.partnersData = allPartners;
+        this.totalPartners = allPartners.length
+        this.partnersLength = allPartners.length
+        this.ngxService.stop()
+      })
+    );
   }
 
   handleSearchResults(results: Partner[]): void {
@@ -49,4 +50,3 @@ export class PartnersComponent {
   }
 
 }
-

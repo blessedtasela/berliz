@@ -94,8 +94,6 @@ export class LoginFormComponent {
           }
           this.snackBarService.openSnackBar(this.responseMessage, "error");
         });
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
-
   }
 
 
@@ -103,42 +101,46 @@ export class LoginFormComponent {
     if (this.loginForm.invalid) {
       this.invalidForm = true;
       this.responseMessage = 'Invalid form';
-    } else {
-      this.userService.login(this.loginForm.value)
-        .subscribe((response: any) => {
-          this.ngxService.start();
-          this.invalidForm = false;
-          localStorage.setItem('token', response.access_token);
-          localStorage.setItem('refresh_token', response.refresh_token);
-          this.userService.startRefreshTokenTimer();
-          this.loginInterface = response;
-          this.invalidLogin = '';
-          this.invalidForm = false;
-          this.responseMessage = '';
-          this.responseMessage = response?.message;
-          this.router.navigate(['/dashboard']);
-          if (response.message) {
-            this.snackBarService.openSnackBar(this.responseMessage, "");
-          }
-          else {
-            this.snackBarService.openSnackBar("Login successful!", "");
-          }
-          this.loginForm.reset;
-          this.ngxService.stop();
-        },
-          (error: any) => {
-            this.ngxService.stop();
-            console.error("error");
-            if (error.error?.message) {
-              this.responseMessage = error.error?.message;
-            } else {
-              this.responseMessage = genericError;
-            }
-            this.snackBarService.openSnackBar(this.responseMessage, "error");
-          });
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
-      this.ngxService.stop();
+      return;
     }
+
+    this.ngxService.start();
+    this.userService.login(this.loginForm.value)
+      .subscribe({
+        next: (response: any) => {
+          this.ngxService.stop();
+
+          const auth = response?.data;
+          if (!auth?.accessToken) {
+            // Backend responded 200 but login didn't actually succeed
+            // (e.g. wrong password, unactivated account) — don't navigate.
+            this.responseMessage = response?.message || genericError;
+            this.snackBarService.openSnackBar(this.responseMessage, "error");
+            return;
+          }
+
+          this.invalidForm = false;
+          localStorage.setItem('token', auth.accessToken);
+          localStorage.setItem('refresh_token', auth.refreshToken);
+          this.loginInterface = auth;
+          this.userService.startRefreshTokenTimer();
+          this.invalidLogin = '';
+          this.responseMessage = response?.message;
+          this.snackBarService.openSnackBar(this.responseMessage, "");
+          this.loginForm.reset();
+          this.router.navigate(['/dashboard']);
+        },
+        error: (error: any) => {
+          this.ngxService.stop();
+          console.error("error");
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackBarService.openSnackBar(this.responseMessage, "error");
+        }
+      });
   }
 
   loginWithGoogle() {

@@ -2,12 +2,20 @@ import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+
 import { Users } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserStateService } from 'src/app/services/user-state.service';
-import { UserService } from 'src/app/services/user.service';
 import { genericError } from 'src/validators/form-validators.module';
+
+import {
+  loadUser,
+  updateUserBio,
+  updateUserProfilePhoto
+} from 'src/app/state/user/user.actions';
+import { selectUser } from 'src/app/state/user/user.selector';
+
 
 @Component({
   selector: 'app-user-profile',
@@ -27,34 +35,44 @@ export class UserProfileComponent {
   subscriptions: Subscription[] = [];
 
   constructor(
-    private userService: UserService,
-    private userStateService: UserStateService,
+    private store: Store,
     private ngx: NgxUiLoaderService,
     private snackbar: SnackBarService,
     private fb: FormBuilder,
     private datePipe: DatePipe
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.bioForm = this.fb.group({
-      bio: ['', Validators.required]
+      bio: ['', [Validators.required, Validators.minLength(900), Validators.maxLength(1200)]]
     });
-    this.loadUser();
+
+    this.loadUserFromStore();
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  loadUser(): void {
-    const sub = this.userStateService.getUser().subscribe(user => {
+  // ---------------------------
+  // USER FROM STORE
+  // ---------------------------
+  loadUserFromStore(): void {
+    this.store.dispatch(loadUser());
+
+    const sub = this.store.select(selectUser).subscribe(user => {
+      if (!user) return;
+
       this.user = user;
-      this.userStateService.setUserSubject(user);
       this.bioForm.patchValue({ bio: user.bio || '' });
     });
+
     this.subscriptions.push(sub);
   }
 
+  // ---------------------------
+  // PHOTO
+  // ---------------------------
   onImgSelected(event: any): void {
     this.imageChangedEvent = event;
     this.showCropper = true;
@@ -68,24 +86,16 @@ export class UserProfileComponent {
     if (!this.croppedImage || !this.user?.id) return;
 
     this.ngx.start();
+
     const form = new FormData();
     form.append('profilePhoto', this.croppedImage);
     form.append('id', this.user.id.toString());
 
-    this.userService.updateProfilePhoto(form).subscribe({
-      next: (res: any) => {
-        this.ngx.stop();
-        this.responseMessage = res?.message;
-        this.snackbar.openSnackBar(this.responseMessage, '');
-        this.showCropper = false;
-        this.loadUser();
-      },
-      error: (error: any) => {
-        this.ngx.stop();
-        this.responseMessage = error.error?.message || genericError;
-        this.snackbar.openSnackBar(this.responseMessage, 'error');
-      }
-    });
+    this.store.dispatch(updateUserProfilePhoto({ data: form }));
+
+    // you should handle success via effect → snackbar
+    this.ngx.stop();
+    this.showCropper = false;
   }
 
   onCancelCrop(): void {
@@ -94,27 +104,25 @@ export class UserProfileComponent {
     this.croppedImage = null;
   }
 
+  // ---------------------------
+  // BIO
+  // ---------------------------
   onSaveBio(): void {
     if (this.bioForm.invalid) return;
 
     this.ngx.start();
-    this.userService.updateBio(this.bioForm.value).subscribe({
-      next: (res: any) => {
-        this.ngx.stop();
-        this.responseMessage = res?.message;
-        this.snackbar.openSnackBar(this.responseMessage, '');
-        this.loadUser();
-      },
-      error: (error: any) => {
-        this.ngx.stop();
-        this.responseMessage = error.error?.message || genericError;
-        this.snackbar.openSnackBar(this.responseMessage, 'error');
-      }
-    });
+
+    this.store.dispatch(updateUserBio({ data: this.bioForm.value }));
+
+    this.ngx.stop();
+    this.bioForm.markAsPristine();
+    this.bioForm.markAsUntouched();
   }
 
+  // ---------------------------
+  // UTILS
+  // ---------------------------
   formatDate(dateString: any): string | null {
-    const date = new Date(dateString);
-    return this.datePipe.transform(date, 'dd/MM/yyyy');
+    return this.datePipe.transform(new Date(dateString), 'dd/MM/yyyy');
   }
 }

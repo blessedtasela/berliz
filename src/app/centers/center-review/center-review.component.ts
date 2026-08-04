@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CenterReview } from 'src/app/models/centers.interface';
+import { CenterReviews } from 'src/app/models/centers.interface';
 
 @Component({
   selector: 'app-center-review',
@@ -7,7 +7,7 @@ import { CenterReview } from 'src/app/models/centers.interface';
   styleUrls: ['./center-review.component.css']
 })
 export class CenterReviewComponent {
-  @Input() centerReviews: CenterReview[] = [];
+  @Input() centerReviews: CenterReviews[] = [];
   showAllReviews: boolean = false;
 
   constructor() {

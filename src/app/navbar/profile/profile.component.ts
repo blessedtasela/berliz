@@ -8,10 +8,11 @@ import { UpdateUserModalComponent } from 'src/app/dashboard/user/update-user-mod
 import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserStateService } from 'src/app/services/user-state.service';
 import { UserService } from 'src/app/services/user.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
+import { Store } from '@ngrx/store';
+import { selectUser } from 'src/app/state/user/user.selector';
 
 @Component({
   selector: 'app-profile',
@@ -21,7 +22,7 @@ import { genericError } from 'src/validators/form-validators.module';
 
 export class ProfileComponent {
   @Output() isMenuOpen = new EventEmitter<boolean>();
-  @Input() userData!: Users;
+  @Input() userData!: Users | null;
   profileOpen: boolean = false;
   responseMessage: any;
   @Input() search: boolean = false;
@@ -33,7 +34,7 @@ export class ProfileComponent {
     private userService: UserService,
     private router: Router,
     private dialog: MatDialog,
-    private userStateService: UserStateService,
+    private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private rxStompService: RxStompService) { }
@@ -44,11 +45,12 @@ export class ProfileComponent {
     this.subscribeToCloseProfileOnScroll()
   }
 
-  handleEmitEvent() {
-    this.userStateService.getUser().subscribe((user) => {
+  handleEmitEvent(): void {
+
+    this.store.select(selectUser).subscribe(user => {
       this.userData = user;
-      this.userStateService.setUserSubject(user);
     });
+
   }
 
   subscribeToCloseProfileOnClick() {
@@ -121,7 +123,13 @@ export class ProfileComponent {
 
   updatePhoto(): void {
     this.ngxService.start();
-    const id = this.userData.id;
+    const id = this.userData?.id;
+    if (id === undefined || id === null) {
+      this.ngxService.stop();
+      this.responseMessage = 'User ID is not available.';
+      this.snackbarService.openSnackBar(this.responseMessage, 'error');
+      return;
+    }
     const photo = this.croppedImage;
     const requestData = new FormData();
     requestData.append('profilePhoto', photo);
@@ -156,7 +164,14 @@ export class ProfileComponent {
     const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((res: any) => {
       this.ngxService.start();
-      this.userService.removePhoto(this.userData.id)
+      const id = this.userData?.id;
+      if (id === undefined || id === null) {
+        this.ngxService.stop();
+        this.responseMessage = 'User ID is not available.';
+        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        return;
+      }
+      this.userService.removePhoto(id)
         .subscribe(
           (response: any) => {
             this.ngxService.stop();

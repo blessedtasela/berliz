@@ -8,7 +8,8 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
 import { AddPartnerModalComponent } from '../add-partner-modal/add-partner-modal.component';
 import { Partner } from 'src/app/models/partners.interface';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { Store } from '@ngrx/store';
+import { selectUsers } from 'src/app/state/user/user.selector';
 
 
 @Component({
@@ -42,7 +43,7 @@ export class UpdatePartnerModalComponent {
 
   constructor(private formBuilder: FormBuilder,
     private partnerService: PartnerService,
-    private userStateService: UserStateService,
+    private store: Store,
     private cdr: ChangeDetectorRef,
     public dialogRef: MatDialogRef<AddPartnerModalComponent>,
     private ngxService: NgxUiLoaderService,
@@ -56,7 +57,7 @@ export class UpdatePartnerModalComponent {
   }
 
   ngOnInit(): void {
-    this.userStateService.getActiveUsers().subscribe((users) => {
+    this.store.select(selectUsers).subscribe((users) => {
       this.users = users;
     })
     this.updatePartnerForm = this.formBuilder.group({

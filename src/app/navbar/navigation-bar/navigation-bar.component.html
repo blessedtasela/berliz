@@ -1,10 +1,11 @@
-<nav class="fixed top-0 left-0 w-full z-50 bg-gray-950 border-b border-gray-800">
+<nav class="fixed top-0 left-0 w-full z-50 bg-gray-950/95 backdrop-blur-sm border-b transition-shadow duration-300"
+    [ngClass]="scrolled ? 'border-gray-800 shadow-2xl' : 'border-gray-900'">
 
-    <div class="flex items-center justify-between px-4 lg:px-10 h-14" id="navbarView">
+    <div class="flex items-center justify-between px-5 lg:px-12 h-16" id="navbarView">
 
         <!-- LEFT: Logo -->
-        <a [routerLink]="['/home']" class="flex items-center shrink-0">
-            <img src="../../../assets/side-bar-berliz.png" alt="Berliz" class="h-8 w-auto object-contain" />
+        <a [routerLink]="['/home']" class="flex items-center shrink-0 mr-6">
+            <img src="../../../assets/side-bar-berliz.png" alt="Berliz" class="h-9 w-auto object-contain" />
         </a>
 
         <!-- MOBILE: hamburger -->
@@ -24,21 +25,23 @@
       }">
 
             <li *ngFor="let link of navLinks" class="py-0.5 lg:py-0">
-                <a [routerLink]="link.path" class="block px-3 py-2 rounded-xl text-sm font-medium text-gray-400
-                 hover:bg-gray-800 hover:text-white transition"
-                    [ngClass]="isActive(link.path.replace('/', '')) ? 'bg-gray-800 text-white' : ''">
+                <a [routerLink]="link.path" class="relative block px-3.5 py-2 rounded-xl text-sm font-medium text-gray-400
+                 hover:bg-white/5 hover:text-white transition"
+                    [ngClass]="isActive(link.path.replace('/', '')) ? 'text-white' : ''">
                     {{ link.label }}
+                    <span class="pointer-events-none absolute left-3.5 right-3.5 -bottom-[13px] lg:-bottom-[19px] h-[2px] rounded-full bg-red-600 transition-opacity duration-200"
+                        [ngClass]="isActive(link.path.replace('/', '')) ? 'opacity-100' : 'opacity-0'"></span>
                 </a>
             </li>
 
-            <li class="py-0.5 lg:py-0 lg:ml-2">
+            <li class="py-0.5 lg:py-0 lg:ml-3">
                 <a *ngIf="!getUser()" [routerLink]="['/login']" class="block px-4 py-2 rounded-xl text-sm font-semibold
-                 bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]
+                 bg-red-600 text-white shadow-[0_2px_10px_rgba(220,38,38,0.35)] hover:bg-red-700 hover:shadow-[0_4px_16px_rgba(220,38,38,0.5)] active:scale-[0.98]
                  transition whitespace-nowrap">
                     Login
                 </a>
                 <a *ngIf="getUser()" [routerLink]="['/dashboard']" class="block px-4 py-2 rounded-xl text-sm font-semibold
-                 bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]
+                 bg-red-600 text-white shadow-[0_2px_10px_rgba(220,38,38,0.35)] hover:bg-red-700 hover:shadow-[0_4px_16px_rgba(220,38,38,0.5)] active:scale-[0.98]
                  transition whitespace-nowrap">
                     Dashboard
                 </a>

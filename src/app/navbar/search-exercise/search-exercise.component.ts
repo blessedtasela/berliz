@@ -1,9 +1,10 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Exercises } from 'src/app/models/exercise.interface';
-import { ExerciseStateService } from 'src/app/services/exercise-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { selectExercises } from 'src/app/state/exercise/exercise.selectors';
 
 @Component({
   selector: 'app-search-exercise',
@@ -21,7 +22,7 @@ export class SearchExerciseComponent {
   constructor(private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef,
-    public exerciseStateService: ExerciseStateService) {
+    private store: Store) {
   }
 
   ngOnInit(): void {
@@ -56,7 +57,7 @@ export class SearchExerciseComponent {
   }
 
   search(query: string): Observable<Exercises[]> {
-    this.exerciseStateService.allExerciseData$.subscribe((cachedData) => {
+    this.store.select(selectExercises).subscribe((cachedData) => {
       this.exercisesData = cachedData;
     });
     query = query.toLowerCase();

@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { EventEmitter } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
 import {
@@ -12,13 +11,15 @@ import {
   TrainerPhotoAlbum,
   TrainerPricing,
   TrainerReview,
+  TrainerReviewLikes,
   TrainerSubscription,
   TrainerTestimonials,
-  TrainerVideoAlbum
+  TrainerVideoAlbum,
+  TrainerLikes,
 } from '../models/trainers.interface';
 
-import { TrainerLikes } from '../models/trainers.interface';
 import { CenterTrainers } from '../models/centers.interface';
+import { ApiResponse } from '../models/Api.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -35,55 +36,57 @@ export class TrainerService {
   // ─────────────────────────────
 
   addTrainer(data: any) {
-    return this.httpClient.post<Trainers>(`${this.url}/trainer/add`, data);
+    return this.httpClient.post<ApiResponse<Trainers>>(`${this.url}/trainer/add`, data);
   }
 
   getAllTrainers() {
-    return this.httpClient.get<Trainers[]>(`${this.url}/trainer/get`);
+    return this.httpClient.get<ApiResponse<Trainers[]>>(`${this.url}/trainer/get`);
   }
 
   getActiveTrainers() {
-    return this.httpClient.get<Trainers[]>(`${this.url}/trainer/getActiveTrainers`);
+    return this.httpClient.get<ApiResponse<Trainers[]>>(`${this.url}/trainer/getActiveTrainers`);
   }
 
   updateTrainer(data: any) {
-    return this.httpClient.put<Trainers>(`${this.url}/trainer/update`, data);
+    return this.httpClient.put<ApiResponse<Trainers>>(`${this.url}/trainer/update`, data);
   }
 
   updateTrainerPhoto(data: any) {
-    return this.httpClient.put<Trainers>(`${this.url}/trainer/updateTrainerPhoto`, data);
+    return this.httpClient.put<ApiResponse<Trainers>>(`${this.url}/trainer/updateTrainerPhoto`, data);
   }
 
   deleteTrainer(id: number) {
-    return this.httpClient.delete<void>(`${this.url}/trainer/delete/${id}`);
+    return this.httpClient.delete<ApiResponse<void>>(`${this.url}/trainer/delete/${id}`);
   }
 
-  updateStatus(id: number) {
-    return this.httpClient.put<void>(
-      `${this.url}/trainer/updateStatus/${id}`,
-      null,
-      { headers: new HttpHeaders().set('Content-Type', 'application/json') }
-    );
+  deleteMyTrainerProfile(confirmationKeyword: string) {
+    return this.httpClient.delete<ApiResponse<void>>(
+      `${this.url}/trainer/deleteMyTrainerProfile/${confirmationKeyword}`);
+  }
+
+  updateTrainerStatus(id: number) {
+    return this.httpClient.put<ApiResponse<Trainers>>(
+      `${this.url}/trainer/updateTrainerStatus/${id}`, null);
   }
 
   getTrainer() {
-    return this.httpClient.get<Trainers>(`${this.url}/trainer/getTrainer`);
+    return this.httpClient.get<ApiResponse<Trainers>>(`${this.url}/trainer/getTrainer`);
   }
 
   likeTrainer(id: number) {
-    return this.httpClient.put<void>(
-      `${this.url}/trainer/like/${id}`,
-      null,
-      { headers: new HttpHeaders().set('Content-Type', 'application/json') }
-    );
+    return this.httpClient.put<ApiResponse<Trainers>>(`${this.url}/trainer/like/${id}`, null);
+  }
+
+  getTrainerLikes() {
+    return this.httpClient.get<ApiResponse<TrainerLikes[]>>(`${this.url}/trainer/getTrainerLikes`);
   }
 
   getMyTrainerLikes() {
-    return this.httpClient.get<TrainerLikes[]>(`${this.url}/trainer/getMyTrainerLikes`);
+    return this.httpClient.get<ApiResponse<TrainerLikes[]>>(`${this.url}/trainer/getMyTrainerLikes`);
   }
 
   getAllTrainerLikes() {
-    return this.httpClient.get<TrainerLikes[]>(`${this.url}/trainer/getAllTrainerLikes`);
+    return this.httpClient.get<ApiResponse<TrainerLikes[]>>(`${this.url}/trainer/getAllTrainerLikes`);
   }
 
   // ─────────────────────────────
@@ -91,23 +94,23 @@ export class TrainerService {
   // ─────────────────────────────
 
   addTrainerPricing(data: any) {
-    return this.httpClient.post<TrainerPricing>(`${this.url}/trainer/addTrainerPricing`, data);
+    return this.httpClient.post<ApiResponse<TrainerPricing>>(`${this.url}/trainer/addTrainerPricing`, data);
   }
 
   updateTrainerPricing(data: any) {
-    return this.httpClient.put<TrainerPricing>(`${this.url}/trainer/updateTrainerPricing`, data);
+    return this.httpClient.put<ApiResponse<TrainerPricing>>(`${this.url}/trainer/updateTrainerPricing`, data);
   }
 
   getAllTrainerPricing() {
-    return this.httpClient.get<TrainerPricing[]>(`${this.url}/trainer/getAllTrainerPricing`);
+    return this.httpClient.get<ApiResponse<TrainerPricing[]>>(`${this.url}/trainer/getAllTrainerPricing`);
   }
 
   getMyTrainerPricing() {
-    return this.httpClient.get<TrainerPricing>(`${this.url}/trainer/getMyTrainerPricing`);
+    return this.httpClient.get<ApiResponse<TrainerPricing>>(`${this.url}/trainer/getMyTrainerPricing`);
   }
 
   deleteTrainerPricing(id: number) {
-    return this.httpClient.delete<void>(`${this.url}/trainer/deleteTrainerPricing/${id}`);
+    return this.httpClient.delete<ApiResponse<void>>(`${this.url}/trainer/deleteTrainerPricing/${id}`);
   }
 
   // ─────────────────────────────
@@ -115,23 +118,23 @@ export class TrainerService {
   // ─────────────────────────────
 
   addTrainerIntroduction(data: any) {
-    return this.httpClient.post<TrainerIntroduction>(`${this.url}/trainer/addTrainerIntroduction`, data);
+    return this.httpClient.post<ApiResponse<TrainerIntroduction>>(`${this.url}/trainer/addTrainerIntroduction`, data);
   }
 
   updateTrainerIntroduction(data: any) {
-    return this.httpClient.put<TrainerIntroduction>(`${this.url}/trainer/updateTrainerIntroduction`, data);
+    return this.httpClient.put<ApiResponse<TrainerIntroduction>>(`${this.url}/trainer/updateTrainerIntroduction`, data);
   }
 
   deleteTrainerIntroduction(id: number) {
-    return this.httpClient.delete<void>(`${this.url}/trainer/deleteTrainerIntroduction/${id}`);
+    return this.httpClient.delete<ApiResponse<void>>(`${this.url}/trainer/deleteTrainerIntroduction/${id}`);
   }
 
   getAllTrainerIntroductions() {
-    return this.httpClient.get<TrainerIntroduction>(`${this.url}/trainer/getAllTrainerIntroductions`);
+    return this.httpClient.get<ApiResponse<TrainerIntroduction[]>>(`${this.url}/trainer/getAllTrainerIntroductions`);
   }
 
   getMyTrainerIntroduction() {
-    return this.httpClient.get<TrainerIntroduction>(`${this.url}/trainer/getMyTrainerIntroduction`);
+    return this.httpClient.get<ApiResponse<TrainerIntroduction>>(`${this.url}/trainer/getMyTrainerIntroduction`);
   }
 
   // ─────────────────────────────
@@ -139,23 +142,23 @@ export class TrainerService {
   // ─────────────────────────────
 
   addTrainerBenefit(data: any) {
-    return this.httpClient.put<TrainerBenefits>(`${this.url}/trainer/addTrainerBenefit`, data);
+    return this.httpClient.post<ApiResponse<TrainerBenefits>>(`${this.url}/trainer/addTrainerBenefit`, data);
   }
 
   updateTrainerBenefit(data: any) {
-    return this.httpClient.put<TrainerBenefits>(`${this.url}/trainer/updateTrainerBenefit`, data);
+    return this.httpClient.put<ApiResponse<TrainerBenefits>>(`${this.url}/trainer/updateTrainerBenefit`, data);
   }
 
   deleteTrainerBenefit(id: number) {
-    return this.httpClient.delete<void>(`${this.url}/trainer/deleteTrainerBenefit/${id}`);
+    return this.httpClient.delete<ApiResponse<void>>(`${this.url}/trainer/deleteTrainerBenefit/${id}`);
   }
 
   getAllTrainerBenefits() {
-    return this.httpClient.get<TrainerBenefits[]>(`${this.url}/trainer/getAllTrainerBenefits`);
+    return this.httpClient.get<ApiResponse<TrainerBenefits[]>>(`${this.url}/trainer/getAllTrainerBenefits`);
   }
 
   getMyTrainerBenefits() {
-    return this.httpClient.get<TrainerBenefits>(`${this.url}/trainer/getMyTrainerBenefits`);
+    return this.httpClient.get<ApiResponse<TrainerBenefits>>(`${this.url}/trainer/getMyTrainerBenefits`);
   }
 
   // ─────────────────────────────
@@ -163,47 +166,77 @@ export class TrainerService {
   // ─────────────────────────────
 
   addTrainerFeatureVideo(data: any) {
-    return this.httpClient.post<TrainerFeatureVideo>(`${this.url}/trainer/addTrainerFeatureVideo`, data);
+    return this.httpClient.post<ApiResponse<TrainerFeatureVideo>>(`${this.url}/trainer/addTrainerFeatureVideo`, data);
   }
 
   updateTrainerFeatureVideo(data: any) {
-    return this.httpClient.put<TrainerFeatureVideo>(`${this.url}/trainer/updateTrainerFeatureVideo`, data);
+    return this.httpClient.put<ApiResponse<TrainerFeatureVideo>>(`${this.url}/trainer/updateTrainerFeatureVideo`, data);
   }
 
   deleteTrainerFeatureVideo(id: number) {
-    return this.httpClient.delete<void>(`${this.url}/trainer/deleteTrainerFeatureVideo/${id}`);
+    return this.httpClient.delete<ApiResponse<void>>(`${this.url}/trainer/deleteTrainerFeatureVideo/${id}`);
   }
 
   getAllTrainerFeatureVideos() {
-    return this.httpClient.get<TrainerFeatureVideo[]>(`${this.url}/trainer/getAllTrainerFeatureVideos`);
+    return this.httpClient.get<ApiResponse<TrainerFeatureVideo[]>>(`${this.url}/trainer/getAllTrainerFeatureVideos`);
   }
 
   getMyTrainerFeatureVideos() {
-    return this.httpClient.get<TrainerFeatureVideo[]>(`${this.url}/trainer/getMyTrainerFeatureVideos`);
+    return this.httpClient.get<ApiResponse<TrainerFeatureVideo[]>>(`${this.url}/trainer/getMyTrainerFeatureVideos`);
+  }
+
+  getActiveFeatureVideos(trainerId: number) {
+    return this.httpClient.get<ApiResponse<TrainerFeatureVideo[]>>(
+      `${this.url}/trainer/getActiveFeatureVideos/${trainerId}`);
+  }
+
+  updateFeatureVideoPosition(id: number, newPosition: number) {
+    return this.httpClient.put<ApiResponse<TrainerFeatureVideo>>(
+      `${this.url}/trainer/updateFeatureVideoPosition?id=${id}&newPosition=${newPosition}`, null);
+  }
+
+  setFeaturedVideo(id: number) {
+    return this.httpClient.put<ApiResponse<TrainerFeatureVideo>>(
+      `${this.url}/trainer/setFeaturedVideo/${id}`, null);
+  }
+
+  incrementFeatureVideoViews(id: number) {
+    return this.httpClient.put<ApiResponse<TrainerFeatureVideo>>(
+      `${this.url}/trainer/incrementFeatureVideoViews/${id}`, null);
   }
 
   // ─────────────────────────────
   // PHOTO ALBUM
   // ─────────────────────────────
 
-  addTrainerPhotoAlbum(data: any) {
-    return this.httpClient.post<TrainerPhotoAlbum>(`${this.url}/trainer/addTrainerPhotosAlbum`, data);
+  addTrainerPhotosAlbum(data: any) {
+    return this.httpClient.post<ApiResponse<TrainerPhotoAlbum>>(`${this.url}/trainer/addTrainerPhotosAlbum`, data);
   }
 
-  updateTrainerPhotoAlbum(data: any) {
-    return this.httpClient.put<TrainerPhotoAlbum>(`${this.url}/trainer/updateTrainerPhotosAlbum`, data);
+  updateTrainerPhotosAlbum(data: any) {
+    return this.httpClient.put<ApiResponse<TrainerPhotoAlbum>>(`${this.url}/trainer/updateTrainerPhotosAlbum`, data);
   }
 
-  deleteTrainerPhotoAlbum(id: number) {
-    return this.httpClient.delete<void>(`${this.url}/trainer/deleteTrainerPhotosAlbum/${id}`);
+  deleteTrainerPhotosAlbum(id: number) {
+    return this.httpClient.delete<ApiResponse<void>>(`${this.url}/trainer/deleteTrainerPhotosAlbum/${id}`);
   }
 
-  getAllTrainerPhotoAlbums() {
-    return this.httpClient.get<TrainerPhotoAlbum[]>(`${this.url}/trainer/getAllTrainerPhotosAlbums`);
+  getAllTrainersPhotosAlbum() {
+    return this.httpClient.get<ApiResponse<TrainerPhotoAlbum[]>>(`${this.url}/trainer/getAllTrainersPhotosAlbum`);
+  }
+
+  getAllTrainerPhotosAlbumsWithPhotos() {
+    return this.httpClient.get<ApiResponse<TrainerPhotoAlbum[]>>(
+      `${this.url}/trainer/getAllTrainerPhotosAlbumsWithPhotos`);
+  }
+
+  getTrainerPhotosInAlbum(albumId: number) {
+    return this.httpClient.get<ApiResponse<TrainerPhotoAlbum>>(
+      `${this.url}/trainer/getTrainerPhotosInAlbum/${albumId}`);
   }
 
   getMyTrainerPhotosAlbum() {
-    return this.httpClient.get<TrainerPhotoAlbum>(`${this.url}/trainer/getMyTrainerPhotosAlbum`);
+    return this.httpClient.get<ApiResponse<TrainerPhotoAlbum>>(`${this.url}/trainer/getMyTrainerPhotosAlbum`);
   }
 
   // ─────────────────────────────
@@ -211,35 +244,46 @@ export class TrainerService {
   // ─────────────────────────────
 
   addTrainerVideosAlbum(data: any) {
-    return this.httpClient.post<TrainerVideoAlbum>(`${this.url}/trainer/addTrainerVideosAlbum`, data);
+    return this.httpClient.post<ApiResponse<TrainerVideoAlbum>>(`${this.url}/trainer/addTrainerVideosAlbum`, data);
   }
 
   updateTrainerVideosAlbum(data: any) {
-    return this.httpClient.put<TrainerVideoAlbum>(`${this.url}/trainer/updateTrainerVideosAlbum`, data);
+    return this.httpClient.put<ApiResponse<TrainerVideoAlbum>>(`${this.url}/trainer/updateTrainerVideosAlbum`, data);
   }
 
   deleteTrainerVideosAlbum(id: number) {
-    return this.httpClient.delete<void>(`${this.url}/trainer/deleteTrainerVideosAlbum/${id}`);
+    return this.httpClient.delete<ApiResponse<void>>(`${this.url}/trainer/deleteTrainerVideosAlbum/${id}`);
   }
 
-  getAllTrainerVideosAlbum() {
-    return this.httpClient.get<TrainerVideoAlbum[]>(`${this.url}/trainer/getAllTrainerVideosAlbum`);
+  getAllTrainersVideosAlbum() {
+    return this.httpClient.get<ApiResponse<TrainerVideoAlbum[]>>(`${this.url}/trainer/getAllTrainersVideosAlbum`);
   }
 
   getMyTrainerVideosAlbum() {
-    return this.httpClient.get<TrainerVideoAlbum>(`${this.url}/trainer/getMyTrainerVideosAlbum`);
+    return this.httpClient.get<ApiResponse<TrainerVideoAlbum>>(`${this.url}/trainer/getMyTrainerVideosAlbum`);
   }
 
   // ─────────────────────────────
   // CLIENTS
   // ─────────────────────────────
 
+  getAllTrainerClients() {
+    return this.httpClient.get<ApiResponse<TrainerClients[]>>(`${this.url}/trainer/getAllTrainerClients`);
+  }
   getMyTrainerClients() {
-    return this.httpClient.get<TrainerClients[]>(`${this.url}/trainer/getMyTrainerClients`);
+    return this.httpClient.get<ApiResponse<TrainerClients[]>>(`${this.url}/trainer/getMyTrainerClients`);
   }
 
-  getMyActiveClients() {
-    return this.httpClient.get<TrainerClients[]>(`${this.url}/trainer/getMyActiveClients`);
+  getAllTrainerActiveClients() {
+    return this.httpClient.get<ApiResponse<TrainerClients[]>>(`${this.url}/trainer/getAllTrainerActiveClients`);
+  }
+
+  getMyTrainerActiveClients() {
+    return this.httpClient.get<ApiResponse<TrainerClients[]>>(`${this.url}/trainer/getMyTrainerActiveClients`);
+  }
+
+  getMyCenterTrainers() {
+    return this.httpClient.get<ApiResponse<CenterTrainers[]>>(`${this.url}/trainer/getMyCenterTrainers`);
   }
 
   // ─────────────────────────────
@@ -247,37 +291,33 @@ export class TrainerService {
   // ─────────────────────────────
 
   addTrainerSubscription(request: any) {
-    return this.httpClient.post<TrainerSubscription>(
-      `${this.url}/trainer/addTrainerSubscription`, request);
+    return this.httpClient.post<ApiResponse<TrainerSubscription>>(`${this.url}/trainer/addTrainerSubscription`, request);
   }
 
   updateTrainerSubscription(request: any) {
-    return this.httpClient.put<TrainerSubscription>(
-      `${this.url}/trainer/updateTrainerSubscription`, request);
+    return this.httpClient.post<ApiResponse<TrainerSubscription>>(`${this.url}/trainer/updateTrainerSubscription`, request);
   }
 
   getMyTrainerSubscription() {
-    return this.httpClient.get<TrainerSubscription>(
-      `${this.url}/trainer/getMyTrainerSubscription`);
+    return this.httpClient.get<ApiResponse<TrainerSubscription>>(`${this.url}/trainer/getMyTrainerSubscription`);
   }
 
-  getAllTrainerSubscriptions() {
-    return this.httpClient.get<TrainerSubscription[]>(
-      `${this.url}/trainer/getAllTrainerSubscriptions`);
+  getAllTrainersSubscriptions() {
+    return this.httpClient.get<ApiResponse<TrainerSubscription[]>>(`${this.url}/trainer/getAllTrainersSubscriptions`);
   }
 
-  getActiveTrainerSubscriptions() {
-    return this.httpClient.get<TrainerSubscription[]>(
-      `${this.url}/trainer/getActiveTrainerSubscriptions`);
+  getActiveTrainersSubscriptions() {
+    return this.httpClient.get<ApiResponse<TrainerSubscription[]>>(`${this.url}/trainer/getActiveTrainersSubscriptions`);
   }
 
   updateTrainerSubscriptionStatus(status: string, activationCode: string) {
-    return this.httpClient.put<TrainerSubscription>(
+    return this.httpClient.put<ApiResponse<TrainerSubscription>>(
       `${this.url}/trainer/updateTrainerSubscriptionStatus/${status}/${activationCode}`, null);
   }
 
-  deleteTrainerSubscription() {
-    return this.httpClient.delete(`${this.url}/trainer/deleteTrainerSubscription`);
+  deleteTrainerSubscription(id: number) {
+    return this.httpClient.delete<ApiResponse<void>>(
+      `${this.url}/trainer/deleteTrainerSubscription/${id}`);
   }
 
   // ─────────────────────────────
@@ -285,35 +325,43 @@ export class TrainerService {
   // ─────────────────────────────
 
   addTrainerReview(data: any) {
-    return this.httpClient.post<TrainerReview>(`${this.url}/trainer/addTrainerReview`, data);
+    return this.httpClient.post<ApiResponse<TrainerReview>>(`${this.url}/trainer/addTrainerReview`, data);
   }
 
   updateTrainerReview(data: any) {
-    return this.httpClient.put<TrainerReview>(`${this.url}/trainer/updateTrainerReview`, data);
+    return this.httpClient.put<ApiResponse<TrainerReview>>(`${this.url}/trainer/updateTrainerReview`, data);
   }
 
   updateTrainerReviewStatus(id: number) {
-    return this.httpClient.put<void>(`${this.url}/trainer/updateTrainerReviewStatus/${id}`, null);
+    return this.httpClient.put<ApiResponse<TrainerReview>>(`${this.url}/trainer/updateTrainerReviewStatus/${id}`, null);
   }
 
   disableTrainerReview(id: number) {
-    return this.httpClient.put<void>(`${this.url}/trainer/disableTrainerReview/${id}`, null);
+    return this.httpClient.put<ApiResponse<TrainerReview>>(`${this.url}/trainer/disableTrainerReview/${id}`, null);
   }
 
   deleteTrainerReview(id: number) {
-    return this.httpClient.delete<void>(`${this.url}/trainer/deleteTrainerReview/${id}`);
+    return this.httpClient.delete<ApiResponse<void>>(`${this.url}/trainer/deleteTrainerReview/${id}`);
   }
 
   getMyTrainerReviews() {
-    return this.httpClient.get<TrainerReview[]>(`${this.url}/trainer/getMyTrainerReviews`);
+    return this.httpClient.get<ApiResponse<TrainerReview[]>>(`${this.url}/trainer/getMyTrainerReviews`);
   }
 
   getAllTrainerReviews() {
-    return this.httpClient.get<TrainerReview[]>(`${this.url}/trainer/getAllTrainerReviews`);
+    return this.httpClient.get<ApiResponse<TrainerReview[]>>(`${this.url}/trainer/getAllTrainerReviews`);
   }
 
-  getActiveTrainerReviews() {
-    return this.httpClient.get<TrainerReview[]>(`${this.url}/trainer/getActiveTrainerReviews`);
+  getActiveTrainerReviews(id: number) {
+    return this.httpClient.get<ApiResponse<TrainerReview[]>>(`${this.url}/trainer/getActiveTrainerReviews/${id}`);
+  }
+
+  likeTrainerReview(id: number) {
+    return this.httpClient.put<ApiResponse<TrainerReview>>(`${this.url}/trainer/likeTrainerReview/${id}`, null);
+  }
+
+  getTrainerReviewLikes() {
+    return this.httpClient.get<ApiResponse<TrainerReviewLikes[]>>(`${this.url}/trainer/getTrainerReviewLikes`);
   }
 
   // ─────────────────────────────
@@ -321,14 +369,10 @@ export class TrainerService {
   // ─────────────────────────────
 
   getMyTrainerTestimonials() {
-    return this.httpClient.get<TrainerTestimonials[]>(`${this.url}/trainer/getMyTrainerTestimonials`);
+    return this.httpClient.get<ApiResponse<TrainerTestimonials[]>>(`${this.url}/trainer/getMyTrainerTestimonials`);
   }
 
-  // ─────────────────────────────
-  // CENTER TRAINERS
-  // ─────────────────────────────
-
-  getMyCenterTrainers() {
-    return this.httpClient.get<CenterTrainers[]>(`${this.url}/trainer/getMyCenterTrainers`);
+  getAllTrainerTestimonials() {
+    return this.httpClient.get<ApiResponse<TrainerTestimonials[]>>(`${this.url}/trainer/getAllTrainerTestimonials`);
   }
 }

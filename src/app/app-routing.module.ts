@@ -19,25 +19,11 @@ import { CategoriesComponent } from './categories/categories/categories.componen
 import { AboutUsComponent } from './about-us/about-us/about-us.component';
 import { ActivateAccountComponent } from './dashboard/user/activate-account/activate-account.component';
 import { ResetPasswordComponent } from './dashboard/user/reset-password/reset-password.component';
-import { CategoryComponent } from './admin/categories/category/category.component';
-import { AdminContactUsComponent } from './admin/contact-us/admin-contact-us/admin-contact-us.component';
-import { UsersComponent } from './admin/users/users/users.component';
-import { TagsComponent } from './admin/tags/tags/tags.component';
-import { NewslettersComponent } from './admin/newsletters/newsletters/newsletters.component';
-import { PartnersComponent } from './admin/partners/partners/partners.component';
-import { MuscleGroupsComponent } from './admin/muscle-groups/muscle-groups/muscle-groups.component';
-import { ExercisesComponent } from './admin/exercises/exercises/exercises.component';
-import { TasksComponent } from './admin/tasks/tasks/tasks.component';
 import { MyNotificationsPageComponent } from './my-notifications/my-notifications-page/my-notifications-page.component';
 import { MyFaqsPageComponent } from './my-faqs/my-faqs-page/my-faqs-page.component';
 import { MyTasksPageComponent } from './my-tasks/my-tasks-page/my-tasks-page.component';
-import { TrainersComponent } from './admin/trainers/trainers/trainers.component';
 import { LoginComponent } from './login/login/login.component';
-import { CentersComponent } from './admin/centers/centers/centers.component';
-import { ClientsComponent } from './admin/clients/clients/clients.component';
 import { SignupComponent } from './login/signup/signup.component';
-import { SubscriptionsComponent } from './admin/subscriptions/subscriptions/subscriptions.component';
-import { TrainerPricingComponent } from './admin/trainer-pricing/trainer-pricing/trainer-pricing.component';
 import { QuickSignupComponent } from './login/quick-signup/quick-signup.component';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { PartnerComponent } from './partner/partner/partner.component';
@@ -58,9 +44,9 @@ import { DashboardMainComponent } from './dashboard/dashboard-main/dashboard-mai
 import { DashboardRouteComponent } from './dashboard/dashboard-route/dashboard-route.component';
 import { MySubscriptionsMainComponent } from './my-subscriptions/my-subscriptions-main/my-subscriptions-main.component';
 import { MyTodoListMainComponent } from './my-todo-list/my-todo-list-main/my-todo-list-main.component';
-import { TodoListsComponent } from './admin/todo-lists/todo-lists/todo-lists.component';
 import { MyTrainerMainComponent } from './my-trainer/my-trainer-main/my-trainer-main.component';
 import { TrainersMainComponent } from './trainers/trainers-main/trainers-main.component';
+import { LegalMainComponent } from './legal/legal-main/legal-main.component';
 
 
 
@@ -86,10 +72,12 @@ export const routes: Routes = [
   { path: 'faqs', component: FaqsPageComponent, data: { breadcrumb: 'FAQs' } },
   { path: 'help-center', component: HelpCenterPageComponent, data: { breadcrumb: 'Help Center' } },
   { path: 'terms', component: TermsPageComponent, data: { breadcrumb: 'Terms' } },
+  { path: 'legal-terms', component: LegalMainComponent, children: productChildRoutes, data: { breadcrumb: 'legal terms' } },
   { path: 'privacy', component: PrivacyPageComponent, data: { breadcrumb: 'Privacy' } },
   { path: 'login/reset-password', component: ResetPasswordComponent, data: { breadcrumb: 'Reset Password' } },
   { path: 'login/activate-account', component: ActivateAccountComponent, data: { breadcrumb: 'Activate Account' } },
   { path: 'shop', component: ProductsPageComponent, children: productChildRoutes, data: { breadcrumb: 'Shop' } },
+
 
   // ── DASHBOARD ──────────────────────────────────────────
   {
@@ -217,22 +205,25 @@ export const routes: Routes = [
         children: [
           { path: '', component: HubMainComponent, canActivate: [AuthGuard], data: { breadcrumb: null, expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
 
-          // Admin hub routes
-          { path: 'users', component: UsersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Users', expectedRole: ['admin'] } },
-          { path: 'newsletters', component: NewslettersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Newsletters', expectedRole: ['admin'] } },
-          { path: 'partners', component: PartnersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Partners', expectedRole: ['admin'] } },
-          { path: 'contact-us', component: AdminContactUsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Contact Us', expectedRole: ['admin'] } },
-          { path: 'trainers', component: TrainersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainers', expectedRole: ['admin'] } },
-          { path: 'centers', component: CentersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Centers', expectedRole: ['admin'] } },
-          { path: 'tags', component: TagsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Tags', expectedRole: ['admin'] } },
-          { path: 'todo-lists', component: TodoListsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Todo Lists', expectedRole: ['admin'] } },
-          { path: 'muscle-groups', component: MuscleGroupsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Muscle Groups', expectedRole: ['admin'] } },
-          { path: 'exercises', component: ExercisesComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Exercises', expectedRole: ['admin'] } },
-          { path: 'tasks', component: TasksComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Tasks', expectedRole: ['admin'] } },
-          { path: 'services', component: CategoryComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Services', expectedRole: ['admin'] } },
-          { path: 'clients', component: ClientsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Clients', expectedRole: ['admin'] } },
-          { path: 'subscriptions', component: SubscriptionsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Subscriptions', expectedRole: ['admin'] } },
-          { path: 'trainer-pricing', component: TrainerPricingComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Pricing', expectedRole: ['admin'] } },
+          // Admin hub routes (lazy-loaded)
+          { path: 'users', loadChildren: () => import('./admin/users/users.module').then(m => m.UsersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Users', expectedRole: ['admin'] } },
+          { path: 'newsletters', loadChildren: () => import('./admin/newsletters/newsletters.module').then(m => m.NewslettersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Newsletters', expectedRole: ['admin'] } },
+          { path: 'partners', loadChildren: () => import('./admin/partners/partners.module').then(m => m.PartnersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Partners', expectedRole: ['admin'] } },
+          { path: 'contact-us', loadChildren: () => import('./admin/contact-us/contact-us.module').then(m => m.ContactUsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Contact Us', expectedRole: ['admin'] } },
+          { path: 'trainers', loadChildren: () => import('./admin/trainers/trainers.module').then(m => m.TrainersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Trainers', expectedRole: ['admin'] } },
+          { path: 'centers', loadChildren: () => import('./admin/centers/centers.module').then(m => m.CentersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Centers', expectedRole: ['admin'] } },
+          { path: 'tags', loadChildren: () => import('./admin/tags/tags.module').then(m => m.TagsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Tags', expectedRole: ['admin'] } },
+          { path: 'todo-lists', loadChildren: () => import('./admin/todo-lists/todo-lists.module').then(m => m.TodoListsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Todo Lists', expectedRole: ['admin'] } },
+          { path: 'muscle-groups', loadChildren: () => import('./admin/muscle-groups/muscle-groups.module').then(m => m.MuscleGroupsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Muscle Groups', expectedRole: ['admin'] } },
+          { path: 'exercises', loadChildren: () => import('./admin/exercises/exercises.module').then(m => m.ExercisesModule), canActivate: [AuthGuard], data: { breadcrumb: 'Exercises', expectedRole: ['admin'] } },
+          { path: 'tasks', loadChildren: () => import('./admin/tasks/tasks.module').then(m => m.TasksModule), canActivate: [AuthGuard], data: { breadcrumb: 'Tasks', expectedRole: ['admin'] } },
+          { path: 'services', loadChildren: () => import('./admin/categories/categories.module').then(m => m.CategoriesModule), canActivate: [AuthGuard], data: { breadcrumb: 'Services', expectedRole: ['admin'] } },
+          { path: 'clients', loadChildren: () => import('./admin/clients/clients.module').then(m => m.ClientsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Clients', expectedRole: ['admin'] } },
+          { path: 'subscriptions', loadChildren: () => import('./admin/subscriptions/subscriptions.module').then(m => m.SubscriptionsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Subscriptions', expectedRole: ['admin'] } },
+          { path: 'trainer-pricing', loadChildren: () => import('./admin/trainer-pricing/trainer-pricing.module').then(m => m.TrainerPricingModule), canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Pricing', expectedRole: ['admin'] } },
+          { path: 'testimonials', loadChildren: () => import('./admin/testimonials/testimonials.module').then(m => m.TestimonialsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Testimonials', expectedRole: ['admin'] } },
+          { path: 'members', loadChildren: () => import('./admin/members/members.module').then(m => m.MembersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Members', expectedRole: ['admin'] } },
+          { path: 'payments', loadChildren: () => import('./admin/payments/payments.module').then(m => m.PaymentsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Payments', expectedRole: ['admin'] } },
           { path: 'settings', component: UserProfileSettingsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Settings', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
           { path: 'my-notifications', component: MyNotificationsPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Notifications', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
           { path: 'my-tasks', component: MyTasksPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Tasks', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
@@ -253,22 +244,25 @@ export const routes: Routes = [
         ]
       },
 
-      // ── ADMIN (direct dashboard children) ────────────
-      { path: 'users', component: UsersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Users', expectedRole: ['admin'] } },
-      { path: 'newsletters', component: NewslettersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Newsletters', expectedRole: ['admin'] } },
-      { path: 'partners', component: PartnersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Partners', expectedRole: ['admin'] } },
-      { path: 'contact-us', component: AdminContactUsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Contact Us', expectedRole: ['admin'] } },
-      { path: 'trainers', component: TrainersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainers', expectedRole: ['admin'] } },
-      { path: 'centers', component: CentersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Centers', expectedRole: ['admin'] } },
-      { path: 'tags', component: TagsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Tags', expectedRole: ['admin'] } },
-      { path: 'todo-lists', component: TodoListsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Todo Lists', expectedRole: ['admin'] } },
-      { path: 'muscle-groups', component: MuscleGroupsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Muscle Groups', expectedRole: ['admin'] } },
-      { path: 'exercises', component: ExercisesComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Exercises', expectedRole: ['admin'] } },
-      { path: 'tasks', component: TasksComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Tasks', expectedRole: ['admin'] } },
-      { path: 'services', component: CategoryComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Services', expectedRole: ['admin'] } },
-      { path: 'clients', component: ClientsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Clients', expectedRole: ['admin'] } },
-      { path: 'subscriptions', component: SubscriptionsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Subscriptions', expectedRole: ['admin'] } },
-      { path: 'trainer-pricing', component: TrainerPricingComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Pricing', expectedRole: ['admin'] } },
+      // ── ADMIN (direct dashboard children, lazy-loaded) ────────────
+      { path: 'users', loadChildren: () => import('./admin/users/users.module').then(m => m.UsersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Users', expectedRole: ['admin'] } },
+      { path: 'newsletters', loadChildren: () => import('./admin/newsletters/newsletters.module').then(m => m.NewslettersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Newsletters', expectedRole: ['admin'] } },
+      { path: 'partners', loadChildren: () => import('./admin/partners/partners.module').then(m => m.PartnersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Partners', expectedRole: ['admin'] } },
+      { path: 'contact-us', loadChildren: () => import('./admin/contact-us/contact-us.module').then(m => m.ContactUsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Contact Us', expectedRole: ['admin'] } },
+      { path: 'trainers', loadChildren: () => import('./admin/trainers/trainers.module').then(m => m.TrainersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Trainers', expectedRole: ['admin'] } },
+      { path: 'centers', loadChildren: () => import('./admin/centers/centers.module').then(m => m.CentersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Centers', expectedRole: ['admin'] } },
+      { path: 'tags', loadChildren: () => import('./admin/tags/tags.module').then(m => m.TagsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Tags', expectedRole: ['admin'] } },
+      { path: 'todo-lists', loadChildren: () => import('./admin/todo-lists/todo-lists.module').then(m => m.TodoListsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Todo Lists', expectedRole: ['admin'] } },
+      { path: 'muscle-groups', loadChildren: () => import('./admin/muscle-groups/muscle-groups.module').then(m => m.MuscleGroupsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Muscle Groups', expectedRole: ['admin'] } },
+      { path: 'exercises', loadChildren: () => import('./admin/exercises/exercises.module').then(m => m.ExercisesModule), canActivate: [AuthGuard], data: { breadcrumb: 'Exercises', expectedRole: ['admin'] } },
+      { path: 'tasks', loadChildren: () => import('./admin/tasks/tasks.module').then(m => m.TasksModule), canActivate: [AuthGuard], data: { breadcrumb: 'Tasks', expectedRole: ['admin'] } },
+      { path: 'services', loadChildren: () => import('./admin/categories/categories.module').then(m => m.CategoriesModule), canActivate: [AuthGuard], data: { breadcrumb: 'Services', expectedRole: ['admin'] } },
+      { path: 'clients', loadChildren: () => import('./admin/clients/clients.module').then(m => m.ClientsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Clients', expectedRole: ['admin'] } },
+      { path: 'subscriptions', loadChildren: () => import('./admin/subscriptions/subscriptions.module').then(m => m.SubscriptionsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Subscriptions', expectedRole: ['admin'] } },
+      { path: 'trainer-pricing', loadChildren: () => import('./admin/trainer-pricing/trainer-pricing.module').then(m => m.TrainerPricingModule), canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Pricing', expectedRole: ['admin'] } },
+      { path: 'testimonials', loadChildren: () => import('./admin/testimonials/testimonials.module').then(m => m.TestimonialsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Testimonials', expectedRole: ['admin'] } },
+      { path: 'members', loadChildren: () => import('./admin/members/members.module').then(m => m.MembersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Members', expectedRole: ['admin'] } },
+      { path: 'payments', loadChildren: () => import('./admin/payments/payments.module').then(m => m.PaymentsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Payments', expectedRole: ['admin'] } },
     ]
   },
 
@@ -281,7 +275,7 @@ export const routes: Routes = [
       scrollPositionRestoration: 'enabled',
       anchorScrolling: 'enabled'
     }),
-    ProductsModule
+
   ],
   exports: [RouterModule],
   providers: [AuthGuard]

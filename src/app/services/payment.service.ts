@@ -1,6 +1,9 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ApiResponse } from '../models/Api.interface';
+import { Payments } from '../models/payment.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -10,37 +13,36 @@ export class PaymentService {
 
   constructor(private httpClient: HttpClient) { }
 
-  addPayment(data: any) {
-    return this.httpClient.post(this.url + "/payment/add", data);
+  addPayment(data: any): Observable<ApiResponse<Payments>> {
+    return this.httpClient.post<ApiResponse<Payments>>(this.url + "/payment/add", data);
   }
 
-  updatePayment(data: any) {
-    return this.httpClient.put(this.url + "/payment/update", data, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    })
+  updatePayment(data: any): Observable<ApiResponse<Payments>> {
+    return this.httpClient.put<ApiResponse<Payments>>(this.url + "/payment/update", data);
   }
 
-  updateStatus(id: number) {
-    return this.httpClient.put(this.url + `/payment/updateStatus/${id}`, null, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  updateStatus(id: number): Observable<ApiResponse<Payments>> {
+    return this.httpClient.put<ApiResponse<Payments>>(this.url + `/payment/updateStatus/${id}`, {});
   }
 
-  getPayment() {
-    return this.httpClient.get(this.url + "/payment/getPayment")
+  getPayment(id: number): Observable<ApiResponse<Payments>> {
+    return this.httpClient.get<ApiResponse<Payments>>(this.url + `/payment/getPayment/${id}`);
   }
 
-  getAllPayments() {
-    return this.httpClient.get(this.url + "/payment/get")
+  getAllPayments(): Observable<ApiResponse<Payments[]>> {
+    return this.httpClient.get<ApiResponse<Payments[]>>(this.url + "/payment/get");
   }
 
-  getActivePayments() {
-    return this.httpClient.get(this.url + "/payment/getActivePayments")
+  getActivePayments(): Observable<ApiResponse<Payments[]>> {
+    return this.httpClient.get<ApiResponse<Payments[]>>(this.url + "/payment/getActivePayments");
   }
 
-  deletePayment(id: number) {
-    return this.httpClient.delete(this.url + `/payment/delete/${id}`);
+  getMyPayments(): Observable<ApiResponse<Payments[]>> {
+    return this.httpClient.get<ApiResponse<Payments[]>>(this.url + "/payment/getMyPayments");
+  }
+
+  deletePayment(id: number): Observable<ApiResponse<void>> {
+    return this.httpClient.delete<ApiResponse<void>>(this.url + `/payment/delete/${id}`);
   }
 
 }
-

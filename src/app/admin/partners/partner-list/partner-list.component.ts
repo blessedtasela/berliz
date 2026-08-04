@@ -10,9 +10,11 @@ import { DatePipe } from '@angular/common';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { ViewCertificateModalComponent } from 'src/app/shared/view-certificate-modal/view-certificate-modal.component';
 import { ViewCvModalComponent } from 'src/app/shared/view-cv-modal/view-cv-modal.component';
-import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { PartnerDetailsModalComponent } from '../partner-details-modal/partner-details-modal.component';
+import { Store } from '@ngrx/store';
+import { loadPartners } from 'src/app/state/partner/partner.actions';
+import { selectPartners } from 'src/app/state/partner/partner.selectors';
 
 @Component({
   selector: 'app-partner-list',
@@ -29,7 +31,7 @@ export class PartnerListComponent {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private partnerStateService: PartnerStateService,
+    private store: Store,
     private datePipe: DatePipe,
     private rxStompService: RxStompService) { }
 
@@ -41,10 +43,10 @@ export class PartnerListComponent {
   }
 
   handleEmitEvent() {
-    this.partnerStateService.getAllPartners().subscribe((partnersData) => {
-      this.ngxService.start();
+    this.ngxService.start();
+    this.store.dispatch(loadPartners());
+    this.store.select(selectPartners).subscribe((partnersData) => {
       this.partnersData = partnersData
-      this.partnerStateService.setAllPartnersSubject(this.partnersData);
       this.ngxService.stop();
     });
   }

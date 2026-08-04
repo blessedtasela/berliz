@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Subscription } from 'rxjs';
 import { Payments } from 'src/app/models/payment.interface';
-import { PaymentStateService } from 'src/app/services/payment-state.service';
+import { loadPayments } from 'src/app/state/payment/payment.actions';
+import { selectPayments } from 'src/app/state/payment/payment.selectors';
 
 @Component({
   selector: 'app-payments',
@@ -14,33 +17,31 @@ export class PaymentsComponent {
   paymentsLength: number = 0;
   searchComponent: string = 'payment'
   isSearch: boolean = true;
+  subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
-    public paymentStateService: PaymentStateService) {
+    public store: Store) {
   }
 
   ngOnInit(): void {
-    this.paymentStateService.allPaymentsData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.paymentsData = cachedData;
-        this.totalPayments = cachedData.length
-        this.paymentsLength = cachedData.length
-      }
-    });
+    this.handleEmitEvent();
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(subscription => (subscription.unsubscribe()));
   }
 
   handleEmitEvent() {
-    this.paymentStateService.getAllPayments().subscribe((allPayments) => {
-      this.ngxService.start()
-      console.log('isCachedData false')
-      this.paymentsData = allPayments;
-      this.totalPayments = allPayments.length
-      this.paymentsLength = allPayments.length
-      this.paymentStateService.setAllPaymentsSubject(this.paymentsData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadPayments());
+    this.subscriptions.push(
+      this.store.select(selectPayments).subscribe((allPayments) => {
+        this.paymentsData = allPayments;
+        this.totalPayments = allPayments.length
+        this.paymentsLength = allPayments.length
+        this.ngxService.stop()
+      }),
+    );
   }
 
   handleSearchResults(results: Payments[]): void {

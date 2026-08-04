@@ -1,15 +1,20 @@
 import { ChangeDetectorRef, Component, EventEmitter, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl, FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Categories, Icons } from 'src/app/models/categories.interface';
+import { Categories } from 'src/app/models/categories.interface';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Observable, tap, catchError, of } from 'rxjs';
 import { Tags } from 'src/app/models/tags.interface';
 import { CategoryService } from 'src/app/services/category.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TagService } from 'src/app/services/tag.service';
 import { genericError } from 'src/validators/form-validators.module';
-import { TagStateService } from 'src/app/services/tag-state.service';
+import { Store } from '@ngrx/store';
+import { loadActiveTags } from 'src/app/state/tag/tag.actions';
+import { selectActiveTags } from 'src/app/state/tag/tag.selectors';
+import { take } from 'rxjs';
+import { StrapiService } from 'src/app/services/strapi.service';
+import { PhotoResponse } from 'src/app/models/Media.interface';
+import { MediaOwnerType } from 'src/app/models/Media.enum';
 
 @Component({
   selector: 'app-update-category-modal',
@@ -21,10 +26,12 @@ export class UpdateCategoryModalComponent {
   updateCategoryForm!: FormGroup;
   invalidForm: boolean = false;
   responseMessage: any;
-  icons: Icons[];
   tags!: Tags[];
   categoryData!: Categories;
   selectedTagsId: any;
+  previewUrl: string | null = null;
+  photoRequest: PhotoResponse | null = null;
+  uploadingPhoto: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     private categoryService: CategoryService,
@@ -32,24 +39,57 @@ export class UpdateCategoryModalComponent {
     private cdr: ChangeDetectorRef,
     public dialogRef: MatDialogRef<UpdateCategoryModalComponent>,
     private ngxService: NgxUiLoaderService,
+    private strapiService: StrapiService,
     private snackbarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private tagStateService: TagStateService) {
-    this.icons = categoryService.getIcons();
+    private store: Store) {
     this.categoryData = this.data.categoryData;
   }
 
   ngOnInit(): void {
     this.handleEmitEvent()
-    this.selectedTagsId = this.categoryData.tagSet.map(tag => tag.id);
+    this.selectedTagsId = this.categoryData.tagIds;
+    this.previewUrl = this.categoryData.photoUrl || null;
     this.updateCategoryForm = this.formBuilder.group({
       'id': new FormControl(this.categoryData.id, [Validators.required]),
       'name': new FormControl(this.categoryData.name, [Validators.required, Validators.minLength(2)]),
-      'photo': new FormControl(this.categoryData.photo, [Validators.required, Validators.minLength(2)]),
       'description': new FormControl(this.categoryData.description, [Validators.required, Validators.minLength(20)]),
       'likes': new FormControl(this.categoryData.likes, [Validators.required, Validators.minLength(1)]),
       'tagIds': this.formBuilder.array(this.selectedTagsId, this.validateCheckbox()),
     });
+  }
+
+  async onPhotoSelected(event: any): Promise<void> {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    this.previewUrl = URL.createObjectURL(file);
+
+    try {
+      this.uploadingPhoto = true;
+      const res = (await this.strapiService.uploadToStrapi(file).pipe(take(1)).toPromise()) ?? [];
+      const uploaded = res[0];
+      if (!uploaded) {
+        throw new Error('No file returned from Strapi');
+      }
+
+      this.photoRequest = {
+        id: this.categoryData.photoId ?? 0,
+        strapiId: uploaded.id,
+        photoUrl: uploaded.url,
+        name: uploaded.name,
+        mimeType: uploaded.mime,
+        byteSize: uploaded.size,
+        ownerId: 0,
+        mediaOwnerType: MediaOwnerType.CATEGORY_PHOTO,
+        date: new Date(),
+        lastUpdate: new Date(),
+      };
+    } catch (err: any) {
+      this.snackbarService.openSnackBar(err?.error?.message || err?.message || 'Photo upload failed', 'error');
+    } finally {
+      this.uploadingPhoto = false;
+    }
   }
 
   onCheckboxChanged(event: any) {
@@ -65,9 +105,9 @@ export class UpdateCategoryModalComponent {
   }
 
   handleEmitEvent() {
-    this.tagStateService.getActiveTags().subscribe((activeTags) => {
+    this.store.dispatch(loadActiveTags());
+    this.store.select(selectActiveTags).subscribe((activeTags) => {
       this.tags = activeTags;
-      this.tagStateService.setActiveTagsSubject(activeTags);
     })
   }
 
@@ -94,7 +134,8 @@ export class UpdateCategoryModalComponent {
       const tagIdsString = selectedTagIds.join(',');
       const formData = {
         ...this.updateCategoryForm.value,
-        tagIds: tagIdsString
+        tagIds: tagIdsString,
+        ...(this.photoRequest ? { photoRequest: this.photoRequest } : {}),
       };
       this.categoryService.updateCategory(formData)
         .subscribe((response: any) => {
@@ -116,8 +157,6 @@ export class UpdateCategoryModalComponent {
           this.snackbarService.openSnackBar(this.responseMessage, "error");
         });
     }
-    this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

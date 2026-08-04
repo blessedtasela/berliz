@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { TodoList } from 'src/app/models/todoList.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { TodoStateService } from 'src/app/services/todo-state.service';
+import { loadTodos } from 'src/app/state/todo/todo.actions';
+import { selectTodos } from 'src/app/state/todo/todo.selectors';
 
 @Component({
   selector: 'app-todo-lists',
@@ -16,8 +19,9 @@ export class TodoListsComponent {
   todoListLength: number = 0;
   searchComponent: string = 'todoList'
   isSearch: boolean = true;
+  subscriptions: Subscription[] = [];
 
-  constructor(private todoStateService: TodoStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
     private rxStompService: RxStompService) {
@@ -32,25 +36,21 @@ export class TodoListsComponent {
     this.watchTodoBulkAction()
     this.handleEmitEvent()
     this.ngxService.stop()
-    // this.todoStateService.allTodosData$.subscribe((cachedData) => {
-    //   if (cachedData === null) {
-    //     this.handleEmitEvent()
-    //   } else {
-    //     this.todoListData = cachedData;
-    //     this.totalTodoList = cachedData.length
-    //     this.todoListLength = cachedData.length
-    //   }
-    // });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   handleEmitEvent() {
-    this.todoStateService.getAllTodos().subscribe((todo) => {
-      console.log('isCachedData false')
-      this.todoListData = todo;
-      this.totalTodoList = todo.length
-      this.todoListLength = todo.length;
-      this.todoStateService.setAllTodosSubject(this.todoListData);
-    });
+    this.store.dispatch(loadTodos());
+    this.subscriptions.push(
+      this.store.select(selectTodos).subscribe((todo) => {
+        this.todoListData = todo;
+        this.totalTodoList = todo.length
+        this.todoListLength = todo.length;
+      })
+    );
   }
 
   handleSearchResults(results: TodoList[]): void {
@@ -61,7 +61,7 @@ export class TodoListsComponent {
   watchGetTodoFromMap() {
     this.rxStompService.watch('/topic/getTodoFromMap').subscribe((message) => {
       this.handleEmitEvent()
-  
+
     });
   }
 
@@ -70,7 +70,7 @@ export class TodoListsComponent {
       this.handleEmitEvent()
     });
   }
-  
+
   watchUpdateTodoList() {
     this.rxStompService.watch('/topic/updateTodoList').subscribe((message) => {
       this.handleEmitEvent()
@@ -86,9 +86,6 @@ export class TodoListsComponent {
   watchUpdateTodoStatus() {
     this.rxStompService.watch('/topic/updateTodoStatus').subscribe((message) => {
       this.handleEmitEvent()
-      // const receivedTodo: TodoList = JSON.parse(message.body);
-      // const todoId = this.todoListData.findIndex(todoList => todoList.id === receivedTodo.id)
-      // this.todoListData[todoId] = receivedTodo
     });
   }
 

@@ -1,0 +1,315 @@
+<div class="flex flex-col h-full max-h-[90vh] w-full max-w-md mx-auto font-sans">
+
+    <!-- ── Header ──────────────────────────────────────────────────────────── -->
+    <div class="flex items-start justify-between px-5 py-4 border-b border-gray-100 shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100
+                  flex items-center justify-center shrink-0">
+                <i-feather name="file-text" class="text-red-600" style="width:17px;height:17px;"></i-feather>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Become a Trainer</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Submit your application and supporting documents</p>
+            </div>
+        </div>
+        <button (click)="closeDialog()" class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center
+             transition text-gray-400 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
+    </div>
+
+    <!-- ── Validation banner ────────────────────────────────────────────────── -->
+    <div class="px-5 pt-3 shrink-0">
+        <div class="text-[11px] rounded-xl px-3 py-2 flex items-center gap-1.5 border" [ngClass]="addPartnerForm.valid && selectedCertification && selectedResume
+          ? 'text-green-700 bg-green-50 border-green-100'
+          : 'text-red-600 bg-red-50 border-red-100'">
+            <i-feather
+                [name]="addPartnerForm.valid && selectedCertification && selectedResume ? 'check-circle' : 'alert-circle'"
+                style="width:12px;height:12px">
+            </i-feather>
+            {{ addPartnerForm.valid && selectedCertification && selectedResume
+            ? 'Ready to submit — all sections are valid'
+            : 'Complete all sections marked below before submitting' }}
+        </div>
+    </div>
+
+    <!-- ── Scrollable body ──────────────────────────────────────────────────── -->
+    <form [formGroup]="addPartnerForm" class="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-4">
+        <!-- Role -->
+        <div *ngIf="showRoleSelector" class="flex flex-col gap-2">
+
+            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                Application Type
+                <span class="text-red-500">*</span>
+            </label>
+
+            <div class="grid grid-cols-2 gap-3">
+
+                <!-- Trainer -->
+                <button type="button" (click)="addPartnerForm.get('role')?.setValue('trainer')"
+                    class="rounded-2xl border p-4 transition text-left" [ngClass]="{
+                'border-red-500 bg-red-50':
+                    addPartnerForm.get('role')?.value === 'trainer',
+                'border-gray-200 bg-white hover:border-red-300':
+                    addPartnerForm.get('role')?.value !== 'trainer'
+            }">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i-feather name="user" class="text-red-500" style="width:15px;height:15px">
+                        </i-feather>
+                        <span class="font-semibold text-sm">
+                            Trainer
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-gray-500">
+                        Offer personal coaching and classes.
+                    </p>
+                </button>
+
+                <!-- Center -->
+                <button type="button" (click)="addPartnerForm.get('role')?.setValue('center')"
+                    class="rounded-2xl border p-4 transition text-left" [ngClass]="{
+                'border-red-500 bg-red-50':
+                    addPartnerForm.get('role')?.value === 'center',
+                'border-gray-200 bg-white hover:border-red-300':
+                    addPartnerForm.get('role')?.value !== 'center'
+            }">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i-feather name="home" class="text-red-500" style="width:15px;height:15px">
+                        </i-feather>
+                        <span class="font-semibold text-sm">
+                            Center
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-gray-500">
+                        Manage a gym, studio, or sports facility.
+                    </p>
+                </button>
+            </div>
+        </div>
+        <!-- Certification upload -->
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                Certification <span class="text-red-500">*</span>
+                <span class="text-gray-400 font-normal normal-case ml-1">(PDF)</span>
+            </label>
+
+            <div class="relative flex items-center gap-3 px-3 py-2.5 rounded-xl border cursor-pointer transition"
+                [ngClass]="selectedCertification
+            ? 'border-green-400 bg-green-50'
+            : invalidForm ? 'border-red-300 bg-red-50'
+            : 'border-gray-200 bg-gray-50 hover:border-red-300'">
+                <input type="file" accept=".pdf" (change)="onCertificationSelected($event)"
+                    class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-0" />
+                <div class="w-8 h-8 rounded-lg bg-white border border-gray-200
+                    flex items-center justify-center shrink-0">
+                    <i-feather [name]="selectedCertification ? 'check' : 'award'"
+                        [class]="selectedCertification ? 'text-green-500' : 'text-gray-400'"
+                        style="width:14px;height:14px;">
+                    </i-feather>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-medium truncate"
+                        [ngClass]="selectedCertification ? 'text-green-700' : 'text-gray-500'">
+                        {{ selectedCertification ? selectedCertification.name : 'Click to upload certification' }}
+                    </p>
+                    <p *ngIf="selectedCertification" class="text-[10px] text-gray-400 mt-0.5">
+                        {{ formatFileSize(selectedCertification.size) }}
+                    </p>
+                </div>
+                <button *ngIf="selectedCertification" type="button" (click)="clearCertification($event)"
+                    class="relative z-10 text-[10px] text-red-500 hover:underline shrink-0 px-1">
+                    Remove
+                </button>
+            </div>
+        </div>
+
+        <!-- Resume upload -->
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                Resume <span class="text-red-500">*</span>
+                <span class="text-gray-400 font-normal normal-case ml-1">(PDF)</span>
+            </label>
+
+            <div class="relative flex items-center gap-3 px-3 py-2.5 rounded-xl border cursor-pointer transition"
+                [ngClass]="selectedResume
+            ? 'border-green-400 bg-green-50'
+            : invalidForm ? 'border-red-300 bg-red-50'
+            : 'border-gray-200 bg-gray-50 hover:border-red-300'">
+                <input type="file" accept=".pdf" (change)="onResumeSelected($event)"
+                    class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-0" />
+                <div class="w-8 h-8 rounded-lg bg-white border border-gray-200
+                    flex items-center justify-center shrink-0">
+                    <i-feather [name]="selectedResume ? 'check' : 'file-text'"
+                        [class]="selectedResume ? 'text-green-500' : 'text-gray-400'" style="width:14px;height:14px;">
+                    </i-feather>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-medium truncate"
+                        [ngClass]="selectedResume ? 'text-green-700' : 'text-gray-500'">
+                        {{ selectedResume ? selectedResume.name : 'Click to upload resume' }}
+                    </p>
+                    <p *ngIf="selectedResume" class="text-[10px] text-gray-400 mt-0.5">
+                        {{ formatFileSize(selectedResume.size) }}
+                    </p>
+                </div>
+                <button *ngIf="selectedResume" type="button" (click)="clearResume($event)"
+                    class="relative z-10 text-[10px] text-red-500 hover:underline shrink-0 px-1">
+                    Remove
+                </button>
+            </div>
+        </div>
+
+        <!-- Motivation -->
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                Motivation <span class="text-red-500">*</span>
+            </label>
+            <textarea rows="7" formControlName="motivation"
+                placeholder="Tell us why you want to become a Berliz partner..." class="w-full px-3 py-2.5 bg-gray-50 border rounded-xl text-gray-900 text-sm
+               focus:outline-none focus:ring-2 focus:border-transparent resize-none
+               transition placeholder:text-gray-400" [ngClass]="motivationClasses()">
+      </textarea>
+            <div class="flex items-center justify-between">
+                <p *ngIf="isInvalid('motivation')" class="text-[11px] text-red-500 flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Minimum 900 characters required.
+                </p>
+                <p *ngIf="isValid('motivation')" class="text-[11px] text-green-600 flex items-center gap-1">
+                    <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
+                    Looks good.
+                </p>
+                <span class="text-[10px] ml-auto font-semibold" [ngClass]="charCountClass('motivation', 900, 1200)">
+                    {{ charCount('motivation') }} / 1200
+                </span>
+            </div>
+        </div>
+
+        <!-- Social links -->
+        <div class="flex flex-col gap-3">
+            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                Social Links
+            </label>
+
+            <!-- Facebook -->
+            <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-2 px-3 py-2.5 bg-gray-50 border rounded-xl transition"
+                    [ngClass]="socialFieldClasses('facebookUrl')">
+                    <i-feather name="facebook" style="width:14px;height:14px;"
+                        class="text-gray-400 shrink-0"></i-feather>
+                    <input type="text" formControlName="facebookUrl" placeholder="facebook.com/yourprofile" class="flex-1 bg-transparent text-sm text-gray-900 focus:outline-none
+                   placeholder:text-gray-400 min-w-0" />
+                </div>
+                <p *ngIf="isInvalid('facebookUrl')" class="text-[11px] text-red-500 flex items-center gap-1 px-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Enter a valid Facebook URL.
+                </p>
+            </div>
+
+            <!-- Instagram -->
+            <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-2 px-3 py-2.5 bg-gray-50 border rounded-xl transition"
+                    [ngClass]="socialFieldClasses('instagramUrl')">
+                    <i-feather name="instagram" style="width:14px;height:14px;"
+                        class="text-gray-400 shrink-0"></i-feather>
+                    <input type="text" formControlName="instagramUrl" placeholder="instagram.com/yourprofile" class="flex-1 bg-transparent text-sm text-gray-900 focus:outline-none
+                   placeholder:text-gray-400 min-w-0" />
+                </div>
+                <p *ngIf="isInvalid('instagramUrl')" class="text-[11px] text-red-500 flex items-center gap-1 px-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Enter a valid Instagram URL.
+                </p>
+            </div>
+
+            <!-- YouTube (optional) -->
+            <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-2 px-3 py-2.5 bg-gray-50 border rounded-xl transition"
+                    [ngClass]="socialFieldClasses('youtubeUrl')">
+                    <i-feather name="youtube" style="width:14px;height:14px;"
+                        class="text-gray-400 shrink-0"></i-feather>
+                    <input type="text" formControlName="youtubeUrl" placeholder="youtube.com/yourchannel (optional)"
+                        class="flex-1 bg-transparent text-sm text-gray-900 focus:outline-none
+                   placeholder:text-gray-400 min-w-0" />
+                </div>
+                <p *ngIf="isInvalid('youtubeUrl')" class="text-[11px] text-red-500 flex items-center gap-1 px-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Enter a valid YouTube URL.
+                </p>
+            </div>
+        </div>
+
+        <!-- Upload progress -->
+        <div *ngIf="uploading" class="flex flex-col gap-1">
+            <div class="flex justify-between text-[11px] text-gray-500">
+                <span>Uploading documents...</span>
+                <span class="font-semibold text-gray-700">{{ uploadProgress }}%</span>
+            </div>
+            <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-red-500 rounded-full transition-all duration-300"
+                    [style.width.%]="uploadProgress">
+                </div>
+            </div>
+        </div>
+        <!-- Agreement -->
+        <div class="rounded-2xl border p-4 flex gap-3" [ngClass]="{
+        'border-red-300 bg-red-50':
+            isInvalid('agreePolicy'),
+        'border-green-300 bg-green-50':
+            isValid('agreePolicy'),
+        'border-gray-200 bg-gray-50':
+            !isInvalid('agreePolicy') && !isValid('agreePolicy')
+                         }">
+            <input type="checkbox" formControlName="agreePolicy" class="mt-1 accent-red-600">
+            <div class="flex flex-col gap-1">
+                <span class="text-xs text-gray-700">
+                    I confirm that the information provided is accurate and I agree to the
+                    <span class="text-red-600 font-semibold">
+                        <a href="/legal-terms">Berliz Terms of Service and Community Guidelines.</a>
+                    </span>
+                </span>
+                <span *ngIf="isInvalid('agreePolicy')" class="text-[11px] text-red-500 flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px">
+                    </i-feather>
+
+                    You must accept the policy before submitting.
+                </span>
+            </div>
+        </div>
+    </form>
+
+    <!-- ── Footer ──────────────────────────────────────────────────────────── -->
+    <div class="flex items-center justify-between px-5 py-4 border-t border-gray-100 shrink-0">
+
+        <div class="flex flex-col gap-0.5">
+            <span *ngIf="canSubmit" class="text-xs text-green-600 font-semibold flex items-center gap-1">
+                <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
+                Ready to submit
+            </span>
+            <span *ngIf="!canSubmit && invalidForm" class="text-xs text-red-500 flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Fix errors above
+            </span>
+            <span *ngIf="!canSubmit && !invalidForm" class="text-xs text-gray-400">
+                Fill in all required fields
+            </span>
+        </div>
+
+        <div class="flex gap-2">
+            <button type="button" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200
+               text-gray-600 hover:bg-gray-50 transition">
+                Cancel
+            </button>
+            <button type="button" (click)="submit()" [disabled]="!canSubmit"
+                class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2" [ngClass]="{
+          'bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]': canSubmit,
+          'bg-gray-100 text-gray-400 cursor-not-allowed': !canSubmit
+                    }">
+                <i-feather *ngIf="!uploading" name="upload-cloud" style="width:12px;height:12px;"></i-feather>
+                <i-feather *ngIf="uploading" name="loader" style="width:12px;height:12px;" class="animate-spin">
+                </i-feather>
+                {{ uploading ? 'Uploading...' : 'Submit Application' }}
+            </button>
+        </div>
+
+    </div>
+
+</div>

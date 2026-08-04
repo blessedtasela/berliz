@@ -3,9 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { TrainerPricing } from 'src/app/models/trainers.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 import { AddSubscriptionsModalComponent } from '../../subscriptions/add-subscriptions-modal/add-subscriptions-modal.component';
 import { AddTrainerPricingModalComponent } from '../add-trainer-pricing-modal/add-trainer-pricing-modal.component';
+import { Store } from '@ngrx/store';
+import { selectTrainerPricing } from 'src/app/state/trainer/trainer.selector';
 
 @Component({
   selector: 'app-trainer-pricing-header',
@@ -22,7 +23,7 @@ export class TrainerPricingHeaderComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private trainerStateService: TrainerStateService,
+    private store: Store,
     private rxStompService: RxStompService) {
   }
 
@@ -32,14 +33,10 @@ export class TrainerPricingHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.trainerStateService.getAllTrainerPricing().subscribe((trainerPricing) => {
-      this.ngxService.start()
-      console.log('cached false')
+    this.store.select(selectTrainerPricing).subscribe((trainerPricing) => {
       this.trainerPricingData = trainerPricing;
       this.totalTrainerPricing = this.trainerPricingData.length
       this.trainerPricingLength = this.trainerPricingData.length
-      this.trainerStateService.setAllTrainerPricingSubject(this.trainerPricingData);
-      this.ngxService.stop()
     });
   }
 

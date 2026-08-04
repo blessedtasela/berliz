@@ -3,9 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { TestimonialStateService } from 'src/app/services/testimonial-state.service';
 import { AddCategoryModalComponent } from '../../categories/add-category-modal/add-category-modal.component';
 import { AddTestimonialsModalComponent } from '../add-testimonials-modal/add-testimonials-modal.component';
+import { Store } from '@ngrx/store';
+import { loadTestimonials } from 'src/app/state/testimonial/testimonial.actions';
+import { selectTestimonials } from 'src/app/state/testimonial/testimonial.selectors';
 
 @Component({
   selector: 'app-testimonials-header',
@@ -22,7 +24,7 @@ export class TestimonialsHeaderComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private testimonialStateService: TestimonialStateService,
+    private store: Store,
     private rxStompService: RxStompService) {
   }
 
@@ -32,13 +34,12 @@ export class TestimonialsHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.testimonialStateService.getAllTestimonials().subscribe((allTestimonials) => {
-      this.ngxService.start()
-      console.log('cached false')
+    this.ngxService.start()
+    this.store.dispatch(loadTestimonials());
+    this.store.select(selectTestimonials).subscribe((allTestimonials) => {
       this.testimonialsData = allTestimonials;
       this.totalTestimonials = this.testimonialsData.length
       this.testimonialsLength = this.testimonialsData.length
-      this.testimonialStateService.setAllTestimonialsSubject(this.testimonialsData);
       this.ngxService.stop()
     });
   }
@@ -54,7 +55,7 @@ export class TestimonialsHeaderComponent {
         break;
       case 'email':
         this.testimonialsData.sort((a, b) => {
-          return a.user.email.localeCompare(b.user.email);
+          return a.userEmail.localeCompare(b.userEmail);
         });
         break;
       case 'id':

@@ -5,11 +5,13 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { SubscriptionStateService } from 'src/app/services/subscription-state.service';
 import { SubscriptionService } from 'src/app/services/subscription.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
 import { MySubscriptionDetailModalComponent } from '../my-subscription-detail-modal/my-subscription-detail-modal.component';
+import { Store } from '@ngrx/store';
+import { loadMySubscriptions } from 'src/app/state/subscription/subscription.actions';
+import { selectMySubscriptions } from 'src/app/state/subscription/subscription.selectors';
 
 @Component({
   selector: 'app-my-subscriptions',
@@ -30,7 +32,7 @@ export class MySubscriptionsComponent {
   selectedSubscriptionIds: number[] = [];
   plans: any;
 
-  constructor(private subscriptionStateService: SubscriptionStateService,
+  constructor(private store: Store,
     private subscriptionService: SubscriptionService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
@@ -50,8 +52,9 @@ export class MySubscriptionsComponent {
   }
 
   handleEmitEvent() {
+    this.store.dispatch(loadMySubscriptions());
     this.subscriptions.push(
-      this.subscriptionStateService.getMySubscriptions().subscribe((mySubscriptions) => {
+      this.store.select(selectMySubscriptions).subscribe((mySubscriptions) => {
         this.mySubscriptions = mySubscriptions;
         this.totalSubscriptions = this.mySubscriptions.length;
         this.subscriptionsLength = mySubscriptions.length;
@@ -59,7 +62,6 @@ export class MySubscriptionsComponent {
           Subscription.checked = false;
           this.selectedSubscriptionIds = [];
         });
-        this.subscriptionStateService.setMySubscriptionsSubject(mySubscriptions);
       }),
     );
   }

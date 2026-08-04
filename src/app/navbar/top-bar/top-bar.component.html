@@ -1,8 +1,8 @@
-<div class="bg-white fixed top-0 left-0 w-full border-b border-gray-200 z-50">
-    <div class="h-14 flex items-center justify-between px-4 gap-3">
+<div class="bg-white/95 backdrop-blur-sm fixed top-0 left-0 w-full border-b border-gray-200 shadow-sm z-50">
+    <div class="h-14 flex items-center justify-between px-5 gap-4">
 
         <!-- LEFT: Logo + Bell -->
-        <div class="flex items-center gap-3 shrink-0">
+        <div class="flex items-center gap-4 shrink-0">
 
             <a [routerLink]="['/home']" class="flex items-center">
                 <img src="../../../assets/landing/logo.png" class="w-7 h-7 object-contain block md:hidden" />
@@ -18,7 +18,7 @@
 
             <!-- Bell -->
             <div class="relative">
-                <button (click)="toggleNotificationDropdown()" class="w-8 h-8 rounded-xl border border-gray-200 bg-white hover:bg-gray-50
+                <button (click)="toggleNotificationDropdown()" class="w-9 h-9 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md hover:border-gray-300
                  flex items-center justify-center transition relative">
                     <i-feather name="bell" class="text-gray-700" style="width:16px;height:16px;"></i-feather>
                     <span *ngIf="notificationLength > 0" class="absolute -top-1 -right-1 bg-red-600 text-white text-[8px]
@@ -57,18 +57,21 @@
                 (membersResult)="handleMemberSearchResults($event)"
                 (paymentsResults)="handlePaymentSearchResults($event)"
                 (subscriptionsResults)="handleSubscriptionSearchResults($event)"
-                (subTasksResults)="handlesubTaskSearchResults($event)" (tasksResults)="handleTaskSearchResults($event)"
+                (subTasksResults)="handlesubTaskSearchResults($event)" 
+                (tasksResults)="handleTaskSearchResults($event)"
                 (testimonialsResults)="handleTestimonialSearchResults($event)" [searchComponent]="searchComponent">
             </app-search>
         </div>
 
         <!-- RIGHT: Home + Profile -->
-        <div class="flex items-center gap-2 shrink-0">
-            <button [routerLink]="['/home']" class="w-8 h-8 rounded-xl border border-gray-200 bg-white hover:bg-gray-50
+        <div class="flex items-center gap-3 shrink-0">
+            <button [routerLink]="['/home']" class="w-9 h-9 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md hover:border-gray-300
                flex items-center justify-center transition">
                 <feather-icon name="home" class="text-gray-700"
                     style="width:16px;height:16px;width:16px;"></feather-icon>
             </button>
+
+            <div class="w-px h-6 bg-gray-200"></div>
 
             <app-profile [search]="isSearch" [userData]="userData"></app-profile>
         </div>

@@ -2,13 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, EMPTY } from 'rxjs';
 import { map, shareReplay, catchError } from 'rxjs/operators';
-
-export interface Country {
-  name: string;
-  code: string;
-  dialCode: string;  // e.g. "+1"
-  flag: string;
-}
+import { Country } from '../models/Location.interface';
 
 @Injectable({ providedIn: 'root' })
 export class LocationService {
@@ -39,15 +33,19 @@ export class LocationService {
               }
 
               return {
+                id: c.cca2 ?? '',
                 name: c.name?.common ?? '',
                 code: c.cca2 ?? '',
+                iso2: c.cca2 ?? '',
+                iso3: '',
                 dialCode: dial,   // full dial code like "+1242" or "+234"
-                flag: c.flags?.svg ?? ''
-              };
+                flag: c.flags?.svg ?? '',
+                states: []
+              } as Country;
             })
 
             // Optionally filter countries without dialCode or flags
-            .filter(c => c.name && c.code && c.dialCode && c.flag)
+            .filter(c => c.name && c.phoneCode && c.phoneCode && c.emoji)
             .sort((a, b) => a.name.localeCompare(b.name))
         ),
         shareReplay(1),

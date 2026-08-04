@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Tags } from 'src/app/models/tags.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { TagStateService } from 'src/app/services/tag-state.service';
+import { loadTags } from 'src/app/state/tag/tag.actions';
+import { selectTags } from 'src/app/state/tag/tag.selectors';
 
 @Component({
   selector: 'app-tags',
@@ -15,9 +18,10 @@ export class TagsComponent {
   tagsLength: number = 0;
   searchComponent: string = 'tag'
   isSearch: boolean = true;
+  subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
-    private tagStateService: TagStateService,
+    private store: Store,
     private rxStompService: RxStompService) {
   }
 
@@ -26,28 +30,24 @@ export class TagsComponent {
     this.watchUpdateTagStatus()
     this.watchDeleteTag()
     this.watchGetTagFromMap()
-    this.ngxService.start()
     this.handleEmitEvent()
-    this.ngxService.stop()
-    // this.tagStateService.allTagsData$.subscribe((cachedData) => {
-    //   if (!cachedData) {
-    //     this.handleEmitEvent()
-    //   } else {
-    //     this.tagsData = cachedData;
-    //     this.totalTags = cachedData.length
-    //     this.tagsLength = cachedData.length
-    //   }
-    // });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   handleEmitEvent() {
-    this.tagStateService.getAllTags().subscribe((allTags) => {
-      console.log('isCachedData false')
-      this.tagsData = allTags;
-      this.totalTags = allTags.length
-      this.tagsLength = allTags.length
-      this.tagStateService.setAllTagsSubject(this.tagsData);
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadTags());
+    this.subscriptions.push(
+      this.store.select(selectTags).subscribe((allTags) => {
+        this.tagsData = allTags;
+        this.totalTags = allTags.length
+        this.tagsLength = allTags.length
+        this.ngxService.stop()
+      })
+    );
   }
 
   handleSearchResults(results: Tags[]): void {
@@ -81,4 +81,3 @@ export class TagsComponent {
     });
   }
 }
-

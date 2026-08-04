@@ -1,12 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectUsers } from 'src/app/state/user/user.selector';
 
 @Component({
   selector: 'app-dashboard-top-users',
@@ -19,7 +20,7 @@ export class DashboardTopUsersComponent {
   showFullData: boolean = false;
   subscriptions: Subscription[] = []
 
-  constructor(private userStateService: UserStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
@@ -48,9 +49,8 @@ export class DashboardTopUsersComponent {
   handleEmitEvent() {
     this.ngxService.start();
     this.subscriptions.push(
-      this.userStateService.getAllUsers().subscribe((users) => {
+      this.store.select(selectUsers).subscribe((users) => {
         this.users = users;
-        this.userStateService.setAllUsersSubject(this.users);
       }),
     );
     this.ngxService.stop();

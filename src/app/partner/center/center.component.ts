@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Store, select } from '@ngrx/store';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
@@ -9,10 +10,9 @@ import { UpdateCenterModalComponent } from 'src/app/admin/centers/update-center-
 import { Centers } from 'src/app/models/centers.interface';
 import { Partner } from 'src/app/models/partners.interface';
 import { Users } from 'src/app/models/users.interface';
-import { CenterStateService } from 'src/app/services/center-state.service';
 import { CenterService } from 'src/app/services/center.service';
-import { PartnerStateService } from 'src/app/services/partner-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { selectCenterEquipment, selectCurrentCenter } from 'src/app/state/center/center.selectors';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -21,9 +21,9 @@ import { fileValidator, genericError } from 'src/validators/form-validators.modu
   styleUrls: ['./center.component.css']
 })
 export class CenterComponent {
-  @Input() centerData!: Centers;
-  @Input() user!: Users;
-  @Input() partnerData!: Partner;
+  @Input() centerData!: Centers | null;
+  @Input() user!: Users | null;
+  @Input() partnerData!: Partner | null;
   @Output() onEmit = new EventEmitter;
   subscriptions: Subscription[] = [];
   responseMessage: any;
@@ -37,8 +37,7 @@ export class CenterComponent {
   constructor(
     private dialog: MatDialog,
     private ngxService: NgxUiLoaderService,
-    private centerStateService: CenterStateService,
-    private partnerStateService: PartnerStateService,
+    private store: Store,
     private datePipe: DatePipe,
     private formbuilder: FormBuilder,
     private centerService: CenterService,
@@ -47,21 +46,20 @@ export class CenterComponent {
   ngOnInit(): void {
     this.updateCenterPhotoForm = this.formbuilder.group({
       'photo': ['', [Validators.required, fileValidator]],
-      'id': [this.centerData.id],
+      'id': [this.centerData?.id],
     })
   }
 
   handleEmitEvent() {
     this.ngxService.start();
     this.subscriptions.push(
-      this.centerStateService.getCenter().subscribe((center) => {
+      this.store.select(selectCurrentCenter).subscribe((center) => {
         this.centerData = center;
-        this.centerStateService.setCenterSubject(center)
       }),
-      this.partnerStateService.getPartner().subscribe((partner) => {
-        this.partnerData = partner;
-        this.partnerStateService.setPartnerSubject(partner);
-      })
+      // this.store.select(selectPartner).subscribe((partner) => {
+      //   this.partnerData = partner;
+      //   this.partnerStateService.setPartnerSubject(partner);
+      // })
     );
     this.ngxService.stop();
   }
@@ -187,7 +185,7 @@ export class CenterComponent {
     const requestData = new FormData();
     requestData.append('id', this.updateCenterPhotoForm.get('id')?.value);
     requestData.append('photo', this.croppedImage);
-    this.centerService.updatePhoto(requestData)
+    this.centerService.updateCenterPhoto(requestData)
       .subscribe(
         (response: any) => {
           this.ngxService.stop();

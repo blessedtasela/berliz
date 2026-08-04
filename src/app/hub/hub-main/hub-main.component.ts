@@ -1,8 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import jwt_decode from "jwt-decode";
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { DashboardStateService } from 'src/app/services/dashboard-state.service';
+import { Store } from '@ngrx/store';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { loadDashboard } from 'src/app/state/dashboard/dashboard.actions';
+import { selectDashboardData } from 'src/app/state/dashboard/dashboard.selectors';
 
 @Component({
   selector: 'app-hub-main',
@@ -19,7 +21,7 @@ export class HubMainComponent implements OnInit {
 
   constructor(
     private loader: NgxUiLoaderService,
-    private dashboardState: DashboardStateService,
+    private store: Store,
     private snackbar: SnackBarService
   ) {
     if (this.token) {
@@ -29,7 +31,7 @@ export class HubMainComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dashboardState.dashboardData$.subscribe(cached => {
+    this.store.select(selectDashboardData).subscribe(cached => {
       if (!cached) {
         this.fetchDashboard();
       } else {
@@ -39,16 +41,7 @@ export class HubMainComponent implements OnInit {
   }
 
   private fetchDashboard() {
-    this.dashboardState.getDashBoard().subscribe({
-
-      next: (res) => {
-        this.data = res;
-        this.dashboardState.setDashboardSubject(res);
-      },
-      error: () => {
-        this.snackbar.openSnackBar('Failed to load dashboard data. Please try again later.', 'error');
-      }
-    });
+    this.store.dispatch(loadDashboard());
   }
 
   formatUrl(name: string): string {

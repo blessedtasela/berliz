@@ -1,38 +1,55 @@
 import { Injectable } from "@angular/core";
 import { CanActivate, Router, ActivatedRouteSnapshot } from "@angular/router";
+import { Observable, of } from "rxjs";
+import { map, catchError } from "rxjs/operators";
+import { TrainerService } from "../services/trainer.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class TrainerGuard implements CanActivate {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router,
+    private trainerService: TrainerService) { }
 
-  canActivate(route: ActivatedRouteSnapshot): boolean {
+  canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
 
     const name = route.paramMap.get('name');
 
-    // 1. Must exist
     if (!name) {
       this.router.navigate(['/trainers']);
-      return false;
+      return of(false);
     }
 
-    // 2. Must be at least 2 characters
     if (name.trim().length < 2) {
       window.alert("Invalid trainer name");
       this.router.navigate(['/trainers']);
-      return false;
+      return of(false);
     }
 
-    // 3. Optional: validate allowed characters (letters, numbers, hyphens)
     const valid = /^[a-zA-Z0-9\-]+$/.test(name);
     if (!valid) {
       window.alert("Invalid trainer name format");
       this.router.navigate(['/trainers']);
-      return false;
+      return of(false);
     }
 
-    return true;
+    return this.trainerService.getActiveTrainers().pipe(
+      map(response => (response?.data ?? []).some(
+        trainer => trainer.name?.replace(/ /g, '-') === name
+      )),
+      map(exists => {
+        if (!exists) {
+          window.alert("Trainer not found");
+          this.router.navigate(['/trainers']);
+        }
+        return exists;
+      }),
+      catchError(() => {
+        window.alert("Trainer not found");
+        this.router.navigate(['/trainers']);
+        return of(false);
+      })
+    );
   }
 }

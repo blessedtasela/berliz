@@ -2,9 +2,10 @@ import { Component, forwardRef, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { Subscription, of } from 'rxjs';
 import { tap, switchMap } from 'rxjs/operators';
-import { LocationService, Country } from 'src/app/services/location.service';
+import { LocationService } from 'src/app/services/location.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { LocationFormatterService } from 'src/app/services/location-formatter.service';
+import { Country } from 'src/app/models/Location.interface';
 
 @Component({
   selector: 'app-location-form',
@@ -75,10 +76,7 @@ export class LocationFormComponent implements OnInit, OnDestroy, ControlValueAcc
     this.subscriptions.add(
       this.locationService.countries$
         .pipe(
-          tap(countries => {
-            this.countries = countries;
-            countries.forEach(c => this.countryMap.set(c.code, c));
-          })
+          tap()
         )
         .subscribe()
     );

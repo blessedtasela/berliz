@@ -14,7 +14,6 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { RouterModule } from '@angular/router';
 import { PartnerRouteComponent } from './partner-route/partner-route.component';
 import { PartnerMainComponent } from './partner-main/partner-main.component';
-import { PartnerFormComponent } from './partner-form/partner-form.component';
 import { SharedModule } from '../shared/shared.module';
 
 
@@ -31,7 +30,6 @@ import { SharedModule } from '../shared/shared.module';
     TrainerDataComponent,
     PartnerRouteComponent,
     PartnerMainComponent,
-    PartnerFormComponent
   ],
   imports: [
     CommonModule,

@@ -8,12 +8,13 @@ import { AdminUpdateUserModalComponent } from '../admin-update-user-modal/admin-
 import { Users } from 'src/app/models/users.interface';
 import { DatePipe } from '@angular/common';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
-import { UserStateService } from 'src/app/services/user-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AdminUpdateUserRoleModalComponent } from '../admin-update-user-role-modal/admin-update-user-role-modal.component';
 import { UserDetailsModalComponent } from '../user-details-modal/user-details-modal.component';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { UpdateEmailModalComponent } from 'src/app/shared/update-email-modal/update-email-modal.component';
+import { Store } from '@ngrx/store';
+import { selectUsers } from 'src/app/state/user/user.selector';
 
 @Component({
   selector: 'app-user-list',
@@ -29,7 +30,7 @@ export class UserListComponent {
   showCropper: boolean = false;
   updatePhotoId: number = 0;
 
-  constructor(private userStateService: UserStateService,
+  constructor(private store: Store,
     private userService: UserService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
@@ -42,10 +43,9 @@ export class UserListComponent {
   }
 
   handleEmitEvent() {
-    this.userStateService.getAllUsers().subscribe((users) => {
+    this.store.select(selectUsers).subscribe((users) => {
       this.ngxService.start();
       this.usersData = users;
-      this.userStateService.setAllUsersSubject(this.usersData);
       this.ngxService.stop();
     });
   }

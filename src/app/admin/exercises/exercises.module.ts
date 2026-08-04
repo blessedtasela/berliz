@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { ExercisesComponent } from './exercises/exercises.component';
 import { ExercisesListComponent } from './exercises-list/exercises-list.component';
 import { ExercisesHeaderComponent } from './exercises-header/exercises-header.component';
@@ -30,7 +31,8 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
     ReactiveFormsModule,
     MatDialogModule,
     FooterModule,
-    NavbarModule
+    NavbarModule,
+    RouterModule.forChild([{ path: '', component: ExercisesComponent }])
   ]
 })
 export class ExercisesModule { }

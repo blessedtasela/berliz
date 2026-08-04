@@ -1,19 +1,16 @@
-import { Users } from "./users.interface";
-
 export interface Categories {
     id: number;
     name: string;
     description: string;
-    photo: string;
-    tagSet: {
-        id: number;
-        name: string;
-        description: string;
-    }[];
+    photoUrl: string;
+    photoId: number;
+    tagIds: number[];
+    tagNames: string[];
     likes: number;
     date: Date;
     lastUpdate: Date;
     status: string;
+    message?: string;
 }
 
 export interface Icons {
@@ -23,8 +20,10 @@ export interface Icons {
 
 export interface CategoryLikes {
     id: number,
-    user: Users;
-    category: Categories;
+    categoryId: number;
+    categoryName: string;
+    userId: number;
+    userEmail: string;
     date: Date;
 }
 

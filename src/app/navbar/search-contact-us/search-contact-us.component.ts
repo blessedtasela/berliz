@@ -2,8 +2,9 @@ import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/cor
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { ContactUs } from 'src/app/models/contact-us.model';
-import { ContactUsStateService } from 'src/app/services/contact-us-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { Store } from '@ngrx/store';
+import { selectContactUsList } from 'src/app/state/contact-us/contact-us.selectors';
 
 @Component({
   selector: 'app-search-contact-us',
@@ -17,7 +18,7 @@ export class SearchContactUsComponent {
   selectedSearchCriteria: any = 'name';
   @Output() results: EventEmitter<ContactUs[]> = new EventEmitter<ContactUs[]>()
 
-  constructor(private contactUsStateService: ContactUsStateService,
+  constructor(private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) {
@@ -60,7 +61,7 @@ export class SearchContactUsComponent {
   }
 
   search(query: string): Observable<ContactUs[]> {
-    this.contactUsStateService.allContactUsData$.subscribe((cachedData) => {
+    this.store.select(selectContactUsList).subscribe((cachedData) => {
       this.contactUsData = cachedData;
     });
     query = query.toLowerCase();

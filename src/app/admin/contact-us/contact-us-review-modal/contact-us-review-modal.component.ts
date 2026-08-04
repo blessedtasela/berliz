@@ -6,9 +6,11 @@ import { ContactUsService } from 'src/app/services/contact-us.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
 import { AddContactUsModalComponent } from '../add-contact-us-modal/add-contact-us-modal.component';
-import { ContactUsStateService } from 'src/app/services/contact-us-state.service';
 import { ContactUs, ContactUsMessage } from 'src/app/models/contact-us.model';
 import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { loadContactUsMessages } from 'src/app/state/contact-us/contact-us.actions';
+import { selectContactUsMessages } from 'src/app/state/contact-us/contact-us.selectors';
 
 @Component({
   selector: 'app-contact-us-review-modal',
@@ -28,7 +30,7 @@ export class ContactUsReviewModalComponent {
 
   constructor(private formBuilder: FormBuilder,
     private contactUsService: ContactUsService,
-    private contactUsStateService: ContactUsStateService,
+    private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -45,24 +47,16 @@ export class ContactUsReviewModalComponent {
       'body': ['', [Validators.required, Validators.minLength(50)]],
     });
 
-    this.contactUsStateService.contactUsMessageData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent();
-      } else {
-        this.savedMessages = cachedData
-      }
-    })
+    this.handleEmitEvent();
   }
 
   handleEmitEvent() {
-    this.subscription.add(this.contactUsStateService.getContactUsMessages().subscribe((messages) => {
-      this.ngxService.start()
-      console.log("isCached false")
+    this.ngxService.start()
+    this.store.dispatch(loadContactUsMessages());
+    this.subscription.add(this.store.select(selectContactUsMessages).subscribe((messages) => {
       this.savedMessages = messages
-      this.contactUsStateService.setContactUsMessageSubject(this.savedMessages);
       this.ngxService.stop()
-    }),
-    );
+    }));
   }
 
   ngOnDestroy() {

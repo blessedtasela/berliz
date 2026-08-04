@@ -2,8 +2,10 @@ import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { ClientStateService } from 'src/app/services/client-state.service';
 import { ClientService } from 'src/app/services/client.service';
+import { Store } from '@ngrx/store';
+import { loadClients } from 'src/app/state/client/client.actions';
+import { selectClients } from 'src/app/state/client/client.selectors';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
@@ -30,7 +32,7 @@ export class ClientsListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private rxStompService: RxStompService,
-    public clientStateService: ClientStateService) {
+    private store: Store) {
   }
 
   ngOnInit() {
@@ -39,11 +41,11 @@ export class ClientsListComponent {
   }
 
   handleEmitEvent() {
-    this.clientStateService.getAllClients().subscribe((clients) => {
-      this.ngxService.start()
+    this.ngxService.start()
+    this.store.dispatch(loadClients());
+    this.store.select(selectClients).subscribe((clients) => {
       this.clientsData = clients;
       this.totalClients = this.clientsData.length
-      this.clientStateService.setAllClientsSubject(this.clientsData);
       this.ngxService.stop()
     });
   }

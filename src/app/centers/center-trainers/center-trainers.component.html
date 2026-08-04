@@ -9,15 +9,15 @@
 </div>
 <section class="mx-auto mb-2 px-2 space-y-1 mt-40">
     <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-20">
-        <section class="flex justify-between items-center cursor-pointer
+        <!-- <section class="flex justify-between items-center cursor-pointer
                  transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-            *ngFor="let t of centerTrainers?.trainers; let i = index" [ngClass]="{ 'hidden' : i >= 12 && !showAllTrainers }">
+            *ngFor="let t of centerTrainers; let i = index" [ngClass]="{ 'hidden' : i >= 12 && !showAllTrainers }">
             <div class="w-full bg-gray-100 rounded-md aspect-square m-5 md:min-h-[500px]">
                 <div class="text-center">
-                    <img class="rounded-md self-start" src="{{ t.imageUrl }}">
+                    <img class="rounded-md self-start" src="{{ t }}">
                     <div class="p-2">
                         <p class="text-center text-lg font-sans font-bold lg:text-xl text-red-600 text-transform: uppercase mt-3">
-                            {{ t.name }}
+                            {{ t.trainers }}
                         </p>
                         <p class="mt-1 text-sm font-bold text-gray-600 w-full text-center font-sans italic">
                             <ng-container *ngFor="let category of t.categories; let ix = index">
@@ -36,9 +36,9 @@
             </button>
                 </div>
             </div>
-        </section>
+        </section> -->
     </div>
-    <div class="p-3" *ngFor="let t of centerTrainers?.trainers; let i = index" [ngClass]="{ 'hidden' : i <= 6 }">
+    <div class="p-3" *ngFor="let t of centerTrainers; let i = index" [ngClass]="{ 'hidden' : i <= 6 }">
         <button
             class="p-1 px-2 bg-red-600 text-gray-100 font-sans font-bold rounded-md mx-auto flex justify-center mt-2"
             (click)="allTrainers()">

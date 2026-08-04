@@ -4,15 +4,19 @@ import { Router, NavigationEnd } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { TodoList } from 'src/app/models/todoList.interface';
-import { DashboardStateService } from 'src/app/services/dashboard-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StateService } from 'src/app/services/state.service';
-import { TodoStateService } from 'src/app/services/todo-state.service';
-import { UserStateService } from 'src/app/services/user-state.service';
 import { TodaysTodoModalComponent } from '../todays-todo-modal/todays-todo-modal.component';
 import { Users } from 'src/app/models/users.interface';
-import { SubscriptionStateService } from 'src/app/services/subscription-state.service';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
+import { Store } from '@ngrx/store';
+import { selectUser } from 'src/app/state/user/user.selector';
+import { loadMyTodos } from 'src/app/state/todo/todo.actions';
+import { selectMyTodos } from 'src/app/state/todo/todo.selectors';
+import { loadDashboard } from 'src/app/state/dashboard/dashboard.actions';
+import { selectDashboardData } from 'src/app/state/dashboard/dashboard.selectors';
+import { loadMySubscriptions } from 'src/app/state/subscription/subscription.actions';
+import { selectMySubscriptions } from 'src/app/state/subscription/subscription.selectors';
 
 @Component({
   selector: 'app-dashboard-main',
@@ -32,12 +36,9 @@ export class DashboardMainComponent {
 
   constructor(
     private router: Router,
-    private userStateService: UserStateService,
+    private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
-    private todoStateService: TodoStateService,
-    private subscriptionStateService: SubscriptionStateService,
-    private dashboardStateService: DashboardStateService,
     private dialog: MatDialog,
     private stateService: StateService
   ) {
@@ -55,25 +56,25 @@ export class DashboardMainComponent {
 
   private loadAllData() {
     this.subscriptions.push(
-      this.userStateService.getUser().subscribe(user => {
+      this.store.select(selectUser).subscribe(user => {
         this.userData = user;
-        this.userStateService.setUserSubject(user);
       }),
 
-      this.dashboardStateService.getDashBoard().subscribe(data => {
+      this.store.select(selectDashboardData).subscribe(data => {
         this.data = data;
-        this.dashboardStateService.setDashboardSubject(data);
       }),
 
-      this.todoStateService.getMyTodos().subscribe(myTodo => {
+      this.store.select(selectMyTodos).subscribe(myTodo => {
         this.myTodo = myTodo;
-        this.todoStateService.setmyTodosSubject(myTodo);
       }),
 
-      this.subscriptionStateService.getMySubscriptions().subscribe(subscriptions => {
+      this.store.select(selectMySubscriptions).subscribe(subscriptions => {
         this.mySubscriptions = subscriptions;
       })
     );
+    this.store.dispatch(loadMyTodos());
+    this.store.dispatch(loadDashboard());
+    this.store.dispatch(loadMySubscriptions());
   }
 
   private handleTodaysTodoPopup() {

@@ -1,12 +1,13 @@
 import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
+import { selectActiveTrainers, selectTrainers } from 'src/app/state/trainer/trainer.selector';
 import { genericError } from 'src/validators/form-validators.module';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
 
 @Component({
   selector: 'app-add-trainer-pricing-modal',
@@ -26,7 +27,7 @@ export class AddTrainerPricingModalComponent {
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,
-    private trainerStateService: TrainerStateService,
+    private store: Store,
     private trainerService: TrainerService,) { }
 
   ngOnInit(): void {
@@ -46,19 +47,14 @@ export class AddTrainerPricingModalComponent {
 
 
   onEmit(): void {
-    this.trainerStateService.allTrainersData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.trainers = cachedData;
-      }
+    this.store.select(selectTrainers).subscribe((trainers) => {
+      this.trainers = trainers;
     });
   }
 
   handleEmitEvent() {
-    this.trainerStateService.getActiveTrainers().subscribe((activeTrainers) => {
-      this.trainers = activeTrainers;
-      this.trainerStateService.setActiveTrainersSubject(activeTrainers);
+   this.store.select(selectActiveTrainers).subscribe((trainers) => {
+      this.trainers = trainers;
     });
   }
 

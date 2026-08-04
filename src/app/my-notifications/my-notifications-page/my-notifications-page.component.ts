@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { FilterState } from 'src/app/models/FilterState.interface';
 import { Notifications } from 'src/app/models/Notifications.interface';
 import { AuthService } from 'src/app/services/auth.service';
-import { NotificationStateService } from 'src/app/services/notification-state.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { selectMyNotifications, selectMyNotificationsCount } from 'src/app/state/notification/notification.selector';
 
 @Component({
   selector: 'app-my-notifications-page',
@@ -23,7 +24,7 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   constructor(
-    private notificationStateService: NotificationStateService,
+    private store: Store,
     private authService: AuthService,
     private rxStompService: RxStompService
   ) { }
@@ -43,14 +44,39 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
   }
 
   onFilterStateChange(state: FilterState) {
-    this.notificationData = this.notificationStateService.filter(state, 'my');
+    this.notificationData = this.rawNotifications.filter(notification => this.matchesFilter(notification, state));
+    this.totalNotifications = this.notificationData.length;
   }
 
+  private matchesFilter(notification: Notifications, state: FilterState): boolean {
+    const filterState = state as any;
+    if (!filterState) {
+      return true;
+    }
+
+    if (filterState.query) {
+      const term = String(filterState.query).toLowerCase();
+      const content = `${(notification as any).title ?? ''} ${(notification as any).message ?? ''}`.toLowerCase();
+      if (!content.includes(term)) {
+        return false;
+      }
+    }
+
+    if (filterState.type && (notification as any).type !== filterState.type) {
+      return false;
+    }
+
+    if (filterState.status && (notification as any).status !== filterState.status) {
+      return false;
+    }
+
+    return true;
+  }
 
   /** Load notifications from state service */
   private loadNotifications(): void {
     this.subscriptions.push(
-      this.notificationStateService.getMyNotifications().subscribe(myNotifications => {
+      this.store.select(selectMyNotifications).subscribe(myNotifications => {
         this.rawNotifications = myNotifications;
 
         // Only overwrite UI if user is NOT filtering
@@ -61,8 +87,6 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
           this.notificationData = [...myNotifications];
           this.totalNotifications = myNotifications.length;
         }
-
-        this.notificationStateService.setMyNotifications(myNotifications);
       })
     );
   }

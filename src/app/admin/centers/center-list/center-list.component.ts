@@ -3,7 +3,6 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Centers } from 'src/app/models/centers.interface';
-import { CenterStateService } from 'src/app/services/center-state.service';
 import { CenterService } from 'src/app/services/center.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
@@ -12,6 +11,8 @@ import { Subscription } from 'rxjs';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { UpdateCenterModalComponent } from '../update-center-modal/update-center-modal.component';
 import { CenterDetailsModalComponent } from '../center-details-modal/center-details-modal.component';
+import { Store } from '@ngrx/store';
+import { selectCenters } from 'src/app/state/center/center.selectors';
 
 @Component({
   selector: 'app-center-list',
@@ -27,7 +28,7 @@ export class CenterListComponent {
   @Output() emitEvent = new EventEmitter()
   selectedImage: any;
 
-  constructor(private centerStateService: CenterStateService,
+  constructor(private store: Store,
     private centerService: CenterService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
@@ -48,10 +49,9 @@ export class CenterListComponent {
   handleEmitEvent() {
     this.ngxService.start();
     this.subscriptions.push(
-      this.centerStateService.getAllCenters().subscribe((center) => {
-        this.centerData = center;
+      this.store.select(selectCenters).subscribe((centers) => {
+        this.centerData = centers;
         this.totalCenters = this.centerData.length;
-        this.centerStateService.setAllCentersSubject(this.centerData);
       }),
     );
     this.ngxService.stop();
@@ -135,7 +135,7 @@ export class CenterListComponent {
       const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
       const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((res: any) => {
         this.ngxService.start();
-        this.centerService.updateStatus(id).subscribe(
+        this.centerService.updateCenterStatus(id).subscribe(
           (response: any) => {
             this.ngxService.stop();
             this.responseMessage = response.message;
@@ -225,7 +225,7 @@ export class CenterListComponent {
     const requestData = new FormData();
     requestData.append('photo', this.selectedImage);
     requestData.append('id', id.toString());
-    this.centerService.updatePhoto(requestData)
+    this.centerService.updateCenterPhoto(requestData)
       .subscribe(
         (response: any) => {
           this.ngxService.stop();

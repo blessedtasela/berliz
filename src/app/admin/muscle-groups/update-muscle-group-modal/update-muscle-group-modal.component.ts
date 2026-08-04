@@ -5,7 +5,6 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Exercises } from 'src/app/models/exercise.interface';
 import { BodyParts, MuscleGroups } from 'src/app/models/muscle-groups.interface';
-import { ExerciseStateService } from 'src/app/services/exercise-state.service';
 import { MuscleGroupService } from 'src/app/services/muscle-group.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { genericError } from 'src/validators/form-validators.module';

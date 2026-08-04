@@ -12,7 +12,3 @@ export interface StrapiUploadResult {
   fullUrl: string;
 }
 
-export interface ApiResponse {
-  message: string;
-}
-

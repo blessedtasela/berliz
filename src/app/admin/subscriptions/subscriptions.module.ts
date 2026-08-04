@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { AddSubscriptionsModalComponent } from './add-subscriptions-modal/add-subscriptions-modal.component';
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { SubscriptionsListComponent } from './subscriptions-list/subscriptions-list.component';
@@ -28,7 +29,8 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
     NavbarModule,
     ReactiveFormsModule,
     FormsModule,
-    IconsModule
+    IconsModule,
+    RouterModule.forChild([{ path: '', component: SubscriptionsComponent }])
   ]
 })
 export class SubscriptionsModule { }

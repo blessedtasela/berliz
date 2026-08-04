@@ -3,10 +3,11 @@ import { Promotions } from '../../models/promotion.model';
 import { Offers } from '../../models/offers.model';
 import { StateService } from 'src/app/services/state.service';
 import { MatDialog } from '@angular/material/dialog';
-import { NewsletterStateService } from 'src/app/services/newsletter-state.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { AddNewsletterModalComponent } from 'src/app/admin/newsletters/add-newsletter-modal/add-newsletter-modal.component';
 import { NewsletterPopupComponent } from 'src/app/shared/newsletter-popup/newsletter-popup.component';
+import { Store } from '@ngrx/store';
+import { loadNewsletters } from 'src/app/state/newsletter/newsletter.actions';
 
 @Component({
   selector: 'app-landing-page',
@@ -22,7 +23,7 @@ export class LandingPageComponent implements OnInit {
   constructor(private stateService: StateService,
     private dialog: MatDialog,
     private ngxService: NgxUiLoaderService,
-    private newsletterStateService: NewsletterStateService,) {
+    private store: Store,) {
     this.promotions = this.stateService.promotions;
     this.offers = this.stateService.offers;
   }
@@ -41,11 +42,9 @@ export class LandingPageComponent implements OnInit {
   onWindowScroll() { }
 
   handleEmitEvent() {
-    this.newsletterStateService.getAllNewsletters().subscribe((newsletter) => {
-      this.ngxService.start()
-      this.newsletterStateService.setAllNewsletterSubject(newsletter);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadNewsletters());
+    this.ngxService.stop()
   }
 
   openAddNewsletter() {

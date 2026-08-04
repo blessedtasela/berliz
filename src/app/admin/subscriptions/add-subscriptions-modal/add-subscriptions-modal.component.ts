@@ -1,20 +1,25 @@
 import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription, forkJoin, take } from 'rxjs';
+import { Subscription, combineLatest, forkJoin, take } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { CenterPricing, Centers } from 'src/app/models/centers.interface';
 import { Clients } from 'src/app/models/clients.interface';
 import { TrainerPricing, Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
-import { CenterStateService } from 'src/app/services/center-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SubscriptionService } from 'src/app/services/subscription.service';
-import { TrainerStateService } from 'src/app/services/trainer-state.service';
-import { UserStateService } from 'src/app/services/user-state.service';
 import { genericError } from 'src/validators/form-validators.module';
+import { selectMyTrainerPricing, selectTrainerPricing, selectTrainers } from 'src/app/state/trainer/trainer.selector';
+import { selectUsers } from 'src/app/state/user/user.selector';
+import { selectCenterPricing, selectCenters } from 'src/app/state/center/center.selectors';
+import { selectCategories } from 'src/app/state/category/category.selectors';
+import { loadAllCenterPricing, loadCenters } from 'src/app/state/center/center.actions';
+import { loadActiveTrainers, loadTrainerPricing } from 'src/app/state/trainer/trainer.actions';
+import { loadActiveUsers } from 'src/app/state/user/user.actions';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
 
 @Component({
   selector: 'app-add-subscriptions-modal',
@@ -47,15 +52,11 @@ export class AddSubscriptionsModalComponent {
 
   constructor(private formBuilder: FormBuilder,
     private subscriptionService: SubscriptionService,
-    private userStateService: UserStateService,
-    private trainerStateService: TrainerStateService,
-    private centerStateService: CenterStateService,
+    private store: Store,
     public dialogRef: MatDialogRef<AddSubscriptionsModalComponent>,
     private ngxService: NgxUiLoaderService,
     private cd: ChangeDetectorRef,
-    private snackbarService: SnackBarService,
-    private categoryStateService: CategoryStateService,) {
-  }
+    private snackbarService: SnackBarService) { }
 
   ngOnInit(): void {
     this.addSubscriptionForm = this.formBuilder.group({
@@ -67,45 +68,34 @@ export class AddSubscriptionsModalComponent {
       'categoryIds': this.formBuilder.array([], this.validateCheckbox()),
     });
 
-    forkJoin([
-      this.centerStateService.activeCentersData$.pipe(take(1)),
-      this.trainerStateService.activeTrainersData$.pipe(take(1)),
-      this.userStateService.activeUserData$.pipe(take(1)),
-      this.categoryStateService.activeCategoriesData$.pipe(take(1)),
-      this.trainerStateService.allTrainerPricingData$.pipe(take(1)),
-      this.centerStateService.centerPricingData$.pipe(take(1))
+    combineLatest([
+      this.store.select(selectCenters),
+      this.store.select(selectTrainers),
+      this.store.select(selectUsers),
+      this.store.select(selectCategories),
+      this.store.select(selectTrainerPricing),
+      this.store.select(selectCenterPricing)
     ]).subscribe(([centers, trainers, users, categories, trainerPricing, centerPricing]) => {
-      if (centers === null) {
-        this.handleEmitEvent()
-      } else {
-        this.centers = centers;
-      }
-      if (trainers === null) {
-        this.handleEmitEvent()
-      } else {
-        this.trainers = trainers
-      }
-      if (users === null) {
-        this.handleEmitEvent()
-      } else {
-        this.users = users
-      }
-      if (categories === null) {
-        this.handleEmitEvent()
-      } else {
-        this.categories = categories
-      }
-      if (trainerPricing === null) {
-        this.handleEmitEvent()
-      } else {
-        this.trainerPricing = trainerPricing
-      }
-      if (centerPricing === null) {
-        this.handleEmitEvent()
-      } else {
-        this.centerPricing = centerPricing
-      }
+
+      if (!centers?.length) this.store.dispatch(loadCenters());
+      else this.centers = centers;
+
+      if (!trainers?.length) this.store.dispatch(loadActiveTrainers());
+      else this.trainers = trainers;
+
+      if (!users?.length) this.store.dispatch(loadActiveUsers());
+      else this.users = users;
+
+      if (!categories?.length) this.store.dispatch(loadActiveCategories());
+      else this.categories = categories;
+
+      if (!trainerPricing?.length) this.store.dispatch(loadTrainerPricing());
+      else this.trainerPricing = trainerPricing;
+
+      if (!centerPricing?.length) this.store.dispatch(loadAllCenterPricing());
+      else this.centerPricing = centerPricing;
     });
+
   }
 
   ngOnDestroy() {
@@ -115,45 +105,39 @@ export class AddSubscriptionsModalComponent {
   handleEmitEvent() {
     console.log("isCached false");
     this.subscriptions.push(
-      this.userStateService.getActiveUsers().subscribe((users) => {
+      this.store.select(selectUsers).subscribe((users) => {
         this.ngxService.start();
         this.users = users;
-        this.userStateService.setActiveUsersSubject(users);
         this.cd.detectChanges();
         this.ngxService.stop();
       }),
-      this.trainerStateService.getActiveTrainers().subscribe((trainers) => {
+      this.store.select(selectTrainers).subscribe((trainers) => {
         this.ngxService.start();
         this.trainers = trainers;
-        this.trainerStateService.setActiveTrainersSubject(trainers);
         this.cd.detectChanges();
         this.ngxService.stop();
       }),
-      this.centerStateService.getActiveCenters().subscribe((centers) => {
+      this.store.select(selectCenters).subscribe((centers) => {
         this.ngxService.start();
         this.centers = centers;
-        this.centerStateService.setAllCentersSubject(centers);
         this.cd.detectChanges();
         this.ngxService.stop();
       }),
-      this.categoryStateService.getActiveCategories().subscribe((categories) => {
+      this.store.select(selectCategories).subscribe((categories) => {
         this.ngxService.start();
         this.categories = categories;
-        this.categoryStateService.setActiveCategoriesSubject(categories);
         this.cd.detectChanges();
         this.ngxService.stop();
       }),
-      this.trainerStateService.getAllTrainerPricing().subscribe((trainerPricing) => {
+      this.store.select(selectTrainerPricing).subscribe((trainerPricing) => {
         this.ngxService.start();
         this.trainerPricing = trainerPricing;
-        this.trainerStateService.setAllTrainerPricingSubject(trainerPricing);
         this.cd.detectChanges();
         this.ngxService.stop();
       }),
-      this.centerStateService.getCenterPricing().subscribe((centerPricing) => {
+      this.store.select(selectCenterPricing).subscribe((centerPricing) => {
         this.ngxService.start();
         this.centerPricing = centerPricing;
-        this.centerStateService.setAllCenterPricingSubject(centerPricing);
         this.cd.detectChanges();
         this.ngxService.stop();
       })
@@ -197,7 +181,7 @@ export class AddSubscriptionsModalComponent {
     );
 
     const selectedCenterPricing = this.centerPricing.find(
-      (centerPricing) => centerPricing.center.id === this.selectedCenter.id
+      (centerPricing) => centerPricing.centerId === this.selectedCenter.id
     );
 
     if (!selectedTrainerPricing || !selectedCenterPricing) {

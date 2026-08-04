@@ -1,10 +1,13 @@
 import { Component, Input } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SubTasks } from 'src/app/models/tasks.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { TaskStateService } from 'src/app/services/task-state.service';
 import { AddSubTasksModalComponent } from '../add-sub-tasks-modal/add-sub-tasks-modal.component';
+import { loadSubTasks } from 'src/app/state/task/task.actions';
+import { selectSubTasks } from 'src/app/state/task/task.selectors';
 
 @Component({
   selector: 'app-sub-tasks-header',
@@ -18,10 +21,11 @@ export class SubTasksHeaderComponent {
   @Input() subTasksData: SubTasks[] = [];
   @Input() totalSubTasks: number = 0;
   @Input() subTasksLength: number = 0;
+  subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private taskStateService: TaskStateService,
+    private store: Store,
     private rxStompService: RxStompService) {
   }
 
@@ -30,16 +34,21 @@ export class SubTasksHeaderComponent {
     this.watchGetCategoryFromMap()
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
   handleEmitEvent() {
-    this.taskStateService.getSubTasks().subscribe((subTasks) => {
-      this.ngxService.start()
-      console.log('cached false')
-      this.subTasksData = subTasks;
-      this.totalSubTasks = this.subTasksData.length
-      this.subTasksLength = this.subTasksData.length
-      this.taskStateService.setSubTasksSubject(this.subTasksData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadSubTasks());
+    this.subscriptions.push(
+      this.store.select(selectSubTasks).subscribe((subTasks) => {
+        this.subTasksData = subTasks;
+        this.totalSubTasks = this.subTasksData.length
+        this.subTasksLength = this.subTasksData.length
+        this.ngxService.stop()
+      })
+    );
   }
 
   sortCategoriesData() {
@@ -56,11 +65,11 @@ export class SubTasksHeaderComponent {
           return a.name.localeCompare(b.name);
         });
         break;
-        case 'task':
-          this.subTasksData.sort((a, b) => {
-            return a.task.description.localeCompare(b.task.description);
-          });
-          break;
+      case 'task':
+        this.subTasksData.sort((a, b) => {
+          return a.taskId - b.taskId;
+        });
+        break;
       case 'id':
         this.subTasksData.sort((a, b) => {
           return a.id - b.id;

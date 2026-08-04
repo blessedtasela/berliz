@@ -1,8 +1,8 @@
 <!-- GLOBAL LOADING STATE -->
-<app-skeleton-loader *ngIf="fallback.loading$ | async"></app-skeleton-loader>
+<app-skeleton-loader *ngIf="!dataReady"></app-skeleton-loader>
 
 <!-- REAL CONTENT -->
-<div *ngIf="!(fallback.loading$ | async)" class="flex flex-col gap-4 font-sans">
+<div *ngIf="dataReady" class="flex flex-col gap-4 font-sans">
 
     <!-- No partner record -->
     <app-partner-null *ngIf="!partner" [user]="user" [partnerData]="partner" (onEmit)="emitData()">
@@ -26,3 +26,4 @@
     </app-partner-data>
 
 </div>
+

@@ -62,7 +62,7 @@
                                 Expereince is required
                             </div>
                         </div>
-                        <div class="mx-auto p-2 " *ngIf="user.role === 'admin'">
+                        <div class="mx-auto p-2 " *ngIf="user?.role === 'admin'">
                             <span class="sr-only">Likes</span>
                             <span class="ml-4 font-bold text-gray-600 italic">Likes</span>
                             <input formControlName="likes" [value]="trainer.likes"

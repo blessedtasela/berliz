@@ -5,8 +5,10 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { NewsletterComponent } from 'src/app/footer/newsletter/newsletter.component';
 import { Newsletter } from 'src/app/models/newsletter.model';
-import { NewsletterStateService } from 'src/app/services/newsletter-state.service';
 import { NewsletterService } from 'src/app/services/newsletter.service';
+import { Store } from '@ngrx/store';
+import { loadNewsletters } from 'src/app/state/newsletter/newsletter.actions';
+import { selectNewsletters } from 'src/app/state/newsletter/newsletter.selectors';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
@@ -28,7 +30,7 @@ export class NewsletterListComponent {
 
   constructor(private datePipe: DatePipe,
     private newsletterService: NewsletterService,
-    private newsletterStateService: NewsletterStateService,
+    private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
@@ -42,11 +44,11 @@ export class NewsletterListComponent {
 
 
   handleEmitEvent() {
-    this.newsletterStateService.getAllNewsletters().subscribe((newsletter) => {
-      this.ngxService.start()
+    this.ngxService.start()
+    this.store.dispatch(loadNewsletters());
+    this.store.select(selectNewsletters).subscribe((newsletter) => {
       this.newsletterData = newsletter;
       this.totalNewsletters = this.newsletterData.length
-      this.newsletterStateService.setAllNewsletterSubject(this.newsletterData);
       this.ngxService.stop()
     });
   }

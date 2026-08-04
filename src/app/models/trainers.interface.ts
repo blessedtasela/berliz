@@ -14,7 +14,7 @@ export interface Trainers {
   address: string;
   experience: string;
   activationUniqueId: string;
-  activationUniqueIdUsed: boolean;
+  activatedUniqueIdUsed: boolean;
   likes: number;
   status: string;
   date: Date;
@@ -130,7 +130,7 @@ export interface TrainerReview {
   lastUpdate: Date;
 }
 
-export interface TrainerReviewLike {
+export interface TrainerReviewLikes {
   id: number;
   userId: number;
   userName: string;
@@ -212,16 +212,33 @@ export interface TrainerSubscriptionForm {
 
 export interface TrainerClients {
   id: number;
-  clients?: Clients[];
-  trainer?: Trainers;
+  userId: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  height: number;
+  weight: number;
+  bodyFat: number;
+  targetWeight: number;
+  motivation: string;
+  mode: string;
+  status: string;
+  date: Date;
+  lastUpdate: Date;
 }
 
 export interface TrainerTestimonials {
   id: number;
   testimonial: string;
+  status: string;
   date: Date;
   lastUpdate: Date;
-  client: Clients;
-  trainer: Trainers;
+  trainerId: number;
+  trainerName: string;
+  trainerEmail: string;
+  trainerPhotoUrl: string;
+  clientId: number;
+  clientName: string;
+  clientPhotoUrl: string;
   expanded?: boolean;
 }

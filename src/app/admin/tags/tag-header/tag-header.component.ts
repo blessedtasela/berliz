@@ -2,9 +2,11 @@ import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Tags } from 'src/app/models/tags.interface';
-import { TagStateService } from 'src/app/services/tag-state.service';
 import { AddTagModalComponent } from '../add-tag-modal/add-tag-modal.component';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { Store } from '@ngrx/store';
+import { loadTags } from 'src/app/state/tag/tag.actions';
+import { selectTags } from 'src/app/state/tag/tag.selectors';
 
 @Component({
   selector: 'app-tag-header',
@@ -19,18 +21,18 @@ export class TagHeaderComponent {
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
-    private tagStateService: TagStateService,
+    private store: Store,
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {  }
 
   handleEmitEvent() {
-    this.tagStateService.getAllTags().subscribe((tagsData) => {
-      this.ngxService.start();
+    this.ngxService.start();
+    this.store.dispatch(loadTags());
+    this.store.select(selectTags).subscribe((tagsData) => {
       this.tagsData = tagsData
       this.tagsLength = this.tagsData.length
       this.totalTags = this.tagsData.length;
-      this.tagStateService.setAllTagsSubject(this.tagsData);
       this.ngxService.stop();
     });
   }

@@ -1,15 +1,17 @@
 import { ChangeDetectorRef, Component, EventEmitter, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators, ValidatorFn, AbstractControl, FormArray } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
-import { CategoryStateService } from 'src/app/services/category-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectUser } from 'src/app/state/user/user.selector';
 import { genericError } from 'src/validators/form-validators.module';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
   selector: 'app-update-trainer-modal',
@@ -25,15 +27,14 @@ export class UpdateTrainerModalComponent {
   selectedPhoto: any;
   trainer!: Trainers;
   selectedCategoriesId: any;
-  user!: Users;
+  user!: Users | null;
 
   constructor(private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<UpdateTrainerModalComponent>,
     private ngxService: NgxUiLoaderService,
-    private userStateService: UserStateService,
+    private store: Store,
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,
-    private categoryStateService: CategoryStateService,
     private trainerService: TrainerService,
     @Inject(MAT_DIALOG_DATA) private data: any) {
     this.trainer = this.data.trainerData;
@@ -59,10 +60,11 @@ export class UpdateTrainerModalComponent {
   }
 
   handleEmitEvent() {
-    this.categoryStateService.getActiveCategories().subscribe((activeCategories) => {
+    this.store.dispatch(loadActiveCategories());
+    this.store.select(selectActiveCategories).subscribe((activeCategories) => {
       this.categories = activeCategories;
     });
-    this.userStateService.getUser().subscribe((user) => {
+    this.store.select(selectUser).subscribe((user) => {
       this.user = user;
     })
   }

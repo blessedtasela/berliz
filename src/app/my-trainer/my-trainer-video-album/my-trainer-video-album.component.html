@@ -228,14 +228,14 @@
                     <span class="text-[10px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
                         {{ videoCount }} / {{ MAX_VIDEOS }} selected
                     </span>
-                    <span *ngIf="!trainerVideoAlbum.id" class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100
+                    <span *ngIf="!trainerVideoAlbum?.id" class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100
                                px-2 py-0.5 rounded-full">
                         Action required
                     </span>
                 </h2>
                 <p class="text-[11px] text-gray-400 mt-0.5">
-                    {{ trainerVideoAlbum.date
-                    ? 'Registered on ' + formatDate(trainerVideoAlbum.date)
+                    {{ trainerVideoAlbum?.date
+                    ? 'Registered on ' + formatDate(trainerVideoAlbum?.date)
                     : 'No videos registered yet' }}
                 </p>
             </div>

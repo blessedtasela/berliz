@@ -4,12 +4,16 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TagService } from 'src/app/services/tag.service';
-import { genericError } from 'src/validators/form-validators.module';
+import { genericError, imageValidator } from 'src/validators/form-validators.module';
 import { CategoryService } from 'src/app/services/category.service';
-import { Icons } from 'src/app/models/categories.interface';
 import { Tags } from 'src/app/models/tags.interface';
-import { Observable, tap, catchError, of, Subscription } from 'rxjs';
-import { TagStateService } from 'src/app/services/tag-state.service';
+import { Subscription, take } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { loadActiveTags } from 'src/app/state/tag/tag.actions';
+import { selectActiveTags } from 'src/app/state/tag/tag.selectors';
+import { StrapiService } from 'src/app/services/strapi.service';
+import { PhotoResponse } from 'src/app/models/Media.interface';
+import { MediaOwnerType } from 'src/app/models/Media.enum';
 
 @Component({
   selector: 'app-add-category-modal',
@@ -21,37 +25,33 @@ export class AddCategoryModalComponent implements OnInit {
   addCategoryForm!: FormGroup;
   invalidForm: boolean = false;
   responseMessage: any;
-  icons: Icons[];
   tags!: Tags[];
-  selectedIcon: string = '../../../../../assets/icons/gym';
   subscription = new Subscription;
+  selectedFile: File | null = null;
+  previewUrl: string | null = null;
+  photoRequest: PhotoResponse | null = null;
+  uploadingPhoto: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     private categoryService: CategoryService,
-    private tagStateService: TagStateService,
+    private store: Store,
     public dialogRef: MatDialogRef<AddCategoryModalComponent>,
     private ngxService: NgxUiLoaderService,
     private cd: ChangeDetectorRef,
+    private strapiService: StrapiService,
     private snackbarService: SnackBarService) {
-    this.icons = categoryService.getIcons();
   }
 
   ngOnInit(): void {
     this.addCategoryForm = this.formBuilder.group({
       'name': ['', [Validators.required, Validators.minLength(2)]],
-      'photo': ['', [Validators.required, Validators.minLength(2)]],
       'description': ['', [Validators.required, Validators.minLength(20)]],
       'likes': ['0',],
+      'photo': ['', [Validators.required, imageValidator]],
       'tagIds': this.formBuilder.array([], this.validateCheckbox()),
     });
 
-    this.tagStateService.activeTagsData$.subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent();
-      } else {
-        this.tags = cachedData
-      }
-    })
+    this.handleEmitEvent();
   }
 
   ngOnDestroy() {
@@ -59,18 +59,51 @@ export class AddCategoryModalComponent implements OnInit {
   }
 
   handleEmitEvent() {
-    console.log("isCached false");
+    this.ngxService.start();
+    this.store.dispatch(loadActiveTags());
     this.subscription.add(
-      this.tagStateService.getActiveTags().subscribe((tags) => {
-        this.ngxService.start();
+      this.store.select(selectActiveTags).subscribe((tags) => {
         this.tags = tags;
-        this.tagStateService.setActiveTagsSubject(tags);
         this.cd.detectChanges(); // Manually trigger change detection
         this.ngxService.stop();
       })
     );
   }
 
+
+  async onPhotoSelected(event: any): Promise<void> {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    this.selectedFile = file;
+    this.previewUrl = URL.createObjectURL(file);
+
+    try {
+      this.uploadingPhoto = true;
+      const res = (await this.strapiService.uploadToStrapi(file).pipe(take(1)).toPromise()) ?? [];
+      const uploaded = res[0];
+      if (!uploaded) {
+        throw new Error('No file returned from Strapi');
+      }
+
+      this.photoRequest = {
+        id: 0,
+        strapiId: uploaded.id,
+        photoUrl: uploaded.url,
+        name: uploaded.name,
+        mimeType: uploaded.mime,
+        byteSize: uploaded.size,
+        ownerId: 0,
+        mediaOwnerType: MediaOwnerType.CATEGORY_PHOTO,
+        date: new Date(),
+        lastUpdate: new Date(),
+      };
+    } catch (err: any) {
+      this.snackbarService.openSnackBar(err?.error?.message || err?.message || 'Photo upload failed', 'error');
+    } finally {
+      this.uploadingPhoto = false;
+    }
+  }
 
   onCheckboxChanged(event: any) {
     const tags = this.addCategoryForm.get('tagIds') as FormArray;
@@ -92,17 +125,20 @@ export class AddCategoryModalComponent implements OnInit {
 
   addCategory(): void {
     this.ngxService.start();
-    if (this.addCategoryForm.invalid) {
+    if (this.addCategoryForm.invalid || !this.photoRequest) {
       this.invalidForm = true
-      this.responseMessage = "Invalid form"
+      this.responseMessage = this.photoRequest ? "Invalid form" : "Please select a photo"
+      this.snackbarService.openSnackBar(this.responseMessage, "error");
       this.ngxService.stop();
     } else {
       // Get the selected tagIds values as an array
       const selectedTagIds = this.addCategoryForm.value.tagIds.map((tag: any) => tag.tagIds);
       const tagIdsString = selectedTagIds.join(',');
+      const { photo, ...formValue } = this.addCategoryForm.value;
       const formData = {
-        ...this.addCategoryForm.value,
-        tagIds: tagIdsString
+        ...formValue,
+        tagIds: tagIdsString,
+        photoRequest: this.photoRequest,
       };
       this.categoryService.addCategory(formData)
         .subscribe((response: any) => {
@@ -124,8 +160,6 @@ export class AddCategoryModalComponent implements OnInit {
           this.snackbarService.openSnackBar(this.responseMessage, "error");
         });
     }
-    this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {
@@ -134,7 +168,9 @@ export class AddCategoryModalComponent implements OnInit {
 
   clear() {
     this.addCategoryForm.reset();
-    this.selectedIcon = '../../../../../assets/icons/gym';
+    this.selectedFile = null;
+    this.previewUrl = null;
+    this.photoRequest = null;
     this.onCheckboxChanged(event)
   }
 

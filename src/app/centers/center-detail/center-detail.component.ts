@@ -1,7 +1,6 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CenterPhotoAlbum, CenterAnnouncement, CenterCategory, CenterEquipment, CenterIntroduction, CenterLocation, CenterPromotions, CenterReview, CenterStatistics, CenterSubscriptionForm, CenterTrainers, CenterVideoAlbum } from 'src/app/models/centers.interface';
-
+import { CenterPromotions, CenterPhotoAlbum, CenterVideoAlbum, CenterStatistics, CenterSubscriptionForm, CenterIntroduction, CenterCategory, CenterEquipment, CenterTrainers, CenterAnnouncements, CenterReviews, CenterLocations } from 'src/app/models/centers.interface';
 @Component({
   selector: 'app-center-detail',
   templateUrl: './center-detail.component.html',
@@ -10,7 +9,7 @@ import { CenterPhotoAlbum, CenterAnnouncement, CenterCategory, CenterEquipment, 
 export class CenterDetailComponent {
   centerId: number = 0;
   centerPromo: CenterPromotions | any;
-  centerAnnouncements: CenterAnnouncement[] = [];
+  centerAnnouncements: CenterAnnouncements[] = [];
   centerAlbums: CenterPhotoAlbum | any;
   centerHeroVideo: CenterVideoAlbum | any;
   centerStatistics: CenterStatistics | any
@@ -18,9 +17,9 @@ export class CenterDetailComponent {
   centerIntro: CenterIntroduction | any;
   centerCategory: CenterCategory | any;
   centerEquipment: CenterEquipment[] = [];
-  centerTrainer: CenterTrainers | any;
-  centerReview: CenterReview| any;
-  centerLocation: CenterLocation[] = [];
+  centerTrainer: CenterTrainers[] = [];
+  centerReview: CenterReviews[] = [];
+  centerLocation: CenterLocations[] = [];
   onLoading: boolean = false;
 
   constructor(

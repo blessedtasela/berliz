@@ -1,18 +1,26 @@
 <div *ngIf="user" class="flex flex-col gap-4 font-sans">
 
-    <!-- Banner + Avatar -->
+    <!-- ── Banner + Avatar ─────────────────────────────────────── -->
     <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
-        <div class="w-full h-32 overflow-hidden">
-            <img src="../../../../assets/landing/hero-bg-4.jpg" class="w-full h-full object-cover" />
-        </div>
-        <div class="flex flex-col items-center -mt-10 pb-5 px-4 gap-2">
-            <img [src]="'data:image/*;base64,' + user.profilePhoto" onerror="this.src='../../../assets/icons/user.png';"
-                class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md" />
-            <p class="text-sm font-bold text-gray-900">{{ user.firstname }} {{ user.lastname }}</p>
-            <p class="text-[11px] text-gray-400 italic">No partnership application found</p>
 
-            <div
-                class="flex items-center gap-4 border border-gray-200 rounded-xl px-4 py-2 text-xs font-semibold text-gray-500">
+        <div class="w-full h-32 overflow-hidden">
+            <img src="../../../../assets/landing/hero-bg-4.jpg"
+                 class="w-full h-full object-cover" alt="banner" />
+        </div>
+
+        <div class="flex flex-col items-center -mt-10 pb-5 px-4 gap-2">
+            <img [src]="'data:image/*;base64,' + user.profilePhoto"
+                 onerror="this.src='../../../assets/icons/user.png';"
+                 class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md"
+                 alt="profile" />
+
+            <p class="text-sm font-bold text-gray-900">{{ user.firstname }} {{ user.lastname }}</p>
+
+            <span class="text-[11px] text-gray-400 italic">No partnership application found</span>
+
+            <!-- Stats strip -->
+            <div class="flex items-center gap-4 border border-gray-200 rounded-xl px-4 py-2
+                        text-xs font-semibold text-gray-500">
                 <span>0 <span class="font-normal text-gray-400">Likes</span></span>
                 <div class="h-4 w-px bg-gray-200"></div>
                 <span>0 <span class="font-normal text-gray-400">Clients</span></span>
@@ -22,156 +30,56 @@
         </div>
     </div>
 
-    <!-- About section -->
+    <!-- ── About section ──────────────────────────────────────── -->
     <div class="bg-white border border-gray-200 rounded-xl p-5 flex flex-col gap-3">
         <h2 class="text-sm font-bold text-red-600">Unlock your true potential</h2>
         <p class="text-xs text-gray-600 leading-relaxed">
-            Embrace the opportunity to inspire and transform lives. As a Berliz partner, you have the power to
-            ignite passion, foster growth, and open doors to new horizons.
+            Embrace the opportunity to inspire and transform lives. As a Berliz partner, you have the
+            power to ignite passion, foster growth, and open doors to new horizons.
         </p>
         <p class="text-xs text-gray-500 leading-relaxed">
-            Join our global network of dedicated fitness educators and become part of a legacy that has empowered
-            millions to live active and healthy lives.
+            Join our global network of dedicated fitness educators and become part of a legacy that has
+            empowered millions to live active and healthy lives.
         </p>
     </div>
 
-    <!-- Application form -->
+    <!-- ── CTA card — opens modal ─────────────────────────────── -->
     <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
 
+        <!-- Red header -->
         <div class="bg-red-600 px-5 py-4">
             <h2 class="text-sm font-bold text-white">Become a Berliz partner</h2>
-            <p class="text-[11px] text-red-100 mt-0.5">Register today and transform lives</p>
+            <p class="text-[11px] text-red-100 mt-0.5">Register today and transform lives through fitness</p>
         </div>
 
-        <form [formGroup]="addPartnerForm" class="flex flex-col gap-4 p-5">
+        <div class="p-5 flex flex-col gap-4">
 
-            <!-- Validation -->
-            <div *ngIf="invalidForm">
-                <p *ngIf="addPartnerForm.invalid"
-                    class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
-                    <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
-                    Please complete all required fields.
-                </p>
+            <!-- What you'll need checklist -->
+            <div class="flex flex-col gap-2">
+                <p class="text-xs font-semibold text-gray-700">You will need to provide:</p>
+                <ul class="flex flex-col gap-1.5">
+                    <li *ngFor="let item of requirements"
+                        class="flex items-center gap-2 text-xs text-gray-500">
+                        <i-feather name="check-circle" class="text-red-500 shrink-0"
+                                   style="width:12px;height:12px;"></i-feather>
+                        {{ item }}
+                    </li>
+                </ul>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="border-t border-gray-100"></div>
 
-                <!-- Certificate -->
-                <div class="flex flex-col gap-1">
-                    <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Certificate</label>
-                    <input formControlName="certificate" type="file" accept=".pdf"
-                        (change)="onCertificateSelected($event)" class="block w-full text-xs text-gray-600 cursor-pointer
-                   file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0
-                   file:text-xs file:font-semibold file:bg-red-50 file:text-red-600
-                   hover:file:bg-red-100 focus:outline-none" />
-                    <p *ngIf="addPartnerForm.get('certificate')?.hasError('invalidSize') && addPartnerForm.get('certificate')?.dirty"
-                        class="text-[11px] text-red-500 flex items-center gap-1">
-                        <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
-                        File size exceeds 4MB
-                    </p>
-                </div>
-
-                <!-- CV -->
-                <div class="flex flex-col gap-1">
-                    <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">CV</label>
-                    <input formControlName="cv" type="file" accept=".pdf" (change)="onCVSelected($event)" class="block w-full text-xs text-gray-600 cursor-pointer
-                   file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0
-                   file:text-xs file:font-semibold file:bg-red-50 file:text-red-600
-                   hover:file:bg-red-100 focus:outline-none" />
-                    <p *ngIf="addPartnerForm.get('cv')?.hasError('invalidSize') && addPartnerForm.get('cv')?.dirty"
-                        class="text-[11px] text-red-500 flex items-center gap-1">
-                        <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
-                        File size exceeds 4MB
-                    </p>
-                </div>
-
-                <!-- Role -->
-                <div class="flex flex-col gap-1">
-                    <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Partnership
-                        role</label>
-                    <select formControlName="role" class="w-full px-3 py-2 rounded-xl bg-gray-50 border text-sm text-gray-900
-                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="addPartnerForm.get('role')?.invalid && addPartnerForm.get('role')?.touched
-              ? 'border-red-300' : 'border-gray-200'">
-                        <option value="" disabled selected>Select role</option>
-                        <option *ngFor="let role of roles">{{ role.role }}</option>
-                    </select>
-                    <p *ngIf="addPartnerForm.get('role')?.invalid && addPartnerForm.get('role')?.touched"
-                        class="text-[11px] text-red-500 flex items-center gap-1">
-                        <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
-                        Please select a role
-                    </p>
-                </div>
-
-                <!-- Facebook -->
-                <div class="flex flex-col gap-1">
-                    <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Facebook URL</label>
-                    <input formControlName="facebookUrl" type="text" placeholder="https://www.facebook.com/my-profile/"
-                        class="w-full px-3 py-2 rounded-xl bg-gray-50 border text-sm text-gray-900
-                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="addPartnerForm.get('facebookUrl')?.invalid && addPartnerForm.get('facebookUrl')?.dirty
-              ? 'border-red-300' : 'border-gray-200'" />
-                    <p *ngIf="addPartnerForm.get('facebookUrl')?.invalid && addPartnerForm.get('facebookUrl')?.dirty"
-                        class="text-[11px] text-red-500 flex items-center gap-1">
-                        <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
-                        Enter a valid Facebook URL
-                    </p>
-                </div>
-
-                <!-- Instagram -->
-                <div class="flex flex-col gap-1">
-                    <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Instagram URL</label>
-                    <input formControlName="instagramUrl" type="text"
-                        placeholder="https://www.instagram.com/my-profile/" class="w-full px-3 py-2 rounded-xl bg-gray-50 border text-sm text-gray-900
-                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="addPartnerForm.get('instagramUrl')?.invalid && addPartnerForm.get('instagramUrl')?.dirty
-              ? 'border-red-300' : 'border-gray-200'" />
-                    <p *ngIf="addPartnerForm.get('instagramUrl')?.invalid && addPartnerForm.get('instagramUrl')?.dirty"
-                        class="text-[11px] text-red-500 flex items-center gap-1">
-                        <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
-                        Enter a valid Instagram URL
-                    </p>
-                </div>
-
-                <!-- Youtube -->
-                <div class="flex flex-col gap-1">
-                    <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
-                        YouTube URL <span class="text-gray-400 normal-case font-normal">(optional)</span>
-                    </label>
-                    <input formControlName="youtubeUrl" type="text" placeholder="https://www.youtube.com/my-profile/"
-                        class="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-900
-                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
-                    <p *ngIf="addPartnerForm.get('youtubeUrl')?.invalid && addPartnerForm.get('youtubeUrl')?.dirty"
-                        class="text-[11px] text-red-500 flex items-center gap-1">
-                        <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
-                        Enter a valid YouTube URL
-                    </p>
-                </div>
-
-                <!-- Motivation -->
-                <div class="md:col-span-2 flex flex-col gap-1">
-                    <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Motivation</label>
-                    <textarea formControlName="motivation" rows="5"
-                        placeholder="Tell us why you want to be a Berliz partner in at least 50 words" class="w-full px-3 py-2.5 rounded-xl bg-gray-50 border text-sm text-gray-900
-                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
-                   resize-none transition placeholder:text-gray-400" [ngClass]="addPartnerForm.get('motivation')?.invalid && addPartnerForm.get('motivation')?.dirty
-              ? 'border-red-300' : 'border-gray-200'">
-          </textarea>
-                    <p *ngIf="addPartnerForm.get('motivation')?.invalid && addPartnerForm.get('motivation')?.dirty"
-                        class="text-[11px] text-red-500 flex items-center gap-1">
-                        <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
-                        At least 50 characters required
-                    </p>
-                </div>
-
-            </div>
-
-            <div class="flex justify-end pt-1 border-t border-gray-100">
-                <button type="button" (click)="addPartner()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
-                 hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
-                    <i-feather name="send" style="width:13px;height:13px;"></i-feather>
-                    Submit application
+            <!-- Open modal button -->
+            <div class="flex justify-end">
+                <button type="button" (click)="openPartnerForm()"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                           hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                    <i-feather name="send" style="width:12px;height:12px;"></i-feather>
+                   Start application
                 </button>
             </div>
 
-        </form>
+        </div>
     </div>
 
 </div>

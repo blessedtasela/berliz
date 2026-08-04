@@ -3,9 +3,10 @@ import { Component, EventEmitter, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
 import { Exercises } from 'src/app/models/exercise.interface';
-import { ExerciseStateService } from 'src/app/services/exercise-state.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { selectExercises } from 'src/app/state/exercise/exercise.selectors';
 import { UpdateTrainerPhotoModalComponent } from 'src/app/shared/update-trainer-photo-modal/update-trainer-photo-modal.component';
 
 @Component({
@@ -22,7 +23,7 @@ export class ExercisesDetailsModalComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<ExercisesDetailsModalComponent>,
-    private exerciseStateService: ExerciseStateService,
+    private store: Store,
     private dialog: MatDialog,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
@@ -40,10 +41,10 @@ export class ExercisesDetailsModalComponent {
   handleEmit() {
     this.ngxService.start();
     this.subscriptions.push(
-      this.exerciseStateService.getExercises().subscribe((exercises) => {
-        const muscleGroup = exercises.find(muscleGroup => muscleGroup.id == this.exerciseData.id);
-        if (muscleGroup)
-          this.exerciseData = muscleGroup
+      this.store.select(selectExercises).subscribe((exercises) => {
+        const found = exercises.find(exercise => exercise.id == this.exerciseData.id);
+        if (found)
+          this.exerciseData = found
       }),
     );
     this.ngxService.stop();

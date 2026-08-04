@@ -1,10 +1,11 @@
 import { Component, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Users } from 'src/app/models/users.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { UserStateService } from 'src/app/services/user-state.service';
+import { selectUser } from 'src/app/state/user/user.selector';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -16,13 +17,13 @@ export class CenterPartnerFormComponent {
   onAddPartnerEmit = new EventEmitter();
   addPartnerForm!: FormGroup;
   invalidForm: boolean = false;
-  user!: Users;
+  user!: Users | null;
   responseMessage: any;
   selectedCV: any;
   selectedCertificate: any;
 
   constructor(private fb: FormBuilder,
-    private userStateService: UserStateService,
+    private store: Store,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private partnerService: PartnerService,) { }
@@ -42,7 +43,7 @@ export class CenterPartnerFormComponent {
   }
 
   handleEmitEvent() {
-    this.userStateService.getUser().subscribe((user) => {
+    this.store.select(selectUser).subscribe((user) => {
       this.user = user;
     });
   }
@@ -65,7 +66,7 @@ export class CenterPartnerFormComponent {
 
   addPartner(): void {
     const requestData = new FormData();
-    requestData.append('email', this.user?.email);
+    requestData.append('email', this.user?.email ?? '');
     requestData.append('certificate', this.addPartnerForm.get('certificate')?.value);
     requestData.append('motivation', this.addPartnerForm.get('motivation')?.value);
     requestData.append('cv', this.addPartnerForm.get('cv')?.value);

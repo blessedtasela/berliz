@@ -17,7 +17,7 @@
             <tbody>
                 <tr *ngFor="let task of tasksData; let i = index" class="bg-gray-100 hover:bg-gray-200">
                     <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ task.user.email }}</td>
+                    <td class="border-b border-gray-400 px-4 py-2">{{ task.userEmail }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">{{ task.status }}</td>
                     <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(task.date) }}</td>
                     <td class="border-b border-gray-400 px-4 py-2 font-bold">{{ task.id }}</td>

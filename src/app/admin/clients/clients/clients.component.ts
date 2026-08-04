@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Categories } from 'src/app/models/categories.interface';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { Clients } from 'src/app/models/clients.interface';
-import { ClientStateService } from 'src/app/services/client-state.service';
+import { loadClients } from 'src/app/state/client/client.actions';
+import { selectClients } from 'src/app/state/client/client.selectors';
 
 @Component({
   selector: 'app-clients',
@@ -15,33 +17,31 @@ export class ClientsComponent {
   clientsLength: number = 0;
   searchComponent: string = 'client'
   isSearch: boolean = true;
+  subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
-    public clientStateService: ClientStateService) {
+    private store: Store) {
   }
 
   ngOnInit(): void {
-    this.clientStateService.allClientsData$.subscribe((cachedData) => {
-      if (cachedData === null) {
-        this.handleEmitEvent()
-      } else {
-        this.clientsData = cachedData;
-        this.totalClients = cachedData.length
-        this.clientsLength = cachedData.length
-      }
-    });
+    this.handleEmitEvent();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   handleEmitEvent() {
-    this.clientStateService.getAllClients().subscribe((clients) => {
-      this.ngxService.start()
-      console.log('isCachedData false')
-      this.clientsData = clients;
-      this.totalClients = clients.length
-      this.clientsLength = clients.length
-      this.clientStateService.setAllClientsSubject(this.clientsData);
-      this.ngxService.stop()
-    });
+    this.ngxService.start()
+    this.store.dispatch(loadClients());
+    this.subscriptions.push(
+      this.store.select(selectClients).subscribe((clients) => {
+        this.clientsData = clients;
+        this.totalClients = clients.length
+        this.clientsLength = clients.length
+        this.ngxService.stop()
+      })
+    );
   }
 
   handleSearchResults(results: Clients[]): void {

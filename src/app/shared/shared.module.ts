@@ -30,6 +30,8 @@ import { RenewSubscriptionModalComponent } from './renew-subscription-modal/rene
 import { SearchPanelComponent } from './search-panel/search-panel.component';
 import { SkeletonLoaderComponent } from './skeleton-loader/skeleton-loader.component';
 import { UpdatePartnerFileModalComponent } from './update-partner-file-modal/update-partner-file-modal.component';
+import { PartnerFormComponent } from './partner-form/partner-form.component';
+import { AppRoutingModule } from "src/app/app-routing.module";
 
 
 
@@ -59,6 +61,7 @@ import { UpdatePartnerFileModalComponent } from './update-partner-file-modal/upd
     SearchPanelComponent,
     SkeletonLoaderComponent,
     UpdatePartnerFileModalComponent,
+    PartnerFormComponent,
   ],
   imports: [
     CommonModule,
@@ -71,8 +74,9 @@ import { UpdatePartnerFileModalComponent } from './update-partner-file-modal/upd
     NgxMaskPipe,
     FormsModule,
     FeatherModule,
-    FormsModule
-  ],
+    FormsModule,
+    AppRoutingModule
+],
   exports: [
     CommonModule,
     ReactiveFormsModule,
