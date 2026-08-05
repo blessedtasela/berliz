@@ -12,9 +12,9 @@
   <!-- Metrics row -->
   <div class="grid grid-cols-3 gap-2" *ngIf="notifications.length > 0">
 
-    <div class="flex flex-col items-center bg-gray-100 rounded-xl py-2 px-1 border border-gray-100">
-      <span class="text-lg font-bold text-gray-800">{{ totalCount }}</span>
-      <span class="text-[10px] text-gray-500 mt-0.5">Total</span>
+    <div class="flex flex-col items-center bg-gray-50 rounded-xl py-2 px-1 border border-gray-200">
+      <span class="text-lg font-bold text-gray-900">{{ totalCount }}</span>
+      <span class="text-[10px] text-gray-400 mt-0.5">Total</span>
     </div>
 
     <div class="flex flex-col items-center bg-red-50 rounded-xl py-2 px-1 border border-red-100">
@@ -40,12 +40,12 @@
     </a>
   </div>
 
-  <!-- Notification list (scrollable, max 12) -->
+  <!-- Notification list (scrollable, max 10) -->
   <div *ngIf="notifications.length > 0"
     class="flex flex-col gap-2 overflow-y-auto pr-1"
     style="max-height: 380px;">
 
-    <div *ngFor="let n of notifications | slice:0:12"
+    <div *ngFor="let n of notifications | slice:0:10"
       (click)="openNotificationModal(n)"
       class="p-3 rounded-xl cursor-pointer transition border flex items-start gap-3"
       [ngClass]="n.read
@@ -86,14 +86,13 @@
 
   </div>
 
-  <!-- More indicator -->
-  <div *ngIf="notifications.length > 12"
-    class="text-center text-[11px] text-gray-400">
-    +{{ notifications.length - 12 }} more —
-    <a routerLink="/dashboard/my-notifications"
-      class="text-red-600 font-semibold hover:underline">
-      view all
-    </a>
-  </div>
+  <!-- Show more card -->
+  <a *ngIf="notifications.length > 10" routerLink="/dashboard/my-notifications"
+    class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-dashed border-gray-300 bg-gray-50
+           hover:border-red-400 hover:bg-red-50 transition text-xs font-semibold text-gray-700">
+    +{{ notifications.length - 10 }} more
+    <span class="text-red-600">View all</span>
+    <i-feather name="arrow-right" class="text-red-600" style="width:12px;height:12px;"></i-feather>
+  </a>
 
 </div>

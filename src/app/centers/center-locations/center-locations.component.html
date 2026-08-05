@@ -1,45 +1,56 @@
-<div class="justify-between mt-40 font-sans mx-auto flex flex-col justify-center items-center">
-    <div class="text-4xl mb-5 text-center">
-        Special Announcements
-    </div>
-    <i-feather name="Bell" style="width: 50px;" class="text-red-600 font-bold"></i-feather>
-</div>
-<section class="mx-auto mb-2 px-2 space-y-1 mt-40">
-    <section class="flex justify-center items-center cursor-pointer">
-        <div class="bg-gray-100 rounded-md m-5 min-h[900px] grid grid-cols md:grid-cols-2">
+<section class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
 
-            <div class="grid grid-cols md:grid-cols-2 justify-center items-center p-4 gap-10
-                transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                *ngFor="let centerLocation of centerLocations; let i = index"
-                [ngClass]="{ 'hidden' : i >= 9 && !showAllLocations }">
-                <div class="flex">
-                    <img class="rounded-md mx-auto" [src]="centerLocation.coverPhotoUrl">
-                </div>
-                <div class="p-4">
-                    <p class="text-red-600 font-bold font-sans text-sm text-center mb-2 uppercase">
-                        {{ centerLocation.subName }}
-                    </p>
-                    <p class="text-gray-600 font-bold font-sans text-sm text-justify">
-                        {{ centerLocation.address }}
-                    </p>
-                    <div class="text-center">
-                        <button class="m-4 text-sm  bg-red-600 text-gray-200 p-1 px-2 mt-3 hover:bg-red-700 hero-button font-sans
-                        rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
-                            <i-feather name="Star" style="width: 14px;"
-                                class="font-boldt ext-gray-200 ml-1 -mb-3"></i-feather>
-                        </button>
-                    </div>
-                </div>
-                <hr class="text-red-600 border-gray-600 border-bold">
-            </div>
+    <div class="flex items-center justify-between gap-3">
+        <div>
+            <h2 class="text-sm font-bold text-gray-900">Locations</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                {{ centerLocations.length }}
+                {{ centerLocations.length === 1 ? 'branch' : 'branches' }} you can train at
+            </p>
         </div>
-    </section>
-    <div class="p-3" *ngFor="let a of centerLocations; let i = index"
-        [ngClass]="{ 'hidden' : i <= 9 && !showAllLocations }">
-        <button
-            class="p-2 px-4 bg-gray-100 text-red-600 font-sans font-bold rounded-md mx-auto flex justify-center mt-2"
-            (click)="allLocations()">
-            {{ !showAllLocations ? 'See more' : 'See less' }}
+        <button *ngIf="centerLocations.length > 4" type="button" (click)="allLocations()"
+            class="text-[11px] font-semibold text-red-600 hover:text-red-700 transition shrink-0">
+            {{ !showAllLocations ? 'See all' : 'See less' }}
         </button>
     </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <div *ngIf="centerLocations.length; else noLocations" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div *ngFor="let centerLocation of centerLocations; let i = index"
+            [ngClass]="{ 'hidden': i >= 4 && !showAllLocations }"
+            class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden flex flex-col hover:border-red-200 transition">
+
+            <div class="h-32 w-full bg-gray-100">
+                <img [src]="centerLocation.coverPhotoUrl" [alt]="centerLocation.subName"
+                    class="w-full h-full object-cover" onerror="this.src='assets/landing/hero-gym-centers.jpg';" />
+            </div>
+
+            <div class="p-3 flex flex-col gap-2 flex-1">
+                <div>
+                    <p class="text-[11px] uppercase tracking-wide text-gray-400">Branch</p>
+                    <p class="text-xs font-bold text-gray-900 mt-0.5">{{ centerLocation.subName }}</p>
+                </div>
+
+                <p class="text-[11px] text-gray-600 leading-relaxed flex-1">
+                    {{ centerLocation.address }}
+                </p>
+
+                <a *ngIf="centerLocation.locationUrl" [href]="centerLocation.locationUrl" target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-[10px] font-semibold text-red-600 hover:text-red-700 transition flex items-center gap-1 pt-2 border-t border-gray-200">
+                    <i-feather name="map-pin" style="width:11px;height:11px;"></i-feather>
+                    Open in maps
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #noLocations>
+        <div class="flex items-center gap-2 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3">
+            <i-feather name="info" style="width:13px;height:13px;"></i-feather>
+            <span class="text-xs">No locations published for this center yet.</span>
+        </div>
+    </ng-template>
+
 </section>

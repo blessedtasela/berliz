@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CenterCategory } from 'src/app/models/centers.interface';
+import { Categories } from 'src/app/models/categories.interface';
 
 @Component({
   selector: 'app-center-categories',
@@ -7,14 +7,20 @@ import { CenterCategory } from 'src/app/models/centers.interface';
   styleUrls: ['./center-categories.component.css']
 })
 export class CenterCategoriesComponent {
- @Input() centerCategories: CenterCategory | undefined;
+  /**
+   * Active platform categories this center is registered under, resolved by the
+   * parent from `Centers.categoryIds`. Replaces the legacy `CenterCategory`
+   * type, which has no backing NgRx action/state.
+   */
+  @Input() centerCategories: Categories[] = [];
 
- constructor() {
+  showAllCategories: boolean = false;
 
- }
+  formatCategoryName(name: string | undefined): string {
+    return (name ?? '').trim().replace(/\s+/g, '-').toLowerCase();
+  }
 
- // format the trainer's name for the URL
- formatCategoryName(name: string): string {
-  return name.replace(/\s+/g, '-').toLowerCase();
-}
+  allCategories(): void {
+    this.showAllCategories = !this.showAllCategories;
+  }
 }

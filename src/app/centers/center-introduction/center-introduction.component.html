@@ -1,24 +1,22 @@
-<section class="w-full rounded-md cursor-pointer mt-20 mx-auto">
-    <div class="grid md:grid-cols-2 mx-auto px-4">
-        <p class="w-full text-center text-2xl font-sans font-bold text-red-600 text-transform: uppercase sm:mb-3">
-            Know us
-        </p>
-        <P class="w-full text-right font-sans text-md font-bold uppercase px-4">
-            ....Who are we
-        </P>
-        <div class="order-1 flex justify-center items-center mt-2 md:mt-0">
-            <img class="w-[400px] h-[400px] object-cover m-2 md:w-[500px] md:h-[450px] rounded-md mb-4 md:mb-0
-            transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                src="../../../assets/landing/hero-bg-4.jpg">
-        </div>
-        <div class="order-1 grid grid-cols-1 text-justify items-center bg-gray-100 m-8 rounded-md mx-auto">
-            <p class="text-sm w-100 font-sans mx-5 mb-5 md:mb-0">
-               {{ centerIntroduction?.introduction }}
-            </p>        
-            <button class="text-sm font-sans bg-red-600 text-white py-2 mb-5 px-5 hover:bg-red-700 rounded-md mx-auto
-                transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
-                Join Now
-            </button>
-        </div>
+<section class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
+
+    <div>
+        <h2 class="text-sm font-bold text-gray-900">About this center</h2>
+        <p class="text-[11px] text-gray-400 mt-0.5">Who we are and what we stand for</p>
     </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <p *ngIf="centerIntroduction?.introduction; else noIntroduction"
+        class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+        {{ centerIntroduction?.introduction }}
+    </p>
+
+    <ng-template #noIntroduction>
+        <div class="flex items-center gap-2 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3">
+            <i-feather name="info" style="width:13px;height:13px;"></i-feather>
+            <span class="text-xs">This center has not published an introduction yet.</span>
+        </div>
+    </ng-template>
+
 </section>

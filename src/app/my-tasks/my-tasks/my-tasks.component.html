@@ -1,1 +1,240 @@
-<p>my-tasks works!</p>
+<div class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- ── Header ─────────────────────────────────────────────────────── -->
+    <div class="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3 flex-wrap">
+        <div>
+            <h2 class="text-sm font-bold text-gray-900">
+                {{ isTrainer ? 'Assigned Tasks' : 'My Tasks' }}
+            </h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                {{ isTrainer
+                ? 'Exercise-based tasks you have assigned to your clients'
+                : 'Exercise-based tasks your trainer assigned to you' }}
+            </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <span
+                class="text-[10px] font-semibold text-gray-400 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-full">
+                {{ tasks.length }} task{{ tasks.length !== 1 ? 's' : '' }}
+            </span>
+
+            <button type="button" (click)="reload()"
+                class="w-7 h-7 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 flex items-center justify-center transition active:scale-95"
+                title="Refresh">
+                <i-feather name="refresh-cw" style="width:12px;height:12px;"></i-feather>
+            </button>
+
+            <button *ngIf="isTrainer" type="button" (click)="openAssignTask()"
+                class="bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition">
+                <i-feather name="plus-circle" style="width:13px;height:13px;"></i-feather>
+                Assign task
+            </button>
+        </div>
+    </div>
+
+    <!-- ── Loading ────────────────────────────────────────────────────── -->
+    <div *ngIf="loading && tasks.length === 0"
+        class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-3">
+        <div *ngFor="let s of [1,2,3]" class="animate-pulse flex flex-col gap-2">
+            <div class="h-3 w-1/3 bg-gray-100 rounded-full"></div>
+            <div class="h-2.5 w-2/3 bg-gray-100 rounded-full"></div>
+            <div class="h-2 w-1/4 bg-gray-100 rounded-full"></div>
+        </div>
+    </div>
+
+    <!-- ── Empty state ────────────────────────────────────────────────── -->
+    <div *ngIf="!loading && tasks.length === 0"
+        class="bg-white rounded-2xl border border-gray-200 p-10 flex flex-col items-center justify-center gap-3 text-center">
+
+        <div class="w-14 h-14 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center">
+            <i-feather name="check-square" class="text-red-600" style="width:22px;height:22px;"></i-feather>
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <p class="text-sm font-bold text-gray-900">
+                {{ isTrainer ? 'No tasks assigned yet' : 'No tasks yet' }}
+            </p>
+            <p class="text-xs text-gray-400 max-w-xs">
+                {{ isTrainer
+                ? 'Assign an exercise-based task to a client and it will show up here with its steps and due date.'
+                : 'When your trainer assigns you a task, it will appear here with each exercise step to work through.'
+                }}
+            </p>
+        </div>
+
+        <button *ngIf="isTrainer" type="button" (click)="openAssignTask()"
+            class="mt-1 bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition">
+            <i-feather name="plus-circle" style="width:13px;height:13px;"></i-feather>
+            Assign your first task
+        </button>
+    </div>
+
+    <!-- ── Task list ──────────────────────────────────────────────────── -->
+    <div *ngIf="tasks.length > 0" class="flex flex-col gap-3">
+
+        <div *ngFor="let task of tasks; trackBy: trackByTaskId"
+            class="bg-white rounded-xl border p-4 flex flex-col gap-3 transition" [ngClass]="{
+                'border-red-200 bg-red-50/40': isTaskComplete(task),
+                'border-gray-200 hover:shadow-sm': !isTaskComplete(task)
+            }">
+
+            <!-- Top row -->
+            <div class="flex items-start justify-between gap-3">
+
+                <div class="flex flex-col gap-1 min-w-0 flex-1">
+
+                    <p class="text-[11px] uppercase tracking-wide text-gray-400">
+                        {{ isTrainer ? 'Client' : 'Assigned by' }}
+                    </p>
+                    <p class="text-xs font-semibold text-gray-900 truncate">
+                        {{ isTrainer ? clientName(task) : (task.trainerName || 'Your trainer') }}
+                    </p>
+
+                    <p class="text-sm text-gray-700 leading-snug mt-1.5 break-words">
+                        {{ task.description }}
+                    </p>
+                </div>
+
+                <div class="flex flex-col items-end gap-1.5 shrink-0">
+
+                    <!-- Priority badge -->
+                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border capitalize" [ngClass]="{
+                            'bg-red-50 text-red-600 border-red-100':        priorityKey(task) === 'high',
+                            'bg-amber-50 text-yellow-600 border-amber-100': priorityKey(task) === 'medium',
+                            'bg-gray-50 text-gray-500 border-gray-200':     priorityKey(task) === 'low' || priorityKey(task) === 'none'
+                        }">
+                        {{ priorityLabel(task) }}
+                    </span>
+
+                    <!-- Status badge -->
+                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border capitalize" [ngClass]="isActive(task)
+                            ? 'bg-green-50 text-green-700 border-green-100'
+                            : 'bg-gray-50 text-gray-500 border-gray-200'">
+                        {{ statusLabel(task) }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-100"></div>
+
+            <!-- Dates + step summary -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-[11px] uppercase tracking-wide text-gray-400">Starts</span>
+                    <span class="text-xs text-gray-700 flex items-center gap-1">
+                        <i-feather name="play-circle" class="text-gray-400" style="width:11px;height:11px;"></i-feather>
+                        {{ task.startDate ? (task.startDate | date:'mediumDate') : '—' }}
+                    </span>
+                </div>
+
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-[11px] uppercase tracking-wide text-gray-400">Due</span>
+                    <span class="text-xs font-medium flex items-center gap-1"
+                        [ngClass]="isOverdue(task) ? 'text-red-600' : 'text-gray-700'">
+                        <i-feather name="calendar" style="width:11px;height:11px;"></i-feather>
+                        {{ task.endDate ? (task.endDate | date:'mediumDate') : '—' }}
+                    </span>
+                    <span *ngIf="daysLeft(task) !== null && !isTaskComplete(task)" class="text-[10px]"
+                        [ngClass]="isOverdue(task) ? 'text-red-500' : 'text-gray-400'">
+                        {{ isOverdue(task)
+                        ? (-(daysLeft(task) || 0)) + ' day(s) overdue'
+                        : daysLeft(task) + ' day(s) left' }}
+                    </span>
+                </div>
+
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-[11px] uppercase tracking-wide text-gray-400">Steps</span>
+                    <span class="text-xs text-gray-700 flex items-center gap-1">
+                        <i-feather name="check-square" class="text-gray-400"
+                            style="width:11px;height:11px;"></i-feather>
+                        {{ progressLabel(task) }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Progress bar (client view only — completion is local) -->
+            <div *ngIf="!isTrainer && stepsTotal(task) > 0" class="flex items-center gap-2">
+                <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-red-600 rounded-full transition-all duration-300"
+                        [style.width.%]="progressPercent(task)"></div>
+                </div>
+                <span class="text-[10px] font-semibold text-gray-400 shrink-0 w-8 text-right">
+                    {{ progressPercent(task) }}%
+                </span>
+            </div>
+
+            <!-- Expand toggle -->
+            <div class="flex items-center justify-between">
+                <button type="button" (click)="toggleExpanded(task)"
+                    class="text-xs text-gray-500 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-xl font-semibold flex items-center gap-1.5 transition">
+                    <i-feather [name]="isExpanded(task) ? 'chevron-up' : 'chevron-down'"
+                        style="width:11px;height:11px;"></i-feather>
+                    {{ isExpanded(task) ? 'Hide steps' : 'View ' + stepsTotal(task) + ' step' + (stepsTotal(task) === 1
+                    ? '' : 's') }}
+                </button>
+
+                <span *ngIf="isTaskComplete(task)"
+                    class="text-[10px] font-semibold text-red-600 flex items-center gap-1">
+                    <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
+                    All steps done
+                </span>
+            </div>
+
+            <!-- Sub-step checklist -->
+            <div *ngIf="isExpanded(task)" class="flex flex-col gap-2 pt-1">
+
+                <div *ngIf="stepsTotal(task) === 0"
+                    class="flex flex-col items-center justify-center py-6 gap-2 text-gray-400 bg-gray-50 border border-gray-100 rounded-xl">
+                    <i-feather name="file-text" style="width:20px;height:20px;"></i-feather>
+                    <p class="text-[11px] italic">This task has no exercise steps.</p>
+                </div>
+
+                <div *ngFor="let sub of subSteps(task); trackBy: trackBySubTaskId"
+                    class="flex items-start gap-3 p-2.5 rounded-xl border transition" [ngClass]="{
+                        'border-red-200 bg-red-50': isStepDone(sub),
+                        'border-gray-200 bg-gray-50': !isStepDone(sub)
+                    }">
+
+                    <button type="button" (click)="toggleStep(sub, $event)" [disabled]="isTrainer"
+                        class="mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition"
+                        [ngClass]="{
+                            'border-red-500 bg-red-600': isStepDone(sub),
+                            'border-gray-300 hover:border-red-400': !isStepDone(sub),
+                            'cursor-default opacity-60': isTrainer
+                        }">
+                        <i-feather *ngIf="isStepDone(sub)" name="check" class="text-white"
+                            style="width:10px;height:10px;"></i-feather>
+                    </button>
+
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-medium text-gray-900 break-words"
+                            [ngClass]="{ 'line-through text-gray-400': isStepDone(sub) }">
+                            {{ sub.name || sub.exerciseName || 'Step' }}
+                        </p>
+                        <p *ngIf="sub.exerciseName" class="text-[11px] text-gray-400 flex items-center gap-1 mt-0.5">
+                            <i-feather name="activity" style="width:10px;height:10px;"></i-feather>
+                            {{ sub.exerciseName }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Honest note about where completion lives -->
+                <p *ngIf="!isTrainer && stepsTotal(task) > 0"
+                    class="text-[10px] text-gray-400 italic flex items-center gap-1 mt-0.5">
+                    <i-feather name="info" style="width:10px;height:10px;"></i-feather>
+                    Step progress is saved on this device — the API does not track sub-step completion yet.
+                </p>
+
+                <p *ngIf="isTrainer && stepsTotal(task) > 0"
+                    class="text-[10px] text-gray-400 italic flex items-center gap-1 mt-0.5">
+                    <i-feather name="info" style="width:10px;height:10px;"></i-feather>
+                    Per-step completion is not reported back by the API yet.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+</div>

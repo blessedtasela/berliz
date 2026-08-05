@@ -1,0 +1,63 @@
+<div class="bg-white font-sans rounded-xl border border-gray-200 p-4 flex flex-col gap-4 mt-4">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between flex-wrap gap-2">
+        <div>
+            <h2 class="text-sm font-bold text-gray-900">Likes</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                {{ centerLikes.length }} member{{ centerLikes.length !== 1 ? 's' : '' }} liked your center
+            </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <input type="text" [(ngModel)]="searchTerm" placeholder="Search by email" class="px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200 text-xs text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition
+                       placeholder:text-gray-400" />
+
+            <select [(ngModel)]="sortOrder" class="px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200 text-xs text-gray-700
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="asc">Email A–Z</option>
+                <option value="desc">Email Z–A</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <!-- Empty state -->
+    <div *ngIf="centerLikes.length === 0" class="flex flex-col items-center justify-center py-10 gap-2 text-gray-400">
+        <i-feather name="heart" style="width:28px;height:28px;"></i-feather>
+        <p class="text-xs italic">No likes yet.</p>
+    </div>
+
+    <!-- List -->
+    <div *ngIf="centerLikes.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-2">
+
+        <div *ngFor="let like of visibleLikes()"
+            class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3">
+
+            <div class="w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center shrink-0">
+                <i-feather name="heart" style="width:14px;height:14px;" class="text-red-500"></i-feather>
+            </div>
+
+            <div class="flex-1 min-w-0 flex flex-col gap-0.5">
+                <p class="text-xs font-semibold text-gray-900 truncate">{{ like.userEmail }}</p>
+                <p class="text-[11px] text-gray-400">{{ formatDate(like.date) }}</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- See more / less -->
+    <div *ngIf="filteredLikes().length > pageSize" class="flex justify-center pt-1">
+        <button type="button" (click)="toggleShowAll()"
+            class="text-xs font-semibold text-red-600 hover:underline flex items-center gap-1 transition">
+            <i-feather [name]="showAll ? 'chevron-up' : 'chevron-down'" style="width:13px;height:13px;"></i-feather>
+            {{ showAll ? 'See less' : 'See ' + (filteredLikes().length - pageSize) + ' more' }}
+        </button>
+    </div>
+
+</div>

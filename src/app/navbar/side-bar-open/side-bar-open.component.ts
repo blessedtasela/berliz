@@ -15,6 +15,7 @@ import { loadUser } from 'src/app/state/user/user.actions';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { Notifications } from 'src/app/models/Notifications.interface';
 import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
+import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
 
 @Component({
   selector: 'app-side-bar-open',
@@ -79,6 +80,7 @@ export class SideBarOpenComponent implements OnInit, OnDestroy {
   // NOTIFICATIONS
   // -----------------------------
   private refreshNotifications(): void {
+    this.store.dispatch(loadMyNotifications());
     this.store.select(selectMyNotifications)
       .subscribe((notifications: Notifications[]) => {
         this.notificationLength =

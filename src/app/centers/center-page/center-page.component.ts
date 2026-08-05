@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { CenterCategory, Centers } from 'src/app/models/centers.interface';
 import { selectActiveCenters } from 'src/app/state/center/center.selectors';
+import { loadActiveCenters } from 'src/app/state/center/center.actions';
 
 @Component({
   selector: 'app-center-page',
@@ -22,6 +23,7 @@ export class CenterPageComponent implements OnInit {
     private ngxService: NgxUiLoaderService) { }
 
   ngOnInit(): void {
+    this.store.dispatch(loadActiveCenters());
     this.store.select(selectActiveCenters).subscribe((cachedData) => {
       if (!cachedData) {
         this.handleEmitEvent()

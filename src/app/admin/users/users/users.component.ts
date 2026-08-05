@@ -4,6 +4,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { selectUsers } from 'src/app/state/user/user.selector';
+import { loadAllUsers } from 'src/app/state/user/user.actions';
 
 @Component({
   selector: 'app-user',
@@ -23,6 +24,7 @@ export class UsersComponent {
   }
 
   ngOnInit(): void {
+    this.store.dispatch(loadAllUsers());
     this.handleEmitEvent()
     // this.userStateService.allUsersData$.subscribe((cachedData) => {
     //   if (!cachedData) {

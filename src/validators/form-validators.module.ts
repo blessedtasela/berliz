@@ -145,9 +145,9 @@ export function fullNameValidator(): ValidatorFn {
 }
 
 
-export const genericError = "An error occured while connecting to the server";
+export const genericError = "Something went wrong on our end — give it another shot.";
 
-export const UNAUTHORIZED = "You are not authorized to access this page!";
+export const UNAUTHORIZED = "You don't have access to this page.";
 
 @NgModule({
   declarations: [],

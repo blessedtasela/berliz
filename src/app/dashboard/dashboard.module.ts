@@ -21,6 +21,7 @@ import { SharedModule } from '../shared/shared.module';
 import { DashboardMainComponent } from './dashboard-main/dashboard-main.component';
 import { DashboardRouteComponent } from './dashboard-route/dashboard-route.component';
 import { DashboardSubscriptionAnalyticsComponent } from './dashboard-subscription-analytics/dashboard-subscription-analytics.component';
+import { DashboardExercisesComponent } from './exercises/dashboard-exercises.component';
 
 
 
@@ -37,7 +38,8 @@ import { DashboardSubscriptionAnalyticsComponent } from './dashboard-subscriptio
     TodaysTodoModalComponent,
     DashboardMainComponent,
     DashboardRouteComponent,
-    DashboardSubscriptionAnalyticsComponent
+    DashboardSubscriptionAnalyticsComponent,
+    DashboardExercisesComponent
   ],
   imports: [
     CommonModule,

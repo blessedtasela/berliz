@@ -92,6 +92,13 @@ export class CategoryEffects {
     ))
   ));
 
+  // A like/unlike changes which categories the current user has liked — refresh
+  // that cache so the filled-heart state self-heals after the optimistic flip.
+  reloadMyLikesAfterLike$ = createEffect(() => this.actions$.pipe(
+    ofType(A.likeCategorySuccess),
+    map(() => A.loadMyCategoryLikes())
+  ));
+
   loadCategoryLikes$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadCategoryLikes),
     mergeMap(() => this.svc.getCategoryLikes().pipe(

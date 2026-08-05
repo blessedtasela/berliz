@@ -9,6 +9,7 @@ import { Users } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TaskService } from 'src/app/services/task.service';
 import { selectUsers } from 'src/app/state/user/user.selector';
+import { loadActiveUsers } from 'src/app/state/user/user.actions';
 import { loadSubTasks } from 'src/app/state/task/task.actions';
 import { selectSubTasks } from 'src/app/state/task/task.selectors';
 import { genericError } from 'src/validators/form-validators.module';
@@ -65,6 +66,7 @@ export class AddTasksModalComponent {
         this.cd.detectChanges(); // Manually trigger change detection
       })
     );
+    this.store.dispatch(loadActiveUsers());
     this.store.dispatch(loadSubTasks());
   }
 
@@ -92,6 +94,7 @@ export class AddTasksModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
+      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       // Get the selected tagIds values as an array
       const selectedTagIds = this.addTaskForm.value.tagIds.map((tag: any) => tag.tagIds);
@@ -123,7 +126,6 @@ export class AddTasksModalComponent {
         });
     }
     this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

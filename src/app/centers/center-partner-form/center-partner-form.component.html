@@ -1,143 +1,59 @@
-<section class="px-4 py-12 font-sans">
-    <div class="max-w-2xl mx-auto rounded-2xl shadow-md border transition duration-300 bg-zinc-900"
-        [ngClass]="{ 'border-red-600': addPartnerForm.invalid && invalidForm, 'border-gray-800': !invalidForm }">
-        <!-- Header -->
-        <header class="text-center px-6 py-6 text-white">
-            <h1 class="text-2xl font-bold">Become a Berliz Partner</h1>
-            <p class="text-sm italic mt-2">
-                Join a global network and empower lives through health and fitness.
+<!-- ═══════════════════════════════════════════════
+     BECOME A CENTER PARTNER — CTA STRIP + MODAL TRIGGER
+════════════════════════════════════════════════ -->
+
+<section class="w-full bg-zinc-950 px-4 pb-20 font-sans">
+    <div class="max-w-2xl mx-auto">
+        <div class="relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 px-8 py-10">
+
+            <!-- Red glow -->
+            <div class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-red-600/10 blur-3xl pointer-events-none">
+            </div>
+
+            <div
+                class="w-12 h-12 rounded-xl bg-red-600/10 border border-red-600/20 flex items-center justify-center mx-auto mb-4">
+                <i-feather name="home" class="text-red-500" style="width:20px;height:20px;">
+                </i-feather>
+            </div>
+
+            <h2 class="text-xl font-extrabold text-white text-center mb-2">
+                Ready to list your center on Berliz?
+            </h2>
+
+            <p class="text-sm text-zinc-400 max-w-md mx-auto text-center mb-8 leading-relaxed">
+                Apply to become a certified Berliz center partner. Submit your credentials and we'll review your
+                application within 48 hours.
             </p>
-        </header>
 
-        <!-- Form -->
-        <form [formGroup]="addPartnerForm" class="bg-zinc-100 rounded-b-2xl px-6 py-6 space-y-6">
-            <!-- Validation Message -->
-            <div class="text-sm text-center">
-                <span *ngIf="!addPartnerForm.invalid && invalidForm" class="text-green-600 font-medium">
-                    Everything looks good!
-                </span>
-                <span *ngIf="addPartnerForm.invalid && addPartnerForm.dirty" class="text-red-600 font-medium">
-                    Please complete all required fields.
-                </span>
-            </div>
-            <!-- Uploads Section -->
-            <div class="flex items-center justify-center space-x-6 mt-8">
+            <!-- Requirements -->
+            <div class="max-w-lg mx-auto mb-8">
+                <p class="text-sm font-semibold text-white mb-3">
+                    You will need:
+                </p>
 
-                <!-- Certificate Upload -->
-                <div class="text-center">
-                    <label class="block font-bold text-black mb-2"></label>
+                <ul class="flex flex-col gap-3">
+                    <li *ngFor="let item of requirements" class="flex items-start gap-3 text-sm text-zinc-300">
 
-                    <div
-                        class="w-24 h-24 border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center cursor-pointer relative hover:shadow-md transition">
-                        <feather-icon name="file-text" class="w-6 h-6 text-gray-400"></feather-icon>
-                        <input type="file" accept=".pdf" formControlName="certificate"
-                            (change)="onCertificateSelected($event)"
-                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                    </div>
-                    <!-- Wrapper -->
-                    <div class="mt-2 flex flex-col items-center text-center">
-                        <!-- Default Message -->
-                        <p *ngIf="!selectedCertificate" class="text-xs text-black italic">
-                            Upload Certifcation
-                        </p>
-                        <!-- File Selected -->
-                        <div *ngIf="selectedCertificate" class="flex flex-col items-center">
-                            <p class="text-xs text-green-500 truncate max-w-[160px] flex items-center gap-1">
-                                <!-- <feather-icon name="file-text" class="w-2 h-2 text-red-600"></feather-icon> -->
-                                {{ selectedCertificate }}
-                            </p>
-                            <button type="button" (click)="selectedCertificate = null"
-                                class="text-red-600 hover:underline text-xs mt-1">
-                                Remove
-                            </button>
-                        </div>
-                    </div>
-                    <div *ngIf="addPartnerForm.get('certificate')?.invalid && addPartnerForm.get('certificate')?.dirty"
-                        class="text-xs text-red-400 mt-1">
-                        Upload a valid Certificate file
-                    </div>
-                </div>
+                        <i-feather name="check-circle" class="text-red-500 shrink-0 mt-0.5"
+                            style="width:14px;height:14px;">
+                        </i-feather>
 
-
-                <!-- CV Upload -->
-                <div class="text-center">
-                    <label class="block font-bold text-black mb-2"></label>
-
-                    <div
-                        class="w-24 h-24 border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center cursor-pointer relative hover:shadow-md transition">
-                        <feather-icon name="file-text" class="w-6 h-6 text-gray-400"></feather-icon>
-                        <input type="file" accept=".pdf" formControlName="cv" (change)="onCVSelected($event)"
-                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                    </div>
-                   c
-                    <div *ngIf="addPartnerForm.get('cv')?.invalid && addPartnerForm.get('cv')?.dirty"
-                        class="text-xs text-red-400 mt-1">
-                        Upload a valid CV file
-                    </div>
-                </div>
-
+                        <span>{{ item }}</span>
+                    </li>
+                </ul>
             </div>
 
-            <!-- Motivation -->
-            <div>
-                <textarea formControlName="motivation" rows="5"
-                    placeholder="Tell us why you want to be a Berliz partner and what role in at least 50 words"
-                    class="w-full px-4 py-3 rounded-md bg-white border border-gray-300 focus:outline-none focus:border-red-600 text-gray-800 placeholder-gray-500"
-                    [ngClass]="{ 'border-red-400': addPartnerForm.get('motivation')?.invalid && addPartnerForm.get('motivation')?.dirty }"></textarea>
-                <div *ngIf="(addPartnerForm.get('motivation')?.invalid && invalidForm) ||addPartnerForm.get('motivation')?.dirty"
-                    class="text-xs text-red-500 mt-1">
-                    At least 50 words are required
-                </div>
-            </div>
+            <!-- Button -->
+            <div class="flex justify-center">
+                <button type="button" (click)="openPartnerForm()"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700 active:scale-[0.98] transition">
 
-            <!-- Facebook URL -->
-            <div>
-                <input formControlName="facebookUrl" type="text" placeholder="Facebook URL"
-                    class="w-full px-4 py-3 rounded-md bg-white border border-gray-300 focus:outline-none focus:border-red-600 text-gray-800"
-                    [ngClass]="{ 'border-red-400': addPartnerForm.get('facebookUrl')?.invalid && addPartnerForm.get('facebookUrl')?.dirty }" />
-                <div *ngIf="(addPartnerForm.get('facebookUrl')?.invalid && invalidForm) ||addPartnerForm.get('facebookUrl')?.dirty"
-                    class="text-xs text-red-500 mt-1">
-                    Please enter a valid Facebook URL
-                </div>
-            </div>
-
-            <!-- Instagram URL -->
-            <div>
-                <input formControlName="instagramUrl" type="text" placeholder="Instagram URL"
-                    class="w-full px-4 py-3 rounded-md bg-white border border-gray-300 focus:outline-none focus:border-red-600 text-gray-800"
-                    [ngClass]="{ 'border-red-400': addPartnerForm.get('instagramUrl')?.invalid && addPartnerForm.get('instagramUrl')?.dirty }" />
-                <div *ngIf="(addPartnerForm.get('instagramUrl')?.invalid && invalidForm) ||addPartnerForm.get('instagramUrl')?.dirty"
-                    class="text-xs text-red-500 mt-1">
-                    Please enter a valid Instagram URL
-                </div>
-            </div>
-
-            <!-- YouTube URL -->
-            <div>
-                <input formControlName="youtubeUrl" type="text" placeholder="YouTube URL (optional)"
-                    class="w-full px-4 py-3 rounded-md bg-white border border-gray-300 focus:outline-none focus:border-red-600 text-gray-800"
-                    [ngClass]="{ 'border-red-400': addPartnerForm.get('youtubeUrl')?.invalid && addPartnerForm.get('youtubeUrl')?.dirty }" />
-                <div *ngIf="addPartnerForm.get('youtubeUrl')?.invalid && addPartnerForm.get('youtubeUrl')?.dirty"
-                    class="text-xs text-red-500 mt-1">
-                    Please enter a valid Youtube URL
-                </div>
-            </div>
-
-            <!-- Buttons -->
-            <div class="flex justify-end space-x-4 pt-2">
-                <button type="button" (click)="clear()"
-                    class="px-5 py-2 rounded-md text-gray-700 bg-white border border-gray-400 hover:bg-gray-100 transition font-semibold">
-                    Clear
-                </button>
-
-                <button type="submit" (click)="addPartner()" [disabled]="addPartnerForm.invalid"
-                    [ngClass]="{'opacity-50 cursor-not-allowed': addPartnerForm.invalid}"
-                    class="px-5 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition font-semibold flex items-center gap-2">
-
-                    <!-- <ng-container *ngIf="addPartnerForm.invalid">Complete form</ng-container> -->
-                    <ng-container> <i-feather name="send" class="w-4 h-4"></i-feather>Submit</ng-container>
+                    <i-feather name="send" style="width:12px;height:12px;">
+                    </i-feather>
+                    Start Application
                 </button>
             </div>
-        </form>
+
+        </div>
     </div>
 </section>

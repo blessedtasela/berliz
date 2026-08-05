@@ -1,76 +1,130 @@
-<div class="relative">
-    <div class="text-red-600 absolute top-0 right-0 p-1">
-        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
-    </div>
-    <section class="p-2 flex flex-col justify-center items-center">
-        <div class="text-center">
-            <p class="text-gray-950 font-sans font-bold text-xl uppercase mt-4">{{ clientData.user.email }} - ID: {{
-                clientData.id }}</p>
-            <p class="text-red-600 font-sans font-bold text-sm italic">
-                created at {{ formatDate(clientData.date) }}
-            </p>
-            <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
-                <div>
-                    <img class="w-16" class="bg-gray-200 rounded-md p-2"
-                        [src]="'data:image/*;base64,' + clientData.user.profilePhoto">
-                </div>
-                <div class="flex flex-col m-4 gap-2">
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Motivation: {{ clientData.motivation }}
-                    </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex italic justify-center">
-                        <ng-container *ngFor="let subscriptions of clientData.subscriptions; let i = index">
-                            <ng-container *ngFor="let category of subscriptions.categories; let i = index">
-                                {{ category.name }} {{ i < (subscriptions.categories.length - 1) ? "/" : "" }}
-                                    </ng-container>
-                            </ng-container>
-                    </p>
+<div class="max-w-lg w-full p-6 mx-auto flex flex-col gap-5 font-sans">
 
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Body fat: <span class="ml-2 text-gray-800 italic">
-                            {{ clientData.bodyFat | number:'1.2-2' }} %</span>
-                    </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Daily calories Intake: <span class="ml-2 text-gray-800 italic">
-                            {{ clientData.caloriesIntake }} cal</span>
-                    </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Dietary preference: {{ clientData.dietaryPreferences }}
-                    </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Weight: <span class="ml-2 text-gray-800 italic">{{ clientData.weight }} kg</span>
-                    </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Dietary Restrictions {{ clientData.dietaryRestrictions }}
-                    </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Height: <span class="ml-2 text-gray-800 italic">{{ clientData.height }} cm</span>
-                    </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Medical conditions: {{ clientData.medicalConditions }}
-                    </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Mode of training: <ng-container
-                            *ngFor="let subscriptions of clientData.subscriptions; let i = index">
-                            {{ subscriptions.mode }}
-                        </ng-container>
-                    </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
-                        <ng-container *ngFor="let subscription of clientData.subscriptions; let i = index">
-                            Subscriptions: {{ subscription.months }} months ({{ formatDate(subscription.endDate) }}) {{
-                            i < (clientData.subscriptions.length - 1) ? "/" : "" }} </ng-container>
-                    </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex">
-                        Target weight: <span class="ml-2 text-gray-800 italic">{{ clientData.targetWeight }} cm</span>
-                    </p>
-                    <p class="text-gray-700 font-sans font-bold text-md flex mt-2">
-                        Client status: {{ clientData.status ==='true' ? 'active' :'false' }}
-                    </p>
-                    <p class="text-red-600 font-sans font-bold text-md flex mt-2">
-                        Last Update: {{ formatDate(clientData.lastUpdate) }}
-                    </p>
-                </div>
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="user" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">{{ clientData.user.email }}</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">ID {{ clientData.id }} &middot; Created {{
+                    formatDate(clientData.date) }}</p>
             </div>
         </div>
-    </section>
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
+    </div>
+
+    <!-- Photo -->
+    <img [src]="'data:image/*;base64,' + clientData.user.profilePhoto"
+        class="w-full h-40 object-cover rounded-xl border border-gray-200"
+        onerror="this.src='../../../assets/icons/customer.png';" />
+
+    <!-- Status -->
+    <span class="w-fit px-2.5 py-1 rounded-full text-[11px] font-semibold" [ngClass]="clientData.status === 'true'
+            ? 'bg-green-50 text-green-700 border border-green-200'
+            : 'bg-gray-100 text-gray-500 border border-gray-200'">
+        {{ clientData.status === 'true' ? 'Active' : 'Inactive' }}
+    </span>
+
+    <!-- Categories -->
+    <div class="flex flex-col gap-1.5" *ngIf="clientData.subscriptions?.length">
+        <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Programs</span>
+        <div class="flex flex-wrap gap-1.5">
+            <ng-container *ngFor="let subscription of clientData.subscriptions">
+                <span *ngFor="let category of subscription.categories"
+                    class="rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-medium text-red-600">
+                    {{ category.name }}
+                </span>
+            </ng-container>
+        </div>
+    </div>
+
+    <!-- Details -->
+    <div class="bg-gray-50 border border-gray-100 rounded-xl divide-y divide-gray-100">
+        <div class="flex items-center justify-between px-4 py-2.5">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Height</span>
+            <span class="text-xs font-medium text-gray-900 text-right">{{ clientData.height }} cm</span>
+        </div>
+        <div class="flex items-center justify-between px-4 py-2.5">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Weight</span>
+            <span class="text-xs font-medium text-gray-900 text-right">{{ clientData.weight }} kg</span>
+        </div>
+        <div class="flex items-center justify-between px-4 py-2.5">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Target weight</span>
+            <span class="text-xs font-medium text-gray-900 text-right">{{ clientData.targetWeight }} kg</span>
+        </div>
+        <div class="flex items-center justify-between px-4 py-2.5">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Body fat</span>
+            <span class="text-xs font-medium text-gray-900 text-right">{{ clientData.bodyFat | number:'1.2-2' }} %</span>
+        </div>
+        <div class="flex items-center justify-between px-4 py-2.5">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Calories intake</span>
+            <span class="text-xs font-medium text-gray-900 text-right">{{ clientData.caloriesIntake }} cal</span>
+        </div>
+        <div class="flex items-center justify-between px-4 py-2.5">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Mode</span>
+            <span class="text-xs font-medium text-gray-900 text-right">
+                <ng-container *ngFor="let subscription of clientData.subscriptions; let last = last">
+                    {{ subscription.mode }}{{ last ? '' : ', ' }}
+                </ng-container>
+            </span>
+        </div>
+        <div class="flex items-center justify-between px-4 py-2.5">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Subscriptions</span>
+            <span class="text-xs font-medium text-gray-900 text-right">
+                <ng-container *ngFor="let subscription of clientData.subscriptions; let last = last">
+                    {{ subscription.months }} months (ends {{ formatDate(subscription.endDate) }}){{ last ? '' : ', ' }}
+                </ng-container>
+            </span>
+        </div>
+        <div class="flex items-center justify-between px-4 py-2.5">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</span>
+            <span class="text-xs font-medium text-gray-900 text-right">{{ formatDate(clientData.lastUpdate) }}</span>
+        </div>
+    </div>
+
+    <!-- Motivation -->
+    <div class="flex flex-col gap-1">
+        <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Motivation</span>
+        <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+            {{ clientData.motivation }}
+        </p>
+    </div>
+
+    <!-- Medical conditions -->
+    <div class="flex flex-col gap-1">
+        <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Medical conditions</span>
+        <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+            {{ clientData.medicalConditions }}
+        </p>
+    </div>
+
+    <!-- Dietary preferences -->
+    <div class="flex flex-col gap-1">
+        <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Dietary preferences</span>
+        <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+            {{ clientData.dietaryPreferences }}
+        </p>
+    </div>
+
+    <!-- Dietary restrictions -->
+    <div class="flex flex-col gap-1">
+        <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Dietary restrictions</span>
+        <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+            {{ clientData.dietaryRestrictions }}
+        </p>
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+    <div class="flex items-center justify-end gap-2">
+        <button type="button" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+                   hover:bg-gray-50 active:scale-[0.98] transition">
+            Close
+        </button>
+    </div>
+
 </div>

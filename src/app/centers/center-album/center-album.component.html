@@ -1,10 +1,33 @@
-<section class="justify-between mt-40 font-sans mx-auto flex flex-col justify-center items-center">
-    <div class="text-4xl mb-5 text-center">
-        Photo Ablum
+<section class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
+
+    <div class="flex items-center justify-between gap-3">
+        <div>
+            <h2 class="text-sm font-bold text-gray-900">Photo album</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                {{ photos.length }} {{ photos.length === 1 ? 'photo' : 'photos' }} from inside the center
+            </p>
+        </div>
+        <button *ngIf="photos.length > 6" type="button" (click)="allPhotos()"
+            class="text-[11px] font-semibold text-red-600 hover:text-red-700 transition shrink-0">
+            {{ !showAllPhotos ? 'See all' : 'See less' }}
+        </button>
     </div>
-    <div class="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-2">
-        <div class="gap-2" *ngFor="let a of centerAlbum?.photos; let i = index">
-        <img class="w-full aspect-video rounded-md" [ngClass]="{'aspect-square': i%2===0}" src="{{ a.photoUrl }}" />
-      </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <div *ngIf="photos.length; else noPhotos" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div *ngFor="let photo of photos; let i = index" [ngClass]="{ 'hidden': i >= 6 && !showAllPhotos }"
+            class="rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
+            <img [src]="photo.photoUrl" [alt]="photo.name" class="w-full aspect-square object-cover"
+                onerror="this.src='assets/landing/hero-gym-centers.jpg';" />
+        </div>
     </div>
+
+    <ng-template #noPhotos>
+        <div class="flex items-center gap-2 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3">
+            <i-feather name="info" style="width:13px;height:13px;"></i-feather>
+            <span class="text-xs">No photos published for this center yet.</span>
+        </div>
+    </ng-template>
+
 </section>

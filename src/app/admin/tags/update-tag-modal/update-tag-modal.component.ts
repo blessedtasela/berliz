@@ -45,34 +45,32 @@ export class UpdateTagModalComponent {
   }
 
   updateTag(): void {
-    this.ngxService.start();
     if (this.updateTagForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
-      this.ngxService.stop();
-    } else {
-      this.tagService.updateTag(this.updateTagForm.value)
-        .subscribe((response: any) => {
-          this.updateTagForm.reset();
-          this.invalidForm = false;
-          this.dialogRef.close('Tag updated successfully');
-          this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.ngxService.stop();
-          this.onUpdateTagEmit.emit();
-        }, (error: any) => {
-          this.ngxService.stop();
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
-        });
+      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      return;
     }
-    this.ngxService.stop();
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
+
+    this.ngxService.start();
+    this.tagService.updateTag(this.updateTagForm.value)
+      .subscribe((response: any) => {
+        this.updateTagForm.reset();
+        this.invalidForm = false;
+        this.dialogRef.close('Tag updated successfully');
+        this.responseMessage = response?.message;
+        this.snackBarService.openSnackBar(this.responseMessage, "");
+        this.ngxService.stop();
+        this.onUpdateTagEmit.emit();
+      }, (error: any) => {
+        this.ngxService.stop();
+        if (error.error?.message) {
+          this.responseMessage = error.error?.message;
+        } else {
+          this.responseMessage = genericError;
+        }
+        this.snackBarService.openSnackBar(this.responseMessage, "error");
+      });
   }
 
   clear() {

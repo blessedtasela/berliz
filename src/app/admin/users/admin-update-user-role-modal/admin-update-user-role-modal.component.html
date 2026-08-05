@@ -1,47 +1,64 @@
-<div class="w-full h-full bg-gradient-to-r from-gray-950 via-gray-800 to-gray-950 text-white font-sans">
-    <div class="text-yellow-500 text-right font-bold">
-        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer m-4"></i-feather>
+<div class="max-w-md w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="shield" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Update user role</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Change what this account is allowed to do.</p>
+            </div>
+        </div>
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
     </div>
-    <h2 class="text-md md:text-lg font-bold text-center">
-        Update user role
-    </h2>
-    <form [formGroup]="updateUserRoleForm" class="">
-        <div class="m-2 grid grid-cols text-gray-950 ">
-            <div class="mx-auto w-full p-2 px-6">
-                <input formControlName="id" [value]="userData.id" hidden type="number">
-                <input [value]="userData.email" readonly
-                    class="w-full border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                    type="text">
-            </div>
-            <div class="mx-auto">
-                <select formControlName="role" [value]="userData.role"
-                    class="w-full border-2 px-4 py-2 rounded-md m-2  hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                    [ngClass]="{'border-yellow-500': updateUserRoleForm.get('role')?.invalid && updateUserRoleForm.get('role')?.touched }"
-                    placeholder="role" type="text">
-                    <option selected hidden class="">{{userData.role}}</option>
-                    <option *ngFor="let role of roles">{{ role.role }}</option>
-                </select>
-                <div *ngIf="updateUserRoleForm.get('role')?.invalid && updateUserRoleForm.get('role')?.touched"
-                    class="text-yellow-500 mx-2">
-                    please select a role
-                </div>
-            </div>
-            <div class="grid grid-cols-2">
-            <div class="bg-white rounded-md mx-auto m-2">
-                <button
-                    class="p-2 font-bold font-sans mx-4 text-yellow-500 text-sm lg:text-md flex items-center justify-center"
-                    (click)="clear()">
-                    clear
-                </button>
-            </div>
-            <div class="bg-yellow-500 rounded-md mx-auto m-2">
-                <button
-                    class="p-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                    type="submit" (click)="updateUserRole()">
-                    Submit
-                </button>
-            </div>
+
+    <form [formGroup]="updateUserRoleForm" class="flex flex-col gap-4">
+
+        <input formControlName="id" type="number" hidden>
+
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Email</label>
+            <input [value]="userData.email" readonly type="text"
+                class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-500 focus:outline-none transition">
         </div>
+
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Role</label>
+            <select formControlName="role" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': updateUserRoleForm.get('role')?.invalid && updateUserRoleForm.get('role')?.touched,
+                        'border-gray-200 bg-gray-50': !(updateUserRoleForm.get('role')?.invalid && updateUserRoleForm.get('role')?.touched)
+                      }">
+                <option selected hidden>{{ userData.role }}</option>
+                <option *ngFor="let role of roles">{{ role.role }}</option>
+            </select>
+            <p *ngIf="updateUserRoleForm.get('role')?.invalid && updateUserRoleForm.get('role')?.touched"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Please select a role
+            </p>
         </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div class="flex items-center justify-end gap-2">
+            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+                       hover:bg-gray-50 active:scale-[0.98] transition">
+                Clear
+            </button>
+            <button type="submit" (click)="updateUserRole()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                <i-feather name="check" style="width:13px;height:13px;"></i-feather>
+                Update role
+            </button>
+        </div>
+
     </form>
+
 </div>

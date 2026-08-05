@@ -83,6 +83,7 @@ export class AdminUpdateUserModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
+      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       this.userService.updateSuperUser(this.updateUserForm.value)
         .subscribe((response: any) => {
@@ -106,7 +107,6 @@ export class AdminUpdateUserModalComponent {
         });
     }
     this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

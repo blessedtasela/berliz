@@ -312,6 +312,7 @@ export class AddSubscriptionsModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
+      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       const selectedTagIds = this.addSubscriptionForm.value.categoryIds.map((category: any) => category.categoryIds);
       const categoryIdsString = selectedTagIds.join(',');
@@ -340,7 +341,6 @@ export class AddSubscriptionsModalComponent {
         });
     }
     this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

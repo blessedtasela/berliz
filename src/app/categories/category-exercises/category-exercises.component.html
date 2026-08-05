@@ -1,0 +1,82 @@
+<!-- ═══════════════════════════════════════════════
+     EXERCISES FOR THIS SERVICE (derived)
+════════════════════════════════════════════════ -->
+<section class="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 flex flex-col gap-4 font-sans">
+
+    <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+            <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                <i-feather name="zap" style="width:14px;height:14px;" class="text-red-500"></i-feather>
+                Exercises
+                <span class="text-[10px] font-semibold text-zinc-400 bg-zinc-800 px-2 py-0.5 rounded-full">
+                    {{ exercises.length }}
+                </span>
+            </h2>
+            <p class="text-[11px] text-zinc-500 mt-0.5">
+                Movements tagged with {{ categoryName || 'this discipline' }}.
+            </p>
+        </div>
+
+        <a routerLink="/exercises"
+            class="shrink-0 text-[11px] text-zinc-400 hover:text-red-400 transition flex items-center gap-1.5">
+            All exercises
+            <i-feather name="arrow-right" style="width:12px;height:12px;"></i-feather>
+        </a>
+    </div>
+
+    <div class="border-t border-zinc-800"></div>
+
+    <!-- Empty -->
+    <div *ngIf="exercises.length === 0" class="flex flex-col items-center justify-center gap-3 py-10 text-center">
+        <div class="w-14 h-14 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center">
+            <i-feather name="activity" class="text-zinc-600" style="width:22px;height:22px;"></i-feather>
+        </div>
+        <p class="text-xs text-zinc-500 max-w-xs">
+            No exercises are tagged with this service yet.
+        </p>
+    </div>
+
+    <!-- Grid -->
+    <div *ngIf="exercises.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        <div *ngFor="let exercise of exercises" class="flex flex-col bg-zinc-950 rounded-xl border border-zinc-800 overflow-hidden
+                    hover:border-red-600/40 transition-all duration-300">
+
+            <!-- Demo clip (base64 mp4 from the backend), when present -->
+            <div *ngIf="exercise.demo" class="w-full h-36 bg-zinc-800 overflow-hidden">
+                <video [src]="'data:video/mp4;base64,' + exercise.demo" class="w-full h-full object-cover" muted loop
+                    playsinline></video>
+            </div>
+
+            <div class="flex flex-col gap-2 p-4 flex-1">
+
+                <h3 class="text-xs font-extrabold text-white uppercase tracking-tight leading-tight">
+                    {{ exercise.name }}
+                </h3>
+
+                <p *ngIf="exercise.description" class="text-[11px] text-zinc-400 leading-relaxed line-clamp-3">
+                    {{ exercise.description }}
+                </p>
+
+                <!-- Muscle groups -->
+                <div *ngIf="exercise.muscleGroups?.length" class="flex flex-col gap-1">
+                    <span class="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">Muscle groups</span>
+                    <div class="flex flex-wrap gap-1.5">
+                        <span *ngFor="let mg of exercise.muscleGroups" class="text-[10px] font-semibold text-zinc-300 bg-zinc-800 border border-zinc-700
+                                     px-2 py-0.5 rounded-full">
+                            {{ mg.name }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div *ngIf="exercise.categories?.length" class="flex flex-wrap gap-1.5">
+                    <span *ngFor="let cat of exercise.categories" class="text-[10px] font-semibold text-red-400 bg-red-950 border border-red-900
+                                 px-2 py-0.5 rounded-full">
+                        {{ cat.name }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

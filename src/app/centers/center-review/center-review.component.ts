@@ -10,16 +10,7 @@ export class CenterReviewComponent {
   @Input() centerReviews: CenterReviews[] = [];
   showAllReviews: boolean = false;
 
-  constructor() {
-
-  }
-  
-  // format the trainer's name for the URL
-  formatCenterName(name: string): string {
-    return name.replace(/\s+/g, '-').toLowerCase();
-  }
-
-  allReviews(){
+  allReviews() {
     this.showAllReviews = !this.showAllReviews;
   }
 }

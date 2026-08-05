@@ -1,55 +1,41 @@
 import { Injectable } from "@angular/core";
 import { CanActivate, Router, ActivatedRouteSnapshot } from "@angular/router";
-import { Observable, of } from "rxjs";
-import { map, catchError } from "rxjs/operators";
-import { TrainerService } from "../services/trainer.service";
+import { SnackBarService } from "../services/snack-bar.service";
 
+/**
+ * Guards `/trainers/:name`.
+ *
+ * Only validates the SHAPE of the slug — resolving the slug to an actual
+ * trainer (and rendering a 404 state when it matches nothing) is the
+ * responsibility of `TrainersDetailsComponent`, which needs the record
+ * anyway. That avoids a duplicate `getActiveTrainers()` round-trip on every
+ * profile view and replaces the old blocking `window.alert()` dead-ends.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class TrainerGuard implements CanActivate {
 
-  constructor(private router: Router,
-    private trainerService: TrainerService) { }
+  constructor(
+    private router: Router,
+    private snackbar: SnackBarService
+  ) { }
 
-  canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
+  canActivate(route: ActivatedRouteSnapshot): boolean {
 
     const name = route.paramMap.get('name');
 
-    if (!name) {
+    if (!name || name.trim().length < 2) {
       this.router.navigate(['/trainers']);
-      return of(false);
+      return false;
     }
 
-    if (name.trim().length < 2) {
-      window.alert("Invalid trainer name");
+    if (!/^[a-zA-Z0-9\-]+$/.test(name)) {
+      this.snackbar.openSnackBar('Invalid trainer name format', 'error');
       this.router.navigate(['/trainers']);
-      return of(false);
+      return false;
     }
 
-    const valid = /^[a-zA-Z0-9\-]+$/.test(name);
-    if (!valid) {
-      window.alert("Invalid trainer name format");
-      this.router.navigate(['/trainers']);
-      return of(false);
-    }
-
-    return this.trainerService.getActiveTrainers().pipe(
-      map(response => (response?.data ?? []).some(
-        trainer => trainer.name?.replace(/ /g, '-') === name
-      )),
-      map(exists => {
-        if (!exists) {
-          window.alert("Trainer not found");
-          this.router.navigate(['/trainers']);
-        }
-        return exists;
-      }),
-      catchError(() => {
-        window.alert("Trainer not found");
-        this.router.navigate(['/trainers']);
-        return of(false);
-      })
-    );
+    return true;
   }
 }

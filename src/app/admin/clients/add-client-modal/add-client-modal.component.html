@@ -1,234 +1,253 @@
-<div class="relative bg-white text-gray-700 p-2">
-    <div class="text-red-600 absolute top-0 right-0 p-5">
-        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+<div class="max-w-2xl w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="user" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Add a new client</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Provide the client's profile and pick their programs.</p>
+            </div>
+        </div>
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
     </div>
-    <section class="bg-white">
-        <form [formGroup]="addClientForm">
-            <header class="font-bold font-sans text-center m-2 text-gray-700">
-                <h1 class="text-xl">Add a new category</h1>
-                <p class="text-red-600 italic text-sm">Please provide details of the category and select it's tags.
-                </p>
-            </header>
-            <div class="invalid-form">
-                <span *ngIf="!(addClientForm.get('userId')?.invalid ||
-                        addClientForm.get('height')?.invalid ||
-                        addClientForm.get('weight')?.invalid ||
-                        addClientForm.get('medicalConditions')?.invalid ||
-                        addClientForm.get('dietaryPreferences')?.invalid ||
-                        addClientForm.get('dietaryRestrictions')?.invalid ||
-                        addClientForm.get('caloriesIntake')?.invalid ||
-                        addClientForm.get('categoryIds')?.invalid ||
-                        addClientForm.get('mode')?.invalid ||
-                        addClientForm.get('motivation')?.invalid ||
-                        addClientForm.get('targetWeight')?.invalid)
-                         && invalidForm" class="mx-2 text-gray-700">
-                    Everything looks good
-                </span>
-                <span *ngIf="(addClientForm.get('userId')?.invalid ||
+
+    <form [formGroup]="addClientForm" class="flex flex-col gap-4">
+
+        <p *ngIf="(addClientForm.get('userId')?.invalid ||
                 addClientForm.get('height')?.invalid ||
                 addClientForm.get('weight')?.invalid ||
                 addClientForm.get('medicalConditions')?.invalid ||
                 addClientForm.get('dietaryPreferences')?.invalid ||
                 addClientForm.get('dietaryRestrictions')?.invalid ||
-                        addClientForm.get('caloriesIntake')?.invalid ||
-                        addClientForm.get('categoryIds')?.invalid ||
-                        addClientForm.get('mode')?.invalid ||
-                        addClientForm.get('motivation')?.invalid ||
-                        addClientForm.get('targetWeight')?.invalid)
-                 && invalidForm" class="mx-2 text-red-500">
-                    Please complete all sessions
-                </span>
-            </div>
-            <div class="grid grid-cols md:grid-cols-2 p-1 gap-2">
-                <div class="mx-auto w-full grid grid-cols-4  rounded-lg text-gray-700">
-                    <div class="rounded-lg object-cover flex col-span-4 flex">
-                        <img src="../../../../assets/icons/customer.png" class="rounded-lg">
-                    </div>
-                    <div *ngIf="addClientForm.get('categoryIds')?.invalid && invalidForm"
-                        class="text-red-500 mx-2 col-span-4">
-                        Select at least one category
-                    </div>
-                    <div *ngFor="let category of categories; let i = index"
-                        class="col-span-2 md:col-span-1 mx-auto w-full flex items-center">
-                        <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
-                            class="w-full border-b-2 rounded-lg  rounded-md m-2 text-gray-950 focus:outline-none border-gray-400 hover:border-gray-500"
-                            placeholder="tags" type="checkbox" [value]="category.id">
-                        {{ category.name }}
-                    </div>
-                    <div class="col-span-4 bg-gray-200 gap-5 rounded-lg p-2">
-                        <div class="mx-auto p-2">
-                            <span class="ml-4 font-bold text-gray-600 italic">Please select mode of training</span>
-                            <div class="grid grid-cols-2 gap-5">
-                                <div>
-                                    <span class="sr-only">Online</span>
-                                    <span class="ml-4 font-bold text-gray-700">Online</span>
-                                    <input formControlName="mode" [value]="'Online'"
-                                        class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                                        [ngClass]="{'border-red-400': addClientForm.get('mode')?.invalid && addClientForm.get('mode')?.touched }"
-                                        placeholder="Online" type="radio">
-                                </div>
-                                <div>
-                                    <span class="sr-only">Hybrid</span>
-                                    <span class="ml-4 font-bold text-gray-700">Hybrid</span>
-                                    <input formControlName="mode" [value]="'Hybrid'"
-                                        class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                                        [ngClass]="{'border-red-400': addClientForm.get('mode')?.invalid && addClientForm.get('mode')?.touched }"
-                                        placeholder="Hybrid" type="radio">
-                                </div>
-                                <div>
-                                    <span class="sr-only">Personal</span>
-                                    <span class="ml-4 font-bold text-gray-700">Personal</span>
-                                    <input formControlName="mode" [value]="'Personal'"
-                                        class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                                        [ngClass]="{'border-red-400': addClientForm.get('mode')?.invalid && addClientForm.get('mode')?.touched }"
-                                        placeholder="Personal" type="radio">
-                                </div>
-                            </div>
-                            <div class="text-red-500" *ngIf="addClientForm.get('mode')?.invalid && addClientForm.get('mode')?.dirty
-                            || (addClientForm.get('mode')?.invalid && invalidForm)">
-                                Please select a mode
-                            </div>
-                        </div>
-                        <div class="mx-auto w-full p-2">
-                            <span class="text-gray-700 font-bold italic">Motivation</span>
-                            <textarea formControlName="motivation"
-                                class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                                [ngClass]="{'border-red-400': addClientForm.get('motivation')?.invalid && addClientForm.get('motivation')?.touched 
-                                    || (addClientForm.get('motivation')?.invalid && invalidForm)}"
-                                placeholder="Write client's motivation here, why they want to subscribe to the service"
-                                rows="5" cols="30"></textarea>
-                            <div *ngIf="addClientForm.get('motivation')?.invalid && addClientForm.get('motivation')?.dirty
-                                 || (addClientForm.get('motivation')?.invalid && invalidForm)"
-                                class="text-red-500 mx-2">
-                                Motivation is required
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-200 gap-5 rounded-lg p-2 ">
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">Users email</span>
-                        <select formControlName="userId"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addClientForm.get('userId')?.invalid && addClientForm.get('userId')?.touched 
-                            || (addClientForm.get('userId')?.invalid && invalidForm)}" placeholder="select user email"
-                            type="text">
-                            <option selected hidden class="w-auto font-sans">Select a user</option>
-                            <option *ngFor="let user of users" class="w-auto p-8 text-sm m-8" [value]="user.id">
-                                {{ user.email }} ( {{ user.role }})</option>
-                        </select>
-                        <div *ngIf="addClientForm.get('userId')?.invalid && addClientForm.get('userId')?.dirty|| 
-                        (addClientForm.get('userId')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            select a user email
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic"> Client Height </span>
-                        <input formControlName="height"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addClientForm.get('height')?.invalid && addClientForm.get('height')?.touched 
-                            || (addClientForm.get('height')?.invalid && invalidForm)}" placeholder="e.g 180cm"
-                            type="number" min="0">
-                        <div *ngIf="addClientForm.get('height')?.invalid && addClientForm.get('height')?.dirty 
-                        || (addClientForm.get('height')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            Client's height is required
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">Client Weight</span>
-                        <input formControlName="weight"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addClientForm.get('weight')?.invalid && addClientForm.get('weight')?.touched 
-                            || (addClientForm.get('weight')?.invalid && invalidForm)}" placeholder="weight"
-                            type="number" min="0">
-                        <div *ngIf="addClientForm.get('weight')?.invalid && addClientForm.get('weight')?.dirty 
-                        || (addClientForm.get('weight')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            Check the client's weight
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">Medical Condtitions</span>
-                        <textarea formControlName="medicalConditions"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addClientForm.get('medicalConditions')?.invalid && addClientForm.get('medicalConditions')?.touched 
-                            || (addClientForm.get('medicalConditions')?.invalid && invalidForm)}"
-                            placeholder="Input any Medical Conditions patient might have, if none, write none" rows="5"
-                            cols="30"></textarea>
-                        <div *ngIf="addClientForm.get('medicalConditions')?.invalid && addClientForm.get('medicalConditions')?.dirty
-                        || (addClientForm.get('medicalConditions')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            medicalConditions is required
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">Dietary Preferences</span>
-                        <textarea formControlName="dietaryPreferences"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addClientForm.get('dietaryPreferences')?.invalid && addClientForm.get('dietaryPreferences')?.touched 
-                            || (addClientForm.get('dietaryPreferences')?.invalid && invalidForm)}"
-                            placeholder="Input any Dietiary Preference patient might have, if none, write none" rows="5"
-                            cols="30"></textarea>
-                        <div *ngIf="addClientForm.get('dietaryPreferences')?.invalid && addClientForm.get('dietaryPreferences')?.dirty
-                        || (addClientForm.get('dietaryPreferences')?.invalid && invalidForm)"
-                            class="text-red-500 mx-2">
-                            Dietary Preferences is required
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">Dietary Restrictions</span>
-                        <textarea formControlName="dietaryRestrictions"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addClientForm.get('dietaryRestrictions')?.invalid && addClientForm.get('dietaryRestrictions')?.touched 
-                            || (addClientForm.get('dietaryRestrictions')?.invalid && invalidForm)}"
-                            placeholder="Input any Dietiary Restrictions patient might have, if none, write none"
-                            rows="5" cols="30"></textarea>
-                        <div *ngIf="addClientForm.get('dietaryRestrictions')?.invalid && addClientForm.get('dietaryRestrictions')?.dirty
-                        || (addClientForm.get('dietaryRestrictions')?.invalid && invalidForm)"
-                            class="text-red-500 mx-2">
-                            dietaryRestrictions is required
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic"> Calorie Intake </span>
-                        <input formControlName="caloriesIntake"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addClientForm.get('caloriesIntake')?.invalid && addClientForm.get('caloriesIntake')?.touched 
-                            || (addClientForm.get('caloriesIntake')?.invalid && invalidForm)}" placeholder="e.g 180cm"
-                            type="number" min="0">
-                        <div *ngIf="addClientForm.get('caloriesIntake')?.invalid && addClientForm.get('caloriesIntake')?.dirty 
-                        || (addClientForm.get('caloriesIntake')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            Calorie Intake is required
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic"> Target Weight </span>
-                        <input formControlName="targetWeight"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addClientForm.get('targetWeight')?.invalid && addClientForm.get('targetWeight')?.touched 
-                            || (addClientForm.get('targetWeight')?.invalid && invalidForm)}" placeholder="e.g 80kg"
-                            type="number" min="0">
-                        <div *ngIf="addClientForm.get('targetWeight')?.invalid && addClientForm.get('targetWeight')?.dirty 
-                        || (addClientForm.get('targetWeight')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            Client's target weight is required
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2">
-                        <div class="bg-gray-950 rounded-md mx-auto m-2">
-                            <button type="button"
-                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
-                                (click)="clear()">
-                                Clear
-                            </button>
-                        </div>
-                        <div class="bg-red-600 rounded-md mx-auto m-2">
-                            <button type="submit"
-                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
-                                (click)="addCategory()">
-                                Add
+                addClientForm.get('caloriesIntake')?.invalid ||
+                addClientForm.get('categoryIds')?.invalid ||
+                addClientForm.get('mode')?.invalid ||
+                addClientForm.get('motivation')?.invalid ||
+                addClientForm.get('targetWeight')?.invalid) && invalidForm"
+            class="text-red-500 text-[11px] flex items-center gap-1">
+            <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+            Please complete all sections
+        </p>
 
-                            </button>
-                        </div>
-                    </div>
-                </div>
+        <!-- User -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">User</label>
+            <select formControlName="userId" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': (addClientForm.get('userId')?.invalid && addClientForm.get('userId')?.touched) || (addClientForm.get('userId')?.invalid && invalidForm),
+                        'border-gray-200 bg-gray-50': !((addClientForm.get('userId')?.invalid && addClientForm.get('userId')?.touched) || (addClientForm.get('userId')?.invalid && invalidForm))
+                      }">
+                <option selected hidden>Select a user</option>
+                <option *ngFor="let user of users" [value]="user.id">{{ user.email }} ({{ user.role }})</option>
+            </select>
+            <p *ngIf="(addClientForm.get('userId')?.invalid && addClientForm.get('userId')?.dirty) || (addClientForm.get('userId')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Select a user email
+            </p>
+        </div>
+
+        <!-- Categories -->
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Categories</label>
+            <div class="flex flex-wrap gap-2">
+                <label *ngFor="let category of categories; let i = index" class="cursor-pointer">
+                    <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)" type="checkbox"
+                        [value]="category.id" class="peer sr-only">
+                    <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
+                               bg-gray-50 border-gray-200 text-gray-600
+                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">
+                        {{ category.name }}
+                    </span>
+                </label>
             </div>
-        </form>
-    </section>
+            <p *ngIf="addClientForm.get('categoryIds')?.invalid && invalidForm"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Select at least one category
+            </p>
+        </div>
+
+        <!-- Mode -->
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Mode of training</label>
+            <div class="flex flex-wrap gap-2">
+                <label class="cursor-pointer">
+                    <input formControlName="mode" [value]="'Online'" type="radio" class="peer sr-only">
+                    <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
+                               bg-gray-50 border-gray-200 text-gray-600
+                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">Online</span>
+                </label>
+                <label class="cursor-pointer">
+                    <input formControlName="mode" [value]="'Hybrid'" type="radio" class="peer sr-only">
+                    <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
+                               bg-gray-50 border-gray-200 text-gray-600
+                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">Hybrid</span>
+                </label>
+                <label class="cursor-pointer">
+                    <input formControlName="mode" [value]="'Personal'" type="radio" class="peer sr-only">
+                    <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
+                               bg-gray-50 border-gray-200 text-gray-600
+                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">Personal</span>
+                </label>
+            </div>
+            <p *ngIf="(addClientForm.get('mode')?.invalid && addClientForm.get('mode')?.dirty) || (addClientForm.get('mode')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Please select a mode
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Height (cm)</label>
+                <input formControlName="height" type="number" min="0" placeholder="e.g. 180" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    [ngClass]="{
+                            'border-red-400 bg-red-50': (addClientForm.get('height')?.invalid && addClientForm.get('height')?.touched) || (addClientForm.get('height')?.invalid && invalidForm),
+                            'border-gray-200 bg-gray-50': !((addClientForm.get('height')?.invalid && addClientForm.get('height')?.touched) || (addClientForm.get('height')?.invalid && invalidForm))
+                          }">
+                <p *ngIf="(addClientForm.get('height')?.invalid && addClientForm.get('height')?.dirty) || (addClientForm.get('height')?.invalid && invalidForm)"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Height is required
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Weight (kg)</label>
+                <input formControlName="weight" type="number" min="0" placeholder="e.g. 75" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    [ngClass]="{
+                            'border-red-400 bg-red-50': (addClientForm.get('weight')?.invalid && addClientForm.get('weight')?.touched) || (addClientForm.get('weight')?.invalid && invalidForm),
+                            'border-gray-200 bg-gray-50': !((addClientForm.get('weight')?.invalid && addClientForm.get('weight')?.touched) || (addClientForm.get('weight')?.invalid && invalidForm))
+                          }">
+                <p *ngIf="(addClientForm.get('weight')?.invalid && addClientForm.get('weight')?.dirty) || (addClientForm.get('weight')?.invalid && invalidForm)"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Check the client's weight
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Target weight
+                    (kg)</label>
+                <input formControlName="targetWeight" type="number" min="0" placeholder="e.g. 80" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    [ngClass]="{
+                            'border-red-400 bg-red-50': (addClientForm.get('targetWeight')?.invalid && addClientForm.get('targetWeight')?.touched) || (addClientForm.get('targetWeight')?.invalid && invalidForm),
+                            'border-gray-200 bg-gray-50': !((addClientForm.get('targetWeight')?.invalid && addClientForm.get('targetWeight')?.touched) || (addClientForm.get('targetWeight')?.invalid && invalidForm))
+                          }">
+                <p *ngIf="(addClientForm.get('targetWeight')?.invalid && addClientForm.get('targetWeight')?.dirty) || (addClientForm.get('targetWeight')?.invalid && invalidForm)"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Target weight is required
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Calorie intake</label>
+                <input formControlName="caloriesIntake" type="number" min="0" placeholder="e.g. 2200" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    [ngClass]="{
+                            'border-red-400 bg-red-50': (addClientForm.get('caloriesIntake')?.invalid && addClientForm.get('caloriesIntake')?.touched) || (addClientForm.get('caloriesIntake')?.invalid && invalidForm),
+                            'border-gray-200 bg-gray-50': !((addClientForm.get('caloriesIntake')?.invalid && addClientForm.get('caloriesIntake')?.touched) || (addClientForm.get('caloriesIntake')?.invalid && invalidForm))
+                          }">
+                <p *ngIf="(addClientForm.get('caloriesIntake')?.invalid && addClientForm.get('caloriesIntake')?.dirty) || (addClientForm.get('caloriesIntake')?.invalid && invalidForm)"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Calorie intake is required
+                </p>
+            </div>
+
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Motivation</label>
+            <textarea formControlName="motivation" rows="3"
+                placeholder="Why does the client want to subscribe to the service?" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': (addClientForm.get('motivation')?.invalid && addClientForm.get('motivation')?.touched) || (addClientForm.get('motivation')?.invalid && invalidForm),
+                        'border-gray-200 bg-gray-50': !((addClientForm.get('motivation')?.invalid && addClientForm.get('motivation')?.touched) || (addClientForm.get('motivation')?.invalid && invalidForm))
+                      }"></textarea>
+            <p *ngIf="(addClientForm.get('motivation')?.invalid && addClientForm.get('motivation')?.dirty) || (addClientForm.get('motivation')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Motivation is required
+            </p>
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Medical conditions</label>
+            <textarea formControlName="medicalConditions" rows="3"
+                placeholder="Any medical conditions the client might have. If none, write none." class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': (addClientForm.get('medicalConditions')?.invalid && addClientForm.get('medicalConditions')?.touched) || (addClientForm.get('medicalConditions')?.invalid && invalidForm),
+                        'border-gray-200 bg-gray-50': !((addClientForm.get('medicalConditions')?.invalid && addClientForm.get('medicalConditions')?.touched) || (addClientForm.get('medicalConditions')?.invalid && invalidForm))
+                      }"></textarea>
+            <p *ngIf="(addClientForm.get('medicalConditions')?.invalid && addClientForm.get('medicalConditions')?.dirty) || (addClientForm.get('medicalConditions')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Medical conditions are required
+            </p>
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Dietary preferences</label>
+            <textarea formControlName="dietaryPreferences" rows="3"
+                placeholder="Any dietary preferences the client might have. If none, write none." class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': (addClientForm.get('dietaryPreferences')?.invalid && addClientForm.get('dietaryPreferences')?.touched) || (addClientForm.get('dietaryPreferences')?.invalid && invalidForm),
+                        'border-gray-200 bg-gray-50': !((addClientForm.get('dietaryPreferences')?.invalid && addClientForm.get('dietaryPreferences')?.touched) || (addClientForm.get('dietaryPreferences')?.invalid && invalidForm))
+                      }"></textarea>
+            <p *ngIf="(addClientForm.get('dietaryPreferences')?.invalid && addClientForm.get('dietaryPreferences')?.dirty) || (addClientForm.get('dietaryPreferences')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Dietary preferences are required
+            </p>
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Dietary restrictions</label>
+            <textarea formControlName="dietaryRestrictions" rows="3"
+                placeholder="Any dietary restrictions the client might have. If none, write none." class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': (addClientForm.get('dietaryRestrictions')?.invalid && addClientForm.get('dietaryRestrictions')?.touched) || (addClientForm.get('dietaryRestrictions')?.invalid && invalidForm),
+                        'border-gray-200 bg-gray-50': !((addClientForm.get('dietaryRestrictions')?.invalid && addClientForm.get('dietaryRestrictions')?.touched) || (addClientForm.get('dietaryRestrictions')?.invalid && invalidForm))
+                      }"></textarea>
+            <p *ngIf="(addClientForm.get('dietaryRestrictions')?.invalid && addClientForm.get('dietaryRestrictions')?.dirty) || (addClientForm.get('dietaryRestrictions')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Dietary restrictions are required
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div class="flex items-center justify-end gap-2">
+            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+                       hover:bg-gray-50 active:scale-[0.98] transition">
+                Clear
+            </button>
+            <button type="submit" (click)="addCategory()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                <i-feather name="check" style="width:13px;height:13px;"></i-feather>
+                Add client
+            </button>
+        </div>
+
+    </form>
+
+</div>

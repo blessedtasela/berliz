@@ -162,6 +162,8 @@ import {
   Volume2,
   VolumeX,
   Info,
+  LogIn,
+  Key,
 
 } from 'angular-feather/icons';
 
@@ -327,7 +329,8 @@ const icons = {
   Volume2,
   VolumeX,
   Info,
-  
+  LogIn,
+  Key,
 };
 
 @NgModule({

@@ -31,36 +31,34 @@ export class ForgotPasswordModalComponent {
   }
 
   submitForm(): void {
-    this.ngxService.start();
     if (this.forgotPasswordForm.invalid) {
-      this.invalidForm = true
-      this.responseMessage = "Invalid form"
-    } else {
-      this.userService.forgotPassword(this.forgotPasswordForm.value)
-        .subscribe((response: any) => {
-          this.ngxService.start();
-          this.forgotPasswordForm.reset();
-          this.dialogRef.close();
-          this.invalidForm = false;
-          this.ngxService.stop();
-          this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.router.navigate(['/login']);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-          , (error: any) => {
-            this.ngxService.stop();
-            console.error("error");
-            if (error.error?.message) {
-              this.responseMessage = error.error?.message;
-            } else {
-              this.responseMessage = genericError;
-            }
-            this.snackBarService.openSnackBar(this.responseMessage, "error")
-          });
+      this.invalidForm = true;
+      this.responseMessage = "Invalid form";
+      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      return;
     }
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
-    this.ngxService.stop()
+
+    this.ngxService.start();
+    this.userService.forgotPassword(this.forgotPasswordForm.value)
+      .subscribe((response: any) => {
+        this.forgotPasswordForm.reset();
+        this.dialogRef.close();
+        this.invalidForm = false;
+        this.ngxService.stop();
+        this.responseMessage = response?.message;
+        this.snackBarService.openSnackBar(this.responseMessage, "");
+        this.router.navigate(['/login']);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+        , (error: any) => {
+          this.ngxService.stop();
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackBarService.openSnackBar(this.responseMessage, "error")
+        });
   }
 
   closeDialog() {

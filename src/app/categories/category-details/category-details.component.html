@@ -1,11 +1,152 @@
-<!-- <app-category-hero-details [categoryName]="category"></app-category-hero-details>
-<app-category-introduction [categoryIntroduction]="categoryIntro"></app-category-introduction>
-<app-category-benefits [categoryBenefits]="categoryBenefit"></app-category-benefits>
-<app-category-tags [categoryTags]="categoryTag"></app-category-tags>
-<app-category-trainers [categoryTrainers]="categoryTrainer"></app-category-trainers>
-<app-category-centers [categoryCenters]="categoryCenter"></app-category-centers> -->
+<!-- ═══════════════════════════════════════════════
+     PUBLIC SERVICE DETAIL  /services/:id/:name
+════════════════════════════════════════════════ -->
 
-<div class="mt-20 p-8 h-screen flex-col w-full font-extrabold">
-    <h2 class="mb-10 text-4xl text-red-600 ">Coming Soon.....</h2>
-    <p class="text-2xl text-white">This page is Under Construction</p>
-</div>
+<!-- ── RESOLVING ─────────────────────────────────────────────────────── -->
+<section *ngIf="!resolved" class="w-full bg-zinc-950 font-sans min-h-[70vh] flex items-center justify-center px-4">
+    <div class="flex flex-col items-center gap-4 text-center">
+        <div class="w-14 h-14 rounded-full border-2 border-zinc-800 border-t-red-600 animate-spin"></div>
+        <p class="text-xs text-zinc-500">Loading service…</p>
+    </div>
+</section>
+
+<!-- ── NOT FOUND ─────────────────────────────────────────────────────── -->
+<section *ngIf="resolved && !category"
+    class="w-full bg-zinc-950 font-sans min-h-[70vh] flex items-center justify-center px-4">
+    <div class="flex flex-col items-center justify-center gap-6 text-center max-w-sm">
+
+        <div class="w-20 h-20 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+            <i-feather name="alert-circle" class="text-zinc-600" style="width:32px;height:32px;"></i-feather>
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <h1 class="text-lg font-bold text-white">Service not found</h1>
+            <p class="text-sm text-zinc-500 leading-relaxed">
+                This service is no longer available, or the link you followed is incorrect.
+            </p>
+        </div>
+
+        <button type="button" (click)="backToServices()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                   hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+            <i-feather name="arrow-left" style="width:13px;height:13px;"></i-feather>
+            Back to all services
+        </button>
+    </div>
+</section>
+
+<!-- ── SERVICE ───────────────────────────────────────────────────────── -->
+<ng-container *ngIf="resolved && category">
+
+    <!-- ═══════════════════ HERO ═══════════════════ -->
+    <section class="relative w-full overflow-hidden font-sans">
+
+        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style="background-image: url('assets/landing/hero-crossfit.jpg');"></div>
+
+        <div class="absolute inset-0"
+            style="background: linear-gradient(135deg, rgba(0,0,0,0.88) 0%, rgba(80,0,0,0.6) 60%, rgba(0,0,0,0.85) 100%);">
+        </div>
+
+        <div class="relative z-10 max-w-5xl mx-auto px-4 py-14 sm:py-16
+                    flex flex-col md:flex-row md:items-center gap-8">
+
+            <!-- Photo -->
+            <div class="shrink-0 w-32 h-32 sm:w-40 sm:h-40 rounded-2xl bg-zinc-900/70 border border-zinc-700
+                        flex items-center justify-center overflow-hidden mx-auto md:mx-0">
+                <img [src]="category.photoUrl" [alt]="category.name" class="w-full h-full object-contain p-4" />
+            </div>
+
+            <!-- Text -->
+            <div class="flex flex-col gap-3 min-w-0 text-center md:text-left">
+
+                <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+                    Berliz Programs
+                </span>
+
+                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight uppercase">
+                    {{ category.name }}
+                </h1>
+
+                <p class="text-sm text-zinc-300 max-w-2xl leading-relaxed">
+                    {{ category.description || 'No description has been added for this service yet.' }}
+                </p>
+
+                <!-- Tag chips -->
+                <div class="flex flex-wrap gap-1.5 justify-center md:justify-start">
+                    <ng-container *ngIf="category.tagNames?.length; else noTags">
+                        <span *ngFor="let tagName of category.tagNames" class="text-[10px] font-semibold text-zinc-300 bg-zinc-800/80 border border-zinc-700
+                                     px-2.5 py-1 rounded-full">
+                            {{ tagName }}
+                        </span>
+                    </ng-container>
+                    <ng-template #noTags>
+                        <span class="text-[10px] font-semibold text-zinc-400 bg-zinc-800/80 border border-zinc-700
+                                     px-2.5 py-1 rounded-full">
+                            Featured
+                        </span>
+                    </ng-template>
+                </div>
+
+                <!-- Like + back -->
+                <div class="flex flex-wrap items-center gap-3 justify-center md:justify-start mt-1">
+
+                    <button type="button" (click)="toggleLike()" class="px-4 py-2 rounded-xl border text-xs font-semibold transition flex items-center gap-2
+                               active:scale-[0.98]" [ngClass]="isLiked
+                                ? 'bg-red-600 border-red-600 text-white hover:bg-red-700'
+                                : 'bg-zinc-900/70 border-zinc-700 text-zinc-300 hover:border-red-600 hover:text-white'">
+                        <!-- Solid heart when liked (Feather's is outline-only) -->
+                        <svg *ngIf="isLiked" viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;">
+                            <path
+                                d="M12 21s-6.716-4.35-9.428-8.06C.657 10.42 1.1 6.9 3.76 5.24c2.29-1.43 5.02-.8 6.6 1.1L12 8l1.64-1.66c1.58-1.9 4.31-2.53 6.6-1.1 2.66 1.66 3.1 5.18 1.19 7.7C18.716 16.65 12 21 12 21z" />
+                        </svg>
+                        <i-feather *ngIf="!isLiked" name="heart" style="width:13px;height:13px;"></i-feather>
+                        {{ isLiked ? 'Liked' : 'Like' }}
+                    </button>
+
+                    <span class="text-[11px] text-zinc-400 flex items-center gap-1.5">
+                        <i-feather name="thumbs-up" style="width:12px;height:12px;" class="text-red-500"></i-feather>
+                        {{ category.likes || 0 }} {{ category.likes === 1 ? 'like' : 'likes' }}
+                    </span>
+
+                    <a [routerLink]="['/services']"
+                        class="text-[11px] text-zinc-400 hover:text-red-400 transition flex items-center gap-1.5">
+                        <i-feather name="arrow-left" style="width:12px;height:12px;"></i-feather>
+                        Back to all services
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════ DERIVED CONTENT ═══════════════════ -->
+    <div class="w-full bg-zinc-950 font-sans px-4 pb-20 pt-10">
+        <div class="max-w-5xl mx-auto flex flex-col gap-6">
+
+            <!-- ══════════════════════════════════════════════════════════
+                 EXPLORE — derived from trainer/center/exercise data,
+                 not part of the service's own record
+                 ══════════════════════════════════════════════════════════ -->
+            <div class="flex items-center gap-3 mb-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Explore</span>
+                <div class="flex-1 border-t border-zinc-800"></div>
+            </div>
+
+            <app-category-trainers [trainers]="trainers" [categoryName]="category.name"></app-category-trainers>
+
+            <app-category-centers [centers]="centers" [categoryName]="category.name"></app-category-centers>
+
+            <app-category-exercises [exercises]="exercises" [categoryName]="category.name"></app-category-exercises>
+
+            <!-- Footer CTA -->
+            <div class="flex justify-center pt-4">
+                <a [routerLink]="['/services']" class="px-5 py-2.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-semibold
+                          hover:border-red-600 hover:text-white transition flex items-center gap-2">
+                    <i-feather name="arrow-left" style="width:13px;height:13px;"></i-feather>
+                    Back to all services
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</ng-container>

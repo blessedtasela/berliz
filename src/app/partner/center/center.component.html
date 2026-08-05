@@ -84,4 +84,36 @@
     <!-- Center data form -->
     <app-center-data [center]="centerData" (emitEvent)="emitData()"></app-center-data>
 
+    <!-- ══════════════════════════════════════════════════════════
+         CENTER PROFILE SECTIONS
+         ══════════════════════════════════════════════════════════ -->
+
+    <app-center-introduction [center]="centerData" (emitEvent)="emitData()"></app-center-introduction>
+
+    <app-center-pricing [center]="centerData" (emitEvent)="emitData()"></app-center-pricing>
+
+    <app-center-equipment [center]="centerData" (emitEvent)="emitData()"></app-center-equipment>
+
+    <app-center-locations [center]="centerData" (emitEvent)="emitData()"></app-center-locations>
+
+    <app-center-photo-album [center]="centerData" (emitEvent)="emitData()"></app-center-photo-album>
+
+    <app-center-video-album [center]="centerData" (emitEvent)="emitData()"></app-center-video-album>
+
+    <app-center-announcements [center]="centerData" (emitEvent)="emitData()"></app-center-announcements>
+
+    <!-- ══════════════════════════════════════════════════════════
+         INSIGHTS — derived from trainer/public activity, not editable
+         ══════════════════════════════════════════════════════════ -->
+    <div class="flex items-center gap-3 mt-8 mb-2">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Insights</span>
+        <div class="flex-1 border-t border-gray-200"></div>
+    </div>
+
+    <app-center-trainers [center]="centerData" (emitEvent)="emitData()"></app-center-trainers>
+
+    <app-center-review (emitEvent)="emitData()"></app-center-review>
+
+    <app-center-like></app-center-like>
+
 </div>

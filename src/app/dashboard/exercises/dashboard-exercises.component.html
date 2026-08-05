@@ -1,0 +1,161 @@
+<div class="flex flex-col gap-4 font-sans">
+
+  <!-- ═══════════════════ HEADER + FILTERS ═══════════════════ -->
+  <div class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-4">
+
+    <div class="flex items-start justify-between gap-3">
+      <div class="min-w-0">
+        <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+          <i-feather name="layers" style="width:14px;height:14px;" class="text-red-600"></i-feather>
+          Exercise library
+          <span class="text-[10px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+            {{ filteredExercises.length }}
+          </span>
+        </h2>
+        <p class="text-[11px] text-gray-400 mt-0.5">
+          Browse every movement available on Berliz. Search by name, discipline or muscle group.
+        </p>
+      </div>
+
+      <a routerLink="/dashboard/workouts"
+        class="shrink-0 px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition flex items-center gap-2">
+        <i-feather name="zap" style="width:13px;height:13px;"></i-feather>
+        My workouts
+      </a>
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <!-- Search + muscle group -->
+    <div class="flex flex-col sm:flex-row gap-3">
+
+      <div class="relative flex-1 max-w-sm">
+        <i-feather name="search" style="width:13px;height:13px;"
+          class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i-feather>
+        <input type="text" [(ngModel)]="searchTerm" placeholder="Search exercises..." class="w-full pl-8 pr-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
+                 transition placeholder:text-gray-400" />
+      </div>
+
+      <div class="flex items-center gap-2">
+        <label class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 shrink-0">
+          Muscle group
+        </label>
+        <select [(ngModel)]="selectedMuscleGroupId" class="px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+          <option [ngValue]="null">All</option>
+          <option *ngFor="let mg of muscleGroups" [ngValue]="mg.id">{{ mg.name }}</option>
+        </select>
+      </div>
+
+      <button *ngIf="hasActiveFilters" type="button" (click)="clearFilters()" class="px-3 py-2 rounded-xl text-[11px] font-semibold border border-gray-200 text-gray-500
+                 hover:bg-gray-50 transition flex items-center gap-1.5 shrink-0">
+        <i-feather name="x" style="width:12px;height:12px;"></i-feather>
+        Clear
+      </button>
+    </div>
+
+    <!-- Category chips -->
+    <div *ngIf="categories.length > 0" class="flex flex-col gap-1.5">
+      <span class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">Discipline</span>
+      <div class="flex flex-wrap gap-1.5">
+        <button type="button" (click)="selectCategory(null)"
+          class="text-[11px] font-semibold px-3 py-1 rounded-full border transition" [ngClass]="selectedCategoryId === null
+                     ? 'bg-red-600 border-red-600 text-white'
+                     : 'bg-white border-gray-200 text-gray-600 hover:border-red-200'">
+          All
+        </button>
+        <button *ngFor="let category of categories" type="button" (click)="selectCategory(category.id)"
+          class="text-[11px] font-semibold px-3 py-1 rounded-full border transition" [ngClass]="selectedCategoryId === category.id
+                     ? 'bg-red-600 border-red-600 text-white'
+                     : 'bg-white border-gray-200 text-gray-600 hover:border-red-200'">
+          {{ category.name }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ GRID ═══════════════════ -->
+  <div *ngIf="filteredExercises.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+
+    <div *ngFor="let exercise of filteredExercises; trackBy: trackByExerciseId"
+      class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-3 hover:border-red-200 transition">
+
+      <!-- Card header -->
+      <div class="flex items-start justify-between gap-2">
+        <div class="min-w-0">
+          <h3 class="text-xs font-bold text-gray-900 truncate">{{ exercise.name }}</h3>
+          <p class="text-[11px] text-gray-400 mt-0.5 line-clamp-2">
+            {{ exercise.description || 'No description' }}
+          </p>
+        </div>
+
+        <button *ngIf="exercise.demo" type="button" (click)="toggleDemo(exercise)"
+          class="shrink-0 w-7 h-7 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition"
+          [attr.aria-label]="openDemoId === exercise.id ? 'Hide demo' : 'Play demo'">
+          <i-feather [name]="openDemoId === exercise.id ? 'x' : 'play-circle'"
+            style="width:14px;height:14px;"></i-feather>
+        </button>
+      </div>
+
+      <!-- Demo clip -->
+      <video *ngIf="exercise.demo && openDemoId === exercise.id" [src]="'data:video/mp4;base64,' + exercise.demo"
+        class="w-full rounded-xl border border-gray-100 bg-gray-50" controls autoplay muted loop playsinline></video>
+
+      <div class="border-t border-gray-100"></div>
+
+      <!-- Muscle groups -->
+      <div class="flex flex-col gap-1">
+        <span class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Muscle groups</span>
+        <div *ngIf="exercise.muscleGroups?.length; else noMuscleGroups" class="flex flex-wrap gap-1.5">
+          <span *ngFor="let mg of exercise.muscleGroups"
+            class="text-[10px] font-semibold text-gray-600 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded-full">
+            {{ mg.name }}
+          </span>
+        </div>
+        <ng-template #noMuscleGroups>
+          <p class="text-[11px] text-gray-400">Not specified</p>
+        </ng-template>
+      </div>
+
+      <!-- Categories -->
+      <div class="flex flex-col gap-1 mt-auto">
+        <span class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Discipline</span>
+        <div *ngIf="exercise.categories?.length; else noCategories" class="flex flex-wrap gap-1.5">
+          <span *ngFor="let cat of exercise.categories"
+            class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">
+            {{ cat.name }}
+          </span>
+        </div>
+        <ng-template #noCategories>
+          <p class="text-[11px] text-gray-400">Not specified</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ EMPTY STATE ═══════════════════ -->
+  <div *ngIf="filteredExercises.length === 0"
+    class="bg-white rounded-2xl border border-gray-200 p-10 flex flex-col items-center justify-center gap-3 text-center">
+
+    <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+      <i-feather name="layers" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+    </div>
+
+    <h3 class="text-sm font-bold text-gray-900">
+      {{ hasActiveFilters ? 'No exercises match your filters' : 'No exercises yet' }}
+    </h3>
+    <p class="text-[11px] text-gray-400 max-w-xs">
+      {{ hasActiveFilters
+      ? 'Try a different search term, discipline or muscle group.'
+      : 'The exercise library is still being built. Check back soon.' }}
+    </p>
+
+    <button *ngIf="hasActiveFilters" type="button" (click)="clearFilters()" class="mt-1 px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold
+               hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+      <i-feather name="x" style="width:13px;height:13px;"></i-feather>
+      Clear filters
+    </button>
+  </div>
+
+</div>

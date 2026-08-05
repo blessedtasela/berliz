@@ -38,6 +38,7 @@ import { selectUser } from 'src/app/state/user/user.selector';
 import { loadUser } from 'src/app/state/user/user.actions';
 import { Store } from '@ngrx/store';
 import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
+import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
 
 @Component({
   selector: 'app-top-bar',
@@ -107,6 +108,7 @@ export class TopBarComponent implements OnInit {
     this.onResize();
     this.subscribeToCloseSideBar();
     this.store.dispatch(loadUser());
+    this.store.dispatch(loadMyNotifications());
     this.handleEmitEvent();
     this.registerNotificationTopics();
     this.watchUpdateProfilePhoto();

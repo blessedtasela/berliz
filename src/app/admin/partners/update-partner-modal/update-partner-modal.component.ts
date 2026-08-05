@@ -10,6 +10,7 @@ import { AddPartnerModalComponent } from '../add-partner-modal/add-partner-modal
 import { Partner } from 'src/app/models/partners.interface';
 import { Store } from '@ngrx/store';
 import { selectUsers } from 'src/app/state/user/user.selector';
+import { loadActiveUsers } from 'src/app/state/user/user.actions';
 
 
 @Component({
@@ -57,6 +58,7 @@ export class UpdatePartnerModalComponent {
   }
 
   ngOnInit(): void {
+    this.store.dispatch(loadActiveUsers());
     this.store.select(selectUsers).subscribe((users) => {
       this.users = users;
     })
@@ -91,6 +93,7 @@ export class UpdatePartnerModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
+      this.snackBarService.openSnackBar(this.responseMessage, "error");
     } else {
       this.partnerService.updatePartner(this.updatePartnerForm.value)
         .subscribe((response: any) => {
@@ -115,7 +118,6 @@ export class UpdatePartnerModalComponent {
           });
     }
     this.ngxService.stop();
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
 
   clear() {

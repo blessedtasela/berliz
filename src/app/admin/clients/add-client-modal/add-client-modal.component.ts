@@ -10,6 +10,7 @@ import { Users } from 'src/app/models/users.interface';
 import { ClientService } from 'src/app/services/client.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { selectUsers } from 'src/app/state/user/user.selector';
+import { loadActiveUsers } from 'src/app/state/user/user.actions';
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 import { genericError } from 'src/validators/form-validators.module';
@@ -62,6 +63,7 @@ export class AddClientModalComponent {
   handleEmitEvent() {
     this.ngxService.start();
     this.store.dispatch(loadActiveCategories());
+    this.store.dispatch(loadActiveUsers());
     this.subscriptions.push(
       this.store.select(selectActiveCategories).subscribe((categories) => {
         this.categories = categories;
@@ -100,6 +102,7 @@ export class AddClientModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
+      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       const selectedCategoryIds = this.addClientForm.value.categoryIds.map((category: any) => category.categoryIds);
       const categoryIdsString = selectedCategoryIds.join(',');
@@ -128,7 +131,6 @@ export class AddClientModalComponent {
         });
     }
     this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

@@ -1,30 +1,64 @@
-<section class="w-full mt-20 px-4 text-white">
-    <div class="grid lg:grid-cols-2 gap-6 items-center max-w-6xl mx-auto">
-        <div class="flex justify-center">
-            <img src="../../../assets/landing/gym-cross.jpg" alt="Berliz Gym"
-                class="w-[400px] lg:w-[500px] h-[400px] lg:h-[450px] object-cover rounded-md shadow-lg transform hover:scale-105 transition" />
-        </div>
-        <div class="text-center lg:text-left space-y-4">
-            <h2 class="text-3xl md:text-4xl text-red-600 font-extrabold uppercase font-sans">Welcome to Berliz</h2>
-            <p class="text-md md:text-lg font-medium italic">...Unlock your full potential</p>
-            <p class="text-sm md:text-base leading-relaxed">
-                <strong class="text-xl">W</strong>e are revolutionizing the fitness industry by seamlessly
-                connecting you to world-class facilities, expert trainers, and a supportive community — all within a
-                tap. Berliz empowers you to take control of your health and fitness journey through our innovative and
-                user-friendly platform.
-            </p>
-            <p class="text-sm md:text-base leading-relaxed">
-                Whether you're a beginner or a seasoned athlete, our curated network of gyms, certified coaches, and
-                engaged community ensures your goals are not only achievable but sustainable.
-            </p>
-            <p class="text-sm md:text-base leading-relaxed">
-                Join Berliz today and experience a smarter, more connected way to achieve your fitness aspirations.
-            </p>
-            <button [routerLink]="['/sign-up']"
-                class="bg-red-600 bg-white text-red-600 hover:text-white hover:bg-red-600 px-6 py-2 rounded-md font-semibold transition transform hover:scale-105">
-                Join Now
-            </button>
+<!-- ═══════════════════════════════════════════════
+     ABOUT — INTRODUCTION
+════════════════════════════════════════════════ -->
+<section class="w-full bg-zinc-950 px-4 py-16 font-sans">
+    <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
+
+        <!-- Image -->
+        <div class="relative rounded-2xl overflow-hidden border border-zinc-800 group">
+            <img src="assets/landing/gym-cross.jpg" alt="Berliz gym"
+                class="w-full h-[360px] lg:h-[420px] object-cover transition-transform duration-500 group-hover:scale-105" />
+            <div class="absolute inset-0 bg-gradient-to-t from-zinc-950/70 to-transparent pointer-events-none"></div>
         </div>
 
+        <!-- Copy -->
+        <div class="flex flex-col gap-4">
+
+            <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+                Who we are
+            </span>
+
+            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+                Welcome to <span class="text-red-500">Berliz</span>
+            </h2>
+
+            <div class="w-12 h-0.5 bg-red-600 rounded-full"></div>
+
+            <p class="text-sm text-zinc-300 leading-relaxed">
+                We connect you to world-class facilities, expert trainers and a supportive community — all within a tap.
+            </p>
+
+            <p class="text-sm text-zinc-400 leading-relaxed">
+                Whether you're a beginner or a seasoned athlete, our curated network of gyms, certified coaches and
+                engaged community keeps your goals achievable and sustainable.
+            </p>
+
+            <!-- Highlights -->
+            <ul class="flex flex-col gap-2.5 mt-1">
+                <li class="flex items-start gap-2.5 text-sm text-zinc-300">
+                    <i-feather name="check-circle" class="text-red-500 shrink-0 mt-0.5"
+                        style="width:14px;height:14px;"></i-feather>
+                    Verified gyms and training centers
+                </li>
+                <li class="flex items-start gap-2.5 text-sm text-zinc-300">
+                    <i-feather name="check-circle" class="text-red-500 shrink-0 mt-0.5"
+                        style="width:14px;height:14px;"></i-feather>
+                    Certified trainers, in person or online
+                </li>
+                <li class="flex items-start gap-2.5 text-sm text-zinc-300">
+                    <i-feather name="check-circle" class="text-red-500 shrink-0 mt-0.5"
+                        style="width:14px;height:14px;"></i-feather>
+                    One place to track everything you do
+                </li>
+            </ul>
+
+            <div class="mt-3">
+                <a [routerLink]="['/sign-up']" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                          hover:bg-red-700 active:scale-[0.98] transition">
+                    <i-feather name="user-plus" style="width:13px;height:13px;"></i-feather>
+                    Join Berliz
+                </a>
+            </div>
+        </div>
     </div>
 </section>

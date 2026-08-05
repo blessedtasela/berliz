@@ -85,6 +85,7 @@ export class AddSubTasksModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
+      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       // Get the selected tagIds values as an array
       const selectedTagIds = this.addSubTaskForm.value.tagIds.map((tag: any) => tag.tagIds);
@@ -116,7 +117,6 @@ export class AddSubTasksModalComponent {
         });
     }
     this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

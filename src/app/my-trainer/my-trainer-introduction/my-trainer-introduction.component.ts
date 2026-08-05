@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
@@ -18,7 +18,7 @@ import { TrainerService } from 'src/app/services/trainer.service';
   templateUrl: './my-trainer-introduction.component.html',
   styleUrls: ['./my-trainer-introduction.component.css']
 })
-export class MyTrainerIntroductionComponent {
+export class MyTrainerIntroductionComponent implements OnInit, OnChanges {
 
 
   @Input() trainerIntroduction!: TrainerIntroduction | null;
@@ -52,27 +52,47 @@ export class MyTrainerIntroductionComponent {
   ) { }
 
   ngOnInit(): void {
+    if (!this.updateTrainerIntroductionForm) {
+      this.initForm();
+    }
+  }
 
-    this.updateTrainerIntroductionForm = this.fb.group({
-      id: this.trainerIntroduction?.id,
-      introduction: [
-        this.trainerIntroduction?.introduction || '',
-        [
-          Validators.required,
-          Validators.minLength(900),
-          Validators.maxLength(1200)
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['trainerIntroduction']?.currentValue) {
+      this.initForm();
+    }
+  }
+
+  private initForm(): void {
+
+    if (this.updateTrainerIntroductionForm) {
+      this.updateTrainerIntroductionForm.patchValue({
+        id: this.trainerIntroduction?.id,
+        introduction: this.trainerIntroduction?.introduction || '',
+        photo: this.trainerIntroduction?.photo || null
+      });
+    } else {
+      this.updateTrainerIntroductionForm = this.fb.group({
+        id: this.trainerIntroduction?.id,
+        introduction: [
+          this.trainerIntroduction?.introduction || '',
+          [
+            Validators.required,
+            Validators.minLength(900),
+            Validators.maxLength(1200)
+          ]
+        ],
+        photo: [
+          this.trainerIntroduction?.photo || null,
+          Validators.required
         ]
-      ],
-      photo: [
-        this.trainerIntroduction?.photo || null,
-        Validators.required
-      ]
-    });
+      });
+    }
 
     this.originalValue = this.updateTrainerIntroductionForm.getRawValue();
     this.photo = this.trainerIntroduction?.photo || null;
 
-    // 🔥 Initialize previewUrl once, stable for first render
+    // 🔥 Initialize previewUrl, stable for first render
     if (this.trainerIntroduction?.photo?.photoUrl) {
       this.previewUrl = this.normalizeUrl(this.trainerIntroduction.photo.photoUrl);
     } else {

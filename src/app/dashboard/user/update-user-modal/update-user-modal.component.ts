@@ -93,9 +93,10 @@ export class UpdateUserModalComponent {
   updateUser(): void {
     this.ngxService.start();
     if (this.updateUserForm.invalid) {
-    this.invalidForm = true
-     this.responseMessage = "Invalid form"
-     this.ngxService.stop();
+      this.invalidForm = true
+      this.responseMessage = "Invalid form"
+      this.ngxService.stop();
+      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       this.userService.updateUser(this.updateUserForm.value)
         .subscribe((response: any) => {
@@ -120,7 +121,6 @@ export class UpdateUserModalComponent {
         });
     }
     this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog(){

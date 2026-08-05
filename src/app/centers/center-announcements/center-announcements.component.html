@@ -1,38 +1,47 @@
-<div class="justify-between mt-40 font-sans mx-auto flex flex-col justify-center items-center">
-    <div class="text-4xl mb-5 text-center">
-        Special Announcements
-    </div>
-    <i-feather name="Bell" style="width: 50px;" class="text-red-600 font-bold"></i-feather>
-</div>
-<section class="mx-auto mb-2 px-2 space-y-1 mt-40">
-    <section class="flex justify-center items-center cursor-pointer">
-        <div class="bg-gray-100 rounded-md m-5 min-h[900px] grid grid-cols md:grid-cols-2">
+<section class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
 
-            <div class="grid grid-cols md:grid-cols-2 justify-center items-center p-4 gap-10
-                transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                *ngFor="let centerAnnouncement of centerAnnouncements; let i = index"
-                [ngClass]="{ 'hidden' : i >= 9 && !showAllAnnouncements }">
-                <div class="flex">
-                    <img class="rounded-md mx-auto" src="{{ centerAnnouncement.iconUrl }}">
-                </div>
-                <div class="p-4">
-                    <p class="text-gray-950 font-bold font-sans text-sm text-left mb-2">
-                        {{ centerAnnouncement.announcement }}
-                    </p>
-                    <p class="text-red-600 font-bold font-sans text-sm text-justify">
-                        {{ centerAnnouncement.date }}
-                    </p>
-                </div>
-                <hr class="text-red-600 border-gray-600 border-bold">
-            </div>
+    <div class="flex items-center justify-between gap-3">
+        <div>
+            <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                Announcements
+                <i-feather name="bell" style="width:13px;height:13px;" class="text-red-600"></i-feather>
+            </h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                {{ centerAnnouncements.length }}
+                {{ centerAnnouncements.length === 1 ? 'update' : 'updates' }} from this center
+            </p>
         </div>
-    </section>
-    <div class="p-3" *ngFor="let a of centerAnnouncements; let i = index"
-        [ngClass]="{ 'hidden' : i <= 9 && !showAllAnnouncements }">
-        <button
-            class="p-2 px-4 bg-gray-100 text-red-600 font-sans font-bold rounded-md mx-auto flex justify-center mt-2"
-            (click)="allAnnouncements()">
-            {{ !showAllAnnouncements ? 'See more' : 'See less' }}
+        <button *ngIf="centerAnnouncements.length > 5" type="button" (click)="allAnnouncements()"
+            class="text-[11px] font-semibold text-red-600 hover:text-red-700 transition shrink-0">
+            {{ !showAllAnnouncements ? 'See all' : 'See less' }}
         </button>
     </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <div *ngIf="centerAnnouncements.length; else noAnnouncements" class="flex flex-col gap-2">
+        <div *ngFor="let centerAnnouncement of centerAnnouncements; let i = index"
+            [ngClass]="{ 'hidden': i >= 5 && !showAllAnnouncements }"
+            class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-start gap-3 hover:border-red-200 transition">
+
+            <img [src]="centerAnnouncement.iconUrl" alt=""
+                class="w-9 h-9 rounded-xl object-cover border border-gray-200 shrink-0"
+                onerror="this.src='assets/avatar.png';" />
+
+            <div class="min-w-0 flex-1">
+                <p class="text-xs text-gray-900 leading-relaxed">{{ centerAnnouncement.announcement }}</p>
+                <p class="text-[10px] uppercase tracking-wide text-gray-400 mt-1">
+                    {{ centerAnnouncement.date | date: 'mediumDate' }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #noAnnouncements>
+        <div class="flex items-center gap-2 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3">
+            <i-feather name="info" style="width:13px;height:13px;"></i-feather>
+            <span class="text-xs">No announcements from this center right now.</span>
+        </div>
+    </ng-template>
+
 </section>

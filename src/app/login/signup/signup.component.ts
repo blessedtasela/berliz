@@ -158,7 +158,6 @@ export class SignupComponent {
     }
 
     this.ngxService.start();
-    //  const fullPhone = this.locationFormComponent.getFullPhoneNumber();
     const data = new FormData();
     Object.keys(this.signupForm.controls).forEach(key => {
       const value = this.f(key).value;
@@ -171,7 +170,6 @@ export class SignupComponent {
       }
     });
 
-    console.log('Submitting signup data:', data);
     this.userService.signup(data).subscribe(
       (resp: any) => {
         this.snackBarService.openSnackBar(resp.message, '');

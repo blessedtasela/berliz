@@ -102,6 +102,7 @@ export class UpdateClientModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
+      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       const selectedCategoryIds = this.updateClientForm.value.categoryIds;
       const categoryIdsString = selectedCategoryIds.join(',');
@@ -130,7 +131,6 @@ export class UpdateClientModalComponent {
         });
     }
     this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

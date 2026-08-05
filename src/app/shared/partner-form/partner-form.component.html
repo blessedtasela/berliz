@@ -5,10 +5,15 @@
         <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100
                   flex items-center justify-center shrink-0">
-                <i-feather name="file-text" class="text-red-600" style="width:17px;height:17px;"></i-feather>
+                <i-feather [name]="addPartnerForm.get('role')?.value === 'center' ? 'home' : 'file-text'"
+                    class="text-red-600" style="width:17px;height:17px;"></i-feather>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-gray-900">Become a Trainer</h2>
+                <h2 class="text-sm font-bold text-gray-900">
+                    {{ addPartnerForm.get('role')?.value === 'center' ? 'Become a Center Partner'
+                    : addPartnerForm.get('role')?.value === 'trainer' ? 'Become a Trainer'
+                    : 'Become a Berliz Partner' }}
+                </h2>
                 <p class="text-[11px] text-gray-400 mt-0.5">Submit your application and supporting documents</p>
             </div>
         </div>

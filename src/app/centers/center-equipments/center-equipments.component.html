@@ -1,55 +1,61 @@
-<div class="justify-between mt-40 font-sans mx-auto flex flex-col justify-center items-center">
-    <div class="text-4xl mb-5 text-center">
-        State of the art equipments
-    </div>
-    <button class="text-md bg-red-600 text-white py-1 mb-5 px-2 hover:bg-red-700 rounded-md font-sans mx-auto
-    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
-        Subscribe Now
-    </button>
-</div>
-<section class="mx-auto mb-2 px-2 space-y-1 mt-40">
-    <div class="grid grid-cols-1 gap-20 p-2">
-        <section class="flex justify-center items-center cursor-pointer
-                 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-            *ngFor="let centerEquipment of centerEquipments; let i = index"
-            [ngClass]="{ 'hidden' : i >= 9 && !showAllEquipments }">
-            <div class="bg-gray-100 rounded-md m-5 min-h[900px] grid grid-cols md:grid-cols-2">
-                <div class="flex">
-                    <img class="rounded-md mx-auto" src="{{ centerEquipment.imageUrl }}">
-                </div>
-                <div class="flex flex-col justify-center items-center p-4">
-                    <div class="p-2">
-                        <p class="text-center text-md font-sans font-bold text-red-600 text-transform: uppercase mt-3">
-                            {{ centerEquipment.name }}
-                        </p>
-                        <p class="mt-1 text-sm w-full text-gray-600 font-bold text-center font-sans italic">
-                            <ng-container *ngFor="let categoryId of centerEquipment.categoryIds; let ix = index">
-                                {{ categoryId }} {{ ix < (centerEquipment.categoryIds.length - 1) ? "/" : "" }}
-                                    </ng-container>
-                        </p>
-                    </div>
-                    <div class="p-4">
-                        <p class="text-red-600 font-bold font-sans text-sm text-left mb-2">
-                            {{ centerEquipment.date }}
-                        </p>
-                        <p class="text-gray-950 font-bold font-sans text-sm text-justify">
-                            {{ centerEquipment.description }}
-                        </p>
-                    </div>
-                    <div
-                        class="text-sm bg-red-600 text-white py-1 mb-5 px-2 hover:bg-red-700 rounded-md font-sans mx-auto
-                                             transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
-                        {{ centerEquipment.stockNumber}} items in stock
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
-    <div class="p-3" *ngFor="let e of centerEquipments; let i = index" [ngClass]="{ 'hidden' : i <= 9  }">
-        <button
-            class="p-2 px-4 bg-gray-100 text-red-600 font-sans font-bold rounded-md mx-auto flex justify-center mt-2"
-            (click)="allEquipments()">
-            {{ !showAllEquipments ? 'See more' : 'See less' }}
+<section class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
+
+    <div class="flex items-center justify-between gap-3">
+        <div>
+            <h2 class="text-sm font-bold text-gray-900">Equipment</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                {{ centerEquipments.length }}
+                {{ centerEquipments.length === 1 ? 'machine' : 'machines' }} available on the floor
+            </p>
+        </div>
+        <button *ngIf="centerEquipments.length > 6" type="button" (click)="allEquipments()"
+            class="text-[11px] font-semibold text-red-600 hover:text-red-700 transition shrink-0">
+            {{ !showAllEquipments ? 'See all' : 'See less' }}
         </button>
     </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <div *ngIf="centerEquipments.length; else noEquipment"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div *ngFor="let centerEquipment of centerEquipments; let i = index"
+            [ngClass]="{ 'hidden': i >= 6 && !showAllEquipments }"
+            class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden flex flex-col hover:border-red-200 transition">
+
+            <div class="h-32 w-full bg-white border-b border-gray-200">
+                <img [src]="centerEquipment.imageUrl" [alt]="centerEquipment.name" class="w-full h-full object-contain"
+                    onerror="this.src='assets/avatar.png';" />
+            </div>
+
+            <div class="p-3 flex flex-col gap-2 flex-1">
+                <div>
+                    <p class="text-[11px] uppercase tracking-wide text-gray-400">Equipment</p>
+                    <p class="text-xs font-bold text-gray-900 mt-0.5">{{ centerEquipment.name }}</p>
+                </div>
+
+                <p class="text-[11px] text-gray-600 leading-relaxed flex-1 line-clamp-4">
+                    {{ centerEquipment.description }}
+                </p>
+
+                <div class="flex items-center justify-between pt-2 border-t border-gray-200">
+                    <span class="text-[10px] text-gray-400">Availability</span>
+                    <span
+                        class="text-[10px] font-semibold px-2 py-0.5 rounded-full border"
+                        [ngClass]="centerEquipment.stockNumber > 0
+                            ? 'text-red-600 bg-red-50 border-red-100'
+                            : 'text-gray-400 bg-gray-100 border-gray-200'">
+                        {{ centerEquipment.stockNumber || 0 }} in stock
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #noEquipment>
+        <div class="flex items-center gap-2 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3">
+            <i-feather name="info" style="width:13px;height:13px;"></i-feather>
+            <span class="text-xs">No equipment published for this center yet.</span>
+        </div>
+    </ng-template>
+
 </section>

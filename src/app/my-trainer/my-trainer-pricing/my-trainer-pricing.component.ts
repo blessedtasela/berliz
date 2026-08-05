@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -15,7 +15,7 @@ import { genericError } from 'src/validators/form-validators.module';
   templateUrl: './my-trainer-pricing.component.html',
   styleUrls: ['./my-trainer-pricing.component.css']
 })
-export class MyTrainerPricingComponent {
+export class MyTrainerPricingComponent implements OnInit, OnChanges {
 
   @Output() emitEvent = new EventEmitter();
   updateTrainerPricingForm!: FormGroup;
@@ -47,18 +47,33 @@ export class MyTrainerPricingComponent {
   ) { }
 
   ngOnInit(): void {
-    this.trainerPricing = this.trainerPricing;
-    this.updateTrainerPricingForm = this.formBuilder.group({
-      id: [this.trainerPricing?.id],
-      priceOnline: [this.trainerPricing?.priceOnline, Validators.required],
-      pricePersonal: [this.trainerPricing?.pricePersonal, Validators.required],
-      priceHybrid: [this.trainerPricing?.priceHybrid, Validators.required],
-      discount3Months: [this.trainerPricing?.discount3Months, Validators.required],
-      discount6Months: [this.trainerPricing?.discount6Months, Validators.required],
-      discount9Months: [this.trainerPricing?.discount9Months, Validators.required],
-      discount12Months: [this.trainerPricing?.discount12Months, Validators.required],
-      discount2Programs: [this.trainerPricing?.discount2Programs, Validators.required],
-    });
+    if (!this.updateTrainerPricingForm) {
+      this.initForm();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['trainerPricing']?.currentValue) {
+      this.initForm();
+    }
+  }
+
+  private initForm(): void {
+    if (this.updateTrainerPricingForm) {
+      this.updateFormValues(this.trainerPricing!);
+    } else {
+      this.updateTrainerPricingForm = this.formBuilder.group({
+        id: [this.trainerPricing?.id],
+        priceOnline: [this.trainerPricing?.priceOnline, Validators.required],
+        pricePersonal: [this.trainerPricing?.pricePersonal, Validators.required],
+        priceHybrid: [this.trainerPricing?.priceHybrid, Validators.required],
+        discount3Months: [this.trainerPricing?.discount3Months, Validators.required],
+        discount6Months: [this.trainerPricing?.discount6Months, Validators.required],
+        discount9Months: [this.trainerPricing?.discount9Months, Validators.required],
+        discount12Months: [this.trainerPricing?.discount12Months, Validators.required],
+        discount2Programs: [this.trainerPricing?.discount2Programs, Validators.required],
+      });
+    }
 
     this.originalValue = this.updateTrainerPricingForm.getRawValue();
   }

@@ -1,347 +1,389 @@
-<div class="relative">
-    <div class="text-red-600 absolute top-0 right-0 p-1">
-        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
-    </div>
-    <form [formGroup]="signupForm">
-        <header class="font-bold font-sans text-center m-2">
-            <h1 class="text-xl">Account Information</h1>
-            <p class="text-red-600 italic text-sm">Sign up today and gain acess to seamless services
-            </p>
-        </header>
-        <div class="grid grid-cols md:grid-cols-2 rounded-lg p-2 gap-2">
-            <div class="flex">
-                <img src="../../../../assets/landing/hero-body-building.jpg" class="rounded-lg">
+<div class="max-w-lg w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="user-plus" class="text-red-600" style="width:15px;height:15px;"></i-feather>
             </div>
-            <div class="bg-gray-200 gap-6 rounded-lg">
-                <div class="" *ngIf="formIndex === 0" [ngClass]="{'border-red-400':
-          (signupForm.get('firstname')?.invalid ||
-                signupForm.get('lastname')?.invalid ||
-                signupForm.get('phone')?.invalid ||
-                signupForm.get('dob')?.invalid ||
-                signupForm.get('gender')?.invalid ||
-                signupForm.get('country')?.invalid ) && invalidForm }">
-                    <hr [ngClass]="{'border-red-500':  (signupForm.get('firstname')?.invalid ||
-                signupForm.get('lastname')?.invalid ||
-                signupForm.get('phone')?.invalid ||
-                signupForm.get('dob')?.invalid ||
-                signupForm.get('gender')?.invalid ||
-                signupForm.get('country')?.invalid) && invalidForm }">
-                    <div class="invalid-form">
-                        <span *ngIf="!(signupForm.get('firstname')?.invalid ||
-                    signupForm.get('lastname')?.invalid ||
-                    signupForm.get('phone')?.invalid ||
-                    signupForm.get('dob')?.invalid ||
-                    signupForm.get('gender')?.invalid ||
-                    signupForm.get('country')?.invalid) && invalidForm" class="mx-2 text-gray-400">
-                            Everything looks good
-                        </span>
-                        <span *ngIf="(signupForm.get('firstname')?.invalid ||
-                    signupForm.get('lastname')?.invalid ||
-                    signupForm.get('phone')?.invalid ||
-                    signupForm.get('dob')?.invalid ||
-                    signupForm.get('gender')?.invalid ||
-                    signupForm.get('country')?.invalid) && invalidForm" class="text-red-500 mx-2">
-                            Please complete this section
-                        </span>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">First Name</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">First Name</span>
-                        <input formControlName="firstname"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': signupForm.get('firstname')?.invalid && signupForm.get('firstname')?.touched }"
-                            placeholder="First Name" type="text">
-                        <div *ngIf="signupForm.get('firstname')?.invalid && signupForm.get('firstname')?.dirty"
-                            class="text-red-500 mx-2">
-                            First Name is required
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Last Name</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Last Name</span>
-                        <input formControlName="lastname"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': signupForm.get('lastname')?.invalid && signupForm.get('lastname')?.touched }"
-                            placeholder="Last Name" type="text">
-                        <div *ngIf="signupForm.get('lastname')?.invalid && signupForm.get('lastname')?.dirty"
-                            class="text-red-500 mx-2">
-                            Last Name is required
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Phone</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Phone</span>
-                        <input formControlName="phone"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': signupForm.get('phone')?.invalid && signupForm.get('phone')?.touched }"
-                            placeholder="+123 000 000 000" type="tel">
-                        <div *ngIf="signupForm.get('phone')?.invalid && signupForm.get('phone')?.dirty"
-                            class="text-red-500 mx-2">
-                            must be at least 8 characters
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">DOB</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">DOB</span>
-                        <input formControlName="dob"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': signupForm.get('dob')?.invalid && signupForm.get('dob')?.touched }"
-                            placeholder="date of birth" type="date">
-                        <div *ngIf="signupForm.get('dob')?.invalid && signupForm.get('dob')?.dirty"
-                            class="text-red-500 mx-2">
-                            Please select your birth date
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="ml-4 font-bold text-gray-600 italic">Gender</span>
-                        <div class="grid grid-cols-2 gap-5">
-                            <div>
-                                <span class="sr-only">Male</span>
-                                <span class="ml-4 font-bold text-gray-700">Male</span>
-                                <input formControlName="gender" [value]="'Male'"
-                                    class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                                    [ngClass]="{'border-red-400': signupForm.get('gender')?.invalid && signupForm.get('gender')?.touched }"
-                                    placeholder="Male" type="radio">
-                            </div>
-                            <div>
-                                <span class="sr-only">Female</span>
-                                <span class="ml-4 font-bold text-gray-700">Female</span>
-                                <input formControlName="gender" [value]="'Female'"
-                                    class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                                    [ngClass]="{'border-red-400': signupForm.get('gender')?.invalid && signupForm.get('gender')?.touched }"
-                                    placeholder="Female" type="radio">
-                            </div>
-                        </div>
-                        <div *ngIf="signupForm.get('gender')?.invalid && signupForm.get('gender')?.dirty"
-                            class="text-red-500 mx-2">
-                            Please select a gender
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Country</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Country</span>
-                        <select formControlName="country" class="w-full"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': signupForm.get('country')?.invalid && signupForm.get('country')?.touched }"
-                            placeholder="country" type="text">
-                            <option selected hidden class="font-sans">Please select your country</option>
-                            <option *ngFor="let country of countries">{{ country.name }}</option>
-                        </select>
-                        <div *ngIf="signupForm.get('country')?.invalid && signupForm.get('country')?.touched"
-                            class="text-red-500 mx-2">
-                            select your country
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2">
-                        <div>
-                            <button
-                                class="bg-gray-950 rounded-md mx-auto py-1 px-2 m-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                                (click)="clear()">
-                                Clear
-                            </button>
-                        </div>
-                        <div>
-                            <button
-                                class="bg-red-600 rounded-md mx-auto py-1 px-2 m-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                                type="submit" (click)="toggleFirstIndex(+1)">
-                                Next
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="" *ngIf="formIndex === 1" [ngClass]="{'border-red-400': (
-            signupForm.get('state')?.invalid ||
-            signupForm.get('city')?.invalid ||
-            signupForm.get('postalCode')?.invalid ||
-            signupForm.get('address')?.invalid ||
-            signupForm.get('profilePhoto')?.invalid) && invalidForm }">
-                    <hr [ngClass]="{'border-red-500':  (
-                signupForm.get('state')?.invalid ||
-                signupForm.get('city')?.invalid ||
-                signupForm.get('postalCode')?.invalid ||
-                signupForm.get('address')?.invalid ||
-                signupForm.get('profilePhoto')?.invalid) && invalidForm }">
-                    <div class="invalid-form">
-                        <span *ngIf="!(
-                    signupForm.get('state')?.invalid ||
-                    signupForm.get('city')?.invalid ||
-                    signupForm.get('postalCode')?.invalid ||
-                    signupForm.get('address')?.invalid ||
-                    signupForm.get('profilePhoto')?.invalid) && invalidForm" class="mx-2 text-gray-400">
-                            Everything looks good
-                        </span>
-                        <span *ngIf="(
-                    signupForm.get('state')?.invalid ||
-                    signupForm.get('city')?.invalid ||
-                    signupForm.get('postalCode')?.invalid ||
-                    signupForm.get('address')?.invalid ||
-                    signupForm.get('profilePhoto')?.invalid) && invalidForm" class="text-red-500 mx-2">
-                            Please complete this section
-                        </span>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">State</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">State</span>
-                        <input formControlName="state"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': signupForm.get('state')?.invalid && signupForm.get('state')?.touched }"
-                            placeholder="State" type="text">
-                        <div *ngIf="signupForm.get('state')?.invalid && signupForm.get('state')?.dirty"
-                            class="text-red-500 mx-2">
-                            Select your state
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">City</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">City</span>
-                        <input formControlName="city"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': signupForm.get('city')?.invalid && signupForm.get('city')?.touched }"
-                            placeholder="City" type="text">
-                        <div *ngIf="signupForm.get('city')?.invalid && signupForm.get('city')?.dirty"
-                            class="text-red-500 mx-2">
-                            Please select your city
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Postal code</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Postal code</span>
-                        <input formControlName="postalCode"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': signupForm.get('postalCode')?.invalid && signupForm.get('postalCode')?.touched }"
-                            placeholder="postal code" type="number">
-                        <div *ngIf="signupForm.get('postalCode')?.invalid && signupForm.get('postalCode')?.dirty"
-                            class="text-red-500 mx-2">
-                            please enter a valid postal code
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Address</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Address</span>
-                        <textarea formControlName="address"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': signupForm.get('address')?.invalid && signupForm.get('address')?.touched }"
-                            placeholder="Write your addresss here" rows="5" cols="15"></textarea>
-                        <div *ngIf="signupForm.get('address')?.invalid && signupForm.get('address')?.dirty"
-                            class="text-red-500 mx-2">
-                            Address is required
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Profile photo</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Profile photo</span>
-                        <div class="flex">
-                            <span class="sr-only">Choose Profile photo</span>
-                            <div class="shrink-0">
-                                <img class="h-16 w-16 object-cover rounded-full" src="../../../assets/icons/user.png"
-                                    alt="Display photo" />
-                            </div>
-                            <input formControlName="profilePhoto"
-                                class="border-b-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none
-                            block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
-                            file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
-                                [ngClass]="{'border-gray-950': signupForm.get('profilePhoto')?.invalid && signupForm.get('profilePhoto')?.touched }"
-                                (change)="onImgSelected($event)" type="file" accept="image/*">
-                        </div>
-                        <div *ngIf="signupForm.get('profilePhoto')?.invalid && signupForm.get('profilePhoto')?.touched"
-                            class="text-red-500 mx-2">
-                            Image is required
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2">
-                        <div>
-                            <button
-                                class="bg-gray-950 rounded-md mx-auto py-1 px-2 m-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                                (click)="toggleIndex(-1)">
-                                Prev
-                            </button>
-                        </div>
-                        <div>
-                            <button
-                                class="bg-red-600 rounded-md mx-auto py-1 px-2 m-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                                type="submit" (click)="toggleSecondIndex(+1)">
-                                Next
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="" *ngIf="formIndex === 2" [ngClass]="{'border-red-400':  (signupForm.get('email')?.invalid ||
-                signupForm.get('password')?.invalid ||
-                signupForm.get('confirmPassword')?.invalid) && invalidForm }">
-                    <hr [ngClass]="{'border-red-500':  (signupForm.get('email')?.invalid ||
-                signupForm.get('password')?.invalid ||
-                signupForm.get('confirmPassword')?.invalid) && invalidForm }">
-                    <div class="invalid-form">
-                        <span *ngIf="signupForm.valid && !invalidForm" class="mx-2 text-gray-400">
-                            Everything looks good
-                        </span>
-                        <span *ngIf="(signupForm.get('email')?.invalid ||
-                    signupForm.get('password')?.invalid ||
-                    signupForm.get('confirmPassword')?.invalid) 
-                    && invalidForm" class="text-red-500 mx-2">
-                            Please complete this section
-                        </span>
-                        <span *ngIf="(!signupForm.get('email')?.invalid &&
-                    !signupForm.get('password')?.invalid &&
-                    !signupForm.get('confirmPassword')?.invalid) &&
-                    signupForm.invalid && invalidForm" class="text-red-500 mx-2">
-                            Please complete all sections
-                        </span>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Email</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Email</span>
-                        <input formControlName="email"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': signupForm.get('email')?.invalid && signupForm.get('email')?.touched }"
-                            placeholder="input email" type="text">
-                        <div *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.dirty"
-                            class="text-red-500 mx-2">
-                            email is required
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Password</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Password</span>
-                        <input formControlName="password"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': signupForm.get('password')?.invalid && signupForm.get('password')?.touched }"
-                            placeholder="at least 8 characters" type="password">
-                        <div *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.dirty"
-                            class="text-red-500 mx-2">
-                            must be at least 8 characters
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Confirm password</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Confirm password</span>
-                        <input formControlName="confirmPassword"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': signupForm.get('confirmPassword')?.invalid && signupForm.get('confirmPassword')?.touched }"
-                            placeholder="re-type password" type="password">
-                        <div *ngIf="signupForm.hasError('passwordMismatch') && signupForm.get('confirmPassword')?.dirty"
-                            class="text-red-500 mx-2">
-                            Passwords do not match.
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2">
-                        <div>
-                            <button
-                                class="bg-gray-950 rounded-md mx-auto py-1 px-2 m-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                                (click)="toggleIndex(-1)">
-                                Prev
-                            </button>
-                        </div>
-                        <div>
-                            <button
-                                class="bg-red-600 rounded-md mx-auto py-1 px-2 m-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                                type="submit" (click)="submitForm()">
-                                Submit
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">
+                    {{ formIndex === 0 ? 'Personal information' : formIndex === 1 ? 'Address & photo' : 'Account
+                    credentials' }}
+                </h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Sign up today and gain access to seamless services.</p>
             </div>
         </div>
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
+    </div>
+
+    <!-- Step indicator -->
+    <div class="flex items-center gap-2">
+        <span class="text-[11px] font-semibold text-gray-600 uppercase tracking-wide">
+            Step {{ formIndex + 1 }} of 3
+        </span>
+        <div class="flex items-center gap-1.5">
+            <span class="h-1.5 w-6 rounded-full transition-all duration-300"
+                [ngClass]="formIndex >= 0 ? 'bg-red-600' : 'bg-gray-200'"></span>
+            <span class="h-1.5 w-6 rounded-full transition-all duration-300"
+                [ngClass]="formIndex >= 1 ? 'bg-red-600' : 'bg-gray-200'"></span>
+            <span class="h-1.5 w-6 rounded-full transition-all duration-300"
+                [ngClass]="formIndex >= 2 ? 'bg-red-600' : 'bg-gray-200'"></span>
+        </div>
+    </div>
+
+    <form [formGroup]="signupForm" class="flex flex-col gap-4">
+
+        <!-- ── STEP 1: Personal information ───────────────────────── -->
+        <div *ngIf="formIndex === 0" class="flex flex-col gap-4">
+
+            <p *ngIf="(signupForm.get('firstname')?.invalid ||
+                       signupForm.get('lastname')?.invalid ||
+                       signupForm.get('phone')?.invalid ||
+                       signupForm.get('dob')?.invalid ||
+                       signupForm.get('gender')?.invalid ||
+                       signupForm.get('country')?.invalid) && invalidForm"
+                class="px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px] flex items-center gap-1.5">
+                <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+                Please complete this section
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- First name -->
+                <div class="flex flex-col gap-1">
+                    <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">First name</label>
+                    <input formControlName="firstname" placeholder="First name" type="text" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                        [ngClass]="{
+                            'border-red-400 bg-red-50': signupForm.get('firstname')?.invalid && signupForm.get('firstname')?.touched,
+                            'border-gray-200 bg-gray-50': !(signupForm.get('firstname')?.invalid && signupForm.get('firstname')?.touched)
+                          }">
+                    <p *ngIf="signupForm.get('firstname')?.invalid && signupForm.get('firstname')?.dirty"
+                        class="text-red-500 text-[11px] flex items-center gap-1">
+                        <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                        First name is required
+                    </p>
+                </div>
+
+                <!-- Last name -->
+                <div class="flex flex-col gap-1">
+                    <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last name</label>
+                    <input formControlName="lastname" placeholder="Last name" type="text" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                        [ngClass]="{
+                            'border-red-400 bg-red-50': signupForm.get('lastname')?.invalid && signupForm.get('lastname')?.touched,
+                            'border-gray-200 bg-gray-50': !(signupForm.get('lastname')?.invalid && signupForm.get('lastname')?.touched)
+                          }">
+                    <p *ngIf="signupForm.get('lastname')?.invalid && signupForm.get('lastname')?.dirty"
+                        class="text-red-500 text-[11px] flex items-center gap-1">
+                        <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                        Last name is required
+                    </p>
+                </div>
+
+                <!-- Phone -->
+                <div class="flex flex-col gap-1">
+                    <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Phone</label>
+                    <input formControlName="phone" placeholder="+123 000 000 000" type="tel" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                        [ngClass]="{
+                            'border-red-400 bg-red-50': signupForm.get('phone')?.invalid && signupForm.get('phone')?.touched,
+                            'border-gray-200 bg-gray-50': !(signupForm.get('phone')?.invalid && signupForm.get('phone')?.touched)
+                          }">
+                    <p *ngIf="signupForm.get('phone')?.invalid && signupForm.get('phone')?.dirty"
+                        class="text-red-500 text-[11px] flex items-center gap-1">
+                        <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                        Must be at least 9 characters
+                    </p>
+                </div>
+
+                <!-- DOB -->
+                <div class="flex flex-col gap-1">
+                    <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date of
+                        birth</label>
+                    <input formControlName="dob" placeholder="Date of birth" type="date" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                        [ngClass]="{
+                            'border-red-400 bg-red-50': signupForm.get('dob')?.invalid && signupForm.get('dob')?.touched,
+                            'border-gray-200 bg-gray-50': !(signupForm.get('dob')?.invalid && signupForm.get('dob')?.touched)
+                          }">
+                    <p *ngIf="signupForm.get('dob')?.invalid && signupForm.get('dob')?.dirty"
+                        class="text-red-500 text-[11px] flex items-center gap-1">
+                        <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                        Please select a birth date
+                    </p>
+                </div>
+            </div>
+
+            <!-- Gender -->
+            <div class="flex flex-col gap-1.5">
+                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Gender</label>
+                <div class="flex flex-wrap gap-1.5">
+                    <label class="cursor-pointer">
+                        <input formControlName="gender" [value]="'Male'" type="radio" class="peer sr-only">
+                        <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
+                                     bg-gray-50 border-gray-200 text-gray-600
+                                     peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">
+                            Male
+                        </span>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input formControlName="gender" [value]="'Female'" type="radio" class="peer sr-only">
+                        <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
+                                     bg-gray-50 border-gray-200 text-gray-600
+                                     peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">
+                            Female
+                        </span>
+                    </label>
+                </div>
+                <p *ngIf="signupForm.get('gender')?.invalid && signupForm.get('gender')?.dirty"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Please select a gender
+                </p>
+            </div>
+
+            <!-- Country -->
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Country</label>
+                <select formControlName="country" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    [ngClass]="{
+                        'border-red-400 bg-red-50': signupForm.get('country')?.invalid && signupForm.get('country')?.touched,
+                        'border-gray-200 bg-gray-50': !(signupForm.get('country')?.invalid && signupForm.get('country')?.touched)
+                      }">
+                    <option selected hidden>Please select your country</option>
+                    <option *ngFor="let country of countries">{{ country.name }}</option>
+                </select>
+                <p *ngIf="signupForm.get('country')?.invalid && signupForm.get('country')?.touched"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Select your country
+                </p>
+            </div>
+
+            <div class="border-t border-gray-100"></div>
+
+            <div class="flex items-center justify-end gap-2">
+                <button type="button" (click)="clear()"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 active:scale-[0.98] transition">
+                    Clear
+                </button>
+                <button type="button" (click)="closeDialog()"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 active:scale-[0.98] transition">
+                    Cancel
+                </button>
+                <button type="button" (click)="toggleFirstIndex(+1)"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                    Next
+                    <i-feather name="arrow-right" style="width:13px;height:13px;"></i-feather>
+                </button>
+            </div>
+        </div>
+
+        <!-- ── STEP 2: Address & photo ────────────────────────────── -->
+        <div *ngIf="formIndex === 1" class="flex flex-col gap-4">
+
+            <p *ngIf="(signupForm.get('state')?.invalid ||
+                       signupForm.get('city')?.invalid ||
+                       signupForm.get('postalCode')?.invalid ||
+                       signupForm.get('address')?.invalid ||
+                       signupForm.get('profilePhoto')?.invalid) && invalidForm"
+                class="px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px] flex items-center gap-1.5">
+                <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+                Please complete this section
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- State -->
+                <div class="flex flex-col gap-1">
+                    <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">State</label>
+                    <input formControlName="state" placeholder="State" type="text" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                        [ngClass]="{
+                            'border-red-400 bg-red-50': signupForm.get('state')?.invalid && signupForm.get('state')?.touched,
+                            'border-gray-200 bg-gray-50': !(signupForm.get('state')?.invalid && signupForm.get('state')?.touched)
+                          }">
+                    <p *ngIf="signupForm.get('state')?.invalid && signupForm.get('state')?.dirty"
+                        class="text-red-500 text-[11px] flex items-center gap-1">
+                        <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                        State is required
+                    </p>
+                </div>
+
+                <!-- City -->
+                <div class="flex flex-col gap-1">
+                    <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">City</label>
+                    <input formControlName="city" placeholder="City" type="text" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                        [ngClass]="{
+                            'border-red-400 bg-red-50': signupForm.get('city')?.invalid && signupForm.get('city')?.touched,
+                            'border-gray-200 bg-gray-50': !(signupForm.get('city')?.invalid && signupForm.get('city')?.touched)
+                          }">
+                    <p *ngIf="signupForm.get('city')?.invalid && signupForm.get('city')?.dirty"
+                        class="text-red-500 text-[11px] flex items-center gap-1">
+                        <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                        City is required
+                    </p>
+                </div>
+            </div>
+
+            <!-- Postal code -->
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Postal code</label>
+                <input formControlName="postalCode" placeholder="Postal code" type="number" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    [ngClass]="{
+                        'border-red-400 bg-red-50': signupForm.get('postalCode')?.invalid && signupForm.get('postalCode')?.touched,
+                        'border-gray-200 bg-gray-50': !(signupForm.get('postalCode')?.invalid && signupForm.get('postalCode')?.touched)
+                      }">
+                <p *ngIf="signupForm.get('postalCode')?.invalid && signupForm.get('postalCode')?.dirty"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Please enter a valid postal code
+                </p>
+            </div>
+
+            <!-- Address -->
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Address</label>
+                <textarea formControlName="address" placeholder="Write your address here" rows="4" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    [ngClass]="{
+                        'border-red-400 bg-red-50': signupForm.get('address')?.invalid && signupForm.get('address')?.touched,
+                        'border-gray-200 bg-gray-50': !(signupForm.get('address')?.invalid && signupForm.get('address')?.touched)
+                      }"></textarea>
+                <p *ngIf="signupForm.get('address')?.invalid && signupForm.get('address')?.dirty"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Address is required
+                </p>
+            </div>
+
+            <!-- Profile photo -->
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Profile photo</label>
+                <div class="flex items-center gap-3">
+                    <img src="../../../assets/icons/user.png" alt="Display photo"
+                        class="w-16 h-16 object-cover rounded-xl border border-gray-200 bg-gray-50 shrink-0">
+                    <input formControlName="profilePhoto" (change)="onImgSelected($event)" type="file" accept="image/*"
+                        class="block w-full text-xs text-gray-500 cursor-pointer
+                               file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold
+                               file:bg-red-50 file:text-red-600 hover:file:bg-red-100 file:cursor-pointer transition">
+                </div>
+                <p *ngIf="signupForm.get('profilePhoto')?.invalid && signupForm.get('profilePhoto')?.touched"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    A profile photo is required
+                </p>
+            </div>
+
+            <div class="border-t border-gray-100"></div>
+
+            <div class="flex items-center justify-end gap-2">
+                <button type="button" (click)="toggleIndex(-1)"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 active:scale-[0.98] transition flex items-center gap-2">
+                    <i-feather name="arrow-left" style="width:13px;height:13px;"></i-feather>
+                    Back
+                </button>
+                <button type="button" (click)="toggleSecondIndex(+1)"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                    Next
+                    <i-feather name="arrow-right" style="width:13px;height:13px;"></i-feather>
+                </button>
+            </div>
+        </div>
+
+        <!-- ── STEP 3: Account credentials ────────────────────────── -->
+        <div *ngIf="formIndex === 2" class="flex flex-col gap-4">
+
+            <p *ngIf="(signupForm.get('email')?.invalid ||
+                       signupForm.get('password')?.invalid ||
+                       signupForm.get('confirmPassword')?.invalid) && invalidForm"
+                class="px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px] flex items-center gap-1.5">
+                <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+                Please complete this section
+            </p>
+            <p *ngIf="(!signupForm.get('email')?.invalid &&
+                       !signupForm.get('password')?.invalid &&
+                       !signupForm.get('confirmPassword')?.invalid) && signupForm.invalid && invalidForm"
+                class="px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px] flex items-center gap-1.5">
+                <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+                Please complete all sections
+            </p>
+            <p *ngIf="signupForm.valid && !invalidForm"
+                class="px-3 py-2 rounded-xl bg-green-50 border border-green-200 text-green-700 text-[11px] flex items-center gap-1.5">
+                <i-feather name="check" style="width:12px;height:12px;"></i-feather>
+                Everything looks good
+            </p>
+
+            <!-- Email -->
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Email</label>
+                <input formControlName="email" placeholder="you@example.com" type="text" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    [ngClass]="{
+                        'border-red-400 bg-red-50': signupForm.get('email')?.invalid && signupForm.get('email')?.touched,
+                        'border-gray-200 bg-gray-50': !(signupForm.get('email')?.invalid && signupForm.get('email')?.touched)
+                      }">
+                <p *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.dirty"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    A valid email is required
+                </p>
+            </div>
+
+            <!-- Password -->
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Password</label>
+                <input formControlName="password" placeholder="At least 8 characters" type="password" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    [ngClass]="{
+                        'border-red-400 bg-red-50': signupForm.get('password')?.invalid && signupForm.get('password')?.touched,
+                        'border-gray-200 bg-gray-50': !(signupForm.get('password')?.invalid && signupForm.get('password')?.touched)
+                      }">
+                <p *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.dirty"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Must be at least 8 characters
+                </p>
+            </div>
+
+            <!-- Confirm password -->
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Confirm password</label>
+                <input formControlName="confirmPassword" placeholder="Re-type password" type="password" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    [ngClass]="{
+                        'border-red-400 bg-red-50': signupForm.get('confirmPassword')?.invalid && signupForm.get('confirmPassword')?.touched,
+                        'border-gray-200 bg-gray-50': !(signupForm.get('confirmPassword')?.invalid && signupForm.get('confirmPassword')?.touched)
+                      }">
+                <p *ngIf="signupForm.hasError('passwordMismatch') && signupForm.get('confirmPassword')?.dirty"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Passwords do not match
+                </p>
+            </div>
+
+            <div class="border-t border-gray-100"></div>
+
+            <div class="flex items-center justify-end gap-2">
+                <button type="button" (click)="toggleIndex(-1)"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 active:scale-[0.98] transition flex items-center gap-2">
+                    <i-feather name="arrow-left" style="width:13px;height:13px;"></i-feather>
+                    Back
+                </button>
+                <button type="submit" (click)="submitForm()"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                    <i-feather name="check" style="width:13px;height:13px;"></i-feather>
+                    Create Account
+                </button>
+            </div>
+        </div>
+
     </form>
+
 </div>

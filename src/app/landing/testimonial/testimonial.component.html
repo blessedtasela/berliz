@@ -1,57 +1,94 @@
-<!-- Testimonial Section -->
-<section class="grid md:grid-cols-2 grid-cols-1 w-full mt-16 p-4 md:p-8 gap-0">
-  <!-- Image -->
-  <div class="flex">
-    <img src="../../../assets/trainers/t10.jpg" alt="Client" class="w-full object-cover md:rounded-l-md" />
-  </div>
+<!-- ═══════════════════════════════════════════════
+     LANDING — TESTIMONIALS
+════════════════════════════════════════════════ -->
+<section class="w-full bg-zinc-950 px-4 py-20 font-sans">
+  <div class="max-w-6xl mx-auto">
 
-  <!-- Testimonial Content -->
-  <div class="bg-gradient-to-b from-zinc-900 to-black md:rounded-r-md rounded-b-md p-6 md:p-10 text-white space-y-4">
-    <p class="text-red-600 font-semibold uppercase tracking-widest text-sm md:text-base">
-      Testimonies
-    </p>
+    <div class="grid lg:grid-cols-2 gap-0 rounded-2xl overflow-hidden border border-zinc-800 bg-zinc-900">
 
-    <h3 class="text-2xl md:text-4xl font-extrabold uppercase tracking-tight">
-      Real Stories. Real Results.
-    </h3>
-
-    <!-- Default fallback when no testimonials are available -->
-    <div *ngIf="testimonials.length === 0" class="text-gray-300 text-sm md:text-base italic mt-4">
-      <p class="my-6">
-        <span class="text-red-600 text-4xl font-bold mr-2">&#8220;</span>
-        Amazing testimonials are coming soon! Stay tuned to hear inspiring stories from our community.
-        <span class="text-red-600 text-3xl font-bold ml-1">&#8221;</span>
-      </p>
-    </div>
-
-    <!-- Testimonial Display -->
-    <div *ngFor="let t of testimonials; let i = index" [class.hidden]="i !== testimonialIndex">
-      <p class="text-gray-200 font-light text-sm md:text-base leading-relaxed my-6 relative">
-        <span class="text-red-600 text-5xl font-bold absolute left-[-10px] top-[-10px]">&#8220;</span>
-        <span class="ml-6 block">{{ t.testimonial }}</span>
-        <span class="text-red-600 text-2xl font-bold absolute right-[-10px] bottom-[-10px]">&#8221;</span>
-      </p>
-
-      <!-- Client Info -->
-      <div class="grid grid-cols-2 items-center gap-4 mt-4">
-        <img src="../../../assets/trainers/t15.jpg" alt="{{ t.userFirstname }}" class="rounded-full w-24 h-24 object-cover border-2 border-red-600" />
-        <div>
-          <p class="font-bold text-md">{{ t.userFirstname }}</p>
-          <p class="text-gray-400 text-sm">{{ t.date }}</p>
-        </div>
+      <!-- Image -->
+      <div class="relative min-h-[280px] lg:min-h-full">
+        <img src="assets/trainers/t10.jpg" alt="Berliz client" class="absolute inset-0 w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-zinc-900/80 to-transparent pointer-events-none"></div>
       </div>
 
-      <!-- Center Name & Navigation Arrows -->
-      <div class="grid grid-cols-2 items-center mt-6">
-        <button
-          class="bg-red-600 text-white py-2 px-4 rounded-md text-sm font-bold uppercase tracking-wide hover:bg-red-700 
-                 transition-all duration-300 transform hover:scale-105">
-          {{ t.centerName }}
-        </button>
+      <!-- Content -->
+      <div class="flex flex-col gap-4 p-8 lg:p-10">
 
-        <div class="flex justify-end space-x-4 text-2xl font-bold">
-          <span (click)="toggleTestimonial(-1)" class="cursor-pointer text-red-600 hover:text-white transition">&#8592;</span>
-          <span (click)="toggleTestimonial(+1)" class="cursor-pointer text-red-600 hover:text-white transition">&#8594;</span>
+        <!-- Eyebrow -->
+        <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+          Testimonies
+        </span>
+
+        <!-- Title -->
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+          Real Stories. <span class="text-red-500">Real Results.</span>
+        </h2>
+
+        <div class="w-12 h-0.5 bg-red-600 rounded-full"></div>
+
+        <!-- ── EMPTY STATE ──────────────────────────────────────── -->
+        <div *ngIf="testimonials.length === 0" class="flex flex-col items-center justify-center py-12 gap-6 text-center">
+
+          <div class="w-20 h-20 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center">
+            <i-feather name="message-circle" class="text-zinc-600" style="width:32px;height:32px;"></i-feather>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <h3 class="text-lg font-bold text-white">Stories coming soon</h3>
+            <p class="text-sm text-zinc-500 max-w-xs">
+              Our community is just getting started. Inspiring stories land here soon.
+            </p>
+          </div>
+        </div>
+
+        <!-- ── TESTIMONIAL ──────────────────────────────────────── -->
+        <div *ngFor="let t of testimonials; let i = index" [class.hidden]="i !== testimonialIndex"
+          class="flex flex-col gap-5">
+
+          <!-- Quote -->
+          <div class="relative pl-6">
+            <i-feather name="message-circle" class="absolute left-0 top-0.5 text-red-600"
+              style="width:14px;height:14px;"></i-feather>
+            <p class="text-sm text-zinc-300 leading-relaxed italic">
+              "{{ t.testimonial }}"
+            </p>
+          </div>
+
+          <!-- Divider -->
+          <div class="border-t border-zinc-800"></div>
+
+          <!-- Client -->
+          <div class="flex items-center gap-3">
+            <img src="assets/trainers/t15.jpg" [alt]="t.userFirstname"
+              class="w-12 h-12 rounded-full object-cover border-2 border-red-600 shrink-0" />
+            <div class="flex flex-col leading-tight">
+              <span class="text-sm font-extrabold text-white">{{ t.userFirstname }}</span>
+              <span class="text-[11px] text-zinc-500">{{ t.date }}</span>
+            </div>
+          </div>
+
+          <!-- Center + nav -->
+          <div class="flex items-center justify-between gap-3">
+
+            <span class="text-[10px] font-semibold text-red-400 bg-red-950 border border-red-900
+                         px-2.5 py-1 rounded-full">
+              {{ t.centerName }}
+            </span>
+
+            <div class="flex items-center gap-2">
+              <button type="button" (click)="toggleTestimonial(-1)" aria-label="Previous testimonial" class="w-8 h-8 rounded-lg border border-zinc-700 flex items-center justify-center
+                         text-zinc-400 hover:bg-red-600 hover:border-red-600 hover:text-white transition">
+                <i-feather name="chevron-left" style="width:14px;height:14px;"></i-feather>
+              </button>
+
+              <button type="button" (click)="toggleTestimonial(1)" aria-label="Next testimonial" class="w-8 h-8 rounded-lg border border-zinc-700 flex items-center justify-center
+                         text-zinc-400 hover:bg-red-600 hover:border-red-600 hover:text-white transition">
+                <i-feather name="chevron-right" style="width:14px;height:14px;"></i-feather>
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

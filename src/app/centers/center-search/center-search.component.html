@@ -1,34 +1,63 @@
-<div class="w-full max-w-xl mx-auto mt-12 px-4 font-sans">
-    <!-- Search Box -->
-    <div
-        class="flex items-center bg-white shadow-md rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-berliz-primary">
-        <input type="text" [(ngModel)]="searchQuery" placeholder="Find centers by name, services, or location"
-            class="w-full px-4 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none"
-            aria-label="Search" />
-        <button type="button" class="p-2 text-berliz-primary hover:text-berliz-accent transition-colors duration-200"
-            (click)="searchByButton()">
-            <i-feather name="Search" class="w-5 h-5"></i-feather>
+<!-- ═══════════════════════════════════════════════
+     CENTERS SEARCH BAR
+     Sits on a dark background (centers page)
+════════════════════════════════════════════════ -->
+<div class="w-full max-w-2xl mx-auto px-4 py-8 font-sans">
+
+    <!-- Search row -->
+    <div class="flex items-stretch gap-2">
+
+        <!-- Input -->
+        <div class="flex-1 flex items-center bg-zinc-900 border border-zinc-700 rounded-xl
+                    focus-within:border-red-600 focus-within:ring-1 focus-within:ring-red-600/30 transition">
+            <i-feather name="search" class="ml-3 text-zinc-500 shrink-0" style="width:15px;height:15px;"></i-feather>
+            <input type="text" [(ngModel)]="searchQuery" placeholder="Search by name, services or location…" class="flex-1 bg-transparent px-3 py-2.5 text-sm text-white placeholder-zinc-500
+                       focus:outline-none" aria-label="Search centers" />
+        </div>
+
+        <!-- Button -->
+        <button type="button" (click)="searchByButton()" class="px-4 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                   hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2 shrink-0">
+            <i-feather name="search" style="width:13px;height:13px;"></i-feather>
+            Search
         </button>
     </div>
 
-    <!-- Criteria Selector -->
-    <div class="flex items-center justify-center gap-2 mt-4">
-        <label for="criteria" class="text-sm text-white">Search by:</label>
-        <select id="criteria" [(ngModel)]="selectedSearchCriteria" (change)="onSearchCriteriaChange()"
-            class="border border-gray-300 rounded-md px-3 py-1 text-sm text-gray-700 focus:border-berliz-primary focus:ring-1 focus:ring-berliz-primary transition">
-            <option value="name">Name</option>
-            <option value="category">Services</option>
-            <option value="address">Address</option>
-        </select>
+    <!-- Criteria pills -->
+    <div class="flex items-center gap-2 mt-4 flex-wrap">
+        <span class="text-[11px] text-zinc-500 font-medium">Filter by:</span>
+
+        <button type="button" (click)="selectedSearchCriteria = 'name'; onSearchCriteriaChange()"
+            class="px-3 py-1 rounded-full text-[11px] font-semibold border transition" [ngClass]="selectedSearchCriteria === 'name'
+                ? 'bg-red-600 border-red-600 text-white'
+                : 'bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-red-600 hover:text-white'">
+            Name
+        </button>
+
+        <button type="button" (click)="selectedSearchCriteria = 'category'; onSearchCriteriaChange()"
+            class="px-3 py-1 rounded-full text-[11px] font-semibold border transition" [ngClass]="selectedSearchCriteria === 'category'
+                ? 'bg-red-600 border-red-600 text-white'
+                : 'bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-red-600 hover:text-white'">
+            Services
+        </button>
+
+        <button type="button" (click)="selectedSearchCriteria = 'address'; onSearchCriteriaChange()"
+            class="px-3 py-1 rounded-full text-[11px] font-semibold border transition" [ngClass]="selectedSearchCriteria === 'address'
+                ? 'bg-red-600 border-red-600 text-white'
+                : 'bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-red-600 hover:text-white'">
+            Address
+        </button>
     </div>
 
-    <!-- Results Feedback (Only when searchQuery is active) -->
-    <div *ngIf="searchQuery && searchQuery.trim() !== ''">
-        <div *ngIf="allCenters.length > 0" class="text-center mt-6 text-white font-medium">
-            {{ allCenters.length }} Results Found
-        </div>
-        <div *ngIf="allCenters.length === 0" class="text-center mt-6 text-red-600">
-            No Results Found. Please Try Again.
-        </div>
+    <!-- Result feedback (only when a query is active) -->
+    <div *ngIf="searchQuery && searchQuery.trim() !== ''" class="mt-4 text-xs text-center">
+        <span *ngIf="centers.length > 0" class="text-zinc-400">
+            <span class="text-white font-semibold">{{ centers.length }}</span>
+            center{{ centers.length === 1 ? '' : 's' }} found
+        </span>
+        <span *ngIf="centers.length === 0" class="text-red-500 font-medium">
+            No centers found for "{{ searchQuery }}"
+        </span>
     </div>
+
 </div>

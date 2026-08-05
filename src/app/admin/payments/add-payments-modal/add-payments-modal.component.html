@@ -1,119 +1,140 @@
-<div class="relative bg-white text-gray-700 p-2">
-    <div class="text-red-600 absolute top-0 right-0 p-5">
-        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+<div class="max-w-lg w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="credit-card" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Add a new payment</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Provide the payment details and select the users.</p>
+            </div>
+        </div>
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
     </div>
-    <section class="bg-white">
-        <form [formGroup]="addPaymentForm">
-            <header class="font-bold font-sans text-center m-2 text-gray-700">
-                <h1 class="text-xl">Add a new category</h1>
-                <p class="text-red-600 italic text-sm">Please provide details of the category and select it's tags.
-                </p>
-            </header>
-            <div class="invalid-form">
-                <span *ngIf="!(addPaymentForm.get('name')?.invalid ||
-                        addPaymentForm.get('likes')?.invalid ||
-                        addPaymentForm.get('description')?.invalid ||
-                        addPaymentForm.get('photo')?.invalid ||
-                        addPaymentForm.get('tagIds')?.invalid)
-                         && invalidForm" class="mx-2 text-gray-700">
-                    Everything looks good
-                </span>
-                <span *ngIf="(addPaymentForm.get('name')?.invalid ||
+
+    <form [formGroup]="addPaymentForm" class="flex flex-col gap-4">
+
+        <p *ngIf="(addPaymentForm.get('name')?.invalid ||
                 addPaymentForm.get('likes')?.invalid ||
                 addPaymentForm.get('description')?.invalid ||
                 addPaymentForm.get('photo')?.invalid ||
-                addPaymentForm.get('tagIds')?.invalid)
-                 && invalidForm" class="mx-2 text-red-500">
-                    Please complete all sessions
-                </span>
-            </div>
-            <div class="grid grid-cols md:grid-cols-2 p-1 gap-2">
-                <div class="mx-auto w-full grid grid-cols-2 grid-cols-4 rounded-lg text-gray-700">
-                    <div class="rounded-lg object-cover flex col-span-4 flex">
-                        <img [src]="selectedPhoto" class="rounded-lg">
-                    </div>
-                    <div *ngIf="addPaymentForm.get('tagIds')?.invalid && invalidForm"
-                        class="text-red-500 mx-2 col-span-4">
-                        Select at least one tag
-                    </div>
-                    <div *ngFor="let tag of users; let i = index"
-                        class="col-span-2 md:col-span-1 mx-auto w-full flex items-center">
-                        <input formArrayName="tagIds" (change)="onCheckboxChanged($event)"
-                            class="w-full border-b-2 rounded-lg  rounded-md m-2 text-gray-950 focus:outline-none border-gray-400 hover:border-gray-500"
-                            placeholder="tags" type="checkbox" [value]="tag.id">
-                        {{ tag.email }}
-                    </div>
-                </div>
-                <div class="bg-gray-200 gap-5 rounded-lg p-2 ">
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">Icon</span>
-                        <select formControlName="photo" class="w-full" [(ngModel)]="selectedPhoto"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addPaymentForm.get('photo')?.invalid && addPaymentForm.get('photo')?.touched 
-                            || (addPaymentForm.get('photo')?.invalid && invalidForm)}" placeholder="photo"
-                            type="text">
-                            <option selected hidden class="w-auto font-sans">Select Icon name</option>
-                            <option *ngFor="let photo of users" class="w-auto p-8 text-sm m-8">{{ photo.email }}</option>
-                        </select>
-                        <div *ngIf="addPaymentForm.get('photo')?.invalid && addPaymentForm.get('photo')?.dirty|| 
-                        (addPaymentForm.get('photo')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            select an icon name
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic"> Category Name</span>
-                        <input formControlName="name"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addPaymentForm.get('name')?.invalid && addPaymentForm.get('name')?.touched 
-                            || (addPaymentForm.get('name')?.invalid && invalidForm)}" placeholder="Category Name"
-                            type="text">
-                        <div *ngIf="addPaymentForm.get('name')?.invalid && addPaymentForm.get('name')?.dirty 
-                        || (addPaymentForm.get('name')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            Category Name is required
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">Likes</span>
-                        <input formControlName="likes"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addPaymentForm.get('likes')?.invalid && addPaymentForm.get('likes')?.touched 
-                            || (addPaymentForm.get('likes')?.invalid && invalidForm)}" placeholder="Likes"
-                            type="number" min="0">
-                        <div *ngIf="addPaymentForm.get('likes')?.invalid && addPaymentForm.get('likes')?.dirty 
-                        || (addPaymentForm.get('likes')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            Check the number of likes
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">Description</span>
-                        <textarea formControlName="description"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addPaymentForm.get('description')?.invalid && addPaymentForm.get('description')?.touched 
-                            || (addPaymentForm.get('description')?.invalid && invalidForm)}" placeholder="Description"
-                            rows="5" cols="30"></textarea>
-                        <div *ngIf="addPaymentForm.get('description')?.invalid && addPaymentForm.get('description')?.dirty
-                        || (addPaymentForm.get('description')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            Description is required
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2">
-                        <div class="bg-gray-950 rounded-md mx-auto m-2">
-                            <button type="button"
-                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
-                                (click)="clear()">
-                                Clear
-                            </button>
-                        </div>
-                        <div class="bg-red-600 rounded-md mx-auto m-2">
-                            <button type="submit"
-                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
-                                (click)="addCategory()">
-                                Add
+                addPaymentForm.get('tagIds')?.invalid) && invalidForm"
+            class="text-red-500 text-[11px] flex items-center gap-1">
+            <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+            Please complete all sections
+        </p>
 
-                            </button>
-                        </div>
-                    </div>
-                </div>
+        <!-- Users -->
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Users</label>
+            <div class="flex flex-wrap gap-2">
+                <label *ngFor="let tag of users; let i = index" class="cursor-pointer">
+                    <input formArrayName="tagIds" (change)="onCheckboxChanged($event)" type="checkbox" [value]="tag.id"
+                        class="peer sr-only">
+                    <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
+                               bg-gray-50 border-gray-200 text-gray-600
+                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">
+                        {{ tag.email }}
+                    </span>
+                </label>
             </div>
-        </form>
-    </section>
+            <p *ngIf="addPaymentForm.get('tagIds')?.invalid && invalidForm"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Select at least one user
+            </p>
+        </div>
+
+        <!-- Icon -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Icon</label>
+            <div class="flex items-center gap-3">
+                <img [src]="selectedPhoto" class="w-16 h-16 object-cover rounded-xl border border-gray-200 shrink-0"
+                    onerror="this.style.visibility='hidden';" />
+                <select formControlName="photo" [(ngModel)]="selectedPhoto" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    [ngClass]="{
+                            'border-red-400 bg-red-50': (addPaymentForm.get('photo')?.invalid && addPaymentForm.get('photo')?.touched) || (addPaymentForm.get('photo')?.invalid && invalidForm),
+                            'border-gray-200 bg-gray-50': !((addPaymentForm.get('photo')?.invalid && addPaymentForm.get('photo')?.touched) || (addPaymentForm.get('photo')?.invalid && invalidForm))
+                          }">
+                    <option selected hidden>Select an icon name</option>
+                    <option *ngFor="let photo of users">{{ photo.email }}</option>
+                </select>
+            </div>
+            <p *ngIf="(addPaymentForm.get('photo')?.invalid && addPaymentForm.get('photo')?.dirty) || (addPaymentForm.get('photo')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Select an icon name
+            </p>
+        </div>
+
+        <!-- Name -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Name</label>
+            <input formControlName="name" type="text" placeholder="Name" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': (addPaymentForm.get('name')?.invalid && addPaymentForm.get('name')?.touched) || (addPaymentForm.get('name')?.invalid && invalidForm),
+                        'border-gray-200 bg-gray-50': !((addPaymentForm.get('name')?.invalid && addPaymentForm.get('name')?.touched) || (addPaymentForm.get('name')?.invalid && invalidForm))
+                      }">
+            <p *ngIf="(addPaymentForm.get('name')?.invalid && addPaymentForm.get('name')?.dirty) || (addPaymentForm.get('name')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Name is required
+            </p>
+        </div>
+
+        <!-- Likes -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Likes</label>
+            <input formControlName="likes" type="number" min="0" placeholder="Likes" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': (addPaymentForm.get('likes')?.invalid && addPaymentForm.get('likes')?.touched) || (addPaymentForm.get('likes')?.invalid && invalidForm),
+                        'border-gray-200 bg-gray-50': !((addPaymentForm.get('likes')?.invalid && addPaymentForm.get('likes')?.touched) || (addPaymentForm.get('likes')?.invalid && invalidForm))
+                      }">
+            <p *ngIf="(addPaymentForm.get('likes')?.invalid && addPaymentForm.get('likes')?.dirty) || (addPaymentForm.get('likes')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Check the number of likes
+            </p>
+        </div>
+
+        <!-- Description -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Description</label>
+            <textarea formControlName="description" rows="4" placeholder="Description" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': (addPaymentForm.get('description')?.invalid && addPaymentForm.get('description')?.touched) || (addPaymentForm.get('description')?.invalid && invalidForm),
+                        'border-gray-200 bg-gray-50': !((addPaymentForm.get('description')?.invalid && addPaymentForm.get('description')?.touched) || (addPaymentForm.get('description')?.invalid && invalidForm))
+                      }"></textarea>
+            <p *ngIf="(addPaymentForm.get('description')?.invalid && addPaymentForm.get('description')?.dirty) || (addPaymentForm.get('description')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Description is required
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div class="flex items-center justify-end gap-2">
+            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+                       hover:bg-gray-50 active:scale-[0.98] transition">
+                Clear
+            </button>
+            <button type="submit" (click)="addCategory()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                <i-feather name="check" style="width:13px;height:13px;"></i-feather>
+                Add payment
+            </button>
+        </div>
+
+    </form>
+
+</div>

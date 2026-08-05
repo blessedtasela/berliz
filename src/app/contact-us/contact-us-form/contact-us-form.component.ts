@@ -35,6 +35,7 @@ export class ContactUsFormComponent implements OnInit {
     if (this.contactUsForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Please fill out the form correctly.";
+      this.snackBarService.openSnackBar(this.responseMessage, "error");
     }
     else {
       this.ngxService.start()
@@ -57,7 +58,6 @@ export class ContactUsFormComponent implements OnInit {
           this.snackBarService.openSnackBar(this.responseMessage, "error");
         });
     }
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
 
   clear() {

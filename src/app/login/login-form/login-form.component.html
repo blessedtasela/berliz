@@ -1,93 +1,116 @@
-<section class="w-full max-w-md space-y-6 text-gray-800 dark:text-gray-200 font-sans">
+<!-- ═══════════════════════════════════════════════
+     LOGIN FORM
+════════════════════════════════════════════════ -->
+<section class="w-full max-w-md flex flex-col gap-6 font-sans">
+
     <!-- Title -->
-    <div class="text-center">
-        <h2 class="text-xl font-bold">Login to Continue</h2>
-        <p class="text-sm text-red-600 font-semibold">Enter login details below</p>
-    </div>
+    <header class="text-center">
+        <h2 class="text-lg font-bold text-gray-900">Login to Continue</h2>
+        <p class="text-xs text-red-500 italic mt-0.5">Enter your details below</p>
+    </header>
 
     <!-- Reactive Form -->
-    <form [formGroup]="loginForm" class="space-y-6">
+    <form [formGroup]="loginForm" class="flex flex-col gap-4">
+
         <!-- Email -->
-        <div>
-            <input formControlName="email" type="email" placeholder="Email address"
-                class="w-full px-4 py-3 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-red-600 transition"
-                [ngClass]="{ 'border-red-600': loginForm.get('email')?.invalid && loginForm.get('email')?.dirty }" />
-            <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.dirty"
-                class="text-xs text-red-500 mt-1">
-                Please enter a valid email address.
-            </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                Email
+            </label>
+            <input formControlName="email" type="email" placeholder="you@example.com" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="loginForm.get('email')?.invalid && loginForm.get('email')?.dirty
+                    ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'" />
+            <p *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Please enter a valid email address
+            </p>
         </div>
+
         <!-- Password -->
-        <div>
-            <input formControlName="password" type="password" placeholder="Password"
-                class="w-full px-4 py-3 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-red-600 transition"
-                [ngClass]="{ 'border-red-600': loginForm.get('password')?.invalid && loginForm.get('password')?.dirty }" />
-            <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.dirty"
-                class="text-xs text-red-500 mt-1">
-                Password must be at least 8 characters.
-            </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                Password
+            </label>
+            <input formControlName="password" type="password" placeholder="••••••••" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="loginForm.get('password')?.invalid && loginForm.get('password')?.dirty
+                    ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'" />
+            <p *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Password must be at least 8 characters
+            </p>
         </div>
 
-        <!-- Submit Button -->
-        <div class="text-center">
-            <button type="submit" [disabled]="loginForm.invalid" (click)="login()"
-                [ngClass]="{'opacity-50 cursor-not-allowed': loginForm.invalid}"
-                class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md transition flex items-center justify-center">
-                Login
+        <!-- Submit -->
+        <button type="submit" [disabled]="loginForm.invalid" (click)="login()"
+            [ngClass]="{ 'opacity-50 cursor-not-allowed': loginForm.invalid }" class="w-full py-2.5 rounded-xl bg-red-600 text-white text-sm font-semibold
+                   hover:bg-red-700 active:scale-[0.98] transition flex items-center justify-center gap-2">
+            <i-feather name="arrow-right" style="width:14px;height:14px;"></i-feather>
+            Login
+        </button>
+
+        <!-- Forgot / Signup -->
+        <div class="flex justify-between items-center text-xs font-semibold">
+            <button type="button" (click)="openForgotPassword()" class="text-gray-500 hover:text-gray-800 transition">
+                Forgot password?
             </button>
-        </div>
-
-        <!-- Forgot/Signup Links -->
-        <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 font-semibold">
-            <span (click)="openForgotPassword()" class="cursor-pointer hover:underline">Forgot password?</span>
-            <a [routerLink]="['/sign-up']" class="text-red-600 hover:underline">Sign up!</a>
+            <a [routerLink]="['/sign-up']" class="text-red-600 hover:text-red-700 transition">
+                Sign up
+            </a>
         </div>
 
         <!-- Social Logins -->
-        <div class="pt-4 border-t border-gray-300 dark:border-gray-600 text-center">
-            <p class="text-xs text-gray-500 dark:text-gray-400">Or sign in with</p>
-            <div class="flex justify-center gap-4 mt-3">
-                <button (click)="loginWithGoogle()"
-                    class="bg-white dark:bg-gray-800 border dark:border-gray-700 px-4 py-2 rounded-md shadow hover:shadow-md flex items-center justify-center">
-                    <img src="assets/icons/google.png" alt="Google" class="h-5 w-5 inline" />
+        <div class="pt-4 border-t border-gray-200 flex flex-col items-center gap-3">
+            <p class="text-[11px] text-gray-400 uppercase tracking-wide font-semibold">Or sign in with</p>
+
+            <div class="flex justify-center gap-3">
+                <button type="button" (click)="loginWithGoogle()" aria-label="Sign in with Google" class="w-11 h-11 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center
+                           hover:border-red-500 hover:bg-white transition">
+                    <img src="assets/icons/google.png" alt="Google" class="h-5 w-5" />
                 </button>
-                <button (click)="loginWithFacebook()"
-                    class="bg-white dark:bg-gray-800 border dark:border-gray-700 px-4 py-2 rounded-md shadow hover:shadow-md flex items-center justify-center">
-                    <img src="assets/icons/facebook.png" alt="Facebook" class="h-5 w-5 inline" />
+
+                <button type="button" (click)="loginWithFacebook()" aria-label="Sign in with Facebook" class="w-11 h-11 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center
+                           hover:border-red-500 hover:bg-white transition">
+                    <img src="assets/icons/facebook.png" alt="Facebook" class="h-5 w-5" />
                 </button>
             </div>
         </div>
     </form>
 
     <!-- Activation Email Resend -->
-    <div class="mt-6 text-sm text-center">
-        <p class="mb-2">Didn't receive your activation email?</p>
-        <!-- Bind this form to ngForm so we can access its controls too -->
-        <form #activationForm="ngForm" (ngSubmit)="sendActivationMail(activationEmail.value)">
-            <div class="flex flex-col items-center space-y-2">
-                <div class="flex items-center justify-center space-x-2">
-                    <input name="activationEmail" ngModel #activationEmail="ngModel" type="email" required email
-                        placeholder="Enter your email"
-                        class="w-64 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-red-600 text-sm" />
+    <div class="pt-4 border-t border-gray-200 flex flex-col gap-2">
+        <p class="text-xs font-semibold text-gray-600 text-center">
+            Didn't receive your activation email?
+        </p>
 
-                    <button type="submit" [disabled]="activationForm.invalid"
-                        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-semibold disabled:opacity-50">
-                        Send
-                    </button>
-                </div>
+        <form #activationForm="ngForm" (ngSubmit)="sendActivationMail(activationEmail.value)"
+            class="flex flex-col gap-2">
 
-                <!-- Validation Errors -->
-                <div class="text-left justify-start w-full">
-                    <ng-container *ngIf="activationEmail.invalid && (activationEmail.dirty || activationEmail.touched)">
-                        <div *ngIf="activationEmail.errors?.['required']" class="text-xs text-red-500">
-                            Email is required.
-                        </div>
-                        <div *ngIf="activationEmail.errors?.['email']" class="text-xs text-red-500">
-                            Please enter a valid email address.
-                        </div>
-                    </ng-container>
-                </div>
+            <div class="flex items-stretch gap-2">
+                <input name="activationEmail" ngModel #activationEmail="ngModel" type="email" required email
+                    placeholder="Enter your email" class="flex-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900
+                           placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500
+                           focus:border-transparent transition" />
+
+                <button type="submit" [disabled]="activationForm.invalid" class="px-4 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold shrink-0
+                           hover:bg-red-700 active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed">
+                    Send
+                </button>
             </div>
+
+            <!-- Validation Errors -->
+            <ng-container *ngIf="activationEmail.invalid && (activationEmail.dirty || activationEmail.touched)">
+                <p *ngIf="activationEmail.errors?.['required']"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Email is required
+                </p>
+                <p *ngIf="activationEmail.errors?.['email']" class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Please enter a valid email address
+                </p>
+            </ng-container>
         </form>
     </div>
 

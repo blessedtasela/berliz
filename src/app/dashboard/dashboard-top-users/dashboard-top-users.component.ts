@@ -8,6 +8,7 @@ import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { selectUsers } from 'src/app/state/user/user.selector';
+import { loadAllUsers } from 'src/app/state/user/user.actions';
 
 @Component({
   selector: 'app-dashboard-top-users',
@@ -48,6 +49,7 @@ export class DashboardTopUsersComponent {
 
   handleEmitEvent() {
     this.ngxService.start();
+    this.store.dispatch(loadAllUsers());
     this.subscriptions.push(
       this.store.select(selectUsers).subscribe((users) => {
         this.users = users;

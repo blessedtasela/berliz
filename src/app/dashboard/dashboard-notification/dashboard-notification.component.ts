@@ -10,7 +10,8 @@ import { NotificationService } from 'src/app/services/notification.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { Store } from '@ngrx/store';
-import { selectAllNotifications } from 'src/app/state/notification/notification.selector';
+import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
+import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
 
 @Component({
   selector: 'app-dashboard-notification',
@@ -56,7 +57,8 @@ export class DashboardNotificationComponent implements OnInit, OnDestroy {
   }
 
   private loadInitialNotifications() {
-    const sub = this.store.select(selectAllNotifications).subscribe(data => {
+    this.store.dispatch(loadMyNotifications());
+    const sub = this.store.select(selectMyNotifications).subscribe(data => {
       this.notifications = data || [];
       this.allNotifications = data || [];
       this.updateNotificationList();

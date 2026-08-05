@@ -1,11 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Users } from 'src/app/models/users.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PartnerFormComponent } from 'src/app/shared/partner-form/partner-form.component';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
@@ -43,6 +45,7 @@ export class TrainerPartnerFormComponent implements OnInit {
     private snackBar: SnackBarService,
     private partnerService: PartnerService,
     private dialog: MatDialog,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -63,10 +66,23 @@ export class TrainerPartnerFormComponent implements OnInit {
     const userEmail = this.user?.email;
 
     if (!userEmail) {
-      this.snackBar.openSnackBar(
-        'Please log in to become a trainer.',
-        'error'
-      );
+      const loginDialogRef = this.dialog.open(PromptModalComponent, {
+        width: '400px',
+        data: {
+          confirmation: true,
+          title: 'Login required',
+          message: 'You need to be logged in to apply as a trainer. Log in to continue?',
+          confirmText: 'Log in',
+          cancelText: 'Cancel',
+          icon: 'log-in'
+        }
+      });
+
+      loginDialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          this.router.navigate(['/login']);
+        }
+      });
       return;
     }
 

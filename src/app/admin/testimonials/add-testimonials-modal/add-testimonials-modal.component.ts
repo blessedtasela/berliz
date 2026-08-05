@@ -9,7 +9,9 @@ import { Users } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TestimonialService } from 'src/app/services/testimonial.service';
 import { selectCenters } from 'src/app/state/center/center.selectors';
+import { loadCenters } from 'src/app/state/center/center.actions';
 import { selectUsers } from 'src/app/state/user/user.selector';
+import { loadActiveUsers } from 'src/app/state/user/user.actions';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -46,12 +48,14 @@ export class AddTestimonialsModalComponent {
       this.store.select(selectUsers).pipe(take(1)),
       this.store.select(selectCenters).pipe(take(1))
     ]).subscribe(([users, centers]) => {
-      if (users === null) {
+      if (!users?.length) {
+        this.store.dispatch(loadActiveUsers());
         this.handleEmitEvent();
       } else {
         this.users = users
       }
-      if (centers === null) {
+      if (!centers?.length) {
+        this.store.dispatch(loadCenters());
         this.handleEmitEvent();
       } else {
         this.centers = centers
@@ -106,6 +110,7 @@ export class AddTestimonialsModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
+      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       // Get the selected tagIds values as an array
       const selectedTagIds = this.addTestimonialForm.value.tagIds.map((tag: any) => tag.tagIds);
@@ -137,7 +142,6 @@ export class AddTestimonialsModalComponent {
         });
     }
     this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -14,7 +14,7 @@ import { minArrayLength, genericError } from 'src/validators/form-validators.mod
   templateUrl: './my-trainer-benefits.component.html',
   styleUrls: ['./my-trainer-benefits.component.css']
 })
-export class MyTrainerBenefitsComponent {
+export class MyTrainerBenefitsComponent implements OnInit, OnChanges {
 
   @Output() emitEvent = new EventEmitter();
   @Input() trainerBenefit!: TrainerBenefits | null;
@@ -36,8 +36,22 @@ export class MyTrainerBenefitsComponent {
   ) { }
 
   ngOnInit(): void {
-    this.initForm();
-    this.originalValue = this.updateTrainerBenefitForm.getRawValue();
+    if (!this.updateTrainerBenefitForm) {
+      this.initForm();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!changes['trainerBenefit']?.currentValue) {
+      return;
+    }
+    if (this.updateTrainerBenefitForm) {
+      this.updateTrainerBenefitForm.patchValue({ id: this.trainerBenefit?.id });
+      this.setBenefitsArray(this.trainerBenefit?.benefits ?? []);
+      this.originalValue = this.updateTrainerBenefitForm.getRawValue();
+    } else {
+      this.initForm();
+    }
   }
 
   ngOnDestroy(): void {
@@ -52,6 +66,7 @@ export class MyTrainerBenefitsComponent {
       id: [this.trainerBenefit?.id],
       benefits: this.fb.array(this.initBenefits(), minArrayLength(5))
     });
+    this.originalValue = this.updateTrainerBenefitForm.getRawValue();
   }
 
   initBenefits(): FormGroup[] {

@@ -27,30 +27,9 @@ export interface CategoryLikes {
     date: Date;
 }
 
-export interface CategoryIntroduction {
-    categoryId: number;
-    paragraphs: string[];
-    imageUrl: string;
-    ratings: number;
-    date: string;
-}
-
-export interface CategoryBenefits {
-    categoryId: number;
-    benefits: string[];
-    imageUrl: string;
-    date: string;
-}
-
-export interface CategoryTags {
-    categoryId: number;
-    tags: {
-        tag: string;
-        description: string;
-    }[];
-    date: string;
-}
-
-export interface CategoryVotes {
-
-}
+// NOTE: CategoryIntroduction / CategoryBenefits / CategoryTags / CategoryVotes
+// used to live here. They had no backing endpoint, no service method and no
+// NgRx state — purely speculative shapes wired to placeholder components — so
+// they were removed along with those components. The service detail page now
+// derives its content from the real `Categories` fields plus the
+// trainer/center/exercise relations.

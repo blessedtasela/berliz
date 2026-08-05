@@ -12,6 +12,7 @@ import { PartnerFormComponent } from 'src/app/shared/partner-form/partner-form.c
 import { Store } from '@ngrx/store';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { selectCurrentTrainer, selectTrainerLikes } from 'src/app/state/trainer/trainer.selector';
+import { loadTrainerLikes } from 'src/app/state/trainer/trainer.actions';
 
 
 @Component({
@@ -36,6 +37,9 @@ export class TrainersSearchResultComponent implements OnInit, OnDestroy {
   user!: Users | null;
   trainerLikes: TrainerLikes[] = [];
 
+  /** trainerIds flipped locally, pending backend reconciliation — makes the heart fill instantly */
+  private optimisticLikes = new Set<number>();
+
   private subs: Subscription[] = [];
 
   constructor(
@@ -50,9 +54,12 @@ export class TrainersSearchResultComponent implements OnInit, OnDestroy {
     this.subs.push(this.store.select(selectUser).subscribe(u => this.user = u));
 
     // Likes cache
+    this.store.dispatch(loadTrainerLikes());
     this.subs.push(
       this.store.select(selectTrainerLikes).subscribe(cached => {
         this.trainerLikes = cached;
+        // Fresh truth arrived from the backend — drop any optimistic overrides.
+        this.optimisticLikes.clear();
       })
     );
 
@@ -91,12 +98,6 @@ export class TrainersSearchResultComponent implements OnInit, OnDestroy {
     });
   }
 
-  private loadLikes(): void {
-    this.store.select(selectTrainerLikes).subscribe(likes => {
-      this.trainerLikes = likes;
-    });
-  }
-
   /** Replace an existing card in the list with updated data */
   private updateCardInList(trainer: Trainers): void {
     const idx = this.trainersResult.findIndex(t => t.id === trainer.id);
@@ -108,19 +109,38 @@ export class TrainersSearchResultComponent implements OnInit, OnDestroy {
   }
 
   likeTrainer(trainer: Trainers): void {
+    const wasLiked = this.isLiked(trainer);
+
     this.trainerService.likeTrainer(trainer.id).subscribe({
       next: (res: any) => {
-        this.snackbar.openSnackBar(res?.message, '');
-        this.loadLikes();
+        if (res?.data) {
+          this.updateCardInList(res.data);
+        }
+
+        // Flip the heart instantly instead of waiting for a refetch to land.
+        if (this.optimisticLikes.has(trainer.id)) {
+          this.optimisticLikes.delete(trainer.id);
+        } else {
+          this.optimisticLikes.add(trainer.id);
+        }
+
+        this.snackbar.openSnackBar(
+          wasLiked ? `Unliked ${trainer.name}` : `❤️ You liked ${trainer.name}`,
+          ''
+        );
+
+        // Reconcile with the backend in the background.
+        this.store.dispatch(loadTrainerLikes());
       },
       error: () => {
-        this.snackbar.openSnackBar('Please log in to like a trainer.', 'error');
+        this.snackbar.openSnackBar('Log in to like a trainer.', 'error');
       }
     });
   }
 
   isLiked(trainer: Trainers): boolean {
-    return this.trainerLikes.some(l => l.userId === this.user?.id && l.trainerId === trainer.id);
+    const cached = this.trainerLikes.some(l => l.userId === this.user?.id && l.trainerId === trainer.id);
+    return this.optimisticLikes.has(trainer.id) ? !cached : cached;
   }
 
   toggleShowMore(): void {
@@ -133,6 +153,10 @@ export class TrainersSearchResultComponent implements OnInit, OnDestroy {
 
   onImageError(event: any): void {
     event.target.src = 'assets/avatar.png';
+  }
+
+  mapsUrl(address: string): string {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address || '')}`;
   }
 
   ngOnDestroy(): void {

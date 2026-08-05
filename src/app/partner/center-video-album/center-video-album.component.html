@@ -1,0 +1,119 @@
+<div class="bg-white font-sans rounded-xl border border-gray-200 p-4 flex flex-col gap-4 mt-4">
+
+    <form *ngIf="updateCenterVideoAlbumForm" [formGroup]="updateCenterVideoAlbumForm"
+        (ngSubmit)="updateCenterVideoAlbum()" class="flex flex-col gap-4">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                    Video album
+                    <span *ngIf="!centerVideoAlbum?.id"
+                        class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">
+                        Action required
+                    </span>
+                </h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">
+                    {{ centerVideoAlbum?.date
+                    ? 'Registered on ' + formatDate(centerVideoAlbum?.date)
+                    : 'No video album registered yet' }}
+                </p>
+            </div>
+
+            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [ngClass]="videoCount >= MIN_VIDEOS
+                    ? 'bg-green-50 text-green-700 border-green-100'
+                    : 'bg-gray-50 text-gray-500 border-gray-200'">
+                {{ videoCount }} / {{ MAX_VIDEOS }}
+            </span>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div *ngIf="invalidForm && (videoCount < MIN_VIDEOS || updateCenterVideoAlbumForm.invalid)">
+            <p
+                class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
+                <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+                Add at least {{ MIN_VIDEOS }} videos and a comment of {{ MIN_COMMENT }}+ characters.
+            </p>
+        </div>
+
+        <!-- Upload -->
+        <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                Videos <span class="normal-case text-gray-400 font-normal">(max {{ MAX_FILE_MB }} MB each)</span>
+            </label>
+
+            <input type="file" accept="video/*" multiple (change)="onVideosSelected($event)" class="block w-full text-xs text-gray-600 cursor-pointer
+                       file:mr-3 file:py-1.5 file:px-3 file:rounded-full
+                       file:border-0 file:text-xs file:font-semibold
+                       file:bg-red-50 file:text-red-600 hover:file:bg-red-100
+                       focus:outline-none transition" />
+
+            <div *ngIf="uploadingAll" class="flex flex-col gap-1">
+                <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-red-500 rounded-full transition-all duration-300"
+                        [style.width.%]="uploadProgress"></div>
+                </div>
+                <p class="text-[10px] text-gray-400">Uploading… {{ uploadProgress }}%</p>
+            </div>
+        </div>
+
+        <!-- Grid -->
+        <div *ngIf="videoCount > 0" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div *ngFor="let slot of filledSlots"
+                class="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-900 aspect-video">
+
+                <video [src]="slot.previewUrl" class="w-full h-full object-cover" muted playsinline controls
+                    (error)="onVideoError($event)"></video>
+
+                <div *ngIf="slot.uploading" class="absolute inset-0 bg-black/50 flex items-center justify-center">
+                    <i-feather name="loader" class="text-white animate-spin" style="width:16px;height:16px;">
+                    </i-feather>
+                </div>
+
+                <button type="button" (click)="removeSlot(slotIndex(slot))" class="absolute top-1 right-1 w-5 h-5 rounded-full bg-gray-900/80 border border-white/30
+                           flex items-center justify-center text-white hover:bg-red-600 transition">
+                    <i-feather name="x" style="width:9px;height:9px;"></i-feather>
+                </button>
+            </div>
+        </div>
+
+        <div *ngIf="videoCount === 0" class="flex flex-col items-center justify-center py-8 gap-2 text-gray-400">
+            <i-feather name="video" style="width:26px;height:26px;"></i-feather>
+            <p class="text-xs italic">No videos added yet.</p>
+        </div>
+
+        <!-- Comment -->
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Album comment</label>
+
+            <textarea formControlName="comment" rows="5" [maxlength]="MAX_COMMENT"
+                placeholder="Describe what these videos show — training sessions, tours, member stories." class="w-full px-3 py-2.5 bg-gray-50 border rounded-xl text-gray-900 text-sm resize-none
+                       focus:outline-none focus:ring-2 focus:border-transparent transition placeholder:text-gray-400"
+                [ngClass]="commentControl?.invalid && (invalidForm || commentControl?.dirty)
+                    ? 'border-red-300 focus:ring-red-400' : 'border-gray-200 focus:ring-red-500'"></textarea>
+
+            <span class="text-[10px] ml-auto font-semibold"
+                [ngClass]="commentLength < MIN_COMMENT ? 'text-red-500' : 'text-green-600'">
+                {{ commentLength }} / {{ MAX_COMMENT }}
+            </span>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Save -->
+        <div class="flex items-center justify-between">
+            <span *ngIf="hasChanges()" class="text-xs text-blue-600 font-semibold">Unsaved changes</span>
+            <span *ngIf="!hasChanges()" class="text-xs text-gray-400">No changes made</span>
+
+            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-xl text-xs font-semibold
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2" [disabled]="!canSave"
+                [ngClass]="{ 'opacity-40 cursor-not-allowed': !canSave }">
+                <i-feather name="save" style="width:13px;height:13px;"></i-feather>
+                Save changes
+            </button>
+        </div>
+
+    </form>
+
+</div>

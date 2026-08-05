@@ -61,7 +61,6 @@ export class AddContactUsModalComponent {
           this.snackBarService.openSnackBar(this.responseMessage, "error");
         });
     }
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

@@ -159,6 +159,7 @@ export class SignupModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
+      this.snackBarService.openSnackBar(this.responseMessage, "error");
     } else {
       this.userService.signup(requestData)
         .subscribe((response: any) => {
@@ -183,7 +184,6 @@ export class SignupModalComponent {
           });
     }
     this.ngxService.stop();
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
 
   clear() {

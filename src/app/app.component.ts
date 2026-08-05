@@ -3,7 +3,6 @@ import { Router, NavigationEnd } from '@angular/router';
 import { BlurService } from './services/blur.service';
 import { MatDialog } from '@angular/material/dialog';
 import { SidebarStateService } from './services/sidebar-state.service';
-import { ScrollRestorationService } from './services/scroll-restoration.service';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +20,6 @@ export class AppComponent implements OnInit {
     private blurService: BlurService,
     private dialog: MatDialog,
     private sidebarState: SidebarStateService,
-    private scrollRestoration: ScrollRestorationService,
   ) {
     this.sidebarState.sidebarOpen$.subscribe(open => {
       this.sidebarOpen = open;
@@ -42,13 +40,15 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.scrollRestoration.init();
   }
   private updateLayout(url: string) {
 
     // LOGIN ROUTES
     if (
       url === '/login' ||
+      url.startsWith('/login/') ||
+      url.startsWith('/sign-up') ||
+      url.startsWith('/quick-sign-up') ||
       url.startsWith('/user/activate') ||
       url.startsWith('/reset-password') ||
       url.startsWith('/forgot-password')

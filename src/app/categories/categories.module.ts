@@ -5,18 +5,15 @@ import { NavbarModule } from '../navbar/navbar.module';
 import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
 import { CategoryDetailsComponent } from './category-details/category-details.component';
-import { CategoryHeroDetailsComponent } from './category-hero-details/category-hero-details.component';
-import { CategoryBenefitsComponent } from './category-benefits/category-benefits.component';
-import { CategoryIntroductionComponent } from './category-introduction/category-introduction.component';
-import { CategoryTagsComponent } from './category-tags/category-tags.component';
-import { CategoryVoteComponent } from './category-vote/category-vote.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 import { CategoriesComponent } from './categories/categories.component';
 import { CategoriesSearchComponent } from './categories-search/categories-search.component';
 import { CategoriesSearchResultComponent } from './categories-search-result/categories-search-result.component';
 import { CategoryTrainersComponent } from './category-trainers/category-trainers.component';
 import { CategoryCentersComponent } from './category-centers/category-centers.component';
+import { CategoryExercisesComponent } from './category-exercises/category-exercises.component';
 
 
 
@@ -24,16 +21,12 @@ import { CategoryCentersComponent } from './category-centers/category-centers.co
   declarations: [
     CategoriesHeroComponent,
     CategoryDetailsComponent,
-    CategoryHeroDetailsComponent,
-    CategoryBenefitsComponent,
-    CategoryIntroductionComponent,
-    CategoryTagsComponent,
-    CategoryVoteComponent,
     CategoriesComponent,
     CategoriesSearchComponent,
     CategoriesSearchResultComponent,
     CategoryTrainersComponent,
-    CategoryCentersComponent
+    CategoryCentersComponent,
+    CategoryExercisesComponent
   ],
   imports: [
     CommonModule,
@@ -42,7 +35,8 @@ import { CategoryCentersComponent } from './category-centers/category-centers.co
     IconsModule,
     RouterModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    MatDialogModule
   ],
   exports: [
   ]

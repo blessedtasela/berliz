@@ -119,6 +119,7 @@ export class UpdateExercisesModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
+      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       var formData;
       if (this.exerciseData && this.exerciseData.muscleGroups && this.exerciseData.categories) {
@@ -155,7 +156,6 @@ export class UpdateExercisesModalComponent {
         });
     }
     this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

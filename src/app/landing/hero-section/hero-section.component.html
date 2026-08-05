@@ -1,7 +1,9 @@
-<section   style="background: linear-gradient(to bottom, black, rgb(27, 25, 25), rgb(63, 38, 38), rgb(27, 25, 25), black);"
-    class="relative min-h-screen lg:h-screen py-24 lg:py-0 px-2 rounded-md shadow-lg items-center justify-center overflow-visible lg:overflow-hidden text-white">
+<!-- ═══════════════════════════════════════════════
+     LANDING HERO — cinematic rotating banner
+════════════════════════════════════════════════ -->
+<section class="relative w-full min-h-screen lg:h-screen overflow-hidden bg-black font-sans">
 
-    <!-- 🔥 Cinematic Fire Background -->
+    <!-- Cinematic fire background -->
     <div class="absolute inset-0 z-0">
         <video autoplay muted loop playsinline
             class="w-full h-full object-cover opacity-20 mix-blend-screen pointer-events-none">
@@ -11,71 +13,98 @@
         </video>
     </div>
 
-    <!-- 🔥 Dark Overlay -->
-    <div class="absolute inset-0 bg-black bg-opacity-60 z-10"></div>
+    <!-- Dark gradient overlay -->
+    <div class="absolute inset-0 z-10"
+        style="background: linear-gradient(135deg, rgba(0,0,0,0.88) 0%, rgba(80,0,0,0.45) 60%, rgba(0,0,0,0.85) 100%);">
+    </div>
 
-    <!-- 💪 Hero Content -->
-    <div class="relative z-20 grid lg:grid-cols-2 items-center w-full h-full px-4 md:px-8 lg:px-12"
-        *ngFor="let h of heroes; let i = index" [class.hidden]="i !== heroIndex">
+    <!-- Hero content -->
+    <div class="relative z-20 max-w-6xl mx-auto h-full px-4 sm:px-6 py-24 lg:py-0
+                grid lg:grid-cols-2 gap-10 items-center" *ngFor="let h of heroes; let i = index"
+        [class.hidden]="i !== heroIndex">
 
-        <!-- Left Text & CTA -->
-        <div class="flex flex-col justify-center text-center lg:text-left space-y-5">
-            <h1 class="text-5xl md:text-5xl font-extrabold tracking-tight">
-                {{ h.title }} <span class="text-red-600">Berliz</span>
+        <!-- ── Left: copy + CTA ─────────────────────────────────────── -->
+        <div class="flex flex-col gap-5 text-center lg:text-left">
+
+            <!-- Eyebrow -->
+            <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+                Train with purpose
+            </span>
+
+            <!-- Title -->
+            <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                {{ h.title }} <span class="text-red-500">Berliz</span>
             </h1>
-            <p class="text-md md:text-lg text-red-100 italic max-w-2xl">
-                We don't just train bodies — we ignite mindsets and awaken purpose.
-                Step into a space where sweat becomes your signature, and discipline carves your legacy.
-                Whether you're throwing punches in high-impact combat or mastering your strength through elite personal
-                training,
-                every rep fuels your transformation. The journey is raw, powerful, and real — and it starts right here.
+
+            <!-- Red rule accent -->
+            <div class="w-12 h-0.5 bg-red-600 rounded-full mx-auto lg:mx-0"></div>
+
+            <!-- Sub -->
+            <p class="text-sm sm:text-base text-zinc-300 max-w-xl leading-relaxed mx-auto lg:mx-0">
+                We don't just train bodies — we ignite mindsets. Find a gym, book a certified coach, and turn
+                discipline into a habit that sticks.
             </p>
 
-
-            <!-- CTA Button -->
-            <div class="flex flex-col sm:flex-row gap-4 items-center justify-center lg:justify-start">
-                <a [routerLink]="['/login']" class="inline-block px-6 py-3 bg-red-600 text-white rounded-md text-lg font-semibold shadow-lg
-                  hover:bg-red-800 transform hover:scale-105 transition-all duration-300">
+            <!-- CTAs -->
+            <div class="flex flex-wrap gap-3 justify-center lg:justify-start mt-1">
+                <a [routerLink]="['/login']" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                          shadow-[0_2px_10px_rgba(220,38,38,0.35)]
+                          hover:bg-red-700 hover:shadow-[0_4px_16px_rgba(220,38,38,0.5)]
+                          active:scale-[0.98] transition">
+                    <i-feather name="zap" style="width:13px;height:13px;"></i-feather>
                     Join Us Today
+                </a>
+
+                <a [routerLink]="['/centers']" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-zinc-700 text-zinc-300
+                          text-xs font-semibold hover:border-red-600 hover:text-white transition">
+                    <i-feather name="map-pin" style="width:13px;height:13px;"></i-feather>
+                    Browse Centers
                 </a>
             </div>
 
             <!-- Stats -->
-            <div class="flex flex-wrap justify-center lg:justify-start gap-6 pt-4">
-                <div *ngFor="let s of stats" class="text-center transform hover:scale-105 transition">
-                    <div class="flex justify-center items-center gap-2 text-red-600 font-semibold">
-                        <i-feather name="{{ s.iconUrl }}"></i-feather>
-                        <span class="text-xl">+{{ s.counterValue }}</span>
+            <div class="flex flex-wrap gap-3 justify-center lg:justify-start pt-4">
+                <div *ngFor="let s of stats" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl
+                            bg-zinc-900/70 border border-zinc-800 backdrop-blur-sm
+                            hover:border-red-600/40 transition">
+                    <i-feather [name]="s.iconUrl" class="text-red-500 shrink-0" style="width:15px;height:15px;">
+                    </i-feather>
+                    <div class="flex flex-col items-start leading-none">
+                        <span class="text-base font-extrabold text-white">+{{ s.counterValue }}</span>
+                        <span class="text-[10px] font-semibold text-zinc-500 uppercase tracking-wide mt-0.5">
+                            {{ s.name }}
+                        </span>
                     </div>
-                    <div class="text-white text-sm font-semibold mt-1">{{ s.name }}</div>
                 </div>
             </div>
 
-            <!-- Arrows -->
-            <div class="hidden md:flex gap-8 pt-4 justify-center lg:justify-start">
-                <button (click)="changeHero(-1)" class="text-3xl text-gray-300 hover:text-red-600">&#9668;</button>
-                <button (click)="changeHero(+1)" class="text-3xl text-gray-300 hover:text-red-600">&#9658;</button>
+            <!-- Slide controls -->
+            <div class="flex items-center gap-3 justify-center lg:justify-start pt-2">
+                <button type="button" (click)="changeHero(-1)" aria-label="Previous slide" class="w-9 h-9 rounded-xl border border-zinc-700 flex items-center justify-center
+                           text-zinc-300 hover:bg-red-600 hover:border-red-600 hover:text-white transition">
+                    <i-feather name="chevron-left" style="width:15px;height:15px;"></i-feather>
+                </button>
+
+                <button type="button" (click)="changeHero(1)" aria-label="Next slide" class="w-9 h-9 rounded-xl border border-zinc-700 flex items-center justify-center
+                           text-zinc-300 hover:bg-red-600 hover:border-red-600 hover:text-white transition">
+                    <i-feather name="chevron-right" style="width:15px;height:15px;"></i-feather>
+                </button>
+
+                <!-- Dots -->
+                <div class="flex items-center gap-1.5 ml-2">
+                    <span *ngFor="let dot of heroes; let d = index" class="h-1.5 rounded-full transition-all duration-300"
+                        [ngClass]="d === heroIndex ? 'w-5 bg-red-600' : 'w-1.5 bg-zinc-700'"></span>
+                </div>
             </div>
         </div>
 
-        <!-- Right Image -->
-        <div class="relative flex justify-center">
-            <figure class="group mt-12">
-             <div class="w-full aspect-[3/2] overflow-hidden rounded-md shadow-md
-            group-hover:shadow-2xl transition-all duration-300">
-  <img
-    [src]="h.image"
-    alt="Berliz training image"
-    class="w-full h-full object-cover
-           transform transition-transform duration-300 group-hover:scale-105"
-  />
-</div>
-
-                <figcaption class="flex md:hidden justify-between mt-4 text-white">
-                    <button (click)="changeHero(-1)" class="text-2xl text-gray-300 hover:text-red-600">&#9668;</button>
-                    <button (click)="changeHero(+1)" class="text-2xl text-gray-300 hover:text-red-600">&#9658;</button>
-                </figcaption>
-            </figure>
+        <!-- ── Right: image ─────────────────────────────────────────── -->
+        <div class="relative rounded-2xl overflow-hidden border border-zinc-800 group
+                    shadow-[0_8px_40px_rgba(0,0,0,0.6)]">
+            <img [src]="h.image" alt="Berliz training"
+                class="w-full h-[300px] lg:h-[440px] object-cover transition-transform duration-500 group-hover:scale-105" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
         </div>
+
     </div>
 </section>

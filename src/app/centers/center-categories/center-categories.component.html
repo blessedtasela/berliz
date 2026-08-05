@@ -1,41 +1,57 @@
-<div class="justify-between mt-40 font-sans mx-auto flex flex-col justify-center items-center">
-    <h2 class="text-4xl mb-5 text-center">
-        Our Services
-    </h2>
-</div>
-<section class="mx-auto mb-2 px-2 mt-20">
-    <div class="grid md:grid-cols-3 grid-cols-1">
-        <section class="flex justify-between items-center cursor-pointer
-                 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-            *ngFor="let c of centerCategories?.categories; let i = index">
-            <div class="bg-gray-950 rounded-md p-4 m-4 min-h-[400px] md:min-h-[450px]">
-                <div class="flex flex-col justify-center items-center">
-                    <img class="rounded-md w-20 m-2" src="{{ c.iconUrl }}">
-                    <p class="p-2 text-center text-md font-sans font-bold text-red-600 uppercase">
-                        {{ c.categoryName }}
+<section class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
+
+    <div class="flex items-center justify-between gap-3">
+        <div>
+            <h2 class="text-sm font-bold text-gray-900">Disciplines</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                {{ centerCategories.length }}
+                {{ centerCategories.length === 1 ? 'discipline' : 'disciplines' }} offered here
+            </p>
+        </div>
+        <button *ngIf="centerCategories.length > 6" type="button" (click)="allCategories()"
+            class="text-[11px] font-semibold text-red-600 hover:text-red-700 transition shrink-0">
+            {{ !showAllCategories ? 'See all' : 'See less' }}
+        </button>
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <div *ngIf="centerCategories.length; else noCategories"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div *ngFor="let c of centerCategories; let i = index" [ngClass]="{ 'hidden': i >= 6 && !showAllCategories }"
+            class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col gap-2 hover:border-red-200 transition">
+
+            <div class="flex items-center gap-3">
+                <img [src]="c.photoUrl" [alt]="c.name" class="w-10 h-10 rounded-xl object-cover border border-gray-200"
+                    onerror="this.src='assets/avatar.png';" />
+                <div class="min-w-0">
+                    <p class="text-xs font-bold text-gray-900 truncate">{{ c.name }}</p>
+                    <p class="text-[10px] text-gray-400 truncate">
+                        {{ c.tagNames && c.tagNames.length ? c.tagNames.join(' / ') : 'General' }}
                     </p>
-                    <p class="p-2 text-center text-sm font-sans font-bold text-gray-400">
-                        <ng-container *ngFor="let tag of c.tags; let ix = index">
-                            {{ tag }} {{ ix < (c.tags.length - 1) ? "/" : "" }} </ng-container>
-                    </p>
-                    <p class="mt-1 text-sm text-gray-100 w-full text-center font-sans mb-2">
-                        {{ c.description }}
-                    </p>
-                    <div class="flex mt-2">
-                        <i-feather name="thumbs-up" style="width: 20px;"
-                            class="font-bold text-red-600 mr-4"></i-feather>
-                        <p class="mt-1 text-sm font-sans font-bold text-gray-400 text-right font-sans mb-2">
-                            {{ c.likes }} people like this sport.
-                        </p>
-                    </div>
-                    <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
-                        rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
-                        <a [routerLink]="['/categories', c.categoryId, formatCategoryName(c.categoryName)]">
-                            Know more
-                        </a>
-                    </button>
                 </div>
             </div>
-</section>
-</div>
+
+            <p class="text-[11px] text-gray-600 line-clamp-3">{{ c.description }}</p>
+
+            <div class="flex items-center justify-between pt-2 border-t border-gray-200">
+                <span class="text-[10px] text-gray-400 flex items-center gap-1">
+                    <i-feather name="thumbs-up" style="width:11px;height:11px;" class="text-red-600"></i-feather>
+                    {{ c.likes || 0 }}
+                </span>
+                <a [routerLink]="['/categories', c.id, formatCategoryName(c.name)]"
+                    class="text-[10px] font-semibold text-red-600 hover:text-red-700 transition">
+                    Know more
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #noCategories>
+        <div class="flex items-center gap-2 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3">
+            <i-feather name="info" style="width:13px;height:13px;"></i-feather>
+            <span class="text-xs">No disciplines listed for this center yet.</span>
+        </div>
+    </ng-template>
+
 </section>

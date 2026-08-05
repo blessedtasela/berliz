@@ -1,1 +1,35 @@
-<p>center-video-gallery works!</p>
+<section class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
+
+    <div class="flex items-center justify-between gap-3">
+        <div>
+            <h2 class="text-sm font-bold text-gray-900">Video gallery</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                {{ videos.length }} {{ videos.length === 1 ? 'video' : 'videos' }} shared by this center
+            </p>
+        </div>
+        <button *ngIf="videos.length > 4" type="button" (click)="allVideos()"
+            class="text-[11px] font-semibold text-red-600 hover:text-red-700 transition shrink-0">
+            {{ !showAllVideos ? 'See all' : 'See less' }}
+        </button>
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <div *ngIf="videos.length; else noVideos" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div *ngFor="let video of videos; let i = index" [ngClass]="{ 'hidden': i >= 4 && !showAllVideos }"
+            class="rounded-xl overflow-hidden border border-gray-200 bg-gray-50 flex flex-col">
+            <video class="w-full aspect-video object-cover bg-black" [src]="video.playbackUrl || video.videoUrl"
+                controls preload="metadata" playsinline>
+            </video>
+            <p *ngIf="video.name" class="text-[11px] text-gray-600 px-3 py-2 truncate">{{ video.name }}</p>
+        </div>
+    </div>
+
+    <ng-template #noVideos>
+        <div class="flex items-center gap-2 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3">
+            <i-feather name="info" style="width:13px;height:13px;"></i-feather>
+            <span class="text-xs">No videos published for this center yet.</span>
+        </div>
+    </ng-template>
+
+</section>

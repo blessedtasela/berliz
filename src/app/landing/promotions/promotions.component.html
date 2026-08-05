@@ -1,31 +1,43 @@
-<!-- Promotion Card -->
-<div class="w-full h-full max-w-sm bg-gradient-to-b from-zinc-900 via-black to-zinc-900 
-  rounded-xl overflow-hidden border border-zinc-800 shadow-xl hover:scale-105 
-  transform transition-all duration-300 flex flex-col justify-between p-6">
+<!-- ═══════════════════════════════════════════════
+     PROMOTION CARD
+════════════════════════════════════════════════ -->
+<div class="h-full flex flex-col bg-zinc-900 rounded-2xl border border-zinc-800 overflow-hidden
+            hover:border-red-600/40 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(220,38,38,0.12)]
+            transition-all duration-300 font-sans">
 
-    <!-- Text Content -->
-    <div class="text-white text-center flex flex-col gap-3">
-        <p class="text-red-600 text-sm uppercase tracking-widest font-bold">
+    <!-- Photo -->
+    <div class="relative w-full h-52 bg-zinc-800 overflow-hidden">
+        <img [src]="promotions.imageUrl" [alt]="promotions.title" class="w-full h-full object-cover" />
+        <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-zinc-900 to-transparent"></div>
+    </div>
+
+    <!-- Body -->
+    <div class="flex flex-col gap-3 p-5 flex-1">
+
+        <!-- Eyebrow -->
+        <span class="text-[10px] font-bold tracking-[0.2em] uppercase text-red-400">
             {{ promotions.subTitle }}
-        </p>
+        </span>
 
-        <h3 class="text-xl font-extrabold uppercase tracking-tight">
+        <!-- Title -->
+        <h3 class="text-sm font-extrabold text-white uppercase tracking-tight leading-tight">
             {{ promotions.title }}
         </h3>
 
-        <p class="text-sm text-gray-300">
+        <!-- Description -->
+        <p class="text-xs text-zinc-400 leading-relaxed line-clamp-3">
             {{ promotions.description }}
         </p>
 
-        <a [routerLink]="[promotions.buttonUrl ]" class="inline-block mt-2 bg-white text-red-600 px-4 py-2 rounded-md text-sm font-semibold 
-      hover:bg-red-600 hover:text-white transition">
-            {{ promotions.button }}
-        </a>
-    </div>
+        <!-- Divider -->
+        <div class="border-t border-zinc-800 mt-auto"></div>
 
-    <!-- Image at Bottom -->
-    <div class="mt-6">
-        <img [src]="promotions.imageUrl" alt="{{ promotions.title }}"
-            class="w-full h-40 object-cover rounded-md shadow-md border border-zinc-700" />
+        <!-- CTA -->
+        <div class="flex justify-end">
+            <a [routerLink]="[promotions.buttonUrl]" class="px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-semibold
+                      hover:bg-red-700 active:scale-[0.98] transition">
+                {{ promotions.button }}
+            </a>
+        </div>
     </div>
 </div>

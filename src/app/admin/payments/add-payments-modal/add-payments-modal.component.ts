@@ -8,6 +8,7 @@ import { Users } from 'src/app/models/users.interface';
 import { PaymentService } from 'src/app/services/payment.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { selectUsers } from 'src/app/state/user/user.selector';
+import { loadActiveUsers } from 'src/app/state/user/user.actions';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -44,7 +45,8 @@ export class AddPaymentsModalComponent {
     });
 
     this.store.select(selectUsers).subscribe((cachedData) => {
-      if (!cachedData) {
+      if (!cachedData?.length) {
+        this.store.dispatch(loadActiveUsers());
         this.handleEmitEvent();
       } else {
         this.users = cachedData
@@ -93,6 +95,7 @@ export class AddPaymentsModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
+      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       // Get the selected tagIds values as an array
       const selectedTagIds = this.addPaymentForm.value.tagIds.map((tag: any) => tag.tagIds);
@@ -124,7 +127,6 @@ export class AddPaymentsModalComponent {
         });
     }
     this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

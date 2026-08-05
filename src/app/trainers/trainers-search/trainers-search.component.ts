@@ -4,7 +4,8 @@ import { Trainers } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Store } from '@ngrx/store';
-import { selectTrainers } from 'src/app/state/trainer/trainer.selector';
+import { selectActiveTrainers } from 'src/app/state/trainer/trainer.selector';
+import { loadActiveTrainers } from 'src/app/state/trainer/trainer.actions';
 
 @Component({
   selector: 'app-trainers-search',
@@ -37,8 +38,9 @@ export class TrainersSearchComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Load from state cache or fetch
+    this.store.dispatch(loadActiveTrainers());
     this.subs.push(
-      this.store.select(selectTrainers).subscribe((data: Trainers[]) => {
+      this.store.select(selectActiveTrainers).subscribe((data: Trainers[]) => {
         this.activeTrainers = data ? [...data] : [];
         this.trainers = [...this.activeTrainers];
         this.allTrainers.emit(this.trainers);

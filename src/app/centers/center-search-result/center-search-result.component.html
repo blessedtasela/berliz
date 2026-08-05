@@ -1,121 +1,149 @@
-<section class="py-12 px-4 sm:px-8 rounded-md shadow-lg text-white"
-    style="background: linear-gradient(to bottom, black, rgb(27, 25, 25), rgb(45, 23, 23), rgb(27, 25, 25), black);">
+<!-- ═══════════════════════════════════════════════
+     CENTER CARDS GRID
+════════════════════════════════════════════════ -->
+<section class="w-full bg-zinc-950 px-4 pb-16 font-sans">
 
-    <!-- Section Title -->
-    <div class="mb-10 text-center">
-        <h2 class="text-center text-white text-2xl md:text-3xl font-extrabold tracking-tight">
-            Top <span class="text-red-600">Centers</span>
-        </h2>
-        <p class="text-center text-sm sm:text-base text-white italic mb-10 max-w-xl mx-auto">
-            Discover our trusted and professional training centers
-        </p>
-    </div>
+    <div class="max-w-6xl mx-auto">
 
+        <!-- ── EMPTY STATE ──────────────────────────────────────────── -->
+        <ng-container *ngIf="centersResult.length === 0">
+            <div class="flex flex-col items-center justify-center py-24 gap-6 text-center">
 
-    <!-- Cards Grid -->
-    <div class="max-w-7xl mx-auto px-6 py-10">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <ng-container *ngIf="centersResult.length > 0; else comingSoonCenter">
-                <ng-container *ngFor="let center of centersResult.slice(0, visibleCenters)">
+                <!-- Icon ring -->
+                <div class="w-20 h-20 rounded-full bg-zinc-900 border border-zinc-800
+                            flex items-center justify-center">
+                    <i-feather name="home" class="text-zinc-600" style="width:32px;height:32px;"></i-feather>
+                </div>
 
-                    <!-- Center Card -->
-                    <div class="w-full h-full max-w-sm bg-gradient-to-b from-zinc-900 via-black to-zinc-900 rounded-xl overflow-hidden 
-          border border-zinc-800 shadow-xl hover:scale-105 transform transition-all duration-300 
-          flex flex-col justify-between p-6 mx-auto">
+                <div class="flex flex-col gap-2">
+                    <h3 class="text-lg font-bold text-white">More centers coming soon</h3>
+                    <p class="text-sm text-zinc-500 max-w-xs">
+                        We're onboarding new gyms and training centers. Check back soon.
+                    </p>
+                </div>
+            </div>
+        </ng-container>
 
-                        <!-- Image -->
-                        <div>
-                            <img [src]="center.photoUrl" [alt]="center.name"
-                                class="w-full h-48 object-cover rounded-md border border-zinc-700 bg-white shadow-sm" />
+        <!-- ── CARDS ─────────────────────────────────────────────────── -->
+        <ng-container *ngIf="centersResult.length > 0">
+
+            <!-- Count -->
+            <p class="text-xs text-zinc-500 mb-6">
+                Showing <span class="text-white font-semibold">{{ visibleCount }}</span>
+                of <span class="text-white font-semibold">{{ centersResult.length }}</span> centers
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <ng-container *ngFor="let center of centersResult.slice(0, visibleCount)">
+
+                    <div class="flex flex-col bg-zinc-900 rounded-2xl border border-zinc-800 overflow-hidden
+                                hover:border-red-600/40 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(220,38,38,0.12)]
+                                transition-all duration-300">
+
+                        <!-- Photo -->
+                        <div class="relative w-full h-52 bg-zinc-800 overflow-hidden">
+                            <img [src]="center.photoUrl" [alt]="center.name" class="w-full h-full object-cover"
+                                (error)="onImageError($event)" />
+                            <!-- Gradient fade at bottom -->
+                            <div class="absolute bottom-0 left-0 right-0 h-16
+                                        bg-gradient-to-t from-zinc-900 to-transparent">
+                            </div>
                         </div>
 
-                        <!-- Content -->
-                        <div class="text-white text-center flex flex-col gap-2 mt-4">
-                            <h3 class="text-xl text-red-600 font-extrabold uppercase tracking-tight">
-                                {{ center.name }}
-                            </h3>
+                        <!-- Body -->
+                        <div class="flex flex-col gap-3 p-5 flex-1">
 
-                            <p class="text-white text-xs uppercase tracking-widest font-bold">
-                                <ng-container *ngIf="center.categoryIds.length > 0; else defaultCenterTag">
-                                    <ng-container *ngFor="let categoryId of center.categoryIds; let i = index">
-                                        {{ categoryId }}<span *ngIf="i < center.categoryIds.length - 1"> / </span>
-                                    </ng-container>
-                                </ng-container>
-                                <ng-template #defaultCenterTag>General</ng-template>
-                            </p>
-
-                            <p class="text-sm text-red-500 font-bold">
-                                + {{ center.experience }} years
-                            </p>
-
-                            <p class="text-sm text-white italic">
-                                {{ center.motto }}
-                            </p>
-
-                            <p class="text-sm text-gray-300">
-                                {{ center.address }}
-                                <span (click)="openUrl(center.location)">
-                                    <i-feather name="map-pin"
-                                        class="ml-1 w-4 h-4 text-red-500 cursor-pointer"></i-feather>
+                            <!-- Name + experience -->
+                            <div class="flex items-start justify-between gap-2">
+                                <h3 class="text-sm font-extrabold text-white uppercase tracking-tight leading-tight">
+                                    {{ center.name }}
+                                </h3>
+                                <span class="shrink-0 text-[10px] font-semibold text-red-400 bg-red-950 border border-red-900
+                                             px-2 py-0.5 rounded-full">
+                                    {{ center.experience }}+ yrs
                                 </span>
-                            </p>
-
-                            <!-- Likes Info -->
-                            <div class="flex justify-center items-center mt-2">
-                                <i-feather name="thumbs-up" (click)="likeCenter(center)"
-                                    class="w-5 h-5 mr-2 cursor-pointer" [ngClass]="{
-                  'text-red-600': isLikedCenter(center),
-                  'text-gray-500': !isLikedCenter(center)
-                }">
-                                </i-feather>
-                                <p class="text-sm text-gray-300 font-medium">
-                                    <ng-container *ngIf="isLikedCenter(center)">
-                                        <ng-container *ngIf="center.likes === 1">You like this center.</ng-container>
-                                        <ng-container *ngIf="center.likes === 2">You and 1 person like this
-                                            center.</ng-container>
-                                        <ng-container *ngIf="center.likes > 2">You and {{ center.likes - 1 }} others
-                                            like
-                                            this center.</ng-container>
-                                    </ng-container>
-                                    <ng-container *ngIf="!isLikedCenter(center)">
-                                        {{ center.likes }} {{ center.likes === 1 ? 'person' : 'people' }} like this
-                                        center.
-                                    </ng-container>
-                                </p>
                             </div>
 
-                            <!-- Know More Button -->
-                            <a [routerLink]="['/centers', center.id, formatStringtoUrl(center.name)]" class="inline-block mt-4 bg-white text-red-600 px-4 py-2 rounded-md text-sm font-semibold 
-              hover:bg-red-600 hover:text-white transition">
-                                Know more
+                            <!-- Categories -->
+                            <div class="flex flex-wrap gap-1.5">
+                                <ng-container *ngIf="categoriesFor(center).length > 0; else nocat">
+                                    <span *ngFor="let cat of categoriesFor(center)" class="text-[10px] font-semibold text-zinc-400 bg-zinc-800 border border-zinc-700
+                                                 px-2 py-0.5 rounded-full">
+                                        {{ cat.name }}
+                                    </span>
+                                </ng-container>
+                                <ng-template #nocat>
+                                    <span class="text-[10px] font-semibold text-zinc-500 bg-zinc-800 border border-zinc-700
+                                                 px-2 py-0.5 rounded-full">
+                                        Fitness
+                                    </span>
+                                </ng-template>
+                            </div>
+
+                            <!-- Motto -->
+                            <p class="text-xs text-zinc-400 italic leading-relaxed line-clamp-2">
+                                "{{ center.motto }}"
+                            </p>
+
+                            <!-- Address -->
+                            <a [href]="mapsUrl(center)" target="_blank" rel="noopener"
+                                (click)="$event.stopPropagation()"
+                                class="relative group/map text-[11px] text-zinc-500 hover:text-red-400 flex items-center gap-1.5 transition w-fit">
+                                <i-feather name="map-pin" style="width:11px;height:11px;"
+                                    class="text-zinc-600 group-hover/map:text-red-400 transition"></i-feather>
+                                {{ center.address }}
+                                <span class="pointer-events-none absolute left-0 -top-7 whitespace-nowrap px-2 py-1 rounded-lg
+                                             bg-zinc-800 border border-zinc-700 text-[10px] text-zinc-200 font-medium
+                                             opacity-0 group-hover/map:opacity-100 transition-opacity duration-150 z-10">
+                                    Open in Google Maps ↗
+                                </span>
                             </a>
+
+                            <!-- Divider -->
+                            <div class="border-t border-zinc-800"></div>
+
+                            <!-- Likes + CTA -->
+                            <div class="flex items-center justify-between">
+
+                                <!-- Like button -->
+                                <button type="button" (click)="likeCenter(center)"
+                                    class="flex items-center gap-1.5 text-xs font-medium transition"
+                                    [ngClass]="isLikedCenter(center) ? 'text-red-500' : 'text-zinc-500 hover:text-red-400'">
+                                    <!-- Solid heart when liked (Feather's is outline-only) -->
+                                    <svg *ngIf="isLikedCenter(center)" viewBox="0 0 24 24" fill="currentColor"
+                                        style="width:13px;height:13px;">
+                                        <path
+                                            d="M12 21s-6.716-4.35-9.428-8.06C.657 10.42 1.1 6.9 3.76 5.24c2.29-1.43 5.02-.8 6.6 1.1L12 8l1.64-1.66c1.58-1.9 4.31-2.53 6.6-1.1 2.66 1.66 3.1 5.18 1.19 7.7C18.716 16.65 12 21 12 21z" />
+                                    </svg>
+                                    <i-feather *ngIf="!isLikedCenter(center)" name="heart"
+                                        style="width:13px;height:13px;"></i-feather>
+                                    {{ center.likes }}
+                                </button>
+
+                                <!-- Know More -->
+                                <a [routerLink]="['/centers', center.id, formatUrl(center.name)]" class="px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-semibold
+                                          hover:bg-red-700 active:scale-[0.98] transition">
+                                    View profile
+                                </a>
+                            </div>
                         </div>
                     </div>
+
                 </ng-container>
-            </ng-container>
+            </div>
 
-            <ng-template #comingSoonCenter>
-                <div class="col-span-full flex flex-col justify-center items-center text-white bg-gradient-to-br from-zinc-900 via-black to-zinc-900 
-    border border-zinc-800 shadow-xl rounded-xl p-6 md:p-10 text-center max-w-5xl mx-auto">
-
-                    <img src="../../../assets/landing/hero-gym-centers.jpg" alt="Coming Soon"
-                        class="w-full max-h-64 object-cover rounded-md mb-6 opacity-80 shadow-md" />
-
-                    <h3 class="text-lg md:text-xl font-bold text-red-600">Centers Coming Soon</h3>
-                    <p class="text-sm md:text-base text-white mt-2">We’re setting up new wellness centers near you!</p>
-                </div>
-            </ng-template>
-
-        </div>
-
-        <!-- Toggle Button -->
-        <div *ngIf="centersResult.length > 0">
-            <div class="mt-10 text-center" *ngIf="centersResult.length > 12">
-                <button (click)="toggleCenterData()" class="inline-block bg-white text-red-600 border border-red-600 px-6 py-2 rounded-md font-semibold 
-        hover:bg-red-600 hover:text-white transition-all duration-300">
-                    {{ showFullData ? 'Show Less' : 'Show More' }}
+            <!-- Show more / less toggle -->
+            <div *ngIf="centersResult.length > PAGE_SIZE" class="flex justify-center mt-10">
+                <button type="button" (click)="toggleShowMore()" class="px-6 py-2.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-semibold
+                           hover:border-red-600 hover:text-white transition flex items-center gap-2">
+                    <i-feather [name]="showAll ? 'chevron-up' : 'chevron-down'"
+                        style="width:13px;height:13px;"></i-feather>
+                    {{ showAll ? 'Show less' : 'Show more centers' }}
                 </button>
             </div>
-        </div>
+
+        </ng-container>
+
     </div>
 </section>

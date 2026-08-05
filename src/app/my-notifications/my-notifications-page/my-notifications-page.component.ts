@@ -6,6 +6,7 @@ import { Notifications } from 'src/app/models/Notifications.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { selectMyNotifications, selectMyNotificationsCount } from 'src/app/state/notification/notification.selector';
+import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
 
 @Component({
   selector: 'app-my-notifications-page',
@@ -75,6 +76,7 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
 
   /** Load notifications from state service */
   private loadNotifications(): void {
+    this.store.dispatch(loadMyNotifications());
     this.subscriptions.push(
       this.store.select(selectMyNotifications).subscribe(myNotifications => {
         this.rawNotifications = myNotifications;

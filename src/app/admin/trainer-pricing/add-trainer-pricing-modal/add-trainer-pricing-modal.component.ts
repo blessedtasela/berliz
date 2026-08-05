@@ -7,6 +7,7 @@ import { Trainers } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { selectActiveTrainers, selectTrainers } from 'src/app/state/trainer/trainer.selector';
+import { loadTrainers } from 'src/app/state/trainer/trainer.actions';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -47,6 +48,7 @@ export class AddTrainerPricingModalComponent {
 
 
   onEmit(): void {
+    this.store.dispatch(loadTrainers());
     this.store.select(selectTrainers).subscribe((trainers) => {
       this.trainers = trainers;
     });

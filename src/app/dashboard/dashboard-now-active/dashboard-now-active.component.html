@@ -1,47 +1,56 @@
-<div class="justify-center items-center p-1 mt-4 overflow-x-scroll" *ngIf="users.length === 0">
-    <h1 class="text-gray-500 italic font-sans">
-        users will appear here
-    </h1>
-</div>
-<h1 class="text-gray-500 italic font-sans">
-    Total tasks {{ users.length }}
-</h1>
-<div class="justify-center items-center p-1 mt-4 overflow-x-scroll font-sans" *ngIf="users.length > 0">
-    <div class="min-w-[300px]">
-        <table class="table-auto border-collapse rounded-lg text-gray-950 font-sans container">
-            <tbody class="rounded-lg">
-                <tr *ngFor="let user of users; let i = index" class="">
-                    <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        <div class="grid grid-cols">
-                            <div>
-                                {{ user.email }}
-                            </div>
-                            <div class="grid grid-cols md:grid-cols-2 text-sm italic text-gray-400">
-                                <span class="flex flex-cols">
-                                    <i-feather name="calendar" class="font-bold text-gray-950 mr-2 mt-1 cursor-pointer"
-                                        style="width: 15px;">
-                                    </i-feather>
-                                    created on {{ formatDate(user.date) }}
-                                </span>
-                                <span class="flex flex-cols">
-                                    <i-feather name="calendar" class="font-bold text-red-600 mr-2 mt-1 cursor-pointer"
-                                        style="width: 15px;">
-                                    </i-feather>
-                                    last updated {{ formatDate(user.lastUpdate) }}
-                                </span>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="border-b border-gray-400 px-4 py-2 text-sm">
-                        <div class="grid grid-cols md:grid-cols-2">
-                            <div class="font-bold italic text-gray-700 mt-0 md:mt-3">
-                                task {{ user.status }}
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+<div class="bg-white border border-gray-200 rounded-xl font-sans">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+        <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wide">Now active</h2>
+        <span class="text-[11px] text-gray-400">{{ users.length }} total</span>
     </div>
+
+    <!-- Empty -->
+    <div *ngIf="users.length === 0" class="flex flex-col items-center py-10 gap-2 text-center">
+        <i-feather name="activity" class="text-gray-300" style="width:28px;height:28px;"></i-feather>
+        <p class="text-xs text-gray-400 italic">No active users right now</p>
+    </div>
+
+    <!-- List -->
+    <div *ngIf="users.length > 0" class="divide-y divide-gray-100">
+
+        <div *ngFor="let user of users; let i = index"
+            class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition">
+
+            <span class="text-[11px] text-gray-400 font-medium w-5 shrink-0 mt-1">{{ i + 1 }}</span>
+
+            <div
+                class="w-8 h-8 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0 mt-0.5">
+                <span class="text-xs font-bold text-red-600">
+                    {{ user.email.charAt(0).toUpperCase() }}
+                </span>
+            </div>
+
+            <div class="flex-1 min-w-0 flex flex-col gap-1">
+
+                <p class="text-xs font-semibold text-gray-900 truncate">{{ user.email }}</p>
+
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+                    <span class="text-[10px] text-gray-400 flex items-center gap-1">
+                        <i-feather name="calendar" style="width:10px;height:10px;"></i-feather>
+                        Created {{ formatDate(user.date) }}
+                    </span>
+                    <span class="text-[10px] text-gray-400 flex items-center gap-1">
+                        <i-feather name="refresh-cw" class="text-red-500" style="width:10px;height:10px;"></i-feather>
+                        Updated {{ formatDate(user.lastUpdate) }}
+                    </span>
+                </div>
+
+            </div>
+
+            <span
+                class="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 bg-gray-100 text-gray-500 border border-gray-200 mt-0.5">
+                {{ user.status }}
+            </span>
+
+        </div>
+
+    </div>
+
 </div>

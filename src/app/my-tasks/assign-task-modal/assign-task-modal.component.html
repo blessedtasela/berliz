@@ -1,0 +1,160 @@
+<div class="relative bg-white font-sans">
+
+    <button type="button" (click)="closeDialog()"
+        class="absolute top-3 right-3 text-red-600 hover:text-red-700 transition active:scale-95">
+        <i-feather name="x-circle" style="width:18px;height:18px;"></i-feather>
+    </button>
+
+    <section class="p-5 flex flex-col gap-5">
+
+        <!-- Header -->
+        <header>
+            <h2 class="text-base font-bold text-gray-900">Assign a task</h2>
+            <p class="text-xs text-red-500 italic mt-0.5">
+                Give a client an exercise-based task with clear steps and a due date.
+            </p>
+        </header>
+
+        <form [formGroup]="assignTaskForm" (ngSubmit)="assign()" class="flex flex-col gap-4">
+
+            <!-- Client -->
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] uppercase tracking-wide text-gray-400">Client</label>
+
+                <select formControlName="userId" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    [ngClass]="isInvalid('userId') ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'">
+                    <option value="" disabled>Select a client</option>
+                    <option *ngFor="let client of clients" [value]="client.userId">
+                        {{ clientLabel(client) }}
+                    </option>
+                </select>
+
+                <p *ngIf="clients.length === 0" class="text-[11px] text-gray-400 italic flex items-center gap-1">
+                    <i-feather name="info" style="width:11px;height:11px;"></i-feather>
+                    You have no clients yet.
+                </p>
+
+                <p *ngIf="isInvalid('userId')" class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Please choose a client
+                </p>
+            </div>
+
+            <!-- Description -->
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] uppercase tracking-wide text-gray-400">Description</label>
+
+                <textarea formControlName="description" rows="3"
+                    placeholder="e.g. Upper body strength block — complete every step twice this week" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    [ngClass]="isInvalid('description') ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'"></textarea>
+
+                <p *ngIf="isInvalid('description')" class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Must be at least 10 characters
+                </p>
+            </div>
+
+            <!-- Priority -->
+            <div class="flex flex-col gap-2">
+                <label class="text-[11px] uppercase tracking-wide text-gray-400">Priority</label>
+
+                <div class="flex gap-2">
+                    <button *ngFor="let p of priorities" type="button" (click)="setPriority(p.value)"
+                        class="px-3 py-1 rounded-full text-xs font-semibold border transition active:scale-95"
+                        [ngClass]="assignTaskForm.value.priority === p.value
+                            ? (p.value === 'HIGH'   ? 'bg-red-50 text-red-600 border-red-200 ring-2 ring-red-100'
+                            : (p.value === 'MEDIUM' ? 'bg-amber-50 text-yellow-600 border-amber-200 ring-2 ring-amber-100'
+                            :                         'bg-gray-100 text-gray-600 border-gray-300 ring-2 ring-gray-100'))
+                            : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'">
+                        {{ p.label }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dates -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-[11px] uppercase tracking-wide text-gray-400">Start date</label>
+                    <input formControlName="startDate" type="date" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                        [ngClass]="isInvalid('startDate') ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'" />
+                    <p *ngIf="isInvalid('startDate')" class="text-red-500 text-[11px] flex items-center gap-1">
+                        <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                        Required
+                    </p>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-[11px] uppercase tracking-wide text-gray-400">Due date</label>
+                    <input formControlName="endDate" type="date" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                        [ngClass]="isInvalid('endDate') ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'" />
+                    <p *ngIf="isInvalid('endDate')" class="text-red-500 text-[11px] flex items-center gap-1">
+                        <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                        Required
+                    </p>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-100"></div>
+
+            <!-- Sub-steps -->
+            <div class="flex flex-col gap-2" formArrayName="subTasks">
+
+                <div class="flex items-center justify-between">
+                    <label class="text-[11px] uppercase tracking-wide text-gray-400">Exercise steps</label>
+                    <button type="button" (click)="addStep()"
+                        class="text-xs text-gray-500 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-xl font-semibold flex items-center gap-1.5 transition active:scale-95">
+                        <i-feather name="plus" style="width:11px;height:11px;"></i-feather>
+                        Add step
+                    </button>
+                </div>
+
+                <div *ngFor="let step of subTasks.controls; let i = index" [formGroupName]="i"
+                    class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col gap-2">
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-semibold text-gray-400">Step {{ i + 1 }}</span>
+                        <button type="button" (click)="removeStep(i)" [disabled]="subTasks.length <= 1"
+                            class="text-red-600 hover:text-red-700 transition active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed">
+                            <i-feather name="trash-2" style="width:13px;height:13px;"></i-feather>
+                        </button>
+                    </div>
+
+                    <input formControlName="name" type="text" placeholder="Step name — e.g. Warm-up set" class="w-full px-3 py-2 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                        [ngClass]="stepGroup(i).get('name')?.invalid && (stepGroup(i).get('name')?.touched || invalidForm)
+                            ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-white'" />
+
+                    <select formControlName="exerciseId" class="w-full px-3 py-2 rounded-xl border text-sm text-gray-900
+                               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                        [ngClass]="stepGroup(i).get('exerciseId')?.invalid && (stepGroup(i).get('exerciseId')?.touched || invalidForm)
+                            ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-white'">
+                        <option value="" disabled>Select an exercise</option>
+                        <option *ngFor="let exercise of exercises" [value]="exercise.id">
+                            {{ exercise.name }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="grid grid-cols-2 gap-3 pt-1">
+                <button type="button" (click)="clear()"
+                    class="w-full bg-gray-100 hover:bg-gray-200 active:scale-[0.98] text-gray-600 py-2.5 rounded-xl font-semibold text-sm transition">
+                    Clear
+                </button>
+
+                <button type="submit"
+                    class="w-full bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white py-2.5 rounded-xl font-semibold text-sm transition flex items-center justify-center gap-2">
+                    <i-feather name="send" style="width:14px;height:14px;"></i-feather>
+                    Assign task
+                </button>
+            </div>
+
+        </form>
+    </section>
+</div>

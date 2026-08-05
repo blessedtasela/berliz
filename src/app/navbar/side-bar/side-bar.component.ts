@@ -10,7 +10,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { Store } from '@ngrx/store';
-import { selectAllNotifications } from 'src/app/state/notification/notification.selector';
+import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
+import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
 
 @Component({
   selector: 'app-side-bar',
@@ -76,6 +77,8 @@ export class SideBarComponent {
 
   handleEmitEvent(): void {
 
+    this.store.dispatch(loadMyNotifications());
+
     this.subscriptions.push(
 
       this.store.select(selectUser).subscribe(user => {
@@ -86,7 +89,7 @@ export class SideBarComponent {
           : null;
       }),
 
-      this.store.select(selectAllNotifications).subscribe(notifications => {
+      this.store.select(selectMyNotifications).subscribe(notifications => {
         this.notificationLength =
           notifications?.filter(notification => !notification.read).length ?? 0;
       })

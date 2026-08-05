@@ -113,6 +113,7 @@ export class AddExercisesModalComponent implements OnInit{
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
+      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       const selectedMuscleGroupIds = this.addExerciseForm.value.muscleGroupIds.map((muscleGroup: any) => muscleGroup.muscleGroupIds);
       const selectedCategoryIds = this.addExerciseForm.value.categoryIds.map((category: any) => category.categoryIds);
@@ -145,7 +146,6 @@ export class AddExercisesModalComponent implements OnInit{
         });
     }
     this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

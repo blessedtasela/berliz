@@ -47,6 +47,10 @@ import { MyTodoListMainComponent } from './my-todo-list/my-todo-list-main/my-tod
 import { MyTrainerMainComponent } from './my-trainer/my-trainer-main/my-trainer-main.component';
 import { TrainersMainComponent } from './trainers/trainers-main/trainers-main.component';
 import { LegalMainComponent } from './legal/legal-main/legal-main.component';
+import { MyWorkoutsComponent } from './workouts/my-workouts/my-workouts.component';
+import { WorkoutBuilderComponent } from './workouts/workout-builder/workout-builder.component';
+import { MyAssignedWorkoutsComponent } from './workouts/my-assigned-workouts/my-assigned-workouts.component';
+import { DashboardExercisesComponent } from './dashboard/exercises/dashboard-exercises.component';
 
 
 
@@ -178,6 +182,57 @@ export const routes: Routes = [
         }
       },
 
+      // Workouts — anyone can build a workout
+      {
+        path: 'workouts',
+        component: MyWorkoutsComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Workouts',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+      {
+        path: 'workouts/builder',
+        component: WorkoutBuilderComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Workout Builder',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+      {
+        path: 'workouts/builder/:id',
+        component: WorkoutBuilderComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Workout Builder',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+
+      // Exercise library — read-only browsing for any signed-in user
+      {
+        path: 'exercises',
+        component: DashboardExercisesComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Exercises',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+
+      // Workouts assigned to me
+      {
+        path: 'my-assigned-workouts',
+        component: MyAssignedWorkoutsComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Assigned Workouts',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+
       // Partnership
       {
         path: 'partnership',
@@ -254,7 +309,11 @@ export const routes: Routes = [
       { path: 'tags', loadChildren: () => import('./admin/tags/tags.module').then(m => m.TagsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Tags', expectedRole: ['admin'] } },
       { path: 'todo-lists', loadChildren: () => import('./admin/todo-lists/todo-lists.module').then(m => m.TodoListsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Todo Lists', expectedRole: ['admin'] } },
       { path: 'muscle-groups', loadChildren: () => import('./admin/muscle-groups/muscle-groups.module').then(m => m.MuscleGroupsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Muscle Groups', expectedRole: ['admin'] } },
-      { path: 'exercises', loadChildren: () => import('./admin/exercises/exercises.module').then(m => m.ExercisesModule), canActivate: [AuthGuard], data: { breadcrumb: 'Exercises', expectedRole: ['admin'] } },
+      // NOTE: `/dashboard/exercises` is now the read-only exercise library for
+      // every signed-in user (see the DashboardExercisesComponent route above).
+      // Admin exercise CRUD stays at `/dashboard/hub/exercises`, which is where
+      // the hub cards link to — the duplicate direct child that used to sit here
+      // was unlinked and would have been shadowed anyway.
       { path: 'tasks', loadChildren: () => import('./admin/tasks/tasks.module').then(m => m.TasksModule), canActivate: [AuthGuard], data: { breadcrumb: 'Tasks', expectedRole: ['admin'] } },
       { path: 'services', loadChildren: () => import('./admin/categories/categories.module').then(m => m.CategoriesModule), canActivate: [AuthGuard], data: { breadcrumb: 'Services', expectedRole: ['admin'] } },
       { path: 'clients', loadChildren: () => import('./admin/clients/clients.module').then(m => m.ClientsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Clients', expectedRole: ['admin'] } },

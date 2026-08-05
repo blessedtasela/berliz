@@ -1,179 +1,190 @@
-<div class="relative bg-white text-gray-700 p-2">
-    <div class="text-red-600 absolute top-0 right-0 p-5">
-        <i-feather userId="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+<div class="max-w-lg w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="layers" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Add subscription</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Select a user, then their center and trainer.</p>
+            </div>
+        </div>
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
     </div>
-    <section class="bg-white">
-        <form [formGroup]="addSubscriptionForm">
-            <header class="font-bold font-sans text-center m-2 text-gray-700">
-                <h1 class="text-xl">Add subscription</h1>
-                <p class="text-red-600 italic text-sm">Please select user and select it's center | trainer
-                </p>
-            </header>
-            <div class="invalid-form">
-                <span *ngIf="!(addSubscriptionForm.get('userId')?.invalid ||
-                        addSubscriptionForm.get('months')?.invalid ||
-                        addSubscriptionForm.get('centerId')?.invalid ||
-                        addSubscriptionForm.get('trainerId')?.invalid ||
-                        addSubscriptionForm.get('mode')?.invalid ||
-                        addSubscriptionForm.get('categoryIds')?.invalid)
-                         && invalidForm" class="mx-2 text-gray-700">
-                    Everything looks good
-                </span>
-                <span *ngIf="(addSubscriptionForm.get('userId')?.invalid ||
+
+    <form [formGroup]="addSubscriptionForm" class="flex flex-col gap-4">
+
+        <p *ngIf="(addSubscriptionForm.get('userId')?.invalid ||
                 addSubscriptionForm.get('months')?.invalid ||
                 addSubscriptionForm.get('centerId')?.invalid ||
                 addSubscriptionForm.get('trainerId')?.invalid ||
                 addSubscriptionForm.get('mode')?.invalid ||
-                addSubscriptionForm.get('categoryIds')?.invalid)
-                 && invalidForm" class="mx-2 text-red-500">
-                    Please complete all sessions
-                </span>
-            </div>
-            <div class="grid grid-cols md:grid-cols-2 p-1 gap-2">
-                <div class="mx-auto w-full grid grid-cols-2 grid-cols-4 rounded-lg text-gray-700">
-                    <div class="rounded-lg object-cover flex col-span-4 flex">
-                        <img src="../../.././../assets/icons/subscribe.jpg" class="rounded-lg">
-                    </div>
-                    <div *ngIf="addSubscriptionForm.get('categoryIds')?.invalid && invalidForm"
-                        class="text-red-500 mx-2 col-span-4">
-                        Select at least one tag
-                    </div>
-                    <div *ngFor="let category of categories; let i = index"
-                        class="col-span-2 md:col-span-1 mx-auto w-full flex items-center">
-                        <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
-                            (change)="calculateTotalAmount()"
-                            class="w-full border-b-2 rounded-lg  rounded-md m-2 text-gray-950 focus:outline-none border-gray-400 hover:border-gray-500"
-                            placeholder="tags" type="checkbox" [value]="category.id">
+                addSubscriptionForm.get('categoryIds')?.invalid) && invalidForm"
+            class="text-red-500 text-[11px] flex items-center gap-1">
+            <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+            Please complete all sections
+        </p>
+
+        <!-- Categories -->
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Categories (max 2)</label>
+            <div class="flex flex-wrap gap-2">
+                <label *ngFor="let category of categories; let i = index" class="cursor-pointer">
+                    <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
+                        (change)="calculateTotalAmount()" type="checkbox" [value]="category.id" class="peer sr-only">
+                    <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
+                               bg-gray-50 border-gray-200 text-gray-600
+                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">
                         {{ category.name }}
-                    </div>
-                    <div *ngIf="addSubscriptionForm.hasError('noCheckboxChecked') && addSubscriptionForm.dirty"
-                        class="text-red-500 mx-2">
-                        Please select at most two categories.
-                    </div>
-                </div>
-                <div class="bg-gray-200 gap-5 rounded-lg p-2 ">
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">User email</span>
-                        <select formControlName="userId"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addSubscriptionForm.get('userId')?.invalid 
-                            && addSubscriptionForm.get('userId')?.touched 
-                            || (addSubscriptionForm.get('userId')?.invalid && invalidForm)}" placeholder="userId"
-                            type="text">
-                            <option selected class="w-auto font-sans">Select user email</option>
-                            <option *ngFor="let user of users" class="w-auto p-8 text-sm m-8">{{ user.email }}
-                                ( {{ user.role }} )</option>
-                        </select>
-                        <div *ngIf="addSubscriptionForm.get('userId')?.invalid && addSubscriptionForm.get('userId')?.dirty|| 
-                        (addSubscriptionForm.get('userId')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            Please select user
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">Duration</span>
-                        <select formControlName="months" (change)="calculateTotalAmount()"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addSubscriptionForm.get('months')?.invalid
-                             && addSubscriptionForm.get('months')?.touched 
-                            || (addSubscriptionForm.get('months')?.invalid && invalidForm)}" type="text">
-                            <option selected hidden class="w-auto font-sans">Select month</option>
-                            <option *ngFor="let month of months" [value]="month.month" class="w-auto p-8 text-sm m-8">
-                                {{ month.month }} month (s)
-                            </option>
-                        </select>
-                        <div *ngIf="addSubscriptionForm.get('months')?.invalid && addSubscriptionForm.get('months')?.dirty|| 
-                        (addSubscriptionForm.get('months')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            Please select subscription durtation
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">Trainer</span>
-                        <select formControlName="trainerId" (change)="onTrainerSelected($event)"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addSubscriptionForm.get('trainerId')?.invalid && addSubscriptionForm.get('trainerId')?.touched 
-                            || (addSubscriptionForm.get('trainerId')?.invalid && invalidForm)}" placeholder="trainerId"
-                            type="text">
-                            <option selected hidden class="w-auto font-sans">Select trainer</option>
-                            <option *ngFor="let trainer of trainers" class="w-auto p-8 text-sm m-8"
-                                [value]="trainer.id">{{ trainer.name }}</option>
-                        </select>
-                        <div *ngIf="addSubscriptionForm.get('trainerId')?.invalid && addSubscriptionForm.get('trainerId')?.dirty|| 
-                        (addSubscriptionForm.get('trainerId')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            lease select trainer
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="ml-4 font-bold text-gray-600 italic">Please select mode of training</span>
-                        <div class="grid grid-cols-2 gap-5">
-                            <div>
-                                <span class="sr-only">Online</span>
-                                <span class="ml-4 font-bold text-gray-700">Online</span>
-                                <input formControlName="mode" [value]="'online'"
-                                    (change)="calculateTotalAmount()"
-                                    class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                                    [ngClass]="{'border-red-400': addSubscriptionForm.get('mode')?.invalid && addSubscriptionForm.get('mode')?.touched }"
-                                    placeholder="Online" type="radio">
-                            </div>
-                            <div>
-                                <span class="sr-only">Hybrid</span>
-                                <span class="ml-4 font-bold text-gray-700">Hybrid</span>
-                                <input formControlName="mode" [value]="'hybrid'"
-                                    (change)="calculateTotalAmount()"
-                                    class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                                    [ngClass]="{'border-red-400': addSubscriptionForm.get('mode')?.invalid && addSubscriptionForm.get('mode')?.touched }"
-                                    placeholder="Hybrid" type="radio">
-                            </div>
-                            <div>
-                                <span class="sr-only">Personal</span>
-                                <span class="ml-4 font-bold text-gray-700">Personal</span>
-                                <input formControlName="mode" [value]="'personal'"
-                                    (change)="calculateTotalAmount()"
-                                    class="w-3 lg:w-full border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                                    [ngClass]="{'border-red-400': addSubscriptionForm.get('mode')?.invalid && addSubscriptionForm.get('mode')?.touched }"
-                                    placeholder="Personal" type="radio">
-                            </div>
-                        </div>
-                        <div class="text-red-500" *ngIf="addSubscriptionForm.get('mode')?.invalid && addSubscriptionForm.get('mode')?.dirty
-                            || (addSubscriptionForm.get('mode')?.invalid && invalidForm)">
-                            Please select a mode
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">Center</span>
-                        <select formControlName="centerId" (change)="onCenterSelected($event)"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': addSubscriptionForm.get('centerId')?.invalid && addSubscriptionForm.get('centerId')?.touched 
-                            || (addSubscriptionForm.get('centerId')?.invalid && invalidForm)}" placeholder="centerId"
-                            type="text">
-                            <option selected hidden class="w-auto font-sans">Select center</option>
-                            <option *ngFor="let center of centers" class="w-auto p-8 text-sm m-8" [value]="center.id">{{
-                                center.name }}</option>
-                        </select>
-                        <div *ngIf="addSubscriptionForm.get('centerId')?.invalid && addSubscriptionForm.get('centerId')?.dirty|| 
-                        (addSubscriptionForm.get('centerId')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            Please select a center
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-center text-gray-950 font-bold">
-                        total Amount: {{ formatTotalAmount(totalAmount) }} USD
-                    </div>
-                    <div class="grid grid-cols-2">
-                        <div class="bg-gray-950 rounded-md mx-auto m-2">
-                            <button type="button"
-                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
-                                (click)="clear()">
-                                Clear
-                            </button>
-                        </div>
-                        <div class="bg-red-600 rounded-md mx-auto m-2">
-                            <button type="submit"
-                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
-                                (click)="addSubscription()">
-                                Add
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                    </span>
+                </label>
             </div>
-        </form>
-    </section>
+            <p *ngIf="addSubscriptionForm.get('categoryIds')?.invalid && invalidForm"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Select at least one category
+            </p>
+            <p *ngIf="addSubscriptionForm.hasError('noCheckboxChecked') && addSubscriptionForm.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Please select at most two categories
+            </p>
+        </div>
+
+        <!-- Mode -->
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Mode of training</label>
+            <div class="flex flex-wrap gap-2">
+                <label class="cursor-pointer">
+                    <input formControlName="mode" [value]="'online'" (change)="calculateTotalAmount()" type="radio"
+                        class="peer sr-only">
+                    <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
+                               bg-gray-50 border-gray-200 text-gray-600
+                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">Online</span>
+                </label>
+                <label class="cursor-pointer">
+                    <input formControlName="mode" [value]="'hybrid'" (change)="calculateTotalAmount()" type="radio"
+                        class="peer sr-only">
+                    <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
+                               bg-gray-50 border-gray-200 text-gray-600
+                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">Hybrid</span>
+                </label>
+                <label class="cursor-pointer">
+                    <input formControlName="mode" [value]="'personal'" (change)="calculateTotalAmount()" type="radio"
+                        class="peer sr-only">
+                    <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
+                               bg-gray-50 border-gray-200 text-gray-600
+                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">Personal</span>
+                </label>
+            </div>
+            <p *ngIf="(addSubscriptionForm.get('mode')?.invalid && addSubscriptionForm.get('mode')?.dirty) || (addSubscriptionForm.get('mode')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Please select a mode
+            </p>
+        </div>
+
+        <!-- User -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">User email</label>
+            <select formControlName="userId" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': (addSubscriptionForm.get('userId')?.invalid && addSubscriptionForm.get('userId')?.touched) || (addSubscriptionForm.get('userId')?.invalid && invalidForm),
+                        'border-gray-200 bg-gray-50': !((addSubscriptionForm.get('userId')?.invalid && addSubscriptionForm.get('userId')?.touched) || (addSubscriptionForm.get('userId')?.invalid && invalidForm))
+                      }">
+                <option selected>Select user email</option>
+                <option *ngFor="let user of users">{{ user.email }} ({{ user.role }})</option>
+            </select>
+            <p *ngIf="(addSubscriptionForm.get('userId')?.invalid && addSubscriptionForm.get('userId')?.dirty) || (addSubscriptionForm.get('userId')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Please select a user
+            </p>
+        </div>
+
+        <!-- Duration -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Duration</label>
+            <select formControlName="months" (change)="calculateTotalAmount()" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': (addSubscriptionForm.get('months')?.invalid && addSubscriptionForm.get('months')?.touched) || (addSubscriptionForm.get('months')?.invalid && invalidForm),
+                        'border-gray-200 bg-gray-50': !((addSubscriptionForm.get('months')?.invalid && addSubscriptionForm.get('months')?.touched) || (addSubscriptionForm.get('months')?.invalid && invalidForm))
+                      }">
+                <option selected hidden>Select month</option>
+                <option *ngFor="let month of months" [value]="month.month">{{ month.month }} month(s)</option>
+            </select>
+            <p *ngIf="(addSubscriptionForm.get('months')?.invalid && addSubscriptionForm.get('months')?.dirty) || (addSubscriptionForm.get('months')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Please select a subscription duration
+            </p>
+        </div>
+
+        <!-- Trainer -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Trainer</label>
+            <select formControlName="trainerId" (change)="onTrainerSelected($event)" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': (addSubscriptionForm.get('trainerId')?.invalid && addSubscriptionForm.get('trainerId')?.touched) || (addSubscriptionForm.get('trainerId')?.invalid && invalidForm),
+                        'border-gray-200 bg-gray-50': !((addSubscriptionForm.get('trainerId')?.invalid && addSubscriptionForm.get('trainerId')?.touched) || (addSubscriptionForm.get('trainerId')?.invalid && invalidForm))
+                      }">
+                <option selected hidden>Select trainer</option>
+                <option *ngFor="let trainer of trainers" [value]="trainer.id">{{ trainer.name }}</option>
+            </select>
+            <p *ngIf="(addSubscriptionForm.get('trainerId')?.invalid && addSubscriptionForm.get('trainerId')?.dirty) || (addSubscriptionForm.get('trainerId')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Please select a trainer
+            </p>
+        </div>
+
+        <!-- Center -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Center</label>
+            <select formControlName="centerId" (change)="onCenterSelected($event)" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': (addSubscriptionForm.get('centerId')?.invalid && addSubscriptionForm.get('centerId')?.touched) || (addSubscriptionForm.get('centerId')?.invalid && invalidForm),
+                        'border-gray-200 bg-gray-50': !((addSubscriptionForm.get('centerId')?.invalid && addSubscriptionForm.get('centerId')?.touched) || (addSubscriptionForm.get('centerId')?.invalid && invalidForm))
+                      }">
+                <option selected hidden>Select center</option>
+                <option *ngFor="let center of centers" [value]="center.id">{{ center.name }}</option>
+            </select>
+            <p *ngIf="(addSubscriptionForm.get('centerId')?.invalid && addSubscriptionForm.get('centerId')?.dirty) || (addSubscriptionForm.get('centerId')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Please select a center
+            </p>
+        </div>
+
+        <!-- Total -->
+        <div class="flex items-center justify-between rounded-xl bg-red-50 border border-red-100 px-4 py-3">
+            <span class="text-[11px] font-semibold text-red-500 uppercase tracking-wide">Total amount</span>
+            <span class="text-sm font-bold text-red-600">{{ formatTotalAmount(totalAmount) }} USD</span>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div class="flex items-center justify-end gap-2">
+            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+                       hover:bg-gray-50 active:scale-[0.98] transition">
+                Clear
+            </button>
+            <button type="submit" (click)="addSubscription()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                <i-feather name="check" style="width:13px;height:13px;"></i-feather>
+                Add subscription
+            </button>
+        </div>
+
+    </form>
+
+</div>

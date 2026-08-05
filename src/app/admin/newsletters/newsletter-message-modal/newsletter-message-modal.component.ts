@@ -80,6 +80,7 @@ export class NewsletterMessageModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop()
+      this.snackBarService.openSnackBar(this.responseMessage, "error");
     }
     else {
       this.newsletterService.sendMessage(this.newsletterMessageForm.value)
@@ -103,7 +104,6 @@ export class NewsletterMessageModalComponent {
         });
     }
     this.ngxService.stop();
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
 
   clear() {

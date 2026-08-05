@@ -1,29 +1,70 @@
-<section class="mt-40 rounded-md p-2">
-    <div class="flex justify-center ">
-        <h1 class="p-4 font-sans text-gray-200 text-xl font-bold uppercase
-        bg-red-700 hover:bg-red-800 hero-button font-sans text-left mx-8
-        rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
-            Amazing
-            <div class="text-gray-950 text-right">Transformations</div>
-        </h1>
+<!-- ═══════════════════════════════════════════════
+     CLIENT REVIEWS — read-only public card
+════════════════════════════════════════════════ -->
+<section *ngIf="trainerReview.length > 0" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 font-sans">
+
+    <div class="flex flex-col gap-1 mb-4">
+        <span class="text-[11px] uppercase tracking-wide text-zinc-500 font-semibold">
+            {{ trainerReview.length }} verified review{{ trainerReview.length === 1 ? '' : 's' }}
+        </span>
+        <h2 class="text-lg font-extrabold text-white leading-tight">
+            Real <span class="text-red-500">transformations</span>
+        </h2>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 mt-20 gap-10 p-2">    
-        <div class="text-gray-200 text-center bg-gray-100 rounded-md m-2"
-         *ngFor="let review of trainerReview; let i = index" [ngClass] ="{ 'hidden' : i >= 4 && !showAllReviews }">
-            <div class="grid grid-cols-2 ">
-            <img src="{{ review.photoFrontBefore }}" class="aspect-square rounded-l-md cursor-pointer">
-            <img src="{{ review.photoFrontAfter }}" class="aspect-square rounded-r-md cursor-pointer">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+        <div *ngFor="let review of visibleReviews"
+            class="flex flex-col bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden">
+
+            <!-- Before / after -->
+            <div *ngIf="hasTransformation(review)" class="grid grid-cols-2 gap-px bg-zinc-800">
+                <div class="relative">
+                    <img [src]="photoUrl(review.photoFrontBefore)" alt="Before"
+                        class="w-full aspect-square object-cover" (error)="onImageError($event)" />
+                    <span class="absolute bottom-1.5 left-1.5 text-[9px] font-bold uppercase tracking-wide
+                                 text-zinc-300 bg-black/70 px-1.5 py-0.5 rounded">
+                        Before
+                    </span>
+                </div>
+                <div class="relative">
+                    <img [src]="photoUrl(review.photoFrontAfter)" alt="After"
+                        class="w-full aspect-square object-cover" (error)="onImageError($event)" />
+                    <span class="absolute bottom-1.5 left-1.5 text-[9px] font-bold uppercase tracking-wide
+                                 text-white bg-red-600 px-1.5 py-0.5 rounded">
+                        After
+                    </span>
+                </div>
+            </div>
+
+            <!-- Copy -->
+            <div class="flex flex-col gap-2.5 p-4">
+                <p class="text-xs text-zinc-300 leading-relaxed italic">
+                    "{{ review.review }}"
+                </p>
+
+                <div class="flex items-center justify-between pt-2 border-t border-zinc-800">
+                    <span class="text-[11px] font-semibold text-red-400 uppercase tracking-wide truncate">
+                        {{ review.clientName }}
+                    </span>
+                    <span class="text-[11px] text-zinc-500 flex items-center gap-1.5 shrink-0">
+                        <i-feather name="heart" style="width:11px;height:11px;"></i-feather>
+                        {{ review.likes || 0 }}
+                    </span>
+                </div>
+            </div>
         </div>
-            <p class="text-gray-950 text-sm p-4 font-sans text-center">{{ review.review }}</p>
-            <!-- <p class="text-red-600 text-md  mb-4 font-sans font-bold uppercase"> 
-                {{ review.client.user.firstname }}   {{ review.client.user.lastname }}
-            </p> -->
-        </div>
-        </div>
-        <div *ngFor="let review of trainerReview; let i = index">
-            <button class="mt-4 p-1 px-2 text-red-600 bg-gray-100 font-sans font-bold rounded-md mx-auto flex justify-center mt-2"
-            (click)="allReviews()"  [ngClass] ="{ 'hidden' : i <= 4 && !showAllReviews }" >
-                {{ !showAllReviews ? 'See more' : 'See less' }}
-            </button>
-        </div>
+
+    </div>
+
+    <!-- Show more / less -->
+    <div *ngIf="trainerReview.length > PAGE_SIZE" class="flex justify-center mt-6">
+        <button type="button" (click)="allReviews()" class="px-5 py-2 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-semibold
+                       hover:border-red-600 hover:text-white transition flex items-center gap-2">
+            <i-feather [name]="showAllReviews ? 'chevron-up' : 'chevron-down'"
+                style="width:13px;height:13px;"></i-feather>
+            {{ showAllReviews ? 'Show less' : 'Show all reviews' }}
+        </button>
+    </div>
+
 </section>

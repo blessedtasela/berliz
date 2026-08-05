@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import {
   ChangeDetectorRef, Component, EventEmitter,
-  Input, OnDestroy, OnInit, Output
+  Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges
 } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -33,7 +33,7 @@ const TOTAL_SLOTS = 4;
   templateUrl: './my-trainer-feature-videos.component.html',
   styleUrls: ['./my-trainer-feature-videos.component.css']
 })
-export class MyTrainerFeatureVideosComponent {
+export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDestroy {
   @Input() trainerFeatureVideos: TrainerFeatureVideo[] = [];
   @Output() emitEvent = new EventEmitter();
 
@@ -88,8 +88,18 @@ export class MyTrainerFeatureVideosComponent {
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
   ngOnInit(): void {
-    this.initSlots();
-    this.buildForm();
+    if (!this.featureVideosForm) {
+      this.initSlots();
+      this.buildForm();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['trainerFeatureVideos']?.currentValue?.length && this.featureVideosForm) {
+      this.initSlots();
+      this.buildForm();
+      this.cdr.detectChanges();
+    }
   }
 
   ngOnDestroy(): void {

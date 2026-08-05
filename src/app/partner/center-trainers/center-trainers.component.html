@@ -1,0 +1,110 @@
+<div class="bg-white font-sans rounded-xl border border-gray-200 p-4 flex flex-col gap-4 mt-4">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-sm font-bold text-gray-900">Trainers</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                {{ activeCount }} active of {{ centerTrainers.length }} affiliated
+            </p>
+        </div>
+
+        <button type="button" (click)="toggleEditor()" class="px-3 py-1.5 rounded-xl text-xs font-semibold border border-gray-200 text-gray-700
+                   hover:bg-gray-50 active:scale-[0.98] transition flex items-center gap-2">
+            <i-feather [name]="showEditor ? 'x' : 'user-plus'" style="width:13px;height:13px;"></i-feather>
+            {{ showEditor ? 'Cancel' : 'Add trainer' }}
+        </button>
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <!-- Add trainer -->
+    <form *ngIf="showEditor && addTrainerForm" [formGroup]="addTrainerForm" (ngSubmit)="addTrainer()"
+        class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col gap-3">
+
+        <p class="text-xs font-bold text-gray-800">Affiliate a trainer</p>
+
+        <div *ngIf="invalidForm && addTrainerForm.invalid"
+            class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
+            <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+            Please provide a valid trainer id.
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Trainer id</label>
+            <input type="number" formControlName="trainerId" placeholder="42" class="w-full px-3 py-2 rounded-xl bg-white border text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition
+                       placeholder:text-gray-400" [ngClass]="addTrainerForm.get('trainerId')?.invalid &&
+                         (invalidForm || addTrainerForm.get('trainerId')?.dirty)
+                    ? 'border-red-300' : 'border-gray-200'" />
+        </div>
+
+        <div class="border-t border-gray-200 pt-3 flex items-center justify-between">
+            <span *ngIf="hasChanges()" class="text-xs text-blue-600 font-semibold">Unsaved changes</span>
+            <span *ngIf="!hasChanges()" class="text-xs text-gray-400">No changes made</span>
+
+            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-xl text-xs font-semibold
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2"
+                [disabled]="!hasChanges() || addTrainerForm.invalid"
+                [ngClass]="{ 'opacity-40 cursor-not-allowed': !hasChanges() || addTrainerForm.invalid }">
+                <i-feather name="save" style="width:13px;height:13px;"></i-feather>
+                Add trainer
+            </button>
+        </div>
+
+    </form>
+
+    <!-- Empty state -->
+    <div *ngIf="centerTrainers.length === 0 && !showEditor"
+        class="flex flex-col items-center justify-center py-10 gap-2 text-gray-400">
+        <i-feather name="users" style="width:28px;height:28px;"></i-feather>
+        <p class="text-xs italic">No trainers affiliated with your center yet.</p>
+    </div>
+
+    <!-- List -->
+    <div *ngIf="centerTrainers.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+        <div *ngFor="let trainer of visibleTrainers"
+            class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3">
+
+            <div class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center shrink-0">
+                <i-feather name="user" style="width:16px;height:16px;" class="text-gray-400"></i-feather>
+            </div>
+
+            <div class="flex-1 min-w-0 flex flex-col gap-0.5">
+                <p class="text-xs font-semibold text-gray-900 truncate">{{ trainer.trainerName }}</p>
+                <p class="text-[11px] text-gray-400">Since {{ formatDate(trainer.date) }}</p>
+            </div>
+
+            <div class="flex items-center gap-1.5 shrink-0">
+                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [ngClass]="isActive(trainer.status)
+                        ? 'bg-green-50 text-green-700 border-green-100'
+                        : 'bg-yellow-50 text-yellow-700 border-yellow-100'">
+                    {{ isActive(trainer.status) ? 'Active' : 'Pending' }}
+                </span>
+
+                <button type="button" (click)="toggleStatus(trainer)" class="text-[10px] font-semibold px-2 py-0.5 rounded-full border border-gray-200
+                               text-gray-600 hover:bg-white active:scale-95 transition">
+                    {{ isActive(trainer.status) ? 'Deactivate' : 'Activate' }}
+                </button>
+
+                <button type="button" (click)="removeTrainer(trainer)" class="text-[10px] font-semibold px-2 py-0.5 rounded-full border border-red-100
+                               text-red-600 hover:bg-red-50 active:scale-95 transition flex items-center gap-1">
+                    <i-feather name="trash-2" style="width:10px;height:10px;"></i-feather>
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- See more / less -->
+    <div *ngIf="centerTrainers.length > visibleCount" class="flex justify-center pt-1">
+        <button type="button" (click)="showAll = !showAll"
+            class="text-xs font-semibold text-red-600 hover:underline flex items-center gap-1 transition">
+            <i-feather [name]="showAll ? 'chevron-up' : 'chevron-down'" style="width:13px;height:13px;"></i-feather>
+            {{ showAll ? 'See less' : 'See ' + (centerTrainers.length - visibleCount) + ' more' }}
+        </button>
+    </div>
+
+</div>

@@ -1,25 +1,35 @@
-<section class="w-full rounded-md cursor-pointer mt-20 mx-auto">
-    <div class="grid md:grid-cols-2 mx-auto px-4">
-        <p class="w-full text-center text-2xl font-sans font-bold text-red-600 text-transform: uppercase sm:mb-3">
-            Meet Your personal trainer
-        </p>
-        <P class="w-full text-right font-sans text-md font-bold uppercase px-4">
-            ....Know them better
-        </P>
-        <div class="order-1 flex justify-center items-center mt-2 md:mt-0">
-            <video class="w-[400px] h-[400px] object-cover m-2 md:w-[500px] md:h-[450px] rounded-md mb-4 md:mb-0
-            transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                src="{{ trainerIntroduction?.videoUrl }}" loop autoplay [muted]="true">
-                </video>
+<!-- ═══════════════════════════════════════════════
+     INTRODUCTION — read-only public card
+════════════════════════════════════════════════ -->
+<section *ngIf="trainerIntroduction?.introduction"
+    class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden font-sans">
+
+    <div class="flex flex-col md:flex-row">
+
+        <!-- Cover photo -->
+        <div class="md:w-64 shrink-0 bg-zinc-800">
+            <img [src]="photoUrl" [alt]="trainerIntroduction?.trainerName"
+                class="w-full h-56 md:h-full object-cover" (error)="onImageError($event)" />
         </div>
-        <div class="order-1 grid grid-cols-1 text-justify items-center bg-gray-100 m-8 rounded-md mx-auto">
-            <p class="m-2 text-sm w-100 font-sans mx-5 mb-5 md:mb-0" *ngFor="let p of trainerIntroduction?.paragraphs">
-               {{ p.paragraph }}
-            </p>        
-            <button class="m-4 text-sm font-sans bg-red-600 text-white p-1 px-2 mb-5 hover:bg-red-700 rounded-md mx-auto
-                transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
-                Subscribe Now
-            </button>
+
+        <!-- Copy -->
+        <div class="flex-1 p-5 sm:p-6 flex flex-col gap-3">
+
+            <div class="flex flex-col gap-1">
+                <span class="text-[11px] uppercase tracking-wide text-zinc-500 font-semibold">
+                    Introduction
+                </span>
+                <h2 class="text-lg font-extrabold text-white leading-tight">
+                    Meet {{ trainerIntroduction?.trainerName }}
+                </h2>
+            </div>
+
+            <div class="w-10 h-0.5 bg-red-600 rounded-full"></div>
+
+            <p class="text-sm text-zinc-400 leading-relaxed whitespace-pre-line">
+                {{ trainerIntroduction?.introduction }}
+            </p>
+
         </div>
     </div>
 </section>

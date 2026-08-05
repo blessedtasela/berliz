@@ -4,10 +4,11 @@
     <div class="flex items-start justify-between">
         <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
-                <i-feather name="alert-triangle" class="text-red-600" style="width:18px;height:18px;"></i-feather>
+                <i-feather [name]="details.icon || 'alert-triangle'" class="text-red-600"
+                    style="width:18px;height:18px;"></i-feather>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-gray-900">Are you sure?</h2>
+                <h2 class="text-sm font-bold text-gray-900">{{ details.title || 'Are you sure?' }}</h2>
                 <p class="text-[11px] text-gray-400 mt-0.5">This action may be irreversible</p>
             </div>
         </div>

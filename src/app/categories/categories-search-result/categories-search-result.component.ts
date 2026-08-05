@@ -1,53 +1,61 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { Categories, CategoryLikes } from 'src/app/models/categories.interface';
+import { Categories } from 'src/app/models/categories.interface';
 import { Users } from 'src/app/models/users.interface';
-import { CategoryService } from 'src/app/services/category.service';
-import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { loadActiveCategories } from 'src/app/state/category/category.actions';
-import { selectActiveCategories } from 'src/app/state/category/category.selectors';
+import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { likeCategory, loadMyCategoryLikes } from 'src/app/state/category/category.actions';
+import { selectLikedCategoryIds } from 'src/app/state/category/category.selectors';
 import { selectUser } from 'src/app/state/user/user.selector';
-import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
   selector: 'app-categories-search-result',
   templateUrl: './categories-search-result.component.html',
   styleUrls: ['./categories-search-result.component.css']
 })
-export class CategoriesSearchResultComponent {
+export class CategoriesSearchResultComponent implements OnInit, OnDestroy {
   @Input() categoriesResult: Categories[] = [];
+  @Input() totalCategories: number = 0;
+
   showFullData: boolean = false;
   visibleItems: number = 12;
-  @Input() totalCategories: number = 0;
-  responseMessage: any;
+
   user!: Users | null;
-  categoryLikes: CategoryLikes[] = [];
-  subscriptions: Subscription[] = []
 
-  constructor(private datePipe: DatePipe,
-    private categoryService: CategoryService,
+  private likedCategoryIds: number[] = [];
+  /** categoryIds flipped locally, pending backend reconciliation — makes the heart fill instantly */
+  private optimisticLikes = new Set<number>();
+
+  subscriptions: Subscription[] = [];
+
+  constructor(
+    private datePipe: DatePipe,
     private store: Store,
-    private rxStompService: RxStompService) { }
+    private router: Router,
+    private dialog: MatDialog,
+    private snackbar: SnackBarService
+  ) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.store.dispatch(loadMyCategoryLikes());
 
-  handleEmitEvent() {
-    this.store.dispatch(loadActiveCategories());
     this.subscriptions.push(
-      this.store.select(selectActiveCategories).subscribe((activeCategories) => {
-        this.categoriesResult = activeCategories;
-        this.totalCategories = activeCategories.length;
-      }),
-      this.store.select(selectUser).subscribe((user) => {
-        this.user = user;
-      }),
+      this.store.select(selectUser).subscribe(user => this.user = user),
+
+      this.store.select(selectLikedCategoryIds).subscribe(ids => {
+        this.likedCategoryIds = ids ?? [];
+        // Fresh truth arrived from the backend — drop any optimistic overrides.
+        this.optimisticLikes.clear();
+      })
     );
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(sub => sub.unsubscribe())
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   toggleData(): void {
@@ -64,22 +72,51 @@ export class CategoriesSearchResultComponent {
     return string.replace(/ /g, "-");
   }
 
-  likeCategory(category: Categories) {
-    this.categoryService.likeCategory(category.id).subscribe(
-      (response: any) => {
-        this.responseMessage = response.message;
-        this.handleEmitEvent()
-      },
-      (error: any) => {
-        if (error.error?.message) {
-          this.responseMessage = error.error?.message;
-        } else {
-          this.responseMessage = genericError;
-        }
-        console.log('error message', this.responseMessage);
-        window.alert('please login to continue')
-      }
+  // ── Likes ───────────────────────────────────────────────────────────────────
+
+  isLiked(category: Categories): boolean {
+    const cached = this.likedCategoryIds.includes(category.id);
+    return this.optimisticLikes.has(category.id) ? !cached : cached;
+  }
+
+  likeCategory(category: Categories): void {
+    if (!this.user?.email) {
+      this.promptLogin();
+      return;
+    }
+
+    // Flip the heart instantly instead of waiting for the round-trip to land.
+    if (this.optimisticLikes.has(category.id)) {
+      this.optimisticLikes.delete(category.id);
+    } else {
+      this.optimisticLikes.add(category.id);
+    }
+
+    this.store.dispatch(likeCategory({ id: category.id }));
+
+    this.snackbar.openSnackBar(
+      this.isLiked(category) ? `You liked ${category.name}` : `Unliked ${category.name}`,
+      ''
     );
   }
 
+  private promptLogin(): void {
+    const ref = this.dialog.open(PromptModalComponent, {
+      width: '400px',
+      data: {
+        confirmation: true,
+        title: 'Login required',
+        message: 'You need to be logged in to like a service. Log in to continue?',
+        confirmText: 'Log in',
+        cancelText: 'Cancel',
+        icon: 'log-in'
+      }
+    });
+
+    ref.afterClosed().subscribe(result => {
+      if (result) {
+        this.router.navigate(['/login']);
+      }
+    });
+  }
 }

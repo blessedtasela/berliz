@@ -8,6 +8,7 @@ import { Role, Users } from 'src/app/models/users.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { selectUsers } from 'src/app/state/user/user.selector';
+import { loadActiveUsers } from 'src/app/state/user/user.actions';
 import { emailExtensionValidator, fileValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -67,7 +68,8 @@ export class AddPartnerModalComponent implements AfterViewInit {
     });
 
     this.store.select(selectUsers).subscribe((cachedData) => {
-      if (!cachedData) {
+      if (!cachedData?.length) {
+        this.store.dispatch(loadActiveUsers());
         this.store.select(selectUsers).subscribe((user) => {
           this.ngxService.start();
           this.users = user;
@@ -119,6 +121,7 @@ export class AddPartnerModalComponent implements AfterViewInit {
     if (this.addPartnerForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
+      this.snackBarService.openSnackBar(this.responseMessage, "error");
     } else {
       this.partnerService.addPartner(requestData)
         .subscribe((response: any) => {
@@ -144,7 +147,6 @@ export class AddPartnerModalComponent implements AfterViewInit {
           });
     }
     this.ngxService.stop();
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
 
   clear() {

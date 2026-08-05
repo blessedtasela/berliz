@@ -1,20 +1,23 @@
-<!-- Offer Card -->
-<div
-  class="h-full w-full max-w-xs bg-white/5 border border-gray-700 backdrop-blur-md text-white p-6 rounded-xl
-         transition-transform transform hover:scale-105 hover:shadow-xl flex flex-col items-center justify-center text-center space-y-4">
+<!-- ═══════════════════════════════════════════════
+     OFFER CARD
+════════════════════════════════════════════════ -->
+<div class="h-full flex flex-col items-center justify-start text-center gap-4 p-6
+            bg-zinc-900 rounded-2xl border border-zinc-800
+            hover:border-red-600/40 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(220,38,38,0.12)]
+            transition-all duration-300 font-sans">
 
-  <!-- Icon -->
-  <div>
-    <i-feather [name]="offers.iconUrl" class="text-red-600" style="width: 32px; height: 32px;"></i-feather>
+  <!-- Icon ring -->
+  <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/20 flex items-center justify-center shrink-0">
+    <i-feather [name]="offers.iconUrl" class="text-red-500" style="width:22px;height:22px;"></i-feather>
   </div>
 
   <!-- Title -->
-  <h3 class="text-lg uppercase text-red-600">
+  <h3 class="text-sm font-extrabold text-white uppercase tracking-tight leading-tight">
     {{ offers.title }}
   </h3>
 
   <!-- Description -->
-  <p class="text-sm text-white">
+  <p class="text-xs text-zinc-400 leading-relaxed">
     {{ offers.description }}
   </p>
 </div>

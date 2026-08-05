@@ -1,11 +1,44 @@
-<section class="py-12 px-4 sm:px-8 rounded-md shadow-lg text-white"
-    style="background: linear-gradient(to bottom, black, rgb(27, 25, 25), rgb(45, 23, 23), rgb(27, 25, 25), black);">
-    <h2 class="text-white text-4xl font-extrabold text-center mb-16 font-sans uppercase tracking-wide">
-        Berliz <span class="text-red-600">Spot</span>light
-    </h2>
+<!-- ═══════════════════════════════════════════════
+     LANDING — BERLIZ SPOTLIGHT
+════════════════════════════════════════════════ -->
+<section class="w-full bg-black px-4 py-20 font-sans">
+    <div class="max-w-6xl mx-auto">
 
-     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 place-items-center">
-    <app-promotions *ngFor="let promotion of promotionsList" [promotions]="promotion">
-    </app-promotions>
-  </div>
+        <!-- Section header -->
+        <div class="flex flex-col items-center text-center gap-3 mb-12">
+            <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+                Featured
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+                Berliz <span class="text-red-500">Spotlight</span>
+            </h2>
+            <p class="text-sm text-zinc-400 max-w-md leading-relaxed">
+                Programs, partners and promotions worth your attention right now.
+            </p>
+            <div class="w-12 h-0.5 bg-red-600 rounded-full mt-1"></div>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="promotionsList.length === 0"
+            class="flex flex-col items-center justify-center py-16 gap-6 text-center">
+
+            <div class="w-20 h-20 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+                <i-feather name="star" class="text-zinc-600" style="width:32px;height:32px;"></i-feather>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <h3 class="text-lg font-bold text-white">Nothing in the spotlight yet</h3>
+                <p class="text-sm text-zinc-500 max-w-xs">
+                    New promotions land here regularly. Check back soon.
+                </p>
+            </div>
+        </div>
+
+        <!-- Cards -->
+        <div *ngIf="promotionsList.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <app-promotions *ngFor="let promotion of promotionsList" [promotions]="promotion" class="block h-full">
+            </app-promotions>
+        </div>
+
+    </div>
 </section>

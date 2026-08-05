@@ -1,40 +1,82 @@
-<div class="relative">
-    <div class="text-red-600 absolute top-0 right-0 p-1">
-        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
-    </div>
-    <section class="p-2 flex flex-col justify-center items-center">
-        <p class="text-gray-950 font-sans font-bold text-xl uppercase mt-4">{{ exerciseData.name }} - {{
-            exerciseData.id }}</p>
-        <p class="text-red-600 font-sans font-bold text-sm italic">
-            created at {{ formatDate(exerciseData.date) }}
-        </p>
-        <div class="md:rounded-r-md rounded-b-md p-8 grid grid-cols md:grid-cols-2">
-            <div class="flex w-full">
-                <video [src]="'data:video/mp4;base64,' + exerciseData.demo " class="bg-gray-200 rounded-lg p-2"
-                  loop autoplay [muted]="true"  onerror="this.src='../../../assets/icons/user.png';"></video>
+<div class="max-w-lg w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="activity" class="text-red-600" style="width:15px;height:15px;"></i-feather>
             </div>
-            <div class="flex flex-col m-4 gap-2">
-                <p class="text-gray-700 font-sans font-bold text-sm flex text-justify">
-                    "{{ exerciseData.description }}"
-                </p>
-                <p class="text-gray-500 font-sans font-bold text-sm flex text-center italic">
-                    <span class="text-justify text-gray-900 italic">Muscle Groups</span>
-                    <ng-container *ngFor="let muscleGroup of exerciseData.muscleGroups; let i = index">
-                        {{ muscleGroup.name }} {{ i < (exerciseData.muscleGroups.length - 1) ? "/" : "" }} </ng-container>
-                </p>
-                <p class="text-gray-500 font-sans font-bold text-sm flex text-center italic">
-                    <span class="text-justify text-gray-900 italic">Categories</span>
-                    <ng-container *ngFor="let category of exerciseData.categories; let i = index">
-                        {{ category.name }} {{ i < (exerciseData.categories.length - 1) ? "/" : "" }} </ng-container>
-                </p>
-              
-                <p class="text-gray-700 font-sans font-bold text-md flex mt-2">
-                    Muscle Group status: {{ exerciseData.status ==='true' ? 'active' :'false' }}
-                </p>
-                <p class="text-red-600 font-sans font-bold text-md flex mt-2">
-                    Last Update: {{ formatDate(exerciseData.lastUpdate) }}
-                </p>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">{{ exerciseData.name }}</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">ID {{ exerciseData.id }} &middot; Created {{
+                    formatDate(exerciseData.date) }}</p>
             </div>
         </div>
-    </section>
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
+    </div>
+
+    <!-- Demo video -->
+    <video *ngIf="exerciseData.demo" [src]="'data:video/mp4;base64,' + exerciseData.demo" loop autoplay [muted]="true"
+        class="w-full h-40 object-cover rounded-xl border border-gray-200 bg-gray-50"></video>
+
+    <!-- Status -->
+    <span class="w-fit px-2.5 py-1 rounded-full text-[11px] font-semibold"
+        [ngClass]="exerciseData.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
+        {{ exerciseData.status === 'true' ? 'Active' : 'Inactive' }}
+    </span>
+
+    <!-- Field grid -->
+    <div class="bg-gray-50 border border-gray-100 rounded-xl divide-y divide-gray-100">
+        <div class="flex items-center justify-between px-4 py-2.5">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Name</span>
+            <span class="text-xs font-medium text-gray-900 text-right">{{ exerciseData.name }}</span>
+        </div>
+        <div class="flex items-center justify-between px-4 py-2.5">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</span>
+            <span class="text-xs font-medium text-gray-900 text-right">{{ formatDate(exerciseData.lastUpdate) }}</span>
+        </div>
+    </div>
+
+    <!-- Muscle groups -->
+    <div class="flex flex-col gap-1.5" *ngIf="exerciseData.muscleGroups?.length">
+        <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Muscle groups</span>
+        <div class="flex flex-wrap gap-1.5">
+            <span *ngFor="let muscleGroup of exerciseData.muscleGroups"
+                class="rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-medium text-red-600">
+                {{ muscleGroup.name }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="flex flex-col gap-1.5" *ngIf="exerciseData.categories?.length">
+        <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Categories</span>
+        <div class="flex flex-wrap gap-1.5">
+            <span *ngFor="let category of exerciseData.categories"
+                class="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs font-medium text-gray-600">
+                {{ category.name }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Description -->
+    <div class="flex flex-col gap-1.5">
+        <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Description</span>
+        <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+            {{ exerciseData.description }}
+        </p>
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <div class="flex items-center justify-end gap-2">
+        <button type="button" (click)="closeDialog()"
+            class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 active:scale-[0.98] transition">
+            Close
+        </button>
+    </div>
+
 </div>

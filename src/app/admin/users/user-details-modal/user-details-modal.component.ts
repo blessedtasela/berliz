@@ -55,6 +55,7 @@ export class UserDetailsModalComponent {
     if (this.passwordForceChnageForm.invalid) {
       this.invalidForm = true;
       this.responseMessage = 'Invalid form';
+      this.snackBarService.openSnackBar(this.responseMessage, "error");
     } else {
       this.userService.forcePasswordChange(this.userData.id, this.passwordForceChnageForm.get('password')?.value)
         .subscribe((response: any) => {
@@ -76,7 +77,6 @@ export class UserDetailsModalComponent {
             }
             this.snackBarService.openSnackBar(this.responseMessage, "error");
           });
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
     }
   }
 }

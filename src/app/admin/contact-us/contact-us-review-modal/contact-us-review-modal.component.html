@@ -1,85 +1,131 @@
-<div class="relative p-2">
-    <section class="p-2 grid grid-cols md:grid-cols-2 gap-2">
-        <div class="text-red-600 absolute top-0 right-0 p-5">
-            <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+<div class="max-w-lg w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="message-square" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Review message</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Reply to this enquiry as an admin.</p>
+            </div>
         </div>
-        <div class="rounded-lg object-cover flex">
-            <img src="../../../../../assets/add-contact-us.jpg" class="rounded-lg">
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
+    </div>
+
+    <!-- Original submission (read-only) -->
+    <div class="flex flex-col gap-2" *ngIf="contactUs">
+        <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Original message</span>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl divide-y divide-gray-100">
+            <div class="flex items-center justify-between px-4 py-2.5">
+                <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">From</span>
+                <span class="text-xs font-medium text-gray-900 text-right">{{ contactUs.name }}</span>
+            </div>
+            <div class="flex items-center justify-between px-4 py-2.5">
+                <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Email</span>
+                <a href="mailto:{{ contactUs.email }}"
+                    class="text-xs font-medium text-red-600 hover:text-red-700 transition text-right">{{ contactUs.email
+                    }}</a>
+            </div>
+            <div class="px-4 py-3">
+                <p class="text-xs text-gray-600 leading-relaxed">{{ contactUs.message }}</p>
+            </div>
         </div>
-        <div class="container border-2 rounded-md max-w-2xl min-w-2xl mx-auto py-2 bg-gray-200">
-            <header class="font-bold font-sans text-center m-2">
-                <h1 class="text-gray-700 text-xl">Review Message</h1>
-                <p class="text-red-600 italic text-sm">
-                    Admin's Feedback/Review
-                </p>
-            </header>
-            <form [formGroup]="reviewContactUsForm">
-                <hr [ngClass]="{'border-red-500': (reviewContactUsForm.get('subject')?.invalid
-                     || reviewContactUsForm.get('body')?.invalid)
-                      && invalidForm }">
-                <div class="invalid-form">
-                    <span *ngIf="!(reviewContactUsForm.get('subject')?.invalid 
-                         || reviewContactUsForm.get('body')?.invalid) && invalidForm" class="mx-2 text-gray-200">
-                        Everything looks good
-                    </span>
-                    <span *ngIf="(reviewContactUsForm.get('subject')?.invalid
-                         || reviewContactUsForm.get('body')?.invalid)   
-                         && invalidForm" class="mx-2 text-red-600">
-                        Please complete all sections
-                    </span>
-                </div>
-                <div class="grid grid-cols-1 gap-5">
-                    <div class="mx-auto w-full p-1">
-                        <select formControlName="savedSubject" [(ngModel)]="selectedSubject"
-                            class="w-full p-2 mr-2 bg-gray-100 rounded-lg focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            placeholder="savedMessages" type="text">
-                            <option selected hidden class="font-sans">You can select message subject</option>
-                            <option *ngFor="let message of savedMessages">{{ message.subject }}</option>
-                        </select>
-                    </div>
-                    <div class="mx-auto w-full p-1">
-                        <input formControlName="subject" [(ngModel)]="selectedSubject"
-                            class="w-full p-2 mr-2 bg-gray-100 rounded-lg focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': reviewContactUsForm.get('subject')?.invalid && reviewContactUsForm.get('subject')?.touched }"
-                            placeholder="Email subject" type="text">
-                        <div *ngIf="reviewContactUsForm.get('subject')?.invalid && reviewContactUsForm.get('subject')?.dirty"
-                            class="text-red-400 mx-2">
-                            Please enter email subject
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-1">
-                        <select formControlName="savedBody" [(ngModel)]="selectedMessage"
-                            class="w-full p-2 mr-2 bg-gray-100 rounded-lg focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            placeholder="savedMessages" type="text">
-                            <option selected hidden class="font-sans">You can select saved messages</option>
-                            <option *ngFor="let message of savedMessages">{{ message.message }}</option>
-                        </select>
-                    </div>
-                    <div class="mx-auto w-full p-1">
-                        <textarea formControlName="body" [(ngModel)]="selectedMessage"
-                            class="w-full p-2 mr-2 bg-gray-100 rounded-lg focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': reviewContactUsForm.get('body')?.invalid && reviewContactUsForm.get('body')?.touched }"
-                            placeholder="Do not add greetings or headers, as they have bee taken care of. Proceed to compose message"
-                            rows="5" cols="20"></textarea>
-                        <div *ngIf="reviewContactUsForm.get('body')?.invalid && reviewContactUsForm.get('body')?.dirty"
-                            class="text-red-400 mx-2">
-                            Body must be at least 50 characters
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-5 font-bold">
-                        <button
-                            class="py-1 px-2 bg-gray-950 mx-auto rounded-md text-sm md:text-md text-white font-sans transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                            type="submit" (click)="clear()">
-                            Clear
-                        </button>
-                        <button
-                            class="py-1 px-2 bg-red-600 mx-auto rounded-md text-sm md:text-md text-white font-sans transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                            type="submit" (click)="reviewContactUs()">
-                            Send
-                        </button>
-                    </div>
-                </div>
-            </form>
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <form [formGroup]="reviewContactUsForm" class="flex flex-col gap-4">
+
+        <!-- Form-level banner -->
+        <p *ngIf="reviewContactUsForm.invalid && invalidForm"
+            class="px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px] flex items-center gap-1.5">
+            <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+            Please complete all sections
+        </p>
+        <p *ngIf="!reviewContactUsForm.invalid && invalidForm"
+            class="px-3 py-2 rounded-xl bg-green-50 border border-green-200 text-green-700 text-[11px] flex items-center gap-1.5">
+            <i-feather name="check" style="width:12px;height:12px;"></i-feather>
+            Everything looks good
+        </p>
+
+        <!-- Saved subject -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Saved subject</label>
+            <select formControlName="savedSubject" [(ngModel)]="selectedSubject" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                <option selected hidden>You can select a message subject</option>
+                <option *ngFor="let message of savedMessages">{{ message.subject }}</option>
+            </select>
         </div>
-    </section>
+
+        <!-- Subject -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Subject</label>
+            <input formControlName="subject" [(ngModel)]="selectedSubject" placeholder="Email subject" type="text" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                    'border-red-400 bg-red-50': reviewContactUsForm.get('subject')?.invalid && reviewContactUsForm.get('subject')?.touched,
+                    'border-gray-200 bg-gray-50': !(reviewContactUsForm.get('subject')?.invalid && reviewContactUsForm.get('subject')?.touched)
+                  }">
+            <p *ngIf="reviewContactUsForm.get('subject')?.invalid && reviewContactUsForm.get('subject')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Subject must be at least 12 characters
+            </p>
+        </div>
+
+        <!-- Saved body -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Saved reply</label>
+            <select formControlName="savedBody" [(ngModel)]="selectedMessage" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                <option selected hidden>You can select a saved message</option>
+                <option *ngFor="let message of savedMessages">{{ message.message }}</option>
+            </select>
+        </div>
+
+        <!-- Body -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Reply</label>
+            <textarea formControlName="body" [(ngModel)]="selectedMessage"
+                placeholder="Greetings and headers are added for you — go straight to composing the reply" rows="6"
+                class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                    'border-red-400 bg-red-50': reviewContactUsForm.get('body')?.invalid && reviewContactUsForm.get('body')?.touched,
+                    'border-gray-200 bg-gray-50': !(reviewContactUsForm.get('body')?.invalid && reviewContactUsForm.get('body')?.touched)
+                  }"></textarea>
+            <p *ngIf="reviewContactUsForm.get('body')?.invalid && reviewContactUsForm.get('body')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Reply must be at least 50 characters
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end gap-2">
+            <button type="button" (click)="clear()"
+                class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 active:scale-[0.98] transition">
+                Clear
+            </button>
+            <button type="button" (click)="closeDialog()"
+                class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 active:scale-[0.98] transition">
+                Cancel
+            </button>
+            <button type="submit" (click)="reviewContactUs()"
+                class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                <i-feather name="check" style="width:13px;height:13px;"></i-feather>
+                Send Reply
+            </button>
+        </div>
+
+    </form>
+
 </div>

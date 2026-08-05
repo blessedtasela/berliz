@@ -38,33 +38,32 @@ export class AddTagModalComponent {
   }
 
   addTag(): void {
-    this.ngxService.start();
     if (this.addTagForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
-      this.ngxService.stop();
-    } else {
-      this.tagService.addTag(this.addTagForm.value)
-        .subscribe((response: any) => {
-          this.addTagForm.reset();
-          this.invalidForm = false;
-          this.dialogRef.close('Tag added sucessfully');
-          this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.onAddTagEmit.emit();
-        }, (error: any) => {
-          this.ngxService.stop();
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
-        });
+      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      return;
     }
-    this.ngxService.stop();
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
+
+    this.ngxService.start();
+    this.tagService.addTag(this.addTagForm.value)
+      .subscribe((response: any) => {
+        this.ngxService.stop();
+        this.addTagForm.reset();
+        this.invalidForm = false;
+        this.dialogRef.close('Tag added sucessfully');
+        this.responseMessage = response?.message;
+        this.snackBarService.openSnackBar(this.responseMessage, "");
+        this.onAddTagEmit.emit();
+      }, (error: any) => {
+        this.ngxService.stop();
+        if (error.error?.message) {
+          this.responseMessage = error.error?.message;
+        } else {
+          this.responseMessage = genericError;
+        }
+        this.snackBarService.openSnackBar(this.responseMessage, "error");
+      });
   }
 
   clear() {

@@ -1,16 +1,157 @@
 <app-navigation-bar></app-navigation-bar>
-<app-center-hero-detail [stats]="centerStatistics" [album]="centerHeroVideo"></app-center-hero-detail>
-<app-center-introduction [centerIntroduction]="centerIntro"></app-center-introduction>
-<app-center-locations [centerLocations]="centerLocation"></app-center-locations>
-<app-center-categories [centerCategories]="centerCategory"></app-center-categories>
-<app-center-equipments [centerEquipments]="centerEquipment"></app-center-equipments>
-<app-center-trainers [centerTrainers]="centerTrainer"></app-center-trainers>
-<app-center-promotions #CenterPromotions [centerPromotions]="centerPromo"
-    (scrollToSubscriptionForm)="scrollToCenterSubscriptionForm()"></app-center-promotions>
-<app-center-subscription-form #CenterSubscriptionForm></app-center-subscription-form>
-<app-center-announcements [centerAnnouncements]="centerAnnouncements"></app-center-announcements>
-<app-center-review [centerReviews]="centerReview"></app-center-review>
-<app-center-album [centerAlbum]="centerAlbums"></app-center-album>
-<app-chat-with-center [whatsappContact]="centerWhatsapp"></app-chat-with-center>
-<app-chat-with-center-pop-up [whatsappContact]="centerWhatsapp"></app-chat-with-center-pop-up>
+
+<main class="bg-gray-50 font-sans min-h-screen pb-16">
+    <div class="max-w-5xl mx-auto px-4 pt-6 flex flex-col gap-4">
+
+        <!-- ===================== LOADING ===================== -->
+        <div *ngIf="loading" class="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col gap-3 animate-pulse">
+            <div class="h-40 bg-gray-100 rounded-xl"></div>
+            <div class="h-3 w-1/3 bg-gray-100 rounded"></div>
+            <div class="h-3 w-2/3 bg-gray-100 rounded"></div>
+        </div>
+
+        <!-- ===================== NOT FOUND ===================== -->
+        <div *ngIf="!loading && notFound"
+            class="bg-white rounded-2xl border border-gray-200 p-8 flex flex-col items-center text-center gap-3">
+            <div class="w-12 h-12 rounded-full bg-red-50 border border-red-100 flex items-center justify-center">
+                <i-feather name="alert-circle" style="width:20px;height:20px;" class="text-red-600"></i-feather>
+            </div>
+            <h1 class="text-base font-bold text-gray-900">Center not found</h1>
+            <p class="text-xs text-gray-500 max-w-sm">
+                This center is no longer available, or the link you followed is incorrect.
+            </p>
+            <button (click)="backToCenters()"
+                class="mt-1 px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                <i-feather name="arrow-left" style="width:13px;height:13px;"></i-feather>
+                Back to centers
+            </button>
+        </div>
+
+        <!-- ===================== CENTER ===================== -->
+        <ng-container *ngIf="!loading && !notFound && center">
+
+            <!-- HERO -->
+            <section class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                <div class="h-44 sm:h-60 w-full bg-gray-100">
+                    <img [src]="center.photoUrl" [alt]="center.name" class="w-full h-full object-cover"
+                        onerror="this.src='assets/landing/hero-gym-centers.jpg';" />
+                </div>
+
+                <div class="p-5 flex flex-col gap-4">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="text-[11px] uppercase tracking-wide text-gray-400">Training center</p>
+                            <h1 class="text-xl font-bold text-gray-900 mt-0.5">{{ center.name }}</h1>
+                            <p *ngIf="center.motto" class="text-xs text-gray-500 italic mt-1">{{ center.motto }}</p>
+                        </div>
+
+                        <div
+                            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-50 border border-red-100 shrink-0">
+                            <i-feather name="thumbs-up" style="width:12px;height:12px;" class="text-red-600"></i-feather>
+                            <span class="text-[11px] font-semibold text-red-600">
+                                {{ center.likes || 0 }} {{ center.likes === 1 ? 'like' : 'likes' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-100"></div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[11px] uppercase tracking-wide text-gray-400">Experience</span>
+                            <span class="text-sm font-semibold text-gray-900">
+                                {{ center.experience || '—' }}
+                            </span>
+                        </div>
+
+                        <div class="flex flex-col gap-1 sm:col-span-2">
+                            <span class="text-[11px] uppercase tracking-wide text-gray-400">Address</span>
+                            <a [href]="mapsUrl(center)" target="_blank" rel="noopener"
+                                class="relative group/map w-fit text-sm text-gray-900 hover:text-red-600 flex items-start gap-2 transition">
+                                <span class="min-w-0">{{ center.address || '—' }}</span>
+                                <i-feather name="map-pin" style="width:14px;height:14px;"
+                                    class="shrink-0 text-red-600"></i-feather>
+                                <span class="pointer-events-none absolute left-0 -top-8 whitespace-nowrap px-2 py-1 rounded-lg
+                                             bg-gray-900 text-[10px] text-white font-medium
+                                             opacity-0 group-hover/map:opacity-100 transition-opacity duration-150 z-10">
+                                    Open in Google Maps ↗
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div *ngIf="centerCategories.length" class="flex flex-wrap gap-2">
+                        <span *ngFor="let c of centerCategories"
+                            class="text-[10px] font-semibold uppercase tracking-wide text-gray-600 bg-gray-50 border border-gray-200 px-2.5 py-1 rounded-full">
+                            {{ c.name }}
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <app-center-introduction [centerIntroduction]="centerIntro"></app-center-introduction>
+
+            <app-center-categories [centerCategories]="centerCategories"></app-center-categories>
+
+            <app-center-locations [centerLocations]="centerLocation"></app-center-locations>
+
+            <app-center-equipments [centerEquipments]="centerEquipment"></app-center-equipments>
+
+            <app-center-trainers [centerTrainers]="centerTrainer"></app-center-trainers>
+
+            <!-- PRICING -->
+            <section *ngIf="centerPricing" class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
+                <div>
+                    <h2 class="text-sm font-bold text-gray-900">Membership pricing</h2>
+                    <p class="text-[11px] text-gray-400 mt-0.5">Monthly rate and long-term commitment discounts</p>
+                </div>
+
+                <div class="border-t border-gray-100"></div>
+
+                <div class="flex items-baseline gap-2">
+                    <span class="text-2xl font-bold text-red-600">{{ centerPricing.price }}</span>
+                    <span class="text-[11px] uppercase tracking-wide text-gray-400">per month</span>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+                    <div class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 flex flex-col gap-0.5">
+                        <span class="text-[11px] uppercase tracking-wide text-gray-400">3 months</span>
+                        <span class="text-sm font-semibold text-gray-900">-{{ centerPricing.discount3Months || 0
+                            }}%</span>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 flex flex-col gap-0.5">
+                        <span class="text-[11px] uppercase tracking-wide text-gray-400">6 months</span>
+                        <span class="text-sm font-semibold text-gray-900">-{{ centerPricing.discount6Months || 0
+                            }}%</span>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 flex flex-col gap-0.5">
+                        <span class="text-[11px] uppercase tracking-wide text-gray-400">9 months</span>
+                        <span class="text-sm font-semibold text-gray-900">-{{ centerPricing.discount9Months || 0
+                            }}%</span>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 flex flex-col gap-0.5">
+                        <span class="text-[11px] uppercase tracking-wide text-gray-400">12 months</span>
+                        <span class="text-sm font-semibold text-gray-900">-{{ centerPricing.discount12Months || 0
+                            }}%</span>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 flex flex-col gap-0.5">
+                        <span class="text-[11px] uppercase tracking-wide text-gray-400">2 programs</span>
+                        <span class="text-sm font-semibold text-gray-900">-{{ centerPricing.discount2Programs || 0
+                            }}%</span>
+                    </div>
+                </div>
+            </section>
+
+            <app-center-announcements [centerAnnouncements]="centerAnnouncements"></app-center-announcements>
+
+            <app-center-review [centerReviews]="centerReview"></app-center-review>
+
+            <app-center-album [centerAlbums]="centerAlbums"></app-center-album>
+
+            <app-center-video-gallery [centerVideoAlbums]="centerVideoAlbums"></app-center-video-gallery>
+
+        </ng-container>
+    </div>
+</main>
+
 <app-footer></app-footer>

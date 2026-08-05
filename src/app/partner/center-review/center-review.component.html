@@ -1,0 +1,69 @@
+<div class="bg-white font-sans rounded-xl border border-gray-200 p-4 flex flex-col gap-4 mt-4">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-sm font-bold text-gray-900">Member Reviews</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">{{ centerReviews.length }} total</p>
+        </div>
+        <span class="text-[10px] font-semibold text-gray-400 bg-gray-50 border border-gray-100
+                     px-2 py-0.5 rounded-full">
+            {{ centerReviews.length }} review{{ centerReviews.length !== 1 ? 's' : '' }}
+        </span>
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <!-- Empty state -->
+    <div *ngIf="centerReviews.length === 0" class="flex flex-col items-center justify-center py-10 gap-2 text-gray-400">
+        <i-feather name="message-square" style="width:28px;height:28px;"></i-feather>
+        <p class="text-xs italic">No reviews yet.</p>
+    </div>
+
+    <!-- Review cards -->
+    <div *ngIf="centerReviews.length > 0" class="flex flex-col gap-3">
+
+        <div *ngFor="let review of visibleReviews"
+            class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col gap-3">
+
+            <div class="flex items-center justify-between flex-wrap gap-2">
+                <div class="flex flex-col gap-0.5">
+                    <p class="text-xs font-semibold text-gray-900">{{ review.memberName }}</p>
+                    <p class="text-[11px] text-gray-400">{{ formatDate(review.lastUpdate || review.date) }}</p>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [ngClass]="isActive(review.status)
+                            ? 'bg-green-50 text-green-700 border-green-100'
+                            : 'bg-yellow-50 text-yellow-700 border-yellow-100'">
+                        {{ isActive(review.status) ? 'Active' : 'Pending' }}
+                    </span>
+
+                    <span class="text-[10px] text-gray-400 flex items-center gap-1">
+                        <i-feather name="heart" style="width:10px;height:10px;" class="text-red-400"></i-feather>
+                        {{ review.likes }}
+                    </span>
+
+                    <button type="button" (click)="toggleStatus(review)" class="text-[10px] font-semibold px-2 py-0.5 rounded-full border transition
+                                   border-gray-200 text-gray-600 hover:bg-white active:scale-95">
+                        {{ isActive(review.status) ? 'Deactivate' : 'Activate' }}
+                    </button>
+                </div>
+            </div>
+
+            <p class="text-xs text-gray-700 leading-relaxed">{{ review.comment }}</p>
+
+        </div>
+
+    </div>
+
+    <!-- See more / less -->
+    <div *ngIf="centerReviews.length > visibleCount" class="flex justify-center pt-1">
+        <button type="button" (click)="showAll = !showAll"
+            class="text-xs font-semibold text-red-600 hover:underline flex items-center gap-1 transition">
+            <i-feather [name]="showAll ? 'chevron-up' : 'chevron-down'" style="width:13px;height:13px;"></i-feather>
+            {{ showAll ? 'See less' : 'See ' + (centerReviews.length - visibleCount) + ' more' }}
+        </button>
+    </div>
+
+</div>

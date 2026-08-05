@@ -1,54 +1,52 @@
-<div class="justify-between mt-20 font-sans mx-auto flex flex-col justify-center items-center">
-    <div class="text-4xl mb-5 text-center">
-        We are here for you!
-    </div>
-    <button class="text-sm bg-red-600 text-white py-2 mb-5 px-5 hover:bg-red-700 rounded-md font-sans mx-auto
-    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl">
-        what our clients says
-    </button>
-</div>
-<section class="rounded-md mt-20 m-4 p-8">
-    <div class="mx-auto px-2">
-        <div class="grid md:grid-cols-2 grid-cols gap-5">
-            <section class="flex items-center cursor-pointer
-            transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                *ngFor="let review of centerReviews; let i = index"
-                [ngClass]="{ 'hidden' : i >= 3 && !showAllReviews }">
-                <div class="mx-auto items-center justify-items-center">
-                    <div
-                        class="grid grid-cols-2 justify-center rounded-md m-2">
-                        <div class="w-24">
-                            <img class="rounded-md" src="../../../assets/icons/user.png">
-                            <div class="flex mt-2">
-                                <i-feather name="heart" style="width: 40px;"
-                                    class="font-bold text-red-600 mr-4 mt-1"></i-feather>
-                                <p class="mt-1 text-sm font-sans font-bold text-gray-600 text-right font-sans mb-2">
-                                    {{ review.likes }} people love it.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="md:-ml-20">
-                        <p class="mt-4 text-center text-md font-sans font-bold text-red-600 uppercase">
-                            {{ review.memberName }}
-                        </p>
-                        <p class="mt-1 text-sm text-gray-950 w-full text-justify font-sans m-2 p-2">
-                            {{ review.comment }}
-                        </p>
-                        <p class="text-sm text-gray-600 italic w-full text-right font-sans mb-2 p-2 font-bold">
-                            {{ review.date }}
-                        </p>
-                    </div>
-                    </div>
-                    
-                </div>
-            </section>
+<section class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
+
+    <div class="flex items-center justify-between gap-3">
+        <div>
+            <h2 class="text-sm font-bold text-gray-900">Member reviews</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                {{ centerReviews.length }}
+                {{ centerReviews.length === 1 ? 'review' : 'reviews' }} from people who train here
+            </p>
         </div>
-    </div>
-    <div class="mt-10 p-4 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-    *ngFor="let review of centerReviews; let i = index" [ngClass]="{'hidden': i <= 10}">
-        <button class="p-1 px-2 bg-red-600 text-gray-100 font-sans font-bold rounded-md mx-auto flex justify-center"
-            (click)="allReviews()">
-            {{ !showAllReviews ? 'See more' : 'See less' }}
+        <button *ngIf="centerReviews.length > 4" type="button" (click)="allReviews()"
+            class="text-[11px] font-semibold text-red-600 hover:text-red-700 transition shrink-0">
+            {{ !showAllReviews ? 'See all' : 'See less' }}
         </button>
     </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <div *ngIf="centerReviews.length; else noReviews" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div *ngFor="let review of centerReviews; let i = index" [ngClass]="{ 'hidden': i >= 4 && !showAllReviews }"
+            class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col gap-2">
+
+            <div class="flex items-center gap-3">
+                <img src="assets/icons/user.png" [alt]="review.memberName"
+                    class="w-9 h-9 rounded-xl object-cover border border-gray-200 bg-white" />
+                <div class="min-w-0">
+                    <p class="text-xs font-bold text-gray-900 truncate">{{ review.memberName }}</p>
+                    <p class="text-[10px] uppercase tracking-wide text-gray-400">
+                        {{ review.date | date: 'mediumDate' }}
+                    </p>
+                </div>
+            </div>
+
+            <p class="text-[11px] text-gray-700 leading-relaxed">{{ review.comment }}</p>
+
+            <div class="flex items-center gap-1.5 pt-2 border-t border-gray-200">
+                <i-feather name="heart" style="width:11px;height:11px;" class="text-red-600"></i-feather>
+                <span class="text-[10px] text-gray-400">
+                    {{ review.likes || 0 }} {{ review.likes === 1 ? 'person finds' : 'people find' }} this helpful
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #noReviews>
+        <div class="flex items-center gap-2 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3">
+            <i-feather name="info" style="width:13px;height:13px;"></i-feather>
+            <span class="text-xs">No reviews published for this center yet.</span>
+        </div>
+    </ng-template>
+
 </section>

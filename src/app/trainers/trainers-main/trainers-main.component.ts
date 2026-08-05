@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Trainers } from 'src/app/models/trainers.interface';
-import { selectCurrentTrainer, selectTrainers } from 'src/app/state/trainer/trainer.selector';
+import { selectCurrentTrainer, selectActiveTrainers } from 'src/app/state/trainer/trainer.selector';
+import { loadActiveTrainers } from 'src/app/state/trainer/trainer.actions';
 
 @Component({
   selector: 'app-trainers-main',
@@ -17,7 +18,8 @@ export class TrainersMainComponent {
   constructor(private store: Store) { }
 
   ngOnInit(): void {
-    this.store.select(selectTrainers).subscribe((cachedData) => {
+    this.store.dispatch(loadActiveTrainers());
+    this.store.select(selectActiveTrainers).subscribe((cachedData) => {
       if (!cachedData) {
         this.handleEmitEvent()
       } else {
@@ -27,7 +29,7 @@ export class TrainersMainComponent {
   }
 
   handleEmitEvent() {
-    this.store.select(selectTrainers).subscribe((cachedData) => {
+    this.store.select(selectActiveTrainers).subscribe((cachedData) => {
       this.trainers = cachedData;
     });
   }

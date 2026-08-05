@@ -77,6 +77,7 @@ export class ContactUsReviewModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form input";
       this.ngxService.stop()
+      this.snackBarService.openSnackBar(this.responseMessage, "error");
     }
     else {
       this.contactUsService.reviewContactUs(this.reviewContactUsForm.value)
@@ -98,7 +99,6 @@ export class ContactUsReviewModalComponent {
           this.snackBarService.openSnackBar(this.responseMessage, "error");
         });
     }
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

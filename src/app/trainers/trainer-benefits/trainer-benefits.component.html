@@ -1,22 +1,23 @@
-<section class="mt-40 bg-gray-950 rounded-md p-2">
-    <div class="grid grid-cols-1 md:grid-cols-2">
-        <div>
-            <h1 class="p-4 font-sans text-gray-200 text-xl font-bold uppercase">
-                Expereince a new level of
-                <div class="text-red-600 text-right">instence training</div>
-            </h1>
-            <ul class="list-styleImage mx-4 p-2" *ngFor="let t of trainerBenefit?.benefits">
-                <li class="text-gray-200 text-sm mx-8">
-                    {{ t.benefit }}
-                </li>
-            </ul>
+<!-- ═══════════════════════════════════════════════
+     BENEFITS — read-only public card
+════════════════════════════════════════════════ -->
+<section *ngIf="benefits.length > 0" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 font-sans">
+
+    <div class="flex flex-col gap-1 mb-4">
+        <span class="text-[11px] uppercase tracking-wide text-zinc-500 font-semibold">
+            What you get
+        </span>
+        <h2 class="text-lg font-extrabold text-white leading-tight">
+            Training <span class="text-red-500">benefits</span>
+        </h2>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div *ngFor="let benefit of benefits" class="flex items-start gap-2.5 bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-3">
+            <i-feather name="check-circle" class="text-red-500 shrink-0 mt-0.5"
+                style="width:14px;height:14px;"></i-feather>
+            <span class="text-xs text-zinc-300 leading-relaxed">{{ benefit }}</span>
         </div>
-        <div class="text-gray-200 text-center">
-            <button class="p-2 m-8 bg-red-700 hover:bg-red-800 hero-button font-sans
-            rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105"> Set your heart Ablaze
-                <i-feather name="arrow-up-right" class="text-gray-200 -mt-2"></i-feather>
-            </button>
-            <img src="{{ trainerBenefit?.imageUrl }}" class="w-full rounded-md cursor-pointer">
-        </div>
-        </div>
+    </div>
+
 </section>

@@ -95,11 +95,18 @@
                             </p>
 
                             <!-- Address -->
-                            <p class="text-[11px] text-zinc-500 flex items-center gap-1.5">
+                            <a [href]="mapsUrl(trainer.address)" target="_blank" rel="noopener"
+                                (click)="$event.stopPropagation()"
+                                class="relative group/map text-[11px] text-zinc-500 hover:text-red-400 flex items-center gap-1.5 transition w-fit">
                                 <i-feather name="map-pin" style="width:11px;height:11px;"
-                                    class="text-zinc-600"></i-feather>
+                                    class="text-zinc-600 group-hover/map:text-red-400 transition"></i-feather>
                                 {{ trainer.address }}
-                            </p>
+                                <span class="pointer-events-none absolute left-0 -top-7 whitespace-nowrap px-2 py-1 rounded-lg
+                                             bg-zinc-800 border border-zinc-700 text-[10px] text-zinc-200 font-medium
+                                             opacity-0 group-hover/map:opacity-100 transition-opacity duration-150 z-10">
+                                    Open in Google Maps ↗
+                                </span>
+                            </a>
 
                             <!-- Divider -->
                             <div class="border-t border-zinc-800"></div>
@@ -111,9 +118,12 @@
                                 <button type="button" (click)="likeTrainer(trainer)"
                                     class="flex items-center gap-1.5 text-xs font-medium transition"
                                     [ngClass]="isLiked(trainer) ? 'text-red-500' : 'text-zinc-500 hover:text-red-400'">
-                                    <i-feather [name]="isLiked(trainer) ? 'heart' : 'heart'"
-                                        style="width:13px;height:13px;"
-                                        [class.fill-current]="isLiked(trainer)"></i-feather>
+                                    <!-- Solid heart when liked (Feather's is outline-only) -->
+                                    <svg *ngIf="isLiked(trainer)" viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;">
+                                        <path
+                                            d="M12 21s-6.716-4.35-9.428-8.06C.657 10.42 1.1 6.9 3.76 5.24c2.29-1.43 5.02-.8 6.6 1.1L12 8l1.64-1.66c1.58-1.9 4.31-2.53 6.6-1.1 2.66 1.66 3.1 5.18 1.19 7.7C18.716 16.65 12 21 12 21z" />
+                                    </svg>
+                                    <i-feather *ngIf="!isLiked(trainer)" name="heart" style="width:13px;height:13px;"></i-feather>
                                     {{ trainer.likes }}
                                 </button>
 

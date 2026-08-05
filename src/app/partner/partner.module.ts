@@ -15,6 +15,16 @@ import { RouterModule } from '@angular/router';
 import { PartnerRouteComponent } from './partner-route/partner-route.component';
 import { PartnerMainComponent } from './partner-main/partner-main.component';
 import { SharedModule } from '../shared/shared.module';
+import { CenterIntroductionComponent } from './center-introduction/center-introduction.component';
+import { CenterPricingComponent } from './center-pricing/center-pricing.component';
+import { CenterEquipmentComponent } from './center-equipment/center-equipment.component';
+import { CenterLocationsComponent } from './center-locations/center-locations.component';
+import { CenterAnnouncementsComponent } from './center-announcements/center-announcements.component';
+import { CenterPhotoAlbumComponent } from './center-photo-album/center-photo-album.component';
+import { CenterVideoAlbumComponent } from './center-video-album/center-video-album.component';
+import { CenterTrainersComponent } from './center-trainers/center-trainers.component';
+import { CenterReviewComponent } from './center-review/center-review.component';
+import { CenterLikeComponent } from './center-like/center-like.component';
 
 
 
@@ -30,6 +40,16 @@ import { SharedModule } from '../shared/shared.module';
     TrainerDataComponent,
     PartnerRouteComponent,
     PartnerMainComponent,
+    CenterIntroductionComponent,
+    CenterPricingComponent,
+    CenterEquipmentComponent,
+    CenterLocationsComponent,
+    CenterAnnouncementsComponent,
+    CenterPhotoAlbumComponent,
+    CenterVideoAlbumComponent,
+    CenterTrainersComponent,
+    CenterReviewComponent,
+    CenterLikeComponent,
   ],
   imports: [
     CommonModule,

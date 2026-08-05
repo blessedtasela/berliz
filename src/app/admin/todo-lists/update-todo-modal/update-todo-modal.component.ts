@@ -47,6 +47,7 @@ export class UpdateTodoModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
+      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       this.todoService.updateTodoList(this.updateTodoForm.value)
         .subscribe((response: any) => {
@@ -69,7 +70,6 @@ export class UpdateTodoModalComponent {
         });
     }
     this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

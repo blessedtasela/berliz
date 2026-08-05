@@ -1,14 +1,33 @@
-<section class="w-full h-full bg-gray-950 flex flex-col justify-center items-center">
-    <a [routerLink]="['/home']" class="w-full h-full">
-        <img src="../../../assets/landing/muscle-group-1.jpg" class="w-full h-full object-cover cursor-pointer"
-            alt="Berliz background" />
+<!-- ═══════════════════════════════════════════════
+     LOGIN HERO — image panel with dark overlay
+════════════════════════════════════════════════ -->
+<section class="relative w-full h-full min-h-[520px] bg-zinc-950 overflow-hidden font-sans">
+
+    <!-- Background image (click through to home) -->
+    <a [routerLink]="['/home']" class="absolute inset-0 block" aria-label="Go to Berliz home">
+        <img src="assets/landing/muscle-group-1.jpg" alt="Berliz" class="w-full h-full object-cover" />
     </a>
 
-    <div class="absolute text-center">
-        <h1 class="text-red-600 text-xl md:text-2xl font-bold uppercase font-sans"
-            style="text-shadow: 2px 2px 4px black;">
-            Welcome to Berliz
+    <!-- Dark gradient overlay -->
+    <div class="absolute inset-0 pointer-events-none"
+        style="background: linear-gradient(135deg, rgba(0,0,0,0.82) 0%, rgba(80,0,0,0.55) 60%, rgba(0,0,0,0.75) 100%);">
+    </div>
+
+    <!-- Content -->
+    <div class="relative z-10 flex flex-col items-center justify-center h-full gap-3 px-8 text-center pointer-events-none">
+
+        <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+            Welcome back
+        </span>
+
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+            Welcome to <span class="text-red-500">Berliz</span>
         </h1>
-        <p class="text-gray-200 text-sm md:text-md font-bold font-sans">Your journey to fitness starts here</p>
+
+        <p class="text-sm text-zinc-300 max-w-xs leading-relaxed">
+            Your journey to fitness starts here.
+        </p>
+
+        <div class="w-12 h-0.5 bg-red-600 rounded-full mt-1"></div>
     </div>
 </section>

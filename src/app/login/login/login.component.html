@@ -1,6 +1,16 @@
-<div class="bg-black">
-  <div class="min-h-screen bg-zinc-900 flex items-center justify-center px-4 py-8">
-    <div class="grid md:grid-cols-2 w-full max-w-5xl rounded-xl overflow-hidden shadow-md bg-white">
+<!-- ═══════════════════════════════════════════════
+     LOGIN — split hero / form shell
+════════════════════════════════════════════════ -->
+<div class="bg-black font-sans">
+
+  <div class="relative min-h-screen bg-zinc-950 flex items-center justify-center px-4 py-12 overflow-hidden">
+
+    <!-- Red glow -->
+    <div class="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-red-600/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-red-600/10 blur-3xl pointer-events-none"></div>
+
+    <div class="relative grid md:grid-cols-2 w-full max-w-5xl rounded-2xl overflow-hidden
+                border border-zinc-800 shadow-[0_8px_40px_rgba(0,0,0,0.6)] bg-white">
 
       <!-- Hero Section -->
       <div class="hidden md:block">
@@ -14,7 +24,6 @@
 
     </div>
   </div>
-  <div class="mt-2">
-    <app-footer></app-footer>
-  </div>
+
+  <app-footer></app-footer>
 </div>

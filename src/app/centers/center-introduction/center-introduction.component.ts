@@ -7,5 +7,5 @@ import { CenterIntroduction } from 'src/app/models/centers.interface';
   styleUrls: ['./center-introduction.component.css']
 })
 export class CenterIntroductionComponent {
-@Input() centerIntroduction: CenterIntroduction | undefined;
+  @Input() centerIntroduction: CenterIntroduction | null = null;
 }

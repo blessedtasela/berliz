@@ -1,10 +1,40 @@
-<section class="justify-between mt-40 font-sans mx-auto flex flex-col justify-center items-center">
-    <div class="text-4xl mb-5 text-center">
-        Photo Ablum
+<!-- ═══════════════════════════════════════════════
+     PHOTO ALBUM — read-only public card
+════════════════════════════════════════════════ -->
+<section *ngIf="photos.length > 0" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 font-sans">
+
+    <div class="flex flex-col gap-1 mb-4">
+        <span class="text-[11px] uppercase tracking-wide text-zinc-500 font-semibold">
+            {{ photos.length }} photo{{ photos.length === 1 ? '' : 's' }}
+        </span>
+        <h2 class="text-lg font-extrabold text-white leading-tight">
+            Photo <span class="text-red-500">album</span>
+        </h2>
+        <p *ngIf="trainerPhotoAlbum?.comment" class="text-xs text-zinc-400 leading-relaxed mt-1">
+            {{ trainerPhotoAlbum?.comment }}
+        </p>
     </div>
-    <div class="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-2">
-        <div class="gap-2" *ngFor="let a of trainerPhotoALbum?.photos; let i = index">
-        <img class="w-full object-cover rounded-md" [ngClass]="{'aspect-square': i%2===0}" src="{{ a.photo }}" />
-      </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <button *ngFor="let photo of photos" type="button" (click)="open(photo)" class="group relative rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950
+                   hover:border-red-600/40 transition">
+            <img [src]="photoUrl(photo)" [alt]="photo.name"
+                class="w-full aspect-square object-cover group-hover:scale-105 transition duration-300"
+                (error)="onImageError($event)" />
+        </button>
     </div>
+
 </section>
+
+<!-- Lightbox -->
+<div *ngIf="lightboxUrl" (click)="close()"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="relative" (click)="$event.stopPropagation()">
+        <img [src]="lightboxUrl" class="max-h-[85vh] max-w-[85vw] rounded-2xl object-contain border border-zinc-700"
+            (error)="onImageError($event)" />
+        <button type="button" (click)="close()" class="absolute -top-3 -right-3 w-7 h-7 rounded-full bg-zinc-900 border-2 border-white
+                   flex items-center justify-center text-white hover:bg-red-600 transition">
+            <i-feather name="x" style="width:12px;height:12px;"></i-feather>
+        </button>
+    </div>
+</div>

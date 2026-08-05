@@ -89,6 +89,7 @@ export class AddMembersModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
+      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       // Get the selected tagIds values as an array
       const selectedTagIds = this.addMemberForm.value.tagIds.map((tag: any) => tag.tagIds);
@@ -120,7 +121,6 @@ export class AddMembersModalComponent {
         });
     }
     this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

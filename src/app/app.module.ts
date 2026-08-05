@@ -98,6 +98,9 @@ import { paymentFeatureKey, paymentReducer } from './state/payment/payment.reduc
 import { PaymentEffects } from './state/payment/payment.effects';
 import { memberFeatureKey, memberReducer } from './state/member/member.reducer';
 import { MemberEffects } from './state/member/member.effects';
+import { workoutFeatureKey, workoutReducer } from './state/workout/workout.reducer';
+import { WorkoutEffects } from './state/workout/workout.effects';
+import { WorkoutsModule } from './workouts/workouts.module';
 
 
 export const ngxUiLoaderConfig: NgxUiLoaderConfig = {
@@ -195,11 +198,12 @@ const dbConfig: DBConfig = {
     MyTodoListModule,
     MySubscriptionsModule,
     MyTrainerModule,
+    WorkoutsModule,
     LegalModule,
 
     // Store and Effects Modules for NgRx
     StoreModule.forRoot({}),
-    EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects]),
+    EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects, WorkoutEffects]),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: !isDevMode(),
@@ -223,6 +227,7 @@ const dbConfig: DBConfig = {
     StoreModule.forFeature(testimonialFeatureKey, testimonialReducer),
     StoreModule.forFeature(paymentFeatureKey, paymentReducer),
     StoreModule.forFeature(memberFeatureKey, memberReducer),
+    StoreModule.forFeature(workoutFeatureKey, workoutReducer),
 
   ],
   exports: [],

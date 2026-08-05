@@ -1,66 +1,74 @@
-<div class="relative p-2">
-    <div class="text-red-600 absolute top-0 right-0 p-5">
-        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+<div class="max-w-md w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="tag" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Add a new tag</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Provide a name and description for the tag.</p>
+            </div>
+        </div>
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
     </div>
-    <form [formGroup]="addTagForm">
-        <header class="text-center m-2 font-bold font-sans">
-            <h1 class=" text-xl">Add a new tag</h1>
-            <p class="text-red-600 italic text-sm">Please provide name and description of the tag
+
+    <form [formGroup]="addTagForm" (ngSubmit)="addTag()" class="flex flex-col gap-4">
+
+        <!-- Tag name -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Tag name</label>
+            <input formControlName="name" type="text" placeholder="e.g. Strength" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="{
+                        'border-red-400 bg-red-50': addTagForm.get('name')?.invalid && addTagForm.get('name')?.touched,
+                        'border-gray-200 bg-gray-50': !(addTagForm.get('name')?.invalid && addTagForm.get('name')?.touched)
+                      }">
+            <p *ngIf="addTagForm.get('name')?.invalid && addTagForm.get('name')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Tag name is required
             </p>
-        </header>
-        <hr [ngClass]="{'border-red-500': 
-             (addTagForm.get('name')?.invalid ||
-                addTagForm.get('description')?.invalid) && invalidForm }">
-        <div class="invalid-form">
-            <span *ngIf="!(addTagForm.get('name')?.invalid ||
-                    addTagForm.get('description')?.invalid) && invalidForm" class="mx-2 text-gray-400">
-                Everything looks good
-            </span>
         </div>
-        <div class="grid grid-cols md:grid-cols-2 rounded-lg p-2 gap-2">
-            <div class="rounded-lg object-cover flex">
-                <img src="../../../../../assets/landing/hero-bg-6.jpg" class="rounded-lg">
-            </div>
-            <div class="bg-gray-200 gap-6 rounded-lg">
-                <div class="mx-auto w-full p-2 mr-2">
-                    <span class="text-gray-700 font-bold italic"> Tag Name</span>
-                    <input formControlName="name"
-                        class="w-full p-2  bg-gray-100 rounded-lg focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                        [ngClass]="{'border-red-400': addTagForm.get('name')?.invalid && addTagForm.get('name')?.touched }"
-                        placeholder="Tag Name" type="text">
-                    <div *ngIf="addTagForm.get('name')?.invalid && addTagForm.get('name')?.dirty"
-                        class="text-red-500 mx-2">
-                        Tag Name is required
-                    </div>
-                </div>
-                <div class="mx-auto w-full p-2 mr-2">
-                    <span class="text-gray-700 font-bold italic">Description</span>
-                    <textarea formControlName="address" formControlName="description"
-                        class="w-full p-2  bg-gray-100 rounded-lg focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                        [ngClass]="{'border-red-400': addTagForm.get('description')?.invalid && addTagForm.get('description')?.touched }"
-                        placeholder="Description" rows="5" cols="20"></textarea>
-                    <div *ngIf="addTagForm.get('description')?.invalid && addTagForm.get('description')?.dirty"
-                        class="text-red-500 mx-2">
-                        Description is required
-                    </div>
-                </div>
-            </div>
+
+        <!-- Description -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Description</label>
+            <textarea formControlName="description" rows="4" placeholder="Describe what this tag is used for" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition resize-none"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': addTagForm.get('description')?.invalid && addTagForm.get('description')?.touched,
+                        'border-gray-200 bg-gray-50': !(addTagForm.get('description')?.invalid && addTagForm.get('description')?.touched)
+                      }"></textarea>
+            <p *ngIf="addTagForm.get('description')?.invalid && addTagForm.get('description')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Description must be at least 20 characters
+            </p>
         </div>
-        <div class="grid grid-cols-2">
-            <div class="bg-gray-950 rounded-md mx-auto m-2">
-                <button type="button"
-                    class="font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
-                    (click)="clear()">
-                    Clear
-                </button>
-            </div>
-            <div class="bg-red-600 rounded-md mx-auto m-2">
-                <button type="submit"
-                    class="font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
-                    (click)="addTag()">
-                    Add
-                </button>
-            </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end gap-2">
+            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+                       hover:bg-gray-50 active:scale-[0.98] transition">
+                Clear
+            </button>
+            <button type="button" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+                       hover:bg-gray-50 active:scale-[0.98] transition">
+                Cancel
+            </button>
+            <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                <i-feather name="check" style="width:13px;height:13px;"></i-feather>
+                Add tag
+            </button>
         </div>
+
     </form>
+
 </div>

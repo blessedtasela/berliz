@@ -10,7 +10,7 @@
     <div class="overflow-x-auto px-4 py-4">
         <div class="flex gap-3" style="min-width: max-content;">
 
-            <a *ngFor="let item of data | keyvalue" [routerLink]="['/dashboard/' + formatUrl(item.key)]" class="w-44 flex flex-col gap-3 p-4 border border-gray-200 rounded-xl bg-white
+            <a *ngFor="let item of (data | keyvalue) | slice:0:10" [routerLink]="['/dashboard/' + formatUrl(item.key)]" class="w-44 flex flex-col gap-3 p-4 border border-gray-200 rounded-xl bg-white
                hover:shadow-sm hover:-translate-y-0.5 transition cursor-pointer shrink-0">
 
                 <!-- Dot -->
@@ -34,6 +34,18 @@
                     <i-feather name="arrow-right" style="width:11px;height:11px;"></i-feather>
                 </span>
 
+            </a>
+
+            <!-- Show more → full Hub grid -->
+            <a *ngIf="((data | keyvalue)?.length || 0) > 10" routerLink="/dashboard/hub" class="w-44 flex flex-col items-center justify-center gap-2 p-4 border border-dashed border-gray-300 rounded-xl bg-gray-50
+               hover:border-red-400 hover:bg-red-50 transition cursor-pointer shrink-0 text-center">
+                <div class="w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center">
+                    <i-feather name="grid" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                </div>
+                <span class="text-[11px] font-semibold text-gray-700">
+                    +{{ ((data | keyvalue)?.length || 0) - 10 }} more
+                </span>
+                <span class="text-[10px] text-red-600 font-semibold">View full hub →</span>
             </a>
 
         </div>

@@ -1,5 +1,21 @@
-import { Component, ElementRef, Input } from '@angular/core';
-import { CenterTrainers } from 'src/app/models/centers.interface';
+import { Component, Input } from '@angular/core';
+
+/**
+ * Flattened view of a `CenterTrainers` affiliation enriched with the public
+ * `Trainers` profile it points at. Built by CenterDetailComponent so this
+ * component stays presentational.
+ */
+export interface CenterTrainerCard {
+  id: number;
+  trainerId: number;
+  trainerName: string;
+  slug: string;
+  photoUrl: string;
+  motto: string;
+  experience: string;
+  status: string;
+  date: Date;
+}
 
 @Component({
   selector: 'app-center-trainers',
@@ -7,17 +23,10 @@ import { CenterTrainers } from 'src/app/models/centers.interface';
   styleUrls: ['./center-trainers.component.css']
 })
 export class CenterTrainersComponent {
-  @Input() centerTrainers: CenterTrainers[] = [];
+  @Input() centerTrainers: CenterTrainerCard[] = [];
   showAllTrainers: boolean = false;
 
-  constructor(private elementRef: ElementRef) { }
-
-  scrollToComponent() {
-    const targetElement = this.elementRef.nativeElement.querySelector('#targetComponent');
-    targetElement.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  allTrainers() {
+  allTrainers(): void {
     this.showAllTrainers = !this.showAllTrainers;
   }
 }

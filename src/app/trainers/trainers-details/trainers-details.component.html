@@ -1,20 +1,71 @@
-<app-trainer-detail-hero
-[album]="trainerHeroAlbum" [stats]="trainerStats">
-</app-trainer-detail-hero>
-<app-trainers-introduction
-[trainerIntroduction]="trainerIntroduction"></app-trainers-introduction>
-<app-trainer-category
-[category]="trainerCategory"></app-trainer-category>
-<app-trainer-feature-video
-[trainerVideos]="trainerVideo"></app-trainer-feature-video>
-<app-trainer-benefits
-[trainerBenefit]="trainerBenefits"
-[album]="trainerHeroAlbum"></app-trainer-benefits>
-<app-trainer-client-review
-[trainerReview]="trainerReview"></app-trainer-client-review>
-<app-trainer-album
-[trainerPhotoALbum]="trainerPhotoAlbum"></app-trainer-album>
-<app-chat-with-trainer
-[whatsappContact]="trainerwhatsapp"></app-chat-with-trainer>
-<app-chat-with-trainer-pop-up
-[whatsappContact]="trainerwhatsapp"></app-chat-with-trainer-pop-up>
+<!-- ═══════════════════════════════════════════════
+     PUBLIC TRAINER PROFILE  /trainers/:name
+════════════════════════════════════════════════ -->
+
+<!-- ── RESOLVING ─────────────────────────────────────────────────────── -->
+<section *ngIf="!resolved" class="w-full bg-zinc-950 font-sans min-h-[70vh] flex items-center justify-center px-4">
+    <div class="flex flex-col items-center gap-4 text-center">
+        <div class="w-14 h-14 rounded-full border-2 border-zinc-800 border-t-red-600 animate-spin"></div>
+        <p class="text-xs text-zinc-500">Loading profile…</p>
+    </div>
+</section>
+
+<!-- ── NOT FOUND ─────────────────────────────────────────────────────── -->
+<section *ngIf="resolved && notFound"
+    class="w-full bg-zinc-950 font-sans min-h-[70vh] flex items-center justify-center px-4">
+
+    <div class="flex flex-col items-center justify-center gap-6 text-center max-w-sm">
+
+        <div class="w-20 h-20 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+            <i-feather name="user-x" class="text-zinc-600" style="width:32px;height:32px;"></i-feather>
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <h1 class="text-lg font-bold text-white">Trainer not found</h1>
+            <p class="text-sm text-zinc-500 leading-relaxed">
+                This profile is no longer available, or the link is incorrect.
+            </p>
+        </div>
+
+        <button type="button" (click)="backToTrainers()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+            <i-feather name="arrow-left" style="width:13px;height:13px;"></i-feather>
+            Browse all trainers
+        </button>
+    </div>
+</section>
+
+<!-- ── PROFILE ───────────────────────────────────────────────────────── -->
+<ng-container *ngIf="resolved && !notFound">
+
+    <app-trainers-details-hero [trainer]="trainer" [reviewCount]="trainerReviews.length">
+    </app-trainers-details-hero>
+
+    <div class="w-full bg-zinc-950 font-sans px-4 pb-20">
+        <div class="max-w-5xl mx-auto flex flex-col gap-6">
+
+            <app-trainers-introduction [trainerIntroduction]="trainerIntroduction">
+            </app-trainers-introduction>
+
+            <app-trainer-benefits [trainerBenefit]="trainerBenefits">
+            </app-trainer-benefits>
+
+            <app-trainer-feature-video [trainerVideos]="trainerFeatureVideos">
+            </app-trainer-feature-video>
+
+            <app-trainer-pricing-card [trainerPricing]="trainerPricing">
+            </app-trainer-pricing-card>
+
+            <app-trainer-album [trainerPhotoAlbum]="trainerPhotoAlbum">
+            </app-trainer-album>
+
+            <app-trainer-video-album [trainerVideoAlbum]="trainerVideoAlbum">
+            </app-trainer-video-album>
+
+            <app-trainer-client-review [trainerReview]="trainerReviews">
+            </app-trainer-client-review>
+
+        </div>
+    </div>
+
+</ng-container>

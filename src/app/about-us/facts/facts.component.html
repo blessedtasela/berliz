@@ -1,23 +1,44 @@
-<section class="bg-white shadow-lg py-12 px-6 mt-40 font-sans">
-  <div class="grid lg:grid-cols-4 grid-cols-2 gap-8 md:gap-16 justify-items-center">
-    <div
-      class="flex flex-col items-center text-center p-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:drop-shadow-xl border border-gray-200 w-full max-w-xs"
-      *ngFor="let stat of stats"
-    >
-      <!-- Icon -->
-      <div class="w-16 h-16 mb-4 flex items-center justify-center bg-gray-100 rounded-full shadow-sm">
-        <img [src]="stat.iconUrl" alt="{{ stat.name }}" class="w-8 h-8 object-contain" />
+<!-- ═══════════════════════════════════════════════
+     ABOUT — BERLIZ BY THE NUMBERS
+════════════════════════════════════════════════ -->
+<section class="w-full bg-black px-4 py-16 font-sans">
+  <div class="max-w-6xl mx-auto">
+
+    <!-- Section header -->
+    <div class="flex flex-col items-center text-center gap-3 mb-10">
+      <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+        The numbers
+      </span>
+      <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+        Berliz <span class="text-red-500">by the numbers</span>
+      </h2>
+      <div class="w-12 h-0.5 bg-red-600 rounded-full"></div>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+
+      <div *ngFor="let stat of stats" class="flex flex-col items-center text-center gap-3 p-6
+                    bg-zinc-900 rounded-2xl border border-zinc-800
+                    hover:border-red-600/40 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(220,38,38,0.12)]
+                    transition-all duration-300">
+
+        <!-- Icon ring -->
+        <div class="w-14 h-14 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center">
+          <img [src]="stat.iconUrl" [alt]="stat.name" class="w-6 h-6 object-contain" />
+        </div>
+
+        <!-- Value -->
+        <p class="text-2xl font-extrabold text-white leading-none">
+          {{ stat.counterValue }}
+        </p>
+
+        <!-- Label -->
+        <h3 class="text-[10px] font-semibold text-zinc-500 uppercase tracking-wide">
+          {{ stat.name }}
+        </h3>
       </div>
 
-      <!-- Stat Name -->
-      <h3 class="text-red-600 text-md font-semibold uppercase tracking-wide">
-        {{ stat.name }}
-      </h3>
-
-      <!-- Stat Value -->
-      <p class="text-gray-800 text-xl font-bold mt-2">
-        {{ stat.counterValue }}
-      </p>
     </div>
   </div>
 </section>

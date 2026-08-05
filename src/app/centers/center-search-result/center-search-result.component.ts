@@ -1,151 +1,180 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+import { Categories } from 'src/app/models/categories.interface';
 import { CenterLikes, Centers } from 'src/app/models/centers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { CenterService } from 'src/app/services/center.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { selectCenterLikes, selectCenters } from 'src/app/state/center/center.selectors';
-import { selectUser, selectUsers } from 'src/app/state/user/user.selector';
-import { genericError } from 'src/validators/form-validators.module';
+import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { selectCenterLikes } from 'src/app/state/center/center.selectors';
+import { loadCenterLikes } from 'src/app/state/center/center.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectUser } from 'src/app/state/user/user.selector';
 
 @Component({
   selector: 'app-center-search-result',
   templateUrl: './center-search-result.component.html',
   styleUrls: ['./center-search-result.component.css']
 })
-export class CenterSearchResultComponent {
+export class CenterSearchResultComponent implements OnInit, OnDestroy {
+
   @Input() centersResult: Centers[] = [];
-  showFullData: boolean = false;
-  user!: Users | null;
-  responseMessage: any;
-  centerLikes: CenterLikes[] = [];
-  subscriptions: Subscription[] = []
   @Input() totalCenters: number = 0;
-  visibleCenters: number = 12;
 
-  constructor(private datePipe: DatePipe,
-    private store: Store,
-    private centerService: CenterService,
-    private rxStompService: RxStompService) { }
+  readonly PAGE_SIZE = 12;
 
-  ngOnInit(): void {
-    this.watchLikeCenter()
-    this.watchUpdatePhoto()
-    this.watchUpdateCenterStatus()
-    this.watchUpdateCenter()
-    this.store.select(selectCenterLikes).subscribe((cachedData) => {
-      if (!cachedData) {
-        this.handleEmitEvent()
-      } else {
-        this.centerLikes = cachedData;
-      }
-    });
-    this.subscribeUser()
+  showAll = false;
+  get visibleCount() {
+    return this.showAll
+      ? this.centersResult.length
+      : Math.min(this.PAGE_SIZE, this.centersResult.length);
   }
 
-  ngOnDestroy() {
-    if (this.subscriptions) {
-      this.subscriptions.forEach((sub => sub.unsubscribe()))
+  user!: Users | null;
+  centerLikes: CenterLikes[] = [];
+  private allCategories: Categories[] = [];
+
+  /** centerIds flipped locally, pending backend reconciliation — makes the heart fill instantly */
+  private optimisticLikes = new Set<number>();
+
+  private subs: Subscription[] = [];
+
+  constructor(
+    private datePipe: DatePipe,
+    private store: Store,
+    private centerService: CenterService,
+    private rxStompService: RxStompService,
+    private snackbar: SnackBarService
+  ) { }
+
+  ngOnInit(): void {
+    this.watchLikeCenter();
+    this.watchUpdatePhoto();
+    this.watchUpdateCenterStatus();
+    this.watchUpdateCenter();
+
+    this.subs.push(this.store.select(selectUser).subscribe(u => this.user = u));
+
+    this.store.dispatch(loadCenterLikes());
+    this.subs.push(
+      this.store.select(selectCenterLikes).subscribe(cached => {
+        this.centerLikes = cached;
+        // Fresh truth arrived from the backend — drop any optimistic overrides.
+        this.optimisticLikes.clear();
+      })
+    );
+
+    this.store.dispatch(loadActiveCategories());
+    this.subs.push(
+      this.store.select(selectActiveCategories).subscribe(categories => {
+        this.allCategories = categories ?? [];
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
+  }
+
+  categoriesFor(center: Centers): Categories[] {
+    const ids = center.categoryIds ?? [];
+    return this.allCategories.filter(c => ids.includes(c.id));
+  }
+
+  toggleShowMore(): void {
+    this.showAll = !this.showAll;
+  }
+
+  formatUrl(name: string): string {
+    return name?.replace(/ /g, '-') ?? '';
+  }
+
+  onImageError(event: any): void {
+    event.target.src = 'assets/avatar.png';
+  }
+
+  mapsUrl(center: Centers): string {
+    if (center.location) return center.location;
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(center.address || '')}`;
+  }
+
+  /** Replace an existing card in the list with updated data */
+  private updateCardInList(center: Centers): void {
+    const idx = this.centersResult.findIndex(c => c.id === center.id);
+    if (idx !== -1) {
+      const updated = [...this.centersResult];
+      updated[idx] = center;
+      this.centersResult = updated;
     }
   }
 
-  subscribeUser() {
-    this.store.select(selectUser).subscribe((user) => {
-      this.user = user;
-    })
-  }
+  likeCenter(center: Centers): void {
+    const wasLiked = this.isLikedCenter(center);
 
-  handleEmitEvent() {
-    this.subscriptions.push(
-      this.store.select(selectCenters).subscribe((activeCenters) => {
-        this.centersResult = activeCenters;
-        this.totalCenters = this.centersResult.length;
-      }),
-      this.store.select(selectUser).subscribe((user) => {
-        this.user = user;
-      }),
-      this.store.select(selectCenterLikes).subscribe((likes) => {
-        this.centerLikes = likes
-      }),
-    )
-  }
-
-  toggleCenterData(): void {
-    this.showFullData = !this.showFullData;
-    this.visibleCenters = this.showFullData ? this.centersResult.length : 12;
-  }
-  formatDate(dateString: any): any {
-    const date = new Date(dateString);
-    return this.datePipe.transform(date, 'dd/MM/yyyy');
-  }
-
-  formatStringtoUrl(string: any) {
-    return string.replace(/ /g, "-");
-  }
-
-  likeCenter(center: Centers) {
-    this.centerService.likeCenter(center.id).subscribe(
-      (response: any) => {
-        this.responseMessage = response.message;
-        this.handleEmitEvent()
-        console.log('message', this.responseMessage);
-      },
-      (error: any) => {
-        if (error.error?.message) {
-          this.responseMessage = error.error?.message;
-        } else {
-          this.responseMessage = genericError;
+    this.centerService.likeCenter(center.id).subscribe({
+      next: (response: any) => {
+        if (response?.data) {
+          this.updateCardInList(response.data);
         }
-        console.log('error message', this.responseMessage);
-        window.alert('please login to continue')
-      }
-    );
-  }
 
-  openUrl(url: any) {
-    window.open(url, '_blank');
+        // Flip the heart instantly instead of waiting for a refetch to land.
+        if (this.optimisticLikes.has(center.id)) {
+          this.optimisticLikes.delete(center.id);
+        } else {
+          this.optimisticLikes.add(center.id);
+        }
+
+        this.snackbar.openSnackBar(
+          wasLiked ? `Unliked ${center.name}` : `❤️ You liked ${center.name}`,
+          ''
+        );
+
+        // Reconcile with the backend in the background.
+        this.store.dispatch(loadCenterLikes());
+      },
+      error: () => {
+        this.snackbar.openSnackBar('Log in to like a center.', 'error');
+      }
+    });
   }
 
   isLikedCenter(center: Centers): boolean {
-    return this.centerLikes.some((centerLikes) =>
-      centerLikes.userId === this.user?.id && centerLikes.centerId === center.id
-    );
+    const cached = this.centerLikes.some(l => l.userId === this.user?.id && l.centerId === center.id);
+    return this.optimisticLikes.has(center.id) ? !cached : cached;
   }
 
-  watchLikeCenter() {
+  watchLikeCenter(): void {
     this.rxStompService.watch('/topic/likeCenter').subscribe((message) => {
       const receivedCenter: Centers = JSON.parse(message.body);
-      const centerId = this.centersResult.findIndex(center => center.id === receivedCenter.id)
-      this.centersResult[centerId] = receivedCenter
+      this.updateCardInList(receivedCenter);
     });
   }
 
-  watchUpdateCenter() {
+  watchUpdateCenter(): void {
     this.rxStompService.watch('/topic/updateCenter').subscribe((message) => {
       const receivedCenter: Centers = JSON.parse(message.body);
-      const centerId = this.centersResult.findIndex(center => center.id === receivedCenter.id)
-      this.centersResult[centerId] = receivedCenter
+      this.updateCardInList(receivedCenter);
     });
   }
 
-  watchUpdateCenterStatus() {
+  watchUpdateCenterStatus(): void {
     this.rxStompService.watch('/topic/updateCenterStatus').subscribe((message) => {
       const receivedCenter: Centers = JSON.parse(message.body);
       if (receivedCenter.status === 'true') {
-        this.centersResult.push(receivedCenter);
+        this.centersResult = [...this.centersResult, receivedCenter];
       } else {
         this.centersResult = this.centersResult.filter(center => center.id !== receivedCenter.id);
       }
     });
   }
 
-  watchUpdatePhoto() {
+  watchUpdatePhoto(): void {
     this.rxStompService.watch('/topic/updateCenterPhoto').subscribe((message) => {
       const receivedCenter: Centers = JSON.parse(message.body);
-      const centerId = this.centersResult.findIndex(center => center.id === receivedCenter.id)
-      this.centersResult[centerId] = receivedCenter
+      this.updateCardInList(receivedCenter);
     });
   }
 

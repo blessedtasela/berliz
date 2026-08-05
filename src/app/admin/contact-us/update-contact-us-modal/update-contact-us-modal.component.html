@@ -1,76 +1,106 @@
-<div class="relative p-2">
-    <section class="p-2 grid grid-cols md:grid-cols-2 gap-2">
-        <div class="text-red-600 absolute top-0 right-0 p-5">
-            <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+<div class="max-w-lg w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="message-square" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Update contact message</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">ID {{ contactUsData.id }} &middot; Edit this submission's
+                    details.</p>
+            </div>
         </div>
-        <div class="rounded-lg object-cover flex">
-            <img src="../../../../../assets/contact-form.jpg" class="rounded-lg">
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
+    </div>
+
+    <form [formGroup]="contactUsForm" class="flex flex-col gap-4">
+
+        <!-- Form-level banner -->
+        <p *ngIf="contactUsForm.invalid && invalidForm"
+            class="px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px] flex items-center gap-1.5">
+            <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+            Please complete all sections
+        </p>
+        <p *ngIf="!contactUsForm.invalid && invalidForm"
+            class="px-3 py-2 rounded-xl bg-green-50 border border-green-200 text-green-700 text-[11px] flex items-center gap-1.5">
+            <i-feather name="check" style="width:12px;height:12px;"></i-feather>
+            Everything looks good
+        </p>
+
+        <!-- Name -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Full name</label>
+            <input formControlName="name" [value]="contactUsData.name" placeholder="Full name" type="text" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                    'border-red-400 bg-red-50': contactUsForm.get('name')?.invalid && contactUsForm.get('name')?.touched,
+                    'border-gray-200 bg-gray-50': !(contactUsForm.get('name')?.invalid && contactUsForm.get('name')?.touched)
+                  }">
+            <p *ngIf="contactUsForm.get('name')?.invalid && contactUsForm.get('name')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Please enter a full name
+            </p>
         </div>
-        <div class="container border-2 rounded-lg max-w-2xl min-w-2xl mx-auto py-2 bg-gray-200">
-            <header class="text-center font-bold font-sans m-2">
-                <h1 class="text-gray-950 text-xl">Update ContactUs details</h1>
-                <p class="text-red-600 italic text-sm">Edit this entity data for ID: {{ contactUsData.id }}</p>
-            </header>
-            <form [formGroup]="contactUsForm">
-                <hr
-                    [ngClass]="{'border-red-500': (contactUsForm.get('name')?.invalid || contactUsForm.get('email')?.invalid || contactUsForm.get('message')?.invalid) && invalidForm }">
-                <div class="invalid-form">
-                    <span
-                        *ngIf="!(contactUsForm.get('name')?.invalid || contactUsForm.get('email')?.invalid || contactUsForm.get('message')?.invalid) && invalidForm"
-                        class="mx-2 text-gray-200">
-                        Everything looks good
-                    </span>
-                    <span
-                        *ngIf="(contactUsForm.get('name')?.invalid || contactUsForm.get('email')?.invalid || contactUsForm.get('message')?.invalid) && invalidForm"
-                        class="mx-2 text-red-600">
-                        Please complete all sections
-                    </span>
-                </div>
-                <div class="grid grid-cols-1 gap-5 p-2 mr-2">
-                    <div class="w-full mx-auto">
-                        <input formControlName="name" [value]="contactUsData.name"
-                            class="w-full px-4 py-2 m-2 rounded-lg bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': contactUsForm.get('name')?.invalid && contactUsForm.get('name')?.touched }"
-                            placeholder="Full Name" type="text">
-                        <div *ngIf="contactUsForm.get('name')?.invalid && contactUsForm.get('name')?.dirty"
-                            class="text-red-400 mx-2">
-                            Please enter your full name
-                        </div>
-                    </div>
-                    <div class="w-full mx-auto">
-                        <input formControlName="email" [value]="contactUsData.email"
-                            class="w-full px-4 py-2 m-2 rounded-lg bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': contactUsForm.get('email')?.invalid && contactUsForm.get('email')?.touched }"
-                            placeholder="example@gmail.com" type="email">
-                        <div *ngIf="contactUsForm.get('email')?.invalid && contactUsForm.get('email')?.dirty"
-                            class="text-red-400 mx-2">
-                            Invalid email
-                        </div>
-                    </div>
-                    <div class="w-full mx-auto">
-                        <textarea formControlName="message" [value]="contactUsData.message"
-                            class="w-full px-4 py-2 m-2 rounded-lg bg-gray-100 focus:outline-none border-b-2 border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': contactUsForm.get('message')?.invalid && contactUsForm.get('message')?.touched }"
-                            placeholder="Leave your message here" rows="5" cols="20"></textarea>
-                        <div *ngIf="contactUsForm.get('message')?.invalid && contactUsForm.get('message')?.dirty"
-                            class="text-red-400 mx-2">
-                            Message must be at least 20 characters
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-5 font-bold">
-                        <button
-                            class="p-1 px-2 bg-gray-950 mx-auto rounded-md text-sm md:text-md text-white font-sans transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                            type="submit" (click)="clear()">
-                            Clear
-                        </button>
-                        <button
-                            class="p-1 px-2 bg-red-600 mx-auto rounded-md text-sm md:text-md text-white font-sans transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl"
-                            type="submit" (click)="updateContactUs()">
-                            Submit
-                        </button>
-                    </div>
-                </div>
-            </form>
+
+        <!-- Email -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Email</label>
+            <input formControlName="email" [value]="contactUsData.email" placeholder="example@gmail.com" type="email"
+                class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                    'border-red-400 bg-red-50': contactUsForm.get('email')?.invalid && contactUsForm.get('email')?.touched,
+                    'border-gray-200 bg-gray-50': !(contactUsForm.get('email')?.invalid && contactUsForm.get('email')?.touched)
+                  }">
+            <p *ngIf="contactUsForm.get('email')?.invalid && contactUsForm.get('email')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Invalid email
+            </p>
         </div>
-    </section>
+
+        <!-- Message -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Message</label>
+            <textarea formControlName="message" [value]="contactUsData.message" placeholder="Leave your message here"
+                rows="5" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                    'border-red-400 bg-red-50': contactUsForm.get('message')?.invalid && contactUsForm.get('message')?.touched,
+                    'border-gray-200 bg-gray-50': !(contactUsForm.get('message')?.invalid && contactUsForm.get('message')?.touched)
+                  }"></textarea>
+            <p *ngIf="contactUsForm.get('message')?.invalid && contactUsForm.get('message')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Message must be at least 20 characters
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end gap-2">
+            <button type="button" (click)="clear()"
+                class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 active:scale-[0.98] transition">
+                Clear
+            </button>
+            <button type="button" (click)="closeDialog()"
+                class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 active:scale-[0.98] transition">
+                Cancel
+            </button>
+            <button type="submit" (click)="updateContactUs()"
+                class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                <i-feather name="check" style="width:13px;height:13px;"></i-feather>
+                Update Message
+            </button>
+        </div>
+
+    </form>
+
 </div>

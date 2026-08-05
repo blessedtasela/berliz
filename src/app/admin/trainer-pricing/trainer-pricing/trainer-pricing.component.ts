@@ -4,6 +4,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { TrainerPricing } from 'src/app/models/trainers.interface';
 import { selectTrainerPricing } from 'src/app/state/trainer/trainer.selector';
+import { loadTrainerPricing } from 'src/app/state/trainer/trainer.actions';
 
 @Component({
   selector: 'app-trainer-pricing',
@@ -22,6 +23,7 @@ export class TrainerPricingComponent {
   }
 
   ngOnInit(): void {
+    this.store.dispatch(loadTrainerPricing());
     this.store.select(selectTrainerPricing).subscribe((cachedData) => {
       this.trainerPricingData = cachedData;
       this.totalTrainerPricing = cachedData.length

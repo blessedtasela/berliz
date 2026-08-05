@@ -6,13 +6,16 @@ import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { MyTasksPageComponent } from './my-tasks-page/my-tasks-page.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { AssignTaskModalComponent } from './assign-task-modal/assign-task-modal.component';
 
 
 
 @NgModule({
   declarations: [
     MyTasksComponent,
-    MyTasksPageComponent
+    MyTasksPageComponent,
+    AssignTaskModalComponent
   ],
   imports: [
     CommonModule,
@@ -20,7 +23,8 @@ import { MyTasksPageComponent } from './my-tasks-page/my-tasks-page.component';
     NavbarModule,
     FooterModule,
     FormsModule,
-     ReactiveFormsModule
+    ReactiveFormsModule,
+    MatDialogModule
   ]
 })
 export class MyTasksModule { }

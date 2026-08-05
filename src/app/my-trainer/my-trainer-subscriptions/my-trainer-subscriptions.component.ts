@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { TrainerSubscription, Trainers } from 'src/app/models/trainers.interface';
 import { selectMyTrainerSubscription } from 'src/app/state/trainer/trainer.selector';
+import { loadMyTrainerSubscription } from 'src/app/state/trainer/trainer.actions';
 
 // Map backend enum values to human-readable labels
 const PLAN_LABELS: Record<string, string> = {
@@ -50,6 +51,7 @@ export class MyTrainerSubscriptionsComponent implements OnInit, OnDestroy {
   }
 
   private loadSubscription(): void {
+    this.store.dispatch(loadMyTrainerSubscription());
     this.subscriptions.push(
       this.store.select(selectMyTrainerSubscription).subscribe({
         next: (sub) => {
