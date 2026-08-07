@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { UpdateCenterPricingsModalComponent } from './update-center-pricings-modal/update-center-pricings-modal.component';
 import { AddCenterPricingsModalComponent } from './add-center-pricings-modal/add-center-pricings-modal.component';
 import { CenterPricingsDetailsModalComponent } from './center-pricings-details-modal/center-pricings-details-modal.component';
@@ -24,7 +25,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    SharedModule
+    SharedModule,
+    RouterModule.forChild([{ path: '', component: CenterPricingsComponent }])
   ]
 })
 export class CenterPricingModule { }

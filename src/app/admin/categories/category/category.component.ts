@@ -6,6 +6,7 @@ import { Categories } from 'src/app/models/categories.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { loadCategories } from 'src/app/state/category/category.actions';
 import { selectCategories } from 'src/app/state/category/category.selectors';
+import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
   selector: 'app-category',
@@ -19,6 +20,15 @@ export class CategoryComponent {
   searchComponent: string = ''
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+
+  readonly selectCategories = selectCategories;
+  readonly categorySearchFields: AdminSearchField<Categories>[] = [
+    { value: 'name', label: 'Name', accessor: c => c.name },
+    { value: 'id', label: 'Category id', accessor: c => c.id?.toString() },
+    { value: 'description', label: 'Description', accessor: c => c.description },
+    { value: 'status', label: 'Status', accessor: c => c.status },
+    { value: 'tag', label: 'Tag', accessor: c => (c.tagNames || []).join(' ') },
+  ];
 
   constructor(private ngxService: NgxUiLoaderService,
     public store: Store,

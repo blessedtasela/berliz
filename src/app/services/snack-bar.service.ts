@@ -20,8 +20,14 @@ export class SnackBarService {
     const panelClass = isError ? 'snack-bar-error' : 'snack-bar-success';
 
     try {
+      // On mobile, the CDK overlay pane sizes itself to its content before our
+      // CSS margin can shrink it, so a right-aligned snackbar still spans edge
+      // to edge. Centering it sidesteps that entirely instead of fighting the
+      // overlay pane's own width.
+      const isMobile = window.innerWidth <= 480;
+
       this.currentRef = this.snackBar.open(message, '✕', {
-        horizontalPosition: 'right',
+        horizontalPosition: isMobile ? 'center' : 'right',
         verticalPosition: 'top',
         duration: isError ? 6000 : 4000,
         panelClass: [panelClass, 'berliz-snackbar'],

@@ -58,7 +58,8 @@ export class SubscriptionsListComponent {
       if (subscription) {
         const dialogRef = this.dialog.open(UpdateSubscriptionsModalComponent, {
           width: '900px',
-          maxHeight: '600px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           disableClose: true,
           data: {
             subscriptionData: subscription,
@@ -89,6 +90,7 @@ export class SubscriptionsListComponent {
       if (subscription) {
         const dialogRef = this.dialog.open(SubscriptionDetailsModalComponent, {
           width: '800px',
+          maxWidth: '95vw',
           panelClass: 'mat-dialog-height',
           data: {
             subscriptionData: subscription,

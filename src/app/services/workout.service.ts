@@ -42,6 +42,20 @@ export class WorkoutService {
   }
 
   // ─────────────────────────────
+  // PUBLIC TEMPLATES
+  // ─────────────────────────────
+
+  // Public endpoint — no auth required.
+  getTemplates() {
+    return this.httpClient.get<ApiResponse<WorkoutResponse[]>>(`${this.url}/workout/getTemplates`);
+  }
+
+  // Authenticated — clones the template into a workout owned by the caller.
+  cloneTemplate(id: number) {
+    return this.httpClient.post<ApiResponse<WorkoutResponse>>(`${this.url}/workout/cloneTemplate/${id}`, {});
+  }
+
+  // ─────────────────────────────
   // ASSIGNMENTS
   // ─────────────────────────────
 

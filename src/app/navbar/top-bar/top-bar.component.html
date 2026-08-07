@@ -1,8 +1,13 @@
 <div class="bg-white/95 backdrop-blur-sm fixed top-0 left-0 w-full border-b border-gray-200 shadow-sm z-50">
     <div class="h-14 flex items-center justify-between px-5 gap-4">
 
-        <!-- LEFT: Logo + Bell -->
-        <div class="flex items-center gap-4 shrink-0">
+        <!--
+          LEFT: Logo + Bell.
+          Below md this whole block steps aside while mobile search mode is on;
+          `md:flex` re-asserts it from the md breakpoint up, so desktop never
+          sees the mode at all.
+        -->
+        <div class="items-center gap-4 shrink-0" [ngClass]="isMobileSearchOpen ? 'hidden md:flex' : 'flex'">
 
             <a [routerLink]="['/home']" class="flex items-center">
                 <img src="../../../assets/landing/logo.png" class="w-7 h-7 object-contain block md:hidden" />
@@ -41,30 +46,32 @@
 
         </div>
 
-        <!-- CENTER: Search -->
-        <div class="flex-1 flex justify-center min-w-0">
-            <app-search (categoriesResults)="handleCategorySearchResults($event)"
-                (exerciseResults)="handleExerciseSearchResults($event)"
-                (contactUsResults)="handleContactUsSearchResults($event)"
-                (muscleGroupResults)="handleMuscleGroupSearchResults($event)"
-                (trainersResults)="handleTrainerSearchResults($event)" (usersResults)="handleUserSearchResults($event)"
-                (partnersResults)="handlePartnerSearchResults($event)"
-                (centerssResults)="handleCenterSearchResults($event)"
-                (newslettersResult)="handleNewsletterSearchResults($event)"
-                (tagsResults)="handleTagSearchResults($event)" (myTodoResults)="handleMyTodoSearchResults($event)"
-                (todoListResults)="handleTodoListSearchResults($event)"
-                (clientssResults)="handleClientSearchResults($event)"
-                (membersResult)="handleMemberSearchResults($event)"
-                (paymentsResults)="handlePaymentSearchResults($event)"
-                (subscriptionsResults)="handleSubscriptionSearchResults($event)"
-                (subTasksResults)="handlesubTaskSearchResults($event)" 
-                (tasksResults)="handleTaskSearchResults($event)"
-                (testimonialsResults)="handleTestimonialSearchResults($event)" [searchComponent]="searchComponent">
-            </app-search>
+        <!-- CENTER: Global search — one search bar for the whole app -->
+        <div class="flex-1 flex items-center justify-end md:justify-center gap-2 min-w-0">
+
+            <!-- Compact trigger — mobile only, swaps the bar into search mode -->
+            <button *ngIf="!isMobileSearchOpen" type="button" (click)="openMobileSearch()" aria-label="Open search"
+                class="md:hidden shrink-0 w-9 h-9 rounded-xl border border-gray-200 bg-white shadow-sm
+                       hover:shadow-md hover:border-gray-300 flex items-center justify-center transition">
+                <i-feather name="search" class="text-gray-700" style="width:16px;height:16px;"></i-feather>
+            </button>
+
+            <!-- The search itself: full width in mobile search mode, always on from md up -->
+            <div class="w-full max-w-xl min-w-0" [ngClass]="isMobileSearchOpen ? 'block' : 'hidden md:block'">
+                <app-global-search #globalSearch (activated)="openMobileSearch()"
+                    (dismissed)="closeMobileSearch()"></app-global-search>
+            </div>
+
+            <button *ngIf="isMobileSearchOpen" type="button" (click)="closeMobileSearch()" aria-label="Close search"
+                class="md:hidden shrink-0 h-9 px-1 text-sm font-semibold text-gray-500 hover:text-gray-800
+                       rounded-lg transition">
+                Cancel
+            </button>
+
         </div>
 
         <!-- RIGHT: Home + Profile -->
-        <div class="flex items-center gap-3 shrink-0">
+        <div class="items-center gap-3 shrink-0" [ngClass]="isMobileSearchOpen ? 'hidden md:flex' : 'flex'">
             <button [routerLink]="['/home']" class="w-9 h-9 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md hover:border-gray-300
                flex items-center justify-center transition">
                 <feather-icon name="home" class="text-gray-700"

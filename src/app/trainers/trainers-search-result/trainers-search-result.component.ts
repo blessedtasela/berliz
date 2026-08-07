@@ -13,6 +13,8 @@ import { Store } from '@ngrx/store';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { selectCurrentTrainer, selectTrainerLikes } from 'src/app/state/trainer/trainer.selector';
 import { loadTrainerLikes } from 'src/app/state/trainer/trainer.actions';
+import { Router } from '@angular/router';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 
 @Component({
@@ -46,7 +48,8 @@ export class TrainersSearchResultComponent implements OnInit, OnDestroy {
     private store: Store,
     private trainerService: TrainerService,
     private snackbar: SnackBarService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -74,26 +77,44 @@ export class TrainersSearchResultComponent implements OnInit, OnDestroy {
     const userEmail = this.user?.email;
 
     if (!userEmail) {
-      this.snackbar.openSnackBar(
-        'Please log in to become a trainer.',
-        'error'
-      );
+      const loginDialogRef = this.dialog.open(PromptModalComponent, {
+        width: '400px',
+        maxWidth: '95vw',
+        data: {
+          confirmation: true,
+          title: 'Login required',
+          message: 'You need to be logged in to apply as a trainer. Log in to continue?',
+          confirmText: 'Log in',
+          cancelText: 'Cancel',
+          icon: 'log-in'
+        }
+      });
+
+      loginDialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          this.router.navigate(['/login']);
+        }
+      });
       return;
     }
 
     const dialogRef = this.dialog.open(PartnerFormComponent, {
       width: '600px',
-      disableClose: true, // only explicit close button can close it
+      maxWidth: '95vw',
+      disableClose: true,
       data: {
         email: userEmail,
         role: 'trainer'
       }
     });
 
-    dialogRef.afterClosed().subscribe((result: any) => {
-      // only reload when something was actually saved
-      if (result === 'saved') {
-        this.trainersResult = [...this.trainersResult]; // Trigger change detection
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // optional: refresh list / show success / reload data
+        this.snackbar.openSnackBar(
+          'Trainer application submitted successfully.',
+          'success'
+        );
       }
     });
   }

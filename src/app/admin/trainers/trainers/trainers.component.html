@@ -1,3 +1,5 @@
+<app-admin-search [selector]="selectTrainers" [fields]="trainerSearchFields"
+    placeholder="Search trainers..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-trainer-header [trainersData]="trainersData" [totalTrainers]="totalTrainers"
     [trainersLength]="trainersLength"></app-trainer-header>
 <app-trainer-list [trainersData]="trainersData" [totalTrainers]="totalTrainers"></app-trainer-list>

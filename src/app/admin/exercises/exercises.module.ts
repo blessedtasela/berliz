@@ -12,6 +12,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { FooterModule } from 'src/app/footer/footer.module';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
+import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 
 
 
@@ -32,6 +33,7 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
     MatDialogModule,
     FooterModule,
     NavbarModule,
+    AdminSearchModule,
     RouterModule.forChild([{ path: '', component: ExercisesComponent }])
   ]
 })

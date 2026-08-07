@@ -7,6 +7,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Subscription } from 'rxjs';
 
 import { Exercises } from 'src/app/models/exercise.interface';
+import { Users } from 'src/app/models/users.interface';
 import { WorkoutResponse } from 'src/app/models/workout.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 
@@ -25,6 +26,7 @@ import {
   selectWorkoutError,
   selectWorkoutLoading,
 } from 'src/app/state/workout/workout.selector';
+import { selectUser } from 'src/app/state/user/user.selector';
 
 @Component({
   selector: 'app-workout-builder',
@@ -38,6 +40,11 @@ export class WorkoutBuilderComponent implements OnInit, OnDestroy {
   allExercises: Exercises[] = [];
   filteredExercises: Exercises[] = [];
   searchTerm = '';
+
+  // ── Who's building ────────────────────────────────────────────────────────
+  // Only an admin may publish a workout as a public template; the backend
+  // forces isTemplate=false for every other role anyway.
+  user: Users | null = null;
 
   // ── Edit mode ─────────────────────────────────────────────────────────────
   workoutId: number | null = null;
@@ -75,7 +82,8 @@ export class WorkoutBuilderComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(
       this.store.select(selectWorkoutLoading).subscribe(l => this.loading = l),
-      this.store.select(selectWorkoutError).subscribe(e => this.error = e)
+      this.store.select(selectWorkoutError).subscribe(e => this.error = e),
+      this.store.select(selectUser).subscribe(user => this.user = user)
     );
 
     // Edit mode — the workout arrives asynchronously, so the form is patched
@@ -128,8 +136,25 @@ export class WorkoutBuilderComponent implements OnInit, OnDestroy {
     this.workoutForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(120)]],
       description: ['', [Validators.maxLength(500)]],
+      // Admin-only — the control always exists, but only an admin ever sees it
+      // and only an admin's value is sent on save.
+      isTemplate: [false],
       exercises: this.fb.array([]),
     });
+  }
+
+  // ── Public template toggle (admin only) ───────────────────────────────────
+
+  get isAdmin(): boolean {
+    return this.user?.role === 'admin';
+  }
+
+  get isTemplate(): boolean {
+    return !!this.workoutForm.get('isTemplate')?.value;
+  }
+
+  toggleTemplate(): void {
+    this.workoutForm.get('isTemplate')?.setValue(!this.isTemplate);
   }
 
   get exercisesArray(): FormArray {
@@ -157,7 +182,7 @@ export class WorkoutBuilderComponent implements OnInit, OnDestroy {
   }
 
   private resetForm(): void {
-    this.workoutForm.reset({ name: '', description: '' });
+    this.workoutForm.reset({ name: '', description: '', isTemplate: false });
     this.exercisesArray.clear();
     this.invalidForm = false;
   }
@@ -166,6 +191,7 @@ export class WorkoutBuilderComponent implements OnInit, OnDestroy {
     this.workoutForm.patchValue({
       name: workout.name ?? '',
       description: workout.description ?? '',
+      isTemplate: !!workout.isTemplate,
     });
 
     this.exercisesArray.clear();
@@ -311,6 +337,12 @@ export class WorkoutBuilderComponent implements OnInit, OnDestroy {
         notes: e.notes ?? '',
       })),
     };
+
+    // Only an admin can publish a public template. The backend forces this
+    // false for every other caller, so it's never sent from a non-admin UI.
+    if (this.isAdmin) {
+      payload.isTemplate = !!raw.isTemplate;
+    }
 
     if (this.workoutId) {
       payload.id = this.workoutId;

@@ -1,4 +1,24 @@
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-  <hub-card *ngFor="let item of items | keyvalue" [label]="item.key" [value]="item.value" [link]="formatUrl(item.key)">
-  </hub-card>
+<div class="flex flex-col gap-6">
+
+  <section *ngFor="let group of groups; trackBy: trackByGroup" class="flex flex-col gap-3">
+
+    <!-- Section header -->
+    <div class="flex items-center gap-2">
+      <i-feather [name]="group.icon" class="text-gray-400 shrink-0" style="width:13px;height:13px;"></i-feather>
+      <h2 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">{{ group.label }}</h2>
+      <span class="text-[10px] font-semibold text-gray-300">{{ group.items.length }}</span>
+      <span class="flex-1 border-t border-gray-100"></span>
+    </div>
+
+    <p class="text-[11px] text-gray-400 -mt-2">{{ group.caption }}</p>
+
+    <!-- Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <hub-card *ngFor="let item of group.items; trackBy: trackByItem" [label]="item.key" [value]="item.value"
+        [icon]="group.icon" [link]="item.link">
+      </hub-card>
+    </div>
+
+  </section>
+
 </div>

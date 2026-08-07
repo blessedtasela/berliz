@@ -1,146 +1,169 @@
-<div class="relative bg-white text-gray-700 p-2">
-    <div class="text-red-600 absolute top-0 right-0 p-5">
-        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
-    </div>
-    <section class="bg-white">
-        <form [formGroup]="addTrainerForm">
-            <header class="text-center m-2 text-gray-700 font-sans text-sm font-bold">
-                <h1 class="text-xl">Complete Trainer Application</h1>
-                <p class="text-sm italic text-red-600">Get ready to transform lives
-                </p>
-            </header>
-            <div class="invalid-form">
-                <span *ngIf="!addTrainerForm.invalid 
-                         && invalidForm" class="mx-2 text-gray-700">
-                    Everything looks good
-                </span>
-                <span *ngIf="addTrainerForm.invalid 
-                 && invalidForm" class="mx-2 text-red-500">
-                    Please complete all sessions
-                </span>
-            </div>
-            <div class="grid grid-cols md:grid-cols-2 rounded-lg p-2 gap-2">
-                <div class="rounded-lg object-cover gap-5">
-                    <img src="../.././../../../assets/landing/about-vision.jpg" class="rounded-lg"
-                        onerror="this.src='../../../assets/icons/user.png';">
-                    <div class="grid grid-cols-2 md:grid-cols-4">
-                        <div *ngFor="let category of categories; let i = index"
-                            class="mx-auto flex items-center justify-center">
-                            <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
-                                class="w-full border-b-2 px-4 py-2 rounded-md m-2 text-gray-950 focus:outline-none border-gray-400 hover:border-gray-500"
-                                placeholder="tags" type="checkbox" [value]="category.id">
-                            {{ category.name }}
-                        </div>
-                    </div>
-                    <div *ngIf="addTrainerForm.get('categoryIds')?.invalid && invalidForm"
-                        class="text-red-500 mx-2 col-span-4">
-                        Select at least one tag
-                    </div>
-                </div>
-                <div class="bg-gray-200 gap-6 rounded-lg">
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Select Partner</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Select partner</span>
-                        <select formControlName="id"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': addTrainerForm.get('id')?.invalid && addTrainerForm.get('id')?.dirty }"
-                            type="text">
-                            <option selected hidden class="font-sans">Please select partner </option>
-                            <option *ngFor="let partner of activePartners" [value]="partner.id">{{
-                                partner.email }}
-                            </option>
-                        </select>
-                        <div *ngIf="addTrainerForm.get('id')?.invalid && addTrainerForm.get('id')?.dirty"
-                            class="text-red-500 mx-2">
-                            Partner cannot be null
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Display Name</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Display Name</span>
-                        <input formControlName="name"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': addTrainerForm.get('name')?.invalid && addTrainerForm.get('name')?.dirty }"
-                            placeholder="Display name e.g Team Berliz" type="text">
-                        <div *ngIf="addTrainerForm.get('name')?.invalid && addTrainerForm.get('name')?.dirty"
-                            class="text-red-500 mx-2">
-                            Display name is required
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Experience</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Experience</span>
-                        <input formControlName="experience"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': addTrainerForm.get('experience')?.invalid && addTrainerForm.get('experience')?.dirty }"
-                            placeholder="experience" type="number" min="0">
-                        <div *ngIf="addTrainerForm.get('experience')?.invalid && addTrainerForm.get('experience')?.dirty"
-                            class="text-red-500 mx-2">
-                            Expereince is required
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Motto</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Motto</span>
-                        <textarea formControlName="motto"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': addTrainerForm.get('mtoo')?.invalid && addTrainerForm.get('motto')?.dirty }"
-                            placeholder="Write a short bio about discipline or motto" rows="5" cols="25"></textarea>
-                        <div *ngIf="addTrainerForm.get('motto')?.invalid && addTrainerForm.get('motto')?.dirty"
-                            class="text-red-500 mx-2">
-                            At least 30 characters
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Address</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Address</span>
-                        <textarea formControlName="address"
-                            class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                            [ngClass]="{'border-red-400': addTrainerForm.get('address')?.invalid && addTrainerForm.get('address')?.dirty }"
-                            placeholder="Write your street address or location here" rows="5" cols="25"></textarea>
-                        <div *ngIf="addTrainerForm.get('address')?.invalid && addTrainerForm.get('address')?.dirty"
-                            class="text-red-500 mx-2">
-                            At least 10 characters
-                        </div>
-                    </div>
-                    <div class="mx-auto p-2">
-                        <span class="sr-only">Cover photo</span>
-                        <span class="ml-4 font-bold text-gray-600 italic">Cover photo</span>
-                        <div class="flex">
-                            <div class="shrink-0">
-                                <img class="h-16 w-16 object-cover rounded-md" src="../../../assets/icons/user.png"
-                                    alt="Display photo" />
-                            </div>
-                            <input formControlName="photo"
-                                class="border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none
-                        block w-full text-sm text-gray-950 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
-                        file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
-                                [ngClass]="{'border-gray-950': invalidForm && this.addTrainerForm.get('photo')?.dirty}"
-                                (change)="onPhotoSelected($event)" type="file" accept="image/*">
-                        </div>
-                        <div *ngIf="this.addTrainerForm.invalid && this.addTrainerForm.get('photo')?.invalid && this.addTrainerForm.get('photo')?.dirty"
-                            class="text-red-500 mx-2">
-                            Upload a valid image
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2">
-                        <div class="bg-gray-950 rounded-md mx-auto m-2">
-                            <button type="button"
-                                class="font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
-                                (click)="clear()">
-                                Clear
-                            </button>
-                        </div>
-                        <div class="bg-red-600 rounded-md mx-auto m-2">
-                            <button type="submit"
-                                class="font-bold font-sans py-1 px-2 text-white text-sm lg:text-md flex items-center justify-center"
-                                (click)="addTrainer()">
-                                Add
+<div class="max-w-lg w-full p-6 mx-auto flex flex-col gap-5 font-sans">
 
-                            </button>
-                        </div>
-                    </div>
-                </div>
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="user-plus" class="text-red-600" style="width:15px;height:15px;"></i-feather>
             </div>
-        </form>
-    </section>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Complete trainer application</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Get ready to transform lives.</p>
+            </div>
+        </div>
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
+    </div>
+
+    <form [formGroup]="addTrainerForm" class="flex flex-col gap-4">
+
+        <p *ngIf="addTrainerForm.invalid && invalidForm" class="text-red-500 text-[11px] flex items-center gap-1">
+            <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+            Please complete all sections
+        </p>
+
+        <!-- Partner -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Partner</label>
+            <select formControlName="id" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': addTrainerForm.get('id')?.invalid && addTrainerForm.get('id')?.dirty,
+                        'border-gray-200 bg-gray-50': !(addTrainerForm.get('id')?.invalid && addTrainerForm.get('id')?.dirty)
+                      }">
+                <option selected hidden>Please select a partner</option>
+                <option *ngFor="let partner of activePartners" [value]="partner.id">{{ partner.email }}</option>
+            </select>
+            <p *ngIf="addTrainerForm.get('id')?.invalid && addTrainerForm.get('id')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Partner cannot be null
+            </p>
+        </div>
+
+        <!-- Display name -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Display name</label>
+            <input formControlName="name" type="text" placeholder="Display name e.g. Team Berliz" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': addTrainerForm.get('name')?.invalid && addTrainerForm.get('name')?.dirty,
+                        'border-gray-200 bg-gray-50': !(addTrainerForm.get('name')?.invalid && addTrainerForm.get('name')?.dirty)
+                      }">
+            <p *ngIf="addTrainerForm.get('name')?.invalid && addTrainerForm.get('name')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Display name is required
+            </p>
+        </div>
+
+        <!-- Experience -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Experience</label>
+            <input formControlName="experience" type="number" min="0" placeholder="Experience" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': addTrainerForm.get('experience')?.invalid && addTrainerForm.get('experience')?.dirty,
+                        'border-gray-200 bg-gray-50': !(addTrainerForm.get('experience')?.invalid && addTrainerForm.get('experience')?.dirty)
+                      }">
+            <p *ngIf="addTrainerForm.get('experience')?.invalid && addTrainerForm.get('experience')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Experience is required
+            </p>
+        </div>
+
+        <!-- Motto -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Motto</label>
+            <textarea formControlName="motto" rows="3" placeholder="Write a short bio about discipline or motto" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': addTrainerForm.get('motto')?.invalid && addTrainerForm.get('motto')?.dirty,
+                        'border-gray-200 bg-gray-50': !(addTrainerForm.get('motto')?.invalid && addTrainerForm.get('motto')?.dirty)
+                      }"></textarea>
+            <p *ngIf="addTrainerForm.get('motto')?.invalid && addTrainerForm.get('motto')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                At least 10 characters
+            </p>
+        </div>
+
+        <!-- Address -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Address</label>
+            <textarea formControlName="address" rows="3" placeholder="Write your street address or location here" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': addTrainerForm.get('address')?.invalid && addTrainerForm.get('address')?.dirty,
+                        'border-gray-200 bg-gray-50': !(addTrainerForm.get('address')?.invalid && addTrainerForm.get('address')?.dirty)
+                      }"></textarea>
+            <p *ngIf="addTrainerForm.get('address')?.invalid && addTrainerForm.get('address')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                At least 10 characters
+            </p>
+        </div>
+
+        <!-- Cover photo -->
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Cover photo</label>
+            <div class="flex items-center gap-3">
+                <img class="h-16 w-16 object-cover rounded-xl border border-gray-200 shrink-0"
+                    src="../../../assets/icons/user.png" alt="Display photo" />
+                <input formControlName="photo" (change)="onPhotoSelected($event)" type="file" accept="image/*" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 cursor-pointer
+                           file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold
+                           file:bg-white file:text-gray-600 file:border file:border-gray-200 file:cursor-pointer
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                    [ngClass]="{
+                            'border-red-400 bg-red-50': addTrainerForm.get('photo')?.invalid && addTrainerForm.get('photo')?.dirty,
+                            'border-gray-200 bg-gray-50': !(addTrainerForm.get('photo')?.invalid && addTrainerForm.get('photo')?.dirty)
+                          }">
+            </div>
+            <p *ngIf="addTrainerForm.get('photo')?.invalid && addTrainerForm.get('photo')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Upload a valid image
+            </p>
+        </div>
+
+        <!-- Categories -->
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Categories</label>
+            <div class="flex flex-wrap gap-2">
+                <label *ngFor="let category of categories; let i = index" class="cursor-pointer">
+                    <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)" type="checkbox"
+                        [value]="category.id" class="peer sr-only">
+                    <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
+                               bg-gray-50 border-gray-200 text-gray-600
+                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">
+                        {{ category.name }}
+                    </span>
+                </label>
+            </div>
+            <p *ngIf="addTrainerForm.get('categoryIds')?.invalid && invalidForm"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Select at least one category
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div class="flex items-center justify-end gap-2">
+            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+                       hover:bg-gray-50 active:scale-[0.98] transition">
+                Clear
+            </button>
+            <button type="submit" (click)="addTrainer()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                <i-feather name="check" style="width:13px;height:13px;"></i-feather>
+                Add trainer
+            </button>
+        </div>
+
+    </form>
+
+</div>

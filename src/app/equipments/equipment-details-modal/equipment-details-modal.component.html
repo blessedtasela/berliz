@@ -1,0 +1,97 @@
+<div class="p-6 flex flex-col gap-5 font-sans">
+
+    <!-- ── Header ─────────────────────────────────────────────────────── -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+            <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="package" class="text-red-600" style="width:18px;height:18px;"></i-feather>
+            </div>
+            <div class="min-w-0">
+                <h2 class="text-sm font-bold text-gray-900 truncate">{{ equipment.name }}</h2>
+                <a *ngIf="equipment.centerName"
+                    [routerLink]="['/centers', equipment.centerId, formatUrl(equipment.centerName)]"
+                    (click)="closeDialog()"
+                    class="text-[11px] text-gray-400 hover:text-red-600 transition flex items-center gap-1 mt-0.5">
+                    <i-feather name="map-pin" style="width:11px;height:11px;"></i-feather>
+                    {{ equipment.centerName }}
+                </a>
+            </div>
+        </div>
+
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
+    </div>
+
+    <!-- ── Photos ─────────────────────────────────────────────────────── -->
+    <div class="flex flex-col gap-2">
+
+        <div class="w-full h-56 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center">
+            <img *ngIf="activePhoto; else noPhoto" [src]="activePhoto" [alt]="equipment.name"
+                class="w-full h-full object-contain p-4" />
+            <ng-template #noPhoto>
+                <div class="flex flex-col items-center gap-2">
+                    <i-feather name="package" class="text-gray-300" style="width:28px;height:28px;"></i-feather>
+                    <span class="text-[11px] text-gray-400">No photos provided</span>
+                </div>
+            </ng-template>
+        </div>
+
+        <!-- Thumbnails — only worth showing when there is more than one view -->
+        <div *ngIf="photos.length > 1" class="flex flex-wrap gap-2">
+            <button *ngFor="let photo of photos" type="button" (click)="setActivePhoto(photo)"
+                class="w-16 h-16 rounded-lg border overflow-hidden bg-gray-50 transition"
+                [ngClass]="activePhoto === photo ? 'border-red-600 ring-1 ring-red-600/30' : 'border-gray-200 hover:border-red-200'">
+                <img [src]="photo" [alt]="equipment.name" class="w-full h-full object-contain p-1" />
+            </button>
+        </div>
+    </div>
+
+    <!-- ── Facts ──────────────────────────────────────────────────────── -->
+    <div class="grid grid-cols-2 gap-3">
+
+        <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">In stock</span>
+            <span class="text-sm font-bold text-gray-900">
+                {{ equipment.stockNumber || 'Not listed' }}
+            </span>
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">Discipline</span>
+            <div *ngIf="categoryNames.length > 0; else noCategories" class="flex flex-wrap gap-1.5">
+                <span *ngFor="let name of categoryNames"
+                    class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">
+                    {{ name }}
+                </span>
+            </div>
+            <ng-template #noCategories>
+                <span class="text-[11px] text-gray-400">Not specified</span>
+            </ng-template>
+        </div>
+    </div>
+
+    <!-- ── Description ────────────────────────────────────────────────── -->
+    <div class="flex flex-col gap-1">
+        <span class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">About</span>
+        <p class="text-sm text-gray-700 leading-relaxed bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+            {{ equipment.description || 'No description provided.' }}
+        </p>
+    </div>
+
+    <!-- ── Actions ────────────────────────────────────────────────────── -->
+    <div class="flex gap-2 justify-end">
+        <button type="button" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+             hover:bg-gray-50 transition">
+            Close
+        </button>
+        <a *ngIf="equipment.centerName" [routerLink]="['/centers', equipment.centerId, formatUrl(equipment.centerName)]"
+            (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+             hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+            <i-feather name="arrow-up-right" style="width:13px;height:13px;"></i-feather>
+            Visit center
+        </a>
+    </div>
+
+</div>

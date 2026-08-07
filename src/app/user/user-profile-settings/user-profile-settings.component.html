@@ -5,6 +5,63 @@
         (stateChange)="onStateChange($event)" [states]="states" [cities]="cities">
     </app-user-profile-settings-form>
 
+    <!-- ═══════════ PUBLIC PROFILE VISIBILITY ═══════════
+         Private by default. Name, photo, role and join date are always visible
+         on /user/:id; this switch controls bio, location and created workouts. -->
+    <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+
+        <div>
+            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Public profile</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                Your name, photo, role and join date are always shown. Everything else is private
+                until you turn this on.
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div class="flex items-start justify-between gap-4">
+
+            <div class="flex items-start gap-2.5 min-w-0">
+
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                    [ngClass]="isProfilePublic ? 'bg-green-50 border border-green-200' : 'bg-gray-100 border border-gray-200'">
+                    <i-feather [name]="isProfilePublic ? 'globe' : 'lock'" style="width:14px;height:14px;"
+                        [ngClass]="isProfilePublic ? 'text-green-600' : 'text-gray-400'"></i-feather>
+                </div>
+
+                <div class="flex flex-col gap-0.5 min-w-0">
+                    <p class="text-xs font-bold text-gray-900">
+                        {{ isProfilePublic ? 'Make my profile public' : 'Keep my profile private' }}
+                    </p>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        {{ isProfilePublic
+                            ? 'Anyone with the link can see your bio, location and the workouts you created.'
+                            : 'Visitors see only your name, photo, role and join date.' }}
+                    </p>
+                    <a *ngIf="isProfilePublic && publicProfileLink" [routerLink]="publicProfileLink"
+                        class="text-[11px] font-semibold text-red-600 hover:underline underline-offset-2 mt-0.5
+                               inline-flex items-center gap-1 self-start">
+                        <i-feather name="eye" style="width:11px;height:11px;"></i-feather>
+                        View my public profile
+                    </a>
+                </div>
+            </div>
+
+            <!-- Switch -->
+            <button type="button" role="switch" [attr.aria-checked]="isProfilePublic"
+                aria-label="Make my profile public" (click)="toggleProfileVisibility()"
+                [disabled]="savingVisibility"
+                class="relative w-11 h-6 rounded-full transition shrink-0 disabled:opacity-60
+                       disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
+                [ngClass]="isProfilePublic ? 'bg-red-600' : 'bg-gray-200'">
+                <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
+                    [ngClass]="isProfilePublic ? 'translate-x-5' : 'translate-x-0'"></span>
+            </button>
+
+        </div>
+    </div>
+
     <app-user-profile-settings-dangerzone (deactivate)="deactivateAccount()" (updateEmail)="openUpdateEmail()">
     </app-user-profile-settings-dangerzone>
 </div>

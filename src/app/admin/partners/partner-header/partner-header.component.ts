@@ -85,7 +85,8 @@ export class PartnerHeaderComponent {
   openAddPartner() {
     const dialogRef = this.dialog.open(AddPartnerModalComponent, {
       width: '800px',
-      height: '600px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
     });
     const childComponentInstance = dialogRef.componentInstance as AddPartnerModalComponent;
     childComponentInstance.onAddPartnerEmit.subscribe(() => {

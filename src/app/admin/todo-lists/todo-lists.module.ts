@@ -11,6 +11,9 @@ import { TodoListHeaderComponent } from './todo-list-header/todo-list-header.com
 import { TodoListListComponent } from './todo-list-list/todo-list-list.component';
 import { TodoListsComponent } from './todo-lists/todo-lists.component';
 import { UpdateTodoModalComponent } from './update-todo-modal/update-todo-modal.component';
+import { TodoListDetailsModalComponent } from './todo-list-details-modal/todo-list-details-modal.component';
+import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
+import { UserHoverCardComponent } from 'src/app/shared/user-hover-card/user-hover-card.component';
 
 
 
@@ -20,7 +23,8 @@ import { UpdateTodoModalComponent } from './update-todo-modal/update-todo-modal.
     TodoListHeaderComponent,
     TodoListListComponent,
     TodoListsComponent,
-    UpdateTodoModalComponent
+    UpdateTodoModalComponent,
+    TodoListDetailsModalComponent
   ],
 
   imports: [
@@ -31,6 +35,8 @@ import { UpdateTodoModalComponent } from './update-todo-modal/update-todo-modal.
     MatDialogModule,
     FooterModule,
     NavbarModule,
+    AdminSearchModule,
+    UserHoverCardComponent,
     RouterModule.forChild([{ path: '', component: TodoListsComponent }])
   ]
 })

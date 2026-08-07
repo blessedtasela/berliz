@@ -2,12 +2,6 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { Promotions } from '../../models/promotion.model';
 import { Offers } from '../../models/offers.model';
 import { StateService } from 'src/app/services/state.service';
-import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { AddNewsletterModalComponent } from 'src/app/admin/newsletters/add-newsletter-modal/add-newsletter-modal.component';
-import { NewsletterPopupComponent } from 'src/app/shared/newsletter-popup/newsletter-popup.component';
-import { Store } from '@ngrx/store';
-import { loadNewsletters } from 'src/app/state/newsletter/newsletter.actions';
 
 @Component({
   selector: 'app-landing-page',
@@ -18,51 +12,19 @@ import { loadNewsletters } from 'src/app/state/newsletter/newsletter.actions';
 export class LandingPageComponent implements OnInit {
   promotions: Promotions[] = [];
   offers: Offers[] = [];
-  timeoutNewsletter = 5000;
 
-  constructor(private stateService: StateService,
-    private dialog: MatDialog,
-    private ngxService: NgxUiLoaderService,
-    private store: Store,) {
+  constructor(private stateService: StateService) {
     this.promotions = this.stateService.promotions;
     this.offers = this.stateService.offers;
   }
 
   ngOnInit(): void {
-    const showNewsletter = this.stateService.getShowNewsletter();
-    if (showNewsletter !== 'true') {
-      setTimeout(() => {
-        this.openAddNewsletter();
-        this.stateService.setShowNewsletter('true')
-      }, this.timeoutNewsletter);
-    }
+    // The newsletter popup is no longer triggered from here. Triggering is
+    // global and lives in AppComponent + NewsletterTriggerService, so it can
+    // fire on any public page and repeat based on time + activity.
   }
 
   @HostListener('window:scroll', [])
   onWindowScroll() { }
-
-  handleEmitEvent() {
-    this.ngxService.start()
-    this.store.dispatch(loadNewsletters());
-    this.ngxService.stop()
-  }
-
-  openAddNewsletter() {
-    const dialogRef = this.dialog.open(NewsletterPopupComponent, {
-      width: '400px',
-      minHeight: '200px',
-    });
-    const childComponentInstance = dialogRef.componentInstance as NewsletterPopupComponent;
-    childComponentInstance.onAddNewsletter.subscribe(() => {
-      this.handleEmitEvent();
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log(`Dialog result: ${result}`);
-      } else {
-        console.log('Dialog closed without adding a newsletter');
-      }
-    });
-  }
 
 }

@@ -62,6 +62,7 @@ export class MuscleGroupDetailsModalComponent {
     try {
       const dialogRef = this.dialog.open(UpdateTrainerPhotoModalComponent, {
         width: '600px',
+        maxWidth: '95vw',
         data: {
           muscleGroupData: this.muscleGroupData,
         }

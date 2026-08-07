@@ -12,6 +12,7 @@ import { TrainerPricingComponent } from './trainer-pricing/trainer-pricing.compo
 import { TrainerPricingListComponent } from './trainer-pricing-list/trainer-pricing-list.component';
 import { TrainerPricingHeaderComponent } from './trainer-pricing-header/trainer-pricing-header.component';
 import { UpdateTrainerPricingModalComponent } from './update-trainer-pricing-modal/update-trainer-pricing-modal.component';
+import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 
 
 
@@ -32,6 +33,7 @@ import { UpdateTrainerPricingModalComponent } from './update-trainer-pricing-mod
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
+    AdminSearchModule,
     RouterModule.forChild([{ path: '', component: TrainerPricingComponent }])
   ]
 })

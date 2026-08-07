@@ -1,5 +1,27 @@
 <div class="font-sans flex flex-col gap-4 mt-4">
 
+    <!-- ── Tabs ───────────────────────────────────────────────────────── -->
+    <div class="flex items-center gap-2">
+        <button type="button" (click)="setTab('tasks')"
+            class="rounded-xl px-4 py-2 text-xs font-semibold transition"
+            [ngClass]="activeTab === 'tasks'
+                ? 'bg-red-600 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+            Tasks
+        </button>
+
+        <button type="button" (click)="setTab('workouts')"
+            class="rounded-xl px-4 py-2 text-xs font-semibold transition"
+            [ngClass]="activeTab === 'workouts'
+                ? 'bg-red-600 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+            Workouts
+        </button>
+    </div>
+
+    <!-- ══════════════════ TAB: TASKS ══════════════════ -->
+    <ng-container *ngIf="activeTab === 'tasks'">
+
     <!-- ── Header ─────────────────────────────────────────────────────── -->
     <div class="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3 flex-wrap">
         <div>
@@ -236,5 +258,14 @@
 
         </div>
     </div>
+
+    </ng-container>
+
+    <!-- ══════════════════ TAB: WORKOUTS ══════════════════ -->
+    <!--
+      Rendered by MyAssignedWorkoutsComponent (declared + exported by
+      WorkoutsModule, which MyTasksModule imports). Its logic is untouched.
+    -->
+    <app-my-assigned-workouts *ngIf="activeTab === 'workouts'"></app-my-assigned-workouts>
 
 </div>

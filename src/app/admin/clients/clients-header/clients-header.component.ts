@@ -105,6 +105,7 @@ export class ClientsHeaderComponent {
   openAddClient() {
     const dialogRef = this.dialog.open(AddClientModalComponent, {
       width: '800px',
+      maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,
     });

@@ -1,60 +1,58 @@
-<div class="justify-center items-center mt-4 overflow-x-scroll">
-    <div class="min-w-[300px]">
-        <table class="table-auto border-collapse border border-gray-400 bg-gray-300 text-gray-950 font-sans
-                        container">
+<div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
             <thead>
-                <tr class="cursor-pointer">
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">SN</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Email</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Trainer</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Date</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400"> ID</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">OTC</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">PTC</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">HTC</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Last update</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Actions</th>
+                <tr class="bg-gray-50 border-b border-gray-200">
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Email</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Trainer</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">ID</th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">OTC</th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">PTC</th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">HTC</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr *ngFor="let trainerPricing of trainerPricingData; let i = index"
-                    class="bg-gray-100 hover:bg-gray-200">
-                    <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        <a href="mailto:{{ trainerPricing.trainerName }}"> {{
-                            trainerPricing.trainerName }}</a>
+            <tbody class="divide-y divide-gray-100">
+                <tr *ngFor="let trainerPricing of trainerPricingData; let i = index" class="hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
+                    <td class="px-4 py-3">
+                        <a href="mailto:{{ trainerPricing.trainerName }}"
+                            class="text-gray-600 hover:text-red-600 transition">{{ trainerPricing.trainerName }}</a>
                     </td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ trainerPricing.trainerName }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(trainerPricing.date) }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2 font-bold">{{ trainerPricing.id }}</td>
-                   <td class="border-b border-gray-400 px-4 py-2">{{ trainerPricing.priceOnline }} usd</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ trainerPricing.pricePersonal }} usd</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ trainerPricing.priceHybrid }} usd</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(trainerPricing.lastUpdate) }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        <div class="flex items-center p-2">
-                            <button
-                                class="text-sm rounded-md font-sans mx-auto ml-4
-                                    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                (click)="openTrainerPricingDetails(trainerPricing.id)">
-                                <i-feather name="eye" class="text-gray-800"></i-feather>
+                    <td class="px-4 py-3 font-semibold text-gray-900">{{ trainerPricing.trainerName }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ formatDate(trainerPricing.date) }}</td>
+                    <td class="px-4 py-3 text-gray-500 tabular-nums">{{ trainerPricing.id }}</td>
+                    <td class="px-4 py-3 text-right font-semibold text-gray-900 tabular-nums">{{ trainerPricing.priceOnline }} usd</td>
+                    <td class="px-4 py-3 text-right font-semibold text-gray-900 tabular-nums">{{ trainerPricing.pricePersonal }} usd</td>
+                    <td class="px-4 py-3 text-right font-semibold text-gray-900 tabular-nums">{{ trainerPricing.priceHybrid }} usd</td>
+                    <td class="px-4 py-3 text-gray-500">{{ formatDate(trainerPricing.lastUpdate) }}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center justify-end gap-1">
+                            <button class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
+                                (click)="openTrainerPricingDetails(trainerPricing.id)" title="View">
+                                <i-feather name="eye" class="text-gray-500" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button
-                                class="text-sm rounded-md font-sans mx-auto ml-4
-                                        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                (click)="openUpdateTrainerPricing(trainerPricing.id)">
-                                <i-feather name="edit" class="text-red-600"></i-feather>
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                                (click)="openUpdateTrainerPricing(trainerPricing.id)" title="Edit">
+                                <i-feather name="edit-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button
-                                class="text-sm rounded-md font-sans mx-auto ml-4
-                                        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                (click)="deleteTrainerPricing(trainerPricing.id)">
-                                <i-feather name="trash-2" class="text-red-600"></i-feather>
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                                (click)="deleteTrainerPricing(trainerPricing.id)" title="Delete">
+                                <i-feather name="trash-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
                             </button>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
+    </div>
+    <div *ngIf="trainerPricingData.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-center">
+        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+            <i-feather name="inbox" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        </div>
+        <p class="text-sm text-gray-400">No trainer pricing yet.</p>
     </div>
 </div>

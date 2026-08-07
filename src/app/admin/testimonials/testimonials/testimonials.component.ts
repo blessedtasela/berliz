@@ -5,6 +5,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { loadTestimonials } from 'src/app/state/testimonial/testimonial.actions';
 import { selectTestimonials } from 'src/app/state/testimonial/testimonial.selectors';
+import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
   selector: 'app-testimonials',
@@ -18,6 +19,17 @@ export class TestimonialsComponent {
   searchComponent: string = 'testimonial'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+
+  readonly selectTestimonials = selectTestimonials;
+  readonly testimonialSearchFields: AdminSearchField<Testimonials>[] = [
+    { value: 'user', label: 'User email', accessor: t => t.userEmail },
+    { value: 'center', label: 'Center', accessor: t => t.centerName },
+    { value: 'trainer', label: 'Trainer', accessor: t => t.trainerName },
+    { value: 'client', label: 'Client', accessor: t => t.clientName },
+    { value: 'testimonial', label: 'Testimonial text', accessor: t => t.testimonial },
+    { value: 'status', label: 'Status', accessor: t => t.status },
+    { value: 'id', label: 'Testimonial id', accessor: t => t.id?.toString() },
+  ];
 
   constructor(private ngxService: NgxUiLoaderService,
     private store: Store) {

@@ -85,7 +85,8 @@ export class TodoListHeaderComponent {
   openAddTodo() {
     const dialogRef = this.dialog.open(AddTodoModalComponent, {
       width: '700px',
-      height: '400px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
     });
     const childComponentInstance = dialogRef.componentInstance as AddTodoModalComponent;
     childComponentInstance.onAddTodoList.subscribe(() => {

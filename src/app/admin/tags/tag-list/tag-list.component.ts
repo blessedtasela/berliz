@@ -52,7 +52,8 @@ export class TagListComponent {
       if (tag) {
         const dialogRef = this.dialog.open(UpdateTagModalComponent, {
           width: '700px',
-          height: '420px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           data: {
             tagData: tag,
           }
@@ -115,6 +116,7 @@ export class TagListComponent {
     if (tag) {
       const dialogRef = this.dialog.open(TagDetailsModalComponent, {
         width: '600px',
+        maxWidth: '95vw',
         data: {
           tagData: tag,
         },

@@ -65,7 +65,7 @@ export class ContactUsListComponent {
       if (contactUs) {
         const dialogRef = this.dialog.open(ContactUsDetailsModalComponent, {
           width: '800px',
-          minHeight: '400px',
+          maxWidth: '95vw',
           data: {
             contactUs: contactUs,
           }
@@ -84,7 +84,8 @@ export class ContactUsListComponent {
       if (contactUs) {
         const dialogRef = this.dialog.open(UpdateContactUsModalComponent, {
           width: '800px',
-          height: '500px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           data: {
             contactUsData: contactUs,
           }
@@ -143,7 +144,8 @@ export class ContactUsListComponent {
     } else {
       const dialogRef = this.dialog.open(ContactUsReviewModalComponent, {
         width: '800px',
-        height: '520px',
+        maxWidth: '95vw',
+        maxHeight: '90vh',
         data: {
           contactUs: contactUs,
         }

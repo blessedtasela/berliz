@@ -12,7 +12,7 @@ import { PartnerHeaderComponent } from './partner-header/partner-header.componen
 import { PartnerListComponent } from './partner-list/partner-list.component';
 import { PartnersComponent } from './partners/partners.component';
 import { UpdatePartnerModalComponent } from './update-partner-modal/update-partner-modal.component';
-import { SearchPartnerComponent } from './search-partner/search-partner.component';
+import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 
 @NgModule({
   declarations: [
@@ -22,7 +22,6 @@ import { SearchPartnerComponent } from './search-partner/search-partner.componen
     PartnerListComponent,
     PartnersComponent,
     UpdatePartnerModalComponent,
-    SearchPartnerComponent
   ],
 
   imports: [
@@ -33,6 +32,7 @@ import { SearchPartnerComponent } from './search-partner/search-partner.componen
     MatDialogModule,
     FooterModule,
     NavbarModule,
+    AdminSearchModule,
     RouterModule.forChild([{ path: '', component: PartnersComponent }])
   ]
 })

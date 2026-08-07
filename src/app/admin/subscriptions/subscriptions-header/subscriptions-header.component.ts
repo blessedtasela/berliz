@@ -86,6 +86,7 @@ export class SubscriptionsHeaderComponent {
   openAddCategory() {
     const dialogRef = this.dialog.open(AddSubscriptionsModalComponent, {
       width: '800px',
+      maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,
     });

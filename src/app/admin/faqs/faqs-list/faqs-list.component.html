@@ -1,0 +1,62 @@
+<div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="bg-gray-50 border-b border-gray-200">
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Question</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Category</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Order</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Status</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                <tr *ngFor="let faq of faqsData; let i = index" class="hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
+                    <td class="px-4 py-3 font-semibold text-gray-900 max-w-xs">
+                        <span class="line-clamp-2">{{ faq.question }}</span>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold
+                                     bg-gray-100 text-gray-600 border border-gray-200">
+                            {{ faq.category }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-gray-500 tabular-nums">{{ faq.displayOrder }}</td>
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold"
+                            [ngClass]="faq.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
+                            {{ faq.status === 'true' ? 'Active' : 'Inactive' }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-gray-500">{{ formatDate(faq.lastUpdate) }}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center justify-end gap-1">
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                                (click)="openUpdateFaq(faq.id)" title="Edit">
+                                <i-feather name="edit-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+                            </button>
+                            <button class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition"
+                                [ngClass]="faq.status === 'true' ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-red-600 text-white hover:bg-red-700'"
+                                (click)="updateFaqStatus(faq.id)">
+                                {{ faq.status === 'false' ? 'Activate' : 'Deactivate' }}
+                            </button>
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                                (click)="deleteFaq(faq.id)" title="Delete">
+                                <i-feather name="trash-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="faqsData.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-center">
+        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+            <i-feather name="inbox" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        </div>
+        <p class="text-sm text-gray-400">No FAQs yet.</p>
+    </div>
+</div>

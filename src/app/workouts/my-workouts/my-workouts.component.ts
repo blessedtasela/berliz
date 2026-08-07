@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
+import { Actions, ofType } from '@ngrx/effects';
 import { Subscription } from 'rxjs';
 
 import { Exercises } from 'src/app/models/exercise.interface';
@@ -16,14 +17,19 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
 import { loadActiveExercises } from 'src/app/state/exercise/exercise.actions';
 import { selectActiveExercises } from 'src/app/state/exercise/exercise.selectors';
 import {
+  cloneWorkoutTemplate,
+  cloneWorkoutTemplateFailure,
+  cloneWorkoutTemplateSuccess,
   deleteWorkout,
   loadAssignmentsIMade,
   loadMyWorkouts,
+  loadWorkoutTemplates,
 } from 'src/app/state/workout/workout.actions';
 import {
   selectAssignmentsIMade,
   selectMyWorkouts,
   selectWorkoutLoading,
+  selectWorkoutTemplates,
 } from 'src/app/state/workout/workout.selector';
 
 import { AssignWorkoutModalComponent } from '../assign-workout-modal/assign-workout-modal.component';
@@ -38,6 +44,12 @@ export class MyWorkoutsComponent implements OnInit, OnDestroy {
   assignmentsIMade: WorkoutAssignmentResponse[] = [];
   exercises: Exercises[] = [];
 
+  /** Admin-curated public templates — only fetched the first time the tab opens. */
+  templates: WorkoutResponse[] = [];
+  activeTab: 'mine' | 'templates' = 'mine';
+  private templatesRequested = false;
+  cloningTemplateId: number | null = null;
+
   searchTerm = '';
   loading = false;
   role: string | null = null;
@@ -48,6 +60,7 @@ export class MyWorkoutsComponent implements OnInit, OnDestroy {
     private store: Store,
     private router: Router,
     private dialog: MatDialog,
+    private actions$: Actions,
     private authService: AuthService,
     private snackbar: SnackBarService,
   ) { }
@@ -63,6 +76,24 @@ export class MyWorkoutsComponent implements OnInit, OnDestroy {
       this.store.select(selectMyWorkouts).subscribe(w => this.myWorkouts = w ?? []),
       this.store.select(selectActiveExercises).subscribe(e => this.exercises = e ?? []),
       this.store.select(selectWorkoutLoading).subscribe(l => this.loading = l),
+      // Selected here, dispatched lazily by setTab() — the templates tab is the
+      // only consumer, so there's no point fetching them on page load.
+      this.store.select(selectWorkoutTemplates).subscribe(t => this.templates = t ?? []),
+    );
+
+    // A clone lands in myWorkouts via the reducer — bounce the user there so
+    // they immediately see their new copy.
+    this.subscriptions.push(
+      this.actions$.pipe(ofType(cloneWorkoutTemplateSuccess)).subscribe(({ response }) => {
+        this.cloningTemplateId = null;
+        this.activeTab = 'mine';
+        this.snackbar.openSnackBar(
+          `"${response?.data?.name ?? 'Template'}" added to your workouts`, '');
+      }),
+      this.actions$.pipe(ofType(cloneWorkoutTemplateFailure)).subscribe(({ error }) => {
+        this.cloningTemplateId = null;
+        this.snackbar.openSnackBar(error || 'Could not add this template', 'error');
+      }),
     );
 
     // Trainers also see what they've assigned out — dispatch + select together.
@@ -91,6 +122,46 @@ export class MyWorkoutsComponent implements OnInit, OnDestroy {
   get canAssign(): boolean {
     // The backend currently rejects assignment from a center account.
     return !this.isCenter;
+  }
+
+  // ── Tabs / templates ──────────────────────────────────────────────────────
+
+  setTab(tab: 'mine' | 'templates'): void {
+    this.activeTab = tab;
+
+    // Fetch once, on first activation — every selected slice stays paired with
+    // its dispatch.
+    if (tab === 'templates' && !this.templatesRequested) {
+      this.templatesRequested = true;
+      this.store.dispatch(loadWorkoutTemplates());
+    }
+  }
+
+  get filteredTemplates(): WorkoutResponse[] {
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) return this.templates;
+    return this.templates.filter(t =>
+      (t.name ?? '').toLowerCase().includes(term) ||
+      (t.description ?? '').toLowerCase().includes(term)
+    );
+  }
+
+  /** Short chip list of the first few exercise names on a template card. */
+  exerciseChips(workout: WorkoutResponse, limit = 4): string[] {
+    return [...(workout.exercises ?? [])]
+      .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+      .slice(0, limit)
+      .map(e => e.exerciseName || this.exercises.find(x => x.id === e.exerciseId)?.name || 'Exercise');
+  }
+
+  extraExerciseCount(workout: WorkoutResponse, limit = 4): number {
+    return Math.max(0, (workout.exercises ?? []).length - limit);
+  }
+
+  quickAdd(template: WorkoutResponse): void {
+    if (this.cloningTemplateId) return;
+    this.cloningTemplateId = template.id;
+    this.store.dispatch(cloneWorkoutTemplate({ id: template.id }));
   }
 
   // ── List ──────────────────────────────────────────────────────────────────
@@ -168,6 +239,7 @@ export class MyWorkoutsComponent implements OnInit, OnDestroy {
   assignWorkout(workout: WorkoutResponse): void {
     this.dialog.open(AssignWorkoutModalComponent, {
       width: '460px',
+      maxWidth: '95vw',
       data: workout
     });
   }

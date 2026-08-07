@@ -64,7 +64,8 @@ export class PaymentsListComponent {
       if (payment) {
         const dialogRef = this.dialog.open(UpdatePaymentsModalComponent, {
           width: '900px',
-          maxHeight: '600px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           disableClose: true,
           data: {
             paymentData: payment,
@@ -95,6 +96,7 @@ export class PaymentsListComponent {
       if (payment) {
         const dialogRef = this.dialog.open(PaymentDetailsModalComponent, {
           width: '800px',
+          maxWidth: '95vw',
           panelClass: 'mat-dialog-height',
           data: {
             paymentData: payment,

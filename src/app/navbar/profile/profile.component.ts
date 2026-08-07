@@ -215,6 +215,7 @@ export class ProfileComponent {
   openChangePassword() {
     const dialogRef = this.dialog.open(ChangePasswordModalComponent, {
       width: '400px',
+      maxWidth: '95vw',
       data: {
         user: this.userData
       }
@@ -237,6 +238,7 @@ export class ProfileComponent {
   openUpdateUser() {
     const dialogRef = this.dialog.open(UpdateUserModalComponent, {
       width: '700px',
+      maxWidth: '95vw',
       data: {
         userData: this.userData
       }

@@ -59,7 +59,8 @@ export class ExercisesListComponent {
       if (exercise) {
         const dialogRef = this.dialog.open(UpdateExercisesModalComponent, {
           width: '900px',
-          maxHeight: '600px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           disableClose: true,
           data: {
             exerciseData: exercise,
@@ -90,6 +91,7 @@ export class ExercisesListComponent {
       if (exercise) {
         const dialogRef = this.dialog.open(ExercisesDetailsModalComponent, {
           width: '800px',
+          maxWidth: '95vw',
           panelClass: 'mat-dialog-height',
           data: {
             exerciseData: exercise,

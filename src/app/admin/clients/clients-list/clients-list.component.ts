@@ -56,7 +56,8 @@ export class ClientsListComponent {
       if (client) {
         const dialogRef = this.dialog.open(UpdateClientModalComponent, {
           width: '900px',
-          maxHeight: '600px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           disableClose: true,
           data: {
             clientData: client,
@@ -87,6 +88,7 @@ export class ClientsListComponent {
       if (client) {
         const dialogRef = this.dialog.open(ClientsDetailsModalComponent, {
           width: '800px',
+          maxWidth: '95vw',
           panelClass: 'mat-dialog-height',
           data: {
             clientData: client,

@@ -1,0 +1,56 @@
+/* Animated fire base — replaces the old off-brand stock photo. Slow-shifting
+   dark-to-ember gradient, echoes the flame in the Berliz logo. */
+.bg-hero-fire {
+  background: linear-gradient(135deg, #0a0505 0%, #1a0806 25%, #3d0f0a 50%, #1a0806 75%, #0a0505 100%);
+  background-size: 300% 300%;
+  animation: fireDrift 10s ease-in-out infinite;
+}
+
+@keyframes fireDrift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hero-glow {
+  background: radial-gradient(ellipse at center, rgba(255, 90, 30, 0.55) 0%, rgba(220, 38, 38, 0.25) 35%, rgba(0, 0, 0, 0) 70%);
+  filter: blur(6px);
+  animation: glowPulse 3.5s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+  50%      { opacity: 1;   transform: translateX(-50%) scale(1.08); }
+}
+
+.ember {
+  position: absolute;
+  bottom: -10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffd08a 0%, #ff6a2f 45%, rgba(255, 60, 20, 0) 75%);
+  animation-name: emberRise;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes emberRise {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-280px) translateX(14px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-hero-fire,
+  .hero-glow,
+  .ember {
+    animation: none;
+  }
+}

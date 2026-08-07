@@ -61,6 +61,7 @@ export class PartnerListComponent {
       if (partner) {
         const dialogRef = this.dialog.open(UpdatePartnerModalComponent, {
           width: '800px',
+          maxWidth: '95vw',
           data: {
             partnerData: partner,
           }
@@ -126,6 +127,7 @@ export class PartnerListComponent {
     if (partner) {
       const dialogRef = this.dialog.open(PartnerDetailsModalComponent, {
         width: '800px',
+        maxWidth: '95vw',
         data: {
           partnerData: partner,
         },
@@ -182,6 +184,7 @@ export class PartnerListComponent {
     if (partner) {
       const dialogRef = this.dialog.open(ViewCertificateModalComponent, {
         width: '800px',
+        maxWidth: '95vw',
         data: {
           partnerData: partner,
         },
@@ -202,6 +205,7 @@ export class PartnerListComponent {
     if (partner) {
       const dialogRef = this.dialog.open(ViewCvModalComponent, {
         width: '800px',
+        maxWidth: '95vw',
         data: {
           partnerData: partner,
         },

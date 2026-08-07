@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { Newsletter } from 'src/app/models/newsletter.model';
 import { loadNewsletters } from 'src/app/state/newsletter/newsletter.actions';
 import { selectNewsletters } from 'src/app/state/newsletter/newsletter.selectors';
+import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
   selector: 'app-newsletters',
@@ -19,6 +20,13 @@ export class NewslettersComponent {
   searchComponent: string = 'newsletter'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+
+  readonly selectNewsletters = selectNewsletters;
+  readonly newsletterSearchFields: AdminSearchField<Newsletter>[] = [
+    { value: 'email', label: 'Email', accessor: n => n.email },
+    { value: 'status', label: 'Status', accessor: n => n.status },
+    { value: 'id', label: 'Newsletter id', accessor: n => n.id?.toString() },
+  ];
 
   constructor(private store: Store,
     private ngxService: NgxUiLoaderService,

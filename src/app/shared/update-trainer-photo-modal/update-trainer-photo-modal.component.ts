@@ -51,6 +51,7 @@ export class UpdateTrainerPhotoModalComponent {
     if (this.updateTrainerPhotoForm.invalid) {
       this.invalidForm = true
       this.responseMessage = 'Invalid form';
+      this.snackBarService.openSnackBar(this.responseMessage, "error");
       this.ngxService.stop();
 
     } else {
@@ -75,7 +76,6 @@ export class UpdateTrainerPhotoModalComponent {
             this.snackBarService.openSnackBar(this.responseMessage, 'error');
           });
     }
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

@@ -5,6 +5,7 @@ import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { selectUsers } from 'src/app/state/user/user.selector';
 import { loadAllUsers } from 'src/app/state/user/user.actions';
+import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
   selector: 'app-user',
@@ -17,6 +18,15 @@ export class UsersComponent {
   usersLength: number = 0;
   searchComponent: string = 'user'
   isSearch: boolean = true;
+
+  readonly selectUsers = selectUsers;
+  readonly userSearchFields: AdminSearchField<Users>[] = [
+    { value: 'email', label: 'Email', accessor: u => u.email },
+    { value: 'name', label: 'Name', accessor: u => `${u.firstname || ''} ${u.lastname || ''}` },
+    { value: 'id', label: 'User id', accessor: u => u.id?.toString() },
+    { value: 'role', label: 'Role', accessor: u => u.role },
+    { value: 'status', label: 'Status', accessor: u => u.status },
+  ];
 
   constructor(private ngxService: NgxUiLoaderService,
     private store: Store,

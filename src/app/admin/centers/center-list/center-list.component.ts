@@ -69,9 +69,10 @@ export class CenterListComponent {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
-        dialogConfig.width = '800px',
-          dialogConfig.height = '600px',
-          dialogConfig.data = { centerData: center }
+        dialogConfig.width = '800px';
+        dialogConfig.maxWidth = '95vw';
+        dialogConfig.maxHeight = '90vh';
+        dialogConfig.data = { centerData: center };
         const dialogRef = this.dialog.open(UpdateCenterModalComponent, dialogConfig);
         const childComponentInstance = dialogRef.componentInstance as UpdateCenterModalComponent;
 
@@ -100,9 +101,10 @@ export class CenterListComponent {
       const dialogConfig = new MatDialogConfig();
       dialogConfig.disableClose = true;
       dialogConfig.autoFocus = true;
-      dialogConfig.width = '800px',
-        dialogConfig.height = '600px',
-        dialogConfig.data = { centerData: center }
+      dialogConfig.width = '800px';
+      dialogConfig.maxWidth = '95vw';
+      dialogConfig.maxHeight = '90vh';
+      dialogConfig.data = { centerData: center };
       const dialogRef = this.dialog.open(CenterDetailsModalComponent, dialogConfig);
       dialogRef.afterClosed().subscribe(result => {
         if (result) {

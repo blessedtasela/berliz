@@ -54,6 +54,7 @@ export class TrainerHeaderComponent {
     } else {
       const dialogRef = this.dialog.open(PartnerFormModalComponent, {
         width: '900px',
+        maxWidth: '95vw',
         panelClass: 'mat-dialog-height',
       });
       const childComponentInstance = dialogRef.componentInstance as PartnerFormModalComponent;

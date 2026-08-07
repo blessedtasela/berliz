@@ -110,6 +110,7 @@ export class MySubscriptionsComponent {
     if (Subscription) {
       const dialogRef = this.dialog.open(MySubscriptionDetailModalComponent, {
         width: '700px',
+        maxWidth: '95vw',
         data: {
           mySubscriptions: Subscription
         }

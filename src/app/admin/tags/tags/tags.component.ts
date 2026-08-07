@@ -6,6 +6,7 @@ import { Tags } from 'src/app/models/tags.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { loadTags } from 'src/app/state/tag/tag.actions';
 import { selectTags } from 'src/app/state/tag/tag.selectors';
+import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
   selector: 'app-tags',
@@ -19,6 +20,14 @@ export class TagsComponent {
   searchComponent: string = 'tag'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+
+  readonly selectTags = selectTags;
+  readonly tagSearchFields: AdminSearchField<Tags>[] = [
+    { value: 'name', label: 'Name', accessor: t => t.name },
+    { value: 'id', label: 'Tag id', accessor: t => t.id?.toString() },
+    { value: 'description', label: 'Description', accessor: t => t.description },
+    { value: 'status', label: 'Status', accessor: t => t.status },
+  ];
 
   constructor(private ngxService: NgxUiLoaderService,
     private store: Store,

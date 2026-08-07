@@ -22,6 +22,7 @@ import { AppRoutingModule, routes } from './app-routing.module';
 import { CentersModule } from './centers/centers.module';
 import { TrainersModule } from './trainers/trainers.module';
 import { TestimonialModule } from './testimonial/testimonial.module';
+import { EquipmentsModule } from './equipments/equipments.module';
 import { LandingPageModule } from './landing/landing-page.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AboutUsModule } from './about-us/about-us.module';
@@ -33,6 +34,7 @@ import { MyTasksModule } from './my-tasks/my-tasks.module';
 import { MySubscriptionsModule } from './my-subscriptions/my-subscriptions.module';
 import { MyNotificationsModule } from './my-notifications/my-notifications.module';
 import { MyFaqsModule } from './my-faqs/my-faqs.module';
+import { FaqsModule } from './faqs/faqs.module';
 import { RefreshTokenOverlayComponent } from './refresh-token-overlay/refresh-token-overlay.component';
 import { ResfreshTokenModalComponent } from './resfresh-token-modal/resfresh-token-modal.component';
 import { NavbarModule } from './navbar/navbar.module';
@@ -94,12 +96,18 @@ import { dashboardFeatureKey, dashboardReducer } from './state/dashboard/dashboa
 import { DashboardEffects } from './state/dashboard/dashboard.effects';
 import { testimonialFeatureKey, testimonialReducer } from './state/testimonial/testimonial.reducer';
 import { TestimonialEffects } from './state/testimonial/testimonial.effects';
+import { faqFeatureKey, faqReducer } from './state/faq/faq.reducer';
+import { FaqEffects } from './state/faq/faq.effects';
 import { paymentFeatureKey, paymentReducer } from './state/payment/payment.reducer';
 import { PaymentEffects } from './state/payment/payment.effects';
 import { memberFeatureKey, memberReducer } from './state/member/member.reducer';
 import { MemberEffects } from './state/member/member.effects';
 import { workoutFeatureKey, workoutReducer } from './state/workout/workout.reducer';
 import { WorkoutEffects } from './state/workout/workout.effects';
+import { userProfileFeatureKey, userProfileReducer } from './state/user-profile/user-profile.reducer';
+import { UserProfileEffects } from './state/user-profile/user-profile.effects';
+import { analyticsFeatureKey, analyticsReducer } from './state/analytics/analytics.reducer';
+import { AnalyticsEffects } from './state/analytics/analytics.effects';
 import { WorkoutsModule } from './workouts/workouts.module';
 
 
@@ -174,6 +182,7 @@ const dbConfig: DBConfig = {
     CentersModule,
     TrainersModule,
     TestimonialModule,
+    EquipmentsModule,
     LandingPageModule,
     CategoriesModule,
     AboutUsModule,
@@ -181,6 +190,7 @@ const dbConfig: DBConfig = {
     MySubscriptionsModule,
     MyNotificationsModule,
     MyFaqsModule,
+    FaqsModule,
     NavbarModule,
     FooterModule,
     LoginModule,
@@ -203,7 +213,7 @@ const dbConfig: DBConfig = {
 
     // Store and Effects Modules for NgRx
     StoreModule.forRoot({}),
-    EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects, WorkoutEffects]),
+    EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects, WorkoutEffects, AnalyticsEffects, UserProfileEffects, FaqEffects]),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: !isDevMode(),
@@ -225,9 +235,12 @@ const dbConfig: DBConfig = {
     StoreModule.forFeature(clientFeatureKey, clientReducer),
     StoreModule.forFeature(dashboardFeatureKey, dashboardReducer),
     StoreModule.forFeature(testimonialFeatureKey, testimonialReducer),
+    StoreModule.forFeature(faqFeatureKey, faqReducer),
     StoreModule.forFeature(paymentFeatureKey, paymentReducer),
     StoreModule.forFeature(memberFeatureKey, memberReducer),
     StoreModule.forFeature(workoutFeatureKey, workoutReducer),
+    StoreModule.forFeature(userProfileFeatureKey, userProfileReducer),
+    StoreModule.forFeature(analyticsFeatureKey, analyticsReducer),
 
   ],
   exports: [],

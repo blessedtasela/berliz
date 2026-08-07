@@ -13,7 +13,11 @@ import {
   TrainerVideoAlbum,
   Trainers
 } from 'src/app/models/trainers.interface';
+import { Testimonials } from 'src/app/models/testimonials.model';
 import { TrainerService } from 'src/app/services/trainer.service';
+import { TestimonialDialogService } from 'src/app/testimonial/testimonial-dialog.service';
+import { loadTestimonialsByTrainer } from 'src/app/state/testimonial/testimonial.actions';
+import { selectTestimonialsByTrainer } from 'src/app/state/testimonial/testimonial.selectors';
 import {
   loadActiveTrainerFeatureVideos,
   loadActiveTrainerReviews,
@@ -62,6 +66,7 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
   trainerVideoAlbum: TrainerVideoAlbum | null = null;
   trainerFeatureVideos: TrainerFeatureVideo[] = [];
   trainerReviews: TrainerReview[] = [];
+  trainerTestimonials: Testimonials[] = [];
 
   /** true once the trainer lookup resolved (either found or not found) */
   resolved = false;
@@ -74,7 +79,8 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private store: Store,
-    private trainerService: TrainerService
+    private trainerService: TrainerService,
+    private testimonialDialog: TestimonialDialogService
   ) { }
 
   ngOnInit(): void {
@@ -145,6 +151,7 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
     // Already trainer-scoped on the backend.
     this.store.dispatch(loadActiveTrainerFeatureVideos({ trainerId: id }));
     this.store.dispatch(loadActiveTrainerReviews({ id }));
+    this.store.dispatch(loadTestimonialsByTrainer({ trainerId: id }));
 
     this.subs.push(
       this.store.select(selectTrainerIntroductions).subscribe(list => {
@@ -176,7 +183,25 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
 
       this.store.select(selectActiveTrainerReviews).subscribe(list => {
         this.trainerReviews = (list ?? []).filter(r => r.trainerId === id);
+      }),
+
+      this.store.select(selectTestimonialsByTrainer).subscribe(list => {
+        this.trainerTestimonials = (list ?? []).filter(t => t.trainerId === id);
       })
     );
+  }
+
+  /**
+   * Reuses the shared login-gated dialog trigger. The form does not support
+   * pre-selecting a target, so this opens the generic form.
+   */
+  leaveTestimonial(): void {
+    this.testimonialDialog.openTestimonialForm();
+  }
+
+  testimonialAuthor(testimonial: Testimonials): string {
+    return testimonial.clientName
+      || `${testimonial.userFirstname ?? ''} ${testimonial.userLastname ?? ''}`.trim()
+      || 'Berliz member';
   }
 }

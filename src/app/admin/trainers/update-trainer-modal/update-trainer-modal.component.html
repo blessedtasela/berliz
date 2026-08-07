@@ -1,122 +1,153 @@
-<div class="relative">
-    <div class="text-red-600 absolute top-0 right-0 p-1">
-        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
-    </div>
-    <div class="rounded-lg p-2 mr-2  mx-auto">
-        <form [formGroup]="updateTrainerForm">
-            <div class="border-b-2 " [ngClass]="{'border-red-400': updateTrainerForm.invalid && invalidForm }">
-                <header class="text-center m-2 font-bold font-sans">
-                    <h1 class=" text-xl">Update Center Details</h1>
-                    <p class="text-red-600 italic text-sm">Trainer ID: {{ trainer.id }}
-                    </p>
-                </header>
-                <hr [ngClass]="{'border-red-500': updateTrainerForm.invalid && invalidForm }">
-                <div class="invalid-form">
-                    <span *ngIf="updateTrainerForm.invalid && invalidForm" class="mx-2 text-red-600">
-                        Please complete all sections
-                    </span>
-                    <span *ngIf="!updateTrainerForm.invalid && invalidForm" class="mx-2 text-gray-400">
-                        Everything looks good
-                    </span>
-                </div>
-                <div class="grid grid-cols md:grid-cols-2 rounded-lg p-2 gap-2">
-                    <div class="rounded-lg object-cover gap-5">
-                        <img [src]="'data:image/*;base64,' + trainer.photoResponse" class="rounded-lg"
-                            onerror="this.src='../../../assets/icons/user.png';">
-                        <div class="grid grid-cols-2 md:grid-cols-4">
-                            <div *ngFor="let cat of categories; let i = index" class="mx-auto flex items-center">
-                                <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
-                                    [checked]="selectedCategoriesId.includes(cat.id)"
-                                    class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                                    placeholder="tags" type="checkbox" [value]="cat.id">
-                                {{ cat.name }}
-                            </div>
-                        </div>
-                        <div *ngIf="updateTrainerForm.get('categoryIds')?.invalid && invalidForm"
-                            class="text-red-500 mx-2">
-                            Select at least one category
-                        </div>
-                    </div>
-                    <div class="bg-gray-200 gap-6 rounded-lg">
-                        <div class="mx-auto p-2">
-                            <span class="sr-only">Display Name</span>
-                            <span class="ml-4 font-bold text-gray-600 italic">Display Name</span>
-                            <input formControlName="name" [value]="trainer.name"
-                                class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                                [ngClass]="{'border-red-400': updateTrainerForm.get('name')?.invalid && updateTrainerForm.get('name')?.dirty }"
-                                placeholder="Display name Team Berliz" type="text">
-                            <div *ngIf="updateTrainerForm.get('name')?.invalid && updateTrainerForm.get('name')?.dirty"
-                                class="text-red-500 mx-2">
-                                Display name is required
-                            </div>
-                        </div>
-                        <div class="mx-auto p-2">
-                            <span class="sr-only">Expereince</span>
-                            <span class="ml-4 font-bold text-gray-600 italic">Expereince</span>
-                            <input formControlName="experience" [value]="trainer.experience"
-                                class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                                [ngClass]="{'border-red-400': updateTrainerForm.get('experience')?.invalid && updateTrainerForm.get('experience')?.dirty }"
-                                placeholder="experience" type="number">
-                            <div *ngIf="updateTrainerForm.get('experience')?.invalid && updateTrainerForm.get('experience')?.dirty"
-                                class="text-red-500 mx-2">
-                                Expereince is required
-                            </div>
-                        </div>
-                        <div class="mx-auto p-2 " *ngIf="user?.role === 'admin'">
-                            <span class="sr-only">Likes</span>
-                            <span class="ml-4 font-bold text-gray-600 italic">Likes</span>
-                            <input formControlName="likes" [value]="trainer.likes"
-                                class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                                [ngClass]="{'border-red-400': updateTrainerForm.get('likes')?.invalid && updateTrainerForm.get('likes')?.dirty }"
-                                placeholder="likes" type="number">
-                            <div *ngIf="updateTrainerForm.get('likes')?.invalid && updateTrainerForm.get('likes')?.dirty"
-                                class="text-red-500 mx-2">
-                                Expereince is required
-                            </div>
-                        </div>
-                        <div class="mx-auto p-2">
-                            <span class="sr-only">Motto</span>
-                            <span class="ml-4 font-bold text-gray-600 italic">Motto</span>
-                            <textarea formControlName="motto" [value]="trainer.motto"
-                                class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                                [ngClass]="{'border-red-400': updateTrainerForm.get('mtoo')?.invalid && updateTrainerForm.get('motto')?.dirty }"
-                                placeholder="Write a short bio about discipline or motto" rows="5" cols="25"></textarea>
-                            <div *ngIf="updateTrainerForm.get('motto')?.invalid && updateTrainerForm.get('motto')?.dirty"
-                                class="text-red-500 mx-2">
-                                At least 30 characters
-                            </div>
-                        </div>
-                        <div class="mx-auto p-2">
-                            <span class="sr-only">Address</span>
-                            <span class="ml-4 font-bold text-gray-600 italic">Address</span>
-                            <textarea formControlName="address" [value]="trainer.address"
-                                class="w-full bg-gray-100 border-b-2 px-4 py-2 rounded-lg p-2 mr-2 border-gray-400 hover:border-gray-500 focus:outline-none"
-                                [ngClass]="{'border-red-400': updateTrainerForm.get('address')?.invalid && updateTrainerForm.get('address')?.dirty }"
-                                placeholder="Write your street address or location here" rows="5" cols="25"></textarea>
-                            <div *ngIf="updateTrainerForm.get('address')?.invalid && updateTrainerForm.get('address')?.dirty"
-                                class="text-red-500 mx-2">
-                                At least 10 characters
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2">
-                            <div>
-                                <button
-                                    class="bg-gray-950 rounded-md mx-auto py-1 px-2 m-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                                    (click)="clear()">
-                                    Clear
-                                </button>
-                            </div>
-                            <div>
-                                <button
-                                    class="bg-red-600 rounded-md mx-auto py-1 px-2 m-2 font-bold font-sans mx-4 text-white text-sm lg:text-md flex items-center justify-center"
-                                    type="submit" (click)="updateTrainer()">
-                                    Submit
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="max-w-lg w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="user" class="text-red-600" style="width:15px;height:15px;"></i-feather>
             </div>
-        </form>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Update trainer details</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">ID {{ trainer.id }} &middot; {{ trainer.name }}</p>
+            </div>
+        </div>
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
     </div>
+
+    <form [formGroup]="updateTrainerForm" class="flex flex-col gap-4">
+
+        <p *ngIf="updateTrainerForm.invalid && invalidForm" class="text-red-500 text-[11px] flex items-center gap-1">
+            <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+            Please complete all sections
+        </p>
+
+        <img [src]="trainer.photoResponse?.photoUrl || '../../../assets/icons/user.png'"
+            class="w-full h-40 object-cover rounded-xl border border-gray-200"
+            onerror="this.src='../../../assets/icons/user.png';" />
+
+        <!-- Categories -->
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Categories</label>
+            <div class="flex flex-wrap gap-2">
+                <label *ngFor="let cat of categories; let i = index" class="cursor-pointer">
+                    <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
+                        [checked]="selectedCategoriesId.includes(cat.id)" type="checkbox" [value]="cat.id"
+                        class="peer sr-only">
+                    <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
+                               bg-gray-50 border-gray-200 text-gray-600
+                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">
+                        {{ cat.name }}
+                    </span>
+                </label>
+            </div>
+            <p *ngIf="updateTrainerForm.get('categoryIds')?.invalid && invalidForm"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Select at least one category
+            </p>
+        </div>
+
+        <!-- Display name -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Display name</label>
+            <input formControlName="name" [value]="trainer.name" type="text" placeholder="Display name e.g. Team Berliz"
+                class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': updateTrainerForm.get('name')?.invalid && updateTrainerForm.get('name')?.dirty,
+                        'border-gray-200 bg-gray-50': !(updateTrainerForm.get('name')?.invalid && updateTrainerForm.get('name')?.dirty)
+                      }">
+            <p *ngIf="updateTrainerForm.get('name')?.invalid && updateTrainerForm.get('name')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Display name is required
+            </p>
+        </div>
+
+        <!-- Experience -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Experience</label>
+            <input formControlName="experience" [value]="trainer.experience" type="number" placeholder="Experience"
+                class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': updateTrainerForm.get('experience')?.invalid && updateTrainerForm.get('experience')?.dirty,
+                        'border-gray-200 bg-gray-50': !(updateTrainerForm.get('experience')?.invalid && updateTrainerForm.get('experience')?.dirty)
+                      }">
+            <p *ngIf="updateTrainerForm.get('experience')?.invalid && updateTrainerForm.get('experience')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Experience is required
+            </p>
+        </div>
+
+        <!-- Likes -->
+        <div class="flex flex-col gap-1" *ngIf="user?.role === 'admin'">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Likes</label>
+            <input formControlName="likes" [value]="trainer.likes" type="number" placeholder="Likes" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': updateTrainerForm.get('likes')?.invalid && updateTrainerForm.get('likes')?.dirty,
+                        'border-gray-200 bg-gray-50': !(updateTrainerForm.get('likes')?.invalid && updateTrainerForm.get('likes')?.dirty)
+                      }">
+            <p *ngIf="updateTrainerForm.get('likes')?.invalid && updateTrainerForm.get('likes')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Likes is required
+            </p>
+        </div>
+
+        <!-- Motto -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Motto</label>
+            <textarea formControlName="motto" [value]="trainer.motto" rows="3"
+                placeholder="Write a short bio about discipline or motto" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': updateTrainerForm.get('motto')?.invalid && updateTrainerForm.get('motto')?.dirty,
+                        'border-gray-200 bg-gray-50': !(updateTrainerForm.get('motto')?.invalid && updateTrainerForm.get('motto')?.dirty)
+                      }"></textarea>
+            <p *ngIf="updateTrainerForm.get('motto')?.invalid && updateTrainerForm.get('motto')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                At least 10 characters
+            </p>
+        </div>
+
+        <!-- Address -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Address</label>
+            <textarea formControlName="address" [value]="trainer.address" rows="3"
+                placeholder="Write your street address or location here" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': updateTrainerForm.get('address')?.invalid && updateTrainerForm.get('address')?.dirty,
+                        'border-gray-200 bg-gray-50': !(updateTrainerForm.get('address')?.invalid && updateTrainerForm.get('address')?.dirty)
+                      }"></textarea>
+            <p *ngIf="updateTrainerForm.get('address')?.invalid && updateTrainerForm.get('address')?.dirty"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                At least 10 characters
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div class="flex items-center justify-end gap-2">
+            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+                       hover:bg-gray-50 active:scale-[0.98] transition">
+                Clear
+            </button>
+            <button type="submit" (click)="updateTrainer()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                <i-feather name="check" style="width:13px;height:13px;"></i-feather>
+                Update trainer
+            </button>
+        </div>
+
+    </form>
+
 </div>

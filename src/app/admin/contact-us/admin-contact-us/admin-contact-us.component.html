@@ -1,3 +1,5 @@
+<app-admin-search [selector]="selectContactUsList" [fields]="contactUsSearchFields"
+    placeholder="Search submissions..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-contact-us-header [contactUsData]="contactUsData" [totalContactUs]="totalContactUs"
     [contactUsLength]="contactUsLength"></app-contact-us-header>
 <app-contact-us-list [contactUsData]="contactUsData" [totalContactUs]="totalContactUs"></app-contact-us-list>

@@ -79,6 +79,7 @@ export class PartnerDetailsModalComponent {
     try {
       const dialogRef = this.dialog.open(UpdatePartnerFileModalComponent, {
         width: '600px',
+        maxWidth: '95vw',
         data: {
           partnerData: this.partnerData,
         }
@@ -106,6 +107,7 @@ export class PartnerDetailsModalComponent {
     if (partner) {
       const dialogRef = this.dialog.open(ViewCertificateModalComponent, {
         width: '800px',
+        maxWidth: '95vw',
         data: {
           partnerData: partner,
         },
@@ -126,6 +128,7 @@ export class PartnerDetailsModalComponent {
     if (partner) {
       const dialogRef = this.dialog.open(ViewCvModalComponent, {
         width: '800px',
+        maxWidth: '95vw',
         data: {
           partnerData: partner,
         },

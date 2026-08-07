@@ -1,3 +1,11 @@
+<!--
+  Page-scoped admin search: selects the full partner list from the store, filters
+  locally, and emits to `handleSearchResults()` which rewrites partnersData /
+  totalPartners. This page previously had no working search — `search-partner`
+  was an unfinished CLI stub that was never even embedded here.
+-->
+<app-admin-search [selector]="selectPartners" [fields]="partnerSearchFields"
+  placeholder="Search partners..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-partner-header [partnersData]="partnersData" [totalPartners]="totalPartners"
     [partnersLength]="partnersLength"></app-partner-header>
 <app-partner-list [partnersData]="partnersData" [totalPartners]="totalPartners"></app-partner-list>

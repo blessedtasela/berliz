@@ -1,0 +1,214 @@
+<!-- Anchor target for deep links such as /services#exercises -->
+<div id="exercises"></div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION HEADING
+════════════════════════════════════════════════ -->
+<section class="w-full bg-zinc-950 px-4 pt-16 font-sans">
+    <div class="max-w-6xl mx-auto flex flex-col gap-3">
+        <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+            Movement Library
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+            Browse the <span class="text-red-500">exercises</span>
+        </h2>
+        <p class="text-sm text-zinc-400 max-w-md leading-relaxed">
+            Every movement our trainers program — with the muscles it hits and the disciplines it belongs to.
+        </p>
+        <div class="w-12 h-0.5 bg-red-600 rounded-full"></div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     SEARCH + DISCIPLINE FILTER
+════════════════════════════════════════════════ -->
+<section class="w-full bg-zinc-950 font-sans">
+    <div class="w-full max-w-2xl mx-auto px-4 py-8">
+
+        <!-- Search row -->
+        <div class="flex items-stretch gap-2">
+
+            <div class="flex-1 flex items-center bg-zinc-900 border border-zinc-700 rounded-xl
+                        focus-within:border-red-600 focus-within:ring-1 focus-within:ring-red-600/30 transition">
+                <i-feather name="search" class="ml-3 text-zinc-500 shrink-0"
+                    style="width:15px;height:15px;"></i-feather>
+                <input type="text" [(ngModel)]="searchTerm" placeholder="Search exercises or muscle groups…" class="flex-1 bg-transparent px-3 py-2.5 text-sm text-white placeholder-zinc-500
+                           focus:outline-none" aria-label="Search exercises" />
+            </div>
+
+            <button *ngIf="hasActiveFilters" type="button" (click)="clearFilters()" class="px-4 py-2.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-semibold
+                       hover:border-red-600 hover:text-white transition flex items-center gap-2 shrink-0">
+                <i-feather name="x" style="width:13px;height:13px;"></i-feather>
+                Clear
+            </button>
+        </div>
+
+        <!-- Discipline pills -->
+        <div *ngIf="categories.length > 0" class="flex items-center gap-2 mt-4 flex-wrap">
+            <span class="text-[11px] text-zinc-500 font-medium">Discipline:</span>
+
+            <button type="button" (click)="selectCategory(null)"
+                class="px-3 py-1 rounded-full text-[11px] font-semibold border transition" [ngClass]="selectedCategoryId === null
+                    ? 'bg-red-600 border-red-600 text-white'
+                    : 'bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-red-600 hover:text-white'">
+                All
+            </button>
+
+            <button *ngFor="let category of categories" type="button" (click)="selectCategory(category.id)"
+                class="px-3 py-1 rounded-full text-[11px] font-semibold border transition" [ngClass]="selectedCategoryId === category.id
+                    ? 'bg-red-600 border-red-600 text-white'
+                    : 'bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-red-600 hover:text-white'">
+                {{ category.name }}
+            </button>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     EXERCISE CARDS GRID
+════════════════════════════════════════════════ -->
+<section class="w-full bg-zinc-950 px-4 pb-16 font-sans">
+
+    <div class="max-w-6xl mx-auto">
+
+        <!-- ── EMPTY STATE ──────────────────────────────────────────── -->
+        <ng-container *ngIf="filteredExercises.length === 0">
+            <div class="flex flex-col items-center justify-center py-24 gap-6 text-center">
+
+                <div class="w-20 h-20 rounded-full bg-zinc-900 border border-zinc-800
+                            flex items-center justify-center">
+                    <i-feather name="activity" class="text-zinc-600" style="width:32px;height:32px;"></i-feather>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <h3 class="text-lg font-bold text-white">
+                        {{ hasActiveFilters ? 'No exercises match your search' : 'Exercises coming soon' }}
+                    </h3>
+                    <p class="text-sm text-zinc-500 max-w-xs">
+                        {{ hasActiveFilters
+                        ? 'Try a different movement, muscle group or discipline.'
+                        : 'Our trainers are still building the library. Check back soon.' }}
+                    </p>
+                </div>
+
+                <button *ngIf="hasActiveFilters" type="button" (click)="clearFilters()" class="px-5 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold
+                           hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                    <i-feather name="x" style="width:13px;height:13px;"></i-feather>
+                    Clear filters
+                </button>
+            </div>
+        </ng-container>
+
+        <!-- ── CARDS ─────────────────────────────────────────────────── -->
+        <ng-container *ngIf="filteredExercises.length > 0">
+
+            <!-- Count -->
+            <p class="text-xs text-zinc-500 mb-6">
+                Showing
+                <span class="text-white font-semibold">{{ visibleExercises.length }}</span>
+                of <span class="text-white font-semibold">{{ totalMatches }}</span> exercises
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <div *ngFor="let exercise of visibleExercises; trackBy: trackByExerciseId" class="flex flex-col bg-zinc-900 rounded-2xl border border-zinc-800 overflow-hidden
+                            hover:border-red-600/40 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(220,38,38,0.12)]
+                            transition-all duration-300">
+
+                    <!-- Demo clip (base64 mp4 from the backend), when present -->
+                    <div *ngIf="exercise.demo" class="w-full h-40 bg-zinc-800 overflow-hidden">
+                        <video [src]="'data:video/mp4;base64,' + exercise.demo" class="w-full h-full object-cover" muted
+                            loop playsinline></video>
+                    </div>
+
+                    <div class="flex flex-col gap-3 p-5 flex-1">
+
+                        <!-- Name -->
+                        <h3 class="text-sm font-extrabold text-white uppercase tracking-tight leading-tight">
+                            {{ exercise.name }}
+                        </h3>
+
+                        <!-- Description -->
+                        <p *ngIf="exercise.description" class="text-[11px] text-zinc-400 leading-relaxed line-clamp-3">
+                            {{ exercise.description }}
+                        </p>
+
+                        <!-- Muscle groups -->
+                        <div *ngIf="exercise.muscleGroups?.length" class="flex flex-col gap-1.5">
+                            <span class="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
+                                Muscle groups
+                            </span>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span *ngFor="let mg of exercise.muscleGroups" class="text-[10px] font-semibold text-zinc-300 bg-zinc-800 border border-zinc-700
+                                             px-2 py-0.5 rounded-full">
+                                    {{ mg.name }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Divider -->
+                        <div class="border-t border-zinc-800 mt-auto"></div>
+
+                        <!-- Disciplines -->
+                        <div class="flex flex-wrap gap-1.5">
+                            <ng-container *ngIf="exercise.categories?.length; else generalTag">
+                                <span *ngFor="let cat of exercise.categories" class="text-[10px] font-semibold text-red-400 bg-red-950 border border-red-900
+                                             px-2 py-0.5 rounded-full">
+                                    {{ cat.name }}
+                                </span>
+                            </ng-container>
+                            <ng-template #generalTag>
+                                <span class="text-[10px] font-semibold text-zinc-500 bg-zinc-800 border border-zinc-700
+                                             px-2 py-0.5 rounded-full">
+                                    General
+                                </span>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Show more / less toggle — expands within whatever the visitor may reach -->
+            <div *ngIf="canShowMore" class="flex justify-center mt-10">
+                <button type="button" (click)="toggleData()" class="px-6 py-2.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-semibold
+                           hover:border-red-600 hover:text-white transition flex items-center gap-2">
+                    <i-feather [name]="showFullData ? 'chevron-up' : 'chevron-down'"
+                        style="width:13px;height:13px;"></i-feather>
+                    {{ showFullData ? 'Show less' : 'Show more exercises' }}
+                </button>
+            </div>
+
+            <!-- ── LOGIN GATE ────────────────────────────────────────────
+                 Anonymous visitors get the first `previewLimit` movements;
+                 the rest needs an account. -->
+            <div *ngIf="isLoginGated"
+                class="mt-10 bg-zinc-900 border border-zinc-800 rounded-2xl p-8 flex flex-col items-center gap-4 text-center">
+
+                <div class="w-14 h-14 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center">
+                    <i-feather name="lock" class="text-red-500" style="width:22px;height:22px;"></i-feather>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <h3 class="text-base font-bold text-white">
+                        Log in to see all {{ totalMatches }} exercises
+                    </h3>
+                    <p class="text-sm text-zinc-500 max-w-sm">
+                        You are viewing the first {{ previewLimit }}. Sign in to browse the full movement
+                        library and build workouts from it.
+                    </p>
+                </div>
+
+                <a [routerLink]="['/login']" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 text-white text-sm
+                          font-semibold hover:bg-red-700 active:scale-[0.98] transition">
+                    <i-feather name="log-in" style="width:14px;height:14px;"></i-feather>
+                    Log in
+                </a>
+            </div>
+
+        </ng-container>
+
+    </div>
+</section>

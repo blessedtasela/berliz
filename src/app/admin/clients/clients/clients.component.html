@@ -1,3 +1,5 @@
+<app-admin-search [selector]="selectClients" [fields]="clientSearchFields"
+    placeholder="Search clients..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-clients-header [clientsData]="clientsData" [totalClients]="totalClients"
     [clientsLength]="clientsLength"></app-clients-header>
 <app-clients-list [clientsData]="clientsData" [totalClients]="totalClients"></app-clients-list>

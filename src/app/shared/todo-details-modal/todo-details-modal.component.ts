@@ -431,6 +431,7 @@ export class TodoDetailsModalComponent implements OnInit {
 
     const dialogRef = this.dialog.open(PromptModalComponent, {
       width: '400px',
+      maxWidth: '95vw',
       data: {
         message: `co this task?`,
         confirmation: true,
@@ -491,6 +492,7 @@ export class TodoDetailsModalComponent implements OnInit {
 
     const dialogRef = this.dialog.open(PromptModalComponent, {
       width: '400px',
+      maxWidth: '95vw',
       data: {
         message: `restart this task?`,
         confirmation: true,

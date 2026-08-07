@@ -41,6 +41,20 @@ export class TestimonialService {
     return this.httpClient.get<ApiResponse<Testimonials[]>>(this.url + "/testimonial/getActiveTestimonials")
   }
 
+  getByTrainer(trainerId: number) {
+    return this.httpClient.get<ApiResponse<Testimonials[]>>(this.url + `/testimonial/getByTrainer/${trainerId}`)
+  }
+
+  getByCenter(centerId: number) {
+    return this.httpClient.get<ApiResponse<Testimonials[]>>(this.url + `/testimonial/getByCenter/${centerId}`)
+  }
+
+  updateFeatured(id: number) {
+    return this.httpClient.put<ApiResponse<Testimonials>>(this.url + `/testimonial/updateFeatured/${id}`, null, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
   deleteTestimonial(id: number) {
     return this.httpClient.delete<ApiResponse<Testimonials>>(this.url + `/testimonial/delete/${id}`);
   }

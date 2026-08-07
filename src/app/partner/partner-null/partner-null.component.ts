@@ -103,6 +103,7 @@ export class PartnerNullComponent {
 
     const dialogRef = this.dialog.open(PartnerFormComponent, {
       width: '600px',
+      maxWidth: '95vw',
       disableClose: true, // only explicit close button can close it
       data: {
         email: userEmail,

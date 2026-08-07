@@ -2,9 +2,8 @@ import {
   Component,
   OnInit,
   HostListener,
-  EventEmitter,
-  Output,
-  Input
+  Input,
+  ViewChild
 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -16,22 +15,6 @@ import { UserService } from 'src/app/services/user.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { Categories } from 'src/app/models/categories.interface';
-import { Centers } from 'src/app/models/centers.interface';
-import { Clients } from 'src/app/models/clients.interface';
-import { ContactUs } from 'src/app/models/contact-us.model';
-import { Exercises } from 'src/app/models/exercise.interface';
-import { Members } from 'src/app/models/members.interface';
-import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
-import { Newsletter } from 'src/app/models/newsletter.model';
-import { Partner } from 'src/app/models/partners.interface';
-import { Payments } from 'src/app/models/payment.interface';
-import { Subscriptions } from 'src/app/models/subscriptions.interface';
-import { Tags } from 'src/app/models/tags.interface';
-import { SubTasks, Tasks } from 'src/app/models/tasks.interface';
-import { Testimonials } from 'src/app/models/testimonials.model';
-import { TodoList } from 'src/app/models/todoList.interface';
-import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { selectUser } from 'src/app/state/user/user.selector';
@@ -39,6 +22,7 @@ import { loadUser } from 'src/app/state/user/user.actions';
 import { Store } from '@ngrx/store';
 import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
 import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
+import { GlobalSearchComponent } from '../global-search/global-search.component';
 
 @Component({
   selector: 'app-top-bar',
@@ -55,33 +39,23 @@ export class TopBarComponent implements OnInit {
 
   notificationLength = 0;
   notificationDropdown = false;
+
+  /**
+   * Below `md`, the bar collapses to a search-only row: logo, breadcrumb, bell,
+   * home and profile step aside so the input and its results own the full
+   * width. Above `md` the flag is inert — every element it hides carries a
+   * `md:` class that wins back the display.
+   */
   isMobileSearchOpen = false;
+
+  @ViewChild('globalSearch') globalSearch?: GlobalSearchComponent;
+
   destroy$ = new Subject<void>();
 
   subscriptions: Subscription[] = [];
 
+  // Still consumed by <app-profile [search]="isSearch">.
   @Input() isSearch = false;
-  @Input() searchComponent = '';
-
-  @Output() categoriesResults = new EventEmitter<Categories[]>();
-  @Output() contactUsResults = new EventEmitter<ContactUs[]>();
-  @Output() trainersResults = new EventEmitter<Trainers[]>();
-  @Output() usersResults = new EventEmitter<Users[]>();
-  @Output() partnersResults = new EventEmitter<Partner[]>();
-  @Output() centersResult = new EventEmitter<Centers[]>();
-  @Output() newslettersResult = new EventEmitter<Newsletter[]>();
-  @Output() tagsResults = new EventEmitter<Tags[]>();
-  @Output() myTodoResults = new EventEmitter<TodoList[]>();
-  @Output() todoListResults = new EventEmitter<TodoList[]>();
-  @Output() muscleGroupResults = new EventEmitter<MuscleGroups[]>();
-  @Output() exerciseResults = new EventEmitter<Exercises[]>();
-  @Output() clientsResult = new EventEmitter<Clients[]>();
-  @Output() membersResult = new EventEmitter<Members[]>();
-  @Output() paymentsResult = new EventEmitter<Payments[]>();
-  @Output() subscriptionsResults = new EventEmitter<Subscriptions[]>();
-  @Output() subTasksResult = new EventEmitter<SubTasks[]>();
-  @Output() tasksResults = new EventEmitter<Tasks[]>();
-  @Output() testimonialsResult = new EventEmitter<Testimonials[]>();
 
   constructor(
     private router: Router,
@@ -145,11 +119,18 @@ export class TopBarComponent implements OnInit {
 
 
   openMobileSearch() {
+    if (this.isMobileSearchOpen) {
+      return;
+    }
     this.isMobileSearchOpen = true;
+    // The input is only rendered-visible after this change is flushed, so hand
+    // focus over on the next tick — one tap gets the user typing.
+    setTimeout(() => this.globalSearch?.focusInput());
   }
 
   closeMobileSearch() {
     this.isMobileSearchOpen = false;
+    this.globalSearch?.clear();
   }
 
   toggleNotificationDropdown() {
@@ -172,12 +153,13 @@ export class TopBarComponent implements OnInit {
   @HostListener('window:resize')
   onResize(): void {
     this.openMenu = window.innerWidth >= 768;
-  }
 
-  get hasSearch(): boolean {
-    return !!this.searchComponent;
+    // Desktop focus also raises `activated`; make sure the flag never survives
+    // a resize back down into the mobile layout.
+    if (window.innerWidth >= 768) {
+      this.isMobileSearchOpen = false;
+    }
   }
-
 
   subscribeToCloseSideBar() {
     document.addEventListener('mousedown', (event) => {
@@ -198,83 +180,6 @@ export class TopBarComponent implements OnInit {
 
   stopPropagation(event: Event): void {
     event.stopPropagation();
-  }
-
-  handleCategorySearchResults(results: Categories[]): void {
-    this.categoriesResults.emit(results);
-  }
-
-  handleContactUsSearchResults(results: ContactUs[]): void {
-    this.contactUsResults.emit(results);
-    this.isSearch = true;
-  }
-
-  handleTrainerSearchResults(results: Trainers[]): void {
-    this.trainersResults.emit(results);
-  }
-
-  handleUserSearchResults(results: Users[]): void {
-    this.usersResults.emit(results);
-  }
-
-  handlePartnerSearchResults(results: Partner[]): void {
-    this.partnersResults.emit(results);
-  }
-
-  handleCenterSearchResults(results: Centers[]): void {
-    this.centersResult.emit(results);
-  }
-
-  handleNewsletterSearchResults(results: Newsletter[]): void {
-    this.newslettersResult.emit(results);
-  }
-
-  handleTagSearchResults(results: Tags[]) {
-    this.tagsResults.emit(results);
-  }
-
-  handleMyTodoSearchResults(results: TodoList[]) {
-    this.myTodoResults.emit(results);
-  }
-
-  handleTodoListSearchResults(results: TodoList[]) {
-    this.todoListResults.emit(results);
-  }
-
-  handleMuscleGroupSearchResults(results: MuscleGroups[]) {
-    this.muscleGroupResults.emit(results);
-  }
-
-  handleExerciseSearchResults(results: Exercises[]) {
-    this.exerciseResults.emit(results);
-  }
-
-  handlePaymentSearchResults(results: Payments[]) {
-    this.paymentsResult.emit(results);
-  }
-
-  handleClientSearchResults(results: Clients[]) {
-    this.clientsResult.emit(results);
-  }
-
-  handleMemberSearchResults(results: Members[]) {
-    this.membersResult.emit(results);
-  }
-
-  handleSubscriptionSearchResults(results: Subscriptions[]) {
-    this.subscriptionsResults.emit(results);
-  }
-
-  handlesubTaskSearchResults(results: SubTasks[]) {
-    this.subTasksResult.emit(results);
-  }
-
-  handleTaskSearchResults(results: Tasks[]) {
-    this.tasksResults.emit(results);
-  }
-
-  handleTestimonialSearchResults(results: Testimonials[]) {
-    this.testimonialsResult.emit(results);
   }
 
   private registerNotificationTopics() {

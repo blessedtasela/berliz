@@ -99,6 +99,7 @@ export class MembersHeaderComponent {
   openAddCategory() {
     const dialogRef = this.dialog.open(AddMembersModalComponent, {
       width: '800px',
+      maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,
     });

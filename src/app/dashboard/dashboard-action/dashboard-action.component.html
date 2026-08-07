@@ -10,7 +10,7 @@
     <div class="overflow-x-auto px-4 py-4">
         <div class="flex gap-3" style="min-width: max-content;">
 
-            <a *ngFor="let item of (data | keyvalue) | slice:0:10" [routerLink]="['/dashboard/' + formatUrl(item.key)]" class="w-44 flex flex-col gap-3 p-4 border border-gray-200 rounded-xl bg-white
+            <a *ngFor="let item of (data | keyvalue) | slice:0:10" [routerLink]="resolveRoute(item.key)" class="w-44 flex flex-col gap-3 p-4 border border-gray-200 rounded-xl bg-white
                hover:shadow-sm hover:-translate-y-0.5 transition cursor-pointer shrink-0">
 
                 <!-- Dot -->

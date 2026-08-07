@@ -12,7 +12,7 @@ import { CentersComponent } from './centers/centers.component';
 import { UpdateCenterModalComponent } from './update-center-modal/update-center-modal.component';
 import { FooterModule } from 'src/app/footer/footer.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
-import { CenterPricingModule } from '../center-pricing/center-pricing.module';
+import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 
 
 
@@ -35,7 +35,7 @@ import { CenterPricingModule } from '../center-pricing/center-pricing.module';
     MatDialogModule,
     FooterModule,
     NavbarModule,
-    CenterPricingModule,
+    AdminSearchModule,
     RouterModule.forChild([{ path: '', component: CentersComponent }])
   ]
 })

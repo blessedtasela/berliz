@@ -1,54 +1,51 @@
-<div class="justify-center items-center p-5 overflow-x-scroll rounded-lg">
-    <div class="min-w-[300px]">
-        <table class="table-auto border-collapse border border-gray-400 bg-gray-300 text-gray-950 font-sans
-                container">
+<div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
             <thead>
-                <tr class="cursor-pointer">
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">SN</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Email </th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Status</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Date</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">ContactUs ID</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Last update</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Actions</th>
+                <tr class="bg-gray-50 border-b border-gray-200">
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Email</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Status</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Contact-us ID</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr *ngFor="let contactUs of contactUsData; let i = index" class="bg-gray-100 hover:bg-gray-200">
-                    <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        <a href="mailto:{{ contactUs.email }}"> {{ contactUs.email }}</a>
+            <tbody class="divide-y divide-gray-100">
+                <tr *ngFor="let contactUs of contactUsData; let i = index" class="hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
+                    <td class="px-4 py-3">
+                        <a href="mailto:{{ contactUs.email }}"
+                            class="font-semibold text-gray-900 hover:text-red-600 transition-colors">{{ contactUs.email }}</a>
                     </td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ contactUs.status }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(contactUs.date) }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2 font-bold">{{ contactUs.id }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ formatDate(contactUs.lastUpdate) }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        <div class="flex items-center p-2">
-                            <button
-                                class="text-sm rounded-md font-sans mx-auto ml-4
-                                    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                (click)="openContactUsDetails(contactUs.id)">
-                                <i-feather name="eye" class="text-gray-800"></i-feather>
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold"
+                              [ngClass]="contactUs.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-amber-50 text-amber-700 border border-amber-200'">
+                            {{ contactUs.status === 'true' ? 'Reviewed' : 'Pending' }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-gray-600">{{ formatDate(contactUs.date) }}</td>
+                    <td class="px-4 py-3 font-semibold text-gray-900">{{ contactUs.id }}</td>
+                    <td class="px-4 py-3 text-gray-600">{{ formatDate(contactUs.lastUpdate) }}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center justify-end gap-1">
+                            <button class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
+                                (click)="openContactUsDetails(contactUs.id)" title="View">
+                                <i-feather name="eye" class="text-gray-500" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button
-                                class="text-sm rounded-md font-sans mx-auto ml-4
-                                        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                (click)="openUpdateContactUs(contactUs.id)">
-                                <i-feather name="edit" class="text-red-600"></i-feather>
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                                (click)="openUpdateContactUs(contactUs.id)" title="Edit">
+                                <i-feather name="edit-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button
-                                class="text-sm bg-gray-950 text-white p-1 px-2 hover:bg-gray-1000 rounded-md font-sans mx-auto ml-4
-                                transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                [ngClass]="{'bg-red-600 hover:bg-red-700': contactUs.status == 'true'}"
+                            <button class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition"
+                                [ngClass]="contactUs.status === 'true' ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-red-600 text-white hover:bg-red-700'"
                                 (click)="updateContactUsStatus(contactUs.id)">
-                                {{ contactUs.status == 'false' ? 'pending' : 'reviewed'}}
+                                {{ contactUs.status === 'false' ? 'Pending' : 'Reviewed' }}
                             </button>
-                            <button
-                                class="text-sm rounded-md font-sans mx-auto ml-4
-                                        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                (click)="deleteContactUs(contactUs.id)">
-                                <i-feather name="trash-2" class="text-red-600"></i-feather>
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                                (click)="deleteContactUs(contactUs.id)" title="Delete">
+                                <i-feather name="trash-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
                             </button>
                         </div>
                     </td>
@@ -56,3 +53,10 @@
             </tbody>
         </table>
     </div>
+    <div *ngIf="contactUsData.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-center">
+        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+            <i-feather name="inbox" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        </div>
+        <p class="text-sm text-gray-400">No contact-us submissions yet.</p>
+    </div>
+</div>

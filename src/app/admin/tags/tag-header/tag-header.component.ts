@@ -77,7 +77,8 @@ export class TagHeaderComponent {
   openAddTag() {
     const dialogRef = this.dialog.open(AddTagModalComponent, {
       width: '700px',
-      height: '420px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
     });
     const childComponentInstance = dialogRef.componentInstance as AddTagModalComponent;
     childComponentInstance.onAddTagEmit.subscribe(() => {

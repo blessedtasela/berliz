@@ -6,19 +6,19 @@
     <div class="w-full max-w-2xl mx-auto px-4 py-8">
 
         <!-- Search row -->
-        <div class="flex items-stretch gap-2">
+        <div class="flex flex-col sm:flex-row items-stretch gap-2">
 
             <!-- Input -->
-            <div class="flex-1 flex items-center bg-zinc-900 border border-zinc-700 rounded-xl
+            <div class="flex-1 min-w-0 flex items-center bg-zinc-900 border border-zinc-700 rounded-xl
                         focus-within:border-red-600 focus-within:ring-1 focus-within:ring-red-600/30 transition">
                 <i-feather name="search" class="ml-3 text-zinc-500 shrink-0" style="width:15px;height:15px;"></i-feather>
-                <input type="text" [(ngModel)]="searchQuery" placeholder="Search by name, tag or description…" class="flex-1 bg-transparent px-3 py-2.5 text-sm text-white placeholder-zinc-500
+                <input type="text" [(ngModel)]="searchQuery" placeholder="Search by name, tag or description…" class="flex-1 min-w-0 bg-transparent px-3 py-2.5 text-sm text-white placeholder-zinc-500
                            focus:outline-none" aria-label="Search services" />
             </div>
 
             <!-- Button -->
             <button type="button" (click)="searchByButton()" class="px-4 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
-                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2 shrink-0">
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center justify-center gap-2 shrink-0 w-full sm:w-auto">
                 <i-feather name="search" style="width:13px;height:13px;"></i-feather>
                 Search
             </button>

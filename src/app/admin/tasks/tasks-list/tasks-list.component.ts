@@ -56,7 +56,8 @@ export class TasksListComponent {
       if (task) {
         const dialogRef = this.dialog.open(UpdateTasksModalComponent, {
           width: '900px',
-          maxHeight: '600px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           disableClose: true,
           data: {
             taskData: task,
@@ -87,6 +88,7 @@ export class TasksListComponent {
       if (task) {
         const dialogRef = this.dialog.open(TaskDetailsModalComponent, {
           width: '800px',
+          maxWidth: '95vw',
           panelClass: 'mat-dialog-height',
           data: {
             taskData: task,

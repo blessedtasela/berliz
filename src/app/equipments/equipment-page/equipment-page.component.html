@@ -1,4 +1,282 @@
-<div class="mt-20 p-8 h-screen flex-col w-full font-extrabold">
-    <h2 class="mb-10 text-4xl text-red-600 ">Coming Soon.....</h2>
-    <p class="text-2xl text-white">This page is Under Construction</p>
-</div>
+<!-- Anchor target for deep links such as /services#equipment -->
+<div id="equipment"></div>
+
+<!-- ═══════════════════════════════════════════════
+     EQUIPMENT HERO — full-width cinematic banner
+     (standalone use only — the Programs page has its own hero)
+════════════════════════════════════════════════ -->
+<section *ngIf="!embedded" class="relative w-full h-72 sm:h-80 overflow-hidden font-sans">
+
+    <!-- Background image -->
+    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style="background-image: url('assets/landing/hero-gym-centers.jpg');">
+    </div>
+
+    <!-- Dark gradient overlay -->
+    <div class="absolute inset-0"
+        style="background: linear-gradient(135deg, rgba(0,0,0,0.82) 0%, rgba(80,0,0,0.55) 60%, rgba(0,0,0,0.75) 100%);">
+    </div>
+
+    <!-- Content -->
+    <div class="relative z-10 flex flex-col items-center justify-center h-full gap-3 px-4 text-center">
+
+        <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+            Berliz Gear
+        </span>
+
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+            Browse The <span class="text-red-500">Equipment</span>
+        </h1>
+
+        <p class="text-sm text-zinc-300 max-w-md leading-relaxed">
+            See exactly what each center trains with — machines, racks and rigs, center by center.
+        </p>
+
+        <div class="w-12 h-0.5 bg-red-600 rounded-full mt-1"></div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     SECTION HEADING — embedded use only
+════════════════════════════════════════════════ -->
+<section *ngIf="embedded" class="w-full bg-zinc-950 px-4 pt-16 font-sans">
+    <div class="max-w-6xl mx-auto flex flex-col gap-3">
+        <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+            Berliz Gear
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+            Browse the <span class="text-red-500">equipment</span>
+        </h2>
+        <p class="text-sm text-zinc-400 max-w-md leading-relaxed">
+            See exactly what each center trains with — machines, racks and rigs, center by center.
+        </p>
+        <div class="w-12 h-0.5 bg-red-600 rounded-full"></div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     SEARCH + DISCIPLINE FILTER
+════════════════════════════════════════════════ -->
+<section class="w-full bg-zinc-950 font-sans">
+    <div class="w-full max-w-2xl mx-auto px-4 py-8">
+
+        <!-- Search row -->
+        <div class="flex items-stretch gap-2">
+
+            <div class="flex-1 flex items-center bg-zinc-900 border border-zinc-700 rounded-xl
+                        focus-within:border-red-600 focus-within:ring-1 focus-within:ring-red-600/30 transition">
+                <i-feather name="search" class="ml-3 text-zinc-500 shrink-0"
+                    style="width:15px;height:15px;"></i-feather>
+                <input type="text" [(ngModel)]="searchTerm" placeholder="Search equipment or center…" class="flex-1 bg-transparent px-3 py-2.5 text-sm text-white placeholder-zinc-500
+                           focus:outline-none" aria-label="Search equipment" />
+            </div>
+
+            <button *ngIf="hasActiveFilters" type="button" (click)="clearFilters()" class="px-4 py-2.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-semibold
+                       hover:border-red-600 hover:text-white transition flex items-center gap-2 shrink-0">
+                <i-feather name="x" style="width:13px;height:13px;"></i-feather>
+                Clear
+            </button>
+        </div>
+
+        <!-- Discipline pills -->
+        <div *ngIf="categories.length > 0" class="flex items-center gap-2 mt-4 flex-wrap">
+            <span class="text-[11px] text-zinc-500 font-medium">Discipline:</span>
+
+            <button type="button" (click)="selectCategory(null)"
+                class="px-3 py-1 rounded-full text-[11px] font-semibold border transition" [ngClass]="selectedCategoryId === null
+                    ? 'bg-red-600 border-red-600 text-white'
+                    : 'bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-red-600 hover:text-white'">
+                All
+            </button>
+
+            <button *ngFor="let category of categories" type="button" (click)="selectCategory(category.id)"
+                class="px-3 py-1 rounded-full text-[11px] font-semibold border transition" [ngClass]="selectedCategoryId === category.id
+                    ? 'bg-red-600 border-red-600 text-white'
+                    : 'bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-red-600 hover:text-white'">
+                {{ category.name }}
+            </button>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     EQUIPMENT CARDS GRID
+════════════════════════════════════════════════ -->
+<section class="w-full bg-zinc-950 px-4 pb-16 font-sans">
+
+    <div class="max-w-6xl mx-auto">
+
+        <!-- ── EMPTY STATE ──────────────────────────────────────────── -->
+        <ng-container *ngIf="filteredEquipment.length === 0">
+            <div class="flex flex-col items-center justify-center py-24 gap-6 text-center">
+
+                <div class="w-20 h-20 rounded-full bg-zinc-900 border border-zinc-800
+                            flex items-center justify-center">
+                    <i-feather name="package" class="text-zinc-600" style="width:32px;height:32px;"></i-feather>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <h3 class="text-lg font-bold text-white">
+                        {{ hasActiveFilters ? 'No equipment matches your search' : 'Equipment listings coming soon' }}
+                    </h3>
+                    <p class="text-sm text-zinc-500 max-w-xs">
+                        {{ hasActiveFilters
+                        ? 'Try a different name or discipline.'
+                        : 'Centers are still adding their gear. Check back soon.' }}
+                    </p>
+                </div>
+
+                <button *ngIf="hasActiveFilters" type="button" (click)="clearFilters()" class="px-5 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold
+                           hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                    <i-feather name="x" style="width:13px;height:13px;"></i-feather>
+                    Clear filters
+                </button>
+            </div>
+        </ng-container>
+
+        <!-- ── CARDS ─────────────────────────────────────────────────── -->
+        <ng-container *ngIf="filteredEquipment.length > 0">
+
+            <!-- Count -->
+            <p class="text-xs text-zinc-500 mb-6">
+                Showing
+                <span class="text-white font-semibold">{{ visibleEquipment.length }}</span>
+                of <span class="text-white font-semibold">{{ totalMatches }}</span> items
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <ng-container *ngFor="let item of visibleEquipment; trackBy: trackByEquipmentId">
+
+                    <div class="flex flex-col bg-zinc-900 rounded-2xl border border-zinc-800 overflow-hidden
+                                hover:border-red-600/40 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(220,38,38,0.12)]
+                                transition-all duration-300">
+
+                        <!-- Photo (grid card shows the primary image only) -->
+                        <button type="button" (click)="openDetails(item)"
+                            class="relative w-full h-44 bg-zinc-800 overflow-hidden flex items-center justify-center"
+                            [attr.aria-label]="'View ' + item.name">
+
+                            <img *ngIf="item.imageUrl; else noPhoto" [src]="item.imageUrl" [alt]="item.name"
+                                class="w-full h-full object-contain p-6" />
+
+                            <ng-template #noPhoto>
+                                <div class="w-full h-full flex flex-col items-center justify-center gap-2 bg-zinc-800">
+                                    <i-feather name="package" class="text-zinc-600"
+                                        style="width:30px;height:30px;"></i-feather>
+                                    <span class="text-[10px] font-semibold uppercase tracking-wide text-zinc-600">
+                                        No photo
+                                    </span>
+                                </div>
+                            </ng-template>
+
+                            <!-- Gradient fade at bottom -->
+                            <div class="absolute bottom-0 left-0 right-0 h-16
+                                        bg-gradient-to-t from-zinc-900 to-transparent pointer-events-none">
+                            </div>
+
+                            <!-- Stock badge -->
+                            <span *ngIf="item.stockNumber > 0" class="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-bold
+                                       bg-zinc-950/80 border border-zinc-700 text-zinc-300">
+                                {{ item.stockNumber }} in stock
+                            </span>
+                        </button>
+
+                        <!-- Body -->
+                        <div class="flex flex-col gap-3 p-5 flex-1">
+
+                            <!-- Name -->
+                            <h3 class="text-sm font-extrabold text-white uppercase tracking-tight leading-tight">
+                                {{ item.name }}
+                            </h3>
+
+                            <!-- Disciplines -->
+                            <div class="flex flex-wrap gap-1.5">
+                                <ng-container *ngIf="categoryNamesFor(item).length > 0; else defaultTag">
+                                    <span *ngFor="let name of categoryNamesFor(item)" class="text-[10px] font-semibold text-zinc-400 bg-zinc-800 border border-zinc-700
+                                                 px-2 py-0.5 rounded-full">
+                                        {{ name }}
+                                    </span>
+                                </ng-container>
+                                <ng-template #defaultTag>
+                                    <span class="text-[10px] font-semibold text-zinc-500 bg-zinc-800 border border-zinc-700
+                                                 px-2 py-0.5 rounded-full">
+                                        General
+                                    </span>
+                                </ng-template>
+                            </div>
+
+                            <!-- Owning center -->
+                            <a *ngIf="item.centerName" [routerLink]="['/centers', item.centerId, formatUrl(item.centerName)]"
+                                class="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-red-400 transition w-fit">
+                                <i-feather name="map-pin" style="width:12px;height:12px;"></i-feather>
+                                <span class="font-medium truncate">{{ item.centerName }}</span>
+                            </a>
+
+                            <!-- Divider -->
+                            <div class="border-t border-zinc-800 mt-auto"></div>
+
+                            <!-- Stock + CTA -->
+                            <div class="flex items-center justify-between">
+
+                                <span *ngIf="item.stockNumber > 0" class="text-xs text-zinc-500">
+                                    <span class="text-white font-semibold">{{ item.stockNumber }}</span> available
+                                </span>
+                                <span *ngIf="!item.stockNumber" class="text-xs text-zinc-600">Stock not listed</span>
+
+                                <button type="button" (click)="openDetails(item)" class="px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-semibold
+                                          hover:bg-red-700 active:scale-[0.98] transition">
+                                    Know more
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </ng-container>
+            </div>
+
+            <!-- Show more / less toggle — expands within whatever the visitor may reach -->
+            <div *ngIf="canShowMore" class="flex justify-center mt-10">
+                <button type="button" (click)="toggleData()" class="px-6 py-2.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-semibold
+                           hover:border-red-600 hover:text-white transition flex items-center gap-2">
+                    <i-feather [name]="showFullData ? 'chevron-up' : 'chevron-down'"
+                        style="width:13px;height:13px;"></i-feather>
+                    {{ showFullData ? 'Show less' : 'Show more equipment' }}
+                </button>
+            </div>
+
+            <!-- ── LOGIN GATE ────────────────────────────────────────────
+                 Anonymous visitors get the first `previewLimit` items;
+                 the rest needs an account. -->
+            <div *ngIf="isLoginGated"
+                class="mt-10 bg-zinc-900 border border-zinc-800 rounded-2xl p-8 flex flex-col items-center gap-4 text-center">
+
+                <div class="w-14 h-14 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center">
+                    <i-feather name="lock" class="text-red-500" style="width:22px;height:22px;"></i-feather>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <h3 class="text-base font-bold text-white">
+                        Log in to see all {{ totalMatches }} equipment items
+                    </h3>
+                    <p class="text-sm text-zinc-500 max-w-sm">
+                        You are viewing the first {{ previewLimit }}. Sign in to browse every center's
+                        full inventory.
+                    </p>
+                </div>
+
+                <a [routerLink]="['/login']" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 text-white text-sm
+                          font-semibold hover:bg-red-700 active:scale-[0.98] transition">
+                    <i-feather name="log-in" style="width:14px;height:14px;"></i-feather>
+                    Log in
+                </a>
+            </div>
+
+        </ng-container>
+
+    </div>
+</section>

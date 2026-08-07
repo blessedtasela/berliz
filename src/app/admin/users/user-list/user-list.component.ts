@@ -60,7 +60,8 @@ export class UserListComponent {
       if (user) {
         const dialogRef = this.dialog.open(AdminUpdateUserModalComponent, {
           width: '900px',
-          height: '600px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           disableClose: true,
           data: {
             userData: user,
@@ -91,7 +92,8 @@ export class UserListComponent {
       if (user) {
         const dialogRef = this.dialog.open(AdminUpdateUserRoleModalComponent, {
           width: '500px',
-          height: '300px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           data: {
             userData: user,
           }
@@ -246,6 +248,7 @@ export class UserListComponent {
     const user = this.usersData.find(user => user.id === id);
     const dialogRef = this.dialog.open(UserDetailsModalComponent, {
       width: '800px',
+      maxWidth: '95vw',
       data: {
         userData: user,
         photo: 'data:image/jpeg;base64,' + user?.profilePhoto.photo
@@ -297,7 +300,8 @@ export class UserListComponent {
     const user = this.usersData.find(user => user.id === id);
     const dialogRef = this.dialog.open(UpdateEmailModalComponent, {
       width: '600px',
-      height: '400px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
       disableClose: true,
       data: {
         userData: user,

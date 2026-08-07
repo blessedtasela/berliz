@@ -98,7 +98,8 @@ export class CenterHeaderComponent {
   openAddCenter() {
     const dialogRef = this.dialog.open(AddCenterModalComponent, {
       width: '800px',
-      height: '600px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
       disableClose: true
     });
     const childComponentInstance = dialogRef.componentInstance as AddCenterModalComponent;

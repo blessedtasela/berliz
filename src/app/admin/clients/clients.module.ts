@@ -12,6 +12,8 @@ import { FeatherModule } from 'angular-feather';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { FooterModule } from 'src/app/footer/footer.module';
+import { UserHoverCardComponent } from 'src/app/shared/user-hover-card/user-hover-card.component';
+import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 
 
 
@@ -32,6 +34,8 @@ import { FooterModule } from 'src/app/footer/footer.module';
     ReactiveFormsModule,
     NavbarModule,
     FooterModule,
+    UserHoverCardComponent,
+    AdminSearchModule,
     RouterModule.forChild([{ path: '', component: ClientsComponent }])
   ]
 })

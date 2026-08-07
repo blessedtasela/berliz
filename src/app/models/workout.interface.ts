@@ -31,6 +31,15 @@ export interface WorkoutResponse {
     lastUpdate: Date;
     status: string;
     exercises: WorkoutExerciseResponse[];
+    /** True only for admin-curated public templates (GET /workout/getTemplates). */
+    isTemplate: boolean;
+    /** Set on a workout cloned from a template; null otherwise. */
+    sourceTemplateId: number | null;
+    /**
+     * How many times this template has been cloned. The backend coalesces null to
+     * 0, so this is safe to sort on directly. Only meaningful when isTemplate.
+     */
+    cloneCount: number;
     message?: string;
 }
 
@@ -67,6 +76,11 @@ export interface WorkoutRequest {
     name: string;
     description: string;
     exercises: WorkoutExerciseRequest[];
+    /**
+     * Only honoured for admin callers — the backend silently forces this false
+     * for every other role, so sending it from a non-admin UI is a no-op.
+     */
+    isTemplate?: boolean;
 }
 
 export interface WorkoutAssignmentRequest {

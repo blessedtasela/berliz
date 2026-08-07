@@ -5,6 +5,7 @@ import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { TrainerPricing } from 'src/app/models/trainers.interface';
 import { selectTrainerPricing } from 'src/app/state/trainer/trainer.selector';
 import { loadTrainerPricing } from 'src/app/state/trainer/trainer.actions';
+import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
   selector: 'app-trainer-pricing',
@@ -17,6 +18,12 @@ export class TrainerPricingComponent {
   trainerPricingLength: number = 0;
   searchComponent: string = 'trainer-pricing'
   isSearch: boolean = true;
+
+  readonly selectTrainerPricing = selectTrainerPricing;
+  readonly trainerPricingSearchFields: AdminSearchField<TrainerPricing>[] = [
+    { value: 'trainer', label: 'Trainer', accessor: t => t.trainerName },
+    { value: 'id', label: 'Pricing id', accessor: t => t.id?.toString() },
+  ];
 
   constructor(private ngxService: NgxUiLoaderService,
     public store: Store) {

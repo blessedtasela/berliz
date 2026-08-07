@@ -8,6 +8,9 @@ export interface WorkoutState {
     myWorkouts: WorkoutResponse[];
     selectedWorkout: WorkoutResponse | null;
 
+    // Admin-curated public templates (isTemplate = true)
+    templates: WorkoutResponse[];
+
     // Assignments
     myAssignedWorkouts: WorkoutAssignmentResponse[];
     assignmentsIMade: WorkoutAssignmentResponse[];
@@ -19,6 +22,8 @@ export const initialWorkoutState: WorkoutState = {
 
     myWorkouts: [],
     selectedWorkout: null,
+
+    templates: [],
 
     myAssignedWorkouts: [],
     assignmentsIMade: [],

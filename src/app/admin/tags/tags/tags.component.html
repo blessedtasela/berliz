@@ -1,3 +1,10 @@
-<app-search-tag (results)="handleSearchResults($event)"></app-search-tag>
+<!--
+  Page-scoped admin search: selects the full tag list from the store, filters
+  locally, and emits to `handleSearchResults()` which rewrites tagsData /
+  totalTags / tagsLength. The top-bar `<app-global-search>` navigates to pages
+  instead of filtering this table, so this is a distinct, real feature.
+-->
+<app-admin-search [selector]="selectTags" [fields]="tagSearchFields"
+  placeholder="Search tags..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-tag-header [tagsData]="tagsData" [totalTags]="totalTags" [tagsLength]="tagsLength"></app-tag-header>
 <app-tag-list [tagsData]="tagsData"></app-tag-list>

@@ -15,7 +15,9 @@ import {
   CenterVideoAlbum,
   Centers,
 } from 'src/app/models/centers.interface';
+import { Testimonials } from 'src/app/models/testimonials.model';
 import { Trainers } from 'src/app/models/trainers.interface';
+import { TestimonialDialogService } from 'src/app/testimonial/testimonial-dialog.service';
 import { CenterTrainerCard } from '../center-trainers/center-trainers.component';
 
 import * as CenterActions from 'src/app/state/center/center.actions';
@@ -24,6 +26,8 @@ import * as CategoryActions from 'src/app/state/category/category.actions';
 import * as CategorySelectors from 'src/app/state/category/category.selectors';
 import * as TrainerActions from 'src/app/state/trainer/trainer.actions';
 import * as TrainerSelectors from 'src/app/state/trainer/trainer.selector';
+import * as TestimonialActions from 'src/app/state/testimonial/testimonial.actions';
+import * as TestimonialSelectors from 'src/app/state/testimonial/testimonial.selectors';
 
 @Component({
   selector: 'app-center-detail',
@@ -45,6 +49,7 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
   centerReview: CenterReviews[] = [];
   centerAlbums: CenterPhotoAlbum[] = [];
   centerVideoAlbums: CenterVideoAlbum[] = [];
+  centerTestimonials: Testimonials[] = [];
 
   loading: boolean = true;
   notFound: boolean = false;
@@ -58,6 +63,7 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private store: Store,
+    private testimonialDialog: TestimonialDialogService,
   ) { }
 
   ngOnInit(): void {
@@ -102,6 +108,7 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     this.store.dispatch(CenterActions.loadActiveCenters());
     this.store.dispatch(CenterActions.loadActiveCenterAnnouncements({ id: this.centerId }));
     this.store.dispatch(CenterActions.loadActiveCenterReviews({ id: this.centerId }));
+    this.store.dispatch(TestimonialActions.loadTestimonialsByCenter({ centerId: this.centerId }));
 
     // Collection endpoints — filtered client-side by centerId
     this.store.dispatch(CenterActions.loadAllCenterIntroductions());
@@ -192,6 +199,12 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     );
 
     this.subscription.add(
+      this.store.select(TestimonialSelectors.selectTestimonialsByCenter).subscribe(list => {
+        this.centerTestimonials = this.forThisCenter(list);
+      })
+    );
+
+    this.subscription.add(
       this.store.select(CategorySelectors.selectActiveCategories).subscribe(categories => {
         this.allCategories = categories ?? [];
         this.buildCategories();
@@ -248,6 +261,20 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
   mapsUrl(center: { location?: string; address?: string }): string {
     if (center.location) return center.location;
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(center.address || '')}`;
+  }
+
+  /**
+   * Reuses the shared login-gated dialog trigger. The form does not support
+   * pre-selecting a target, so this opens the generic form.
+   */
+  leaveTestimonial(): void {
+    this.testimonialDialog.openTestimonialForm();
+  }
+
+  testimonialAuthor(testimonial: Testimonials): string {
+    return testimonial.clientName
+      || `${testimonial.userFirstname ?? ''} ${testimonial.userLastname ?? ''}`.trim()
+      || 'Berliz member';
   }
 
   backToCenters(): void {

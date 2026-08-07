@@ -1,160 +1,392 @@
 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 font-sans flex flex-col gap-4">
 
-    <!-- ── EMPTY STATE ── -->
-    <ng-container *ngIf="todoData.length === 0">
-        <div class="flex flex-col items-center text-center py-10 gap-2">
+    <!-- ── Header ─────────────────────────────────────────────────────── -->
+    <div class="flex justify-between items-center">
+        <h2 class="text-gray-800 text-base font-bold">{{ heading }}</h2>
+        <a [routerLink]="viewAllLink" class="text-red-600 text-xs font-semibold hover:underline">
+            View all
+        </a>
+    </div>
+
+    <!-- ── Tabs (same pill convention as the My Tasks page) ───────────── -->
+    <div class="flex items-center gap-2">
+        <button type="button" (click)="setTab('tasks')" class="rounded-xl px-4 py-2 text-xs font-semibold transition"
+            [ngClass]="activeTab === 'tasks'
+                ? 'bg-red-600 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+            Tasks
+        </button>
+
+        <button type="button" (click)="setTab('workouts')" class="rounded-xl px-4 py-2 text-xs font-semibold transition"
+            [ngClass]="activeTab === 'workouts'
+                ? 'bg-red-600 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+            Workouts
+        </button>
+
+        <button type="button" (click)="setTab('todos')" class="rounded-xl px-4 py-2 text-xs font-semibold transition"
+            [ngClass]="activeTab === 'todos'
+                ? 'bg-red-600 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+            Todos
+        </button>
+    </div>
+
+    <!-- ══════════════════ TAB: TASKS ══════════════════ -->
+    <ng-container *ngIf="activeTab === 'tasks'">
+
+        <!-- Empty state -->
+        <div *ngIf="tasks.length === 0" class="flex flex-col items-center text-center py-10 gap-2">
             <i-feather name="check-square" class="text-gray-300" style="width:40px;height:40px;"></i-feather>
-            <p class="text-gray-500 text-sm italic">No tasks yet.</p>
-            <a routerLink="/dashboard/my-todos" class="text-red-600 text-sm font-semibold hover:underline">
-                Add your first task →
+            <p class="text-gray-500 text-sm italic">
+                {{ isTrainer ? 'No tasks assigned yet.' : 'No tasks yet.' }}
+            </p>
+            <a routerLink="/dashboard/my-tasks" class="text-red-600 text-sm font-semibold hover:underline">
+                {{ isTrainer ? 'Assign your first task →' : 'Go to my tasks →' }}
             </a>
         </div>
+
+        <ng-container *ngIf="tasks.length > 0">
+
+            <!-- Metrics row -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+
+                <div class="flex flex-col items-center bg-gray-50 rounded-xl py-2 px-1 border border-gray-200">
+                    <span class="text-lg font-bold text-gray-900">{{ taskMetrics.total }}</span>
+                    <span class="text-[10px] text-gray-400 mt-0.5">Total</span>
+                </div>
+
+                <div class="flex flex-col items-center bg-blue-50 rounded-xl py-2 px-1 border border-blue-100">
+                    <span class="text-lg font-bold text-blue-700">{{ taskMetrics.active }}</span>
+                    <span class="text-[10px] text-blue-500 mt-0.5">Active</span>
+                </div>
+
+                <div class="flex flex-col items-center bg-green-50 rounded-xl py-2 px-1 border border-green-100">
+                    <span class="text-lg font-bold text-green-700">{{ taskMetrics.completed }}</span>
+                    <span class="text-[10px] text-green-500 mt-0.5">Done</span>
+                </div>
+
+                <div class="flex flex-col items-center bg-red-50 rounded-xl py-2 px-1 border border-red-100">
+                    <span class="text-lg font-bold text-red-600">{{ taskMetrics.overdue }}</span>
+                    <span class="text-[10px] text-red-400 mt-0.5">Overdue</span>
+                </div>
+            </div>
+
+            <!-- Recent tasks -->
+            <div>
+                <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Recent</span>
+
+                <div class="flex flex-col gap-2 mt-2 overflow-y-auto pr-1" style="max-height: 380px;">
+
+                    <div *ngFor="let task of displayedTasks; trackBy: trackByTaskId"
+                        (click)="toggleTaskExpanded(task)"
+                        class="p-3 bg-white border rounded-xl cursor-pointer hover:shadow-sm transition flex flex-col gap-1.5"
+                        [ngClass]="isTaskComplete(task) ? 'border-green-200 bg-green-50/40' : 'border-gray-200'">
+
+                        <div class="flex justify-between items-start gap-2">
+                            <span class="text-gray-900 text-sm font-semibold leading-snug flex-1 break-words">
+                                {{ taskTitle(task) }}
+                            </span>
+                            <span [ngClass]="taskStatusClass(task)"
+                                class="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 capitalize">
+                                {{ taskStatusLabel(task) }}
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between items-center gap-2">
+                            <span class="text-[10px]"
+                                [ngClass]="isTaskOverdue(task) ? 'text-red-600 font-semibold' : 'text-gray-500'">
+                                {{ taskDueLabel(task) }}
+                            </span>
+                            <span class="text-[10px] text-gray-400 truncate max-w-[50%]">
+                                {{ isTrainer ? taskPerson(task) : 'by ' + taskPerson(task) }}
+                            </span>
+                        </div>
+
+                        <!-- Step progress (client view — completion is device-local) -->
+                        <div *ngIf="!isTrainer && stepsTotal(task) > 0" class="flex items-center gap-2">
+                            <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-red-600 rounded-full transition-all duration-300"
+                                    [style.width.%]="progressPercent(task)"></div>
+                            </div>
+                            <span class="text-[10px] font-semibold text-gray-400 shrink-0">
+                                {{ stepsDone(task) }}/{{ stepsTotal(task) }}
+                            </span>
+                        </div>
+
+                        <!-- Inline step detail, matching the My Tasks page interaction -->
+                        <div *ngIf="isTaskExpanded(task)" class="flex flex-col gap-1.5 pt-1">
+
+                            <p *ngIf="stepsTotal(task) === 0" class="text-[11px] text-gray-400 italic">
+                                This task has no exercise steps.
+                            </p>
+
+                            <div *ngFor="let sub of subSteps(task); trackBy: trackBySubTaskId"
+                                class="flex items-start gap-2 p-2 rounded-xl border"
+                                [ngClass]="isStepDone(sub) ? 'border-red-200 bg-red-50' : 'border-gray-200 bg-gray-50'">
+
+                                <span class="mt-0.5 w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0"
+                                    [ngClass]="isStepDone(sub) ? 'border-red-500 bg-red-600' : 'border-gray-300'">
+                                    <i-feather *ngIf="isStepDone(sub)" name="check" class="text-white"
+                                        style="width:9px;height:9px;"></i-feather>
+                                </span>
+
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[11px] font-medium text-gray-900 break-words"
+                                        [ngClass]="{ 'line-through text-gray-400': isStepDone(sub) }">
+                                        {{ sub.name || sub.exerciseName || 'Step' }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <a routerLink="/dashboard/my-tasks"
+                                class="text-red-600 text-[11px] font-semibold hover:underline mt-0.5">
+                                Open in My Tasks →
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div *ngIf="tasks.length > 8" class="mt-2 text-center text-[11px] text-gray-400">
+                    +{{ tasks.length - 8 }} more —
+                    <a routerLink="/dashboard/my-tasks" class="text-red-600 font-semibold hover:underline">view all</a>
+                </div>
+            </div>
+
+        </ng-container>
     </ng-container>
 
-    <!-- ── CONTENT ── -->
-    <ng-container *ngIf="todoData.length > 0">
+    <!-- ══════════════════ TAB: WORKOUTS ══════════════════ -->
+    <ng-container *ngIf="activeTab === 'workouts'">
 
-        <!-- Header -->
-        <div class="flex justify-between items-center">
-            <h2 class="text-gray-800 text-base font-bold">My Todos</h2>
-            <a routerLink="/dashboard/my-todos" class="text-red-600 text-xs font-semibold hover:underline">
-                View all
+        <!-- Empty state -->
+        <div *ngIf="assignments.length === 0" class="flex flex-col items-center text-center py-10 gap-2">
+            <i-feather name="activity" class="text-gray-300" style="width:40px;height:40px;"></i-feather>
+            <p class="text-gray-500 text-sm italic">No workouts assigned yet.</p>
+            <a routerLink="/dashboard/my-tasks" class="text-red-600 text-sm font-semibold hover:underline">
+                Go to my workouts →
             </a>
         </div>
 
-        <!-- Metrics row -->
-        <div class="grid grid-cols-5 gap-2">
+        <ng-container *ngIf="assignments.length > 0">
 
-            <div class="flex flex-col items-center bg-gray-50 rounded-xl py-2 px-1 border border-gray-200">
-                <span class="text-lg font-bold text-gray-900">{{ metrics.total }}</span>
-                <span class="text-[10px] text-gray-400 mt-0.5">Total</span>
-            </div>
+            <!-- Metrics row -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
 
-            <div class="flex flex-col items-center bg-blue-50 rounded-xl py-2 px-1 border border-blue-100">
-                <span class="text-lg font-bold text-blue-700">{{ metrics.inProgress }}</span>
-                <span class="text-[10px] text-blue-500 mt-0.5">Active</span>
-            </div>
-
-            <div class="flex flex-col items-center bg-green-50 rounded-xl py-2 px-1 border border-green-100">
-                <span class="text-lg font-bold text-green-700">{{ metrics.completed }}</span>
-                <span class="text-[10px] text-green-500 mt-0.5">Done</span>
-            </div>
-
-            <div class="flex flex-col items-center bg-red-50 rounded-xl py-2 px-1 border border-red-100">
-                <span class="text-lg font-bold text-red-600">{{ metrics.overdue }}</span>
-                <span class="text-[10px] text-red-400 mt-0.5">Overdue</span>
-            </div>
-
-             <div class="flex flex-col items-center bg-gray-50 rounded-xl py-2 px-1 border border-gray-100">
-                <span class="text-lg font-bold text-gray-600">{{ metrics.cancelled }}</span>
-                <span class="text-[10px] text-gray-400 mt-0.5">Cancelled</span>
-            </div>
-
-        </div>
-
-        <!-- Completion bar -->
-        <div>
-            <div class="flex justify-between text-[10px] text-gray-500 mb-1">
-                <span>Completion</span>
-                <span>{{ metrics.completionRate }}%</span>
-            </div>
-            <div class="w-full bg-gray-100 rounded-full h-1.5">
-                <div class="bg-green-500 h-1.5 rounded-full transition-all duration-500"
-                    [style.width.%]="metrics.completionRate">
+                <div class="flex flex-col items-center bg-gray-50 rounded-xl py-2 px-1 border border-gray-200">
+                    <span class="text-lg font-bold text-gray-900">{{ workoutMetrics.total }}</span>
+                    <span class="text-[10px] text-gray-400 mt-0.5">Total</span>
                 </div>
-            </div>
-        </div>
 
-        <!-- Overdue section -->
-        <div *ngIf="overdueTodos.length > 0">
-            <div class="flex items-center gap-1.5 mb-2">
-                <i-feather name="alert-circle" class="text-red-500" style="width:13px;height:13px;"></i-feather>
-                <span class="text-[11px] font-semibold text-red-500 uppercase tracking-wide">Overdue</span>
-            </div>
-            <div class="flex flex-col gap-2">
-                <div *ngFor="let todo of overdueTodos" (click)="openTodoDetails(todo)"
-                    class="p-3 bg-red-50 border border-red-100 rounded-xl cursor-pointer hover:border-red-300 transition flex flex-col gap-1.5">
-                    <div class="flex justify-between items-start gap-2">
-                        <span class="text-gray-900 text-sm font-semibold leading-snug flex-1">{{ todo.task }}</span>
-                        <span [ngClass]="statusClass(todo.status)"
-                            class="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0">
-                            {{ statusLabel(todo.status) }}
-                        </span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-red-600 text-[10px] font-semibold">{{ getDueLabel(todo) }}</span>
-                        <span [ngClass]="priorityClass(todo.priority)" class="text-[10px] font-semibold">
-                            {{ todo.priority | titlecase }}
-                        </span>
-                    </div>
+                <div class="flex flex-col items-center bg-gray-50 rounded-xl py-2 px-1 border border-gray-100">
+                    <span class="text-lg font-bold text-gray-600">{{ workoutMetrics.assigned }}</span>
+                    <span class="text-[10px] text-gray-400 mt-0.5">Assigned</span>
                 </div>
-            </div>
-        </div>
 
-        <!-- Due soon section -->
-        <div *ngIf="dueSoonTodos.length > 0">
-            <div class="flex items-center gap-1.5 mb-2">
-                <i-feather name="clock" class="text-yellow-500" style="width:13px;height:13px;"></i-feather>
-                <span class="text-[11px] font-semibold text-yellow-600 uppercase tracking-wide">Due soon</span>
-            </div>
-            <div class="flex flex-col gap-2">
-                <div *ngFor="let todo of dueSoonTodos" (click)="openTodoDetails(todo)"
-                    class="p-3 bg-yellow-50 border border-yellow-100 rounded-xl cursor-pointer hover:border-yellow-300 transition flex flex-col gap-1.5">
-                    <div class="flex justify-between items-start gap-2">
-                        <span class="text-gray-900 text-sm font-semibold leading-snug flex-1">{{ todo.task }}</span>
-                        <span [ngClass]="statusClass(todo.status)"
-                            class="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0">
-                            {{ statusLabel(todo.status) }}
-                        </span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-yellow-600 text-[10px] font-semibold">{{ getDueLabel(todo) }}</span>
-                        <span [ngClass]="priorityClass(todo.priority)" class="text-[10px] font-semibold">
-                            {{ todo.priority | titlecase }}
-                        </span>
-                    </div>
+                <div class="flex flex-col items-center bg-orange-50 rounded-xl py-2 px-1 border border-orange-100">
+                    <span class="text-lg font-bold text-orange-600">{{ workoutMetrics.inProgress }}</span>
+                    <span class="text-[10px] text-orange-500 mt-0.5">In progress</span>
                 </div>
-            </div>
-        </div>
 
-        <!-- Divider if both sections above exist -->
-        <div *ngIf="overdueTodos.length > 0 || dueSoonTodos.length > 0" class="border-t border-gray-100">
-        </div>
-
-        <!-- All todos (scrollable, max 12) -->
-        <div>
-            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Recent</span>
-            <div class="flex flex-col gap-2 mt-2 overflow-y-auto pr-1" style="max-height: 380px;">
-                <div *ngFor="let todo of displayedTodos" (click)="openTodoDetails(todo)"
-                    class="p-3 bg-white border border-gray-200 rounded-xl cursor-pointer hover:shadow-sm hover:-translate-y-0.5 transition flex flex-col gap-1.5"
-                    [ngClass]="{ 'opacity-60': todo.status === 'cancelled' }">
-
-                    <div class="flex justify-between items-start gap-2">
-                        <span class="text-gray-900 text-sm font-semibold leading-snug flex-1">{{ todo.task }}</span>
-                        <span [ngClass]="statusClass(todo.status)"
-                            class="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0">
-                            {{ statusLabel(todo.status) }}
-                        </span>
-                    </div>
-
-                    <div class="flex justify-between items-center">
-                        <span class="text-[10px]" [ngClass]="getDueColor(todo)">{{ getDueLabel(todo) }}</span>
-                        <span [ngClass]="priorityClass(todo.priority)" class="text-[10px] font-semibold">
-                            {{ todo.priority | titlecase }}
-                        </span>
-                    </div>
-
+                <div class="flex flex-col items-center bg-green-50 rounded-xl py-2 px-1 border border-green-100">
+                    <span class="text-lg font-bold text-green-700">{{ workoutMetrics.completed }}</span>
+                    <span class="text-[10px] text-green-500 mt-0.5">Done</span>
                 </div>
             </div>
 
-            <!-- More indicator -->
-            <div *ngIf="todoData.length > 12" class="mt-2 text-center text-[11px] text-gray-400">
-                +{{ todoData.length - 12 }} more —
-                <a routerLink="/dashboard/my-todos" class="text-red-600 font-semibold hover:underline">view all</a>
+            <!-- Recent assigned workouts -->
+            <div>
+                <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Recent</span>
+
+                <div class="flex flex-col gap-2 mt-2 overflow-y-auto pr-1" style="max-height: 380px;">
+
+                    <div *ngFor="let assignment of displayedWorkouts; trackBy: trackByAssignmentId"
+                        class="p-3 bg-white border border-gray-200 rounded-xl flex flex-col gap-1.5">
+
+                        <div class="flex justify-between items-start gap-2">
+                            <span class="text-gray-900 text-sm font-semibold leading-snug flex-1 break-words">
+                                {{ workoutName(assignment) }}
+                            </span>
+                            <span [ngClass]="workoutStatusClass(assignment.status)"
+                                class="text-[10px] font-semibold px-2 py-0.5 rounded-full border shrink-0">
+                                {{ workoutStatusLabel(assignment.status) }}
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between items-center gap-2">
+                            <span class="text-[10px] text-gray-500 flex items-center gap-1">
+                                <i-feather name="activity" class="text-gray-400"
+                                    style="width:10px;height:10px;"></i-feather>
+                                {{ workoutExerciseCount(assignment) }} exercise{{ workoutExerciseCount(assignment) === 1
+                                ? '' : 's' }}
+                            </span>
+                            <span *ngIf="assignment.scheduledDate" class="text-[10px] text-gray-400 flex items-center gap-1">
+                                <i-feather name="calendar" style="width:10px;height:10px;"></i-feather>
+                                {{ assignment.scheduledDate | date:'mediumDate' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="assignments.length > 8" class="mt-2 text-center text-[11px] text-gray-400">
+                    +{{ assignments.length - 8 }} more —
+                    <a routerLink="/dashboard/my-tasks" class="text-red-600 font-semibold hover:underline">view all</a>
+                </div>
             </div>
 
+        </ng-container>
+    </ng-container>
+
+    <!-- ══════════════════ TAB: TODOS (lower priority) ══════════════════ -->
+    <ng-container *ngIf="activeTab === 'todos'">
+
+        <!-- Empty state -->
+        <div *ngIf="todoData.length === 0" class="flex flex-col items-center text-center py-10 gap-2">
+            <i-feather name="check-square" class="text-gray-300" style="width:40px;height:40px;"></i-feather>
+            <p class="text-gray-500 text-sm italic">No todos yet.</p>
+            <a routerLink="/dashboard/my-todos" class="text-red-600 text-sm font-semibold hover:underline">
+                Add your first todo →
+            </a>
         </div>
 
+        <ng-container *ngIf="todoData.length > 0">
+
+            <!-- Metrics row — 5 tiles do not fit on a phone (the "Cancelled" label
+                 alone overruns a ~44px column), so drop to 3 up until sm. -->
+            <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+
+                <div class="flex flex-col items-center bg-gray-50 rounded-xl py-2 px-1 border border-gray-200">
+                    <span class="text-lg font-bold text-gray-900">{{ metrics.total }}</span>
+                    <span class="text-[10px] text-gray-400 mt-0.5">Total</span>
+                </div>
+
+                <div class="flex flex-col items-center bg-blue-50 rounded-xl py-2 px-1 border border-blue-100">
+                    <span class="text-lg font-bold text-blue-700">{{ metrics.inProgress }}</span>
+                    <span class="text-[10px] text-blue-500 mt-0.5">Active</span>
+                </div>
+
+                <div class="flex flex-col items-center bg-green-50 rounded-xl py-2 px-1 border border-green-100">
+                    <span class="text-lg font-bold text-green-700">{{ metrics.completed }}</span>
+                    <span class="text-[10px] text-green-500 mt-0.5">Done</span>
+                </div>
+
+                <div class="flex flex-col items-center bg-red-50 rounded-xl py-2 px-1 border border-red-100">
+                    <span class="text-lg font-bold text-red-600">{{ metrics.overdue }}</span>
+                    <span class="text-[10px] text-red-400 mt-0.5">Overdue</span>
+                </div>
+
+                <div class="flex flex-col items-center bg-gray-50 rounded-xl py-2 px-1 border border-gray-100">
+                    <span class="text-lg font-bold text-gray-600">{{ metrics.cancelled }}</span>
+                    <span class="text-[10px] text-gray-400 mt-0.5">Cancelled</span>
+                </div>
+
+            </div>
+
+            <!-- Completion bar -->
+            <div>
+                <div class="flex justify-between text-[10px] text-gray-500 mb-1">
+                    <span>Completion</span>
+                    <span>{{ metrics.completionRate }}%</span>
+                </div>
+                <div class="w-full bg-gray-100 rounded-full h-1.5">
+                    <div class="bg-green-500 h-1.5 rounded-full transition-all duration-500"
+                        [style.width.%]="metrics.completionRate">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overdue section -->
+            <div *ngIf="overdueTodos.length > 0">
+                <div class="flex items-center gap-1.5 mb-2">
+                    <i-feather name="alert-circle" class="text-red-500" style="width:13px;height:13px;"></i-feather>
+                    <span class="text-[11px] font-semibold text-red-500 uppercase tracking-wide">Overdue</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <div *ngFor="let todo of overdueTodos" (click)="openTodoDetails(todo)"
+                        class="p-3 bg-red-50 border border-red-100 rounded-xl cursor-pointer hover:border-red-300 transition flex flex-col gap-1.5">
+                        <div class="flex justify-between items-start gap-2">
+                            <span class="text-gray-900 text-sm font-semibold leading-snug flex-1">{{ todo.task }}</span>
+                            <span [ngClass]="statusClass(todo.status)"
+                                class="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0">
+                                {{ statusLabel(todo.status) }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-red-600 text-[10px] font-semibold">{{ getDueLabel(todo) }}</span>
+                            <span [ngClass]="priorityClass(todo.priority)" class="text-[10px] font-semibold">
+                                {{ todo.priority | titlecase }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Due soon section -->
+            <div *ngIf="dueSoonTodos.length > 0">
+                <div class="flex items-center gap-1.5 mb-2">
+                    <i-feather name="clock" class="text-yellow-500" style="width:13px;height:13px;"></i-feather>
+                    <span class="text-[11px] font-semibold text-yellow-600 uppercase tracking-wide">Due soon</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <div *ngFor="let todo of dueSoonTodos" (click)="openTodoDetails(todo)"
+                        class="p-3 bg-yellow-50 border border-yellow-100 rounded-xl cursor-pointer hover:border-yellow-300 transition flex flex-col gap-1.5">
+                        <div class="flex justify-between items-start gap-2">
+                            <span class="text-gray-900 text-sm font-semibold leading-snug flex-1">{{ todo.task }}</span>
+                            <span [ngClass]="statusClass(todo.status)"
+                                class="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0">
+                                {{ statusLabel(todo.status) }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-yellow-600 text-[10px] font-semibold">{{ getDueLabel(todo) }}</span>
+                            <span [ngClass]="priorityClass(todo.priority)" class="text-[10px] font-semibold">
+                                {{ todo.priority | titlecase }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Divider if both sections above exist -->
+            <div *ngIf="overdueTodos.length > 0 || dueSoonTodos.length > 0" class="border-t border-gray-100">
+            </div>
+
+            <!-- All todos (scrollable, max 12) -->
+            <div>
+                <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Recent</span>
+                <div class="flex flex-col gap-2 mt-2 overflow-y-auto pr-1" style="max-height: 380px;">
+                    <div *ngFor="let todo of displayedTodos" (click)="openTodoDetails(todo)"
+                        class="p-3 bg-white border border-gray-200 rounded-xl cursor-pointer hover:shadow-sm hover:-translate-y-0.5 transition flex flex-col gap-1.5"
+                        [ngClass]="{ 'opacity-60': todo.status === 'cancelled' }">
+
+                        <div class="flex justify-between items-start gap-2">
+                            <span class="text-gray-900 text-sm font-semibold leading-snug flex-1">{{ todo.task }}</span>
+                            <span [ngClass]="statusClass(todo.status)"
+                                class="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0">
+                                {{ statusLabel(todo.status) }}
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px]" [ngClass]="getDueColor(todo)">{{ getDueLabel(todo) }}</span>
+                            <span [ngClass]="priorityClass(todo.priority)" class="text-[10px] font-semibold">
+                                {{ todo.priority | titlecase }}
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- More indicator -->
+                <div *ngIf="todoData.length > 12" class="mt-2 text-center text-[11px] text-gray-400">
+                    +{{ todoData.length - 12 }} more —
+                    <a routerLink="/dashboard/my-todos" class="text-red-600 font-semibold hover:underline">view all</a>
+                </div>
+
+            </div>
+
+        </ng-container>
     </ng-container>
 
 </div>

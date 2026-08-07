@@ -1,4 +1,76 @@
-<div class="mt-20 p-8 h-screen flex-col w-full font-extrabold">
-    <h2 class="mb-10 text-4xl text-red-600 ">Coming Soon.....</h2>
-    <p class="text-2xl text-white">This page is Under Construction</p>
-</div>
+<main class="w-full bg-zinc-950 min-h-screen font-sans">
+
+  <!-- ═══════════════════════════════════════════════
+       HERO — matches the testimonials page banner style
+  ════════════════════════════════════════════════ -->
+  <section class="relative w-full h-64 sm:h-72 overflow-hidden">
+    <div class="absolute inset-0"
+      style="background: linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(80,0,0,0.6) 60%, rgba(0,0,0,0.9) 100%);">
+    </div>
+    <div class="relative z-10 flex flex-col items-center justify-center h-full gap-3 px-4 text-center">
+      <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">Help &amp; support</span>
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+        Frequently Asked <span class="text-red-500">Questions</span>
+      </h1>
+      <p class="text-sm text-zinc-300 max-w-md leading-relaxed">
+        Answers to the most common questions about Berliz, our centers, trainers and billing.
+      </p>
+      <div class="w-12 h-0.5 bg-red-600 rounded-full mt-1"></div>
+    </div>
+  </section>
+
+  <section class="px-4 py-14">
+    <div class="max-w-3xl mx-auto flex flex-col gap-10">
+
+      <!-- ── LOADING ──────────────────────────────────────────────── -->
+      <div *ngIf="loading && faqGroups.length === 0" class="flex flex-col items-center justify-center py-16 gap-3">
+        <i-feather name="loader" class="text-red-500 animate-spin" style="width:24px;height:24px;"></i-feather>
+        <p class="text-sm text-zinc-500">Loading FAQs...</p>
+      </div>
+
+      <!-- ── EMPTY STATE ──────────────────────────────────────────── -->
+      <div *ngIf="!loading && faqGroups.length === 0"
+        class="flex flex-col items-center justify-center py-20 gap-6 text-center rounded-2xl border border-zinc-800 bg-zinc-900">
+        <div class="w-20 h-20 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center">
+          <i-feather name="message-circle" class="text-zinc-600" style="width:32px;height:32px;"></i-feather>
+        </div>
+        <div class="flex flex-col gap-2">
+          <h3 class="text-lg font-bold text-white">No FAQs yet</h3>
+          <p class="text-sm text-zinc-500 max-w-xs mx-auto">Check back soon — we're still writing answers.</p>
+        </div>
+      </div>
+
+      <!-- ── FAQ GROUPS ───────────────────────────────────────────── -->
+      <div *ngFor="let group of faqGroups; trackBy: trackByCategory" class="flex flex-col gap-4">
+        <div class="flex items-center gap-3">
+          <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">{{ group.category }}</span>
+          <div class="flex-1 h-px bg-zinc-800"></div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <div *ngFor="let faq of group.faqs; trackBy: trackByFaq"
+            class="rounded-2xl border border-zinc-800 bg-zinc-900 overflow-hidden transition-colors"
+            [ngClass]="{ 'border-red-900/60': isExpanded(faq.id) }">
+
+            <button type="button" (click)="toggle(faq.id)"
+              class="w-full flex items-center justify-between gap-4 px-5 py-4 text-left">
+              <span class="text-sm font-semibold text-white">{{ faq.question }}</span>
+              <span
+                class="shrink-0 w-7 h-7 rounded-lg border border-zinc-700 flex items-center justify-center transition-transform"
+                [ngClass]="{ 'rotate-180 bg-red-600 border-red-600': isExpanded(faq.id) }">
+                <i-feather name="chevron-down" style="width:14px;height:14px;" class="text-zinc-300"
+                  [ngClass]="{ 'text-white': isExpanded(faq.id) }"></i-feather>
+              </span>
+            </button>
+
+            <div *ngIf="isExpanded(faq.id)" class="px-5 pb-5">
+              <p class="text-sm text-zinc-400 leading-relaxed whitespace-pre-line">{{ faq.answer }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>

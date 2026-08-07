@@ -1,7 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Exercises } from '../models/exercise.interface';
+import { ExerciseLikes, Exercises } from '../models/exercise.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -45,6 +45,32 @@ export class ExerciseService {
 
   updateExerciseDemo(data: any) {
     return this.httpClient.put<{ message: string }>(this.url + "/exercise/updateDemo", data);
+  }
+
+  // ── Discovery ───────────────────────────────────────────────────────────────
+
+  /**
+   * Trending exercises (likes DESC, date DESC), optionally narrowed to one
+   * category. Public endpoint — the backend ranks and caps the list, so the
+   * category toggle re-requests rather than filtering a fixed list client-side.
+   */
+  getTrendingExercises(categoryId?: number | null) {
+    let params = new HttpParams();
+    if (categoryId != null) {
+      params = params.set('categoryId', categoryId);
+    }
+    return this.httpClient.get<Exercises[]>(this.url + "/exercise/getTrending", { params });
+  }
+
+  // ── Likes ───────────────────────────────────────────────────────────────────
+
+  /** Toggles the current user's like; returns the exercise with its new count. */
+  likeExercise(id: number) {
+    return this.httpClient.put<Exercises>(this.url + `/exercise/like/${id}`, null);
+  }
+
+  getMyExerciseLikes() {
+    return this.httpClient.get<ExerciseLikes[]>(this.url + "/exercise/getMyExerciseLikes");
   }
 
 }

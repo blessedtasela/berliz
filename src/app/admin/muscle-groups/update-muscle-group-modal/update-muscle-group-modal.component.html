@@ -1,95 +1,106 @@
-<div class="relative bg-white text-gray-700 p-2">
-    <div class="text-red-600 absolute top-0 right-0 p-5">
-        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
+<div class="max-w-lg w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="activity" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Update muscle group</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">ID {{ muscleGroupData.id }} &middot; {{
+                    muscleGroupData.name }}</p>
+            </div>
+        </div>
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
     </div>
-    <section class="bg-white">
-        <form [formGroup]="updateMuscleGroupForm">
-            <header class="font-bold font-sans text-center m-2 text-gray-700">
-                <h1 class="text-xl">Add a new MuscleGroup</h1>
-                <p class="text-red-600 italic text-sm">Please provide details of the muscleGroupand select it's
-                    exercises.
-                </p>
-            </header>
-            <div class="invalid-form">
-                <span *ngIf="!(updateMuscleGroupForm.get('name')?.invalid ||
-                        updateMuscleGroupForm.get('description')?.invalid ||
-                        updateMuscleGroupForm.get('bodyPart')?.invalid )
-                         && invalidForm" class="mx-2 text-gray-700">
-                    Everything looks good
-                </span>
-                <span *ngIf="(updateMuscleGroupForm.get('name')?.invalid ||
+
+    <form [formGroup]="updateMuscleGroupForm" class="flex flex-col gap-4">
+
+        <input formControlName="id" [value]="muscleGroupData.id" type="number" hidden>
+
+        <p *ngIf="(updateMuscleGroupForm.get('name')?.invalid ||
                 updateMuscleGroupForm.get('description')?.invalid ||
-                updateMuscleGroupForm.get('bodyPart')?.invalid )
-                 && invalidForm" class="mx-2 text-red-500">
-                    Please complete all sessions
-                </span>
-            </div>
-            <div class="grid grid-cols md:grid-cols-2 p-1 gap-2">
-                <div class="mx-auto w-full grid grid-cols-2 grid-cols-4 rounded-lg text-gray-700">
-                    <div class="rounded-lg object-cover flex col-span-4 flex">
-                        <img [src]="'data:image/*;base64,' + muscleGroupData.image" class="rounded-lg">
-                    </div>
-                </div>
-                <div class="bg-gray-200 gap-5 rounded-lg p-2 ">
-                    <input formControlName="id" [value]="muscleGroupData.id" type="number" hidden>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">MuscleGroup Name</span>
-                        <input formControlName="name" [value]="muscleGroupData.name"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': updateMuscleGroupForm.get('name')?.invalid && updateMuscleGroupForm.get('name')?.touched 
-                            || (updateMuscleGroupForm.get('name')?.invalid && invalidForm)}"
-                            placeholder="MuscleGroup Name" type="text">
-                        <div *ngIf="updateMuscleGroupForm.get('name')?.invalid && updateMuscleGroupForm.get('name')?.dirty 
-                        || (updateMuscleGroupForm.get('name')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            MuscleGroup Name is required
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">bodyPart</span>
-                        <select formControlName="bodyPart" [value]="muscleGroupData.bodyPart"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': updateMuscleGroupForm.get('bodyPart')?.invalid && updateMuscleGroupForm.get('bodyPart')?.touched 
-                            || (updateMuscleGroupForm.get('bodyPart')?.invalid && invalidForm)}" placeholder="bodyPart"
-                            type="text">
-                            <option selected hidden class="font-sans">{{ muscleGroupData.bodyPart }}</option>
-                            <option *ngFor="let bodyPart of bodyParts" class="w-auto p-8 text-sm m-8">{{ bodyPart.name
-                                }}</option>
-                        </select>
-                        <div *ngIf="updateMuscleGroupForm.get('bodyPart')?.invalid && updateMuscleGroupForm.get('bodyPart')?.dirty|| 
-                        (updateMuscleGroupForm.get('bodyPart')?.invalid && invalidForm)" class="text-red-500 mx-2">
-                            select an bodyPart name
-                        </div>
-                    </div>
-                    <div class="mx-auto w-full p-2">
-                        <span class="text-gray-700 font-bold italic">Description</span>
-                        <textarea formControlName="description" [value]="muscleGroupData.description"
-                            class="w-full p-2 mr-2 bg-gray-100 focus:outline-none border-b-2 rounded-lg border-gray-400 hover:border-gray-500"
-                            [ngClass]="{'border-red-400': updateMuscleGroupForm.get('description')?.invalid && updateMuscleGroupForm.get('description')?.touched 
-                            || (updateMuscleGroupForm.get('description')?.invalid && invalidForm)}"
-                            placeholder="Description" rows="5" cols="30"></textarea>
-                        <div *ngIf="updateMuscleGroupForm.get('description')?.invalid && updateMuscleGroupForm.get('description')?.dirty
-                        || (updateMuscleGroupForm.get('description')?.invalid && invalidForm)"
-                            class="text-red-500 mx-2">
-                            Description is required
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2">
-                        <div class="bg-gray-950 rounded-md mx-auto m-2">
-                            <button type="button"
-                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm flex items-center justify-center"
-                                (click)="clear()">
-                                Clear
-                            </button>
-                        </div>
-                        <div class="bg-red-600 rounded-md mx-auto m-2">
-                            <button type="submit"
-                                class="p-2 font-bold font-sans py-1 px-2 text-white text-sm flex items-center justify-center"
-                                (click)="updateMuscleGroup()">
-                                Update
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </section>
+                updateMuscleGroupForm.get('bodyPart')?.invalid) && invalidForm"
+            class="text-red-500 text-[11px] flex items-center gap-1">
+            <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+            Please complete all sections
+        </p>
+
+        <img [src]="'data:image/*;base64,' + muscleGroupData.image"
+            class="w-full h-40 object-cover rounded-xl border border-gray-200"
+            onerror="this.src='../../../assets/icons/user.png';" />
+
+        <!-- Muscle group name -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Muscle group name</label>
+            <input formControlName="name" [value]="muscleGroupData.name" type="text" placeholder="Muscle group name"
+                class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': (updateMuscleGroupForm.get('name')?.invalid && updateMuscleGroupForm.get('name')?.touched) || (updateMuscleGroupForm.get('name')?.invalid && invalidForm),
+                        'border-gray-200 bg-gray-50': !((updateMuscleGroupForm.get('name')?.invalid && updateMuscleGroupForm.get('name')?.touched) || (updateMuscleGroupForm.get('name')?.invalid && invalidForm))
+                      }">
+            <p *ngIf="(updateMuscleGroupForm.get('name')?.invalid && updateMuscleGroupForm.get('name')?.dirty) || (updateMuscleGroupForm.get('name')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Muscle group name is required
+            </p>
+        </div>
+
+        <!-- Body part -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Body part</label>
+            <select formControlName="bodyPart" [value]="muscleGroupData.bodyPart" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': (updateMuscleGroupForm.get('bodyPart')?.invalid && updateMuscleGroupForm.get('bodyPart')?.touched) || (updateMuscleGroupForm.get('bodyPart')?.invalid && invalidForm),
+                        'border-gray-200 bg-gray-50': !((updateMuscleGroupForm.get('bodyPart')?.invalid && updateMuscleGroupForm.get('bodyPart')?.touched) || (updateMuscleGroupForm.get('bodyPart')?.invalid && invalidForm))
+                      }">
+                <option selected hidden>{{ muscleGroupData.bodyPart }}</option>
+                <option *ngFor="let bodyPart of bodyParts">{{ bodyPart.name }}</option>
+            </select>
+            <p *ngIf="(updateMuscleGroupForm.get('bodyPart')?.invalid && updateMuscleGroupForm.get('bodyPart')?.dirty) || (updateMuscleGroupForm.get('bodyPart')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Select a body part
+            </p>
+        </div>
+
+        <!-- Description -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Description</label>
+            <textarea formControlName="description" [value]="muscleGroupData.description" rows="4"
+                placeholder="Description" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                [ngClass]="{
+                        'border-red-400 bg-red-50': (updateMuscleGroupForm.get('description')?.invalid && updateMuscleGroupForm.get('description')?.touched) || (updateMuscleGroupForm.get('description')?.invalid && invalidForm),
+                        'border-gray-200 bg-gray-50': !((updateMuscleGroupForm.get('description')?.invalid && updateMuscleGroupForm.get('description')?.touched) || (updateMuscleGroupForm.get('description')?.invalid && invalidForm))
+                      }"></textarea>
+            <p *ngIf="(updateMuscleGroupForm.get('description')?.invalid && updateMuscleGroupForm.get('description')?.dirty) || (updateMuscleGroupForm.get('description')?.invalid && invalidForm)"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Description is required
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div class="flex items-center justify-end gap-2">
+            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+                       hover:bg-gray-50 active:scale-[0.98] transition">
+                Clear
+            </button>
+            <button type="submit" (click)="updateMuscleGroup()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+                <i-feather name="check" style="width:13px;height:13px;"></i-feather>
+                Update muscle group
+            </button>
+        </div>
+
+    </form>
+
+</div>

@@ -13,6 +13,8 @@ import { NewsletterListComponent } from './newsletter-list/newsletter-list.compo
 import { NewslettersComponent } from './newsletters/newsletters.component';
 import { NewsletterMessageModalComponent } from './newsletter-message-modal/newsletter-message-modal.component';
 import { UpdateNewsletterModalComponent } from './update-newsletter-modal/update-newsletter-modal.component';
+import { NewsletterDetailsModalComponent } from './newsletter-details-modal/newsletter-details-modal.component';
+import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 
 
 
@@ -24,7 +26,8 @@ import { UpdateNewsletterModalComponent } from './update-newsletter-modal/update
     NewsletterListComponent,
     NewslettersComponent,
     NewsletterMessageModalComponent,
-    UpdateNewsletterModalComponent
+    UpdateNewsletterModalComponent,
+    NewsletterDetailsModalComponent
   ],
 
   imports: [
@@ -35,6 +38,7 @@ import { UpdateNewsletterModalComponent } from './update-newsletter-modal/update
     MatDialogModule,
     FooterModule,
     NavbarModule,
+    AdminSearchModule,
     RouterModule.forChild([{ path: '', component: NewslettersComponent }])
   ]
 })

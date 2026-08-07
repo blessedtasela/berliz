@@ -88,7 +88,8 @@ export class NewsletterHeaderComponent {
   openAddNewsletter() {
     const dialogRef = this.dialog.open(AddNewsletterModalComponent, {
       width: '600px',
-      height: '400px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
     });
     const childComponentInstance = dialogRef.componentInstance as AddNewsletterModalComponent;
     childComponentInstance.onAddNewsletter.subscribe(() => {
@@ -107,7 +108,8 @@ export class NewsletterHeaderComponent {
   sendNewsletterBulkMessage() {
     const dialogRef = this.dialog.open(NewsletterBulkMessageModalComponent, {
       width: '800px',
-      height: '520px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
     });
     const childComponentInstance = dialogRef.componentInstance as NewsletterBulkMessageModalComponent;
     childComponentInstance.onSendMessage.subscribe(() => {

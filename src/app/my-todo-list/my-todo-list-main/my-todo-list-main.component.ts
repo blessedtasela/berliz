@@ -201,6 +201,7 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
 
     const dialogRef = this.dialog.open(TodoDetailsModalComponent, {
       width: '500px',
+      maxWidth: '95vw',
       data: todo
     });
 

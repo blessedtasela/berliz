@@ -8,6 +8,10 @@ import { NavbarModule } from '../navbar/navbar.module';
 import { MyTasksPageComponent } from './my-tasks-page/my-tasks-page.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { AssignTaskModalComponent } from './assign-task-modal/assign-task-modal.component';
+// The Workouts tab on /dashboard/my-tasks renders <app-my-assigned-workouts>,
+// which WorkoutsModule declares and exports. WorkoutsModule does not import
+// MyTasksModule, so this is a one-way edge — no circular module dependency.
+import { WorkoutsModule } from '../workouts/workouts.module';
 
 
 
@@ -24,7 +28,8 @@ import { AssignTaskModalComponent } from './assign-task-modal/assign-task-modal.
     FooterModule,
     FormsModule,
     ReactiveFormsModule,
-    MatDialogModule
+    MatDialogModule,
+    WorkoutsModule
   ]
 })
 export class MyTasksModule { }

@@ -1,5 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { IconsModule } from '../icons/icons.module';
+import { ExercisesSectionComponent } from './exercises-section/exercises-section.component';
 import { ExerciseHeroComponent } from './exercise-hero/exercise-hero.component';
 import { ExerciseSearchComponent } from './exercise-search/exercise-search.component';
 import { ExerciseSearchResultComponent } from './exercise-search-result/exercise-search-result.component';
@@ -20,10 +24,18 @@ import { FooterModule } from '../footer/footer.module';
     ExerciseIntroductionComponent,
     ExerciseTipsComponent,
     ExercisesPageComponent,
+    ExercisesSectionComponent,
   ],
   imports: [
     CommonModule,
+    RouterModule,
+    FormsModule,
+    IconsModule,
     FooterModule
+  ],
+  exports: [
+    // Rendered as the movement-library section of the Programs page (`/services`).
+    ExercisesSectionComponent
   ]
 })
 export class ExercisesModule { }

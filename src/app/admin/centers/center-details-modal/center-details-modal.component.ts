@@ -63,6 +63,7 @@ export class CenterDetailsModalComponent {
     try {
       const dialogRef = this.dialog.open(UpdateTrainerPhotoModalComponent, {
         width: '600px',
+        maxWidth: '95vw',
         data: {
           centerData: this.centerData,
         }

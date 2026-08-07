@@ -1,82 +1,92 @@
-<div class="justify-center items-center mt-4 overflow-x-scroll">
-    <div class="min-w-[300px]">
-        <table class="table-auto border-collapse border border-gray-400 bg-gray-300 text-gray-950 font-sans
-                        container">
+<div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
             <thead>
-                <tr class="cursor-pointer">
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">SN</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Cover photo </th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Name</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Likes</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Map</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">ID</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Status</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Actions</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Date</th>
+                <tr class="bg-gray-50 border-b border-gray-200">
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN
+                    </th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                        Cover photo</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Name
+                    </th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                        Likes</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Map
+                    </th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">ID
+                    </th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                        Status</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date
+                    </th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                        Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr *ngFor="let center of centerData; let i = index" class="bg-gray-100 hover:bg-gray-200">
-                    <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        <img [src]="center.photoUrl" class="rounded-full"
-                            onerror="this.src='../../../assets/icons/user.png';" style="width: 40px;">
-                        <label for="fileInput-{{center.id}}" class="">
-                            <i-feather name="Edit" class="font-bold text-red-600 mr-4 cursor-pointer"
-                                style="width: 10px;">
-                            </i-feather>
-                        </label>
-                        <input accept="image/*" type="file" id="fileInput-{{center.id}}" style="display: none;"
-                            (change)="onImgSelected($event, center.id)">
+            <tbody class="divide-y divide-gray-100">
+                <tr *ngFor="let center of centerData; let i = index" class="hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <img [src]="center.photoUrl || '../../../assets/icons/user.png'"
+                                onerror="this.src='../../../assets/icons/user.png';"
+                                class="w-10 h-10 rounded-xl object-cover border border-gray-200">
+                            <label [attr.for]="'fileInput-' + center.id" title="Change photo"
+                                class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition cursor-pointer">
+                                <i-feather name="camera" class="text-red-600"
+                                    style="width:15px;height:15px;"></i-feather>
+                            </label>
+                            <input accept="image/*" type="file" id="fileInput-{{center.id}}" style="display: none;"
+                                (change)="onImgSelected($event, center.id)">
+                        </div>
                     </td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        {{ center.name }}
+                    <td class="px-4 py-3 font-semibold text-gray-900">{{ center.name }}</td>
+                    <td class="px-4 py-3 text-gray-600">{{ center.likes }}</td>
+                    <td class="px-4 py-3">
+                        <button type="button" (click)="openUrl(center.location)" title="Open map"
+                            class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition">
+                            <i-feather name="map-pin" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+                        </button>
                     </td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        {{ center.likes }}
-                    </td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        <span (click)="openUrl(center.location)">
-                            <i-feather name="map-pin" style="width: 20px;"
-                                class="font-bold text-red-600 ml-2 -mb-2 cursor-pointer">
-                            </i-feather>
+                    <td class="px-4 py-3 font-semibold text-gray-900">{{ center.id }}</td>
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold"
+                            [ngClass]="center.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
+                            {{ center.status === 'true' ? 'Active' : 'Inactive' }}
                         </span>
                     </td>
-                    <th class="border-b border-gray-400 px-4 py-2 font-bold">{{ center.id }}</th>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ center.status }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        <div class="flex items-center p-2">
-                            <button
-                                class="text-sm rounded-md font-sans mx-auto ml-4
-                                    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                (click)="openCenterDetails(center.id)">
-                                <i-feather name="eye" class="text-gray-800"></i-feather>
+                    <td class="px-4 py-3 text-gray-500">{{ formatDate(center.date) }}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center justify-end gap-1">
+                            <button class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
+                                (click)="openCenterDetails(center.id)" title="View">
+                                <i-feather name="eye" class="text-gray-500" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button
-                                class="text-sm rounded-md font-sans mx-auto ml-4
-                                        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                (click)="openUpdateCenter(center.id)">
-                                <i-feather name="edit" class="text-red-600"></i-feather>
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                                (click)="openUpdateCenter(center.id)" title="Edit">
+                                <i-feather name="edit-2" class="text-red-600"
+                                    style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button
-                                class="text-sm bg-gray-950 text-white p-1 px-2 hover:bg-gray-1000 rounded-md font-sans mx-auto ml-4
-                                transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                [ngClass]="{'bg-red-600 hover:bg-red-700': center.status == 'true'}"
+                            <button class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition"
+                                [ngClass]="center.status === 'true' ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-red-600 text-white hover:bg-red-700'"
                                 (click)="updateCenterStatus(center.id)">
-                                {{ center.status == 'false' ? 'activate' : 'deactivate'}}
+                                {{ center.status === 'false' ? 'Activate' : 'Deactivate' }}
                             </button>
-                            <button
-                                class="text-sm rounded-md font-sans mx-auto ml-4
-                                        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                (click)="deleteCenter(center.id)">
-                                <i-feather name="trash-2" class="text-red-600"></i-feather>
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                                (click)="deleteCenter(center.id)" title="Delete">
+                                <i-feather name="trash-2" class="text-red-600"
+                                    style="width:15px;height:15px;"></i-feather>
                             </button>
                         </div>
-                    <td class="border-b border-gray-400 px-4 py-2"> {{ formatDate(center.date) }}
-
                     </td>
                 </tr>
             </tbody>
         </table>
+    </div>
+    <div *ngIf="centerData.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-center">
+        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+            <i-feather name="inbox" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        </div>
+        <p class="text-sm text-gray-400">No centers yet.</p>
     </div>
 </div>

@@ -5,6 +5,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Partner } from 'src/app/models/partners.interface';
 import { loadPartners } from 'src/app/state/partner/partner.actions';
 import { selectPartners } from 'src/app/state/partner/partner.selectors';
+import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
   selector: 'app-partners',
@@ -18,6 +19,15 @@ export class PartnersComponent {
   searchComponent: string = 'partner'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+
+  readonly selectPartners = selectPartners;
+  readonly partnerSearchFields: AdminSearchField<Partner>[] = [
+    { value: 'name', label: 'Name', accessor: p => `${p.firstname || ''} ${p.lastname || ''}` },
+    { value: 'email', label: 'Email', accessor: p => p.email },
+    { value: 'id', label: 'Partner id', accessor: p => p.id?.toString() },
+    { value: 'role', label: 'Role', accessor: p => p.role },
+    { value: 'status', label: 'Status', accessor: p => p.status },
+  ];
 
   constructor(private ngxService: NgxUiLoaderService,
     private store: Store) {

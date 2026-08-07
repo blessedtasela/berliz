@@ -1,78 +1,87 @@
-<div class="justify-center items-center p-5 overflow-x-scroll">
-    <div class="min-w-[300px]">
-        <table class="table-auto border-collapse border border-gray-400 bg-gray-300 text-gray-950 font-sans
-                        container">
+<div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
             <thead>
-                <tr class="cursor-pointer">
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">SN</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Cover photo </th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Name</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Likes</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Email</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Trainer id</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Actions</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Status</th>
-                    <th class="border border-gray-400 px-4 py-2 hover:bg-gray-400">Date</th>
+                <tr class="bg-gray-50 border-b border-gray-200">
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN
+                    </th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                        Cover photo</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Name
+                    </th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                        Likes</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                        Partner id</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                        Trainer id</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                        Status</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date
+                    </th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                        Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr *ngFor="let trainer of trainersData; let i = index" class="bg-gray-100 hover:bg-gray-200">
-                    <td class="border-b border-gray-400 px-4 py-2">{{ i + 1 }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        <img [src]="'data:image/*;base64,' + trainer.photoResponse " class="rounded-full"
-                            onerror="this.src='../../../assets/icons/user.png';" style="width: 40px;">
-                        <label for="fileInput-{{trainer.id}}" class="">
-                            <i-feather name="Edit" class="font-bold text-red-600 mr-4 cursor-pointer"
-                                style="width: 10px;">
-                            </i-feather>
-                        </label>
-                        <input accept="image/*" type="file" id="fileInput-{{trainer.id}}" style="display: none;"
-                            (change)="onImgSelected($event, trainer.id)">
+            <tbody class="divide-y divide-gray-100">
+                <tr *ngFor="let trainer of trainersData; let i = index" class="hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <img [src]="trainer.photoResponse?.photoUrl || '../../../assets/icons/user.png'"
+                                onerror="this.src='../../../assets/icons/user.png';"
+                                class="w-10 h-10 rounded-xl object-cover border border-gray-200">
+                            <label [attr.for]="'fileInput-' + trainer.id" title="Change photo"
+                                class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition cursor-pointer">
+                                <i-feather name="camera" class="text-red-600"
+                                    style="width:15px;height:15px;"></i-feather>
+                            </label>
+                            <input accept="image/*" type="file" id="fileInput-{{trainer.id}}" style="display: none;"
+                                (change)="onImgSelected($event, trainer.id)">
+                        </div>
                     </td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        {{ trainer.name }}
+                    <td class="px-4 py-3 font-semibold text-gray-900">{{ trainer.name }}</td>
+                    <td class="px-4 py-3 text-gray-600">{{ trainer.likes }}</td>
+                    <td class="px-4 py-3 text-gray-600">{{ trainer.partnerId }}</td>
+                    <td class="px-4 py-3 font-semibold text-gray-900">{{ trainer.id }}</td>
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold"
+                            [ngClass]="trainer.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
+                            {{ trainer.status === 'true' ? 'Active' : 'Inactive' }}
+                        </span>
                     </td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        {{ trainer.likes }}
-                    </td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        {{ trainer.partnerId }}
-                    </td>
-                    <th class="border-b border-gray-400 px-4 py-2 font-bold">{{ trainer.id }}</th>
-                    <td class="border-b border-gray-400 px-4 py-2">{{ trainer.status }}</td>
-                    <td class="border-b border-gray-400 px-4 py-2">
-                        <div class="flex items-center p-2">
-                            <button
-                                class="text-sm rounded-md font-sans mx-auto ml-4
-                                    transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                (click)="openTrainerDetails(trainer.id)">
-                                <i-feather name="eye" class="text-gray-800"></i-feather>
+                    <td class="px-4 py-3 text-gray-500">{{ formatDate(trainer.date) }}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center justify-end gap-1">
+                            <button class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
+                                (click)="openTrainerDetails(trainer.id)" title="View">
+                                <i-feather name="eye" class="text-gray-500" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button
-                                class="text-sm rounded-md font-sans mx-auto ml-4
-                                        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                (click)="openUpdateTrainer(trainer.id)">
-                                <i-feather name="edit" class="text-red-600"></i-feather>
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                                (click)="openUpdateTrainer(trainer.id)" title="Edit">
+                                <i-feather name="edit-2" class="text-red-600"
+                                    style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button
-                                class="text-sm bg-gray-950 text-white p-1 px-2 hover:bg-gray-1000 rounded-md font-sans mx-auto ml-4
-                                transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                [ngClass]="{'bg-red-600 hover:bg-red-700': trainer.status == 'true'}"
+                            <button class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition"
+                                [ngClass]="trainer.status === 'true' ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-red-600 text-white hover:bg-red-700'"
                                 (click)="updateTrainerStatus(trainer.id)">
-                                {{ trainer.status == 'false' ? 'activate' : 'deactivate'}}
+                                {{ trainer.status === 'false' ? 'Activate' : 'Deactivate' }}
                             </button>
-                            <button
-                                class="text-sm rounded-md font-sans mx-auto ml-4
-                                        transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold"
-                                (click)="deleteTrainer(trainer.id)">
-                                <i-feather name="trash-2" class="text-red-600"></i-feather>
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                                (click)="deleteTrainer(trainer.id)" title="Delete">
+                                <i-feather name="trash-2" class="text-red-600"
+                                    style="width:15px;height:15px;"></i-feather>
                             </button>
                         </div>
-                    <td class="border-b border-gray-400 px-4 py-2"> {{ formatDate(trainer.date) }}
-
                     </td>
                 </tr>
             </tbody>
         </table>
+    </div>
+    <div *ngIf="trainersData.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-center">
+        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+            <i-feather name="inbox" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        </div>
+        <p class="text-sm text-gray-400">No trainers yet.</p>
     </div>
 </div>

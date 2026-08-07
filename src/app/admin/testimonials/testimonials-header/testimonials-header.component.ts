@@ -87,6 +87,7 @@ export class TestimonialsHeaderComponent {
   openAddTestimonial() {
     const dialogRef = this.dialog.open(AddTestimonialsModalComponent, {
       width: '800px',
+      maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,
     });

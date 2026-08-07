@@ -1,0 +1,26 @@
+<div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+    <div class="text-xs font-semibold text-gray-500">
+        Showing <span class="text-gray-900">{{ totalFaqs }}</span> FAQs
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+        <div class="flex items-center gap-1.5">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Sort</span>
+            <select [(ngModel)]="selectedSortOption" (change)="onSortOptionChange($event)"
+                class="px-3 py-1.5 rounded-xl border border-gray-200 bg-gray-50 text-xs text-gray-700
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition cursor-pointer">
+                <option value="category">Category / order</option>
+                <option value="date">Date added</option>
+                <option value="lastUpdate">Last update</option>
+                <option value="id">FAQ id</option>
+            </select>
+        </div>
+        <button type="button" (click)="openAddFaq()"
+            class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold
+                   hover:bg-red-700 active:scale-[0.98] transition">
+            <i-feather name="plus" style="width:13px;height:13px;"></i-feather>
+            Add FAQ
+        </button>
+    </div>
+</div>
+
+<app-faqs-list [faqsData]="faqsData" [totalFaqs]="totalFaqs"></app-faqs-list>

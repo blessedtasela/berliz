@@ -14,6 +14,9 @@ import { CategoriesSearchResultComponent } from './categories-search-result/cate
 import { CategoryTrainersComponent } from './category-trainers/category-trainers.component';
 import { CategoryCentersComponent } from './category-centers/category-centers.component';
 import { CategoryExercisesComponent } from './category-exercises/category-exercises.component';
+import { TestimonialModule } from '../testimonial/testimonial.module';
+import { EquipmentsModule } from '../equipments/equipments.module';
+import { ExercisesModule } from '../exercises/exercises.module';
 
 
 
@@ -36,7 +39,10 @@ import { CategoryExercisesComponent } from './category-exercises/category-exerci
     RouterModule,
     ReactiveFormsModule,
     FormsModule,
-    MatDialogModule
+    MatDialogModule,
+    TestimonialModule,
+    EquipmentsModule,
+    ExercisesModule
   ],
   exports: [
   ]

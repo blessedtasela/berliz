@@ -1,4 +1,14 @@
-<app-search-categories (results)="handleSearchResults($event)"></app-search-categories>
+<!--
+  Page-scoped admin search: `<app-admin-search>` selects the full category list
+  straight from the store (it never dispatches a load itself), filters it locally
+  against the query + chosen field, and emits the filtered set to
+  `handleSearchResults()` below, which LOCALLY FILTERS this admin list (rewrites
+  categoriesData / totalCategories / categoriesLength). The top-bar
+  `<app-global-search>` navigates to detail pages instead, it does not filter this
+  table, so this embed is a distinct, real feature.
+-->
+<app-admin-search [selector]="selectCategories" [fields]="categorySearchFields"
+  placeholder="Search categories..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-categories-header [categoriesData]="categoriesData" [totalCategories]="totalCategories"
     [categoriesLength]="categoriesLength"></app-categories-header>
 <app-categories-list [categoriesData]="categoriesData" [totalCategories]="totalCategories"></app-categories-list>

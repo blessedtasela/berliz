@@ -1,41 +1,62 @@
-<div class="relative bg-white rounded-xl">
-    <div class="text-red-600 absolute top-0 right-0 p-2">
-        <i-feather name="x-circle" (click)="closeDialog()" class="cursor-pointer"></i-feather>
-    </div>
-    <section class="p-4 flex flex-col justify-center items-center">
-        <div class="text-center w-full">
-            <p class="text-gray-950 font-sans font-bold text-xl uppercase mt-4">{{ categoryData.name }} [ID {{
-                categoryData.id }}]</p>
-            <p class="text-red-600 font-sans font-bold text-sm italic">
-                created at {{ formatDate(categoryData.date) }}
-            </p>
-            <div class="rounded-xl p-6 grid grid-cols md:grid-cols-2 gap-4">
-                <div class="flex items-start justify-center">
-                    <img class="rounded-xl border border-gray-200 w-full max-w-[220px] object-cover"
-                        [src]="categoryData.photoUrl || '../../../assets/icons/user.png'"
-                        onerror="this.src='../../../assets/icons/user.png';">
-                </div>
-                <div class="flex flex-col text-left gap-2">
-                    <p class="font-bold text-gray-950">Description</p>
-                    <p class="text-gray-700 font-sans text-md">
-                        {{ categoryData.description }}
-                    </p>
-                    <p class="font-bold text-gray-950 mt-2">Tags</p>
-                    <p class="text-gray-700 font-sans text-md">
-                        <ng-container *ngFor="let tagName of categoryData.tagNames; let i = index">
-                            {{ tagName }} {{ i < (categoryData.tagNames.length - 1) ? "/" : "" }} </ng-container>
-                    </p>
-                    <p class="text-gray-700 font-sans font-bold text-md mt-2">
-                        Liked by {{ categoryData.likes }} users
-                    </p>
-                    <p class="text-gray-700 font-sans font-bold text-md">
-                        Category status: {{ categoryData.status === 'true' ? 'active' : 'inactive' }}
-                    </p>
-                    <p class="text-red-600 font-sans font-bold text-md">
-                        Last Update: {{ formatDate(categoryData.lastUpdate) }}
-                    </p>
-                </div>
+<div class="max-w-lg w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="grid" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">{{ categoryData.name }}</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">ID {{ categoryData.id }} &middot; Created {{
+                    formatDate(categoryData.date) }}</p>
             </div>
         </div>
-    </section>
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
+    </div>
+
+    <img class="w-full h-40 object-cover rounded-xl border border-gray-200"
+        [src]="categoryData.photoUrl || '../../../assets/icons/user.png'"
+        onerror="this.src='../../../assets/icons/user.png';" />
+
+    <span class="w-fit px-2.5 py-1 rounded-full text-[11px] font-semibold" [ngClass]="categoryData.status === 'true'
+            ? 'bg-green-50 text-green-700 border border-green-200'
+            : 'bg-gray-100 text-gray-500 border border-gray-200'">
+        {{ categoryData.status === 'true' ? 'Active' : 'Inactive' }}
+    </span>
+
+    <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+        {{ categoryData.description }}
+    </p>
+
+    <div class="bg-gray-50 border border-gray-100 rounded-xl divide-y divide-gray-100">
+        <div class="flex items-center justify-between px-4 py-2.5">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Tags</span>
+            <span class="text-xs font-medium text-gray-900 text-right">
+                <ng-container *ngFor="let tagName of categoryData.tagNames; let i = index">
+                    {{ tagName }}{{ i < (categoryData.tagNames.length - 1) ? " / " : "" }} </ng-container>
+            </span>
+        </div>
+        <div class="flex items-center justify-between px-4 py-2.5">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Likes</span>
+            <span class="text-xs font-medium text-gray-900 text-right">{{ categoryData.likes }}</span>
+        </div>
+        <div class="flex items-center justify-between px-4 py-2.5">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</span>
+            <span class="text-xs font-medium text-gray-900 text-right">{{ formatDate(categoryData.lastUpdate) }}</span>
+        </div>
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <div class="flex items-center justify-end gap-2">
+        <button type="button" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+                   hover:bg-gray-50 active:scale-[0.98] transition">
+            Close
+        </button>
+    </div>
+
 </div>

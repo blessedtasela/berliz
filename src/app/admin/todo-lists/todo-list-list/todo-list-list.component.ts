@@ -10,6 +10,7 @@ import { TodoService } from 'src/app/services/todo.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
 import { UpdateTodoModalComponent } from '../update-todo-modal/update-todo-modal.component';
+import { TodoListDetailsModalComponent } from '../todo-list-details-modal/todo-list-details-modal.component';
 import { Store } from '@ngrx/store';
 import { loadTodos } from 'src/app/state/todo/todo.actions';
 import { selectTodos } from 'src/app/state/todo/todo.selectors';
@@ -52,13 +53,34 @@ export class TodoListListComponent {
     this.showFullData = !this.showFullData;
   }
 
+  openTodoDetails(id: number) {
+    try {
+      const todoList = this.todoListData.find(todoList => todoList.id === id);
+      if (todoList) {
+        const dialogRef = this.dialog.open(TodoListDetailsModalComponent, {
+          width: '800px',
+          maxWidth: '95vw',
+          panelClass: 'mat-dialog-height',
+          data: {
+            todoData: todoList,
+          }
+        });
+      } else {
+        this.snackbarService.openSnackBar('todoList not found for id: ' + id, 'error');
+      }
+    } catch (error) {
+      this.snackbarService.openSnackBar("An error occurred. Check todoList status", 'error');
+    }
+  }
+
   openUpdateTodo(id: number) {
     try {
       const todoList = this.todoListData.find(todoList => todoList.id === id);
       if (todoList) {
         const dialogRef = this.dialog.open(UpdateTodoModalComponent, {
           width: '700px',
-          height: '400px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           data: {
             todoData: todoList,
           }

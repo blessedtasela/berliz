@@ -11,6 +11,7 @@ import { FooterModule } from 'src/app/footer/footer.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconsModule } from 'src/app/icons/icons.module';
+import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 
 
 
@@ -30,6 +31,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
     ReactiveFormsModule,
     FormsModule,
     IconsModule,
+    AdminSearchModule,
     RouterModule.forChild([{ path: '', component: PaymentsComponent }])
   ]
 })

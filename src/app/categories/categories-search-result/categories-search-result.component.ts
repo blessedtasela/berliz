@@ -103,6 +103,7 @@ export class CategoriesSearchResultComponent implements OnInit, OnDestroy {
   private promptLogin(): void {
     const ref = this.dialog.open(PromptModalComponent, {
       width: '400px',
+      maxWidth: '95vw',
       data: {
         confirmation: true,
         title: 'Login required',

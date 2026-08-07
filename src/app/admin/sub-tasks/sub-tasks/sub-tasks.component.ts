@@ -5,6 +5,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SubTasks } from 'src/app/models/tasks.interface';
 import { loadSubTasks } from 'src/app/state/task/task.actions';
 import { selectSubTasks } from 'src/app/state/task/task.selectors';
+import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
   selector: 'app-sub-tasks',
@@ -18,6 +19,13 @@ export class SubTasksComponent {
   searchComponent: string = 'sub-task'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+
+  readonly selectSubTasks = selectSubTasks;
+  readonly subTaskSearchFields: AdminSearchField<SubTasks>[] = [
+    { value: 'name', label: 'Name', accessor: s => s.name },
+    { value: 'exercise', label: 'Exercise', accessor: s => s.exerciseName },
+    { value: 'id', label: 'Sub-task id', accessor: s => s.id?.toString() },
+  ];
 
   constructor(private ngxService: NgxUiLoaderService,
     private store: Store) {

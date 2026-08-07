@@ -1,9 +1,9 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { environment } from 'src/environments/environment';
-import { Users } from '../models/users.interface';
+import { ProfileVisibility, PublicDirectoryEntry, PublicUserProfile, Users } from '../models/users.interface';
 import { AuthResponse } from '../models/Auth.interface';
 import { ApiResponse } from '../models/Api.interface';
 
@@ -180,6 +180,41 @@ export class UserService {
   getUser(): Observable<ApiResponse<Users>> {
     return this.httpClient.get<ApiResponse<Users>>(
       this.url + "/user/getUser"
+    );
+  }
+
+  /**
+   * Public, unauthenticated. Always resolves for an existing user — a private
+   * profile comes back with `isPrivate: true` and the gated fields omitted,
+   * not as an error.
+   */
+  getPublicProfile(id: number): Observable<ApiResponse<PublicUserProfile>> {
+    return this.httpClient.get<ApiResponse<PublicUserProfile>>(
+      this.url + `/user/getPublicProfile/${id}`
+    );
+  }
+
+  /** Flips the signed-in user's own profile between "public" and "private". */
+  updateProfileVisibility(profileVisibility: ProfileVisibility): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/updateProfileVisibility",
+      { profileVisibility }
+    );
+  }
+
+  /**
+   * Public, unauthenticated member directory. Only users with profileVisibility
+   * "public" are ever returned. `search` matches first/last name substring;
+   * `role` is an exact (case-insensitive) match. Both optional.
+   */
+  getPublicDirectory(search?: string | null, role?: string | null): Observable<ApiResponse<PublicDirectoryEntry[]>> {
+    let params = new HttpParams();
+    if (search) { params = params.set('search', search); }
+    if (role) { params = params.set('role', role); }
+
+    return this.httpClient.get<ApiResponse<PublicDirectoryEntry[]>>(
+      this.url + "/user/getPublicDirectory",
+      { params }
     );
   }
 

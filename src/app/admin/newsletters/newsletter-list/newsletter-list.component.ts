@@ -15,6 +15,7 @@ import { genericError } from 'src/validators/form-validators.module';
 import { UpdateNewsletterModalComponent } from '../update-newsletter-modal/update-newsletter-modal.component';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { NewsletterMessageModalComponent } from '../newsletter-message-modal/newsletter-message-modal.component';
+import { NewsletterDetailsModalComponent } from '../newsletter-details-modal/newsletter-details-modal.component';
 
 @Component({
   selector: 'app-newsletter-list',
@@ -59,7 +60,8 @@ export class NewsletterListComponent {
 
   openAddNewsletter() {
     const dialogRef = this.dialog.open(NewsletterComponent, {
-      width: '500px'
+      width: '500px',
+      maxWidth: '95vw',
     });
     const childComponentInstance = dialogRef.componentInstance as NewsletterComponent;
     childComponentInstance.onAddNewsletterEmit.subscribe(() => {
@@ -75,12 +77,33 @@ export class NewsletterListComponent {
     });
   }
 
+  openNewsletterDetails(id: number) {
+    try {
+      const newsletter = this.newsletterData.find(newsletter => newsletter.id === id);
+      if (newsletter) {
+        const dialogRef = this.dialog.open(NewsletterDetailsModalComponent, {
+          width: '800px',
+          maxWidth: '95vw',
+          panelClass: 'mat-dialog-height',
+          data: {
+            newsletterData: newsletter,
+          }
+        });
+      } else {
+        this.snackbarService.openSnackBar('newsletter not found for id: ' + id, 'error');
+      }
+    } catch (error) {
+      this.snackbarService.openSnackBar("An error occurred. Check newsletter status", 'error');
+    }
+  }
+
   openUpdateNewsletter(id: number) {
     try {
       const newsletter = this.newsletterData.find(newsletter => newsletter.id === id);
       if (newsletter) {
         const dialogRef = this.dialog.open(UpdateNewsletterModalComponent, {
           width: '400px',
+          maxWidth: '95vw',
           data: {
             newsletterData: newsletter,
           }
@@ -177,7 +200,8 @@ export class NewsletterListComponent {
       if (newsletter) {
         const dialogRef = this.dialog.open(NewsletterMessageModalComponent, {
           width: '800px',
-          height: '600px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           data: {
             newsletterData: newsletter,
           }

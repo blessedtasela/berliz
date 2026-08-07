@@ -16,6 +16,17 @@
   overflow-wrap: anywhere;
 }
 
+/* iOS Safari auto-zooms the whole page on focus of any form field whose
+   computed font-size is under 16px. Almost every input/textarea/select in
+   this app uses text-sm (14px) or smaller, so every modal was triggering it.
+   Force 16px on focus-capable fields on phone-width viewports only — desktop
+   density is untouched. */
+@media (max-width: 767px) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
+
 .hero-bg {
   background-image: url('./assets/landing/hero-bg.jpg');
   background-repeat: repeat-x;
@@ -113,6 +124,25 @@ body {
   opacity: 1 !important;
 }
 
+/* Small screens: the 300px min-width / 440px max-width above is wider than a
+   phone viewport, and horizontalPosition:'right' pushes the panel off-screen.
+   Constrain it to the viewport with a 12px gutter. Desktop is untouched. */
+@media (max-width: 480px) {
+  .berliz-snackbar.mat-mdc-snack-bar-container {
+    margin-top: 64px !important;
+    margin-left: 12px !important;
+    margin-right: 12px !important;
+    min-width: 0 !important;
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+
+  .berliz-snackbar .mdc-snackbar__label {
+    font-size: 12.5px !important;
+    overflow-wrap: anywhere !important;
+  }
+}
+
 /* ─── Success: solid zinc-950, unmissable ───────────────────────────────── */
 
 .snack-bar-success.mat-mdc-snack-bar-container .mdc-snackbar__surface {
@@ -160,7 +190,7 @@ body {
 }
 
 .mat-dialog-height {
-  max-height: 600px;
+  max-height: 90vh;
 }
 
 .custom-checkbox {

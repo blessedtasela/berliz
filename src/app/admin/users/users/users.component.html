@@ -1,3 +1,10 @@
-<app-search-user (results)="handleSearchResults($event)"></app-search-user>
+<!--
+  Page-scoped admin search: selects the full user list from the store, filters
+  locally, and emits to `handleSearchResults()` which rewrites usersData /
+  totalUsers. The top-bar `<app-global-search>` navigates to pages instead of
+  filtering this table, so this is a distinct, real feature.
+-->
+<app-admin-search [selector]="selectUsers" [fields]="userSearchFields"
+  placeholder="Search users..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-user-header [usersData]="usersData" [totalUsers]="totalUsers" [usersLength]="usersLength"></app-user-header>
 <app-user-list [usersData]="usersData"></app-user-list>

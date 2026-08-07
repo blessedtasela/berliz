@@ -1,2 +1,4 @@
+<app-admin-search [selector]="selectTasks" [fields]="taskSearchFields"
+    placeholder="Search tasks..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-tasks-header [tasksData]="tasksData" [totalTasks]="totalTasks" [tasksLength]="tasksLength"></app-tasks-header>
 <app-tasks-list [tasksData]="tasksData" [totalTasks]="totalTasks"></app-tasks-list>

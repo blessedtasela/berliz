@@ -58,6 +58,7 @@ export class PartnerApplicationComponent {
     if (this.partnerData.role === 'trainer') {
       const dialogRef = this.dialog.open(TrainerFormModalComponent, {
         width: '800px',
+        maxWidth: '95vw',
         data: {
           partnerData: this.partnerData,
         },
@@ -72,6 +73,7 @@ export class PartnerApplicationComponent {
     if (this.partnerData.role === 'center') {
       const dialogRef = this.dialog.open(CenterFormModalComponent, {
         width: '800px',
+        maxWidth: '95vw',
         data: {
           partnerData: this.partnerData,
         },

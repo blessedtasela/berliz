@@ -36,6 +36,14 @@ const PROGRESS_STORAGE_KEY = 'berliz.task.subStepProgress';
 })
 export class MyTasksComponent implements OnInit, OnDestroy {
 
+  /**
+   * "Things assigned to me" now lives on one page with two tabs. The Workouts
+   * tab is `MyAssignedWorkoutsComponent` embedded by selector — it owns all of
+   * its own NgRx wiring in ngOnInit, so switching tabs destroys/recreates it
+   * and it re-fetches on its own. No workout state is duplicated here.
+   */
+  activeTab: 'tasks' | 'workouts' = 'tasks';
+
   role = '';
   loading = false;
 
@@ -72,6 +80,11 @@ export class MyTasksComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
+  }
+
+  // ── TABS ────────────────────────────────────────────────────────────────
+  setTab(tab: 'tasks' | 'workouts'): void {
+    this.activeTab = tab;
   }
 
   // ── ROLE ────────────────────────────────────────────────────────────────

@@ -1,3 +1,5 @@
+<app-admin-search [selector]="selectNewsletters" [fields]="newsletterSearchFields"
+    placeholder="Search newsletters..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-newsletter-header [newsletterData]="newsletterData" [totalNewsletters]="totalNewsletters"
     [newsletterLength]="newsletterLength"></app-newsletter-header>
 <app-newsletter-list [newsletterData]="newsletterData" [totalNewsletters]="totalNewsletters"></app-newsletter-list>

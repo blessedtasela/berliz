@@ -234,6 +234,7 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
   openDetails(notification: Notifications): void {
     const dialogRef = this.dialog.open(NotificationDetailsComponent, {
       width: '500px',
+      maxWidth: '95vw',
       data: notification
     });
 

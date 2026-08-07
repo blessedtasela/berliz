@@ -57,7 +57,8 @@ export class MuscleGroupsListComponent {
       if (muscleGroup) {
         const dialogRef = this.dialog.open(UpdateMuscleGroupModalComponent, {
           width: '900px',
-          maxHeight: '600px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           disableClose: true,
           data: {
             muscleGroupData: muscleGroup,
@@ -88,6 +89,7 @@ export class MuscleGroupsListComponent {
       if (muscleGroup) {
         const dialogRef = this.dialog.open(MuscleGroupDetailsModalComponent, {
           width: '800px',
+          maxWidth: '95vw',
           panelClass: 'mat-dialog-height',
           data: {
             muscleGroupData: muscleGroup,

@@ -96,6 +96,7 @@ export class PaymentsHeaderComponent {
   openAddPayment() {
     const dialogRef = this.dialog.open(AddPaymentsModalComponent, {
       width: '800px',
+      maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,
     });

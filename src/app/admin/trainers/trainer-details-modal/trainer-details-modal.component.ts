@@ -54,6 +54,7 @@ export class TrainerDetailsModalComponent {
     try {
       const dialogRef = this.dialog.open(UpdateTrainerPhotoModalComponent, {
         width: '600px',
+        maxWidth: '95vw',
         data: {
           trainerData: this.trainerData,
         }

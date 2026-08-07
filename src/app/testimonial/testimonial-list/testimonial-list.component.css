@@ -1,0 +1,8 @@
+.testimonial-scroll-strip {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.testimonial-scroll-strip::-webkit-scrollbar {
+  display: none;
+}

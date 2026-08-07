@@ -7,6 +7,7 @@ import { TodoList } from 'src/app/models/todoList.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { loadTodos } from 'src/app/state/todo/todo.actions';
 import { selectTodos } from 'src/app/state/todo/todo.selectors';
+import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
   selector: 'app-todo-lists',
@@ -20,6 +21,15 @@ export class TodoListsComponent {
   searchComponent: string = 'todoList'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+
+  readonly selectTodos = selectTodos;
+  readonly todoSearchFields: AdminSearchField<TodoList>[] = [
+    { value: 'task', label: 'Task', accessor: t => t.task },
+    { value: 'user', label: 'User', accessor: t => `${t.userFirstname || ''} ${t.userLastname || ''} ${t.userEmail || ''}` },
+    { value: 'status', label: 'Status', accessor: t => t.status },
+    { value: 'priority', label: 'Priority', accessor: t => t.priority },
+    { value: 'id', label: 'Todo id', accessor: t => t.id?.toString() },
+  ];
 
   constructor(private store: Store,
     private ngxService: NgxUiLoaderService,

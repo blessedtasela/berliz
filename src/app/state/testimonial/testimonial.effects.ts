@@ -28,6 +28,22 @@ export class TestimonialEffects {
     ))
   ));
 
+  loadTestimonialsByTrainer$ = createEffect(() => this.actions$.pipe(
+    ofType(A.loadTestimonialsByTrainer),
+    mergeMap(({ trainerId }) => this.svc.getByTrainer(trainerId).pipe(
+      map(response => A.loadTestimonialsByTrainerSuccess({ response })),
+      catchError(e => of(A.loadTestimonialsByTrainerFailure({ error: e?.error?.message || 'Failed to load testimonials' })))
+    ))
+  ));
+
+  loadTestimonialsByCenter$ = createEffect(() => this.actions$.pipe(
+    ofType(A.loadTestimonialsByCenter),
+    mergeMap(({ centerId }) => this.svc.getByCenter(centerId).pipe(
+      map(response => A.loadTestimonialsByCenterSuccess({ response })),
+      catchError(e => of(A.loadTestimonialsByCenterFailure({ error: e?.error?.message || 'Failed to load testimonials' })))
+    ))
+  ));
+
   loadTestimonial$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadTestimonial),
     mergeMap(({ id }) => this.svc.getTestimonial(id).pipe(
@@ -57,6 +73,14 @@ export class TestimonialEffects {
     mergeMap(({ id }) => this.svc.updateStatus(id).pipe(
       map(response => A.updateTestimonialStatusSuccess({ response })),
       catchError(e => of(A.updateTestimonialStatusFailure({ error: e?.error?.message || 'Failed' })))
+    ))
+  ));
+
+  updateTestimonialFeatured$ = createEffect(() => this.actions$.pipe(
+    ofType(A.updateTestimonialFeatured),
+    mergeMap(({ id }) => this.svc.updateFeatured(id).pipe(
+      map(response => A.updateTestimonialFeaturedSuccess({ response })),
+      catchError(e => of(A.updateTestimonialFeaturedFailure({ error: e?.error?.message || 'Failed' })))
     ))
   ));
 

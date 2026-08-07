@@ -1,75 +1,95 @@
-import { Component, EventEmitter, HostListener, Inject } from '@angular/core';
+import { Component, EventEmitter, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { NewsletterService } from 'src/app/services/newsletter.service';
+import { Actions, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { Subject, takeUntil } from 'rxjs';
+
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import {
+  addNewsletter,
+  addNewsletterFailure,
+  addNewsletterSuccess
+} from 'src/app/state/newsletter/newsletter.actions';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
+import { NewsletterTriggerService } from './newsletter-trigger.service';
 
 @Component({
   selector: 'app-newsletter-popup',
   templateUrl: './newsletter-popup.component.html',
   styleUrls: ['./newsletter-popup.component.css']
 })
-export class NewsletterPopupComponent {
-  onAddNewsletter = new EventEmitter()
+export class NewsletterPopupComponent implements OnInit, OnDestroy {
+  /** Emitted once the subscription is confirmed by the backend. */
+  onAddNewsletter = new EventEmitter();
+
   newsletterForm!: FormGroup;
-  invalidForm: boolean = false;
-  responseMessage: any;
-  showPopUp = false;
+  invalidForm = false;
+  submitting = false;
 
-  constructor(private formBuilder: FormBuilder,
-    private newsletterService: NewsletterService,
-    private ngxService: NgxUiLoaderService,
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private store: Store,
+    private actions$: Actions,
     private snackBarService: SnackBarService,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<NewsletterPopupComponent>,) { }
+    private trigger: NewsletterTriggerService,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<NewsletterPopupComponent>,
+  ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.newsletterForm = this.formBuilder.group({
       'email': ['', [Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])]]
     });
+
+    this.actions$
+      .pipe(ofType(addNewsletterSuccess), takeUntil(this.destroy$))
+      .subscribe(({ message }) => {
+        this.submitting = false;
+        this.invalidForm = false;
+        this.newsletterForm.reset();
+        // Permanent: this browser is on the list, never prompt again.
+        this.trigger.markSubscribed();
+        this.snackBarService.openSnackBar(message || 'You are subscribed. Welcome aboard!', '');
+        this.onAddNewsletter.emit();
+        this.dialogRef.close('Newsletter subscription added');
+      });
+
+    this.actions$
+      .pipe(ofType(addNewsletterFailure), takeUntil(this.destroy$))
+      .subscribe(({ error }) => {
+        this.submitting = false;
+        this.snackBarService.openSnackBar(error || genericError, 'error');
+      });
   }
 
-  @HostListener('window:scroll', [])
-  onWindowScroll() {
-    this.showPopUp = window.scrollY > 500;
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   addNewsletter(): void {
+    if (this.submitting) return;
+
     if (this.newsletterForm.invalid) {
-      this.invalidForm = true
-      this.responseMessage = "Invalid form"
-    } else {
-      this.newsletterService.addNewsletter(this.newsletterForm.value)
-        .subscribe((response: any) => {
-          this.ngxService.start();
-          this.newsletterForm.reset();
-          this.invalidForm = false;
-          this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
-          this.onAddNewsletter.emit();
-          this.ngxService.stop();
-        }, (error: any) => {
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
-        });
+      this.invalidForm = true;
+      this.newsletterForm.markAllAsTouched();
+      this.snackBarService.openSnackBar('Invalid form', 'error');
+      return;
     }
-    this.ngxService.stop();
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
+
+    this.invalidForm = false;
+    this.submitting = true;
+    this.store.dispatch(addNewsletter({ data: this.newsletterForm.value }));
   }
 
-  closeDialog() {
-    this.dialogRef.close("Dialog closed without updating newsletter")
+  closeDialog(): void {
+    this.dialogRef.close('Dialog closed without updating newsletter');
   }
 
-  clear() {
-    this.newsletterForm.reset()
+  clear(): void {
+    this.newsletterForm.reset();
   }
 }
-

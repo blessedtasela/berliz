@@ -107,6 +107,7 @@ export class TasksHeaderComponent {
   openAddTask() {
     const dialogRef = this.dialog.open(AddTasksModalComponent, {
       width: '800px',
+      maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,
     });

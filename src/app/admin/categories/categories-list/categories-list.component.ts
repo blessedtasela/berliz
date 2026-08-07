@@ -61,7 +61,8 @@ export class CategoriesListComponent implements OnInit {
       if (category) {
         const dialogRef = this.dialog.open(UpdateCategoryModalComponent, {
           width: '900px',
-          maxHeight: '600px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           disableClose: true,
           data: {
             categoryData: category,
@@ -92,6 +93,7 @@ export class CategoriesListComponent implements OnInit {
       if (category) {
         const dialogRef = this.dialog.open(CategoryDetailsModalComponent, {
           width: '800px',
+          maxWidth: '95vw',
           panelClass: 'mat-dialog-height',
           data: {
             categoryData: category,

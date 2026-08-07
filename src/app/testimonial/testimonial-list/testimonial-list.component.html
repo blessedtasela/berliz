@@ -1,46 +1,129 @@
- <section class="grid md:grid-cols-2 grid-cols w-full rounded-md mt-20 container">
-    <div class="flex">
-        <img src="../../../assets/trainers/t10.jpg" class="md:rounded-l-md rounded-t-md">
-    </div>
-    <div class="bg-gray-950 md:rounded-r-md rounded-b-md p-8">
-        <p class="text-red-600 font-sans font-bold text-md md:text-xl uppercase mb-4">Testimonies</p>
-        <p class="text-gray-200 font-sans font-bold md:text-4xl text-2xl uppercase">What our client says</p>
+<!-- ═══════════════════════════════════════════════
+     TESTIMONIALS — featured rotating quote
+════════════════════════════════════════════════ -->
+<section class="w-full bg-zinc-950 px-4 py-16 font-sans">
+    <div class="max-w-4xl mx-auto">
 
-        <div *ngIf="testimonials.length === 0" class="text-gray-300 text-sm md:text-base italic my-8">
-            <span class="text-red-600 text-4xl font-bold mr-2">&#8220;</span>
-            Amazing testimonials are coming soon! Stay tuned to hear inspiring stories from our community.
-            <span class="text-red-600 text-3xl font-bold ml-1">&#8221;</span>
+        <!-- ── EMPTY STATE ──────────────────────────────────────────────── -->
+        <div *ngIf="testimonials.length === 0"
+            class="flex flex-col items-center justify-center py-20 gap-6 text-center rounded-2xl border border-zinc-800 bg-zinc-900">
+
+            <div class="w-20 h-20 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center">
+                <i-feather name="message-circle" class="text-zinc-600" style="width:32px;height:32px;"></i-feather>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <h3 class="text-lg font-bold text-white">Stories coming soon</h3>
+                <p class="text-sm text-zinc-500 max-w-xs mx-auto">
+                    Our community is just getting started. Be the first to share how Berliz changed your training.
+                </p>
+            </div>
+
+            <button type="button" (click)="openTestimonialForm()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 text-white text-sm
+                       font-semibold hover:bg-red-700 active:scale-[0.98] transition">
+                <i-feather name="edit-3" style="width:13px;height:13px;"></i-feather>
+                Leave a testimonial
+            </button>
         </div>
 
-        <div *ngFor="let t of testimonials; let i = index" [class.hidden]="i !== testimonialIndex">
-            <p class="text-gray-200 font-sans md:text-md text-sm my-8">
-                <span class="text-red-600 md:text-6xl font-bold ml-2">&#8220;</span>
-                <span class="ml-2">{{ t.testimonial }}</span>
-                <span class="text-red-600 md:text-2xl font-bold ml-2">&#8221;</span>
-            </p>
-            <div class="flex items-center">
-                <img class="rounded-full w-48">
-                <div class="flex flex-col m-8">
-                    <p class="text-gray-200 font-sans font-bold text-md flex">
-                        {{ t.userFirstname }}
-                    </p>
-                    <p class="text-gray-200 font-sans text-sm flex">
-                        {{t.date }}
-                    </p>
+        <!-- ── TESTIMONIAL STRIP ────────────────────────────────────────── -->
+        <ng-container *ngIf="testimonials.length > 0">
+
+            <!-- Section heading -->
+            <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+                <div class="flex flex-col gap-3">
+                    <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+                        Testimonies
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+                        What our community says
+                    </h2>
+                    <div class="w-12 h-0.5 bg-red-600 rounded-full"></div>
+                </div>
+
+                <!-- Prev / next -->
+                <div class="hidden sm:flex items-center gap-2">
+                    <button type="button" (click)="scrollStrip(strip, -1)" aria-label="Scroll left" class="w-9 h-9 rounded-lg border border-zinc-700 flex items-center justify-center
+                                   text-zinc-400 hover:bg-red-600 hover:border-red-600 hover:text-white transition">
+                        <i-feather name="chevron-left" style="width:15px;height:15px;"></i-feather>
+                    </button>
+                    <button type="button" (click)="scrollStrip(strip, 1)" aria-label="Scroll right" class="w-9 h-9 rounded-lg border border-zinc-700 flex items-center justify-center
+                                   text-zinc-400 hover:bg-red-600 hover:border-red-600 hover:text-white transition">
+                        <i-feather name="chevron-right" style="width:15px;height:15px;"></i-feather>
+                    </button>
                 </div>
             </div>
-            <div class="grid grid grid-cols-2">
-            <button class="mt-6 text-sm bg-red-600 text-white py-2 px-5 hover:bg-red-700 rounded-md font-sans mx-auto ml-4
-            transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:drop-shadow-2xl font-bold">
-                {{t.centerName}}
-            </button>
-            <div class="mt-6 flex justify-end">
-                <span (click)="toggleTestimonial(-1)"
-                class="text-red-600 text-2xl md:text-4xl font-bold cursor-pointer mx-3">&#8592;</span>
-                <span (click)="toggleTestimonial(+1)"
-                class="text-red-600 text-2xl md:text-4xl font-bold cursor-pointer mx-3">&#8594;</span>
+
+            <!-- Scrollable card strip -->
+            <div #strip class="testimonial-scroll-strip flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+
+                <div *ngFor="let t of testimonials" class="relative overflow-hidden shrink-0 snap-start w-[280px] sm:w-[340px]
+                            rounded-2xl border border-zinc-800 bg-zinc-900 p-6 flex flex-col gap-5">
+
+                    <!-- Red glow -->
+                    <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-red-600/10 blur-3xl pointer-events-none"></div>
+
+                    <!-- Quote mark -->
+                    <div class="w-9 h-9 rounded-xl bg-red-600/10 border border-red-600/20 flex items-center justify-center shrink-0">
+                        <i-feather name="message-circle" class="text-red-500" style="width:15px;height:15px;"></i-feather>
+                    </div>
+
+                    <!-- Quote -->
+                    <p class="relative text-sm text-zinc-200 leading-relaxed italic line-clamp-5">
+                        "{{ t.testimonial }}"
+                    </p>
+
+                    <div class="border-t border-zinc-800 mt-auto"></div>
+
+                    <!-- Author + target -->
+                    <div class="flex flex-col gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-full bg-zinc-800 border-2 border-red-600 flex items-center
+                                        justify-center shrink-0">
+                                <span class="text-xs font-extrabold text-red-500">
+                                    {{ (t.userFirstname || '?').charAt(0) | uppercase }}
+                                </span>
+                            </div>
+                            <div class="flex flex-col leading-tight min-w-0">
+                                <span class="text-xs font-extrabold text-white truncate">
+                                    {{ t.userFirstname }} {{ t.userLastname }}
+                                </span>
+                                <span class="text-[10px] text-zinc-500">
+                                    {{ t.date | date:'mediumDate' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- What the testimonial is about -->
+                        <span *ngIf="t.centerName || t.trainerName" class="w-fit text-[10px] font-semibold text-red-400 bg-red-950 border border-red-900
+                                     px-2.5 py-1 rounded-full flex items-center gap-1.5 shrink-0">
+                            <i-feather [name]="t.centerName ? 'home' : 'user'" style="width:10px;height:10px;">
+                            </i-feather>
+                            {{ t.centerName || t.trainerName }}
+                        </span>
+                    </div>
+                </div>
+
             </div>
-        </div>
-        </div>
+
+            <p class="sm:hidden text-center text-[11px] text-zinc-600 mt-3 flex items-center justify-center gap-1.5">
+                <i-feather name="arrow-left" style="width:11px;height:11px;"></i-feather>
+                Swipe to see more
+                <i-feather name="arrow-right" style="width:11px;height:11px;"></i-feather>
+            </p>
+
+            <!-- ── CTA ──────────────────────────────────────────────────── -->
+            <div class="mt-10 flex flex-col items-center gap-3 text-center">
+                <p class="text-sm text-zinc-400">
+                    Trained with a Berliz center or coach? Your story could be next.
+                </p>
+                <button type="button" (click)="openTestimonialForm()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 text-white text-sm
+                           font-semibold hover:bg-red-700 active:scale-[0.98] transition">
+                    <i-feather name="edit-3" style="width:13px;height:13px;"></i-feather>
+                    Leave a testimonial
+                </button>
+            </div>
+
+        </ng-container>
     </div>
 </section>

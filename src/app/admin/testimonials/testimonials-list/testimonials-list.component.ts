@@ -55,7 +55,8 @@ export class TestimonialsListComponent {
       if (testimonial) {
         const dialogRef = this.dialog.open(UpdateTestimonialsModalComponent, {
           width: '900px',
-          maxHeight: '600px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           disableClose: true,
           data: {
             testimonialData: testimonial,
@@ -86,6 +87,7 @@ export class TestimonialsListComponent {
       if (testimonial) {
         const dialogRef = this.dialog.open(TestimonialDetailsModalComponent, {
           width: '800px',
+          maxWidth: '95vw',
           panelClass: 'mat-dialog-height',
           data: {
             testimonialData: testimonial,
@@ -131,6 +133,45 @@ export class TestimonialsListComponent {
         }, (error) => {
           this.ngxService.stop();
           this.snackbarService.openSnackBar(error, 'error');
+          if (error.error?.message) {
+            this.responseMessage = error.error?.message;
+          } else {
+            this.responseMessage = genericError;
+          }
+          this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        });
+    });
+  }
+
+  /**
+   * Feature / unfeature a testimonial on the public testimonials page.
+   * Direct-service + `handleEmitEvent()` refresh, matching how
+   * `updateTestimonialStatus` and `deleteTestimonial` already work here.
+   */
+  toggleFeatured(id: number) {
+    const dialogConfig = new MatDialogConfig();
+    const testimonial = this.testimonialsData.find(testimonial => testimonial.id === id);
+    const message = testimonial?.featured
+      ? 'remove this testimonial from the public page?'
+      : 'feature this testimonial on the public page?';
+
+    dialogConfig.data = {
+      message: message,
+      confirmation: true,
+      disableClose: true,
+    };
+    const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
+    const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((res: any) => {
+      this.ngxService.start();
+      this.testimonialService.updateFeatured(id)
+        .subscribe((response: any) => {
+          this.ngxService.stop();
+          this.responseMessage = response.message;
+          this.snackbarService.openSnackBar(this.responseMessage, '');
+          this.handleEmitEvent()
+          dialogRef.close('testimonial featured flag updated successfully')
+        }, (error) => {
+          this.ngxService.stop();
           if (error.error?.message) {
             this.responseMessage = error.error?.message;
           } else {

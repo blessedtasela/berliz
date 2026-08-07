@@ -5,6 +5,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Exercises } from 'src/app/models/exercise.interface';
 import { loadExercises } from 'src/app/state/exercise/exercise.actions';
 import { selectExercises } from 'src/app/state/exercise/exercise.selectors';
+import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
   selector: 'app-exercises',
@@ -18,6 +19,14 @@ export class ExercisesComponent {
   searchComponent: string = 'exercise'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+
+  readonly selectExercises = selectExercises;
+  readonly exerciseSearchFields: AdminSearchField<Exercises>[] = [
+    { value: 'name', label: 'Name', accessor: e => e.name },
+    { value: 'description', label: 'Description', accessor: e => e.description },
+    { value: 'id', label: 'Exercise id', accessor: e => e.id?.toString() },
+    { value: 'status', label: 'Status', accessor: e => e.status },
+  ];
 
   constructor(private ngxService: NgxUiLoaderService,
     private store: Store) {

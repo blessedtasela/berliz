@@ -47,13 +47,11 @@ export class DashboardNowActiveComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.subscriptions.push(
       this.store.select(selectUsers).subscribe((users) => {
         this.users = users;
       }),
     );
-    this.ngxService.stop();
   }
 
   formatDate(dateString: any): string {

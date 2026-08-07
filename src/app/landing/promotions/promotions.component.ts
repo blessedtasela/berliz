@@ -16,7 +16,8 @@ export class PromotionsComponent {
   openSignup() {
     const dialogRef = this.dialog.open(SignupModalComponent, {
       width: '900px',
-      height: '600px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
       disableClose: true
     });
     dialogRef.afterClosed().subscribe(result => {

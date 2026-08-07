@@ -58,7 +58,8 @@ export class MembersListComponent {
       if (member) {
         const dialogRef = this.dialog.open(UpdateMembersModalComponent, {
           width: '900px',
-          maxHeight: '600px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           disableClose: true,
           data: {
             memberData: member,
@@ -89,6 +90,7 @@ export class MembersListComponent {
       if (member) {
         const dialogRef = this.dialog.open(MemberDetailsModalComponent, {
           width: '800px',
+          maxWidth: '95vw',
           panelClass: 'mat-dialog-height',
           data: {
             memberData: member,

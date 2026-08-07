@@ -57,7 +57,8 @@ export class TrainerPricingListComponent {
       if (trainerPricing) {
         const dialogRef = this.dialog.open(UpdateTrainerPricingModalComponent, {
           width: '900px',
-          maxHeight: '600px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           disableClose: true,
           data: {
             trainerPricingData: trainerPricing,
@@ -88,6 +89,7 @@ export class TrainerPricingListComponent {
       if (trainerPricing) {
         const dialogRef = this.dialog.open(TrainerPricingDetailsModalComponent, {
           width: '800px',
+          maxWidth: '95vw',
           panelClass: 'mat-dialog-height',
           data: {
             trainerPricingData: trainerPricing,

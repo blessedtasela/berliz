@@ -1,82 +1,180 @@
-<div class="justify-between mt-40 font-sans mx-auto flex flex-col justify-center items-center">
-    <div class="font-sans text-2xl mb-5 text-center uppercase font-bold">
-        let us know what you think
-    </div>
-</div>
-<section class="m-2 flex items-center justify-center">
-    <div class="mt-12 container border-2 rounded-md max-w-2xl min-w-2xl mx-auto py-2 bg-red-600"
-        [ngClass]="{'border-gray-950': testimonialForm.invalid && invalidForm}">
-        <header class="text-center m-2">
-            <h1 class="font-bold font-sans text-xl text-gray-200">Share your testimony with us</h1>
-        </header>
-        <form [formGroup]="testimonialForm" (ngSubmit)="submitForm()">
-            <div class="invalid-form">
-                <hr [ngClass]="{'border-gray-950': testimonialForm.invalid && invalidForm}">
-                <span *ngIf="!testimonialForm.invalid && testimonialForm.touched" class="text-gray-950">
-                    Everything looks good
-                </span>
-                <span *ngIf="testimonialForm.invalid && invalidForm" class="text-gray-950 mx-2">
-                    Please complete all required fields
-                </span>
+<div class="max-w-xl w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="message-circle" class="text-red-600" style="width:15px;height:15px;"></i-feather>
             </div>
-            <div class="grid grid-cols-1 gap-5">
-                <div class="mx-auto">
-                    <span class="sr-only">Enter full name</span>
-                    <input formControlName="name"
-                        class="lg:w-96 border-2 px-4 py-2 rounded-md m-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                        [ngClass]="{'border-gray-950': testimonialForm.get('name')?.invalid && testimonialForm.get('name')?.touched }"
-                        placeholder="Full Name" type="text">
-                    <div *ngIf="testimonialForm.get('name')?.invalid && testimonialForm.get('name')?.touched"
-                        class="text-gray-950 mx-2">
-                        Name is required
-                    </div>
-                </div>
-                <div class="mx-auto">
-                    <span class="sr-only">Choose gym center</span>
-                    <input formControlName="center"
-                        class="lg:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                        [ngClass]="{'border-gray-950': testimonialForm.get('center')?.invalid && testimonialForm.get('center')?.touched }"
-                        placeholder="Gym center" type="text">
-                    <div *ngIf="testimonialForm.get('center')?.invalid && testimonialForm.get('center')?.touched"
-                        class="text-gray-950 mx-2">
-                        Center Name is required
-                    </div>
-                </div>
-                <div class="mx-auto">
-                    <span class="sr-only">Write testiomony</span>
-                    <textarea formControlName="testimony"
-                        class="lg:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
-                        [ngClass]="{'border-gray-950': testimonialForm.get('testimony')?.invalid && testimonialForm.get('testimony')?.touched }"
-                        placeholder="Leave your testimony here" rows="5" cols="30"></textarea>
-                    <div *ngIf="testimonialForm.get('testimony')?.invalid && testimonialForm.get('testimony')?.touched"
-                        class="text-gray-950 mx-2">
-                        testimony is required
-                    </div>
-                </div>
-                <div class="mx-auto">
-                    <div class=" flex items-center">
-                    <span class="sr-only">Choose testimonial photo</span>
-                    <div class="shrink-0">
-                        <img class="h-16 w-16 object-cover rounded-full" src="../../../assets/clients/c5.jpg" alt="Display photo" />
-                      </div>
-                    <input formControlName="imageUrl"
-                        class="lg:w-96 border-2 px-4 py-2 rounded-md m-2 col-span-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none
-                        block w-full text-sm text-gray-100 font-bold cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
-                        file:text-sm file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer"
-                        [ngClass]="{'border-gray-950': testimonialForm.get('imageUrl')?.invalid && testimonialForm.get('imageUrl')?.touched }"
-                        placeholder="Gym center" type="file" (change)="validateImage(testimonialForm.get('imageUrl')?.value)"
-                        accept="image/*">     
-                </div>
-                <div *ngIf="testimonialForm.get('imageUrl')?.invalid && testimonialForm.get('imageUrl')?.touched"
-                class="text-gray-950 mx-2">
-                Image is required
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Leave a testimonial</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">
+                    Share your experience with a center, a trainer, or Berliz overall.
+                </p>
             </div>
         </div>
-            <button class="uppercase p-2 px-4 bg-gray-950 mx-auto rounded-md text-md text-white font-sans"
-                type="submit">
-                submit
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
+    </div>
+
+    <form [formGroup]="testimonialForm" (ngSubmit)="submitForm()" class="flex flex-col gap-4">
+
+        <!-- ── Who is this about ─────────────────────────────────────────── -->
+        <div class="flex flex-col gap-2">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                Who is this testimonial about?
+            </label>
+
+            <div class="grid grid-cols-3 gap-2">
+                <button type="button" (click)="setTarget('center')" class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border text-xs font-semibold transition"
+                    [ngClass]="target === 'center'
+                        ? 'border-red-600 bg-red-50 text-red-600'
+                        : 'border-gray-200 bg-gray-50 text-gray-500 hover:bg-gray-100'">
+                    <i-feather name="home" style="width:13px;height:13px;"></i-feather>
+                    A center
+                </button>
+
+                <button type="button" (click)="setTarget('trainer')" class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border text-xs font-semibold transition"
+                    [ngClass]="target === 'trainer'
+                        ? 'border-red-600 bg-red-50 text-red-600'
+                        : 'border-gray-200 bg-gray-50 text-gray-500 hover:bg-gray-100'">
+                    <i-feather name="user" style="width:13px;height:13px;"></i-feather>
+                    A trainer
+                </button>
+
+                <button type="button" (click)="setTarget('general')" class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border text-xs font-semibold transition"
+                    [ngClass]="target === 'general'
+                        ? 'border-red-600 bg-red-50 text-red-600'
+                        : 'border-gray-200 bg-gray-50 text-gray-500 hover:bg-gray-100'">
+                    <i-feather name="award" style="width:13px;height:13px;"></i-feather>
+                    About Berliz
+                </button>
+            </div>
+        </div>
+
+        <!-- ── About Berliz — nothing to pick ────────────────────────────── -->
+        <div *ngIf="isGeneral" class="flex items-start gap-2 px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200">
+            <i-feather name="award" class="text-red-600 shrink-0 mt-0.5" style="width:13px;height:13px;"></i-feather>
+            <p class="text-[11px] text-gray-500 leading-relaxed">
+                Share your overall experience with Berliz — not tied to a specific trainer or center.
+            </p>
+        </div>
+
+        <!-- ── Searchable picker ─────────────────────────────────────────── -->
+        <div *ngIf="!isGeneral" class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                {{ target === 'center' ? 'Select a center' : 'Select a trainer' }}
+            </label>
+
+            <!-- Search box -->
+            <div class="relative">
+                <i-feather name="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    style="width:13px;height:13px;"></i-feather>
+                <input type="text" [value]="searchTerm" (input)="onSearch($event)"
+                    [placeholder]="target === 'center' ? 'Search centers…' : 'Search trainers…'" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900
+                           placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+            </div>
+
+            <!-- Options list -->
+            <div class="mt-1 max-h-44 overflow-y-auto rounded-xl border" [ngClass]="{
+                    'border-red-400': testimonialForm.get('targetId')?.invalid && testimonialForm.get('targetId')?.touched,
+                    'border-gray-200': !(testimonialForm.get('targetId')?.invalid && testimonialForm.get('targetId')?.touched)
+                 }">
+
+                <p *ngIf="filteredOptions.length === 0" class="px-3 py-4 text-[11px] text-gray-400 text-center">
+                    {{ searchTerm
+                        ? 'No matches for "' + searchTerm + '".'
+                        : (target === 'center' ? 'No centers available yet.' : 'No trainers available yet.') }}
+                </p>
+
+                <button *ngFor="let option of filteredOptions" type="button" (click)="chooseTarget(option)"
+                    class="w-full text-left px-3 py-2.5 border-b border-gray-100 last:border-b-0 transition flex items-center justify-between gap-2"
+                    [ngClass]="targetId === option.id ? 'bg-red-50' : 'hover:bg-gray-50'">
+                    <span class="min-w-0">
+                        <span class="block text-sm font-semibold truncate"
+                            [ngClass]="targetId === option.id ? 'text-red-600' : 'text-gray-900'">
+                            {{ option.name }}
+                        </span>
+                        <span *ngIf="option.subtitle" class="block text-[11px] text-gray-400 truncate">
+                            {{ option.subtitle }}
+                        </span>
+                    </span>
+                    <i-feather *ngIf="targetId === option.id" name="check" class="text-red-600 shrink-0"
+                        style="width:14px;height:14px;"></i-feather>
+                </button>
+            </div>
+
+            <p *ngIf="testimonialForm.get('targetId')?.invalid && testimonialForm.get('targetId')?.touched"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Pick the {{ target }} this testimonial is about
+            </p>
+
+            <p *ngIf="selectedOption" class="text-[11px] text-gray-500 flex items-center gap-1">
+                <i-feather name="check-circle" class="text-red-600" style="width:11px;height:11px;"></i-feather>
+                Writing about <span class="font-semibold text-gray-700">{{ selectedOption.name }}</span>
+            </p>
+        </div>
+
+        <!-- ── Testimonial ───────────────────────────────────────────────── -->
+        <div class="flex flex-col gap-1">
+            <div class="flex items-center justify-between">
+                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                    Your testimonial
+                </label>
+                <span class="text-[11px]" [ngClass]="remaining < 0 ? 'text-red-500' : 'text-gray-400'">
+                    {{ remaining }} left
+                </span>
+            </div>
+
+            <textarea formControlName="testimonial" rows="5"
+                placeholder="Tell us how your training went — what changed, and what stood out." class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400 resize-none
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="{
+                        'border-red-400 bg-red-50': testimonialForm.get('testimonial')?.invalid && testimonialForm.get('testimonial')?.touched,
+                        'border-gray-200 bg-gray-50': !(testimonialForm.get('testimonial')?.invalid && testimonialForm.get('testimonial')?.touched)
+                      }"></textarea>
+
+            <p *ngIf="testimonialForm.get('testimonial')?.invalid && testimonialForm.get('testimonial')?.touched"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Please write between {{ minLength }} and {{ maxLength }} characters
+            </p>
+        </div>
+
+        <!-- Missing client profile notice -->
+        <div *ngIf="!myClient"
+            class="flex items-start gap-2 px-3 py-2.5 rounded-xl bg-amber-50 border border-amber-100">
+            <i-feather name="alert-circle" class="text-amber-600 shrink-0 mt-0.5"
+                style="width:13px;height:13px;"></i-feather>
+            <p class="text-[11px] text-amber-700 leading-relaxed">
+                We couldn't load your client profile. Testimonials are tied to your client record — complete it from
+                your dashboard first.
+            </p>
+        </div>
+
+        <p class="text-[11px] text-gray-400 flex items-start gap-1.5">
+            <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+            Testimonials are reviewed by our team before they appear publicly.
+        </p>
+
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end gap-2">
+            <button type="button" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+                       hover:bg-gray-50 active:scale-[0.98] transition">
+                Cancel
+            </button>
+            <button type="submit" [disabled]="submitting" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2
+                       disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100">
+                <i-feather [name]="submitting ? 'loader' : 'send'" style="width:13px;height:13px;"></i-feather>
+                {{ submitting ? 'Submitting…' : 'Submit testimonial' }}
             </button>
         </div>
+
     </form>
-    </div>
-</section>
+
+</div>

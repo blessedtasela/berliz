@@ -1,13 +1,42 @@
-import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
-import { Chart, registerables } from 'chart.js/auto';
-import { Subscriptions } from 'src/app/models/subscriptions.interface';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 
+import { Chart, registerables } from 'chart.js/auto';
+
+import { Store } from '@ngrx/store';
+import { Subscription as RxSubscription, combineLatest, take } from 'rxjs';
+
+import { Subscriptions } from 'src/app/models/subscriptions.interface';
+import { AuthService } from 'src/app/services/auth.service';
+import { loadMySubscriptions, loadSubscriptions } from 'src/app/state/subscription/subscription.actions';
+import {
+  selectMySubscriptions,
+  selectSubscriptionLoading,
+  selectSubscriptions
+} from 'src/app/state/subscription/subscription.selectors';
+
+/**
+ * Previously depended entirely on a parent-supplied @Input, which meant the card
+ * rendered a chart of zeros before (and often instead of) any real data — and
+ * always showed nothing for admins, who have no personal subscriptions.
+ * It is now self-sufficient: it dispatches and selects from the subscription
+ * store itself — all subscriptions for admins, the signed-in user's own
+ * subscriptions for every other role. Bar chart type and styling preserved.
+ */
 @Component({
   selector: 'app-dashboard-subscription-analytics',
   templateUrl: './dashboard-subscription-analytics.component.html',
   styleUrls: ['./dashboard-subscription-analytics.component.css']
 })
-export class DashboardSubscriptionAnalyticsComponent {
+export class DashboardSubscriptionAnalyticsComponent implements OnInit, OnDestroy {
+  /** Kept for template compatibility with dashboard-main; not the data source. */
   @Input() subscriptions: Subscriptions[] = [];
 
   total = 0;
@@ -15,48 +44,94 @@ export class DashboardSubscriptionAnalyticsComponent {
   expired = 0;
   expiringSoon = 0;
 
+  ready = false;
+  scopeLabel = 'You';
+
   @ViewChild('analyticsCanvas', { static: true })
   analyticsCanvas!: ElementRef<HTMLCanvasElement>;
 
   private chart!: Chart<'bar', number[], string>;
+  private subs: RxSubscription[] = [];
+  private sawLoading = false;
+  private isAdminView = false;
 
-  ngOnChanges() {
-    this.computeStats();
-    this.tryCreateChart();
+  constructor(
+    private store: Store,
+    private auth: AuthService
+  ) { }
+
+  ngOnInit() {
+    this.isAdminView = this.auth.isAdmin();
+    this.scopeLabel = this.isAdminView ? 'All users' : 'You';
+
+    this.subs.push(
+      combineLatest([this.subscriptions$(), this.store.select(selectSubscriptionLoading)])
+        .subscribe(([list, loading]) => {
+          if (loading) {
+            this.sawLoading = true;
+            return;
+          }
+          // Nothing in flight and nothing cached yet — wait for the real response
+          // instead of drawing a chart of zeros.
+          if (!this.sawLoading && (list ?? []).length === 0) return;
+
+          this.ready = true;
+          this.computeStats(list ?? []);
+          this.renderChart();
+        })
+    );
+
+    this.fetchIfNeeded();
   }
 
-  ngAfterViewInit() {
-    this.tryCreateChart();
+  ngOnDestroy() {
+    this.subs.forEach(s => s.unsubscribe());
+    if (this.chart) this.chart.destroy();
   }
 
-  private computeStats() {
+  private subscriptions$() {
+    return this.isAdminView
+      ? this.store.select(selectSubscriptions)
+      : this.store.select(selectMySubscriptions);
+  }
+
+  /** Only hit the API when the slice is empty and no request is already running. */
+  private fetchIfNeeded() {
+    combineLatest([this.subscriptions$(), this.store.select(selectSubscriptionLoading)])
+      .pipe(take(1))
+      .subscribe(([list, loading]) => {
+        if (loading || (list ?? []).length > 0) return;
+        this.store.dispatch(this.isAdminView ? loadSubscriptions() : loadMySubscriptions());
+      });
+  }
+
+  private computeStats(list: Subscriptions[]) {
     const now = new Date();
 
-    this.total = this.subscriptions.length;
-    this.active = this.subscriptions.filter(s => s.status === 'true').length;
-    this.expired = this.subscriptions.filter(s => s.status === 'false').length;
+    this.total = list.length;
+    this.active = list.filter(s => s.status === 'true').length;
+    this.expired = list.filter(s => s.status === 'false').length;
 
-    this.expiringSoon = this.subscriptions.filter(s => {
+    this.expiringSoon = list.filter(s => {
       if (!s.endDate) return false;
       const end = new Date(s.endDate);
+      if (isNaN(end.getTime())) return false;
       const diff = (end.getTime() - now.getTime()) / 86400000;
       return diff > 0 && diff <= 7;
     }).length;
   }
 
-  private tryCreateChart() {
-    if (!this.analyticsCanvas) return;
-
-    if (this.chart) this.chart.destroy();
-
-    this.createChart();
-  }
-
-  private createChart() {
-    Chart.register(...registerables);
-
+  private renderChart() {
     const labels = ['Active', 'Expiring soon', 'Expired'];
     const values = [this.active, this.expiringSoon, this.expired];
+
+    if (this.chart) {
+      this.chart.data.datasets[0].data = values;
+      this.chart.update();
+      return;
+    }
+
+    Chart.register(...registerables);
 
     this.chart = new Chart<'bar', number[], string>(this.analyticsCanvas.nativeElement, {
       type: 'bar',
@@ -109,12 +184,9 @@ export class DashboardSubscriptionAnalyticsComponent {
       }
     });
   }
+
   @HostListener('window:resize')
   onResize() {
     if (this.chart) setTimeout(() => this.chart.resize(), 50);
-  }
-
-  ngOnDestroy() {
-    if (this.chart) this.chart.destroy();
   }
 }

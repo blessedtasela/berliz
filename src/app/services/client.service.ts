@@ -28,7 +28,7 @@ export class ClientService {
   }
 
   getClient() {
-    return this.httpClient.get<Clients>(this.url + "/client/getClient")
+    return this.httpClient.get<Clients>(this.url + "/client/getMyClient")
   }
 
   getAllClients() {

@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { Testimonials } from '../../models/testimonials.model';
 import { loadActiveTestimonials } from 'src/app/state/testimonial/testimonial.actions';
 import { selectActiveTestimonials } from 'src/app/state/testimonial/testimonial.selectors';
+import { TestimonialDialogService } from '../testimonial-dialog.service';
 
 @Component({
   selector: 'app-testimonial-list',
@@ -12,34 +13,30 @@ import { selectActiveTestimonials } from 'src/app/state/testimonial/testimonial.
 })
 export class TestimonialListComponent implements OnInit, OnDestroy {
   testimonials: Testimonials[] = [];
-  testimonialIndex: number = 0;
-  private intervalId: any;
   private subscription!: Subscription;
 
-  constructor(private store: Store) { }
+  constructor(
+    private store: Store,
+    private testimonialDialog: TestimonialDialogService
+  ) { }
 
   ngOnInit() {
     this.store.dispatch(loadActiveTestimonials());
     this.subscription = this.store.select(selectActiveTestimonials).subscribe(testimonials => {
       this.testimonials = testimonials ?? [];
-      this.testimonialIndex = 0;
     });
-    this.testimonialCounter();
   }
 
   ngOnDestroy() {
     this.subscription?.unsubscribe();
-    clearInterval(this.intervalId);
   }
 
-  testimonialCounter() {
-    this.intervalId = setInterval(() => {
-      this.toggleTestimonial(1);
-    }, 8000);
+  /** Scrolls the strip roughly one card's width in either direction. */
+  scrollStrip(container: HTMLElement, direction: 1 | -1): void {
+    container.scrollBy({ left: direction * (container.clientWidth * 0.8), behavior: 'smooth' });
   }
 
-  toggleTestimonial(n: number): void {
-    if (!this.testimonials.length) return;
-    this.testimonialIndex = (this.testimonialIndex + n + this.testimonials.length) % this.testimonials.length;
+  openTestimonialForm(): void {
+    this.testimonialDialog.openTestimonialForm();
   }
 }

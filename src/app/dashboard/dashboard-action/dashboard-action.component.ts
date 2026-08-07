@@ -44,6 +44,27 @@ export class DashboardActionComponent {
     return name.replace(/\s+/g, '-').toLowerCase();
   }
 
+  /**
+   * Dashboard keys whose natural `/dashboard/<key>` path is not where the user
+   * should actually land. Everything else falls back to `/dashboard/<key>`.
+   */
+  private readonly ROUTE_OVERRIDES: Record<string, string> = {
+    // No admin CRUD table for equipment — it's center-scoped and managed from
+    // "My equipment" on /dashboard/exercises, so point at the public browser.
+    'equipments': '/equipments',
+    'workouts': '/dashboard/workouts',
+    'my-workouts': '/dashboard/workouts',
+    'liked-trainers': '/trainers',
+    // No dedicated "my testimonials" page exists (a user has at most one
+    // testimonial); the merged Programs/testimonials page is the sensible landing spot.
+    'my-testimonials': '/services',
+  };
+
+  resolveRoute(key: any): string {
+    const slug = this.formatUrl(key);
+    return this.ROUTE_OVERRIDES[slug] ?? '/dashboard/' + slug;
+  }
+
   toggleData() {
     this.showAllData == !this.showAllData;
   }

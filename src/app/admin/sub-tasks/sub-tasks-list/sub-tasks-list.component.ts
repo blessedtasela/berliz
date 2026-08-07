@@ -59,7 +59,8 @@ export class SubTasksListComponent {
       if (subTask) {
         const dialogRef = this.dialog.open(UpdateSubTasksModalComponent, {
           width: '900px',
-          maxHeight: '600px',
+          maxWidth: '95vw',
+          maxHeight: '90vh',
           disableClose: true,
           data: {
             subTaskData: subTask,
@@ -90,6 +91,7 @@ export class SubTasksListComponent {
       if (subTask) {
         const dialogRef = this.dialog.open(SubTaskDetailsModalComponent, {
           width: '800px',
+          maxWidth: '95vw',
           panelClass: 'mat-dialog-height',
           data: {
             subTaskData: subTask,

@@ -22,6 +22,9 @@ import { DashboardMainComponent } from './dashboard-main/dashboard-main.componen
 import { DashboardRouteComponent } from './dashboard-route/dashboard-route.component';
 import { DashboardSubscriptionAnalyticsComponent } from './dashboard-subscription-analytics/dashboard-subscription-analytics.component';
 import { DashboardExercisesComponent } from './exercises/dashboard-exercises.component';
+import { DashboardTrendingExercisesComponent } from './dashboard-trending-exercises/dashboard-trending-exercises.component';
+import { DashboardSuggestedComponent } from './dashboard-suggested/dashboard-suggested.component';
+import { UserHoverCardComponent } from '../shared/user-hover-card/user-hover-card.component';
 
 
 
@@ -39,7 +42,9 @@ import { DashboardExercisesComponent } from './exercises/dashboard-exercises.com
     DashboardMainComponent,
     DashboardRouteComponent,
     DashboardSubscriptionAnalyticsComponent,
-    DashboardExercisesComponent
+    DashboardExercisesComponent,
+    DashboardTrendingExercisesComponent,
+    DashboardSuggestedComponent
   ],
   imports: [
     CommonModule,
@@ -52,7 +57,8 @@ import { DashboardExercisesComponent } from './exercises/dashboard-exercises.com
     FooterModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    UserHoverCardComponent
   ]
 })
 export class DashboardModule { }

@@ -1,0 +1,38 @@
+<!-- Trigger — the text the table cell was already showing. -->
+<span #trigger class="inline-flex items-center gap-1.5 max-w-full" (mouseenter)="onEnter()" (mouseleave)="onLeave()">
+
+    <button *ngIf="isLinked" type="button" (click)="navigate()"
+        class="truncate text-left font-semibold text-gray-900 hover:text-red-600 hover:underline
+               underline-offset-2 transition focus:outline-none focus-visible:ring-2
+               focus-visible:ring-red-200 rounded">
+        {{ displayLabel }}
+    </button>
+
+    <!-- No user id on this row — render plain text, no affordance. -->
+    <span *ngIf="!isLinked" class="truncate font-semibold text-gray-900">{{ displayLabel }}</span>
+
+</span>
+
+<!-- Preview card. Fixed-position so the table's overflow-x-auto scroller
+     can't clip it; coordinates come from the trigger's bounding rect. -->
+<div *ngIf="open && isLinked" class="fixed z-50 w-60 bg-white rounded-xl border border-gray-200 shadow-lg p-3
+            flex items-start gap-3 pointer-events-none" [style.top.px]="cardTop" [style.left.px]="cardLeft">
+
+    <img [src]="photoSrc" [alt]="fullName"
+        class="w-10 h-10 rounded-full object-cover bg-gray-100 border border-gray-200 shrink-0" />
+
+    <div class="flex flex-col gap-1 min-w-0">
+
+        <p class="text-xs font-bold text-gray-900 truncate">{{ fullName || displayLabel }}</p>
+
+        <span *ngIf="role" class="text-[10px] font-semibold uppercase tracking-wide text-red-600 bg-red-50
+                     border border-red-100 px-2 py-0.5 rounded-full self-start">
+            {{ role }}
+        </span>
+
+        <p *ngIf="email" class="text-[11px] text-gray-400 truncate">{{ email }}</p>
+
+        <p class="text-[10px] text-gray-300 mt-0.5">Click to view profile</p>
+
+    </div>
+</div>

@@ -53,6 +53,7 @@ export class ResetPasswordComponent {
   openPasswordResetModal(): void {
     this.dialog.open(ResetPasswordModalComponent, {
       width: '400px', 
+      maxWidth: '95vw',
       data: {
         token : this.token
       } 

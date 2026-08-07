@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { ContactUs } from 'src/app/models/contact-us.model';
 import { loadContactUs } from 'src/app/state/contact-us/contact-us.actions';
 import { selectContactUsList } from 'src/app/state/contact-us/contact-us.selectors';
+import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
   selector: 'app-admin-contact-us',
@@ -19,6 +20,13 @@ export class AdminContactUsComponent {
   searchComponent: string = 'contactUs'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+
+  readonly selectContactUsList = selectContactUsList;
+  readonly contactUsSearchFields: AdminSearchField<ContactUs>[] = [
+    { value: 'name', label: 'Name', accessor: c => c.name },
+    { value: 'email', label: 'Email', accessor: c => c.email },
+    { value: 'id', label: 'Contact-us id', accessor: c => c.id?.toString() },
+  ];
 
   constructor(private store: Store,
     private ngxService: NgxUiLoaderService,

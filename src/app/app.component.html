@@ -23,8 +23,12 @@
             <app-top-bar></app-top-bar>
             <app-side-bar></app-side-bar>
 
-            <div class="pt-14 transition-all duration-300" [ngClass]="sidebarOpen ? 'pl-60' : 'pl-14'">
-                <div class="p-4">
+            <!-- On mobile the expanded sidebar overlays the content (see the md:hidden
+                 backdrop in app-side-bar), so only push the content across from md up.
+                 Below md we stay at the icon-rail offset and never squeeze the page. -->
+            <div class="pt-14 transition-all duration-300 min-w-0"
+                [ngClass]="sidebarOpen ? 'pl-14 md:pl-60' : 'pl-14'">
+                <div class="p-4 min-w-0">
                     <router-outlet></router-outlet>
                     <app-footer></app-footer>
                 </div>

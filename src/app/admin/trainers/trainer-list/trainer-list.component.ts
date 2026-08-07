@@ -61,9 +61,10 @@ export class TrainerListComponent {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
-        dialogConfig.width = '800px',
-          dialogConfig.height = '600px',
-          dialogConfig.data = { trainerData: trainer }
+        dialogConfig.width = '800px';
+        dialogConfig.maxWidth = '95vw';
+        dialogConfig.maxHeight = '90vh';
+        dialogConfig.data = { trainerData: trainer };
         const dialogRef = this.dialog.open(UpdateTrainerModalComponent, dialogConfig);
         const childComponentInstance = dialogRef.componentInstance as UpdateTrainerModalComponent;
 
@@ -92,9 +93,10 @@ export class TrainerListComponent {
       const dialogConfig = new MatDialogConfig();
       dialogConfig.disableClose = false;
       dialogConfig.autoFocus = true;
-      dialogConfig.width = '800px',
-        dialogConfig.height = '600px',
-        dialogConfig.data = { trainerData: trainer }
+      dialogConfig.width = '800px';
+      dialogConfig.maxWidth = '95vw';
+      dialogConfig.maxHeight = '90vh';
+      dialogConfig.data = { trainerData: trainer };
       const dialogRef = this.dialog.open(TrainerDetailsModalComponent, dialogConfig);
       dialogRef.afterClosed().subscribe(result => {
         if (result) {

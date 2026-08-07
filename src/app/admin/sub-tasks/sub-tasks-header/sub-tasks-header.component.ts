@@ -92,6 +92,7 @@ export class SubTasksHeaderComponent {
   openAddCategory() {
     const dialogRef = this.dialog.open(AddSubTasksModalComponent, {
       width: '800px',
+      maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,
     });

@@ -1,3 +1,5 @@
+<app-admin-search [selector]="selectSubscriptions" [fields]="subscriptionSearchFields"
+    placeholder="Search subscriptions..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-subscriptions-header [subscriptionsData]="subscriptionsData" [totalSubscriptions]="totalSubscriptions"
     [subscriptionsLength]="subscriptionsLength"></app-subscriptions-header>
 <app-subscriptions-list [subscriptionsData]="subscriptionsData"

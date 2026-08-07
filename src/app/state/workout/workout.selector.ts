@@ -12,6 +12,9 @@ export const selectWorkoutError   = createSelector(selectState, s => s.error);
 export const selectMyWorkouts     = createSelector(selectState, s => s.myWorkouts);
 export const selectSelectedWorkout = createSelector(selectState, s => s.selectedWorkout);
 
+// ── Public templates ──────────────────────────────────────────────────────────
+export const selectWorkoutTemplates = createSelector(selectState, s => s.templates);
+
 // ── Assignments ───────────────────────────────────────────────────────────────
 export const selectMyAssignedWorkouts = createSelector(selectState, s => s.myAssignedWorkouts);
 export const selectAssignmentsIMade   = createSelector(selectState, s => s.assignmentsIMade);

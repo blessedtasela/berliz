@@ -25,7 +25,9 @@
       </div>
 
       <div class="flex-1 min-w-0">
-        <p class="text-xs font-semibold text-gray-900 truncate">{{ user.email }}</p>
+        <app-user-hover-card [userId]="user.id" [firstname]="user.firstname" [lastname]="user.lastname"
+          [photo]="user.profilePhoto" [role]="user.role" [email]="user.email" [label]="user.email">
+        </app-user-hover-card>
         <p class="text-[10px] text-gray-400 flex items-center gap-1 mt-0.5">
           <i-feather name="calendar" style="width:10px;height:10px;"></i-feather>
           {{ formatDate(user.date) }}

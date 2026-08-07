@@ -38,6 +38,7 @@ export class QuickSignupComponent {
   openForgotPassword() {
     const dialogRef = this.dialog.open(ForgotPasswordModalComponent, {
       width: '600px',
+      maxWidth: '95vw',
       disableClose: true
     });
 

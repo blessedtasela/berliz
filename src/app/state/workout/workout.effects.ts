@@ -57,6 +57,26 @@ export class WorkoutEffects {
   ));
 
   // =========================================================================
+  // PUBLIC TEMPLATES
+  // =========================================================================
+
+  loadWorkoutTemplates$ = createEffect(() => this.actions$.pipe(
+    ofType(A.loadWorkoutTemplates),
+    mergeMap(() => this.svc.getTemplates().pipe(
+      map(r => A.loadWorkoutTemplatesSuccess({ response: r })),
+      catchError(e => of(A.loadWorkoutTemplatesFailure({ error: e?.error?.message || 'Failed to load templates' })))
+    ))
+  ));
+
+  cloneWorkoutTemplate$ = createEffect(() => this.actions$.pipe(
+    ofType(A.cloneWorkoutTemplate),
+    mergeMap(({ id }) => this.svc.cloneTemplate(id).pipe(
+      map(r => A.cloneWorkoutTemplateSuccess({ response: r })),
+      catchError(e => of(A.cloneWorkoutTemplateFailure({ error: e?.error?.message || 'Failed to add this template' })))
+    ))
+  ));
+
+  // =========================================================================
   // WORKOUT ASSIGNMENTS
   // =========================================================================
 

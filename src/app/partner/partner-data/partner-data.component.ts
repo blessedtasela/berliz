@@ -92,6 +92,7 @@ export class PartnerDataComponent {
   openViewResume() {
     const dialogRef = this.dialog.open(ViewCvModalComponent, {
       width: '800px',
+      maxWidth: '95vw',
       data: {
         partnerData: this.partnerData,
       },
@@ -109,6 +110,7 @@ export class PartnerDataComponent {
   openViewCertification() {
     const dialogRef = this.dialog.open(ViewCvModalComponent, {
       width: '800px',
+      maxWidth: '95vw',
       data: {
         partnerData: this.partnerData,
       },
@@ -126,6 +128,7 @@ export class PartnerDataComponent {
   openUpdateFile() {
     const dialogRef = this.dialog.open(UpdatePartnerFileModalComponent, {
       width: '400px',
+      maxWidth: '95vw',
       data: {
         partnerData: this.partnerData,
       }

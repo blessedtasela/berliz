@@ -6,6 +6,8 @@ export interface TestimonialState {
 
     testimonials: Testimonials[];
     activeTestimonials: Testimonials[];
+    testimonialsByTrainer: Testimonials[];
+    testimonialsByCenter: Testimonials[];
     selectedTestimonial: Testimonials | null;
 }
 
@@ -15,5 +17,7 @@ export const initialTestimonialState: TestimonialState = {
 
     testimonials: [],
     activeTestimonials: [],
+    testimonialsByTrainer: [],
+    testimonialsByCenter: [],
     selectedTestimonial: null,
 };

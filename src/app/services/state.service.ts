@@ -178,6 +178,7 @@ export class StateService {
   }
 
 
+  /** value is a 'YYYY-MM-DD' key for the day the popup was last shown — resets daily, not just once ever. */
   setTodaysTodo(value: string) {
     localStorage.setItem("todaysTodo", value)
     this.showTodaysTodo = value;

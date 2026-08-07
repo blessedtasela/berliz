@@ -12,7 +12,7 @@ import { TagHeaderComponent } from './tag-header/tag-header.component';
 import { TagListComponent } from './tag-list/tag-list.component';
 import { TagsComponent } from './tags/tags.component';
 import { UpdateTagModalComponent } from './update-tag-modal/update-tag-modal.component';
-import { SearchTagComponent } from './search-tag/search-tag.component';
+import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 
 
 
@@ -24,7 +24,6 @@ import { SearchTagComponent } from './search-tag/search-tag.component';
     TagListComponent,
     TagsComponent,
     UpdateTagModalComponent,
-    SearchTagComponent
   ],
 
   imports: [
@@ -35,6 +34,7 @@ import { SearchTagComponent } from './search-tag/search-tag.component';
     MatDialogModule,
     FooterModule,
     NavbarModule,
+    AdminSearchModule,
     RouterModule.forChild([{ path: '', component: TagsComponent }])
   ]
 })

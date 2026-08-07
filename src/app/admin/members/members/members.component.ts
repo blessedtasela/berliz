@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { Members } from 'src/app/models/members.interface';
 import { loadMembers } from 'src/app/state/member/member.actions';
 import { selectMembers } from 'src/app/state/member/member.selectors';
+import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
   selector: 'app-members',
@@ -18,6 +19,14 @@ export class MembersComponent {
   searchComponent: string = 'member'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+
+  readonly selectMembers = selectMembers;
+  readonly memberSearchFields: AdminSearchField<Members>[] = [
+    { value: 'name', label: 'Name', accessor: m => `${m.userFirstname || ''} ${m.userLastname || ''}` },
+    { value: 'email', label: 'Email', accessor: m => m.userEmail },
+    { value: 'id', label: 'Member id', accessor: m => m.id?.toString() },
+    { value: 'status', label: 'Status', accessor: m => m.status },
+  ];
 
   constructor(private ngxService: NgxUiLoaderService,
     public store: Store) {

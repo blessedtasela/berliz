@@ -88,7 +88,8 @@ export class ContactUsHeaderComponent {
   openAddContactUs() {
     const dialogRef = this.dialog.open(AddContactUsModalComponent, {
       width: '800px',
-      height: '600px'
+      maxWidth: '95vw',
+      maxHeight: '90vh'
     });
     const childComponentInstance = dialogRef.componentInstance as AddContactUsModalComponent;
     childComponentInstance.onAddContactUsEmit.subscribe(() => {

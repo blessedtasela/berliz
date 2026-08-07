@@ -8,8 +8,7 @@
     {name:'Profile', icon:'user', route:'/dashboard/profile'},
     {separator:true},
     {name:'Workouts', icon:'zap', route:'/dashboard/workouts'},
-    {name:'Exercises', icon:'layers', route:'/dashboard/exercises'},
-    {name:'Assigned to me', icon:'check-square', route:'/dashboard/my-assigned-workouts'},
+    {name:'Exercises & Gear', icon:'layers', route:'/dashboard/exercises'},
     {name:'Todos', icon:'calendar', route:'/dashboard/my-todos'},
     {name:'Subscriptions', icon:'airplay', route:'/dashboard/my-subscriptions'},
     {name:'FAQs', icon:'message-square', route:'/dashboard/my-faqs'},
@@ -24,7 +23,7 @@
         ? 'bg-red-600/20 border border-red-600/30'
         : 'hover:bg-gray-800'">
 
-      <feather-icon [name]="item.icon || ''" style="width:18px;"
+      <feather-icon [name]="item.icon || ''" style="width:18px;height:18px;" class="shrink-0 flex items-center justify-center"
         [ngClass]="isActive(item.route || '', item.exact) ? 'text-red-400' : 'text-white'">
       </feather-icon>
 
@@ -51,7 +50,7 @@
   <!-- Logout -->
   <button (click)="logout()" class="group relative w-10 h-10 rounded-xl flex items-center justify-center
            hover:bg-red-50 transition">
-    <feather-icon name="log-out" style="width:18px;" class="text-white group-hover:text-red-600 transition">
+    <feather-icon name="log-out" style="width:18px;height:18px;" class="text-white group-hover:text-red-600 transition shrink-0 flex items-center justify-center">
     </feather-icon>
     <span class="absolute left-full ml-2 px-2 py-1 rounded-lg bg-gray-900 text-white text-xs
                  font-medium whitespace-nowrap opacity-0 group-hover:opacity-100

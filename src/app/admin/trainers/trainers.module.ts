@@ -12,6 +12,7 @@ import { TrainerHeaderComponent } from './trainer-header/trainer-header.componen
 import { TrainerListComponent } from './trainer-list/trainer-list.component';
 import { TrainersComponent } from './trainers/trainers.component';
 import { UpdateTrainerModalComponent } from './update-trainer-modal/update-trainer-modal.component';
+import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 
 
 
@@ -33,6 +34,7 @@ import { UpdateTrainerModalComponent } from './update-trainer-modal/update-train
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
+    AdminSearchModule,
     RouterModule.forChild([{ path: '', component: TrainersComponent }])
   ]
 })

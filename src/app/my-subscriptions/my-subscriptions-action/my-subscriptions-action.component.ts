@@ -34,6 +34,7 @@ export class MySubscriptionsActionComponent {
     this.open = false;
     const dialogRef = this.dialog.open(MySubscriptionDetailModalComponent, {
       width: '700px',
+      maxWidth: '95vw',
       data: { subscription: this.subscription }
     });
 
@@ -72,6 +73,7 @@ export class MySubscriptionsActionComponent {
     this.open = false;
     const dialogRef = this.dialog.open(RenewSubscriptionModalComponent, {
       width: '420px',
+      maxWidth: '95vw',
       data: { subscription: this.subscription }
     });
 

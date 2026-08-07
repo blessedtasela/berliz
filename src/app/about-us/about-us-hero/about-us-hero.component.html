@@ -1,17 +1,24 @@
 <!-- ═══════════════════════════════════════════════
-     ABOUT US HERO — full-width cinematic banner
-     Dark overlay on a background image, red accent
+     ABOUT US HERO — animated ember/fire banner
+     No stock photo (the previous one was an off-brand
+     cyberpunk street scene) — a CSS-only fire effect
+     that echoes the flame in the Berliz logo instead.
 ════════════════════════════════════════════════ -->
-<section class="relative w-full h-72 sm:h-80 overflow-hidden font-sans">
+<section class="relative w-full h-72 sm:h-80 overflow-hidden font-sans bg-hero-fire">
 
-  <!-- Background image -->
-  <div class="absolute inset-0 bg-cover bg-center bg-no-repeat"
-    style="background-image: url('assets/landing/hero-bg-2.jpg');">
+  <!-- Rising embers -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <span class="ember" *ngFor="let e of embers; let i = index" [style.left.%]="e.left"
+      [style.animation-duration.s]="e.duration" [style.animation-delay.s]="e.delay"
+      [style.width.px]="e.size" [style.height.px]="e.size" [style.opacity]="e.opacity"></span>
   </div>
 
-  <!-- Dark gradient overlay -->
+  <!-- Bottom ember glow -->
+  <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[140%] h-40 hero-glow"></div>
+
+  <!-- Dark gradient overlay (keeps text readable over the animation) -->
   <div class="absolute inset-0"
-    style="background: linear-gradient(135deg, rgba(0,0,0,0.82) 0%, rgba(80,0,0,0.55) 60%, rgba(0,0,0,0.75) 100%);">
+    style="background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 45%, rgba(0,0,0,0.75) 100%);">
   </div>
 
   <!-- Content -->

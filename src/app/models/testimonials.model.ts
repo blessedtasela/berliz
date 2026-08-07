@@ -13,6 +13,7 @@ export interface Testimonials {
   testimonial: string;
   likes: number;
   status: string;
+  featured: boolean;
   date: Date;
   lastUpdate: Date;
   message?: string;

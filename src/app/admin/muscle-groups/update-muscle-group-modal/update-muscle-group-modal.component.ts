@@ -49,6 +49,7 @@ export class UpdateMuscleGroupModalComponent implements OnInit {
     if (this.updateMuscleGroupForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
+      this.snackbarService.openSnackBar(this.responseMessage, "error");
       this.ngxService.stop();
     } else {
       this.muscleGroupService.updateMuscleGroup(this.updateMuscleGroupForm.value)
@@ -71,8 +72,6 @@ export class UpdateMuscleGroupModalComponent implements OnInit {
           this.snackbarService.openSnackBar(this.responseMessage, "error");
         });
     }
-    this.ngxService.stop();
-    this.snackbarService.openSnackBar(this.responseMessage, "error");
   }
 
   closeDialog() {

@@ -4,9 +4,7 @@ import { CenterPageComponent } from './centers/center-page/center-page.component
 import { LandingPageComponent } from './landing/landing-page/landing-page.component';
 import { ContactUsPageComponent } from './contact-us/contact-us-page/contact-us-page.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { TestimonialPageComponent } from './testimonial/testimonial-page/testimonial-page.component';
 import { ProductsPageComponent } from './products/products-page/products-page.component';
-import { EquipmentPageComponent } from './equipments/equipment-page/equipment-page.component';
 import { ReportProblemPageComponent } from './report-problem/report-problem-page/report-problem-page.component';
 import { TrainersDetailsComponent } from './trainers/trainers-details/trainers-details.component';
 import { TrainerGuard } from './guards/trainer.guard';
@@ -28,7 +26,6 @@ import { QuickSignupComponent } from './login/quick-signup/quick-signup.componen
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { PartnerComponent } from './partner/partner/partner.component';
 import { PartnerRouteComponent } from './partner/partner-route/partner-route.component';
-import { ExercisesPageComponent } from './exercises/exercises-page/exercises-page.component';
 import { FaqsPageComponent } from './faqs/faqs-page/faqs-page.component';
 import { HelpCenterPageComponent } from './help-center/help-center-page/help-center-page.component';
 import { TermsPageComponent } from './terms/terms-page/terms-page.component';
@@ -51,6 +48,8 @@ import { MyWorkoutsComponent } from './workouts/my-workouts/my-workouts.componen
 import { WorkoutBuilderComponent } from './workouts/workout-builder/workout-builder.component';
 import { MyAssignedWorkoutsComponent } from './workouts/my-assigned-workouts/my-assigned-workouts.component';
 import { DashboardExercisesComponent } from './dashboard/exercises/dashboard-exercises.component';
+import { PublicProfileComponent } from './user-profile/public-profile/public-profile.component';
+import { MembersDirectoryComponent } from './members-directory/members-directory.component';
 
 
 
@@ -69,9 +68,11 @@ export const routes: Routes = [
   { path: 'centers/:id/:name', component: CenterDetailComponent, canActivate: [CenterGuard], data: { breadcrumb: { alias: 'centerName' } } },
   { path: 'services', component: CategoriesComponent, data: { breadcrumb: 'Services' } },
   { path: 'services/:id/:name', component: CategoryDetailsComponent, canActivate: [CategoryGuard], data: { breadcrumb: { alias: 'serviceName' } } },
-  { path: 'testimonials', component: TestimonialPageComponent, data: { breadcrumb: 'Testimonials' } },
-  { path: 'equipments', component: EquipmentPageComponent, data: { breadcrumb: 'Equipment' } },
-  { path: 'exercises', component: ExercisesPageComponent, data: { breadcrumb: 'Exercises' } },
+  { path: 'testimonials', redirectTo: 'services', pathMatch: 'full' },
+  // Equipment and exercises are now sections of the Programs page (`/services`),
+  // the same way testimonials were merged in above.
+  { path: 'equipments', redirectTo: 'services', pathMatch: 'full' },
+  { path: 'exercises', redirectTo: 'services', pathMatch: 'full' },
   { path: 'report-problem', component: ReportProblemPageComponent, data: { breadcrumb: 'Report Problem' } },
   { path: 'faqs', component: FaqsPageComponent, data: { breadcrumb: 'FAQs' } },
   { path: 'help-center', component: HelpCenterPageComponent, data: { breadcrumb: 'Help Center' } },
@@ -81,6 +82,17 @@ export const routes: Routes = [
   { path: 'login/reset-password', component: ResetPasswordComponent, data: { breadcrumb: 'Reset Password' } },
   { path: 'login/activate-account', component: ActivateAccountComponent, data: { breadcrumb: 'Activate Account' } },
   { path: 'shop', component: ProductsPageComponent, children: productChildRoutes, data: { breadcrumb: 'Shop' } },
+
+  // Member profile — page itself has NO guard, so anonymous visitors can land
+  // here, but the backend requires auth for the actual data (SecurityConfig).
+  // The component shows a "log in to view" prompt in place of content when
+  // the API call comes back unauthorized, rather than bouncing the visitor
+  // away before they even see the page exists.
+  { path: 'user/:id', component: PublicProfileComponent, data: { breadcrumb: 'Profile' } },
+
+  // Member directory — discovery surface for the profiles above. Same model:
+  // page loads for anyone, content requires sign-in.
+  { path: 'members', component: MembersDirectoryComponent, data: { breadcrumb: 'Members' } },
 
 
   // ── DASHBOARD ──────────────────────────────────────────
@@ -222,7 +234,9 @@ export const routes: Routes = [
         }
       },
 
-      // Workouts assigned to me
+      // Workouts assigned to me — now also the "Workouts" tab on
+      // /dashboard/my-tasks. Kept as a standalone route because
+      // my-workouts.component.html still deep-links here (and old bookmarks).
       {
         path: 'my-assigned-workouts',
         component: MyAssignedWorkoutsComponent,
@@ -272,11 +286,14 @@ export const routes: Routes = [
           { path: 'muscle-groups', loadChildren: () => import('./admin/muscle-groups/muscle-groups.module').then(m => m.MuscleGroupsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Muscle Groups', expectedRole: ['admin'] } },
           { path: 'exercises', loadChildren: () => import('./admin/exercises/exercises.module').then(m => m.ExercisesModule), canActivate: [AuthGuard], data: { breadcrumb: 'Exercises', expectedRole: ['admin'] } },
           { path: 'tasks', loadChildren: () => import('./admin/tasks/tasks.module').then(m => m.TasksModule), canActivate: [AuthGuard], data: { breadcrumb: 'Tasks', expectedRole: ['admin'] } },
-          { path: 'services', loadChildren: () => import('./admin/categories/categories.module').then(m => m.CategoriesModule), canActivate: [AuthGuard], data: { breadcrumb: 'Services', expectedRole: ['admin'] } },
+          { path: 'sub-tasks', loadChildren: () => import('./admin/sub-tasks/sub-tasks.module').then(m => m.SubTasksModule), canActivate: [AuthGuard], data: { breadcrumb: 'Sub Tasks', expectedRole: ['admin'] } },
+          { path: 'categories', loadChildren: () => import('./admin/categories/categories.module').then(m => m.CategoriesModule), canActivate: [AuthGuard], data: { breadcrumb: 'Categories', expectedRole: ['admin'] } },
           { path: 'clients', loadChildren: () => import('./admin/clients/clients.module').then(m => m.ClientsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Clients', expectedRole: ['admin'] } },
           { path: 'subscriptions', loadChildren: () => import('./admin/subscriptions/subscriptions.module').then(m => m.SubscriptionsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Subscriptions', expectedRole: ['admin'] } },
           { path: 'trainer-pricing', loadChildren: () => import('./admin/trainer-pricing/trainer-pricing.module').then(m => m.TrainerPricingModule), canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Pricing', expectedRole: ['admin'] } },
+          { path: 'center-pricing', loadChildren: () => import('./admin/center-pricing/center-pricing.module').then(m => m.CenterPricingModule), canActivate: [AuthGuard], data: { breadcrumb: 'Center Pricing', expectedRole: ['admin'] } },
           { path: 'testimonials', loadChildren: () => import('./admin/testimonials/testimonials.module').then(m => m.TestimonialsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Testimonials', expectedRole: ['admin'] } },
+          { path: 'faqs', loadChildren: () => import('./admin/faqs/faqs.module').then(m => m.FaqsModule), canActivate: [AuthGuard], data: { breadcrumb: 'FAQs', expectedRole: ['admin'] } },
           { path: 'members', loadChildren: () => import('./admin/members/members.module').then(m => m.MembersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Members', expectedRole: ['admin'] } },
           { path: 'payments', loadChildren: () => import('./admin/payments/payments.module').then(m => m.PaymentsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Payments', expectedRole: ['admin'] } },
           { path: 'settings', component: UserProfileSettingsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Settings', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
@@ -315,11 +332,14 @@ export const routes: Routes = [
       // the hub cards link to — the duplicate direct child that used to sit here
       // was unlinked and would have been shadowed anyway.
       { path: 'tasks', loadChildren: () => import('./admin/tasks/tasks.module').then(m => m.TasksModule), canActivate: [AuthGuard], data: { breadcrumb: 'Tasks', expectedRole: ['admin'] } },
-      { path: 'services', loadChildren: () => import('./admin/categories/categories.module').then(m => m.CategoriesModule), canActivate: [AuthGuard], data: { breadcrumb: 'Services', expectedRole: ['admin'] } },
+      { path: 'sub-tasks', loadChildren: () => import('./admin/sub-tasks/sub-tasks.module').then(m => m.SubTasksModule), canActivate: [AuthGuard], data: { breadcrumb: 'Sub Tasks', expectedRole: ['admin'] } },
+      { path: 'categories', loadChildren: () => import('./admin/categories/categories.module').then(m => m.CategoriesModule), canActivate: [AuthGuard], data: { breadcrumb: 'Categories', expectedRole: ['admin'] } },
       { path: 'clients', loadChildren: () => import('./admin/clients/clients.module').then(m => m.ClientsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Clients', expectedRole: ['admin'] } },
       { path: 'subscriptions', loadChildren: () => import('./admin/subscriptions/subscriptions.module').then(m => m.SubscriptionsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Subscriptions', expectedRole: ['admin'] } },
       { path: 'trainer-pricing', loadChildren: () => import('./admin/trainer-pricing/trainer-pricing.module').then(m => m.TrainerPricingModule), canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Pricing', expectedRole: ['admin'] } },
+      { path: 'center-pricing', loadChildren: () => import('./admin/center-pricing/center-pricing.module').then(m => m.CenterPricingModule), canActivate: [AuthGuard], data: { breadcrumb: 'Center Pricing', expectedRole: ['admin'] } },
       { path: 'testimonials', loadChildren: () => import('./admin/testimonials/testimonials.module').then(m => m.TestimonialsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Testimonials', expectedRole: ['admin'] } },
+      { path: 'faqs', loadChildren: () => import('./admin/faqs/faqs.module').then(m => m.FaqsModule), canActivate: [AuthGuard], data: { breadcrumb: 'FAQs', expectedRole: ['admin'] } },
       { path: 'members', loadChildren: () => import('./admin/members/members.module').then(m => m.MembersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Members', expectedRole: ['admin'] } },
       { path: 'payments', loadChildren: () => import('./admin/payments/payments.module').then(m => m.PaymentsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Payments', expectedRole: ['admin'] } },
     ]

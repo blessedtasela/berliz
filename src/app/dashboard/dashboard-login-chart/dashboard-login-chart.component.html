@@ -1,8 +1,58 @@
 <div class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3 h-full">
   <div class="flex items-center justify-between">
-    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wide">Login platforms</h2>
+    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wide">Logins · last 30 days</h2>
+    <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">{{ scopeLabel }}</span>
   </div>
-  <div class="relative flex-1 min-h-[260px] flex items-center justify-center">
+
+  <!-- Headline numbers -->
+  <div class="flex flex-wrap items-baseline gap-x-6 gap-y-1">
+    <div class="flex items-baseline gap-1.5">
+      <span class="text-xl font-bold text-gray-900">{{ totalLogins }}</span>
+      <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">logins</span>
+    </div>
+    <div *ngIf="uniqueActiveUsers > 0" class="flex items-baseline gap-1.5">
+      <span class="text-xl font-bold text-gray-900">{{ uniqueActiveUsers }}</span>
+      <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">active users</span>
+    </div>
+    <div *ngIf="averageSessionMinutes > 0" class="flex items-baseline gap-1.5">
+      <span class="text-xl font-bold text-gray-900">{{ averageSessionMinutes }}</span>
+      <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">avg min / session</span>
+    </div>
+  </div>
+
+  <div class="relative flex-1 min-h-[200px]">
     <canvas #loginCanvas></canvas>
+
+    <div *ngIf="!ready"
+      class="absolute inset-0 flex items-center justify-center bg-white/70 rounded-xl">
+      <span class="text-xs text-gray-400">Loading…</span>
+    </div>
+
+    <div *ngIf="ready && totalLogins === 0"
+      class="absolute inset-0 flex items-center justify-center">
+      <span class="text-xs text-gray-400">No logins recorded in the last 30 days.</span>
+    </div>
+  </div>
+
+  <!-- Device split: mobile / tablet / desktop -->
+  <div *ngIf="devices.length" class="pt-3 border-t border-gray-100 flex flex-col gap-2">
+    <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Devices used</span>
+
+    <!-- Proportional bar -->
+    <div class="flex h-1.5 w-full rounded-full overflow-hidden bg-gray-100">
+      <div *ngFor="let device of devices"
+        [style.width.%]="device.percent"
+        [style.background]="device.color"
+        [title]="device.label + ': ' + device.count"></div>
+    </div>
+
+    <div class="flex flex-wrap gap-x-4 gap-y-1">
+      <div *ngFor="let device of devices" class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full shrink-0" [style.background]="device.color"></span>
+        <span class="text-[11px] font-medium text-gray-600">{{ device.label }}</span>
+        <span class="text-[11px] font-bold text-gray-900">{{ device.count }}</span>
+        <span class="text-[10px] text-gray-400">({{ device.percent }}%)</span>
+      </div>
+    </div>
   </div>
 </div>

@@ -76,6 +76,7 @@ export class CenterComponent {
   openUpdateCenter() {
     const dialogRef = this.dialog.open(UpdateCenterModalComponent, {
       width: '800px',
+      maxWidth: '95vw',
       data: {
         centerData: this.centerData,
       },

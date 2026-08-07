@@ -13,6 +13,7 @@ import { ContactUsHeaderComponent } from './contact-us-header/contact-us-header.
 import { ContactUsReviewModalComponent } from './contact-us-review-modal/contact-us-review-modal.component';
 import { UpdateContactUsModalComponent } from './update-contact-us-modal/update-contact-us-modal.component';
 import { ContactUsListComponent } from './contact-us-list/contact-us-list.component';
+import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 
 
 
@@ -35,6 +36,7 @@ import { ContactUsListComponent } from './contact-us-list/contact-us-list.compon
     MatDialogModule,
     FooterModule,
     NavbarModule,
+    AdminSearchModule,
     RouterModule.forChild([{ path: '', component: AdminContactUsComponent }])
   ]
 })

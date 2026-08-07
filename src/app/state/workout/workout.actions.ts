@@ -36,6 +36,17 @@ export const deleteWorkoutFailure = createAction('[Workout] Delete Workout Failu
 export const clearSelectedWorkout = createAction('[Workout] Clear Selected Workout');
 
 // =============================================================================
+// PUBLIC TEMPLATES
+// =============================================================================
+export const loadWorkoutTemplates = createAction('[Workout] Load Workout Templates');
+export const loadWorkoutTemplatesSuccess = createAction('[Workout] Load Workout Templates Success', props<Res<WorkoutResponse[]>>());
+export const loadWorkoutTemplatesFailure = createAction('[Workout] Load Workout Templates Failure', props<Err>());
+
+export const cloneWorkoutTemplate = createAction('[Workout] Clone Workout Template', props<Id>());
+export const cloneWorkoutTemplateSuccess = createAction('[Workout] Clone Workout Template Success', props<Res<WorkoutResponse>>());
+export const cloneWorkoutTemplateFailure = createAction('[Workout] Clone Workout Template Failure', props<Err>());
+
+// =============================================================================
 // WORKOUT ASSIGNMENTS
 // =============================================================================
 export const assignWorkout = createAction('[Workout] Assign Workout', props<Data>());

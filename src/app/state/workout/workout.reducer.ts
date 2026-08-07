@@ -21,6 +21,7 @@ export const workoutReducer = createReducer(
     A.addWorkout, A.updateWorkout, A.deleteWorkout,
     A.assignWorkout, A.updateAssignmentStatus,
     A.loadMyAssignedWorkouts, A.loadAssignmentsIMade,
+    A.loadWorkoutTemplates, A.cloneWorkoutTemplate,
     state => ({ ...state, loading: true, error: null })
   ),
 
@@ -30,6 +31,7 @@ export const workoutReducer = createReducer(
     A.addWorkoutFailure, A.updateWorkoutFailure, A.deleteWorkoutFailure,
     A.assignWorkoutFailure, A.updateAssignmentStatusFailure,
     A.loadMyAssignedWorkoutsFailure, A.loadAssignmentsIMadeFailure,
+    A.loadWorkoutTemplatesFailure, A.cloneWorkoutTemplateFailure,
     (state, { error }) => ({ ...state, loading: false, error })
   ),
 
@@ -56,10 +58,24 @@ export const workoutReducer = createReducer(
     ...s, loading: false,
     selectedWorkout: s.selectedWorkout?.id === id ? null : s.selectedWorkout,
     myWorkouts: s.myWorkouts.filter(w => w.id !== id),
+    templates: s.templates.filter(t => t.id !== id),
     myAssignedWorkouts: s.myAssignedWorkouts.filter(a => a.workoutId !== id),
     assignmentsIMade: s.assignmentsIMade.filter(a => a.workoutId !== id),
   })),
   on(A.clearSelectedWorkout, s => ({ ...s, selectedWorkout: null })),
+
+  // =========================================================================
+  // PUBLIC TEMPLATES
+  // =========================================================================
+  on(A.loadWorkoutTemplatesSuccess, (s, { response }) => ({
+    ...s, loading: false, templates: response.data ?? []
+  })),
+  // A clone is a brand-new workout owned by the caller — it lands in myWorkouts
+  // exactly like addWorkoutSuccess does. The templates list is untouched.
+  on(A.cloneWorkoutTemplateSuccess, (s, { response }) => ({
+    ...s, loading: false,
+    myWorkouts: response.data ? [...s.myWorkouts, response.data] : s.myWorkouts,
+  })),
 
   // =========================================================================
   // WORKOUT ASSIGNMENTS

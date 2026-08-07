@@ -12,8 +12,8 @@ import { UserDetailsModalComponent } from './user-details-modal/user-details-mod
 import { UserHeaderComponent } from './user-header/user-header.component';
 import { UserListComponent } from './user-list/user-list.component';
 import { UsersComponent } from './users/users.component';
-import { SearchUserComponent } from './search-user/search-user.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 
 
 
@@ -25,7 +25,6 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     UserHeaderComponent,
     UserListComponent,
     UsersComponent,
-    SearchUserComponent
   ],
 
   imports: [
@@ -37,6 +36,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     FooterModule,
     NavbarModule,
     ImageCropperModule,
+    AdminSearchModule,
     RouterModule.forChild([{ path: '', component: UsersComponent }])
   ]
 })

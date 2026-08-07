@@ -55,6 +55,7 @@ export class CenterPartnerFormComponent implements OnInit {
     if (!userEmail) {
       const loginDialogRef = this.dialog.open(PromptModalComponent, {
         width: '400px',
+        maxWidth: '95vw',
         data: {
           confirmation: true,
           title: 'Login required',
@@ -75,6 +76,7 @@ export class CenterPartnerFormComponent implements OnInit {
 
     const dialogRef = this.dialog.open(PartnerFormComponent, {
       width: '600px',
+      maxWidth: '95vw',
       disableClose: true,
       data: {
         email: userEmail,

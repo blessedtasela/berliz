@@ -5,6 +5,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Tasks } from 'src/app/models/tasks.interface';
 import { loadTasks } from 'src/app/state/task/task.actions';
 import { selectTasks } from 'src/app/state/task/task.selectors';
+import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
   selector: 'app-tasks',
@@ -18,6 +19,16 @@ export class TasksComponent {
   searchComponent: string = 'task'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+
+  readonly selectTasks = selectTasks;
+  readonly taskSearchFields: AdminSearchField<Tasks>[] = [
+    { value: 'user', label: 'Client', accessor: t => `${t.userFirstname || ''} ${t.userLastname || ''} ${t.userEmail || ''}` },
+    { value: 'trainer', label: 'Trainer', accessor: t => t.trainerName },
+    { value: 'description', label: 'Description', accessor: t => t.description },
+    { value: 'priority', label: 'Priority', accessor: t => t.priority },
+    { value: 'status', label: 'Status', accessor: t => t.status },
+    { value: 'id', label: 'Task id', accessor: t => t.id?.toString() },
+  ];
 
   constructor(private ngxService: NgxUiLoaderService,
     private store: Store) {

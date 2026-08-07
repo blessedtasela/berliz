@@ -99,6 +99,7 @@ export class MuscleGroupsHeaderComponent {
   openAddMuscleGroup() {
     const dialogRef = this.dialog.open(AddMuscleGroupModalComponent, {
       width: '800px',
+      maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,
     });

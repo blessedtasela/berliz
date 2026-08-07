@@ -104,6 +104,7 @@ export class CategoriesHeaderComponent {
   openAddCategory() {
     const dialogRef = this.dialog.open(AddCategoryModalComponent, {
       width: '800px',
+      maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,
     });

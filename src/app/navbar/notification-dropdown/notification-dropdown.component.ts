@@ -97,6 +97,7 @@ export class NotificationDropdownComponent implements OnInit, OnDestroy {
 
     this.dialog.open(NotificationDetailsComponent, {
       width: '450px',
+      maxWidth: '95vw',
       data: n,
       panelClass: 'berliz-modal'
     });

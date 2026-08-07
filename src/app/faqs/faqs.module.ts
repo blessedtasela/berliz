@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FaqsPageComponent } from './faqs-page/faqs-page.component';
+import { IconsModule } from '../icons/icons.module';
 
 
 
@@ -9,7 +10,8 @@ import { FaqsPageComponent } from './faqs-page/faqs-page.component';
     FaqsPageComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    IconsModule
   ]
 })
 export class FaqsModule { }
