@@ -69,10 +69,6 @@ export class AuthInterceptor implements HttpInterceptor {
     return publicEndpoints.some(route => url.includes(route));
   }
 
-  private isStrapiRequest(url: string): boolean {
-    return url.includes('localhost:1337');
-  }
-
   private withToken(request: HttpRequest<any>, token: string): HttpRequest<any> {
     return request.clone({
       setHeaders: { Authorization: `Bearer ${token}` }
@@ -80,10 +76,6 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-
-    if (this.isStrapiRequest(request.url)) {
-      return next.handle(request);
-    }
 
     const token = this.authService.getToken();
 
