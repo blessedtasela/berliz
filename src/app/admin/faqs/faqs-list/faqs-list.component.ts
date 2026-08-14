@@ -33,7 +33,7 @@ export class FaqsListComponent {
       return;
     }
     const dialogRef = this.dialog.open(UpdateFaqModalComponent, {
-      width: '700px',
+      width: '560px',
       maxWidth: '95vw',
       maxHeight: '600px',
       disableClose: true,

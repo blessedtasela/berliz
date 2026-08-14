@@ -2,7 +2,6 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -26,7 +25,6 @@ export class CenterDetailsModalComponent {
     private dialogRef: MatDialogRef<CenterDetailsModalComponent>,
     private store: Store,
     private dialog: MatDialog,
-    private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private datePipe: DatePipe) {
     this.centerData = this.data.centerData;
@@ -40,7 +38,6 @@ export class CenterDetailsModalComponent {
   }
 
   handleEmit() {
-    this.ngxService.start();
     this.subscriptions.push(
       this.store.select(selectCenters).subscribe((centers) => {
         const center = centers.find(center => center.id == this.centerData.id);
@@ -48,7 +45,6 @@ export class CenterDetailsModalComponent {
           this.centerData = center
       }),
     );
-    this.ngxService.stop();
   }
 
   openUrl(url: any) {

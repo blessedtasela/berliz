@@ -3,20 +3,26 @@
   <div>
     <h2 class="text-base font-bold text-gray-900">Choose your plan</h2>
     <p class="text-xs text-gray-400 mt-0.5">
-      Flexible options designed to match your fitness journey.
+      Flexible options designed to match your fitness journey. Selecting a plan sends a request to
+      our team — there's no payment step yet, so nothing is charged.
     </p>
   </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+  <!-- Loading skeleton -->
+  <div *ngIf="loading && plans.length === 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div *ngFor="let i of [1,2,3]" class="rounded-xl border border-gray-200 bg-white p-4 h-48 animate-pulse"></div>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && plans.length === 0"
+    class="rounded-xl border border-dashed border-gray-200 bg-white p-6 text-center">
+    <p class="text-xs text-gray-400">No plans are available right now. Please check back later.</p>
+  </div>
+
+  <div *ngIf="plans.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
     <div *ngFor="let plan of plans" class="relative border border-gray-200 rounded-xl bg-white p-4 flex flex-col gap-3
-             hover:shadow-sm hover:-translate-y-0.5 transition cursor-pointer">
-
-      <!-- Discount badge -->
-      <div
-        class="absolute top-3 right-3 text-[10px] font-bold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">
-        Save {{ plan.discount }}%
-      </div>
+             hover:shadow-sm hover:-translate-y-0.5 transition">
 
       <!-- Plan name -->
       <h3 class="text-sm font-bold text-gray-900">{{ plan.name }}</h3>
@@ -24,24 +30,24 @@
 
       <div class="border-t border-gray-100"></div>
 
-      <!-- Features -->
-      <ul class="flex flex-col gap-1.5">
-        <li *ngFor="let detail of plan.details" class="flex items-start gap-2 text-xs text-gray-700">
-          <i-feather name="check" style="width:12px;height:12px;" class="text-red-600 shrink-0 mt-0.5"></i-feather>
-          {{ detail }}
-        </li>
-      </ul>
+      <!-- Price -->
+      <div class="flex items-baseline gap-1">
+        <span class="text-lg font-bold text-red-600">{{ plan.price | currency }}</span>
+        <span class="text-[11px] text-gray-400">/ {{ plan.billingInterval || 'month' }}</span>
+      </div>
 
-      <!-- Duration -->
-      <div class="flex items-center gap-1 text-[11px] text-gray-500 mt-auto">
-        <i-feather name="clock" style="width:11px;height:11px;"></i-feather>
-        {{ plan.duration }}
+      <!-- Access scope -->
+      <div class="flex items-start gap-2 text-xs text-gray-700">
+        <i-feather name="check" style="width:12px;height:12px;" class="text-red-600 shrink-0 mt-0.5"></i-feather>
+        <span>{{ plan.accessScope }}</span>
       </div>
 
       <!-- CTA -->
-      <button class="w-full py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
-               hover:bg-red-700 active:scale-[0.98] transition">
-        Select {{ plan.name }}
+      <button type="button" (click)="choosePlan(plan)" [disabled]="selectingPlanId !== null"
+        class="mt-auto w-full py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+               hover:bg-red-700 active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed">
+        <span *ngIf="selectingPlanId === plan.id">Sending request…</span>
+        <span *ngIf="selectingPlanId !== plan.id">Select {{ plan.name }}</span>
       </button>
 
     </div>

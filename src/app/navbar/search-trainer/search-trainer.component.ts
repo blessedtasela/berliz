@@ -3,7 +3,6 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Outp
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -23,7 +22,6 @@ export class SearchTrainerComponent implements OnInit, AfterViewInit {
 
   constructor(
     private store: Store,
-    private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) { }
 
@@ -40,7 +38,6 @@ export class SearchTrainerComponent implements OnInit, AfterViewInit {
         debounceTime(300),
         map((e: any) => e.target.value),
         tap(() => {
-          this.ngxService.start();
         }),
         switchMap((query: string) => {
           return this.search(query); // Perform the search with the query
@@ -48,12 +45,10 @@ export class SearchTrainerComponent implements OnInit, AfterViewInit {
       )
       .subscribe(
         (results: Trainers[]) => {
-          this.ngxService.stop();
           this.results.emit(results);
         },
         (error: any) => {
           this.snackbarService.openSnackBar(error, 'error');
-          this.ngxService.stop();
         }
       );
   }

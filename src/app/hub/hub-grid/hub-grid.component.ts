@@ -35,7 +35,7 @@ export class HubGridComponent implements OnChanges {
    */
   private readonly CONTENT_KEYS = ['categories', 'tags', 'exercises', 'muscle-groups', 'newsletters',
     'testimonials', 'faqs', 'tasks', 'sub-tasks', 'todo-lists', 'trainer-pricing', 'center-pricing',
-    'equipments', 'workouts', 'contact-us', 'payments', 'subscriptions'];
+    'equipments', 'workouts', 'contact-us', 'problem-reports', 'payments', 'subscriptions', 'bookings'];
 
   /**
    * "Mine as an individual" counts. The backend appends these for EVERY role
@@ -46,7 +46,7 @@ export class HubGridComponent implements OnChanges {
    */
   private readonly PERSONAL_KEYS = ['my-tasks', 'my-todos', 'my-subscriptions', 'my-workouts',
     'my-testimonials', 'liked-trainers', 'partnership', 'my-clients', 'my-members',
-    'members-testimonial', 'clients-tasks', 'todos'];
+    'members-testimonial', 'clients-tasks', 'todos', 'my-bookings', 'my-provider-bookings'];
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['items']) {
@@ -132,7 +132,7 @@ export class HubGridComponent implements OnChanges {
   private readonly ROUTE_OVERRIDES: Record<string, string> = {
     // No admin CRUD table for equipment — it's center-scoped and managed from
     // "My equipment" on /dashboard/exercises, so point at the public browser.
-    'equipments': '/equipments',
+    'equipments': '/services/equipment',
     'workouts': '/dashboard/workouts',
     'my-workouts': '/dashboard/workouts',
     'liked-trainers': '/trainers',

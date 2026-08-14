@@ -11,6 +11,7 @@ import { TrainerPhotoAlbum } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { TrainerService } from 'src/app/services/trainer.service';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 import { selectMyTrainerPhotoAlbum } from 'src/app/state/trainer/trainer.selector';
 import { genericError } from 'src/validators/form-validators.module';
 
@@ -457,9 +458,7 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
   }
   
   private resolvePhotoUrl(url?: string): string {
-    if (!url?.trim()) return '';
-    if (url.startsWith('blob:') || url.startsWith('http')) return url;
-    return `http://localhost:1337${url}`;
+    return resolveStrapiUrl(url);
   }
 
   hasChanges(): boolean {

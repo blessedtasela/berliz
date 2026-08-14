@@ -45,7 +45,6 @@ export class UpdateFaqModalComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(
       this.actions$.pipe(ofType(updateFaqSuccess)).subscribe(({ response }) => {
-        this.ngxService.stop();
         this.onUpdateFaqEmit.emit();
         this.invalidForm = false;
         this.responseMessage = response?.message;
@@ -53,7 +52,6 @@ export class UpdateFaqModalComponent implements OnInit, OnDestroy {
         this.dialogRef.close('FAQ updated successfully');
       }),
       this.actions$.pipe(ofType(updateFaqFailure)).subscribe(({ error }) => {
-        this.ngxService.stop();
         this.responseMessage = error || genericError;
         this.snackbarService.openSnackBar(this.responseMessage, 'error');
       })

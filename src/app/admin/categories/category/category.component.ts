@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -30,15 +29,12 @@ export class CategoryComponent {
     { value: 'tag', label: 'Tag', accessor: c => (c.tagNames || []).join(' ') },
   ];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    public store: Store,
+  constructor(public store: Store,
     private rxStompService: RxStompService) {
   }
 
   ngOnInit(): void {
-    this.ngxService.start()
     this.handleEmitEvent()
-    this.ngxService.stop()
   }
 
   ngOnDestroy(): void {

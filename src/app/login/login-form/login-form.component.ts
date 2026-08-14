@@ -1,23 +1,22 @@
-import { Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import * as e from 'cors';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { FacebookAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { ForgotPasswordModalComponent } from 'src/app/dashboard/user/forgot-password-modal/forgot-password-modal.component';
 import { Login } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
+import { SocialAuthService } from 'src/app/services/social-auth.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
-import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.css']
 })
-export class LoginFormComponent {
+export class LoginFormComponent implements AfterViewInit {
   loginForm!: FormGroup;
   loginInterface: Login | undefined;
   invalidForm: boolean = false;
@@ -25,6 +24,8 @@ export class LoginFormComponent {
   username: string = '';
   password: string = '';
   responseMessage: any;
+  /** True once the official "Sign in with Google" button has actually rendered. */
+  googleReady = false;
   @ViewChild('activationEmail')
   activationEmail!: NgForm;
 
@@ -34,8 +35,14 @@ export class LoginFormComponent {
     private userService: UserService,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
-    private auth: AuthService) {
+    private socialAuthService: SocialAuthService) {
     this.invalidLogin = ''
+  }
+
+  ngAfterViewInit(): void {
+    this.socialAuthService.renderGoogleButton('googleSignInButton', (idToken) => this.handleGoogleCredential(idToken))
+      .then(() => { this.googleReady = true; })
+      .catch(() => { this.googleReady = false; });
   }
 
   ngOnInit(): void {
@@ -143,36 +150,54 @@ export class LoginFormComponent {
       });
   }
 
-  loginWithGoogle() {
-    this.snackBarService.openSnackBar("Google login not implemented yet", "error");
-    const provider = new GoogleAuthProvider();
-    // signInWithPopup(this.auth, provider)
-    //   .then((result) => {
-    //     const user = result.user;
-    //     console.log('Google login success', user);
-    //     this.snackBar.open('Logged in with Google!', 'Close', { duration: 3000 });
-    //     this.router.navigate(['/dashboard']);
-    //   })
-    //   .catch((error) => {
-    //     console.error('Google login error', error);
-    //     this.snackBar.open('Google login failed', 'Close', { duration: 3000 });
-    //   });
+  /** Fallback click handler shown only while Google Sign-In isn't configured yet. */
+  loginWithGoogleFallback(): void {
+    this.snackBarService.openSnackBar('Google login is not configured yet. Please try again later.', 'error');
   }
 
-  loginWithFacebook() {
-    this.snackBarService.openSnackBar("Facebook login not implemented yet", "error");
-    const provider = new FacebookAuthProvider();
-    // signInWithPopup(this.auth, provider)
-    //   .then((result) => {
-    //     const user = result.user;
-    //     console.log('Facebook login success', user);
-    //     this.snackBarService.open('Logged in with Facebook!', 'Close', { duration: 3000 });
-    //     this.router.navigate(['/dashboard']);
-    //   })
-    //   .catch((error) => {
-    //     console.error('Facebook login error', error);
-    //     this.snackBarService.open('Facebook login failed', 'Close', { duration: 3000 });
-    //   });
+  private handleGoogleCredential(idToken: string): void {
+    this.ngxService.start();
+    this.userService.loginWithGoogle(idToken).subscribe({
+      next: (response: any) => this.handleSocialAuthResponse(response),
+      error: (error: any) => this.handleSocialAuthError(error),
+    });
+  }
+
+  loginWithFacebook(): void {
+    this.socialAuthService.loginWithFacebook()
+      .then((accessToken) => {
+        this.ngxService.start();
+        this.userService.loginWithFacebook(accessToken).subscribe({
+          next: (response: any) => this.handleSocialAuthResponse(response),
+          error: (error: any) => this.handleSocialAuthError(error),
+        });
+      })
+      .catch((err: any) => {
+        this.snackBarService.openSnackBar(err?.message || 'Facebook login is not configured yet.', 'error');
+      });
+  }
+
+  private handleSocialAuthResponse(response: any): void {
+    this.ngxService.stop();
+    const auth = response?.data;
+    if (!auth?.accessToken) {
+      this.responseMessage = response?.message || genericError;
+      this.snackBarService.openSnackBar(this.responseMessage, 'error');
+      return;
+    }
+
+    localStorage.setItem('token', auth.accessToken);
+    localStorage.setItem('refresh_token', auth.refreshToken);
+    this.userService.startRefreshTokenTimer();
+    this.responseMessage = response?.message;
+    this.snackBarService.openSnackBar(this.responseMessage, '');
+    this.router.navigate(['/dashboard']);
+  }
+
+  private handleSocialAuthError(error: any): void {
+    this.ngxService.stop();
+    this.responseMessage = error.error?.message || genericError;
+    this.snackBarService.openSnackBar(this.responseMessage, 'error');
   }
 
   clear() {

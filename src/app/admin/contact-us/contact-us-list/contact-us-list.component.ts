@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ContactUs } from 'src/app/models/contact-us.model';
 import { ContactUsService } from 'src/app/services/contact-us.service';
@@ -33,7 +34,8 @@ export class ContactUsListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private elementRef: ElementRef,
-    private rxStompService: RxStompService) {
+    private rxStompService: RxStompService,
+    private router: Router) {
   }
 
   ngOnInit(): void {
@@ -46,12 +48,10 @@ export class ContactUsListComponent {
 
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadContactUs());
     this.store.select(selectContactUsList).subscribe((contactUs) => {
       this.contactUsData = contactUs;
       this.totalContactUs = this.contactUsData.length
-      this.ngxService.stop()
     });
   }
 
@@ -60,22 +60,7 @@ export class ContactUsListComponent {
   }
 
   openContactUsDetails(id: number) {
-    try {
-      const contactUs = this.contactUsData.find(contactUs => contactUs.id === id);
-      if (contactUs) {
-        const dialogRef = this.dialog.open(ContactUsDetailsModalComponent, {
-          width: '800px',
-          maxWidth: '95vw',
-          data: {
-            contactUs: contactUs,
-          }
-        });
-      } else {
-        this.snackbarService.openSnackBar('contactUs not found for id: ' + id, 'error');
-      }
-    } catch (error) {
-      this.snackbarService.openSnackBar("An error occurred. Check contactUs status", 'error');
-    }
+    this.router.navigate(['/dashboard/contact-us', id]);
   }
 
   openUpdateContactUs(id: number) {
@@ -83,7 +68,7 @@ export class ContactUsListComponent {
       const contactUs = this.contactUsData.find(contactUs => contactUs.id === id);
       if (contactUs) {
         const dialogRef = this.dialog.open(UpdateContactUsModalComponent, {
-          width: '800px',
+          width: '560px',
           maxWidth: '95vw',
           maxHeight: '90vh',
           data: {
@@ -143,7 +128,7 @@ export class ContactUsListComponent {
       });
     } else {
       const dialogRef = this.dialog.open(ContactUsReviewModalComponent, {
-        width: '800px',
+        width: '560px',
         maxWidth: '95vw',
         maxHeight: '90vh',
         data: {

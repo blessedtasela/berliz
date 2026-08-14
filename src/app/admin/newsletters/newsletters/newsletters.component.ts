@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Newsletter } from 'src/app/models/newsletter.model';
@@ -29,7 +28,6 @@ export class NewslettersComponent {
   ];
 
   constructor(private store: Store,
-    private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,) {
   }
 
@@ -42,14 +40,12 @@ export class NewslettersComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadNewsletters());
     this.subscriptions.push(
       this.store.select(selectNewsletters).subscribe((newsletter) => {
         this.newsletterData = newsletter;
         this.totalNewsletters = newsletter.length
         this.newsletterLength = newsletter.length;
-        this.ngxService.stop()
       })
     );
   }

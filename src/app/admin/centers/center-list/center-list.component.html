@@ -3,34 +3,43 @@
         <table class="w-full text-sm">
             <thead>
                 <tr class="bg-gray-50 border-b border-gray-200">
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN
+                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN
                     </th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
                         Cover photo</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Name
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Name
                     </th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
                         Likes</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Map
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Map
                     </th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">ID
+                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">ID
                     </th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
                         Status</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date
+                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date
                     </th>
-                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
                         Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 <tr *ngFor="let center of centerData; let i = index" class="hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
-                    <td class="px-4 py-3">
+                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-500">{{ i + 1 }}</td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
                         <div class="flex items-center gap-2">
-                            <img [src]="center.photoUrl || '../../../assets/icons/user.png'"
-                                onerror="this.src='../../../assets/icons/user.png';"
-                                class="w-10 h-10 rounded-xl object-cover border border-gray-200">
+                            <div class="group relative">
+                                <img [src]="(center.photoUrl | strapiUrl) || '../../../assets/icons/user.png'"
+                                    onerror="this.src='../../../assets/icons/user.png';"
+                                    (click)="openCenterDetails(center.id)"
+                                    class="w-10 h-10 rounded-xl object-cover border border-gray-200 cursor-pointer">
+                                <div class="hidden group-hover:block fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2
+                                    -translate-y-1/2 rounded-2xl border border-gray-200 bg-white p-2 shadow-2xl">
+                                    <img [src]="(center.photoUrl | strapiUrl) || '../../../assets/icons/user.png'"
+                                        onerror="this.src='../../../assets/icons/user.png';"
+                                        class="w-96 h-96 rounded-xl object-cover">
+                                </div>
+                            </div>
                             <label [attr.for]="'fileInput-' + center.id" title="Change photo"
                                 class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition cursor-pointer">
                                 <i-feather name="camera" class="text-red-600"
@@ -40,23 +49,23 @@
                                 (change)="onImgSelected($event, center.id)">
                         </div>
                     </td>
-                    <td class="px-4 py-3 font-semibold text-gray-900">{{ center.name }}</td>
-                    <td class="px-4 py-3 text-gray-600">{{ center.likes }}</td>
-                    <td class="px-4 py-3">
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3 font-semibold text-gray-900">{{ center.name }}</td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3 text-gray-600">{{ center.likes }}</td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
                         <button type="button" (click)="openUrl(center.location)" title="Open map"
                             class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition">
                             <i-feather name="map-pin" class="text-red-600" style="width:15px;height:15px;"></i-feather>
                         </button>
                     </td>
-                    <td class="px-4 py-3 font-semibold text-gray-900">{{ center.id }}</td>
-                    <td class="px-4 py-3">
+                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 font-semibold text-gray-900">{{ center.id }}</td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold"
                             [ngClass]="center.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
                             {{ center.status === 'true' ? 'Active' : 'Inactive' }}
                         </span>
                     </td>
-                    <td class="px-4 py-3 text-gray-500">{{ formatDate(center.date) }}</td>
-                    <td class="px-4 py-3">
+                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-500">{{ formatDate(center.date) }}</td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
                         <div class="flex items-center justify-end gap-1">
                             <button class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
                                 (click)="openCenterDetails(center.id)" title="View">

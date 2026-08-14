@@ -1,27 +1,22 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, convertToParamMap } from '@angular/router';
 import { TrainerGuard } from './trainer.guard';
-import { TrainerService } from '../services/trainer.service';
+import { SnackBarService } from '../services/snack-bar.service';
 
 describe('TrainerGuard', () => {
   let guard: TrainerGuard;
   let mockRouter: Partial<Router>;
-  let mockTrainerService: Partial<TrainerService>;
+  let mockSnackbar: { openSnackBar: jasmine.Spy };
 
   beforeEach(() => {
-    mockRouter = {
-      navigate: jasmine.createSpy('navigate') // Mock the Router's navigate method
-    };
-
-    mockTrainerService = {
-      isValidTrainer: (name: string) => true // Mock the isValidTrainer method to always return true for testing purposes
-    };
+    mockRouter = { navigate: jasmine.createSpy('navigate') };
+    mockSnackbar = { openSnackBar: jasmine.createSpy('openSnackBar') };
 
     TestBed.configureTestingModule({
       providers: [
         TrainerGuard,
         { provide: Router, useValue: mockRouter },
-        { provide: TrainerService, useValue: mockTrainerService }
+        { provide: SnackBarService, useValue: mockSnackbar }
       ]
     });
 
@@ -32,22 +27,25 @@ describe('TrainerGuard', () => {
     expect(guard).toBeTruthy();
   });
 
-  it('should allow access for valid trainer id', () => {
-    const route = new ActivatedRouteSnapshot();
+  it('allows access for a valid slug', () => {
+    const route = { paramMap: convertToParamMap({ name: 'jane-doe' }) } as ActivatedRouteSnapshot;
 
-    const state: RouterStateSnapshot = jasmine.createSpyObj<RouterStateSnapshot>('RouterStateSnapshot', ['toString']);
-
-    expect(guard.canActivate(route, state)).toBe(true);
-    expect(mockRouter.navigate).not.toHaveBeenCalled(); // We expect that navigate method is not called for valid trainer
+    expect(guard.canActivate(route)).toBe(true);
+    expect(mockRouter.navigate).not.toHaveBeenCalled();
   });
 
-  it('should navigate to trainers page for invalid trainer id', () => {
-    const route = new ActivatedRouteSnapshot();
+  it('redirects for a missing/too-short slug', () => {
+    const route = { paramMap: convertToParamMap({ name: 'a' }) } as ActivatedRouteSnapshot;
 
+    expect(guard.canActivate(route)).toBe(false);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/trainers']);
+  });
 
-    const state: RouterStateSnapshot = jasmine.createSpyObj<RouterStateSnapshot>('RouterStateSnapshot', ['toString']);
+  it('redirects and shows a snackbar for an invalid slug format', () => {
+    const route = { paramMap: convertToParamMap({ name: 'invalid name!' }) } as ActivatedRouteSnapshot;
 
-    expect(guard.canActivate(route, state)).toBe(false);
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/trainers']); // We expect that navigate method is called for invalid trainer
+    expect(guard.canActivate(route)).toBe(false);
+    expect(mockSnackbar.openSnackBar).toHaveBeenCalledWith('Invalid trainer name format', 'error');
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/trainers']);
   });
 });

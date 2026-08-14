@@ -1,3 +1,4 @@
+import { PlanSubscriptionResponse } from '../../models/plan.model';
 import { Subscriptions } from '../../models/subscriptions.interface';
 
 export interface SubscriptionState {
@@ -9,6 +10,9 @@ export interface SubscriptionState {
     activeSubscriptions: Subscriptions[];
     mySubscriptions: Subscriptions[];
     selectedSubscription: Subscriptions | null;
+
+    /** Result of the most recent self-service plan selection. */
+    planSelection: PlanSubscriptionResponse | null;
 }
 
 export const initialSubscriptionState: SubscriptionState = {
@@ -20,4 +24,6 @@ export const initialSubscriptionState: SubscriptionState = {
     activeSubscriptions: [],
     mySubscriptions: [],
     selectedSubscription: null,
+
+    planSelection: null,
 };

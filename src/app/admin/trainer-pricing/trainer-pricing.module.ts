@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AddTrainerPricingModalComponent } from './add-trainer-pricing-modal/add-trainer-pricing-modal.component';
 import { TrainerPricingDetailsModalComponent } from './trainer-pricing-details-modal/trainer-pricing-details-modal.component';
+import { TrainerPricingDetailPageComponent } from './trainer-pricing-detail-page/trainer-pricing-detail-page.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FooterModule } from 'src/app/footer/footer.module';
@@ -13,6 +14,8 @@ import { TrainerPricingListComponent } from './trainer-pricing-list/trainer-pric
 import { TrainerPricingHeaderComponent } from './trainer-pricing-header/trainer-pricing-header.component';
 import { UpdateTrainerPricingModalComponent } from './update-trainer-pricing-modal/update-trainer-pricing-modal.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
+import { AuthGuard } from 'src/app/services/auth.guard';
+import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 
 
 
@@ -20,6 +23,7 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
   declarations: [
     AddTrainerPricingModalComponent,
     TrainerPricingDetailsModalComponent,
+    TrainerPricingDetailPageComponent,
     TrainerPricingComponent,
     TrainerPricingListComponent,
     TrainerPricingHeaderComponent,
@@ -34,7 +38,11 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     ReactiveFormsModule,
     MatDialogModule,
     AdminSearchModule,
-    RouterModule.forChild([{ path: '', component: TrainerPricingComponent }])
+    StrapiUrlPipe,
+    RouterModule.forChild([
+      { path: '', component: TrainerPricingComponent },
+      { path: ':id', component: TrainerPricingDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Pricing Details', expectedRole: ['admin'] } },
+    ])
   ]
 })
 export class TrainerPricingModule { }

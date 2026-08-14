@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -31,15 +32,14 @@ export class TrainerListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private datePipe: DatePipe,
-    private rxStompService: RxStompService) { }
+    private rxStompService: RxStompService,
+    private router: Router) { }
 
   ngOnInit(): void {
-    this.ngxService.start();
     this.watchLikeTrainer()
     this.watchUpdatePhoto()
     this.watchUpdateStatus()
     this.watchUpdateTrainer()
-    this.ngxService.stop();
   }
 
   handleEmitEvent() {
@@ -61,7 +61,7 @@ export class TrainerListComponent {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
-        dialogConfig.width = '800px';
+        dialogConfig.width = '560px';
         dialogConfig.maxWidth = '95vw';
         dialogConfig.maxHeight = '90vh';
         dialogConfig.data = { trainerData: trainer };
@@ -88,24 +88,7 @@ export class TrainerListComponent {
   }
 
   openTrainerDetails(id: number) {
-    const trainer = this.trainersData.find(partner => partner.id === id);
-    if (trainer) {
-      const dialogConfig = new MatDialogConfig();
-      dialogConfig.disableClose = false;
-      dialogConfig.autoFocus = true;
-      dialogConfig.width = '800px';
-      dialogConfig.maxWidth = '95vw';
-      dialogConfig.maxHeight = '90vh';
-      dialogConfig.data = { trainerData: trainer };
-      const dialogRef = this.dialog.open(TrainerDetailsModalComponent, dialogConfig);
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          console.log(`Dialog result: ${result}`);
-        } else {
-          console.log('Dialog closed without any action');
-        }
-      });
-    }
+    this.router.navigate(['/dashboard/trainers', id]);
   }
 
   updateTrainerStatus(id: number) {

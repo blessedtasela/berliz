@@ -13,6 +13,7 @@ import { Centers, CenterVideoAlbum } from 'src/app/models/centers.interface';
 import { CenterService } from 'src/app/services/center.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiService } from 'src/app/services/strapi.service';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 import { loadMyCenterVideoAlbums } from 'src/app/state/center/center.actions';
 import { selectMyCenterVideoAlbums } from 'src/app/state/center/center.selectors';
 import { genericError } from 'src/validators/form-validators.module';
@@ -350,9 +351,7 @@ export class CenterVideoAlbumComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private resolveVideoUrl(url?: string): string {
-    if (!url?.trim()) return '';
-    if (url.startsWith('blob:') || url.startsWith('http')) return url;
-    return `http://localhost:1337${url}`;
+    return resolveStrapiUrl(url);
   }
 
   formatDate(date: any): string {

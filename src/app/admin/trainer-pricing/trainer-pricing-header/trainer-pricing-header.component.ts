@@ -82,7 +82,7 @@ export class TrainerPricingHeaderComponent {
 
   openAddTrainerPricing() {
     const dialogRef = this.dialog.open(AddTrainerPricingModalComponent, {
-      width: '800px',
+      width: '560px',
       maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,

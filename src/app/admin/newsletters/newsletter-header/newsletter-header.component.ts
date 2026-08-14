@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Newsletter } from 'src/app/models/newsletter.model';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { NewsletterBulkMessageModalComponent } from '../newsletter-bulk-message-modal/newsletter-bulk-message-modal.component';
@@ -23,7 +22,6 @@ export class NewsletterHeaderComponent {
   subscriptions: Subscription[] = [];
 
   constructor(private store: Store,
-    private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
     private rxStompService: RxStompService) { }
 
@@ -37,14 +35,12 @@ export class NewsletterHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadNewsletters());
     this.subscriptions.push(
       this.store.select(selectNewsletters).subscribe((newsletter) => {
         this.newsletterData = newsletter;
         this.totalNewsletters = this.newsletterData.length
         this.newsletterLength = this.newsletterData.length
-        this.ngxService.stop()
       })
     );
   }
@@ -87,7 +83,7 @@ export class NewsletterHeaderComponent {
 
   openAddNewsletter() {
     const dialogRef = this.dialog.open(AddNewsletterModalComponent, {
-      width: '600px',
+      width: '496px',
       maxWidth: '95vw',
       maxHeight: '90vh',
     });

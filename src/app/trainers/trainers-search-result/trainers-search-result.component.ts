@@ -4,7 +4,7 @@ import { Trainers, TrainerLikes } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { environment } from 'src/environments/environment';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 import { genericError } from 'src/validators/form-validators.module';
 import { TrainerPartnerFormComponent } from '../trainer-partner-form/trainer-partner-form.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -27,9 +27,13 @@ export class TrainersSearchResultComponent implements OnInit, OnDestroy {
   @Input() trainersResult: Trainers[] = [];
 
   readonly PAGE_SIZE = 12;
-  readonly strapiUrl = environment.strapiUrl;
 
   showAll = false;
+
+  photoUrl(trainer: Trainers): string {
+    return resolveStrapiUrl(trainer?.photoResponse?.photoUrl) || 'assets/avatar.png';
+  }
+
   get visibleCount() {
     return this.showAll
       ? this.trainersResult.length
@@ -99,7 +103,7 @@ export class TrainersSearchResultComponent implements OnInit, OnDestroy {
     }
 
     const dialogRef = this.dialog.open(PartnerFormComponent, {
-      width: '600px',
+      width: '496px',
       maxWidth: '95vw',
       disableClose: true,
       data: {

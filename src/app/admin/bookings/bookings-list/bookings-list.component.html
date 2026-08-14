@@ -1,0 +1,72 @@
+<div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="bg-gray-50 border-b border-gray-200">
+                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN</th>
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Client</th>
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">With</th>
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Scheduled</th>
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Duration</th>
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Status</th>
+                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Booking ID</th>
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                <tr *ngFor="let booking of bookingsData; let i = index" class="hover:bg-gray-50 transition-colors">
+                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-500">{{ i + 1 }}</td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
+                        <app-user-hover-card [userId]="booking.clientId" [firstname]="booking.clientFirstname"
+                            [lastname]="booking.clientLastname" [email]="booking.clientEmail"
+                            [label]="booking.clientEmail">
+                        </app-user-hover-card>
+                    </td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3 text-gray-600">
+                        {{ who(booking) }}
+                        <span class="text-[10px] text-gray-400">({{ booking.trainerName ? 'Trainer' : 'Center' }})</span>
+                    </td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3 text-gray-500">{{ formatDate(booking.scheduledAt) }}</td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3 text-gray-600 tabular-nums">{{ booking.durationMinutes }}m</td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold"
+                            [ngClass]="{
+                                'bg-amber-50 text-amber-700 border border-amber-200': booking.status === 'pending',
+                                'bg-blue-50 text-blue-700 border border-blue-200': booking.status === 'confirmed',
+                                'bg-green-50 text-green-700 border border-green-200': booking.status === 'completed',
+                                'bg-gray-100 text-gray-500 border border-gray-200': booking.status === 'cancelled'
+                            }">
+                            {{ booking.status | titlecase }}
+                        </span>
+                    </td>
+                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-500 tabular-nums">{{ booking.id }}</td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
+                        <div class="flex items-center justify-end gap-1">
+                            <button *ngIf="booking.status === 'pending'"
+                                class="w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center transition"
+                                (click)="updateStatus(booking.id, 'confirmed')" title="Confirm">
+                                <i-feather name="check" class="text-blue-600" style="width:15px;height:15px;"></i-feather>
+                            </button>
+                            <button *ngIf="booking.status === 'confirmed'"
+                                class="w-8 h-8 rounded-lg hover:bg-green-50 flex items-center justify-center transition"
+                                (click)="updateStatus(booking.id, 'completed')" title="Mark completed">
+                                <i-feather name="award" class="text-green-600" style="width:15px;height:15px;"></i-feather>
+                            </button>
+                            <button *ngIf="booking.status === 'pending' || booking.status === 'confirmed'"
+                                class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                                (click)="updateStatus(booking.id, 'cancelled')" title="Cancel">
+                                <i-feather name="x" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="bookingsData.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-center">
+        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+            <i-feather name="inbox" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        </div>
+        <p class="text-sm text-gray-400">No bookings yet.</p>
+    </div>
+</div>

@@ -1,5 +1,4 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Store } from '@ngrx/store';
 import { Subscription, fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { SubTasks } from 'src/app/models/tasks.interface';
@@ -20,7 +19,6 @@ export class SearchSubTaskComponent {
   subscriptions: Subscription[] = []
 
   constructor(private store: Store,
-    private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) { }
 
@@ -41,7 +39,6 @@ export class SearchSubTaskComponent {
         debounceTime(300),
         map((e: any) => e.target.value),
         tap(() => {
-          this.ngxService.start();
         }),
         switchMap((query: string) => {
           return this.search(query); // Perform the search with the query
@@ -49,12 +46,10 @@ export class SearchSubTaskComponent {
       )
       .subscribe(
         (results: SubTasks[]) => {
-          this.ngxService.stop();
           this.results.emit(results);
         },
         (error: any) => {
           this.snackbarService.openSnackBar(error, 'error');
-          this.ngxService.stop();
         }
       );
   }

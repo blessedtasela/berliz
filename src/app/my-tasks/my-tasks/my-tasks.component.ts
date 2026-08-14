@@ -240,7 +240,7 @@ export class MyTasksComponent implements OnInit, OnDestroy {
   // ── TRAINER: ASSIGN A NEW TASK ──────────────────────────────────────────
   openAssignTask(): void {
     const dialogRef = this.dialog.open(AssignTaskModalComponent, {
-      width: '640px',
+      width: '560px',
       maxWidth: '95vw',
       autoFocus: false
     });

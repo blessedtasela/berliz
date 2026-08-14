@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
 import { MuscleGroupService } from 'src/app/services/muscle-group.service';
@@ -32,7 +33,8 @@ export class MuscleGroupsListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private rxStompService: RxStompService,
-    private store: Store) {
+    private store: Store,
+    private router: Router) {
   }
 
   ngOnInit() {
@@ -41,12 +43,10 @@ export class MuscleGroupsListComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadMuscleGroups());
     this.store.select(selectMuscleGroups).subscribe((allMuscleGroups) => {
       this.muscleGroupsData = allMuscleGroups;
       this.totalMuscleGroups = this.muscleGroupsData.length
-      this.ngxService.stop()
     });
   }
 
@@ -56,7 +56,7 @@ export class MuscleGroupsListComponent {
       const muscleGroup = this.muscleGroupsData.find(muscleGroup => muscleGroup.id === id);
       if (muscleGroup) {
         const dialogRef = this.dialog.open(UpdateMuscleGroupModalComponent, {
-          width: '900px',
+          width: '560px',
           maxWidth: '95vw',
           maxHeight: '90vh',
           disableClose: true,
@@ -84,23 +84,7 @@ export class MuscleGroupsListComponent {
   }
 
   openCategoryDetails(id: number) {
-    try {
-      const muscleGroup = this.muscleGroupsData.find(muscleGroup => muscleGroup.id === id);
-      if (muscleGroup) {
-        const dialogRef = this.dialog.open(MuscleGroupDetailsModalComponent, {
-          width: '800px',
-          maxWidth: '95vw',
-          panelClass: 'mat-dialog-height',
-          data: {
-            muscleGroupData: muscleGroup,
-          }
-        });
-      } else {
-        this.snackbarService.openSnackBar('muscleGroup not found for id: ' + id, 'error');
-      }
-    } catch (error) {
-      this.snackbarService.openSnackBar("An error occurred. Check muscleGroup status", 'error');
-    }
+    this.router.navigate(['/dashboard/muscle-groups', id]);
   }
 
   updateCategoryStatus(id: number) {

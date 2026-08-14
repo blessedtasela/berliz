@@ -23,28 +23,28 @@
         <table class="w-full text-sm">
             <thead>
                 <tr class="bg-gray-50 border-b border-gray-200">
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN
+                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN
                     </th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
                         Photo</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
                         First Name</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
                         Last Name</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
                         Email - username</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
                         userId</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Role
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Role
                     </th>
-                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
                         Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 <tr *ngFor="let user of usersData; let i = index" class="hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
-                    <td class="px-4 py-3">
+                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-500">{{ i + 1 }}</td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
                         <div class="flex items-center gap-2">
                             <div class="group relative">
                                 <!-- Default image -->
@@ -72,11 +72,11 @@
                             </button>
                         </div>
                     </td>
-                    <td class="px-4 py-3 font-semibold text-gray-900">{{ user.firstname }}</td>
-                    <td class="px-4 py-3 font-semibold text-gray-900">{{ user.lastname }}</td>
-                    <td class="px-4 py-3 text-gray-600">{{ user.email }}</td>
-                    <td class="px-4 py-3 font-semibold text-gray-900">{{ user.id }}</td>
-                    <td class="px-4 py-3">
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3 font-semibold text-gray-900">{{ user.firstname }}</td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3 font-semibold text-gray-900">{{ user.lastname }}</td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3 text-gray-600">{{ user.email }}</td>
+                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 font-semibold text-gray-900">{{ user.id }}</td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
                         <div class="flex items-center gap-1">
                             <span
                                 class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold bg-gray-100 text-gray-600 border border-gray-200">
@@ -89,7 +89,7 @@
                             </button>
                         </div>
                     </td>
-                    <td class="px-4 py-3">
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
                         <div class="flex items-center justify-end gap-1">
                             <button class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
                                 (click)="openUserDetails(user.id)" title="View">

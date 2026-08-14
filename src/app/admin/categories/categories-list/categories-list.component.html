@@ -1,67 +1,110 @@
-<div class="justify-center items-center mt-4 overflow-x-auto">
-    <div class="min-w-[300px] rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <table class="w-full border-collapse bg-white text-gray-950 font-sans">
+<div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+    <!-- Mobile: card rows (Corrigo-style) — table below is sm:block, hidden here -->
+    <div class="sm:hidden divide-y divide-gray-100">
+        <div *ngFor="let category of categoriesData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors">
+            <img [src]="(category.photoUrl | strapiUrl) || '../../../assets/icons/user.png'"
+                onerror="this.src='../../../assets/icons/user.png';"
+                (click)="openCategoryDetails(category.id)"
+                class="w-12 h-12 rounded-xl object-cover border border-gray-200 shrink-0 cursor-pointer">
+
+            <div class="min-w-0 flex-1" (click)="openCategoryDetails(category.id)">
+                <div class="flex items-center gap-2">
+                    <p class="font-semibold text-gray-900 truncate">{{ category.name }}</p>
+                    <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                        [ngClass]="category.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
+                        {{ category.status === 'true' ? 'Active' : 'Inactive' }}
+                    </span>
+                </div>
+                <p class="text-xs text-gray-400 mt-0.5 truncate">
+                    {{ category.likes }} likes &middot; updated {{ formatDate(category.lastUpdate) }}
+                </p>
+            </div>
+
+            <div class="flex items-center gap-0.5 shrink-0">
+                <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center"
+                    (click)="openUpdateCategory(category.id)" title="Edit">
+                    <i-feather name="edit-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                </button>
+                <button class="w-9 h-9 rounded-lg active:bg-red-50 flex items-center justify-center"
+                    (click)="deleteCategory(category.id)" title="Delete">
+                    <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="hidden sm:block overflow-x-auto">
+        <table class="w-full text-sm">
             <thead>
-                <tr class="cursor-pointer bg-gray-50">
-                    <th class="border-b border-gray-200 px-4 py-3 text-left text-sm font-bold text-gray-700">SN</th>
-                    <th class="border-b border-gray-200 px-4 py-3 text-left text-sm font-bold text-gray-700">Photo</th>
-                    <th class="border-b border-gray-200 px-4 py-3 text-left text-sm font-bold text-gray-700">Name</th>
-                    <th class="border-b border-gray-200 px-4 py-3 text-left text-sm font-bold text-gray-700">Status</th>
-                    <th class="border-b border-gray-200 px-4 py-3 text-left text-sm font-bold text-gray-700">Date</th>
-                    <th class="border-b border-gray-200 px-4 py-3 text-left text-sm font-bold text-gray-700">Category ID</th>
-                    <th class="border-b border-gray-200 px-4 py-3 text-left text-sm font-bold text-gray-700">Likes</th>
-                    <th class="border-b border-gray-200 px-4 py-3 text-left text-sm font-bold text-gray-700">Last update</th>
-                    <th class="border-b border-gray-200 px-4 py-3 text-left text-sm font-bold text-gray-700">Actions</th>
+                <tr class="bg-gray-50 border-b border-gray-200">
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Photo</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Name</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Status</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Category ID</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Likes</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr *ngFor="let category of categoriesData; let i = index"
-                    class="bg-white hover:bg-gray-50 transition-colors">
-                    <td class="border-b border-gray-200 px-4 py-3">{{ i + 1 }}</td>
-                    <td class="border-b border-gray-200 px-4 py-3">
-                        <img [src]="category.photoUrl || '../../../assets/icons/user.png'"
-                            onerror="this.src='../../../assets/icons/user.png';"
-                            class="w-10 h-10 rounded-xl object-cover border border-gray-200">
+            <tbody class="divide-y divide-gray-100">
+                <tr *ngFor="let category of categoriesData; let i = index" class="hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
+                    <td class="px-4 py-3">
+                        <div class="group relative">
+                            <img [src]="(category.photoUrl | strapiUrl) || '../../../assets/icons/user.png'"
+                                onerror="this.src='../../../assets/icons/user.png';"
+                                (click)="openCategoryDetails(category.id)"
+                                class="w-10 h-10 rounded-xl object-cover border border-gray-200 cursor-pointer">
+                            <div class="hidden group-hover:block fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2
+                                -translate-y-1/2 rounded-2xl border border-gray-200 bg-white p-2 shadow-2xl">
+                                <img [src]="(category.photoUrl | strapiUrl) || '../../../assets/icons/user.png'"
+                                    onerror="this.src='../../../assets/icons/user.png';"
+                                    class="w-96 h-96 rounded-xl object-cover">
+                            </div>
+                        </div>
                     </td>
-                    <td class="border-b border-gray-200 px-4 py-3 font-semibold">{{ category.name }}</td>
-                    <td class="border-b border-gray-200 px-4 py-3">
-                        <span class="inline-flex items-center px-2 py-1 rounded-xl text-xs font-bold"
-                            [ngClass]="category.status === 'true' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'">
-                            {{ category.status === 'true' ? 'active' : 'inactive' }}
+                    <td class="px-4 py-3 font-semibold text-gray-900">{{ category.name }}</td>
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold"
+                            [ngClass]="category.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
+                            {{ category.status === 'true' ? 'Active' : 'Inactive' }}
                         </span>
                     </td>
-                    <td class="border-b border-gray-200 px-4 py-3">{{ formatDate(category.date) }}</td>
-                    <td class="border-b border-gray-200 px-4 py-3 font-bold">{{ category.id }}</td>
-                    <td class="border-b border-gray-200 px-4 py-3">{{ category.likes }}</td>
-                    <td class="border-b border-gray-200 px-4 py-3">{{ formatDate(category.lastUpdate) }}</td>
-                    <td class="border-b border-gray-200 px-4 py-3">
-                        <div class="flex items-center gap-3">
-                            <button
-                                class="text-sm rounded-xl font-sans transition-all duration-200 transform hover:scale-105 focus:scale-105 hover:text-gray-950 font-bold"
-                                (click)="openCategoryDetails(category.id)">
-                                <i-feather name="eye" class="text-gray-500 w-5"></i-feather>
+                    <td class="px-4 py-3 text-gray-500">{{ formatDate(category.date) }}</td>
+                    <td class="px-4 py-3 font-semibold text-gray-900">{{ category.id }}</td>
+                    <td class="px-4 py-3 text-gray-600">{{ category.likes }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ formatDate(category.lastUpdate) }}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center justify-end gap-1">
+                            <button class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
+                                (click)="openCategoryDetails(category.id)" title="View">
+                                <i-feather name="eye" class="text-gray-500" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button
-                                class="text-sm rounded-xl font-sans transition-all duration-200 transform hover:scale-105 focus:scale-105 font-bold"
-                                (click)="openUpdateCategory(category.id)">
-                                <i-feather name="edit" class="text-red-600 w-5"></i-feather>
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                                (click)="openUpdateCategory(category.id)" title="Edit">
+                                <i-feather name="edit-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button
-                                class="text-xs bg-gray-800 text-white py-1.5 px-3 hover:bg-gray-700 rounded-xl font-sans
-                                transition-all duration-200 transform hover:scale-105 focus:scale-105 font-bold"
-                                [ngClass]="{'bg-red-600 hover:bg-red-700': category.status == 'true'}"
+                            <button class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition"
+                                [ngClass]="category.status === 'true' ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-red-600 text-white hover:bg-red-700'"
                                 (click)="updateCategoryStatus(category.id)">
-                                {{ category.status == 'false' ? 'activate' : 'deactivate'}}
+                                {{ category.status === 'false' ? 'Activate' : 'Deactivate' }}
                             </button>
-                            <button
-                                class="text-sm rounded-xl font-sans transition-all duration-200 transform hover:scale-105 focus:scale-105 font-bold"
-                                (click)="deleteCategory(category.id)">
-                                <i-feather name="trash-2" class="text-red-600 w-5"></i-feather>
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                                (click)="deleteCategory(category.id)" title="Delete">
+                                <i-feather name="trash-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
                             </button>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
+    </div>
+    <div *ngIf="categoriesData.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-center">
+        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+            <i-feather name="inbox" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        </div>
+        <p class="text-sm text-gray-400">No categories yet.</p>
     </div>
 </div>

@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
@@ -33,7 +34,8 @@ export class CategoriesListComponent implements OnInit {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private store: Store) {
+    private store: Store,
+    private router: Router) {
   }
 
   ngOnInit() { }
@@ -43,13 +45,11 @@ export class CategoriesListComponent implements OnInit {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadCategories());
     this.subscriptions.push(
       this.store.select(selectCategories).subscribe((allCategories) => {
         this.categoriesData = allCategories;
         this.totalCategories = this.categoriesData.length
-        this.ngxService.stop()
       })
     );
   }
@@ -60,7 +60,7 @@ export class CategoriesListComponent implements OnInit {
       const category = this.categoriesData.find(category => category.id === id);
       if (category) {
         const dialogRef = this.dialog.open(UpdateCategoryModalComponent, {
-          width: '900px',
+          width: '560px',
           maxWidth: '95vw',
           maxHeight: '90vh',
           disableClose: true,
@@ -88,23 +88,7 @@ export class CategoriesListComponent implements OnInit {
   }
 
   openCategoryDetails(id: number) {
-    try {
-      const category = this.categoriesData.find(category => category.id === id);
-      if (category) {
-        const dialogRef = this.dialog.open(CategoryDetailsModalComponent, {
-          width: '800px',
-          maxWidth: '95vw',
-          panelClass: 'mat-dialog-height',
-          data: {
-            categoryData: category,
-          }
-        });
-      } else {
-        this.snackbarService.openSnackBar('category not found for id: ' + id, 'error');
-      }
-    } catch (error) {
-      this.snackbarService.openSnackBar("An error occurred. Check category status", 'error');
-    }
+    this.router.navigate(['/dashboard/categories', id]);
   }
 
   updateCategoryStatus(id: number) {

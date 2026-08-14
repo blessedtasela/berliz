@@ -1,7 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
 import { Partner } from 'src/app/models/partners.interface';
@@ -30,20 +29,17 @@ export class PartnerApplicationComponent {
   constructor(
     private store: Store,
     private dialog: MatDialog,
-    private ngxService: NgxUiLoaderService,
     private datePipe: DatePipe) { }
 
   ngOnInit(): void { }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.store.dispatch(loadMyPartner());
     this.subscriptions.push(
       this.store.select(selectMyPartner).subscribe((partner) => {
         if (partner) this.partnerData = partner;
       })
     );
-    this.ngxService.stop();
   }
 
   ngOnDestroy() {
@@ -57,7 +53,7 @@ export class PartnerApplicationComponent {
   openApplicationForm() {
     if (this.partnerData.role === 'trainer') {
       const dialogRef = this.dialog.open(TrainerFormModalComponent, {
-        width: '800px',
+        width: '720px',
         maxWidth: '95vw',
         data: {
           partnerData: this.partnerData,
@@ -72,7 +68,7 @@ export class PartnerApplicationComponent {
     }
     if (this.partnerData.role === 'center') {
       const dialogRef = this.dialog.open(CenterFormModalComponent, {
-        width: '800px',
+        width: '720px',
         maxWidth: '95vw',
         data: {
           partnerData: this.partnerData,

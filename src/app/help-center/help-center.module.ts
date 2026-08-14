@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { IconsModule } from 'src/app/icons/icons.module';
 import { HelpCenterPageComponent } from './help-center-page/help-center-page.component';
 
 
@@ -9,7 +11,9 @@ import { HelpCenterPageComponent } from './help-center-page/help-center-page.com
     HelpCenterPageComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    RouterModule,
+    IconsModule
   ]
 })
 export class HelpCenterModule { }

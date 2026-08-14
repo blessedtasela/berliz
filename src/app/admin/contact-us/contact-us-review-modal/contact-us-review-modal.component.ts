@@ -51,11 +51,9 @@ export class ContactUsReviewModalComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadContactUsMessages());
     this.subscription.add(this.store.select(selectContactUsMessages).subscribe((messages) => {
       this.savedMessages = messages
-      this.ngxService.stop()
     }));
   }
 

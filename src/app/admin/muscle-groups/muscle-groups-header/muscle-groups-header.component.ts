@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AddMuscleGroupModalComponent } from '../add-muscle-group-modal/add-muscle-group-modal.component';
@@ -23,8 +22,7 @@ export class MuscleGroupsHeaderComponent {
   @Input() muscleGroupsLength: number = 0;
   subscriptions: Subscription[] = [];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
     private store: Store,
     private rxStompService: RxStompService) {
   }
@@ -39,14 +37,12 @@ export class MuscleGroupsHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadMuscleGroups());
     this.subscriptions.push(
       this.store.select(selectMuscleGroups).subscribe((allMuscleGroups) => {
         this.muscleGroupsData = allMuscleGroups;
         this.totalMuscleGroups = this.muscleGroupsData.length
         this.muscleGroupsLength = this.muscleGroupsData.length
-        this.ngxService.stop()
       })
     );
   }
@@ -98,7 +94,7 @@ export class MuscleGroupsHeaderComponent {
 
   openAddMuscleGroup() {
     const dialogRef = this.dialog.open(AddMuscleGroupModalComponent, {
-      width: '800px',
+      width: '560px',
       maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,

@@ -12,6 +12,7 @@ import { CategoriesComponent } from './categories/categories.component';
 import { RouterModule } from '@angular/router';
 import { IconsModule } from '../icons/icons.module';
 import { FactsComponent } from './facts/facts.component';
+import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
 
 
 
@@ -28,7 +29,8 @@ import { FactsComponent } from './facts/facts.component';
   imports: [
     CommonModule,
     RouterModule,
-    IconsModule
+    IconsModule,
+    StrapiUrlPipe
   ]
 })
 export class AboutUsModule { }

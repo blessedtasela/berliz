@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AddMuscleGroupModalComponent } from '../../muscle-groups/add-muscle-group-modal/add-muscle-group-modal.component';
@@ -25,8 +24,7 @@ export class ExercisesHeaderComponent {
   @Input() exercisesLength: number = 0;
   subscriptions: Subscription[] = [];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
     private store: Store,
     private rxStompService: RxStompService) {
   }
@@ -41,14 +39,12 @@ export class ExercisesHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadExercises());
     this.subscriptions.push(
       this.store.select(selectExercises).subscribe((allExercises) => {
         this.exercisesData = allExercises;
         this.totalExercises = this.exercisesData.length
         this.exercisesLength = this.exercisesData.length
-        this.ngxService.stop()
       })
     );
   }
@@ -121,7 +117,7 @@ export class ExercisesHeaderComponent {
 
   openAddExercise() {
     const dialogRef = this.dialog.open(AddExercisesModalComponent, {
-      width: '800px',
+      width: '720px',
       maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,

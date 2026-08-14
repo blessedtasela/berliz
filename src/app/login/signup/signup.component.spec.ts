@@ -64,7 +64,12 @@ describe('SignupComponent', () => {
   });
 
   it('should submit form successfully when valid', () => {
-    userServiceMock.signup.and.returnValue(of({ message: 'Signup successful' }));
+    userServiceMock.signup.and.returnValue(of({
+      message: 'Signup successful',
+      data: '',
+      success: true,
+      statusCode: 200
+    }));
     component.signupForm.setValue({
       firstname: 'John',
       lastname: 'Doe',

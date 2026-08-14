@@ -66,6 +66,38 @@ export class UserService {
 
   }
 
+  /**
+   * Verifies a Google ID token (obtained client-side via Google Identity Services)
+   * server-side and logs the user in, creating an account on first sign-in. Issues the
+   * same JWT pair as {@link login}.
+   */
+  loginWithGoogle(idToken: string): Observable<ApiResponse<AuthResponse>> {
+    return this.httpClient.post<ApiResponse<AuthResponse>>(
+      this.url + "/auth/google",
+      { token: idToken },
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/json')
+      }
+    );
+  }
+
+  /**
+   * Verifies a Facebook user access token (obtained client-side via the Facebook JS
+   * SDK) server-side and logs the user in, creating an account on first sign-in.
+   * Issues the same JWT pair as {@link login}.
+   */
+  loginWithFacebook(accessToken: string): Observable<ApiResponse<AuthResponse>> {
+    return this.httpClient.post<ApiResponse<AuthResponse>>(
+      this.url + "/auth/facebook",
+      { token: accessToken },
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/json')
+      }
+    );
+  }
+
   validateEmail(data: any): Observable<ApiResponse<string>> {
     return this.httpClient.put<ApiResponse<string>>(
       this.url + "/user/validateEmail",

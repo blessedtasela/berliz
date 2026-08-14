@@ -14,7 +14,9 @@ import { NewslettersComponent } from './newsletters/newsletters.component';
 import { NewsletterMessageModalComponent } from './newsletter-message-modal/newsletter-message-modal.component';
 import { UpdateNewsletterModalComponent } from './update-newsletter-modal/update-newsletter-modal.component';
 import { NewsletterDetailsModalComponent } from './newsletter-details-modal/newsletter-details-modal.component';
+import { NewsletterDetailPageComponent } from './newsletter-detail-page/newsletter-detail-page.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
+import { AuthGuard } from 'src/app/services/auth.guard';
 
 
 
@@ -27,7 +29,8 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     NewslettersComponent,
     NewsletterMessageModalComponent,
     UpdateNewsletterModalComponent,
-    NewsletterDetailsModalComponent
+    NewsletterDetailsModalComponent,
+    NewsletterDetailPageComponent
   ],
 
   imports: [
@@ -39,7 +42,10 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     FooterModule,
     NavbarModule,
     AdminSearchModule,
-    RouterModule.forChild([{ path: '', component: NewslettersComponent }])
+    RouterModule.forChild([
+      { path: '', component: NewslettersComponent },
+      { path: ':id', component: NewsletterDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Subscriber Details', expectedRole: ['admin'] } },
+    ])
   ]
 })
 export class NewslettersModule { }

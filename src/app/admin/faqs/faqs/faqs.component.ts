@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Faq } from 'src/app/models/faq.model';
 import { loadFaqs } from 'src/app/state/faq/faq.actions';
@@ -20,7 +19,6 @@ export class FaqsComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
 
   constructor(
-    private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
     private store: Store) { }
 
@@ -33,7 +31,6 @@ export class FaqsComponent implements OnInit, OnDestroy {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.store.dispatch(loadFaqs());
     this.subscriptions.push(
       this.store.select(selectFaqs).subscribe((allFaqs) => {
@@ -42,7 +39,6 @@ export class FaqsComponent implements OnInit, OnDestroy {
           return cat !== 0 ? cat : (a.displayOrder ?? 0) - (b.displayOrder ?? 0);
         });
         this.totalFaqs = allFaqs.length;
-        this.ngxService.stop();
       })
     );
   }
@@ -70,7 +66,7 @@ export class FaqsComponent implements OnInit, OnDestroy {
 
   openAddFaq() {
     const dialogRef = this.dialog.open(AddFaqModalComponent, {
-      width: '700px',
+      width: '560px',
       maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,

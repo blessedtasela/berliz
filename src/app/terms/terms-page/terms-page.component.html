@@ -1,4 +1,64 @@
-<div class="mt-20 p-8 h-screen flex-col w-full font-extrabold">
-    <h2 class="mb-10 text-4xl text-red-600 ">Coming Soon.....</h2>
-    <p class="text-2xl text-white">This page is Under Construction</p>
-</div>
+<main class="w-full bg-zinc-950 min-h-screen font-sans">
+
+  <!-- ═══════════════════════════════════════════════
+       DRAFT / LEGAL REVIEW DISCLOSURE BANNER
+       Non-dismissible on purpose — this content has not
+       been reviewed by a licensed attorney.
+  ════════════════════════════════════════════════ -->
+  <div class="w-full bg-amber-500 text-black" data-testid="legal-disclaimer-banner">
+    <div class="max-w-3xl mx-auto flex items-start gap-3 px-4 py-3">
+      <i-feather name="alert-triangle" style="width:18px;height:18px;" class="shrink-0 mt-0.5"></i-feather>
+      <p class="text-xs sm:text-sm font-semibold leading-snug">
+        This is a draft policy prepared for Berliz's platform and has not yet been reviewed by a
+        licensed attorney. Do not treat this as final legal advice — legal review is required
+        before this policy is relied upon for compliance purposes.
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       HERO — matches the FAQ / testimonials page banner style
+  ════════════════════════════════════════════════ -->
+  <section class="relative w-full h-56 sm:h-64 overflow-hidden">
+    <div class="absolute inset-0"
+      style="background: linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(80,0,0,0.6) 60%, rgba(0,0,0,0.9) 100%);">
+    </div>
+    <div class="relative z-10 flex flex-col items-center justify-center h-full gap-3 px-4 text-center">
+      <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">Legal &amp; Policies</span>
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+        Terms of <span class="text-red-500">Service</span>
+      </h1>
+      <p class="text-sm text-zinc-300 max-w-md leading-relaxed">
+        Your agreement with Berliz. Please read this before using the platform.
+      </p>
+      <div class="w-12 h-0.5 bg-red-600 rounded-full mt-1"></div>
+    </div>
+  </section>
+
+  <section class="px-4 py-14">
+    <div class="max-w-3xl mx-auto flex flex-col gap-8">
+
+      <p class="text-xs text-zinc-500">Last updated: August 13, 2026</p>
+
+      <!-- ── TERMS SECTIONS ───────────────────────────────────────── -->
+      <div class="flex flex-col gap-4">
+        <div *ngFor="let item of sections" class="rounded-2xl border border-zinc-800 bg-zinc-900 px-5 py-4">
+          <h2 class="text-sm font-bold text-white mb-1">{{ item.title }}</h2>
+          <p class="text-sm text-zinc-400 leading-relaxed">{{ item.body }}</p>
+        </div>
+      </div>
+
+      <!-- ── CONTACT ──────────────────────────────────────────────── -->
+      <div class="flex items-center gap-3 pt-2">
+        <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">Questions</span>
+        <div class="flex-1 h-px bg-zinc-800"></div>
+      </div>
+      <p class="text-sm text-zinc-400 leading-relaxed">
+        If you have questions about these Terms of Service, please
+        <a [routerLink]="['/contact']" class="text-red-500 hover:text-red-400 font-semibold transition">contact us</a>.
+      </p>
+
+    </div>
+  </section>
+
+</main>

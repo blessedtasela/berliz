@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { AddSubscriptionsModalComponent } from '../add-subscriptions-modal/add-subscriptions-modal.component';
@@ -21,8 +20,7 @@ export class SubscriptionsHeaderComponent {
   @Input() totalSubscriptions: number = 0;
   @Input() subscriptionsLength: number = 0;
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
     private store: Store,
     private rxStompService: RxStompService) {
   }
@@ -33,13 +31,11 @@ export class SubscriptionsHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadSubscriptions());
     this.store.select(selectSubscriptions).subscribe((allSubscriptions) => {
       this.subscriptionsData = allSubscriptions;
       this.totalSubscriptions = this.subscriptionsData.length
       this.subscriptionsLength = this.subscriptionsData.length
-      this.ngxService.stop()
     });
   }
 
@@ -85,7 +81,7 @@ export class SubscriptionsHeaderComponent {
 
   openAddCategory() {
     const dialogRef = this.dialog.open(AddSubscriptionsModalComponent, {
-      width: '800px',
+      width: '560px',
       maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,

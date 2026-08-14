@@ -1,7 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { Exercises } from 'src/app/models/exercise.interface';
@@ -25,7 +24,6 @@ export class ExercisesDetailsModalComponent {
     private dialogRef: MatDialogRef<ExercisesDetailsModalComponent>,
     private store: Store,
     private dialog: MatDialog,
-    private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private datePipe: DatePipe) {
     this.exerciseData = this.data.exerciseData;
@@ -39,7 +37,6 @@ export class ExercisesDetailsModalComponent {
   }
 
   handleEmit() {
-    this.ngxService.start();
     this.subscriptions.push(
       this.store.select(selectExercises).subscribe((exercises) => {
         const found = exercises.find(exercise => exercise.id == this.exerciseData.id);
@@ -47,7 +44,6 @@ export class ExercisesDetailsModalComponent {
           this.exerciseData = found
       }),
     );
-    this.ngxService.stop();
   }
 
   openUrl(url: any) {

@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { TrainerPricing } from 'src/app/models/trainers.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -32,14 +33,13 @@ export class TrainerPricingListComponent {
     private dialog: MatDialog,
     private rxStompService: RxStompService,
     public store: Store,
-    private authService: AuthService) {
+    private authService: AuthService,
+    private router: Router) {
   }
 
   ngOnInit() {
-    this.ngxService.start()
     this.watchUpdateTrainerPricing()
     this.watchDeleteTrainerPricing()
-    this.ngxService.stop()
     // this.watchGetTrainerPricingFromMap()
   }
 
@@ -56,7 +56,7 @@ export class TrainerPricingListComponent {
       const trainerPricing = this.trainerPricingData.find(trainerPricing => trainerPricing.id === id);
       if (trainerPricing) {
         const dialogRef = this.dialog.open(UpdateTrainerPricingModalComponent, {
-          width: '900px',
+          width: '560px',
           maxWidth: '95vw',
           maxHeight: '90vh',
           disableClose: true,
@@ -84,23 +84,7 @@ export class TrainerPricingListComponent {
   }
 
   openTrainerPricingDetails(id: number) {
-    try {
-      const trainerPricing = this.trainerPricingData.find(trainerPricing => trainerPricing.id === id);
-      if (trainerPricing) {
-        const dialogRef = this.dialog.open(TrainerPricingDetailsModalComponent, {
-          width: '800px',
-          maxWidth: '95vw',
-          panelClass: 'mat-dialog-height',
-          data: {
-            trainerPricingData: trainerPricing,
-          }
-        });
-      } else {
-        this.snackbarService.openSnackBar('trainerPricing not found for id: ' + id, 'error');
-      }
-    } catch (error) {
-      this.snackbarService.openSnackBar("An error occurred. Check trainerPricing status", 'error');
-    }
+    this.router.navigate(['/dashboard/trainer-pricing', id]);
   }
 
   deleteTrainerPricing(id: number) {

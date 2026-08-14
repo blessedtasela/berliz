@@ -51,7 +51,6 @@ export class CenterComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.subscriptions.push(
       this.store.select(selectCurrentCenter).subscribe((center) => {
         this.centerData = center;
@@ -61,7 +60,6 @@ export class CenterComponent {
       //   this.partnerStateService.setPartnerSubject(partner);
       // })
     );
-    this.ngxService.stop();
   }
 
   emitData(): void {
@@ -75,7 +73,7 @@ export class CenterComponent {
 
   openUpdateCenter() {
     const dialogRef = this.dialog.open(UpdateCenterModalComponent, {
-      width: '800px',
+      width: '560px',
       maxWidth: '95vw',
       data: {
         centerData: this.centerData,

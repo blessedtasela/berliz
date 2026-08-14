@@ -71,9 +71,7 @@ export class AddPartnerModalComponent implements AfterViewInit {
       if (!cachedData?.length) {
         this.store.dispatch(loadActiveUsers());
         this.store.select(selectUsers).subscribe((user) => {
-          this.ngxService.start();
           this.users = user;
-          this.ngxService.stop();
         });
       } else {
         this.users = cachedData

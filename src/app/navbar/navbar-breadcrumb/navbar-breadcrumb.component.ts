@@ -24,4 +24,22 @@ export class NavbarBreadcrumbComponent {
       this.cdr.detectChanges();
     });
   }
+
+  /**
+   * The full trail rendered on md+ screens where there's room for it.
+   * On narrow screens the template hides everything except the last
+   * (current-page) crumb via responsive classes, so this stays simple —
+   * collapsing only kicks in once the trail is genuinely long, keeping
+   * a single "…" in place of the middle segments instead of letting a
+   * deep route (Admin > Users > John Doe > Edit > ...) push the search
+   * bar and profile controls out of the top bar.
+   */
+  get displayBreadcrumbs(): Array<{ label: string; url: string; ellipsis?: boolean }> {
+    if (this.breadcrumbs.length <= 3) {
+      return this.breadcrumbs;
+    }
+    const first = this.breadcrumbs[0];
+    const last = this.breadcrumbs[this.breadcrumbs.length - 1];
+    return [first, { label: '…', url: '', ellipsis: true }, last];
+  }
 }

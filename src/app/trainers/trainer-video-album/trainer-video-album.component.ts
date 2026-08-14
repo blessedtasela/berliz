@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { VideoResponse } from 'src/app/models/Media.interface';
 import { TrainerVideoAlbum } from 'src/app/models/trainers.interface';
-import { environment } from 'src/environments/environment';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 
 /**
  * Public read-only rendering of a trainer's video album.
@@ -16,15 +16,12 @@ export class TrainerVideoAlbumComponent {
 
   @Input() trainerVideoAlbum: TrainerVideoAlbum | null = null;
 
-  readonly strapiUrl = environment.strapiUrl;
-
   get videos(): VideoResponse[] {
     return this.trainerVideoAlbum?.videos ?? [];
   }
 
   videoUrl(video: VideoResponse): string {
     const url = video?.playbackUrl || video?.secureUrl || video?.videoUrl || '';
-    if (!url) return '';
-    return url.startsWith('http') ? url : `${this.strapiUrl}${url}`;
+    return resolveStrapiUrl(url);
   }
 }

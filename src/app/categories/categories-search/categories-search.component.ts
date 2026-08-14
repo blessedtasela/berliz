@@ -2,7 +2,6 @@ import { query } from '@angular/animations';
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of, Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -24,7 +23,6 @@ export class CategoriesSearchComponent {
   subscriptions: Subscription[] = [];
 
   constructor(private store: Store,
-    private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef,
     private rxStompService: RxStompService) { }
@@ -46,7 +44,6 @@ export class CategoriesSearchComponent {
         debounceTime(300),
         map((e: any) => e.target.value),
         tap((query: string) => {
-          this.ngxService.start();
         }),
         switchMap((query: string) => {
           return this.search(query);
@@ -54,12 +51,10 @@ export class CategoriesSearchComponent {
       )
       .subscribe(
         (results: Categories[]) => {
-          this.ngxService.stop();
           this.results.emit(results);
         },
         (error: any) => {
           this.snackbarService.openSnackBar(error, 'error');
-          this.ngxService.stop();
         }
       );
   }
@@ -144,16 +139,13 @@ export class CategoriesSearchComponent {
       return;
     }
 
-    this.ngxService.start();
 
     this.search(query).subscribe(
       (results) => {
         this.results.emit(results);
-        this.ngxService.stop();
       },
       (error) => {
         this.snackbarService.openSnackBar('Search failed.', 'error');
-        this.ngxService.stop();
       }
     );
   }

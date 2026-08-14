@@ -13,7 +13,9 @@ import { ContactUsHeaderComponent } from './contact-us-header/contact-us-header.
 import { ContactUsReviewModalComponent } from './contact-us-review-modal/contact-us-review-modal.component';
 import { UpdateContactUsModalComponent } from './update-contact-us-modal/update-contact-us-modal.component';
 import { ContactUsListComponent } from './contact-us-list/contact-us-list.component';
+import { ContactUsDetailPageComponent } from './contact-us-detail-page/contact-us-detail-page.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
+import { AuthGuard } from 'src/app/services/auth.guard';
 
 
 
@@ -22,6 +24,7 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     AddContactUsModalComponent,
     AdminContactUsComponent,
     ContactUsDetailsModalComponent,
+    ContactUsDetailPageComponent,
     ContactUsHeaderComponent,
     ContactUsReviewModalComponent,
     UpdateContactUsModalComponent,
@@ -37,7 +40,10 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     FooterModule,
     NavbarModule,
     AdminSearchModule,
-    RouterModule.forChild([{ path: '', component: AdminContactUsComponent }])
+    RouterModule.forChild([
+      { path: '', component: AdminContactUsComponent },
+      { path: ':id', component: ContactUsDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Message Details', expectedRole: ['admin'] } },
+    ])
   ]
 })
 export class ContactUsModule { }

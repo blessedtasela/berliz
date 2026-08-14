@@ -15,6 +15,7 @@ import { take } from 'rxjs';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { PhotoResponse } from 'src/app/models/Media.interface';
 import { MediaOwnerType } from 'src/app/models/Media.enum';
+import { ImageCroppedEvent } from 'ngx-image-cropper';
 
 @Component({
   selector: 'app-update-category-modal',
@@ -32,6 +33,9 @@ export class UpdateCategoryModalComponent {
   previewUrl: string | null = null;
   photoRequest: PhotoResponse | null = null;
   uploadingPhoto: boolean = false;
+  imageChangedEvent: any = null;
+  croppedImageBlob: Blob | null = null;
+  showCropper: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     private categoryService: CategoryService,
@@ -59,9 +63,46 @@ export class UpdateCategoryModalComponent {
     });
   }
 
-  async onPhotoSelected(event: any): Promise<void> {
+  onPhotoSelected(event: any): void {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    this.imageChangedEvent = event;
+    this.showCropper = true;
+  }
+
+  imageCropped(event: ImageCroppedEvent): void {
+    this.croppedImageBlob = event.blob || null;
+  }
+
+  loadImageFailed(): void {
+    this.snackbarService.openSnackBar('Failed to load image', 'error');
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+  }
+
+  cancelCrop(): void {
+    if (this.imageChangedEvent?.target) {
+      this.imageChangedEvent.target.value = '';
+    }
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+    this.croppedImageBlob = null;
+  }
+
+  async confirmCrop(): Promise<void> {
+    if (!this.croppedImageBlob) {
+      this.snackbarService.openSnackBar('Please crop the image first', 'error');
+      return;
+    }
+
+    const file = new File([this.croppedImageBlob], `category_${Date.now()}.jpeg`, {
+      type: this.croppedImageBlob.type || 'image/jpeg'
+    });
+
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+    this.croppedImageBlob = null;
 
     this.previewUrl = URL.createObjectURL(file);
 
@@ -131,10 +172,10 @@ export class UpdateCategoryModalComponent {
       const selectedTagIds = this.updateCategoryForm.value.tagIds
 
       // Convert the array to a comma-separated string
-      const tagIdsString = selectedTagIds.join(',');
+      const tagIdsArray = selectedTagIds;
       const formData = {
         ...this.updateCategoryForm.value,
-        tagIds: tagIdsString,
+        tagIds: tagIdsArray,
         ...(this.photoRequest ? { photoRequest: this.photoRequest } : {}),
       };
       this.categoryService.updateCategory(formData)
@@ -165,6 +206,9 @@ export class UpdateCategoryModalComponent {
 
   clear() {
     this.updateCategoryForm.reset();
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+    this.croppedImageBlob = null;
   }
 
 }

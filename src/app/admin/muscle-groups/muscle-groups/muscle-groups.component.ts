@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
 import { loadMuscleGroups } from 'src/app/state/muscle-group/muscle-group.actions';
 import { selectMuscleGroups } from 'src/app/state/muscle-group/muscle-group.selectors';
@@ -29,8 +28,7 @@ export class MuscleGroupsComponent {
     { value: 'status', label: 'Status', accessor: m => m.status },
   ];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private store: Store) {
+  constructor(private store: Store) {
   }
 
   ngOnInit(): void {
@@ -42,14 +40,12 @@ export class MuscleGroupsComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadMuscleGroups());
     this.subscriptions.push(
       this.store.select(selectMuscleGroups).subscribe((allMuscleGroups) => {
         this.muscleGroupsData = allMuscleGroups;
         this.totalMuscleGroups = allMuscleGroups.length
         this.muscleGroupsLength = allMuscleGroups.length
-        this.ngxService.stop()
       })
     );
   }

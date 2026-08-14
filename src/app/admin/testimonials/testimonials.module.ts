@@ -5,6 +5,7 @@ import { TestimonialsComponent } from './testimonials/testimonials.component';
 import { TestimonialsListComponent } from './testimonials-list/testimonials-list.component';
 import { TestimonialsHeaderComponent } from './testimonials-header/testimonials-header.component';
 import { TestimonialDetailsModalComponent } from './testimonial-details-modal/testimonial-details-modal.component';
+import { TestimonialDetailPageComponent } from './testimonial-detail-page/testimonial-detail-page.component';
 import { AddTestimonialsModalComponent } from './add-testimonials-modal/add-testimonials-modal.component';
 import { UpdateTestimonialsModalComponent } from './update-testimonials-modal/update-testimonials-modal.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -13,6 +14,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { UserHoverCardComponent } from 'src/app/shared/user-hover-card/user-hover-card.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
+import { AuthGuard } from 'src/app/services/auth.guard';
 
 
 
@@ -22,6 +24,7 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     TestimonialsListComponent,
     TestimonialsHeaderComponent,
     TestimonialDetailsModalComponent,
+    TestimonialDetailPageComponent,
     AddTestimonialsModalComponent,
     UpdateTestimonialsModalComponent
   ],
@@ -34,7 +37,10 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     IconsModule,
     UserHoverCardComponent,
     AdminSearchModule,
-    RouterModule.forChild([{ path: '', component: TestimonialsComponent }])
+    RouterModule.forChild([
+      { path: '', component: TestimonialsComponent },
+      { path: ':id', component: TestimonialDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Testimonial Details', expectedRole: ['admin'] } },
+    ])
   ]
 })
 export class TestimonialsModule { }

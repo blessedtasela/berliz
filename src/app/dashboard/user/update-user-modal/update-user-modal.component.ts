@@ -128,7 +128,6 @@ export class UpdateUserModalComponent {
   }
 
   getUser(){
-    this.ngxService.stop();
     this.userService.getUser()
     .subscribe((response: any)=>{
       this.userData =response;
@@ -145,7 +144,6 @@ export class UpdateUserModalComponent {
         address: this.userData.address,
       });
     }, (error)=>{
-      this.ngxService.stop();
       console.log(error)
       if(error.error?.message){
         this.responseMessage = error.error?.message;

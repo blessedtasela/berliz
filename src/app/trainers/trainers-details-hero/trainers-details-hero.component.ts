@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Trainers } from 'src/app/models/trainers.interface';
-import { environment } from 'src/environments/environment';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 
 /**
  * Public hero header for a single trainer profile.
@@ -17,12 +17,9 @@ export class TrainersDetailsHeroComponent {
   @Input() trainer: Trainers | null = null;
   @Input() reviewCount = 0;
 
-  readonly strapiUrl = environment.strapiUrl;
-
   get photoUrl(): string {
     const url = this.trainer?.photoResponse?.photoUrl;
-    if (!url) return 'assets/avatar.png';
-    return url.startsWith('http') ? url : `${this.strapiUrl}${url}`;
+    return url ? resolveStrapiUrl(url) : 'assets/avatar.png';
   }
 
   onImageError(event: any): void {

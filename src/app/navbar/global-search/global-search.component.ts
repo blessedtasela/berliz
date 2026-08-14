@@ -235,7 +235,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         id: e.id,
         label: e.name,
         sublabel: e.centerName,
-        link: ['/equipments']
+        link: ['/services/equipment']
       })
     },
 

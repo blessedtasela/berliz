@@ -17,6 +17,7 @@ import { CategoryExercisesComponent } from './category-exercises/category-exerci
 import { TestimonialModule } from '../testimonial/testimonial.module';
 import { EquipmentsModule } from '../equipments/equipments.module';
 import { ExercisesModule } from '../exercises/exercises.module';
+import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
 
 
 
@@ -42,7 +43,8 @@ import { ExercisesModule } from '../exercises/exercises.module';
     MatDialogModule,
     TestimonialModule,
     EquipmentsModule,
-    ExercisesModule
+    ExercisesModule,
+    StrapiUrlPipe
   ],
   exports: [
   ]

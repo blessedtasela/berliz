@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { TrainerFeatureVideo } from 'src/app/models/trainers.interface';
-import { environment } from 'src/environments/environment';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 
 /**
  * Public read-only rendering of a trainer's feature videos.
@@ -16,15 +16,12 @@ export class TrainerFeatureVideoComponent {
 
   @Input() trainerVideos: TrainerFeatureVideo[] = [];
 
-  readonly strapiUrl = environment.strapiUrl;
-
   videoUrl(video: TrainerFeatureVideo): string {
     const url = video?.video?.playbackUrl
       || video?.video?.secureUrl
       || video?.video?.videoUrl
       || '';
 
-    if (!url) return '';
-    return url.startsWith('http') ? url : `${this.strapiUrl}${url}`;
+    return resolveStrapiUrl(url);
   }
 }

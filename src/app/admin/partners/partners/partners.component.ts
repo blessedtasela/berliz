@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Partner } from 'src/app/models/partners.interface';
 import { loadPartners } from 'src/app/state/partner/partner.actions';
 import { selectPartners } from 'src/app/state/partner/partner.selectors';
@@ -29,8 +28,7 @@ export class PartnersComponent {
     { value: 'status', label: 'Status', accessor: p => p.status },
   ];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private store: Store) {
+  constructor(private store: Store) {
   }
 
   ngOnInit(): void {
@@ -42,14 +40,12 @@ export class PartnersComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadPartners());
     this.subscriptions.push(
       this.store.select(selectPartners).subscribe((allPartners) => {
         this.partnersData = allPartners;
         this.totalPartners = allPartners.length
         this.partnersLength = allPartners.length
-        this.ngxService.stop()
       })
     );
   }

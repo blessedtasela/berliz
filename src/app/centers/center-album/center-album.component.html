@@ -18,7 +18,7 @@
     <div *ngIf="photos.length; else noPhotos" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
         <div *ngFor="let photo of photos; let i = index" [ngClass]="{ 'hidden': i >= 6 && !showAllPhotos }"
             class="rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
-            <img [src]="photo.photoUrl" [alt]="photo.name" class="w-full aspect-square object-cover"
+            <img [src]="photo.photoUrl | strapiUrl" [alt]="photo.name" class="w-full aspect-square object-cover"
                 onerror="this.src='assets/landing/hero-gym-centers.jpg';" />
         </div>
     </div>

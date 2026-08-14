@@ -22,6 +22,7 @@ import { RouterModule } from '@angular/router';
 import { FooterModule } from '../footer/footer.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { MyTrainerSubModalComponent } from './my-trainer-sub-modal/my-trainer-sub-modal.component';
+import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
 
 
 
@@ -52,6 +53,7 @@ import { MyTrainerSubModalComponent } from './my-trainer-sub-modal/my-trainer-su
     FormsModule,
     ImageCropperModule,
     NgxFileDropModule,
+    StrapiUrlPipe,
   ]
 })
 export class MyTrainerModule { }

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { TrainerIntroduction } from 'src/app/models/trainers.interface';
-import { environment } from 'src/environments/environment';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 
 /**
  * Public read-only rendering of a trainer's introduction.
@@ -15,12 +15,9 @@ export class TrainersIntroductionComponent {
 
   @Input() trainerIntroduction: TrainerIntroduction | null = null;
 
-  readonly strapiUrl = environment.strapiUrl;
-
   get photoUrl(): string {
     const url = this.trainerIntroduction?.photo?.photoUrl;
-    if (!url) return 'assets/avatar.png';
-    return url.startsWith('http') ? url : `${this.strapiUrl}${url}`;
+    return url ? resolveStrapiUrl(url) : 'assets/avatar.png';
   }
 
   onImageError(event: any): void {

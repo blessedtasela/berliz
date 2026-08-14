@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Exercises } from 'src/app/models/exercise.interface';
 import { ExerciseService } from 'src/app/services/exercise.service';
@@ -34,7 +35,8 @@ export class ExercisesListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private rxStompService: RxStompService,
-    private store: Store) {
+    private store: Store,
+    private router: Router) {
   }
 
   ngOnInit() {
@@ -43,12 +45,10 @@ export class ExercisesListComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadExercises());
     this.store.select(selectExercises).subscribe((allExercises) => {
       this.exercisesData = allExercises;
       this.totalExercises = this.exercisesData.length
-      this.ngxService.stop()
     });
   }
 
@@ -58,7 +58,7 @@ export class ExercisesListComponent {
       const exercise = this.exercisesData.find(exercise => exercise.id === id);
       if (exercise) {
         const dialogRef = this.dialog.open(UpdateExercisesModalComponent, {
-          width: '900px',
+          width: '720px',
           maxWidth: '95vw',
           maxHeight: '90vh',
           disableClose: true,
@@ -86,23 +86,7 @@ export class ExercisesListComponent {
   }
 
   openExerciseDetails(id: number) {
-    try {
-      const exercise = this.exercisesData.find(exercise => exercise.id === id);
-      if (exercise) {
-        const dialogRef = this.dialog.open(ExercisesDetailsModalComponent, {
-          width: '800px',
-          maxWidth: '95vw',
-          panelClass: 'mat-dialog-height',
-          data: {
-            exerciseData: exercise,
-          }
-        });
-      } else {
-        this.snackbarService.openSnackBar('exercise not found for id: ' + id, 'error');
-      }
-    } catch (error) {
-      this.snackbarService.openSnackBar("An error occurred. Check exercise status", 'error');
-    }
+    this.router.navigate(['/dashboard/hub/exercises', id]);
   }
 
   updateExerciseStatus(id: number) {

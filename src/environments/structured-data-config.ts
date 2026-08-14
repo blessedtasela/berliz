@@ -1,110 +1,94 @@
+import { environment } from './environment';
+
+/**
+ * schema.org JSON-LD building blocks for Berliz.
+ *
+ * Only real, verifiable data lives here. Earlier versions of this file shipped
+ * fabricated placeholder objects (fake phone number, a Burnaby address that
+ * doesn't match the real one, invented social handles, a fake reviewer named
+ * "John Doe", a fake trainer named "John Trainer"). Mismatched/fake structured
+ * data can get a site flagged by Google, so anything we can't back with a real
+ * value is simply omitted rather than invented.
+ *
+ * Source of truth for the contact details below is the live footer
+ * (`src/app/footer/footer/footer.component.html` and the
+ * `app-phone` / `app-email` components it renders).
+ */
+
+const logoUrl = `${environment.baseUrl}/assets/landing/logo.png`;
+
 export const StructuredDataConfig = {
-    organization: {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Berliz Fitness",
-      "url": "https://berliz.fitness",
-      "logo": "https://berliz.fitness/logo.png",
-      "sameAs": [
-        "https://www.facebook.com/berliz",
-        "https://www.instagram.com/berliz"
-      ],
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "+1-234-567-890",
-        "contactType": "Customer Service"
-      }
+  organization: {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Berliz Fitness',
+    url: environment.baseUrl,
+    logo: logoUrl,
+    // Real handles from environment.socialUrls. Not yet linked from the footer's
+    // social icons (see SocialComponent), but this is the real config the app
+    // ships with — no invented URLs.
+    sameAs: [
+      environment.socialUrls.facebook,
+      environment.socialUrls.instagram,
+      environment.socialUrls.linkedin,
+    ],
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: '+1-236-990-0823',
+      email: 'berlizworld@gmail.com',
+      contactType: 'Customer Service',
     },
-    localBusiness: {
-      "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      "name": "Berliz Fitness",
-      "image": "https://berliz.fitness/logo.png",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "123 Fitness St",
-        "addressLocality": "Burnaby",
-        "addressRegion": "BC",
-        "postalCode": "V5G 3H2",
-        "addressCountry": "CA"
-      },
-      "telephone": "+1-234-567-890",
-      "openingHours": "Mo-Sa 08:00-18:00",
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": "49.2488",
-        "longitude": "-123.0016"
-      }
+  },
+
+  localBusiness: {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: 'Berliz Fitness',
+    image: logoUrl,
+    url: environment.baseUrl,
+    telephone: '+1-236-990-0823',
+    email: 'berlizworld@gmail.com',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '555 Burrard Street',
+      addressLocality: 'Vancouver',
+      addressRegion: 'BC',
+      postalCode: 'V7X 1M8',
+      addressCountry: 'CA',
     },
-    webpage: {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "Berliz Fitness - Home",
-      "url": "https://berliz.fitness/home",
-      "description": "Welcome to Berliz Fitness. Discover personalized training solutions that combine martial arts, fitness, and wellness."
+    // Opening hours and geo-coordinates are not published anywhere in the app
+    // (footer has no hours, no map). Omitted rather than guessed — add these
+    // once the business confirms real values.
+  },
+};
+
+/**
+ * Builds a Person schema for a real trainer record. Intentionally a function,
+ * not static example data: a "person" schema only means something when it
+ * describes an actual trainer on the site. Call this from a trainer profile
+ * page once one exists, e.g.:
+ *
+ *   buildTrainerPersonSchema({ name: trainer.fullName, imageUrl: trainer.avatarUrl, profileUrl: `${environment.baseUrl}/trainers/${trainer.slug}` })
+ */
+export function buildTrainerPersonSchema(trainer: {
+  name: string;
+  imageUrl?: string;
+  profileUrl: string;
+}): Record<string, unknown> {
+  const schema: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: trainer.name,
+    url: trainer.profileUrl,
+    jobTitle: 'Personal Trainer',
+    worksFor: {
+      '@type': 'Organization',
+      name: 'Berliz Fitness',
+      url: environment.baseUrl,
     },
-    product: {
-      "@context": "https://schema.org",
-      "@type": "Product",
-      "name": "Berliz Fitness Membership",
-      "description": "Premium fitness membership that includes personal training, martial arts, and nutrition plans.",
-      "image": "https://berliz.fitness/product-image.png",
-      "offers": {
-        "@type": "Offer",
-        "priceCurrency": "USD",
-        "price": "199.99",
-        "url": "https://berliz.fitness/membership",
-        "availability": "https://schema.org/InStock"
-      }
-    },
-    review: {
-      "@context": "https://schema.org",
-      "@type": "Review",
-      "reviewRating": {
-        "@type": "Rating",
-        "ratingValue": "5",
-        "bestRating": "5"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "John Doe"
-      },
-      "description": "The Berliz fitness program transformed my life. Highly recommend!"
-    },
-    article: {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      "headline": "The Benefits of Martial Arts for Fitness",
-      "image": "https://berliz.fitness/article-image.png",
-      "author": {
-        "@type": "Person",
-        "name": "Jane Smith"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "Berliz Fitness",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://berliz.fitness/logo.png"
-        }
-      },
-      "datePublished": "2024-09-29",
-      "description": "Martial arts offer a unique way to build fitness, confidence, and discipline. Learn the key benefits of adding martial arts to your fitness routine."
-    },
-    person: {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "John Trainer",
-      "image": "https://berliz.fitness/john-trainer.jpg",
-      "jobTitle": "Personal Trainer",
-      "worksFor": {
-        "@type": "Organization",
-        "name": "Berliz Fitness"
-      },
-      "sameAs": [
-        "https://www.linkedin.com/in/john-trainer",
-        "https://twitter.com/john_trainer"
-      ]
-    }
   };
-  
+  if (trainer.imageUrl) {
+    schema['image'] = trainer.imageUrl;
+  }
+  return schema;
+}

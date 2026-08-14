@@ -18,6 +18,7 @@ import {
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { TestimonialDialogService } from 'src/app/testimonial/testimonial-dialog.service';
+import { BookingDialogService } from 'src/app/booking/booking-dialog.service';
 import { CenterTrainerCard } from '../center-trainers/center-trainers.component';
 
 import * as CenterActions from 'src/app/state/center/center.actions';
@@ -64,6 +65,7 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private store: Store,
     private testimonialDialog: TestimonialDialogService,
+    private bookingDialog: BookingDialogService,
   ) { }
 
   ngOnInit(): void {
@@ -269,6 +271,15 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
    */
   leaveTestimonial(): void {
     this.testimonialDialog.openTestimonialForm();
+  }
+
+  /** Opens the "Book a session" form for this center. */
+  bookSession(): void {
+    if (!this.center) return;
+    this.bookingDialog.openBookingForm({
+      centerId: this.centerId,
+      providerName: this.center.name || 'this center'
+    });
   }
 
   testimonialAuthor(testimonial: Testimonials): string {

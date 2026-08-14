@@ -83,4 +83,12 @@ export class SubscriptionEffects {
       catchError(e => of(A.bulkActionSubscriptionFailure({ error: e?.error?.message || 'Failed' })))
     ))
   ));
+
+  selectPlan$ = createEffect(() => this.actions$.pipe(
+    ofType(A.selectPlan),
+    mergeMap(({ planId }) => this.svc.selectPlan(planId).pipe(
+      map(response => A.selectPlanSuccess({ response })),
+      catchError(e => of(A.selectPlanFailure({ error: e?.error?.message || 'Failed to select plan' })))
+    ))
+  ));
 }

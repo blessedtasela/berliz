@@ -7,6 +7,7 @@ import { UpdateClientModalComponent } from './update-client-modal/update-client-
 import { ClientsListComponent } from './clients-list/clients-list.component';
 import { ClientsHeaderComponent } from './clients-header/clients-header.component';
 import { ClientsDetailsModalComponent } from './clients-details-modal/clients-details-modal.component';
+import { ClientDetailPageComponent } from './client-detail-page/client-detail-page.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FeatherModule } from 'angular-feather';
 import { IconsModule } from 'src/app/icons/icons.module';
@@ -14,6 +15,7 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { FooterModule } from 'src/app/footer/footer.module';
 import { UserHoverCardComponent } from 'src/app/shared/user-hover-card/user-hover-card.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
+import { AuthGuard } from 'src/app/services/auth.guard';
 
 
 
@@ -24,7 +26,8 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     UpdateClientModalComponent,
     ClientsListComponent,
     ClientsHeaderComponent,
-    ClientsDetailsModalComponent
+    ClientsDetailsModalComponent,
+    ClientDetailPageComponent
   ],
   imports: [
     CommonModule,
@@ -36,7 +39,10 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     FooterModule,
     UserHoverCardComponent,
     AdminSearchModule,
-    RouterModule.forChild([{ path: '', component: ClientsComponent }])
+    RouterModule.forChild([
+      { path: '', component: ClientsComponent },
+      { path: ':id', component: ClientDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Client Details', expectedRole: ['admin'] } },
+    ])
   ]
 })
 export class ClientsModule { }

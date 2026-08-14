@@ -1,0 +1,5 @@
+<app-admin-search [selector]="selectBookings" [fields]="bookingSearchFields"
+    placeholder="Search bookings..." (results)="handleSearchResults($event)"></app-admin-search>
+<app-bookings-header [bookingsData]="bookingsData" [totalBookings]="totalBookings"
+    [bookingsLength]="bookingsLength"></app-bookings-header>
+<app-bookings-list [bookingsData]="bookingsData" [totalBookings]="totalBookings"></app-bookings-list>

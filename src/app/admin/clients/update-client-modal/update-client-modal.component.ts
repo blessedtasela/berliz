@@ -66,13 +66,11 @@ export class UpdateClientModalComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.store.dispatch(loadActiveCategories());
     this.subscriptions.push(
       this.store.select(selectActiveCategories).subscribe((categories) => {
         this.categories = categories;
         this.cd.detectChanges();
-        this.ngxService.stop();
       })
     );
   }

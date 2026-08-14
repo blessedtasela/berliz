@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Clients } from 'src/app/models/clients.interface';
@@ -28,8 +27,7 @@ export class ClientsComponent {
     { value: 'category', label: 'Category', accessor: c => c.subscriptions?.[0]?.categories?.[0]?.name },
   ];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private store: Store) {
+  constructor(private store: Store) {
   }
 
   ngOnInit(): void {
@@ -41,14 +39,12 @@ export class ClientsComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadClients());
     this.subscriptions.push(
       this.store.select(selectClients).subscribe((clients) => {
         this.clientsData = clients;
         this.totalClients = clients.length
         this.clientsLength = clients.length
-        this.ngxService.stop()
       })
     );
   }

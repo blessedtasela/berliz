@@ -41,10 +41,8 @@ export class MySubscriptionsComponent {
 
   ngOnInit(): void {
     console.log(this.mySubscriptions)
-    this.ngxService.start();
     this.subscribeToCloseSubscriptionAction()
     this.isSubscriptionChecked = this.mySubscriptions.map(Subscription => Subscription.checked === true);
-    this.ngxService.stop();
   }
 
   ngOnDestroy() {
@@ -109,7 +107,7 @@ export class MySubscriptionsComponent {
     const Subscription = this.mySubscriptions.find((s) => s.id === id);
     if (Subscription) {
       const dialogRef = this.dialog.open(MySubscriptionDetailModalComponent, {
-        width: '700px',
+        width: '560px',
         maxWidth: '95vw',
         data: {
           mySubscriptions: Subscription

@@ -12,8 +12,10 @@ import { TodoListListComponent } from './todo-list-list/todo-list-list.component
 import { TodoListsComponent } from './todo-lists/todo-lists.component';
 import { UpdateTodoModalComponent } from './update-todo-modal/update-todo-modal.component';
 import { TodoListDetailsModalComponent } from './todo-list-details-modal/todo-list-details-modal.component';
+import { TodoListDetailPageComponent } from './todo-list-detail-page/todo-list-detail-page.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { UserHoverCardComponent } from 'src/app/shared/user-hover-card/user-hover-card.component';
+import { AuthGuard } from 'src/app/services/auth.guard';
 
 
 
@@ -24,7 +26,8 @@ import { UserHoverCardComponent } from 'src/app/shared/user-hover-card/user-hove
     TodoListListComponent,
     TodoListsComponent,
     UpdateTodoModalComponent,
-    TodoListDetailsModalComponent
+    TodoListDetailsModalComponent,
+    TodoListDetailPageComponent
   ],
 
   imports: [
@@ -37,7 +40,10 @@ import { UserHoverCardComponent } from 'src/app/shared/user-hover-card/user-hove
     NavbarModule,
     AdminSearchModule,
     UserHoverCardComponent,
-    RouterModule.forChild([{ path: '', component: TodoListsComponent }])
+    RouterModule.forChild([
+      { path: '', component: TodoListsComponent },
+      { path: ':id', component: TodoListDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'To-do Details', expectedRole: ['admin'] } },
+    ])
   ]
 })
 export class TodoListsModule { }

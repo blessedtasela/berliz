@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Payments } from 'src/app/models/payment.interface';
 import { loadPayments } from 'src/app/state/payment/payment.actions';
@@ -29,8 +28,7 @@ export class PaymentsComponent {
     { value: 'id', label: 'Payment id', accessor: p => p.id?.toString() },
   ];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    public store: Store) {
+  constructor(public store: Store) {
   }
 
   ngOnInit(): void {
@@ -42,14 +40,12 @@ export class PaymentsComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadPayments());
     this.subscriptions.push(
       this.store.select(selectPayments).subscribe((allPayments) => {
         this.paymentsData = allPayments;
         this.totalPayments = allPayments.length
         this.paymentsLength = allPayments.length
-        this.ngxService.stop()
       }),
     );
   }

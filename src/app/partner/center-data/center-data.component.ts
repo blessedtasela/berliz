@@ -63,7 +63,6 @@ export class CenterDataComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadActiveCategories());
     this.subscriptions.push(
       this.store.select(selectActiveCategories).subscribe((activeCategories) => {
@@ -76,7 +75,6 @@ export class CenterDataComponent {
         this.center = center
       })
     );
-    this.ngxService.stop()
   }
 
   formatDate(dateString: any): any {

@@ -33,7 +33,7 @@
             <!-- HERO -->
             <section class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                 <div class="h-44 sm:h-60 w-full bg-gray-100">
-                    <img [src]="center.photoUrl" [alt]="center.name" class="w-full h-full object-cover"
+                    <img [src]="center.photoUrl | strapiUrl" [alt]="center.name" class="w-full h-full object-cover"
                         onerror="this.src='assets/landing/hero-gym-centers.jpg';" />
                 </div>
 
@@ -87,6 +87,24 @@
                         </span>
                     </div>
                 </div>
+            </section>
+
+            <!-- BOOK A SESSION -->
+            <section class="bg-white rounded-2xl border border-gray-200 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                        <i-feather name="calendar" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-bold text-gray-900">Ready to train?</h2>
+                        <p class="text-xs text-gray-500">Book a session at {{ center.name }} — pick a date and time that works for you.</p>
+                    </div>
+                </div>
+                <button type="button" (click)="bookSession()"
+                    class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2 shrink-0 w-full sm:w-auto justify-center">
+                    <i-feather name="calendar" style="width:13px;height:13px;"></i-feather>
+                    Book a session
+                </button>
             </section>
 
             <app-center-introduction [centerIntroduction]="centerIntro"></app-center-introduction>

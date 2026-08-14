@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { loadSubscriptions } from 'src/app/state/subscription/subscription.actions';
 import { selectSubscriptions } from 'src/app/state/subscription/subscription.selectors';
@@ -31,8 +30,7 @@ export class SubscriptionsComponent {
     { value: 'id', label: 'Subscription id', accessor: s => s.id?.toString() },
   ];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private store: Store) {
+  constructor(private store: Store) {
   }
 
   ngOnInit(): void {
@@ -44,14 +42,12 @@ export class SubscriptionsComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadSubscriptions());
     this.subscriptions.push(
       this.store.select(selectSubscriptions).subscribe((allSubscriptions) => {
         this.subscriptionsData = allSubscriptions;
         this.totalSubscriptions = allSubscriptions.length
         this.subscriptionsLength = allSubscriptions.length
-        this.ngxService.stop()
       })
     );
   }

@@ -1,4 +1,6 @@
 import { createAction, props } from '@ngrx/store';
+import { ApiResponse } from '../../models/Api.interface';
+import { PlanSubscriptionResponse } from '../../models/plan.model';
 import { Subscriptions } from '../../models/subscriptions.interface';
 
 type Err  = { error: string };
@@ -40,3 +42,8 @@ export const deleteSubscriptionFailure = createAction('[Subscription] Delete Fai
 export const bulkActionSubscription = createAction('[Subscription] Bulk Action', props<Data>());
 export const bulkActionSubscriptionSuccess = createAction('[Subscription] Bulk Action Success', props<{ message: string }>());
 export const bulkActionSubscriptionFailure = createAction('[Subscription] Bulk Action Failure', props<Err>());
+
+/** Self-service plan selection — creates/refreshes a PENDING_PAYMENT subscription for the current user. */
+export const selectPlan = createAction('[Subscription] Select Plan', props<{ planId: number }>());
+export const selectPlanSuccess = createAction('[Subscription] Select Plan Success', props<{ response: ApiResponse<PlanSubscriptionResponse> }>());
+export const selectPlanFailure = createAction('[Subscription] Select Plan Failure', props<Err>());

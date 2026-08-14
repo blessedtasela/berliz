@@ -14,9 +14,14 @@
                 <img src="../../../assets/landing/berliz.png" class="h-7 w-auto object-contain hidden md:block" />
             </a>
 
-            <!-- Breadcrumb — hidden on mobile, shows on md+ -->
-            <div class="flex flex-wrap items-center max-w-full">
-                <span class="text-gray-300 mx-2">|</span>
+            <!--
+              Breadcrumb — hidden below `sm` (no room next to the search bar
+              and profile controls on a phone); from `sm` up it's capped to a
+              max-width and truncates internally so a long/deep trail can
+              never push the search bar, bell, home or profile out of view.
+            -->
+            <div class="hidden sm:flex items-center min-w-0 overflow-hidden max-w-[140px] md:max-w-[170px] lg:max-w-[260px] xl:max-w-xs">
+                <span class="text-gray-300 mx-2 shrink-0">|</span>
                 <app-navbar-breadcrumb></app-navbar-breadcrumb>
             </div>
 

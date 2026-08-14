@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Members } from 'src/app/models/members.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AddMembersModalComponent } from '../add-members-modal/add-members-modal.component';
@@ -21,8 +20,7 @@ export class MembersHeaderComponent {
   @Input() totalMembers: number = 0;
   @Input() membersLength: number = 0;
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
     public store: Store,
     private rxStompService: RxStompService) {
   }
@@ -33,13 +31,11 @@ export class MembersHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadMembers());
     this.store.select(selectMembers).subscribe((allMembers) => {
       this.membersData = allMembers;
       this.totalMembers = this.membersData.length
       this.membersLength = this.membersData.length
-      this.ngxService.stop()
     });
   }
 
@@ -98,7 +94,7 @@ export class MembersHeaderComponent {
 
   openAddCategory() {
     const dialogRef = this.dialog.open(AddMembersModalComponent, {
-      width: '800px',
+      width: '560px',
       maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,

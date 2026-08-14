@@ -158,11 +158,11 @@
 
                         <!-- Photo (grid card shows the primary image only) -->
                         <button type="button" (click)="openDetails(item)"
-                            class="relative w-full h-44 bg-zinc-800 overflow-hidden flex items-center justify-center"
+                            class="relative w-full h-52 bg-zinc-800 overflow-hidden"
                             [attr.aria-label]="'View ' + item.name">
 
-                            <img *ngIf="item.imageUrl; else noPhoto" [src]="item.imageUrl" [alt]="item.name"
-                                class="w-full h-full object-contain p-6" />
+                            <img *ngIf="item.imageUrl; else noPhoto" [src]="item.imageUrl | strapiUrl" [alt]="item.name"
+                                class="w-full h-full object-cover" />
 
                             <ng-template #noPhoto>
                                 <div class="w-full h-full flex flex-col items-center justify-center gap-2 bg-zinc-800">

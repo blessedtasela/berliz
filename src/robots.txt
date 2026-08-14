@@ -1,0 +1,42 @@
+# Berliz — robots.txt
+# Goal: allow discovery by search engines and AI assistants that browse in
+# real time, while keeping authenticated-only areas out of the index.
+# Public discovery pages that require login to see full content (e.g. /members,
+# /user/:id) are intentionally left crawlable — they render a real page for
+# anonymous visitors, so they should stay discoverable.
+
+User-agent: *
+Disallow: /dashboard/
+Disallow: /hub/
+Disallow: /login
+
+# Search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# AI assistants / real-time browsing crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://berliz.fitness/sitemap.xml

@@ -51,7 +51,7 @@
 
                         <!-- Photo -->
                         <div class="relative w-full h-52 bg-zinc-800 overflow-hidden">
-                            <img [src]="strapiUrl + trainer.photoResponse.photoUrl" [alt]="trainer?.name"
+                            <img [src]="photoUrl(trainer)" [alt]="trainer?.name"
                                 class="w-full h-full object-cover" (error)="onImageError($event)" />
                             <!-- Gradient fade at bottom -->
                             <div class="absolute bottom-0 left-0 right-0 h-16

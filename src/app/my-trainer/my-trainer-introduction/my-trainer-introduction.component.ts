@@ -12,6 +12,7 @@ import { TrainerIntroduction } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { TrainerService } from 'src/app/services/trainer.service';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 
 @Component({
   selector: 'app-my-trainer-introduction',
@@ -101,17 +102,9 @@ export class MyTrainerIntroductionComponent implements OnInit, OnChanges {
 
   }
 
-  // 🔥 Helper to normalize URLs (blob / http / relative)
+  // Helper to normalize URLs (blob / http / relative)
   private normalizeUrl(url: string): string {
-    if (!url) return 'assets/avatar.png';
-
-    if (url.startsWith('blob:')) {
-      return url;
-    }
-
-    return url.startsWith('http')
-      ? url
-      : `http://localhost:1337${url}`;
+    return resolveStrapiUrl(url) || 'assets/avatar.png';
   }
 
   onImgSelected(event: any): void {

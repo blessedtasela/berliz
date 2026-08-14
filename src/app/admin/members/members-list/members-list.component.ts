@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Members } from 'src/app/models/members.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -31,7 +32,8 @@ export class MembersListComponent {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private rxStompService: RxStompService) {
+    private rxStompService: RxStompService,
+    private router: Router) {
   }
 
   ngOnInit() {
@@ -42,12 +44,10 @@ export class MembersListComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.store.dispatch(loadMembers());
     this.store.select(selectMembers).subscribe((allMembers) => {
       this.membersData = allMembers;
       this.totalMembers = this.membersData.length
-      this.ngxService.stop();
     });
   }
 
@@ -85,23 +85,7 @@ export class MembersListComponent {
   }
 
   openMemberDetails(id: number) {
-    try {
-      const member = this.membersData.find(member => member.id === id);
-      if (member) {
-        const dialogRef = this.dialog.open(MemberDetailsModalComponent, {
-          width: '800px',
-          maxWidth: '95vw',
-          panelClass: 'mat-dialog-height',
-          data: {
-            memberData: member,
-          }
-        });
-      } else {
-        this.snackbarService.openSnackBar('member not found for id: ' + id, 'error');
-      }
-    } catch (error) {
-      this.snackbarService.openSnackBar("An error occurred. Check member status", 'error');
-    }
+    this.router.navigate(['/dashboard/members', id]);
   }
 
   updateMemberStatus(id: number) {

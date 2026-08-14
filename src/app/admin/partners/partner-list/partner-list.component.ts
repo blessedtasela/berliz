@@ -1,5 +1,6 @@
 import { Component, ElementRef, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { Partner } from 'src/app/models/partners.interface';
@@ -33,7 +34,8 @@ export class PartnerListComponent {
     private dialog: MatDialog,
     private store: Store,
     private datePipe: DatePipe,
-    private rxStompService: RxStompService) { }
+    private rxStompService: RxStompService,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.watchRejectPartnerApplication()
@@ -43,11 +45,9 @@ export class PartnerListComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.store.dispatch(loadPartners());
     this.store.select(selectPartners).subscribe((partnersData) => {
       this.partnersData = partnersData
-      this.ngxService.stop();
     });
   }
 
@@ -60,7 +60,7 @@ export class PartnerListComponent {
       const partner = this.partnersData.find(partner => partner.id === id);
       if (partner) {
         const dialogRef = this.dialog.open(UpdatePartnerModalComponent, {
-          width: '800px',
+          width: '560px',
           maxWidth: '95vw',
           data: {
             partnerData: partner,
@@ -123,28 +123,7 @@ export class PartnerListComponent {
   }
 
   openPartnerDetails(id: number) {
-    const partner = this.partnersData.find(partner => partner.id === id);
-    if (partner) {
-      const dialogRef = this.dialog.open(PartnerDetailsModalComponent, {
-        width: '800px',
-        maxWidth: '95vw',
-        data: {
-          partnerData: partner,
-        },
-        panelClass: 'mat-dialog-height',
-      });
-      const childComponentInstance = dialogRef.componentInstance as PartnerDetailsModalComponent;
-      const sub = dialogRef.componentInstance.onRejectApplicationEmit.subscribe((res: any) => {
-        this.handleEmitEvent();
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          console.log(`Dialog result: ${result}`);
-        } else {
-          console.log('Dialog closed without any action');
-        }
-      });
-    }
+    this.router.navigate(['/dashboard/partners', id]);
   }
 
   deletePartner(id: number) {
@@ -183,7 +162,7 @@ export class PartnerListComponent {
     const partner = this.partnersData.find(partner => partner.id === id);
     if (partner) {
       const dialogRef = this.dialog.open(ViewCertificateModalComponent, {
-        width: '800px',
+        width: '720px',
         maxWidth: '95vw',
         data: {
           partnerData: partner,
@@ -204,7 +183,7 @@ export class PartnerListComponent {
     const partner = this.partnersData.find(partner => partner.id === id);
     if (partner) {
       const dialogRef = this.dialog.open(ViewCvModalComponent, {
-        width: '800px',
+        width: '720px',
         maxWidth: '95vw',
         data: {
           partnerData: partner,

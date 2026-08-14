@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { PhotoResponse } from 'src/app/models/Media.interface';
 import { TrainerReview } from 'src/app/models/trainers.interface';
-import { environment } from 'src/environments/environment';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 
 /**
  * Public read-only rendering of a trainer's client reviews
@@ -17,7 +17,6 @@ export class TrainerClientReviewComponent {
   @Input() trainerReview: TrainerReview[] = [];
 
   readonly PAGE_SIZE = 4;
-  readonly strapiUrl = environment.strapiUrl;
 
   showAllReviews = false;
 
@@ -38,8 +37,7 @@ export class TrainerClientReviewComponent {
 
   photoUrl(photo: PhotoResponse | undefined | null): string {
     const url = photo?.photoUrl;
-    if (!url) return 'assets/avatar.png';
-    return url.startsWith('http') ? url : `${this.strapiUrl}${url}`;
+    return url ? resolveStrapiUrl(url) : 'assets/avatar.png';
   }
 
   onImageError(event: any): void {

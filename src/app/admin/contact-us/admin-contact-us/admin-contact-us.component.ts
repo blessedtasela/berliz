@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { ContactUs } from 'src/app/models/contact-us.model';
@@ -29,7 +28,6 @@ export class AdminContactUsComponent {
   ];
 
   constructor(private store: Store,
-    private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,) {
   }
 
@@ -42,14 +40,12 @@ export class AdminContactUsComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadContactUs());
     this.subscriptions.push(
       this.store.select(selectContactUsList).subscribe((contactUs) => {
         this.contactUsData = contactUs;
         this.totalContactUs = contactUs.length
         this.contactUsLength = contactUs.length;
-        this.ngxService.stop()
       })
     );
   }

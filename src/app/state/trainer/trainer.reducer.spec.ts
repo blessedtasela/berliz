@@ -1,13 +1,14 @@
-import { reducer, initialState } from './trainer.reducer';
+import { trainerReducer } from './trainer.reducer';
+import { initialTrainerState } from './trainer.state';
 
 describe('Trainer Reducer', () => {
   describe('unknown action', () => {
     it('should return the previous state', () => {
       const action = {} as any;
 
-      const result = reducer(initialState, action);
+      const result = trainerReducer(initialTrainerState, action);
 
-      expect(result).toBe(initialState);
+      expect(result).toBe(initialTrainerState);
     });
   });
 });

@@ -5,6 +5,7 @@ import { TasksComponent } from './tasks/tasks.component';
 import { TasksListComponent } from './tasks-list/tasks-list.component';
 import { TasksHeaderComponent } from './tasks-header/tasks-header.component';
 import { TaskDetailsModalComponent } from './task-details-modal/task-details-modal.component';
+import { TaskDetailPageComponent } from './task-detail-page/task-detail-page.component';
 import { AddTasksModalComponent } from './add-tasks-modal/add-tasks-modal.component';
 import { UpdateTasksModalComponent } from './update-tasks-modal/update-tasks-modal.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -13,6 +14,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { UserHoverCardComponent } from 'src/app/shared/user-hover-card/user-hover-card.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
+import { AuthGuard } from 'src/app/services/auth.guard';
 
 
 
@@ -22,6 +24,7 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     TasksListComponent,
     TasksHeaderComponent,
     TaskDetailsModalComponent,
+    TaskDetailPageComponent,
     AddTasksModalComponent,
     UpdateTasksModalComponent
   ],
@@ -34,7 +37,10 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     IconsModule,
     UserHoverCardComponent,
     AdminSearchModule,
-    RouterModule.forChild([{ path: '', component: TasksComponent }])
+    RouterModule.forChild([
+      { path: '', component: TasksComponent },
+      { path: ':id', component: TaskDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Task Details', expectedRole: ['admin'] } },
+    ])
   ]
 })
 export class TasksModule { }

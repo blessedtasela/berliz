@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Partner } from 'src/app/models/partners.interface';
 import { Users } from 'src/app/models/users.interface';
 import { PartnerFormModalComponent } from 'src/app/shared/partner-form-modal/partner-form-modal.component';
@@ -23,7 +22,6 @@ export class TrainerHeaderComponent {
   destroy$ = new Subject<void>();
 
   constructor(private dialog: MatDialog,
-    private ngxService: NgxUiLoaderService,
     private store: Store,
     private router: Router) { }
 
@@ -39,11 +37,9 @@ export class TrainerHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadMyPartner());
     this.store.select(selectMyPartner).subscribe((partnerData) => {
       if (partnerData) this.partner = partnerData;
-      this.ngxService.stop()
     });
   }
 
@@ -53,7 +49,7 @@ export class TrainerHeaderComponent {
       this.router.navigate(['/login'])
     } else {
       const dialogRef = this.dialog.open(PartnerFormModalComponent, {
-        width: '900px',
+        width: '560px',
         maxWidth: '95vw',
         panelClass: 'mat-dialog-height',
       });

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { PhotoResponse } from 'src/app/models/Media.interface';
 import { TrainerPhotoAlbum } from 'src/app/models/trainers.interface';
-import { environment } from 'src/environments/environment';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 
 /**
  * Public read-only rendering of a trainer's photo album.
@@ -16,8 +16,6 @@ export class TrainerAlbumComponent {
 
   @Input() trainerPhotoAlbum: TrainerPhotoAlbum | null = null;
 
-  readonly strapiUrl = environment.strapiUrl;
-
   lightboxUrl = '';
 
   get photos(): PhotoResponse[] {
@@ -26,8 +24,7 @@ export class TrainerAlbumComponent {
 
   photoUrl(photo: PhotoResponse): string {
     const url = photo?.photoUrl;
-    if (!url) return 'assets/avatar.png';
-    return url.startsWith('http') ? url : `${this.strapiUrl}${url}`;
+    return url ? resolveStrapiUrl(url) : 'assets/avatar.png';
   }
 
   open(photo: PhotoResponse): void {

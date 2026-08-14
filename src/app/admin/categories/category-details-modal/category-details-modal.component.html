@@ -19,7 +19,7 @@
     </div>
 
     <img class="w-full h-40 object-cover rounded-xl border border-gray-200"
-        [src]="categoryData.photoUrl || '../../../assets/icons/user.png'"
+        [src]="(categoryData.photoUrl | strapiUrl) || '../../../assets/icons/user.png'"
         onerror="this.src='../../../assets/icons/user.png';" />
 
     <span class="w-fit px-2.5 py-1 rounded-full text-[11px] font-semibold" [ngClass]="categoryData.status === 'true'

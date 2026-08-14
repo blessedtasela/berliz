@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Tags } from 'src/app/models/tags.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -29,16 +30,15 @@ export class TagListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private store: Store,
-    private datePipe: DatePipe,) { }
+    private datePipe: DatePipe,
+    private router: Router) { }
 
   ngOnInit(): void { }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.store.dispatch(loadTags());
     this.store.select(selectTags).subscribe((tagsData) => {
       this.tagsData = tagsData
-      this.ngxService.stop();
     });
   }
 
@@ -51,7 +51,7 @@ export class TagListComponent {
       const tag = this.tagsData.find(tag => tag.id === id);
       if (tag) {
         const dialogRef = this.dialog.open(UpdateTagModalComponent, {
-          width: '700px',
+          width: '496px',
           maxWidth: '95vw',
           maxHeight: '90vh',
           data: {
@@ -112,24 +112,7 @@ export class TagListComponent {
   }
 
   openTagDetails(id: number) {
-    const tag = this.tagsData.find(tag => tag.id === id);
-    if (tag) {
-      const dialogRef = this.dialog.open(TagDetailsModalComponent, {
-        width: '600px',
-        maxWidth: '95vw',
-        data: {
-          tagData: tag,
-        },
-        panelClass: 'mat-dialog-height',
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          console.log(`Dialog result: ${result}`);
-        } else {
-          console.log('Dialog closed without any action');
-        }
-      });
-    }
+    this.router.navigate(['/dashboard/tags', id]);
   }
 
   deleteTag(id: number) {

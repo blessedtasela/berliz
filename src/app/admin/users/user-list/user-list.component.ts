@@ -44,9 +44,7 @@ export class UserListComponent {
 
   handleEmitEvent() {
     this.store.select(selectUsers).subscribe((users) => {
-      this.ngxService.start();
       this.usersData = users;
-      this.ngxService.stop();
     });
   }
 
@@ -59,7 +57,7 @@ export class UserListComponent {
       const user = this.usersData.find(user => user.id === id);
       if (user) {
         const dialogRef = this.dialog.open(AdminUpdateUserModalComponent, {
-          width: '900px',
+          width: '720px',
           maxWidth: '95vw',
           maxHeight: '90vh',
           disableClose: true,
@@ -299,7 +297,7 @@ export class UserListComponent {
   openUpdateEmail(id: number) {
     const user = this.usersData.find(user => user.id === id);
     const dialogRef = this.dialog.open(UpdateEmailModalComponent, {
-      width: '600px',
+      width: '432px',
       maxWidth: '95vw',
       maxHeight: '90vh',
       disableClose: true,

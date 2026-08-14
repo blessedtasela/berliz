@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Partner } from 'src/app/models/partners.interface';
 import { AddPartnerModalComponent } from '../add-partner-modal/add-partner-modal.component';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -19,8 +18,7 @@ export class PartnerHeaderComponent {
   @Input() partnersLength: number = 0;
   @Input() totalPartners: number = 0;
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
     private store: Store,
     private rxStompService: RxStompService) { }
 
@@ -30,13 +28,11 @@ export class PartnerHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.store.dispatch(loadPartners());
     this.store.select(selectPartners).subscribe((partnersData) => {
       this.partnersData = partnersData
       this.partnersLength = this.partnersData.length
       this.totalPartners = this.partnersData.length;
-      this.ngxService.stop();
     });
   }
 
@@ -84,7 +80,7 @@ export class PartnerHeaderComponent {
 
   openAddPartner() {
     const dialogRef = this.dialog.open(AddPartnerModalComponent, {
-      width: '800px',
+      width: '560px',
       maxWidth: '95vw',
       maxHeight: '90vh',
     });

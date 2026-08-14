@@ -210,6 +210,50 @@
                     </div>
 
                 </div>
+
+                <!-- Testimonials (trainer only) -->
+                <div *ngIf="profile.role === 'trainer' && testimonials.length > 0" class="flex flex-col gap-3">
+
+                    <div class="flex items-center justify-between gap-2">
+                        <h2 class="text-xs font-bold text-white uppercase tracking-wide">Testimonials</h2>
+                        <span class="text-[11px] font-semibold text-zinc-500">{{ testimonials.length }}</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+
+                        <div *ngFor="let t of testimonials; trackBy: trackByTestimonialId"
+                            class="bg-zinc-900 rounded-xl border border-zinc-800 p-4 flex flex-col gap-3 hover:border-red-900 transition">
+
+                            <div class="w-8 h-8 rounded-xl bg-red-600/10 border border-red-600/20 flex items-center justify-center shrink-0">
+                                <i-feather name="message-circle" class="text-red-500" style="width:13px;height:13px;"></i-feather>
+                            </div>
+
+                            <p class="text-xs text-zinc-300 leading-relaxed italic line-clamp-4">
+                                "{{ t.testimonial }}"
+                            </p>
+
+                            <div class="border-t border-zinc-800 mt-auto"></div>
+
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-8 h-8 rounded-full bg-zinc-800 border-2 border-red-600 flex items-center
+                                            justify-center shrink-0">
+                                    <span class="text-[11px] font-extrabold text-red-500">
+                                        {{ (t.userFirstname || '?').charAt(0) | uppercase }}
+                                    </span>
+                                </div>
+                                <div class="flex flex-col leading-tight min-w-0">
+                                    <span class="text-[11px] font-extrabold text-white truncate">
+                                        {{ t.userFirstname }} {{ t.userLastname }}
+                                    </span>
+                                    <span class="text-[10px] text-zinc-500">
+                                        {{ t.date | date:'mediumDate' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </ng-container>
 
         </div>

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { selectUsers } from 'src/app/state/user/user.selector';
@@ -28,8 +27,7 @@ export class UsersComponent {
     { value: 'status', label: 'Status', accessor: u => u.status },
   ];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private store: Store,
+  constructor(private store: Store,
     private rxStompService: RxStompService) {
   }
 
@@ -60,12 +58,10 @@ export class UsersComponent {
 
   handleEmitEvent() {
     this.store.select(selectUsers).subscribe((allUsers) => {
-      this.ngxService.start()
       console.log('isCachedData false')
       this.usersData = allUsers;
       this.totalUsers = allUsers.length
       this.usersLength = allUsers.length
-      this.ngxService.stop()
     });
   }
 

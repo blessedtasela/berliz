@@ -46,11 +46,9 @@ export class NewsletterBulkMessageModalComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadNewsletterMessages());
     this.subscription.add(this.store.select(selectNewsletterMessages).subscribe((messages) => {
       this.savedMessages = messages
-      this.ngxService.stop()
     }));
   }
 

@@ -12,3 +12,4 @@ export const selectSubscriptions        = createSelector(selectState, s => s.sub
 export const selectActiveSubscriptions  = createSelector(selectState, s => s.activeSubscriptions);
 export const selectMySubscriptions      = createSelector(selectState, s => s.mySubscriptions);
 export const selectSelectedSubscription = createSelector(selectState, s => s.selectedSubscription);
+export const selectPlanSelectionResult  = createSelector(selectState, s => s.planSelection);

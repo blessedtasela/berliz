@@ -13,11 +13,18 @@ import { selectActiveCategories } from 'src/app/state/category/category.selector
 import { selectUser } from 'src/app/state/user/user.selector';
 
 /**
- * PUBLIC exercise browsing — the "Movements" SECTION of the Programs page
- * (`/services`). There was no working public exercises page to reuse: the old
- * `/exercises` route pointed at a "Coming Soon" stub, so this is built fresh on
- * the same `loadActiveExercises()` / `selectActiveExercises` slice that
- * `CategoryDetailsComponent` already derives its exercise list from.
+ * PUBLIC exercise browsing. Rendered as its own full page at
+ * `/services/exercises`, with a cinematic hero banner (see
+ * exercises-section.component.html). There was no working public exercises
+ * page to reuse: the old `/exercises` route pointed at a "Coming Soon" stub,
+ * so this is built fresh on the same `loadActiveExercises()` /
+ * `selectActiveExercises` slice that `CategoryDetailsComponent` already
+ * derives its exercise list from.
+ *
+ * Also reused with `[embedded]="true"` on the Programs page (`/services`),
+ * the same way `EquipmentPageComponent` is — that drops the standalone hero
+ * in favor of a compact section heading, since the page already has its own
+ * hero.
  *
  * Anonymous visitors see at most `previewLimit` movements; the rest sits behind
  * a login call-to-action instead of the show-more toggle.
@@ -28,8 +35,8 @@ import { selectUser } from 'src/app/state/user/user.selector';
 })
 export class ExercisesSectionComponent implements OnInit, OnDestroy {
 
-  /** Reserved for a future standalone use — the section heading is always shown. */
-  @Input() embedded = true;
+  /** Hides the standalone hero when this sits inside another page. */
+  @Input() embedded = false;
 
   exercises: Exercises[] = [];
   categories: Categories[] = [];

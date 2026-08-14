@@ -4,6 +4,7 @@ import { take } from 'rxjs/operators';
 import { StrapiService } from './strapi.service';
 import { VideoResponse } from 'src/app/models/Media.interface';
 import { MediaOwnerType } from 'src/app/models/Media.enum';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 
 // ── Output events emitted to the component ────────────────────────────────────
 export interface VideoProcessResult {
@@ -421,9 +422,7 @@ export class VideoCropperService {
             lastUpdate:       new Date()
           };
 
-          const resolvedUrl = uploaded.url.startsWith('http')
-            ? uploaded.url
-            : `${strapiBaseUrl}${uploaded.url}`;
+          const resolvedUrl = resolveStrapiUrl(uploaded.url);
 
           subject.next({ videoResponse, resolvedUrl });
           subject.complete();
@@ -441,8 +440,6 @@ export class VideoCropperService {
   }
 
   resolveVideoUrl(url: string | undefined, fallback: string): string {
-    if (!url?.trim()) return fallback;
-    if (url.startsWith('blob:') || url.startsWith('http')) return url;
-    return `http://localhost:1337${url}`;
+    return resolveStrapiUrl(url) || fallback;
   }
 }

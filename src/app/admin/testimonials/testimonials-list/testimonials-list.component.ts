@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -30,7 +31,8 @@ export class TestimonialsListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private rxStompService: RxStompService,
-    private store: Store) {
+    private store: Store,
+    private router: Router) {
   }
 
   ngOnInit() {
@@ -39,12 +41,10 @@ export class TestimonialsListComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadTestimonials());
     this.store.select(selectTestimonials).subscribe((allTestimonials) => {
       this.testimonialsData = allTestimonials;
       this.totalTestimonials = this.testimonialsData.length
-      this.ngxService.stop()
     });
   }
 
@@ -82,23 +82,7 @@ export class TestimonialsListComponent {
   }
 
   openTestimonialDetails(id: number) {
-    try {
-      const testimonial = this.testimonialsData.find(testimonial => testimonial.id === id);
-      if (testimonial) {
-        const dialogRef = this.dialog.open(TestimonialDetailsModalComponent, {
-          width: '800px',
-          maxWidth: '95vw',
-          panelClass: 'mat-dialog-height',
-          data: {
-            testimonialData: testimonial,
-          }
-        });
-      } else {
-        this.snackbarService.openSnackBar('testimonial not found for id: ' + id, 'error');
-      }
-    } catch (error) {
-      this.snackbarService.openSnackBar("An error occurred. Check testimonial status", 'error');
-    }
+    this.router.navigate(['/dashboard/testimonials', id]);
   }
 
   updateTestimonialStatus(id: number) {

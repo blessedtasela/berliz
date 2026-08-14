@@ -6,6 +6,7 @@ import { SidebarStateService } from './services/sidebar-state.service';
 import { NewsletterPopupComponent } from './shared/newsletter-popup/newsletter-popup.component';
 import { NewsletterTriggerService } from './shared/newsletter-popup/newsletter-trigger.service';
 import { InactivityService } from './services/inactivity.service';
+import { SeoService } from './services/seo.service';
 
 @Component({
   selector: 'app-root',
@@ -25,6 +26,7 @@ export class AppComponent implements OnInit {
     private sidebarState: SidebarStateService,
     private newsletterTrigger: NewsletterTriggerService,
     private inactivityService: InactivityService,
+    private seoService: SeoService,
   ) {
     this.sidebarState.sidebarOpen$.subscribe(open => {
       this.sidebarOpen = open;
@@ -32,6 +34,11 @@ export class AppComponent implements OnInit {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.updateLayout(event.urlAfterRedirects);
+        // Title/meta description/OG/Twitter/canonical/JSON-LD for the page we
+        // just landed on. Same NavigationEnd hook as updateLayout() above,
+        // driven off the post-redirect URL so redirecting routes (e.g.
+        // /testimonials -> /services) get the SEO data for where they land.
+        this.seoService.updateForRoute(event.urlAfterRedirects);
         // Every completed navigation is one "pageview" of activity, and is also
         // the only place we consider showing the newsletter popup.
         this.newsletterTrigger.registerPageview();
@@ -82,8 +89,15 @@ export class AppComponent implements OnInit {
       url.startsWith('/trainers') ||
       url.startsWith('/testimonials') ||
       url.startsWith('/equipments') ||
+      url.startsWith('/exercises') ||
       url.startsWith('/members') ||
-      url.startsWith('/user')
+      url.startsWith('/user') ||
+      url.startsWith('/faqs') ||
+      url.startsWith('/report-problem') ||
+      url.startsWith('/help-center') ||
+      url.startsWith('/terms') ||
+      url.startsWith('/privacy') ||
+      url.startsWith('/shop')
     ) {
       this.activeLayout = 'topbar';
       return;

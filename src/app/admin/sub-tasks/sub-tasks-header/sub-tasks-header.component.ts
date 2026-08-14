@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SubTasks } from 'src/app/models/tasks.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AddSubTasksModalComponent } from '../add-sub-tasks-modal/add-sub-tasks-modal.component';
@@ -23,8 +22,7 @@ export class SubTasksHeaderComponent {
   @Input() subTasksLength: number = 0;
   subscriptions: Subscription[] = [];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
     private store: Store,
     private rxStompService: RxStompService) {
   }
@@ -39,14 +37,12 @@ export class SubTasksHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadSubTasks());
     this.subscriptions.push(
       this.store.select(selectSubTasks).subscribe((subTasks) => {
         this.subTasksData = subTasks;
         this.totalSubTasks = this.subTasksData.length
         this.subTasksLength = this.subTasksData.length
-        this.ngxService.stop()
       })
     );
   }
@@ -91,7 +87,7 @@ export class SubTasksHeaderComponent {
 
   openAddCategory() {
     const dialogRef = this.dialog.open(AddSubTasksModalComponent, {
-      width: '800px',
+      width: '720px',
       maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,

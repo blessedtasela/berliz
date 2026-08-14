@@ -1,0 +1,58 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+            <i-feather name="calendar" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+            <h1 class="text-sm font-bold text-gray-900">My bookings</h1>
+            <p class="text-[11px] text-gray-400">Sessions you've requested with trainers and centers</p>
+        </div>
+    </div>
+
+    <app-bookings-empty *ngIf="bookings.length === 0" message="You haven't booked any sessions yet."></app-bookings-empty>
+
+    <div *ngIf="bookings.length > 0" class="flex flex-col gap-4">
+
+        <!-- Pending -->
+        <div *ngIf="pending.length > 0" class="flex flex-col gap-2">
+            <span class="text-[11px] font-semibold text-amber-600 uppercase tracking-wide flex items-center gap-1">
+                <i-feather name="clock" style="width:11px;height:11px;"></i-feather>
+                Pending
+            </span>
+            <app-booking-card *ngFor="let b of pending" mode="client" [booking]="b"
+                (cancelRequested)="onCancelRequested($event)"></app-booking-card>
+        </div>
+
+        <!-- Confirmed -->
+        <div *ngIf="confirmed.length > 0" class="flex flex-col gap-2">
+            <span class="text-[11px] font-semibold text-blue-600 uppercase tracking-wide flex items-center gap-1">
+                <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
+                Confirmed
+            </span>
+            <app-booking-card *ngFor="let b of confirmed" mode="client" [booking]="b"
+                (cancelRequested)="onCancelRequested($event)"></app-booking-card>
+        </div>
+
+        <!-- Completed -->
+        <div *ngIf="completed.length > 0" class="flex flex-col gap-2">
+            <span class="text-[11px] font-semibold text-green-600 uppercase tracking-wide flex items-center gap-1">
+                <i-feather name="award" style="width:11px;height:11px;"></i-feather>
+                Completed
+            </span>
+            <app-booking-card *ngFor="let b of completed" mode="client" [booking]="b"></app-booking-card>
+        </div>
+
+        <!-- Cancelled -->
+        <div *ngIf="cancelled.length > 0" class="flex flex-col gap-2">
+            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide flex items-center gap-1">
+                <i-feather name="x-circle" style="width:11px;height:11px;"></i-feather>
+                Cancelled
+            </span>
+            <app-booking-card *ngFor="let b of cancelled" mode="client" [booking]="b"></app-booking-card>
+        </div>
+
+    </div>
+
+</section>

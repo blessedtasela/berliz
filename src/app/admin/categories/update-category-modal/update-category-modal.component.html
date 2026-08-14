@@ -1,3 +1,23 @@
+<!-- CROPPER MODAL -->
+<div *ngIf="showCropper"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50 p-4 md:p-1">
+    <div class="bg-white p-4 rounded-2xl w-full max-w-md image-cropper-container">
+        <image-cropper class="image-cropper" [imageChangedEvent]="imageChangedEvent"
+            (imageCropped)="imageCropped($event)" (loadImageFailed)="loadImageFailed()"
+            [maintainAspectRatio]="true" [aspectRatio]="1/1" [resizeToWidth]="512">
+        </image-cropper>
+
+        <div class="mt-4 flex justify-center gap-2 text-sm">
+            <button type="button"
+                class="px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition"
+                (click)="confirmCrop()">Upload</button>
+            <button type="button"
+                class="px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:bg-gray-50 active:scale-[0.98] transition"
+                (click)="cancelCrop()">Cancel</button>
+        </div>
+    </div>
+</div>
+
 <div class="max-w-lg w-full p-6 mx-auto flex flex-col gap-5 font-sans">
 
     <!-- Header -->

@@ -27,6 +27,8 @@ import { BreadcrumbService } from 'xng-breadcrumb';
 import { PartnerComponent } from './partner/partner/partner.component';
 import { PartnerRouteComponent } from './partner/partner-route/partner-route.component';
 import { FaqsPageComponent } from './faqs/faqs-page/faqs-page.component';
+import { EquipmentPageComponent } from './equipments/equipment-page/equipment-page.component';
+import { ExercisesSectionComponent } from './exercises/exercises-section/exercises-section.component';
 import { HelpCenterPageComponent } from './help-center/help-center-page/help-center-page.component';
 import { TermsPageComponent } from './terms/terms-page/terms-page.component';
 import { PrivacyPageComponent } from './privacy/privacy-page/privacy-page.component';
@@ -40,10 +42,11 @@ import { UserProfileSettingsComponent } from './user/user-profile-settings/user-
 import { DashboardMainComponent } from './dashboard/dashboard-main/dashboard-main.component';
 import { DashboardRouteComponent } from './dashboard/dashboard-route/dashboard-route.component';
 import { MySubscriptionsMainComponent } from './my-subscriptions/my-subscriptions-main/my-subscriptions-main.component';
+import { MyBookingsMainComponent } from './bookings/my-bookings-main/my-bookings-main.component';
+import { ProviderBookingsMainComponent } from './bookings/provider-bookings-main/provider-bookings-main.component';
 import { MyTodoListMainComponent } from './my-todo-list/my-todo-list-main/my-todo-list-main.component';
 import { MyTrainerMainComponent } from './my-trainer/my-trainer-main/my-trainer-main.component';
 import { TrainersMainComponent } from './trainers/trainers-main/trainers-main.component';
-import { LegalMainComponent } from './legal/legal-main/legal-main.component';
 import { MyWorkoutsComponent } from './workouts/my-workouts/my-workouts.component';
 import { WorkoutBuilderComponent } from './workouts/workout-builder/workout-builder.component';
 import { MyAssignedWorkoutsComponent } from './workouts/my-assigned-workouts/my-assigned-workouts.component';
@@ -66,18 +69,42 @@ export const routes: Routes = [
   { path: 'trainers/:name', component: TrainersDetailsComponent, canActivate: [TrainerGuard], data: { breadcrumb: { alias: 'trainerName' } } },
   { path: 'centers', component: CenterPageComponent, data: { breadcrumb: 'Centers' } },
   { path: 'centers/:id/:name', component: CenterDetailComponent, canActivate: [CenterGuard], data: { breadcrumb: { alias: 'centerName' } } },
-  { path: 'services', component: CategoriesComponent, data: { breadcrumb: 'Services' } },
-  { path: 'services/:id/:name', component: CategoryDetailsComponent, canActivate: [CategoryGuard], data: { breadcrumb: { alias: 'serviceName' } } },
+  {
+    path: 'services',
+    data: { breadcrumb: 'Services' },
+    children: [
+      { path: '', component: CategoriesComponent, data: { breadcrumb: null } },
+
+      // Real standalone pages, nested under /services (each renders its own
+      // hero — see equipment-page.component.html / exercises-section.component.html).
+      { path: 'equipment', component: EquipmentPageComponent, data: { breadcrumb: 'Equipment' } },
+      { path: 'exercises', component: ExercisesSectionComponent, data: { breadcrumb: 'Exercises' } },
+      { path: 'faqs', component: FaqsPageComponent, data: { breadcrumb: 'FAQs' } },
+
+      { path: ':id/:name', component: CategoryDetailsComponent, canActivate: [CategoryGuard], data: { breadcrumb: { alias: 'serviceName' } } },
+    ]
+  },
   { path: 'testimonials', redirectTo: 'services', pathMatch: 'full' },
-  // Equipment and exercises are now sections of the Programs page (`/services`),
-  // the same way testimonials were merged in above.
-  { path: 'equipments', redirectTo: 'services', pathMatch: 'full' },
-  { path: 'exercises', redirectTo: 'services', pathMatch: 'full' },
+  // Equipment and exercises now have real pages at /services/equipment and
+  // /services/exercises (see the children above) — these old top-level paths
+  // redirect straight to the dedicated page rather than the generic Programs page.
+  { path: 'equipments', redirectTo: 'services/equipment', pathMatch: 'full' },
+  { path: 'exercises', redirectTo: 'services/exercises', pathMatch: 'full' },
   { path: 'report-problem', component: ReportProblemPageComponent, data: { breadcrumb: 'Report Problem' } },
-  { path: 'faqs', component: FaqsPageComponent, data: { breadcrumb: 'FAQs' } },
+  // FAQs moved to /services/faqs (a real child page of Services). Keep the old
+  // top-level path alive as a redirect so existing bookmarks, inbound links and
+  // already-indexed search results don't 404 — same pattern as /equipments and
+  // /exercises above.
+  { path: 'faqs', redirectTo: 'services/faqs', pathMatch: 'full' },
   { path: 'help-center', component: HelpCenterPageComponent, data: { breadcrumb: 'Help Center' } },
   { path: 'terms', component: TermsPageComponent, data: { breadcrumb: 'Terms' } },
-  { path: 'legal-terms', component: LegalMainComponent, children: productChildRoutes, data: { breadcrumb: 'legal terms' } },
+  // The old "Legal & Policies" drawer widget (LegalMainComponent /
+  // LegalDetailsComponent) has been retired — its content now lives directly
+  // on the real /terms page (including what used to be the separate
+  // Community Guidelines tab, folded in as a section). Redirect so old links
+  // and bookmarks still land somewhere real, same pattern as /equipments and
+  // /exercises above.
+  { path: 'legal-terms', redirectTo: 'terms', pathMatch: 'full' },
   { path: 'privacy', component: PrivacyPageComponent, data: { breadcrumb: 'Privacy' } },
   { path: 'login/reset-password', component: ResetPasswordComponent, data: { breadcrumb: 'Reset Password' } },
   { path: 'login/activate-account', component: ActivateAccountComponent, data: { breadcrumb: 'Activate Account' } },
@@ -183,6 +210,28 @@ export const routes: Routes = [
         }
       },
 
+      // Bookings (client-made) — anyone can book a trainer or center.
+      {
+        path: 'my-bookings',
+        component: MyBookingsMainComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'My Bookings',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+
+      // Bookings made WITH the current trainer/center.
+      {
+        path: 'my-provider-bookings',
+        component: ProviderBookingsMainComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Bookings',
+          expectedRole: ['trainer', 'center']
+        }
+      },
+
       // Todos
       {
         path: 'my-todos',
@@ -279,6 +328,7 @@ export const routes: Routes = [
           { path: 'newsletters', loadChildren: () => import('./admin/newsletters/newsletters.module').then(m => m.NewslettersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Newsletters', expectedRole: ['admin'] } },
           { path: 'partners', loadChildren: () => import('./admin/partners/partners.module').then(m => m.PartnersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Partners', expectedRole: ['admin'] } },
           { path: 'contact-us', loadChildren: () => import('./admin/contact-us/contact-us.module').then(m => m.ContactUsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Contact Us', expectedRole: ['admin'] } },
+          { path: 'problem-reports', loadChildren: () => import('./admin/problem-reports/problem-reports.module').then(m => m.ProblemReportsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Problem Reports', expectedRole: ['admin'] } },
           { path: 'trainers', loadChildren: () => import('./admin/trainers/trainers.module').then(m => m.TrainersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Trainers', expectedRole: ['admin'] } },
           { path: 'centers', loadChildren: () => import('./admin/centers/centers.module').then(m => m.CentersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Centers', expectedRole: ['admin'] } },
           { path: 'tags', loadChildren: () => import('./admin/tags/tags.module').then(m => m.TagsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Tags', expectedRole: ['admin'] } },
@@ -296,12 +346,15 @@ export const routes: Routes = [
           { path: 'faqs', loadChildren: () => import('./admin/faqs/faqs.module').then(m => m.FaqsModule), canActivate: [AuthGuard], data: { breadcrumb: 'FAQs', expectedRole: ['admin'] } },
           { path: 'members', loadChildren: () => import('./admin/members/members.module').then(m => m.MembersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Members', expectedRole: ['admin'] } },
           { path: 'payments', loadChildren: () => import('./admin/payments/payments.module').then(m => m.PaymentsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Payments', expectedRole: ['admin'] } },
+          { path: 'bookings', loadChildren: () => import('./admin/bookings/bookings.module').then(m => m.BookingsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Bookings', expectedRole: ['admin'] } },
           { path: 'settings', component: UserProfileSettingsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Settings', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
           { path: 'my-notifications', component: MyNotificationsPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Notifications', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
           { path: 'my-tasks', component: MyTasksPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Tasks', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
           { path: 'my-subscriptions', component: MySubscriptionsMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Subscriptions', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
           { path: 'my-faqs', component: MyFaqsPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'FAQs', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
           { path: 'my-todos', component: MyTodoListMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'To-do List', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
+          { path: 'my-bookings', component: MyBookingsMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'My Bookings', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
+          { path: 'my-provider-bookings', component: ProviderBookingsMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Bookings', expectedRole: ['trainer', 'center'] } },
 
           {
             path: 'partnership',
@@ -321,6 +374,7 @@ export const routes: Routes = [
       { path: 'newsletters', loadChildren: () => import('./admin/newsletters/newsletters.module').then(m => m.NewslettersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Newsletters', expectedRole: ['admin'] } },
       { path: 'partners', loadChildren: () => import('./admin/partners/partners.module').then(m => m.PartnersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Partners', expectedRole: ['admin'] } },
       { path: 'contact-us', loadChildren: () => import('./admin/contact-us/contact-us.module').then(m => m.ContactUsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Contact Us', expectedRole: ['admin'] } },
+      { path: 'problem-reports', loadChildren: () => import('./admin/problem-reports/problem-reports.module').then(m => m.ProblemReportsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Problem Reports', expectedRole: ['admin'] } },
       { path: 'trainers', loadChildren: () => import('./admin/trainers/trainers.module').then(m => m.TrainersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Trainers', expectedRole: ['admin'] } },
       { path: 'centers', loadChildren: () => import('./admin/centers/centers.module').then(m => m.CentersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Centers', expectedRole: ['admin'] } },
       { path: 'tags', loadChildren: () => import('./admin/tags/tags.module').then(m => m.TagsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Tags', expectedRole: ['admin'] } },
@@ -342,6 +396,7 @@ export const routes: Routes = [
       { path: 'faqs', loadChildren: () => import('./admin/faqs/faqs.module').then(m => m.FaqsModule), canActivate: [AuthGuard], data: { breadcrumb: 'FAQs', expectedRole: ['admin'] } },
       { path: 'members', loadChildren: () => import('./admin/members/members.module').then(m => m.MembersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Members', expectedRole: ['admin'] } },
       { path: 'payments', loadChildren: () => import('./admin/payments/payments.module').then(m => m.PaymentsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Payments', expectedRole: ['admin'] } },
+      { path: 'bookings', loadChildren: () => import('./admin/bookings/bookings.module').then(m => m.BookingsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Bookings', expectedRole: ['admin'] } },
     ]
   },
 

@@ -2,7 +2,6 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Partner } from 'src/app/models/partners.interface';
 import { Role, Users } from 'src/app/models/users.interface';
@@ -46,7 +45,6 @@ export class PartnerNullComponent {
   constructor(
     private store: Store,
     private dialog: MatDialog,
-    private ngxService: NgxUiLoaderService,
     private datePipe: DatePipe,
     private formBuilder: FormBuilder,
     private snackbarService: SnackBarService,
@@ -58,7 +56,6 @@ export class PartnerNullComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.store.dispatch(loadMyPartner());
     this.subscriptions.push(
       this.store.select(selectUser).subscribe((user) => {
@@ -68,7 +65,6 @@ export class PartnerNullComponent {
         if (partner) this.partnerData = partner;
       })
     );
-    this.ngxService.stop();
   }
 
   ngOnDestroy() {
@@ -102,7 +98,7 @@ export class PartnerNullComponent {
     }
 
     const dialogRef = this.dialog.open(PartnerFormComponent, {
-      width: '600px',
+      width: '496px',
       maxWidth: '95vw',
       disableClose: true, // only explicit close button can close it
       data: {

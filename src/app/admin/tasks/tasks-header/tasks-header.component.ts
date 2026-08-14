@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Tasks } from 'src/app/models/tasks.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AddTasksModalComponent } from '../add-tasks-modal/add-tasks-modal.component';
@@ -23,8 +22,7 @@ export class TasksHeaderComponent {
   @Input() tasksLength: number = 0;
   subscriptions: Subscription[] = [];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
     private store: Store,
     private rxStompService: RxStompService) {
   }
@@ -39,14 +37,12 @@ export class TasksHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadTasks());
     this.subscriptions.push(
       this.store.select(selectTasks).subscribe((allTasks) => {
         this.tasksData = allTasks;
         this.totalTasks = this.tasksData.length
         this.tasksLength = this.tasksData.length
-        this.ngxService.stop()
       })
     );
   }
@@ -106,7 +102,7 @@ export class TasksHeaderComponent {
 
   openAddTask() {
     const dialogRef = this.dialog.open(AddTasksModalComponent, {
-      width: '800px',
+      width: '720px',
       maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,

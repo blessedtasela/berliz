@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Centers } from 'src/app/models/centers.interface';
 import { CenterService } from 'src/app/services/center.service';
@@ -34,7 +35,8 @@ export class CenterListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private datePipe: DatePipe,
-    private rxStompService: RxStompService) { }
+    private rxStompService: RxStompService,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.watchLikeCenter()
@@ -47,14 +49,12 @@ export class CenterListComponent {
     this.subscriptions.forEach(sub => (sub.unsubscribe()))
   }
   handleEmitEvent() {
-    this.ngxService.start();
     this.subscriptions.push(
       this.store.select(selectCenters).subscribe((centers) => {
         this.centerData = centers;
         this.totalCenters = this.centerData.length;
       }),
     );
-    this.ngxService.stop();
   }
 
   toggleData() {
@@ -69,7 +69,7 @@ export class CenterListComponent {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
-        dialogConfig.width = '800px';
+        dialogConfig.width = '560px';
         dialogConfig.maxWidth = '95vw';
         dialogConfig.maxHeight = '90vh';
         dialogConfig.data = { centerData: center };
@@ -96,24 +96,7 @@ export class CenterListComponent {
   }
 
   openCenterDetails(id: number) {
-    const center = this.centerData.find(center => center.id === id);
-    if (center) {
-      const dialogConfig = new MatDialogConfig();
-      dialogConfig.disableClose = true;
-      dialogConfig.autoFocus = true;
-      dialogConfig.width = '800px';
-      dialogConfig.maxWidth = '95vw';
-      dialogConfig.maxHeight = '90vh';
-      dialogConfig.data = { centerData: center };
-      const dialogRef = this.dialog.open(CenterDetailsModalComponent, dialogConfig);
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          console.log(`Dialog result: ${result}`);
-        } else {
-          console.log('Dialog closed without any action');
-        }
-      });
-    }
+    this.router.navigate(['/dashboard/centers', id]);
   }
 
   updateCenterStatus(id: number) {

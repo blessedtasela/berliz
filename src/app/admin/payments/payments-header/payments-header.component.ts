@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Payments } from 'src/app/models/payment.interface';
 import { loadPayments } from 'src/app/state/payment/payment.actions';
 import { selectPayments } from 'src/app/state/payment/payment.selectors';
@@ -21,8 +20,7 @@ export class PaymentsHeaderComponent {
   @Input() totalPayments: number = 0;
   @Input() paymentsLength: number = 0;
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
     public store: Store,
     private rxStompService: RxStompService) {
   }
@@ -33,13 +31,11 @@ export class PaymentsHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadPayments());
     this.store.select(selectPayments).subscribe((allPayments) => {
       this.paymentsData = allPayments;
       this.totalPayments = this.paymentsData.length
       this.paymentsLength = this.paymentsData.length
-      this.ngxService.stop()
     });
   }
 
@@ -95,7 +91,7 @@ export class PaymentsHeaderComponent {
 
   openAddPayment() {
     const dialogRef = this.dialog.open(AddPaymentsModalComponent, {
-      width: '800px',
+      width: '560px',
       maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,

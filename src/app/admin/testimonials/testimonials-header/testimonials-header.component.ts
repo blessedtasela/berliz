@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AddCategoryModalComponent } from '../../categories/add-category-modal/add-category-modal.component';
@@ -22,8 +21,7 @@ export class TestimonialsHeaderComponent {
   @Input() totalTestimonials: number = 0;
   @Input() testimonialsLength: number = 0;
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
     private store: Store,
     private rxStompService: RxStompService) {
   }
@@ -34,13 +32,11 @@ export class TestimonialsHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadTestimonials());
     this.store.select(selectTestimonials).subscribe((allTestimonials) => {
       this.testimonialsData = allTestimonials;
       this.totalTestimonials = this.testimonialsData.length
       this.testimonialsLength = this.testimonialsData.length
-      this.ngxService.stop()
     });
   }
 
@@ -86,7 +82,7 @@ export class TestimonialsHeaderComponent {
 
   openAddTestimonial() {
     const dialogRef = this.dialog.open(AddTestimonialsModalComponent, {
-      width: '800px',
+      width: '560px',
       maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,

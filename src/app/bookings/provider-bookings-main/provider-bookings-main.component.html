@@ -1,0 +1,80 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+            <i-feather name="calendar" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+            <h1 class="text-sm font-bold text-gray-900">Bookings</h1>
+            <p class="text-[11px] text-gray-400">Sessions clients have requested with you</p>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex items-center gap-1 border-b border-gray-100">
+        <button type="button" (click)="activeTab = 'bookings'"
+            class="px-3.5 py-2 text-xs font-semibold border-b-2 -mb-px transition flex items-center gap-1.5"
+            [ngClass]="activeTab === 'bookings' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-400 hover:text-gray-600'">
+            <i-feather name="layout" style="width:13px;height:13px;"></i-feather>
+            Bookings
+        </button>
+        <button type="button" (click)="activeTab = 'availability'"
+            class="px-3.5 py-2 text-xs font-semibold border-b-2 -mb-px transition flex items-center gap-1.5"
+            [ngClass]="activeTab === 'availability' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-400 hover:text-gray-600'">
+            <i-feather name="clock" style="width:13px;height:13px;"></i-feather>
+            My Availability
+        </button>
+    </div>
+
+    <ng-container *ngIf="activeTab === 'bookings'">
+        <app-bookings-empty *ngIf="bookings.length === 0" message="No one has booked a session with you yet."></app-bookings-empty>
+
+        <div *ngIf="bookings.length > 0" class="flex flex-col gap-4">
+
+            <!-- Pending -->
+            <div *ngIf="pending.length > 0" class="flex flex-col gap-2">
+                <span class="text-[11px] font-semibold text-amber-600 uppercase tracking-wide flex items-center gap-1">
+                    <i-feather name="clock" style="width:11px;height:11px;"></i-feather>
+                    Awaiting your response
+                </span>
+                <app-booking-card *ngFor="let b of pending" mode="provider" [booking]="b"
+                    (statusChangeRequested)="onStatusChangeRequested($event)"></app-booking-card>
+            </div>
+
+            <!-- Confirmed -->
+            <div *ngIf="confirmed.length > 0" class="flex flex-col gap-2">
+                <span class="text-[11px] font-semibold text-blue-600 uppercase tracking-wide flex items-center gap-1">
+                    <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
+                    Confirmed
+                </span>
+                <app-booking-card *ngFor="let b of confirmed" mode="provider" [booking]="b"
+                    (statusChangeRequested)="onStatusChangeRequested($event)"></app-booking-card>
+            </div>
+
+            <!-- Completed -->
+            <div *ngIf="completed.length > 0" class="flex flex-col gap-2">
+                <span class="text-[11px] font-semibold text-green-600 uppercase tracking-wide flex items-center gap-1">
+                    <i-feather name="award" style="width:11px;height:11px;"></i-feather>
+                    Completed
+                </span>
+                <app-booking-card *ngFor="let b of completed" mode="provider" [booking]="b"></app-booking-card>
+            </div>
+
+            <!-- Cancelled -->
+            <div *ngIf="cancelled.length > 0" class="flex flex-col gap-2">
+                <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide flex items-center gap-1">
+                    <i-feather name="x-circle" style="width:11px;height:11px;"></i-feather>
+                    Cancelled
+                </span>
+                <app-booking-card *ngFor="let b of cancelled" mode="provider" [booking]="b"></app-booking-card>
+            </div>
+
+        </div>
+    </ng-container>
+
+    <div *ngIf="activeTab === 'availability'" class="rounded-2xl border border-gray-100 bg-white p-4 sm:p-5">
+        <app-my-availability-editor></app-my-availability-editor>
+    </div>
+
+</section>

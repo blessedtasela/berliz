@@ -71,16 +71,12 @@ export class AddTestimonialsModalComponent {
     console.log("isCached false");
     this.subscriptions.push(
       this.store.select(selectUsers).subscribe((users) => {
-        this.ngxService.start();
         this.users = users;
         this.cd.detectChanges(); // Manually trigger change detection
-        this.ngxService.stop();
       }),
       this.store.select(selectCenters).subscribe((centers) => {
-        this.ngxService.start();
         this.centers = centers;
         this.cd.detectChanges(); // Manually trigger change detection
-        this.ngxService.stop();
       })
     );
   }

@@ -22,6 +22,8 @@ import { AppRoutingModule, routes } from './app-routing.module';
 import { CentersModule } from './centers/centers.module';
 import { TrainersModule } from './trainers/trainers.module';
 import { TestimonialModule } from './testimonial/testimonial.module';
+import { BookingModule } from './booking/booking.module';
+import { MyBookingsModule } from './bookings/bookings.module';
 import { EquipmentsModule } from './equipments/equipments.module';
 import { LandingPageModule } from './landing/landing-page.module';
 import { CategoriesModule } from './categories/categories.module';
@@ -35,6 +37,8 @@ import { MySubscriptionsModule } from './my-subscriptions/my-subscriptions.modul
 import { MyNotificationsModule } from './my-notifications/my-notifications.module';
 import { MyFaqsModule } from './my-faqs/my-faqs.module';
 import { FaqsModule } from './faqs/faqs.module';
+import { HelpCenterModule } from './help-center/help-center.module';
+import { ReportProblemModule } from './report-problem/report-problem.module';
 import { RefreshTokenOverlayComponent } from './refresh-token-overlay/refresh-token-overlay.component';
 import { ResfreshTokenModalComponent } from './resfresh-token-modal/resfresh-token-modal.component';
 import { NavbarModule } from './navbar/navbar.module';
@@ -55,7 +59,6 @@ import { UserModule } from './user/user.module';
 import { MyTodoListModule } from './my-todo-list/my-todo-list.module';
 import { MyTrainerModule } from './my-trainer/my-trainer.module';
 import { GlobalErrorHandlerService } from './services/global-error-handler.service';
-import { LegalModule } from './legal/legal.module';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -96,8 +99,14 @@ import { dashboardFeatureKey, dashboardReducer } from './state/dashboard/dashboa
 import { DashboardEffects } from './state/dashboard/dashboard.effects';
 import { testimonialFeatureKey, testimonialReducer } from './state/testimonial/testimonial.reducer';
 import { TestimonialEffects } from './state/testimonial/testimonial.effects';
+import { bookingFeatureKey, bookingReducer } from './state/booking/booking.reducer';
+import { BookingEffects } from './state/booking/booking.effects';
+import { availabilityFeatureKey, availabilityReducer } from './state/availability/availability.reducer';
+import { AvailabilityEffects } from './state/availability/availability.effects';
 import { faqFeatureKey, faqReducer } from './state/faq/faq.reducer';
 import { FaqEffects } from './state/faq/faq.effects';
+import { planFeatureKey, planReducer } from './state/plan/plan.reducer';
+import { PlanEffects } from './state/plan/plan.effects';
 import { paymentFeatureKey, paymentReducer } from './state/payment/payment.reducer';
 import { PaymentEffects } from './state/payment/payment.effects';
 import { memberFeatureKey, memberReducer } from './state/member/member.reducer';
@@ -182,6 +191,8 @@ const dbConfig: DBConfig = {
     CentersModule,
     TrainersModule,
     TestimonialModule,
+    BookingModule,
+    MyBookingsModule,
     EquipmentsModule,
     LandingPageModule,
     CategoriesModule,
@@ -191,6 +202,8 @@ const dbConfig: DBConfig = {
     MyNotificationsModule,
     MyFaqsModule,
     FaqsModule,
+    HelpCenterModule,
+    ReportProblemModule,
     NavbarModule,
     FooterModule,
     LoginModule,
@@ -209,11 +222,10 @@ const dbConfig: DBConfig = {
     MySubscriptionsModule,
     MyTrainerModule,
     WorkoutsModule,
-    LegalModule,
 
     // Store and Effects Modules for NgRx
     StoreModule.forRoot({}),
-    EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects, WorkoutEffects, AnalyticsEffects, UserProfileEffects, FaqEffects]),
+    EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects, WorkoutEffects, AnalyticsEffects, UserProfileEffects, FaqEffects, BookingEffects, AvailabilityEffects, PlanEffects]),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: !isDevMode(),
@@ -235,7 +247,10 @@ const dbConfig: DBConfig = {
     StoreModule.forFeature(clientFeatureKey, clientReducer),
     StoreModule.forFeature(dashboardFeatureKey, dashboardReducer),
     StoreModule.forFeature(testimonialFeatureKey, testimonialReducer),
+    StoreModule.forFeature(bookingFeatureKey, bookingReducer),
+    StoreModule.forFeature(availabilityFeatureKey, availabilityReducer),
     StoreModule.forFeature(faqFeatureKey, faqReducer),
+    StoreModule.forFeature(planFeatureKey, planReducer),
     StoreModule.forFeature(paymentFeatureKey, paymentReducer),
     StoreModule.forFeature(memberFeatureKey, memberReducer),
     StoreModule.forFeature(workoutFeatureKey, workoutReducer),

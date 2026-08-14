@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { NewsletterComponent } from 'src/app/footer/newsletter/newsletter.component';
@@ -35,7 +36,8 @@ export class NewsletterListComponent {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private rxStompService: RxStompService) {
+    private rxStompService: RxStompService,
+    private router: Router) {
   }
 
   ngOnInit(): void {
@@ -45,12 +47,10 @@ export class NewsletterListComponent {
 
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadNewsletters());
     this.store.select(selectNewsletters).subscribe((newsletter) => {
       this.newsletterData = newsletter;
       this.totalNewsletters = this.newsletterData.length
-      this.ngxService.stop()
     });
   }
 
@@ -78,23 +78,7 @@ export class NewsletterListComponent {
   }
 
   openNewsletterDetails(id: number) {
-    try {
-      const newsletter = this.newsletterData.find(newsletter => newsletter.id === id);
-      if (newsletter) {
-        const dialogRef = this.dialog.open(NewsletterDetailsModalComponent, {
-          width: '800px',
-          maxWidth: '95vw',
-          panelClass: 'mat-dialog-height',
-          data: {
-            newsletterData: newsletter,
-          }
-        });
-      } else {
-        this.snackbarService.openSnackBar('newsletter not found for id: ' + id, 'error');
-      }
-    } catch (error) {
-      this.snackbarService.openSnackBar("An error occurred. Check newsletter status", 'error');
-    }
+    this.router.navigate(['/dashboard/newsletters', id]);
   }
 
   openUpdateNewsletter(id: number) {
@@ -199,7 +183,7 @@ export class NewsletterListComponent {
       const newsletter = this.newsletterData.find(newsletter => newsletter.email === email);
       if (newsletter) {
         const dialogRef = this.dialog.open(NewsletterMessageModalComponent, {
-          width: '800px',
+          width: '560px',
           maxWidth: '95vw',
           maxHeight: '90vh',
           data: {

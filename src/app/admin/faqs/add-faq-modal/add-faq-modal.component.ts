@@ -38,7 +38,6 @@ export class AddFaqModalComponent implements OnDestroy {
 
     this.subscriptions.push(
       this.actions$.pipe(ofType(addFaqSuccess)).subscribe(({ response }) => {
-        this.ngxService.stop();
         this.onAddFaqEmit.emit();
         this.addFaqForm.reset();
         this.invalidForm = false;
@@ -47,7 +46,6 @@ export class AddFaqModalComponent implements OnDestroy {
         this.dialogRef.close('FAQ added successfully');
       }),
       this.actions$.pipe(ofType(addFaqFailure)).subscribe(({ error }) => {
-        this.ngxService.stop();
         this.responseMessage = error || genericError;
         this.snackbarService.openSnackBar(this.responseMessage, 'error');
       })

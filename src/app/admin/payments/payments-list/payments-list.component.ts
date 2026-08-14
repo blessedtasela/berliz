@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
@@ -32,7 +33,8 @@ export class PaymentsListComponent {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private rxStompService: RxStompService) {
+    private rxStompService: RxStompService,
+    private router: Router) {
   }
 
   ngOnInit() {
@@ -47,12 +49,10 @@ export class PaymentsListComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.subscriptions.push(
       this.store.select(selectPayments).subscribe((allPayments) => {
         this.paymentsData = allPayments;
         this.totalPayments = this.paymentsData.length
-        this.ngxService.stop()
       }),
     );
   }
@@ -91,23 +91,7 @@ export class PaymentsListComponent {
   }
 
   openPaymentDetails(id: number) {
-    try {
-      const payment = this.paymentsData.find(payment => payment.id === id);
-      if (payment) {
-        const dialogRef = this.dialog.open(PaymentDetailsModalComponent, {
-          width: '800px',
-          maxWidth: '95vw',
-          panelClass: 'mat-dialog-height',
-          data: {
-            paymentData: payment,
-          }
-        });
-      } else {
-        this.snackbarService.openSnackBar('payment not found for id: ' + id, 'error');
-      }
-    } catch (error) {
-      this.snackbarService.openSnackBar("An error occurred. Check payment status", 'error');
-    }
+    this.router.navigate(['/dashboard/payments', id]);
   }
 
   updatePaymentStatus(id: number) {

@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { TodoList } from 'src/app/models/todoList.interface';
@@ -32,12 +33,11 @@ export class TodoListListComponent {
     private todoService: TodoService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
-    private dialog: MatDialog) {
+    private dialog: MatDialog,
+    private router: Router) {
   }
 
   ngOnInit(): void {
-    this.ngxService.start()
-    this.ngxService.stop()
   }
 
 
@@ -54,23 +54,7 @@ export class TodoListListComponent {
   }
 
   openTodoDetails(id: number) {
-    try {
-      const todoList = this.todoListData.find(todoList => todoList.id === id);
-      if (todoList) {
-        const dialogRef = this.dialog.open(TodoListDetailsModalComponent, {
-          width: '800px',
-          maxWidth: '95vw',
-          panelClass: 'mat-dialog-height',
-          data: {
-            todoData: todoList,
-          }
-        });
-      } else {
-        this.snackbarService.openSnackBar('todoList not found for id: ' + id, 'error');
-      }
-    } catch (error) {
-      this.snackbarService.openSnackBar("An error occurred. Check todoList status", 'error');
-    }
+    this.router.navigate(['/dashboard/todo-lists', id]);
   }
 
   openUpdateTodo(id: number) {
@@ -78,7 +62,7 @@ export class TodoListListComponent {
       const todoList = this.todoListData.find(todoList => todoList.id === id);
       if (todoList) {
         const dialogRef = this.dialog.open(UpdateTodoModalComponent, {
-          width: '700px',
+          width: '560px',
           maxWidth: '95vw',
           maxHeight: '90vh',
           data: {

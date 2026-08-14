@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
 import { loadCenters } from 'src/app/state/center/center.actions';
@@ -29,8 +28,7 @@ export class CentersComponent {
     { value: 'partnerId', label: 'Partner id', accessor: c => c.partnerId?.toString() },
   ];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    public store: Store) {
+  constructor(public store: Store) {
   }
 
   ngOnInit(): void {
@@ -42,14 +40,12 @@ export class CentersComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadCenters());
     this.subscriptions.push(
       this.store.select(selectCenters).subscribe((allCenters) => {
         this.centersData = allCenters;
         this.totalCenters = allCenters.length
         this.centersLength = allCenters.length
-        this.ngxService.stop()
       }),
     );
   }

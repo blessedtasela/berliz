@@ -1,7 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, catchError, of } from 'rxjs';
 import { Newsletter } from 'src/app/models/newsletter.model';
 import { NewsletterService } from 'src/app/services/newsletter.service';
@@ -22,8 +21,7 @@ export class SearchNewsletterComponent {
   filteredNewsletterData: Newsletter[] = [];
   @Output() results: EventEmitter<Newsletter[]> = new EventEmitter<Newsletter[]>()
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private snackbarService: SnackBarService,
+  constructor(private snackbarService: SnackBarService,
     private store: Store,
     private elementRef: ElementRef) {
   }
@@ -42,7 +40,6 @@ export class SearchNewsletterComponent {
         debounceTime(300),
         map((e: any) => e.target.value),
         tap(() => {
-          this.ngxService.start();
         }),
         switchMap((query: string) => {
           return this.search(query);
@@ -50,12 +47,10 @@ export class SearchNewsletterComponent {
       )
       .subscribe(
         (results: Newsletter[]) => {
-          this.ngxService.stop();
           this.results.emit(results);
         },
         (error: any) => {
           this.snackbarService.openSnackBar(error, 'error');
-          this.ngxService.stop();
         }
       );
   }

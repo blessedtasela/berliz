@@ -13,7 +13,9 @@
   <link rel="icon" type="image/png" sizes="32x32" href="./assets/berliz-favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="./assets/berliz-favicon/favicon-16x16.png">
   <link rel="manifest" href="./assets/berliz-favicon/site.webmanifest">
-  <link rel="canonical" href="https://berliz.fitness/">
+  <!-- Canonical link is now set per-route by SeoService (src/app/services/seo.service.ts)
+       on every NavigationEnd. A single static tag here would falsely claim every
+       page is the homepage, which is what happened before SeoService existed. -->
 </head>
 
 <body>

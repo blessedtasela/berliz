@@ -3,7 +3,6 @@ import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { AddCategoryModalComponent } from '../add-category-modal/add-category-modal.component';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { loadCategories } from 'src/app/state/category/category.actions';
@@ -23,8 +22,7 @@ export class CategoriesHeaderComponent {
   @Input() categoriesLength: number = 0;
   subscriptions: Subscription[] = [];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
     private store: Store,
     private rxStompService: RxStompService) {
   }
@@ -36,14 +34,12 @@ export class CategoriesHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadCategories());
     this.subscriptions.push(
       this.store.select(selectCategories).subscribe((allCategories) => {
         this.categoriesData = allCategories;
         this.totalCategories = this.categoriesData.length
         this.categoriesLength = this.categoriesData.length
-        this.ngxService.stop()
       })
     );
   }
@@ -103,7 +99,7 @@ export class CategoriesHeaderComponent {
 
   openAddCategory() {
     const dialogRef = this.dialog.open(AddCategoryModalComponent, {
-      width: '800px',
+      width: '560px',
       maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,

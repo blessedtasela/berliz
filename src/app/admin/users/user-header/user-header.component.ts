@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SignupModalComponent } from 'src/app/login/signup-modal/signup-modal.component';
 import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -18,8 +17,7 @@ export class UserHeaderComponent {
   @Input() totalUsers: number = 0;
   @Input() usersLength: number = 0;
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
     private store: Store,
     private rxStompService: RxStompService) {
   }
@@ -31,11 +29,9 @@ export class UserHeaderComponent {
 
   handleEmitEvent() {
     this.store.select(selectUsers).subscribe((allUsers) => {
-      this.ngxService.start()
       this.usersData = allUsers;
       this.totalUsers = this.usersData.length
       this.usersLength = this.usersData.length
-      this.ngxService.stop()
     });
   }
 
@@ -76,7 +72,7 @@ export class UserHeaderComponent {
 
   openSignup() {
     const dialogRef = this.dialog.open(SignupModalComponent, {
-      width: '900px',
+      width: '560px',
       maxWidth: '95vw',
       maxHeight: '90vh',
       disableClose: true,

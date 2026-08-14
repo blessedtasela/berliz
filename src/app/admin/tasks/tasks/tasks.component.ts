@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Tasks } from 'src/app/models/tasks.interface';
 import { loadTasks } from 'src/app/state/task/task.actions';
 import { selectTasks } from 'src/app/state/task/task.selectors';
@@ -30,8 +29,7 @@ export class TasksComponent {
     { value: 'id', label: 'Task id', accessor: t => t.id?.toString() },
   ];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private store: Store) {
+  constructor(private store: Store) {
   }
 
   ngOnInit(): void {
@@ -43,14 +41,12 @@ export class TasksComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadTasks());
     this.subscriptions.push(
       this.store.select(selectTasks).subscribe((allTasks) => {
         this.tasksData = allTasks;
         this.totalTasks = allTasks.length
         this.tasksLength = allTasks.length
-        this.ngxService.stop()
       })
     );
   }

@@ -11,6 +11,7 @@ import { MediaOwnerType } from 'src/app/models/Media.enum';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { StrapiService } from 'src/app/services/strapi.service';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 import { genericError } from 'src/validators/form-validators.module';
 import { VideoResponse } from 'src/app/models/Media.interface';
 import { Store } from '@ngrx/store';
@@ -639,9 +640,7 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
   }
 
   private resolveVideoUrl(url?: string): string {
-    if (!url?.trim()) return 'assets/videos/demo_ok.mp4';
-    if (url.startsWith('blob:') || url.startsWith('http')) return url;
-    return `http://localhost:1337${url}`;
+    return resolveStrapiUrl(url) || 'assets/videos/demo_ok.mp4';
   }
 
   private revokeBlobUrl(url: string): void {

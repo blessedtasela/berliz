@@ -1,5 +1,6 @@
 import { ApiResponse } from "./Api.interface";
 import { AuthResponse } from "./Auth.interface";
+import { Testimonials } from "./testimonials.model";
 import { WorkoutResponse } from "./workout.interface";
 
 export interface Users {
@@ -59,6 +60,9 @@ export interface PublicUserProfile {
     city?: string;
     country?: string;
     workoutsCreated?: WorkoutResponse[];
+
+    /** Trainer-only: this trainer's active testimonials. Absent for every other role. */
+    testimonials?: Testimonials[];
 
     message?: string;
 }

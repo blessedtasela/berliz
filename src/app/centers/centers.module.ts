@@ -28,6 +28,7 @@ import { CenterLocationsComponent } from './center-locations/center-locations.co
 import { CenterHeaderComponent } from './center-header/center-header.component';
 import { CenterPartnerFormComponent } from './center-partner-form/center-partner-form.component';
 import { CenterFormComponent } from './center-form/center-form.component';
+import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,8 @@ import { CenterFormComponent } from './center-form/center-form.component';
     IconsModule,
     RouterModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    StrapiUrlPipe
   ],
   providers: [
   ]

@@ -1,7 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
@@ -25,7 +24,6 @@ export class MuscleGroupDetailsModalComponent {
     private dialogRef: MatDialogRef<MuscleGroupDetailsModalComponent>,
     private store: Store,
     private dialog: MatDialog,
-    private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private datePipe: DatePipe) {
     this.muscleGroupData = this.data.muscleGroupData;
@@ -39,7 +37,6 @@ export class MuscleGroupDetailsModalComponent {
   }
 
   handleEmit() {
-    this.ngxService.start();
     this.subscriptions.push(
       this.store.select(selectMuscleGroups).subscribe((muscleGroups) => {
         const found = muscleGroups.find(muscleGroup => muscleGroup.id == this.muscleGroupData.id);
@@ -47,7 +44,6 @@ export class MuscleGroupDetailsModalComponent {
           this.muscleGroupData = found
       }),
     );
-    this.ngxService.stop();
   }
 
   openUrl(url: any) {

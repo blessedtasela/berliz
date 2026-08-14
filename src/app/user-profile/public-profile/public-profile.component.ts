@@ -6,6 +6,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Subject, takeUntil } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
+import { Testimonials } from 'src/app/models/testimonials.model';
 import { PublicUserProfile } from 'src/app/models/users.interface';
 import { WorkoutResponse } from 'src/app/models/workout.interface';
 import { AuthService } from 'src/app/services/auth.service';
@@ -157,6 +158,11 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
     return this.profile?.workoutsCreated ?? [];
   }
 
+  /** Trainer-only: only ever populated when profile.role === 'trainer'. */
+  get testimonials(): Testimonials[] {
+    return this.profile?.testimonials ?? [];
+  }
+
   exerciseCount(workout: WorkoutResponse): number {
     return workout.exercises?.length ?? 0;
   }
@@ -194,5 +200,9 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
 
   trackByWorkoutId(_: number, workout: WorkoutResponse): number {
     return workout.id;
+  }
+
+  trackByTestimonialId(_: number, testimonial: Testimonials): number {
+    return testimonial.id;
   }
 }

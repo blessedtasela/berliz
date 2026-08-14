@@ -2,9 +2,45 @@
 <div id="exercises"></div>
 
 <!-- ═══════════════════════════════════════════════
-     SECTION HEADING
+     EXERCISES HERO — full-width cinematic banner
+     (standalone use only — the Programs page has its own hero)
 ════════════════════════════════════════════════ -->
-<section class="w-full bg-zinc-950 px-4 pt-16 font-sans">
+<section *ngIf="!embedded" class="relative w-full h-72 sm:h-80 overflow-hidden font-sans">
+
+    <!-- Background image -->
+    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style="background-image: url('assets/landing/hero-body-building.jpg');">
+    </div>
+
+    <!-- Dark gradient overlay -->
+    <div class="absolute inset-0"
+        style="background: linear-gradient(135deg, rgba(0,0,0,0.82) 0%, rgba(80,0,0,0.55) 60%, rgba(0,0,0,0.75) 100%);">
+    </div>
+
+    <!-- Content -->
+    <div class="relative z-10 flex flex-col items-center justify-center h-full gap-3 px-4 text-center">
+
+        <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+            Movement Library
+        </span>
+
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+            Browse The <span class="text-red-500">Exercises</span>
+        </h1>
+
+        <p class="text-sm text-zinc-300 max-w-md leading-relaxed">
+            Every movement our trainers program — with the muscles it hits and the disciplines it belongs to.
+        </p>
+
+        <div class="w-12 h-0.5 bg-red-600 rounded-full mt-1"></div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     SECTION HEADING — embedded use only
+════════════════════════════════════════════════ -->
+<section *ngIf="embedded" class="w-full bg-zinc-950 px-4 pt-16 font-sans">
     <div class="max-w-6xl mx-auto flex flex-col gap-3">
         <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
             Movement Library

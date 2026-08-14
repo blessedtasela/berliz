@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { FallBackService } from './fall-back.service';
+import { FallbackService } from './fall-back.service';
 
-describe('FallBackService', () => {
-  let service: FallBackService;
+describe('FallbackService', () => {
+  let service: FallbackService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(FallBackService);
+    service = TestBed.inject(FallbackService);
   });
 
   it('should be created', () => {

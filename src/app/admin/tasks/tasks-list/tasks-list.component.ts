@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Tasks } from 'src/app/models/tasks.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -31,7 +32,8 @@ export class TasksListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private rxStompService: RxStompService,
-    private store: Store) {
+    private store: Store,
+    private router: Router) {
   }
 
   ngOnInit() {
@@ -41,12 +43,10 @@ export class TasksListComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadTasks());
     this.store.select(selectTasks).subscribe((allTasks) => {
       this.tasksData = allTasks;
       this.totalTasks = this.tasksData.length
-      this.ngxService.stop()
     });
   }
 
@@ -83,23 +83,7 @@ export class TasksListComponent {
   }
 
   openTaskDetails(id: number) {
-    try {
-      const task = this.tasksData.find(task => task.id === id);
-      if (task) {
-        const dialogRef = this.dialog.open(TaskDetailsModalComponent, {
-          width: '800px',
-          maxWidth: '95vw',
-          panelClass: 'mat-dialog-height',
-          data: {
-            taskData: task,
-          }
-        });
-      } else {
-        this.snackbarService.openSnackBar('task not found for id: ' + id, 'error');
-      }
-    } catch (error) {
-      this.snackbarService.openSnackBar("An error occurred. Check task status", 'error');
-    }
+    this.router.navigate(['/dashboard/tasks', id]);
   }
 
   updateTaskStatus(id: number) {

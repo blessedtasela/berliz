@@ -93,7 +93,7 @@ export class TrainerHeaderComponent {
 
   openAddTrainer() {
     const dialogRef = this.dialog.open(AddTrainerModalComponent, {
-      width: '800px',
+      width: '560px',
       maxWidth: '95vw',
       maxHeight: '90vh',
     });

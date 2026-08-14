@@ -2,7 +2,6 @@ import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output }
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of, Subscription } from 'rxjs';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Store } from '@ngrx/store';
 import { selectActiveTrainers } from 'src/app/state/trainer/trainer.selector';
 import { loadActiveTrainers } from 'src/app/state/trainer/trainer.actions';
@@ -31,7 +30,6 @@ export class TrainersSearchComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
-    private ngxService: NgxUiLoaderService,
     private snackbar: SnackBarService,
     private elementRef: ElementRef,
   ) { }
@@ -89,10 +87,7 @@ export class TrainersSearchComponent implements OnInit, OnDestroy {
       this.snackbar.openSnackBar('Enter a search term.', 'error');
       return;
     }
-    this.ngxService.start();
     this.runSearch(this.searchQuery).subscribe({
-      next: r => { this.allTrainers.emit(r); this.ngxService.stop(); },
-      error: () => { this.ngxService.stop(); this.snackbar.openSnackBar('Search failed.', 'error'); }
     });
   }
 

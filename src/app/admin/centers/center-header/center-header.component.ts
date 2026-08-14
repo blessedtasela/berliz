@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Centers } from 'src/app/models/centers.interface';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AddCenterModalComponent } from '../add-center-modal/add-center-modal.component';
 import { Store } from '@ngrx/store';
@@ -20,8 +19,7 @@ export class CenterHeaderComponent {
   @Input() totalCenters: number = 0;
   @Input() centersLength: number = 0;
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
     public store: Store,
     private rxStompService: RxStompService) { }
 
@@ -32,11 +30,9 @@ export class CenterHeaderComponent {
 
   handleEmitEvent() {
     this.store.select(selectCenters).subscribe((allCenters) => {
-      this.ngxService.start()
       this.centersData = allCenters;
       this.totalCenters = this.centersData.length
       this.centersLength = this.centersData.length
-      this.ngxService.stop()
     });
   }
 
@@ -97,7 +93,7 @@ export class CenterHeaderComponent {
 
   openAddCenter() {
     const dialogRef = this.dialog.open(AddCenterModalComponent, {
-      width: '800px',
+      width: '560px',
       maxWidth: '95vw',
       maxHeight: '90vh',
       disableClose: true

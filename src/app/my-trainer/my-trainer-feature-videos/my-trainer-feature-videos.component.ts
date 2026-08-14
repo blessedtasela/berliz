@@ -13,7 +13,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { genericError } from 'src/validators/form-validators.module';
-import { environment } from 'src/environments/environment';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 import { Store } from '@ngrx/store';
 
 type EditorStep = 'idle' | 'trimming' | 'previewing' | 'size-warning' | 'uploading';
@@ -678,16 +678,7 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
   // ── Utilities ─────────────────────────────────────────────────────────────
 
   private resolveVideoUrl(url?: string): string {
-    if (!url) return this.defaultVideo;
-    const cleanUrl = url.trim();
-    if (!cleanUrl) return this.defaultVideo;
-    if (cleanUrl.startsWith('blob:') || cleanUrl.startsWith('http')) {
-      return cleanUrl;
-    }
-    const base = environment.strapiUrl.replace(/\/$/, '');
-    const path = cleanUrl.startsWith('/') ? cleanUrl : `/${cleanUrl}`;
-
-    return `${base}${path}`;
+    return resolveStrapiUrl(url) || this.defaultVideo;
   }
 
   private revokeBlobUrl(url: string): void {

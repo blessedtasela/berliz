@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Tags } from 'src/app/models/tags.interface';
 import { AddTagModalComponent } from '../add-tag-modal/add-tag-modal.component';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -19,21 +18,18 @@ export class TagHeaderComponent {
   @Input() tagsLength: number = 0;
   @Input() totalTags: number = 0;
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
     private store: Store,
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {  }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.store.dispatch(loadTags());
     this.store.select(selectTags).subscribe((tagsData) => {
       this.tagsData = tagsData
       this.tagsLength = this.tagsData.length
       this.totalTags = this.tagsData.length;
-      this.ngxService.stop();
     });
   }
 
@@ -76,7 +72,7 @@ export class TagHeaderComponent {
 
   openAddTag() {
     const dialogRef = this.dialog.open(AddTagModalComponent, {
-      width: '700px',
+      width: '496px',
       maxWidth: '95vw',
       maxHeight: '90vh',
     });

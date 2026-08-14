@@ -1,6 +1,5 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Newsletter } from 'src/app/models/newsletter.model';
 import { TodoList } from 'src/app/models/todoList.interface';
@@ -19,8 +18,7 @@ export class SearchMyTodoComponent {
   filteredMyTodos: TodoList[] = [];
   @Output() results: EventEmitter<TodoList[]> = new EventEmitter<TodoList[]>()
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private snackbarService: SnackBarService,
+  constructor(private snackbarService: SnackBarService,
     private store: Store,
     private elementRef: ElementRef) {
   }
@@ -39,7 +37,6 @@ export class SearchMyTodoComponent {
         debounceTime(300),
         map((e: any) => e.target.value),
         tap(() => {
-          this.ngxService.start();
         }),
         switchMap((query: string) => {
           return this.search(query);
@@ -47,12 +44,10 @@ export class SearchMyTodoComponent {
       )
       .subscribe(
         (results: TodoList[]) => {
-          this.ngxService.stop();
           this.results.emit(results);
         },
         (error: any) => {
           this.snackbarService.openSnackBar(error, 'error');
-          this.ngxService.stop();
         }
       );
   }

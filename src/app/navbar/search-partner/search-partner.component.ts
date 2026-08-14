@@ -1,5 +1,4 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Partner } from 'src/app/models/partners.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -18,8 +17,7 @@ export class SearchPartnerComponent {
   selectedSearchCriteria: any = 'email';
   @Output() results: EventEmitter<Partner[]> = new EventEmitter<Partner[]>()
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private snackbarService: SnackBarService,
+  constructor(private snackbarService: SnackBarService,
     private elementRef: ElementRef,
     private store: Store) { }
 
@@ -35,7 +33,6 @@ export class SearchPartnerComponent {
         debounceTime(300),
         map((e: any) => e.target.value),
         tap(() => {
-          this.ngxService.start();
         }),
         switchMap((query: string) => {
           return this.search(query);
@@ -43,12 +40,10 @@ export class SearchPartnerComponent {
       )
       .subscribe(
         (results: Partner[]) => {
-          this.ngxService.stop();
           this.results.emit(results);
         },
         (error: any) => {
           this.snackbarService.openSnackBar(error, 'error');
-          this.ngxService.stop();
         }
       );
   }

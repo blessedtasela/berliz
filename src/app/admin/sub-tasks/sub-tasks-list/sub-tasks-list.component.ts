@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SubTasks } from 'src/app/models/tasks.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -31,7 +32,8 @@ export class SubTasksListComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private rxStompService: RxStompService,
-    private store: Store) {
+    private store: Store,
+    private router: Router) {
   }
 
   ngOnInit() {
@@ -43,12 +45,10 @@ export class SubTasksListComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadSubTasks());
     this.store.select(selectSubTasks).subscribe((subTasks) => {
       this.subTasksData = subTasks;
       this.totalSubTasks = this.subTasksData.length
-      this.ngxService.stop()
     });
   }
 
@@ -86,23 +86,7 @@ export class SubTasksListComponent {
   }
 
   openSubTaskDetails(id: number) {
-    try {
-      const subTask = this.subTasksData.find(subTask => subTask.id === id);
-      if (subTask) {
-        const dialogRef = this.dialog.open(SubTaskDetailsModalComponent, {
-          width: '800px',
-          maxWidth: '95vw',
-          panelClass: 'mat-dialog-height',
-          data: {
-            subTaskData: subTask,
-          }
-        });
-      } else {
-        this.snackbarService.openSnackBar('subTask not found for id: ' + id, 'error');
-      }
-    } catch (error) {
-      this.snackbarService.openSnackBar("An error occurred. Check subTask status", 'error');
-    }
+    this.router.navigate(['/dashboard/sub-tasks', id]);
   }
 
   deleteSubTask(id: number) {

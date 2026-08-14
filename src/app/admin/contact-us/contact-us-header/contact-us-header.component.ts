@@ -1,6 +1,5 @@
 import { Component, ElementRef, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ContactUsFormComponent } from 'src/app/contact-us/contact-us-form/contact-us-form.component';
 import { ContactUs } from 'src/app/models/contact-us.model';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -23,7 +22,6 @@ export class ContactUsHeaderComponent {
 
 
   constructor(private store: Store,
-    private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
     private rxStompService: RxStompService) {
   }
@@ -34,13 +32,11 @@ export class ContactUsHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadContactUs());
     this.store.select(selectContactUsList).subscribe((contactUs) => {
       this.contactUsData = contactUs;
       this.totalContactUs = this.contactUsData.length
       this.contactUsLength = this.contactUsData.length
-      this.ngxService.stop()
     });
   }
 
@@ -87,7 +83,7 @@ export class ContactUsHeaderComponent {
 
   openAddContactUs() {
     const dialogRef = this.dialog.open(AddContactUsModalComponent, {
-      width: '800px',
+      width: '560px',
       maxWidth: '95vw',
       maxHeight: '90vh'
     });

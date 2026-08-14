@@ -7,6 +7,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { IconsModule } from '../icons/icons.module';
 import { EquipmentPageComponent } from './equipment-page/equipment-page.component';
 import { EquipmentDetailsModalComponent } from './equipment-details-modal/equipment-details-modal.component';
+import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
 
 
 
@@ -21,7 +22,8 @@ import { EquipmentDetailsModalComponent } from './equipment-details-modal/equipm
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
-    IconsModule
+    IconsModule,
+    StrapiUrlPipe
   ],
   exports: [
     // Rendered as the gear section of the Programs page (`/services`).

@@ -1,6 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of, Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -19,8 +18,7 @@ export class SearchCategoryComponent {
   @Output() results: EventEmitter<Categories[]> = new EventEmitter<Categories[]>()
   subscriptions: Subscription[] = [];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private snackbarService: SnackBarService,
+  constructor(private snackbarService: SnackBarService,
     private elementRef: ElementRef,
     private store: Store) {
   }
@@ -42,7 +40,6 @@ export class SearchCategoryComponent {
         debounceTime(300),
         map((e: any) => e.target.value),
         tap(() => {
-          this.ngxService.start();
         }),
         switchMap((query: string) => {
           return this.search(query);
@@ -50,12 +47,10 @@ export class SearchCategoryComponent {
       )
       .subscribe(
         (results: Categories[]) => {
-          this.ngxService.stop();
           this.results.emit(results);
         },
         (error: any) => {
           this.snackbarService.openSnackBar(error, 'error');
-          this.ngxService.stop();
         }
       );
   }

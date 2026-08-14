@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { TodoList } from 'src/app/models/todoList.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AddTodoModalComponent } from '../add-todo-modal/add-todo-modal.component';
@@ -22,13 +21,10 @@ export class TodoListHeaderComponent {
   subscriptions: Subscription[] = [];
 
   constructor(private store: Store,
-    private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
     private rxStompService: RxStompService) { }
 
   ngOnInit(): void {
-    this.ngxService.start()
-    this.ngxService.stop()
   }
 
   ngOnDestroy(): void {
@@ -84,7 +80,7 @@ export class TodoListHeaderComponent {
 
   openAddTodo() {
     const dialogRef = this.dialog.open(AddTodoModalComponent, {
-      width: '700px',
+      width: '560px',
       maxWidth: '95vw',
       maxHeight: '90vh',
     });

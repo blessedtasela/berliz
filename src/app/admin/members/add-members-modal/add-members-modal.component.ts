@@ -53,13 +53,11 @@ export class AddMembersModalComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.store.dispatch(loadActiveSubscriptions());
     this.subscription.add(
       this.store.select(selectActiveSubscriptions).subscribe((subs) => {
         this.subscriptions = subs;
         this.cd.detectChanges(); // Manually trigger change detection
-        this.ngxService.stop();
       })
     );
   }

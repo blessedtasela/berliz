@@ -1,97 +1,84 @@
-# Berliz — Frontend Application
+# Berliz — Frontend
 
-[![Build Status](https://img.shields.io/badge/status-active-brightgreen)]()
+Angular single-page application for Berliz, a fitness and combat sports platform connecting trainers, gyms, and clients through profiles, bookings, and content.
 
-Berliz is a **fitness and combat sports web platform** that allows users to track workouts, view progress, and engage with fitness content. The frontend is built using **Angular**, styled with **Tailwind CSS**, and deployed via **Netlify**.
+**Live**: [berliz.fitness](https://berliz.fitness)
 
-## 🚀 Live Demo
-### Check out the live application:
+## Stack
 
-#### [https://berliz.fitness](https://berliz.fitness)
+Angular 16 · TypeScript · NgRx · Tailwind CSS · RxJS
 
-## 🛠️ Technologies & Libraries
-- **Angular** — Frontend framework  
-- **TypeScript** — Language for frontend logic  
-- **Tailwind CSS** — Styling and responsive design  
-- **Angular Router** — Routing and navigation  
-- **RxJS** — Reactive programming for handling streams S 
-- **Netlify** — Hosting and deployment  
-- **Cloudflare** — DNS management and SSL  
-- **Axios / HttpClient** — API requests to backend  
-- **Ngx-Toastr** — Notifications  
-- **Strapi** — Headless CMS for media and content  
-- **Other libraries** — Any additional npm packages listed in `package.json`
+See [`docs/TECH_STACK.md`](docs/TECH_STACK.md) for a full breakdown of every library in use and why it's here, and [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for how the app is structured.
 
-## 📁 Project Structure
-``` text
-.angular/                  # Angular CLI cache
-src/                       # Source code
-  app/                     # Main Angular app folder
-  assets/                  # Static assets
-  environments/            # Environment configuration
-angular.json               # Angular CLI configuration
-netlify.toml               # Netlify deployment configuration
-package.json               # Project dependencies and scripts
-tsconfig.json              # TypeScript configuration
-robots.txt                 # Instructions for web crawlers
-sitemap.xml                # Sitemap for search engines
-```
-## 🚦 Features Implemented
-- Angular app scaffolded with Angular CLI
+## Getting started
 
-- Hosted on Netlify with custom domain (berliz.fitness)
+### Requirements
 
-- Environment configurations supported via .env
+- Node.js 18+
+- Angular CLI (`npm install -g @angular/cli`)
 
-- Basic routing implemented
+### Setup
 
-- Responsive UI for desktop and mobile
-
-- API integration with Strapi backend for media and content
-
-## 📌 Setup Instructions
-### Clone the repository:
-
-``` bash
+```bash
 git clone https://github.com/blessedtasela/berliz.git
 cd berliz
-```
-### Install dependencies:
-
-``` bash
 npm install
-``` 
-### Configure environment variables:
-#### Create a .env file in the root (not committed to Git):
-
-``` ini
-API_URL=https://api.berliz.fitness
-STRAPI_URL=https://strapi.berliz.fitness
 ```
 
-#### Run the development server:
+Configuration lives in `src/environments/environment.ts` (development) and `environment.prod.ts` (production, swapped in automatically by `angular.json`'s `fileReplacements` on a production build) — not a `.env` file. Copy the shape of `environment.ts` if you need to point at a different backend locally.
 
-``` bash
+### Run locally
+
+```bash
 ng serve
 ```
-#### Open your browser at `http://localhost:4200`
 
-### Build for production:
+Opens at `http://localhost:4200`, proxying API calls to whatever `environment.api` points at (defaults to a local backend at `http://localhost:8001`).
 
-``` bash
-ng build --prod
+### Build
+
+```bash
+ng build                    # development build
+ng build --configuration=production   # production build, used by Netlify
 ```
-#### The production-ready files are generated in dist/.
 
-### Run tests:
+Output goes to `dist/berliz/`.
 
-``` bash
+### Test
+
+```bash
 ng test
 ```
-## 📚 Notes
-#### Hosted on Netlify with Cloudflare managing the domain and SSL.
 
-#### Keep environment variables secret; never push .env to GitHub.
+## Deployment
 
-#### API requests are handled via Strapi for content management and media.
+Netlify builds and deploys automatically on every push to `master` (see `netlify.toml`). Cloudflare sits in front of the custom domain for DNS and SSL. Full details in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
+## Project structure
+
+```text
+src/
+  app/
+    admin/            # Admin-only management screens (users, centers, trainers, content, etc.)
+    services/          # HTTP services, auth interceptor, shared business logic
+    state/              # NgRx: actions, reducers, effects, selectors
+    shared/             # Reusable components, pipes, directives
+    models/             # TypeScript interfaces for API data shapes
+    utils/              # Framework-agnostic helper functions
+    ...                 # Feature areas (trainers/, centers/, categories/, etc.), each
+                          # typically paired with an admin/<feature> counterpart
+  environments/         # environment.ts / environment.prod.ts — build-time config
+  legacy/               # Pre-NgRx state services, kept for reference during migration
+angular.json             # Angular CLI / build configuration
+netlify.toml              # Netlify build & deploy configuration
+docs/                      # Architecture, setup, deployment, roadmap, API, tech stack docs
+```
+
+## Further reading
+
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — how the pieces fit together
+- [`docs/SETUP.md`](docs/SETUP.md) — detailed local setup
+- [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) — how production deploys work
+- [`docs/API.md`](docs/API.md) — backend API reference from the frontend's perspective
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — what's built and what's planned
+- [`docs/TECH_STACK.md`](docs/TECH_STACK.md) — every technology in use, and why

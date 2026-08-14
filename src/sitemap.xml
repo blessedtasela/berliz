@@ -4,44 +4,105 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <url>
-    <loc>https://www.berliz.fitness/</loc>
-    <lastmod>2024-09-28T07:04:51+00:00</lastmod>
-    <changefreq>always</changefreq>
+    <loc>https://berliz.fitness/</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+
   <url>
-    <loc>https://www.berliz.fitness/about</loc>
-    <lastmod>2024-09-27T07:00:00+00:00</lastmod>
+    <loc>https://berliz.fitness/about</loc>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://www.berliz.fitness/services</loc>
-    <lastmod>2024-09-26T07:00:00+00:00</lastmod>
+    <loc>https://berliz.fitness/services</loc>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://www.berliz.fitness/contact</loc>
-    <lastmod>2024-09-25T07:00:00+00:00</lastmod>
+    <loc>https://berliz.fitness/contact</loc>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://www.berliz.fitness/trainers</loc>
-    <lastmod>2024-09-24T07:00:00+00:00</lastmod>
-    <changefreq>always</changefreq>
+    <loc>https://berliz.fitness/trainers</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://www.berliz.fitness/centers</loc>
-    <lastmod>2024-09-23T07:00:00+00:00</lastmod>
-    <changefreq>always</changefreq>
+    <loc>https://berliz.fitness/centers</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://berliz.fitness/members</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://berliz.fitness/services/equipment</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://berliz.fitness/services/exercises</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://berliz.fitness/services/faqs</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- The four pages below currently render "Coming Soon" placeholder content
+       (see terms-page, privacy-page, report-problem-page, help-center-page
+       components). Still listed for discoverability, but low priority /
+       yearly changefreq until real content ships. -->
+  <url>
+    <loc>https://berliz.fitness/report-problem</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://berliz.fitness/help-center</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://berliz.fitness/terms</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://berliz.fitness/privacy</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 
 </urlset>

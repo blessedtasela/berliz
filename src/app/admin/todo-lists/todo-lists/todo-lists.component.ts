@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { TodoList } from 'src/app/models/todoList.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { loadTodos } from 'src/app/state/todo/todo.actions';
@@ -32,20 +31,17 @@ export class TodoListsComponent {
   ];
 
   constructor(private store: Store,
-    private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
     private rxStompService: RxStompService) {
   }
 
   ngOnInit(): void {
-    this.ngxService.start()
     this.watchDeleteTodo()
     this.watchGetTodoFromMap()
     this.watchUpdateTodoList()
     this.watchUpdateTodoStatus()
     this.watchTodoBulkAction()
     this.handleEmitEvent()
-    this.ngxService.stop()
   }
 
   ngOnDestroy(): void {

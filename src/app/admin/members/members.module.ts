@@ -7,11 +7,13 @@ import { MembersHeaderComponent } from './members-header/members-header.componen
 import { AddMembersModalComponent } from './add-members-modal/add-members-modal.component';
 import { UpdateMembersModalComponent } from './update-members-modal/update-members-modal.component';
 import { MemberDetailsModalComponent } from './member-details-modal/member-details-modal.component';
+import { MemberDetailPageComponent } from './member-detail-page/member-detail-page.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { FooterModule } from 'src/app/footer/footer.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
+import { AuthGuard } from 'src/app/services/auth.guard';
 
 
 
@@ -22,7 +24,8 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     MembersHeaderComponent,
     AddMembersModalComponent,
     UpdateMembersModalComponent,
-    MemberDetailsModalComponent
+    MemberDetailsModalComponent,
+    MemberDetailPageComponent
   ],
   imports: [
     CommonModule,
@@ -32,7 +35,10 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     NavbarModule,
     FormsModule,
     AdminSearchModule,
-    RouterModule.forChild([{ path: '', component: MembersComponent }])
+    RouterModule.forChild([
+      { path: '', component: MembersComponent },
+      { path: ':id', component: MemberDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Member Details', expectedRole: ['admin'] } },
+    ])
   ]
 })
 export class MembersModule { }

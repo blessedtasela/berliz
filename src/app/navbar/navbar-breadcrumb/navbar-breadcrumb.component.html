@@ -1,6 +1,23 @@
-<div class="flex flex-wrap items-center font-sans text-xs text-gray-400 max-w-full">
-    <xng-breadcrumb [separator]="sep"></xng-breadcrumb>
-    <ng-template #sep>
-        <i-feather name="chevron-right" style="width:11px;height:11px;" class="text-gray-300 mx-0.5"></i-feather>
-    </ng-template>
-</div>
+<nav aria-label="breadcrumb" class="flex items-center min-w-0 max-w-full font-sans text-xs text-gray-400">
+    <ol class="flex items-center min-w-0 max-w-full">
+        <ng-container *ngFor="let crumb of displayBreadcrumbs; let isLast = last">
+
+            <!-- Non-final segments: link + separator, each capped and truncated so a long label can't force the row wider -->
+            <li *ngIf="!isLast" class="flex items-center shrink-0 max-w-[70px] md:max-w-[110px]">
+                <ng-container *ngIf="!crumb.ellipsis; else ellipsisTpl">
+                    <a [routerLink]="crumb.url" class="truncate hover:text-gray-600 hover:underline transition">{{ crumb.label }}</a>
+                </ng-container>
+                <ng-template #ellipsisTpl>
+                    <span aria-hidden="true">&hellip;</span>
+                </ng-template>
+                <i-feather name="chevron-right" style="width:11px;height:11px;" class="text-gray-300 mx-1 shrink-0"></i-feather>
+            </li>
+
+            <!-- Final segment: the current page — gets the most room and truncates with an ellipsis instead of overflowing -->
+            <li *ngIf="isLast" class="flex items-center min-w-0">
+                <span class="truncate max-w-[90px] md:max-w-[140px] lg:max-w-[200px] font-semibold text-gray-500">{{ crumb.label }}</span>
+            </li>
+
+        </ng-container>
+    </ol>
+</nav>

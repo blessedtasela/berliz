@@ -1,6 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, map, debounceTime, tap, switchMap, distinctUntilChanged, Observable, of, Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -21,7 +20,6 @@ export class CenterSearchComponent {
   subscription!: Subscription;
 
   constructor(private store: Store,
-    private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef,
     private rxStompService: RxStompService) { }
@@ -56,7 +54,6 @@ export class CenterSearchComponent {
         debounceTime(300),
         map((e: any) => e.target.value),
         tap((query: string) => {
-          this.ngxService.start();
         }),
         switchMap((query: string) => {
           return this.search(query);
@@ -64,12 +61,10 @@ export class CenterSearchComponent {
       )
       .subscribe(
         (results: Centers[]) => {
-          this.ngxService.stop();
           this.allCenters.emit(results);
         },
         (error: any) => {
           this.snackbarService.openSnackBar(error, 'error');
-          this.ngxService.stop();
         }
       );
   }
@@ -82,16 +77,13 @@ export class CenterSearchComponent {
       return;
     }
 
-    this.ngxService.start();
 
     this.search(query).subscribe(
       (results) => {
         this.allCenters.emit(results);
-        this.ngxService.stop();
       },
       (error) => {
         this.snackbarService.openSnackBar('Search failed.', 'error');
-        this.ngxService.stop();
       }
     );
   }

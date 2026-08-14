@@ -44,4 +44,14 @@ export const subscriptionReducer = createReducer(
     A.deleteSubscriptionSuccess, A.bulkActionSubscriptionSuccess,
     (s, { message }) => ({ ...s, loading: false, lastMessage: message })
   ),
+
+  on(A.selectPlan, state => ({ ...state, loading: true, error: null })),
+
+  on(A.selectPlanFailure, (state, { error }) => ({ ...state, loading: false, error })),
+
+  on(A.selectPlanSuccess, (s, { response }) => ({
+    ...s, loading: false,
+    lastMessage: response.data?.message ?? response.message,
+    planSelection: response.data ?? null,
+  })),
 );

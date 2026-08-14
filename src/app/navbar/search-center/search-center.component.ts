@@ -1,6 +1,5 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of, Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
@@ -21,7 +20,6 @@ export class SearchCenterComponent {
   subscriptions: Subscription [] = []
 
   constructor(private store: Store,
-    private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) { }
 
@@ -42,7 +40,6 @@ export class SearchCenterComponent {
         debounceTime(300),
         map((e: any) => e.target.value),
         tap(() => {
-          this.ngxService.start();
         }),
         switchMap((query: string) => {
           return this.search(query); // Perform the search with the query
@@ -50,12 +47,10 @@ export class SearchCenterComponent {
       )
       .subscribe(
         (results: Centers[]) => {
-          this.ngxService.stop();
           this.results.emit(results);
         },
         (error: any) => {
           this.snackbarService.openSnackBar(error, 'error');
-          this.ngxService.stop();
         }
       );
   }

@@ -54,17 +54,14 @@ export class AddExercisesModalComponent implements OnInit{
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.store.dispatch(loadActiveMuscleGroups());
     this.store.dispatch(loadActiveCategories());
     this.subscriptions.push(
       this.store.select(selectActiveMuscleGroups).subscribe((muscleGroups) => {
         this.muscleGroups = muscleGroups;
-        this.ngxService.stop();
       }),
       this.store.select(selectActiveCategories).subscribe((categories) => {
         this.categories = categories;
-        this.ngxService.stop();
       }),
     );
   }

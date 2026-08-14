@@ -20,7 +20,6 @@ export class SearchTaskComponent {
   subscriptions: Subscription [] = []
 
   constructor(private store: Store,
-    private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) { }
 
@@ -41,7 +40,6 @@ export class SearchTaskComponent {
         debounceTime(300),
         map((e: any) => e.target.value),
         tap(() => {
-          this.ngxService.start();
         }),
         switchMap((query: string) => {
           return this.search(query); // Perform the search with the query
@@ -49,12 +47,10 @@ export class SearchTaskComponent {
       )
       .subscribe(
         (results: Tasks[]) => {
-          this.ngxService.stop();
           this.results.emit(results);
         },
         (error: any) => {
           this.snackbarService.openSnackBar(error, 'error');
-          this.ngxService.stop();
         }
       );
   }

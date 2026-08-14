@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Exercises } from 'src/app/models/exercise.interface';
 import { loadExercises } from 'src/app/state/exercise/exercise.actions';
 import { selectExercises } from 'src/app/state/exercise/exercise.selectors';
@@ -28,8 +27,7 @@ export class ExercisesComponent {
     { value: 'status', label: 'Status', accessor: e => e.status },
   ];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private store: Store) {
+  constructor(private store: Store) {
   }
 
   ngOnInit(): void {
@@ -41,14 +39,12 @@ export class ExercisesComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadExercises());
     this.subscriptions.push(
       this.store.select(selectExercises).subscribe((allExercises) => {
         this.exercisesData = allExercises;
         this.totalExercises = allExercises.length
         this.exercisesLength = allExercises.length
-        this.ngxService.stop()
       })
     );
   }

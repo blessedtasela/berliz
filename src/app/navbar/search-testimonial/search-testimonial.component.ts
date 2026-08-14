@@ -1,5 +1,4 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription, fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -20,7 +19,6 @@ export class SearchTestimonialComponent {
   subscriptions: Subscription [] = []
 
   constructor(private store: Store,
-    private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private elementRef: ElementRef) { }
 
@@ -41,7 +39,6 @@ export class SearchTestimonialComponent {
         debounceTime(300),
         map((e: any) => e.target.value),
         tap(() => {
-          this.ngxService.start();
         }),
         switchMap((query: string) => {
           return this.search(query); // Perform the search with the query
@@ -49,12 +46,10 @@ export class SearchTestimonialComponent {
       )
       .subscribe(
         (results: Testimonials[]) => {
-          this.ngxService.stop();
           this.results.emit(results);
         },
         (error: any) => {
           this.snackbarService.openSnackBar(error, 'error');
-          this.ngxService.stop();
         }
       );
   }

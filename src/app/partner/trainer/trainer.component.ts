@@ -18,7 +18,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { UpdateTrainerPhotoModalComponent } from 'src/app/shared/update-trainer-photo-modal/update-trainer-photo-modal.component';
-import { environment } from 'src/environments/environment';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 import { imageValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -74,9 +74,7 @@ export class TrainerComponent {
   }
 
   private normalizeUrl(url: string): string {
-    if (!url) return 'assets/icons/user.png';
-    if (url.startsWith('http') || url.startsWith('blob:')) return url;
-    return `${environment.strapiUrl}${url}`;
+    return resolveStrapiUrl(url) || 'assets/icons/user.png';
   }
 
   onImgSelected(event: any): void {

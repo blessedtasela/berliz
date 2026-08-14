@@ -88,7 +88,7 @@ export class TrainerPartnerFormComponent implements OnInit {
     }
 
     const dialogRef = this.dialog.open(PartnerFormComponent, {
-      width: '600px',
+      width: '496px',
       maxWidth: '95vw',
       disableClose: true,
       data: {

@@ -56,10 +56,8 @@ export class AddTasksModalComponent {
   handleEmitEvent() {
     this.subscriptions.push(
       this.store.select(selectUsers).subscribe((users) => {
-        this.ngxService.start();
         this.users = users;
         this.cd.detectChanges(); // Manually trigger change detection
-        this.ngxService.stop();
       }),
       this.store.select(selectSubTasks).subscribe((subTasks) => {
         this.subTasks = subTasks;

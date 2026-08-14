@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Tags } from 'src/app/models/tags.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { loadTags } from 'src/app/state/tag/tag.actions';
@@ -29,8 +28,7 @@ export class TagsComponent {
     { value: 'status', label: 'Status', accessor: t => t.status },
   ];
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private store: Store,
+  constructor(private store: Store,
     private rxStompService: RxStompService) {
   }
 
@@ -47,14 +45,12 @@ export class TagsComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadTags());
     this.subscriptions.push(
       this.store.select(selectTags).subscribe((allTags) => {
         this.tagsData = allTags;
         this.totalTags = allTags.length
         this.tagsLength = allTags.length
-        this.ngxService.stop()
       })
     );
   }

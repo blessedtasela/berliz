@@ -61,14 +61,12 @@ export class AddClientModalComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.store.dispatch(loadActiveCategories());
     this.store.dispatch(loadActiveUsers());
     this.subscriptions.push(
       this.store.select(selectActiveCategories).subscribe((categories) => {
         this.categories = categories;
         this.cd.detectChanges();
-        this.ngxService.stop();
       }),
       this.store.select(selectUsers).subscribe((users) => {
         this.users = users;

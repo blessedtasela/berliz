@@ -1,13 +1,14 @@
-import { reducer, initialState } from './center.reducer';
+import { centerReducer } from './center.reducer';
+import { initialCenterState } from './center.state';
 
 describe('Center Reducer', () => {
   describe('an unknown action', () => {
     it('should return the previous state', () => {
       const action = {} as any;
 
-      const result = reducer(initialState, action);
+      const result = centerReducer(initialCenterState, action);
 
-      expect(result).toBe(initialState);
+      expect(result).toBe(initialCenterState);
     });
   });
 });

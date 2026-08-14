@@ -51,7 +51,7 @@ export class DashboardActionComponent {
   private readonly ROUTE_OVERRIDES: Record<string, string> = {
     // No admin CRUD table for equipment — it's center-scoped and managed from
     // "My equipment" on /dashboard/exercises, so point at the public browser.
-    'equipments': '/equipments',
+    'equipments': '/services/equipment',
     'workouts': '/dashboard/workouts',
     'my-workouts': '/dashboard/workouts',
     'liked-trainers': '/trainers',

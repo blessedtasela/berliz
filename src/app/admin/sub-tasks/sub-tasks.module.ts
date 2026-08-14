@@ -7,11 +7,13 @@ import { SubTasksHeaderComponent } from './sub-tasks-header/sub-tasks-header.com
 import { AddSubTasksModalComponent } from './add-sub-tasks-modal/add-sub-tasks-modal.component';
 import { UpdateSubTasksModalComponent } from './update-sub-tasks-modal/update-sub-tasks-modal.component';
 import { SubTaskDetailsModalComponent } from './sub-task-details-modal/sub-task-details-modal.component';
+import { SubTaskDetailPageComponent } from './sub-task-detail-page/sub-task-detail-page.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { FooterModule } from 'src/app/footer/footer.module';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
+import { AuthGuard } from 'src/app/services/auth.guard';
 
 
 
@@ -22,7 +24,8 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     SubTasksHeaderComponent,
     AddSubTasksModalComponent,
     UpdateSubTasksModalComponent,
-    SubTaskDetailsModalComponent
+    SubTaskDetailsModalComponent,
+    SubTaskDetailPageComponent
   ],
   imports: [
     CommonModule,
@@ -32,7 +35,10 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     FormsModule,
     IconsModule,
     AdminSearchModule,
-    RouterModule.forChild([{ path: '', component: SubTasksComponent }])
+    RouterModule.forChild([
+      { path: '', component: SubTasksComponent },
+      { path: ':id', component: SubTaskDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Sub Task Details', expectedRole: ['admin'] } },
+    ])
   ]
 })
 export class SubTasksModule { }

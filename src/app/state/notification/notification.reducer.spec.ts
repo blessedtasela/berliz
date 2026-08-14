@@ -1,13 +1,14 @@
-import { reducer, initialState } from './notification.reducer';
+import { notificationReducer } from './notification.reducer';
+import { initialNotificationState } from './notification.state';
 
 describe('Notification Reducer', () => {
   describe('unknown action', () => {
     it('should return the previous state', () => {
       const action = {} as any;
 
-      const result = reducer(initialState, action);
+      const result = notificationReducer(initialNotificationState, action);
 
-      expect(result).toBe(initialState);
+      expect(result).toBe(initialNotificationState);
     });
   });
 });

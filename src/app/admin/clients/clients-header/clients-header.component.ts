@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import { Clients } from 'src/app/models/clients.interface';
 import { AddClientModalComponent } from '../add-client-modal/add-client-modal.component';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { take } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -22,8 +21,7 @@ export class ClientsHeaderComponent {
   @Input() totalClients: number = 0;
   @Input() clientsLength: number = 0;
 
-  constructor(private ngxService: NgxUiLoaderService,
-    private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
     private store: Store,
     private rxStompService: RxStompService) {
   }
@@ -34,13 +32,11 @@ export class ClientsHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start()
     this.store.dispatch(loadClients());
     this.store.select(selectClients).subscribe((clients) => {
       this.clientsData = clients;
       this.totalClients = this.clientsData.length
       this.clientsLength = this.clientsData.length
-      this.ngxService.stop()
     });
   }
 
@@ -104,7 +100,7 @@ export class ClientsHeaderComponent {
 
   openAddClient() {
     const dialogRef = this.dialog.open(AddClientModalComponent, {
-      width: '800px',
+      width: '720px',
       maxWidth: '95vw',
       panelClass: 'mat-dialog-height',
       disableClose: true,

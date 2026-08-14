@@ -11,7 +11,6 @@ import { ExerciseHeroDetailsComponent } from './exercise-hero-details/exercise-h
 import { ExerciseMuscleGroupsComponent } from './exercise-muscle-groups/exercise-muscle-groups.component';
 import { ExerciseIntroductionComponent } from './exercise-introduction/exercise-introduction.component';
 import { ExerciseTipsComponent } from './exercise-tips/exercise-tips.component';
-import { ExercisesPageComponent } from './exercises-page/exercises-page.component';
 import { FooterModule } from '../footer/footer.module';
 
 @NgModule({
@@ -23,7 +22,6 @@ import { FooterModule } from '../footer/footer.module';
     ExerciseMuscleGroupsComponent,
     ExerciseIntroductionComponent,
     ExerciseTipsComponent,
-    ExercisesPageComponent,
     ExercisesSectionComponent,
   ],
   imports: [

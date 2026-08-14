@@ -12,7 +12,11 @@ import { CategoriesListComponent } from './categories-list/categories-list.compo
 import { CategoryComponent } from './category/category.component';
 import { UpdateCategoryModalComponent } from './update-category-modal/update-category-modal.component';
 import { CategoryDetailsModalComponent } from './category-details-modal/category-details-modal.component';
+import { CategoryDetailPageComponent } from './category-detail-page/category-detail-page.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
+import { AuthGuard } from 'src/app/services/auth.guard';
+import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
+import { ImageCropperModule } from 'ngx-image-cropper';
 
 @NgModule({
   declarations: [
@@ -21,6 +25,7 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     CategoriesListComponent,
     CategoryComponent,
     CategoryDetailsModalComponent,
+    CategoryDetailPageComponent,
     UpdateCategoryModalComponent,
   ],
 
@@ -32,7 +37,12 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     MatDialogModule,
     NavbarModule,
     AdminSearchModule,
-    RouterModule.forChild([{ path: '', component: CategoryComponent }])
+    StrapiUrlPipe,
+    ImageCropperModule,
+    RouterModule.forChild([
+      { path: '', component: CategoryComponent },
+      { path: ':id', component: CategoryDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Category Details', expectedRole: ['admin'] } },
+    ])
   ]
 })
 export class CategoriesModule { }

@@ -65,14 +65,12 @@ export class PartnerDataComponent {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.store.dispatch(loadMyPartner());
     this.subscriptions.push(this.store.select(selectMyPartner).subscribe((partner) => {
       if (partner) this.partnerData = partner;
       this.cd.detectChanges();
     }),
     );
-    this.ngxService.stop();
   }
 
   updateFormValues(partner: Partner) {
@@ -91,7 +89,7 @@ export class PartnerDataComponent {
 
   openViewResume() {
     const dialogRef = this.dialog.open(ViewCvModalComponent, {
-      width: '800px',
+      width: '720px',
       maxWidth: '95vw',
       data: {
         partnerData: this.partnerData,
@@ -109,7 +107,7 @@ export class PartnerDataComponent {
 
   openViewCertification() {
     const dialogRef = this.dialog.open(ViewCvModalComponent, {
-      width: '800px',
+      width: '720px',
       maxWidth: '95vw',
       data: {
         partnerData: this.partnerData,

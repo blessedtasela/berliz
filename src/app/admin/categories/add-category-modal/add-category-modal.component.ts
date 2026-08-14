@@ -14,6 +14,7 @@ import { selectActiveTags } from 'src/app/state/tag/tag.selectors';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { PhotoResponse } from 'src/app/models/Media.interface';
 import { MediaOwnerType } from 'src/app/models/Media.enum';
+import { ImageCroppedEvent } from 'ngx-image-cropper';
 
 @Component({
   selector: 'app-add-category-modal',
@@ -31,6 +32,9 @@ export class AddCategoryModalComponent implements OnInit {
   previewUrl: string | null = null;
   photoRequest: PhotoResponse | null = null;
   uploadingPhoto: boolean = false;
+  imageChangedEvent: any = null;
+  croppedImageBlob: Blob | null = null;
+  showCropper: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     private categoryService: CategoryService,
@@ -59,21 +63,56 @@ export class AddCategoryModalComponent implements OnInit {
   }
 
   handleEmitEvent() {
-    this.ngxService.start();
     this.store.dispatch(loadActiveTags());
     this.subscription.add(
       this.store.select(selectActiveTags).subscribe((tags) => {
         this.tags = tags;
         this.cd.detectChanges(); // Manually trigger change detection
-        this.ngxService.stop();
       })
     );
   }
 
 
-  async onPhotoSelected(event: any): Promise<void> {
+  onPhotoSelected(event: any): void {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    this.imageChangedEvent = event;
+    this.showCropper = true;
+  }
+
+  imageCropped(event: ImageCroppedEvent): void {
+    this.croppedImageBlob = event.blob || null;
+  }
+
+  loadImageFailed(): void {
+    this.snackbarService.openSnackBar('Failed to load image', 'error');
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+  }
+
+  cancelCrop(): void {
+    if (this.imageChangedEvent?.target) {
+      this.imageChangedEvent.target.value = '';
+    }
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+    this.croppedImageBlob = null;
+  }
+
+  async confirmCrop(): Promise<void> {
+    if (!this.croppedImageBlob) {
+      this.snackbarService.openSnackBar('Please crop the image first', 'error');
+      return;
+    }
+
+    const file = new File([this.croppedImageBlob], `category_${Date.now()}.jpeg`, {
+      type: this.croppedImageBlob.type || 'image/jpeg'
+    });
+
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+    this.croppedImageBlob = null;
 
     this.selectedFile = file;
     this.previewUrl = URL.createObjectURL(file);
@@ -171,6 +210,9 @@ export class AddCategoryModalComponent implements OnInit {
     this.selectedFile = null;
     this.previewUrl = null;
     this.photoRequest = null;
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+    this.croppedImageBlob = null;
     this.onCheckboxChanged(event)
   }
 

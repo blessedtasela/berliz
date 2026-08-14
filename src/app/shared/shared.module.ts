@@ -20,6 +20,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { NotificationDetailsComponent } from './notification-details/notification-details.component';
 import { TimeAgoPipe } from './pipes/time-ago.pipe';
+import { StrapiUrlPipe } from './pipes/strapi-url.pipe';
 import { TodoDetailsModalComponent } from './todo-details-modal/todo-details-modal.component';
 import { UpdateEmailModalComponent } from './update-email-modal/update-email-modal.component';
 import { UpdateUserModalComponent } from './update-user-modal/update-user-modal.component';
@@ -75,7 +76,8 @@ import { AppRoutingModule } from "src/app/app-routing.module";
     FormsModule,
     FeatherModule,
     FormsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    StrapiUrlPipe
 ],
   exports: [
     CommonModule,
@@ -88,6 +90,7 @@ import { AppRoutingModule } from "src/app/app-routing.module";
     NgxMaskDirective,
     NgxMaskPipe,
     TimeAgoPipe,
+    StrapiUrlPipe,
     SearchPanelComponent,
     SkeletonLoaderComponent,
     UpdatePartnerFileModalComponent,

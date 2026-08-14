@@ -222,9 +222,7 @@ export class ProfileComponent {
     });
     const childComponentInstance = dialogRef.componentInstance as ChangePasswordModalComponent;
     childComponentInstance.onChangePassword.subscribe(() => {
-      this.ngxService.start();
       this.handleEmitEvent();
-      this.ngxService.stop();
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -237,7 +235,7 @@ export class ProfileComponent {
 
   openUpdateUser() {
     const dialogRef = this.dialog.open(UpdateUserModalComponent, {
-      width: '700px',
+      width: '560px',
       maxWidth: '95vw',
       data: {
         userData: this.userData
@@ -245,9 +243,7 @@ export class ProfileComponent {
     });
     const childComponentInstance = dialogRef.componentInstance as UpdateUserModalComponent;
     childComponentInstance.onUpdateUser.subscribe(() => {
-      this.ngxService.start();
       this.handleEmitEvent();
-      this.ngxService.stop();
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

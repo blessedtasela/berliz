@@ -13,6 +13,7 @@ import { loadActivePartners } from 'src/app/state/partner/partner.actions';
 import { selectActivePartners } from 'src/app/state/partner/partner.selectors';
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
+import { ImageCroppedEvent } from 'ngx-image-cropper';
 
 @Component({
   selector: 'app-add-trainer-modal',
@@ -28,6 +29,9 @@ export class AddTrainerModalComponent {
   selectedPhoto: any;
   activePartners: Partner[] = [];
   displayPhoto: any = "../../../assets/icons/user.png";
+  imageChangedEvent: any = null;
+  croppedImageBlob: Blob | null = null;
+  showCropper: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<AddTrainerModalComponent>,
@@ -76,8 +80,47 @@ export class AddTrainerModalComponent {
 
   onPhotoSelected(event: any): void {
     if (event.target.files && event.target.files.length > 0) {
-      this.selectedPhoto = event.target.files[0];
+      this.imageChangedEvent = event;
+      this.showCropper = true;
     }
+  }
+
+  imageCropped(event: ImageCroppedEvent): void {
+    this.croppedImageBlob = event.blob || null;
+  }
+
+  loadImageFailed(): void {
+    this.snackBarService.openSnackBar('Failed to load image', 'error');
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+  }
+
+  cancelCrop(): void {
+    if (this.imageChangedEvent?.target) {
+      this.imageChangedEvent.target.value = '';
+    }
+    this.addTrainerForm.patchValue({ photo: '' });
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+    this.croppedImageBlob = null;
+  }
+
+  confirmCrop(): void {
+    if (!this.croppedImageBlob) {
+      this.snackBarService.openSnackBar('Please crop the image first', 'error');
+      return;
+    }
+
+    const file = new File([this.croppedImageBlob], `trainer_${Date.now()}.jpeg`, {
+      type: this.croppedImageBlob.type || 'image/jpeg'
+    });
+
+    this.selectedPhoto = file;
+    this.displayPhoto = URL.createObjectURL(file);
+
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+    this.croppedImageBlob = null;
   }
 
   validateCheckbox(): ValidatorFn {
@@ -147,5 +190,10 @@ export class AddTrainerModalComponent {
 
   clear() {
     this.addTrainerForm.reset();
+    this.selectedPhoto = null;
+    this.displayPhoto = "../../../assets/icons/user.png";
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+    this.croppedImageBlob = null;
   }
 }

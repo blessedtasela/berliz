@@ -16,6 +16,7 @@ import {
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { TestimonialDialogService } from 'src/app/testimonial/testimonial-dialog.service';
+import { BookingDialogService } from 'src/app/booking/booking-dialog.service';
 import { loadTestimonialsByTrainer } from 'src/app/state/testimonial/testimonial.actions';
 import { selectTestimonialsByTrainer } from 'src/app/state/testimonial/testimonial.selectors';
 import {
@@ -80,7 +81,8 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
     private router: Router,
     private store: Store,
     private trainerService: TrainerService,
-    private testimonialDialog: TestimonialDialogService
+    private testimonialDialog: TestimonialDialogService,
+    private bookingDialog: BookingDialogService
   ) { }
 
   ngOnInit(): void {
@@ -197,6 +199,15 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
    */
   leaveTestimonial(): void {
     this.testimonialDialog.openTestimonialForm();
+  }
+
+  /** Opens the "Book a session" form for this trainer. */
+  bookSession(): void {
+    if (!this.trainer) return;
+    this.bookingDialog.openBookingForm({
+      trainerId: this.trainerId,
+      providerName: this.trainer.name || 'this trainer'
+    });
   }
 
   testimonialAuthor(testimonial: Testimonials): string {

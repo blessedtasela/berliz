@@ -8,16 +8,19 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { AddPartnerModalComponent } from './add-partner-modal/add-partner-modal.component';
 import { PartnerDetailsModalComponent } from './partner-details-modal/partner-details-modal.component';
+import { PartnerDetailPageComponent } from './partner-detail-page/partner-detail-page.component';
 import { PartnerHeaderComponent } from './partner-header/partner-header.component';
 import { PartnerListComponent } from './partner-list/partner-list.component';
 import { PartnersComponent } from './partners/partners.component';
 import { UpdatePartnerModalComponent } from './update-partner-modal/update-partner-modal.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
+import { AuthGuard } from 'src/app/services/auth.guard';
 
 @NgModule({
   declarations: [
     AddPartnerModalComponent,
     PartnerDetailsModalComponent,
+    PartnerDetailPageComponent,
     PartnerHeaderComponent,
     PartnerListComponent,
     PartnersComponent,
@@ -33,7 +36,10 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     FooterModule,
     NavbarModule,
     AdminSearchModule,
-    RouterModule.forChild([{ path: '', component: PartnersComponent }])
+    RouterModule.forChild([
+      { path: '', component: PartnersComponent },
+      { path: ':id', component: PartnerDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Partner Details', expectedRole: ['admin'] } },
+    ])
   ]
 })
 export class PartnersModule { }

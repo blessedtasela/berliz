@@ -1,4 +1,157 @@
-<div class="mt-20 p-8 h-screen flex-col w-full font-extrabold">
-    <h2 class="mb-10 text-4xl text-red-600 ">Coming Soon.....</h2>
-    <p class="text-2xl text-white">This page is Under Construction</p>
-</div>
+<main class="w-full bg-zinc-950 min-h-screen font-sans">
+
+  <!-- ═══════════════════════════════════════════════
+       HERO
+  ════════════════════════════════════════════════ -->
+  <section class="relative w-full h-64 sm:h-72 overflow-hidden">
+    <div class="absolute inset-0"
+      style="background: linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(80,0,0,0.6) 60%, rgba(0,0,0,0.9) 100%);">
+    </div>
+    <div class="relative z-10 flex flex-col items-center justify-center h-full gap-3 px-4 text-center">
+      <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">Help &amp; support</span>
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+        Report a <span class="text-red-500">Problem</span>
+      </h1>
+      <p class="text-sm text-zinc-300 max-w-md leading-relaxed">
+        Bugs, billing issues or safety concerns — tell us what happened and we'll take it from there.
+      </p>
+      <div class="w-12 h-0.5 bg-red-600 rounded-full mt-1"></div>
+    </div>
+  </section>
+
+  <section class="px-4 py-14">
+    <div class="max-w-2xl mx-auto flex flex-col gap-8">
+
+      <!-- ── SUCCESS STATE ─────────────────────────────────────────── -->
+      <div *ngIf="submitted"
+        class="relative overflow-hidden rounded-2xl border border-green-900/50 bg-zinc-900 px-8 py-12 flex flex-col items-center text-center gap-4">
+        <div class="w-14 h-14 rounded-full bg-green-600/10 border border-green-600/30 flex items-center justify-center">
+          <i-feather name="check-circle" class="text-green-400" style="width:26px;height:26px;"></i-feather>
+        </div>
+        <h2 class="text-xl font-extrabold text-white">Report submitted</h2>
+        <p class="text-sm text-zinc-400 max-w-sm">{{ successMessage }}</p>
+        <div class="flex items-center gap-3 mt-2">
+          <button type="button" (click)="dismissSuccess()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                     hover:bg-red-700 active:scale-[0.98] transition">
+            Submit another report
+          </button>
+          <a routerLink="/help-center" class="px-5 py-2.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-semibold
+                     hover:border-red-600 hover:text-white transition">
+            Back to Help Center
+          </a>
+        </div>
+      </div>
+
+      <!-- ── FORM ─────────────────────────────────────────────────── -->
+      <form *ngIf="!submitted" [formGroup]="reportForm" (ngSubmit)="submitForm()"
+        class="relative overflow-hidden rounded-2xl border bg-zinc-900 transition-colors duration-300 px-6 sm:px-8 py-8 flex flex-col gap-6"
+        [ngClass]="reportForm.invalid && invalidForm ? 'border-red-600/60' : 'border-zinc-800'">
+
+        <div class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-red-600/10 blur-3xl pointer-events-none"></div>
+
+        <!-- Category picker -->
+        <div class="relative flex flex-col gap-3">
+          <label class="text-[10px] font-semibold text-zinc-500 uppercase tracking-wide">
+            What's this about?
+          </label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button type="button" *ngFor="let category of categories; trackBy: trackByCategory"
+              (click)="selectCategory(category.value)"
+              class="text-left rounded-2xl border px-4 py-3.5 flex items-start gap-3 transition-colors"
+              [ngClass]="reportForm.value.category === category.value
+                          ? 'border-red-600 bg-red-600/10'
+                          : 'border-zinc-800 bg-zinc-950 hover:border-zinc-700'">
+              <span class="shrink-0 w-9 h-9 rounded-xl border flex items-center justify-center"
+                [ngClass]="reportForm.value.category === category.value
+                            ? 'border-red-600/40 bg-red-600/20'
+                            : 'border-zinc-800 bg-zinc-900'">
+                <i-feather [name]="category.icon" style="width:16px;height:16px;"
+                  [ngClass]="reportForm.value.category === category.value ? 'text-red-400' : 'text-zinc-400'"></i-feather>
+              </span>
+              <span class="flex flex-col gap-0.5">
+                <span class="text-sm font-semibold text-white">{{ category.label }}</span>
+                <span class="text-xs text-zinc-500 leading-snug">{{ category.description }}</span>
+              </span>
+            </button>
+          </div>
+          <p *ngIf="reportForm.get('category')?.invalid && reportForm.get('category')?.touched"
+            class="text-[11px] text-red-500 flex items-center gap-1">
+            <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+            Please choose a category
+          </p>
+        </div>
+
+        <!-- Name -->
+        <div class="relative flex flex-col gap-1">
+          <label class="text-[10px] font-semibold text-zinc-500 uppercase tracking-wide">
+            Full name
+          </label>
+          <input formControlName="name" type="text" placeholder="Jane Doe" class="w-full px-3 py-2.5 rounded-xl bg-zinc-950 border text-sm text-white placeholder-zinc-600
+                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+            [ngClass]="reportForm.get('name')?.invalid && reportForm.get('name')?.touched
+                        ? 'border-red-600/60' : 'border-zinc-700'" />
+          <p *ngIf="reportForm.get('name')?.invalid && reportForm.get('name')?.touched"
+            class="text-[11px] text-red-500 flex items-center gap-1">
+            <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+            {{ reportForm.get('name')?.errors?.['fullNameInvalid'] || 'Name is required' }}
+          </p>
+        </div>
+
+        <!-- Email -->
+        <div class="relative flex flex-col gap-1">
+          <label class="text-[10px] font-semibold text-zinc-500 uppercase tracking-wide">
+            Email
+          </label>
+          <input formControlName="email" type="email" placeholder="example@gmail.com" class="w-full px-3 py-2.5 rounded-xl bg-zinc-950 border text-sm text-white placeholder-zinc-600
+                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+            [ngClass]="reportForm.get('email')?.invalid && reportForm.get('email')?.touched
+                        ? 'border-red-600/60' : 'border-zinc-700'" />
+          <p *ngIf="reportForm.get('email')?.invalid && reportForm.get('email')?.touched"
+            class="text-[11px] text-red-500 flex items-center gap-1">
+            <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+            A valid email address is required
+          </p>
+        </div>
+
+        <!-- Description -->
+        <div class="relative flex flex-col gap-1">
+          <label class="text-[10px] font-semibold text-zinc-500 uppercase tracking-wide">
+            What happened?
+          </label>
+          <textarea formControlName="description" rows="5" placeholder="The more detail you give us, the faster we can help." class="w-full px-3 py-2.5 rounded-xl bg-zinc-950 border text-sm text-white placeholder-zinc-600
+                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+            [ngClass]="reportForm.get('description')?.invalid && reportForm.get('description')?.touched
+                        ? 'border-red-600/60' : 'border-zinc-700'"></textarea>
+          <p *ngIf="reportForm.get('description')?.invalid && reportForm.get('description')?.touched"
+            class="text-[11px] text-red-500 flex items-center gap-1">
+            <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+            Please describe the problem in at least 10 characters
+          </p>
+        </div>
+
+        <!-- Submit-level error -->
+        <div *ngIf="submitError" class="relative rounded-xl border border-red-900/50 bg-red-950/40 px-4 py-3 flex items-start gap-2">
+          <i-feather name="alert-triangle" class="text-red-400 shrink-0" style="width:14px;height:14px;margin-top:1px;"></i-feather>
+          <p class="text-xs text-red-300">{{ submitError }}</p>
+        </div>
+
+        <!-- Actions -->
+        <div class="relative flex justify-end gap-3 pt-1">
+          <button type="submit" [disabled]="submitting" [ngClass]="{ 'opacity-60 cursor-not-allowed': submitting }" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                     hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+            <i-feather [name]="submitting ? 'loader' : 'send'" [ngClass]="{ 'animate-spin': submitting }" style="width:13px;height:13px;"></i-feather>
+            {{ submitting ? 'Submitting...' : 'Submit report' }}
+          </button>
+        </div>
+
+        <p class="relative text-[11px] text-zinc-600 text-center">
+          Not a bug or billing issue? Check the
+          <a routerLink="/services/faqs" class="text-red-400 hover:text-red-300 underline">FAQs</a>
+          or visit the
+          <a routerLink="/help-center" class="text-red-400 hover:text-red-300 underline">Help Center</a>.
+        </p>
+      </form>
+    </div>
+  </section>
+
+</main>

@@ -106,40 +106,28 @@ export class AddSubscriptionsModalComponent {
     console.log("isCached false");
     this.subscriptions.push(
       this.store.select(selectUsers).subscribe((users) => {
-        this.ngxService.start();
         this.users = users;
         this.cd.detectChanges();
-        this.ngxService.stop();
       }),
       this.store.select(selectTrainers).subscribe((trainers) => {
-        this.ngxService.start();
         this.trainers = trainers;
         this.cd.detectChanges();
-        this.ngxService.stop();
       }),
       this.store.select(selectCenters).subscribe((centers) => {
-        this.ngxService.start();
         this.centers = centers;
         this.cd.detectChanges();
-        this.ngxService.stop();
       }),
       this.store.select(selectCategories).subscribe((categories) => {
-        this.ngxService.start();
         this.categories = categories;
         this.cd.detectChanges();
-        this.ngxService.stop();
       }),
       this.store.select(selectTrainerPricing).subscribe((trainerPricing) => {
-        this.ngxService.start();
         this.trainerPricing = trainerPricing;
         this.cd.detectChanges();
-        this.ngxService.stop();
       }),
       this.store.select(selectCenterPricing).subscribe((centerPricing) => {
-        this.ngxService.start();
         this.centerPricing = centerPricing;
         this.cd.detectChanges();
-        this.ngxService.stop();
       })
     );
   }

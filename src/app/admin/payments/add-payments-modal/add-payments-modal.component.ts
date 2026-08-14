@@ -62,10 +62,8 @@ export class AddPaymentsModalComponent {
     console.log("isCached false");
     this.subscription.add(
       this.store.select(selectUsers).subscribe((users) => {
-        this.ngxService.start();
         this.users = users;
         this.cd.detectChanges(); // Manually trigger change detection
-        this.ngxService.stop();
       })
     );
   }
