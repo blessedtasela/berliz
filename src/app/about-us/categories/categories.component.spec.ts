@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { provideMockStore } from '@ngrx/store/testing';
 
 import { CategoriesComponent } from './categories.component';
 
@@ -8,7 +11,12 @@ describe('CategoriesComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CategoriesComponent]
+      declarations: [CategoriesComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        DatePipe,
+        provideMockStore()
+      ]
     });
     fixture = TestBed.createComponent(CategoriesComponent);
     component = fixture.componentInstance;

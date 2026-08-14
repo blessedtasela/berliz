@@ -7,8 +7,8 @@ import {
   HttpErrorResponse
 } from '@angular/common/http';
 
-import { BehaviorSubject, Observable, Subject, merge, throwError } from 'rxjs';
-import { catchError, filter, map, switchMap, take } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, merge, throwError, TimeoutError } from 'rxjs';
+import { catchError, filter, map, switchMap, take, timeout } from 'rxjs/operators';
 
 import { Router } from '@angular/router';
 import { UserService } from './user.service';
@@ -75,15 +75,52 @@ export class AuthInterceptor implements HttpInterceptor {
     });
   }
 
+  /**
+   * How long to wait for a response before treating the backend as unreachable.
+   * Without this, an unresponsive/down server relies on the browser's own default
+   * connection timeout (60s+) before anything errors out — which just looks like
+   * an infinite spinner to the user. Uploads get more room since a slow connection
+   * legitimately needs longer to push a large file, not because the server's down.
+   */
+  private readonly DEFAULT_TIMEOUT_MS = 20000;
+  private readonly UPLOAD_TIMEOUT_MS = 90000;
+
+  private timeoutFor(url: string): number {
+    return url.includes('/strapi/upload') ? this.UPLOAD_TIMEOUT_MS : this.DEFAULT_TIMEOUT_MS;
+  }
+
+  /** Reshapes a timeout into the same {error: {message}} shape backend error
+   * responses already have, so existing `error.error?.message` handlers in
+   * components show this instead of silently falling through to a generic
+   * message with no explanation. Not applied to the WebSocket/STOMP handshake —
+   * that connection is meant to stay open, not resolve quickly. */
+  private withTimeout<T>(source: Observable<T>, url: string): Observable<T> {
+    if (url.includes('/stomp')) {
+      return source;
+    }
+    return source.pipe(
+      timeout(this.timeoutFor(url)),
+      catchError(err => {
+        if (err instanceof TimeoutError) {
+          return throwError(() => ({
+            status: 0,
+            error: { message: 'The server is taking too long to respond. Please check your connection and try again.' }
+          }));
+        }
+        return throwError(() => err);
+      })
+    );
+  }
+
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
     const token = this.authService.getToken();
 
     if (this.isPublicRequest(request.url) || !token) {
-      return next.handle(request);
+      return this.withTimeout(next.handle(request), request.url);
     }
 
-    return next.handle(this.withToken(request, token)).pipe(
+    return this.withTimeout(next.handle(this.withToken(request, token)), request.url).pipe(
       catchError((error: HttpErrorResponse) => {
 
         // 401 handling

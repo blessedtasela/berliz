@@ -106,6 +106,13 @@ export const routes: Routes = [
   // /exercises above.
   { path: 'legal-terms', redirectTo: 'terms', pathMatch: 'full' },
   { path: 'privacy', component: PrivacyPageComponent, data: { breadcrumb: 'Privacy' } },
+
+  // Unlisted partner pitch page — deliberately NOT in any nav/footer, NOT in
+  // sitemap.xml, and NOT in robots.txt (that file is public, so listing this
+  // path there would leak it). Reachable only by whoever is given this exact
+  // URL directly. The component itself sets a noindex/nofollow meta tag as a
+  // second layer, in case the URL ever leaks to a well-behaved crawler.
+  { path: 'partners/aW3QRnVb-XxJ8DtqfSeRAhMVoGBJ5pjq', loadChildren: () => import('./partner-onepager/partner-onepager.module').then(m => m.PartnerOnepagerModule) },
   { path: 'login/reset-password', component: ResetPasswordComponent, data: { breadcrumb: 'Reset Password' } },
   { path: 'login/activate-account', component: ActivateAccountComponent, data: { breadcrumb: 'Activate Account' } },
   { path: 'shop', component: ProductsPageComponent, children: productChildRoutes, data: { breadcrumb: 'Shop' } },

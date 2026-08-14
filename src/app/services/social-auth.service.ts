@@ -91,11 +91,13 @@ export class SocialAuthService {
       auto_select: false,
     });
 
-    // type: 'icon' renders a compact circular icon button, matching the square
-    // icon-button styling the rest of the social-login row already uses.
+    // type: 'icon' + shape: 'square' renders a compact rounded-square icon
+    // button, matching the Facebook button's w-11 h-11 rounded-xl styling
+    // right next to it — 'circle' left a mismatched round shape clipped
+    // inside that square container.
     google.accounts.id.renderButton(el, {
       type: 'icon',
-      shape: 'circle',
+      shape: 'square',
       theme: 'outline',
       size: 'large',
     });

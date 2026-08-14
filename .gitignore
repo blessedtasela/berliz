@@ -43,3 +43,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Local-only notes containing secrets/unlisted URLs — never commit
+docs/PARTNER_PROGRAM.md

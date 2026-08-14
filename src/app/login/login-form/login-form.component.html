@@ -65,11 +65,20 @@
             <p class="text-[11px] text-gray-400 uppercase tracking-wide font-semibold">Or sign in with</p>
 
             <div class="flex justify-center gap-3">
-                <!-- Google Identity Services renders its official button into this div once
-                     configured; the plain icon button underneath is the fallback shown until then. -->
-                <div class="relative w-11 h-11">
+                <!-- Google's official button must stay the real click target (required for the
+                     Sign-In flow to actually fire) but its own rendered appearance can't be
+                     styled to match Facebook's button exactly — so it's rendered invisible
+                     (opacity-0) on top, with a pixel-matched decorative button underneath. The
+                     wrapper's `group` + `group-hover` is what lets that decorative button pick up
+                     hover styling even though it's not the element actually being hovered. -->
+                <div class="group relative w-11 h-11">
+                    <div *ngIf="googleReady" aria-hidden="true"
+                        class="absolute inset-0 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center
+                               pointer-events-none transition group-hover:border-red-500 group-hover:bg-white">
+                        <img src="assets/icons/google.png" alt="" class="h-5 w-5" />
+                    </div>
                     <div id="googleSignInButton"
-                        class="absolute inset-0 flex items-center justify-center overflow-hidden rounded-xl"
+                        class="absolute inset-0 overflow-hidden rounded-xl opacity-0"
                         [class.hidden]="!googleReady"></div>
                     <button *ngIf="!googleReady" type="button" (click)="loginWithGoogleFallback()"
                         aria-label="Sign in with Google" class="w-11 h-11 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center

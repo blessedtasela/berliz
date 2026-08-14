@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { CenterPricingsListComponent } from './center-pricings-list.component';
 
@@ -8,7 +9,8 @@ describe('CenterPricingsListComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CenterPricingsListComponent]
+      declarations: [CenterPricingsListComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(CenterPricingsListComponent);
     component = fixture.componentInstance;
