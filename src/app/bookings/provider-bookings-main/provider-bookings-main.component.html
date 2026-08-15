@@ -25,6 +25,12 @@
             <i-feather name="clock" style="width:13px;height:13px;"></i-feather>
             My Availability
         </button>
+        <button type="button" (click)="activeTab = 'earnings'"
+            class="px-3.5 py-2 text-xs font-semibold border-b-2 -mb-px transition flex items-center gap-1.5"
+            [ngClass]="activeTab === 'earnings' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-400 hover:text-gray-600'">
+            <i-feather name="dollar-sign" style="width:13px;height:13px;"></i-feather>
+            Earnings
+        </button>
     </div>
 
     <ng-container *ngIf="activeTab === 'bookings'">
@@ -75,6 +81,10 @@
 
     <div *ngIf="activeTab === 'availability'" class="rounded-2xl border border-gray-100 bg-white p-4 sm:p-5">
         <app-my-availability-editor></app-my-availability-editor>
+    </div>
+
+    <div *ngIf="activeTab === 'earnings'" class="rounded-2xl border border-gray-100 bg-white p-4 sm:p-5">
+        <app-earnings-view></app-earnings-view>
     </div>
 
 </section>

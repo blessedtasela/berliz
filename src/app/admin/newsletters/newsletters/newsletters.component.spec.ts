@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { provideMockStore } from '@ngrx/store/testing';
 
 import { NewslettersComponent } from './newsletters.component';
 
@@ -7,8 +10,15 @@ describe('NewslettersComponent', () => {
   let fixture: ComponentFixture<NewslettersComponent>;
 
   beforeEach(() => {
+    const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+
     TestBed.configureTestingModule({
-      declarations: [NewslettersComponent]
+      declarations: [NewslettersComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        provideMockStore(),
+        { provide: MatDialog, useValue: dialogSpy }
+      ]
     });
     fixture = TestBed.createComponent(NewslettersComponent);
     component = fixture.componentInstance;

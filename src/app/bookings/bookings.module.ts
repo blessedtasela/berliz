@@ -12,6 +12,7 @@ import { BookingsEmptyComponent } from './bookings-empty/bookings-empty.componen
 import { MyBookingsMainComponent } from './my-bookings-main/my-bookings-main.component';
 import { ProviderBookingsMainComponent } from './provider-bookings-main/provider-bookings-main.component';
 import { MyAvailabilityEditorComponent } from './my-availability-editor/my-availability-editor.component';
+import { EarningsViewComponent } from './earnings-view/earnings-view.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { MyAvailabilityEditorComponent } from './my-availability-editor/my-avail
     BookingsEmptyComponent,
     MyBookingsMainComponent,
     ProviderBookingsMainComponent,
-    MyAvailabilityEditorComponent
+    MyAvailabilityEditorComponent,
+    EarningsViewComponent
   ],
   imports: [
     CommonModule,

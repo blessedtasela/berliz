@@ -119,6 +119,8 @@ import { analyticsFeatureKey, analyticsReducer } from './state/analytics/analyti
 import { AnalyticsEffects } from './state/analytics/analytics.effects';
 import { progressShareFeatureKey, progressShareReducer } from './state/progress-share/progress-share.reducer';
 import { ProgressShareEffects } from './state/progress-share/progress-share.effects';
+import { payoutFeatureKey, payoutReducer } from './state/payout/payout.reducer';
+import { PayoutEffects } from './state/payout/payout.effects';
 import { WorkoutsModule } from './workouts/workouts.module';
 
 
@@ -227,7 +229,7 @@ const dbConfig: DBConfig = {
 
     // Store and Effects Modules for NgRx
     StoreModule.forRoot({}),
-    EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects, WorkoutEffects, AnalyticsEffects, UserProfileEffects, FaqEffects, BookingEffects, AvailabilityEffects, PlanEffects, ProgressShareEffects]),
+    EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects, WorkoutEffects, AnalyticsEffects, UserProfileEffects, FaqEffects, BookingEffects, AvailabilityEffects, PlanEffects, ProgressShareEffects, PayoutEffects]),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: !isDevMode(),
@@ -259,6 +261,7 @@ const dbConfig: DBConfig = {
     StoreModule.forFeature(userProfileFeatureKey, userProfileReducer),
     StoreModule.forFeature(analyticsFeatureKey, analyticsReducer),
     StoreModule.forFeature(progressShareFeatureKey, progressShareReducer),
+    StoreModule.forFeature(payoutFeatureKey, payoutReducer),
 
   ],
   exports: [],

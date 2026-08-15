@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { provideMockStore } from '@ngrx/store/testing';
 
 import { PaymentsComponent } from './payments.component';
 
@@ -8,7 +10,11 @@ describe('PaymentsComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [PaymentsComponent]
+      declarations: [PaymentsComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        provideMockStore()
+      ]
     });
     fixture = TestBed.createComponent(PaymentsComponent);
     component = fixture.componentInstance;

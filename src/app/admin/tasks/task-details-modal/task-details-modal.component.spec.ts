@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { TaskDetailsModalComponent } from './task-details-modal.component';
 
@@ -7,8 +10,16 @@ describe('TaskDetailsModalComponent', () => {
   let fixture: ComponentFixture<TaskDetailsModalComponent>;
 
   beforeEach(() => {
+    const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
+
     TestBed.configureTestingModule({
-      declarations: [TaskDetailsModalComponent]
+      declarations: [TaskDetailsModalComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        DatePipe,
+        { provide: MatDialogRef, useValue: dialogRefSpy },
+        { provide: MAT_DIALOG_DATA, useValue: { taskData: {} } }
+      ]
     });
     fixture = TestBed.createComponent(TaskDetailsModalComponent);
     component = fixture.componentInstance;

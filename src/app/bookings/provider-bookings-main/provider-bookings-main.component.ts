@@ -28,7 +28,7 @@ import { genericError } from 'src/validators/form-validators.module';
 })
 export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
 
-  activeTab: 'bookings' | 'availability' = 'bookings';
+  activeTab: 'bookings' | 'availability' | 'earnings' = 'bookings';
 
   bookings: Booking[] = [];
 

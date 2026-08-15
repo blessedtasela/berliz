@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { provideMockStore } from '@ngrx/store/testing';
 
 import { MembersComponent } from './members.component';
 
@@ -8,7 +10,11 @@ describe('MembersComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [MembersComponent]
+      declarations: [MembersComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        provideMockStore()
+      ]
     });
     fixture = TestBed.createComponent(MembersComponent);
     component = fixture.componentInstance;
