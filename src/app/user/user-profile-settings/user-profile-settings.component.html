@@ -62,6 +62,11 @@
         </div>
     </div>
 
+    <!-- ═══════════ PROGRESS SHARING ═══════════
+         Opt-in per trainer — mirrors the public profile visibility switch above.
+         Nothing is shared with any trainer until the client turns them on here. -->
+    <app-progress-sharing-settings></app-progress-sharing-settings>
+
     <app-user-profile-settings-dangerzone (deactivate)="deactivateAccount()" (updateEmail)="openUpdateEmail()">
     </app-user-profile-settings-dangerzone>
 </div>

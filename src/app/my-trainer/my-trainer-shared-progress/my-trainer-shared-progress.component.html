@@ -1,0 +1,97 @@
+<div class="bg-white font-sans rounded-xl border border-gray-200 p-4 flex flex-col gap-4 mt-4">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-sm font-bold text-gray-900">Clients' Progress</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                {{ sharedClients.length }} client{{ sharedClients.length !== 1 ? 's have' : ' has' }} shared their
+                progress with you
+            </p>
+        </div>
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex items-center justify-center py-8 gap-2 text-gray-400">
+        <i-feather name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>
+        <span class="text-[11px]">Loading...</span>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!loading && sharedClients.length === 0"
+        class="flex flex-col items-center justify-center py-10 gap-2 text-gray-400">
+        <i-feather name="eye-off" style="width:28px;height:28px;"></i-feather>
+        <p class="text-xs font-medium">No clients have shared their progress with you yet.</p>
+    </div>
+
+    <!-- Shared clients list -->
+    <div *ngIf="!loading && sharedClients.length > 0" class="flex flex-col divide-y divide-gray-100">
+        <div *ngFor="let share of sharedClients" class="flex items-center justify-between gap-4 py-2.5">
+
+            <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-8 h-8 rounded-lg bg-green-50 border border-green-200 flex items-center justify-center shrink-0">
+                    <i-feather name="user" style="width:14px;height:14px;" class="text-green-600"></i-feather>
+                </div>
+                <div class="flex flex-col gap-0.5 min-w-0">
+                    <p class="text-xs font-bold text-gray-900 truncate">
+                        {{ share.clientFirstname }} {{ share.clientLastname }}
+                    </p>
+                    <p class="text-[11px] text-gray-400 truncate">{{ share.clientEmail }}</p>
+                </div>
+            </div>
+
+            <button type="button" (click)="viewProgress(share)"
+                class="text-[11px] font-semibold text-red-600 hover:underline underline-offset-2 shrink-0
+                       inline-flex items-center gap-1 px-2 py-1">
+                <i-feather name="bar-chart-2" style="width:11px;height:11px;"></i-feather>
+                View progress
+            </button>
+
+        </div>
+    </div>
+
+    <!-- Selected client progress panel -->
+    <div *ngIf="selectedClientId" class="mt-2 rounded-xl border border-gray-200 bg-gray-50 p-4 flex flex-col gap-3">
+
+        <div class="flex items-center justify-between">
+            <p class="text-xs font-bold text-gray-800">
+                Progress <span *ngIf="selectedProgress">— {{ selectedProgress.clientFirstname }} {{ selectedProgress.clientLastname }}</span>
+            </p>
+            <button type="button" (click)="closeProgress()" class="text-gray-400 hover:text-gray-600">
+                <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+            </button>
+        </div>
+
+        <div *ngIf="loadingProgress" class="flex items-center justify-center py-6 gap-2 text-gray-400">
+            <i-feather name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>
+            <span class="text-[11px]">Loading progress...</span>
+        </div>
+
+        <div *ngIf="!loadingProgress && selectedProgress && selectedProgress.assignments.length === 0"
+            class="text-[11px] text-gray-400 italic py-4 text-center">
+            No assigned workouts yet.
+        </div>
+
+        <div *ngIf="!loadingProgress && selectedProgress && selectedProgress.assignments.length > 0"
+            class="flex flex-col gap-2">
+            <div *ngFor="let assignment of selectedProgress.assignments"
+                class="flex items-center justify-between gap-3 bg-white border border-gray-200 rounded-lg px-3 py-2">
+                <div class="min-w-0">
+                    <p class="text-[11px] font-bold text-gray-800 truncate">{{ assignment.workout?.name }}</p>
+                    <p class="text-[10px] text-gray-400">{{ assignment.scheduledDate | date:'mediumDate' }}</p>
+                </div>
+                <span class="text-[10px] font-bold px-2 py-1 rounded-full shrink-0" [ngClass]="{
+                        'bg-green-100 text-green-700': assignment.status === 'COMPLETED',
+                        'bg-yellow-100 text-yellow-700': assignment.status === 'IN_PROGRESS',
+                        'bg-gray-100 text-gray-600': assignment.status === 'ASSIGNED'
+                    }">
+                    {{ assignment.status }}
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+</div>

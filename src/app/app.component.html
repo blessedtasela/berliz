@@ -11,7 +11,12 @@
     <ng-container *ngSwitchCase="'topbar'">
         <div class="bg-black">
             <app-navigation-bar></app-navigation-bar>
-            <router-outlet></router-outlet>
+            <!-- app-navigation-bar is `fixed`, so it's removed from normal flow and
+                 would otherwise sit on top of (clipping) whatever renders first —
+                 pt-16 matches its h-16 height exactly. -->
+            <div class="pt-16">
+                <router-outlet></router-outlet>
+            </div>
             <app-footer></app-footer>
         </div>
     </ng-container>

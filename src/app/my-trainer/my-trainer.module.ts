@@ -23,6 +23,7 @@ import { FooterModule } from '../footer/footer.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { MyTrainerSubModalComponent } from './my-trainer-sub-modal/my-trainer-sub-modal.component';
 import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
+import { MyTrainerSharedProgressComponent } from './my-trainer-shared-progress/my-trainer-shared-progress.component';
 
 
 
@@ -41,7 +42,8 @@ import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
     MyTrainerReviewComponent,
     MyTrainerLikeComponent,
     MyTrainerTestimonialsComponent,
-    MyTrainerSubModalComponent
+    MyTrainerSubModalComponent,
+    MyTrainerSharedProgressComponent
   ],
   imports: [
     CommonModule,

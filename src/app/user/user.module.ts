@@ -23,10 +23,10 @@ import { UserBioEditComponent } from './user-bio-edit/user-bio-edit.component';
 import { UserAccountInfoComponent } from './user-account-info/user-account-info.component';
 import { UserProfileSettingsFormComponent } from './user-profile-settings-form/user-profile-settings-form.component';
 import { UserProfileSettingsDangerzoneComponent } from './user-profile-settings-dangerzone/user-profile-settings-dangerzone.component';
+import { ProgressSharingSettingsComponent } from './progress-sharing-settings/progress-sharing-settings.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { userFeatureKey, userReducer } from '../state/user/user.reducer';
 import { StoreModule } from '@ngrx/store';
-import { ProgressSharingSettingsComponent } from './progress-sharing-settings/progress-sharing-settings.component';
 
 
 @NgModule({
