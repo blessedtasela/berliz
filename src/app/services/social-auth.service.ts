@@ -103,6 +103,23 @@ export class SocialAuthService {
     });
   }
 
+  /**
+   * Kicks off loading the Facebook SDK ahead of time (call this on page load, not
+   * on click). FB.login() must run synchronously inside the click handler for its
+   * popup to actually behave like a popup — mobile browsers (Safari especially)
+   * require that direct user-gesture chain, and break it the moment there's an
+   * `await` for a script that hasn't loaded yet. The visible symptom is the login
+   * silently falling back to opening in a new tab instead of a popup that reports
+   * back. Preloading here means the SDK is (almost always, in practice) already
+   * loaded by the time the user actually taps the button, so loginWithFacebook()'s
+   * own await resolves immediately instead of introducing that gap. Errors are
+   * swallowed — isFacebookConfigured/loadFacebookScript's own rejection still
+   * surfaces normally at actual click time.
+   */
+  preloadFacebookSdk(): void {
+    this.loadFacebookScript().catch(() => { /* surfaced for real on click, not here */ });
+  }
+
   /** Loads the Facebook JS SDK once and initializes FB.init() with our App ID. */
   private loadFacebookScript(): Promise<void> {
     if (this.facebookScriptPromise) {

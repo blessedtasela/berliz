@@ -43,6 +43,12 @@ export class LoginFormComponent implements AfterViewInit {
     this.socialAuthService.renderGoogleButton('googleSignInButton', (idToken) => this.handleGoogleCredential(idToken))
       .then(() => { this.googleReady = true; })
       .catch(() => { this.googleReady = false; });
+
+    // Load the Facebook SDK now, not on click — FB.login()'s popup needs to open
+    // synchronously within the click handler on mobile browsers, and an unloaded
+    // SDK forces an await there that breaks that chain (see preloadFacebookSdk's
+    // own comment for what that looks like to the user).
+    this.socialAuthService.preloadFacebookSdk();
   }
 
   ngOnInit(): void {
