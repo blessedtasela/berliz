@@ -7,6 +7,18 @@
   for = "/sitemap.xml"
   [headers.values]
     Content-Type = "application/xml"
+
+[[headers]]
+  # Netlify's default COOP (same-origin) blocks the postMessage calls Google
+  # Identity Services needs between the page and its Sign-In iframe/popup —
+  # this is what breaks the Google button in production while it works fine
+  # on localhost (which sends no COOP header at all). same-origin-allow-popups
+  # keeps the process-isolation security benefit but permits exactly the
+  # popup/iframe communication Google's SDK (and Facebook's, same pattern)
+  # relies on.
+  for = "/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
 [build]
   command = "npm run build"
   publish = "dist/berliz"
