@@ -1,6 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import { ApiResponse } from '../../models/Api.interface';
 import { Booking } from '../../models/booking.model';
+import { MyTrainerSummary } from '../../models/progress-share.model';
 
 type Res<T> = { response: ApiResponse<T> };
 type Err = { error: string };
@@ -35,3 +36,8 @@ export const updateBookingStatusFailure = createAction('[Booking] Update Status 
 export const cancelBooking = createAction('[Booking] Cancel', props<Id>());
 export const cancelBookingSuccess = createAction('[Booking] Cancel Success', props<Res<Booking>>());
 export const cancelBookingFailure = createAction('[Booking] Cancel Failure', props<Err>());
+
+// ── MY TRAINERS — distinct trainers/centers the client has booked with ─────
+export const loadMyTrainers = createAction('[Booking] Load My Trainers');
+export const loadMyTrainersSuccess = createAction('[Booking] Load My Trainers Success', props<Res<MyTrainerSummary[]>>());
+export const loadMyTrainersFailure = createAction('[Booking] Load My Trainers Failure', props<Err>());

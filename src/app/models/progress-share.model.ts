@@ -1,0 +1,46 @@
+// Shapes mirror the backend /progress-share and /booking/myTrainers contracts
+// (ProgressShareResponse / ClientProgressResponse / MyTrainerSummaryResponse),
+// all wrapped in ApiResponse<T> (see models/Api.interface.ts).
+import { WorkoutAssignmentResponse } from './workout.interface';
+
+export interface ProgressShare {
+  id: number;
+
+  clientId: number;
+  clientFirstname: string;
+  clientLastname: string;
+  clientEmail: string;
+
+  trainerId: number;
+  trainerName: string;
+
+  grantedAt: Date;
+  revokedAt: Date | null;
+  isActive: boolean;
+
+  date: Date;
+  lastUpdate: Date;
+
+  message?: string;
+}
+
+/** Read-only progress summary a trainer sees for a client who granted them access. */
+export interface ClientProgress {
+  clientId: number;
+  clientFirstname: string;
+  clientLastname: string;
+  clientEmail: string;
+  assignments: WorkoutAssignmentResponse[];
+  message?: string;
+}
+
+/** One entry in the client's "my trainers" list — GET /booking/myTrainers. */
+export interface MyTrainerSummary {
+  /** 'trainer' | 'center' */
+  type: 'trainer' | 'center';
+  id: number;
+  name: string;
+  status: string;
+  lastBookingAt: Date;
+  bookingCount: number;
+}

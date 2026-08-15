@@ -26,6 +26,7 @@ import { UserProfileSettingsDangerzoneComponent } from './user-profile-settings-
 import { NgSelectModule } from '@ng-select/ng-select';
 import { userFeatureKey, userReducer } from '../state/user/user.reducer';
 import { StoreModule } from '@ngrx/store';
+import { ProgressSharingSettingsComponent } from './progress-sharing-settings/progress-sharing-settings.component';
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import { StoreModule } from '@ngrx/store';
     UserBioEditComponent,
     UserAccountInfoComponent,
     UserProfileSettingsFormComponent,
-    UserProfileSettingsDangerzoneComponent
+    UserProfileSettingsDangerzoneComponent,
+    ProgressSharingSettingsComponent
   ],
   imports: [
     CommonModule,

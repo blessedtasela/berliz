@@ -11,3 +11,12 @@ export const selectBookings = createSelector(selectState, s => s.bookings);
 export const selectMyBookings = createSelector(selectState, s => s.myBookings);
 export const selectProviderBookings = createSelector(selectState, s => s.providerBookings);
 export const selectSelectedBooking = createSelector(selectState, s => s.selectedBooking);
+
+export const selectMyTrainers = createSelector(selectState, s => s.myTrainers);
+export const selectMyTrainersLoading = createSelector(selectState, s => s.myTrainersLoading);
+
+/** Trainer-type entries only — the pick-list for granting progress-share access. */
+export const selectMyTrainersOnly = createSelector(
+  selectMyTrainers,
+  trainers => trainers.filter(t => t.type === 'trainer')
+);

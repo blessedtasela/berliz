@@ -67,4 +67,12 @@ export class BookingEffects {
       catchError(e => of(A.cancelBookingFailure({ error: e?.error?.message || 'Failed to cancel booking' })))
     ))
   ));
+
+  loadMyTrainers$ = createEffect(() => this.actions$.pipe(
+    ofType(A.loadMyTrainers),
+    mergeMap(() => this.svc.getMyTrainers().pipe(
+      map(response => A.loadMyTrainersSuccess({ response })),
+      catchError(e => of(A.loadMyTrainersFailure({ error: e?.error?.message || 'Failed to load your trainers' })))
+    ))
+  ));
 }

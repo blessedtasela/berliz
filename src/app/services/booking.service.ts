@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../models/Api.interface';
 import { Booking } from '../models/booking.model';
+import { MyTrainerSummary } from '../models/progress-share.model';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +44,11 @@ export class BookingService {
 
   getBooking(id: number) {
     return this.httpClient.get<ApiResponse<Booking>>(this.url + `/booking/getBooking/${id}`);
+  }
+
+  /** The distinct trainers/centers the current user has an active or past booking relationship with. */
+  getMyTrainers() {
+    return this.httpClient.get<ApiResponse<MyTrainerSummary[]>>(this.url + "/booking/myTrainers");
   }
 
 }

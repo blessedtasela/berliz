@@ -55,4 +55,14 @@ export const bookingReducer = createReducer(
     myBookings: response.data ? upsert(s.myBookings, response.data) : s.myBookings,
     providerBookings: response.data ? upsert(s.providerBookings, response.data) : s.providerBookings,
   })),
+
+  on(A.loadMyTrainers, state => ({ ...state, myTrainersLoading: true, error: null })),
+
+  on(A.loadMyTrainersSuccess, (s, { response }) => ({
+    ...s, myTrainersLoading: false, myTrainers: response.data ?? []
+  })),
+
+  on(A.loadMyTrainersFailure, (s, { error }) => ({
+    ...s, myTrainersLoading: false, error
+  })),
 );

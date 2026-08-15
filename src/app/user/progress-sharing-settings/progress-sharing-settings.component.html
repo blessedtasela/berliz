@@ -1,0 +1,59 @@
+<div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+
+    <div>
+        <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Progress sharing</h2>
+        <p class="text-[11px] text-gray-400 mt-0.5">
+            Your workout and progress history is private by default. Turn a trainer on below to let
+            them see it — you can revoke access at any time.
+        </p>
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <!-- Loading -->
+    <div *ngIf="loadingTrainers" class="flex items-center justify-center py-6 gap-2 text-gray-400">
+        <i-feather name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>
+        <span class="text-[11px]">Loading your trainers...</span>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!loadingTrainers && trainers.length === 0"
+        class="flex flex-col items-center justify-center py-8 gap-2 text-gray-400">
+        <i-feather name="users" style="width:24px;height:24px;"></i-feather>
+        <p class="text-xs font-medium">You haven't booked with a trainer yet.</p>
+    </div>
+
+    <!-- Trainer rows -->
+    <div *ngIf="!loadingTrainers && trainers.length > 0" class="flex flex-col divide-y divide-gray-100">
+        <div *ngFor="let trainer of trainers" class="flex items-center justify-between gap-4 py-2.5">
+
+            <div class="flex items-start gap-2.5 min-w-0">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                    [ngClass]="isShared(trainer.id) ? 'bg-green-50 border border-green-200' : 'bg-gray-100 border border-gray-200'">
+                    <i-feather [name]="isShared(trainer.id) ? 'eye' : 'eye-off'" style="width:14px;height:14px;"
+                        [ngClass]="isShared(trainer.id) ? 'text-green-600' : 'text-gray-400'"></i-feather>
+                </div>
+
+                <div class="flex flex-col gap-0.5 min-w-0">
+                    <p class="text-xs font-bold text-gray-900 truncate">{{ trainer.name }}</p>
+                    <p class="text-[11px] text-gray-400">
+                        {{ isShared(trainer.id) ? 'Can see your progress' : 'Cannot see your progress' }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Switch -->
+            <button type="button" role="switch" [attr.aria-checked]="isShared(trainer.id)"
+                [attr.aria-label]="'Share progress with ' + trainer.name" (click)="toggleSharing(trainer)"
+                [disabled]="isSaving(trainer.id)"
+                class="relative w-11 h-6 rounded-full transition shrink-0 disabled:opacity-60
+                       disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
+                [ngClass]="isShared(trainer.id) ? 'bg-red-600' : 'bg-gray-200'">
+                <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
+                    [ngClass]="isShared(trainer.id) ? 'translate-x-5' : 'translate-x-0'"></span>
+            </button>
+
+        </div>
+    </div>
+
+</div>

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes, UrlMatchResult, UrlSegment } from '@angular/router';
 import { CenterPageComponent } from './centers/center-page/center-page.component';
 import { LandingPageComponent } from './landing/landing-page/landing-page.component';
 import { ContactUsPageComponent } from './contact-us/contact-us-page/contact-us-page.component';
@@ -56,6 +56,26 @@ import { MembersDirectoryComponent } from './members-directory/members-directory
 
 
 
+/**
+ * Matches /partners/<secret> case-insensitively — the secret gets shared through
+ * channels (chat apps, some email clients) that silently lowercase URLs before a
+ * person can click them, so a case-sensitive `path` would 404 real, legitimate
+ * visitors. Angular's `path` matching has no case-insensitive option, hence the
+ * custom matcher instead of a plain path segment.
+ */
+const PARTNER_ONEPAGER_SECRET = 'aW3QRnVb-XxJ8DtqfSeRAhMVoGBJ5pjq'.toLowerCase();
+
+function partnerOnepagerMatcher(segments: UrlSegment[]): UrlMatchResult | null {
+  if (
+    segments.length === 2 &&
+    segments[0].path === 'partners' &&
+    segments[1].path.toLowerCase() === PARTNER_ONEPAGER_SECRET
+  ) {
+    return { consumed: segments };
+  }
+  return null;
+}
+
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: LandingPageComponent, data: { breadcrumb: 'Home' } },
@@ -110,9 +130,11 @@ export const routes: Routes = [
   // Unlisted partner pitch page — deliberately NOT in any nav/footer, NOT in
   // sitemap.xml, and NOT in robots.txt (that file is public, so listing this
   // path there would leak it). Reachable only by whoever is given this exact
-  // URL directly. The component itself sets a noindex/nofollow meta tag as a
-  // second layer, in case the URL ever leaks to a well-behaved crawler.
-  { path: 'partners/aW3QRnVb-XxJ8DtqfSeRAhMVoGBJ5pjq', loadChildren: () => import('./partner-onepager/partner-onepager.module').then(m => m.PartnerOnepagerModule) },
+  // URL directly. Matched case-insensitively (see partnerOnepagerMatcher above)
+  // since the secret gets mangled to lowercase by some sharing channels. The
+  // component itself sets a noindex/nofollow meta tag as a second layer, in
+  // case the URL ever leaks to a well-behaved crawler.
+  { matcher: partnerOnepagerMatcher, loadChildren: () => import('./partner-onepager/partner-onepager.module').then(m => m.PartnerOnepagerModule) },
   { path: 'login/reset-password', component: ResetPasswordComponent, data: { breadcrumb: 'Reset Password' } },
   { path: 'login/activate-account', component: ActivateAccountComponent, data: { breadcrumb: 'Activate Account' } },
   { path: 'shop', component: ProductsPageComponent, children: productChildRoutes, data: { breadcrumb: 'Shop' } },
