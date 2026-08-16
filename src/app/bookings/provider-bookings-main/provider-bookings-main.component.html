@@ -45,7 +45,8 @@
                     Awaiting your response
                 </span>
                 <app-booking-card *ngFor="let b of pending" mode="provider" [booking]="b"
-                    (statusChangeRequested)="onStatusChangeRequested($event)"></app-booking-card>
+                    (statusChangeRequested)="onStatusChangeRequested($event)"
+                    (startIntakeRequested)="onStartIntakeRequested($event)"></app-booking-card>
             </div>
 
             <!-- Confirmed -->
@@ -55,7 +56,8 @@
                     Confirmed
                 </span>
                 <app-booking-card *ngFor="let b of confirmed" mode="provider" [booking]="b"
-                    (statusChangeRequested)="onStatusChangeRequested($event)"></app-booking-card>
+                    (statusChangeRequested)="onStatusChangeRequested($event)"
+                    (startIntakeRequested)="onStartIntakeRequested($event)"></app-booking-card>
             </div>
 
             <!-- Completed -->
@@ -64,7 +66,8 @@
                     <i-feather name="award" style="width:11px;height:11px;"></i-feather>
                     Completed
                 </span>
-                <app-booking-card *ngFor="let b of completed" mode="provider" [booking]="b"></app-booking-card>
+                <app-booking-card *ngFor="let b of completed" mode="provider" [booking]="b"
+                    (startIntakeRequested)="onStartIntakeRequested($event)"></app-booking-card>
             </div>
 
             <!-- Cancelled -->
@@ -73,7 +76,8 @@
                     <i-feather name="x-circle" style="width:11px;height:11px;"></i-feather>
                     Cancelled
                 </span>
-                <app-booking-card *ngFor="let b of cancelled" mode="provider" [booking]="b"></app-booking-card>
+                <app-booking-card *ngFor="let b of cancelled" mode="provider" [booking]="b"
+                    (startIntakeRequested)="onStartIntakeRequested($event)"></app-booking-card>
             </div>
 
         </div>

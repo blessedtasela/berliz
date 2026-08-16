@@ -14,11 +14,11 @@ describe('TrainerPricingComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [TrainerPricingComponent],
+      schemas: [NO_ERRORS_SCHEMA],
       providers: [
         provideMockStore(),
-        { provide: NgxUiLoaderService, useValue: ngxServiceSpy },
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+        { provide: NgxUiLoaderService, useValue: ngxServiceSpy }
+      ]
     });
     fixture = TestBed.createComponent(TrainerPricingComponent);
     component = fixture.componentInstance;

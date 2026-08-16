@@ -15,6 +15,7 @@ export class BookingCardComponent {
 
   @Output() cancelRequested = new EventEmitter<number>();
   @Output() statusChangeRequested = new EventEmitter<{ id: number; status: string }>();
+  @Output() startIntakeRequested = new EventEmitter<{ clientId: number; clientName: string }>();
 
   get counterpartyName(): string {
     if (this.mode === 'client') {
@@ -65,11 +66,20 @@ export class BookingCardComponent {
     return this.mode === 'provider' && (this.booking.status === 'pending' || this.booking.status === 'confirmed');
   }
 
+  /** A trainer can start (or revisit) an intake once they've actually taken the client on. */
+  get canStartIntake(): boolean {
+    return this.mode === 'provider' && (this.booking.status === 'confirmed' || this.booking.status === 'completed');
+  }
+
   cancel(): void {
     this.cancelRequested.emit(this.booking.id);
   }
 
   setStatus(status: string): void {
     this.statusChangeRequested.emit({ id: this.booking.id, status });
+  }
+
+  startIntake(): void {
+    this.startIntakeRequested.emit({ clientId: this.booking.clientId, clientName: this.counterpartyName });
   }
 }

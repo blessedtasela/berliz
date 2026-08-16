@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
@@ -38,6 +39,7 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     private store: Store,
     private actions$: Actions,
     private snackBar: SnackBarService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -82,5 +84,11 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
 
   onStatusChangeRequested(event: { id: number; status: string }): void {
     this.store.dispatch(updateBookingStatus(event));
+  }
+
+  onStartIntakeRequested(event: { clientId: number; clientName: string }): void {
+    this.router.navigate(['/client-intake/new', event.clientId], {
+      queryParams: { clientName: event.clientName }
+    });
   }
 }

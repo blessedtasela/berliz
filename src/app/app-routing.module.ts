@@ -44,6 +44,8 @@ import { DashboardRouteComponent } from './dashboard/dashboard-route/dashboard-r
 import { MySubscriptionsMainComponent } from './my-subscriptions/my-subscriptions-main/my-subscriptions-main.component';
 import { MyBookingsMainComponent } from './bookings/my-bookings-main/my-bookings-main.component';
 import { ProviderBookingsMainComponent } from './bookings/provider-bookings-main/provider-bookings-main.component';
+import { ClientIntakeFormComponent } from './client-intake/client-intake-form/client-intake-form.component';
+import { MyClientIntakesComponent } from './client-intake/my-client-intakes/my-client-intakes.component';
 import { MyTodoListMainComponent } from './my-todo-list/my-todo-list-main/my-todo-list-main.component';
 import { MyTrainerMainComponent } from './my-trainer/my-trainer-main/my-trainer-main.component';
 import { TrainersMainComponent } from './trainers/trainers-main/trainers-main.component';
@@ -261,6 +263,37 @@ export const routes: Routes = [
         }
       },
 
+      // Client intake — trainer initiates for a specific client (clientId
+      // route param); client or the assigned trainer can view/edit
+      // afterwards (id route param). Access is enforced server-side.
+      {
+        path: 'client-intake/new/:clientId',
+        component: ClientIntakeFormComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'New Client Intake',
+          expectedRole: ['trainer']
+        }
+      },
+      {
+        path: 'client-intake/:id',
+        component: ClientIntakeFormComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Client Intake',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+      {
+        path: 'my-client-intakes',
+        component: MyClientIntakesComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Client Intakes',
+          expectedRole: ['trainer']
+        }
+      },
+
       // Todos
       {
         path: 'my-todos',
@@ -384,6 +417,9 @@ export const routes: Routes = [
           { path: 'my-todos', component: MyTodoListMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'To-do List', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
           { path: 'my-bookings', component: MyBookingsMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'My Bookings', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
           { path: 'my-provider-bookings', component: ProviderBookingsMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Bookings', expectedRole: ['trainer', 'center'] } },
+          { path: 'client-intake/new/:clientId', component: ClientIntakeFormComponent, canActivate: [AuthGuard], data: { breadcrumb: 'New Client Intake', expectedRole: ['trainer'] } },
+          { path: 'client-intake/:id', component: ClientIntakeFormComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Client Intake', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
+          { path: 'my-client-intakes', component: MyClientIntakesComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Client Intakes', expectedRole: ['trainer'] } },
 
           {
             path: 'partnership',

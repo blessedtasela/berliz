@@ -44,6 +44,11 @@
                 class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
                 Cancel
             </button>
+            <button *ngIf="canStartIntake" type="button" (click)="startIntake()"
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-red-200 text-red-600 hover:bg-red-50 transition flex items-center gap-1">
+                <i-feather name="file-text" style="width:11px;height:11px;"></i-feather>
+                Start Intake
+            </button>
         </div>
     </div>
 </div>
