@@ -155,6 +155,13 @@ export class SideBarOpenComponent implements OnInit, OnDestroy {
     this.openMenu = window.innerWidth >= 768;
   }
 
+  @HostListener('window:resize')
+  closeMobileSidebar(): void {
+    if (window.innerWidth < 768) {
+      this.openMenu = false;
+    }
+  }
+
   @HostListener('document:click', ['$event'])
   handleDocumentClick(event: Event): void {
     if (!this.isClickInsideSidebar(event) && window.innerWidth < 768) {

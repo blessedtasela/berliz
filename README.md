@@ -33,7 +33,7 @@ Configuration lives in `src/environments/environment.ts` (development) and `envi
 ng serve
 ```
 
-Opens at `http://localhost:4200`, proxying API calls to whatever `environment.api` points at (defaults to a local backend at `http://localhost:8001`).
+Opens at `http://localhost:4200`, proxying API calls to whatever `environment.api` points at (defaults to a local backend at `http://localhost:8080`).
 
 ### Build
 

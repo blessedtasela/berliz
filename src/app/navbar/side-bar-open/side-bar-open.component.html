@@ -20,7 +20,7 @@
     <div *ngIf="item.separator" class="border-t border-gray-800 my-1 mx-1"></div>
 
     <!-- Nav item -->
-    <a *ngIf="!item.separator" [routerLink]="item.route"
+    <a *ngIf="!item.separator" [routerLink]="item.route"  (click)="closeMobileSidebar()"
       class="flex items-center gap-2.5 px-3 h-10 rounded-lg text-[12.5px] font-medium transition"
       [ngClass]="isActive(item.route || '', item.exact)
         ? 'bg-red-600/20 border border-red-600/30 text-red-400'
