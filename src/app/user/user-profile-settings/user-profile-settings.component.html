@@ -62,6 +62,60 @@
         </div>
     </div>
 
+    <!-- ═══════════ SIDEBAR DISPLAY ═══════════
+         Sets the DEFAULT sidebar shown on desktop when the app loads. Purely a
+         starting point — the sidebar's own expand/collapse controls and the
+         floating reopen button always still work afterwards regardless of it. -->
+    <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+
+        <div>
+            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Sidebar display</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                Choose how the navigation sidebar looks by default on desktop. You can always
+                expand, collapse or reopen it manually afterwards — this just sets the starting point.
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div class="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Sidebar display">
+
+            <button type="button" role="radio" [attr.aria-checked]="sidebarDisplay === 'expanded'"
+                (click)="setSidebarDisplay('expanded')" [disabled]="savingSidebarDisplay"
+                class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition
+                       disabled:opacity-60 disabled:cursor-not-allowed"
+                [ngClass]="sidebarDisplay === 'expanded' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                <i-feather name="layout" style="width:16px;height:16px;"
+                    [ngClass]="sidebarDisplay === 'expanded' ? 'text-red-600' : 'text-gray-400'"></i-feather>
+                <span class="text-[11px] font-semibold"
+                    [ngClass]="sidebarDisplay === 'expanded' ? 'text-red-600' : 'text-gray-600'">Expanded</span>
+            </button>
+
+            <button type="button" role="radio" [attr.aria-checked]="sidebarDisplay === 'collapsed'"
+                (click)="setSidebarDisplay('collapsed')" [disabled]="savingSidebarDisplay"
+                class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition
+                       disabled:opacity-60 disabled:cursor-not-allowed"
+                [ngClass]="sidebarDisplay === 'collapsed' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                <i-feather name="align-justify" style="width:16px;height:16px;"
+                    [ngClass]="sidebarDisplay === 'collapsed' ? 'text-red-600' : 'text-gray-400'"></i-feather>
+                <span class="text-[11px] font-semibold"
+                    [ngClass]="sidebarDisplay === 'collapsed' ? 'text-red-600' : 'text-gray-600'">Collapsed</span>
+            </button>
+
+            <button type="button" role="radio" [attr.aria-checked]="sidebarDisplay === 'hidden'"
+                (click)="setSidebarDisplay('hidden')" [disabled]="savingSidebarDisplay"
+                class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition
+                       disabled:opacity-60 disabled:cursor-not-allowed"
+                [ngClass]="sidebarDisplay === 'hidden' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                <i-feather name="eye-off" style="width:16px;height:16px;"
+                    [ngClass]="sidebarDisplay === 'hidden' ? 'text-red-600' : 'text-gray-400'"></i-feather>
+                <span class="text-[11px] font-semibold"
+                    [ngClass]="sidebarDisplay === 'hidden' ? 'text-red-600' : 'text-gray-600'">Hidden</span>
+            </button>
+
+        </div>
+    </div>
+
     <!-- ═══════════ PROGRESS SHARING ═══════════
          Opt-in per trainer — mirrors the public profile visibility switch above.
          Nothing is shared with any trainer until the client turns them on here. -->

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, of } from 'rxjs';
+import { catchError, exhaustMap, map, mergeMap, of } from 'rxjs';
 import { TrainerService } from '../../services/trainer.service';
 import * as A from './trainer.actions';
 
@@ -34,7 +34,7 @@ export class TrainerEffects {
 
   loadMyTrainer$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadMyTrainer, A.refreshTrainer),
-    mergeMap(() => this.svc.getTrainer().pipe(
+    exhaustMap(() => this.svc.getTrainer().pipe(
       map(r => A.loadMyTrainerSuccess({ response: r })),
       catchError(e => of(A.loadMyTrainerFailure({ error: e?.error?.message || 'Failed' })))
     ))
@@ -126,7 +126,7 @@ export class TrainerEffects {
 
   loadMyTrainerPricing$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadMyTrainerPricing),
-    mergeMap(() => this.svc.getMyTrainerPricing().pipe(
+    exhaustMap(() => this.svc.getMyTrainerPricing().pipe(
       map(r => A.loadMyTrainerPricingSuccess({ response: r })),
       catchError(e => of(A.loadMyTrainerPricingFailure({ error: e?.error?.message || 'Failed' })))
     ))
@@ -170,7 +170,7 @@ export class TrainerEffects {
 
   loadMyTrainerBenefits$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadMyTrainerBenefits),
-    mergeMap(() => this.svc.getMyTrainerBenefits().pipe(
+    exhaustMap(() => this.svc.getMyTrainerBenefits().pipe(
       map(r => A.loadMyTrainerBenefitsSuccess({ response: r })),
       catchError(e => of(A.loadMyTrainerBenefitsFailure({ error: e?.error?.message || 'Failed' })))
     ))
@@ -214,7 +214,7 @@ export class TrainerEffects {
 
   loadMyTrainerIntroduction$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadMyTrainerIntroduction),
-    mergeMap(() => this.svc.getMyTrainerIntroduction().pipe(
+    exhaustMap(() => this.svc.getMyTrainerIntroduction().pipe(
       map(r => A.loadMyTrainerIntroductionSuccess({ response: r })),
       catchError(e => of(A.loadMyTrainerIntroductionFailure({ error: e?.error?.message || 'Failed' })))
     ))
@@ -258,7 +258,7 @@ export class TrainerEffects {
 
   loadMyTrainerPhotoAlbum$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadMyTrainerPhotoAlbum),
-    mergeMap(() => this.svc.getMyTrainerPhotosAlbum().pipe(
+    exhaustMap(() => this.svc.getMyTrainerPhotosAlbum().pipe(
       map(r => A.loadMyTrainerPhotoAlbumSuccess({ response: r })),
       catchError(e => of(A.loadMyTrainerPhotoAlbumFailure({ error: e?.error?.message || 'Failed' })))
     ))
@@ -310,7 +310,7 @@ export class TrainerEffects {
 
   loadMyTrainerVideoAlbum$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadMyTrainerVideoAlbum),
-    mergeMap(() => this.svc.getMyTrainerVideosAlbum().pipe(
+    exhaustMap(() => this.svc.getMyTrainerVideosAlbum().pipe(
       map(r => A.loadMyTrainerVideoAlbumSuccess({ response: r })),
       catchError(e => of(A.loadMyTrainerVideoAlbumFailure({ error: e?.error?.message || 'Failed' })))
     ))
@@ -354,7 +354,7 @@ export class TrainerEffects {
 
   loadMyTrainerFeatureVideos$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadMyTrainerFeatureVideos),
-    mergeMap(() => this.svc.getMyTrainerFeatureVideos().pipe(
+    exhaustMap(() => this.svc.getMyTrainerFeatureVideos().pipe(
       map(r => A.loadMyTrainerFeatureVideosSuccess({ response: r })),
       catchError(e => of(A.loadMyTrainerFeatureVideosFailure({ error: e?.error?.message || 'Failed' })))
     ))
@@ -466,7 +466,7 @@ export class TrainerEffects {
 
   loadMyTrainerSubscription$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadMyTrainerSubscription),
-    mergeMap(() => this.svc.getMyTrainerSubscription().pipe(
+    exhaustMap(() => this.svc.getMyTrainerSubscription().pipe(
       map(r => A.loadMyTrainerSubscriptionSuccess({ response: r })),
       catchError(e => of(A.loadMyTrainerSubscriptionFailure({ error: e?.error?.message || 'Failed' })))
     ))

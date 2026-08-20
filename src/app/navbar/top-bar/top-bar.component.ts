@@ -91,7 +91,17 @@ export class TopBarComponent implements OnInit {
     this.watchUpdateUserStatus();
   }
 
+  // Called once from ngOnInit AND again on every websocket notification/user
+  // topic event (see registerNotificationTopics / watchUpdateUser etc. below).
+  // The guard below makes it idempotent: previously every one of those calls
+  // pushed two MORE store subscriptions onto this.subscriptions without ever
+  // unsubscribing the old ones, leaking subscriptions for as long as the app
+  // shell (this component) stayed mounted — i.e. the whole logged-in session.
+  private storeStateWatched = false;
+
   handleEmitEvent(): void {
+    if (this.storeStateWatched) return;
+    this.storeStateWatched = true;
 
     this.subscriptions.push(
 
@@ -115,6 +125,7 @@ export class TopBarComponent implements OnInit {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
 

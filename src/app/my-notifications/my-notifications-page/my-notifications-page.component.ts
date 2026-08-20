@@ -33,11 +33,32 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
 
+    // Store subscription set up ONCE. Previously loadNotifications() both
+    // dispatched AND re-subscribed to selectMyNotifications, and every one
+    // of the five websocket topics below called loadNotifications() again on
+    // every message -- stacking a brand-new, never-unsubscribed subscription
+    // on top of the last one for as long as this page stayed mounted.
+    this.watchStoreState();
+
     // Initial load
     this.loadNotifications();
 
     // Watch all websocket events with one helper
     this.webSocketListeners();
+  }
+
+  private watchStoreState(): void {
+    this.subscriptions.push(
+      this.store.select(selectMyNotifications).subscribe(myNotifications => {
+        this.rawNotifications = myNotifications;
+
+        // ONLY update UI if no filter is active
+        if (!this.isSearch) {
+          this.notificationData = [...myNotifications];
+          this.totalNotifications = myNotifications.length;
+        }
+      })
+    );
   }
 
   ngOnDestroy(): void {
@@ -77,20 +98,6 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
   /** Load notifications from state service */
   private loadNotifications(): void {
     this.store.dispatch(loadMyNotifications());
-    this.subscriptions.push(
-      this.store.select(selectMyNotifications).subscribe(myNotifications => {
-        this.rawNotifications = myNotifications;
-
-        // Only overwrite UI if user is NOT filtering
-        this.rawNotifications = myNotifications;
-
-        // ONLY update UI if no filter is active
-        if (!this.isSearch) {
-          this.notificationData = [...myNotifications];
-          this.totalNotifications = myNotifications.length;
-        }
-      })
-    );
   }
 
   /** Generic websocket watcher */

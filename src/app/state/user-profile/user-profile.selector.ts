@@ -42,6 +42,16 @@ export const selectSavingVisibility = createSelector(
   state => state.savingVisibility
 );
 
+export const selectMySidebarDisplay = createSelector(
+  selectUserProfileState,
+  state => state.mySidebarDisplay
+);
+
+export const selectSavingSidebarDisplay = createSelector(
+  selectUserProfileState,
+  state => state.savingSidebarDisplay
+);
+
 // ── PUBLIC DIRECTORY ──────────────────────────────────────────────────────
 export const selectPublicDirectory = createSelector(
   selectUserProfileState,

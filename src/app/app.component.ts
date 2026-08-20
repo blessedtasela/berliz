@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { BlurService } from './services/blur.service';
 import { MatDialog } from '@angular/material/dialog';
-import { SidebarStateService } from './services/sidebar-state.service';
+import { SidebarDisplay, SidebarStateService } from './services/sidebar-state.service';
 import { NewsletterPopupComponent } from './shared/newsletter-popup/newsletter-popup.component';
 import { NewsletterTriggerService } from './shared/newsletter-popup/newsletter-trigger.service';
 import { InactivityService } from './services/inactivity.service';
@@ -17,7 +17,13 @@ export class AppComponent implements OnInit {
   title = 'Berliz';
   activeLayout: 'login' | 'topbar' | 'sidebar' = 'login';
   isBlurred$ = this.blurService.blur$;
-  sidebarOpen = false;
+  /**
+   * Desktop sidebar display mode, mirrored from SidebarStateService so the page
+   * wrapper knows how much horizontal space (if any) to reserve. Below `md` the
+   * sidebar never reserves space — it is either a temporary overlay or fully
+   * hidden behind a floating reopen button — so this only matters at `md` and up.
+   */
+  sidebarMode: SidebarDisplay = 'expanded';
 
   constructor(
     private router: Router,
@@ -28,8 +34,8 @@ export class AppComponent implements OnInit {
     private inactivityService: InactivityService,
     private seoService: SeoService,
   ) {
-    this.sidebarState.sidebarOpen$.subscribe(open => {
-      this.sidebarOpen = open;
+    this.sidebarState.mode$.subscribe(mode => {
+      this.sidebarMode = mode;
     });
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {

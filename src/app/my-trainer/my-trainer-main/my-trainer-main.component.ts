@@ -47,7 +47,14 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
   dataReady = false;
 
   private totalRequests = 8;
-  private completedRequests = 0;
+  // Tracks which of the 8 sections has resolved at least once, keyed by name
+  // (see markRequestCompleted). A Set instead of a running counter because the
+  // selector subscriptions below are now set up exactly ONCE (see ngOnInit) —
+  // with a counter, calling loadData() again (e.g. from a websocket event)
+  // while old subscriptions were still alive used to keep incrementing past
+  // totalRequests every time the store emitted, which happened to still work
+  // by accident but relied on subscriptions leaking forever.
+  private completedKeys = new Set<string>();
 
   // Computed after data loads
   profileCompletion: ProfileCompletion = {
@@ -71,6 +78,16 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.handleWatchService();
+    // Store subscriptions are wired up once, here — loadData() below (and
+    // every subsequent call to it, e.g. from websocket events or the
+    // subscription modal) only dispatches. Previously each of the 8
+    // loadX() methods called store.select(...).subscribe(...) itself, so
+    // every loadData() call (including one per websocket topic message)
+    // created 8 brand-new, never-unsubscribed store subscriptions on top
+    // of whatever was already listening — a growing subscription leak that
+    // also meant a single store emission could re-run markRequestCompleted
+    // once per leaked subscription.
+    this.watchStoreState();
     this.loadData();
   }
 
@@ -78,131 +95,53 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  // ── Load ──────────────────────────────────────────────────────────────────
+  // ── Store subscriptions (set up once) ───────────────────────────────────────
 
-  private markRequestCompleted(): void {
-    this.completedRequests++;
+  private watchStoreState(): void {
+    this.subscriptions.push(
+      this.store.select(selectCurrentTrainer).subscribe(res => {
+        this.trainer = res;
+        this.markRequestCompleted('trainer');
+      }),
+      this.store.select(selectMyTrainerPricing).subscribe(res => {
+        this.trainerPricing = res;
+        this.markRequestCompleted('pricing');
+      }),
+      this.store.select(selectMyTrainerIntroduction).subscribe(res => {
+        this.trainerIntroduction = res;
+        this.markRequestCompleted('introduction');
+      }),
+      this.store.select(selectMyTrainerBenefit).subscribe(res => {
+        this.trainerBenefit = res;
+        this.markRequestCompleted('benefits');
+      }),
+      this.store.select(selectMyTrainerFeatureVideos).subscribe(res => {
+        this.trainerFeatureVideo = res;
+        this.markRequestCompleted('featureVideos');
+      }),
+      this.store.select(selectMyTrainerPhotoAlbum).subscribe(res => {
+        this.trainerPhotoAlbum = res;
+        this.markRequestCompleted('photoAlbum');
+      }),
+      this.store.select(selectMyTrainerVideoAlbum).subscribe(res => {
+        this.trainerVideoAlbum = res;
+        this.markRequestCompleted('videoAlbum');
+      }),
+      this.store.select(selectMyTrainerSubscription).subscribe(res => {
+        this.trainerSubscription = res;
+        this.markRequestCompleted('subscription');
+      }),
+    );
+  }
 
-    if (this.completedRequests >= this.totalRequests) {
+  private markRequestCompleted(key: string): void {
+    this.completedKeys.add(key);
+
+    if (this.completedKeys.size >= this.totalRequests) {
       this.computeProfileCompletion();
       this.dataReady = true;
       this.cdr.detectChanges();
     }
-  }
-
-  loadTrainer(): void {
-    this.store.dispatch(loadMyTrainer());
-    this.store.select(selectCurrentTrainer).subscribe({
-      next: res => {
-        this.trainer = res;
-        this.markRequestCompleted();
-      },
-      error: err => {
-        console.error(err);
-        this.markRequestCompleted();
-      }
-    });
-  }
-
-  loadPricing(): void {
-    this.store.dispatch(loadMyTrainerPricing());
-    this.store.select(selectMyTrainerPricing).subscribe({
-      next: res => {
-        this.trainerPricing = res;
-        this.markRequestCompleted();
-      },
-      error: err => {
-        console.error(err);
-        this.markRequestCompleted();
-      }
-    });
-  }
-
-
-  loadIntroduction(): void {
-    this.store.dispatch(loadMyTrainerIntroduction());
-    this.store.select(selectMyTrainerIntroduction).subscribe({
-      next: res => {
-        this.trainerIntroduction = res;
-        console.log('Loaded introduction:', res);
-        this.markRequestCompleted();
-      },
-      error: err => {
-        console.error(err);
-        this.markRequestCompleted();
-      }
-    });
-  }
-
-  loadBenefits(): void {
-    this.store.dispatch(loadMyTrainerBenefits());
-    this.store.select(selectMyTrainerBenefit).subscribe({
-      next: res => {
-        this.trainerBenefit = res;
-        this.markRequestCompleted();
-      },
-      error: err => {
-        console.error(err);
-        this.markRequestCompleted();
-      }
-    });
-  }
-
-  loadFeatureVideos(): void {
-    this.store.dispatch(loadMyTrainerFeatureVideos());
-    this.store.select(selectMyTrainerFeatureVideos).subscribe({
-      next: res => {
-        this.trainerFeatureVideo = res;
-        this.markRequestCompleted();
-      },
-      error: err => {
-        console.error(err);
-        this.markRequestCompleted();
-      }
-    });
-  }
-
-
-  loadPhotoAlbum(): void {
-    this.store.dispatch(loadMyTrainerPhotoAlbum());
-    this.store.select(selectMyTrainerPhotoAlbum).subscribe({
-      next: res => {
-        this.trainerPhotoAlbum = res;
-        this.markRequestCompleted();
-      },
-      error: err => {
-        console.error(err);
-        this.markRequestCompleted();
-      }
-    });
-  }
-
-  loadVideoAlbum(): void {
-    this.store.dispatch(loadMyTrainerVideoAlbum());
-    this.store.select(selectMyTrainerVideoAlbum).subscribe({
-      next: res => {
-        this.trainerVideoAlbum = res;
-        this.markRequestCompleted();
-      },
-      error: err => {
-        console.error(err);
-        this.markRequestCompleted();
-      }
-    });
-  }
-
-  loadSubscription(): void {
-    this.store.dispatch(loadMyTrainerSubscription());
-    this.store.select(selectMyTrainerSubscription).subscribe({
-      next: res => {
-        this.trainerSubscription = res;
-        this.markRequestCompleted();
-      },
-      error: err => {
-        console.error(err);
-        this.markRequestCompleted();
-      }
-    });
   }
 
   private computeProfileCompletion(): void {
@@ -216,20 +155,22 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
     };
   }
 
+  // ── Load data (dispatch only) ────────────────────────────────────────────────
+  // Safe to call repeatedly (initial load, websocket-triggered refresh, modal
+  // save) without leaking subscriptions or piling up duplicate HTTP requests:
+  // the loadMyTrainer*/loadMyTrainerSubscription effects use exhaustMap, which
+  // collapses concurrent/duplicate dispatches of the same action into a single
+  // in-flight request.
 
   loadData(): void {
-
-    this.dataReady = false;
-    this.completedRequests = 0;
-
-    this.loadTrainer();
-    this.loadIntroduction();
-    this.loadPricing();
-    this.loadBenefits();
-    this.loadFeatureVideos();
-    this.loadPhotoAlbum();
-    this.loadVideoAlbum();
-    this.loadSubscription();
+    this.store.dispatch(loadMyTrainer());
+    this.store.dispatch(loadMyTrainerIntroduction());
+    this.store.dispatch(loadMyTrainerPricing());
+    this.store.dispatch(loadMyTrainerBenefits());
+    this.store.dispatch(loadMyTrainerFeatureVideos());
+    this.store.dispatch(loadMyTrainerPhotoAlbum());
+    this.store.dispatch(loadMyTrainerVideoAlbum());
+    this.store.dispatch(loadMyTrainerSubscription());
   }
 
   // ── Derived state ─────────────────────────────────────────────────────────

@@ -4,8 +4,8 @@ export const environment = {
     production: false,
     // api: 'https://berliz-server-fd9efef771e8.herokuapp.com',
         // Railway backend
-    api: 'https://berliz-api.up.railway.app',
-    // api: 'http://localhost:8080',
+    // api: 'https://berliz-api.up.railway.app',
+    api: 'http://localhost:8080',
     // api: 'http://192.168.43.56:8001',
 
     baseUrl: berliz,

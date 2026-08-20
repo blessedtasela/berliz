@@ -3,7 +3,7 @@ import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidatorFn, Valida
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription, combineLatest } from 'rxjs';
+import { Subscription, combineLatest, take } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { CenterPricing, Centers } from 'src/app/models/centers.interface';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
@@ -73,31 +73,43 @@ export class UpdateSubscriptionsModalComponent {
       ),
     });
 
+    // One-time priming: dispatch a load only for whichever lists are still
+    // empty when the modal opens, instead of re-checking (and potentially
+    // re-dispatching) on every emission from any of these five selectors --
+    // which duplicated GET requests for lists that were merely slow to
+    // resolve or genuinely empty.
     combineLatest([
       this.store.select(selectCenters),
       this.store.select(selectTrainers),
       this.store.select(selectCategories),
       this.store.select(selectTrainerPricing),
       this.store.select(selectCenterPricing)
-    ]).subscribe(([centers, trainers, categories, trainerPricing, centerPricing]) => {
-
+    ]).pipe(take(1)).subscribe(([centers, trainers, categories, trainerPricing, centerPricing]) => {
       if (!centers?.length) this.store.dispatch(loadCenters());
-      else this.centers = centers;
-
       if (!trainers?.length) this.store.dispatch(loadActiveTrainers());
-      else this.trainers = trainers;
-
       if (!categories?.length) this.store.dispatch(loadActiveCategories());
-      else this.categories = categories;
-
       if (!trainerPricing?.length) this.store.dispatch(loadTrainerPricing());
-      else this.trainerPricing = trainerPricing;
-
       if (!centerPricing?.length) this.store.dispatch(loadAllCenterPricing());
-      else this.centerPricing = centerPricing;
-
-      this.initializeSelections();
     });
+
+    // Ongoing: keep local fields synced with the store as those loads
+    // resolve (and reflect any later updates), tracked for cleanup.
+    this.subscriptions.push(
+      combineLatest([
+        this.store.select(selectCenters),
+        this.store.select(selectTrainers),
+        this.store.select(selectCategories),
+        this.store.select(selectTrainerPricing),
+        this.store.select(selectCenterPricing)
+      ]).subscribe(([centers, trainers, categories, trainerPricing, centerPricing]) => {
+        this.centers = centers ?? [];
+        this.trainers = trainers ?? [];
+        this.categories = categories ?? [];
+        this.trainerPricing = trainerPricing ?? [];
+        this.centerPricing = centerPricing ?? [];
+        this.initializeSelections();
+      })
+    );
   }
 
   ngOnDestroy() {

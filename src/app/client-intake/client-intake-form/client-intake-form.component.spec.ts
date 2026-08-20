@@ -17,6 +17,7 @@ import {
   createClientIntake,
   createClientIntakeFailure,
   createClientIntakeSuccess,
+  loadClientIntake,
   loadClientIntakeFailure,
   updateClientIntake,
 } from 'src/app/state/client-intake/client-intake.actions';
@@ -86,7 +87,7 @@ describe('ClientIntakeFormComponent', () => {
 
     expect(component.mode).toBe('edit');
     expect(component.intakeId).toBe(5);
-    expect(store.dispatch).toHaveBeenCalledWith({ type: '[ClientIntake] Load By Id', id: 5 });
+    expect(store.dispatch).toHaveBeenCalledWith(loadClientIntake({ id: 5 }));
   });
 
   // ── DISCLOSURE BANNER — same non-dismissible pattern as terms-page ──

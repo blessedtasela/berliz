@@ -58,6 +58,26 @@ export const userProfileReducer = createReducer(
     error,
   })),
 
+  // ── MY SIDEBAR DISPLAY ────────────────────────────────────────────────────
+  on(A.updateSidebarDisplay, state => ({
+    ...state,
+    savingSidebarDisplay: true,
+    error: null,
+  })),
+
+  on(A.updateSidebarDisplaySuccess, (state, { sidebarDisplay }) => ({
+    ...state,
+    mySidebarDisplay: sidebarDisplay,
+    savingSidebarDisplay: false,
+    error: null,
+  })),
+
+  on(A.updateSidebarDisplayFailure, (state, { error }) => ({
+    ...state,
+    savingSidebarDisplay: false,
+    error,
+  })),
+
   // ── PUBLIC DIRECTORY ──────────────────────────────────────────────────────
   on(A.loadPublicDirectory, state => ({
     ...state,

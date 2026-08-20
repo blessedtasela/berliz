@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ContactUsFormComponent } from 'src/app/contact-us/contact-us-form/contact-us-form.component';
 import { ContactUs } from 'src/app/models/contact-us.model';
@@ -8,18 +8,20 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { Store } from '@ngrx/store';
 import { loadContactUs } from 'src/app/state/contact-us/contact-us.actions';
 import { selectContactUsList } from 'src/app/state/contact-us/contact-us.selectors';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-contact-us-header',
   templateUrl: './contact-us-header.component.html',
   styleUrls: ['./contact-us-header.component.css']
 })
-export class ContactUsHeaderComponent {
+export class ContactUsHeaderComponent implements OnDestroy {
   selectedSortOption: string = 'date';
   @Input() contactUsData: ContactUs[] = [];
   @Input() totalContactUs: number = 0;
   @Input() contactUsLength: number = 0;
 
+  private subscriptions: Subscription[] = [];
 
   constructor(private store: Store,
     private dialog: MatDialog,
@@ -29,6 +31,10 @@ export class ContactUsHeaderComponent {
   ngOnInit(): void {
     this.watchGetContactUsFromMap()
     this.watchDeleteContactUs()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -102,21 +108,25 @@ export class ContactUsHeaderComponent {
   }
 
   watchGetContactUsFromMap() {
-    this.rxStompService.watch('/topic/getContactUsFromMap').subscribe((message) => {
-      const receivedCategories: ContactUs = JSON.parse(message.body);
-      this.contactUsData.push(receivedCategories);
-      this.contactUsLength = this.contactUsData.length;
-      this.totalContactUs = this.contactUsData.length;
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/getContactUsFromMap').subscribe((message) => {
+        const receivedCategories: ContactUs = JSON.parse(message.body);
+        this.contactUsData.push(receivedCategories);
+        this.contactUsLength = this.contactUsData.length;
+        this.totalContactUs = this.contactUsData.length;
+      })
+    );
   }
 
   watchDeleteContactUs() {
-    this.rxStompService.watch('/topic/deleteContactUs').subscribe((message) => {
-      const receivedContactUs: ContactUs = JSON.parse(message.body);
-      this.contactUsData = this.contactUsData.filter(contactUs => contactUs.id !== receivedContactUs.id);
-      this.contactUsLength = this.contactUsData.length;
-      this.totalContactUs = this.contactUsData.length;
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/deleteContactUs').subscribe((message) => {
+        const receivedContactUs: ContactUs = JSON.parse(message.body);
+        this.contactUsData = this.contactUsData.filter(contactUs => contactUs.id !== receivedContactUs.id);
+        this.contactUsLength = this.contactUsData.length;
+        this.totalContactUs = this.contactUsData.length;
+      })
+    );
   }
 }
 

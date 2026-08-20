@@ -32,6 +32,9 @@ export interface Users {
     /** "public" | "private" — what /user/getPublicProfile/{id} is allowed to expose. */
     profileVisibility?: ProfileVisibility;
 
+    /** "expanded" | "collapsed" | "hidden" — the user's default desktop sidebar display mode. */
+    sidebarDisplay?: SidebarDisplay;
+
     date: string;
     lastUpdate: string;
 
@@ -39,6 +42,16 @@ export interface Users {
 }
 
 export type ProfileVisibility = 'public' | 'private';
+
+/**
+ * The user's preferred default sidebar display mode on desktop:
+ *  - "expanded": full sidebar with labels
+ *  - "collapsed": icon-only rail
+ *  - "hidden": no sidebar at all, reopened via a floating button
+ * Only sets the DEFAULT shown on load — manual toggling (the expand/collapse
+ * controls, the floating reopen button) always still works regardless of it.
+ */
+export type SidebarDisplay = 'expanded' | 'collapsed' | 'hidden';
 
 /**
  * Mirrors the backend `PublicUserProfileResponse`.

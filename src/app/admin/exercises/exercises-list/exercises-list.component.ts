@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Subscription } from 'rxjs';
 import { Exercises } from 'src/app/models/exercise.interface';
 import { ExerciseService } from 'src/app/services/exercise.service';
 import { Store } from '@ngrx/store';
@@ -22,12 +23,14 @@ import { ExercisesDetailsModalComponent } from '../exercises-details-modal/exerc
   templateUrl: './exercises-list.component.html',
   styleUrls: ['./exercises-list.component.css']
 })
-export class ExercisesListComponent {
+export class ExercisesListComponent implements OnDestroy {
   responseMessage: any;
   showFullData: boolean = false;
   @Input() exercisesData: Exercises[] = [];
   @Input() totalExercises: number = 0;
   selectedDemo: any;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private datePipe: DatePipe,
     private exerciseService: ExerciseService,
@@ -42,6 +45,10 @@ export class ExercisesListComponent {
   ngOnInit() {
     this.watchUpdateExercise()
     this.watchUpdateStatus()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -209,19 +216,23 @@ export class ExercisesListComponent {
   }
 
   watchUpdateExercise() {
-    this.rxStompService.watch('/topic/updateExercise').subscribe((message) => {
-      const receivedExercises: Exercises = JSON.parse(message.body);
-      const exerciseId = this.exercisesData.findIndex(exercise => exercise.id === receivedExercises.id)
-      this.exercisesData[exerciseId] = receivedExercises
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateExercise').subscribe((message) => {
+        const receivedExercises: Exercises = JSON.parse(message.body);
+        const exerciseId = this.exercisesData.findIndex(exercise => exercise.id === receivedExercises.id)
+        this.exercisesData[exerciseId] = receivedExercises
+      })
+    );
   }
 
   watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateExerciseStatus').subscribe((message) => {
-      const receivedExercises: Exercises = JSON.parse(message.body);
-      const exerciseId = this.exercisesData.findIndex(exercise => exercise.id === receivedExercises.id)
-      this.exercisesData[exerciseId] = receivedExercises
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateExerciseStatus').subscribe((message) => {
+        const receivedExercises: Exercises = JSON.parse(message.body);
+        const exerciseId = this.exercisesData.findIndex(exercise => exercise.id === receivedExercises.id)
+        this.exercisesData[exerciseId] = receivedExercises
+      })
+    );
   }
 
 }

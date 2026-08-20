@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { ApiResponse } from '../../models/Api.interface';
-import { PublicDirectoryEntry, ProfileVisibility, PublicUserProfile } from '../../models/users.interface';
+import { PublicDirectoryEntry, ProfileVisibility, PublicUserProfile, SidebarDisplay } from '../../models/users.interface';
 
 type Res<T> = { response: ApiResponse<T> };
 type Err = { error: string };
@@ -41,6 +41,24 @@ export const updateProfileVisibilitySuccess = createAction(
 
 export const updateProfileVisibilityFailure = createAction(
   '[User Profile] Update Profile Visibility Failure',
+  props<Err>()
+);
+
+// =============================================================================
+// MY SIDEBAR DISPLAY  — authenticated, affects the caller only
+// =============================================================================
+export const updateSidebarDisplay = createAction(
+  '[User Profile] Update Sidebar Display',
+  props<{ sidebarDisplay: SidebarDisplay }>()
+);
+
+export const updateSidebarDisplaySuccess = createAction(
+  '[User Profile] Update Sidebar Display Success',
+  props<Res<string> & { sidebarDisplay: SidebarDisplay }>()
+);
+
+export const updateSidebarDisplayFailure = createAction(
+  '[User Profile] Update Sidebar Display Failure',
   props<Err>()
 );
 

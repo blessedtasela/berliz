@@ -1,35 +1,58 @@
 <div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
-    <div class="overflow-x-auto">
+    <!-- Mobile: card rows (matches admin/categories pattern) -->
+    <div class="sm:hidden divide-y divide-gray-100">
+        <div *ngFor="let trainerPricing of trainerPricingData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors">
+            <div class="min-w-0 flex-1" (click)="openTrainerPricingDetails(trainerPricing.id)">
+                <p class="font-semibold text-gray-900 truncate">{{ trainerPricing.trainerName }}</p>
+                <p class="text-xs text-gray-400 mt-0.5 truncate">
+                    Online {{ trainerPricing.priceOnline }} &middot; Personal {{ trainerPricing.pricePersonal }} &middot; Hybrid {{ trainerPricing.priceHybrid }} usd
+                </p>
+                <p class="text-[10px] text-gray-400 mt-0.5">{{ formatDate(trainerPricing.date) }}</p>
+            </div>
+            <div class="flex items-center gap-0.5 shrink-0">
+                <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center"
+                    (click)="openUpdateTrainerPricing(trainerPricing.id)" title="Edit">
+                    <i-feather name="edit-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                </button>
+                <button class="w-9 h-9 rounded-lg active:bg-red-50 flex items-center justify-center"
+                    (click)="deleteTrainerPricing(trainerPricing.id)" title="Delete">
+                    <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="hidden sm:block overflow-x-auto">
         <table class="w-full text-sm">
             <thead>
                 <tr class="bg-gray-50 border-b border-gray-200">
-                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN</th>
-                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Email</th>
-                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Trainer</th>
-                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date</th>
-                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">ID</th>
-                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">OTC</th>
-                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">PTC</th>
-                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">HTC</th>
-                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</th>
-                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Email</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Trainer</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">ID</th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">OTC</th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">PTC</th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">HTC</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 <tr *ngFor="let trainerPricing of trainerPricingData; let i = index" class="hover:bg-gray-50 transition-colors">
-                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-500">{{ i + 1 }}</td>
-                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
+                    <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
+                    <td class="px-4 py-3">
                         <a href="mailto:{{ trainerPricing.trainerName }}"
                             class="text-gray-600 hover:text-red-600 transition">{{ trainerPricing.trainerName }}</a>
                     </td>
-                    <td class="px-3 py-2.5 sm:px-4 sm:py-3 font-semibold text-gray-900">{{ trainerPricing.trainerName }}</td>
-                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-500">{{ formatDate(trainerPricing.date) }}</td>
-                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-500 tabular-nums">{{ trainerPricing.id }}</td>
-                    <td class="px-3 py-2.5 sm:px-4 sm:py-3 text-right font-semibold text-gray-900 tabular-nums">{{ trainerPricing.priceOnline }} usd</td>
-                    <td class="px-3 py-2.5 sm:px-4 sm:py-3 text-right font-semibold text-gray-900 tabular-nums">{{ trainerPricing.pricePersonal }} usd</td>
-                    <td class="px-3 py-2.5 sm:px-4 sm:py-3 text-right font-semibold text-gray-900 tabular-nums">{{ trainerPricing.priceHybrid }} usd</td>
-                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-500">{{ formatDate(trainerPricing.lastUpdate) }}</td>
-                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
+                    <td class="px-4 py-3 font-semibold text-gray-900">{{ trainerPricing.trainerName }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ formatDate(trainerPricing.date) }}</td>
+                    <td class="px-4 py-3 text-gray-500 tabular-nums">{{ trainerPricing.id }}</td>
+                    <td class="px-4 py-3 text-right font-semibold text-gray-900 tabular-nums">{{ trainerPricing.priceOnline }} usd</td>
+                    <td class="px-4 py-3 text-right font-semibold text-gray-900 tabular-nums">{{ trainerPricing.pricePersonal }} usd</td>
+                    <td class="px-4 py-3 text-right font-semibold text-gray-900 tabular-nums">{{ trainerPricing.priceHybrid }} usd</td>
+                    <td class="px-4 py-3 text-gray-500">{{ formatDate(trainerPricing.lastUpdate) }}</td>
+                    <td class="px-4 py-3">
                         <div class="flex items-center justify-end gap-1">
                             <button class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
                                 (click)="openTrainerPricingDetails(trainerPricing.id)" title="View">

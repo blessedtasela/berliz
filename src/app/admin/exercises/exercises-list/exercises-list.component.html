@@ -1,22 +1,63 @@
 <div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
-    <div class="overflow-x-auto">
+    <!-- Mobile: card rows (matches admin/categories pattern) -->
+    <div class="sm:hidden divide-y divide-gray-100">
+        <div *ngFor="let exercise of exercisesData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors">
+            <div class="w-12 h-12 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center shrink-0">
+                <video *ngIf="exercise.demo" [src]="'data:video/mp4;base64,' + exercise.demo"
+                    class="w-full h-full object-cover" autoplay [muted]="true" loop>
+                </video>
+                <i-feather *ngIf="!exercise.demo" name="video" class="text-gray-300"
+                    style="width:18px;height:18px;"></i-feather>
+            </div>
+
+            <div class="min-w-0 flex-1" (click)="openExerciseDetails(exercise.id)">
+                <div class="flex items-center gap-2">
+                    <p class="font-semibold text-gray-900 truncate">{{ exercise.name }}</p>
+                    <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                        [ngClass]="exercise.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
+                        {{ exercise.status === 'true' ? 'Active' : 'Inactive' }}
+                    </span>
+                </div>
+                <p class="text-xs text-gray-400 mt-0.5 truncate">updated {{ formatDate(exercise.lastUpdate) }}</p>
+            </div>
+
+            <div class="flex items-center gap-0.5 shrink-0">
+                <label for="fileInput-{{exercise.id}}" title="Replace demo video"
+                    class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center cursor-pointer">
+                    <i-feather name="upload" class="text-gray-500" style="width:16px;height:16px;"></i-feather>
+                </label>
+                <input accept="video/*" type="file" id="fileInput-{{exercise.id}}" class="hidden"
+                    (change)="onVideoSelected($event, exercise.id)">
+                <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center"
+                    (click)="openUpdateExercise(exercise.id)" title="Edit">
+                    <i-feather name="edit-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                </button>
+                <button class="w-9 h-9 rounded-lg active:bg-red-50 flex items-center justify-center"
+                    (click)="deleteExercise(exercise.id)" title="Delete">
+                    <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="hidden sm:block overflow-x-auto">
         <table class="w-full text-sm">
             <thead>
                 <tr class="bg-gray-50 border-b border-gray-200">
-                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN</th>
-                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Demo</th>
-                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Name</th>
-                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Status</th>
-                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date</th>
-                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">ID</th>
-                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</th>
-                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Demo</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Name</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Status</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">ID</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 <tr *ngFor="let exercise of exercisesData; let i = index" class="hover:bg-gray-50 transition-colors">
-                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-500">{{ i + 1 }}</td>
-                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
+                    <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
+                    <td class="px-4 py-3">
                         <div class="flex items-center gap-2">
                             <div class="w-10 h-10 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center shrink-0">
                                 <video *ngIf="exercise.demo" [src]="'data:video/mp4;base64,' + exercise.demo"
@@ -36,17 +77,17 @@
                                 (change)="onVideoSelected($event, exercise.id)">
                         </div>
                     </td>
-                    <td class="px-3 py-2.5 sm:px-4 sm:py-3 font-semibold text-gray-900">{{ exercise.name }}</td>
-                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
+                    <td class="px-4 py-3 font-semibold text-gray-900">{{ exercise.name }}</td>
+                    <td class="px-4 py-3">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold"
                               [ngClass]="exercise.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
                             {{ exercise.status === 'true' ? 'Active' : 'Inactive' }}
                         </span>
                     </td>
-                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-600">{{ formatDate(exercise.date) }}</td>
-                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 font-semibold text-gray-900">{{ exercise.id }}</td>
-                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-600">{{ formatDate(exercise.lastUpdate) }}</td>
-                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
+                    <td class="px-4 py-3 text-gray-600">{{ formatDate(exercise.date) }}</td>
+                    <td class="px-4 py-3 font-semibold text-gray-900">{{ exercise.id }}</td>
+                    <td class="px-4 py-3 text-gray-600">{{ formatDate(exercise.lastUpdate) }}</td>
+                    <td class="px-4 py-3">
                         <div class="flex items-center justify-end gap-1">
                             <button class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
                                 (click)="openExerciseDetails(exercise.id)" title="View">

@@ -1,44 +1,67 @@
 <div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
-    <div class="overflow-x-auto">
+    <!-- Mobile: card rows (matches admin/categories pattern) -->
+    <div class="sm:hidden divide-y divide-gray-100">
+        <div *ngFor="let client of clientsData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors">
+            <div class="min-w-0 flex-1" (click)="openClientDetailsModal(client.id)">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <app-user-hover-card [userId]="client.user?.id" [firstname]="client.user?.firstname"
+                        [lastname]="client.user?.lastname" [photo]="client.user?.profilePhoto"
+                        [role]="client.user?.role" [email]="client.user?.email"
+                        [label]="client.user?.firstname">
+                    </app-user-hover-card>
+                    <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                        [ngClass]="client.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
+                        {{ client.status === 'true' ? 'Active' : 'Inactive' }}
+                    </span>
+                </div>
+                <p class="text-xs text-gray-400 mt-0.5 truncate">updated {{ formatDate(client.lastUpdate) }}</p>
+            </div>
+            <div class="flex items-center gap-0.5 shrink-0">
+                <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center"
+                    (click)="openUpdateClient(client.id)" title="Edit">
+                    <i-feather name="edit-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                </button>
+                <button class="w-9 h-9 rounded-lg active:bg-red-50 flex items-center justify-center"
+                    (click)="deleteClient(client.id)" title="Delete">
+                    <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="hidden sm:block overflow-x-auto">
         <table class="w-full text-sm">
             <thead>
                 <tr class="bg-gray-50 border-b border-gray-200">
-                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN
-                    </th>
-                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Name
-                    </th>
-                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
-                        Status</th>
-                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date
-                    </th>
-                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
-                        Client ID</th>
-                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last
-                        update</th>
-                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
-                        Actions</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Name</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Status</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Client ID</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 <tr *ngFor="let client of clientsData; let i = index" class="hover:bg-gray-50 transition-colors">
-                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-500">{{ i + 1 }}</td>
-                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
+                    <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
+                    <td class="px-4 py-3">
                         <app-user-hover-card [userId]="client.user?.id" [firstname]="client.user?.firstname"
                             [lastname]="client.user?.lastname" [photo]="client.user?.profilePhoto"
                             [role]="client.user?.role" [email]="client.user?.email"
                             [label]="client.user?.firstname">
                         </app-user-hover-card>
                     </td>
-                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
+                    <td class="px-4 py-3">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold"
                             [ngClass]="client.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
                             {{ client.status === 'true' ? 'Active' : 'Inactive' }}
                         </span>
                     </td>
-                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-500">{{ formatDate(client.date) }}</td>
-                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 font-semibold text-gray-900">{{ client.id }}</td>
-                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-500">{{ formatDate(client.lastUpdate) }}</td>
-                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
+                    <td class="px-4 py-3 text-gray-500">{{ formatDate(client.date) }}</td>
+                    <td class="px-4 py-3 font-semibold text-gray-900">{{ client.id }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ formatDate(client.lastUpdate) }}</td>
+                    <td class="px-4 py-3">
                         <div class="flex items-center justify-end gap-1">
                             <button class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
                                 (click)="openClientDetailsModal(client.id)" title="View">

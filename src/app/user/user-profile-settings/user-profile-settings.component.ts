@@ -20,13 +20,19 @@ import { loadUser, refreshUser } from 'src/app/state/user/user.actions';
 import { ApiResponse } from 'src/app/models/Api.interface';
 import { User } from 'firebase/auth';
 import { selectUser } from 'src/app/state/user/user.selector';
-import { ProfileVisibility } from 'src/app/models/users.interface';
+import { ProfileVisibility, SidebarDisplay } from 'src/app/models/users.interface';
 import {
   updateProfileVisibility,
   updateProfileVisibilityFailure,
   updateProfileVisibilitySuccess,
+  updateSidebarDisplay,
+  updateSidebarDisplayFailure,
+  updateSidebarDisplaySuccess,
 } from 'src/app/state/user-profile/user-profile.actions';
-import { selectSavingVisibility } from 'src/app/state/user-profile/user-profile.selector';
+import { selectSavingVisibility, selectSavingSidebarDisplay } from 'src/app/state/user-profile/user-profile.selector';
+import { SidebarStateService } from 'src/app/services/sidebar-state.service';
+
+const KNOWN_SIDEBAR_MODES: SidebarDisplay[] = ['expanded', 'collapsed', 'hidden'];
 
 @Component({
   selector: 'app-user-profile-settings',
@@ -55,6 +61,13 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   private localVisibility: ProfileVisibility | null = null;
   savingVisibility = false;
 
+  // ── Sidebar display preference ──────────────────────────────────────────
+  /** Value on the user record from /user/getUser. Defaults to 'expanded'. */
+  private serverSidebarDisplay: SidebarDisplay = 'expanded';
+  /** Set once the user picks an option in this session; takes precedence. */
+  private localSidebarDisplay: SidebarDisplay | null = null;
+  savingSidebarDisplay = false;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -66,7 +79,8 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     private snackBarService: SnackBarService,
     private formBuilder: FormBuilder,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private sidebarState: SidebarStateService
   ) { }
 
   ngOnInit(): void {
@@ -80,6 +94,9 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
         if (user) {
           this.user = user;
           this.serverVisibility = user.profileVisibility === 'public' ? 'public' : 'private';
+          this.serverSidebarDisplay = KNOWN_SIDEBAR_MODES.includes(user.sidebarDisplay as SidebarDisplay)
+            ? (user.sidebarDisplay as SidebarDisplay)
+            : 'expanded';
           this.initOrPatchForm();
           this.originalValue = structuredClone(user);
           this.updateUserForm.patchValue(user);
@@ -111,6 +128,27 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     this.actions$
       .pipe(ofType(updateProfileVisibilityFailure), takeUntil(this.destroy$))
       .subscribe(({ error }) => this.snackBarService.openSnackBar(error, 'error'));
+
+    // Sidebar display — in-flight flag plus success/failure feedback.
+    this.store.select(selectSavingSidebarDisplay)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(saving => this.savingSidebarDisplay = saving);
+
+    this.actions$
+      .pipe(ofType(updateSidebarDisplaySuccess), takeUntil(this.destroy$))
+      .subscribe(({ response, sidebarDisplay }) => {
+        this.localSidebarDisplay = sidebarDisplay;
+        this.snackBarService.openSnackBar(
+          response?.message || `Sidebar display set to ${sidebarDisplay}`,
+          ''
+        );
+        // Keep /user/getUser in sync so a reload doesn't show the old value.
+        this.store.dispatch(refreshUser());
+      });
+
+    this.actions$
+      .pipe(ofType(updateSidebarDisplayFailure), takeUntil(this.destroy$))
+      .subscribe(({ error }) => this.snackBarService.openSnackBar(error, 'error'));
   }
 
   // -------------------------
@@ -136,6 +174,26 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
 
     const next: ProfileVisibility = this.isProfilePublic ? 'private' : 'public';
     this.store.dispatch(updateProfileVisibility({ profileVisibility: next }));
+  }
+
+  // -------------------------
+  // SIDEBAR DISPLAY
+  // -------------------------
+
+  /** Locally-chosen value wins over whatever the last /user/getUser returned. */
+  get sidebarDisplay(): SidebarDisplay {
+    return this.localSidebarDisplay ?? this.serverSidebarDisplay;
+  }
+
+  setSidebarDisplay(display: SidebarDisplay): void {
+    if (this.savingSidebarDisplay || display === this.sidebarDisplay) return;
+
+    this.store.dispatch(updateSidebarDisplay({ sidebarDisplay: display }));
+    // Apply it to the live sidebar for this session immediately — the setting is
+    // meant to be felt right away, not just after a reload. Manual toggles via
+    // the sidebar's own controls (expand/collapse, the floating reopen button)
+    // still override this afterwards, same as any other manual toggle.
+    this.sidebarState.setMode(display);
   }
 
   ngOnDestroy() {

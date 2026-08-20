@@ -88,6 +88,73 @@ describe('SocialAuthService', () => {
       container.remove();
     });
 
+    it('only calls google.accounts.id.initialize() once across repeated renderGoogleButton() calls', async () => {
+      (environment as any).googleClientId = 'abc123.apps.googleusercontent.com';
+
+      const containerA = document.createElement('div');
+      containerA.id = 'google-button-test-container-once-a';
+      document.body.appendChild(containerA);
+
+      const containerB = document.createElement('div');
+      containerB.id = 'google-button-test-container-once-b';
+      document.body.appendChild(containerB);
+
+      const renderButton = jasmine.createSpy('renderButton');
+      const initialize = jasmine.createSpy('initialize');
+      (window as any).google = { accounts: { id: { initialize, renderButton } } };
+
+      // Simulates a login component mounting (ngAfterViewInit) more than once
+      // in the same SPA session — e.g. navigating away from and back to /login,
+      // or /login then /signup both rendering their own Google button.
+      await service.renderGoogleButton('google-button-test-container-once-a', () => {});
+      await service.renderGoogleButton('google-button-test-container-once-b', () => {});
+
+      expect(initialize).toHaveBeenCalledTimes(1);
+      expect(renderButton).toHaveBeenCalledTimes(2);
+
+      containerA.remove();
+      containerB.remove();
+    });
+
+    it('routes the credential to whichever onCredential callback was passed most recently', async () => {
+      (environment as any).googleClientId = 'abc123.apps.googleusercontent.com';
+
+      const containerA = document.createElement('div');
+      containerA.id = 'google-button-test-container-latest-a';
+      document.body.appendChild(containerA);
+
+      const containerB = document.createElement('div');
+      containerB.id = 'google-button-test-container-latest-b';
+      document.body.appendChild(containerB);
+
+      let capturedCallback: (r: { credential: string }) => void = () => {};
+      (window as any).google = {
+        accounts: {
+          id: {
+            initialize: (opts: any) => { capturedCallback = opts.callback; },
+            renderButton: () => {},
+          },
+        },
+      };
+
+      const firstHandler = jasmine.createSpy('firstHandler');
+      const secondHandler = jasmine.createSpy('secondHandler');
+
+      await service.renderGoogleButton('google-button-test-container-latest-a', firstHandler);
+      await service.renderGoogleButton('google-button-test-container-latest-b', secondHandler);
+
+      // initialize() only ran on the first call, so this exercises the SAME
+      // registered callback closure -- it must still reach the most recent
+      // caller's handler, not the one from the first render.
+      capturedCallback({ credential: 'the-id-token' });
+
+      expect(secondHandler).toHaveBeenCalledWith('the-id-token');
+      expect(firstHandler).not.toHaveBeenCalled();
+
+      containerA.remove();
+      containerB.remove();
+    });
+
     it('forwards the ID token from the GIS callback to onCredential', async () => {
       (environment as any).googleClientId = 'abc123.apps.googleusercontent.com';
 

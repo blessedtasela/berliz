@@ -68,6 +68,12 @@ export class AddSubscriptionsModalComponent {
       'categoryIds': this.formBuilder.array([], this.validateCheckbox()),
     });
 
+    // One-time priming: only dispatch a load for whichever lists are still
+    // empty when the modal opens. This used to run inside the combineLatest
+    // subscribe below on EVERY emission (i.e. every time any one of these six
+    // lists changed) -- so as long as even one list stayed empty (still
+    // loading, or genuinely empty), every unrelated update re-fired its load
+    // action, producing duplicate/parallel GET requests for the same data.
     combineLatest([
       this.store.select(selectCenters),
       this.store.select(selectTrainers),
@@ -75,26 +81,18 @@ export class AddSubscriptionsModalComponent {
       this.store.select(selectCategories),
       this.store.select(selectTrainerPricing),
       this.store.select(selectCenterPricing)
-    ]).subscribe(([centers, trainers, users, categories, trainerPricing, centerPricing]) => {
-
+    ]).pipe(take(1)).subscribe(([centers, trainers, users, categories, trainerPricing, centerPricing]) => {
       if (!centers?.length) this.store.dispatch(loadCenters());
-      else this.centers = centers;
-
       if (!trainers?.length) this.store.dispatch(loadActiveTrainers());
-      else this.trainers = trainers;
-
       if (!users?.length) this.store.dispatch(loadActiveUsers());
-      else this.users = users;
-
       if (!categories?.length) this.store.dispatch(loadActiveCategories());
-      else this.categories = categories;
-
       if (!trainerPricing?.length) this.store.dispatch(loadTrainerPricing());
-      else this.trainerPricing = trainerPricing;
-
       if (!centerPricing?.length) this.store.dispatch(loadAllCenterPricing());
-      else this.centerPricing = centerPricing;
     });
+
+    // Ongoing: keep local fields synced with the store as those loads resolve
+    // (and reflect any later updates), each subscription tracked for cleanup.
+    this.handleEmitEvent();
 
   }
 

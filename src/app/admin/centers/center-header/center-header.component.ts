@@ -1,23 +1,31 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { Centers } from 'src/app/models/centers.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AddCenterModalComponent } from '../add-center-modal/add-center-modal.component';
 import { Store } from '@ngrx/store';
 import { selectCenters } from 'src/app/state/center/center.selectors';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-center-header',
   templateUrl: './center-header.component.html',
   styleUrls: ['./center-header.component.css']
 })
-export class CenterHeaderComponent {
+export class CenterHeaderComponent implements OnDestroy {
   responseMessage: any;
   showFullData: boolean = false;
   selectedSortOption: string = 'date';
   @Input() centersData: Centers[] = [];
   @Input() totalCenters: number = 0;
   @Input() centersLength: number = 0;
+
+  // Tracks the websocket subscriptions below so ngOnDestroy can unsubscribe
+  // them -- previously they were never cleaned up, so navigating to/from this
+  // page repeatedly across a session left more and more live STOMP
+  // subscriptions running against a component instance the router had
+  // already destroyed.
+  private subscriptions: Subscription[] = [];
 
   constructor(private dialog: MatDialog,
     public store: Store,
@@ -26,6 +34,10 @@ export class CenterHeaderComponent {
   ngOnInit() {
     this.watchDeleteCenter()
     this.watchGetCenterFromMap()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -114,21 +126,25 @@ export class CenterHeaderComponent {
   }
 
   watchDeleteCenter() {
-    this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
-      const receivedCenter: Centers = JSON.parse(message.body);
-      this.centersData = this.centersData.filter(center => center.id !== receivedCenter.id);
-      this.centersLength = this.centersData.length;
-      this.totalCenters = this.centersData.length;
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
+        const receivedCenter: Centers = JSON.parse(message.body);
+        this.centersData = this.centersData.filter(center => center.id !== receivedCenter.id);
+        this.centersLength = this.centersData.length;
+        this.totalCenters = this.centersData.length;
+      })
+    );
   }
 
   watchGetCenterFromMap() {
-    this.rxStompService.watch('/topic/getCenterFromMap').subscribe((message) => {
-      const receivedCategories: Centers = JSON.parse(message.body);
-      this.centersData.push(receivedCategories);
-      this.centersLength = this.centersData.length;
-      this.totalCenters = this.centersData.length;
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/getCenterFromMap').subscribe((message) => {
+        const receivedCategories: Centers = JSON.parse(message.body);
+        this.centersData.push(receivedCategories);
+        this.centersLength = this.centersData.length;
+        this.totalCenters = this.centersData.length;
+      })
+    );
   }
 
 }

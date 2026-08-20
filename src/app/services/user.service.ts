@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { environment } from 'src/environments/environment';
-import { ProfileVisibility, PublicDirectoryEntry, PublicUserProfile, Users } from '../models/users.interface';
+import { ProfileVisibility, PublicDirectoryEntry, PublicUserProfile, SidebarDisplay, Users } from '../models/users.interface';
 import { AuthResponse } from '../models/Auth.interface';
 import { ApiResponse } from '../models/Api.interface';
 
@@ -231,6 +231,14 @@ export class UserService {
     return this.httpClient.put<ApiResponse<string>>(
       this.url + "/user/updateProfileVisibility",
       { profileVisibility }
+    );
+  }
+
+  /** Sets the signed-in user's own default sidebar display mode. */
+  updateSidebarDisplay(sidebarDisplay: SidebarDisplay): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/updateSidebarDisplay",
+      { sidebarDisplay }
     );
   }
 

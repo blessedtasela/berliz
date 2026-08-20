@@ -47,6 +47,22 @@ export class UserProfileEffects {
     )
   );
 
+  updateSidebarDisplay$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(A.updateSidebarDisplay),
+      mergeMap(({ sidebarDisplay }) =>
+        this.userService.updateSidebarDisplay(sidebarDisplay).pipe(
+          map(response => A.updateSidebarDisplaySuccess({ response, sidebarDisplay })),
+          catchError(err =>
+            of(A.updateSidebarDisplayFailure({
+              error: err.error?.message || 'Could not update your sidebar display preference'
+            }))
+          )
+        )
+      )
+    )
+  );
+
   // Only the newest search/role combo matters — switchMap so a fast typist
   // can't land a stale response on top of the current filter.
   loadPublicDirectory$ = createEffect(() =>

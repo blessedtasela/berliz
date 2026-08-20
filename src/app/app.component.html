@@ -28,11 +28,20 @@
             <app-top-bar></app-top-bar>
             <app-side-bar></app-side-bar>
 
-            <!-- On mobile the expanded sidebar overlays the content (see the md:hidden
-                 backdrop in app-side-bar), so only push the content across from md up.
-                 Below md we stay at the icon-rail offset and never squeeze the page. -->
+            <!--
+              Below `md` the sidebar never reserves layout space — on mobile it's
+              either a temporary overlay (see the backdrop in app-side-bar) or fully
+              hidden behind a floating reopen button, so content always gets the
+              full width there. From `md` up we push the content across by exactly
+              as much as the desktop sidebar mode currently occupies: none when
+              hidden, the icon rail when collapsed, the full width when expanded.
+            -->
             <div class="pt-14 transition-all duration-300 min-w-0"
-                [ngClass]="sidebarOpen ? 'pl-14 md:pl-60' : 'pl-14'">
+                [ngClass]="{
+                    'md:pl-60': sidebarMode === 'expanded',
+                    'md:pl-14': sidebarMode === 'collapsed',
+                    'md:pl-0': sidebarMode === 'hidden'
+                }">
                 <div class="p-4 min-w-0">
                     <router-outlet></router-outlet>
                     <app-footer></app-footer>

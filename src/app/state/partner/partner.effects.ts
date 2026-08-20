@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, of } from 'rxjs';
+import { catchError, exhaustMap, map, mergeMap, of } from 'rxjs';
 import { PartnerService } from '../../services/partner.service';
 import * as A from './partner.actions';
 
@@ -36,9 +36,12 @@ export class PartnerEffects {
     ))
   ));
 
+  // exhaustMap (not mergeMap): collapses concurrent/duplicate loadMyPartner
+  // dispatches into a single in-flight request instead of firing a new GET
+  // for every dispatch (see PartnerComponent.loadData()).
   loadMyPartner$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadMyPartner),
-    mergeMap(() => this.svc.getPartner().pipe(
+    exhaustMap(() => this.svc.getPartner().pipe(
       map(r => A.loadMyPartnerSuccess({ response: r })),
       catchError(e => of(A.loadMyPartnerFailure({ error: e?.error?.message || 'Failed' })))
     ))

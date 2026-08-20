@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -14,18 +14,23 @@ import { genericError } from 'src/validators/form-validators.module';
 import { Clients } from 'src/app/models/clients.interface';
 import { UpdateClientModalComponent } from '../update-client-modal/update-client-modal.component';
 import { ClientsDetailsModalComponent } from '../clients-details-modal/clients-details-modal.component';
-import { take } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-clients-list',
   templateUrl: './clients-list.component.html',
   styleUrls: ['./clients-list.component.css']
 })
-export class ClientsListComponent {
+export class ClientsListComponent implements OnDestroy {
   responseMessage: any;
   showFullData: boolean = false;
   @Input() clientsData: Clients[] = [];
   @Input() totalClients: number = 0;
+
+  // Both watchers below already use take(1), so they self-unsubscribe after
+  // their first message -- but tracking them here still lets ngOnDestroy
+  // clean up an in-flight one if the page is left before any message arrives.
+  private subscriptions: Subscription[] = [];
 
   constructor(private datePipe: DatePipe,
     private clientService: ClientService,
@@ -40,6 +45,10 @@ export class ClientsListComponent {
   ngOnInit() {
     this.watchUpdateClient()
     this.watchUpdateStatus()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -173,19 +182,23 @@ export class ClientsListComponent {
   }
 
   watchUpdateClient() {
-    this.rxStompService.watch('/topic/updateClient').pipe(take(1)).subscribe((message) => {
-      const receivedClients: Clients = JSON.parse(message.body);
-      const ClientId = this.clientsData.findIndex(client => client.id === receivedClients.id)
-      this.clientsData[ClientId] = receivedClients
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateClient').pipe(take(1)).subscribe((message) => {
+        const receivedClients: Clients = JSON.parse(message.body);
+        const ClientId = this.clientsData.findIndex(client => client.id === receivedClients.id)
+        this.clientsData[ClientId] = receivedClients
+      })
+    );
   }
 
   watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateClientStatus').pipe(take(1)).subscribe((message) => {
-      const receivedClients: Clients = JSON.parse(message.body);
-      const ClientId = this.clientsData.findIndex(client => client.id === receivedClients.id)
-      this.clientsData[ClientId] = receivedClients
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateClientStatus').pipe(take(1)).subscribe((message) => {
+        const receivedClients: Clients = JSON.parse(message.body);
+        const ClientId = this.clientsData.findIndex(client => client.id === receivedClients.id)
+        this.clientsData[ClientId] = receivedClients
+      })
+    );
   }
 
 }

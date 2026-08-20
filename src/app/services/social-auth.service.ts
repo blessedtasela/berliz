@@ -31,6 +31,15 @@ export class SocialAuthService {
   private googleScriptPromise: Promise<void> | null = null;
   private facebookScriptPromise: Promise<void> | null = null;
 
+  // google.accounts.id.initialize() must only ever run once per page session --
+  // calling it again (which used to happen every time renderGoogleButton() ran,
+  // i.e. every time a login/signup component remounted, e.g. navigating away
+  // from and back to /login within the SPA) re-registers the credential
+  // listener on top of the previous one. This service is providedIn: 'root',
+  // so this flag is a true once-per-session guard shared by every caller.
+  private googleInitialized = false;
+  private currentGoogleCredentialHandler: ((idToken: string) => void) | null = null;
+
   get isGoogleConfigured(): boolean {
     return !!environment.googleClientId;
   }
@@ -84,13 +93,25 @@ export class SocialAuthService {
       return;
     }
 
-    const google = getGoogle();
-    google.accounts.id.initialize({
-      client_id: environment.googleClientId,
-      callback: (response: { credential: string }) => onCredential(response.credential),
-      auto_select: false,
-    });
+    // The latest caller always wins the actual credential callback, even
+    // though initialize() below only ever runs its first time.
+    this.currentGoogleCredentialHandler = onCredential;
 
+    const google = getGoogle();
+
+    if (!this.googleInitialized) {
+      this.googleInitialized = true;
+      google.accounts.id.initialize({
+        client_id: environment.googleClientId,
+        callback: (response: { credential: string }) =>
+          this.currentGoogleCredentialHandler?.(response.credential),
+        auto_select: false,
+      });
+    }
+
+    // renderButton() IS safe (and required) to call every time this method
+    // runs — it just (re)paints the button into whichever element id was
+    // passed this time. Only initialize() above needed the once-only guard.
     // type: 'icon' + shape: 'square' renders a compact rounded-square icon
     // button, matching the Facebook button's w-11 h-11 rounded-xl styling
     // right next to it — 'circle' left a mismatched round shape clipped

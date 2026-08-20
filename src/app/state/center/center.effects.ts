@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, of } from 'rxjs';
+import { catchError, exhaustMap, map, mergeMap, of } from 'rxjs';
 import { CenterService } from '../../services/center.service';
 import * as A from './center.actions';
 
@@ -31,9 +31,15 @@ export class CenterEffects {
         ))
     ));
 
+    // exhaustMap (not mergeMap): while a getCenter() request is in flight, ignore
+    // any further loadCenter/refreshCenters dispatches instead of firing a new
+    // HTTP call for each one. This is what was causing GET /center/getCenter to
+    // fire multiple times for a single page load -- every dispatch of loadCenter()
+    // (e.g. from repeated component loadData() calls) triggered its own request
+    // with no de-duplication of in-flight calls.
     loadCenter$ = createEffect(() => this.actions$.pipe(
         ofType(A.loadCenter, A.refreshCenters),
-        mergeMap(() => this.svc.getCenter().pipe(
+        exhaustMap(() => this.svc.getCenter().pipe(
             map(r => A.loadCenterSuccess({ response: r })),
             catchError(e => of(A.loadCenterFailure({ error: e?.error?.message || 'Failed' })))
         ))
