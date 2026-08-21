@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { LoginHeroComponent } from './login-hero.component';
 
@@ -8,7 +9,8 @@ describe('LoginHeroComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [LoginHeroComponent]
+      declarations: [LoginHeroComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(LoginHeroComponent);
     component = fixture.componentInstance;

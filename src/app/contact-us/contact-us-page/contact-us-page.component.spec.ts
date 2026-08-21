@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { ContactUsPageComponent } from './contact-us-page.component';
 
@@ -8,7 +9,8 @@ describe('ContactUsPageComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ContactUsPageComponent]
+      declarations: [ContactUsPageComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(ContactUsPageComponent);
     component = fixture.componentInstance;

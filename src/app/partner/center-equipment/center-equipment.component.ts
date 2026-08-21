@@ -149,6 +149,21 @@ export class CenterEquipmentComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
+  toggleFeatured(equipment: CenterEquipment): void {
+    this.loader.start();
+    this.centerService.updateEquipmentFeatured(equipment.id).pipe(take(1)).subscribe({
+      next: (response: any) => {
+        this.snackbar.openSnackBar(response?.message || 'Updated successfully', '');
+        this.store.dispatch(loadMyCenterEquipment());
+        this.loader.stop();
+      },
+      error: (err: any) => {
+        this.snackbar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.loader.stop();
+      }
+    });
+  }
+
   deleteEquipment(equipment: CenterEquipment): void {
     this.loader.start();
     this.centerService.deleteEquipment(equipment.id).pipe(take(1)).subscribe({

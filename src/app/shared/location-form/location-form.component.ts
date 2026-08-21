@@ -72,11 +72,17 @@ export class LocationFormComponent implements OnInit, OnDestroy, ControlValueAcc
     const stateCtrl = this.form.get('state')!;
     const cityCtrl = this.form.get('city')!;
 
-    // Load countries
+    // Load countries — this used to subscribe with no handler and an empty
+    // tap(), so `countries` and `countryMap` were never actually populated and
+    // the country dropdown (and everything downstream: states, cities, phone
+    // formatting) silently had nothing to select.
     this.subscriptions.add(
       this.locationService.countries$
         .pipe(
-          tap()
+          tap(countries => {
+            this.countries = countries;
+            this.countryMap = new Map(countries.map(c => [c.code, c]));
+          })
         )
         .subscribe()
     );

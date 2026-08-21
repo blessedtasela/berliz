@@ -18,7 +18,6 @@ import { Store } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
 import { loadUser, refreshUser } from 'src/app/state/user/user.actions';
 import { ApiResponse } from 'src/app/models/Api.interface';
-import { User } from 'firebase/auth';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { ProfileVisibility, SidebarDisplay } from 'src/app/models/users.interface';
 import {

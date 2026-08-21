@@ -51,8 +51,6 @@ import { PartnerModule } from './partner/partner.module';
 import { UrlLowerCaseSerializer } from 'url-lower-case-serializer';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { UnderConstructionPageComponent } from './under-construction-page/under-construction-page.component';
-import { AngularFireModule } from '@angular/fire/compat';
-import { environment } from '../environments/environment';
 import { TimeAgoPipe } from './shared/pipes/time-ago.pipe';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { HubModule } from './hub/hub.module';
@@ -218,8 +216,6 @@ const dbConfig: DBConfig = {
     BreadcrumbModule,
     NgxIndexedDBModule.forRoot(dbConfig),
     NgxFileDropModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFireModule,
     ReactiveFormsModule,
     CommonModule,
     BrowserAnimationsModule,

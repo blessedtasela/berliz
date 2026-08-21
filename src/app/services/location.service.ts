@@ -44,8 +44,11 @@ export class LocationService {
               } as Country;
             })
 
-            // Optionally filter countries without dialCode or flags
-            .filter(c => c.name && c.phoneCode && c.phoneCode && c.emoji)
+            // Only include countries with usable data — previously checked
+            // c.phoneCode/c.emoji, properties that don't exist on the object
+            // built above (the real fields are dialCode/flag), so this always
+            // evaluated false and silently emptied the entire country list.
+            .filter(c => c.name && c.dialCode && c.flag)
             .sort((a, b) => a.name.localeCompare(b.name))
         ),
         shareReplay(1),

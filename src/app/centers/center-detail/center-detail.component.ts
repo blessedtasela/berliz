@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
+import { Subscription, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Categories } from 'src/app/models/categories.interface';
 import {
   CenterAnnouncements,
@@ -17,6 +18,7 @@ import {
 } from 'src/app/models/centers.interface';
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { Trainers } from 'src/app/models/trainers.interface';
+import { CenterService } from 'src/app/services/center.service';
 import { TestimonialDialogService } from 'src/app/testimonial/testimonial-dialog.service';
 import { BookingDialogService } from 'src/app/booking/booking-dialog.service';
 import { CenterTrainerCard } from '../center-trainers/center-trainers.component';
@@ -30,6 +32,19 @@ import * as TrainerSelectors from 'src/app/state/trainer/trainer.selector';
 import * as TestimonialActions from 'src/app/state/testimonial/testimonial.actions';
 import * as TestimonialSelectors from 'src/app/state/testimonial/testimonial.selectors';
 
+/**
+ * PUBLIC center profile page — route `/centers/:id`.
+ *
+ * Introduction / equipment / pricing / photo albums / video albums / locations /
+ * trainer roster are fetched directly via CenterService's public
+ * getXxxByCenterId() calls rather than through the NgRx store — the backend
+ * used to only expose admin-only "load all" endpoints for these (401s for
+ * anyone but an admin, which is why they silently never showed up here for
+ * regular or logged-out visitors), and the store's global list state isn't a
+ * good fit for what's really a single-center, single-view fetch anyway.
+ * Announcements and reviews already have center-scoped "active" endpoints and
+ * are used as-is via the store.
+ */
 @Component({
   selector: 'app-center-detail',
   templateUrl: './center-detail.component.html',
@@ -64,6 +79,7 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private store: Store,
+    private centerService: CenterService,
     private testimonialDialog: TestimonialDialogService,
     private bookingDialog: BookingDialogService,
   ) { }
@@ -103,23 +119,16 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
   /**
    * There is no public "get center by id" endpoint, so we follow the pattern
    * already used by CenterGuard / CenterPageComponent: load the active centers
-   * and resolve the one matching the route id client-side.
+   * and resolve the one matching the route id client-side. The center's public
+   * sub-sections (introduction, equipment, etc.) do have per-center public
+   * endpoints, fetched below directly through CenterService.
    */
   private fetchCenter(): void {
-    // Id-scoped public endpoints
+    // Id-scoped public endpoints, via the store.
     this.store.dispatch(CenterActions.loadActiveCenters());
     this.store.dispatch(CenterActions.loadActiveCenterAnnouncements({ id: this.centerId }));
     this.store.dispatch(CenterActions.loadActiveCenterReviews({ id: this.centerId }));
     this.store.dispatch(TestimonialActions.loadTestimonialsByCenter({ centerId: this.centerId }));
-
-    // Collection endpoints — filtered client-side by centerId
-    this.store.dispatch(CenterActions.loadAllCenterIntroductions());
-    this.store.dispatch(CenterActions.loadAllCenterLocations());
-    this.store.dispatch(CenterActions.loadAllCenterEquipment());
-    this.store.dispatch(CenterActions.loadAllCenterTrainers());
-    this.store.dispatch(CenterActions.loadAllCenterPricing());
-    this.store.dispatch(CenterActions.loadAllCenterPhotoAlbums());
-    this.store.dispatch(CenterActions.loadAllCenterVideoAlbums());
 
     // Reference data used to enrich the page
     this.store.dispatch(CategoryActions.loadActiveCategories());
@@ -139,42 +148,6 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     );
 
     this.subscription.add(
-      this.store.select(CenterSelectors.selectCenterIntroductions).subscribe(list => {
-        this.centerIntro = (list ?? []).find(i => i.centerId === this.centerId) ?? null;
-      })
-    );
-
-    this.subscription.add(
-      this.store.select(CenterSelectors.selectCenterLocations).subscribe(list => {
-        this.centerLocation = this.forThisCenter(list);
-      })
-    );
-
-    this.subscription.add(
-      this.store.select(CenterSelectors.selectCenterEquipment).subscribe(list => {
-        this.centerEquipment = this.forThisCenter(list);
-      })
-    );
-
-    this.subscription.add(
-      this.store.select(CenterSelectors.selectCenterPricing).subscribe(list => {
-        this.centerPricing = (list ?? []).find(p => p.centerId === this.centerId) ?? null;
-      })
-    );
-
-    this.subscription.add(
-      this.store.select(CenterSelectors.selectCenterPhotoAlbums).subscribe(list => {
-        this.centerAlbums = this.forThisCenter(list);
-      })
-    );
-
-    this.subscription.add(
-      this.store.select(CenterSelectors.selectCenterVideoAlbums).subscribe(list => {
-        this.centerVideoAlbums = this.forThisCenter(list);
-      })
-    );
-
-    this.subscription.add(
       this.store.select(CenterSelectors.selectActiveCenterAnnouncements).subscribe(list => {
         this.centerAnnouncements = this.forThisCenter(list);
       })
@@ -183,13 +156,6 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.store.select(CenterSelectors.selectActiveCenterReviews).subscribe(list => {
         this.centerReview = this.forThisCenter(list);
-      })
-    );
-
-    this.subscription.add(
-      this.store.select(CenterSelectors.selectCenterTrainers).subscribe(list => {
-        this.affiliations = this.forThisCenter(list).filter(t => t.status !== 'INACTIVE');
-        this.buildTrainerCards();
       })
     );
 
@@ -211,6 +177,54 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
         this.allCategories = categories ?? [];
         this.buildCategories();
       })
+    );
+
+    // Public, single-center endpoints — no auth required, no client-side filtering.
+    const id = this.centerId;
+
+    this.subscription.add(
+      this.centerService.getIntroductionsByCenterId(id)
+        .pipe(catchError(() => of(null)))
+        .subscribe(res => this.centerIntro = (res?.data ?? [])[0] ?? null)
+    );
+
+    this.subscription.add(
+      this.centerService.getLocationsByCenterId(id)
+        .pipe(catchError(() => of(null)))
+        .subscribe(res => this.centerLocation = res?.data ?? [])
+    );
+
+    this.subscription.add(
+      this.centerService.getEquipmentByCenterId(id)
+        .pipe(catchError(() => of(null)))
+        .subscribe(res => this.centerEquipment = res?.data ?? [])
+    );
+
+    this.subscription.add(
+      this.centerService.getPricingByCenterId(id)
+        .pipe(catchError(() => of(null)))
+        .subscribe(res => this.centerPricing = res?.data?.id ? res.data : null)
+    );
+
+    this.subscription.add(
+      this.centerService.getPhotoAlbumsByCenterId(id)
+        .pipe(catchError(() => of(null)))
+        .subscribe(res => this.centerAlbums = res?.data ?? [])
+    );
+
+    this.subscription.add(
+      this.centerService.getVideoAlbumsByCenterId(id)
+        .pipe(catchError(() => of(null)))
+        .subscribe(res => this.centerVideoAlbums = res?.data ?? [])
+    );
+
+    this.subscription.add(
+      this.centerService.getCenterTrainersByCenterId(id)
+        .pipe(catchError(() => of(null)))
+        .subscribe(res => {
+          this.affiliations = (res?.data ?? []).filter(t => t.status !== 'INACTIVE');
+          this.buildTrainerCards();
+        })
     );
   }
 

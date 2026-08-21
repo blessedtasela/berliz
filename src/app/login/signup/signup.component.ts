@@ -9,8 +9,12 @@ import {
   emailExtensionValidator,
   passwordMatchValidator,
   genericError,
-  imageValidator
+  imageValidator,
+  minimumAgeValidator
 } from 'src/validators/form-validators.module';
+
+/** Berliz requires signups to be 16 or older. */
+export const MINIMUM_SIGNUP_AGE = 16;
 
 @Component({
   selector: 'app-signup',
@@ -42,7 +46,7 @@ export class SignupComponent {
         firstname: ['', [Validators.required, Validators.minLength(2)]],
         lastname: ['', [Validators.required, Validators.minLength(2)]],
         gender: ['', Validators.required],
-        dob: ['', Validators.required],
+        dob: ['', [Validators.required, minimumAgeValidator(MINIMUM_SIGNUP_AGE)]],
         profilePhoto: ['', [Validators.required, imageValidator()]],
 
         location: this.fb.group({
@@ -68,6 +72,13 @@ export class SignupComponent {
 
   f(name: string): AbstractControl {
     return this.signupForm.get(name)!;
+  }
+
+  /** Latest birthdate that still satisfies the minimum-age requirement — caps the date picker itself. */
+  get maxDob(): string {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - MINIMUM_SIGNUP_AGE);
+    return d.toISOString().split('T')[0];
   }
 
   isStepValid(step: number): boolean {

@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import { PromotionsComponent } from './promotions.component';
 
@@ -7,8 +9,14 @@ describe('PromotionsComponent', () => {
   let fixture: ComponentFixture<PromotionsComponent>;
 
   beforeEach(() => {
+    const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+
     TestBed.configureTestingModule({
-      declarations: [PromotionsComponent]
+      declarations: [PromotionsComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        { provide: MatDialog, useValue: dialogSpy }
+      ]
     });
     fixture = TestBed.createComponent(PromotionsComponent);
     component = fixture.componentInstance;

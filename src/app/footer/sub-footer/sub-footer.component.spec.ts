@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { SubFooterComponent } from './sub-footer.component';
 
@@ -8,7 +9,8 @@ describe('SubFooterComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SubFooterComponent]
+      declarations: [SubFooterComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(SubFooterComponent);
     component = fixture.componentInstance;

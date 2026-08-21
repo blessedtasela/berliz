@@ -81,6 +81,9 @@ export interface CenterEquipment {
   id: number;
   centerId: number;
   centerName: string;
+  trainerId: number;
+  trainerName: string;
+  featured: boolean;
   name: string;
   description: string;
   stockNumber: number;

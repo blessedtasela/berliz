@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { CenterVideoGalleryComponent } from './center-video-gallery.component';
 
@@ -8,7 +9,8 @@ describe('CenterVideoGalleryComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CenterVideoGalleryComponent]
+      declarations: [CenterVideoGalleryComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(CenterVideoGalleryComponent);
     component = fixture.componentInstance;

@@ -6,7 +6,10 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { CountryService } from 'src/app/services/country.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
-import { fileValidator, emailExtensionValidator, passwordMatchValidator, genericError } from 'src/validators/form-validators.module';
+import { fileValidator, emailExtensionValidator, passwordMatchValidator, genericError, minimumAgeValidator } from 'src/validators/form-validators.module';
+
+/** Berliz requires signups to be 16 or older. */
+export const MINIMUM_SIGNUP_AGE = 16;
 
 @Component({
   selector: 'app-signup-modal',
@@ -38,7 +41,7 @@ export class SignupModalComponent {
       'lastname': ['', [Validators.required, Validators.minLength(2)]],
       'phone': ['', Validators.compose([Validators.required, Validators.minLength(9)])],
       'postalCode': ['', Validators.compose([Validators.required, Validators.minLength(5)])],
-      'dob': ['', Validators.required],
+      'dob': ['', [Validators.required, minimumAgeValidator(MINIMUM_SIGNUP_AGE)]],
       'gender': ['', Validators.required],
       'country': ['', Validators.required],
       'state': ['', [Validators.required, Validators.minLength(3)]],
@@ -51,6 +54,13 @@ export class SignupModalComponent {
     }
       , { validator: passwordMatchValidator })
 
+  }
+
+  /** Latest birthdate that still satisfies the minimum-age requirement — caps the date picker itself. */
+  get maxDob(): string {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - MINIMUM_SIGNUP_AGE);
+    return d.toISOString().split('T')[0];
   }
 
   closeDialog() {
@@ -135,7 +145,18 @@ export class SignupModalComponent {
   }
 
   onImgSelected(event: any): void {
-    this.selectedImage = event.target.files[0];
+    const file = event.target.files?.[0] ?? null;
+    this.selectedImage = file;
+
+    // A native <input type="file"> has no writable value accessor Angular can
+    // bind to via formControlName, so the control's value must be pushed in
+    // manually — previously it never was, which meant the profilePhoto
+    // control's `required` validator could never clear no matter what the
+    // user selected, permanently blocking this step (and submission).
+    const control = this.signupForm.get('profilePhoto')!;
+    control.setValue(file);
+    control.markAsTouched();
+    control.updateValueAndValidity();
   }
 
   submitForm(): void {

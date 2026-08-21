@@ -104,7 +104,7 @@
                 <div class="flex flex-col gap-1">
                     <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date of
                         birth</label>
-                    <input formControlName="dob" placeholder="Date of birth" type="date" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                    <input formControlName="dob" placeholder="Date of birth" type="date" [attr.max]="maxDob" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
                                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                         [ngClass]="{
                             'border-red-400 bg-red-50': signupForm.get('dob')?.invalid && signupForm.get('dob')?.touched,
@@ -113,7 +113,10 @@
                     <p *ngIf="signupForm.get('dob')?.invalid && signupForm.get('dob')?.dirty"
                         class="text-red-500 text-[11px] flex items-center gap-1">
                         <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
-                        Please select a birth date
+                        <ng-container *ngIf="signupForm.get('dob')?.hasError('underAge'); else missingDobModal">
+                            You must be at least {{ signupForm.get('dob')?.getError('underAge').requiredAge }} years old to sign up
+                        </ng-container>
+                        <ng-template #missingDobModal>Please select a birth date</ng-template>
                     </p>
                 </div>
             </div>
@@ -277,7 +280,10 @@
                 <p *ngIf="signupForm.get('profilePhoto')?.invalid && signupForm.get('profilePhoto')?.touched"
                     class="text-red-500 text-[11px] flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
-                    A profile photo is required
+                    <ng-container *ngIf="signupForm.get('profilePhoto')?.hasError('fileTooLarge'); else photoRequiredModal">
+                        Image must be under 10MB
+                    </ng-container>
+                    <ng-template #photoRequiredModal>A profile photo is required</ng-template>
                 </p>
             </div>
 

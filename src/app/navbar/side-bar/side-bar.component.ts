@@ -149,11 +149,12 @@ export class SideBarComponent implements OnInit, OnDestroy {
         // showed up, since applyPreferredMode only ever applies once per session.
         // No preference saved yet (backend sends null — see
         // UserMapper.resolveSidebarDisplay) picks a default based on viewport:
-        // desktop opens expanded, mobile stays hidden behind the menu button.
+        // desktop opens collapsed (icon rail), mobile stays hidden behind the
+        // menu button — neither reserves a full labeled sidebar unasked.
         if (user) {
           const preference: SidebarDisplay = KNOWN_SIDEBAR_MODES.includes(user.sidebarDisplay as SidebarDisplay)
             ? (user.sidebarDisplay as SidebarDisplay)
-            : (this.sidebarState.isMobileViewport() ? 'hidden' : 'expanded');
+            : (this.sidebarState.isMobileViewport() ? 'hidden' : 'collapsed');
           this.sidebarState.applyPreferredMode(preference);
         }
       }),

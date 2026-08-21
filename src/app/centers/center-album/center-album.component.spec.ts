@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { CenterAlbumComponent } from './center-album.component';
 
@@ -8,7 +9,8 @@ describe('CenterAlbumComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CenterAlbumComponent]
+      declarations: [CenterAlbumComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(CenterAlbumComponent);
     component = fixture.componentInstance;

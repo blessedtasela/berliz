@@ -91,8 +91,8 @@
 
                                 <!-- Like button -->
                                 <button type="button" (click)="likeCategory(category)"
-                                    class="flex items-center gap-1.5 text-xs font-medium transition"
-                                    [ngClass]="isLiked(category) ? 'text-red-500' : 'text-zinc-500 hover:text-red-400'">
+                                    class="flex items-center gap-1.5 text-xs font-medium rounded-full px-2.5 py-1 border transition"
+                                    [ngClass]="isLiked(category) ? 'text-red-400 bg-red-950 border-red-900' : 'text-zinc-500 border-transparent hover:text-red-400 hover:border-zinc-800'">
                                     <!-- Solid heart when liked (Feather's is outline-only) -->
                                     <svg *ngIf="isLiked(category)" viewBox="0 0 24 24" fill="currentColor"
                                         style="width:13px;height:13px;">

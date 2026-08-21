@@ -1,0 +1,139 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+                <i-feather name="package" class="text-blue-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <h1 class="text-sm font-bold text-gray-900">Equipment</h1>
+                <p class="text-[11px] text-gray-400">{{ equipment.length }} item{{ equipment.length !== 1 ? 's' : '' }} across every center and trainer</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <div class="relative">
+                <i-feather name="search" class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" style="width:13px;height:13px;"></i-feather>
+                <input type="text" [(ngModel)]="searchTerm" placeholder="Search name or owner…"
+                    class="pl-8 pr-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-xs text-gray-900 w-56
+                           focus:outline-none focus:ring-1 focus:ring-blue-400 focus:bg-white transition placeholder:text-gray-400" />
+            </div>
+            <button type="button" (click)="openAdd()"
+                class="text-xs font-semibold text-white bg-gray-900 hover:bg-gray-800 rounded-lg px-3 py-2 transition flex items-center gap-1.5 shrink-0">
+                <i-feather name="plus" style="width:13px;height:13px;"></i-feather>
+                Add equipment
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex items-center justify-center py-16">
+        <i-feather name="loader" class="text-gray-300 animate-spin" style="width:20px;height:20px;"></i-feather>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!loading && filtered.length === 0"
+        class="flex flex-col items-center justify-center py-16 gap-3 text-center bg-white rounded-2xl border border-gray-200">
+        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+            <i-feather name="package" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        </div>
+        <p class="text-sm text-gray-400">{{ searchTerm ? 'No equipment matches your search.' : 'No equipment yet.' }}</p>
+        <button *ngIf="!searchTerm" type="button" (click)="openAdd()"
+            class="text-xs font-semibold text-blue-600 hover:text-blue-700 transition">Add the first item</button>
+    </div>
+
+    <!-- Table -->
+    <div *ngIf="!loading && filtered.length > 0" class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+
+        <!-- Mobile: card rows -->
+        <div class="sm:hidden divide-y divide-gray-100">
+            <div *ngFor="let item of filtered" class="flex items-center gap-3 px-4 py-3">
+                <img [src]="item.imageUrl | strapiUrl" onerror="this.src='assets/icons/user.png';"
+                    class="w-12 h-12 rounded-xl object-cover border border-gray-200 shrink-0 bg-gray-50" />
+
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2">
+                        <p class="font-semibold text-gray-900 truncate text-sm">{{ item.name }}</p>
+                        <i-feather *ngIf="item.featured" name="star" class="text-amber-500 shrink-0" style="width:12px;height:12px;"></i-feather>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-0.5 truncate">
+                        {{ ownerType(item) === 'trainer' ? 'Trainer' : 'Center' }}: {{ ownerLabel(item) }} &middot; x{{ item.stockNumber }}
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-0.5 shrink-0">
+                    <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center" (click)="toggleFeatured(item)" title="Toggle featured">
+                        <i-feather name="star" [class]="item.featured ? 'text-amber-500' : 'text-gray-400'" style="width:16px;height:16px;"></i-feather>
+                    </button>
+                    <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center" (click)="openEdit(item)" title="Edit">
+                        <i-feather name="edit-2" class="text-blue-600" style="width:16px;height:16px;"></i-feather>
+                    </button>
+                    <button class="w-9 h-9 rounded-lg active:bg-red-50 flex items-center justify-center" (click)="deleteEquipment(item)" title="Delete">
+                        <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop: table -->
+        <div class="hidden sm:block overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Photo</th>
+                        <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Name</th>
+                        <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Owner</th>
+                        <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Stock</th>
+                        <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Featured</th>
+                        <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</th>
+                        <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <tr *ngFor="let item of filtered" class="hover:bg-gray-50 transition-colors"
+                        [class.opacity-50]="togglingId === item.id">
+                        <td class="px-4 py-3">
+                            <img [src]="item.imageUrl | strapiUrl" onerror="this.src='assets/icons/user.png';"
+                                class="w-10 h-10 rounded-xl object-cover border border-gray-200 bg-gray-50">
+                        </td>
+                        <td class="px-4 py-3 font-semibold text-gray-900">{{ item.name }}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full uppercase tracking-wide shrink-0"
+                                    [ngClass]="ownerType(item) === 'trainer' ? 'bg-purple-50 text-purple-700 border border-purple-100' : 'bg-blue-50 text-blue-700 border border-blue-100'">
+                                    {{ ownerType(item) === 'trainer' ? 'Trainer' : 'Center' }}
+                                </span>
+                                <span class="text-gray-600 truncate">{{ ownerLabel(item) }}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-gray-600">x{{ item.stockNumber }}</td>
+                        <td class="px-4 py-3">
+                            <button type="button" (click)="toggleFeatured(item)" [disabled]="togglingId === item.id"
+                                class="text-[10px] font-semibold px-2 py-0.5 rounded-full border transition flex items-center gap-1 w-fit"
+                                [ngClass]="item.featured
+                                    ? 'border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100'
+                                    : 'border-gray-200 text-gray-500 hover:bg-gray-50'">
+                                <i-feather name="star" style="width:10px;height:10px;"></i-feather>
+                                {{ item.featured ? 'Featured' : 'Feature' }}
+                            </button>
+                        </td>
+                        <td class="px-4 py-3 text-gray-500">{{ item.lastUpdate | date:'mediumDate' }}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center justify-end gap-1">
+                                <button class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center" (click)="openEdit(item)" title="Edit">
+                                    <i-feather name="edit-2" class="text-blue-600" style="width:14px;height:14px;"></i-feather>
+                                </button>
+                                <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center" (click)="deleteEquipment(item)" title="Delete">
+                                    <i-feather name="trash-2" class="text-red-600" style="width:14px;height:14px;"></i-feather>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</section>

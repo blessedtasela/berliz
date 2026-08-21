@@ -1,14 +1,39 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
 
 import { DashboardNotificationComponent } from './dashboard-notification.component';
+import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { NotificationService } from 'src/app/services/notification.service';
+import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 describe('DashboardNotificationComponent', () => {
   let component: DashboardNotificationComponent;
   let fixture: ComponentFixture<DashboardNotificationComponent>;
 
   beforeEach(() => {
+    const rxStompServiceSpy = jasmine.createSpyObj('RxStompService', ['watch', 'publish']);
+    rxStompServiceSpy.watch.and.returnValue(of({}));
+    const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
+    authServiceSpy.isAuthenticated.and.returnValue(false);
+    const notificationServiceSpy = jasmine.createSpyObj('NotificationService', ['markAsRead']);
+    const snackbarServiceSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
+
     TestBed.configureTestingModule({
-      declarations: [DashboardNotificationComponent]
+      declarations: [DashboardNotificationComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        provideMockStore(),
+        { provide: RxStompService, useValue: rxStompServiceSpy },
+        { provide: MatDialog, useValue: dialogSpy },
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: NotificationService, useValue: notificationServiceSpy },
+        { provide: SnackBarService, useValue: snackbarServiceSpy }
+      ]
     });
     fixture = TestBed.createComponent(DashboardNotificationComponent);
     component = fixture.componentInstance;

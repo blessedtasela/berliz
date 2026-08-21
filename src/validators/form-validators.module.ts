@@ -21,24 +21,28 @@ export function emailExtensionValidator(validExtensions: string[]): ValidatorFn 
   };
 }
 
+/**
+ * Generic file-size validator (any file type — resumes, certifications, etc;
+ * use imageValidator() instead when the type also needs restricting to images).
+ * Previously compared against a 50-BYTE threshold (not 50MB) and wrapped the
+ * value in `new File([fileInput], 'pdf-file')`, which — combined with the
+ * threshold — meant literally any real file always failed as "too large".
+ */
 export function fileValidator(control: AbstractControl): ValidationErrors | null {
   const fileInput = control.value;
-  if (!fileInput || fileInput.length === 0) {
-    return null;
+  if (!fileInput) return null; // Required validator will catch empty
+
+  // If coming from a file input, it could be a FileList or a bare File.
+  const selectedFile = fileInput instanceof File ? fileInput : fileInput?.[0];
+  if (!selectedFile) return null;
+
+  const maxSizeInMB = 10;
+  const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+  if (selectedFile.size > maxSizeInBytes) {
+    return { fileTooLarge: true };
   }
 
-  const file = new File([fileInput], 'pdf-file');
-  const maxSizeInBytes = 50; // 50
-  console.log(file, ' file')
-  console.log(file.size, ' file size')
-  if (file.size < maxSizeInBytes) {
-    console.log('invalid is false. inside if block')
-    return null;
-  }
-
-  console.log('invalid is true')
-  // File size exceeds limit, return validation error
-  return { invalidSize: true };
+  return null;
 }
 
 export function imageValidator(
@@ -118,6 +122,26 @@ export const videoSizeValidator = (videoFile: File): { [key: string]: any } | nu
 
   return null;  // File size is valid
 };
+
+/** Rejects a date-of-birth control value that is younger than `minAge` years old as of today. */
+export function minimumAgeValidator(minAge: number): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+    if (!value) return null; // Required validator will catch empty
+
+    const dob = new Date(value);
+    if (isNaN(dob.getTime())) return null; // not our job to validate format
+
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const hasHadBirthdayThisYear =
+      today.getMonth() > dob.getMonth() ||
+      (today.getMonth() === dob.getMonth() && today.getDate() >= dob.getDate());
+    if (!hasHadBirthdayThisYear) age--;
+
+    return age >= minAge ? null : { underAge: { requiredAge: minAge, actualAge: age } };
+  };
+}
 
 export function fullNameValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {

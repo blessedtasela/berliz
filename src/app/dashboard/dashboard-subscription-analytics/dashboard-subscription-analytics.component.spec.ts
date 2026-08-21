@@ -10,13 +10,16 @@ describe('DashboardSubscriptionAnalyticsComponent', () => {
   let fixture: ComponentFixture<DashboardSubscriptionAnalyticsComponent>;
 
   beforeEach(() => {
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAdmin']);
+    authServiceSpy.isAdmin.and.returnValue(false);
+
     TestBed.configureTestingModule({
       declarations: [DashboardSubscriptionAnalyticsComponent],
+      schemas: [NO_ERRORS_SCHEMA],
       providers: [
         provideMockStore(),
-        { provide: AuthService, useValue: jasmine.createSpyObj('AuthService', ['isAdmin']) }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+        { provide: AuthService, useValue: authServiceSpy }
+      ]
     });
     fixture = TestBed.createComponent(DashboardSubscriptionAnalyticsComponent);
     component = fixture.componentInstance;

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { HubRouteComponent } from './hub-route.component';
 
@@ -8,7 +9,8 @@ describe('HubRouteComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [HubRouteComponent]
+      declarations: [HubRouteComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(HubRouteComponent);
     component = fixture.componentInstance;

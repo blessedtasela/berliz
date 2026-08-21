@@ -1,14 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { LandingPageComponent } from './landing-page.component';
+import { StateService } from 'src/app/services/state.service';
 
 describe('LandingPageComponent', () => {
   let component: LandingPageComponent;
   let fixture: ComponentFixture<LandingPageComponent>;
 
   beforeEach(() => {
+    const stateServiceMock = { promotions: [], offers: [] };
+
     TestBed.configureTestingModule({
-      declarations: [LandingPageComponent]
+      declarations: [LandingPageComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        { provide: StateService, useValue: stateServiceMock }
+      ]
     });
     fixture = TestBed.createComponent(LandingPageComponent);
     component = fixture.componentInstance;

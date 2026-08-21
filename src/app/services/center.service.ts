@@ -133,6 +133,11 @@ export class CenterService {
     return this.http.put<ApiResponse<CenterEquipment>>(`${this.url}/center/updateCenterEquipment`, data);
   }
 
+  /** Owner (center/trainer) or admin toggles the equipment's "featured" flag. */
+  updateEquipmentFeatured(id: number) {
+    return this.http.put<ApiResponse<CenterEquipment>>(`${this.url}/center/updateEquipmentFeatured/${id}`, {});
+  }
+
   deleteEquipment(id: number) {
     return this.http.delete<ApiResponse<string>>(`${this.url}/center/deleteCenterEquipment/${id}`);
   }

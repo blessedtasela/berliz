@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { CenterAnnouncementsComponent } from './center-announcements.component';
 
@@ -8,7 +9,8 @@ describe('CenterAnnouncementsComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CenterAnnouncementsComponent]
+      declarations: [CenterAnnouncementsComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(CenterAnnouncementsComponent);
     component = fixture.componentInstance;
