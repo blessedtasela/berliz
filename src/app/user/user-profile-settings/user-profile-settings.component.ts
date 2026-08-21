@@ -62,7 +62,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   savingVisibility = false;
 
   // ── Sidebar display preference ──────────────────────────────────────────
-  /** Value on the user record from /user/getUser. Defaults to 'expanded'. */
+  /** Value on the user record from /user/getUser. Defaults per viewport until loaded. */
   private serverSidebarDisplay: SidebarDisplay = 'expanded';
   /** Set once the user picks an option in this session; takes precedence. */
   private localSidebarDisplay: SidebarDisplay | null = null;
@@ -80,7 +80,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private dialog: MatDialog,
     private router: Router,
-    private sidebarState: SidebarStateService
+    public sidebarState: SidebarStateService
   ) { }
 
   ngOnInit(): void {
@@ -96,7 +96,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
           this.serverVisibility = user.profileVisibility === 'public' ? 'public' : 'private';
           this.serverSidebarDisplay = KNOWN_SIDEBAR_MODES.includes(user.sidebarDisplay as SidebarDisplay)
             ? (user.sidebarDisplay as SidebarDisplay)
-            : 'expanded';
+            : (this.sidebarState.isMobileViewport() ? 'hidden' : 'expanded');
           this.initOrPatchForm();
           this.originalValue = structuredClone(user);
           this.updateUserForm.patchValue(user);

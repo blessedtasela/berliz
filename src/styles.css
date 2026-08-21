@@ -11,6 +11,96 @@
   opacity: 0;
 }
 
+/* ─── Berliz-styled ng-select (country/state/city pickers etc.) ────────────
+   .berliz-select is referenced on several ng-select fields but had no rules
+   of its own, so those fields silently rendered in ng-select's plain default
+   theme — a totally different look (blue focus, square corners, denser text)
+   from every hand-styled text input around them. This brings it in line:
+   same rounded-xl / gray-50 / red-focus-ring language as the rest of the form. */
+.berliz-select .ng-select-container {
+  min-height: 2.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  font-size: 0.875rem;
+  color: #111827;
+  box-shadow: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.berliz-select.ng-select-focused .ng-select-container {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px #ef4444;
+  background-color: #ffffff;
+}
+
+.berliz-select--error .ng-select-container {
+  border-color: #ef4444;
+}
+
+.berliz-select .ng-placeholder {
+  color: #9ca3af;
+}
+
+.berliz-select .ng-value-container {
+  padding-left: 0.75rem;
+}
+
+.berliz-select .ng-value-container .ng-input > input {
+  font-size: 0.875rem;
+  color: #111827;
+}
+
+.berliz-select .ng-arrow-wrapper {
+  padding-right: 0.5rem;
+}
+
+.berliz-select .ng-clear-wrapper {
+  color: #9ca3af;
+}
+
+.berliz-select .ng-dropdown-panel {
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.10), 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-top: 4px;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+  background-color: #fef2f2;
+}
+
+.berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected,
+.berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+/* ─── Native date inputs ─────────────────────────────────────────────────
+   The calendar icon's own hit-target is a hard-edged square baked into the
+   browser's UA styling; inside our rounded-xl inputs it visibly poked past
+   the rounded corner ("out of the border"). Rounding the icon itself and
+   pulling it in from the edge keeps it inside the field's own corner radius. */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  border-radius: 0.5rem;
+  padding: 3px;
+  margin-right: 2px;
+  filter: opacity(0.55);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  filter: opacity(0.85);
+}
+
 /* safer global text handling */
 * {
   overflow-wrap: anywhere;

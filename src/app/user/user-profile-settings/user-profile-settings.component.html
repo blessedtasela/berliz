@@ -63,25 +63,36 @@
     </div>
 
     <!-- ═══════════ SIDEBAR DISPLAY ═══════════
-         Sets the DEFAULT sidebar shown on desktop when the app loads. Purely a
-         starting point — the sidebar's own expand/collapse controls and the
-         floating reopen button always still work afterwards regardless of it. -->
+         Sets the DEFAULT sidebar shown when the app loads. Purely a starting
+         point — the sidebar's own expand/collapse controls and the menu
+         button always still work afterwards regardless of it. "Expanded" is
+         desktop-only: on mobile there's no useful difference between it and
+         "hidden" (both are just tucked behind the menu button), so mobile
+         only ever offers Collapsed / Hidden. -->
     <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
             <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Sidebar display</h2>
             <p class="text-[11px] text-gray-400 mt-0.5">
-                Choose how the navigation sidebar looks by default on desktop. You can always
-                expand, collapse or reopen it manually afterwards — this just sets the starting point.
+                <ng-container *ngIf="!(sidebarState.isMobile$ | async)">
+                    Choose the default width on desktop: full labels, icon-only, or tucked away.
+                </ng-container>
+                <ng-container *ngIf="sidebarState.isMobile$ | async">
+                    "Collapsed" keeps a compact icon rail on screen at all times. "Hidden" tucks it
+                    away completely behind the menu button in the top bar until you tap it.
+                </ng-container>
+                You can always switch it manually afterwards — this just sets the starting point.
             </p>
         </div>
 
         <div class="border-t border-gray-100"></div>
 
-        <div class="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Sidebar display">
+        <div class="grid gap-2" role="radiogroup" aria-label="Sidebar display"
+            [ngClass]="(sidebarState.isMobile$ | async) ? 'grid-cols-2' : 'grid-cols-3'">
 
-            <button type="button" role="radio" [attr.aria-checked]="sidebarDisplay === 'expanded'"
-                (click)="setSidebarDisplay('expanded')" [disabled]="savingSidebarDisplay"
+            <button *ngIf="!(sidebarState.isMobile$ | async)" type="button" role="radio"
+                [attr.aria-checked]="sidebarDisplay === 'expanded'" (click)="setSidebarDisplay('expanded')"
+                [disabled]="savingSidebarDisplay"
                 class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition
                        disabled:opacity-60 disabled:cursor-not-allowed"
                 [ngClass]="sidebarDisplay === 'expanded' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">

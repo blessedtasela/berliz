@@ -11,8 +11,15 @@
 
         <!-- Expand button -->
         <button (click)="setMode('expanded'); stopPropagation($event)"
-            class="w-8 h-8 rounded-xl hover:bg-gray-950 flex items-center justify-center transition mb-2">
+            class="group relative w-8 h-8 rounded-xl hover:bg-gray-950 flex items-center justify-center transition mb-2">
             <i-feather name="align-justify" style="width:16px;height:16px;" class="text-white"></i-feather>
+
+            <!-- Tooltip -->
+            <span class="absolute left-full ml-2 px-2 py-1 rounded-lg bg-white text-gray-950 font-bold shadow-lg text-xs
+                         font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 border border-gray-200
+                         pointer-events-none transition-opacity duration-150 z-50">
+                Change this anytime in Settings
+            </span>
         </button>
 
         <div class="w-6 border-t border-gray-200 mb-1"></div>
@@ -41,10 +48,36 @@
 
     </div>
 
-    <!-- MOBILE — TEMPORARY OVERLAY. Always the full, labelled sidebar (a
-         collapsed icon-only rail isn't useful as a dismissible mobile overlay).
-         Backdrop click closes it. The centralized close-on-navigate that also
-         closes this lives in SidebarStateService, not here. -->
+    <!-- MOBILE — COLLAPSED (persistent icon rail, mirrors the desktop one).
+         The only mobile mode with a permanent on-screen presence; 'expanded'
+         and 'hidden' both stay tucked behind the top-bar toggle instead. -->
+    <div *ngIf="isMobile && mode === 'collapsed' && !mobileOverlayOpen" class="fixed top-14 left-0 h-[calc(100vh-3.5rem)] w-14 border-r border-gray-200 bg-gray-950
+           flex flex-col items-center py-4 gap-1 z-40 transition-all duration-300">
+
+        <!-- Expand into the full overlay menu -->
+        <button (click)="openSidebar(); stopPropagation($event)"
+            class="group relative w-8 h-8 rounded-xl hover:bg-gray-950 flex items-center justify-center transition mb-2">
+            <i-feather name="align-justify" style="width:16px;height:16px;" class="text-white"></i-feather>
+
+            <!-- Tooltip -->
+            <span class="absolute left-full ml-2 px-2 py-1 rounded-lg bg-white text-gray-950 font-bold shadow-lg text-xs
+                         font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 border border-gray-200
+                         pointer-events-none transition-opacity duration-150 z-50">
+                Change this anytime in Settings
+            </span>
+        </button>
+
+        <div class="w-6 border-t border-gray-200 mb-1"></div>
+
+        <app-side-bar-close [notificationLength]="notificationLength"></app-side-bar-close>
+
+    </div>
+
+    <!-- MOBILE — TEMPORARY OVERLAY. The full, labelled sidebar, reached either
+         from the collapsed rail's expand button or the top-bar toggle (for
+         'expanded'/'hidden' modes, which have no persistent rail). Backdrop
+         click closes it. The centralized close-on-navigate that also closes
+         this lives in SidebarStateService, not here. -->
     <ng-container *ngIf="isMobile && mobileOverlayOpen">
 
         <div class="fixed inset-0 bg-black/20 z-30" (click)="closeMobileOverlay()"></div>

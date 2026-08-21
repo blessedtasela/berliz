@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, of, switchMap } from 'rxjs';
+import { catchError, map, of, switchMap } from 'rxjs';
 
 import { UserService } from '../../services/user.service';
 import * as A from './user-profile.actions';
@@ -31,10 +31,15 @@ export class UserProfileEffects {
     )
   );
 
+  // switchMap, not mergeMap: two toggles fired close together used to be able to
+  // resolve out of order over the network, so the OLDER click's response could
+  // land after the newer one and silently overwrite it back. switchMap cancels
+  // any still-in-flight save the moment a newer one is dispatched, so only the
+  // latest choice can ever win.
   updateProfileVisibility$ = createEffect(() =>
     this.actions$.pipe(
       ofType(A.updateProfileVisibility),
-      mergeMap(({ profileVisibility }) =>
+      switchMap(({ profileVisibility }) =>
         this.userService.updateProfileVisibility(profileVisibility).pipe(
           map(response => A.updateProfileVisibilitySuccess({ response, profileVisibility })),
           catchError(err =>
@@ -47,10 +52,11 @@ export class UserProfileEffects {
     )
   );
 
+  // switchMap for the same out-of-order reason as updateProfileVisibility$ above.
   updateSidebarDisplay$ = createEffect(() =>
     this.actions$.pipe(
       ofType(A.updateSidebarDisplay),
-      mergeMap(({ sidebarDisplay }) =>
+      switchMap(({ sidebarDisplay }) =>
         this.userService.updateSidebarDisplay(sidebarDisplay).pipe(
           map(response => A.updateSidebarDisplaySuccess({ response, sidebarDisplay })),
           catchError(err =>

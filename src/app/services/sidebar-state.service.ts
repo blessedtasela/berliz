@@ -16,16 +16,19 @@ export const SIDEBAR_MOBILE_BREAKPOINT = 768;
 /**
  * Pure helper so the "show the floating reopen button" rule can be unit-tested
  * without touching Angular/TestBed.
- *  - Mobile: shown whenever the temporary overlay is currently closed —
- *    regardless of `mode`, since mobile never has a permanent icon rail.
+ *  - Mobile only has two effective states: 'collapsed' gets its own persistent
+ *    icon rail (see SideBarComponent), so it never needs this button; anything
+ *    else ('expanded' or 'hidden') is tucked away and reopened via this button.
  *  - Desktop: shown only when `mode === 'hidden'`.
+ *  - Never shown while the temporary overlay is already open.
  */
 export function shouldShowFloatingReopenButton(
   isMobile: boolean,
   mode: SidebarDisplay,
   mobileOverlayOpen: boolean
 ): boolean {
-  return isMobile ? !mobileOverlayOpen : mode === 'hidden';
+  if (mobileOverlayOpen) return false;
+  return isMobile ? mode !== 'collapsed' : mode === 'hidden';
 }
 
 /**
@@ -51,7 +54,7 @@ export function shouldShowFloatingReopenButton(
 @Injectable({ providedIn: 'root' })
 export class SidebarStateService implements OnDestroy {
 
-  private mode$$ = new BehaviorSubject<SidebarDisplay>('collapsed');
+  private mode$$ = new BehaviorSubject<SidebarDisplay>('hidden');
   mode$ = this.mode$$.asObservable();
 
   private mobileOverlayOpen$$ = new BehaviorSubject<boolean>(false);
@@ -164,11 +167,11 @@ export class SidebarStateService implements OnDestroy {
     this.preferenceApplied = true;
 
     this.mode$$.next(preference);
-    // Mobile: an "expanded" preference starts as an open overlay (the app "opens
-    // with the sidebar showing"); "collapsed" and "hidden" both start closed
-    // behind the floating reopen button — a permanent icon rail eating 56px of a
-    // phone screen is exactly the problem this feature replaces.
-    this.mobileOverlayOpen$$.next(preference === 'expanded' && this.isMobileViewport());
+    // Mobile never auto-opens the temporary overlay on load — there's no room
+    // for a permanently expanded, fully-labeled sidebar on a phone screen.
+    // Only 'collapsed' gets a persistent (icon rail) presence on mobile;
+    // 'expanded' and 'hidden' both start tucked behind the top-bar toggle.
+    this.mobileOverlayOpen$$.next(false);
   }
 
   /** Lets a fresh sign-in (or a test) re-seed from that user's own preference. */

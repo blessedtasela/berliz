@@ -29,17 +29,16 @@
             <app-side-bar></app-side-bar>
 
             <!--
-              Below `md` the sidebar never reserves layout space — on mobile it's
-              either a temporary overlay (see the backdrop in app-side-bar) or fully
-              hidden behind a floating reopen button, so content always gets the
-              full width there. From `md` up we push the content across by exactly
-              as much as the desktop sidebar mode currently occupies: none when
-              hidden, the icon rail when collapsed, the full width when expanded.
+              'collapsed' has a persistent icon rail on every viewport size (mobile
+              included — see app-side-bar), so it reserves the same 56px of space
+              everywhere. 'expanded' and 'hidden' are both overlay/toggle-based on
+              mobile (no reserved space there, full width instead) and only push
+              content across from `md` up.
             -->
             <div class="pt-14 transition-all duration-300 min-w-0"
                 [ngClass]="{
+                    'pl-14': sidebarMode === 'collapsed',
                     'md:pl-60': sidebarMode === 'expanded',
-                    'md:pl-14': sidebarMode === 'collapsed',
                     'md:pl-0': sidebarMode === 'hidden'
                 }">
                 <div class="p-4 min-w-0">

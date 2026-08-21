@@ -28,7 +28,7 @@ export class SideBarComponent implements OnInit, OnDestroy {
   currentRoute: any;
 
   /** Desktop display mode — 'expanded' | 'collapsed' | 'hidden'. Mirrors SidebarStateService.mode$. */
-  mode: SidebarDisplay = 'collapsed';
+  mode: SidebarDisplay = 'hidden';
   /** True below the md breakpoint. Mobile never reserves layout space for any mode. */
   isMobile = false;
   /** Mobile-only: whether the temporary, full-screen overlay sidebar is showing. */
@@ -73,6 +73,11 @@ export class SideBarComponent implements OnInit, OnDestroy {
 
   closeMobileOverlay(): void {
     this.sidebarState.setMobileOverlayOpen(false);
+  }
+
+  /** Mobile collapsed rail's own expand button — same reopen behavior as the top-bar toggle. */
+  openSidebar(): void {
+    this.sidebarState.openSidebar();
   }
 
   @HostListener('window:resize')
@@ -136,12 +141,13 @@ export class SideBarComponent implements OnInit, OnDestroy {
 
         // Seed the runtime sidebar mode from the user's saved "Sidebar display"
         // preference the first time it's seen this session (SidebarStateService
-        // guards against re-seeding on later reloads). Unknown/missing values
-        // default to 'collapsed' (icon rail), matching the backend's own
-        // null-reads-as-collapsed rule (see UserMapper.resolveSidebarDisplay).
+        // guards against re-seeding on later reloads). No preference saved yet
+        // (backend sends null — see UserMapper.resolveSidebarDisplay) picks a
+        // default based on viewport: desktop opens expanded, mobile stays hidden
+        // behind the menu button (no room for a permanent full sidebar there).
         const preference: SidebarDisplay = KNOWN_SIDEBAR_MODES.includes(user?.sidebarDisplay as SidebarDisplay)
           ? (user!.sidebarDisplay as SidebarDisplay)
-          : 'collapsed';
+          : (this.sidebarState.isMobileViewport() ? 'hidden' : 'expanded');
         this.sidebarState.applyPreferredMode(preference);
       }),
 
@@ -178,8 +184,16 @@ export class SideBarComponent implements OnInit, OnDestroy {
   }
 
   isClickInsideDropdown(event: Event): any {
+    const target = event.target as HTMLElement;
     const dropdownElement = document.getElementById('sidebarView');
-    return dropdownElement && dropdownElement.contains(event.target as Node);
+    if (dropdownElement && dropdownElement.contains(target)) {
+      return true;
+    }
+    // The floating reopen button lives in the top bar, outside #sidebarView.
+    // Without this, clicking it opened the overlay and this same document-level
+    // click listener, seeing a click "outside" #sidebarView, closed it again in
+    // the same event — the button appeared to do nothing.
+    return !!target.closest('[aria-label="Show sidebar"]');
   }
 
   stopPropagation(event: Event): void {
