@@ -41,6 +41,10 @@ export class TestimonialService {
     return this.httpClient.get<ApiResponse<Testimonials[]>>(this.url + "/testimonial/getActiveTestimonials")
   }
 
+  getMyTestimonials() {
+    return this.httpClient.get<ApiResponse<Testimonials[]>>(this.url + "/testimonial/getMyTestimonials")
+  }
+
   getByTrainer(trainerId: number) {
     return this.httpClient.get<ApiResponse<Testimonials[]>>(this.url + `/testimonial/getByTrainer/${trainerId}`)
   }

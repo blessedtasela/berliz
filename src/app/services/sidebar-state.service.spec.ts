@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { NavigationEnd, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 
 import {
@@ -11,6 +12,7 @@ describe('SidebarStateService', () => {
   let service: SidebarStateService;
   let routerEvents: Subject<any>;
   let originalInnerWidth: number;
+  let storeSpy: jasmine.SpyObj<Store>;
 
   function setInnerWidth(width: number) {
     Object.defineProperty(window, 'innerWidth', { configurable: true, value: width });
@@ -19,10 +21,12 @@ describe('SidebarStateService', () => {
   beforeEach(() => {
     originalInnerWidth = window.innerWidth;
     routerEvents = new Subject<any>();
+    storeSpy = jasmine.createSpyObj('Store', ['dispatch']);
 
     TestBed.configureTestingModule({
       providers: [
         { provide: Router, useValue: { events: routerEvents.asObservable() } },
+        { provide: Store, useValue: storeSpy },
       ],
     });
 
@@ -45,11 +49,19 @@ describe('SidebarStateService', () => {
       expect(service.currentMode).toBe('collapsed');
     });
 
-    it('defaults to collapsed before any preference has loaded', () => {
+    it('defaults to hidden before any preference has loaded', () => {
       // Before applyPreferredMode is ever called (e.g. user record still loading),
-      // the service starts in 'collapsed' (icon rail) — a permanently-open
-      // expanded sidebar being the exact problem this preference solves.
-      expect(service.currentMode).toBe('collapsed');
+      // the service starts 'hidden' — momentary, and neutral for both mobile and
+      // desktop until the real per-viewport default is resolved and applied.
+      expect(service.currentMode).toBe('hidden');
+    });
+
+    it('applying a preference does not persist it back as a save', () => {
+      // Seeding the runtime mode FROM the saved preference must not immediately
+      // re-save it — that would be a pointless round-trip on every page load.
+      setInnerWidth(1280);
+      service.applyPreferredMode('collapsed');
+      expect(storeSpy.dispatch).not.toHaveBeenCalled();
     });
 
     it('only applies once per session, so a later reload cannot silently undo a manual toggle', () => {
@@ -153,6 +165,13 @@ describe('SidebarStateService', () => {
       service.applyPreferredMode('hidden');
       service.setMode('expanded');
       expect(service.currentMode).toBe('expanded');
+    });
+
+    it('setMode persists the new mode as the user\'s saved preference', () => {
+      service.setMode('expanded');
+      expect(storeSpy.dispatch).toHaveBeenCalledWith(
+        jasmine.objectContaining({ sidebarDisplay: 'expanded' })
+      );
     });
 
     it('setOpen(true/false) maps onto expanded/collapsed', () => {

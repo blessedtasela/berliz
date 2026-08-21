@@ -85,6 +85,11 @@ export class TrainerService {
     return this.httpClient.get<ApiResponse<TrainerLikes[]>>(`${this.url}/trainer/getMyTrainerLikes`);
   }
 
+  /** Trainers the current (client) user has liked — not likes received on their own trainer profile. */
+  getMyLikedTrainers() {
+    return this.httpClient.get<ApiResponse<TrainerLikes[]>>(`${this.url}/trainer/getMyLikedTrainers`);
+  }
+
   getAllTrainerLikes() {
     return this.httpClient.get<ApiResponse<TrainerLikes[]>>(`${this.url}/trainer/getAllTrainerLikes`);
   }
@@ -99,6 +104,11 @@ export class TrainerService {
 
   updateTrainerPricing(data: any) {
     return this.httpClient.put<ApiResponse<TrainerPricing>>(`${this.url}/trainer/updateTrainerPricing`, data);
+  }
+
+  /** Public: this one trainer's pricing, no auth required — for their public profile page. */
+  getTrainerPricingByTrainerId(trainerId: number) {
+    return this.httpClient.get<ApiResponse<TrainerPricing>>(`${this.url}/trainer/getTrainerPricing/${trainerId}`);
   }
 
   getAllTrainerPricing() {
@@ -129,6 +139,11 @@ export class TrainerService {
     return this.httpClient.delete<ApiResponse<void>>(`${this.url}/trainer/deleteTrainerIntroduction/${id}`);
   }
 
+  /** Public: this one trainer's introduction, no auth required — for their public profile page. */
+  getTrainerIntroductionByTrainerId(trainerId: number) {
+    return this.httpClient.get<ApiResponse<TrainerIntroduction>>(`${this.url}/trainer/getTrainerIntroduction/${trainerId}`);
+  }
+
   getAllTrainerIntroductions() {
     return this.httpClient.get<ApiResponse<TrainerIntroduction[]>>(`${this.url}/trainer/getAllTrainerIntroductions`);
   }
@@ -151,6 +166,11 @@ export class TrainerService {
 
   deleteTrainerBenefit(id: number) {
     return this.httpClient.delete<ApiResponse<void>>(`${this.url}/trainer/deleteTrainerBenefit/${id}`);
+  }
+
+  /** Public: this one trainer's benefits, no auth required — for their public profile page. */
+  getTrainerBenefitsByTrainerId(trainerId: number) {
+    return this.httpClient.get<ApiResponse<TrainerBenefits>>(`${this.url}/trainer/getTrainerBenefits/${trainerId}`);
   }
 
   getAllTrainerBenefits() {
@@ -221,6 +241,11 @@ export class TrainerService {
     return this.httpClient.delete<ApiResponse<void>>(`${this.url}/trainer/deleteTrainerPhotosAlbum/${id}`);
   }
 
+  /** Public: this one trainer's photo album, no auth required — for their public profile page. */
+  getTrainerPhotosAlbumByTrainerId(trainerId: number) {
+    return this.httpClient.get<ApiResponse<TrainerPhotoAlbum>>(`${this.url}/trainer/getTrainerPhotosAlbum/${trainerId}`);
+  }
+
   getAllTrainersPhotosAlbum() {
     return this.httpClient.get<ApiResponse<TrainerPhotoAlbum[]>>(`${this.url}/trainer/getAllTrainersPhotosAlbum`);
   }
@@ -253,6 +278,11 @@ export class TrainerService {
 
   deleteTrainerVideosAlbum(id: number) {
     return this.httpClient.delete<ApiResponse<void>>(`${this.url}/trainer/deleteTrainerVideosAlbum/${id}`);
+  }
+
+  /** Public: this one trainer's video album, no auth required — for their public profile page. */
+  getTrainerVideosAlbumByTrainerId(trainerId: number) {
+    return this.httpClient.get<ApiResponse<TrainerVideoAlbum>>(`${this.url}/trainer/getTrainerVideosAlbum/${trainerId}`);
   }
 
   getAllTrainersVideosAlbum() {

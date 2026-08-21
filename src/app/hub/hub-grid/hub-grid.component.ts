@@ -135,10 +135,6 @@ export class HubGridComponent implements OnChanges {
     'equipments': '/services/equipment',
     'workouts': '/dashboard/workouts',
     'my-workouts': '/dashboard/workouts',
-    'liked-trainers': '/trainers',
-    // No dedicated "my testimonials" page exists (a user has at most one
-    // testimonial); the merged Programs/testimonials page is the sensible landing spot.
-    'my-testimonials': '/services',
   };
 
   resolveRoute(key: string): string {

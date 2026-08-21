@@ -25,14 +25,11 @@ import {
   updateProfileVisibility,
   updateProfileVisibilityFailure,
   updateProfileVisibilitySuccess,
-  updateSidebarDisplay,
   updateSidebarDisplayFailure,
   updateSidebarDisplaySuccess,
 } from 'src/app/state/user-profile/user-profile.actions';
 import { selectSavingVisibility, selectSavingSidebarDisplay } from 'src/app/state/user-profile/user-profile.selector';
 import { SidebarStateService } from 'src/app/services/sidebar-state.service';
-
-const KNOWN_SIDEBAR_MODES: SidebarDisplay[] = ['expanded', 'collapsed', 'hidden'];
 
 @Component({
   selector: 'app-user-profile-settings',
@@ -62,10 +59,6 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   savingVisibility = false;
 
   // ── Sidebar display preference ──────────────────────────────────────────
-  /** Value on the user record from /user/getUser. Defaults per viewport until loaded. */
-  private serverSidebarDisplay: SidebarDisplay = 'expanded';
-  /** Set once the user picks an option in this session; takes precedence. */
-  private localSidebarDisplay: SidebarDisplay | null = null;
   savingSidebarDisplay = false;
 
   private destroy$ = new Subject<void>();
@@ -94,9 +87,6 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
         if (user) {
           this.user = user;
           this.serverVisibility = user.profileVisibility === 'public' ? 'public' : 'private';
-          this.serverSidebarDisplay = KNOWN_SIDEBAR_MODES.includes(user.sidebarDisplay as SidebarDisplay)
-            ? (user.sidebarDisplay as SidebarDisplay)
-            : (this.sidebarState.isMobileViewport() ? 'hidden' : 'expanded');
           this.initOrPatchForm();
           this.originalValue = structuredClone(user);
           this.updateUserForm.patchValue(user);
@@ -137,7 +127,6 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     this.actions$
       .pipe(ofType(updateSidebarDisplaySuccess), takeUntil(this.destroy$))
       .subscribe(({ response, sidebarDisplay }) => {
-        this.localSidebarDisplay = sidebarDisplay;
         this.snackBarService.openSnackBar(
           response?.message || `Sidebar display set to ${sidebarDisplay}`,
           ''
@@ -180,19 +169,17 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   // SIDEBAR DISPLAY
   // -------------------------
 
-  /** Locally-chosen value wins over whatever the last /user/getUser returned. */
+  /** Always the live, authoritative mode — same value the sidebar itself is showing right now. */
   get sidebarDisplay(): SidebarDisplay {
-    return this.localSidebarDisplay ?? this.serverSidebarDisplay;
+    return this.sidebarState.currentMode;
   }
 
   setSidebarDisplay(display: SidebarDisplay): void {
     if (this.savingSidebarDisplay || display === this.sidebarDisplay) return;
 
-    this.store.dispatch(updateSidebarDisplay({ sidebarDisplay: display }));
-    // Apply it to the live sidebar for this session immediately — the setting is
-    // meant to be felt right away, not just after a reload. Manual toggles via
-    // the sidebar's own controls (expand/collapse, the floating reopen button)
-    // still override this afterwards, same as any other manual toggle.
+    // SidebarStateService.setMode() now both applies it live AND persists it as
+    // the new preference (any manual toggle does) — no separate dispatch needed
+    // here, it would just be a duplicate save.
     this.sidebarState.setMode(display);
   }
 

@@ -141,14 +141,21 @@ export class SideBarComponent implements OnInit, OnDestroy {
 
         // Seed the runtime sidebar mode from the user's saved "Sidebar display"
         // preference the first time it's seen this session (SidebarStateService
-        // guards against re-seeding on later reloads). No preference saved yet
-        // (backend sends null — see UserMapper.resolveSidebarDisplay) picks a
-        // default based on viewport: desktop opens expanded, mobile stays hidden
-        // behind the menu button (no room for a permanent full sidebar there).
-        const preference: SidebarDisplay = KNOWN_SIDEBAR_MODES.includes(user?.sidebarDisplay as SidebarDisplay)
-          ? (user!.sidebarDisplay as SidebarDisplay)
-          : (this.sidebarState.isMobileViewport() ? 'hidden' : 'expanded');
-        this.sidebarState.applyPreferredMode(preference);
+        // guards against re-seeding on later reloads). Skip while `user` is still
+        // null/loading — store.select() emits synchronously with whatever the
+        // store held BEFORE the /user/getUser response arrives, and treating
+        // that transient null as "no preference saved" used to permanently latch
+        // in the viewport-based default a moment before the REAL saved value
+        // showed up, since applyPreferredMode only ever applies once per session.
+        // No preference saved yet (backend sends null — see
+        // UserMapper.resolveSidebarDisplay) picks a default based on viewport:
+        // desktop opens expanded, mobile stays hidden behind the menu button.
+        if (user) {
+          const preference: SidebarDisplay = KNOWN_SIDEBAR_MODES.includes(user.sidebarDisplay as SidebarDisplay)
+            ? (user.sidebarDisplay as SidebarDisplay)
+            : (this.sidebarState.isMobileViewport() ? 'hidden' : 'expanded');
+          this.sidebarState.applyPreferredMode(preference);
+        }
       }),
 
       this.store.select(selectMyNotifications).subscribe(notifications => {

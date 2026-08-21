@@ -120,6 +120,11 @@ export class CenterService {
     return this.http.get<ApiResponse<CenterEquipment[]>>(`${this.url}/center/getMyCenterEquipments`);
   }
 
+  /** Public: this one center's equipment, no auth required — for its public profile page. */
+  getEquipmentByCenterId(centerId: number) {
+    return this.http.get<ApiResponse<CenterEquipment[]>>(`${this.url}/center/getCenterEquipments/${centerId}`);
+  }
+
   addEquipment(data: any) {
     return this.http.post<ApiResponse<CenterEquipment>>(`${this.url}/center/addCenterEquipment`, data);
   }
@@ -143,6 +148,11 @@ export class CenterService {
 
   getMyIntroductions() {
     return this.http.get<ApiResponse<CenterIntroduction[]>>(`${this.url}/center/getMyCenterIntroductions`);
+  }
+
+  /** Public: this one center's introductions, no auth required — for its public profile page. */
+  getIntroductionsByCenterId(centerId: number) {
+    return this.http.get<ApiResponse<CenterIntroduction[]>>(`${this.url}/center/getCenterIntroductions/${centerId}`);
   }
 
   addIntroduction(data: any) {
@@ -170,6 +180,11 @@ export class CenterService {
     return this.http.get<ApiResponse<CenterLocations[]>>(`${this.url}/center/getMyCenterLocations`);
   }
 
+  /** Public: this one center's locations, no auth required — for its public profile page. */
+  getLocationsByCenterId(centerId: number) {
+    return this.http.get<ApiResponse<CenterLocations[]>>(`${this.url}/center/getCenterLocations/${centerId}`);
+  }
+
   addLocation(data: any) {
     return this.http.post<ApiResponse<CenterLocations>>(`${this.url}/center/addCenterLocation`, data);
   }
@@ -193,6 +208,11 @@ export class CenterService {
 
   getMyPhotoAlbums() {
     return this.http.get<ApiResponse<CenterPhotoAlbum[]>>(`${this.url}/center/getMyCenterPhotoAlbums`);
+  }
+
+  /** Public: this one center's photo albums, no auth required — for its public profile page. */
+  getPhotoAlbumsByCenterId(centerId: number) {
+    return this.http.get<ApiResponse<CenterPhotoAlbum[]>>(`${this.url}/center/getCenterPhotoAlbums/${centerId}`);
   }
 
   addPhotoAlbum(data: any) {
@@ -219,6 +239,11 @@ export class CenterService {
     return this.http.get<ApiResponse<CenterPricing>>(`${this.url}/center/getMyCenterPricing`);
   }
 
+  /** Public: this one center's pricing, no auth required — for its public profile page. */
+  getPricingByCenterId(centerId: number) {
+    return this.http.get<ApiResponse<CenterPricing>>(`${this.url}/center/getCenterPricing/${centerId}`);
+  }
+
   addPricing(data: any) {
     return this.http.post<ApiResponse<CenterPricing>>(`${this.url}/center/addCenterPricing`, data);
   }
@@ -237,6 +262,11 @@ export class CenterService {
 
   getAllCenterTrainers() {
     return this.http.get<ApiResponse<CenterTrainers[]>>(`${this.url}/center/getAllCenterTrainers`);
+  }
+
+  /** Public: this one center's trainer roster, no auth required — for its public profile page. */
+  getCenterTrainersByCenterId(centerId: number) {
+    return this.http.get<ApiResponse<CenterTrainers[]>>(`${this.url}/center/getCenterTrainers/${centerId}`);
   }
 
   getMyCenterTrainers() {
@@ -265,6 +295,11 @@ export class CenterService {
 
   getMyVideoAlbums() {
     return this.http.get<ApiResponse<CenterVideoAlbum[]>>(`${this.url}/center/getMyCenterVideoAlbums`);
+  }
+
+  /** Public: this one center's video albums, no auth required — for its public profile page. */
+  getVideoAlbumsByCenterId(centerId: number) {
+    return this.http.get<ApiResponse<CenterVideoAlbum[]>>(`${this.url}/center/getCenterVideoAlbums/${centerId}`);
   }
 
   addVideoAlbum(data: any) {

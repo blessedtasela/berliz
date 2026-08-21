@@ -1,8 +1,10 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { BehaviorSubject, Subject, combineLatest, fromEvent } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { SidebarDisplay } from '../models/users.interface';
+import { updateSidebarDisplay } from '../state/user-profile/user-profile.actions';
 
 export type { SidebarDisplay };
 
@@ -86,7 +88,7 @@ export class SidebarStateService implements OnDestroy {
   private destroy$ = new Subject<void>();
   private preferenceApplied = false;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private store: Store) {
     // ── CENTRALIZED mobile auto-close-on-navigate ──────────────────────────────
     // The one and only place this happens for the whole app. Every completed
     // navigation, regardless of which component/link triggered it, closes the
@@ -125,8 +127,19 @@ export class SidebarStateService implements OnDestroy {
     return typeof window !== 'undefined' && window.innerWidth < SIDEBAR_MOBILE_BREAKPOINT;
   }
 
+  /**
+   * Any manual toggle (the rail's expand/collapse arrows, the reopen button) is
+   * saved as the user's new preference here, not just changes made through the
+   * Settings page — otherwise a manual toggle only lasted for the current tab
+   * and reverted to the old saved value (or the default) on the next refresh,
+   * which read as "the sidebar doesn't remember what I set it to." Excluded:
+   * applyPreferredMode() below sets mode$$ directly, bypassing this, since that
+   * call IS the preference being loaded — persisting it right back would just
+   * be a redundant no-op save on every single page load.
+   */
   setMode(mode: SidebarDisplay): void {
     this.mode$$.next(mode);
+    this.store.dispatch(updateSidebarDisplay({ sidebarDisplay: mode }));
   }
 
   /**

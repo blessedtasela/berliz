@@ -43,6 +43,8 @@ import { DashboardMainComponent } from './dashboard/dashboard-main/dashboard-mai
 import { DashboardRouteComponent } from './dashboard/dashboard-route/dashboard-route.component';
 import { MySubscriptionsMainComponent } from './my-subscriptions/my-subscriptions-main/my-subscriptions-main.component';
 import { MyBookingsMainComponent } from './bookings/my-bookings-main/my-bookings-main.component';
+import { MyLikedTrainersComponent } from './liked-trainers/my-liked-trainers/my-liked-trainers.component';
+import { MyTestimonialsPageComponent } from './my-testimonials/my-testimonials-page/my-testimonials-page.component';
 import { ProviderBookingsMainComponent } from './bookings/provider-bookings-main/provider-bookings-main.component';
 import { ClientIntakeFormComponent } from './client-intake/client-intake-form/client-intake-form.component';
 import { MyClientIntakesComponent } from './client-intake/my-client-intakes/my-client-intakes.component';
@@ -263,6 +265,28 @@ export const routes: Routes = [
         }
       },
 
+      // Liked trainers — dashboard-native list (vs the public /trainers grid).
+      {
+        path: 'liked-trainers',
+        component: MyLikedTrainersComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Liked Trainers',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+
+      // My testimonials — dashboard-native list (vs the public /services page).
+      {
+        path: 'my-testimonials',
+        component: MyTestimonialsPageComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'My Testimonials',
+          expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client']
+        }
+      },
+
       // Client intake — trainer initiates for a specific client (clientId
       // route param); client or the assigned trainer can view/edit
       // afterwards (id route param). Access is enforced server-side.
@@ -417,6 +441,8 @@ export const routes: Routes = [
           { path: 'my-todos', component: MyTodoListMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'To-do List', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
           { path: 'my-bookings', component: MyBookingsMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'My Bookings', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
           { path: 'my-provider-bookings', component: ProviderBookingsMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Bookings', expectedRole: ['trainer', 'center'] } },
+          { path: 'liked-trainers', component: MyLikedTrainersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Liked Trainers', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
+          { path: 'my-testimonials', component: MyTestimonialsPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'My Testimonials', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
           { path: 'client-intake/new/:clientId', component: ClientIntakeFormComponent, canActivate: [AuthGuard], data: { breadcrumb: 'New Client Intake', expectedRole: ['trainer'] } },
           { path: 'client-intake/:id', component: ClientIntakeFormComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Client Intake', expectedRole: ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'] } },
           { path: 'my-client-intakes', component: MyClientIntakesComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Client Intakes', expectedRole: ['trainer'] } },

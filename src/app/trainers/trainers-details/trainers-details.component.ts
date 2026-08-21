@@ -21,21 +21,11 @@ import { loadTestimonialsByTrainer } from 'src/app/state/testimonial/testimonial
 import { selectTestimonialsByTrainer } from 'src/app/state/testimonial/testimonial.selectors';
 import {
   loadActiveTrainerFeatureVideos,
-  loadActiveTrainerReviews,
-  loadTrainerBenefits,
-  loadTrainerIntroductions,
-  loadTrainerPhotoAlbums,
-  loadTrainerPricing,
-  loadTrainerVideoAlbums
+  loadActiveTrainerReviews
 } from 'src/app/state/trainer/trainer.actions';
 import {
   selectActiveTrainerFeatureVideos,
-  selectActiveTrainerReviews,
-  selectTrainerBenefits,
-  selectTrainerIntroductions,
-  selectTrainerPhotoAlbums,
-  selectTrainerPricing,
-  selectTrainerVideoAlbums
+  selectActiveTrainerReviews
 } from 'src/app/state/trainer/trainer.selector';
 
 /**
@@ -45,10 +35,14 @@ import {
  * TrainerGuard uses). We resolve the slug back to the real `Trainers` record,
  * then pull every public sub-entity for that trainer id.
  *
- * NOTE: the backend only exposes "load all" endpoints for introduction /
- * benefits / pricing / photo album / video album, so those are dispatched as
- * the global load actions and filtered client-side by `trainerId`. Feature
- * videos and reviews already have trainer-scoped endpoints and are used as-is.
+ * Introduction / benefits / pricing / photo album / video album are fetched
+ * directly via TrainerService's public getXxxByTrainerId() calls rather than
+ * through the NgRx store — the backend used to only expose admin-only "load
+ * all" endpoints for these (401s for anyone but an admin, which is why they
+ * silently never showed up here), and the store's global list state isn't a
+ * good fit for what's really a single-object, single-view fetch anyway.
+ * Feature videos and reviews already have trainer-scoped endpoints and are
+ * used as-is via the store.
  */
 @Component({
   selector: 'app-trainers-details',
@@ -143,12 +137,31 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
 
     const id = this.trainerId;
 
-    // "Load all" endpoints — filtered client-side by trainerId.
-    this.store.dispatch(loadTrainerIntroductions());
-    this.store.dispatch(loadTrainerBenefits());
-    this.store.dispatch(loadTrainerPricing());
-    this.store.dispatch(loadTrainerPhotoAlbums());
-    this.store.dispatch(loadTrainerVideoAlbums());
+    // Public, single-trainer endpoints — no auth required, no client-side filtering.
+    // The backend returns an empty (but non-null) response object when a trainer
+    // hasn't set this section up yet, so treat "no id" as "not set" — matching
+    // the previous null-when-absent contract these child components expect.
+    this.subs.push(
+      this.trainerService.getTrainerIntroductionByTrainerId(id)
+        .pipe(catchError(() => of(null)))
+        .subscribe(res => this.trainerIntroduction = res?.data?.id ? res.data : null),
+
+      this.trainerService.getTrainerBenefitsByTrainerId(id)
+        .pipe(catchError(() => of(null)))
+        .subscribe(res => this.trainerBenefits = res?.data?.id ? res.data : null),
+
+      this.trainerService.getTrainerPricingByTrainerId(id)
+        .pipe(catchError(() => of(null)))
+        .subscribe(res => this.trainerPricing = res?.data?.id ? res.data : null),
+
+      this.trainerService.getTrainerPhotosAlbumByTrainerId(id)
+        .pipe(catchError(() => of(null)))
+        .subscribe(res => this.trainerPhotoAlbum = res?.data?.id ? res.data : null),
+
+      this.trainerService.getTrainerVideosAlbumByTrainerId(id)
+        .pipe(catchError(() => of(null)))
+        .subscribe(res => this.trainerVideoAlbum = res?.data?.id ? res.data : null),
+    );
 
     // Already trainer-scoped on the backend.
     this.store.dispatch(loadActiveTrainerFeatureVideos({ trainerId: id }));
@@ -156,26 +169,6 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
     this.store.dispatch(loadTestimonialsByTrainer({ trainerId: id }));
 
     this.subs.push(
-      this.store.select(selectTrainerIntroductions).subscribe(list => {
-        this.trainerIntroduction = (list ?? []).find(i => i.trainerId === id) ?? null;
-      }),
-
-      this.store.select(selectTrainerBenefits).subscribe(list => {
-        this.trainerBenefits = (list ?? []).find(b => b.trainerId === id) ?? null;
-      }),
-
-      this.store.select(selectTrainerPricing).subscribe(list => {
-        this.trainerPricing = (list ?? []).find(p => p.trainerId === id) ?? null;
-      }),
-
-      this.store.select(selectTrainerPhotoAlbums).subscribe(list => {
-        this.trainerPhotoAlbum = (list ?? []).find(a => a.trainerId === id) ?? null;
-      }),
-
-      this.store.select(selectTrainerVideoAlbums).subscribe(list => {
-        this.trainerVideoAlbum = (list ?? []).find(a => a.trainerId === id) ?? null;
-      }),
-
       this.store.select(selectActiveTrainerFeatureVideos).subscribe(list => {
         this.trainerFeatureVideos = (list ?? [])
           .filter(v => v.trainerId === id)
