@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Subscription } from 'rxjs';
 import { SubTasks } from 'src/app/models/tasks.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -20,11 +21,13 @@ import { selectSubTasks } from 'src/app/state/task/task.selectors';
   templateUrl: './sub-tasks-list.component.html',
   styleUrls: ['./sub-tasks-list.component.css']
 })
-export class SubTasksListComponent {
+export class SubTasksListComponent implements OnDestroy {
   responseMessage: any;
   showFullData: boolean = false;
   @Input() subTasksData: SubTasks[] = [];
   @Input() totalSubTasks: number = 0;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private datePipe: DatePipe,
     private taskService: TaskService,
@@ -42,6 +45,10 @@ export class SubTasksListComponent {
     this.watchUpdateCategory()
     this.watchUpdateStatus()
     this.watchDeleteCategory()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -134,41 +141,51 @@ export class SubTasksListComponent {
   }
 
   watchLikeCategory() {
-    this.rxStompService.watch('/topic/likeCategory').subscribe((message) => {
-      const receivedCategories: SubTasks = JSON.parse(message.body);
-      const categoryId = this.subTasksData.findIndex(subTask => subTask.id === receivedCategories.id)
-      this.subTasksData[categoryId] = receivedCategories
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/likeCategory').subscribe((message) => {
+        const receivedCategories: SubTasks = JSON.parse(message.body);
+        const categoryId = this.subTasksData.findIndex(subTask => subTask.id === receivedCategories.id)
+        this.subTasksData[categoryId] = receivedCategories
+      })
+    );
   }
 
   watchUpdateCategory() {
-    this.rxStompService.watch('/topic/updateCategory').subscribe((message) => {
-      const receivedCategories: SubTasks = JSON.parse(message.body);
-      const categoryId = this.subTasksData.findIndex(subTask => subTask.id === receivedCategories.id)
-      this.subTasksData[categoryId] = receivedCategories
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateCategory').subscribe((message) => {
+        const receivedCategories: SubTasks = JSON.parse(message.body);
+        const categoryId = this.subTasksData.findIndex(subTask => subTask.id === receivedCategories.id)
+        this.subTasksData[categoryId] = receivedCategories
+      })
+    );
   }
 
   watchGetCategoryFromMap() {
-    this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
-      const receivedCategories: SubTasks = JSON.parse(message.body);
-      this.subTasksData.push(receivedCategories);
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
+        const receivedCategories: SubTasks = JSON.parse(message.body);
+        this.subTasksData.push(receivedCategories);
+      })
+    );
   }
 
   watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
-      const receivedCategories: SubTasks = JSON.parse(message.body);
-      const categoryId = this.subTasksData.findIndex(subTask => subTask.id === receivedCategories.id)
-      this.subTasksData[categoryId] = receivedCategories
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
+        const receivedCategories: SubTasks = JSON.parse(message.body);
+        const categoryId = this.subTasksData.findIndex(subTask => subTask.id === receivedCategories.id)
+        this.subTasksData[categoryId] = receivedCategories
+      })
+    );
   }
 
   watchDeleteCategory() {
-    this.rxStompService.watch('/topic/deleteCategory').subscribe((message) => {
-      const receivedCategories: SubTasks = JSON.parse(message.body);
-      this.subTasksData = this.subTasksData.filter(subTask => subTask.id !== receivedCategories.id);
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/deleteCategory').subscribe((message) => {
+        const receivedCategories: SubTasks = JSON.parse(message.body);
+        this.subTasksData = this.subTasksData.filter(subTask => subTask.id !== receivedCategories.id);
+      })
+    );
   }
 
 }

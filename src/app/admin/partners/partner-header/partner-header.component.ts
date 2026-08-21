@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Partner } from 'src/app/models/partners.interface';
 import { AddPartnerModalComponent } from '../add-partner-modal/add-partner-modal.component';
@@ -6,17 +6,20 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { Store } from '@ngrx/store';
 import { loadPartners } from 'src/app/state/partner/partner.actions';
 import { selectPartners } from 'src/app/state/partner/partner.selectors';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-partner-header',
   templateUrl: './partner-header.component.html',
   styleUrls: ['./partner-header.component.css']
 })
-export class PartnerHeaderComponent {
+export class PartnerHeaderComponent implements OnDestroy {
   @Input() partnersData: Partner[] = [];
   selectedSortOption: string = 'date';
   @Input() partnersLength: number = 0;
   @Input() totalPartners: number = 0;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private dialog: MatDialog,
     private store: Store,
@@ -25,6 +28,10 @@ export class PartnerHeaderComponent {
   ngOnInit(): void {
     this.watchDeletePartner()
     this.watchGetPartnerFromMap()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -98,21 +105,25 @@ export class PartnerHeaderComponent {
   }
 
   watchGetPartnerFromMap() {
-    this.rxStompService.watch('/topic/getNewsletterFromMap').subscribe((message) => {
-      const receivedCategories: Partner = JSON.parse(message.body);
-      this.partnersData.push(receivedCategories);
-      this.partnersLength = this.partnersData.length;
-      this.totalPartners = this.partnersData.length;
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/getNewsletterFromMap').subscribe((message) => {
+        const receivedCategories: Partner = JSON.parse(message.body);
+        this.partnersData.push(receivedCategories);
+        this.partnersLength = this.partnersData.length;
+        this.totalPartners = this.partnersData.length;
+      })
+    );
   }
 
   watchDeletePartner() {
-    this.rxStompService.watch('/topic/deleteNewsletter').subscribe((message) => {
-      const receivedNewsletter: Partner = JSON.parse(message.body);
-      this.partnersData = this.partnersData.filter(partners => partners.id !== receivedNewsletter.id);
-      this.partnersLength = this.partnersData.length;
-      this.totalPartners = this.partnersData.length;
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/deleteNewsletter').subscribe((message) => {
+        const receivedNewsletter: Partner = JSON.parse(message.body);
+        this.partnersData = this.partnersData.filter(partners => partners.id !== receivedNewsletter.id);
+        this.partnersLength = this.partnersData.length;
+        this.totalPartners = this.partnersData.length;
+      })
+    );
   }
 }
 

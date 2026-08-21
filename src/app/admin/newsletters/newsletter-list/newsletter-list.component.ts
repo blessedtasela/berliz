@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, ElementRef, Input } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -23,12 +23,13 @@ import { NewsletterDetailsModalComponent } from '../newsletter-details-modal/new
   templateUrl: './newsletter-list.component.html',
   styleUrls: ['./newsletter-list.component.css']
 })
-export class NewsletterListComponent {
+export class NewsletterListComponent implements OnDestroy {
   responseMessage: any;
   @Input() newsletterData: Newsletter[] = [];
   showFullData: boolean = false;
   @Input() totalNewsletters: number = 0;
   subscription = new Subscription;
+  private subscriptions: Subscription[] = [];
 
   constructor(private datePipe: DatePipe,
     private newsletterService: NewsletterService,
@@ -43,6 +44,11 @@ export class NewsletterListComponent {
   ngOnInit(): void {
     this.watchUpdateNewsletter()
     this.watchUpdateNewsletterStatus()
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
 
@@ -216,19 +222,23 @@ export class NewsletterListComponent {
   }
 
   watchUpdateNewsletter() {
-    this.rxStompService.watch('/topic/updateNewsletter').subscribe((message) => {
-      const receivedNewsletter: Newsletter = JSON.parse(message.body);
-      const newsletterId = this.newsletterData.findIndex(newsletter => newsletter.id === receivedNewsletter.id)
-      this.newsletterData[newsletterId] = receivedNewsletter
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateNewsletter').subscribe((message) => {
+        const receivedNewsletter: Newsletter = JSON.parse(message.body);
+        const newsletterId = this.newsletterData.findIndex(newsletter => newsletter.id === receivedNewsletter.id)
+        this.newsletterData[newsletterId] = receivedNewsletter
+      })
+    );
   }
 
   watchUpdateNewsletterStatus() {
-    this.rxStompService.watch('/topic/updateNewsletterStatus').subscribe((message) => {
-      const receivedNewsletter: Newsletter = JSON.parse(message.body);
-      const newsletterId = this.newsletterData.findIndex(newsletter => newsletter.id === receivedNewsletter.id)
-      this.newsletterData[newsletterId] = receivedNewsletter
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateNewsletterStatus').subscribe((message) => {
+        const receivedNewsletter: Newsletter = JSON.parse(message.body);
+        const newsletterId = this.newsletterData.findIndex(newsletter => newsletter.id === receivedNewsletter.id)
+        this.newsletterData[newsletterId] = receivedNewsletter
+      })
+    );
   }
 
 }

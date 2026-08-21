@@ -50,36 +50,9 @@ describe('SideBarComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('floating reopen button', () => {
-    it('is shown on desktop when the mode is hidden', () => {
-      fixture.detectChanges();
-      component.isMobile = false;
-      sidebarState.setMode('hidden');
-      expect(component.showFloatingButton).toBeTrue();
-    });
-
-    it('is hidden on desktop when expanded or collapsed', () => {
-      fixture.detectChanges();
-      component.isMobile = false;
-
-      sidebarState.setMode('expanded');
-      expect(component.showFloatingButton).toBeFalse();
-
-      sidebarState.setMode('collapsed');
-      expect(component.showFloatingButton).toBeFalse();
-    });
-
-    it('is shown on mobile whenever the overlay is closed, regardless of mode', () => {
-      fixture.detectChanges();
-      component.isMobile = true;
-
-      sidebarState.setMobileOverlayOpen(false);
-      expect(component.showFloatingButton).toBeTrue();
-
-      sidebarState.setMobileOverlayOpen(true);
-      expect(component.showFloatingButton).toBeFalse();
-    });
-  });
+  // The floating reopen button (and its visibility rule) moved to
+  // TopBarComponent, backed by SidebarStateService.showFloatingButton$ —
+  // see sidebar-state.service.spec.ts for those behavioral tests.
 
   describe('mobile overlay state reflects the shared service', () => {
     it('mirrors setMobileOverlayOpen changes onto the component', () => {
@@ -103,32 +76,14 @@ describe('SideBarComponent', () => {
     });
   });
 
-  describe('setMode / openSidebar', () => {
-    it('setMode delegates to the sidebar state service', () => {
+  describe('setMode', () => {
+    it('delegates to the sidebar state service', () => {
       fixture.detectChanges();
       component.setMode('collapsed');
       expect(sidebarState.currentMode).toBe('collapsed');
     });
-
-    it('openSidebar() reopens the mode to expanded on desktop', () => {
-      fixture.detectChanges();
-      component.isMobile = false;
-      sidebarState.setMode('hidden');
-
-      component.openSidebar();
-
-      expect(sidebarState.currentMode).toBe('expanded');
-    });
-
-    it('openSidebar() opens the mobile overlay instead of touching mode on mobile', () => {
-      fixture.detectChanges();
-      component.isMobile = true;
-      sidebarState.setMode('hidden');
-
-      component.openSidebar();
-
-      expect(sidebarState.isMobileOverlayOpen).toBeTrue();
-      expect(sidebarState.currentMode).toBe('hidden');
-    });
   });
+
+  // openSidebar() moved onto SidebarStateService itself (now called from
+  // TopBarComponent) — see sidebar-state.service.spec.ts.
 });

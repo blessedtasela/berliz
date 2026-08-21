@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { IconsModule } from 'src/app/icons/icons.module';
 
 interface PrivacySection {
   title: string;
@@ -6,8 +9,11 @@ interface PrivacySection {
   todo?: boolean;
 }
 
+// Standalone for the same reason as TermsPageComponent — see its comment.
 @Component({
   selector: 'app-privacy-page',
+  standalone: true,
+  imports: [CommonModule, RouterModule, IconsModule],
   templateUrl: './privacy-page.component.html',
   styleUrls: ['./privacy-page.component.css']
 })

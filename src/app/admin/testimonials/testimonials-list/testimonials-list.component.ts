@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Subscription } from 'rxjs';
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -19,11 +20,13 @@ import { selectTestimonials } from 'src/app/state/testimonial/testimonial.select
   templateUrl: './testimonials-list.component.html',
   styleUrls: ['./testimonials-list.component.css']
 })
-export class TestimonialsListComponent {
+export class TestimonialsListComponent implements OnDestroy {
   responseMessage: any;
   showFullData: boolean = false;
   @Input() testimonialsData: Testimonials[] = [];
   @Input() totalTestimonials: number = 0;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private datePipe: DatePipe,
     private testimonialService: TestimonialService,
@@ -38,6 +41,10 @@ export class TestimonialsListComponent {
   ngOnInit() {
     this.watchUpdateStatus()
     this.watchUpdateTestimonial()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -211,19 +218,23 @@ export class TestimonialsListComponent {
   }
 
   watchUpdateTestimonial() {
-    this.rxStompService.watch('/topic/updateTestimonial').subscribe((message) => {
-      const receivedCategories: Testimonials = JSON.parse(message.body);
-      const categoryId = this.testimonialsData.findIndex(testimonial => testimonial.id === receivedCategories.id)
-      this.testimonialsData[categoryId] = receivedCategories
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateTestimonial').subscribe((message) => {
+        const receivedCategories: Testimonials = JSON.parse(message.body);
+        const categoryId = this.testimonialsData.findIndex(testimonial => testimonial.id === receivedCategories.id)
+        this.testimonialsData[categoryId] = receivedCategories
+      })
+    );
   }
 
   watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateTestimonialStatus').subscribe((message) => {
-      const receivedCategories: Testimonials = JSON.parse(message.body);
-      const categoryId = this.testimonialsData.findIndex(testimonial => testimonial.id === receivedCategories.id)
-      this.testimonialsData[categoryId] = receivedCategories
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateTestimonialStatus').subscribe((message) => {
+        const receivedCategories: Testimonials = JSON.parse(message.body);
+        const categoryId = this.testimonialsData.findIndex(testimonial => testimonial.id === receivedCategories.id)
+        this.testimonialsData[categoryId] = receivedCategories
+      })
+    );
   }
 
 }

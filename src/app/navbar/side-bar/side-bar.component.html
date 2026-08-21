@@ -1,17 +1,9 @@
 <section id="sidebarView" class="font-sans">
 
-    <!-- FLOATING REOPEN BUTTON
-         Shown whenever there's no persistent/overlay sidebar currently on screen:
-         desktop "hidden" mode, or mobile with the overlay closed (covers the mobile
-         default for "collapsed"/"hidden" preferences, and a manually-dismissed
-         mobile "expanded" overlay too). This button is the only thing rendered in
-         those states — the sidebar itself takes zero horizontal layout space. -->
-    <button *ngIf="showFloatingButton" type="button" (click)="openSidebar(); stopPropagation($event)"
-        aria-label="Show sidebar"
-        class="fixed top-[4.25rem] left-3 z-40 w-10 h-10 rounded-xl bg-gray-950 border border-gray-800
-               shadow-lg flex items-center justify-center hover:bg-gray-900 transition">
-        <i-feather name="align-justify" style="width:16px;height:16px;" class="text-white"></i-feather>
-    </button>
+    <!-- The floating reopen button now lives in the top bar (see
+         top-bar.component.html) instead of floating separately below it —
+         that avoided a real bug where it overlapped page-specific content
+         sitting at the same vertical position on some pages. -->
 
     <!-- DESKTOP — COLLAPSED SIDEBAR (icon rail). Visual design unchanged. -->
     <div *ngIf="!isMobile && mode === 'collapsed'" class="fixed top-14 left-0 h-[calc(100vh-3.5rem)] w-14 border-r border-gray-200 bg-gray-950

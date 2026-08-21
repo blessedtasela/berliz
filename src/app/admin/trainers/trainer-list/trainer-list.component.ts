@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Subscription } from 'rxjs';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
@@ -19,12 +20,14 @@ import { selectTrainers } from 'src/app/state/trainer/trainer.selector';
   templateUrl: './trainer-list.component.html',
   styleUrls: ['./trainer-list.component.css']
 })
-export class TrainerListComponent {
+export class TrainerListComponent implements OnDestroy {
   @Input() trainersData: Trainers[] = [];
   responseMessage: any;
   showFullData: boolean = false;
   @Input() totalTrainers: number = 0;
   selectedImage: any;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private store: Store,
     private trainerService: TrainerService,
@@ -40,6 +43,10 @@ export class TrainerListComponent {
     this.watchUpdatePhoto()
     this.watchUpdateStatus()
     this.watchUpdateTrainer()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -211,35 +218,43 @@ export class TrainerListComponent {
   }
 
   watchLikeTrainer() {
-    this.rxStompService.watch('/topic/likeTrainer').subscribe((message) => {
-      const receivedTrainer: Trainers = JSON.parse(message.body);
-      const trainerId = this.trainersData.findIndex(trainer => trainer.id === receivedTrainer.id)
-      this.trainersData[trainerId] = receivedTrainer
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/likeTrainer').subscribe((message) => {
+        const receivedTrainer: Trainers = JSON.parse(message.body);
+        const trainerId = this.trainersData.findIndex(trainer => trainer.id === receivedTrainer.id)
+        this.trainersData[trainerId] = receivedTrainer
+      })
+    );
   }
 
   watchUpdateTrainer() {
-    this.rxStompService.watch('/topic/updateTrainer').subscribe((message) => {
-      const receivedTrainer: Trainers = JSON.parse(message.body);
-      const trainerId = this.trainersData.findIndex(trainer => trainer.id === receivedTrainer.id)
-      this.trainersData[trainerId] = receivedTrainer
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateTrainer').subscribe((message) => {
+        const receivedTrainer: Trainers = JSON.parse(message.body);
+        const trainerId = this.trainersData.findIndex(trainer => trainer.id === receivedTrainer.id)
+        this.trainersData[trainerId] = receivedTrainer
+      })
+    );
   }
 
   watchUpdatePhoto() {
-    this.rxStompService.watch('/topic/updatePhoto').subscribe((message) => {
-      const receivedTrainer: Trainers = JSON.parse(message.body);
-      const trainerId = this.trainersData.findIndex(trainer => trainer.id === receivedTrainer.id)
-      this.trainersData[trainerId] = receivedTrainer
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updatePhoto').subscribe((message) => {
+        const receivedTrainer: Trainers = JSON.parse(message.body);
+        const trainerId = this.trainersData.findIndex(trainer => trainer.id === receivedTrainer.id)
+        this.trainersData[trainerId] = receivedTrainer
+      })
+    );
   }
 
   watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateTrainerStatus').subscribe((message) => {
-      const receivedTrainer: Trainers = JSON.parse(message.body);
-      const trainerId = this.trainersData.findIndex(trainer => trainer.id === receivedTrainer.id)
-      this.trainersData[trainerId] = receivedTrainer
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateTrainerStatus').subscribe((message) => {
+        const receivedTrainer: Trainers = JSON.parse(message.body);
+        const trainerId = this.trainersData.findIndex(trainer => trainer.id === receivedTrainer.id)
+        this.trainersData[trainerId] = receivedTrainer
+      })
+    );
   }
 }
 

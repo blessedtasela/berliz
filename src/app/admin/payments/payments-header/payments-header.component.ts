@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Payments } from 'src/app/models/payment.interface';
@@ -6,19 +6,22 @@ import { loadPayments } from 'src/app/state/payment/payment.actions';
 import { selectPayments } from 'src/app/state/payment/payment.selectors';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AddPaymentsModalComponent } from '../add-payments-modal/add-payments-modal.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-payments-header',
   templateUrl: './payments-header.component.html',
   styleUrls: ['./payments-header.component.css']
 })
-export class PaymentsHeaderComponent {
+export class PaymentsHeaderComponent implements OnDestroy {
   responseMessage: any;
   showFullData: boolean = false;
   selectedSortOption: string = 'date';
   @Input() paymentsData: Payments[] = [];
   @Input() totalPayments: number = 0;
   @Input() paymentsLength: number = 0;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private dialog: MatDialog,
     public store: Store,
@@ -28,6 +31,10 @@ export class PaymentsHeaderComponent {
   ngOnInit() {
     this.watchDeletePayment()
     this.watchAddPayment()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -110,14 +117,18 @@ export class PaymentsHeaderComponent {
   }
 
   watchDeletePayment() {
-    this.rxStompService.watch('/topic/deletePayment').subscribe(() => {
-      this.handleEmitEvent();
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/deletePayment').subscribe(() => {
+        this.handleEmitEvent();
+      })
+    );
   }
 
   watchAddPayment() {
-    this.rxStompService.watch('/topic/addPayment').subscribe(() => {
-      this.handleEmitEvent();
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/addPayment').subscribe(() => {
+        this.handleEmitEvent();
+      })
+    );
   }
 }

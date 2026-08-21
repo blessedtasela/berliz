@@ -11,7 +11,6 @@ import { AuthService } from 'src/app/services/auth.service';
 import {
   SidebarDisplay,
   SidebarStateService,
-  shouldShowFloatingReopenButton,
 } from 'src/app/services/sidebar-state.service';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { Store } from '@ngrx/store';
@@ -29,7 +28,7 @@ export class SideBarComponent implements OnInit, OnDestroy {
   currentRoute: any;
 
   /** Desktop display mode — 'expanded' | 'collapsed' | 'hidden'. Mirrors SidebarStateService.mode$. */
-  mode: SidebarDisplay = 'expanded';
+  mode: SidebarDisplay = 'collapsed';
   /** True below the md breakpoint. Mobile never reserves layout space for any mode. */
   isMobile = false;
   /** Mobile-only: whether the temporary, full-screen overlay sidebar is showing. */
@@ -64,23 +63,12 @@ export class SideBarComponent implements OnInit, OnDestroy {
   // -----------------------------
   // MODE / VIEWPORT
   // -----------------------------
-  /** Shown whenever there's no persistent/overlay sidebar currently on screen:
-   *  desktop 'hidden' mode, or mobile with the overlay closed. */
-  get showFloatingButton(): boolean {
-    return shouldShowFloatingReopenButton(this.isMobile, this.mode, this.mobileOverlayOpen);
-  }
+  // The floating reopen button itself now lives in TopBarComponent (see
+  // sidebar-state.service.ts's showFloatingButton$) — this component no
+  // longer needs its own copy of that visibility rule.
 
   setMode(mode: SidebarDisplay): void {
     this.sidebarState.setMode(mode);
-  }
-
-  /** Floating button handler: reopens into the full sidebar regardless of viewport. */
-  openSidebar(): void {
-    if (this.isMobile) {
-      this.sidebarState.setMobileOverlayOpen(true);
-    } else {
-      this.sidebarState.setMode('expanded');
-    }
   }
 
   closeMobileOverlay(): void {
@@ -149,11 +137,11 @@ export class SideBarComponent implements OnInit, OnDestroy {
         // Seed the runtime sidebar mode from the user's saved "Sidebar display"
         // preference the first time it's seen this session (SidebarStateService
         // guards against re-seeding on later reloads). Unknown/missing values
-        // default to 'expanded', matching the backend's own null-reads-as-expanded
-        // rule (see UserMapper.resolveSidebarDisplay).
+        // default to 'collapsed' (icon rail), matching the backend's own
+        // null-reads-as-collapsed rule (see UserMapper.resolveSidebarDisplay).
         const preference: SidebarDisplay = KNOWN_SIDEBAR_MODES.includes(user?.sidebarDisplay as SidebarDisplay)
           ? (user!.sidebarDisplay as SidebarDisplay)
-          : 'expanded';
+          : 'collapsed';
         this.sidebarState.applyPreferredMode(preference);
       }),
 

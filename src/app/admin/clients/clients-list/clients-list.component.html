@@ -4,10 +4,10 @@
         <div *ngFor="let client of clientsData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors">
             <div class="min-w-0 flex-1" (click)="openClientDetailsModal(client.id)">
                 <div class="flex items-center gap-2 flex-wrap">
-                    <app-user-hover-card [userId]="client.user?.id" [firstname]="client.user?.firstname"
-                        [lastname]="client.user?.lastname" [photo]="client.user?.profilePhoto"
-                        [role]="client.user?.role" [email]="client.user?.email"
-                        [label]="client.user?.firstname">
+                    <app-user-hover-card [userId]="client.user.id" [firstname]="client.user.firstname"
+                        [lastname]="client.user.lastname" [photo]="client.user.profilePhoto"
+                        [role]="client.user.role" [email]="client.user.email"
+                        [label]="client.user.firstname">
                     </app-user-hover-card>
                     <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
                         [ngClass]="client.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
@@ -46,10 +46,10 @@
                 <tr *ngFor="let client of clientsData; let i = index" class="hover:bg-gray-50 transition-colors">
                     <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
                     <td class="px-4 py-3">
-                        <app-user-hover-card [userId]="client.user?.id" [firstname]="client.user?.firstname"
-                            [lastname]="client.user?.lastname" [photo]="client.user?.profilePhoto"
-                            [role]="client.user?.role" [email]="client.user?.email"
-                            [label]="client.user?.firstname">
+                        <app-user-hover-card [userId]="client.user.id" [firstname]="client.user.firstname"
+                            [lastname]="client.user.lastname" [photo]="client.user.profilePhoto"
+                            [role]="client.user.role" [email]="client.user.email"
+                            [label]="client.user.firstname">
                         </app-user-hover-card>
                     </td>
                     <td class="px-4 py-3">

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -7,19 +7,22 @@ import { AddTestimonialsModalComponent } from '../add-testimonials-modal/add-tes
 import { Store } from '@ngrx/store';
 import { loadTestimonials } from 'src/app/state/testimonial/testimonial.actions';
 import { selectTestimonials } from 'src/app/state/testimonial/testimonial.selectors';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-testimonials-header',
   templateUrl: './testimonials-header.component.html',
   styleUrls: ['./testimonials-header.component.css']
 })
-export class TestimonialsHeaderComponent {
+export class TestimonialsHeaderComponent implements OnDestroy {
   responseMessage: any;
   showFullData: boolean = false;
   selectedSortOption: string = 'date';
   @Input() testimonialsData: Testimonials[] = [];
   @Input() totalTestimonials: number = 0;
   @Input() testimonialsLength: number = 0;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private dialog: MatDialog,
     private store: Store,
@@ -29,6 +32,10 @@ export class TestimonialsHeaderComponent {
   ngOnInit() {
     this.watchDeleteCategory()
     this.watchGetCategoryFromMap()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -101,20 +108,24 @@ export class TestimonialsHeaderComponent {
   }
 
   watchDeleteCategory() {
-    this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
-      const receivedCategories: Testimonials = JSON.parse(message.body);
-      this.testimonialsData = this.testimonialsData.filter(category => category.id !== receivedCategories.id);
-      this.testimonialsLength = this.testimonialsData.length;
-      this.totalTestimonials = this.testimonialsData.length
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/deleteCenter').subscribe((message) => {
+        const receivedCategories: Testimonials = JSON.parse(message.body);
+        this.testimonialsData = this.testimonialsData.filter(category => category.id !== receivedCategories.id);
+        this.testimonialsLength = this.testimonialsData.length;
+        this.totalTestimonials = this.testimonialsData.length
+      })
+    );
   }
 
   watchGetCategoryFromMap() {
-    this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
-      const receivedCategories: Testimonials = JSON.parse(message.body);
-      this.testimonialsData.push(receivedCategories);
-      this.testimonialsLength = this.testimonialsData.length;
-      this.totalTestimonials = this.testimonialsData.length
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/getCategoryFromMap').subscribe((message) => {
+        const receivedCategories: Testimonials = JSON.parse(message.body);
+        this.testimonialsData.push(receivedCategories);
+        this.testimonialsLength = this.testimonialsData.length;
+        this.totalTestimonials = this.testimonialsData.length
+      })
+    );
   }
 }

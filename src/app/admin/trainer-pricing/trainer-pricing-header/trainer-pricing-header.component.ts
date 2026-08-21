@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { TrainerPricing } from 'src/app/models/trainers.interface';
@@ -7,19 +7,22 @@ import { AddSubscriptionsModalComponent } from '../../subscriptions/add-subscrip
 import { AddTrainerPricingModalComponent } from '../add-trainer-pricing-modal/add-trainer-pricing-modal.component';
 import { Store } from '@ngrx/store';
 import { selectTrainerPricing } from 'src/app/state/trainer/trainer.selector';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-trainer-pricing-header',
   templateUrl: './trainer-pricing-header.component.html',
   styleUrls: ['./trainer-pricing-header.component.css']
 })
-export class TrainerPricingHeaderComponent {
+export class TrainerPricingHeaderComponent implements OnDestroy {
   responseMessage: any;
   showFullData: boolean = false;
   selectedSortOption: string = 'date';
   @Input() trainerPricingData: TrainerPricing[] = [];
   @Input() totalTrainerPricing: number = 0;
   @Input() trainerPricingLength: number = 0;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private ngxService: NgxUiLoaderService,
     private dialog: MatDialog,
@@ -30,6 +33,10 @@ export class TrainerPricingHeaderComponent {
   ngOnInit() {
     this.watchDeleteTrainerPricing()
     this.watchGetTrainerPricingFromMap()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -101,20 +108,24 @@ export class TrainerPricingHeaderComponent {
   }
 
   watchDeleteTrainerPricing() {
-    this.rxStompService.watch('/topic/deleteTrainerPricing').subscribe((message) => {
-      const receivedCategories: TrainerPricing = JSON.parse(message.body);
-      this.trainerPricingData = this.trainerPricingData.filter(subscription => subscription.id !== receivedCategories.id);
-      this.trainerPricingLength = this.trainerPricingData.length;
-      this.totalTrainerPricing = this.trainerPricingData.length
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/deleteTrainerPricing').subscribe((message) => {
+        const receivedCategories: TrainerPricing = JSON.parse(message.body);
+        this.trainerPricingData = this.trainerPricingData.filter(subscription => subscription.id !== receivedCategories.id);
+        this.trainerPricingLength = this.trainerPricingData.length;
+        this.totalTrainerPricing = this.trainerPricingData.length
+      })
+    );
   }
 
   watchGetTrainerPricingFromMap() {
-    this.rxStompService.watch('/topic/getTrainerPricingFromMap').subscribe((message) => {
-      const receivedCategories: TrainerPricing = JSON.parse(message.body);
-      this.trainerPricingData.push(receivedCategories);
-      this.trainerPricingLength = this.trainerPricingData.length;
-      this.totalTrainerPricing = this.trainerPricingData.length
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/getTrainerPricingFromMap').subscribe((message) => {
+        const receivedCategories: TrainerPricing = JSON.parse(message.body);
+        this.trainerPricingData.push(receivedCategories);
+        this.trainerPricingLength = this.trainerPricingData.length;
+        this.totalTrainerPricing = this.trainerPricingData.length
+      })
+    );
   }
 }

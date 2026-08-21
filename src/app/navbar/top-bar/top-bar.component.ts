@@ -17,6 +17,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { Users } from 'src/app/models/users.interface';
 import { AuthService } from 'src/app/services/auth.service';
+import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { loadUser } from 'src/app/state/user/user.actions';
 import { Store } from '@ngrx/store';
@@ -65,7 +66,8 @@ export class TopBarComponent implements OnInit {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private rxStompService: RxStompService,
-    private authService: AuthService
+    private authService: AuthService,
+    public sidebarState: SidebarStateService
   ) {
     this.currentRoute = this.router.url;
     this.router.events.subscribe(event => {

@@ -1,4 +1,5 @@
-import { Component, ElementRef, Input } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -22,11 +23,13 @@ import { selectPartners } from 'src/app/state/partner/partner.selectors';
   templateUrl: './partner-list.component.html',
   styleUrls: ['./partner-list.component.css']
 })
-export class PartnerListComponent {
+export class PartnerListComponent implements OnDestroy {
   responseMessage: any;
   @Input() partnersData: Partner[] = [];
   @Input() totalPartners: number = 0
   showFullData: boolean = false;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private partnerService: PartnerService,
     private ngxService: NgxUiLoaderService,
@@ -42,6 +45,10 @@ export class PartnerListComponent {
     this.watchUpdatePartner()
     this.watchUpdatePartnerStatus()
     this.watchUpdatePartnerFile()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -206,34 +213,42 @@ export class PartnerListComponent {
   }
 
   watchUpdatePartner() {
-    this.rxStompService.watch('/topic/updatePartner').subscribe((message) => {
-      const receivedPartner: Partner = JSON.parse(message.body);
-      const partnerId = this.partnersData.findIndex(partners => partners.id === receivedPartner.id)
-      this.partnersData[partnerId] = receivedPartner
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updatePartner').subscribe((message) => {
+        const receivedPartner: Partner = JSON.parse(message.body);
+        const partnerId = this.partnersData.findIndex(partners => partners.id === receivedPartner.id)
+        this.partnersData[partnerId] = receivedPartner
+      })
+    );
   }
 
   watchUpdatePartnerStatus() {
-    this.rxStompService.watch('/topic/updatePartnerStatus').subscribe((message) => {
-      const receivedPartner: Partner = JSON.parse(message.body);
-      const partnerId = this.partnersData.findIndex(partners => partners.id === receivedPartner.id)
-      this.partnersData[partnerId] = receivedPartner
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updatePartnerStatus').subscribe((message) => {
+        const receivedPartner: Partner = JSON.parse(message.body);
+        const partnerId = this.partnersData.findIndex(partners => partners.id === receivedPartner.id)
+        this.partnersData[partnerId] = receivedPartner
+      })
+    );
   }
 
   watchRejectPartnerApplication() {
-    this.rxStompService.watch('/topic/rejectPartnerApplication').subscribe((message) => {
-      const response = message.body;
-      this.snackbarService.openSnackBar(response, '');
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/rejectPartnerApplication').subscribe((message) => {
+        const response = message.body;
+        this.snackbarService.openSnackBar(response, '');
+      })
+    );
   }
 
   watchUpdatePartnerFile() {
-    this.rxStompService.watch('/topic/updatePartnerFile').subscribe((message) => {
-      const receivedPartner: Partner = JSON.parse(message.body);
-      const partnerId = this.partnersData.findIndex(partners => partners.id === receivedPartner.id)
-      this.partnersData[partnerId] = receivedPartner
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updatePartnerFile').subscribe((message) => {
+        const receivedPartner: Partner = JSON.parse(message.body);
+        const partnerId = this.partnersData.findIndex(partners => partners.id === receivedPartner.id)
+        this.partnersData[partnerId] = receivedPartner
+      })
+    );
   }
 
 }

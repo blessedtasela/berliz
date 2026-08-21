@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Members } from 'src/app/models/members.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -6,19 +6,22 @@ import { AddMembersModalComponent } from '../add-members-modal/add-members-modal
 import { Store } from '@ngrx/store';
 import { loadMembers } from 'src/app/state/member/member.actions';
 import { selectMembers } from 'src/app/state/member/member.selectors';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-members-header',
   templateUrl: './members-header.component.html',
   styleUrls: ['./members-header.component.css']
 })
-export class MembersHeaderComponent {
+export class MembersHeaderComponent implements OnDestroy {
   responseMessage: any;
   showFullData: boolean = false;
   selectedSortOption: string = 'date';
   @Input() membersData: Members[] = [];
   @Input() totalMembers: number = 0;
   @Input() membersLength: number = 0;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private dialog: MatDialog,
     public store: Store,
@@ -28,6 +31,10 @@ export class MembersHeaderComponent {
   ngOnInit() {
     this.watchDeleteMember()
     this.watchAddMember()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -113,14 +120,18 @@ export class MembersHeaderComponent {
   }
 
   watchDeleteMember() {
-    this.rxStompService.watch('/topic/deleteMember').subscribe(() => {
-      this.handleEmitEvent();
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/deleteMember').subscribe(() => {
+        this.handleEmitEvent();
+      })
+    );
   }
 
   watchAddMember() {
-    this.rxStompService.watch('/topic/addMember').subscribe(() => {
-      this.handleEmitEvent();
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/addMember').subscribe(() => {
+        this.handleEmitEvent();
+      })
+    );
   }
 }

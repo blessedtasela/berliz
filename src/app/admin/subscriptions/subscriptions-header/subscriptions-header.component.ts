@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
@@ -6,19 +6,22 @@ import { AddSubscriptionsModalComponent } from '../add-subscriptions-modal/add-s
 import { Store } from '@ngrx/store';
 import { loadSubscriptions } from 'src/app/state/subscription/subscription.actions';
 import { selectSubscriptions } from 'src/app/state/subscription/subscription.selectors';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-subscriptions-header',
   templateUrl: './subscriptions-header.component.html',
   styleUrls: ['./subscriptions-header.component.css']
 })
-export class SubscriptionsHeaderComponent {
+export class SubscriptionsHeaderComponent implements OnDestroy {
   responseMessage: any;
   showFullData: boolean = false;
   selectedSortOption: string = 'date';
   @Input() subscriptionsData: Subscriptions[] = [];
   @Input() totalSubscriptions: number = 0;
   @Input() subscriptionsLength: number = 0;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private dialog: MatDialog,
     private store: Store,
@@ -28,6 +31,10 @@ export class SubscriptionsHeaderComponent {
   ngOnInit() {
     this.watchDeleteSubscription()
     this.watchGetSubscriptionFromMap()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -100,14 +107,18 @@ export class SubscriptionsHeaderComponent {
   }
 
   watchDeleteSubscription() {
-    this.rxStompService.watch('/topic/deleteSubscription').subscribe(() => {
-      this.handleEmitEvent();
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/deleteSubscription').subscribe(() => {
+        this.handleEmitEvent();
+      })
+    );
   }
 
   watchGetSubscriptionFromMap() {
-    this.rxStompService.watch('/topic/getSubscriptionFromMap').subscribe(() => {
-      this.handleEmitEvent();
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/getSubscriptionFromMap').subscribe(() => {
+        this.handleEmitEvent();
+      })
+    );
   }
 }

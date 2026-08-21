@@ -45,10 +45,11 @@ describe('SidebarStateService', () => {
       expect(service.currentMode).toBe('collapsed');
     });
 
-    it('defaults to expanded before any preference has loaded', () => {
+    it('defaults to collapsed before any preference has loaded', () => {
       // Before applyPreferredMode is ever called (e.g. user record still loading),
-      // the service starts in 'expanded' — matching the app's pre-existing default.
-      expect(service.currentMode).toBe('expanded');
+      // the service starts in 'collapsed' (icon rail) — a permanently-open
+      // expanded sidebar being the exact problem this preference solves.
+      expect(service.currentMode).toBe('collapsed');
     });
 
     it('only applies once per session, so a later reload cannot silently undo a manual toggle', () => {

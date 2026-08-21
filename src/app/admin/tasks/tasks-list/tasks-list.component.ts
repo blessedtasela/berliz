@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Subscription } from 'rxjs';
 import { Tasks } from 'src/app/models/tasks.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -20,11 +21,13 @@ import { selectTasks } from 'src/app/state/task/task.selectors';
   templateUrl: './tasks-list.component.html',
   styleUrls: ['./tasks-list.component.css']
 })
-export class TasksListComponent {
+export class TasksListComponent implements OnDestroy {
   responseMessage: any;
   showFullData: boolean = false;
   @Input() tasksData: Tasks[] = [];
   @Input() totalTasks: number = 0;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private datePipe: DatePipe,
     private taskService: TaskService,
@@ -40,6 +43,10 @@ export class TasksListComponent {
     this.watchLikeCategory()
     this.watchUpdateCategory()
     this.watchUpdateStatus()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -173,27 +180,33 @@ export class TasksListComponent {
   }
 
   watchLikeCategory() {
-    this.rxStompService.watch('/topic/likeCategory').subscribe((message) => {
-      const receivedCategories: Tasks = JSON.parse(message.body);
-      const categoryId = this.tasksData.findIndex(task => task.id === receivedCategories.id)
-      this.tasksData[categoryId] = receivedCategories
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/likeCategory').subscribe((message) => {
+        const receivedCategories: Tasks = JSON.parse(message.body);
+        const categoryId = this.tasksData.findIndex(task => task.id === receivedCategories.id)
+        this.tasksData[categoryId] = receivedCategories
+      })
+    );
   }
 
   watchUpdateCategory() {
-    this.rxStompService.watch('/topic/updateCategory').subscribe((message) => {
-      const receivedCategories: Tasks = JSON.parse(message.body);
-      const categoryId = this.tasksData.findIndex(task => task.id === receivedCategories.id)
-      this.tasksData[categoryId] = receivedCategories
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateCategory').subscribe((message) => {
+        const receivedCategories: Tasks = JSON.parse(message.body);
+        const categoryId = this.tasksData.findIndex(task => task.id === receivedCategories.id)
+        this.tasksData[categoryId] = receivedCategories
+      })
+    );
   }
 
   watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
-      const receivedCategories: Tasks = JSON.parse(message.body);
-      const categoryId = this.tasksData.findIndex(task => task.id === receivedCategories.id)
-      this.tasksData[categoryId] = receivedCategories
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateCategoryStatus').subscribe((message) => {
+        const receivedCategories: Tasks = JSON.parse(message.body);
+        const categoryId = this.tasksData.findIndex(task => task.id === receivedCategories.id)
+        this.tasksData[categoryId] = receivedCategories
+      })
+    );
   }
 
 }

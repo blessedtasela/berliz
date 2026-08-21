@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Subscription } from 'rxjs';
 import { TrainerPricing } from 'src/app/models/trainers.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -20,11 +21,13 @@ import { selectTrainerPricing } from 'src/app/state/trainer/trainer.selector';
   templateUrl: './trainer-pricing-list.component.html',
   styleUrls: ['./trainer-pricing-list.component.css']
 })
-export class TrainerPricingListComponent {
+export class TrainerPricingListComponent implements OnDestroy {
   responseMessage: any;
   showFullData: boolean = false;
   @Input() trainerPricingData: TrainerPricing[] = [];
   @Input() totalTrainerPricing: number = 0;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private datePipe: DatePipe,
     private trainerService: TrainerService,
@@ -41,6 +44,10 @@ export class TrainerPricingListComponent {
     this.watchUpdateTrainerPricing()
     this.watchDeleteTrainerPricing()
     // this.watchGetTrainerPricingFromMap()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -133,27 +140,33 @@ export class TrainerPricingListComponent {
   }
 
   watchUpdateTrainerPricing() {
-    this.rxStompService.watch('/topic/updateTrainerPricing').subscribe((message) => {
-      const receivedCategories: TrainerPricing = JSON.parse(message.body);
-      const categoryId = this.trainerPricingData.findIndex(trainerPricing => trainerPricing.id === receivedCategories.id)
-      this.trainerPricingData[categoryId] = receivedCategories
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateTrainerPricing').subscribe((message) => {
+        const receivedCategories: TrainerPricing = JSON.parse(message.body);
+        const categoryId = this.trainerPricingData.findIndex(trainerPricing => trainerPricing.id === receivedCategories.id)
+        this.trainerPricingData[categoryId] = receivedCategories
+      })
+    );
   }
 
   watchDeleteTrainerPricing() {
     // Subscribe to the common topic
-    this.rxStompService.watch('/topic/deleteTrainerPricing').subscribe((message) => {
-      const receivedCategories: TrainerPricing = JSON.parse(message.body);
-      this.handleDeleteTrainerPricing(receivedCategories);
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/deleteTrainerPricing').subscribe((message) => {
+        const receivedCategories: TrainerPricing = JSON.parse(message.body);
+        this.handleDeleteTrainerPricing(receivedCategories);
+      })
+    );
 
     // Subscribe to individual admin topics
     const currentUserEmail = this.authService.getCurrentUserEmail();
     console.log("current email", currentUserEmail)
-    this.rxStompService.watch(`/user/${currentUserEmail}/deleteTrainerPricing`).subscribe((message) => {
-      const receivedCategories: TrainerPricing = JSON.parse(message.body);
-      this.handleDeleteTrainerPricing(receivedCategories);
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch(`/user/${currentUserEmail}/deleteTrainerPricing`).subscribe((message) => {
+        const receivedCategories: TrainerPricing = JSON.parse(message.body);
+        this.handleDeleteTrainerPricing(receivedCategories);
+      })
+    );
   }
 
   handleDeleteTrainerPricing(deletedTrainerPricing: TrainerPricing) {

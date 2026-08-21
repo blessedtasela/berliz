@@ -18,7 +18,7 @@
         </button>
     </div>
 
-    <img [src]="(trainerData.photoResponse?.photoUrl | strapiUrl) || '../../../assets/icons/user.png'"
+    <img [src]="(trainerData.photoResponse.photoUrl | strapiUrl) || '../../../assets/icons/user.png'"
         class="w-full h-40 object-cover rounded-xl border border-gray-200"
         onerror="this.src='../../../assets/icons/user.png';" />
 

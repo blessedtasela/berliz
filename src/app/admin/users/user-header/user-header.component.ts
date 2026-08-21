@@ -1,21 +1,24 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { SignupModalComponent } from 'src/app/login/signup-modal/signup-modal.component';
 import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { selectUsers } from 'src/app/state/user/user.selector';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user-header',
   templateUrl: './user-header.component.html',
   styleUrls: ['./user-header.component.css']
 })
-export class UserHeaderComponent {
+export class UserHeaderComponent implements OnDestroy {
   selectedSortOption: string = 'date';
   @Input() usersData: Users[] = [];
   @Input() totalUsers: number = 0;
   @Input() usersLength: number = 0;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private dialog: MatDialog,
     private store: Store,
@@ -25,6 +28,10 @@ export class UserHeaderComponent {
   ngOnInit() {
     this.watchDeleteUser()
     this.watchGetUserFromMap()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -91,20 +98,24 @@ export class UserHeaderComponent {
   }
 
   watchGetUserFromMap() {
-    this.rxStompService.watch('/topic/getUserFromMap').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      this.usersData.push(receivedUsers);
-      this.usersLength = this.usersData.length;
-      this.totalUsers = this.usersData.length;
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/getUserFromMap').subscribe((message) => {
+        const receivedUsers: Users = JSON.parse(message.body);
+        this.usersData.push(receivedUsers);
+        this.usersLength = this.usersData.length;
+        this.totalUsers = this.usersData.length;
+      })
+    );
   }
 
   watchDeleteUser() {
-    this.rxStompService.watch('/topic/deleteUser').subscribe((message) => {
-      const receivedUsers: Users = JSON.parse(message.body);
-      this.usersData = this.usersData.filter(Users => Users.id !== receivedUsers.id);
-      this.usersLength = this.usersData.length;
-      this.totalUsers = this.usersData.length;
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/deleteUser').subscribe((message) => {
+        const receivedUsers: Users = JSON.parse(message.body);
+        this.usersData = this.usersData.filter(Users => Users.id !== receivedUsers.id);
+        this.usersLength = this.usersData.length;
+        this.totalUsers = this.usersData.length;
+      })
+    );
   }
 }

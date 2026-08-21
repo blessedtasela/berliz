@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, combineLatest, fromEvent } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { SidebarDisplay } from '../models/users.interface';
 
@@ -51,11 +51,28 @@ export function shouldShowFloatingReopenButton(
 @Injectable({ providedIn: 'root' })
 export class SidebarStateService implements OnDestroy {
 
-  private mode$$ = new BehaviorSubject<SidebarDisplay>('expanded');
+  private mode$$ = new BehaviorSubject<SidebarDisplay>('collapsed');
   mode$ = this.mode$$.asObservable();
 
   private mobileOverlayOpen$$ = new BehaviorSubject<boolean>(false);
   mobileOverlayOpen$ = this.mobileOverlayOpen$$.asObservable();
+
+  private isMobile$$ = new BehaviorSubject<boolean>(this.isMobileViewport());
+  isMobile$ = this.isMobile$$.asObservable();
+
+  /**
+   * Whether the floating reopen button should be visible right now — one
+   * reactive stream combining viewport + mode + overlay state, so any
+   * component (top bar, sidebar itself, ...) can just `| async` this instead
+   * of each re-implementing its own resize listener and re-deriving the same
+   * boolean. This is what actually renders the button; it lives in the
+   * TOP BAR (a fixed, always-present header row) rather than as a
+   * separately-floating element, since a floating button positioned below
+   * the header risked overlapping page-specific content underneath it.
+   */
+  showFloatingButton$ = combineLatest([this.isMobile$, this.mode$, this.mobileOverlayOpen$]).pipe(
+    map(([isMobile, mode, mobileOverlayOpen]) => shouldShowFloatingReopenButton(isMobile, mode, mobileOverlayOpen))
+  );
 
   /**
    * Legacy boolean stream some call sites still read: true only when the desktop
@@ -82,6 +99,15 @@ export class SidebarStateService implements OnDestroy {
           this.mobileOverlayOpen$$.next(false);
         }
       });
+
+    // ── CENTRALIZED viewport tracking ───────────────────────────────────────
+    // Keeps isMobile$ (and therefore showFloatingButton$) current without
+    // every consumer needing its own @HostListener('window:resize').
+    if (typeof window !== 'undefined') {
+      fromEvent(window, 'resize')
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => this.isMobile$$.next(this.isMobileViewport()));
+    }
   }
 
   get currentMode(): SidebarDisplay {
@@ -114,6 +140,15 @@ export class SidebarStateService implements OnDestroy {
 
   toggleMobileOverlay(): void {
     this.mobileOverlayOpen$$.next(!this.mobileOverlayOpen$$.value);
+  }
+
+  /** Floating button handler: reopens into the full sidebar regardless of viewport. */
+  openSidebar(): void {
+    if (this.isMobileViewport()) {
+      this.setMobileOverlayOpen(true);
+    } else {
+      this.setMode('expanded');
+    }
   }
 
   /**

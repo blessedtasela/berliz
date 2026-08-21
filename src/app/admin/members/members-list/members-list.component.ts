@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Subscription } from 'rxjs';
 import { Members } from 'src/app/models/members.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -20,11 +21,13 @@ import { selectMembers } from 'src/app/state/member/member.selectors';
   templateUrl: './members-list.component.html',
   styleUrls: ['./members-list.component.css']
 })
-export class MembersListComponent {
+export class MembersListComponent implements OnDestroy {
   responseMessage: any;
   showFullData: boolean = false;
   @Input() membersData: Members[] = [];
   @Input() totalMembers: number = 0;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private store: Store,
     private datePipe: DatePipe,
@@ -41,6 +44,10 @@ export class MembersListComponent {
     this.watchUpdateMember()
     this.watchUpdateStatus()
     this.watchDeleteMember()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -175,27 +182,35 @@ export class MembersListComponent {
   }
 
   watchAddMember() {
-    this.rxStompService.watch('/topic/addMember').subscribe(() => {
-      this.handleEmitEvent();
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/addMember').subscribe(() => {
+        this.handleEmitEvent();
+      })
+    );
   }
 
   watchUpdateMember() {
-    this.rxStompService.watch('/topic/updateMember').subscribe(() => {
-      this.handleEmitEvent();
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateMember').subscribe(() => {
+        this.handleEmitEvent();
+      })
+    );
   }
 
   watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateMemberStatus').subscribe(() => {
-      this.handleEmitEvent();
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateMemberStatus').subscribe(() => {
+        this.handleEmitEvent();
+      })
+    );
   }
 
   watchDeleteMember() {
-    this.rxStompService.watch('/topic/deleteMember').subscribe(() => {
-      this.handleEmitEvent();
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/deleteMember').subscribe(() => {
+        this.handleEmitEvent();
+      })
+    );
   }
 
 }

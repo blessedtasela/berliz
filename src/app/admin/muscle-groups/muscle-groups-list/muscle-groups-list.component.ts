@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Subscription } from 'rxjs';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
 import { MuscleGroupService } from 'src/app/services/muscle-group.service';
 import { Store } from '@ngrx/store';
@@ -20,12 +21,14 @@ import { MuscleGroupDetailsModalComponent } from '../muscle-group-details-modal/
   templateUrl: './muscle-groups-list.component.html',
   styleUrls: ['./muscle-groups-list.component.css']
 })
-export class MuscleGroupsListComponent {
+export class MuscleGroupsListComponent implements OnDestroy {
   responseMessage: any;
   showFullData: boolean = false;
   @Input() muscleGroupsData: MuscleGroups[] = [];
   @Input() totalMuscleGroups: number = 0;
   selectedImage: any;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private datePipe: DatePipe,
     private muscleGroupService: MuscleGroupService,
@@ -40,6 +43,10 @@ export class MuscleGroupsListComponent {
   ngOnInit() {
     this.watchUpdateMuscleGroup()
     this.watchUpdateStatus()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -207,19 +214,23 @@ export class MuscleGroupsListComponent {
   }
 
   watchUpdateMuscleGroup() {
-    this.rxStompService.watch('/topic/updateMuscleGroup').subscribe((message) => {
-      const receivedCategories: MuscleGroups = JSON.parse(message.body);
-      const categoryId = this.muscleGroupsData.findIndex(muscleGroup => muscleGroup.id === receivedCategories.id)
-      this.muscleGroupsData[categoryId] = receivedCategories
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateMuscleGroup').subscribe((message) => {
+        const receivedCategories: MuscleGroups = JSON.parse(message.body);
+        const categoryId = this.muscleGroupsData.findIndex(muscleGroup => muscleGroup.id === receivedCategories.id)
+        this.muscleGroupsData[categoryId] = receivedCategories
+      })
+    );
   }
 
   watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateMuscleGroupStatus').subscribe((message) => {
-      const receivedCategories: MuscleGroups = JSON.parse(message.body);
-      const categoryId = this.muscleGroupsData.findIndex(muscleGroup => muscleGroup.id === receivedCategories.id)
-      this.muscleGroupsData[categoryId] = receivedCategories
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateMuscleGroupStatus').subscribe((message) => {
+        const receivedCategories: MuscleGroups = JSON.parse(message.body);
+        const categoryId = this.muscleGroupsData.findIndex(muscleGroup => muscleGroup.id === receivedCategories.id)
+        this.muscleGroupsData[categoryId] = receivedCategories
+      })
+    );
   }
 
 }

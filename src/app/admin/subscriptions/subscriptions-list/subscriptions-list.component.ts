@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Subscription } from 'rxjs';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -20,11 +21,13 @@ import { SubscriptionDetailsModalComponent } from '../subscription-details-modal
   templateUrl: './subscriptions-list.component.html',
   styleUrls: ['./subscriptions-list.component.css']
 })
-export class SubscriptionsListComponent {
+export class SubscriptionsListComponent implements OnDestroy {
   responseMessage: any;
   showFullData: boolean = false;
   @Input() subscriptionsData: Subscriptions[] = [];
   @Input() totalSubscriptions: number = 0;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private datePipe: DatePipe,
     private subscriptionService: SubscriptionService,
@@ -41,6 +44,10 @@ export class SubscriptionsListComponent {
     this.watchUpdateSubscription()
     this.watchUpdateStatus()
     this.watchDeleteSubscription()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleEmitEvent() {
@@ -175,27 +182,35 @@ export class SubscriptionsListComponent {
   }
 
   watchUpdateSubscription() {
-    this.rxStompService.watch('/topic/updateSubscription').subscribe(() => {
-      this.handleEmitEvent();
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateSubscription').subscribe(() => {
+        this.handleEmitEvent();
+      })
+    );
   }
 
   watchGetSubscriptionFromMap() {
-    this.rxStompService.watch('/topic/getSubscriptionFromMap').subscribe(() => {
-      this.handleEmitEvent();
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/getSubscriptionFromMap').subscribe(() => {
+        this.handleEmitEvent();
+      })
+    );
   }
 
   watchUpdateStatus() {
-    this.rxStompService.watch('/topic/updateSubscriptionStatus').subscribe(() => {
-      this.handleEmitEvent();
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateSubscriptionStatus').subscribe(() => {
+        this.handleEmitEvent();
+      })
+    );
   }
 
   watchDeleteSubscription() {
-    this.rxStompService.watch('/topic/deleteSubscription').subscribe(() => {
-      this.handleEmitEvent();
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/deleteSubscription').subscribe(() => {
+        this.handleEmitEvent();
+      })
+    );
   }
 
 }

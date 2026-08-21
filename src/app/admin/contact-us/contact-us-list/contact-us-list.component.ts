@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
-import { Component, ElementRef, Input } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -21,11 +22,13 @@ import { ContactUsDetailsModalComponent } from '../contact-us-details-modal/cont
   templateUrl: './contact-us-list.component.html',
   styleUrls: ['./contact-us-list.component.css']
 })
-export class ContactUsListComponent {
+export class ContactUsListComponent implements OnDestroy {
   responseMessage: any;
   @Input() contactUsData: ContactUs[] = [];
   showFullData: boolean = false;
   @Input() totalContactUs: number = 0;
+
+  private subscriptions: Subscription[] = [];
 
   constructor(private datePipe: DatePipe,
     private contactUsService: ContactUsService,
@@ -44,6 +47,10 @@ export class ContactUsListComponent {
     this.watchReviewContactUs()
     this.watchUpdateContactUs()
     this.watchUpdateContactUsStatus()
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
 
@@ -188,41 +195,51 @@ export class ContactUsListComponent {
   }
 
   watchGetContactUsFromMap() {
-    this.rxStompService.watch('/topic/getContactUsFromMap').subscribe((message) => {
-      const receivedCategories: ContactUs = JSON.parse(message.body);
-      this.contactUsData.push(receivedCategories);
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/getContactUsFromMap').subscribe((message) => {
+        const receivedCategories: ContactUs = JSON.parse(message.body);
+        this.contactUsData.push(receivedCategories);
+      })
+    );
   }
 
   watchReviewContactUs() {
-    this.rxStompService.watch('/topic/reviewContactUs').subscribe((message) => {
-      const receivedContactUs: ContactUs = JSON.parse(message.body);
-      const centerId = this.contactUsData.findIndex(contactUs => contactUs.id === receivedContactUs.id)
-      this.contactUsData[centerId] = receivedContactUs
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/reviewContactUs').subscribe((message) => {
+        const receivedContactUs: ContactUs = JSON.parse(message.body);
+        const centerId = this.contactUsData.findIndex(contactUs => contactUs.id === receivedContactUs.id)
+        this.contactUsData[centerId] = receivedContactUs
+      })
+    );
   }
 
   watchUpdateContactUs() {
-    this.rxStompService.watch('/topic/updateContactUs').subscribe((message) => {
-      const receivedContactUs: ContactUs = JSON.parse(message.body);
-      const centerId = this.contactUsData.findIndex(contactUs => contactUs.id === receivedContactUs.id)
-      this.contactUsData[centerId] = receivedContactUs
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateContactUs').subscribe((message) => {
+        const receivedContactUs: ContactUs = JSON.parse(message.body);
+        const centerId = this.contactUsData.findIndex(contactUs => contactUs.id === receivedContactUs.id)
+        this.contactUsData[centerId] = receivedContactUs
+      })
+    );
   }
 
   watchUpdateContactUsStatus() {
-    this.rxStompService.watch('/topic/updateContactUsStatus').subscribe((message) => {
-      const receivedContactUs: ContactUs = JSON.parse(message.body);
-      const centerId = this.contactUsData.findIndex(contactUs => contactUs.id === receivedContactUs.id)
-      this.contactUsData[centerId] = receivedContactUs
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/updateContactUsStatus').subscribe((message) => {
+        const receivedContactUs: ContactUs = JSON.parse(message.body);
+        const centerId = this.contactUsData.findIndex(contactUs => contactUs.id === receivedContactUs.id)
+        this.contactUsData[centerId] = receivedContactUs
+      })
+    );
   }
 
   watchDeleteContactUs() {
-    this.rxStompService.watch('/topic/deleteContactUs').subscribe((message) => {
-      const receivedContactUs: ContactUs = JSON.parse(message.body);
-      this.contactUsData = this.contactUsData.filter(contactUs => contactUs.id !== receivedContactUs.id);
-    });
+    this.subscriptions.push(
+      this.rxStompService.watch('/topic/deleteContactUs').subscribe((message) => {
+        const receivedContactUs: ContactUs = JSON.parse(message.body);
+        this.contactUsData = this.contactUsData.filter(contactUs => contactUs.id !== receivedContactUs.id);
+      })
+    );
   }
 
 }
