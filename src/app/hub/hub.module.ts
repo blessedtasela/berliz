@@ -8,7 +8,6 @@ import { HubCardComponent } from './hub-card/hub-card.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FeatherModule } from 'angular-feather';
 import { IconsModule } from '../icons/icons.module';
-import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FooterModule } from '../footer/footer.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { SearchModule } from '../shared/search/search.module';

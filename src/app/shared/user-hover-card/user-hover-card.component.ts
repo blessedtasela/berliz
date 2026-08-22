@@ -14,9 +14,8 @@ import { IconsModule } from 'src/app/icons/icons.module';
  * table wraps its `<table>` in an `overflow-x-auto` scroller, which would clip
  * an absolutely-positioned popup at the row boundary.
  *
- * Standalone so each admin feature module can import it directly — the app's
- * SharedModule pulls in AppRoutingModule (RouterModule.forRoot), which cannot
- * be imported from a lazy-loaded module.
+ * Standalone so each admin feature module can import it directly without
+ * pulling in all of SharedModule's declarations just for this one card.
  */
 @Component({
   selector: 'app-user-hover-card',

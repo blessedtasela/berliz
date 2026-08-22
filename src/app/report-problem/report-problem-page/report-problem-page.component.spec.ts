@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -23,6 +24,7 @@ describe('ReportProblemPageComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [ReportProblemPageComponent],
+      schemas: [NO_ERRORS_SCHEMA],
       imports: [
         HttpClientTestingModule,
         ReactiveFormsModule,

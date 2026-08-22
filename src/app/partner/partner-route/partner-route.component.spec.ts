@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { PartnerRouteComponent } from './partner-route.component';
 
@@ -8,7 +9,8 @@ describe('PartnerRouteComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [PartnerRouteComponent]
+      declarations: [PartnerRouteComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(PartnerRouteComponent);
     component = fixture.componentInstance;

@@ -8,7 +8,6 @@ import { DateRangeDrawerComponent } from './date-range-drawer/date-range-drawer.
 import { DateJoinedDrawerComponent } from './date-joined-drawer/date-joined-drawer.component';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
@@ -26,8 +25,6 @@ import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform
     IconsModule,
     FormsModule,
     ReactiveFormsModule,
-    BrowserAnimationsModule,
-    NoopAnimationsModule,
   ],
   exports: [
     SearchPanelComponent

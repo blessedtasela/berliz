@@ -7,7 +7,6 @@ import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { SearchMyNotificationComponent } from './search-my-notification/search-my-notification.component';
-import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { SearchModule } from '../shared/search/search.module';
 import { NotificationMainComponent } from './notification-main/notification-main.component';
 import { NotificationListComponent } from './notification-list/notification-list.component';
@@ -45,8 +44,6 @@ import { StoreModule } from '@ngrx/store';
     FooterModule,
     FormsModule,
     ReactiveFormsModule,
-    BrowserAnimationsModule,
-    NoopAnimationsModule,
     SharedModule,
     FeatherModule,
     SearchModule,
