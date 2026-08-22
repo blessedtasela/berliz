@@ -18,7 +18,7 @@ describe('ContactUsDetailsModalComponent', () => {
       providers: [
         DatePipe,
         { provide: MatDialogRef, useValue: dialogRefSpy },
-        { provide: MAT_DIALOG_DATA, useValue: { contactUs: {} } }
+        { provide: MAT_DIALOG_DATA, useValue: { contactUs: { date: new Date().toISOString(), lastUpdate: new Date().toISOString() } } }
       ]
     });
     fixture = TestBed.createComponent(ContactUsDetailsModalComponent);

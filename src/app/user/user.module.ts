@@ -10,7 +10,7 @@ import { UserProfileCardComponent } from './user-profile-card/user-profile-card.
 import { UserAvatarComponent } from './user-avatar/user-avatar.component';
 import { UserInfoComponent } from './user-info/user-info.component';
 import { UserRouteComponent } from './user-route/user-route.component';
-import { AppRoutingModule } from "src/app/app-routing.module";
+import { RouterModule } from '@angular/router';
 import { UserProfilePhotoCropperComponent } from './user-profile-photo-cropper/user-profile-photo-cropper.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { IconsModule } from '../icons/icons.module';
@@ -53,7 +53,7 @@ import { StoreModule } from '@ngrx/store';
   ],
   imports: [
     CommonModule,
-    AppRoutingModule,
+    RouterModule,
     ImageCropperModule,
     IconsModule,
     FormsModule,

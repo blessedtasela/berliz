@@ -25,7 +25,7 @@ describe('ExercisesDetailsModalComponent', () => {
         { provide: MatDialogRef, useValue: dialogRefSpy },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: SnackBarService, useValue: snackbarServiceSpy },
-        { provide: MAT_DIALOG_DATA, useValue: { exerciseData: {} } }
+        { provide: MAT_DIALOG_DATA, useValue: { exerciseData: { date: new Date().toISOString(), lastUpdate: new Date().toISOString() } } }
       ]
     });
     fixture = TestBed.createComponent(ExercisesDetailsModalComponent);

@@ -32,7 +32,7 @@ describe('CenterDataComponent', () => {
     });
     fixture = TestBed.createComponent(CenterDataComponent);
     component = fixture.componentInstance;
-    component.center = { id: 1, categoryIds: [] } as any;
+    component.center = { id: 1, categoryIds: [], date: new Date().toISOString() } as any;
     fixture.detectChanges();
   });
 

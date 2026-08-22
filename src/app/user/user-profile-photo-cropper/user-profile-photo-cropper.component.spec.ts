@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { UserProfilePhotoCropperComponent } from './user-profile-photo-cropper.component';
 
@@ -8,7 +9,8 @@ describe('UserProfilePhotoCropperComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [UserProfilePhotoCropperComponent]
+      declarations: [UserProfilePhotoCropperComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(UserProfilePhotoCropperComponent);
     component = fixture.componentInstance;
