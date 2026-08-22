@@ -88,9 +88,9 @@
           </label>
           <input formControlName="name" type="text" placeholder="Jane Doe" class="w-full px-3 py-2.5 rounded-xl bg-zinc-950 border text-sm text-white placeholder-zinc-600
                    focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-            [ngClass]="reportForm.get('name')?.invalid && reportForm.get('name')?.touched
+            [ngClass]="reportForm.get('name')?.invalid && (reportForm.get('name')?.dirty || reportForm.get('name')?.touched)
                         ? 'border-red-600/60' : 'border-zinc-700'" />
-          <p *ngIf="reportForm.get('name')?.invalid && reportForm.get('name')?.touched"
+          <p *ngIf="reportForm.get('name')?.invalid && (reportForm.get('name')?.dirty || reportForm.get('name')?.touched)"
             class="text-[11px] text-red-500 flex items-center gap-1">
             <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
             {{ reportForm.get('name')?.errors?.['fullNameInvalid'] || 'Name is required' }}
@@ -104,9 +104,9 @@
           </label>
           <input formControlName="email" type="email" placeholder="example@gmail.com" class="w-full px-3 py-2.5 rounded-xl bg-zinc-950 border text-sm text-white placeholder-zinc-600
                    focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-            [ngClass]="reportForm.get('email')?.invalid && reportForm.get('email')?.touched
+            [ngClass]="reportForm.get('email')?.invalid && (reportForm.get('email')?.dirty || reportForm.get('email')?.touched)
                         ? 'border-red-600/60' : 'border-zinc-700'" />
-          <p *ngIf="reportForm.get('email')?.invalid && reportForm.get('email')?.touched"
+          <p *ngIf="reportForm.get('email')?.invalid && (reportForm.get('email')?.dirty || reportForm.get('email')?.touched)"
             class="text-[11px] text-red-500 flex items-center gap-1">
             <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
             A valid email address is required
@@ -120,9 +120,9 @@
           </label>
           <textarea formControlName="description" rows="5" placeholder="The more detail you give us, the faster we can help." class="w-full px-3 py-2.5 rounded-xl bg-zinc-950 border text-sm text-white placeholder-zinc-600
                    focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-            [ngClass]="reportForm.get('description')?.invalid && reportForm.get('description')?.touched
+            [ngClass]="reportForm.get('description')?.invalid && (reportForm.get('description')?.dirty || reportForm.get('description')?.touched)
                         ? 'border-red-600/60' : 'border-zinc-700'"></textarea>
-          <p *ngIf="reportForm.get('description')?.invalid && reportForm.get('description')?.touched"
+          <p *ngIf="reportForm.get('description')?.invalid && (reportForm.get('description')?.dirty || reportForm.get('description')?.touched)"
             class="text-[11px] text-red-500 flex items-center gap-1">
             <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
             Please describe the problem in at least 10 characters
