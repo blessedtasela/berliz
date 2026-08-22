@@ -16,28 +16,17 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { SharedModule } from './shared/shared.module';
 import { FeatherModule } from 'angular-feather';
 import { RouterModule, UrlSerializer } from '@angular/router';
-import { ContactUsModule } from './contact-us/contact-us.module';
 import { AppRoutingModule, routes } from './app-routing.module';
-import { CentersModule } from './centers/centers.module';
-import { TrainersModule } from './trainers/trainers.module';
 import { TestimonialModule } from './testimonial/testimonial.module';
 import { BookingModule } from './booking/booking.module';
-import { EquipmentsModule } from './equipments/equipments.module';
-import { LandingPageModule } from './landing/landing-page.module';
-import { CategoriesModule } from './categories/categories.module';
-import { AboutUsModule } from './about-us/about-us.module';
 import { RxStompService } from './services/rx-stomp.service';
 import { rxStompServiceFactory } from './rx-stomp-service-factory';
 import { DBConfig } from 'ngx-indexed-db';
 import { NgxIndexedDBModule } from 'ngx-indexed-db';
-import { FaqsModule } from './faqs/faqs.module';
-import { HelpCenterModule } from './help-center/help-center.module';
-import { ReportProblemModule } from './report-problem/report-problem.module';
 import { RefreshTokenOverlayComponent } from './refresh-token-overlay/refresh-token-overlay.component';
 import { ResfreshTokenModalComponent } from './resfresh-token-modal/resfresh-token-modal.component';
 import { NavbarModule } from './navbar/navbar.module';
 import { FooterModule } from './footer/footer.module';
-import { LoginModule } from './login/login.module';
 import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb.component';
 import { BreadcrumbModule, BreadcrumbService } from 'xng-breadcrumb';
 import { UrlLowerCaseSerializer } from 'url-lower-case-serializer';
@@ -177,21 +166,10 @@ const dbConfig: DBConfig = {
     FeatherModule,
     RouterModule,
     AppRoutingModule,
-    ContactUsModule,
-    CentersModule,
-    TrainersModule,
     TestimonialModule,
     BookingModule,
-    EquipmentsModule,
-    LandingPageModule,
-    CategoriesModule,
-    AboutUsModule,
-    FaqsModule,
-    HelpCenterModule,
-    ReportProblemModule,
     NavbarModule,
     FooterModule,
-    LoginModule,
     BreadcrumbModule,
     NgxIndexedDBModule.forRoot(dbConfig),
     NgxFileDropModule,
