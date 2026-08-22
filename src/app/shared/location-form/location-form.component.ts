@@ -1,7 +1,7 @@
 import { Component, forwardRef, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { Subscription, of } from 'rxjs';
-import { tap, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { LocationService } from 'src/app/services/location.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { LocationFormatterService } from 'src/app/services/location-formatter.service';
@@ -31,6 +31,7 @@ export class LocationFormComponent implements OnInit, OnDestroy, ControlValueAcc
 
   private subscriptions = new Subscription();
   private countryMap = new Map<string, Country>();
+  private stateMap = new Map<string, number>();
 
   private onChange = (_: any) => { };
   private onTouched = () => { };
@@ -75,10 +76,10 @@ export class LocationFormComponent implements OnInit, OnDestroy, ControlValueAcc
     // Load countries
     this.subscriptions.add(
       this.locationService.countries$
-        .pipe(
-          tap()
-        )
-        .subscribe()
+        .subscribe(countries => {
+          this.countries = countries;
+          countries.forEach(c => this.countryMap.set(c.code!, c));
+        })
     );
 
     // Country change → enable state
@@ -101,11 +102,15 @@ export class LocationFormComponent implements OnInit, OnDestroy, ControlValueAcc
       countryCtrl.valueChanges
         .pipe(
           switchMap(code => {
-            const countryName = this.countryMap.get(code)?.name;
-            return countryName ? this.locationService.getStates(countryName) : of([]);
+            const countryId = this.countryMap.get(code)?.id;
+            return countryId ? this.locationService.getStates(countryId) : of([]);
           })
         )
-        .subscribe(states => this.states = states)
+        .subscribe(states => {
+          this.stateMap.clear();
+          states.forEach(s => this.stateMap.set(s.name, s.id));
+          this.states = states.map(s => s.name);
+        })
     );
 
     // State → city enable
@@ -123,11 +128,11 @@ export class LocationFormComponent implements OnInit, OnDestroy, ControlValueAcc
       stateCtrl.valueChanges
         .pipe(
           switchMap(state => {
-            const countryName = this.countryMap.get(countryCtrl.value)?.name;
-            return state && countryName ? this.locationService.getCities(countryName, state) : of([]);
+            const stateId = this.stateMap.get(state);
+            return stateId ? this.locationService.getCities(stateId) : of([]);
           })
         )
-        .subscribe(cities => this.cities = cities)
+        .subscribe(cities => this.cities = cities.map(c => c.name))
     );
   }
 

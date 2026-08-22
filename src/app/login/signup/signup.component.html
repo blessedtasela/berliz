@@ -157,6 +157,9 @@
             <app-validation-message *ngIf="f('profilePhoto').errors?.['fileTooLarge']" [control]="f('profilePhoto')"
               [message]="'Image must be under 5MB'">
             </app-validation-message>
+            <app-validation-message *ngIf="f('profilePhoto').errors?.['invalidType']" [control]="f('profilePhoto')"
+              [message]="'Please upload a valid image file'">
+            </app-validation-message>
           </div>
         </div>
 

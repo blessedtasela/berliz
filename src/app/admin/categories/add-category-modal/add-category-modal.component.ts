@@ -51,7 +51,7 @@ export class AddCategoryModalComponent implements OnInit {
       'name': ['', [Validators.required, Validators.minLength(2)]],
       'description': ['', [Validators.required, Validators.minLength(20)]],
       'likes': ['0',],
-      'photo': ['', [Validators.required, imageValidator]],
+      'photo': ['', [Validators.required, imageValidator()]],
       'tagIds': this.formBuilder.array([], this.validateCheckbox()),
     });
 

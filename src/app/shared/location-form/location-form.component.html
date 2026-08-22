@@ -4,10 +4,10 @@
   <ng-select formControlName="country" [items]="countries" bindLabel="name" bindValue="code"
              placeholder="Select Country" [clearable]="false" class="w-full rounded-md border focus:outline-none">
     <ng-template ng-option-tmp let-item="item">
-      <img [src]="item.flag" class="inline w-6 h-4 mr-2 rounded-sm" /> {{ item.name }}
+      <span class="mr-2">{{ item.emoji }}</span> {{ item.name }}
     </ng-template>
     <ng-template ng-label-tmp let-item="item">
-      <img [src]="item.flag" class="inline w-6 h-4 mr-2 rounded-sm" /> {{ item.name }}
+      <span class="mr-2">{{ item.emoji }}</span> {{ item.name }}
     </ng-template>
   </ng-select>
 
@@ -35,10 +35,10 @@
   <ng-select formControlName="countryCode" [items]="countries" bindValue="dialCode"
              placeholder="Country Code" [clearable]="false" class="w-full rounded-md border focus:outline-none">
     <ng-template ng-option-tmp let-item="item">
-      <img [src]="item.flag" class="inline w-6 h-4 mr-2 rounded-sm" /> ({{item.name}}) {{item.dialCode}}
+      <span class="mr-2">{{ item.emoji }}</span> ({{item.name}}) {{item.dialCode}}
     </ng-template>
     <ng-template ng-label-tmp let-item="item">
-      <img [src]="item.flag" class="inline w-6 h-4 mr-2 rounded-sm" /> ({{item.name}}) {{item.dialCode}}
+      <span class="mr-2">{{ item.emoji }}</span> ({{item.name}}) {{item.dialCode}}
     </ng-template>
   </ng-select>
 

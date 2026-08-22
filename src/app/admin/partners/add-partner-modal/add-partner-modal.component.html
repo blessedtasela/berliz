@@ -63,10 +63,15 @@
                                file:text-xs file:font-semibold file:bg-red-50 file:text-red-600
                                hover:file:bg-red-100 file:cursor-pointer">
                 </div>
-                <p *ngIf="addPartnerForm.get('certificate')?.invalid && addPartnerForm.get('certificate')?.dirty"
+                <p *ngIf="addPartnerForm.get('certificate')?.invalid && addPartnerForm.get('certificate')?.dirty && !addPartnerForm.get('certificate')?.errors?.['invalidSize']"
                     class="text-red-500 text-[11px] flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     Certificate is required
+                </p>
+                <p *ngIf="addPartnerForm.get('certificate')?.errors?.['invalidSize']"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    File must be under 10MB
                 </p>
             </div>
 
@@ -80,10 +85,15 @@
                                file:text-xs file:font-semibold file:bg-red-50 file:text-red-600
                                hover:file:bg-red-100 file:cursor-pointer">
                 </div>
-                <p *ngIf="addPartnerForm.get('cv')?.invalid && addPartnerForm.get('cv')?.dirty"
+                <p *ngIf="addPartnerForm.get('cv')?.invalid && addPartnerForm.get('cv')?.dirty && !addPartnerForm.get('cv')?.errors?.['invalidSize']"
                     class="text-red-500 text-[11px] flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     Upload a valid file
+                </p>
+                <p *ngIf="addPartnerForm.get('cv')?.errors?.['invalidSize']"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    File must be under 10MB
                 </p>
             </div>
 

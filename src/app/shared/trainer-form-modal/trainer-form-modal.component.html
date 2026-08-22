@@ -85,10 +85,15 @@
                         class="flex-1 text-xs text-gray-600 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0
                        file:text-xs file:font-semibold file:bg-gray-100 file:text-red-600 hover:file:bg-gray-200 file:cursor-pointer cursor-pointer" />
                 </div>
-                <p *ngIf="addTrainerForm.get('photo')?.invalid && addTrainerForm.get('photo')?.dirty"
+                <p *ngIf="addTrainerForm.get('photo')?.invalid && addTrainerForm.get('photo')?.dirty && !addTrainerForm.get('photo')?.errors?.['invalidSize']"
                     class="text-red-500 text-[11px] flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     Upload a valid image
+                </p>
+                <p *ngIf="addTrainerForm.get('photo')?.errors?.['invalidSize']"
+                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    File must be under 10MB
                 </p>
             </div>
 

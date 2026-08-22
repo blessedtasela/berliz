@@ -3,46 +3,31 @@ import { CommonModule } from '@angular/common';
 import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 
-export function emailExtensionValidator(validExtensions: string[]): ValidatorFn {
-  return (control: AbstractControl) => {
-    const email = control.value;
-    if (email) {
-      const emailParts = email.split('@');
-      if (emailParts.length === 2) {
-        const [, domain] = emailParts;
-        const domainParts = domain.split('.');
-        const extension = domainParts[domainParts.length - 1];
-        if (!validExtensions.includes(extension.toLowerCase())) {
-          return { invalidExtension: true };
-        }
-      }
-    }
-    return null;
-  };
+// Previously rejected any email whose TLD wasn't in a hardcoded allow-list (every
+// caller passed only ['com', 'org']), which blocked valid .net/.io/.co/country-code
+// etc. addresses. Real TLD validity is already covered by Validators.email, so this
+// no longer restricts by extension — kept as a no-op so existing call sites don't
+// need to change.
+export function emailExtensionValidator(_validExtensions: string[]): ValidatorFn {
+  return (_control: AbstractControl) => null;
 }
 
 export function fileValidator(control: AbstractControl): ValidationErrors | null {
   const fileInput = control.value;
-  if (!fileInput || fileInput.length === 0) {
-    return null;
+  if (!fileInput) return null;
+
+  const file = fileInput instanceof File ? fileInput : fileInput?.[0];
+  if (!file) return null;
+
+  const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
+  if (file.size > maxSizeInBytes) {
+    return { invalidSize: true };
   }
 
-  const file = new File([fileInput], 'pdf-file');
-  const maxSizeInBytes = 50; // 50
-  console.log(file, ' file')
-  console.log(file.size, ' file size')
-  if (file.size < maxSizeInBytes) {
-    console.log('invalid is false. inside if block')
-    return null;
-  }
-
-  console.log('invalid is true')
-  // File size exceeds limit, return validation error
-  return { invalidSize: true };
+  return null;
 }
 
 export function imageValidator(
-  allowedTypes: string[] = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'],
   maxSizeInMB: number = 5
 ): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -55,8 +40,8 @@ export function imageValidator(
 
     if (!selectedFile) return null;
 
-    // File type check
-    if (!allowedTypes.includes(selectedFile.type)) {
+    // File type check — accept any image format, not just a hardcoded allow-list
+    if (!selectedFile.type.startsWith('image/')) {
       return { invalidType: true };
     }
 

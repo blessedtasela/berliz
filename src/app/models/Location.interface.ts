@@ -4,6 +4,11 @@ export interface Country {
     iso2: string;
     iso3: string;
 
+    /** Same value as iso2 — the form control's bound value for the country select. */
+    code?: string;
+    /** "+" prefixed dial code, e.g. "+1", derived from phoneCode. */
+    dialCode?: string;
+
     phoneCode?: string;
 
     capital?: string;

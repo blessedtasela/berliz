@@ -72,9 +72,13 @@
                 </button>
             </div>
 
-            <span *ngIf="invalidForm && updatePartnerForm.get('certification')?.invalid"
+            <span *ngIf="invalidForm && updatePartnerForm.get('certification')?.invalid && !updatePartnerForm.get('certification')?.errors?.['invalidSize']"
                   class="text-[10px] text-red-500">
                 Certification is required
+            </span>
+            <span *ngIf="updatePartnerForm.get('certification')?.errors?.['invalidSize']"
+                  class="text-[10px] text-red-500">
+                File must be under 10MB
             </span>
         </div>
 
@@ -116,9 +120,13 @@
                 </button>
             </div>
 
-            <span *ngIf="invalidForm && updatePartnerForm.get('resume')?.invalid"
+            <span *ngIf="invalidForm && updatePartnerForm.get('resume')?.invalid && !updatePartnerForm.get('resume')?.errors?.['invalidSize']"
                   class="text-[10px] text-red-500">
                 Resume is required
+            </span>
+            <span *ngIf="updatePartnerForm.get('resume')?.errors?.['invalidSize']"
+                  class="text-[10px] text-red-500">
+                File must be under 10MB
             </span>
         </div>
 

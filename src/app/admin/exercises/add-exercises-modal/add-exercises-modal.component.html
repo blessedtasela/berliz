@@ -59,10 +59,15 @@
                            file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold
                            file:bg-red-50 file:text-red-600 hover:file:bg-red-100 file:cursor-pointer transition">
             </div>
-            <p *ngIf="addExerciseForm.get('demo')?.invalid && (addExerciseForm.get('demo')?.dirty || invalidForm)"
+            <p *ngIf="addExerciseForm.get('demo')?.invalid && (addExerciseForm.get('demo')?.dirty || invalidForm) && !addExerciseForm.get('demo')?.errors?.['invalidSize']"
                 class="text-red-500 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 A demo video is required
+            </p>
+            <p *ngIf="addExerciseForm.get('demo')?.errors?.['invalidSize']"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                File must be under 10MB
             </p>
         </div>
 
