@@ -15,7 +15,6 @@ import { ExamplePdfViewerComponent } from './example-pdf-viewer/example-pdf-view
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { SharedModule } from './shared/shared.module';
 import { FeatherModule } from 'angular-feather';
-import { DashboardModule } from './dashboard/dashboard.module';
 import { RouterModule, UrlSerializer } from '@angular/router';
 import { ContactUsModule } from './contact-us/contact-us.module';
 import { AppRoutingModule, routes } from './app-routing.module';
@@ -23,8 +22,6 @@ import { CentersModule } from './centers/centers.module';
 import { TrainersModule } from './trainers/trainers.module';
 import { TestimonialModule } from './testimonial/testimonial.module';
 import { BookingModule } from './booking/booking.module';
-import { MyBookingsModule } from './bookings/bookings.module';
-import { ClientIntakeModule } from './client-intake/client-intake.module';
 import { EquipmentsModule } from './equipments/equipments.module';
 import { LandingPageModule } from './landing/landing-page.module';
 import { CategoriesModule } from './categories/categories.module';
@@ -33,10 +30,6 @@ import { RxStompService } from './services/rx-stomp.service';
 import { rxStompServiceFactory } from './rx-stomp-service-factory';
 import { DBConfig } from 'ngx-indexed-db';
 import { NgxIndexedDBModule } from 'ngx-indexed-db';
-import { MyTasksModule } from './my-tasks/my-tasks.module';
-import { MySubscriptionsModule } from './my-subscriptions/my-subscriptions.module';
-import { MyNotificationsModule } from './my-notifications/my-notifications.module';
-import { MyFaqsModule } from './my-faqs/my-faqs.module';
 import { FaqsModule } from './faqs/faqs.module';
 import { HelpCenterModule } from './help-center/help-center.module';
 import { ReportProblemModule } from './report-problem/report-problem.module';
@@ -47,16 +40,11 @@ import { FooterModule } from './footer/footer.module';
 import { LoginModule } from './login/login.module';
 import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb.component';
 import { BreadcrumbModule, BreadcrumbService } from 'xng-breadcrumb';
-import { PartnerModule } from './partner/partner.module';
 import { UrlLowerCaseSerializer } from 'url-lower-case-serializer';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { UnderConstructionPageComponent } from './under-construction-page/under-construction-page.component';
 import { TimeAgoPipe } from './shared/pipes/time-ago.pipe';
 import { AuthInterceptor } from './services/auth.interceptor';
-import { HubModule } from './hub/hub.module';
-import { UserModule } from './user/user.module';
-import { MyTodoListModule } from './my-todo-list/my-todo-list.module';
-import { MyTrainerModule } from './my-trainer/my-trainer.module';
 import { GlobalErrorHandlerService } from './services/global-error-handler.service';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
@@ -122,7 +110,6 @@ import { payoutFeatureKey, payoutReducer } from './state/payout/payout.reducer';
 import { PayoutEffects } from './state/payout/payout.effects';
 import { clientIntakeFeatureKey, clientIntakeReducer } from './state/client-intake/client-intake.reducer';
 import { ClientIntakeEffects } from './state/client-intake/client-intake.effects';
-import { WorkoutsModule } from './workouts/workouts.module';
 
 
 export const ngxUiLoaderConfig: NgxUiLoaderConfig = {
@@ -188,8 +175,6 @@ const dbConfig: DBConfig = {
     NgxExtendedPdfViewerModule,
     SharedModule,
     FeatherModule,
-    DashboardModule,
-    PartnerModule,
     RouterModule,
     AppRoutingModule,
     ContactUsModule,
@@ -197,16 +182,10 @@ const dbConfig: DBConfig = {
     TrainersModule,
     TestimonialModule,
     BookingModule,
-    MyBookingsModule,
-    ClientIntakeModule,
     EquipmentsModule,
     LandingPageModule,
     CategoriesModule,
     AboutUsModule,
-    MyTasksModule,
-    MySubscriptionsModule,
-    MyNotificationsModule,
-    MyFaqsModule,
     FaqsModule,
     HelpCenterModule,
     ReportProblemModule,
@@ -220,12 +199,6 @@ const dbConfig: DBConfig = {
     CommonModule,
     BrowserAnimationsModule,
     NoopAnimationsModule,
-    HubModule,
-    UserModule,
-    MyTodoListModule,
-    MySubscriptionsModule,
-    MyTrainerModule,
-    WorkoutsModule,
 
     // Store and Effects Modules for NgRx
     StoreModule.forRoot({}),

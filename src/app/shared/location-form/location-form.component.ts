@@ -81,7 +81,7 @@ export class LocationFormComponent implements OnInit, OnDestroy, ControlValueAcc
         .pipe(
           tap(countries => {
             this.countries = countries;
-            this.countryMap = new Map(countries.map(c => [c.code, c]));
+            this.countryMap = new Map(countries.map(c => [c.code ?? c.iso2, c]));
           })
         )
         .subscribe()

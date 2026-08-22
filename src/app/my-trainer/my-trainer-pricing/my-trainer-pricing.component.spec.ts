@@ -14,8 +14,8 @@ describe('MyTrainerPricingComponent', () => {
   let fixture: ComponentFixture<MyTrainerPricingComponent>;
 
   beforeEach(() => {
-    const loaderSpy = jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']);
-    const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
+    const ngxServiceSpy = jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']);
+    const snackBarServiceSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     const trainerServiceSpy = jasmine.createSpyObj('TrainerService', ['updateTrainerPricing', 'addTrainerPricing']);
 
     TestBed.configureTestingModule({
@@ -25,8 +25,8 @@ describe('MyTrainerPricingComponent', () => {
         FormBuilder,
         DatePipe,
         provideMockStore(),
-        { provide: NgxUiLoaderService, useValue: loaderSpy },
-        { provide: SnackBarService, useValue: snackbarSpy },
+        { provide: NgxUiLoaderService, useValue: ngxServiceSpy },
+        { provide: SnackBarService, useValue: snackBarServiceSpy },
         { provide: TrainerService, useValue: trainerServiceSpy }
       ]
     });

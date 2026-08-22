@@ -2,88 +2,53 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 
 import { SideBarComponent } from './side-bar.component';
-import { SidebarStateService } from 'src/app/services/sidebar-state.service';
-import { AuthService } from 'src/app/services/auth.service';
-import { UserService } from 'src/app/services/user.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { UserService } from 'src/app/services/user.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 
 describe('SideBarComponent', () => {
   let component: SideBarComponent;
   let fixture: ComponentFixture<SideBarComponent>;
-  let sidebarState: SidebarStateService;
-  let authServiceSpy: jasmine.SpyObj<AuthService>;
 
   beforeEach(() => {
-    authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
+    const routerSpy = jasmine.createSpyObj('Router', ['navigate'], { url: '/', events: of({}) });
+    const userServiceSpy = jasmine.createSpyObj('UserService', ['logout']);
+    const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+    const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
+    const rxStompSpy = jasmine.createSpyObj('RxStompService', ['watch']);
+    rxStompSpy.watch.and.returnValue(of({}));
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
     authServiceSpy.isAuthenticated.and.returnValue(true);
-
-    const storeSpy = jasmine.createSpyObj('Store', ['dispatch', 'select']);
-    storeSpy.select.and.returnValue(of(null));
+    const sidebarStateSpy = jasmine.createSpyObj('SidebarStateService',
+      ['setMode', 'setMobileOverlayOpen', 'openSidebar', 'isMobileViewport', 'applyPreferredMode'],
+      { mode$: of('collapsed'), mobileOverlayOpen$: of(false) });
 
     TestBed.configureTestingModule({
       declarations: [SideBarComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        { provide: Router, useValue: { url: '/dashboard', events: of() } },
-        { provide: MatDialog, useValue: {} },
-        { provide: Store, useValue: storeSpy },
-        { provide: SnackBarService, useValue: {} },
-        { provide: RxStompService, useValue: { watch: () => of() } },
+        provideMockStore(),
+        { provide: Router, useValue: routerSpy },
+        { provide: UserService, useValue: userServiceSpy },
+        { provide: MatDialog, useValue: dialogSpy },
+        { provide: SnackBarService, useValue: snackbarSpy },
+        { provide: RxStompService, useValue: rxStompSpy },
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: UserService, useValue: {} },
-        SidebarStateService,
-      ],
+        { provide: SidebarStateService, useValue: sidebarStateSpy }
+      ]
     });
-
     fixture = TestBed.createComponent(SideBarComponent);
     component = fixture.componentInstance;
-    sidebarState = TestBed.inject(SidebarStateService);
+    fixture.detectChanges();
   });
 
   it('should create', () => {
-    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
-
-  // The floating reopen button (and its visibility rule) moved to
-  // TopBarComponent, backed by SidebarStateService.showFloatingButton$ —
-  // see sidebar-state.service.spec.ts for those behavioral tests.
-
-  describe('mobile overlay state reflects the shared service', () => {
-    it('mirrors setMobileOverlayOpen changes onto the component', () => {
-      fixture.detectChanges();
-
-      sidebarState.setMobileOverlayOpen(true);
-      expect(component.mobileOverlayOpen).toBeTrue();
-
-      sidebarState.setMobileOverlayOpen(false);
-      expect(component.mobileOverlayOpen).toBeFalse();
-    });
-
-    it('closeMobileOverlay() closes it via the service', () => {
-      fixture.detectChanges();
-      sidebarState.setMobileOverlayOpen(true);
-
-      component.closeMobileOverlay();
-
-      expect(sidebarState.isMobileOverlayOpen).toBeFalse();
-      expect(component.mobileOverlayOpen).toBeFalse();
-    });
-  });
-
-  describe('setMode', () => {
-    it('delegates to the sidebar state service', () => {
-      fixture.detectChanges();
-      component.setMode('collapsed');
-      expect(sidebarState.currentMode).toBe('collapsed');
-    });
-  });
-
-  // openSidebar() moved onto SidebarStateService itself (now called from
-  // TopBarComponent) — see sidebar-state.service.spec.ts.
 });

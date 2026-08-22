@@ -195,7 +195,12 @@ export class SocialAuthService {
         } else {
           reject(new Error('Facebook login was cancelled or not authorized.'));
         }
-      }, { scope: 'email,public_profile' });
+        // user_birthday backs the backend's best-effort under-16 check on new social
+        // signups (see SocialAuthServiceImplement.loginOrCreate). It needs Meta App
+        // Review to actually return data for real (non-tester) users — until that's
+        // approved, Facebook silently omits it and the backend skips the check rather
+        // than blocking signup, so this is safe to request either way.
+      }, { scope: 'email,public_profile,user_birthday' });
     });
   }
 }

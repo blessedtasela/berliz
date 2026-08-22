@@ -4,6 +4,14 @@ export interface Country {
     iso2: string;
     iso3: string;
 
+    // Populated by LocationService's REST Countries-backed lookup (see
+    // location.service.ts) alongside phoneCode/emoji below — that lookup
+    // builds objects with these field names instead, so both sets of fields
+    // exist on a Country depending on which source produced it.
+    code?: string;
+    dialCode?: string;
+    flag?: string;
+
     phoneCode?: string;
 
     capital?: string;
