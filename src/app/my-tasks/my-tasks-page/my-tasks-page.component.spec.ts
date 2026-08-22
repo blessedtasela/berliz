@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { MyTasksPageComponent } from './my-tasks-page.component';
 
@@ -8,7 +9,8 @@ describe('MyTasksPageComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [MyTasksPageComponent]
+      declarations: [MyTasksPageComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(MyTasksPageComponent);
     component = fixture.componentInstance;

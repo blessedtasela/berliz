@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { MyTodoListItemComponent } from './my-todo-list-item.component';
 
@@ -8,10 +9,12 @@ describe('MyTodoListItemComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [MyTodoListItemComponent]
+      declarations: [MyTodoListItemComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(MyTodoListItemComponent);
     component = fixture.componentInstance;
+    component.todo = { id: 1, task: '', dueDate: new Date().toISOString(), status: 'pending' } as any;
     fixture.detectChanges();
   });
 

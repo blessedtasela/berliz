@@ -1,6 +1,7 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 import { MySubscriptionsMainComponent } from './my-subscriptions-main.component';
@@ -12,14 +13,20 @@ describe('MySubscriptionsMainComponent', () => {
   let fixture: ComponentFixture<MySubscriptionsMainComponent>;
 
   beforeEach(() => {
+    const loaderSpy = jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']);
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAdmin']);
+    authServiceSpy.isAdmin.and.returnValue(false);
+    const rxStompSpy = jasmine.createSpyObj('RxStompService', ['watch']);
+    rxStompSpy.watch.and.returnValue(of({}));
+
     TestBed.configureTestingModule({
       declarations: [MySubscriptionsMainComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         provideMockStore(),
-        { provide: RxStompService, useValue: jasmine.createSpyObj('RxStompService', ['activate', 'deactivate']) },
-        { provide: NgxUiLoaderService, useValue: jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']) },
-        { provide: AuthService, useValue: jasmine.createSpyObj('AuthService', ['isAdmin']) }
+        { provide: NgxUiLoaderService, useValue: loaderSpy },
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: RxStompService, useValue: rxStompSpy }
       ]
     });
     fixture = TestBed.createComponent(MySubscriptionsMainComponent);

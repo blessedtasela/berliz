@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { MyTodoListHeaderComponent } from './my-todo-list-header.component';
 
@@ -8,7 +9,8 @@ describe('MyTodoListHeaderComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [MyTodoListHeaderComponent]
+      declarations: [MyTodoListHeaderComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(MyTodoListHeaderComponent);
     component = fixture.componentInstance;
