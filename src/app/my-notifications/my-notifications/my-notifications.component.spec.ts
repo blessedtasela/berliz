@@ -3,7 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 
 import { MyNotificationsComponent } from './my-notifications.component';
 import { NotificationService } from 'src/app/services/notification.service';
@@ -19,7 +19,7 @@ describe('MyNotificationsComponent', () => {
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     const rxStompSpy = jasmine.createSpyObj('RxStompService', ['watch']);
-    rxStompSpy.watch.and.returnValue(of({}));
+    rxStompSpy.watch.and.returnValue(NEVER);
 
     TestBed.configureTestingModule({
       declarations: [MyNotificationsComponent],

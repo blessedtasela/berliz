@@ -18,7 +18,7 @@ describe('TrainerPricingDetailsModalComponent', () => {
       providers: [
         DatePipe,
         { provide: MatDialogRef, useValue: dialogRefSpy },
-        { provide: MAT_DIALOG_DATA, useValue: { trainerPricingData: {} } }
+        { provide: MAT_DIALOG_DATA, useValue: { trainerPricingData: { date: new Date().toISOString(), lastUpdate: new Date().toISOString() } } }
       ]
     });
     fixture = TestBed.createComponent(TrainerPricingDetailsModalComponent);

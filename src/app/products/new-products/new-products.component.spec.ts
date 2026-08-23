@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { NewProductsComponent } from './new-products.component';
 
@@ -8,7 +9,8 @@ describe('NewProductsComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [NewProductsComponent]
+      declarations: [NewProductsComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(NewProductsComponent);
     component = fixture.componentInstance;

@@ -3,7 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 
 import { SideBarOpenComponent } from './side-bar-open.component';
 import { UserService } from 'src/app/services/user.service';
@@ -21,7 +21,7 @@ describe('SideBarOpenComponent', () => {
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     const rxStompSpy = jasmine.createSpyObj('RxStompService', ['watch']);
-    rxStompSpy.watch.and.returnValue(of({}));
+    rxStompSpy.watch.and.returnValue(NEVER);
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
     authServiceSpy.isAuthenticated.and.returnValue(true);
 

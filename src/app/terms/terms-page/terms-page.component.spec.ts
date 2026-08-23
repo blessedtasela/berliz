@@ -10,7 +10,7 @@ describe('TermsPageComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [TermsPageComponent],
+      imports: [TermsPageComponent],
       schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(TermsPageComponent);

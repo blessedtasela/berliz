@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 import { TrainerPricingHeaderComponent } from './trainer-pricing-header.component';
@@ -16,7 +16,7 @@ describe('TrainerPricingHeaderComponent', () => {
     const ngxServiceSpy = jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']);
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     const rxStompServiceSpy = jasmine.createSpyObj('RxStompService', ['watch']);
-    rxStompServiceSpy.watch.and.returnValue(of({}));
+    rxStompServiceSpy.watch.and.returnValue(NEVER);
 
     TestBed.configureTestingModule({
       declarations: [TrainerPricingHeaderComponent],

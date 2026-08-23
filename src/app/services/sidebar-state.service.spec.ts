@@ -80,10 +80,12 @@ describe('SidebarStateService', () => {
       expect(service.currentMode).toBe('collapsed');
     });
 
-    it('on mobile, an "expanded" preference starts with the overlay open', () => {
+    it('on mobile, an "expanded" preference does not auto-open the overlay either', () => {
+      // Mobile never auto-opens the temporary overlay on load, regardless of the
+      // saved desktop preference — see applyPreferredMode()'s doc comment.
       setInnerWidth(400);
       service.applyPreferredMode('expanded');
-      expect(service.isMobileOverlayOpen).toBeTrue();
+      expect(service.isMobileOverlayOpen).toBeFalse();
     });
 
     it('on mobile, "collapsed" and "hidden" preferences both start with the overlay closed', () => {

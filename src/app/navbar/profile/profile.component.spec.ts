@@ -3,7 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 import { ProfileComponent } from './profile.component';
@@ -22,7 +22,7 @@ describe('ProfileComponent', () => {
     const ngxServiceSpy = jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']);
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     const rxStompSpy = jasmine.createSpyObj('RxStompService', ['watch']);
-    rxStompSpy.watch.and.returnValue(of({}));
+    rxStompSpy.watch.and.returnValue(NEVER);
 
     TestBed.configureTestingModule({
       declarations: [ProfileComponent],

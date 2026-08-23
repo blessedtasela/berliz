@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 import { MySubscriptionsMainComponent } from './my-subscriptions-main.component';
@@ -17,7 +17,7 @@ describe('MySubscriptionsMainComponent', () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAdmin']);
     authServiceSpy.isAdmin.and.returnValue(false);
     const rxStompSpy = jasmine.createSpyObj('RxStompService', ['watch']);
-    rxStompSpy.watch.and.returnValue(of({}));
+    rxStompSpy.watch.and.returnValue(NEVER);
 
     TestBed.configureTestingModule({
       declarations: [MySubscriptionsMainComponent],

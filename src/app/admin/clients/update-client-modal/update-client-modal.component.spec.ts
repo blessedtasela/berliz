@@ -29,7 +29,7 @@ describe('UpdateClientModalComponent', () => {
         { provide: MatDialogRef, useValue: dialogRefSpy },
         { provide: NgxUiLoaderService, useValue: ngxServiceSpy },
         { provide: SnackBarService, useValue: snackbarServiceSpy },
-        { provide: MAT_DIALOG_DATA, useValue: { clientData: {} } }
+        { provide: MAT_DIALOG_DATA, useValue: { clientData: { user: { email: 'client@example.com' }, date: new Date().toISOString(), lastUpdate: new Date().toISOString() } } }
       ]
     });
     fixture = TestBed.createComponent(UpdateClientModalComponent);

@@ -102,13 +102,13 @@ export class PartnerFormComponent implements OnInit {
   /** True when a field is invalid AND the user has interacted with it or submitted */
   isInvalid(field: string): boolean {
     const ctrl = this.addPartnerForm.get(field);
-    return !!ctrl?.invalid && (!!ctrl?.touched || this.invalidForm);
+    return !!ctrl?.invalid && (!!ctrl?.touched || !!ctrl?.dirty || this.invalidForm);
   }
 
   /** True when a field is valid AND touched */
   isValid(field: string): boolean {
     const ctrl = this.addPartnerForm.get(field);
-    return !!ctrl?.valid && !!ctrl?.touched;
+    return !!ctrl?.valid && (!!ctrl?.touched || !!ctrl?.dirty);
   }
 
   /** Current char length for a textarea field */

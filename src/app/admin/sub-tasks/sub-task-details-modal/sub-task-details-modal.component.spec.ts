@@ -18,7 +18,7 @@ describe('SubTaskDetailsModalComponent', () => {
       providers: [
         DatePipe,
         { provide: MatDialogRef, useValue: dialogRefSpy },
-        { provide: MAT_DIALOG_DATA, useValue: { subTaskData: {} } }
+        { provide: MAT_DIALOG_DATA, useValue: { subTaskData: { date: new Date().toISOString() } } }
       ]
     });
     fixture = TestBed.createComponent(SubTaskDetailsModalComponent);

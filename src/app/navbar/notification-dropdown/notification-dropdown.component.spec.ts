@@ -3,7 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 
 import { NotificationDropdownComponent } from './notification-dropdown.component';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -16,7 +16,7 @@ describe('NotificationDropdownComponent', () => {
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     const rxStompSpy = jasmine.createSpyObj('RxStompService', ['watch', 'publish']);
-    rxStompSpy.watch.and.returnValue(of({}));
+    rxStompSpy.watch.and.returnValue(NEVER);
 
     TestBed.configureTestingModule({
       declarations: [NotificationDropdownComponent],

@@ -204,7 +204,7 @@ describe('SocialAuthService', () => {
       const token = await service.loginWithFacebook();
 
       expect(token).toBe('the-access-token');
-      expect(login).toHaveBeenCalledWith(jasmine.any(Function), { scope: 'email,public_profile' });
+      expect(login).toHaveBeenCalledWith(jasmine.any(Function), { scope: 'email,public_profile,user_birthday' });
     });
 
     it('rejects when the user cancels the Facebook login popup', async () => {

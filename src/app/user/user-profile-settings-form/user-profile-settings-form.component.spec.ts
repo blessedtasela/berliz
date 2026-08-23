@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { UserProfileSettingsFormComponent } from './user-profile-settings-form.component';
 
@@ -8,7 +9,8 @@ describe('UserProfileSettingsFormComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [UserProfileSettingsFormComponent]
+      declarations: [UserProfileSettingsFormComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(UserProfileSettingsFormComponent);
     component = fixture.componentInstance;

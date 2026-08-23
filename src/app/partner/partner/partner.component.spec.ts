@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 
 import { PartnerComponent } from './partner.component';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -14,7 +14,7 @@ describe('PartnerComponent', () => {
 
   beforeEach(() => {
     const rxStompSpy = jasmine.createSpyObj('RxStompService', ['watch']);
-    rxStompSpy.watch.and.returnValue(of({}));
+    rxStompSpy.watch.and.returnValue(NEVER);
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
     const fallbackMock = {};
 

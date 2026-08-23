@@ -14,6 +14,13 @@ describe('OffersComponent', () => {
     });
     fixture = TestBed.createComponent(OffersComponent);
     component = fixture.componentInstance;
+    component.offers = {
+      id: 1,
+      title: 'Test Offer',
+      description: 'Test description',
+      subTitle: 'Test subtitle',
+      iconUrl: 'gift'
+    };
     fixture.detectChanges();
   });
 

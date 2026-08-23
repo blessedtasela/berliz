@@ -8,6 +8,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { UpdateTrainerModalComponent } from './update-trainer-modal.component';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 
 describe('UpdateTrainerModalComponent', () => {
   let component: UpdateTrainerModalComponent;
@@ -21,6 +22,7 @@ describe('UpdateTrainerModalComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [UpdateTrainerModalComponent],
+      imports: [StrapiUrlPipe],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         FormBuilder,
@@ -29,7 +31,7 @@ describe('UpdateTrainerModalComponent', () => {
         { provide: MatDialogRef, useValue: dialogRefSpy },
         { provide: NgxUiLoaderService, useValue: ngxServiceSpy },
         { provide: SnackBarService, useValue: snackBarServiceSpy },
-        { provide: MAT_DIALOG_DATA, useValue: { trainerData: { categories: [] } } }
+        { provide: MAT_DIALOG_DATA, useValue: { trainerData: { categories: [], photoResponse: { photoUrl: '' } } } }
       ]
     });
     fixture = TestBed.createComponent(UpdateTrainerModalComponent);

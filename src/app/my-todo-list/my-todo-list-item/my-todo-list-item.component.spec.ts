@@ -14,7 +14,7 @@ describe('MyTodoListItemComponent', () => {
     });
     fixture = TestBed.createComponent(MyTodoListItemComponent);
     component = fixture.componentInstance;
-    component.todo = { id: 1, task: '', dueDate: new Date().toISOString(), status: 'pending' } as any;
+    component.todo = { id: 1, task: '', dueDate: new Date().toISOString(), status: 'pending', priority: 'normal' } as any;
     fixture.detectChanges();
   });
 

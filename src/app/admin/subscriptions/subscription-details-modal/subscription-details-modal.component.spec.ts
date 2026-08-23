@@ -18,7 +18,7 @@ describe('SubscriptionDetailsModalComponent', () => {
       providers: [
         DatePipe,
         { provide: MatDialogRef, useValue: dialogRefSpy },
-        { provide: MAT_DIALOG_DATA, useValue: { subscriptionData: {} } }
+        { provide: MAT_DIALOG_DATA, useValue: { subscriptionData: { user: { email: 'client@example.com' }, date: new Date().toISOString(), startDate: new Date().toISOString(), endDate: new Date().toISOString(), lastUpdate: new Date().toISOString() } } }
       ]
     });
     fixture = TestBed.createComponent(SubscriptionDetailsModalComponent);

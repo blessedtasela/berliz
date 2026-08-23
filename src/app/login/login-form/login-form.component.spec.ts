@@ -41,7 +41,7 @@ describe('LoginFormComponent', () => {
     ]);
     userService.checkToken.and.returnValue(of({ message: '', success: true, statusCode: 200, data: 'true' }));
 
-    socialAuthService = jasmine.createSpyObj('SocialAuthService', ['renderGoogleButton', 'loginWithFacebook']);
+    socialAuthService = jasmine.createSpyObj('SocialAuthService', ['renderGoogleButton', 'loginWithFacebook', 'preloadFacebookSdk']);
     socialAuthService.renderGoogleButton.and.returnValue(Promise.resolve());
 
     snackBarService = jasmine.createSpyObj('SnackBarService', ['openSnackBar', 'dismiss']);

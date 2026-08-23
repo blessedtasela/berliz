@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { UserBioEditComponent } from './user-bio-edit.component';
 
@@ -8,7 +9,8 @@ describe('UserBioEditComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [UserBioEditComponent]
+      declarations: [UserBioEditComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(UserBioEditComponent);
     component = fixture.componentInstance;

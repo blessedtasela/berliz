@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { UserProfileSettingsDangerzoneComponent } from './user-profile-settings-dangerzone.component';
 
@@ -8,7 +9,8 @@ describe('UserProfileSettingsDangerzoneComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [UserProfileSettingsDangerzoneComponent]
+      declarations: [UserProfileSettingsDangerzoneComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(UserProfileSettingsDangerzoneComponent);
     component = fixture.componentInstance;

@@ -3,7 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 import { DashboardTopUsersComponent } from './dashboard-top-users.component';
@@ -19,7 +19,7 @@ describe('DashboardTopUsersComponent', () => {
     const snackbarServiceSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     const rxStompServiceSpy = jasmine.createSpyObj('RxStompService', ['watch']);
-    rxStompServiceSpy.watch.and.returnValue(of({}));
+    rxStompServiceSpy.watch.and.returnValue(NEVER);
 
     TestBed.configureTestingModule({
       declarations: [DashboardTopUsersComponent],

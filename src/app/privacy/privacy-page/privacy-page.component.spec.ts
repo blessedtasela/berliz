@@ -10,7 +10,7 @@ describe('PrivacyPageComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [PrivacyPageComponent],
+      imports: [PrivacyPageComponent],
       schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(PrivacyPageComponent);

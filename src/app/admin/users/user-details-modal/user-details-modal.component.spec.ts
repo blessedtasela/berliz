@@ -29,7 +29,7 @@ describe('UserDetailsModalComponent', () => {
         { provide: NgxUiLoaderService, useValue: ngxServiceSpy },
         { provide: SnackBarService, useValue: snackBarServiceSpy },
         { provide: UserService, useValue: userServiceSpy },
-        { provide: MAT_DIALOG_DATA, useValue: { userData: {}, photo: '' } }
+        { provide: MAT_DIALOG_DATA, useValue: { userData: { date: new Date().toISOString(), lastUpdate: new Date().toISOString() }, photo: '' } }
       ]
     });
     fixture = TestBed.createComponent(UserDetailsModalComponent);

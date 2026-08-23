@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
@@ -6,6 +7,7 @@ import { DatePipe } from '@angular/common';
 import { AdminProblemReportsComponent } from './admin-problem-reports.component';
 import { environment } from 'src/environments/environment';
 import { ProblemReport } from 'src/app/models/problem-report.model';
+import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 describe('AdminProblemReportsComponent', () => {
   let component: AdminProblemReportsComponent;
@@ -27,10 +29,16 @@ describe('AdminProblemReportsComponent', () => {
   };
 
   beforeEach(() => {
+    const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
+
     TestBed.configureTestingModule({
       declarations: [AdminProblemReportsComponent],
+      schemas: [NO_ERRORS_SCHEMA],
       imports: [HttpClientTestingModule, MatDialogModule],
-      providers: [DatePipe]
+      providers: [
+        DatePipe,
+        { provide: SnackBarService, useValue: snackbarSpy }
+      ]
     });
     fixture = TestBed.createComponent(AdminProblemReportsComponent);
     component = fixture.componentInstance;

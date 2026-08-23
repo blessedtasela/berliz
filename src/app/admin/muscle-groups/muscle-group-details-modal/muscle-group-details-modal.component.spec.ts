@@ -25,7 +25,7 @@ describe('MuscleGroupDetailsModalComponent', () => {
         { provide: MatDialogRef, useValue: dialogRefSpy },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: SnackBarService, useValue: snackbarServiceSpy },
-        { provide: MAT_DIALOG_DATA, useValue: { muscleGroupData: {} } }
+        { provide: MAT_DIALOG_DATA, useValue: { muscleGroupData: { date: new Date().toISOString(), lastUpdate: new Date().toISOString() } } }
       ]
     });
     fixture = TestBed.createComponent(MuscleGroupDetailsModalComponent);

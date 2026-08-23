@@ -8,6 +8,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { UpdateCenterModalComponent } from './update-center-modal.component';
 import { CenterService } from 'src/app/services/center.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 
 describe('UpdateCenterModalComponent', () => {
   let component: UpdateCenterModalComponent;
@@ -21,6 +22,7 @@ describe('UpdateCenterModalComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [UpdateCenterModalComponent],
+      imports: [StrapiUrlPipe],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         FormBuilder,

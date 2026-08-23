@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 import { TrainerPricingListComponent } from './trainer-pricing-list.component';
@@ -24,7 +24,7 @@ describe('TrainerPricingListComponent', () => {
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     const rxStompServiceSpy = jasmine.createSpyObj('RxStompService', ['watch']);
-    rxStompServiceSpy.watch.and.returnValue(of({}));
+    rxStompServiceSpy.watch.and.returnValue(NEVER);
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['getCurrentUserEmail']);
     authServiceSpy.getCurrentUserEmail.and.returnValue('test@example.com');
 

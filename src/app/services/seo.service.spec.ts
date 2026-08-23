@@ -18,7 +18,7 @@ describe('SeoService', () => {
     service.updateForRoute('/trainers');
     expect(document.title).toContain('Trainer');
     const canonical = document.head.querySelector('link[rel="canonical"]');
-    expect(canonical?.getAttribute('href')).toBe('https://berliz.fitness/trainers');
+    expect(canonical?.getAttribute('href')).toBe('https://www.berliz.fitness/trainers');
   });
 
   it('falls back to the default entry for an unknown route', () => {

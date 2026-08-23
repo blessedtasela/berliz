@@ -35,7 +35,7 @@ describe('TrainerDataComponent', () => {
     });
     fixture = TestBed.createComponent(TrainerDataComponent);
     component = fixture.componentInstance;
-    component.trainer = { id: 1, categories: [] } as any;
+    component.trainer = { id: 1, categories: [], date: new Date().toISOString() } as any;
     fixture.detectChanges();
   });
 

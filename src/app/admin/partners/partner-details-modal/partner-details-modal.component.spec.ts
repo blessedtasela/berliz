@@ -29,7 +29,7 @@ describe('PartnerDetailsModalComponent', () => {
         { provide: MatDialog, useValue: dialogSpy },
         { provide: NgxUiLoaderService, useValue: ngxServiceSpy },
         { provide: SnackBarService, useValue: snackbarServiceSpy },
-        { provide: MAT_DIALOG_DATA, useValue: { partnerData: {} } }
+        { provide: MAT_DIALOG_DATA, useValue: { partnerData: { date: new Date().toISOString(), lastUpdate: new Date().toISOString() } } }
       ]
     });
     fixture = TestBed.createComponent(PartnerDetailsModalComponent);

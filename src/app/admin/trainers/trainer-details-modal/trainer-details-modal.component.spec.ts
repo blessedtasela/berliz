@@ -7,6 +7,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 import { TrainerDetailsModalComponent } from './trainer-details-modal.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 
 describe('TrainerDetailsModalComponent', () => {
   let component: TrainerDetailsModalComponent;
@@ -20,6 +21,7 @@ describe('TrainerDetailsModalComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [TrainerDetailsModalComponent],
+      imports: [StrapiUrlPipe],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         DatePipe,
@@ -28,7 +30,7 @@ describe('TrainerDetailsModalComponent', () => {
         { provide: MatDialog, useValue: dialogSpy },
         { provide: NgxUiLoaderService, useValue: ngxServiceSpy },
         { provide: SnackBarService, useValue: snackbarServiceSpy },
-        { provide: MAT_DIALOG_DATA, useValue: { trainerData: {} } }
+        { provide: MAT_DIALOG_DATA, useValue: { trainerData: { date: new Date().toISOString(), lastUpdate: new Date().toISOString(), photoResponse: { photoUrl: '' } } } }
       ]
     });
     fixture = TestBed.createComponent(TrainerDetailsModalComponent);

@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { TrainerDetailHeroComponent } from './trainer-detail-hero.component';
 
@@ -8,7 +10,9 @@ describe('TrainerDetailHeroComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [TrainerDetailHeroComponent]
+      declarations: [TrainerDetailHeroComponent],
+      imports: [RouterTestingModule],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(TrainerDetailHeroComponent);
     component = fixture.componentInstance;

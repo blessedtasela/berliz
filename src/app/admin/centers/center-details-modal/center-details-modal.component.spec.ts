@@ -6,6 +6,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 
 import { CenterDetailsModalComponent } from './center-details-modal.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 
 describe('CenterDetailsModalComponent', () => {
   let component: CenterDetailsModalComponent;
@@ -18,6 +19,7 @@ describe('CenterDetailsModalComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [CenterDetailsModalComponent],
+      imports: [StrapiUrlPipe],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         DatePipe,
@@ -25,7 +27,7 @@ describe('CenterDetailsModalComponent', () => {
         { provide: MatDialogRef, useValue: dialogRefSpy },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: SnackBarService, useValue: snackbarServiceSpy },
-        { provide: MAT_DIALOG_DATA, useValue: { centerData: {} } }
+        { provide: MAT_DIALOG_DATA, useValue: { centerData: { date: new Date().toISOString(), lastUpdate: new Date().toISOString() } } }
       ]
     });
     fixture = TestBed.createComponent(CenterDetailsModalComponent);

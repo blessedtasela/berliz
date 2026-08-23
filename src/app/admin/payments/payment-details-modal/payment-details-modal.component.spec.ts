@@ -18,7 +18,7 @@ describe('PaymentDetailsModalComponent', () => {
       providers: [
         DatePipe,
         { provide: MatDialogRef, useValue: dialogRefSpy },
-        { provide: MAT_DIALOG_DATA, useValue: { paymentData: {} } }
+        { provide: MAT_DIALOG_DATA, useValue: { paymentData: { date: new Date().toISOString(), lastUpdate: new Date().toISOString() } } }
       ]
     });
     fixture = TestBed.createComponent(PaymentDetailsModalComponent);

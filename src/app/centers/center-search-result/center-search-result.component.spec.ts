@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 
 import { CenterSearchResultComponent } from './center-search-result.component';
 import { CenterService } from 'src/app/services/center.service';
@@ -16,7 +16,7 @@ describe('CenterSearchResultComponent', () => {
   beforeEach(() => {
     const centerServiceSpy = jasmine.createSpyObj('CenterService', ['likeCenter']);
     const rxStompServiceSpy = jasmine.createSpyObj('RxStompService', ['watch']);
-    rxStompServiceSpy.watch.and.returnValue(of({}));
+    rxStompServiceSpy.watch.and.returnValue(NEVER);
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
 
     TestBed.configureTestingModule({
