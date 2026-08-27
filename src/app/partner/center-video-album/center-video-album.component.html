@@ -63,7 +63,7 @@
             <div *ngFor="let slot of filledSlots"
                 class="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-900 aspect-video">
 
-                <video [src]="slot.previewUrl" class="w-full h-full object-cover" muted playsinline controls
+                <video [src]="slot.previewUrl" class="w-full h-full object-cover object-top" muted playsinline controls
                     (error)="onVideoError($event)"></video>
 
                 <div *ngIf="slot.uploading" class="absolute inset-0 bg-black/50 flex items-center justify-center">

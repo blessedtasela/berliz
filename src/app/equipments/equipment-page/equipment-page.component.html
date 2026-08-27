@@ -162,7 +162,7 @@
                             [attr.aria-label]="'View ' + item.name">
 
                             <img *ngIf="item.imageUrl; else noPhoto" [src]="item.imageUrl | strapiUrl" [alt]="item.name"
-                                class="w-full h-full object-cover" />
+                                class="w-full h-full object-cover object-top" />
 
                             <ng-template #noPhoto>
                                 <div class="w-full h-full flex flex-col items-center justify-center gap-2 bg-zinc-800">

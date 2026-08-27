@@ -50,7 +50,7 @@
         <div class="sm:hidden divide-y divide-gray-100">
             <div *ngFor="let item of filtered" class="flex items-center gap-3 px-4 py-3">
                 <img [src]="item.imageUrl | strapiUrl" onerror="this.src='assets/icons/user.png';"
-                    class="w-12 h-12 rounded-xl object-cover border border-gray-200 shrink-0 bg-gray-50" />
+                    class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200 shrink-0 bg-gray-50" />
 
                 <div class="min-w-0 flex-1">
                     <div class="flex items-center gap-2">
@@ -95,7 +95,7 @@
                         [class.opacity-50]="togglingId === item.id">
                         <td class="px-4 py-3">
                             <img [src]="item.imageUrl | strapiUrl" onerror="this.src='assets/icons/user.png';"
-                                class="w-10 h-10 rounded-xl object-cover border border-gray-200 bg-gray-50">
+                                class="w-10 h-10 rounded-xl object-cover object-top border border-gray-200 bg-gray-50">
                         </td>
                         <td class="px-4 py-3 font-semibold text-gray-900">{{ item.name }}</td>
                         <td class="px-4 py-3">

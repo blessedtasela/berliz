@@ -4,7 +4,7 @@
     (click)="showPreviewModal = false">
     <div class="relative" (click)="$event.stopPropagation()">
         <img [src]="previewUrl"
-            class="max-w-[280px] max-h-[280px] rounded-2xl object-cover shadow-2xl border border-white/20"
+            class="max-w-[280px] max-h-[280px] rounded-2xl object-cover object-top shadow-2xl border border-white/20"
             onerror="this.src='assets/avatar.png';" />
         <button (click)="showPreviewModal = false" class="absolute -top-2.5 -right-2.5 w-7 h-7 rounded-full bg-gray-900 border-2 border-white
              flex items-center justify-center text-white hover:bg-red-600 transition">
@@ -150,7 +150,7 @@
 
                 <!-- Preview -->
                 <div class="relative shrink-0">
-                    <img [src]="previewUrl" class="w-14 h-14 rounded-xl object-cover border border-gray-200"
+                    <img [src]="previewUrl" class="w-14 h-14 rounded-xl object-cover object-top border border-gray-200"
                         onerror="this.src='assets/avatar.png';" />
 
                     <button type="button" (click)="showPreviewModal = true" class="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full bg-gray-900 border-2 border-white

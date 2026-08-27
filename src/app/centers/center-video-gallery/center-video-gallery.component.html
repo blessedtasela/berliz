@@ -18,7 +18,7 @@
     <div *ngIf="videos.length; else noVideos" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div *ngFor="let video of videos; let i = index" [ngClass]="{ 'hidden': i >= 4 && !showAllVideos }"
             class="rounded-xl overflow-hidden border border-gray-200 bg-gray-50 flex flex-col">
-            <video class="w-full aspect-video object-cover bg-black" [src]="(video.playbackUrl || video.videoUrl) | strapiUrl"
+            <video class="w-full aspect-video object-cover object-top bg-black" [src]="(video.playbackUrl || video.videoUrl) | strapiUrl"
                 controls preload="metadata" playsinline>
             </video>
             <p *ngIf="video.name" class="text-[11px] text-gray-600 px-3 py-2 truncate">{{ video.name }}</p>

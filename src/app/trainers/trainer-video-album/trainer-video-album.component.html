@@ -17,7 +17,7 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div *ngFor="let video of videos" class="rounded-xl overflow-hidden border border-zinc-800 bg-black">
-            <video class="w-full aspect-video object-cover" [src]="videoUrl(video)" controls playsinline
+            <video class="w-full aspect-video object-cover object-top" [src]="videoUrl(video)" controls playsinline
                 preload="metadata"></video>
         </div>
     </div>

@@ -22,7 +22,7 @@
 
             <div class="flex items-center gap-3">
                 <img [src]="t.photoUrl | strapiUrl" [alt]="t.trainerName"
-                    class="w-11 h-11 rounded-xl object-cover border border-gray-200"
+                    class="w-11 h-11 rounded-xl object-cover object-top border border-gray-200"
                     onerror="this.src='assets/avatar.png';" />
                 <div class="min-w-0">
                     <p class="text-xs font-bold text-gray-900 truncate">{{ t.trainerName }}</p>

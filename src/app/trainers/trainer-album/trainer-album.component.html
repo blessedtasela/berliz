@@ -19,7 +19,7 @@
         <button *ngFor="let photo of photos" type="button" (click)="open(photo)" class="group relative rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950
                    hover:border-red-600/40 transition">
             <img [src]="photoUrl(photo)" [alt]="photo.name"
-                class="w-full aspect-square object-cover group-hover:scale-105 transition duration-300"
+                class="w-full aspect-square object-cover object-top group-hover:scale-105 transition duration-300"
                 (error)="onImageError($event)" />
         </button>
     </div>

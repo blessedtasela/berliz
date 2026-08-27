@@ -44,7 +44,7 @@
 
             <!-- Demo clip (base64 mp4 from the backend), when present -->
             <div *ngIf="exercise.demo" class="w-full h-36 bg-zinc-800 overflow-hidden">
-                <video [src]="'data:video/mp4;base64,' + exercise.demo" class="w-full h-full object-cover" muted loop
+                <video [src]="'data:video/mp4;base64,' + exercise.demo" class="w-full h-full object-cover object-top" muted loop
                     playsinline></video>
             </div>
 

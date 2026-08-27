@@ -22,7 +22,7 @@
             class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col gap-2 hover:border-red-200 transition">
 
             <div class="flex items-center gap-3">
-                <img [src]="c.photoUrl | strapiUrl" [alt]="c.name" class="w-10 h-10 rounded-xl object-cover border border-gray-200"
+                <img [src]="c.photoUrl | strapiUrl" [alt]="c.name" class="w-10 h-10 rounded-xl object-cover object-top border border-gray-200"
                     onerror="this.src='assets/avatar.png';" />
                 <div class="min-w-0">
                     <p class="text-xs font-bold text-gray-900 truncate">{{ c.name }}</p>

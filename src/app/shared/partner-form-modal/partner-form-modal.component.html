@@ -35,7 +35,7 @@
                 <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Relevant document or
                     certificate</label>
                 <div class="flex items-center gap-3">
-                    <img class="w-16 h-16 object-cover rounded-xl border border-gray-200"
+                    <img class="w-16 h-16 object-cover object-top rounded-xl border border-gray-200"
                         src="../../../assets/icons/user.png" alt="Certificate" />
                     <input formControlName="certificate" (change)="onCertificateSelected($event)" type="file"
                         accept=".pdf" class="block w-full text-xs text-gray-500 cursor-pointer
@@ -53,7 +53,7 @@
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">CV</label>
                 <div class="flex items-center gap-3">
-                    <img class="w-16 h-16 object-cover rounded-xl border border-gray-200"
+                    <img class="w-16 h-16 object-cover object-top rounded-xl border border-gray-200"
                         src="../../../assets/icons/user.png" alt="CV" />
                     <input formControlName="cv" (change)="onCVSelected($event)" type="file" accept=".pdf" class="block w-full text-xs text-gray-500 cursor-pointer
                                file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0

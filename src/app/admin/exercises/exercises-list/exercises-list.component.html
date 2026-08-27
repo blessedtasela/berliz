@@ -4,7 +4,7 @@
         <div *ngFor="let exercise of exercisesData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors">
             <div class="w-12 h-12 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center shrink-0">
                 <video *ngIf="exercise.demo" [src]="'data:video/mp4;base64,' + exercise.demo"
-                    class="w-full h-full object-cover" autoplay [muted]="true" loop>
+                    class="w-full h-full object-cover object-top" autoplay [muted]="true" loop>
                 </video>
                 <i-feather *ngIf="!exercise.demo" name="video" class="text-gray-300"
                     style="width:18px;height:18px;"></i-feather>
@@ -61,7 +61,7 @@
                         <div class="flex items-center gap-2">
                             <div class="w-10 h-10 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center shrink-0">
                                 <video *ngIf="exercise.demo" [src]="'data:video/mp4;base64,' + exercise.demo"
-                                    class="w-full h-full object-cover" autoplay [muted]="true" loop>
+                                    class="w-full h-full object-cover object-top" autoplay [muted]="true" loop>
                                 </video>
                                 <i-feather *ngIf="!exercise.demo" name="video" class="text-gray-300"
                                     style="width:16px;height:16px;"></i-feather>

@@ -25,7 +25,7 @@
         </p>
 
         <img *ngIf="selectedTrainer" [src]="(selectedTrainer.photoResponse.photoUrl | strapiUrl) || '../../../assets/icons/user.png'"
-            class="w-full h-40 object-cover rounded-xl border border-gray-200"
+            class="w-full h-40 object-cover object-top rounded-xl border border-gray-200"
             onerror="this.src='../../../assets/icons/user.png';" />
 
         <!-- Trainer -->

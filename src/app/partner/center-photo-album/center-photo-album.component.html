@@ -3,7 +3,7 @@
     (click)="showPreviewModal = false">
     <div class="relative" (click)="$event.stopPropagation()">
         <img [src]="previewModalUrl"
-            class="max-w-[320px] max-h-[320px] rounded-2xl object-cover shadow-2xl border border-white/20"
+            class="max-w-[320px] max-h-[320px] rounded-2xl object-cover object-top shadow-2xl border border-white/20"
             onerror="this.src='assets/avatar.png';" />
         <button type="button" (click)="showPreviewModal = false" class="absolute -top-2.5 -right-2.5 w-7 h-7 rounded-full bg-gray-900 border-2 border-white
                    flex items-center justify-center text-white hover:bg-red-600 transition">
@@ -76,7 +76,7 @@
             <div *ngFor="let slot of filledSlots; let i = index"
                 class="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50 aspect-square">
 
-                <img [src]="slot.previewUrl" class="w-full h-full object-cover"
+                <img [src]="slot.previewUrl" class="w-full h-full object-cover object-top"
                     onerror="this.src='assets/avatar.png';" />
 
                 <div *ngIf="slot.uploading" class="absolute inset-0 bg-black/40 flex items-center justify-center">

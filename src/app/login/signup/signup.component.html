@@ -142,7 +142,7 @@
               <input type="file" accept="image/*" (change)="onImgSelected($event)"
                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
               <img *ngIf="imagePreview; else cameraIcon" [src]="imagePreview" alt="Profile preview"
-                class="object-cover w-full h-full" />
+                class="object-cover object-top w-full h-full" />
               <ng-template #cameraIcon>
                 <i-feather name="camera" class="text-gray-400" style="width:22px;height:22px;"></i-feather>
               </ng-template>

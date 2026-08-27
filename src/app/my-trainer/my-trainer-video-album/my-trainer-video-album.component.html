@@ -313,7 +313,7 @@
                         'border-red-300': slot.touched && !slot.uploading
                     }">
 
-                    <video [src]="slot.previewUrl" class="w-full h-full object-cover bg-black" autoplay muted loop
+                    <video [src]="slot.previewUrl" class="w-full h-full object-cover object-top bg-black" autoplay muted loop
                         playsinline (error)="onVideoError($event)">
                     </video>
 

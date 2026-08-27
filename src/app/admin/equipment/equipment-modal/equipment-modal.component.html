@@ -90,7 +90,7 @@
                         [ngClass]="uploadError[field] ? 'border-red-300' : 'border-gray-200'">
 
                         <img *ngIf="form.get(field)?.value && !uploading[field]" [src]="form.get(field)?.value | strapiUrl"
-                            class="absolute inset-0 w-full h-full object-cover" />
+                            class="absolute inset-0 w-full h-full object-cover object-top" />
 
                         <div *ngIf="uploading[field]" class="flex flex-col items-center gap-1 text-gray-400">
                             <i-feather name="loader" class="animate-spin" style="width:16px;height:16px;"></i-feather>

@@ -21,7 +21,7 @@
             <div *ngIf="hasTransformation(review)" class="grid grid-cols-2 gap-px bg-zinc-800">
                 <div class="relative">
                     <img [src]="photoUrl(review.photoFrontBefore)" alt="Before"
-                        class="w-full aspect-square object-cover" (error)="onImageError($event)" />
+                        class="w-full aspect-square object-cover object-top" (error)="onImageError($event)" />
                     <span class="absolute bottom-1.5 left-1.5 text-[9px] font-bold uppercase tracking-wide
                                  text-zinc-300 bg-black/70 px-1.5 py-0.5 rounded">
                         Before
@@ -29,7 +29,7 @@
                 </div>
                 <div class="relative">
                     <img [src]="photoUrl(review.photoFrontAfter)" alt="After"
-                        class="w-full aspect-square object-cover" (error)="onImageError($event)" />
+                        class="w-full aspect-square object-cover object-top" (error)="onImageError($event)" />
                     <span class="absolute bottom-1.5 left-1.5 text-[9px] font-bold uppercase tracking-wide
                                  text-white bg-red-600 px-1.5 py-0.5 rounded">
                         After

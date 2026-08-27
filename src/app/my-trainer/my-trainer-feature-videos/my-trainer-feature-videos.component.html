@@ -305,7 +305,7 @@
 
                         <div *ngIf="slot.previewUrl" class="relative">
                             <video *ngIf="slot.previewUrl" [src]="slot.previewUrl" (error)="onVideoError($event)"
-                                class="w-full aspect-video rounded-xl object-cover border bg-black" [ngClass]="{
+                                class="w-full aspect-video rounded-xl object-cover object-top border bg-black" [ngClass]="{
                                         'border-gray-200': !slotIsTouched(i),
                                         'border-green-200': slotTouched(i) && slotIsValid(i),
                                         'border-red-200': slotIsTouched(i) && slotHasError(i)
