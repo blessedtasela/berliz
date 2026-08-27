@@ -68,7 +68,7 @@ describe('Progress Share Reducer', () => {
       const inFlight = progressShareReducer(initialProgressShareState, A.loadClientProgress({ clientId: 5 }));
       expect(inFlight.loadingClientProgress).toBeTrue();
 
-      const progress = { clientId: 5, clientFirstname: 'Jane', clientLastname: 'Doe', clientEmail: 'jane@doe.com', assignments: [] };
+      const progress = { clientId: 5, clientFirstname: 'Jane', clientLastname: 'Doe', clientEmail: 'jane@doe.com', assignments: [], progressEntries: [] };
       const response: ApiResponse<any> = { message: 'ok', data: progress, success: true, statusCode: 200 };
       const done = progressShareReducer(inFlight, A.loadClientProgressSuccess({ response }));
 

@@ -23,7 +23,7 @@ describe('ProgressShareEffects', () => {
 
   const sampleProgress: ClientProgress = {
     clientId: 5, clientFirstname: 'Jane', clientLastname: 'Doe', clientEmail: 'jane@doe.com',
-    assignments: []
+    assignments: [], progressEntries: []
   };
 
   beforeEach(() => {

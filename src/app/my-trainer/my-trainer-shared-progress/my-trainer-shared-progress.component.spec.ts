@@ -27,7 +27,7 @@ describe('MyTrainerSharedProgressComponent', () => {
 
   const progress: ClientProgress = {
     clientId: 42, clientFirstname: 'Jane', clientLastname: 'Doe', clientEmail: 'jane@doe.com',
-    assignments: []
+    assignments: [], progressEntries: []
   };
 
   beforeEach(() => {

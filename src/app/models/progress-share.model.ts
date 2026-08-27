@@ -2,6 +2,7 @@
 // (ProgressShareResponse / ClientProgressResponse / MyTrainerSummaryResponse),
 // all wrapped in ApiResponse<T> (see models/Api.interface.ts).
 import { WorkoutAssignmentResponse } from './workout.interface';
+import { ProgressEntry } from './progress-entry.model';
 
 export interface ProgressShare {
   id: number;
@@ -31,6 +32,8 @@ export interface ClientProgress {
   clientLastname: string;
   clientEmail: string;
   assignments: WorkoutAssignmentResponse[];
+  /** The client's logged body-metric check-ins (weight/body-fat %/photos), newest first. */
+  progressEntries: ProgressEntry[];
   message?: string;
 }
 

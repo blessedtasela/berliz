@@ -10,6 +10,7 @@ import { DashboardExercisesComponent } from './exercises/dashboard-exercises.com
 import { UserModule } from '../user/user.module';
 import { UserProfileComponent } from '../user/user-profile/user-profile.component';
 import { UserProfileSettingsComponent } from '../user/user-profile-settings/user-profile-settings.component';
+import { UserProgressComponent } from '../user/user-progress/user-progress.component';
 
 import { MyNotificationsModule } from '../my-notifications/my-notifications.module';
 import { NotificationMainComponent } from '../my-notifications/notification-main/notification-main.component';
@@ -115,6 +116,17 @@ const dashboardRoutes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: 'Settings',
+          expectedRole: expectedRoleAll
+        }
+      },
+
+      // My Progress — weight/body-fat/photo check-ins over time
+      {
+        path: 'my-progress',
+        component: UserProgressComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'My Progress',
           expectedRole: expectedRoleAll
         }
       },
