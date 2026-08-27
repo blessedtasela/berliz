@@ -110,7 +110,8 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
       .subscribe(response => {
 
         const trainers = response?.data ?? [];
-        const match = trainers.find(t => t.name?.replace(/ /g, '-') === name);
+        const target = name.toLowerCase();
+        const match = trainers.find(t => t.name?.replace(/ /g, '-').toLowerCase() === target);
 
         this.resolved = true;
 

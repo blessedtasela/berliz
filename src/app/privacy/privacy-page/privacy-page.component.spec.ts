@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { By } from '@angular/platform-browser';
+import { RouterLink } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { PrivacyPageComponent } from './privacy-page.component';
 
@@ -10,7 +12,7 @@ describe('PrivacyPageComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [PrivacyPageComponent],
+      imports: [PrivacyPageComponent, RouterTestingModule],
       schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(PrivacyPageComponent);
@@ -64,6 +66,9 @@ describe('PrivacyPageComponent', () => {
     const links = fixture.debugElement.queryAll(By.css('a'));
     const contactLink = links.find(l => /contact us/i.test((l.nativeElement as HTMLElement).textContent || ''));
     expect(contactLink).withContext('a "contact us" link should be present').toBeTruthy();
-    expect((contactLink!.nativeElement as any).routerLink).toEqual(['/contact']);
+    // routerLink is a set-only accessor on the RouterLink directive (it stores
+    // into `commands`, with no matching getter) and isn't mirrored onto the
+    // native DOM element, so read the resolved commands off the directive.
+    expect((contactLink!.injector.get(RouterLink) as any).commands).toEqual(['/contact']);
   });
 });

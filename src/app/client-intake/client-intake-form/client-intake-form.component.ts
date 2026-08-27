@@ -117,7 +117,7 @@ export class ClientIntakeFormComponent implements OnInit, OnDestroy {
 
     this.actions$
       .pipe(ofType(createClientIntakeFailure, updateClientIntakeFailure), takeUntil(this.destroy$))
-      .subscribe(({ error }) => this.handleError(error));
+      .subscribe(({ error }) => this.handleSaveError(error));
   }
 
   ngOnDestroy(): void {
@@ -160,13 +160,34 @@ export class ClientIntakeFormComponent implements OnInit, OnDestroy {
     this.clientName = `${intake.clientFirstname ?? ''} ${intake.clientLastname ?? ''}`.trim() || intake.clientEmail;
   }
 
-  /** Distinguishes an access-denied response from any other failure so we can show a dedicated state. */
+  /**
+   * Distinguishes an access-denied response from any other failure so we can show
+   * a dedicated state. Only used for loadClientIntakeFailure — "not found" there
+   * unambiguously means the intake record being loaded doesn't exist.
+   */
   private handleError(error: string): void {
     const msg = (error || '').toLowerCase();
     if (msg.includes('not authorized') || msg.includes('unauthorized')) {
       this.accessDenied = true;
     } else if (msg.includes('not found')) {
       this.notFound = true;
+    } else {
+      this.snackBar.openSnackBar(error || genericError, 'error');
+    }
+  }
+
+  /**
+   * For create/update failures. Deliberately does NOT switch to the notFound
+   * state on a "not found" message — unlike a load failure, "not found" here
+   * could mean something else entirely in the payload (e.g. "Client not found"),
+   * and the user is actively filling out a visible form, not loading an existing
+   * record — flipping to an empty "not found" state would hide their input behind
+   * the wrong UI. Always surface it as an error toast instead.
+   */
+  private handleSaveError(error: string): void {
+    const msg = (error || '').toLowerCase();
+    if (msg.includes('not authorized') || msg.includes('unauthorized')) {
+      this.accessDenied = true;
     } else {
       this.snackBar.openSnackBar(error || genericError, 'error');
     }

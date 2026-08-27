@@ -20,7 +20,8 @@ describe('UserProfileSettingsComponent', () => {
 
   beforeEach(() => {
     const userServiceSpy = jasmine.createSpyObj('UserService', ['updateUser']);
-    const countryServiceSpy = jasmine.createSpyObj('CountryService', ['getCountriesFromApi']);
+    const countryServiceSpy = jasmine.createSpyObj('CountryService', ['getCountries']);
+    countryServiceSpy.getCountries.and.returnValue(of([]));
     const ngxServiceSpy = jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']);
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);

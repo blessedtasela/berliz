@@ -19,7 +19,7 @@ export class CategoryCentersComponent {
   }
 
   formatUrl(name: string): string {
-    return name?.replace(/ /g, '-') ?? '';
+    return name?.replace(/ /g, '-').toLowerCase() ?? '';
   }
 
   mapsUrl(address: string): string {

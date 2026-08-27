@@ -20,6 +20,15 @@ describe('PromotionsComponent', () => {
     });
     fixture = TestBed.createComponent(PromotionsComponent);
     component = fixture.componentInstance;
+    component.promotions = {
+      id: 1,
+      title: 'Test Promotion',
+      subTitle: 'Test subtitle',
+      description: 'Test description',
+      imageUrl: 'test.jpg',
+      button: 'Sign up',
+      buttonUrl: '/sign-up'
+    };
     fixture.detectChanges();
   });
 

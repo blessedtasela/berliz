@@ -89,7 +89,7 @@ export class CenterSearchResultComponent implements OnInit, OnDestroy {
   }
 
   formatUrl(name: string): string {
-    return name?.replace(/ /g, '-') ?? '';
+    return name?.replace(/ /g, '-').toLowerCase() ?? '';
   }
 
   onImageError(event: any): void {

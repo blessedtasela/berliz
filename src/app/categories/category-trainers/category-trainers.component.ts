@@ -25,6 +25,6 @@ export class CategoryTrainersComponent {
   }
 
   formatUrl(name: string): string {
-    return name?.replace(/ /g, '-') ?? '';
+    return name?.replace(/ /g, '-').toLowerCase() ?? '';
   }
 }

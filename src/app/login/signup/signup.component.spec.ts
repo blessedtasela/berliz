@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { SignupComponent } from './signup.component';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -28,6 +29,7 @@ describe('SignupComponent', () => {
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule],
       declarations: [SignupComponent],
+      schemas: [NO_ERRORS_SCHEMA],
       providers: [
         FormBuilder,
         { provide: UserService, useValue: userServiceMock },
@@ -63,6 +65,31 @@ describe('SignupComponent', () => {
     expect(component.signupForm.invalid).toBeTrue();
   });
 
+  // Full, currently-valid payload for signupForm — it groups location fields
+  // (country/state/city/countryCode/postalCode/address/phone) under a nested
+  // 'location' FormGroup rather than at the top level.
+  const validSignupFormValue = {
+    firstname: 'John',
+    lastname: 'Doe',
+    gender: 'Male',
+    dob: '1990-01-01',
+    // imageValidator() checks the File's MIME type, so it needs an explicit
+    // image type — a bare `new File([], 'photo.jpg')` has type '' and fails.
+    profilePhoto: new File([], 'photo.jpg', { type: 'image/jpeg' }),
+    location: {
+      country: 'USA',
+      state: 'CA',
+      city: 'Los Angeles',
+      countryCode: 'US',
+      postalCode: '12345',
+      address: '123 Main St',
+      phone: '123456789'
+    },
+    email: 'john.doe@example.com',
+    password: 'password123',
+    confirmPassword: 'password123'
+  };
+
   it('should submit form successfully when valid', () => {
     userServiceMock.signup.and.returnValue(of({
       message: 'Signup successful',
@@ -70,22 +97,7 @@ describe('SignupComponent', () => {
       success: true,
       statusCode: 200
     }));
-    component.signupForm.setValue({
-      firstname: 'John',
-      lastname: 'Doe',
-      phone: '123456789',
-      postalCode: '12345',
-      dob: '1990-01-01',
-      gender: 'Male',
-      country: 'USA',
-      state: 'CA',
-      city: 'Los Angeles',
-      address: '123 Main St',
-      profilePhoto: new File([], 'photo.jpg'),
-      email: 'john.doe@example.com',
-      password: 'password123',
-      confirmPassword: 'password123'
-    });
+    component.signupForm.setValue(validSignupFormValue);
 
     component.submitForm();
     expect(ngxUiLoaderServiceMock.start).toHaveBeenCalled();
@@ -96,6 +108,7 @@ describe('SignupComponent', () => {
 
   it('should handle signup error', () => {
     userServiceMock.signup.and.returnValue(throwError({ error: { message: 'Signup failed' } }));
+    component.signupForm.setValue(validSignupFormValue);
 
     component.submitForm();
     expect(snackBarServiceMock.openSnackBar).toHaveBeenCalledWith('Signup failed', 'error');
