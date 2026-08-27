@@ -19,8 +19,8 @@ describe('ProgressSharingSettingsComponent', () => {
   let snackBarSpy: jasmine.SpyObj<SnackBarService>;
 
   const trainers: MyTrainerSummary[] = [
-    { type: 'trainer', id: 1, name: 'Trainer One', status: 'confirmed', lastBookingAt: new Date(), bookingCount: 2 },
-    { type: 'trainer', id: 2, name: 'Trainer Two', status: 'pending', lastBookingAt: new Date(), bookingCount: 1 },
+    { type: 'trainer', id: 1, userId: 101, name: 'Trainer One', status: 'confirmed', lastBookingAt: new Date(), bookingCount: 2 },
+    { type: 'trainer', id: 2, userId: 102, name: 'Trainer Two', status: 'pending', lastBookingAt: new Date(), bookingCount: 1 },
   ];
 
   const activeGrant: ProgressShare = {

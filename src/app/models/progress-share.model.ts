@@ -42,6 +42,8 @@ export interface MyTrainerSummary {
   /** 'trainer' | 'center' */
   type: 'trainer' | 'center';
   id: number;
+  /** The underlying User id — messaging targets a User, not a Trainer/Center profile. Trainer entries only (center messaging is out of scope). */
+  userId: number | null;
   name: string;
   status: string;
   lastBookingAt: Date;

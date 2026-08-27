@@ -4,11 +4,13 @@ import { DatePipe } from '@angular/common';
 import { FormBuilder } from '@angular/forms';
 import { provideMockStore } from '@ngrx/store/testing';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { of } from 'rxjs';
 
 import { TrainerDataComponent } from './trainer-data.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { LocationService } from 'src/app/services/location.service';
 
 describe('TrainerDataComponent', () => {
   let component: TrainerDataComponent;
@@ -19,6 +21,9 @@ describe('TrainerDataComponent', () => {
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     const trainerServiceSpy = jasmine.createSpyObj('TrainerService', ['updateTrainer']);
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
+    const locationServiceSpy = jasmine.createSpyObj('LocationService', ['getStates', 'getCities'], { countries$: of([]) });
+    locationServiceSpy.getStates.and.returnValue(of([]));
+    locationServiceSpy.getCities.and.returnValue(of([]));
 
     TestBed.configureTestingModule({
       declarations: [TrainerDataComponent],
@@ -30,7 +35,8 @@ describe('TrainerDataComponent', () => {
         { provide: NgxUiLoaderService, useValue: ngxServiceSpy },
         { provide: SnackBarService, useValue: snackbarSpy },
         { provide: TrainerService, useValue: trainerServiceSpy },
-        { provide: AuthService, useValue: authServiceSpy }
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: LocationService, useValue: locationServiceSpy }
       ]
     });
     fixture = TestBed.createComponent(TrainerDataComponent);

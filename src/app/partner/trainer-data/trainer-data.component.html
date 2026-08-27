@@ -59,13 +59,59 @@
         </textarea>
             </div>
 
-            <div class="md:col-span-2 flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Address</label>
-                <textarea formControlName="address" rows="4" placeholder="Street address or location" class="w-full px-3 py-2.5 rounded-xl bg-gray-50 border text-sm text-gray-900
-                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
-                 resize-none transition placeholder:text-gray-400" [ngClass]="updateTrainerForm.get('address')?.invalid && updateTrainerForm.get('address')?.dirty
-            ? 'border-red-300' : 'border-gray-200'">
-        </textarea>
+            <!-- How you coach -->
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">How you coach</label>
+                <select formControlName="serviceMode" class="berliz-select">
+                    <option value="IN_PERSON">In-person only</option>
+                    <option value="HYBRID">Hybrid — in-person &amp; online</option>
+                    <option value="ONLINE">Online only</option>
+                </select>
+            </div>
+
+            <!-- Available in (cities/countries) -->
+            <div class="md:col-span-2 flex flex-col gap-2">
+                <div class="flex items-center justify-between">
+                    <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Available in</label>
+                    <button type="button" (click)="addLocation()" class="text-[11px] font-semibold text-red-600 hover:text-red-700 flex items-center gap-1">
+                        <i-feather name="plus" style="width:11px;height:11px;"></i-feather>
+                        Add a city
+                    </button>
+                </div>
+
+                <p *ngIf="locationsArray.length === 0" class="text-[11px] text-gray-400 italic">
+                    No cities added yet — clients won't know where to find you in person.
+                </p>
+
+                <div formArrayName="locations" class="flex flex-col gap-2">
+                    <div *ngFor="let loc of locationsArray.controls; let i = index" [formGroupName]="i"
+                        class="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr_auto] gap-2 items-start bg-gray-50 border border-gray-200 rounded-xl p-2.5">
+
+                        <select formControlName="country" (change)="onLocationCountryChange(i)" class="berliz-select !py-1.5 !text-xs">
+                            <option value="" disabled>Country</option>
+                            <option *ngFor="let c of countries" [value]="c.name">{{ c.name }}</option>
+                        </select>
+
+                        <select formControlName="stateProvince" (change)="onLocationStateChange(i)"
+                            [disabled]="!loc.get('country')?.value" class="berliz-select !py-1.5 !text-xs">
+                            <option value="" disabled>State / Province</option>
+                            <option *ngFor="let s of locationStates[i]" [value]="s">{{ s }}</option>
+                        </select>
+
+                        <select formControlName="city" [disabled]="!loc.get('country')?.value" class="berliz-select !py-1.5 !text-xs">
+                            <option value="" disabled>City</option>
+                            <option *ngFor="let c of locationCities[i]" [value]="c">{{ c }}</option>
+                            <!-- Keep an already-saved city selectable even if the cascading city list hasn't loaded it yet -->
+                            <option *ngIf="loc.get('city')?.value && !locationCities[i]?.includes(loc.get('city')?.value)"
+                                [value]="loc.get('city')?.value">{{ loc.get('city')?.value }}</option>
+                        </select>
+
+                        <button type="button" (click)="removeLocation(i)"
+                            class="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition self-center">
+                            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Categories -->

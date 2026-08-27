@@ -1,0 +1,94 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
+            <i-feather name="message-circle" class="text-sky-600" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+            <h1 class="text-sm font-bold text-gray-900">Messages</h1>
+            <p class="text-[11px] text-gray-400">Direct messages with your trainers</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-gray-200 grid grid-cols-1 md:grid-cols-[280px_1fr] overflow-hidden" style="min-height: 480px;">
+
+        <!-- Conversation list -->
+        <div class="border-b md:border-b-0 md:border-r border-gray-100 flex flex-col">
+
+            <div *ngIf="loading" class="flex items-center justify-center py-10">
+                <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
+            </div>
+
+            <div *ngIf="!loading" class="flex flex-col divide-y divide-gray-100 overflow-y-auto" style="max-height: 480px;">
+                <button *ngFor="let c of conversations" type="button" (click)="openConversation(c.otherUserId)"
+                    class="text-left px-4 py-3 hover:bg-gray-50 transition flex items-start gap-2.5"
+                    [class.bg-gray-50]="activeUserId === c.otherUserId">
+                    <div class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
+                        <i-feather name="user" class="text-sky-600" style="width:14px;height:14px;"></i-feather>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs font-bold text-gray-900 truncate">{{ c.otherUserName }}</span>
+                            <span *ngIf="c.unreadCount > 0" class="text-[10px] font-bold text-white bg-sky-600 rounded-full px-1.5 py-0.5 shrink-0">{{ c.unreadCount }}</span>
+                        </div>
+                        <p class="text-[11px] text-gray-400 truncate">{{ c.lastMessage }}</p>
+                    </div>
+                </button>
+
+                <!-- Start a new conversation -->
+                <div *ngIf="startableTrainers.length > 0" class="px-4 py-2">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Start a conversation</p>
+                    <button *ngFor="let t of startableTrainers" type="button" (click)="startConversation(t)"
+                        class="w-full text-left py-1.5 flex items-center gap-2 hover:text-sky-600 transition"
+                        [class.text-sky-600]="activeUserId === t.userId">
+                        <i-feather name="plus-circle" style="width:12px;height:12px;"></i-feather>
+                        <span class="text-xs font-medium truncate">{{ t.name }}</span>
+                    </button>
+                </div>
+
+                <div *ngIf="conversations.length === 0 && startableTrainers.length === 0" class="px-4 py-10 text-center">
+                    <p class="text-xs text-gray-400">No conversations yet.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thread -->
+        <div class="flex flex-col" style="max-height: 480px;">
+
+            <div *ngIf="activeUserId == null" class="flex-1 flex items-center justify-center py-16">
+                <p class="text-xs text-gray-400">Select a conversation to view messages.</p>
+            </div>
+
+            <ng-container *ngIf="activeUserId != null">
+
+                <div *ngIf="loadingConversation" class="flex-1 flex items-center justify-center">
+                    <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
+                </div>
+
+                <div *ngIf="!loadingConversation" class="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
+                    <div *ngIf="activeMessages.length === 0" class="flex-1 flex items-center justify-center">
+                        <p class="text-xs text-gray-400">No messages yet — say hello.</p>
+                    </div>
+                    <div *ngFor="let m of activeMessages" class="flex" [class.justify-end]="isMine(m)">
+                        <div class="max-w-[75%] rounded-2xl px-3 py-2"
+                            [ngClass]="isMine(m) ? 'bg-sky-600 text-white' : 'bg-gray-100 text-gray-800'">
+                            <p class="text-sm">{{ m.body }}</p>
+                            <p class="text-[10px] mt-0.5" [ngClass]="isMine(m) ? 'text-sky-100' : 'text-gray-400'">{{ m.date | date:'shortTime' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-100 p-3 flex items-center gap-2">
+                    <input type="text" [(ngModel)]="draftBody" (keydown.enter)="send()" placeholder="Type a message..."
+                        class="flex-1 text-sm text-gray-700 border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-sky-400" />
+                    <button type="button" (click)="send()" [disabled]="!draftBody.trim()"
+                        class="text-xs font-semibold text-white bg-gray-900 hover:bg-gray-800 disabled:opacity-40 rounded-lg px-3 py-2 transition">
+                        Send
+                    </button>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+
+</section>

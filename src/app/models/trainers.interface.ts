@@ -11,6 +11,7 @@ export interface Trainers {
   id: number;
   name: string;
   motto: string;
+  /** @deprecated Internal-use free text only — the public profile shows `locations` instead. */
   address: string;
   experience: string;
   activationUniqueId: string;
@@ -26,7 +27,18 @@ export interface Trainers {
   userEmail: string;
   categories: Categories[];
   photoResponse: PhotoResponse;
+  /** How this trainer coaches — drives the "Available in" section on the public profile. */
+  serviceMode?: 'IN_PERSON' | 'HYBRID' | 'ONLINE';
+  /** Cities/countries this trainer is available in. Public-facing replacement for `address`. */
+  locations?: TrainerLocation[];
   message?: string;
+}
+
+export interface TrainerLocation {
+  id?: number;
+  country: string;
+  stateProvince?: string | null;
+  city: string;
 }
 
 export interface UpdateTrainerPhotoRequest {

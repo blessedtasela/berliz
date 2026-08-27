@@ -1,9 +1,8 @@
 import { RxStomp, RxStompConfig } from '@stomp/rx-stomp';
 import { environment } from 'src/environments/environment';
-const token = localStorage.getItem('token');
 
 export const myRxStompConfig: RxStompConfig = {
-  
+
   // Which server?
   brokerURL: environment.brokerURL,
 
@@ -14,6 +13,19 @@ export const myRxStompConfig: RxStompConfig = {
 
   // Typical value 500 (500 milli seconds)
   reconnectDelay: 5000,
+
+  // Runs before every CONNECT attempt (first activation AND every
+  // auto-reconnect), so it always sends whatever token is currently in
+  // localStorage rather than one read once at module-load time (which could
+  // be stale/empty if this module loads before login, or never updated
+  // across a token refresh). This is what lets the backend's
+  // StompAuthChannelInterceptor attach a Principal to the session for
+  // private per-user delivery (convertAndSendToUser) — without it the
+  // socket connects but stays anonymous, same as before this existed.
+  beforeConnect: (client) => {
+    const token = localStorage.getItem('token');
+    client.stompClient.connectHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+  },
 
   // Skip this key to stop logging to console
   // debug: (msg: string): void => {

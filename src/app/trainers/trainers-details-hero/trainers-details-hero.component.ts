@@ -5,7 +5,7 @@ import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 /**
  * Public hero header for a single trainer profile.
  * Built entirely from the real `Trainers` record (photoResponse / name /
- * motto / categories / experience / address / likes).
+ * motto / categories / experience / locations / serviceMode / likes).
  */
 @Component({
   selector: 'app-trainers-details-hero',
@@ -26,7 +26,27 @@ export class TrainersDetailsHeroComponent {
     event.target.src = 'assets/avatar.png';
   }
 
+  /** "Vancouver, CA" for the first listed location, "+N more" appended in the template. */
+  get primaryLocationLabel(): string {
+    const first = this.trainer?.locations?.[0];
+    if (!first) return '—';
+    return [first.city, first.country].filter(Boolean).join(', ');
+  }
+
+  get extraLocationCount(): number {
+    return Math.max(0, (this.trainer?.locations?.length ?? 0) - 1);
+  }
+
   get mapsUrl(): string {
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(this.trainer?.address || '')}`;
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(this.primaryLocationLabel)}`;
+  }
+
+  get serviceModeLabel(): string {
+    switch (this.trainer?.serviceMode) {
+      case 'ONLINE': return 'Online';
+      case 'HYBRID': return 'Hybrid';
+      case 'IN_PERSON':
+      default: return 'In-person';
+    }
   }
 }

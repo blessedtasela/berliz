@@ -56,7 +56,7 @@
         </div>
 
         <!-- Stat strip -->
-        <div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
 
             <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1">
                 <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold">Experience</span>
@@ -84,17 +84,26 @@
 
             <a [href]="mapsUrl" target="_blank" rel="noopener"
                 class="relative group/map bg-zinc-900 border border-zinc-800 hover:border-red-600/40 rounded-xl px-4 py-3 flex flex-col gap-1 transition">
-                <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold">Based in</span>
+                <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold">Available in</span>
                 <span class="text-sm font-bold text-white group-hover/map:text-red-400 flex items-center gap-1.5 truncate transition">
                     <i-feather name="map-pin" class="text-red-500 shrink-0" style="width:13px;height:13px;"></i-feather>
-                    <span class="truncate">{{ trainer?.address || '—' }}</span>
+                    <span class="truncate">{{ primaryLocationLabel }}</span>
+                    <span *ngIf="extraLocationCount > 0" class="text-zinc-500 font-medium shrink-0">+{{ extraLocationCount }}</span>
                 </span>
-                <span *ngIf="trainer?.address" class="pointer-events-none absolute left-4 -top-8 whitespace-nowrap px-2 py-1 rounded-lg
+                <span *ngIf="(trainer?.locations?.length ?? 0) > 0" class="pointer-events-none absolute left-4 -top-8 whitespace-nowrap px-2 py-1 rounded-lg
                              bg-zinc-800 border border-zinc-700 text-[10px] text-zinc-200 font-medium
                              opacity-0 group-hover/map:opacity-100 transition-opacity duration-150 z-10">
                     Open in Google Maps ↗
                 </span>
             </a>
+
+            <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1">
+                <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold">Coaching style</span>
+                <span class="text-sm font-bold text-white flex items-center gap-1.5">
+                    <i-feather name="video" class="text-red-500" style="width:13px;height:13px;"></i-feather>
+                    {{ serviceModeLabel }}
+                </span>
+            </div>
 
         </div>
 
