@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
+import { RouterModule } from '@angular/router';
 
 import { IconsModule } from '../icons/icons.module';
 import { FooterModule } from '../footer/footer.module';
@@ -30,7 +31,8 @@ import { EarningsViewComponent } from './earnings-view/earnings-view.component';
     MatDialogModule,
     IconsModule,
     FooterModule,
-    NavbarModule
+    NavbarModule,
+    RouterModule
   ],
   exports: [
     MyBookingsMainComponent,

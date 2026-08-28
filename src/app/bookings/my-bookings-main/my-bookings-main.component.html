@@ -1,17 +1,25 @@
 <section class="font-sans flex flex-col gap-4 mt-4">
 
     <!-- Page header -->
-    <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
-            <i-feather name="calendar" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+    <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="calendar" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <h1 class="text-sm font-bold text-gray-900">My bookings</h1>
+                <p class="text-[11px] text-gray-400">Sessions you've requested with trainers and centers</p>
+            </div>
         </div>
-        <div>
-            <h1 class="text-sm font-bold text-gray-900">My bookings</h1>
-            <p class="text-[11px] text-gray-400">Sessions you've requested with trainers and centers</p>
-        </div>
+
+        <a routerLink="/dashboard/find-trainers" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600 text-white
+                text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition shrink-0">
+            <i-feather name="search" style="width:12px;height:12px;"></i-feather>
+            Find a trainer or center
+        </a>
     </div>
 
-    <app-bookings-empty *ngIf="bookings.length === 0" message="You haven't booked any sessions yet."></app-bookings-empty>
+    <app-bookings-empty *ngIf="bookings.length === 0" message="You haven't booked any sessions yet." [showFindProviderCta]="true"></app-bookings-empty>
 
     <div *ngIf="bookings.length > 0" class="flex flex-col gap-4">
 

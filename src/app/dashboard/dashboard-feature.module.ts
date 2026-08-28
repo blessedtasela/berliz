@@ -436,6 +436,16 @@ const dashboardRoutes: Routes = [
       { path: 'members', loadChildren: () => import('../admin/members/members.module').then(m => m.MembersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Members', expectedRole: ['admin'] } },
       { path: 'payments', loadChildren: () => import('../admin/payments/payments.module').then(m => m.PaymentsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Payments', expectedRole: ['admin'] } },
       { path: 'bookings', loadChildren: () => import('../admin/bookings/bookings.module').then(m => m.BookingsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Bookings', expectedRole: ['admin'] } },
+
+      // Browse trainers/centers WITHOUT leaving the dashboard shell — any
+      // signed-in user. Named distinctly from `trainers`/`centers` above,
+      // which are the admin CRUD modules. Reuses the exact same public
+      // feature modules (search + details) mounted at a second path; since
+      // app.component.ts picks 'sidebar' layout for anything not matching
+      // its topbar allowlist, this renders inside the dashboard chrome
+      // automatically — no separate wrapper components needed.
+      { path: 'find-trainers', loadChildren: () => import('../trainers/trainers-feature.module').then(m => m.TrainersFeatureModule), canActivate: [AuthGuard], data: { breadcrumb: 'Find a Trainer', expectedRole: expectedRoleAll } },
+      { path: 'find-centers', loadChildren: () => import('../centers/centers-feature.module').then(m => m.CentersFeatureModule), canActivate: [AuthGuard], data: { breadcrumb: 'Find a Center', expectedRole: expectedRoleAll } },
     ]
   }
 ];

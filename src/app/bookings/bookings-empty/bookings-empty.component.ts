@@ -7,4 +7,8 @@ import { Component, Input } from '@angular/core';
 })
 export class BookingsEmptyComponent {
   @Input() message = 'No bookings yet.';
+
+  /** Only meaningful for a CLIENT's own booking list — a trainer/center
+   *  viewing bookings made WITH them has no reason to "find" a provider. */
+  @Input() showFindProviderCta = false;
 }
