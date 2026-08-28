@@ -10,6 +10,8 @@ export interface PostResponse {
   photoUrl?: string | null;
   likes: number;
   likedByMe: boolean;
+  /** Denormalized counter, maintained the same way `likes` is. */
+  commentCount?: number;
   date: string;
   lastUpdate: string;
   message?: string;

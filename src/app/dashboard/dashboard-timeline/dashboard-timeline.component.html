@@ -120,6 +120,69 @@
                 <i-feather name="heart" style="width:13px;height:13px;" [attr.fill]="post.likedByMe ? 'currentColor' : 'none'"></i-feather>
                 {{ post.likes }}
             </button>
+
+            <button type="button" (click)="toggleComments(post)"
+                class="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition"
+                [class.text-sky-600]="openCommentsPostId === post.id" [class.bg-sky-50]="openCommentsPostId === post.id"
+                [class.text-gray-400]="openCommentsPostId !== post.id" [class.hover:bg-gray-50]="openCommentsPostId !== post.id">
+                <i-feather name="message-circle" style="width:13px;height:13px;"></i-feather>
+                {{ post.commentCount || 0 }}
+            </button>
+        </div>
+
+        <!-- ── COMMENTS ──────────────────────────────────────────────────── -->
+        <div *ngIf="openCommentsPostId === post.id" class="border-t border-gray-100 pt-3 flex flex-col gap-3">
+
+            <div *ngIf="loadingCommentsPostId === post.id" class="flex items-center justify-center py-4">
+                <i-feather name="loader" class="text-gray-300 animate-spin" style="width:16px;height:16px;"></i-feather>
+            </div>
+
+            <div *ngIf="loadingCommentsPostId !== post.id && commentsFor(post).length === 0" class="text-center py-2">
+                <p class="text-xs text-gray-400">No comments yet — be the first to reply.</p>
+            </div>
+
+            <div *ngFor="let comment of commentsFor(post); trackBy: trackByCommentId" class="flex items-start gap-2.5">
+                <a [routerLink]="['/dashboard/user', comment.authorUsername || comment.authorId]" class="shrink-0">
+                    <img *ngIf="commentPhotoSrc(comment) as src" [src]="src" alt="" class="w-7 h-7 rounded-full object-cover border border-gray-200" />
+                    <div *ngIf="!commentPhotoSrc(comment)" class="w-7 h-7 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center">
+                        <i-feather name="user" class="text-sky-600" style="width:12px;height:12px;"></i-feather>
+                    </div>
+                </a>
+                <div class="flex-1 min-w-0 bg-gray-50 rounded-xl px-3 py-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <a [routerLink]="['/dashboard/user', comment.authorUsername || comment.authorId]"
+                            class="text-xs font-bold text-gray-900 hover:text-sky-600 transition truncate">{{ comment.authorName }}</a>
+                        <button *ngIf="comment.canDelete" type="button" (click)="deleteComment(post, comment)"
+                            class="text-gray-300 hover:text-red-600 transition p-0.5 shrink-0">
+                            <i-feather name="trash-2" style="width:11px;height:11px;"></i-feather>
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-700 leading-relaxed whitespace-pre-line break-words">
+                        <span *ngFor="let part of parseMentions(comment.content)">
+                            <a *ngIf="part.mention" [routerLink]="['/dashboard/user', part.mention]"
+                                class="text-sky-600 font-semibold hover:underline">{{ part.text }}</a>
+                            <ng-container *ngIf="!part.mention">{{ part.text }}</ng-container>
+                        </span>
+                    </p>
+                    <span class="text-[10px] text-gray-400 mt-0.5 block">{{ comment.date | date:'medium' }}</span>
+                </div>
+            </div>
+
+            <!-- Add a comment -->
+            <div class="flex items-center gap-2">
+                <img [src]="myPhotoSrc" alt="" class="w-7 h-7 rounded-full object-cover border border-gray-200 shrink-0" />
+                <input type="text" [(ngModel)]="commentDraft[post.id]" (keydown.enter)="submitComment(post)"
+                    placeholder="Write a comment… use @username to mention"
+                    class="flex-1 text-xs text-gray-700 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2
+                           placeholder-gray-400 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400/30 transition" />
+                <button type="button" (click)="submitComment(post)"
+                    [disabled]="!commentDraft[post.id] || !commentDraft[post.id].trim() || postingComment[post.id]"
+                    class="w-8 h-8 rounded-lg bg-sky-600 hover:bg-sky-700 text-white flex items-center justify-center
+                           shrink-0 transition disabled:opacity-40 disabled:cursor-not-allowed">
+                    <i-feather *ngIf="!postingComment[post.id]" name="send" style="width:13px;height:13px;"></i-feather>
+                    <i-feather *ngIf="postingComment[post.id]" name="loader" class="animate-spin" style="width:13px;height:13px;"></i-feather>
+                </button>
+            </div>
         </div>
     </div>
 
