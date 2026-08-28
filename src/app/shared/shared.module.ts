@@ -34,6 +34,7 @@ import { UpdatePartnerFileModalComponent } from './update-partner-file-modal/upd
 import { PartnerFormComponent } from './partner-form/partner-form.component';
 import { RefreshButtonComponent } from './refresh-button/refresh-button.component';
 import { RouterModule } from '@angular/router';
+import { ClickablePhotoDirective } from './photo-lightbox/clickable-photo.directive';
 
 
 
@@ -79,7 +80,8 @@ import { RouterModule } from '@angular/router';
     FeatherModule,
     FormsModule,
     RouterModule,
-    StrapiUrlPipe
+    StrapiUrlPipe,
+    ClickablePhotoDirective
 ],
   exports: [
     CommonModule,
@@ -97,6 +99,7 @@ import { RouterModule } from '@angular/router';
     SkeletonLoaderComponent,
     UpdatePartnerFileModalComponent,
     RefreshButtonComponent,
+    ClickablePhotoDirective,
   ],
   providers: [
     provideNgxMask(),
