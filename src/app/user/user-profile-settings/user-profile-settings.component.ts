@@ -32,6 +32,7 @@ import {
 } from 'src/app/state/user-profile/user-profile.actions';
 import { selectSavingVisibility, selectSavingSidebarDisplay, selectSavingMessagePopupEnabled } from 'src/app/state/user-profile/user-profile.selector';
 import { SidebarStateService } from 'src/app/services/sidebar-state.service';
+import { BrowserNotificationService, NotificationCategory } from 'src/app/services/browser-notification.service';
 
 @Component({
   selector: 'app-user-profile-settings',
@@ -82,7 +83,8 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private dialog: MatDialog,
     private router: Router,
-    public sidebarState: SidebarStateService
+    public sidebarState: SidebarStateService,
+    private browserNotifications: BrowserNotificationService,
   ) { }
 
   ngOnInit(): void {
@@ -229,6 +231,46 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     if (this.savingMessagePopupEnabled) return;
 
     this.store.dispatch(updateMessagePopupEnabled({ messagePopupEnabled: !this.messagePopupEnabled }));
+  }
+
+  // ═══════════ BROWSER NOTIFICATIONS ═══════════
+  // Per-device (localStorage), not synced across devices — see
+  // BrowserNotificationService for why, and which categories actually have
+  // a live event to fire on today.
+
+  get browserNotificationsSupported(): boolean {
+    return this.browserNotifications.supported;
+  }
+
+  get browserNotificationPermission(): NotificationPermission | 'unsupported' {
+    return this.browserNotifications.permission;
+  }
+
+  get browserNotificationsEnabled(): boolean {
+    return this.browserNotifications.masterEnabled;
+  }
+
+  isNotificationCategoryEnabled(category: NotificationCategory): boolean {
+    return this.browserNotifications.isCategoryEnabled(category);
+  }
+
+  async toggleBrowserNotifications(): Promise<void> {
+    if (!this.browserNotificationsEnabled) {
+      const permission = await this.browserNotifications.requestPermission();
+      if (permission !== 'granted') {
+        if (permission === 'denied') {
+          this.snackBarService.openSnackBar(
+            'Notifications are blocked for this site in your browser settings — enable them there first.', 'error'
+          );
+        }
+        return;
+      }
+    }
+    this.browserNotifications.setMasterEnabled(!this.browserNotificationsEnabled);
+  }
+
+  toggleNotificationCategory(category: NotificationCategory): void {
+    this.browserNotifications.setCategoryEnabled(category, !this.isNotificationCategoryEnabled(category));
   }
 
   ngOnDestroy() {

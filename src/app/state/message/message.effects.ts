@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, of } from 'rxjs';
+import { catchError, map, mergeMap, of, tap } from 'rxjs';
 import { MessageService } from '../../services/message.service';
 import { RxStompService } from '../../services/rx-stomp.service';
+import { BrowserNotificationService } from '../../services/browser-notification.service';
 import { Message } from '../../models/message.model';
 import * as A from './message.actions';
 
@@ -13,6 +15,8 @@ export class MessageEffects {
     private actions$: Actions,
     private svc: MessageService,
     private rxStompService: RxStompService,
+    private browserNotifications: BrowserNotificationService,
+    private router: Router,
   ) { }
 
   loadConversations$ = createEffect(() => this.actions$.pipe(
@@ -56,4 +60,17 @@ export class MessageEffects {
   receiveMessage$ = createEffect(() => this.rxStompService.watch('/user/queue/messages').pipe(
     map(stompMessage => A.receiveMessage({ message: JSON.parse(stompMessage.body) as Message }))
   ));
+
+  /** Only fires while the page is hidden (see BrowserNotificationService) — no point popping a system alert for something already on screen. */
+  notifyOnReceivedMessage$ = createEffect(() => this.actions$.pipe(
+    ofType(A.receiveMessage),
+    tap(({ message }) => {
+      this.browserNotifications.notify(
+        'message',
+        message.senderName || 'New message',
+        message.body,
+        () => this.router.navigate(['/dashboard/messages']),
+      );
+    })
+  ), { dispatch: false });
 }
