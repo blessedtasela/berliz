@@ -29,6 +29,8 @@ import { ProfileSettingsToggleComponent } from './profile-settings-toggle/profil
 import { FindProvidersComponent } from './find-providers/find-providers.component';
 import { DashboardTrainerDetailComponent } from './dashboard-trainer-detail/dashboard-trainer-detail.component';
 import { DashboardCenterDetailComponent } from './dashboard-center-detail/dashboard-center-detail.component';
+import { DashboardMembersComponent } from './dashboard-members/dashboard-members.component';
+import { DashboardCategoryDetailComponent } from './dashboard-category-detail/dashboard-category-detail.component';
 
 
 
@@ -52,7 +54,9 @@ import { DashboardCenterDetailComponent } from './dashboard-center-detail/dashbo
     ProfileSettingsToggleComponent,
     FindProvidersComponent,
     DashboardTrainerDetailComponent,
-    DashboardCenterDetailComponent
+    DashboardCenterDetailComponent,
+    DashboardMembersComponent,
+    DashboardCategoryDetailComponent
   ],
   imports: [
     CommonModule,

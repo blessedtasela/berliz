@@ -1,0 +1,128 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="users" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <h1 class="text-sm font-bold text-gray-900">Members</h1>
+                <p class="text-[11px] text-gray-400">Browse Berliz members who have made their profile public</p>
+            </div>
+        </div>
+        <app-refresh-button [loading]="loading" (refresh)="refresh()"></app-refresh-button>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-col gap-3">
+        <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl max-w-sm
+                    focus-within:border-red-500 focus-within:ring-1 focus-within:ring-red-500/30 transition">
+            <i-feather name="search" class="ml-3 text-gray-400 shrink-0" style="width:14px;height:14px;"></i-feather>
+            <input type="text" [ngModel]="searchTerm" (ngModelChange)="onSearchChange($event)"
+                placeholder="Search by name…"
+                class="flex-1 bg-transparent px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none" />
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+            <button *ngFor="let option of roleOptions" type="button" (click)="selectRole(option.value)"
+                class="px-3.5 py-1.5 rounded-full text-xs font-semibold border transition"
+                [ngClass]="option.value === activeRole
+                    ? 'bg-red-600 border-red-600 text-white'
+                    : 'bg-white border-gray-200 text-gray-500 hover:text-gray-900 hover:border-gray-300'">
+                {{ option.label }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex items-center justify-center py-16">
+        <div class="w-10 h-10 rounded-full border-2 border-gray-200 border-t-red-600 animate-spin"></div>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="!loading && error" class="bg-white border border-gray-200 rounded-2xl p-10 flex flex-col items-center justify-center gap-3 text-center">
+        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+            <i-feather name="user-x" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        </div>
+        <p class="text-sm font-bold text-gray-900">Could not load members</p>
+        <p class="text-xs text-gray-400 max-w-xs">{{ friendlyError }}</p>
+    </div>
+
+    <!-- Grid -->
+    <div *ngIf="!loading && !error && members.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+
+        <div *ngFor="let member of members; trackBy: trackById"
+            class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col items-center gap-3 text-center hover:border-red-200 transition">
+
+            <img [src]="photoSrc(member)" [alt]="fullName(member)"
+                class="w-16 h-16 rounded-full object-cover object-top border-2 border-gray-100 shrink-0" />
+
+            <div class="flex flex-col gap-1.5 min-w-0 w-full">
+                <h3 class="text-sm font-bold text-gray-900 truncate">{{ fullName(member) || 'Berliz member' }}</h3>
+
+                <span class="self-center text-[10px] font-semibold uppercase tracking-wide text-red-600
+                             bg-red-50 border border-red-100 px-2.5 py-0.5 rounded-full">
+                    {{ member.role || 'member' }}
+                </span>
+
+                <span *ngIf="location(member)" class="text-[11px] text-gray-400 flex items-center justify-center gap-1.5">
+                    <i-feather name="map-pin" style="width:11px;height:11px;"></i-feather>
+                    {{ location(member) }}
+                </span>
+            </div>
+
+            <!-- Connection action -->
+            <ng-container [ngSwitch]="connectStatus(member)">
+                <span *ngSwitchCase="'self'" class="text-[11px] text-gray-300 mt-1">You</span>
+
+                <button *ngSwitchCase="'none'" type="button" (click)="connect(member)"
+                    class="w-full mt-1 px-3 py-1.5 rounded-lg text-[11px] font-semibold border
+                           border-gray-200 text-gray-600 hover:border-red-300 hover:text-red-600 transition
+                           flex items-center justify-center gap-1.5">
+                    <i-feather name="user-plus" style="width:11px;height:11px;"></i-feather>
+                    Connect
+                </button>
+
+                <button *ngSwitchCase="'outgoing'" type="button" (click)="cancelRequest(member)"
+                    class="w-full mt-1 px-3 py-1.5 rounded-lg text-[11px] font-semibold border
+                           border-gray-200 text-gray-400 hover:border-red-200 hover:text-red-600 transition
+                           flex items-center justify-center gap-1.5">
+                    <i-feather name="clock" style="width:11px;height:11px;"></i-feather>
+                    Request sent
+                </button>
+
+                <div *ngSwitchCase="'incoming'" class="w-full mt-1 flex gap-1.5">
+                    <button type="button" (click)="acceptRequest(member)"
+                        class="flex-1 px-2 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 hover:bg-red-700 text-white transition">
+                        Accept
+                    </button>
+                    <button type="button" (click)="declineRequest(member)"
+                        class="flex-1 px-2 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 text-gray-500 hover:text-gray-900 hover:border-gray-300 transition">
+                        Decline
+                    </button>
+                </div>
+
+                <button *ngSwitchCase="'connected'" type="button" (click)="messageMember()"
+                    class="w-full mt-1 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-gray-900 hover:bg-gray-800 text-white transition flex items-center justify-center gap-1.5">
+                    <i-feather name="message-circle" style="width:11px;height:11px;"></i-feather>
+                    Message
+                </button>
+            </ng-container>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!loading && !error && members.length === 0" class="bg-white border border-gray-200 rounded-2xl p-14 flex flex-col items-center justify-center gap-3 text-center">
+        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+            <i-feather name="users" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        </div>
+        <p class="text-sm font-bold text-gray-900">
+            {{ isFiltered ? 'No members match your search' : 'No public members yet' }}
+        </p>
+        <p class="text-xs text-gray-400 max-w-xs leading-relaxed">
+            {{ isFiltered ? 'Try a different name or role filter.' : 'Members who make their profile public will show up here.' }}
+        </p>
+    </div>
+
+</section>

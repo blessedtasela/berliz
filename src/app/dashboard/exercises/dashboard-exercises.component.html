@@ -385,7 +385,7 @@
         <!-- Center -->
         <div class="flex flex-col gap-1">
           <span class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Center</span>
-          <a *ngIf="item.centerName; else noCenter" [routerLink]="['/centers', item.centerId, formatUrl(item.centerName)]"
+          <a *ngIf="item.centerName; else noCenter" [routerLink]="['/dashboard/find-centers', item.centerId, formatUrl(item.centerName)]"
             class="text-[11px] text-gray-600 font-semibold hover:text-red-600 transition flex items-center gap-1 w-fit">
             <i-feather name="map-pin" style="width:11px;height:11px;"></i-feather>
             {{ item.centerName }}

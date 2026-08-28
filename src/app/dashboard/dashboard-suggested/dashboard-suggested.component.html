@@ -13,7 +13,7 @@
 
     <div class="flex items-center justify-between">
       <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide">Popular programs</h3>
-      <a routerLink="/services" class="text-red-600 text-xs font-semibold hover:underline">Browse all</a>
+      <a routerLink="/dashboard/find-providers" class="text-red-600 text-xs font-semibold hover:underline">Browse all</a>
     </div>
 
     <div *ngIf="programs.length === 0" class="flex flex-col items-center text-center py-6 gap-2">
@@ -23,7 +23,7 @@
 
     <div *ngIf="programs.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
       <a *ngFor="let program of programs; trackBy: trackById"
-        [routerLink]="['/services', program.id, formatStringToUrl(program.name)]"
+        [routerLink]="['/dashboard/find-providers/category', program.id, formatStringToUrl(program.name)]"
         class="border border-gray-200 rounded-xl p-3 flex flex-col gap-1.5 hover:border-red-300 hover:bg-red-50/40 transition">
 
         <div class="flex items-start justify-between gap-2">

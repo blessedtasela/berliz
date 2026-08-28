@@ -24,6 +24,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { name: 'Notifications', icon: 'inbox', route: '/dashboard/my-notifications' },
   { name: 'Messages', icon: 'message-circle', route: '/dashboard/messages' },
   { name: 'Connections', icon: 'users', route: '/dashboard/connections' },
+  { name: 'Members', icon: 'grid', route: '/dashboard/member-directory' },
 
   { label: 'Training' },
   { name: 'Tasks', icon: 'activity', route: '/dashboard/my-tasks' },

@@ -4,13 +4,16 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
 
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Centers } from 'src/app/models/centers.interface';
+import { Categories } from 'src/app/models/categories.interface';
 import { loadActiveTrainers } from 'src/app/state/trainer/trainer.actions';
 import { selectActiveTrainers } from 'src/app/state/trainer/trainer.selector';
 import { loadActiveCenters } from 'src/app/state/center/center.actions';
 import { selectActiveCenters } from 'src/app/state/center/center.selectors';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 
-type ProviderTab = 'trainers' | 'centers';
+type ProviderTab = 'trainers' | 'centers' | 'categories';
 
 /**
  * Dashboard-native "find a trainer or center" page — a signed-in user should
@@ -36,6 +39,7 @@ export class FindProvidersComponent implements OnInit, OnDestroy {
 
   trainers: Trainers[] = [];
   centers: Centers[] = [];
+  categories: Categories[] = [];
 
   private destroy$ = new Subject<void>();
   private subs: Subscription[] = [];
@@ -43,13 +47,25 @@ export class FindProvidersComponent implements OnInit, OnDestroy {
   constructor(private store: Store) { }
 
   ngOnInit(): void {
+    this.load();
+  }
+
+  private load(): void {
     this.store.dispatch(loadActiveTrainers());
     this.store.dispatch(loadActiveCenters());
+    this.store.dispatch(loadActiveCategories());
 
     this.subs.push(
       this.store.select(selectActiveTrainers).pipe(takeUntil(this.destroy$)).subscribe(list => this.trainers = list ?? []),
       this.store.select(selectActiveCenters).pipe(takeUntil(this.destroy$)).subscribe(list => this.centers = list ?? []),
+      this.store.select(selectActiveCategories).pipe(takeUntil(this.destroy$)).subscribe(list => this.categories = list ?? []),
     );
+  }
+
+  refresh(): void {
+    this.store.dispatch(loadActiveTrainers());
+    this.store.dispatch(loadActiveCenters());
+    this.store.dispatch(loadActiveCategories());
   }
 
   ngOnDestroy(): void {
@@ -89,6 +105,19 @@ export class FindProvidersComponent implements OnInit, OnDestroy {
 
   centerPhotoUrl(center: Centers): string {
     return resolveStrapiUrl(center?.photoUrl) || 'assets/avatar.png';
+  }
+
+  categoryPhotoUrl(category: Categories): string {
+    return resolveStrapiUrl(category?.photoUrl) || 'assets/avatar.png';
+  }
+
+  get filteredCategories(): Categories[] {
+    const q = this.searchQuery.trim().toLowerCase();
+    if (!q) return this.categories;
+    return this.categories.filter(c =>
+      c.name?.toLowerCase().includes(q) ||
+      c.tagNames?.some(t => t?.toLowerCase().includes(q))
+    );
   }
 
   onImageError(event: any): void {

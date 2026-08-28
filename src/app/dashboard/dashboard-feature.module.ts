@@ -12,6 +12,8 @@ import { DashboardTrainerDetailComponent } from './dashboard-trainer-detail/dash
 import { TrainerGuard } from '../guards/trainer.guard';
 import { CenterGuard } from '../guards/center.guard';
 import { DashboardCenterDetailComponent } from './dashboard-center-detail/dashboard-center-detail.component';
+import { DashboardMembersComponent } from './dashboard-members/dashboard-members.component';
+import { DashboardCategoryDetailComponent } from './dashboard-category-detail/dashboard-category-detail.component';
 
 import { UserModule } from '../user/user.module';
 import { UserProfileComponent } from '../user/user-profile/user-profile.component';
@@ -461,6 +463,8 @@ const dashboardRoutes: Routes = [
       // its topbar allowlist, this renders inside the dashboard chrome
       // automatically — no separate wrapper components needed.
       { path: 'find-providers', component: FindProvidersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Find a Provider', expectedRole: expectedRoleAll } },
+      { path: 'member-directory', component: DashboardMembersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Members', expectedRole: expectedRoleAll } },
+      { path: 'find-providers/category/:id/:name', component: DashboardCategoryDetailComponent, canActivate: [AuthGuard], data: { breadcrumb: { alias: 'categoryName' }, expectedRole: expectedRoleAll } },
       { path: 'find-trainers/:name', component: DashboardTrainerDetailComponent, canActivate: [AuthGuard, TrainerGuard], data: { breadcrumb: { alias: 'trainerName' }, expectedRole: expectedRoleAll } },
       { path: 'find-centers/:id/:name', component: DashboardCenterDetailComponent, canActivate: [AuthGuard, CenterGuard], data: { breadcrumb: { alias: 'centerName' }, expectedRole: expectedRoleAll } },
     ]
