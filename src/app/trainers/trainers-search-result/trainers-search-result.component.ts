@@ -180,8 +180,19 @@ export class TrainersSearchResultComponent implements OnInit, OnDestroy {
     event.target.src = 'assets/avatar.png';
   }
 
-  mapsUrl(address: string): string {
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address || '')}`;
+  /** "Vancouver, Canada" for the first listed location, "—" when the trainer hasn't set any. */
+  primaryLocationLabel(trainer: Trainers): string {
+    const first = trainer?.locations?.[0];
+    if (!first) return '—';
+    return [first.city, first.country].filter(Boolean).join(', ');
+  }
+
+  extraLocationCount(trainer: Trainers): number {
+    return Math.max(0, (trainer?.locations?.length ?? 0) - 1);
+  }
+
+  mapsUrl(trainer: Trainers): string {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(this.primaryLocationLabel(trainer))}`;
   }
 
   ngOnDestroy(): void {

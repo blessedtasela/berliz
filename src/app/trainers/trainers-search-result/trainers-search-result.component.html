@@ -94,19 +94,28 @@
                                 "{{ trainer.motto }}"
                             </p>
 
-                            <!-- Address -->
-                            <a [href]="mapsUrl(trainer.address)" target="_blank" rel="noopener"
-                                (click)="$event.stopPropagation()"
-                                class="relative group/map text-[11px] text-zinc-500 hover:text-red-400 flex items-center gap-1.5 transition w-fit">
-                                <i-feather name="map-pin" style="width:11px;height:11px;"
-                                    class="text-zinc-600 group-hover/map:text-red-400 transition"></i-feather>
-                                {{ trainer.address }}
-                                <span class="pointer-events-none absolute left-0 -top-7 whitespace-nowrap px-2 py-1 rounded-lg
-                                             bg-zinc-800 border border-zinc-700 text-[10px] text-zinc-200 font-medium
-                                             opacity-0 group-hover/map:opacity-100 transition-opacity duration-150 z-10">
-                                    Open in Google Maps ↗
+                            <!-- Location + coaching style -->
+                            <div class="flex items-center justify-between gap-2 flex-wrap">
+                                <a [href]="mapsUrl(trainer)" target="_blank" rel="noopener"
+                                    (click)="$event.stopPropagation()"
+                                    class="relative group/map text-[11px] text-zinc-500 hover:text-red-400 flex items-center gap-1.5 transition w-fit">
+                                    <i-feather name="map-pin" style="width:11px;height:11px;"
+                                        class="text-zinc-600 group-hover/map:text-red-400 transition"></i-feather>
+                                    {{ primaryLocationLabel(trainer) }}
+                                    <span *ngIf="extraLocationCount(trainer) > 0" class="text-zinc-600">+{{ extraLocationCount(trainer) }}</span>
+                                    <span *ngIf="(trainer.locations?.length ?? 0) > 0" class="pointer-events-none absolute left-0 -top-7 whitespace-nowrap px-2 py-1 rounded-lg
+                                                 bg-zinc-800 border border-zinc-700 text-[10px] text-zinc-200 font-medium
+                                                 opacity-0 group-hover/map:opacity-100 transition-opacity duration-150 z-10">
+                                        Open in Google Maps ↗
+                                    </span>
+                                </a>
+
+                                <span *ngIf="trainer.serviceMode" class="text-[10px] font-semibold text-zinc-400 bg-zinc-800 border border-zinc-700
+                                             px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0">
+                                    <i-feather name="video" style="width:9px;height:9px;"></i-feather>
+                                    {{ trainer.serviceMode === 'ONLINE' ? 'Online' : trainer.serviceMode === 'HYBRID' ? 'Hybrid' : 'In-person' }}
                                 </span>
-                            </a>
+                            </div>
 
                             <!-- Divider -->
                             <div class="border-t border-zinc-800"></div>
