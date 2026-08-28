@@ -18,6 +18,7 @@ import { selectMyNotifications } from 'src/app/state/notification/notification.s
 import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
 import { loadPendingRequests } from 'src/app/state/connection/connection.actions';
 import { selectIncomingRequestCount } from 'src/app/state/connection/connection.selectors';
+import { SIDEBAR_NAV_ITEMS } from '../sidebar-nav-items';
 
 @Component({
   selector: 'app-side-bar-open',
@@ -25,6 +26,8 @@ import { selectIncomingRequestCount } from 'src/app/state/connection/connection.
   styleUrls: ['./side-bar-open.component.css']
 })
 export class SideBarOpenComponent implements OnInit, OnDestroy {
+
+  readonly navItems = SIDEBAR_NAV_ITEMS;
 
   currentRoute: string | null = null;
   openMenu = false;

@@ -8,6 +8,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { SIDEBAR_NAV_ITEMS } from '../sidebar-nav-items';
 
 @Component({
   selector: 'app-side-bar-close',
@@ -15,6 +16,8 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
   styleUrls: ['./side-bar-close.component.css']
 })
 export class SideBarCloseComponent implements OnDestroy {
+
+  readonly navItems = SIDEBAR_NAV_ITEMS;
 
   @Input() userData!: Users;
   @Input() notificationLength: number = 0;

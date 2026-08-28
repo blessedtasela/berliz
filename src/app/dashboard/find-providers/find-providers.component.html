@@ -1,0 +1,130 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+            <i-feather name="search" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+            <h1 class="text-sm font-bold text-gray-900">Find a provider</h1>
+            <p class="text-[11px] text-gray-400">Browse certified trainers and centers on Berliz</p>
+        </div>
+    </div>
+
+    <!-- Toggle + search -->
+    <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+
+        <div class="inline-flex items-center gap-1 bg-gray-100 rounded-xl p-1 w-fit shrink-0">
+            <button type="button" (click)="setTab('trainers')"
+                class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition"
+                [ngClass]="tab === 'trainers' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'">
+                <i-feather name="award" style="width:12px;height:12px;"></i-feather>
+                Trainers
+            </button>
+            <button type="button" (click)="setTab('centers')"
+                class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition"
+                [ngClass]="tab === 'centers' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'">
+                <i-feather name="map-pin" style="width:12px;height:12px;"></i-feather>
+                Centers
+            </button>
+        </div>
+
+        <div class="flex-1 flex items-center bg-gray-50 border border-gray-200 rounded-xl
+                    focus-within:border-red-500 focus-within:ring-1 focus-within:ring-red-500/30 transition">
+            <i-feather name="search" class="ml-3 text-gray-400 shrink-0" style="width:14px;height:14px;"></i-feather>
+            <input type="text" [(ngModel)]="searchQuery"
+                [placeholder]="tab === 'trainers' ? 'Search trainers by name, service or city…' : 'Search centers by name or location…'"
+                class="flex-1 bg-transparent px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none" />
+        </div>
+    </div>
+
+    <!-- ── TRAINERS ─────────────────────────────────────────── -->
+    <ng-container *ngIf="tab === 'trainers'">
+
+        <div *ngIf="filteredTrainers.length === 0"
+            class="flex flex-col items-center justify-center py-16 gap-3 text-center bg-white rounded-2xl border border-gray-200">
+            <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+                <i-feather name="award" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+            </div>
+            <p class="text-sm text-gray-400">{{ searchQuery ? 'No trainers match your search.' : 'No trainers available yet.' }}</p>
+        </div>
+
+        <div *ngIf="filteredTrainers.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <a *ngFor="let trainer of filteredTrainers" [routerLink]="['/dashboard/find-trainers', formatUrl(trainer.name)]"
+                class="flex flex-col bg-white rounded-2xl border border-gray-200 overflow-hidden
+                       hover:border-red-300 hover:shadow-md transition-all duration-200">
+
+                <div class="relative w-full h-40 bg-gray-100 overflow-hidden">
+                    <img [src]="trainerPhotoUrl(trainer)" [alt]="trainer.name" (error)="onImageError($event)"
+                        class="w-full h-full object-cover object-top" />
+                </div>
+
+                <div class="flex flex-col gap-2 p-4 flex-1">
+                    <div class="flex items-start justify-between gap-2">
+                        <h3 class="text-sm font-bold text-gray-900 truncate">{{ trainer.name }}</h3>
+                        <span class="shrink-0 text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100
+                                     px-2 py-0.5 rounded-full">{{ trainer.experience }}+ yrs</span>
+                    </div>
+
+                    <div class="flex flex-wrap gap-1">
+                        <span *ngFor="let cat of trainer.categories?.slice(0, 3)" class="text-[10px] font-medium text-gray-500 bg-gray-100
+                                     px-2 py-0.5 rounded-full">{{ cat.name }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-2 mt-auto pt-1">
+                        <span class="text-[11px] text-gray-400 flex items-center gap-1 truncate">
+                            <i-feather name="map-pin" style="width:10px;height:10px;"></i-feather>
+                            {{ primaryLocationLabel(trainer) }}
+                            <span *ngIf="extraLocationCount(trainer) > 0">+{{ extraLocationCount(trainer) }}</span>
+                        </span>
+                        <span class="text-[10px] font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full shrink-0">
+                            {{ serviceModeLabel(trainer) }}
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </ng-container>
+
+    <!-- ── CENTERS ──────────────────────────────────────────── -->
+    <ng-container *ngIf="tab === 'centers'">
+
+        <div *ngIf="filteredCenters.length === 0"
+            class="flex flex-col items-center justify-center py-16 gap-3 text-center bg-white rounded-2xl border border-gray-200">
+            <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+                <i-feather name="map-pin" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+            </div>
+            <p class="text-sm text-gray-400">{{ searchQuery ? 'No centers match your search.' : 'No centers available yet.' }}</p>
+        </div>
+
+        <div *ngIf="filteredCenters.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <a *ngFor="let center of filteredCenters" [routerLink]="['/dashboard/find-centers', center.id, formatUrl(center.name)]"
+                class="flex flex-col bg-white rounded-2xl border border-gray-200 overflow-hidden
+                       hover:border-red-300 hover:shadow-md transition-all duration-200">
+
+                <div class="relative w-full h-40 bg-gray-100 overflow-hidden">
+                    <img [src]="centerPhotoUrl(center)" [alt]="center.name" (error)="onImageError($event)"
+                        class="w-full h-full object-cover object-top" />
+                </div>
+
+                <div class="flex flex-col gap-2 p-4 flex-1">
+                    <h3 class="text-sm font-bold text-gray-900 truncate">{{ center.name }}</h3>
+                    <p class="text-xs text-gray-400 italic leading-relaxed line-clamp-2">"{{ center.motto }}"</p>
+
+                    <div class="flex items-center justify-between gap-2 mt-auto pt-1">
+                        <span class="text-[11px] text-gray-400 flex items-center gap-1 truncate">
+                            <i-feather name="map-pin" style="width:10px;height:10px;"></i-feather>
+                            {{ center.address || center.location || '—' }}
+                        </span>
+                        <span class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100
+                                     px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1">
+                            <i-feather name="heart" style="width:9px;height:9px;"></i-feather>
+                            {{ center.likes || 0 }}
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </ng-container>
+
+</section>

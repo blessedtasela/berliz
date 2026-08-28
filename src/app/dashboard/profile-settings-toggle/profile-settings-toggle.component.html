@@ -1,0 +1,21 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Segmented toggle -->
+    <div class="inline-flex items-center gap-1 bg-gray-100 rounded-xl p-1 w-fit">
+        <a routerLink="./view" routerLinkActive="bg-white text-red-600 shadow-sm" #viewLink="routerLinkActive"
+            [ngClass]="!viewLink.isActive ? 'text-gray-500 hover:text-gray-700' : ''"
+            class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition">
+            <i-feather name="user" style="width:12px;height:12px;"></i-feather>
+            Profile
+        </a>
+        <a routerLink="./edit" routerLinkActive="bg-white text-red-600 shadow-sm" #editLink="routerLinkActive"
+            [ngClass]="!editLink.isActive ? 'text-gray-500 hover:text-gray-700' : ''"
+            class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition">
+            <i-feather name="settings" style="width:12px;height:12px;"></i-feather>
+            Settings
+        </a>
+    </div>
+
+    <router-outlet></router-outlet>
+
+</section>

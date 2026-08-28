@@ -7,7 +7,7 @@
 
     <!-- DESKTOP — COLLAPSED SIDEBAR (icon rail). Visual design unchanged. -->
     <div *ngIf="!isMobile && mode === 'collapsed'" class="fixed top-14 left-0 h-[calc(100vh-3.5rem)] w-14 border-r border-gray-200 bg-gray-950
-           flex flex-col items-center py-4 gap-1 z-40 transition-all duration-300">
+           flex flex-col items-center py-4 gap-1 z-40 transition-all duration-300 overflow-y-auto">
 
         <!-- Expand button -->
         <button (click)="setMode('expanded'); stopPropagation($event)"
@@ -52,7 +52,7 @@
          The only mobile mode with a permanent on-screen presence; 'expanded'
          and 'hidden' both stay tucked behind the top-bar toggle instead. -->
     <div *ngIf="isMobile && mode === 'collapsed' && !mobileOverlayOpen" class="fixed top-14 left-0 h-[calc(100vh-3.5rem)] w-14 border-r border-gray-200 bg-gray-950
-           flex flex-col items-center py-4 gap-1 z-40 transition-all duration-300">
+           flex flex-col items-center py-4 gap-1 z-40 transition-all duration-300 overflow-y-auto">
 
         <!-- Expand into the full overlay menu -->
         <button (click)="openSidebar(); stopPropagation($event)"

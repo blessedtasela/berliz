@@ -6,6 +6,8 @@ import { DashboardModule } from './dashboard.module';
 import { DashboardMainComponent } from './dashboard-main/dashboard-main.component';
 import { DashboardRouteComponent } from './dashboard-route/dashboard-route.component';
 import { DashboardExercisesComponent } from './exercises/dashboard-exercises.component';
+import { ProfileSettingsToggleComponent } from './profile-settings-toggle/profile-settings-toggle.component';
+import { FindProvidersComponent } from './find-providers/find-providers.component';
 
 import { UserModule } from '../user/user.module';
 import { UserProfileComponent } from '../user/user-profile/user-profile.component';
@@ -104,27 +106,23 @@ const dashboardRoutes: Routes = [
         }
       },
 
-      // Profile
+      // Profile + Settings — one sidebar entry, toggled via child routes.
+      // /dashboard/settings kept as a redirect so old links/bookmarks still work.
       {
         path: 'profile',
-        component: UserProfileComponent,
+        component: ProfileSettingsToggleComponent,
         canActivate: [AuthGuard],
         data: {
           breadcrumb: 'Profile',
           expectedRole: expectedRoleAll
-        }
+        },
+        children: [
+          { path: '', redirectTo: 'view', pathMatch: 'full' },
+          { path: 'view', component: UserProfileComponent, data: { breadcrumb: null, expectedRole: expectedRoleAll } },
+          { path: 'edit', component: UserProfileSettingsComponent, data: { breadcrumb: 'Settings', expectedRole: expectedRoleAll } },
+        ]
       },
-
-      // Settings
-      {
-        path: 'settings',
-        component: UserProfileSettingsComponent,
-        canActivate: [AuthGuard],
-        data: {
-          breadcrumb: 'Settings',
-          expectedRole: expectedRoleAll
-        }
-      },
+      { path: 'settings', redirectTo: 'profile/edit' },
 
       // My Progress — weight/body-fat/photo check-ins over time
       {
@@ -170,13 +168,24 @@ const dashboardRoutes: Routes = [
         }
       },
 
-      // Tasks
+      // Tasks — has its own internal toggle already, kept separate from To-do list.
       {
         path: 'my-tasks',
         component: MyTasksPageComponent,
         canActivate: [AuthGuard],
         data: {
           breadcrumb: 'Tasks',
+          expectedRole: expectedRoleAll
+        }
+      },
+
+      // To-do list
+      {
+        path: 'my-todos',
+        component: MyTodoListMainComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'To-do List',
           expectedRole: expectedRoleAll
         }
       },
@@ -275,17 +284,6 @@ const dashboardRoutes: Routes = [
         data: {
           breadcrumb: 'Client Intakes',
           expectedRole: ['trainer']
-        }
-      },
-
-      // Todos
-      {
-        path: 'my-todos',
-        component: MyTodoListMainComponent,
-        canActivate: [AuthGuard],
-        data: {
-          breadcrumb: 'To-do List',
-          expectedRole: expectedRoleAll
         }
       },
 
@@ -458,6 +456,7 @@ const dashboardRoutes: Routes = [
       // app.component.ts picks 'sidebar' layout for anything not matching
       // its topbar allowlist, this renders inside the dashboard chrome
       // automatically — no separate wrapper components needed.
+      { path: 'find-providers', component: FindProvidersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Find a Provider', expectedRole: expectedRoleAll } },
       { path: 'find-trainers', loadChildren: () => import('../trainers/trainers-feature.module').then(m => m.TrainersFeatureModule), canActivate: [AuthGuard], data: { breadcrumb: 'Find a Trainer', expectedRole: expectedRoleAll } },
       { path: 'find-centers', loadChildren: () => import('../centers/centers-feature.module').then(m => m.CentersFeatureModule), canActivate: [AuthGuard], data: { breadcrumb: 'Find a Center', expectedRole: expectedRoleAll } },
     ]

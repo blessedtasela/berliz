@@ -25,6 +25,8 @@ import { DashboardExercisesComponent } from './exercises/dashboard-exercises.com
 import { DashboardTrendingExercisesComponent } from './dashboard-trending-exercises/dashboard-trending-exercises.component';
 import { DashboardSuggestedComponent } from './dashboard-suggested/dashboard-suggested.component';
 import { UserHoverCardComponent } from '../shared/user-hover-card/user-hover-card.component';
+import { ProfileSettingsToggleComponent } from './profile-settings-toggle/profile-settings-toggle.component';
+import { FindProvidersComponent } from './find-providers/find-providers.component';
 
 
 
@@ -44,7 +46,9 @@ import { UserHoverCardComponent } from '../shared/user-hover-card/user-hover-car
     DashboardSubscriptionAnalyticsComponent,
     DashboardExercisesComponent,
     DashboardTrendingExercisesComponent,
-    DashboardSuggestedComponent
+    DashboardSuggestedComponent,
+    ProfileSettingsToggleComponent,
+    FindProvidersComponent
   ],
   imports: [
     CommonModule,
