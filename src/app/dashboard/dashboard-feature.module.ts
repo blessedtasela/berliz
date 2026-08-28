@@ -478,7 +478,7 @@ const dashboardRoutes: Routes = [
         data: { breadcrumb: 'Profile', expectedRole: expectedRoleAll }
       },
 
-      // Your own timeline — compose box + Feed/My Timeline toggle.
+      // Timeline — compose box + Feed/My Timeline toggle (defaults to Feed).
       {
         path: 'timeline',
         loadComponent: () => import('./dashboard-timeline/dashboard-timeline.component').then(m => m.DashboardTimelineComponent),

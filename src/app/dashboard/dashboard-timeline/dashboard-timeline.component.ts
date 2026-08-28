@@ -18,9 +18,11 @@ type TimelineTab = 'feed' | 'mine';
 
 /**
  * Compose + view your own posts, and see your accepted connections' posts —
- * `/dashboard/timeline`. Reads from PostService directly (no NgRx slice: the
- * only consumer of this state is this one page, plus the read-only viewer on
- * DashboardUserProfileComponent which fetches its own copy independently).
+ * `/dashboard/timeline`. Defaults to the Feed tab; toggles to "My Timeline"
+ * for just your own posts. Reads from PostService directly (no NgRx slice:
+ * the only consumer of this state is this one page, plus the read-only
+ * viewer on DashboardUserProfileComponent which fetches its own copy
+ * independently).
  */
 @Component({
   selector: 'app-dashboard-timeline',

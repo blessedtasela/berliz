@@ -165,7 +165,7 @@ import {
   LogIn,
   Key,
   TrendingUp,
-
+Image,
 
 } from 'angular-feather/icons';
 
@@ -334,6 +334,7 @@ const icons = {
   LogIn,
   Key,
   TrendingUp,
+  Image,
 };
 
 @NgModule({
