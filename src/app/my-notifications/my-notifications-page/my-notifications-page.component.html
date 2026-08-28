@@ -3,7 +3,8 @@
    <app-search-panel (stateChange)="onFilterStateChange($event)">
    </app-search-panel>
 
-   <app-my-notifications [notificationData]="notificationData" [totalNotifications]="totalNotifications">
+   <app-my-notifications [notificationData]="notificationData" [totalNotifications]="totalNotifications"
+      [refreshing]="refreshing" (refresh)="onRefresh()">
    </app-my-notifications>
 
 

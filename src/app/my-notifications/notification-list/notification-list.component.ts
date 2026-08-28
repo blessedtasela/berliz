@@ -17,11 +17,13 @@ export class NotificationListComponent {
   @Input() searchQuery = '';
   @Input() selectionMode: boolean = false;
   @Input() notificationsLength = 0;
-  
+  @Input() refreshing = false;
+
   @Output() prev = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
   @Output() toggleSelectAll = new EventEmitter<void>();
   @Output() bulkAction = new EventEmitter<string>();
+  @Output() refresh = new EventEmitter<void>();
   @Output() open = new EventEmitter<Notifications>();
   @Output() toggle = new EventEmitter<Notifications>();
   @Output() markRead = new EventEmitter<Notifications>();

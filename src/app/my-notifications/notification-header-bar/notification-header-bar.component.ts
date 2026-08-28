@@ -10,11 +10,13 @@ export class NotificationHeaderBarComponent {
   @Input() endIndex = 0;
   @Input() total = 0;
   @Input() selectAll = false;
+  @Input() refreshing = false;
 
   @Output() prev = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
   @Output() toggleSelectAll = new EventEmitter<void>();
   @Output() bulkAction = new EventEmitter<string>();
+  @Output() refresh = new EventEmitter<void>();
 
   menuOpen = false;
 

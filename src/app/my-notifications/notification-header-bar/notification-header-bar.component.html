@@ -26,6 +26,12 @@
   <!-- RIGHT: select all + bulk menu -->
   <div class="flex items-center gap-3">
 
+    <!-- Refresh -->
+    <button type="button" (click)="refresh.emit()" [disabled]="refreshing" title="Refresh"
+      class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition disabled:opacity-60">
+      <i-feather name="refresh-cw" [class.animate-spin]="refreshing" style="width:13px;height:13px;" class="text-gray-500"></i-feather>
+    </button>
+
     <!-- Select all -->
     <label class="flex items-center gap-1.5 cursor-pointer select-none group">
       <input type="checkbox" [checked]="selectAll" (change)="toggleSelectAll.emit()" class="hidden peer" />

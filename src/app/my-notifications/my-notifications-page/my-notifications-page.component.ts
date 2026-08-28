@@ -21,6 +21,7 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
 
   isSearch = false;
   isAdmin = false;
+  refreshing = false;
 
   private subscriptions: Subscription[] = [];
 
@@ -98,6 +99,15 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
   /** Load notifications from state service */
   private loadNotifications(): void {
     this.store.dispatch(loadMyNotifications());
+  }
+
+  /** Manual refresh button — same load, just with a brief spin cue since
+   *  there's no dedicated loading selector for this action to bind to. */
+  onRefresh(): void {
+    if (this.refreshing) return;
+    this.refreshing = true;
+    this.loadNotifications();
+    setTimeout(() => this.refreshing = false, 500);
   }
 
   /** Generic websocket watcher */

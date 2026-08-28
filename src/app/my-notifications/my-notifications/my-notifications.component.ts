@@ -46,6 +46,8 @@ export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
   allNotificationData: Notifications[] = []; // full list
 
   @Output() emitEvent = new EventEmitter();
+  @Output() refresh = new EventEmitter<void>();
+  @Input() refreshing = false;
 
   selectedNotificationIds: number[] = [];
   menuOpen: boolean[] = [];

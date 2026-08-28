@@ -45,6 +45,12 @@
             <!-- Bulk Actions -->
             <div class="relative flex items-center gap-2">
 
+                <!-- Refresh -->
+                <button type="button" (click)="refresh.emit()" [disabled]="refreshing" title="Refresh"
+                    class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition disabled:opacity-60">
+                    <i-feather name="refresh-cw" [class.animate-spin]="refreshing" style="width:13px;height:13px;" class="text-gray-500"></i-feather>
+                </button>
+
                 <!-- Select All -->
                 <button (click)="toggleSelectAll($event)" class="w-4 h-4 rounded-full border border-gray-300 hover:border-red-400
                        flex items-center justify-center bg-white transition shrink-0">

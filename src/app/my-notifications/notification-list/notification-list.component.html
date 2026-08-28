@@ -12,8 +12,8 @@
 
   <!-- Header -->
   <notification-header-bar *ngIf="sections.length > 0" [startIndex]="startIndex" [endIndex]="endIndex" [total]="total"
-    [selectAll]="selectAll" (prev)="prev.emit()" (next)="next.emit()" (toggleSelectAll)="toggleSelectAll.emit()"
-    (bulkAction)="bulkAction.emit($event)">
+    [selectAll]="selectAll" [refreshing]="refreshing" (prev)="prev.emit()" (next)="next.emit()" (toggleSelectAll)="toggleSelectAll.emit()"
+    (bulkAction)="bulkAction.emit($event)" (refresh)="refresh.emit()">
   </notification-header-bar>
 
   <!-- Sections -->
