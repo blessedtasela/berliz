@@ -113,6 +113,15 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
     });
   }
 
+  refresh(): void {
+    this.store.dispatch(MessageActions.loadConversations());
+    this.store.dispatch(loadMyTrainers());
+    this.store.dispatch(loadMyConnections());
+    if (this.activeUserId != null) {
+      this.store.dispatch(MessageActions.loadConversation({ otherUserId: this.activeUserId }));
+    }
+  }
+
   openConversation(otherUserId: number): void {
     this.store.dispatch(MessageActions.loadConversation({ otherUserId }));
     this.store.dispatch(MessageActions.markConversationRead({ otherUserId }));

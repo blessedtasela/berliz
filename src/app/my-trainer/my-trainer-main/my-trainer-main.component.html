@@ -1,4 +1,11 @@
 <!-- ══════════════════════════════════════════════════════════
+     REFRESH
+     ══════════════════════════════════════════════════════════ -->
+<div class="flex items-center justify-end">
+    <app-refresh-button [loading]="refreshing" (refresh)="refresh()"></app-refresh-button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
      SUBSCRIPTION INACTIVE BANNER
      Shown when no active subscription exists
      ══════════════════════════════════════════════════════════ -->

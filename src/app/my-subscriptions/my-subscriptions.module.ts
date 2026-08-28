@@ -20,6 +20,7 @@ import { FeatherModule } from 'angular-feather';
 import { MySubscriptionsFormComponent } from './my-subscriptions-form/my-subscriptions-form.component';
 import { MySubscriptionsTimelineComponent } from './my-subscriptions-timeline/my-subscriptions-timeline.component';
 import { MySubscriptionsAnalyticsComponent } from './my-subscriptions-analytics/my-subscriptions-analytics.component';
+import { SharedModule } from '../shared/shared.module';
 
 
 
@@ -48,7 +49,8 @@ import { MySubscriptionsAnalyticsComponent } from './my-subscriptions-analytics/
     FooterModule,
     FormsModule,
     ReactiveFormsModule,
-    FeatherModule
+    FeatherModule,
+    SharedModule
   ]
 })
 export class MySubscriptionsModule { }

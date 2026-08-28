@@ -9,6 +9,7 @@ import { TestimonialService } from 'src/app/services/testimonial.service';
 import { TestimonialDialogService } from 'src/app/testimonial/testimonial-dialog.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { Testimonials } from 'src/app/models/testimonials.model';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { genericError } from 'src/validators/form-validators.module';
 
 /**
@@ -23,7 +24,7 @@ import { genericError } from 'src/validators/form-validators.module';
 @Component({
   selector: 'app-my-testimonials-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule],
+  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule],
   templateUrl: './my-testimonials-page.component.html',
   styleUrls: ['./my-testimonials-page.component.css']
 })
@@ -61,6 +62,10 @@ export class MyTestimonialsPageComponent implements OnInit {
           this.snackBar.openSnackBar(genericError, 'error');
         }
       });
+  }
+
+  refresh(): void {
+    this.load();
   }
 
   isPending(t: Testimonials): boolean {

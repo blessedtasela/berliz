@@ -1,14 +1,17 @@
 <section class="font-sans flex flex-col gap-4 mt-4">
 
     <!-- Page header -->
-    <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
-            <i-feather name="calendar" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+    <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="calendar" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <h1 class="text-sm font-bold text-gray-900">Bookings</h1>
+                <p class="text-[11px] text-gray-400">Sessions clients have requested with you</p>
+            </div>
         </div>
-        <div>
-            <h1 class="text-sm font-bold text-gray-900">Bookings</h1>
-            <p class="text-[11px] text-gray-400">Sessions clients have requested with you</p>
-        </div>
+        <app-refresh-button [loading]="loading" (refresh)="refresh()"></app-refresh-button>
     </div>
 
     <!-- Tabs -->

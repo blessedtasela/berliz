@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FeatherModule } from 'angular-feather';
 import { IconsModule } from '../icons/icons.module';
+import { SharedModule } from '../shared/shared.module';
 
 import { MessagesMainComponent } from './messages-main/messages-main.component';
 
@@ -15,6 +16,7 @@ import { MessagesMainComponent } from './messages-main/messages-main.component';
     FormsModule,
     IconsModule,
     FeatherModule,
+    SharedModule,
   ]
 })
 export class MessagesModule { }

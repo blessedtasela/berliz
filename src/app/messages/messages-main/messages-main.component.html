@@ -1,14 +1,17 @@
 <section class="font-sans flex flex-col gap-4 mt-4">
 
     <!-- Page header -->
-    <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
-            <i-feather name="message-circle" class="text-sky-600" style="width:16px;height:16px;"></i-feather>
+    <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
+                <i-feather name="message-circle" class="text-sky-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <h1 class="text-sm font-bold text-gray-900">Messages</h1>
+                <p class="text-[11px] text-gray-400">Direct messages with your trainers</p>
+            </div>
         </div>
-        <div>
-            <h1 class="text-sm font-bold text-gray-900">Messages</h1>
-            <p class="text-[11px] text-gray-400">Direct messages with your trainers</p>
-        </div>
+        <app-refresh-button [loading]="loading" (refresh)="refresh()"></app-refresh-button>
     </div>
 
     <div class="bg-white rounded-2xl border border-gray-200 grid grid-cols-1 md:grid-cols-[280px_1fr] overflow-hidden" style="min-height: 480px;">
