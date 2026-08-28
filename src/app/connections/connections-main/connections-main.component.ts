@@ -7,6 +7,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Connection } from 'src/app/models/connection.model';
 import { PublicDirectoryEntry } from 'src/app/models/users.interface';
 import * as ConnectionActions from 'src/app/state/connection/connection.actions';
+import * as MessageActions from 'src/app/state/message/message.actions';
 import {
   selectConnectionError,
   selectConnectionLoading,
@@ -114,7 +115,17 @@ export class ConnectionsMainComponent implements OnInit, OnDestroy {
     this.store.dispatch(ConnectionActions.cancelConnectionRequest({ id: request.id }));
   }
 
+  /**
+   * Was just navigating to /dashboard/messages with no indication of who to
+   * talk to -- the user landed on the plain inbox and had to go hunt for the
+   * same person again in "start a conversation" there. Dispatching
+   * loadConversation first sets activeConversationUserId synchronously (see
+   * message.reducer.ts), so by the time MessagesMainComponent mounts and
+   * reads that same store slice, this thread is already open.
+   */
   message(connection: Connection): void {
+    this.store.dispatch(MessageActions.loadConversation({ otherUserId: connection.otherUserId }));
+    this.store.dispatch(MessageActions.markConversationRead({ otherUserId: connection.otherUserId }));
     this.router.navigate(['/dashboard/messages']);
   }
 
@@ -157,5 +168,10 @@ export class ConnectionsMainComponent implements OnInit, OnDestroy {
 
   photoSrc(member: PublicDirectoryEntry): string {
     return member.profilePhoto ? 'data:image/*;base64,' + member.profilePhoto : 'assets/avatar.png';
+  }
+
+  /** Incoming/Sent/Connections rows only ever rendered a static icon -- ConnectionResponse had no photo field until now. */
+  connectionPhotoSrc(c: Connection): string | null {
+    return c.otherUserPhoto ? 'data:image/*;base64,' + c.otherUserPhoto : null;
   }
 }

@@ -11,6 +11,7 @@ export interface Connection {
   otherUserId: number;
   otherUserName: string;
   otherUserRole: string;
+  otherUserPhoto?: string;
 
   /** "incoming" (they requested you) or "outgoing" (you requested them). */
   direction: ConnectionDirection;

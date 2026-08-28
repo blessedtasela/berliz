@@ -80,7 +80,8 @@
 
             <div *ngFor="let r of incoming" class="flex items-center justify-between gap-3 py-1.5">
                 <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
+                    <img *ngIf="connectionPhotoSrc(r) as src" [src]="src" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
+                    <div *ngIf="!connectionPhotoSrc(r)" class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
                         <i-feather name="user" class="text-sky-600" style="width:14px;height:14px;"></i-feather>
                     </div>
                     <div class="min-w-0">
@@ -107,7 +108,8 @@
 
             <div *ngFor="let r of outgoing" class="flex items-center justify-between gap-3 py-1.5">
                 <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">
+                    <img *ngIf="connectionPhotoSrc(r) as src" [src]="src" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
+                    <div *ngIf="!connectionPhotoSrc(r)" class="w-8 h-8 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">
                         <i-feather name="clock" class="text-gray-400" style="width:14px;height:14px;"></i-feather>
                     </div>
                     <div class="min-w-0">
@@ -132,7 +134,8 @@
 
             <div *ngFor="let c of connections" class="flex items-center justify-between gap-3 py-1.5">
                 <a [routerLink]="['/dashboard/user', c.otherUserId]" class="flex items-center gap-2.5 min-w-0 hover:opacity-80 transition">
-                    <div class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
+                    <img *ngIf="connectionPhotoSrc(c) as src" [src]="src" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
+                    <div *ngIf="!connectionPhotoSrc(c)" class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
                         <i-feather name="user" class="text-sky-600" style="width:14px;height:14px;"></i-feather>
                     </div>
                     <div class="min-w-0">

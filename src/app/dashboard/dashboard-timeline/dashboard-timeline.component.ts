@@ -128,9 +128,14 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
         }
         this.uploadedPhoto = { strapiId: uploaded.id, photoUrl: uploaded.url };
       },
-      error: () => {
+      error: (err) => {
         this.uploading = false;
-        this.uploadError = 'Upload failed — try again';
+        // The backend surfaces the actual root cause (e.g. Strapi rejected
+        // the request, or strapi.base-url/strapi.api-token aren't configured
+        // on this environment) in err.error.detail — showing only a generic
+        // message here made this failure mode undiagnosable from the UI.
+        const detail = err?.error?.detail;
+        this.uploadError = detail ? `Upload failed: ${detail}` : 'Upload failed — try again';
       }
     });
   }
