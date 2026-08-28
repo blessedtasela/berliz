@@ -1,13 +1,70 @@
 <section class="font-sans flex flex-col gap-4 mt-4">
 
     <!-- Page header -->
-    <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
-            <i-feather name="users" class="text-sky-600" style="width:16px;height:16px;"></i-feather>
+    <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
+                <i-feather name="users" class="text-sky-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <h1 class="text-sm font-bold text-gray-900">Connections</h1>
+                <p class="text-[11px] text-gray-400">Find people, manage requests, and jump into messages once you're connected</p>
+            </div>
         </div>
-        <div>
-            <h1 class="text-sm font-bold text-gray-900">Connections</h1>
-            <p class="text-[11px] text-gray-400">Manage requests, and jump into messages once you're connected</p>
+        <app-refresh-button [loading]="loading" (refresh)="refresh()"></app-refresh-button>
+    </div>
+
+    <!-- ── FIND PEOPLE ────────────────────────────────────────────────────── -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Find people</p>
+
+        <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl
+                    focus-within:border-red-500 focus-within:ring-1 focus-within:ring-red-500/30 transition">
+            <i-feather name="search" class="ml-3 text-gray-400 shrink-0" style="width:14px;height:14px;"></i-feather>
+            <input type="text" [ngModel]="searchTerm" (ngModelChange)="onSearchChange($event)"
+                placeholder="Search by name…"
+                class="flex-1 bg-transparent px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none" />
+        </div>
+
+        <div *ngIf="searchLoading" class="flex items-center justify-center py-6">
+            <i-feather name="loader" class="text-gray-300 animate-spin" style="width:16px;height:16px;"></i-feather>
+        </div>
+
+        <p *ngIf="!searchLoading && searchTerm.trim() && searchResults.length === 0" class="text-xs text-gray-400 py-2">
+            No one matches "{{ searchTerm }}".
+        </p>
+
+        <div *ngIf="!searchLoading && searchResults.length > 0" class="flex flex-col divide-y divide-gray-100">
+            <div *ngFor="let member of searchResults" class="flex items-center justify-between gap-3 py-2">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <img [src]="photoSrc(member)" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
+                    <div class="min-w-0">
+                        <p class="text-xs font-bold text-gray-900 truncate">{{ fullName(member) }}</p>
+                        <p class="text-[11px] text-gray-400 truncate capitalize">{{ member.role }}</p>
+                    </div>
+                </div>
+
+                <ng-container [ngSwitch]="connectStatus(member)">
+                    <span *ngSwitchCase="'self'" class="text-[11px] text-gray-300 shrink-0">You</span>
+                    <span *ngSwitchCase="'connected'" class="text-[11px] font-semibold text-green-600 shrink-0 flex items-center gap-1">
+                        <i-feather name="check" style="width:11px;height:11px;"></i-feather>
+                        Connected
+                    </span>
+                    <button *ngSwitchCase="'incoming'" type="button" (click)="acceptSearchRequest(member)"
+                        class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 hover:bg-red-700 text-white transition">
+                        Accept
+                    </button>
+                    <button *ngSwitchCase="'outgoing'" type="button" (click)="cancelSearchRequest(member)"
+                        class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-200 transition">
+                        Cancel
+                    </button>
+                    <button *ngSwitchDefault type="button" (click)="sendRequest(member)"
+                        class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 text-gray-600 hover:border-red-300 hover:text-red-600 transition flex items-center gap-1.5">
+                        <i-feather name="user-plus" style="width:11px;height:11px;"></i-feather>
+                        Connect
+                    </button>
+                </ng-container>
+            </div>
         </div>
     </div>
 
@@ -70,10 +127,7 @@
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Your connections</p>
 
             <div *ngIf="connections.length === 0" class="py-6 text-center">
-                <p class="text-xs text-gray-400">
-                    No connections yet. Find people to connect with from
-                    <a routerLink="/members" class="font-semibold text-red-600 hover:underline">Members</a>.
-                </p>
+                <p class="text-xs text-gray-400">No connections yet. Use "Find people" above to search and connect.</p>
             </div>
 
             <div *ngFor="let c of connections" class="flex items-center justify-between gap-3 py-1.5">
