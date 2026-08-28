@@ -82,27 +82,42 @@
                 </span>
             </div>
 
-            <a [href]="mapsUrl" target="_blank" rel="noopener"
-                class="relative group/map bg-zinc-900 border border-zinc-800 hover:border-red-600/40 rounded-xl px-4 py-3 flex flex-col gap-1 transition">
-                <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold">Available in</span>
-                <span class="text-sm font-bold text-white group-hover/map:text-red-400 flex items-center gap-1.5 truncate transition">
-                    <i-feather name="map-pin" class="text-red-500 shrink-0" style="width:13px;height:13px;"></i-feather>
-                    <span class="truncate">{{ primaryLocationLabel }}</span>
-                    <span *ngIf="extraLocationCount > 0" class="text-zinc-500 font-medium shrink-0">+{{ extraLocationCount }}</span>
-                </span>
-                <span *ngIf="(trainer?.locations?.length ?? 0) > 0" class="pointer-events-none absolute left-4 -top-8 whitespace-nowrap px-2 py-1 rounded-lg
-                             bg-zinc-800 border border-zinc-700 text-[10px] text-zinc-200 font-medium
-                             opacity-0 group-hover/map:opacity-100 transition-opacity duration-150 z-10">
-                    Open in Google Maps ↗
-                </span>
-            </a>
+            <div class="relative">
+                <button type="button" (click)="toggleLocations()"
+                    class="w-full text-left bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1 transition"
+                    [ngClass]="hasLocations ? 'hover:border-red-600/40 cursor-pointer' : 'cursor-default'">
+                    <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold flex items-center justify-between">
+                        Available in
+                        <i-feather *ngIf="hasLocations" name="chevron-down" class="text-zinc-600 transition-transform"
+                            [ngClass]="{ 'rotate-180': locationsOpen }" style="width:11px;height:11px;"></i-feather>
+                    </span>
+                    <span class="text-sm font-bold text-white flex items-center gap-1.5 truncate">
+                        <i-feather name="map-pin" class="text-red-500 shrink-0" style="width:13px;height:13px;"></i-feather>
+                        <span class="truncate">{{ primaryLocationLabel }}</span>
+                        <span *ngIf="extraLocationCount > 0" class="text-zinc-500 font-medium shrink-0">+{{ extraLocationCount }}</span>
+                    </span>
+                </button>
 
-            <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1">
+                <!-- Dropdown: every location, each linking out to Maps -->
+                <div *ngIf="locationsOpen" class="absolute left-0 right-0 top-full mt-2 z-20 bg-zinc-900 border border-zinc-700
+                            rounded-xl shadow-[0_12px_32px_rgba(0,0,0,0.5)] overflow-hidden">
+                    <a *ngFor="let loc of trainer?.locations" [href]="mapsUrlFor(loc)" target="_blank" rel="noopener"
+                        class="flex items-center gap-2 px-4 py-2.5 text-xs text-zinc-200 hover:bg-zinc-800 hover:text-red-400
+                               border-b border-zinc-800 last:border-b-0 transition">
+                        <i-feather name="map-pin" class="text-red-500 shrink-0" style="width:12px;height:12px;"></i-feather>
+                        <span class="truncate">{{ fullLocationLabel(loc) }}</span>
+                        <i-feather name="link" class="text-zinc-600 shrink-0 ml-auto" style="width:11px;height:11px;"></i-feather>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-span-2 sm:col-span-1 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1">
                 <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold">Coaching style</span>
                 <span class="text-sm font-bold text-white flex items-center gap-1.5">
                     <i-feather name="video" class="text-red-500" style="width:13px;height:13px;"></i-feather>
                     {{ serviceModeLabel }}
                 </span>
+                <span class="text-[11px] text-zinc-500 leading-snug">{{ serviceModeDescription }}</span>
             </div>
 
         </div>
