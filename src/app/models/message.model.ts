@@ -29,6 +29,7 @@ export interface MessageRequest {
 export interface ConversationSummary {
   otherUserId: number;
   otherUserName: string;
+  otherUsername?: string;
   otherUserRole: string;
   otherUserPhoto?: string;
 

@@ -226,6 +226,21 @@ export class UserService {
     );
   }
 
+  /** Same as getPublicProfile(id), resolved by username -- what profile pages actually call now that /user/:id routes use it. */
+  getPublicProfileByUsername(username: string): Observable<ApiResponse<PublicUserProfile>> {
+    return this.httpClient.get<ApiResponse<PublicUserProfile>>(
+      this.url + `/user/getPublicProfile/username/${username}`
+    );
+  }
+
+  /** Authenticated. 3-30 chars, lowercase letters/digits/underscore, must be unique. Applies to the caller only. */
+  updateUsername(username: string): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + `/user/updateUsername`,
+      { username }
+    );
+  }
+
   /** Flips the signed-in user's own profile between "public" and "private". */
   updateProfileVisibility(profileVisibility: ProfileVisibility): Observable<ApiResponse<string>> {
     return this.httpClient.put<ApiResponse<string>>(

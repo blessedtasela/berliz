@@ -2,9 +2,11 @@ import { ApiResponse } from "./Api.interface";
 import { AuthResponse } from "./Auth.interface";
 import { Testimonials } from "./testimonials.model";
 import { WorkoutResponse } from "./workout.interface";
+import { PostResponse } from "./post.interface";
 
 export interface Users {
     id: number;
+    username?: string;
 
     firstname: string;
     lastname: string;
@@ -65,6 +67,7 @@ export type SidebarDisplay = 'expanded' | 'collapsed' | 'hidden';
  */
 export interface PublicUserProfile {
     id: number;
+    username?: string;
     firstname: string;
     lastname: string;
     role: string;
@@ -76,6 +79,9 @@ export interface PublicUserProfile {
     city?: string;
     country?: string;
     workoutsCreated?: WorkoutResponse[];
+
+    /** This user's own timeline posts, newest first. Absent when private. */
+    posts?: PostResponse[];
 
     /** Trainer-only: this trainer's active testimonials. Absent for every other role. */
     testimonials?: Testimonials[];
@@ -90,6 +96,7 @@ export interface PublicUserProfile {
  */
 export interface PublicDirectoryEntry {
     id: number;
+    username?: string;
     firstname: string;
     lastname: string;
     role: string;

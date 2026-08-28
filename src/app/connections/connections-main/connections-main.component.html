@@ -36,8 +36,9 @@
 
         <div *ngIf="!searchLoading && searchResults.length > 0" class="flex flex-col divide-y divide-gray-100">
             <div *ngFor="let member of searchResults" class="flex items-center justify-between gap-3 py-2">
-                <a [routerLink]="['/dashboard/user', member.id]" class="flex items-center gap-2.5 min-w-0 hover:opacity-80 transition">
-                    <img [src]="photoSrc(member)" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
+                <a [routerLink]="['/dashboard/user', member.username || member.id]" class="flex items-center gap-2.5 min-w-0 hover:opacity-80 transition">
+                    <img [src]="photoSrc(member)" alt="" (click)="lightbox.open(photoSrc(member)); $event.stopPropagation(); $event.preventDefault()"
+                        class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
                     <div class="min-w-0">
                         <p class="text-xs font-bold text-gray-900 truncate">{{ fullName(member) }}</p>
                         <p class="text-[11px] text-gray-400 truncate capitalize">{{ member.role }}</p>
@@ -80,7 +81,7 @@
 
             <div *ngFor="let r of incoming" class="flex items-center justify-between gap-3 py-1.5">
                 <div class="flex items-center gap-2.5 min-w-0">
-                    <img *ngIf="connectionPhotoSrc(r) as src" [src]="src" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
+                    <img *ngIf="connectionPhotoSrc(r) as src" [src]="src" alt="" (click)="lightbox.open(src)" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0 cursor-zoom-in" />
                     <div *ngIf="!connectionPhotoSrc(r)" class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
                         <i-feather name="user" class="text-sky-600" style="width:14px;height:14px;"></i-feather>
                     </div>
@@ -108,7 +109,7 @@
 
             <div *ngFor="let r of outgoing" class="flex items-center justify-between gap-3 py-1.5">
                 <div class="flex items-center gap-2.5 min-w-0">
-                    <img *ngIf="connectionPhotoSrc(r) as src" [src]="src" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
+                    <img *ngIf="connectionPhotoSrc(r) as src" [src]="src" alt="" (click)="lightbox.open(src)" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0 cursor-zoom-in" />
                     <div *ngIf="!connectionPhotoSrc(r)" class="w-8 h-8 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">
                         <i-feather name="clock" class="text-gray-400" style="width:14px;height:14px;"></i-feather>
                     </div>
@@ -133,8 +134,9 @@
             </div>
 
             <div *ngFor="let c of connections" class="flex items-center justify-between gap-3 py-1.5">
-                <a [routerLink]="['/dashboard/user', c.otherUserId]" class="flex items-center gap-2.5 min-w-0 hover:opacity-80 transition">
-                    <img *ngIf="connectionPhotoSrc(c) as src" [src]="src" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
+                <a [routerLink]="['/dashboard/user', c.otherUsername || c.otherUserId]" class="flex items-center gap-2.5 min-w-0 hover:opacity-80 transition">
+                    <img *ngIf="connectionPhotoSrc(c) as src" [src]="src" alt="" (click)="lightbox.open(src); $event.stopPropagation(); $event.preventDefault()"
+                        class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
                     <div *ngIf="!connectionPhotoSrc(c)" class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
                         <i-feather name="user" class="text-sky-600" style="width:14px;height:14px;"></i-feather>
                     </div>
@@ -144,7 +146,7 @@
                     </div>
                 </a>
                 <div class="flex items-center gap-1.5 shrink-0">
-                    <a [routerLink]="['/dashboard/user', c.otherUserId]"
+                    <a [routerLink]="['/dashboard/user', c.otherUsername || c.otherUserId]"
                         class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 text-gray-600 hover:border-gray-300 hover:text-gray-900 transition flex items-center gap-1.5">
                         <i-feather name="user" style="width:11px;height:11px;"></i-feather>
                         Profile

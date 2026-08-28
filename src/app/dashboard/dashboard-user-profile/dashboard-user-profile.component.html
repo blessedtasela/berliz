@@ -1,6 +1,6 @@
 <!-- ═══════════════════════════════════════════════
-     DASHBOARD USER PROFILE + TIMELINE  /dashboard/user/:id
-     Light theme — the dashboard-native replacement for /user/:id.
+     DASHBOARD USER PROFILE + TIMELINE  /dashboard/user/:username
+     Light theme — the dashboard-native replacement for /user/:username.
 ════════════════════════════════════════════════ -->
 
 <!-- ── LOADING ───────────────────────────────────────────────────────── -->
@@ -36,8 +36,14 @@
         <!-- Hero -->
         <div class="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col sm:flex-row sm:items-center gap-5">
 
-            <img [src]="photoSrc" [alt]="fullName"
-                class="w-20 h-20 rounded-full object-cover object-top border border-gray-200 bg-gray-50 shrink-0" />
+            <button type="button" (click)="lightbox.open(photoSrc)"
+                class="w-20 h-20 rounded-full shrink-0 border border-gray-200 bg-gray-50 overflow-hidden group relative">
+                <img [src]="photoSrc" [alt]="fullName" class="w-full h-full object-cover object-top" />
+                <span class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center">
+                    <i-feather name="maximize-2" style="width:14px;height:14px;"
+                        class="text-white opacity-0 group-hover:opacity-100 transition"></i-feather>
+                </span>
+            </button>
 
             <div class="flex-1 min-w-0 flex flex-col gap-2">
                 <h1 class="text-xl font-bold text-gray-900 truncate">{{ fullName || 'Berliz member' }}</h1>
@@ -126,7 +132,9 @@
 
                     <div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-2.5 min-w-0">
-                            <img [src]="photoSrc" [alt]="fullName" class="w-8 h-8 rounded-full object-cover object-top border border-gray-200 shrink-0" />
+                            <button type="button" (click)="lightbox.open(photoSrc)" class="shrink-0">
+                                <img [src]="photoSrc" [alt]="fullName" class="w-8 h-8 rounded-full object-cover object-top border border-gray-200" />
+                            </button>
                             <div class="flex flex-col leading-tight min-w-0">
                                 <span class="text-xs font-bold text-gray-900 truncate">{{ fullName }}</span>
                                 <span class="text-[10px] text-gray-400">{{ post.date | date:'mediumDate' }}</span>
@@ -136,8 +144,14 @@
 
                     <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ post.content }}</p>
 
-                    <img *ngIf="post.photoUrl" [src]="post.photoUrl | strapiUrl" alt=""
-                        class="w-full max-h-96 object-cover rounded-xl border border-gray-100" />
+                    <button *ngIf="post.photoUrl | strapiUrl as src" type="button" (click)="lightbox.open(src)"
+                        class="relative w-full max-h-96 overflow-hidden rounded-xl border border-gray-100 group cursor-zoom-in">
+                        <img [src]="src" alt="" class="w-full max-h-96 object-cover" />
+                        <span class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition flex items-center justify-center">
+                            <i-feather name="maximize-2" style="width:20px;height:20px;"
+                                class="text-white opacity-0 group-hover:opacity-100 transition drop-shadow"></i-feather>
+                        </span>
+                    </button>
 
                     <div class="border-t border-gray-100 pt-2 flex items-center gap-1.5">
                         <button type="button" (click)="toggleLike(post)"

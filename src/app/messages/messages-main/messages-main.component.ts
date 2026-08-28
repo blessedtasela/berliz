@@ -23,6 +23,7 @@ import { selectMyConnections } from 'src/app/state/connection/connection.selecto
 import { Connection } from 'src/app/models/connection.model';
 
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 /** A person you can start (or already have) a conversation with -- either a booked trainer or an accepted Connection. */
@@ -65,6 +66,7 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     private snackBar: SnackBarService,
+    public lightbox: PhotoLightboxService,
   ) { }
 
   ngOnInit(): void {

@@ -13,6 +13,12 @@ export const loadPublicProfile = createAction(
   props<{ id: number }>()
 );
 
+/** Same as loadPublicProfile(id) -- what /user/:username actually dispatches now that profile links resolve by username. Shares loadPublicProfileSuccess/Failure and reducer state. */
+export const loadPublicProfileByUsername = createAction(
+  '[User Profile] Load Public Profile By Username',
+  props<{ username: string }>()
+);
+
 export const loadPublicProfileSuccess = createAction(
   '[User Profile] Load Public Profile Success',
   props<Res<PublicUserProfile>>()

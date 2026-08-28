@@ -1,5 +1,5 @@
 <!-- ═══════════════════════════════════════════════
-     PUBLIC USER PROFILE  /user/:id
+     PUBLIC USER PROFILE  /user/:username
      Dark treatment, matching the public trainer/center profiles.
 ════════════════════════════════════════════════ -->
 
@@ -66,8 +66,14 @@
     <section class="w-full bg-zinc-950 font-sans px-4 pt-14 pb-8">
         <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center sm:items-end gap-5 text-center sm:text-left">
 
-            <img [src]="photoSrc" [alt]="fullName"
-                class="w-24 h-24 rounded-full object-cover object-top border-4 border-zinc-900 bg-zinc-900 shrink-0" />
+            <button type="button" (click)="lightbox.open(photoSrc)"
+                class="w-24 h-24 rounded-full shrink-0 border-4 border-zinc-900 bg-zinc-900 overflow-hidden group relative">
+                <img [src]="photoSrc" [alt]="fullName" class="w-full h-full object-cover object-top" />
+                <span class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center">
+                    <i-feather name="maximize-2" style="width:16px;height:16px;"
+                        class="text-white opacity-0 group-hover:opacity-100 transition"></i-feather>
+                </span>
+            </button>
 
             <div class="flex flex-col gap-2 min-w-0">
 
@@ -122,6 +128,41 @@
                 <div *ngIf="profile.bio" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 flex flex-col gap-2">
                     <span class="text-[11px] uppercase tracking-wide text-zinc-500 font-semibold">About</span>
                     <p class="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">{{ profile.bio }}</p>
+                </div>
+
+                <!-- Timeline -->
+                <div *ngIf="posts.length > 0" class="flex flex-col gap-3">
+
+                    <div class="flex items-center justify-between gap-2">
+                        <h2 class="text-xs font-bold text-white uppercase tracking-wide">Timeline</h2>
+                        <span class="text-[11px] font-semibold text-zinc-500">{{ posts.length }}</span>
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+                        <div *ngFor="let post of posts; trackBy: trackByPostId"
+                            class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col gap-3">
+
+                            <p class="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">{{ post.content }}</p>
+
+                            <button *ngIf="post.photoUrl | strapiUrl as src" type="button" (click)="lightbox.open(src)"
+                                class="relative w-full max-h-96 overflow-hidden rounded-xl border border-zinc-800 group cursor-zoom-in">
+                                <img [src]="src" alt="" class="w-full max-h-96 object-cover" />
+                                <span class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center">
+                                    <i-feather name="maximize-2" style="width:18px;height:18px;"
+                                        class="text-white opacity-0 group-hover:opacity-100 transition drop-shadow"></i-feather>
+                                </span>
+                            </button>
+
+                            <div class="border-t border-zinc-800 pt-2 flex items-center gap-3 text-[11px] text-zinc-500">
+                                <span class="flex items-center gap-1.5">
+                                    <i-feather name="heart" style="width:11px;height:11px;" [attr.fill]="post.likedByMe ? 'currentColor' : 'none'"
+                                        [class.text-red-500]="post.likedByMe"></i-feather>
+                                    {{ post.likes }}
+                                </span>
+                                <span>{{ post.date | date:'mediumDate' }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Workouts created -->

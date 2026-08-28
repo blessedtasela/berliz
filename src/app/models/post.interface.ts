@@ -3,6 +3,7 @@ export interface PostResponse {
   id: number;
   authorId: number;
   authorName: string;
+  authorUsername?: string;
   authorEmail: string;
   authorPhoto?: string;
   content: string;

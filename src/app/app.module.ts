@@ -2,6 +2,7 @@ import { ErrorHandler, NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
+import { PhotoLightboxComponent } from './shared/photo-lightbox/photo-lightbox.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -159,6 +160,7 @@ const dbConfig: DBConfig = {
   ],
   imports: [
     BrowserModule,
+    PhotoLightboxComponent,
     BrowserAnimationsModule,
     ScrollModule,
     HttpClientModule,

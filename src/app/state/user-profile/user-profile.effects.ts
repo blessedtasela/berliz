@@ -31,6 +31,25 @@ export class UserProfileEffects {
     )
   );
 
+  // Same as loadPublicProfile$ above, resolved by username instead -- what
+  // /user/:username and /dashboard/user/:username actually dispatch now.
+  // Shares loadPublicProfileSuccess/Failure so the reducer/selectors need no changes.
+  loadPublicProfileByUsername$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(A.loadPublicProfileByUsername),
+      switchMap(({ username }) =>
+        this.userService.getPublicProfileByUsername(username).pipe(
+          map(response => A.loadPublicProfileSuccess({ response })),
+          catchError(err =>
+            of(A.loadPublicProfileFailure({
+              error: err.error?.message || 'Could not load this profile'
+            }))
+          )
+        )
+      )
+    )
+  );
+
   // switchMap, not mergeMap: two toggles fired close together used to be able to
   // resolve out of order over the network, so the OLDER click's response could
   // land after the newer one and silently overwrite it back. switchMap cancels

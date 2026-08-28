@@ -24,6 +24,7 @@ import {
 
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
@@ -63,6 +64,7 @@ export class ConnectionsMainComponent implements OnInit, OnDestroy {
     private router: Router,
     private snackBar: SnackBarService,
     private authService: AuthService,
+    public lightbox: PhotoLightboxService,
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
   }

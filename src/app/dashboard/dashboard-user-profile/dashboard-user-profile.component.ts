@@ -12,6 +12,7 @@ import { PublicUserProfile } from 'src/app/models/users.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { PostService } from 'src/app/services/post.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
 
 import * as ConnectionActions from 'src/app/state/connection/connection.actions';
 import {
@@ -20,7 +21,7 @@ import {
 } from 'src/app/state/connection/connection.selectors';
 import {
   clearPublicProfile,
-  loadPublicProfile,
+  loadPublicProfileByUsername,
 } from 'src/app/state/user-profile/user-profile.actions';
 import {
   selectPublicProfile,
@@ -30,14 +31,15 @@ import {
 type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
 
 /**
- * Dashboard-native "view someone's profile + timeline" — `/dashboard/user/:id`.
+ * Dashboard-native "view someone's profile + timeline" — `/dashboard/user/:username`.
  *
- * Reuses the same `loadPublicProfile`/`PublicUserProfile` NgRx slice the public
- * `/user/:id` page uses (identity, bio, workouts), reuses the Connections
+ * Reuses the same `loadPublicProfile*`/`PublicUserProfile` NgRx slice the public
+ * `/user/:username` page uses (identity, bio, workouts), reuses the Connections
  * state for the connect/accept/cancel/message actions, and adds the one thing
- * neither of those pages has: the person's posts, via the new `/post/timeline`
- * endpoint. Light dashboard theme throughout — this is the page Members and
- * Connections link to instead of ever sending a signed-in user to `/user/:id`.
+ * neither of those pages has: the person's posts, via the `/post/timeline`
+ * endpoint (fetched once the numeric id is known from the resolved profile).
+ * Light dashboard theme throughout — this is the page Members and Connections
+ * link to instead of ever sending a signed-in user to `/user/:username`.
  */
 @Component({
   selector: 'app-dashboard-user-profile',
@@ -67,6 +69,7 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private postService: PostService,
     private snackBarService: SnackBarService,
+    public lightbox: PhotoLightboxService,
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
   }
@@ -81,14 +84,25 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
-        const id = Number(params.get('id'));
-        if (!id || Number.isNaN(id)) { return; }
-        this.userId = id;
-        this.store.dispatch(loadPublicProfile({ id }));
-        this.fetchTimeline(id);
+        const username = params.get('username');
+        if (!username) { return; }
+        // Reset so a fast link-to-link navigation never fetches the timeline
+        // for the previous person under the new username.
+        this.userId = null;
+        this.posts = [];
+        this.store.dispatch(loadPublicProfileByUsername({ username }));
       });
 
-    this.store.select(selectPublicProfile).pipe(takeUntil(this.destroy$)).subscribe(profile => this.profile = profile);
+    this.store.select(selectPublicProfile).pipe(takeUntil(this.destroy$)).subscribe(profile => {
+      this.profile = profile;
+      // The route only carries a username; the numeric id (needed for the
+      // timeline fetch and connect-status checks) only exists once the
+      // profile itself resolves.
+      if (profile && profile.id !== this.userId) {
+        this.userId = profile.id;
+        this.fetchTimeline(profile.id);
+      }
+    });
     this.store.select(selectPublicProfileLoading).pipe(takeUntil(this.destroy$)).subscribe(loading => this.loading = loading);
   }
 

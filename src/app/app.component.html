@@ -55,3 +55,6 @@
 
 <div *ngIf="isBlurred$ | async" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[999] transition-all duration-300">
 </div>
+
+<!-- Mounted once, app-wide -- every page opens it by calling PhotoLightboxService.open(src). -->
+<app-photo-lightbox></app-photo-lightbox>

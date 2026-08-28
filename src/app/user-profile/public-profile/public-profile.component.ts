@@ -9,12 +9,15 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { PublicUserProfile } from 'src/app/models/users.interface';
 import { WorkoutResponse } from 'src/app/models/workout.interface';
+import { PostResponse } from 'src/app/models/post.interface';
+import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
 
 import {
   clearPublicProfile,
-  loadPublicProfile,
+  loadPublicProfileByUsername,
 } from 'src/app/state/user-profile/user-profile.actions';
 import {
   selectPublicProfile,
@@ -28,7 +31,7 @@ import {
 } from 'src/app/state/workout/workout.actions';
 
 /**
- * Public profile page — `/user/:id`, no guard.
+ * Public profile page — `/user/:username`, no guard.
  *
  * Renders one of four states: loading, not-found, private, or the full profile.
  * "Private" is a first-class state, not an error: the backend still returns the
@@ -41,7 +44,7 @@ import {
 @Component({
   selector: 'app-public-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
+  imports: [CommonModule, RouterModule, IconsModule, StrapiUrlPipe],
   templateUrl: './public-profile.component.html'
 })
 export class PublicProfileComponent implements OnInit, OnDestroy {
@@ -70,7 +73,8 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
-    private snackBarService: SnackBarService
+    private snackBarService: SnackBarService,
+    public lightbox: PhotoLightboxService
   ) {
     this.needsLogin = !this.authService.isAuthenticated();
   }
@@ -78,16 +82,16 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (this.needsLogin) { return; }
 
-    // paramMap (not snapshot) so /user/1 → /user/2 re-fetches without a remount.
+    // paramMap (not snapshot) so /user/alice → /user/bob re-fetches without a remount.
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
-        const id = Number(params.get('id'));
-        if (!id || Number.isNaN(id)) {
+        const username = params.get('username');
+        if (!username) {
           this.error = 'Invalid profile link';
           return;
         }
-        this.store.dispatch(loadPublicProfile({ id }));
+        this.store.dispatch(loadPublicProfileByUsername({ username }));
       });
 
     this.store.select(selectPublicProfile)
@@ -158,6 +162,11 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
     return this.profile?.workoutsCreated ?? [];
   }
 
+  /** This user's own timeline posts -- backend only populates this when the profile is public. */
+  get posts(): PostResponse[] {
+    return this.profile?.posts ?? [];
+  }
+
   /** Trainer-only: only ever populated when profile.role === 'trainer'. */
   get testimonials(): Testimonials[] {
     return this.profile?.testimonials ?? [];
@@ -204,5 +213,9 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
 
   trackByTestimonialId(_: number, testimonial: Testimonials): number {
     return testimonial.id;
+  }
+
+  trackByPostId(_: number, post: PostResponse): number {
+    return post.id;
   }
 }

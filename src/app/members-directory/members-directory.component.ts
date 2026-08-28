@@ -11,6 +11,7 @@ import { PublicDirectoryEntry } from 'src/app/models/users.interface';
 import { Connection } from 'src/app/models/connection.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
 import { loadPublicDirectory } from 'src/app/state/user-profile/user-profile.actions';
 import {
   selectPublicDirectory,
@@ -82,6 +83,7 @@ export class MembersDirectoryComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private snackBar: SnackBarService,
+    public lightbox: PhotoLightboxService,
   ) {
     this.needsLogin = !this.authService.isAuthenticated();
     this.currentUserId = this.authService.getCurrentUserId();

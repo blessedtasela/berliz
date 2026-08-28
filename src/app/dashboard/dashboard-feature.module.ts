@@ -473,7 +473,7 @@ const dashboardRoutes: Routes = [
       // replacement for the public /user/:id page, linked from Members and
       // Connections so a signed-in user never has to leave the dashboard.
       {
-        path: 'user/:id',
+        path: 'user/:username',
         loadComponent: () => import('./dashboard-user-profile/dashboard-user-profile.component').then(m => m.DashboardUserProfileComponent),
         canActivate: [AuthGuard, RoleGuard],
         data: { breadcrumb: 'Profile', expectedRole: expectedRoleAll }

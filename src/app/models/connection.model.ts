@@ -10,6 +10,7 @@ export interface Connection {
 
   otherUserId: number;
   otherUserName: string;
+  otherUsername?: string;
   otherUserRole: string;
   otherUserPhoto?: string;
 

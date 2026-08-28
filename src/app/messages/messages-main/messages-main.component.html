@@ -24,7 +24,8 @@
                 <button *ngFor="let c of conversations" type="button" (click)="openConversation(c.otherUserId)"
                     class="text-left px-4 py-3 hover:bg-gray-50 transition flex items-start gap-2.5"
                     [class.bg-gray-50]="activeUserId === c.otherUserId">
-                    <img *ngIf="photoSrc(c) as src" [src]="src" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
+                    <img *ngIf="photoSrc(c) as src" [src]="src" alt="" (click)="lightbox.open(src); $event.stopPropagation()"
+                        class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
                     <div *ngIf="!photoSrc(c)" class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
                         <i-feather name="user" class="text-sky-600" style="width:14px;height:14px;"></i-feather>
                     </div>

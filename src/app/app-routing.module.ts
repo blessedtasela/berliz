@@ -83,7 +83,7 @@ export const routes: Routes = [
   // The component shows a "log in to view" prompt in place of content when
   // the API call comes back unauthorized, rather than bouncing the visitor
   // away before they even see the page exists.
-  { path: 'user/:id', loadComponent: () => import('./user-profile/public-profile/public-profile.component').then(m => m.PublicProfileComponent), data: { breadcrumb: 'Profile' } },
+  { path: 'user/:username', loadComponent: () => import('./user-profile/public-profile/public-profile.component').then(m => m.PublicProfileComponent), data: { breadcrumb: 'Profile' } },
 
   // Member directory — discovery surface for the profiles above. Same model:
   // page loads for anyone, content requires sign-in.
