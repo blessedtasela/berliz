@@ -14,6 +14,7 @@ import { UserListComponent } from './user-list/user-list.component';
 import { UsersComponent } from './users/users.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -28,6 +29,7 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
   ],
 
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     IconsModule,
     FormsModule,

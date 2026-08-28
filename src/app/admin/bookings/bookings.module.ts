@@ -12,6 +12,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { UserHoverCardComponent } from 'src/app/shared/user-hover-card/user-hover-card.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
     BookingsListComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     FooterModule,
     NavbarModule,

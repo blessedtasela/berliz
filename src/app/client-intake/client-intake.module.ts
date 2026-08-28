@@ -7,6 +7,7 @@ import { IconsModule } from '../icons/icons.module';
 
 import { ClientIntakeFormComponent } from './client-intake-form/client-intake-form.component';
 import { MyClientIntakesComponent } from './my-client-intakes/my-client-intakes.component';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { MyClientIntakesComponent } from './my-client-intakes/my-client-intakes.
     MyClientIntakesComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,

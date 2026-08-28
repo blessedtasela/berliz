@@ -12,6 +12,7 @@ import { ExerciseMuscleGroupsComponent } from './exercise-muscle-groups/exercise
 import { ExerciseIntroductionComponent } from './exercise-introduction/exercise-introduction.component';
 import { ExerciseTipsComponent } from './exercise-tips/exercise-tips.component';
 import { FooterModule } from '../footer/footer.module';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { FooterModule } from '../footer/footer.module';
     ExercisesSectionComponent,
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     RouterModule,
     FormsModule,

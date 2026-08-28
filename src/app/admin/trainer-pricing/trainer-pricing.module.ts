@@ -17,6 +17,7 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
 import { AuthGuard } from 'src/app/services/auth.guard';
 import { RoleGuard } from 'src/app/services/role.guard';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -31,6 +32,7 @@ import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
     UpdateTrainerPricingModalComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     NavbarModule,
     FooterModule,

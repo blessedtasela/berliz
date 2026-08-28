@@ -12,6 +12,7 @@ import { PhoneComponent } from './phone/phone.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SocialComponent } from './social/social.component';
 import { UnderConstructionComponent } from './under-construction/under-construction.component';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 @NgModule({
@@ -25,6 +26,7 @@ import { UnderConstructionComponent } from './under-construction/under-construct
     UnderConstructionComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     IconsModule,
     RouterModule,

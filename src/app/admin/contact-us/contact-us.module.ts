@@ -17,6 +17,7 @@ import { ContactUsDetailPageComponent } from './contact-us-detail-page/contact-u
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
 import { RoleGuard } from 'src/app/services/role.guard';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -33,6 +34,7 @@ import { RoleGuard } from 'src/app/services/role.guard';
   ],
 
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     IconsModule,
     FormsModule,

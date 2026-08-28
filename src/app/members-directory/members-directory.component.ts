@@ -26,6 +26,7 @@ import {
   sendConnectionRequest,
 } from 'src/app/state/connection/connection.actions';
 import { selectConnectionError, selectMyConnections, selectPendingRequests } from 'src/app/state/connection/connection.selectors';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 /** A directory row's connection status, derived client-side from myConnections + pendingRequests. */
 type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
@@ -48,7 +49,7 @@ interface RoleOption {
 @Component({
   selector: 'app-members-directory',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule],
+  imports: [ClickablePhotoDirective, CommonModule, RouterModule, FormsModule, IconsModule],
   templateUrl: './members-directory.component.html'
 })
 export class MembersDirectoryComponent implements OnInit, OnDestroy {

@@ -18,6 +18,7 @@ import { AuthGuard } from 'src/app/services/auth.guard';
 import { RoleGuard } from 'src/app/services/role.guard';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -33,6 +34,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
   ],
 
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     NavbarModule,
     FooterModule,

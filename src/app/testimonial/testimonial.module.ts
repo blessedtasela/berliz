@@ -9,6 +9,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { NavbarModule } from '../navbar/navbar.module';
 import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -20,6 +21,7 @@ import { IconsModule } from '../icons/icons.module';
     TestimonialListComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,

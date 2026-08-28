@@ -37,6 +37,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { NotificationDropdownComponent } from './notification-dropdown/notification-dropdown.component';
 import { GlobalSearchComponent } from './global-search/global-search.component';
 import { MessagePopupComponent } from '../messages/message-popup/message-popup.component';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 @NgModule({
@@ -74,6 +75,7 @@ import { MessagePopupComponent } from '../messages/message-popup/message-popup.c
     MessagePopupComponent,
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     IconsModule,
     RouterModule,

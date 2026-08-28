@@ -8,6 +8,7 @@ import { ContactUsFormComponent } from './contact-us-form/contact-us-form.compon
 import { ContactUsHeroComponent } from './contact-us-hero/contact-us-hero.component';
 import { ContactUsPageComponent } from './contact-us-page/contact-us-page.component';
 import { FeatherModule } from 'angular-feather';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 @NgModule({
@@ -17,6 +18,7 @@ import { FeatherModule } from 'angular-feather';
     ContactUsPageComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     ReactiveFormsModule,
     NavbarModule,

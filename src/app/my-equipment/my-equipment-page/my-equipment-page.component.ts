@@ -9,6 +9,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { CenterEquipment } from 'src/app/models/centers.interface';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 import { genericError } from 'src/validators/form-validators.module';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 /**
  * Dashboard-native "My Equipment" for trainers — read-only list of equipment
@@ -20,7 +21,7 @@ import { genericError } from 'src/validators/form-validators.module';
 @Component({
   selector: 'app-my-equipment-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, StrapiUrlPipe],
+  imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, StrapiUrlPipe],
   templateUrl: './my-equipment-page.component.html',
   styleUrls: ['./my-equipment-page.component.css']
 })

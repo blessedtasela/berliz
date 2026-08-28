@@ -16,6 +16,7 @@ import { UpdatePartnerModalComponent } from './update-partner-modal/update-partn
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
 import { RoleGuard } from 'src/app/services/role.guard';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { RoleGuard } from 'src/app/services/role.guard';
   ],
 
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     IconsModule,
     FormsModule,

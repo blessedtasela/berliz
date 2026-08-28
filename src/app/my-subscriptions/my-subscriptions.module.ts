@@ -20,6 +20,7 @@ import { FeatherModule } from 'angular-feather';
 import { MySubscriptionsFormComponent } from './my-subscriptions-form/my-subscriptions-form.component';
 import { MySubscriptionsTimelineComponent } from './my-subscriptions-timeline/my-subscriptions-timeline.component';
 import { MySubscriptionsAnalyticsComponent } from './my-subscriptions-analytics/my-subscriptions-analytics.component';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -42,6 +43,7 @@ import { MySubscriptionsAnalyticsComponent } from './my-subscriptions-analytics/
     MySubscriptionsAnalyticsComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     IconsModule,
     NavbarModule,

@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { ReportProblemPageComponent } from './report-problem-page/report-problem-page.component';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -12,6 +13,7 @@ import { ReportProblemPageComponent } from './report-problem-page/report-problem
     ReportProblemPageComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     ReactiveFormsModule,
     RouterModule,

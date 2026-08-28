@@ -5,6 +5,7 @@ import { BlogComponent } from './blog/blog.component';
 import { AnnouncementComponent } from './announcement/announcement.component';
 import { FactsComponent } from './facts/facts.component';
 import { IconsModule } from '../icons/icons.module';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -16,6 +17,7 @@ import { IconsModule } from '../icons/icons.module';
     FactsComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     IconsModule
   ],

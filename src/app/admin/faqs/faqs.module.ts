@@ -9,6 +9,7 @@ import { FaqsComponent } from './faqs/faqs.component';
 import { FaqsListComponent } from './faqs-list/faqs-list.component';
 import { AddFaqModalComponent } from './add-faq-modal/add-faq-modal.component';
 import { UpdateFaqModalComponent } from './update-faq-modal/update-faq-modal.component';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { UpdateFaqModalComponent } from './update-faq-modal/update-faq-modal.com
     UpdateFaqModalComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     IconsModule,
     FormsModule,

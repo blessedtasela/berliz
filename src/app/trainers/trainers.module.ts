@@ -32,6 +32,7 @@ import { TrainersListComponent } from './trainers-list/trainers-list.component';
 import { TrainersMainComponent } from './trainers-main/trainers-main.component';
 import { TrainerVideoAlbumComponent } from './trainer-video-album/trainer-video-album.component';
 import { TrainerPricingCardComponent } from './trainer-pricing-card/trainer-pricing-card.component';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { TrainerPricingCardComponent } from './trainer-pricing-card/trainer-pric
     TrainerPricingCardComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     NavbarModule,
     FooterModule,

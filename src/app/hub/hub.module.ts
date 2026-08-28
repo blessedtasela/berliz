@@ -12,6 +12,7 @@ import { FooterModule } from '../footer/footer.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { SearchModule } from '../shared/search/search.module';
 import { RouterModule } from '@angular/router';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -24,6 +25,7 @@ import { RouterModule } from '@angular/router';
     HubCardComponent,
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     IconsModule,
     NavbarModule,

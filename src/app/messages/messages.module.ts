@@ -5,12 +5,14 @@ import { FeatherModule } from 'angular-feather';
 import { IconsModule } from '../icons/icons.module';
 
 import { MessagesMainComponent } from './messages-main/messages-main.component';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 @NgModule({
   declarations: [
     MessagesMainComponent,
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     FormsModule,
     IconsModule,

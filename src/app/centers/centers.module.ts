@@ -29,6 +29,7 @@ import { CenterHeaderComponent } from './center-header/center-header.component';
 import { CenterPartnerFormComponent } from './center-partner-form/center-partner-form.component';
 import { CenterFormComponent } from './center-form/center-form.component';
 import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
     CenterFormComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     ReactiveFormsModule,
     NavbarModule,

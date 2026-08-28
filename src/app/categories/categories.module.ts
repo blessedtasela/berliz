@@ -18,6 +18,7 @@ import { TestimonialModule } from '../testimonial/testimonial.module';
 import { EquipmentsModule } from '../equipments/equipments.module';
 import { ExercisesModule } from '../exercises/exercises.module';
 import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -33,6 +34,7 @@ import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
     CategoryExercisesComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     NavbarModule,
     FooterModule,

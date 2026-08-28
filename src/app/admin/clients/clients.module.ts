@@ -17,6 +17,7 @@ import { UserHoverCardComponent } from 'src/app/shared/user-hover-card/user-hove
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
 import { RoleGuard } from 'src/app/services/role.guard';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -31,6 +32,7 @@ import { RoleGuard } from 'src/app/services/role.guard';
     ClientDetailPageComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     FormsModule,
     FeatherModule,

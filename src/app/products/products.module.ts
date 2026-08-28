@@ -25,6 +25,7 @@ import { UsedProductsComponent } from './used-products/used-products.component';
 import { NewProductsComponent } from './new-products/new-products.component';
 import { NavbarModule } from '../navbar/navbar.module';
 import { FooterModule } from '../footer/footer.module';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 export const productChildRoutes: Routes = [
   { path: 'main', component: MainComponent },
@@ -58,6 +59,7 @@ export const productChildRoutes: Routes = [
     MainComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     RouterModule,
     RouterModule.forChild(productChildRoutes),

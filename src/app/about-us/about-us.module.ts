@@ -13,6 +13,7 @@ import { RouterModule } from '@angular/router';
 import { IconsModule } from '../icons/icons.module';
 import { FactsComponent } from './facts/facts.component';
 import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -27,6 +28,7 @@ import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
     FactsComponent,
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     RouterModule,
     IconsModule,

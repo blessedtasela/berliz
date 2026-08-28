@@ -25,6 +25,7 @@ import { MyTrainerSubModalComponent } from './my-trainer-sub-modal/my-trainer-su
 import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
 import { MyTrainerSharedProgressComponent } from './my-trainer-shared-progress/my-trainer-shared-progress.component';
 import { MyEquipmentPageComponent } from '../my-equipment/my-equipment-page/my-equipment-page.component';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -47,6 +48,7 @@ import { MyEquipmentPageComponent } from '../my-equipment/my-equipment-page/my-e
     MyTrainerSharedProgressComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     NavbarModule,
     FooterModule,

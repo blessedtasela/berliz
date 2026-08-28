@@ -13,6 +13,7 @@ import { CenterEquipment } from 'src/app/models/centers.interface';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 import { genericError } from 'src/validators/form-validators.module';
 import { EquipmentModalComponent } from '../equipment-modal/equipment-modal.component';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 /**
  * Admin equipment CRUD — every piece of equipment across every center and
@@ -23,7 +24,7 @@ import { EquipmentModalComponent } from '../equipment-modal/equipment-modal.comp
 @Component({
   selector: 'app-equipment-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconsModule, StrapiUrlPipe],
+  imports: [ClickablePhotoDirective, CommonModule, FormsModule, IconsModule, StrapiUrlPipe],
   templateUrl: './equipment-page.component.html',
   styleUrls: ['./equipment-page.component.css']
 })

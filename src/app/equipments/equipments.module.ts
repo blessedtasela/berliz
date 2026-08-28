@@ -8,6 +8,7 @@ import { IconsModule } from '../icons/icons.module';
 import { EquipmentPageComponent } from './equipment-page/equipment-page.component';
 import { EquipmentDetailsModalComponent } from './equipment-details-modal/equipment-details-modal.component';
 import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -17,6 +18,7 @@ import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
     EquipmentDetailsModalComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     RouterModule,
     FormsModule,

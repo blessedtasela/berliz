@@ -7,6 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { EditTodoComponent } from './edit-todo/edit-todo.component';
 import { SearchTodoComponent } from './search-todo/search-todo.component';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { SearchTodoComponent } from './search-todo/search-todo.component';
     SearchTodoComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     NavbarModule,
     FooterModule,

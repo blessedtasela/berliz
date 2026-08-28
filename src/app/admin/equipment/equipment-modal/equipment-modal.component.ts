@@ -13,6 +13,7 @@ import { Centers, CenterEquipment } from 'src/app/models/centers.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 import { genericError, imageValidator } from 'src/validators/form-validators.module';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 export interface EquipmentModalData {
   equipment?: CenterEquipment;
@@ -30,7 +31,7 @@ export type EquipmentImageField = typeof EQUIPMENT_IMAGE_FIELDS[number];
 @Component({
   selector: 'app-equipment-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IconsModule, StrapiUrlPipe],
+  imports: [ClickablePhotoDirective, CommonModule, ReactiveFormsModule, IconsModule, StrapiUrlPipe],
   templateUrl: './equipment-modal.component.html',
   styleUrls: ['./equipment-modal.component.css']
 })

@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
 import { NavbarModule } from '../navbar/navbar.module';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -15,6 +16,7 @@ import { NavbarModule } from '../navbar/navbar.module';
     MyFaqsPageComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     IconsModule,
     NavbarModule,

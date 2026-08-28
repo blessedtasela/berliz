@@ -17,6 +17,7 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
 import { AuthGuard } from 'src/app/services/auth.guard';
 import { RoleGuard } from 'src/app/services/role.guard';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -31,6 +32,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     MuscleGroupDetailPageComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     IconsModule,
     FormsModule,

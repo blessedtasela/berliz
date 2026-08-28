@@ -8,6 +8,7 @@ import { DateRangeDrawerComponent } from './date-range-drawer/date-range-drawer.
 import { DateJoinedDrawerComponent } from './date-joined-drawer/date-joined-drawer.component';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
 
@@ -21,6 +22,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     DateJoinedDrawerComponent
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     IconsModule,
     FormsModule,

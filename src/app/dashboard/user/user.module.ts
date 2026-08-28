@@ -13,6 +13,7 @@ import { FooterModule } from 'src/app/footer/footer.module';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 
   ],
   imports: [
+    ClickablePhotoDirective,
     CommonModule,
     ReactiveFormsModule,
     RouterModule,

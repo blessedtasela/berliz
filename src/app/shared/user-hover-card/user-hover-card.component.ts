@@ -3,6 +3,7 @@ import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/
 import { Router } from '@angular/router';
 
 import { IconsModule } from 'src/app/icons/icons.module';
+import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 /**
  * A user reference inside an admin table: shows the name/email as an inline
@@ -20,7 +21,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 @Component({
   selector: 'app-user-hover-card',
   standalone: true,
-  imports: [CommonModule, IconsModule],
+  imports: [ClickablePhotoDirective, CommonModule, IconsModule],
   templateUrl: './user-hover-card.component.html'
 })
 export class UserHoverCardComponent {
