@@ -1,11 +1,14 @@
 <nav class="flex flex-col items-center gap-1 w-full">
 
-  <ng-container *ngFor="let item of navItems">
+  <ng-container *ngFor="let item of navItems; let first = first">
+
+    <!-- Section label — no room for text on the icon rail, just a divider (skip before the very first). -->
+    <div *ngIf="item.label && !first" class="w-6 border-t border-gray-800 my-1"></div>
 
     <!-- Separator -->
     <div *ngIf="item.separator" class="w-6 border-t border-gray-800 my-1"></div>
 
-    <a *ngIf="!item.separator" [routerLink]="item.route || ''" class="relative group w-10 h-10 rounded-xl flex items-center justify-center transition"
+    <a *ngIf="!item.separator && !item.label" [routerLink]="item.route || ''" class="relative group w-10 h-10 rounded-xl flex items-center justify-center transition"
       [ngClass]="isActive(item.route || '', item.exact)
         ? 'bg-red-600/20 border border-red-600/30'
         : 'hover:bg-gray-800'">

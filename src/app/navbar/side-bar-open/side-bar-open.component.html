@@ -1,12 +1,17 @@
 <nav class="flex flex-col gap-1 px-3 font-sans">
 
-  <ng-container *ngFor="let item of navItems">
+  <ng-container *ngFor="let item of navItems; let first = first">
+
+    <!-- Section label -->
+    <div *ngIf="item.label" class="px-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider" [ngClass]="first ? 'mb-1' : 'mt-3 mb-1'">
+      {{ item.label }}
+    </div>
 
     <!-- Separator -->
     <div *ngIf="item.separator" class="border-t border-gray-800 my-1 mx-1"></div>
 
     <!-- Nav item -->
-    <a *ngIf="!item.separator" [routerLink]="item.route"  (click)="closeMobileSidebar()"
+    <a *ngIf="!item.separator && !item.label" [routerLink]="item.route"  (click)="closeMobileSidebar()"
       class="flex items-center gap-2.5 px-3 h-10 rounded-lg text-[12.5px] font-medium transition"
       [ngClass]="isActive(item.route || '', item.exact)
         ? 'bg-red-600/20 border border-red-600/30 text-red-400'

@@ -8,6 +8,10 @@ import { DashboardRouteComponent } from './dashboard-route/dashboard-route.compo
 import { DashboardExercisesComponent } from './exercises/dashboard-exercises.component';
 import { ProfileSettingsToggleComponent } from './profile-settings-toggle/profile-settings-toggle.component';
 import { FindProvidersComponent } from './find-providers/find-providers.component';
+import { DashboardTrainerDetailComponent } from './dashboard-trainer-detail/dashboard-trainer-detail.component';
+import { TrainerGuard } from '../guards/trainer.guard';
+import { CenterGuard } from '../guards/center.guard';
+import { DashboardCenterDetailComponent } from './dashboard-center-detail/dashboard-center-detail.component';
 
 import { UserModule } from '../user/user.module';
 import { UserProfileComponent } from '../user/user-profile/user-profile.component';
@@ -457,8 +461,8 @@ const dashboardRoutes: Routes = [
       // its topbar allowlist, this renders inside the dashboard chrome
       // automatically — no separate wrapper components needed.
       { path: 'find-providers', component: FindProvidersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Find a Provider', expectedRole: expectedRoleAll } },
-      { path: 'find-trainers', loadChildren: () => import('../trainers/trainers-feature.module').then(m => m.TrainersFeatureModule), canActivate: [AuthGuard], data: { breadcrumb: 'Find a Trainer', expectedRole: expectedRoleAll } },
-      { path: 'find-centers', loadChildren: () => import('../centers/centers-feature.module').then(m => m.CentersFeatureModule), canActivate: [AuthGuard], data: { breadcrumb: 'Find a Center', expectedRole: expectedRoleAll } },
+      { path: 'find-trainers/:name', component: DashboardTrainerDetailComponent, canActivate: [AuthGuard, TrainerGuard], data: { breadcrumb: { alias: 'trainerName' }, expectedRole: expectedRoleAll } },
+      { path: 'find-centers/:id/:name', component: DashboardCenterDetailComponent, canActivate: [AuthGuard, CenterGuard], data: { breadcrumb: { alias: 'centerName' }, expectedRole: expectedRoleAll } },
     ]
   }
 ];

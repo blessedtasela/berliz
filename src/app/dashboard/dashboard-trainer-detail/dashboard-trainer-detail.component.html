@@ -1,0 +1,219 @@
+<!-- ═══════════════════════════════════════════════
+     DASHBOARD-NATIVE TRAINER PROFILE
+     Same data/logic as the public /trainers/:name page (this component
+     extends it), light dashboard theme instead of the public dark one.
+════════════════════════════════════════════════ -->
+
+<!-- ── RESOLVING ─────────────────────────────────────────────────────── -->
+<div *ngIf="!resolved" class="flex flex-col items-center justify-center py-24 gap-4 text-center font-sans">
+    <div class="w-12 h-12 rounded-full border-2 border-gray-200 border-t-red-600 animate-spin"></div>
+    <p class="text-xs text-gray-400">Loading profile…</p>
+</div>
+
+<!-- ── NOT FOUND ─────────────────────────────────────────────────────── -->
+<div *ngIf="resolved && notFound" class="flex flex-col items-center justify-center py-24 gap-5 text-center font-sans max-w-sm mx-auto">
+    <div class="w-16 h-16 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+        <i-feather name="user-x" class="text-gray-300" style="width:26px;height:26px;"></i-feather>
+    </div>
+    <div class="flex flex-col gap-1.5">
+        <h1 class="text-sm font-bold text-gray-900">Trainer not found</h1>
+        <p class="text-xs text-gray-400 leading-relaxed">This profile is no longer available, or the link is incorrect.</p>
+    </div>
+    <a routerLink="/dashboard/find-providers" class="px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold
+            hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+        <i-feather name="arrow-left" style="width:12px;height:12px;"></i-feather>
+        Back to Find a Provider
+    </a>
+</div>
+
+<!-- ── PROFILE ───────────────────────────────────────────────────────── -->
+<section *ngIf="resolved && !notFound" class="font-sans flex flex-col gap-4 mt-4">
+
+    <a routerLink="/dashboard/find-providers" class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-gray-400 hover:text-red-600 transition w-fit">
+        <i-feather name="arrow-left" style="width:11px;height:11px;"></i-feather>
+        Find a Provider
+    </a>
+
+    <!-- Hero -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-5 flex flex-col sm:flex-row gap-5 sm:items-center">
+        <img [src]="photoUrl" [alt]="trainer?.name" (error)="onImageError($event)"
+            class="w-24 h-24 rounded-2xl object-cover object-top border border-gray-200 shrink-0 mx-auto sm:mx-0" />
+
+        <div class="flex flex-col gap-2 flex-1 text-center sm:text-left">
+            <span class="text-[10px] font-bold tracking-wider uppercase text-red-600">Berliz Certified Trainer</span>
+            <h1 class="text-lg font-extrabold text-gray-900 uppercase tracking-tight">{{ trainer?.name }}</h1>
+            <p *ngIf="trainer?.motto" class="text-xs text-gray-500 italic leading-relaxed">"{{ trainer?.motto }}"</p>
+            <div class="flex flex-wrap gap-1.5 justify-center sm:justify-start" *ngIf="(trainer?.categories?.length || 0) > 0">
+                <span *ngFor="let cat of trainer?.categories" class="text-[10px] font-semibold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">
+                    {{ cat.name }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div class="bg-white border border-gray-200 rounded-xl px-4 py-3 flex flex-col gap-1">
+            <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Experience</span>
+            <span class="text-sm font-bold text-gray-900 flex items-center gap-1.5">
+                <i-feather name="award" class="text-red-600" style="width:13px;height:13px;"></i-feather>
+                {{ trainer?.experience || '—' }}<span *ngIf="trainer?.experience">&nbsp;yrs</span>
+            </span>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-xl px-4 py-3 flex flex-col gap-1">
+            <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Likes</span>
+            <span class="text-sm font-bold text-gray-900 flex items-center gap-1.5">
+                <i-feather name="heart" class="text-red-600" style="width:13px;height:13px;"></i-feather>
+                {{ trainer?.likes || 0 }}
+            </span>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-xl px-4 py-3 flex flex-col gap-1">
+            <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Reviews</span>
+            <span class="text-sm font-bold text-gray-900 flex items-center gap-1.5">
+                <i-feather name="star" class="text-red-600" style="width:13px;height:13px;"></i-feather>
+                {{ trainerReviews.length }}
+            </span>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-xl px-4 py-3 flex flex-col gap-1">
+            <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Available in</span>
+            <span class="text-sm font-bold text-gray-900 flex items-center gap-1.5 truncate">
+                <i-feather name="map-pin" class="text-red-600 shrink-0" style="width:13px;height:13px;"></i-feather>
+                <span class="truncate">{{ primaryLocationLabel }}</span>
+                <span *ngIf="extraLocationCount > 0" class="text-gray-400 shrink-0">+{{ extraLocationCount }}</span>
+            </span>
+        </div>
+        <div class="col-span-2 sm:col-span-1 bg-white border border-gray-200 rounded-xl px-4 py-3 flex flex-col gap-1">
+            <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Coaching style</span>
+            <span class="text-sm font-bold text-gray-900 flex items-center gap-1.5">
+                <i-feather name="video" class="text-red-600" style="width:13px;height:13px;"></i-feather>
+                {{ serviceModeLabel }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Book a session -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="calendar" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Ready to train?</h2>
+                <p class="text-xs text-gray-400">Book a session with {{ trainer?.name }} — pick a date and time that works for you.</p>
+            </div>
+        </div>
+        <button type="button" (click)="bookSession()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2 shrink-0 w-full sm:w-auto justify-center">
+            <i-feather name="calendar" style="width:13px;height:13px;"></i-feather>
+            Book a session
+        </button>
+    </div>
+
+    <!-- Introduction -->
+    <div *ngIf="trainerIntroduction?.introduction" class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
+        <h2 class="text-sm font-bold text-gray-900">Meet {{ trainer?.name }}</h2>
+        <p class="text-xs text-gray-500 leading-relaxed whitespace-pre-line">{{ trainerIntroduction?.introduction }}</p>
+    </div>
+
+    <!-- Benefits -->
+    <div *ngIf="(trainerBenefits?.benefits?.length || 0) > 0" class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
+        <h2 class="text-sm font-bold text-gray-900">Training benefits</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div *ngFor="let benefit of trainerBenefits?.benefits" class="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 rounded-lg px-3 py-2">
+                <i-feather name="check-circle" class="text-red-600 shrink-0" style="width:13px;height:13px;"></i-feather>
+                {{ benefit }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature videos -->
+    <div *ngIf="trainerFeatureVideos.length > 0" class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
+        <h2 class="text-sm font-bold text-gray-900">Featured videos</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div *ngFor="let fv of trainerFeatureVideos" class="flex flex-col gap-2">
+                <video *ngIf="fv.video?.videoUrl" [src]="resolveStrapiUrl(fv.video.videoUrl)" controls
+                    class="w-full aspect-video rounded-xl border border-gray-200 bg-black object-cover"></video>
+                <p *ngIf="fv.motivation" class="text-[11px] text-gray-500 leading-relaxed line-clamp-3">{{ fv.motivation }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing -->
+    <div *ngIf="trainerPricing" class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
+        <h2 class="text-sm font-bold text-gray-900">Pricing</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="bg-gray-50 rounded-xl p-4 flex flex-col gap-1">
+                <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Online</span>
+                <span class="text-lg font-extrabold text-gray-900">${{ trainerPricing.priceOnline }}</span>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4 flex flex-col gap-1">
+                <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Hybrid</span>
+                <span class="text-lg font-extrabold text-gray-900">${{ trainerPricing.priceHybrid }}</span>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4 flex flex-col gap-1">
+                <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">In-person</span>
+                <span class="text-lg font-extrabold text-gray-900">${{ trainerPricing.pricePersonal }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Photo album -->
+    <div *ngIf="(trainerPhotoAlbum?.photos?.length || 0) > 0" class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
+        <h2 class="text-sm font-bold text-gray-900">Photos</h2>
+        <p *ngIf="trainerPhotoAlbum?.comment" class="text-xs text-gray-500 leading-relaxed whitespace-pre-line">{{ trainerPhotoAlbum?.comment }}</p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+            <img *ngFor="let photo of trainerPhotoAlbum?.photos" [src]="resolveStrapiUrl(photo.photoUrl)" [alt]="photo.name"
+                class="w-full aspect-square object-cover object-top rounded-xl border border-gray-200" />
+        </div>
+    </div>
+
+    <!-- Video album -->
+    <div *ngIf="(trainerVideoAlbum?.videos?.length || 0) > 0" class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
+        <h2 class="text-sm font-bold text-gray-900">Videos</h2>
+        <p *ngIf="trainerVideoAlbum?.comment" class="text-xs text-gray-500 leading-relaxed whitespace-pre-line">{{ trainerVideoAlbum?.comment }}</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <video *ngFor="let video of trainerVideoAlbum?.videos" [src]="resolveStrapiUrl(video.videoUrl)" controls
+                class="w-full aspect-video rounded-xl border border-gray-200 bg-black object-cover"></video>
+        </div>
+    </div>
+
+    <!-- Reviews -->
+    <div *ngIf="trainerReviews.length > 0" class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
+        <h2 class="text-sm font-bold text-gray-900">{{ trainerReviews.length }} review{{ trainerReviews.length === 1 ? '' : 's' }}</h2>
+        <div class="flex flex-col gap-2">
+            <div *ngFor="let review of trainerReviews" class="bg-gray-50 rounded-xl p-4 flex flex-col gap-1.5">
+                <p class="text-xs text-gray-600 leading-relaxed italic">"{{ review.review }}"</p>
+                <span class="text-[11px] font-semibold text-red-600 uppercase tracking-wide">{{ review.clientName }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonials -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+            <div class="flex flex-col gap-1">
+                <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">
+                    {{ trainerTestimonials.length }} testimonial{{ trainerTestimonials.length === 1 ? '' : 's' }}
+                </span>
+                <h2 class="text-sm font-bold text-gray-900">What people say</h2>
+            </div>
+            <button type="button" (click)="leaveTestimonial()" class="px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold
+                    hover:border-red-300 hover:text-red-600 transition flex items-center gap-1.5 shrink-0">
+                <i-feather name="message-circle" style="width:12px;height:12px;"></i-feather>
+                Leave a testimonial
+            </button>
+        </div>
+
+        <div *ngIf="trainerTestimonials.length > 0" class="flex flex-col gap-2">
+            <div *ngFor="let testimonial of trainerTestimonials" class="bg-gray-50 rounded-xl p-4 flex flex-col gap-2">
+                <p class="text-xs text-gray-600 leading-relaxed italic">"{{ testimonial.testimonial }}"</p>
+                <div class="flex items-center justify-between gap-2 pt-2 border-t border-gray-200">
+                    <span class="text-[11px] font-semibold text-red-600 uppercase tracking-wide truncate">{{ testimonialAuthor(testimonial) }}</span>
+                    <span class="text-[11px] text-gray-400 shrink-0">{{ testimonial.date | date:'mediumDate' }}</span>
+                </div>
+            </div>
+        </div>
+        <p *ngIf="trainerTestimonials.length === 0" class="text-xs text-gray-400">No testimonials yet — be the first to share your experience.</p>
+    </div>
+
+</section>

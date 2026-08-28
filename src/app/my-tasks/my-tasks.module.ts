@@ -12,6 +12,7 @@ import { AssignTaskModalComponent } from './assign-task-modal/assign-task-modal.
 // which WorkoutsModule declares and exports. WorkoutsModule does not import
 // MyTasksModule, so this is a one-way edge — no circular module dependency.
 import { WorkoutsModule } from '../workouts/workouts.module';
+import { SharedModule } from '../shared/shared.module';
 
 
 
