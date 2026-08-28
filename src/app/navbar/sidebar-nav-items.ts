@@ -23,6 +23,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { name: 'Dashboard', icon: 'package', route: '/dashboard', exact: true },
   { name: 'Notifications', icon: 'inbox', route: '/dashboard/my-notifications' },
   { name: 'Messages', icon: 'message-circle', route: '/dashboard/messages' },
+  { name: 'Timeline', icon: 'file-text', route: '/dashboard/timeline' },
   { name: 'Connections', icon: 'users', route: '/dashboard/connections' },
   { name: 'Members', icon: 'grid', route: '/dashboard/member-directory' },
 

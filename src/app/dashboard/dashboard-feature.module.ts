@@ -477,6 +477,14 @@ const dashboardRoutes: Routes = [
         canActivate: [AuthGuard],
         data: { breadcrumb: 'Profile', expectedRole: expectedRoleAll }
       },
+
+      // Your own timeline — compose box + Feed/My Timeline toggle.
+      {
+        path: 'timeline',
+        loadComponent: () => import('./dashboard-timeline/dashboard-timeline.component').then(m => m.DashboardTimelineComponent),
+        canActivate: [AuthGuard],
+        data: { breadcrumb: 'Timeline', expectedRole: expectedRoleAll }
+      },
     ]
   }
 ];

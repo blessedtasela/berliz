@@ -136,7 +136,7 @@
 
                     <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ post.content }}</p>
 
-                    <img *ngIf="post.photoUrl" [src]="post.photoUrl" alt=""
+                    <img *ngIf="post.photoUrl" [src]="post.photoUrl | strapiUrl" alt=""
                         class="w-full max-h-96 object-cover rounded-xl border border-gray-100" />
 
                     <div class="border-t border-gray-100 pt-2 flex items-center gap-1.5">

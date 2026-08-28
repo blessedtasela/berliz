@@ -1,0 +1,132 @@
+<!-- ═══════════════════════════════════════════════
+     TIMELINE  /dashboard/timeline
+     Compose + Feed/My Timeline toggle. Light dashboard theme.
+════════════════════════════════════════════════ -->
+
+<section class="font-sans flex flex-col gap-4 mt-4 max-w-2xl mx-auto">
+
+    <!-- Page header -->
+    <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="activity" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <h1 class="text-sm font-bold text-gray-900">Timeline</h1>
+                <p class="text-[11px] text-gray-400">Share an update, and see what your connections are up to</p>
+            </div>
+        </div>
+        <app-refresh-button [loading]="loading" (refresh)="refresh()"></app-refresh-button>
+    </div>
+
+    <!-- ── COMPOSE ───────────────────────────────────────────────────────── -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+        <div class="flex items-start gap-3">
+            <img [src]="myPhotoSrc" alt="" class="w-9 h-9 rounded-full object-cover object-top border border-gray-200 shrink-0" />
+            <textarea [(ngModel)]="draftContent" rows="3" placeholder="Share an update…"
+                class="flex-1 resize-none bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-900
+                       placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition"></textarea>
+        </div>
+
+        <!-- Photo preview / uploader -->
+        <div *ngIf="uploadedPhoto" class="relative w-fit">
+            <img [src]="uploadedPhoto.photoUrl | strapiUrl" alt="" class="max-h-40 rounded-xl border border-gray-200" />
+            <button type="button" (click)="removePhoto()"
+                class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gray-900 text-white flex items-center justify-center
+                       hover:bg-black transition">
+                <i-feather name="x" style="width:12px;height:12px;"></i-feather>
+            </button>
+        </div>
+
+        <p *ngIf="uploadError" class="text-[11px] text-red-600">{{ uploadError }}</p>
+
+        <div class="flex items-center justify-between gap-2 pt-1 border-t border-gray-100">
+            <label class="flex items-center gap-1.5 text-[11px] font-semibold text-gray-500 hover:text-gray-900
+                          cursor-pointer transition px-2 py-1.5 rounded-lg hover:bg-gray-50">
+                <i-feather *ngIf="!uploading" name="image" style="width:14px;height:14px;"></i-feather>
+                <i-feather *ngIf="uploading" name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>
+                {{ uploading ? 'Uploading…' : 'Add photo' }}
+                <input type="file" accept="image/jpeg,image/png,image/webp" class="hidden"
+                    [disabled]="uploading || !!uploadedPhoto" (change)="onFileSelected($event)" />
+            </label>
+
+            <button type="button" (click)="submitPost()" [disabled]="!canPost"
+                class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-1.5
+                       disabled:opacity-50 disabled:cursor-not-allowed">
+                <i-feather *ngIf="posting" name="loader" class="animate-spin" style="width:12px;height:12px;"></i-feather>
+                Post
+            </button>
+        </div>
+    </div>
+
+    <!-- ── TAB TOGGLE ────────────────────────────────────────────────────── -->
+    <div class="bg-gray-100 rounded-xl p-1 flex gap-1 w-fit">
+        <button type="button" (click)="setTab('feed')"
+            class="px-4 py-1.5 rounded-lg text-xs font-semibold transition"
+            [ngClass]="tab === 'feed' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'">
+            Feed
+        </button>
+        <button type="button" (click)="setTab('mine')"
+            class="px-4 py-1.5 rounded-lg text-xs font-semibold transition"
+            [ngClass]="tab === 'mine' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'">
+            My Timeline
+        </button>
+    </div>
+
+    <!-- ── FEED / MY TIMELINE ────────────────────────────────────────────── -->
+    <div *ngIf="loading && posts.length === 0" class="bg-white border border-gray-200 rounded-2xl p-10 flex items-center justify-center">
+        <div class="w-8 h-8 rounded-full border-2 border-gray-200 border-t-red-600 animate-spin"></div>
+    </div>
+
+    <div *ngFor="let post of posts; trackBy: trackByPostId"
+        class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
+
+        <div class="flex items-center justify-between gap-2">
+            <a [routerLink]="isMine(post) ? null : ['/dashboard/user', post.authorId]"
+                class="flex items-center gap-2.5 min-w-0" [class.hover:opacity-80]="!isMine(post)">
+                <div class="w-8 h-8 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                    <i-feather name="user" class="text-red-600" style="width:14px;height:14px;"></i-feather>
+                </div>
+                <div class="flex flex-col leading-tight min-w-0">
+                    <span class="text-xs font-bold text-gray-900 truncate">{{ post.authorName }}{{ isMine(post) ? ' (You)' : '' }}</span>
+                    <span class="text-[10px] text-gray-400">{{ post.date | date:'mediumDate' }}</span>
+                </div>
+            </a>
+
+            <button *ngIf="isMine(post)" type="button" (click)="deletePost(post)"
+                class="text-gray-300 hover:text-red-600 transition p-1">
+                <i-feather name="trash-2" style="width:14px;height:14px;"></i-feather>
+            </button>
+        </div>
+
+        <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ post.content }}</p>
+
+        <img *ngIf="post.photoUrl" [src]="post.photoUrl | strapiUrl" alt=""
+            class="w-full max-h-96 object-cover rounded-xl border border-gray-100" />
+
+        <div class="border-t border-gray-100 pt-2 flex items-center gap-1.5">
+            <button type="button" (click)="toggleLike(post)"
+                class="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition"
+                [class.text-red-600]="post.likedByMe" [class.bg-red-50]="post.likedByMe"
+                [class.text-gray-400]="!post.likedByMe" [class.hover:bg-gray-50]="!post.likedByMe">
+                <i-feather name="heart" style="width:13px;height:13px;" [attr.fill]="post.likedByMe ? 'currentColor' : 'none'"></i-feather>
+                {{ post.likes }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Empty -->
+    <div *ngIf="!loading && posts.length === 0" class="bg-white border border-gray-200 rounded-2xl p-14 flex flex-col items-center justify-center gap-3 text-center">
+        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+            <i-feather name="activity" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        </div>
+        <p class="text-sm font-bold text-gray-900">
+            {{ tab === 'feed' ? 'Nothing here yet' : 'No posts yet' }}
+        </p>
+        <p class="text-xs text-gray-400 max-w-xs leading-relaxed">
+            {{ tab === 'feed' ? 'Posts from you and your connections will show up here.' : 'Share your first update above.' }}
+        </p>
+    </div>
+
+</section>
