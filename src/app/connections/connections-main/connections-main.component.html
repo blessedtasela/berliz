@@ -36,13 +36,13 @@
 
         <div *ngIf="!searchLoading && searchResults.length > 0" class="flex flex-col divide-y divide-gray-100">
             <div *ngFor="let member of searchResults" class="flex items-center justify-between gap-3 py-2">
-                <div class="flex items-center gap-2.5 min-w-0">
+                <a [routerLink]="['/dashboard/user', member.id]" class="flex items-center gap-2.5 min-w-0 hover:opacity-80 transition">
                     <img [src]="photoSrc(member)" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
                     <div class="min-w-0">
                         <p class="text-xs font-bold text-gray-900 truncate">{{ fullName(member) }}</p>
                         <p class="text-[11px] text-gray-400 truncate capitalize">{{ member.role }}</p>
                     </div>
-                </div>
+                </a>
 
                 <ng-container [ngSwitch]="connectStatus(member)">
                     <span *ngSwitchCase="'self'" class="text-[11px] text-gray-300 shrink-0">You</span>
@@ -131,7 +131,7 @@
             </div>
 
             <div *ngFor="let c of connections" class="flex items-center justify-between gap-3 py-1.5">
-                <div class="flex items-center gap-2.5 min-w-0">
+                <a [routerLink]="['/dashboard/user', c.otherUserId]" class="flex items-center gap-2.5 min-w-0 hover:opacity-80 transition">
                     <div class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
                         <i-feather name="user" class="text-sky-600" style="width:14px;height:14px;"></i-feather>
                     </div>
@@ -139,12 +139,19 @@
                         <p class="text-xs font-bold text-gray-900 truncate">{{ c.otherUserName }}</p>
                         <p class="text-[11px] text-gray-400 truncate capitalize">{{ c.otherUserRole }}</p>
                     </div>
+                </a>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <a [routerLink]="['/dashboard/user', c.otherUserId]"
+                        class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 text-gray-600 hover:border-gray-300 hover:text-gray-900 transition flex items-center gap-1.5">
+                        <i-feather name="user" style="width:11px;height:11px;"></i-feather>
+                        Profile
+                    </a>
+                    <button type="button" (click)="message(c)"
+                        class="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-gray-900 hover:bg-gray-800 text-white transition flex items-center gap-1.5">
+                        <i-feather name="message-circle" style="width:11px;height:11px;"></i-feather>
+                        Message
+                    </button>
                 </div>
-                <button type="button" (click)="message(c)"
-                    class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-gray-900 hover:bg-gray-800 text-white transition flex items-center gap-1.5">
-                    <i-feather name="message-circle" style="width:11px;height:11px;"></i-feather>
-                    Message
-                </button>
             </div>
         </div>
 

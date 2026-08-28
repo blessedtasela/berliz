@@ -1,0 +1,169 @@
+<!-- ═══════════════════════════════════════════════
+     DASHBOARD USER PROFILE + TIMELINE  /dashboard/user/:id
+     Light theme — the dashboard-native replacement for /user/:id.
+════════════════════════════════════════════════ -->
+
+<!-- ── LOADING ───────────────────────────────────────────────────────── -->
+<section *ngIf="loading" class="w-full font-sans min-h-[60vh] flex items-center justify-center px-4">
+    <div class="flex flex-col items-center gap-4 text-center">
+        <div class="w-12 h-12 rounded-full border-2 border-gray-200 border-t-red-600 animate-spin"></div>
+        <p class="text-xs text-gray-400">Loading profile…</p>
+    </div>
+</section>
+
+<!-- ── NOT FOUND ─────────────────────────────────────────────────────── -->
+<section *ngIf="!loading && notFound" class="w-full font-sans min-h-[60vh] flex items-center justify-center px-4">
+    <div class="flex flex-col items-center justify-center gap-6 text-center max-w-sm">
+        <div class="w-20 h-20 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+            <i-feather name="user-x" class="text-gray-400" style="width:32px;height:32px;"></i-feather>
+        </div>
+        <div class="flex flex-col gap-2">
+            <h1 class="text-lg font-bold text-gray-900">Profile not found</h1>
+            <p class="text-sm text-gray-400 leading-relaxed">This profile is no longer available.</p>
+        </div>
+        <a routerLink="/dashboard" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                  hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+            <i-feather name="arrow-left" style="width:13px;height:13px;"></i-feather>
+            Back to Dashboard
+        </a>
+    </div>
+</section>
+
+<!-- ── PROFILE ───────────────────────────────────────────────────────── -->
+<div *ngIf="!loading && profile" class="w-full font-sans px-4 py-8">
+    <div class="max-w-3xl mx-auto flex flex-col gap-5">
+
+        <!-- Hero -->
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col sm:flex-row sm:items-center gap-5">
+
+            <img [src]="photoSrc" [alt]="fullName"
+                class="w-20 h-20 rounded-full object-cover object-top border border-gray-200 bg-gray-50 shrink-0" />
+
+            <div class="flex-1 min-w-0 flex flex-col gap-2">
+                <h1 class="text-xl font-bold text-gray-900 truncate">{{ fullName || 'Berliz member' }}</h1>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-[10px] font-semibold uppercase tracking-wide text-red-600 bg-red-50
+                                 border border-red-100 px-2.5 py-1 rounded-full">
+                        {{ profile.role || 'member' }}
+                    </span>
+                    <span *ngIf="profile.memberSince" class="text-[11px] font-semibold text-gray-400 flex items-center gap-1.5">
+                        <i-feather name="calendar" style="width:12px;height:12px;"></i-feather>
+                        Member since {{ profile.memberSince | date:'MMM yyyy' }}
+                    </span>
+                    <span *ngIf="location" class="text-[11px] font-semibold text-gray-400 flex items-center gap-1.5">
+                        <i-feather name="map-pin" style="width:12px;height:12px;"></i-feather>
+                        {{ location }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Connect / message actions -->
+            <div class="flex items-center gap-2 shrink-0">
+                <ng-container [ngSwitch]="connectStatus">
+                    <button *ngSwitchCase="'none'" type="button" (click)="sendRequest()"
+                        class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                               hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-1.5">
+                        <i-feather name="user-plus" style="width:13px;height:13px;"></i-feather>
+                        Connect
+                    </button>
+                    <button *ngSwitchCase="'outgoing'" type="button" (click)="cancelRequest()"
+                        class="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200
+                               hover:bg-gray-200 active:scale-[0.98] transition flex items-center gap-1.5">
+                        <i-feather name="clock" style="width:13px;height:13px;"></i-feather>
+                        Requested
+                    </button>
+                    <button *ngSwitchCase="'incoming'" type="button" (click)="acceptRequest()"
+                        class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                               hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-1.5">
+                        <i-feather name="check" style="width:13px;height:13px;"></i-feather>
+                        Accept request
+                    </button>
+                    <button *ngSwitchCase="'connected'" type="button" (click)="message()"
+                        class="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-900 text-white
+                               hover:bg-black active:scale-[0.98] transition flex items-center gap-1.5">
+                        <i-feather name="message-circle" style="width:13px;height:13px;"></i-feather>
+                        Message
+                    </button>
+                </ng-container>
+            </div>
+        </div>
+
+        <!-- ── PRIVATE STATE ─────────────────────────────────────────── -->
+        <div *ngIf="isPrivate" class="bg-white border border-gray-200 rounded-2xl p-10
+                    flex flex-col items-center justify-center gap-3 text-center">
+            <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+                <i-feather name="lock" class="text-gray-400" style="width:22px;height:22px;"></i-feather>
+            </div>
+            <p class="text-sm font-bold text-gray-900">This profile is private</p>
+            <p class="text-[11px] text-gray-400 max-w-xs leading-relaxed">
+                {{ (fullName || 'This member') + ' keeps their bio and workouts to themselves.' }}
+            </p>
+        </div>
+
+        <ng-container *ngIf="!isPrivate">
+
+            <!-- Bio -->
+            <div *ngIf="profile.bio" class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-2">
+                <span class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">About</span>
+                <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ profile.bio }}</p>
+            </div>
+
+            <!-- ── TIMELINE ──────────────────────────────────────────── -->
+            <div class="flex flex-col gap-3">
+                <div class="flex items-center justify-between gap-2">
+                    <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Timeline</h2>
+                    <app-refresh-button [loading]="postsLoading" (refresh)="refresh()"></app-refresh-button>
+                </div>
+
+                <div *ngIf="postsLoading && posts.length === 0" class="bg-white border border-gray-200 rounded-2xl p-10
+                            flex items-center justify-center">
+                    <div class="w-8 h-8 rounded-full border-2 border-gray-200 border-t-red-600 animate-spin"></div>
+                </div>
+
+                <div *ngFor="let post of posts; trackBy: trackByPostId"
+                    class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
+
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <img [src]="photoSrc" [alt]="fullName" class="w-8 h-8 rounded-full object-cover object-top border border-gray-200 shrink-0" />
+                            <div class="flex flex-col leading-tight min-w-0">
+                                <span class="text-xs font-bold text-gray-900 truncate">{{ fullName }}</span>
+                                <span class="text-[10px] text-gray-400">{{ post.date | date:'mediumDate' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ post.content }}</p>
+
+                    <img *ngIf="post.photoUrl" [src]="post.photoUrl" alt=""
+                        class="w-full max-h-96 object-cover rounded-xl border border-gray-100" />
+
+                    <div class="border-t border-gray-100 pt-2 flex items-center gap-1.5">
+                        <button type="button" (click)="toggleLike(post)"
+                            class="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition"
+                            [class.text-red-600]="post.likedByMe" [class.bg-red-50]="post.likedByMe"
+                            [class.text-gray-400]="!post.likedByMe" [class.hover:bg-gray-50]="!post.likedByMe">
+                            <i-feather name="heart" style="width:13px;height:13px;" [attr.fill]="post.likedByMe ? 'currentColor' : 'none'"></i-feather>
+                            {{ post.likes }}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Empty -->
+                <div *ngIf="!postsLoading && posts.length === 0" class="bg-white border border-gray-200 rounded-2xl p-10
+                            flex flex-col items-center justify-center gap-3 text-center">
+                    <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+                        <i-feather name="file-text" class="text-gray-400" style="width:22px;height:22px;"></i-feather>
+                    </div>
+                    <p class="text-sm font-bold text-gray-900">No posts yet</p>
+                    <p class="text-[11px] text-gray-400 max-w-xs">
+                        {{ (fullName || 'This member') + ' hasn\'t shared anything yet.' }}
+                    </p>
+                </div>
+            </div>
+
+        </ng-container>
+
+    </div>
+</div>

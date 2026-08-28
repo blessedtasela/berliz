@@ -55,22 +55,24 @@
         <div *ngFor="let member of members; trackBy: trackById"
             class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col items-center gap-3 text-center hover:border-red-200 transition">
 
-            <img [src]="photoSrc(member)" [alt]="fullName(member)"
-                class="w-16 h-16 rounded-full object-cover object-top border-2 border-gray-100 shrink-0" />
+            <a [routerLink]="['/dashboard/user', member.id]" class="flex flex-col items-center gap-3 w-full">
+                <img [src]="photoSrc(member)" [alt]="fullName(member)"
+                    class="w-16 h-16 rounded-full object-cover object-top border-2 border-gray-100 shrink-0" />
 
-            <div class="flex flex-col gap-1.5 min-w-0 w-full">
-                <h3 class="text-sm font-bold text-gray-900 truncate">{{ fullName(member) || 'Berliz member' }}</h3>
+                <div class="flex flex-col gap-1.5 min-w-0 w-full">
+                    <h3 class="text-sm font-bold text-gray-900 truncate hover:text-red-600 transition">{{ fullName(member) || 'Berliz member' }}</h3>
 
-                <span class="self-center text-[10px] font-semibold uppercase tracking-wide text-red-600
-                             bg-red-50 border border-red-100 px-2.5 py-0.5 rounded-full">
-                    {{ member.role || 'member' }}
-                </span>
+                    <span class="self-center text-[10px] font-semibold uppercase tracking-wide text-red-600
+                                 bg-red-50 border border-red-100 px-2.5 py-0.5 rounded-full">
+                        {{ member.role || 'member' }}
+                    </span>
 
-                <span *ngIf="location(member)" class="text-[11px] text-gray-400 flex items-center justify-center gap-1.5">
-                    <i-feather name="map-pin" style="width:11px;height:11px;"></i-feather>
-                    {{ location(member) }}
-                </span>
-            </div>
+                    <span *ngIf="location(member)" class="text-[11px] text-gray-400 flex items-center justify-center gap-1.5">
+                        <i-feather name="map-pin" style="width:11px;height:11px;"></i-feather>
+                        {{ location(member) }}
+                    </span>
+                </div>
+            </a>
 
             <!-- Connection action -->
             <ng-container [ngSwitch]="connectStatus(member)">

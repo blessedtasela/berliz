@@ -467,6 +467,16 @@ const dashboardRoutes: Routes = [
       { path: 'find-providers/category/:id/:name', component: DashboardCategoryDetailComponent, canActivate: [AuthGuard], data: { breadcrumb: { alias: 'categoryName' }, expectedRole: expectedRoleAll } },
       { path: 'find-trainers/:name', component: DashboardTrainerDetailComponent, canActivate: [AuthGuard, TrainerGuard], data: { breadcrumb: { alias: 'trainerName' }, expectedRole: expectedRoleAll } },
       { path: 'find-centers/:id/:name', component: DashboardCenterDetailComponent, canActivate: [AuthGuard, CenterGuard], data: { breadcrumb: { alias: 'centerName' }, expectedRole: expectedRoleAll } },
+
+      // View another member's profile + timeline — dashboard-native
+      // replacement for the public /user/:id page, linked from Members and
+      // Connections so a signed-in user never has to leave the dashboard.
+      {
+        path: 'user/:id',
+        loadComponent: () => import('./dashboard-user-profile/dashboard-user-profile.component').then(m => m.DashboardUserProfileComponent),
+        canActivate: [AuthGuard],
+        data: { breadcrumb: 'Profile', expectedRole: expectedRoleAll }
+      },
     ]
   }
 ];
