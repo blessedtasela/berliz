@@ -36,6 +36,7 @@ import { BreadcrumbModule } from 'xng-breadcrumb';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { NotificationDropdownComponent } from './notification-dropdown/notification-dropdown.component';
 import { GlobalSearchComponent } from './global-search/global-search.component';
+import { MessagePopupComponent } from '../messages/message-popup/message-popup.component';
 
 
 @NgModule({
@@ -70,6 +71,7 @@ import { GlobalSearchComponent } from './global-search/global-search.component';
     NavbarBreadcrumbComponent,
     NotificationDropdownComponent,
     GlobalSearchComponent,
+    MessagePopupComponent,
   ],
   imports: [
     CommonModule,
@@ -90,7 +92,8 @@ import { GlobalSearchComponent } from './global-search/global-search.component';
     SideBarOpenComponent,
     SideBarCloseComponent,
     NotificationDropdownComponent,
-    GlobalSearchComponent
+    GlobalSearchComponent,
+    MessagePopupComponent
 
   ],
   providers: [

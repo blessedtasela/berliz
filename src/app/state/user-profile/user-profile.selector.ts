@@ -52,6 +52,16 @@ export const selectSavingSidebarDisplay = createSelector(
   state => state.savingSidebarDisplay
 );
 
+export const selectMyMessagePopupEnabled = createSelector(
+  selectUserProfileState,
+  state => state.myMessagePopupEnabled
+);
+
+export const selectSavingMessagePopupEnabled = createSelector(
+  selectUserProfileState,
+  state => state.savingMessagePopupEnabled
+);
+
 // ── PUBLIC DIRECTORY ──────────────────────────────────────────────────────
 export const selectPublicDirectory = createSelector(
   selectUserProfileState,

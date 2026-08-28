@@ -78,6 +78,26 @@ export const userProfileReducer = createReducer(
     error,
   })),
 
+  // ── MY MESSAGE POPUP ENABLED ─────────────────────────────────────────────
+  on(A.updateMessagePopupEnabled, state => ({
+    ...state,
+    savingMessagePopupEnabled: true,
+    error: null,
+  })),
+
+  on(A.updateMessagePopupEnabledSuccess, (state, { messagePopupEnabled }) => ({
+    ...state,
+    myMessagePopupEnabled: messagePopupEnabled,
+    savingMessagePopupEnabled: false,
+    error: null,
+  })),
+
+  on(A.updateMessagePopupEnabledFailure, (state, { error }) => ({
+    ...state,
+    savingMessagePopupEnabled: false,
+    error,
+  })),
+
   // ── PUBLIC DIRECTORY ──────────────────────────────────────────────────────
   on(A.loadPublicDirectory, state => ({
     ...state,

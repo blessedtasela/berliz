@@ -63,6 +63,24 @@ export const updateSidebarDisplayFailure = createAction(
 );
 
 // =============================================================================
+// MY MESSAGE POPUP ENABLED  — authenticated, affects the caller only
+// =============================================================================
+export const updateMessagePopupEnabled = createAction(
+  '[User Profile] Update Message Popup Enabled',
+  props<{ messagePopupEnabled: boolean }>()
+);
+
+export const updateMessagePopupEnabledSuccess = createAction(
+  '[User Profile] Update Message Popup Enabled Success',
+  props<Res<string> & { messagePopupEnabled: boolean }>()
+);
+
+export const updateMessagePopupEnabledFailure = createAction(
+  '[User Profile] Update Message Popup Enabled Failure',
+  props<Err>()
+);
+
+// =============================================================================
 // PUBLIC DIRECTORY  — /members, no auth required
 // =============================================================================
 export const loadPublicDirectory = createAction(

@@ -69,6 +69,23 @@ export class UserProfileEffects {
     )
   );
 
+  // switchMap for the same out-of-order reason as updateProfileVisibility$ above.
+  updateMessagePopupEnabled$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(A.updateMessagePopupEnabled),
+      switchMap(({ messagePopupEnabled }) =>
+        this.userService.updateMessagePopupEnabled(messagePopupEnabled).pipe(
+          map(response => A.updateMessagePopupEnabledSuccess({ response, messagePopupEnabled })),
+          catchError(err =>
+            of(A.updateMessagePopupEnabledFailure({
+              error: err.error?.message || 'Could not update your message popup setting'
+            }))
+          )
+        )
+      )
+    )
+  );
+
   // Only the newest search/role combo matters — switchMap so a fast typist
   // can't land a stale response on top of the current filter.
   loadPublicDirectory$ = createEffect(() =>

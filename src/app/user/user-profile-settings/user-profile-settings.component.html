@@ -127,6 +127,59 @@
         </div>
     </div>
 
+    <!-- ═══════════ MESSAGE POPUP ═══════════
+         On by default. Controls only the floating chat bubble that follows you
+         around the app — the full messaging center at /dashboard/messages always
+         works regardless of this setting. -->
+    <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+
+        <div>
+            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Message popup</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                A floating chat bubble follows you around the app so you never have to leave a
+                page to reply. Turn it off to use the messaging center only.
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div class="flex items-start justify-between gap-4">
+
+            <div class="flex items-start gap-2.5 min-w-0">
+
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                    [ngClass]="messagePopupEnabled ? 'bg-green-50 border border-green-200' : 'bg-gray-100 border border-gray-200'">
+                    <i-feather [name]="messagePopupEnabled ? 'message-circle' : 'message-square'"
+                        style="width:14px;height:14px;"
+                        [ngClass]="messagePopupEnabled ? 'text-green-600' : 'text-gray-400'"></i-feather>
+                </div>
+
+                <div class="flex flex-col gap-0.5 min-w-0">
+                    <p class="text-xs font-bold text-gray-900">
+                        {{ messagePopupEnabled ? 'Popup shown everywhere' : 'Popup turned off' }}
+                    </p>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        {{ messagePopupEnabled
+                            ? 'The chat bubble and unread badge appear on every page.'
+                            : 'Use the messages page from the sidebar to read and reply.' }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Switch -->
+            <button type="button" role="switch" [attr.aria-checked]="messagePopupEnabled"
+                aria-label="Show message popup everywhere" (click)="toggleMessagePopupEnabled()"
+                [disabled]="savingMessagePopupEnabled"
+                class="relative w-11 h-6 rounded-full transition shrink-0 disabled:opacity-60
+                       disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
+                [ngClass]="messagePopupEnabled ? 'bg-red-600' : 'bg-gray-200'">
+                <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
+                    [ngClass]="messagePopupEnabled ? 'translate-x-5' : 'translate-x-0'"></span>
+            </button>
+
+        </div>
+    </div>
+
     <!-- ═══════════ PROGRESS SHARING ═══════════
          Opt-in per trainer — mirrors the public profile visibility switch above.
          Nothing is shared with any trainer until the client turns them on here. -->

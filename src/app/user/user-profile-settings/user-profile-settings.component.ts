@@ -26,8 +26,11 @@ import {
   updateProfileVisibilitySuccess,
   updateSidebarDisplayFailure,
   updateSidebarDisplaySuccess,
+  updateMessagePopupEnabled,
+  updateMessagePopupEnabledFailure,
+  updateMessagePopupEnabledSuccess,
 } from 'src/app/state/user-profile/user-profile.actions';
-import { selectSavingVisibility, selectSavingSidebarDisplay } from 'src/app/state/user-profile/user-profile.selector';
+import { selectSavingVisibility, selectSavingSidebarDisplay, selectSavingMessagePopupEnabled } from 'src/app/state/user-profile/user-profile.selector';
 import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 
 @Component({
@@ -60,6 +63,13 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   // ── Sidebar display preference ──────────────────────────────────────────
   savingSidebarDisplay = false;
 
+  // ── Message popup preference ────────────────────────────────────────────
+  /** Value on the user record from /user/getUser. On until proven otherwise. */
+  private serverMessagePopupEnabled = true;
+  /** Set once the user flips the toggle in this session; takes precedence. */
+  private localMessagePopupEnabled: boolean | null = null;
+  savingMessagePopupEnabled = false;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -86,6 +96,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
         if (user) {
           this.user = user;
           this.serverVisibility = user.profileVisibility === 'public' ? 'public' : 'private';
+          this.serverMessagePopupEnabled = user.messagePopupEnabled !== false;
           this.initOrPatchForm();
           this.originalValue = structuredClone(user);
           this.updateUserForm.patchValue(user);
@@ -137,6 +148,29 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     this.actions$
       .pipe(ofType(updateSidebarDisplayFailure), takeUntil(this.destroy$))
       .subscribe(({ error }) => this.snackBarService.openSnackBar(error, 'error'));
+
+    // Message popup — in-flight flag plus success/failure feedback.
+    this.store.select(selectSavingMessagePopupEnabled)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(saving => this.savingMessagePopupEnabled = saving);
+
+    this.actions$
+      .pipe(ofType(updateMessagePopupEnabledSuccess), takeUntil(this.destroy$))
+      .subscribe(({ response, messagePopupEnabled }) => {
+        this.localMessagePopupEnabled = messagePopupEnabled;
+        this.snackBarService.openSnackBar(
+          response?.message || (messagePopupEnabled
+            ? 'Message popup turned on'
+            : 'Message popup turned off'),
+          ''
+        );
+        // Keep /user/getUser in sync so a reload doesn't show the old value.
+        this.store.dispatch(refreshUser());
+      });
+
+    this.actions$
+      .pipe(ofType(updateMessagePopupEnabledFailure), takeUntil(this.destroy$))
+      .subscribe(({ error }) => this.snackBarService.openSnackBar(error, 'error'));
   }
 
   // -------------------------
@@ -180,6 +214,21 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     // the new preference (any manual toggle does) — no separate dispatch needed
     // here, it would just be a duplicate save.
     this.sidebarState.setMode(display);
+  }
+
+  // -------------------------
+  // MESSAGE POPUP
+  // -------------------------
+
+  /** Locally-chosen value wins over whatever the last /user/getUser returned. */
+  get messagePopupEnabled(): boolean {
+    return this.localMessagePopupEnabled ?? this.serverMessagePopupEnabled;
+  }
+
+  toggleMessagePopupEnabled(): void {
+    if (this.savingMessagePopupEnabled) return;
+
+    this.store.dispatch(updateMessagePopupEnabled({ messagePopupEnabled: !this.messagePopupEnabled }));
   }
 
   ngOnDestroy() {

@@ -3,7 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Actions } from '@ngrx/effects';
 import { Subject, of } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -13,10 +13,12 @@ import { UserService } from 'src/app/services/user.service';
 import { CountryService } from 'src/app/services/country.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SidebarStateService } from 'src/app/services/sidebar-state.service';
+import { updateMessagePopupEnabled } from 'src/app/state/user-profile/user-profile.actions';
 
 describe('UserProfileSettingsComponent', () => {
   let component: UserProfileSettingsComponent;
   let fixture: ComponentFixture<UserProfileSettingsComponent>;
+  let store: MockStore;
 
   beforeEach(() => {
     const userServiceSpy = jasmine.createSpyObj('UserService', ['updateUser']);
@@ -45,6 +47,9 @@ describe('UserProfileSettingsComponent', () => {
         { provide: SidebarStateService, useValue: sidebarStateSpy }
       ]
     });
+    store = TestBed.inject(MockStore);
+    spyOn(store, 'dispatch').and.callThrough();
+
     fixture = TestBed.createComponent(UserProfileSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -52,5 +57,15 @@ describe('UserProfileSettingsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('toggleMessagePopupEnabled dispatches updateMessagePopupEnabled with the flipped value', () => {
+    (store.dispatch as jasmine.Spy).calls.reset();
+
+    component.toggleMessagePopupEnabled();
+
+    expect(store.dispatch).toHaveBeenCalledWith(
+      updateMessagePopupEnabled({ messagePopupEnabled: !component.messagePopupEnabled })
+    );
   });
 });

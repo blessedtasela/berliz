@@ -242,6 +242,14 @@ export class UserService {
     );
   }
 
+  /** Turns the floating message popup widget on/off for the signed-in user. */
+  updateMessagePopupEnabled(enabled: boolean): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/updateMessagePopupEnabled",
+      { messagePopupEnabled: String(enabled) }
+    );
+  }
+
   /**
    * Public, unauthenticated member directory. Only users with profileVisibility
    * "public" are ever returned. `search` matches first/last name substring;

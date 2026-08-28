@@ -22,6 +22,14 @@ export interface UserProfileState {
   mySidebarDisplay: SidebarDisplay | null;
   savingSidebarDisplay: boolean;
 
+  /**
+   * Last message-popup-enabled value the signed-in user successfully saved. Null
+   * until they change it in this session — the settings page falls back to the
+   * value on the user record from /user/getUser, same pattern as mySidebarDisplay.
+   */
+  myMessagePopupEnabled: boolean | null;
+  savingMessagePopupEnabled: boolean;
+
   /** Anonymous-facing member directory — /members. Backend caps this at 100 rows. */
   directory: PublicDirectoryEntry[];
   directoryLoading: boolean;
@@ -38,6 +46,9 @@ export const initialUserProfileState: UserProfileState = {
 
   mySidebarDisplay: null,
   savingSidebarDisplay: false,
+
+  myMessagePopupEnabled: null,
+  savingMessagePopupEnabled: false,
 
   directory: [],
   directoryLoading: false,

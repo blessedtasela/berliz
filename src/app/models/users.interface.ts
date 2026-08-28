@@ -35,6 +35,9 @@ export interface Users {
     /** "expanded" | "collapsed" | "hidden" — the user's default desktop sidebar display mode. */
     sidebarDisplay?: SidebarDisplay;
 
+    /** Whether the floating message popup widget shows up anywhere in the app. Defaults to true. */
+    messagePopupEnabled?: boolean;
+
     date: string;
     lastUpdate: string;
 
