@@ -69,8 +69,7 @@ export class MyWorkoutsComponent implements OnInit, OnDestroy {
     this.role = (this.authService.getCurrentUserRole() ?? '').toLowerCase();
 
     // Every selected slice is paired with its load dispatch.
-    this.store.dispatch(loadMyWorkouts());
-    this.store.dispatch(loadActiveExercises());
+    this.refresh();
 
     this.subscriptions.push(
       this.store.select(selectMyWorkouts).subscribe(w => this.myWorkouts = w ?? []),
@@ -122,6 +121,13 @@ export class MyWorkoutsComponent implements OnInit, OnDestroy {
   get canAssign(): boolean {
     // The backend currently rejects assignment from a center account.
     return !this.isCenter;
+  }
+
+  refresh(): void {
+    this.store.dispatch(loadMyWorkouts());
+    this.store.dispatch(loadActiveExercises());
+    if (this.templatesRequested) this.store.dispatch(loadWorkoutTemplates());
+    if (this.isTrainer) this.store.dispatch(loadAssignmentsIMade());
   }
 
   // ── Tabs / templates ──────────────────────────────────────────────────────

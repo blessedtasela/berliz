@@ -16,6 +16,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { IconsModule } from '../icons/icons.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FeatherModule } from 'angular-feather';
+import { SharedModule } from '../shared/shared.module';
 import { UserProfileBannerComponent } from './user-profile-banner/user-profile-banner.component';
 import { UserProfileIdentityComponent } from './user-profile-identity/user-profile-identity.component';
 import { UserProfileStatsComponent } from './user-profile-stats/user-profile-stats.component';
@@ -60,6 +61,7 @@ import { StoreModule } from '@ngrx/store';
     ReactiveFormsModule,
     FeatherModule,
     NgSelectModule,
+    SharedModule,
   ]
 })
 export class UserModule { }

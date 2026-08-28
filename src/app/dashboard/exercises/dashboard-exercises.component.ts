@@ -68,16 +68,25 @@ export class DashboardExercisesComponent implements OnInit, OnDestroy {
 
   private subs: Subscription[] = [];
 
+  refreshing = false;
+
   constructor(
     private store: Store,
     private dialog: MatDialog
   ) { }
 
-  ngOnInit(): void {
+  refresh(): void {
+    this.refreshing = true;
     this.store.dispatch(loadActiveExercises());
     this.store.dispatch(loadActiveCategories());
     this.store.dispatch(loadActiveMuscleGroups());
     this.store.dispatch(loadAllCenterEquipment());
+    if (this.isCenter) this.store.dispatch(loadMyCenterEquipment());
+    setTimeout(() => this.refreshing = false, 500);
+  }
+
+  ngOnInit(): void {
+    this.refresh();
 
     this.subs.push(
       this.store.select(selectActiveExercises).subscribe(list => this.exercises = list ?? []),

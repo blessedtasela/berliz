@@ -79,6 +79,10 @@ export class UserProgressComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
+  refresh(): void {
+    this.store.dispatch(ProgressEntryActions.loadMyProgressEntries());
+  }
+
   private emptySlot(): PhotoSlot {
     return { file: null, uploading: false, error: null, uploaded: null };
   }

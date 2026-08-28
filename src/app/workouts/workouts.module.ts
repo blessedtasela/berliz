@@ -7,6 +7,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { FeatherModule } from 'angular-feather';
 
 import { IconsModule } from '../icons/icons.module';
+import { SharedModule } from '../shared/shared.module';
 import { WorkoutBuilderComponent } from './workout-builder/workout-builder.component';
 import { MyWorkoutsComponent } from './my-workouts/my-workouts.component';
 import { AssignWorkoutModalComponent } from './assign-workout-modal/assign-workout-modal.component';
@@ -28,6 +29,7 @@ import { MyAssignedWorkoutsComponent } from './my-assigned-workouts/my-assigned-
     MatDialogModule,
     IconsModule,
     FeatherModule,
+    SharedModule,
   ],
   exports: [
     WorkoutBuilderComponent,

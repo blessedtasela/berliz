@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { IconsModule } from '../icons/icons.module';
 import { FooterModule } from '../footer/footer.module';
 import { NavbarModule } from '../navbar/navbar.module';
+import { SharedModule } from '../shared/shared.module';
 
 import { BookingCardComponent } from './booking-card/booking-card.component';
 import { BookingsEmptyComponent } from './bookings-empty/bookings-empty.component';
@@ -32,7 +33,8 @@ import { EarningsViewComponent } from './earnings-view/earnings-view.component';
     IconsModule,
     FooterModule,
     NavbarModule,
-    RouterModule
+    RouterModule,
+    SharedModule
   ],
   exports: [
     MyBookingsMainComponent,

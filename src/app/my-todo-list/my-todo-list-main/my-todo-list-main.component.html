@@ -1,9 +1,12 @@
 <div class="flex flex-col gap-6">
 
   <!-- Shared Search Panel -->
-  <app-search-panel (stateChange)="onFilterStateChange($event)" [(searchQuery)]="searchQuery"
-    [sortOptions]="todoSortOptions" [placeholder]="placeholder">
-  </app-search-panel>
+  <div class="flex items-center gap-2">
+    <app-search-panel class="flex-1" (stateChange)="onFilterStateChange($event)" [(searchQuery)]="searchQuery"
+      [sortOptions]="todoSortOptions" [placeholder]="placeholder">
+    </app-search-panel>
+    <app-refresh-button [loading]="refreshing" (refresh)="refreshTodos()"></app-refresh-button>
+  </div>
 
   <!-- DASHBOARD (only when NOT filtering) -->
   <ng-container *ngIf="!isFiltering">

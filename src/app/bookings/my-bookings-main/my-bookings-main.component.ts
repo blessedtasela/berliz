@@ -31,6 +31,7 @@ import { genericError } from 'src/validators/form-validators.module';
 export class MyBookingsMainComponent implements OnInit, OnDestroy {
 
   bookings: Booking[] = [];
+  loading = false;
 
   private destroy$ = new Subject<void>();
 
@@ -42,6 +43,12 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.store.select(selectMyBookings)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(bookings => {
+        this.bookings = bookings ?? [];
+        this.loading = false;
+      });
     this.loadBookings();
 
     this.actions$
@@ -62,11 +69,9 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private loadBookings(): void {
+  loadBookings(): void {
+    this.loading = true;
     this.store.dispatch(loadMyBookings());
-    this.store.select(selectMyBookings)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(bookings => this.bookings = bookings ?? []);
   }
 
   get pending(): Booking[] {

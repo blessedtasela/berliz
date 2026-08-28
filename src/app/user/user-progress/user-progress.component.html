@@ -1,14 +1,17 @@
 <section class="font-sans flex flex-col gap-4 mt-4">
 
     <!-- Page header -->
-    <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
-            <i-feather name="trending-up" class="text-emerald-600" style="width:16px;height:16px;"></i-feather>
+    <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
+                <i-feather name="trending-up" class="text-emerald-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <h1 class="text-sm font-bold text-gray-900">My Progress</h1>
+                <p class="text-[11px] text-gray-400">Log your weight, body fat % and progress photos over time</p>
+            </div>
         </div>
-        <div>
-            <h1 class="text-sm font-bold text-gray-900">My Progress</h1>
-            <p class="text-[11px] text-gray-400">Log your weight, body fat % and progress photos over time</p>
-        </div>
+        <app-refresh-button [loading]="loading" (refresh)="refresh()"></app-refresh-button>
     </div>
 
     <!-- Log a new check-in -->

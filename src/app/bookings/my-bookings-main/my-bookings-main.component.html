@@ -12,11 +12,14 @@
             </div>
         </div>
 
-        <a routerLink="/dashboard/find-trainers" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600 text-white
-                text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition shrink-0">
-            <i-feather name="search" style="width:12px;height:12px;"></i-feather>
-            Find a trainer or center
-        </a>
+        <div class="flex items-center gap-2 shrink-0">
+            <app-refresh-button [loading]="loading" (refresh)="loadBookings()"></app-refresh-button>
+            <a routerLink="/dashboard/find-providers" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600 text-white
+                    text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition">
+                <i-feather name="search" style="width:12px;height:12px;"></i-feather>
+                Find a trainer or center
+            </a>
+        </div>
     </div>
 
     <app-bookings-empty *ngIf="bookings.length === 0" message="You haven't booked any sessions yet." [showFindProviderCta]="true"></app-bookings-empty>

@@ -302,17 +302,18 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
     this.subs.push(sub);
   }
 
-  refreshTodos(): void {
-    const sub = this.store.select(selectMyTodos).subscribe(data => {
-      this.allTodos = data;
-      this.filteredTodos = [...data];
-      this.currentPage = 1;
-      this.updatePage();
-      this.selectedTodoIds = [];
-    });
+  /** Was re-subscribing to selectMyTodos on every call (on top of the one
+   *  already set up in ngOnInit) -- every post-CRUD call site below stacked
+   *  one more never-unsubscribed subscription for the life of this component.
+   *  Dispatch-only now; ngOnInit's subscription already reacts to the
+   *  resulting store update. */
+  refreshing = false;
 
-    this.subs.push(sub);
+  refreshTodos(): void {
+    this.refreshing = true;
     this.store.dispatch(loadMyTodos());
+    this.selectedTodoIds = [];
+    setTimeout(() => this.refreshing = false, 500);
   }
 
   get selectionMode(): boolean {
