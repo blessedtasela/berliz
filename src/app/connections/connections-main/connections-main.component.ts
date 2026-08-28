@@ -2,8 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subject, Subscription, takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { Connection } from 'src/app/models/connection.model';
+import { PublicDirectoryEntry } from 'src/app/models/users.interface';
 import * as ConnectionActions from 'src/app/state/connection/connection.actions';
 import {
   selectConnectionError,
@@ -11,16 +13,26 @@ import {
   selectIncomingRequests,
   selectMyConnections,
   selectOutgoingRequests,
+  selectPendingRequests,
 } from 'src/app/state/connection/connection.selectors';
+import { loadPublicDirectory } from 'src/app/state/user-profile/user-profile.actions';
+import {
+  selectPublicDirectory,
+  selectPublicDirectoryLoading,
+} from 'src/app/state/user-profile/user-profile.selector';
 
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { genericError } from 'src/validators/form-validators.module';
+
+type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
 
 /**
  * Manage connection requests: incoming (accept/decline), sent (cancel), and
- * accepted connections (jump into Messages). Sending a NEW request happens
- * from the member directory (/members) where people are actually discovered
- * -- this page is purely for managing requests once they exist.
+ * accepted connections (jump into Messages) -- plus a "Find people" search
+ * to actually send new requests, inlined here instead of sending users out
+ * to the public /members directory (dashboard routes should stay in the
+ * dashboard for a signed-in user).
  */
 @Component({
   selector: 'app-connections-main',
@@ -34,6 +46,14 @@ export class ConnectionsMainComponent implements OnInit, OnDestroy {
   connections: Connection[] = [];
   loading = true;
 
+  // ── Find people ──────────────────────────────────────────────────────────
+  searchTerm = '';
+  searchResults: PublicDirectoryEntry[] = [];
+  searchLoading = false;
+  pendingRequests: Connection[] = [];
+  private currentUserId: number | null = null;
+  private search$ = new Subject<string>();
+
   private subscriptions: Subscription[] = [];
   private destroy$ = new Subject<void>();
 
@@ -41,7 +61,10 @@ export class ConnectionsMainComponent implements OnInit, OnDestroy {
     private store: Store,
     private router: Router,
     private snackBar: SnackBarService,
-  ) { }
+    private authService: AuthService,
+  ) {
+    this.currentUserId = this.authService.getCurrentUserId();
+  }
 
   ngOnInit(): void {
     this.store.dispatch(ConnectionActions.loadPendingRequests());
@@ -51,10 +74,20 @@ export class ConnectionsMainComponent implements OnInit, OnDestroy {
       this.store.select(selectIncomingRequests).pipe(takeUntil(this.destroy$)).subscribe(l => this.incoming = l),
       this.store.select(selectOutgoingRequests).pipe(takeUntil(this.destroy$)).subscribe(l => this.outgoing = l),
       this.store.select(selectMyConnections).pipe(takeUntil(this.destroy$)).subscribe(l => this.connections = l),
+      this.store.select(selectPendingRequests).pipe(takeUntil(this.destroy$)).subscribe(l => this.pendingRequests = l),
       this.store.select(selectConnectionLoading).pipe(takeUntil(this.destroy$)).subscribe(l => this.loading = l),
       this.store.select(selectConnectionError).pipe(takeUntil(this.destroy$)).subscribe(error => {
         if (error) this.snackBar.openSnackBar(error || genericError, 'error');
       }),
+
+      this.store.select(selectPublicDirectory).pipe(takeUntil(this.destroy$)).subscribe(l => this.searchResults = l ?? []),
+      this.store.select(selectPublicDirectoryLoading).pipe(takeUntil(this.destroy$)).subscribe(l => this.searchLoading = l),
+
+      this.search$.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+      ).subscribe(term => this.store.dispatch(loadPublicDirectory({ search: term?.trim() || null, role: null }))),
     );
   }
 
@@ -62,6 +95,11 @@ export class ConnectionsMainComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
     this.subscriptions.forEach(s => s.unsubscribe());
+  }
+
+  refresh(): void {
+    this.store.dispatch(ConnectionActions.loadPendingRequests());
+    this.store.dispatch(ConnectionActions.loadMyConnections());
   }
 
   accept(request: Connection): void {
@@ -78,5 +116,46 @@ export class ConnectionsMainComponent implements OnInit, OnDestroy {
 
   message(connection: Connection): void {
     this.router.navigate(['/dashboard/messages']);
+  }
+
+  // ── Find people ──────────────────────────────────────────────────────────
+
+  onSearchChange(term: string): void {
+    this.searchTerm = term;
+    this.search$.next(term);
+  }
+
+  connectStatus(member: PublicDirectoryEntry): ConnectStatus {
+    if (this.currentUserId != null && member.id === this.currentUserId) return 'self';
+    if (this.connections.some(c => c.otherUserId === member.id)) return 'connected';
+    const pending = this.pendingRequests.find(c => c.otherUserId === member.id);
+    if (pending) return pending.direction === 'incoming' ? 'incoming' : 'outgoing';
+    return 'none';
+  }
+
+  private pendingRequestFor(member: PublicDirectoryEntry): Connection | undefined {
+    return this.pendingRequests.find(c => c.otherUserId === member.id);
+  }
+
+  sendRequest(member: PublicDirectoryEntry): void {
+    this.store.dispatch(ConnectionActions.sendConnectionRequest({ recipientId: member.id }));
+  }
+
+  cancelSearchRequest(member: PublicDirectoryEntry): void {
+    const request = this.pendingRequestFor(member);
+    if (request) this.cancel(request);
+  }
+
+  acceptSearchRequest(member: PublicDirectoryEntry): void {
+    const request = this.pendingRequestFor(member);
+    if (request) this.accept(request);
+  }
+
+  fullName(member: PublicDirectoryEntry): string {
+    return `${member.firstname ?? ''} ${member.lastname ?? ''}`.trim();
+  }
+
+  photoSrc(member: PublicDirectoryEntry): string {
+    return member.profilePhoto ? 'data:image/*;base64,' + member.profilePhoto : 'assets/avatar.png';
   }
 }
