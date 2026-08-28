@@ -30,6 +30,7 @@ export interface ConversationSummary {
   otherUserId: number;
   otherUserName: string;
   otherUserRole: string;
+  otherUserPhoto?: string;
 
   lastMessage: string;
   lastMessageDate: Date;

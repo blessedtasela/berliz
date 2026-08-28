@@ -15,6 +15,7 @@ import { FooterModule } from 'src/app/footer/footer.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
+import { RoleGuard } from 'src/app/services/role.guard';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 import { ImageCropperModule } from 'ngx-image-cropper';
 
@@ -45,7 +46,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     ImageCropperModule,
     RouterModule.forChild([
       { path: '', component: CentersComponent },
-      { path: ':id', component: CenterDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Center Details', expectedRole: ['admin'] } },
+      { path: ':id', component: CenterDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Center Details', expectedRole: ['admin'] } },
     ])
   ]
 })

@@ -14,6 +14,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
+import { RoleGuard } from 'src/app/services/role.guard';
 
 
 
@@ -37,7 +38,7 @@ import { AuthGuard } from 'src/app/services/auth.guard';
     AdminSearchModule,
     RouterModule.forChild([
       { path: '', component: PaymentsComponent },
-      { path: ':id', component: PaymentDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Payment Details', expectedRole: ['admin'] } },
+      { path: ':id', component: PaymentDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Payment Details', expectedRole: ['admin'] } },
     ])
   ]
 })

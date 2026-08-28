@@ -16,6 +16,7 @@ import { TodoListDetailPageComponent } from './todo-list-detail-page/todo-list-d
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { UserHoverCardComponent } from 'src/app/shared/user-hover-card/user-hover-card.component';
 import { AuthGuard } from 'src/app/services/auth.guard';
+import { RoleGuard } from 'src/app/services/role.guard';
 
 
 
@@ -42,7 +43,7 @@ import { AuthGuard } from 'src/app/services/auth.guard';
     UserHoverCardComponent,
     RouterModule.forChild([
       { path: '', component: TodoListsComponent },
-      { path: ':id', component: TodoListDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'To-do Details', expectedRole: ['admin'] } },
+      { path: ':id', component: TodoListDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'To-do Details', expectedRole: ['admin'] } },
     ])
   ]
 })

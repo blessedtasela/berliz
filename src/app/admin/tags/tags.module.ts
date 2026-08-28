@@ -15,6 +15,7 @@ import { TagsComponent } from './tags/tags.component';
 import { UpdateTagModalComponent } from './update-tag-modal/update-tag-modal.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
+import { RoleGuard } from 'src/app/services/role.guard';
 
 
 
@@ -40,7 +41,7 @@ import { AuthGuard } from 'src/app/services/auth.guard';
     AdminSearchModule,
     RouterModule.forChild([
       { path: '', component: TagsComponent },
-      { path: ':id', component: TagDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Tag Details', expectedRole: ['admin'] } },
+      { path: ':id', component: TagDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Tag Details', expectedRole: ['admin'] } },
     ])
   ]
 })

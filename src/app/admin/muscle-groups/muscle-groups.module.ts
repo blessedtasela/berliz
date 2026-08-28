@@ -15,6 +15,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
+import { RoleGuard } from 'src/app/services/role.guard';
 import { ImageCropperModule } from 'ngx-image-cropper';
 
 
@@ -41,7 +42,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     ImageCropperModule,
     RouterModule.forChild([
       { path: '', component: MuscleGroupsComponent },
-      { path: ':id', component: MuscleGroupDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Muscle Group Details', expectedRole: ['admin'] } },
+      { path: ':id', component: MuscleGroupDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Muscle Group Details', expectedRole: ['admin'] } },
     ])
   ]
 })

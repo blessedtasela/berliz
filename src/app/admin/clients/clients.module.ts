@@ -16,6 +16,7 @@ import { FooterModule } from 'src/app/footer/footer.module';
 import { UserHoverCardComponent } from 'src/app/shared/user-hover-card/user-hover-card.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
+import { RoleGuard } from 'src/app/services/role.guard';
 
 
 
@@ -41,7 +42,7 @@ import { AuthGuard } from 'src/app/services/auth.guard';
     AdminSearchModule,
     RouterModule.forChild([
       { path: '', component: ClientsComponent },
-      { path: ':id', component: ClientDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Client Details', expectedRole: ['admin'] } },
+      { path: ':id', component: ClientDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Client Details', expectedRole: ['admin'] } },
     ])
   ]
 })

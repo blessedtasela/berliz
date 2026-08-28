@@ -15,6 +15,7 @@ import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { UserHoverCardComponent } from 'src/app/shared/user-hover-card/user-hover-card.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
+import { RoleGuard } from 'src/app/services/role.guard';
 
 
 
@@ -39,7 +40,7 @@ import { AuthGuard } from 'src/app/services/auth.guard';
     AdminSearchModule,
     RouterModule.forChild([
       { path: '', component: TestimonialsComponent },
-      { path: ':id', component: TestimonialDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Testimonial Details', expectedRole: ['admin'] } },
+      { path: ':id', component: TestimonialDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Testimonial Details', expectedRole: ['admin'] } },
     ])
   ]
 })

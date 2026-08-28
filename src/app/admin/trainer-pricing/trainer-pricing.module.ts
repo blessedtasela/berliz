@@ -15,6 +15,7 @@ import { TrainerPricingHeaderComponent } from './trainer-pricing-header/trainer-
 import { UpdateTrainerPricingModalComponent } from './update-trainer-pricing-modal/update-trainer-pricing-modal.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
+import { RoleGuard } from 'src/app/services/role.guard';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 
 
@@ -41,7 +42,7 @@ import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
     StrapiUrlPipe,
     RouterModule.forChild([
       { path: '', component: TrainerPricingComponent },
-      { path: ':id', component: TrainerPricingDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Pricing Details', expectedRole: ['admin'] } },
+      { path: ':id', component: TrainerPricingDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Trainer Pricing Details', expectedRole: ['admin'] } },
     ])
   ]
 })

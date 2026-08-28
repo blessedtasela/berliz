@@ -15,6 +15,7 @@ import { PartnersComponent } from './partners/partners.component';
 import { UpdatePartnerModalComponent } from './update-partner-modal/update-partner-modal.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
+import { RoleGuard } from 'src/app/services/role.guard';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,7 @@ import { AuthGuard } from 'src/app/services/auth.guard';
     AdminSearchModule,
     RouterModule.forChild([
       { path: '', component: PartnersComponent },
-      { path: ':id', component: PartnerDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Partner Details', expectedRole: ['admin'] } },
+      { path: ':id', component: PartnerDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Partner Details', expectedRole: ['admin'] } },
     ])
   ]
 })

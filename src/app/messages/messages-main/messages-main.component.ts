@@ -136,4 +136,9 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
   isMine(message: Message): boolean {
     return message.senderId !== this.activeUserId;
   }
+
+  /** Conversation list only ever rendered a static icon -- ConversationSummaryResponse had no photo field until now. */
+  photoSrc(c: ConversationSummary): string | null {
+    return c.otherUserPhoto ? 'data:image/*;base64,' + c.otherUserPhoto : null;
+  }
 }

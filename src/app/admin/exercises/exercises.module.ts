@@ -15,6 +15,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
+import { RoleGuard } from 'src/app/services/role.guard';
 
 
 
@@ -39,7 +40,7 @@ import { AuthGuard } from 'src/app/services/auth.guard';
     AdminSearchModule,
     RouterModule.forChild([
       { path: '', component: ExercisesComponent },
-      { path: ':id', component: ExerciseDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Exercise Details', expectedRole: ['admin'] } },
+      { path: ':id', component: ExerciseDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Exercise Details', expectedRole: ['admin'] } },
     ])
   ]
 })

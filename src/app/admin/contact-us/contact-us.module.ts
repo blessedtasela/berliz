@@ -16,6 +16,7 @@ import { ContactUsListComponent } from './contact-us-list/contact-us-list.compon
 import { ContactUsDetailPageComponent } from './contact-us-detail-page/contact-us-detail-page.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
+import { RoleGuard } from 'src/app/services/role.guard';
 
 
 
@@ -42,7 +43,7 @@ import { AuthGuard } from 'src/app/services/auth.guard';
     AdminSearchModule,
     RouterModule.forChild([
       { path: '', component: AdminContactUsComponent },
-      { path: ':id', component: ContactUsDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Message Details', expectedRole: ['admin'] } },
+      { path: ':id', component: ContactUsDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Message Details', expectedRole: ['admin'] } },
     ])
   ]
 })

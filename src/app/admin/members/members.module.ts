@@ -14,6 +14,7 @@ import { FooterModule } from 'src/app/footer/footer.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
+import { RoleGuard } from 'src/app/services/role.guard';
 
 
 
@@ -37,7 +38,7 @@ import { AuthGuard } from 'src/app/services/auth.guard';
     AdminSearchModule,
     RouterModule.forChild([
       { path: '', component: MembersComponent },
-      { path: ':id', component: MemberDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Member Details', expectedRole: ['admin'] } },
+      { path: ':id', component: MemberDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Member Details', expectedRole: ['admin'] } },
     ])
   ]
 })

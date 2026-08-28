@@ -15,6 +15,7 @@ import { TrainersComponent } from './trainers/trainers.component';
 import { UpdateTrainerModalComponent } from './update-trainer-modal/update-trainer-modal.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
+import { RoleGuard } from 'src/app/services/role.guard';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 import { ImageCropperModule } from 'ngx-image-cropper';
 
@@ -44,7 +45,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     ImageCropperModule,
     RouterModule.forChild([
       { path: '', component: TrainersComponent },
-      { path: ':id', component: TrainerDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Details', expectedRole: ['admin'] } },
+      { path: ':id', component: TrainerDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Trainer Details', expectedRole: ['admin'] } },
     ])
   ]
 })

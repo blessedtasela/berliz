@@ -15,6 +15,7 @@ import { CategoryDetailsModalComponent } from './category-details-modal/category
 import { CategoryDetailPageComponent } from './category-detail-page/category-detail-page.component';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
+import { RoleGuard } from 'src/app/services/role.guard';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 import { ImageCropperModule } from 'ngx-image-cropper';
 
@@ -41,7 +42,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     ImageCropperModule,
     RouterModule.forChild([
       { path: '', component: CategoryComponent },
-      { path: ':id', component: CategoryDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Category Details', expectedRole: ['admin'] } },
+      { path: ':id', component: CategoryDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Category Details', expectedRole: ['admin'] } },
     ])
   ]
 })
