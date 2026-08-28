@@ -6,11 +6,10 @@ import { Subject } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comments.component';
 import { PostResponse } from 'src/app/models/post.interface';
-import { CommentResponse } from 'src/app/models/comment.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { PostService } from 'src/app/services/post.service';
-import { CommentService } from 'src/app/services/comment.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { UserService } from 'src/app/services/user.service';
@@ -18,24 +17,19 @@ import { imageValidator } from 'src/validators/form-validators.module';
 
 type TimelineTab = 'feed' | 'mine';
 
-/** One chunk of a comment's text -- either plain text, or an `@username` mention that should link out. Rendered via *ngFor so no innerHTML/sanitizer is ever needed for user-generated text. */
-interface CommentPart {
-  text: string;
-  mention?: string;
-}
-
 /**
  * Compose + view your own posts, and see your accepted connections' posts —
  * `/dashboard/timeline`. Defaults to the Feed tab; toggles to "My Timeline"
  * for just your own posts. Reads from PostService directly (no NgRx slice:
  * the only consumer of this state is this one page, plus the read-only
  * viewer on DashboardUserProfileComponent which fetches its own copy
- * independently).
+ * independently). Comment threads are PostCommentsComponent, shared with
+ * both profile pages' Timeline sections.
  */
 @Component({
   selector: 'app-dashboard-timeline',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule],
+  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, PostCommentsComponent],
   templateUrl: './dashboard-timeline.component.html'
 })
 export class DashboardTimelineComponent implements OnInit, OnDestroy {
@@ -59,19 +53,13 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   /** Feed thumbnails are cropped (object-cover) to keep the feed tidy — clicking one opens the full, uncropped image + caption, IG-style. */
   expandedPost: PostResponse | null = null;
 
-  // ── Comments ─────────────────────────────────────────────────────────────
-  /** Which post's comment thread is expanded inline, if any. Only one open at a time. */
+  /** Which post's comment thread (PostCommentsComponent) is expanded inline, if any. Only one open at a time. */
   openCommentsPostId: number | null = null;
-  commentsByPostId: { [postId: number]: CommentResponse[] } = {};
-  loadingCommentsPostId: number | null = null;
-  commentDraft: { [postId: number]: string } = {};
-  postingComment: { [postId: number]: boolean } = {};
 
   private destroy$ = new Subject<void>();
 
   constructor(
     private postService: PostService,
-    private commentService: CommentService,
     private strapiService: StrapiService,
     private authService: AuthService,
     private userService: UserService,
@@ -262,88 +250,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
 
   // ── Comments ─────────────────────────────────────────────────────────────
 
-  commentsFor(post: PostResponse): CommentResponse[] {
-    return this.commentsByPostId[post.id] ?? [];
-  }
-
   toggleComments(post: PostResponse): void {
-    if (this.openCommentsPostId === post.id) {
-      this.openCommentsPostId = null;
-      return;
-    }
-    this.openCommentsPostId = post.id;
-    if (!this.commentsByPostId[post.id]) {
-      this.loadComments(post.id);
-    }
-  }
-
-  private loadComments(postId: number): void {
-    this.loadingCommentsPostId = postId;
-    this.commentService.getComments(postId).subscribe({
-      next: res => {
-        this.loadingCommentsPostId = null;
-        this.commentsByPostId[postId] = res.data ?? [];
-      },
-      error: () => {
-        this.loadingCommentsPostId = null;
-        this.snackBarService.openSnackBar('Could not load comments', 'error');
-      },
-    });
-  }
-
-  submitComment(post: PostResponse): void {
-    const content = (this.commentDraft[post.id] ?? '').trim();
-    if (!content || this.postingComment[post.id]) return;
-
-    this.postingComment[post.id] = true;
-    this.commentService.addComment({ postId: post.id, content }).subscribe({
-      next: res => {
-        this.postingComment[post.id] = false;
-        const comment = res.data;
-        if (!comment) return;
-        this.commentsByPostId[post.id] = [...this.commentsFor(post), comment];
-        this.commentDraft[post.id] = '';
-        post.commentCount = (post.commentCount ?? 0) + 1;
-      },
-      error: () => {
-        this.postingComment[post.id] = false;
-        this.snackBarService.openSnackBar('Could not post comment — try again', 'error');
-      },
-    });
-  }
-
-  deleteComment(post: PostResponse, comment: CommentResponse): void {
-    if (!confirm('Delete this comment?')) return;
-
-    this.commentService.deleteComment(comment.id).subscribe({
-      next: () => {
-        this.commentsByPostId[post.id] = this.commentsFor(post).filter(c => c.id !== comment.id);
-        post.commentCount = Math.max(0, (post.commentCount ?? 1) - 1);
-      },
-      error: () => this.snackBarService.openSnackBar('Could not delete comment', 'error'),
-    });
-  }
-
-  commentPhotoSrc(comment: CommentResponse): string | null {
-    return comment.authorPhoto ? 'data:image/*;base64,' + comment.authorPhoto : null;
-  }
-
-  /** Splits a comment's text into plain-text and @mention chunks so the template can render mentions as links via *ngFor -- never innerHTML, so user-generated text can never inject markup. */
-  parseMentions(content: string): CommentPart[] {
-    const parts: CommentPart[] = [];
-    const re = /@([a-zA-Z0-9_]{3,30})/g;
-    let lastIndex = 0;
-    let m: RegExpExecArray | null;
-    while ((m = re.exec(content)) !== null) {
-      if (m.index > lastIndex) parts.push({ text: content.slice(lastIndex, m.index) });
-      parts.push({ text: m[0], mention: m[1].toLowerCase() });
-      lastIndex = m.index + m[0].length;
-    }
-    if (lastIndex < content.length) parts.push({ text: content.slice(lastIndex) });
-    return parts;
-  }
-
-  trackByCommentId(_: number, comment: CommentResponse): number {
-    return comment.id;
+    this.openCommentsPostId = this.openCommentsPostId === post.id ? null : post.id;
   }
 }

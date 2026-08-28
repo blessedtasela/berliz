@@ -15,6 +15,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comments.component';
 
 import {
   clearPublicProfile,
@@ -45,7 +46,7 @@ import {
 @Component({
   selector: 'app-public-profile',
   standalone: true,
-  imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, StrapiUrlPipe],
+  imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, StrapiUrlPipe, PostCommentsComponent],
   templateUrl: './public-profile.component.html'
 })
 export class PublicProfileComponent implements OnInit, OnDestroy {
@@ -56,6 +57,9 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
 
   /** Set while a clone request is in flight so the button can show a spinner. */
   cloningTemplateId: number | null = null;
+
+  /** Which post's comment thread (PostCommentsComponent) is expanded inline, if any. Only one open at a time. */
+  openCommentsPostId: number | null = null;
 
   /**
    * The page itself has no route guard so anonymous visitors can land here,
@@ -218,5 +222,9 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
 
   trackByPostId(_: number, post: PostResponse): number {
     return post.id;
+  }
+
+  toggleComments(post: PostResponse): void {
+    this.openCommentsPostId = this.openCommentsPostId === post.id ? null : post.id;
   }
 }

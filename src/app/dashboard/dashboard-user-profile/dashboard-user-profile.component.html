@@ -161,7 +161,17 @@
                             <i-feather name="heart" style="width:13px;height:13px;" [attr.fill]="post.likedByMe ? 'currentColor' : 'none'"></i-feather>
                             {{ post.likes }}
                         </button>
+
+                        <button type="button" (click)="toggleComments(post)"
+                            class="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition"
+                            [class.text-sky-600]="openCommentsPostId === post.id" [class.bg-sky-50]="openCommentsPostId === post.id"
+                            [class.text-gray-400]="openCommentsPostId !== post.id" [class.hover:bg-gray-50]="openCommentsPostId !== post.id">
+                            <i-feather name="message-circle" style="width:13px;height:13px;"></i-feather>
+                            {{ post.commentCount || 0 }}
+                        </button>
                     </div>
+
+                    <app-post-comments [post]="post" [open]="openCommentsPostId === post.id"></app-post-comments>
                 </div>
 
                 <!-- Empty -->

@@ -6,6 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comments.component';
 import { Connection } from 'src/app/models/connection.model';
 import { PostResponse } from 'src/app/models/post.interface';
 import { PublicUserProfile } from 'src/app/models/users.interface';
@@ -44,7 +45,7 @@ type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
 @Component({
   selector: 'app-dashboard-user-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, SharedModule],
+  imports: [CommonModule, RouterModule, IconsModule, SharedModule, PostCommentsComponent],
   templateUrl: './dashboard-user-profile.component.html'
 })
 export class DashboardUserProfileComponent implements OnInit, OnDestroy {
@@ -59,6 +60,9 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
   pendingRequests: Connection[] = [];
   private currentUserId: number | null = null;
   private userId: number | null = null;
+
+  /** Which post's comment thread (PostCommentsComponent) is expanded inline, if any. Only one open at a time. */
+  openCommentsPostId: number | null = null;
 
   private destroy$ = new Subject<void>();
 
@@ -217,5 +221,9 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
 
   trackByPostId(_: number, post: PostResponse): number {
     return post.id;
+  }
+
+  toggleComments(post: PostResponse): void {
+    this.openCommentsPostId = this.openCommentsPostId === post.id ? null : post.id;
   }
 }

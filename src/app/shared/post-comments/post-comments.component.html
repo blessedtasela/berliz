@@ -1,0 +1,60 @@
+<div *ngIf="open" class="border-t pt-3 flex flex-col gap-3" [class.border-gray-100]="!dark" [class.border-zinc-800]="dark">
+
+    <div *ngIf="loading" class="flex items-center justify-center py-4">
+        <i-feather name="loader" class="animate-spin" [class.text-gray-300]="!dark" [class.text-zinc-600]="dark" style="width:16px;height:16px;"></i-feather>
+    </div>
+
+    <div *ngIf="!loading && comments.length === 0" class="text-center py-2">
+        <p class="text-xs" [class.text-gray-400]="!dark" [class.text-zinc-500]="dark">No comments yet — be the first to reply.</p>
+    </div>
+
+    <div *ngFor="let comment of comments; trackBy: trackByCommentId" class="flex items-start gap-2.5">
+        <a [routerLink]="[profileRoutePrefix, comment.authorUsername || comment.authorId]" class="shrink-0">
+            <img *ngIf="commentPhotoSrc(comment) as src" [src]="src" alt="" class="w-7 h-7 rounded-full object-cover border"
+                [class.border-gray-200]="!dark" [class.border-zinc-700]="dark" />
+            <div *ngIf="!commentPhotoSrc(comment)" class="w-7 h-7 rounded-full flex items-center justify-center border"
+                [ngClass]="dark ? 'bg-sky-500/10 border-sky-900' : 'bg-sky-50 border-sky-100'">
+                <i-feather name="user" class="text-sky-500" style="width:12px;height:12px;"></i-feather>
+            </div>
+        </a>
+        <div class="flex-1 min-w-0 rounded-xl px-3 py-2" [ngClass]="dark ? 'bg-zinc-800/60' : 'bg-gray-50'">
+            <div class="flex items-center justify-between gap-2">
+                <a [routerLink]="[profileRoutePrefix, comment.authorUsername || comment.authorId]"
+                    class="text-xs font-bold hover:text-sky-500 transition truncate"
+                    [class.text-gray-900]="!dark" [class.text-white]="dark">{{ comment.authorName }}</a>
+                <button *ngIf="comment.canDelete" type="button" (click)="remove(comment)"
+                    class="hover:text-red-500 transition p-0.5 shrink-0"
+                    [class.text-gray-300]="!dark" [class.text-zinc-600]="dark">
+                    <i-feather name="trash-2" style="width:11px;height:11px;"></i-feather>
+                </button>
+            </div>
+            <p class="text-xs leading-relaxed whitespace-pre-line break-words" [class.text-gray-700]="!dark" [class.text-zinc-300]="dark">
+                <span *ngFor="let part of parseMentions(comment.content)">
+                    <a *ngIf="part.mention" [routerLink]="[profileRoutePrefix, part.mention]"
+                        class="text-sky-500 font-semibold hover:underline">{{ part.text }}</a>
+                    <ng-container *ngIf="!part.mention">{{ part.text }}</ng-container>
+                </span>
+            </p>
+            <span class="text-[10px] mt-0.5 block" [class.text-gray-400]="!dark" [class.text-zinc-500]="dark">{{ comment.date | date:'medium' }}</span>
+        </div>
+    </div>
+
+    <!-- Add a comment -->
+    <div class="flex items-center gap-2">
+        <img [src]="myPhotoSrc" alt="" class="w-7 h-7 rounded-full object-cover border shrink-0"
+            [class.border-gray-200]="!dark" [class.border-zinc-700]="dark" />
+        <input type="text" [(ngModel)]="draft" (keydown.enter)="submit()"
+            placeholder="Write a comment… use @username to mention"
+            class="flex-1 text-xs rounded-lg px-3 py-2 border focus:outline-none focus:ring-1 transition"
+            [ngClass]="dark
+                ? 'bg-zinc-800 border-zinc-700 text-zinc-200 placeholder-zinc-500 focus:border-sky-500 focus:ring-sky-500/30'
+                : 'bg-gray-50 border-gray-200 text-gray-700 placeholder-gray-400 focus:border-sky-400 focus:ring-sky-400/30'" />
+        <button type="button" (click)="submit()"
+            [disabled]="!draft || !draft.trim() || posting"
+            class="w-8 h-8 rounded-lg bg-sky-600 hover:bg-sky-700 text-white flex items-center justify-center
+                   shrink-0 transition disabled:opacity-40 disabled:cursor-not-allowed">
+            <i-feather *ngIf="!posting" name="send" style="width:13px;height:13px;"></i-feather>
+            <i-feather *ngIf="posting" name="loader" class="animate-spin" style="width:13px;height:13px;"></i-feather>
+        </button>
+    </div>
+</div>

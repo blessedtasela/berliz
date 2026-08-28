@@ -159,8 +159,17 @@
                                         [class.text-red-500]="post.likedByMe"></i-feather>
                                     {{ post.likes }}
                                 </span>
+                                <button type="button" (click)="toggleComments(post)"
+                                    class="flex items-center gap-1.5 transition hover:text-sky-500"
+                                    [class.text-sky-500]="openCommentsPostId === post.id">
+                                    <i-feather name="message-circle" style="width:11px;height:11px;"></i-feather>
+                                    {{ post.commentCount || 0 }}
+                                </button>
                                 <span>{{ post.date | date:'mediumDate' }}</span>
                             </div>
+
+                            <app-post-comments [post]="post" [open]="openCommentsPostId === post.id"
+                                [dark]="true" profileRoutePrefix="/user"></app-post-comments>
                         </div>
                     </div>
                 </div>
