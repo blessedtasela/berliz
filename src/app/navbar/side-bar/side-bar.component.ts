@@ -16,6 +16,8 @@ import { selectUser } from 'src/app/state/user/user.selector';
 import { Store } from '@ngrx/store';
 import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
 import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
+import { selectIncomingRequestCount } from 'src/app/state/connection/connection.selectors';
+import { loadPendingRequests } from 'src/app/state/connection/connection.actions';
 
 const KNOWN_SIDEBAR_MODES: SidebarDisplay[] = ['expanded', 'collapsed', 'hidden'];
 
@@ -38,6 +40,7 @@ export class SideBarComponent implements OnInit, OnDestroy {
   responseMessage: any;
   profilePhoto: any;
   subscriptions: Subscription[] = [];
+  incomingRequestCount: number = 0;
   notificationLength: number = 0;
 
   private destroy$ = new Subject<void>();
@@ -126,6 +129,7 @@ export class SideBarComponent implements OnInit, OnDestroy {
   handleEmitEvent(): void {
 
     this.store.dispatch(loadMyNotifications());
+    this.store.dispatch(loadPendingRequests());
 
     if (this.storeStateWatched) return;
     this.storeStateWatched = true;
@@ -162,6 +166,10 @@ export class SideBarComponent implements OnInit, OnDestroy {
       this.store.select(selectMyNotifications).subscribe(notifications => {
         this.notificationLength =
           notifications?.filter(notification => !notification.read).length ?? 0;
+      }),
+
+      this.store.select(selectIncomingRequestCount).subscribe(count => {
+        this.incomingRequestCount = count;
       })
 
     );

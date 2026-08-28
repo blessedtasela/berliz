@@ -16,6 +16,8 @@ import { selectUser } from 'src/app/state/user/user.selector';
 import { Notifications } from 'src/app/models/Notifications.interface';
 import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
 import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
+import { loadPendingRequests } from 'src/app/state/connection/connection.actions';
+import { selectIncomingRequestCount } from 'src/app/state/connection/connection.selectors';
 
 @Component({
   selector: 'app-side-bar-open',
@@ -30,6 +32,7 @@ export class SideBarOpenComponent implements OnInit, OnDestroy {
 
   userData: any;
   notificationLength = 0;
+  incomingRequestCount = 0;
 
   private destroy$ = new Subject<void>();
 
@@ -74,6 +77,11 @@ export class SideBarOpenComponent implements OnInit, OnDestroy {
     // Initial notification load
     this.refreshNotifications();
 
+    // Incoming connection-request count, for the sidebar badge.
+    this.store.dispatch(loadPendingRequests());
+    this.store.select(selectIncomingRequestCount)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(count => this.incomingRequestCount = count);
   }
 
   // -----------------------------

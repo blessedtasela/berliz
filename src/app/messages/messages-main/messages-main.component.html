@@ -37,17 +37,17 @@
                 </button>
 
                 <!-- Start a new conversation -->
-                <div *ngIf="startableTrainers.length > 0" class="px-4 py-2">
+                <div *ngIf="startableContacts.length > 0" class="px-4 py-2">
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Start a conversation</p>
-                    <button *ngFor="let t of startableTrainers" type="button" (click)="startConversation(t)"
+                    <button *ngFor="let contact of startableContacts" type="button" (click)="startConversation(contact)"
                         class="w-full text-left py-1.5 flex items-center gap-2 hover:text-sky-600 transition"
-                        [class.text-sky-600]="activeUserId === t.userId">
+                        [class.text-sky-600]="activeUserId === contact.userId">
                         <i-feather name="plus-circle" style="width:12px;height:12px;"></i-feather>
-                        <span class="text-xs font-medium truncate">{{ t.name }}</span>
+                        <span class="text-xs font-medium truncate">{{ contact.name }}</span>
                     </button>
                 </div>
 
-                <div *ngIf="conversations.length === 0 && startableTrainers.length === 0" class="px-4 py-10 text-center">
+                <div *ngIf="conversations.length === 0 && startableContacts.length === 0" class="px-4 py-10 text-center">
                     <p class="text-xs text-gray-400">No conversations yet.</p>
                 </div>
             </div>

@@ -103,6 +103,8 @@ import { payoutFeatureKey, payoutReducer } from './state/payout/payout.reducer';
 import { PayoutEffects } from './state/payout/payout.effects';
 import { clientIntakeFeatureKey, clientIntakeReducer } from './state/client-intake/client-intake.reducer';
 import { ClientIntakeEffects } from './state/client-intake/client-intake.effects';
+import { connectionFeatureKey, connectionReducer } from './state/connection/connection.reducer';
+import { ConnectionEffects } from './state/connection/connection.effects';
 
 
 export const ngxUiLoaderConfig: NgxUiLoaderConfig = {
@@ -184,7 +186,7 @@ const dbConfig: DBConfig = {
 
     // Store and Effects Modules for NgRx
     StoreModule.forRoot({}),
-    EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects, WorkoutEffects, AnalyticsEffects, UserProfileEffects, FaqEffects, BookingEffects, AvailabilityEffects, PlanEffects, ProgressShareEffects, ProgressEntryEffects, MessageEffects, PayoutEffects, ClientIntakeEffects]),
+    EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects, WorkoutEffects, AnalyticsEffects, UserProfileEffects, FaqEffects, BookingEffects, AvailabilityEffects, PlanEffects, ProgressShareEffects, ProgressEntryEffects, MessageEffects, PayoutEffects, ClientIntakeEffects, ConnectionEffects]),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: !isDevMode(),
@@ -220,6 +222,7 @@ const dbConfig: DBConfig = {
     StoreModule.forFeature(messageFeatureKey, messageReducer),
     StoreModule.forFeature(payoutFeatureKey, payoutReducer),
     StoreModule.forFeature(clientIntakeFeatureKey, clientIntakeReducer),
+    StoreModule.forFeature(connectionFeatureKey, connectionReducer),
 
   ],
   exports: [],

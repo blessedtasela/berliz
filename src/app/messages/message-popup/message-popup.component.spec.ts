@@ -22,6 +22,9 @@ import {
 } from 'src/app/state/message/message.selectors';
 import { loadMyTrainers } from 'src/app/state/booking/booking.actions';
 import { selectMyTrainers } from 'src/app/state/booking/booking.selectors';
+import { loadMyConnections } from 'src/app/state/connection/connection.actions';
+import { selectMyConnections } from 'src/app/state/connection/connection.selectors';
+import { Connection } from 'src/app/models/connection.model';
 import { selectUser } from 'src/app/state/user/user.selector';
 
 describe('MessagePopupComponent', () => {
@@ -43,6 +46,10 @@ describe('MessagePopupComponent', () => {
     { id: 1, senderId: 5, senderName: 'Coach Sam', recipientId: 1, recipientName: 'Jane Doe', body: 'Hey!', isRead: false, date: new Date(), lastUpdate: new Date() }
   ];
 
+  const connections: Connection[] = [
+    { id: 1, otherUserId: 7, otherUserName: 'Jordan Lee', otherUserRole: 'user', direction: 'incoming', status: 'accepted', date: new Date() }
+  ];
+
   function setup(user: Partial<Users> | null, url = '/dashboard/home') {
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     router = jasmine.createSpyObj('Router', ['navigate'], { url, events: of() });
@@ -57,6 +64,7 @@ describe('MessagePopupComponent', () => {
             { selector: selectConversations, value: conversations },
             { selector: selectTotalUnreadCount, value: 1 },
             { selector: selectMyTrainers, value: myTrainers },
+            { selector: selectMyConnections, value: connections },
             { selector: selectActiveConversationUserId, value: null },
             { selector: selectActiveConversationMessages, value: [] },
             { selector: selectLoadingConversation, value: false },
@@ -83,6 +91,7 @@ describe('MessagePopupComponent', () => {
     expect(component.popupEnabled).toBeTrue();
     expect(store.dispatch).toHaveBeenCalledWith(MessageActions.loadConversations());
     expect(store.dispatch).toHaveBeenCalledWith(loadMyTrainers());
+    expect(store.dispatch).toHaveBeenCalledWith(loadMyConnections());
   });
 
   it('defaults popupEnabled to true when the field is undefined', () => {
@@ -110,11 +119,11 @@ describe('MessagePopupComponent', () => {
     expect(component.open).toBeFalse();
   });
 
-  it('startableTrainers excludes trainers who already have a conversation', () => {
+  it('startableContacts excludes trainers/connections who already have a conversation, and merges both sources', () => {
     setup({ messagePopupEnabled: true } as Partial<Users>);
     fixture.detectChanges();
 
-    expect(component.startableTrainers.map(t => t.userId)).toEqual([6]);
+    expect(component.startableContacts.map(c => c.userId)).toEqual([6, 7]);
   });
 
   it('openConversation dispatches loadConversation and markConversationRead, and switches to thread view', () => {

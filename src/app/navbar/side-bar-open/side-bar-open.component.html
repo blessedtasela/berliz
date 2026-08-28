@@ -5,6 +5,7 @@
     {name:'Tasks', icon:'activity', route:'/dashboard/my-tasks'},
     {name:'Notifications', icon:'inbox', route:'/dashboard/my-notifications'},
     {name:'Messages', icon:'message-circle', route:'/dashboard/messages'},
+    {name:'Connections', icon:'users', route:'/dashboard/connections'},
     {name:'Hub', icon:'globe', route:'/dashboard/hub'},
     {name:'Profile', icon:'user', route:'/dashboard/profile'},
     {separator:true},
@@ -39,6 +40,11 @@
       <span *ngIf="item.name === 'Notifications' && notificationLength > 0"
         class="bg-red-600 text-white text-[9px] px-1.5 py-px rounded-full font-bold badge-pulse">
         {{ notificationLength }}
+      </span>
+
+      <span *ngIf="item.name === 'Connections' && incomingRequestCount > 0"
+        class="bg-red-600 text-white text-[9px] px-1.5 py-px rounded-full font-bold badge-pulse">
+        {{ incomingRequestCount }}
       </span>
 
     </a>

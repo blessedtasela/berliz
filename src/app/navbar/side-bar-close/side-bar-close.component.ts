@@ -18,6 +18,7 @@ export class SideBarCloseComponent implements OnDestroy {
 
   @Input() userData!: Users;
   @Input() notificationLength: number = 0;
+  @Input() incomingRequestCount: number = 0;
 
   currentRoute: string | null = null;
   currentRouteName: string | null = null;

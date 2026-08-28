@@ -111,6 +111,49 @@
                             {{ location(member) }}
                         </span>
                     </div>
+
+                    <!-- ── CONNECTION ACTION ─────────────────────────────────
+                         Send/accept/decline/cancel a connection request, or jump
+                         to Messages once connected. Never shown on your own card. -->
+                    <ng-container [ngSwitch]="connectStatus(member)">
+
+                        <button *ngSwitchCase="'none'" type="button" (click)="connect(member, $event)"
+                            class="w-full mt-1 px-3 py-1.5 rounded-lg text-[11px] font-semibold border
+                                   border-zinc-700 text-zinc-300 hover:border-red-700 hover:text-white transition
+                                   flex items-center justify-center gap-1.5">
+                            <i-feather name="user-plus" style="width:11px;height:11px;"></i-feather>
+                            Connect
+                        </button>
+
+                        <button *ngSwitchCase="'outgoing'" type="button" (click)="cancelRequest(member, $event)"
+                            class="w-full mt-1 px-3 py-1.5 rounded-lg text-[11px] font-semibold border
+                                   border-zinc-800 text-zinc-500 hover:border-red-900 hover:text-red-400 transition
+                                   flex items-center justify-center gap-1.5">
+                            <i-feather name="clock" style="width:11px;height:11px;"></i-feather>
+                            Request sent
+                        </button>
+
+                        <div *ngSwitchCase="'incoming'" class="w-full mt-1 flex gap-1.5">
+                            <button type="button" (click)="acceptRequest(member, $event)"
+                                class="flex-1 px-2 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600
+                                       hover:bg-red-700 text-white transition">
+                                Accept
+                            </button>
+                            <button type="button" (click)="declineRequest(member, $event)"
+                                class="flex-1 px-2 py-1.5 rounded-lg text-[11px] font-semibold border
+                                       border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-600 transition">
+                                Decline
+                            </button>
+                        </div>
+
+                        <button *ngSwitchCase="'connected'" type="button" (click)="messageMember(member, $event)"
+                            class="w-full mt-1 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-zinc-800
+                                   hover:bg-zinc-700 text-white transition flex items-center justify-center gap-1.5">
+                            <i-feather name="message-circle" style="width:11px;height:11px;"></i-feather>
+                            Message
+                        </button>
+
+                    </ng-container>
                 </a>
             </div>
 

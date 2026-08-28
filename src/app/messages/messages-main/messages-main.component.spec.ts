@@ -19,6 +19,9 @@ import {
 } from 'src/app/state/message/message.selectors';
 import { loadMyTrainers } from 'src/app/state/booking/booking.actions';
 import { selectMyTrainers } from 'src/app/state/booking/booking.selectors';
+import { loadMyConnections } from 'src/app/state/connection/connection.actions';
+import { selectMyConnections } from 'src/app/state/connection/connection.selectors';
+import { Connection } from 'src/app/models/connection.model';
 
 describe('MessagesMainComponent', () => {
   let component: MessagesMainComponent;
@@ -38,6 +41,10 @@ describe('MessagesMainComponent', () => {
     { id: 1, senderId: 5, senderName: 'Coach Sam', recipientId: 1, recipientName: 'Jane Doe', body: 'Hey!', isRead: false, date: new Date(), lastUpdate: new Date() }
   ];
 
+  const connections: Connection[] = [
+    { id: 1, otherUserId: 7, otherUserName: 'Jordan Lee', otherUserRole: 'user', direction: 'incoming', status: 'accepted', date: new Date() }
+  ];
+
   beforeEach(() => {
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
 
@@ -51,6 +58,7 @@ describe('MessagesMainComponent', () => {
             { selector: selectConversations, value: conversations },
             { selector: selectMessageLoading, value: false },
             { selector: selectMyTrainers, value: myTrainers },
+            { selector: selectMyConnections, value: connections },
             { selector: selectActiveConversationUserId, value: null },
             { selector: selectActiveConversationMessages, value: [] },
             { selector: selectLoadingConversation, value: false },
@@ -74,12 +82,13 @@ describe('MessagesMainComponent', () => {
     expect(component.conversations).toEqual(conversations);
     expect(store.dispatch).toHaveBeenCalledWith(MessageActions.loadConversations());
     expect(store.dispatch).toHaveBeenCalledWith(loadMyTrainers());
+    expect(store.dispatch).toHaveBeenCalledWith(loadMyConnections());
   });
 
-  it('startableTrainers excludes trainers who already have a conversation', () => {
+  it('startableContacts excludes trainers/connections who already have a conversation, and merges both sources', () => {
     fixture.detectChanges();
 
-    expect(component.startableTrainers.map(t => t.userId)).toEqual([6]);
+    expect(component.startableContacts.map(c => c.userId)).toEqual([6, 7]);
   });
 
   it('openConversation dispatches loadConversation and markConversationRead for that user', () => {

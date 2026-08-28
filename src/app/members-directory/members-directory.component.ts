@@ -1,20 +1,33 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { PublicDirectoryEntry } from 'src/app/models/users.interface';
+import { Connection } from 'src/app/models/connection.model';
 import { AuthService } from 'src/app/services/auth.service';
+import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { loadPublicDirectory } from 'src/app/state/user-profile/user-profile.actions';
 import {
   selectPublicDirectory,
   selectPublicDirectoryError,
   selectPublicDirectoryLoading,
 } from 'src/app/state/user-profile/user-profile.selector';
+import {
+  cancelConnectionRequest,
+  loadMyConnections,
+  loadPendingRequests,
+  respondToConnectionRequest,
+  sendConnectionRequest,
+} from 'src/app/state/connection/connection.actions';
+import { selectConnectionError, selectMyConnections, selectPendingRequests } from 'src/app/state/connection/connection.selectors';
+
+/** A directory row's connection status, derived client-side from myConnections + pendingRequests. */
+type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
 
 interface RoleOption {
   label: string;
@@ -57,22 +70,39 @@ export class MembersDirectoryComponent implements OnInit, OnDestroy {
 
   needsLogin = true;
 
+  myConnections: Connection[] = [];
+  pendingRequests: Connection[] = [];
+  private currentUserId: number | null = null;
+
   private search$ = new Subject<string>();
   private subs: Subscription[] = [];
 
-  constructor(private store: Store, private authService: AuthService) {
+  constructor(
+    private store: Store,
+    private authService: AuthService,
+    private router: Router,
+    private snackBar: SnackBarService,
+  ) {
     this.needsLogin = !this.authService.isAuthenticated();
+    this.currentUserId = this.authService.getCurrentUserId();
   }
 
   ngOnInit(): void {
     if (this.needsLogin) { return; }
 
     this.store.dispatch(loadPublicDirectory({ search: null, role: null }));
+    this.store.dispatch(loadMyConnections());
+    this.store.dispatch(loadPendingRequests());
 
     this.subs.push(
       this.store.select(selectPublicDirectory).subscribe(list => this.members = list ?? []),
       this.store.select(selectPublicDirectoryLoading).subscribe(loading => this.loading = loading),
       this.store.select(selectPublicDirectoryError).subscribe(error => this.error = error),
+      this.store.select(selectMyConnections).subscribe(list => this.myConnections = list ?? []),
+      this.store.select(selectPendingRequests).subscribe(list => this.pendingRequests = list ?? []),
+      this.store.select(selectConnectionError).subscribe(error => {
+        if (error) this.snackBar.openSnackBar(error, 'error');
+      }),
 
       this.search$.pipe(
         debounceTime(300),
@@ -83,6 +113,54 @@ export class MembersDirectoryComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
+  }
+
+  // ── Connections ──────────────────────────────────────────────────────────
+
+  connectStatus(member: PublicDirectoryEntry): ConnectStatus {
+    if (this.currentUserId != null && member.id === this.currentUserId) return 'self';
+    if (this.myConnections.some(c => c.otherUserId === member.id)) return 'connected';
+    const pending = this.pendingRequests.find(c => c.otherUserId === member.id);
+    if (pending) return pending.direction === 'incoming' ? 'incoming' : 'outgoing';
+    return 'none';
+  }
+
+  /** The pending request row for this member, if any -- needed for respond/cancel, which act on a request id, not a user id. */
+  private pendingRequestFor(member: PublicDirectoryEntry): Connection | undefined {
+    return this.pendingRequests.find(c => c.otherUserId === member.id);
+  }
+
+  connect(member: PublicDirectoryEntry, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.store.dispatch(sendConnectionRequest({ recipientId: member.id }));
+  }
+
+  cancelRequest(member: PublicDirectoryEntry, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    const request = this.pendingRequestFor(member);
+    if (request) this.store.dispatch(cancelConnectionRequest({ id: request.id }));
+  }
+
+  acceptRequest(member: PublicDirectoryEntry, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    const request = this.pendingRequestFor(member);
+    if (request) this.store.dispatch(respondToConnectionRequest({ id: request.id, status: 'accepted' }));
+  }
+
+  declineRequest(member: PublicDirectoryEntry, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    const request = this.pendingRequestFor(member);
+    if (request) this.store.dispatch(respondToConnectionRequest({ id: request.id, status: 'rejected' }));
+  }
+
+  messageMember(member: PublicDirectoryEntry, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.router.navigate(['/dashboard/messages']);
   }
 
   // ── Filters ──────────────────────────────────────────────────────────────

@@ -27,7 +27,7 @@
         <!-- LIST VIEW -->
         <div *ngIf="view === 'list'" class="flex-1 overflow-y-auto">
 
-            <div *ngIf="!conversations.length && !startableTrainers.length" class="p-4 text-xs text-gray-400 text-center">
+            <div *ngIf="!conversations.length && !startableContacts.length" class="p-4 text-xs text-gray-400 text-center">
                 No conversations yet.
             </div>
 
@@ -43,11 +43,11 @@
                 </span>
             </button>
 
-            <ng-container *ngIf="startableTrainers.length">
+            <ng-container *ngIf="startableContacts.length">
                 <p class="px-4 pt-3 pb-1 text-[10px] font-bold text-gray-400 uppercase tracking-wide">Start a conversation</p>
-                <button *ngFor="let t of startableTrainers" type="button" (click)="startConversation(t)"
+                <button *ngFor="let contact of startableContacts" type="button" (click)="startConversation(contact)"
                     class="w-full flex items-center gap-2 px-4 py-3 border-b border-gray-100 hover:bg-gray-50 text-left">
-                    <p class="text-xs font-bold text-gray-900 truncate">{{ t.name }}</p>
+                    <p class="text-xs font-bold text-gray-900 truncate">{{ contact.name }}</p>
                 </button>
             </ng-container>
         </div>

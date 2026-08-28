@@ -15,6 +15,9 @@ import { UserProgressComponent } from '../user/user-progress/user-progress.compo
 import { MessagesModule } from '../messages/messages.module';
 import { MessagesMainComponent } from '../messages/messages-main/messages-main.component';
 
+import { ConnectionsModule } from '../connections/connections.module';
+import { ConnectionsMainComponent } from '../connections/connections-main/connections-main.component';
+
 import { MyNotificationsModule } from '../my-notifications/my-notifications.module';
 import { NotificationMainComponent } from '../my-notifications/notification-main/notification-main.component';
 import { MyNotificationsPageComponent } from '../my-notifications/my-notifications-page/my-notifications-page.component';
@@ -141,6 +144,17 @@ const dashboardRoutes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: 'Messages',
+          expectedRole: expectedRoleAll
+        }
+      },
+
+      // Connections — request/accept flow that unlocks messaging beyond bookings
+      {
+        path: 'connections',
+        component: ConnectionsMainComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Connections',
           expectedRole: expectedRoleAll
         }
       },
@@ -466,6 +480,7 @@ const dashboardRoutes: Routes = [
     MyTrainerModule,
     HubModule,
     MessagesModule,
+    ConnectionsModule,
     RouterModule.forChild(dashboardRoutes),
   ]
 })

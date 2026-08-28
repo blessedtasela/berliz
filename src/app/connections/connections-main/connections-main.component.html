@@ -1,0 +1,99 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
+            <i-feather name="users" class="text-sky-600" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+            <h1 class="text-sm font-bold text-gray-900">Connections</h1>
+            <p class="text-[11px] text-gray-400">Manage requests, and jump into messages once you're connected</p>
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="flex items-center justify-center py-10">
+        <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
+    </div>
+
+    <ng-container *ngIf="!loading">
+
+        <!-- ── INCOMING REQUESTS ─────────────────────────────────────────── -->
+        <div *ngIf="incoming.length > 0" class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Requests</p>
+
+            <div *ngFor="let r of incoming" class="flex items-center justify-between gap-3 py-1.5">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
+                        <i-feather name="user" class="text-sky-600" style="width:14px;height:14px;"></i-feather>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-xs font-bold text-gray-900 truncate">{{ r.otherUserName }}</p>
+                        <p class="text-[11px] text-gray-400 truncate capitalize">{{ r.otherUserRole }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <button type="button" (click)="accept(r)"
+                        class="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 hover:bg-red-700 text-white transition">
+                        Accept
+                    </button>
+                    <button type="button" (click)="decline(r)"
+                        class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 text-gray-500 hover:text-gray-900 hover:border-gray-300 transition">
+                        Decline
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── SENT REQUESTS ──────────────────────────────────────────────── -->
+        <div *ngIf="outgoing.length > 0" class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Sent</p>
+
+            <div *ngFor="let r of outgoing" class="flex items-center justify-between gap-3 py-1.5">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">
+                        <i-feather name="clock" class="text-gray-400" style="width:14px;height:14px;"></i-feather>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-xs font-bold text-gray-900 truncate">{{ r.otherUserName }}</p>
+                        <p class="text-[11px] text-gray-400 truncate">Request pending</p>
+                    </div>
+                </div>
+                <button type="button" (click)="cancel(r)"
+                    class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-200 transition">
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <!-- ── CONNECTIONS ─────────────────────────────────────────────────── -->
+        <div class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Your connections</p>
+
+            <div *ngIf="connections.length === 0" class="py-6 text-center">
+                <p class="text-xs text-gray-400">
+                    No connections yet. Find people to connect with from
+                    <a routerLink="/members" class="font-semibold text-red-600 hover:underline">Members</a>.
+                </p>
+            </div>
+
+            <div *ngFor="let c of connections" class="flex items-center justify-between gap-3 py-1.5">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
+                        <i-feather name="user" class="text-sky-600" style="width:14px;height:14px;"></i-feather>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-xs font-bold text-gray-900 truncate">{{ c.otherUserName }}</p>
+                        <p class="text-[11px] text-gray-400 truncate capitalize">{{ c.otherUserRole }}</p>
+                    </div>
+                </div>
+                <button type="button" (click)="message(c)"
+                    class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-gray-900 hover:bg-gray-800 text-white transition flex items-center gap-1.5">
+                    <i-feather name="message-circle" style="width:11px;height:11px;"></i-feather>
+                    Message
+                </button>
+            </div>
+        </div>
+
+    </ng-container>
+
+</section>

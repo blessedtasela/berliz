@@ -20,10 +20,20 @@ import {
 import { loadMyTrainers } from 'src/app/state/booking/booking.actions';
 import { selectMyTrainers } from 'src/app/state/booking/booking.selectors';
 
+import { loadMyConnections } from 'src/app/state/connection/connection.actions';
+import { selectMyConnections } from 'src/app/state/connection/connection.selectors';
+import { Connection } from 'src/app/models/connection.model';
+
 import { selectUser } from 'src/app/state/user/user.selector';
 
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { genericError } from 'src/validators/form-validators.module';
+
+/** A person you can start (or already have) a conversation with -- either a booked trainer or an accepted Connection. */
+interface StartableContact {
+  userId: number;
+  name: string;
+}
 
 /**
  * Floating chat bubble mounted once at the app root (see app.component.html) so it
@@ -52,6 +62,7 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
   conversations: ConversationSummary[] = [];
   unreadCount = 0;
   myTrainers: MyTrainerSummary[] = [];
+  connections: Connection[] = [];
 
   activeUserId: number | null = null;
   activeMessages: Message[] = [];
@@ -71,6 +82,7 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.store.dispatch(MessageActions.loadConversations());
     this.store.dispatch(loadMyTrainers());
+    this.store.dispatch(loadMyConnections());
 
     this.onMessagesPage = this.router.url.startsWith('/dashboard/messages');
 
@@ -86,6 +98,7 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
       this.store.select(selectConversations).pipe(takeUntil(this.destroy$)).subscribe(c => this.conversations = c),
       this.store.select(selectTotalUnreadCount).pipe(takeUntil(this.destroy$)).subscribe(n => this.unreadCount = n),
       this.store.select(selectMyTrainers).pipe(takeUntil(this.destroy$)).subscribe(t => this.myTrainers = t),
+      this.store.select(selectMyConnections).pipe(takeUntil(this.destroy$)).subscribe(c => this.connections = c),
       this.store.select(selectActiveConversationUserId).pipe(takeUntil(this.destroy$)).subscribe(id => this.activeUserId = id),
       this.store.select(selectActiveConversationMessages).pipe(takeUntil(this.destroy$)).subscribe(m => this.activeMessages = m),
       this.store.select(selectLoadingConversation).pipe(takeUntil(this.destroy$)).subscribe(l => this.loadingConversation = l),
@@ -101,10 +114,24 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  /** Trainers from myTrainers who don't already have a conversation started. */
-  get startableTrainers(): MyTrainerSummary[] {
+  /** Booked trainers + accepted connections who don't already have a conversation started, deduped by userId. */
+  get startableContacts(): StartableContact[] {
     const existingIds = new Set(this.conversations.map(c => c.otherUserId));
-    return this.myTrainers.filter(t => t.type === 'trainer' && t.userId != null && !existingIds.has(t.userId));
+
+    const fromTrainers: StartableContact[] = this.myTrainers
+      .filter(t => t.type === 'trainer' && t.userId != null && !existingIds.has(t.userId))
+      .map(t => ({ userId: t.userId as number, name: t.name }));
+
+    const fromConnections: StartableContact[] = this.connections
+      .filter(c => !existingIds.has(c.otherUserId))
+      .map(c => ({ userId: c.otherUserId, name: c.otherUserName }));
+
+    const seen = new Set<number>();
+    return [...fromTrainers, ...fromConnections].filter(c => {
+      if (seen.has(c.userId)) return false;
+      seen.add(c.userId);
+      return true;
+    });
   }
 
   togglePopup(): void {
@@ -122,9 +149,8 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
     this.view = 'thread';
   }
 
-  startConversation(trainer: MyTrainerSummary): void {
-    if (trainer.userId == null) return;
-    this.activeUserId = trainer.userId;
+  startConversation(contact: StartableContact): void {
+    this.activeUserId = contact.userId;
     this.store.dispatch(MessageActions.clearActiveConversation());
     this.view = 'thread';
   }
