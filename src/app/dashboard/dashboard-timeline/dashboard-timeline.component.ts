@@ -48,6 +48,9 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   currentUserId: number | null = null;
   myPhotoSrc = '../../../assets/icons/user.png';
 
+  /** Feed thumbnails are cropped (object-cover) to keep the feed tidy — clicking one opens the full, uncropped image + caption, IG-style. */
+  expandedPost: PostResponse | null = null;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -179,6 +182,20 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
 
   isMine(post: PostResponse): boolean {
     return this.currentUserId != null && post.authorId === this.currentUserId;
+  }
+
+  /** Post cards only ever rendered a static icon -- PostResponse had no author photo field until now. */
+  authorPhotoSrc(post: PostResponse): string | null {
+    return post.authorPhoto ? 'data:image/*;base64,' + post.authorPhoto : null;
+  }
+
+  openLightbox(post: PostResponse): void {
+    if (!post.photoUrl) return;
+    this.expandedPost = post;
+  }
+
+  closeLightbox(): void {
+    this.expandedPost = null;
   }
 
   toggleLike(post: PostResponse): void {

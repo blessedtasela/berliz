@@ -85,7 +85,8 @@
         <div class="flex items-center justify-between gap-2">
             <a [routerLink]="isMine(post) ? null : ['/dashboard/user', post.authorId]"
                 class="flex items-center gap-2.5 min-w-0" [class.hover:opacity-80]="!isMine(post)">
-                <div class="w-8 h-8 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <img *ngIf="authorPhotoSrc(post) as src" [src]="src" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
+                <div *ngIf="!authorPhotoSrc(post)" class="w-8 h-8 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
                     <i-feather name="user" class="text-red-600" style="width:14px;height:14px;"></i-feather>
                 </div>
                 <div class="flex flex-col leading-tight min-w-0">
@@ -102,8 +103,14 @@
 
         <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ post.content }}</p>
 
-        <img *ngIf="post.photoUrl" [src]="post.photoUrl | strapiUrl" alt=""
-            class="w-full max-h-96 object-cover rounded-xl border border-gray-100" />
+        <button *ngIf="post.photoUrl" type="button" (click)="openLightbox(post)"
+            class="relative w-full max-h-96 overflow-hidden rounded-xl border border-gray-100 group cursor-zoom-in">
+            <img [src]="post.photoUrl | strapiUrl" alt="" class="w-full max-h-96 object-cover" />
+            <span class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition flex items-center justify-center">
+                <i-feather name="maximize-2" style="width:20px;height:20px;"
+                    class="text-white opacity-0 group-hover:opacity-100 transition drop-shadow"></i-feather>
+            </span>
+        </button>
 
         <div class="border-t border-gray-100 pt-2 flex items-center gap-1.5">
             <button type="button" (click)="toggleLike(post)"
@@ -127,6 +134,32 @@
         <p class="text-xs text-gray-400 max-w-xs leading-relaxed">
             {{ tab === 'feed' ? 'Posts from you and your connections will show up here.' : 'Share your first update above.' }}
         </p>
+    </div>
+
+    <!-- ── LIGHTBOX ──────────────────────────────────────────────────────── -->
+    <div *ngIf="expandedPost" (click)="closeLightbox()"
+        class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4">
+
+        <button type="button" (click)="closeLightbox()"
+            class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition">
+            <i-feather name="x" style="width:18px;height:18px;"></i-feather>
+        </button>
+
+        <div class="max-w-3xl w-full max-h-full flex flex-col items-center gap-4" (click)="$event.stopPropagation()">
+            <img [src]="expandedPost.photoUrl | strapiUrl" alt=""
+                class="max-w-full max-h-[75vh] object-contain rounded-lg" />
+
+            <div *ngIf="expandedPost.content" class="w-full bg-black/40 rounded-xl px-4 py-3 flex items-start gap-2.5">
+                <img *ngIf="authorPhotoSrc(expandedPost) as src" [src]="src" alt="" class="w-7 h-7 rounded-full object-cover shrink-0" />
+                <div *ngIf="!authorPhotoSrc(expandedPost)" class="w-7 h-7 rounded-full bg-red-500/20 flex items-center justify-center shrink-0">
+                    <i-feather name="user" class="text-red-400" style="width:12px;height:12px;"></i-feather>
+                </div>
+                <div class="min-w-0">
+                    <span class="text-xs font-bold text-white">{{ expandedPost.authorName }}</span>
+                    <p class="text-sm text-gray-200 whitespace-pre-line break-words">{{ expandedPost.content }}</p>
+                </div>
+            </div>
+        </div>
     </div>
 
 </section>

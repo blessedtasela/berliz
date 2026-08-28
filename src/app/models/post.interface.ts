@@ -4,6 +4,7 @@ export interface PostResponse {
   authorId: number;
   authorName: string;
   authorEmail: string;
+  authorPhoto?: string;
   content: string;
   photoUrl?: string | null;
   likes: number;
