@@ -33,7 +33,7 @@
             <!-- HERO -->
             <section class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                 <div class="h-44 sm:h-60 w-full bg-gray-100">
-                    <img [src]="center.photoUrl | strapiUrl" [alt]="center.name" class="w-full h-full object-cover object-top"
+                    <img [src]="center.photoResponse?.photoUrl | strapiUrl" [alt]="center.name" class="w-full h-full object-cover object-top"
                         onerror="this.src='assets/landing/hero-gym-centers.jpg';" />
                 </div>
 

@@ -16,7 +16,7 @@ export class DashboardCenterDetailComponent extends CenterDetailComponent {
   resolveStrapiUrl = resolveStrapiUrl;
 
   get photoUrl(): string {
-    return this.center?.photoUrl ? resolveStrapiUrl(this.center.photoUrl) : 'assets/avatar.png';
+    return this.center?.photoResponse?.photoUrl ? resolveStrapiUrl(this.center.photoResponse.photoUrl) : 'assets/avatar.png';
   }
 
   onImageError(event: any): void {

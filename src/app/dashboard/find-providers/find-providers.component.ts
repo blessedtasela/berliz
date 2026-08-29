@@ -104,7 +104,7 @@ export class FindProvidersComponent implements OnInit, OnDestroy {
   }
 
   centerPhotoUrl(center: Centers): string {
-    return resolveStrapiUrl(center?.photoUrl) || 'assets/avatar.png';
+    return resolveStrapiUrl(center?.photoResponse?.photoUrl) || 'assets/avatar.png';
   }
 
   categoryPhotoUrl(category: Categories): string {

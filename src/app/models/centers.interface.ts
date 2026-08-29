@@ -7,7 +7,8 @@ export interface Centers {
   address: string;
   experience: string;
   location: string;
-  photoUrl: string;
+  /** Same nested shape Trainers.photoResponse already uses -- was a flat `photoUrl` that the API never actually sent, so every center image silently fell back to a placeholder. */
+  photoResponse: PhotoResponse;
   likes: number;
   status: string;
   userId: number;
@@ -101,6 +102,8 @@ export interface CenterTrainers {
   id: number;
   centerId: number;
   centerName: string;
+  /** The center's own photo -- mirrors CenterTrainerResponse.photoResponse on the backend. */
+  photoResponse?: PhotoResponse;
   trainerId: number;
   trainerName: string;
   status: string;

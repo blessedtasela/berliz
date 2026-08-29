@@ -134,7 +134,7 @@
             </div>
 
             <div *ngFor="let c of connections" class="flex items-center justify-between gap-3 py-1.5">
-                <a [routerLink]="['/dashboard/user', c.otherUsername || c.otherUserId]" class="flex items-center gap-2.5 min-w-0 hover:opacity-80 transition">
+                <a [routerLink]="['/dashboard/user', c.otherHandle || c.otherUserId]" class="flex items-center gap-2.5 min-w-0 hover:opacity-80 transition">
                     <img *ngIf="connectionPhotoSrc(c) as src" [src]="src" alt="" (click)="lightbox.open(src); $event.stopPropagation(); $event.preventDefault()"
                         class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
                     <div *ngIf="!connectionPhotoSrc(c)" class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
@@ -146,7 +146,7 @@
                     </div>
                 </a>
                 <div class="flex items-center gap-1.5 shrink-0">
-                    <a [routerLink]="['/dashboard/user', c.otherUsername || c.otherUserId]"
+                    <a [routerLink]="['/dashboard/user', c.otherHandle || c.otherUserId]"
                         class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 text-gray-600 hover:border-gray-300 hover:text-gray-900 transition flex items-center gap-1.5">
                         <i-feather name="user" style="width:11px;height:11px;"></i-feather>
                         Profile

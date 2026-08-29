@@ -30,9 +30,13 @@
             class="flex items-center justify-between gap-3 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
 
             <div class="flex items-center gap-3 min-w-0">
-                <div class="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center shrink-0">
-                    <i-feather name="home" style="width:15px;height:15px;" class="text-gray-500"></i-feather>
-                </div>
+                <img *ngIf="ct.photoResponse?.photoUrl as src; else centerFallbackIcon"
+                    [src]="src | strapiUrl" alt="" class="w-9 h-9 rounded-xl object-cover object-top border border-gray-200 shrink-0" />
+                <ng-template #centerFallbackIcon>
+                    <div class="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center shrink-0">
+                        <i-feather name="home" style="width:15px;height:15px;" class="text-gray-500"></i-feather>
+                    </div>
+                </ng-template>
                 <div class="min-w-0">
                     <p class="text-xs font-semibold text-gray-900 truncate">{{ ct.centerName }}</p>
                     <p class="text-[11px] text-gray-400">Linked since {{ formatDate(ct.date) }}</p>

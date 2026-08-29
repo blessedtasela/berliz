@@ -29,7 +29,8 @@ export interface MessageRequest {
 export interface ConversationSummary {
   otherUserId: number;
   otherUserName: string;
-  otherUsername?: string;
+  /** The other side's @handle -- named otherHandle (not otherUsername) to match ConversationSummaryResponse; see that DTO's field comment for why. */
+  otherHandle?: string;
   otherUserRole: string;
   otherUserPhoto?: string;
 
