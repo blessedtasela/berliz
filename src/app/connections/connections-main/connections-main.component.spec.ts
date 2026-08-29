@@ -100,6 +100,6 @@ describe('ConnectionsMainComponent', () => {
 
     component.message(connections[0]);
 
-    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/messages']);
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/messages'], { queryParams: { userId: 4 } });
   });
 });

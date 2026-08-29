@@ -1,11 +1,11 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { environment } from 'src/environments/environment';
 import { ProfileVisibility, PublicDirectoryEntry, PublicUserProfile, SidebarDisplay, Users } from '../models/users.interface';
 import { AuthResponse } from '../models/Auth.interface';
 import { ApiResponse } from '../models/Api.interface';
+import { AuthRedirectService } from './auth-redirect.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class UserService {
   partnerFormIndex: number = 0;
 
   constructor(private httpClient: HttpClient,
-    private router: Router) { }
+    private authRedirect: AuthRedirectService) { }
 
   signup(data: any): Observable<ApiResponse<string>> {
     return this.httpClient.post<ApiResponse<string>>(
@@ -312,7 +312,7 @@ export class UserService {
 
   logout(): any {
     this.clearLogOutLocalStorage();
-    this.router.navigate(['/login']);
+    this.authRedirect.goToLogin();
   }
 
   setPartnerFormIndex(index: number) {

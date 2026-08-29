@@ -124,7 +124,24 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
         this.trainer = match;
         this.trainerId = match.id;
         this.loadPublicProfile();
+        this.resumePendingAction();
       });
+  }
+
+  /**
+   * A login gate (BookingDialogService/TestimonialDialogService) sent the
+   * user here with ?action=book|testimonial after signing in -- finish what
+   * they were trying to do instead of leaving them to find the button again.
+   * Fires once and strips the query param so a manual refresh doesn't reopen it.
+   */
+  private resumePendingAction(): void {
+    const action = this.route.snapshot.queryParamMap.get('action');
+    if (!action) return;
+
+    if (action === 'book') this.bookSession();
+    if (action === 'testimonial') this.leaveTestimonial();
+
+    this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
   }
 
   /** Back to the trainers directory from the not-found state. */

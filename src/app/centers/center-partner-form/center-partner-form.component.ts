@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 import { Users } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PartnerFormComponent } from 'src/app/shared/partner-form/partner-form.component';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { loadUser } from 'src/app/state/user/user.actions';
 import { selectUser } from 'src/app/state/user/user.selector';
 
@@ -34,7 +34,7 @@ export class CenterPartnerFormComponent implements OnInit {
     private store: Store,
     private snackBar: SnackBarService,
     private dialog: MatDialog,
-    private router: Router,
+    private authRedirect: AuthRedirectService,
   ) { }
 
   ngOnInit(): void {
@@ -68,7 +68,7 @@ export class CenterPartnerFormComponent implements OnInit {
 
       loginDialogRef.afterClosed().subscribe((result) => {
         if (result) {
-          this.router.navigate(['/login']);
+          this.authRedirect.goToLogin();
         }
       });
       return;

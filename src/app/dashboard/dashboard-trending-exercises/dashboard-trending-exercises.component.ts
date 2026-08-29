@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 
@@ -8,6 +7,7 @@ import { Categories } from 'src/app/models/categories.interface';
 import { Exercises } from 'src/app/models/exercise.interface';
 import { Users } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
@@ -58,9 +58,9 @@ export class DashboardTrendingExercisesComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
-    private router: Router,
     private dialog: MatDialog,
-    private snackbar: SnackBarService
+    private snackbar: SnackBarService,
+    private authRedirect: AuthRedirectService
   ) { }
 
   ngOnInit(): void {
@@ -160,7 +160,7 @@ export class DashboardTrendingExercisesComponent implements OnInit, OnDestroy {
 
     ref.afterClosed().subscribe(result => {
       if (result) {
-        this.router.navigate(['/login']);
+        this.authRedirect.goToLogin();
       }
     });
   }

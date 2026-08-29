@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Users } from 'src/app/models/users.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { PartnerFormComponent } from 'src/app/shared/partner-form/partner-form.component';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
@@ -45,7 +45,7 @@ export class TrainerPartnerFormComponent implements OnInit {
     private snackBar: SnackBarService,
     private partnerService: PartnerService,
     private dialog: MatDialog,
-    private router: Router,
+    private authRedirect: AuthRedirectService,
   ) { }
 
   ngOnInit(): void {
@@ -81,7 +81,7 @@ export class TrainerPartnerFormComponent implements OnInit {
 
       loginDialogRef.afterClosed().subscribe((result) => {
         if (result) {
-          this.router.navigate(['/login']);
+          this.authRedirect.goToLogin();
         }
       });
       return;

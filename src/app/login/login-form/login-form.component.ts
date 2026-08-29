@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ForgotPasswordModalComponent } from 'src/app/dashboard/user/forgot-password-modal/forgot-password-modal.component';
 import { Login } from 'src/app/models/users.interface';
@@ -15,7 +15,7 @@ import { emailExtensionValidator, genericError } from 'src/validators/form-valid
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.css']
 })
-export class LoginFormComponent implements AfterViewInit {
+export class LoginFormComponent implements OnInit, AfterViewInit {
   loginForm!: FormGroup;
   loginInterface: Login | undefined;
   invalidForm: boolean = false;
@@ -30,12 +30,26 @@ export class LoginFormComponent implements AfterViewInit {
 
   constructor(private fb: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private dialog: MatDialog,
     private userService: UserService,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private socialAuthService: SocialAuthService) {
     this.invalidLogin = ''
+  }
+
+  /**
+   * Where to send the user once they're signed in. Set by AuthGuard when it
+   * blocked a protected route, or by AuthRedirectService.goToLogin() when some
+   * other "you need to log in to do that" gate sent them here — defaults to
+   * /dashboard when neither applies (a plain, unprompted visit to /login).
+   * Only ever a same-origin relative path — never trust this into an open
+   * redirect to an attacker-controlled host.
+   */
+  private get returnUrl(): string {
+    const url = this.route.snapshot.queryParamMap.get('returnUrl');
+    return url && url.startsWith('/') && !url.startsWith('//') ? url : '/dashboard';
   }
 
   ngAfterViewInit(): void {
@@ -60,7 +74,7 @@ export class LoginFormComponent implements AfterViewInit {
 
     if (token) {
       this.userService.checkToken().subscribe({
-        next: () => this.router.navigate(['/dashboard']),
+        next: () => this.router.navigateByUrl(this.returnUrl),
         error: () => {
           // token invalid/expired → clear it and stay on login
           localStorage.removeItem('token');
@@ -140,7 +154,7 @@ export class LoginFormComponent implements AfterViewInit {
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.loginForm.reset();
-          this.router.navigate(['/dashboard']);
+          this.router.navigateByUrl(this.returnUrl);
         },
         error: (error: any) => {
           this.ngxService.stop();
@@ -196,7 +210,7 @@ export class LoginFormComponent implements AfterViewInit {
     this.userService.startRefreshTokenTimer();
     this.responseMessage = response?.message;
     this.snackBarService.openSnackBar(this.responseMessage, '');
-    this.router.navigate(['/dashboard']);
+    this.router.navigateByUrl(this.returnUrl);
   }
 
   private handleSocialAuthError(error: any): void {

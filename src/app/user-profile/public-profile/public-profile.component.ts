@@ -11,6 +11,7 @@ import { PublicUserProfile } from 'src/app/models/users.interface';
 import { WorkoutResponse } from 'src/app/models/workout.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 
 import {
   clearPublicProfile,
@@ -70,7 +71,8 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
-    private snackBarService: SnackBarService
+    private snackBarService: SnackBarService,
+    public authRedirect: AuthRedirectService
   ) {
     this.needsLogin = !this.authService.isAuthenticated();
   }
@@ -190,7 +192,7 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
   quickAdd(template: WorkoutResponse): void {
     if (!this.authService.isAuthenticated()) {
       this.snackBarService.openSnackBar('Log in to add this workout', '');
-      this.router.navigate(['/login']);
+      this.authRedirect.goToLogin();
       return;
     }
 

@@ -162,9 +162,26 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
         if (this.centerId !== match.id) {
           this.centerId = match.id;
           this.loadCenterDetails();
+          this.resumePendingAction();
         }
       })
     );
+  }
+
+  /**
+   * A login gate (BookingDialogService/TestimonialDialogService) sent the
+   * user here with ?action=book|testimonial after signing in -- finish what
+   * they were trying to do instead of leaving them to find the button again.
+   * Fires once and strips the query param so a manual refresh doesn't reopen it.
+   */
+  private resumePendingAction(): void {
+    const action = this.route.snapshot.queryParamMap.get('action');
+    if (!action) return;
+
+    if (action === 'book') this.bookSession();
+    if (action === 'testimonial') this.leaveTestimonial();
+
+    this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
   }
 
   private loadCenterDetails(): void {

@@ -262,12 +262,12 @@ export class AuthInterceptor implements HttpInterceptor {
 
   /**
    * The one and only hard-logout path in the interceptor.
-   * `AuthService.logout()` clears the tokens and already navigates to `/login`;
-   * the explicit navigate is kept as a belt-and-braces guard for the case where
-   * logout is triggered mid-navigation.
+   * `AuthService.logout()` clears the tokens and navigates to `/login`,
+   * carrying the page the user was on as returnUrl (via AuthRedirectService)
+   * so they land back here once they sign back in. Don't navigate again
+   * here -- a second bare `/login` would immediately overwrite that returnUrl.
    */
   private forceLogout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }

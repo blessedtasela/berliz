@@ -1,5 +1,4 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
 import { EMPTY, Subscription, fromEvent, merge, timer } from 'rxjs';
 import { startWith, switchMap, throttleTime } from 'rxjs/operators';
 
@@ -46,7 +45,6 @@ export class InactivityService implements OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private router: Router,
     private zone: NgZone
   ) { }
 
@@ -105,14 +103,16 @@ export class InactivityService implements OnDestroy {
 
   /**
    * Same logout path `AuthInterceptor` uses for an unrecoverable refresh
-   * failure: `AuthService.logout()` (clears tokens, navigates to `/login`) plus
-   * the explicit navigation guard. No second logout implementation.
+   * failure: `AuthService.logout()` clears tokens and navigates to `/login`,
+   * carrying the page the user was on as returnUrl (via AuthRedirectService)
+   * so logging back in after an idle timeout returns them right there. No
+   * second logout implementation, and no second navigate -- that would
+   * overwrite the returnUrl with a bare `/login`.
    */
   private logoutForInactivity(): void {
     // Note: we deliberately keep watching. The subscription is idle until the
     // next interaction, and once the user logs back in `hasSession()` is true
     // again, so the countdown re-arms by itself without a second `start()`.
     this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }

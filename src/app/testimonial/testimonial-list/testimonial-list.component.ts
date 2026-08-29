@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Testimonials } from '../../models/testimonials.model';
@@ -17,7 +18,9 @@ export class TestimonialListComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
-    private testimonialDialog: TestimonialDialogService
+    private testimonialDialog: TestimonialDialogService,
+    private route: ActivatedRoute,
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -25,6 +28,15 @@ export class TestimonialListComponent implements OnInit, OnDestroy {
     this.subscription = this.store.select(selectActiveTestimonials).subscribe(testimonials => {
       this.testimonials = testimonials ?? [];
     });
+
+    // A login gate (TestimonialDialogService) sent the user here with
+    // ?action=testimonial after signing in -- reopen the form instead of
+    // leaving them to find the button again. Strip the param so a manual
+    // refresh doesn't reopen it.
+    if (this.route.snapshot.queryParamMap.get('action') === 'testimonial') {
+      this.openTestimonialForm();
+      this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+    }
   }
 
   ngOnDestroy() {

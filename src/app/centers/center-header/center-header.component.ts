@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { Partner } from 'src/app/models/partners.interface';
 import { Users } from 'src/app/models/users.interface';
 import { PartnerFormModalComponent } from 'src/app/shared/partner-form-modal/partner-form-modal.component';
 import { Store } from '@ngrx/store';
+import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { loadMyPartner } from 'src/app/state/partner/partner.actions';
 import { selectMyPartner } from 'src/app/state/partner/partner.selectors';
@@ -20,7 +20,7 @@ export class CenterHeaderComponent {
 
   constructor(private dialog: MatDialog,
     private store: Store,
-    private router: Router) { }
+    private authRedirect: AuthRedirectService) { }
 
   ngOnInit() {
     this.store.select(selectUser).subscribe((user) => {
@@ -38,7 +38,7 @@ export class CenterHeaderComponent {
   openAddPartner() {
     if (!this.user) {
       window.alert("Please log in to continue")
-      this.router.navigate(['/login'])
+      this.authRedirect.goToLogin();
     } else {
       const dialogRef = this.dialog.open(PartnerFormModalComponent, {
         width: '560px',

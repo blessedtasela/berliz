@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 import { Users } from 'src/app/models/users.interface';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { loadUser } from 'src/app/state/user/user.actions';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { TestimonialFormComponent } from './testimonial-form/testimonial-form.component';
@@ -22,7 +22,7 @@ export class TestimonialDialogService {
   constructor(
     private store: Store,
     private dialog: MatDialog,
-    private router: Router,
+    private authRedirect: AuthRedirectService,
   ) {
     // Same pattern as trainer-partner-form: keep the current user warm so the
     // login gate can decide synchronously on click.
@@ -48,8 +48,10 @@ export class TestimonialDialogService {
       });
 
       loginDialogRef.afterClosed().subscribe(result => {
+        // 'testimonial' -- the page this dialog was opened from checks for
+        // this on return and re-opens the form automatically.
         if (result) {
-          this.router.navigate(['/login']);
+          this.authRedirect.goToLogin('testimonial');
         }
       });
       return;

@@ -148,6 +148,6 @@ describe('MembersDirectoryComponent', () => {
 
     component.messageMember(members[4], event);
 
-    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/messages']);
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/messages'], { queryParams: { userId: 5 } });
   });
 });

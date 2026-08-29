@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 
 import { MessagesMainComponent } from './messages-main.component';
@@ -66,6 +67,7 @@ describe('MessagesMainComponent', () => {
           ]
         }),
         { provide: SnackBarService, useValue: snackbarSpy },
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } },
       ]
     });
 
