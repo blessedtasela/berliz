@@ -18,7 +18,7 @@ describe('PlanEffects', () => {
     {
       id: 1, name: 'Basic', description: 'One center', price: 17,
       billingInterval: 'monthly', accessScope: 'One center and its trainer(s)',
-      isActive: true, sortOrder: 1
+      isActive: true, sortOrder: 1, targetRole: 'client'
     }
   ];
 

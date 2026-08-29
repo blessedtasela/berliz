@@ -1,44 +1,44 @@
-<section class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
+<section class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col gap-4">
 
     <div class="flex items-center justify-between gap-3">
         <div>
-            <h2 class="text-sm font-bold text-gray-900">Locations</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h2 class="text-sm font-bold text-white">Locations</h2>
+            <p class="text-[11px] text-zinc-500 mt-0.5">
                 {{ centerLocations.length }}
                 {{ centerLocations.length === 1 ? 'branch' : 'branches' }} you can train at
             </p>
         </div>
         <button *ngIf="centerLocations.length > 4" type="button" (click)="allLocations()"
-            class="text-[11px] font-semibold text-red-600 hover:text-red-700 transition shrink-0">
+            class="text-[11px] font-semibold text-red-400 hover:text-red-300 transition shrink-0">
             {{ !showAllLocations ? 'See all' : 'See less' }}
         </button>
     </div>
 
-    <div class="border-t border-gray-100"></div>
+    <div class="border-t border-zinc-800"></div>
 
     <div *ngIf="centerLocations.length; else noLocations" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div *ngFor="let centerLocation of centerLocations; let i = index"
             [ngClass]="{ 'hidden': i >= 4 && !showAllLocations }"
-            class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden flex flex-col hover:border-red-200 transition">
+            class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden flex flex-col hover:border-red-900 transition">
 
-            <div class="h-32 w-full bg-gray-100">
+            <div class="h-32 w-full bg-zinc-900">
                 <img [src]="centerLocation.coverPhotoUrl" [alt]="centerLocation.subName"
                     class="w-full h-full object-cover object-top" onerror="this.src='assets/landing/hero-gym-centers.jpg';" />
             </div>
 
             <div class="p-3 flex flex-col gap-2 flex-1">
                 <div>
-                    <p class="text-[11px] uppercase tracking-wide text-gray-400">Branch</p>
-                    <p class="text-xs font-bold text-gray-900 mt-0.5">{{ centerLocation.subName }}</p>
+                    <p class="text-[11px] uppercase tracking-wide text-zinc-500">Branch</p>
+                    <p class="text-xs font-bold text-white mt-0.5">{{ centerLocation.subName }}</p>
                 </div>
 
-                <p class="text-[11px] text-gray-600 leading-relaxed flex-1">
+                <p class="text-[11px] text-zinc-400 leading-relaxed flex-1">
                     {{ centerLocation.address }}
                 </p>
 
                 <a *ngIf="centerLocation.locationUrl" [href]="centerLocation.locationUrl" target="_blank"
                     rel="noopener noreferrer"
-                    class="text-[10px] font-semibold text-red-600 hover:text-red-700 transition flex items-center gap-1 pt-2 border-t border-gray-200">
+                    class="text-[10px] font-semibold text-red-400 hover:text-red-300 transition flex items-center gap-1 pt-2 border-t border-zinc-800">
                     <i-feather name="map-pin" style="width:11px;height:11px;"></i-feather>
                     Open in maps
                 </a>
@@ -47,7 +47,7 @@
     </div>
 
     <ng-template #noLocations>
-        <div class="flex items-center gap-2 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3">
+        <div class="flex items-center gap-2 text-zinc-500 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-3">
             <i-feather name="info" style="width:13px;height:13px;"></i-feather>
             <span class="text-xs">No locations published for this center yet.</span>
         </div>

@@ -71,6 +71,11 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     return this.availabilityConfigured === false;
   }
 
+  /** "trainer" or "center" -- this same form/dialog serves both booking contexts. */
+  get providerKind(): string {
+    return this.data.centerId != null ? 'center' : 'trainer';
+  }
+
   private destroy$ = new Subject<void>();
 
   constructor(

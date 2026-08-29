@@ -1,46 +1,46 @@
-<section class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
+<section class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col gap-4">
 
     <div class="flex items-center justify-between gap-3">
         <div>
-            <h2 class="text-sm font-bold text-gray-900">Disciplines</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h2 class="text-sm font-bold text-white">Disciplines</h2>
+            <p class="text-[11px] text-zinc-500 mt-0.5">
                 {{ centerCategories.length }}
                 {{ centerCategories.length === 1 ? 'discipline' : 'disciplines' }} offered here
             </p>
         </div>
         <button *ngIf="centerCategories.length > 6" type="button" (click)="allCategories()"
-            class="text-[11px] font-semibold text-red-600 hover:text-red-700 transition shrink-0">
+            class="text-[11px] font-semibold text-red-400 hover:text-red-300 transition shrink-0">
             {{ !showAllCategories ? 'See all' : 'See less' }}
         </button>
     </div>
 
-    <div class="border-t border-gray-100"></div>
+    <div class="border-t border-zinc-800"></div>
 
     <div *ngIf="centerCategories.length; else noCategories"
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <div *ngFor="let c of centerCategories; let i = index" [ngClass]="{ 'hidden': i >= 6 && !showAllCategories }"
-            class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col gap-2 hover:border-red-200 transition">
+            class="bg-zinc-950 border border-zinc-800 rounded-xl p-3 flex flex-col gap-2 hover:border-red-900 transition">
 
             <div class="flex items-center gap-3">
-                <img [src]="c.photoUrl | strapiUrl" [alt]="c.name" class="w-10 h-10 rounded-xl object-cover object-top border border-gray-200"
+                <img [src]="c.photoUrl | strapiUrl" [alt]="c.name" class="w-10 h-10 rounded-xl object-cover object-top border border-zinc-800"
                     onerror="this.src='assets/avatar.png';" />
                 <div class="min-w-0">
-                    <p class="text-xs font-bold text-gray-900 truncate">{{ c.name }}</p>
-                    <p class="text-[10px] text-gray-400 truncate">
+                    <p class="text-xs font-bold text-white truncate">{{ c.name }}</p>
+                    <p class="text-[10px] text-zinc-500 truncate">
                         {{ c.tagNames && c.tagNames.length ? c.tagNames.join(' / ') : 'General' }}
                     </p>
                 </div>
             </div>
 
-            <p class="text-[11px] text-gray-600 line-clamp-3">{{ c.description }}</p>
+            <p class="text-[11px] text-zinc-400 line-clamp-3">{{ c.description }}</p>
 
-            <div class="flex items-center justify-between pt-2 border-t border-gray-200">
-                <span class="text-[10px] text-gray-400 flex items-center gap-1">
-                    <i-feather name="thumbs-up" style="width:11px;height:11px;" class="text-red-600"></i-feather>
+            <div class="flex items-center justify-between pt-2 border-t border-zinc-800">
+                <span class="text-[10px] text-zinc-500 flex items-center gap-1">
+                    <i-feather name="thumbs-up" style="width:11px;height:11px;" class="text-red-400"></i-feather>
                     {{ c.likes || 0 }}
                 </span>
                 <a [routerLink]="['/categories', c.id, formatCategoryName(c.name)]"
-                    class="text-[10px] font-semibold text-red-600 hover:text-red-700 transition">
+                    class="text-[10px] font-semibold text-red-400 hover:text-red-300 transition">
                     Know more
                 </a>
             </div>
@@ -48,7 +48,7 @@
     </div>
 
     <ng-template #noCategories>
-        <div class="flex items-center gap-2 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3">
+        <div class="flex items-center gap-2 text-zinc-500 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-3">
             <i-feather name="info" style="width:13px;height:13px;"></i-feather>
             <span class="text-xs">No disciplines listed for this center yet.</span>
         </div>

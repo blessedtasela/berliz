@@ -149,10 +149,16 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
     this.view = 'thread';
   }
 
+  /**
+   * Starting a brand-new thread is just opening a conversation that happens to
+   * have zero messages yet -- see messages-main.component.ts's startConversation
+   * for the full explanation of the bug this replaced (only the component's
+   * own local activeUserId was set, never the store's activeConversationUserId,
+   * so a first message posted successfully but never appeared in the sender's
+   * own thread).
+   */
   startConversation(contact: StartableContact): void {
-    this.activeUserId = contact.userId;
-    this.store.dispatch(MessageActions.clearActiveConversation());
-    this.view = 'thread';
+    this.openConversation(contact.userId);
   }
 
   backToList(): void {

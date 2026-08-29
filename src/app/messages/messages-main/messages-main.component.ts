@@ -127,9 +127,20 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
     this.store.dispatch(MessageActions.markConversationRead({ otherUserId }));
   }
 
+  /**
+   * Starting a brand-new thread is just opening a conversation that happens to
+   * have zero messages yet -- loadConversation() already handles that (an
+   * empty array back from the server, no error) and correctly sets the
+   * store's activeConversationUserId. This used to set only the component's
+   * OWN local activeUserId field and dispatch clearActiveConversation()
+   * instead, leaving the store's activeConversationUserId untouched -- which
+   * silently broke sending the first message: sendMessageSuccess's reducer
+   * only appends to activeConversationMessages when the STORE's
+   * activeConversationUserId matches the sent message's recipientId, so the
+   * message posted fine but never appeared in the sender's own thread.
+   */
   startConversation(contact: StartableContact): void {
-    this.activeUserId = contact.userId;
-    this.store.dispatch(MessageActions.clearActiveConversation());
+    this.openConversation(contact.userId);
   }
 
   send(): void {

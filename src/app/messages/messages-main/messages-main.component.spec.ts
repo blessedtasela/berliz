@@ -101,6 +101,21 @@ describe('MessagesMainComponent', () => {
     expect(store.dispatch).toHaveBeenCalledWith(MessageActions.markConversationRead({ otherUserId: 5 }));
   });
 
+  // Regression test: startConversation used to only set the component's own
+  // local activeUserId field, never the store's activeConversationUserId --
+  // sendMessageSuccess's reducer only appends to activeConversationMessages
+  // when the STORE's activeConversationUserId matches, so the first message
+  // to a brand-new contact posted successfully but never appeared on screen.
+  it('startConversation delegates to openConversation, updating the store (not just a local field)', () => {
+    fixture.detectChanges();
+    (store.dispatch as jasmine.Spy).calls.reset();
+
+    component.startConversation({ userId: 7, name: 'Jordan Lee' });
+
+    expect(store.dispatch).toHaveBeenCalledWith(MessageActions.loadConversation({ otherUserId: 7 }));
+    expect(store.dispatch).toHaveBeenCalledWith(MessageActions.markConversationRead({ otherUserId: 7 }));
+  });
+
   it('send dispatches sendMessage with the draft body and clears it', () => {
     fixture.detectChanges();
     component.activeUserId = 5;

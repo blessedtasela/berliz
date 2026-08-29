@@ -211,7 +211,7 @@
                             </div>
 
                             <!-- Owning center -->
-                            <a *ngIf="item.centerName" [routerLink]="['/centers', item.centerId, formatUrl(item.centerName)]"
+                            <a *ngIf="item.centerName" [routerLink]="['/centers', formatUrl(item.centerName)]"
                                 class="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-red-400 transition w-fit">
                                 <i-feather name="map-pin" style="width:12px;height:12px;"></i-feather>
                                 <span class="font-medium truncate">{{ item.centerName }}</span>

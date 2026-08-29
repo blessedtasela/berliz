@@ -1,19 +1,19 @@
-<section class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
+<section class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col gap-4">
 
     <div>
-        <h2 class="text-sm font-bold text-gray-900">About this center</h2>
-        <p class="text-[11px] text-gray-400 mt-0.5">Who we are and what we stand for</p>
+        <h2 class="text-sm font-bold text-white">About this center</h2>
+        <p class="text-[11px] text-zinc-500 mt-0.5">Who we are and what we stand for</p>
     </div>
 
-    <div class="border-t border-gray-100"></div>
+    <div class="border-t border-zinc-800"></div>
 
     <p *ngIf="centerIntroduction?.introduction; else noIntroduction"
-        class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+        class="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">
         {{ centerIntroduction?.introduction }}
     </p>
 
     <ng-template #noIntroduction>
-        <div class="flex items-center gap-2 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3">
+        <div class="flex items-center gap-2 text-zinc-500 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-3">
             <i-feather name="info" style="width:13px;height:13px;"></i-feather>
             <span class="text-xs">This center has not published an introduction yet.</span>
         </div>

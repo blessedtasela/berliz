@@ -5,11 +5,11 @@ import { CenterPageComponent } from './center-page/center-page.component';
 import { CenterDetailComponent } from './center-detail/center-detail.component';
 import { CenterGuard } from '../guards/center.guard';
 
-// Lazy-loading wrapper for `centers` and `centers/:id/:name`, mounted under
+// Lazy-loading wrapper for `centers` and `centers/:name`, mounted under
 // the `centers` path segment from app-routing.module.ts.
 const routes: Routes = [
   { path: '', component: CenterPageComponent, data: { breadcrumb: 'Centers' } },
-  { path: ':id/:name', component: CenterDetailComponent, canActivate: [CenterGuard], data: { breadcrumb: { alias: 'centerName' } } },
+  { path: ':name', component: CenterDetailComponent, canActivate: [CenterGuard], data: { breadcrumb: { alias: 'centerName' } } },
 ];
 
 @NgModule({

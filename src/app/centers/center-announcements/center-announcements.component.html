@@ -1,36 +1,36 @@
-<section class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
+<section class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col gap-4">
 
     <div class="flex items-center justify-between gap-3">
         <div>
-            <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+            <h2 class="text-sm font-bold text-white flex items-center gap-2">
                 Announcements
-                <i-feather name="bell" style="width:13px;height:13px;" class="text-red-600"></i-feather>
+                <i-feather name="bell" style="width:13px;height:13px;" class="text-red-400"></i-feather>
             </h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <p class="text-[11px] text-zinc-500 mt-0.5">
                 {{ centerAnnouncements.length }}
                 {{ centerAnnouncements.length === 1 ? 'update' : 'updates' }} from this center
             </p>
         </div>
         <button *ngIf="centerAnnouncements.length > 5" type="button" (click)="allAnnouncements()"
-            class="text-[11px] font-semibold text-red-600 hover:text-red-700 transition shrink-0">
+            class="text-[11px] font-semibold text-red-400 hover:text-red-300 transition shrink-0">
             {{ !showAllAnnouncements ? 'See all' : 'See less' }}
         </button>
     </div>
 
-    <div class="border-t border-gray-100"></div>
+    <div class="border-t border-zinc-800"></div>
 
     <div *ngIf="centerAnnouncements.length; else noAnnouncements" class="flex flex-col gap-2">
         <div *ngFor="let centerAnnouncement of centerAnnouncements; let i = index"
             [ngClass]="{ 'hidden': i >= 5 && !showAllAnnouncements }"
-            class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-start gap-3 hover:border-red-200 transition">
+            class="bg-zinc-950 border border-zinc-800 rounded-xl p-3 flex items-start gap-3 hover:border-red-900 transition">
 
             <img [src]="centerAnnouncement.iconUrl" alt=""
-                class="w-9 h-9 rounded-xl object-cover object-top border border-gray-200 shrink-0"
+                class="w-9 h-9 rounded-xl object-cover object-top border border-zinc-800 shrink-0"
                 onerror="this.src='assets/avatar.png';" />
 
             <div class="min-w-0 flex-1">
-                <p class="text-xs text-gray-900 leading-relaxed">{{ centerAnnouncement.announcement }}</p>
-                <p class="text-[10px] uppercase tracking-wide text-gray-400 mt-1">
+                <p class="text-xs text-white leading-relaxed">{{ centerAnnouncement.announcement }}</p>
+                <p class="text-[10px] uppercase tracking-wide text-zinc-500 mt-1">
                     {{ centerAnnouncement.date | date: 'mediumDate' }}
                 </p>
             </div>
@@ -38,7 +38,7 @@
     </div>
 
     <ng-template #noAnnouncements>
-        <div class="flex items-center gap-2 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3">
+        <div class="flex items-center gap-2 text-zinc-500 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-3">
             <i-feather name="info" style="width:13px;height:13px;"></i-feather>
             <span class="text-xs">No announcements from this center right now.</span>
         </div>

@@ -1,38 +1,46 @@
 <app-navigation-bar></app-navigation-bar>
 
-<main class="bg-gray-50 font-sans min-h-screen pb-16">
-    <div class="max-w-5xl mx-auto px-4 pt-6 flex flex-col gap-4">
+<!-- ── LOADING ────────────────────────────────────────────────────────── -->
+<section *ngIf="loading" class="w-full bg-zinc-950 font-sans min-h-[70vh] flex items-center justify-center px-4">
+    <div class="flex flex-col items-center gap-4 text-center">
+        <div class="w-14 h-14 rounded-full border-2 border-zinc-800 border-t-red-600 animate-spin"></div>
+        <p class="text-xs text-zinc-500">Loading center…</p>
+    </div>
+</section>
 
-        <!-- ===================== LOADING ===================== -->
-        <div *ngIf="loading" class="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col gap-3 animate-pulse">
-            <div class="h-40 bg-gray-100 rounded-xl"></div>
-            <div class="h-3 w-1/3 bg-gray-100 rounded"></div>
-            <div class="h-3 w-2/3 bg-gray-100 rounded"></div>
+<!-- ── NOT FOUND ──────────────────────────────────────────────────────── -->
+<section *ngIf="!loading && notFound" class="w-full bg-zinc-950 font-sans min-h-[70vh] flex items-center justify-center px-4">
+
+    <div class="flex flex-col items-center justify-center gap-6 text-center max-w-sm">
+
+        <div class="w-20 h-20 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+            <i-feather name="alert-circle" class="text-zinc-600" style="width:32px;height:32px;"></i-feather>
         </div>
 
-        <!-- ===================== NOT FOUND ===================== -->
-        <div *ngIf="!loading && notFound"
-            class="bg-white rounded-2xl border border-gray-200 p-8 flex flex-col items-center text-center gap-3">
-            <div class="w-12 h-12 rounded-full bg-red-50 border border-red-100 flex items-center justify-center">
-                <i-feather name="alert-circle" style="width:20px;height:20px;" class="text-red-600"></i-feather>
-            </div>
-            <h1 class="text-base font-bold text-gray-900">Center not found</h1>
-            <p class="text-xs text-gray-500 max-w-sm">
+        <div class="flex flex-col gap-2">
+            <h1 class="text-lg font-bold text-white">Center not found</h1>
+            <p class="text-sm text-zinc-500 leading-relaxed">
                 This center is no longer available, or the link you followed is incorrect.
             </p>
-            <button (click)="backToCenters()"
-                class="mt-1 px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
-                <i-feather name="arrow-left" style="width:13px;height:13px;"></i-feather>
-                Back to centers
-            </button>
         </div>
 
-        <!-- ===================== CENTER ===================== -->
-        <ng-container *ngIf="!loading && !notFound && center">
+        <button type="button" (click)="backToCenters()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+            <i-feather name="arrow-left" style="width:13px;height:13px;"></i-feather>
+            Browse all centers
+        </button>
+    </div>
+</section>
+
+<!-- ── CENTER ─────────────────────────────────────────────────────────── -->
+<ng-container *ngIf="!loading && !notFound && center">
+
+    <div class="w-full bg-zinc-950 font-sans px-4 pt-6 pb-20">
+        <div class="max-w-5xl mx-auto flex flex-col gap-6">
 
             <!-- HERO -->
-            <section class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div class="h-44 sm:h-60 w-full bg-gray-100">
+            <section class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+                <div class="h-44 sm:h-60 w-full bg-zinc-950">
                     <img [src]="center.photoUrl | strapiUrl" [alt]="center.name" class="w-full h-full object-cover object-top"
                         onerror="this.src='assets/landing/hero-gym-centers.jpg';" />
                 </div>
@@ -40,39 +48,38 @@
                 <div class="p-5 flex flex-col gap-4">
                     <div class="flex flex-wrap items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <p class="text-[11px] uppercase tracking-wide text-gray-400">Training center</p>
-                            <h1 class="text-xl font-bold text-gray-900 mt-0.5">{{ center.name }}</h1>
-                            <p *ngIf="center.motto" class="text-xs text-gray-500 italic mt-1">{{ center.motto }}</p>
+                            <p class="text-[11px] uppercase tracking-wide text-zinc-500">Training center</p>
+                            <h1 class="text-xl font-bold text-white mt-0.5">{{ center.name }}</h1>
+                            <p *ngIf="center.motto" class="text-xs text-zinc-500 italic mt-1">{{ center.motto }}</p>
                         </div>
 
-                        <div
-                            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-50 border border-red-100 shrink-0">
-                            <i-feather name="thumbs-up" style="width:12px;height:12px;" class="text-red-600"></i-feather>
-                            <span class="text-[11px] font-semibold text-red-600">
+                        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-950/60 border border-red-900 shrink-0">
+                            <i-feather name="thumbs-up" style="width:12px;height:12px;" class="text-red-400"></i-feather>
+                            <span class="text-[11px] font-semibold text-red-400">
                                 {{ center.likes || 0 }} {{ center.likes === 1 ? 'like' : 'likes' }}
                             </span>
                         </div>
                     </div>
 
-                    <div class="border-t border-gray-100"></div>
+                    <div class="border-t border-zinc-800"></div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="flex flex-col gap-1">
-                            <span class="text-[11px] uppercase tracking-wide text-gray-400">Experience</span>
-                            <span class="text-sm font-semibold text-gray-900">
+                            <span class="text-[11px] uppercase tracking-wide text-zinc-500">Experience</span>
+                            <span class="text-sm font-semibold text-white">
                                 {{ center.experience || '—' }}
                             </span>
                         </div>
 
                         <div class="flex flex-col gap-1 sm:col-span-2">
-                            <span class="text-[11px] uppercase tracking-wide text-gray-400">Address</span>
+                            <span class="text-[11px] uppercase tracking-wide text-zinc-500">Address</span>
                             <a [href]="mapsUrl(center)" target="_blank" rel="noopener"
-                                class="relative group/map w-fit text-sm text-gray-900 hover:text-red-600 flex items-start gap-2 transition">
+                                class="relative group/map w-fit text-sm text-white hover:text-red-400 flex items-start gap-2 transition">
                                 <span class="min-w-0">{{ center.address || '—' }}</span>
                                 <i-feather name="map-pin" style="width:14px;height:14px;"
-                                    class="shrink-0 text-red-600"></i-feather>
+                                    class="shrink-0 text-red-400"></i-feather>
                                 <span class="pointer-events-none absolute left-0 -top-8 whitespace-nowrap px-2 py-1 rounded-lg
-                                             bg-gray-900 text-[10px] text-white font-medium
+                                             bg-zinc-800 text-[10px] text-white font-medium
                                              opacity-0 group-hover/map:opacity-100 transition-opacity duration-150 z-10">
                                     Open in Google Maps ↗
                                 </span>
@@ -82,7 +89,7 @@
 
                     <div *ngIf="centerCategories.length" class="flex flex-wrap gap-2">
                         <span *ngFor="let c of centerCategories"
-                            class="text-[10px] font-semibold uppercase tracking-wide text-gray-600 bg-gray-50 border border-gray-200 px-2.5 py-1 rounded-full">
+                            class="text-[10px] font-semibold uppercase tracking-wide text-zinc-400 bg-zinc-950 border border-zinc-800 px-2.5 py-1 rounded-full">
                             {{ c.name }}
                         </span>
                     </div>
@@ -90,18 +97,19 @@
             </section>
 
             <!-- BOOK A SESSION -->
-            <section class="bg-white rounded-2xl border border-gray-200 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <section class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 font-sans
+                             flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
-                        <i-feather name="calendar" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                    <div class="w-9 h-9 rounded-xl bg-red-600/10 border border-red-600/20 flex items-center justify-center shrink-0">
+                        <i-feather name="calendar" class="text-red-500" style="width:16px;height:16px;"></i-feather>
                     </div>
                     <div>
-                        <h2 class="text-sm font-bold text-gray-900">Ready to train?</h2>
-                        <p class="text-xs text-gray-500">Book a session at {{ center.name }} — pick a date and time that works for you.</p>
+                        <h2 class="text-sm font-bold text-white">Ready to train?</h2>
+                        <p class="text-xs text-zinc-500">Book a session at {{ center.name }} — pick a date and time that works for you.</p>
                     </div>
                 </div>
-                <button type="button" (click)="bookSession()"
-                    class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2 shrink-0 w-full sm:w-auto justify-center">
+                <button type="button" (click)="bookSession()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                               hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2 shrink-0 w-full sm:w-auto justify-center">
                     <i-feather name="calendar" style="width:13px;height:13px;"></i-feather>
                     Book a session
                 </button>
@@ -118,43 +126,43 @@
             <app-center-trainers [centerTrainers]="centerTrainer"></app-center-trainers>
 
             <!-- PRICING -->
-            <section *ngIf="centerPricing" class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
+            <section *ngIf="centerPricing" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 flex flex-col gap-4">
                 <div>
-                    <h2 class="text-sm font-bold text-gray-900">Membership pricing</h2>
-                    <p class="text-[11px] text-gray-400 mt-0.5">Monthly rate and long-term commitment discounts</p>
+                    <h2 class="text-sm font-bold text-white">Membership pricing</h2>
+                    <p class="text-[11px] text-zinc-500 mt-0.5">Monthly rate and long-term commitment discounts</p>
                 </div>
 
-                <div class="border-t border-gray-100"></div>
+                <div class="border-t border-zinc-800"></div>
 
                 <div class="flex items-baseline gap-2">
-                    <span class="text-2xl font-bold text-red-600">{{ centerPricing.price }}</span>
-                    <span class="text-[11px] uppercase tracking-wide text-gray-400">per month</span>
+                    <span class="text-2xl font-bold text-red-500">{{ centerPricing.price }}</span>
+                    <span class="text-[11px] uppercase tracking-wide text-zinc-500">per month</span>
                 </div>
 
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-                    <div class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 flex flex-col gap-0.5">
-                        <span class="text-[11px] uppercase tracking-wide text-gray-400">3 months</span>
-                        <span class="text-sm font-semibold text-gray-900">-{{ centerPricing.discount3Months || 0
+                    <div class="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 flex flex-col gap-0.5">
+                        <span class="text-[11px] uppercase tracking-wide text-zinc-500">3 months</span>
+                        <span class="text-sm font-semibold text-white">-{{ centerPricing.discount3Months || 0
                             }}%</span>
                     </div>
-                    <div class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 flex flex-col gap-0.5">
-                        <span class="text-[11px] uppercase tracking-wide text-gray-400">6 months</span>
-                        <span class="text-sm font-semibold text-gray-900">-{{ centerPricing.discount6Months || 0
+                    <div class="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 flex flex-col gap-0.5">
+                        <span class="text-[11px] uppercase tracking-wide text-zinc-500">6 months</span>
+                        <span class="text-sm font-semibold text-white">-{{ centerPricing.discount6Months || 0
                             }}%</span>
                     </div>
-                    <div class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 flex flex-col gap-0.5">
-                        <span class="text-[11px] uppercase tracking-wide text-gray-400">9 months</span>
-                        <span class="text-sm font-semibold text-gray-900">-{{ centerPricing.discount9Months || 0
+                    <div class="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 flex flex-col gap-0.5">
+                        <span class="text-[11px] uppercase tracking-wide text-zinc-500">9 months</span>
+                        <span class="text-sm font-semibold text-white">-{{ centerPricing.discount9Months || 0
                             }}%</span>
                     </div>
-                    <div class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 flex flex-col gap-0.5">
-                        <span class="text-[11px] uppercase tracking-wide text-gray-400">12 months</span>
-                        <span class="text-sm font-semibold text-gray-900">-{{ centerPricing.discount12Months || 0
+                    <div class="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 flex flex-col gap-0.5">
+                        <span class="text-[11px] uppercase tracking-wide text-zinc-500">12 months</span>
+                        <span class="text-sm font-semibold text-white">-{{ centerPricing.discount12Months || 0
                             }}%</span>
                     </div>
-                    <div class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 flex flex-col gap-0.5">
-                        <span class="text-[11px] uppercase tracking-wide text-gray-400">2 programs</span>
-                        <span class="text-sm font-semibold text-gray-900">-{{ centerPricing.discount2Programs || 0
+                    <div class="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 flex flex-col gap-0.5">
+                        <span class="text-[11px] uppercase tracking-wide text-zinc-500">2 programs</span>
+                        <span class="text-sm font-semibold text-white">-{{ centerPricing.discount2Programs || 0
                             }}%</span>
                     </div>
                 </div>
@@ -168,51 +176,52 @@
 
             <app-center-video-gallery [centerVideoAlbums]="centerVideoAlbums"></app-center-video-gallery>
 
-            <!-- ===================== WHAT PEOPLE SAY ===================== -->
-            <section class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
-                <div class="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                        <h2 class="text-sm font-bold text-gray-900">What people say</h2>
-                        <p class="text-[11px] text-gray-400 mt-0.5">
+            <!-- ── WHAT PEOPLE SAY ───────────────────────────────────────── -->
+            <section class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 font-sans">
+
+                <div class="flex flex-wrap items-end justify-between gap-3 mb-4">
+                    <div class="flex flex-col gap-1">
+                        <span class="text-[11px] uppercase tracking-wide text-zinc-500 font-semibold">
                             {{ centerTestimonials.length }} testimonial{{ centerTestimonials.length === 1 ? '' : 's' }}
-                            about this center
-                        </p>
+                        </span>
+                        <h2 class="text-lg font-extrabold text-white leading-tight">
+                            What people <span class="text-red-500">say</span>
+                        </h2>
                     </div>
 
-                    <button type="button" (click)="leaveTestimonial()"
-                        class="px-3 py-1.5 rounded-xl border border-gray-200 text-gray-600 text-[11px] font-semibold hover:bg-gray-50 active:scale-[0.98] transition flex items-center gap-1.5 shrink-0">
-                        <i-feather name="message-circle" style="width:12px;height:12px;"
-                            class="text-red-600"></i-feather>
+                    <button type="button" (click)="leaveTestimonial()" class="px-4 py-2 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-semibold
+                                   hover:border-red-600 hover:text-white transition flex items-center gap-2 shrink-0">
+                        <i-feather name="message-circle" style="width:13px;height:13px;"></i-feather>
                         Leave a testimonial
                     </button>
                 </div>
 
-                <div class="border-t border-gray-100"></div>
-
-                <div *ngIf="centerTestimonials.length" class="flex flex-col gap-2.5">
+                <div *ngIf="centerTestimonials.length > 0" class="flex flex-col gap-3">
                     <div *ngFor="let testimonial of centerTestimonials"
-                        class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 flex flex-col gap-2">
-                        <p class="text-xs text-gray-700 leading-relaxed italic">
+                        class="bg-zinc-950 border border-zinc-800 rounded-xl p-4 flex flex-col gap-2.5">
+                        <p class="text-xs text-zinc-300 leading-relaxed italic">
                             "{{ testimonial.testimonial }}"
                         </p>
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="text-[11px] font-semibold text-gray-900 truncate">
+                        <div class="flex items-center justify-between gap-2 pt-2 border-t border-zinc-800">
+                            <span class="text-[11px] font-semibold text-red-400 uppercase tracking-wide truncate">
                                 {{ testimonialAuthor(testimonial) }}
                             </span>
-                            <span class="text-[11px] text-gray-400 shrink-0">
+                            <span class="text-[11px] text-zinc-500 shrink-0">
                                 {{ testimonial.date | date:'mediumDate' }}
                             </span>
                         </div>
                     </div>
                 </div>
 
-                <p *ngIf="!centerTestimonials.length" class="text-[11px] text-gray-400">
+                <p *ngIf="centerTestimonials.length === 0" class="text-xs text-zinc-500">
                     No testimonials yet — be the first to share your experience.
                 </p>
+
             </section>
 
-        </ng-container>
+        </div>
     </div>
-</main>
+
+</ng-container>
 
 <app-footer></app-footer>
