@@ -68,53 +68,64 @@
                 {{ target === 'center' ? 'Select a center' : 'Select a trainer' }}
             </label>
 
-            <!-- Search box -->
-            <div class="relative">
-                <i-feather name="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                    style="width:13px;height:13px;"></i-feather>
-                <input type="text" [value]="searchTerm" (input)="onSearch($event)"
-                    [placeholder]="target === 'center' ? 'Search centers…' : 'Search trainers…'" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900
-                           placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
-            </div>
-
-            <!-- Options list -->
-            <div class="mt-1 max-h-44 overflow-y-auto rounded-xl border" [ngClass]="{
-                    'border-red-400': testimonialForm.get('targetId')?.invalid && testimonialForm.get('targetId')?.touched,
-                    'border-gray-200': !(testimonialForm.get('targetId')?.invalid && testimonialForm.get('targetId')?.touched)
-                 }">
-
-                <p *ngIf="filteredOptions.length === 0" class="px-3 py-4 text-[11px] text-gray-400 text-center">
-                    {{ searchTerm
-                        ? 'No matches for "' + searchTerm + '".'
-                        : (target === 'center' ? 'No centers available yet.' : 'No trainers available yet.') }}
-                </p>
-
-                <button *ngFor="let option of filteredOptions" type="button" (click)="chooseTarget(option)"
-                    class="w-full text-left px-3 py-2.5 border-b border-gray-100 last:border-b-0 transition flex items-center justify-between gap-2"
-                    [ngClass]="targetId === option.id ? 'bg-red-50' : 'hover:bg-gray-50'">
+            <!-- Collapsed: selection made, picker closed -->
+            <button *ngIf="!pickerOpen && selectedOption" type="button" (click)="openPicker()"
+                class="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition text-left">
+                <span class="min-w-0 flex items-center gap-2">
+                    <i-feather name="check-circle" class="text-red-600 shrink-0" style="width:14px;height:14px;"></i-feather>
                     <span class="min-w-0">
-                        <span class="block text-sm font-semibold truncate"
-                            [ngClass]="targetId === option.id ? 'text-red-600' : 'text-gray-900'">
-                            {{ option.name }}
-                        </span>
-                        <span *ngIf="option.subtitle" class="block text-[11px] text-gray-400 truncate">
-                            {{ option.subtitle }}
-                        </span>
+                        <span class="block text-sm font-semibold text-gray-900 truncate">{{ selectedOption.name }}</span>
+                        <span *ngIf="selectedOption.subtitle" class="block text-[11px] text-gray-400 truncate">{{ selectedOption.subtitle }}</span>
                     </span>
-                    <i-feather *ngIf="targetId === option.id" name="check" class="text-red-600 shrink-0"
-                        style="width:14px;height:14px;"></i-feather>
-                </button>
-            </div>
+                </span>
+                <span class="text-[11px] font-semibold text-red-600 shrink-0">Change</span>
+            </button>
+
+            <!-- Expanded: search + options list -->
+            <ng-container *ngIf="pickerOpen || !selectedOption">
+                <!-- Search box -->
+                <div class="relative">
+                    <i-feather name="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                        style="width:13px;height:13px;"></i-feather>
+                    <input type="text" [value]="searchTerm" (input)="onSearch($event)" (focus)="pickerOpen = true"
+                        [placeholder]="target === 'center' ? 'Search centers…' : 'Search trainers…'" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900
+                               placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+                </div>
+
+                <!-- Options list -->
+                <div class="mt-1 max-h-44 overflow-y-auto rounded-xl border" [ngClass]="{
+                        'border-red-400': testimonialForm.get('targetId')?.invalid && testimonialForm.get('targetId')?.touched,
+                        'border-gray-200': !(testimonialForm.get('targetId')?.invalid && testimonialForm.get('targetId')?.touched)
+                     }">
+
+                    <p *ngIf="filteredOptions.length === 0" class="px-3 py-4 text-[11px] text-gray-400 text-center">
+                        {{ searchTerm
+                            ? 'No matches for "' + searchTerm + '".'
+                            : (target === 'center' ? 'No centers available yet.' : 'No trainers available yet.') }}
+                    </p>
+
+                    <button *ngFor="let option of filteredOptions" type="button" (click)="chooseTarget(option)"
+                        class="w-full text-left px-3 py-2.5 border-b border-gray-100 last:border-b-0 transition flex items-center justify-between gap-2"
+                        [ngClass]="targetId === option.id ? 'bg-red-50' : 'hover:bg-gray-50'">
+                        <span class="min-w-0">
+                            <span class="block text-sm font-semibold truncate"
+                                [ngClass]="targetId === option.id ? 'text-red-600' : 'text-gray-900'">
+                                {{ option.name }}
+                            </span>
+                            <span *ngIf="option.subtitle" class="block text-[11px] text-gray-400 truncate">
+                                {{ option.subtitle }}
+                            </span>
+                        </span>
+                        <i-feather *ngIf="targetId === option.id" name="check" class="text-red-600 shrink-0"
+                            style="width:14px;height:14px;"></i-feather>
+                    </button>
+                </div>
+            </ng-container>
 
             <p *ngIf="testimonialForm.get('targetId')?.invalid && testimonialForm.get('targetId')?.touched"
                 class="text-red-500 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Pick the {{ target }} this testimonial is about
-            </p>
-
-            <p *ngIf="selectedOption" class="text-[11px] text-gray-500 flex items-center gap-1">
-                <i-feather name="check-circle" class="text-red-600" style="width:11px;height:11px;"></i-feather>
-                Writing about <span class="font-semibold text-gray-700">{{ selectedOption.name }}</span>
             </p>
         </div>
 

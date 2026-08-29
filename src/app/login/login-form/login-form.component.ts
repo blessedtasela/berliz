@@ -134,12 +134,11 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
     this.userService.login(this.loginForm.value)
       .subscribe({
         next: (response: any) => {
-          this.ngxService.stop();
-
           const auth = response?.data;
           if (!auth?.accessToken) {
             // Backend responded 200 but login didn't actually succeed
             // (e.g. wrong password, unactivated account) — don't navigate.
+            this.ngxService.stop();
             this.responseMessage = response?.message || genericError;
             this.snackBarService.openSnackBar(this.responseMessage, "error");
             return;
@@ -154,7 +153,10 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.loginForm.reset();
-          this.router.navigateByUrl(this.returnUrl);
+          // Keep the spinner running through navigation -- /dashboard is lazy-loaded
+          // with no preloading strategy, so the chunk fetch/parse can visibly stall
+          // the (already spinner-free) login page for a second or two otherwise.
+          this.router.navigateByUrl(this.returnUrl).finally(() => this.ngxService.stop());
         },
         error: (error: any) => {
           this.ngxService.stop();

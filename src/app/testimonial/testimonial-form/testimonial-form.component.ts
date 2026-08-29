@@ -61,6 +61,10 @@ export class TestimonialFormComponent implements OnInit, OnDestroy {
   myClient: Clients | null = null;
 
   searchTerm = '';
+  /** Whether the target picker's option list is expanded. Collapses to a
+   *  "selected" trigger once something is chosen, instead of staying open
+   *  showing the full list underneath the chosen value. */
+  pickerOpen = true;
   readonly maxLength = 1000;
   readonly minLength = 20;
 
@@ -179,6 +183,7 @@ export class TestimonialFormComponent implements OnInit, OnDestroy {
 
     this.testimonialForm.patchValue({ target, targetId: null });
     this.searchTerm = '';
+    this.pickerOpen = true;
 
     // "About Berliz" has nothing to select, so `targetId` must stop being
     // required — otherwise the form could never become valid for that option.
@@ -195,6 +200,13 @@ export class TestimonialFormComponent implements OnInit, OnDestroy {
   chooseTarget(option: TestimonialTargetOption): void {
     this.testimonialForm.patchValue({ targetId: option.id });
     this.testimonialForm.get('targetId')?.markAsTouched();
+    this.pickerOpen = false;
+  }
+
+  /** Re-opens the picker to change a selection already made. */
+  openPicker(): void {
+    this.searchTerm = '';
+    this.pickerOpen = true;
   }
 
   onSearch(event: Event): void {

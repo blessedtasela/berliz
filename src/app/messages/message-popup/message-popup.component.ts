@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subject, Subscription, takeUntil } from 'rxjs';
@@ -58,6 +58,16 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
 
   open = false;
   view: 'list' | 'thread' = 'list';
+
+  // Mirrors ScrollToTopComponent's own show threshold (no shared state between
+  // the two -- they're independent siblings mounted in different places) so the
+  // bubble/panel can lift out of the way once that button appears in the same corner.
+  raised = false;
+
+  @HostListener('window:scroll', [])
+  onWindowScroll(): void {
+    this.raised = window.scrollY > 2000;
+  }
 
   conversations: ConversationSummary[] = [];
   unreadCount = 0;

@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { PostResponse } from 'src/app/models/post.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { PostService } from 'src/app/services/post.service';
@@ -27,7 +29,7 @@ type TimelineTab = 'feed' | 'mine';
 @Component({
   selector: 'app-dashboard-timeline',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule],
+  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule],
   templateUrl: './dashboard-timeline.component.html'
 })
 export class DashboardTimelineComponent implements OnInit, OnDestroy {
@@ -56,6 +58,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private userService: UserService,
     private snackBarService: SnackBarService,
+    private dialog: MatDialog,
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
   }
@@ -196,15 +199,28 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   }
 
   deletePost(post: PostResponse): void {
-    if (!confirm('Delete this post?')) return;
+    this.dialog.open(PromptModalComponent, {
+      width: '400px',
+      maxWidth: '95vw',
+      data: {
+        confirmation: true,
+        title: 'Delete this post?',
+        message: 'This will permanently remove the post from your timeline.',
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
+        icon: 'trash-2'
+      }
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
 
-    this.postService.deletePost(post.id).subscribe({
-      next: () => {
-        this.myPosts = this.myPosts.filter(p => p.id !== post.id);
-        this.feedPosts = this.feedPosts.filter(p => p.id !== post.id);
-        this.snackBarService.openSnackBar('Post deleted', '');
-      },
-      error: () => this.snackBarService.openSnackBar('Could not delete post', 'error'),
+      this.postService.deletePost(post.id).subscribe({
+        next: () => {
+          this.myPosts = this.myPosts.filter(p => p.id !== post.id);
+          this.feedPosts = this.feedPosts.filter(p => p.id !== post.id);
+          this.snackBarService.openSnackBar('Post deleted', '');
+        },
+        error: () => this.snackBarService.openSnackBar('Could not delete post', 'error'),
+      });
     });
   }
 

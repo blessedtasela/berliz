@@ -193,4 +193,37 @@ describe('MessagePopupComponent', () => {
 
     expect(component.onMessagesPage).toBeTrue();
   });
+
+  // Regression: the bubble/panel sat at a fixed bottom offset that visually
+  // collided with the scroll-to-top button once it appeared in the same corner.
+  describe('raised state (avoids overlapping the scroll-to-top button)', () => {
+    it('is not raised before scrolling', () => {
+      setup({ messagePopupEnabled: true } as Partial<Users>);
+      fixture.detectChanges();
+
+      expect(component.raised).toBeFalse();
+    });
+
+    it('raises once scrolled past the scroll-to-top button\'s own show threshold', () => {
+      setup({ messagePopupEnabled: true } as Partial<Users>);
+      fixture.detectChanges();
+      spyOnProperty(window, 'scrollY').and.returnValue(2500);
+
+      component.onWindowScroll();
+
+      expect(component.raised).toBeTrue();
+    });
+
+    it('lowers back down once scrolled back up', () => {
+      setup({ messagePopupEnabled: true } as Partial<Users>);
+      fixture.detectChanges();
+      const scrollY = spyOnProperty(window, 'scrollY').and.returnValue(2500);
+      component.onWindowScroll();
+
+      scrollY.and.returnValue(0);
+      component.onWindowScroll();
+
+      expect(component.raised).toBeFalse();
+    });
+  });
 });

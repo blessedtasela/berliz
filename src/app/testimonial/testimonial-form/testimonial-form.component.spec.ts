@@ -39,4 +39,35 @@ describe('TestimonialFormComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  // Regression: the target picker used to stay expanded (showing the full
+  // list) after a selection was made, with no way to collapse it back down.
+  describe('target picker open/closed state', () => {
+    it('starts open', () => {
+      expect(component.pickerOpen).toBeTrue();
+    });
+
+    it('choosing an option closes the picker and shows it as selected', () => {
+      component.chooseTarget({ id: 5, name: 'Downtown Gym', subtitle: '' });
+
+      expect(component.pickerOpen).toBeFalse();
+      expect(component.targetId).toBe(5);
+    });
+
+    it('openPicker re-expands it (e.g. to change the selection)', () => {
+      component.chooseTarget({ id: 5, name: 'Downtown Gym', subtitle: '' });
+      component.openPicker();
+
+      expect(component.pickerOpen).toBeTrue();
+    });
+
+    it('switching target type re-opens the picker for the new list', () => {
+      component.chooseTarget({ id: 5, name: 'Downtown Gym', subtitle: '' });
+
+      component.setTarget('trainer');
+
+      expect(component.pickerOpen).toBeTrue();
+      expect(component.targetId).toBeNull();
+    });
+  });
 });

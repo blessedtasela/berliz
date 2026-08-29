@@ -2,7 +2,8 @@
 
     <!-- Panel -->
     <div *ngIf="open"
-        class="fixed bottom-24 right-6 z-50 w-80 max-h-[32rem] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden font-sans">
+        class="fixed right-6 z-50 w-80 max-h-[32rem] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden font-sans transition-[bottom] duration-200"
+        [ngClass]="raised ? 'bottom-40' : 'bottom-24'">
 
         <!-- Header -->
         <div class="flex items-center justify-between px-4 py-3 bg-gray-900 text-white shrink-0">
@@ -79,7 +80,8 @@
 
     <!-- Bubble -->
     <button type="button" (click)="togglePopup()" [attr.aria-label]="open ? 'Close messages' : 'Open messages'"
-        class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-red-600 text-white shadow-xl flex items-center justify-center hover:bg-red-700 transition">
+        class="fixed right-6 z-50 w-14 h-14 rounded-full bg-red-600 text-white shadow-xl flex items-center justify-center hover:bg-red-700 transition-[bottom,background-color] duration-200"
+        [ngClass]="raised ? 'bottom-24' : 'bottom-6'">
         <i-feather [name]="open ? 'x' : 'message-circle'" style="width:22px;height:22px;"></i-feather>
         <span *ngIf="!open && unreadCount > 0"
             class="absolute -top-1 -right-1 bg-gray-900 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center border-2 border-white">

@@ -27,6 +27,11 @@
                     (click)="openUpdateTask(task.id)" title="Edit">
                     <i-feather name="edit-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
+                <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center"
+                    (click)="updateTaskStatus(task.id)"
+                    [title]="task.status === 'false' ? 'Activate' : 'Deactivate'">
+                    <i-feather [name]="task.status === 'false' ? 'check-circle' : 'slash'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                </button>
                 <button class="w-9 h-9 rounded-lg active:bg-red-50 flex items-center justify-center"
                     (click)="deleteTask(task.id)" title="Delete">
                     <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>

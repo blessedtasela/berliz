@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Partner } from 'src/app/models/partners.interface';
 import { Users } from 'src/app/models/users.interface';
 import { PartnerFormModalComponent } from 'src/app/shared/partner-form-modal/partner-form-modal.component';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
@@ -45,8 +46,20 @@ export class TrainerHeaderComponent {
 
   openAddPartner() {
     if (!this.user) {
-      window.alert("Please log in to continue")
-      this.authRedirect.goToLogin();
+      this.dialog.open(PromptModalComponent, {
+        width: '400px',
+        maxWidth: '95vw',
+        data: {
+          confirmation: true,
+          title: 'Login required',
+          message: 'You need to be logged in to add a partner. Log in to continue?',
+          confirmText: 'Log in',
+          cancelText: 'Cancel',
+          icon: 'log-in'
+        }
+      }).afterClosed().subscribe(result => {
+        if (result) this.authRedirect.goToLogin();
+      });
     } else {
       const dialogRef = this.dialog.open(PartnerFormModalComponent, {
         width: '560px',

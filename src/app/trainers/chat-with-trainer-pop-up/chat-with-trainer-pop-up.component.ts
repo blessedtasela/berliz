@@ -1,5 +1,7 @@
 import { Component, HostListener, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { TrainerSubscriptionForm } from 'src/app/models/trainers.interface';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 @Component({
   selector: 'app-chat-with-trainer-pop-up',
@@ -11,21 +13,28 @@ export class ChatWithTrainerPopUpComponent {
   showPopUp = false;
   hidePopUp: boolean = false;
 
+  constructor(private dialog: MatDialog) { }
+
   @HostListener('window:scroll', [])
   onWindowScroll() {
     this.showPopUp = window.scrollY > 500;
   }
 
   chatWhatsapp() {
-    const phoneNumber = this.whatsappContact?.whatsapp;
+    this.dialog.open(PromptModalComponent, {
+      width: '400px',
+      maxWidth: '95vw',
+      data: {
+        confirmation: true,
+        title: 'Leaving Berliz',
+        message: 'You are leaving to an external link (WhatsApp). Do you want to proceed?',
+        confirmText: 'Proceed',
+        cancelText: 'Cancel',
+        icon: 'external-link'
+      }
+    }).afterClosed().subscribe(confirmResult => {
+      if (!confirmResult) return;
 
-    // Construct the WhatsApp URL with the phone number and optional message
-    const whatsappUrl = `https://wa.me/${phoneNumber}`;
-
-    // add a prompt for the user to confirm they are opening an external link
-      const confirmResult = window.confirm("You are leaving to an external link. Do you want to proceed?");
-
-    if (confirmResult) {
       // Format the message to be sent via WhatsApp
       const whatsappMessage = `Hello, I am interested in your services.\n`
         + `I want to know more about your training programs.\n`
@@ -41,9 +50,7 @@ export class ChatWithTrainerPopUpComponent {
 
       // Redirect the user to the WhatsApp URL
       window.location.href = whatsappURL;
-    } else {
-      // The user clicked "Cancel", do nothing
-    }
+    });
   }
 
   hidePop() {

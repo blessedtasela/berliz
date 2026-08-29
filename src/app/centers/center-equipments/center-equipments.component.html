@@ -23,7 +23,7 @@
             class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden flex flex-col hover:border-red-900 transition">
 
             <div class="h-32 w-full bg-zinc-900 border-b border-zinc-800">
-                <img [src]="centerEquipment.imageUrl" [alt]="centerEquipment.name" class="w-full h-full object-contain"
+                <img [src]="centerEquipment.imageUrl | strapiUrl" [alt]="centerEquipment.name" class="w-full h-full object-contain"
                     onerror="this.src='assets/avatar.png';" />
             </div>
 
