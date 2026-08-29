@@ -29,6 +29,12 @@
         {{ incomingRequestCount }}
       </span>
 
+      <!-- Messages badge -->
+      <span *ngIf="item.name === 'Messages' && unreadMessageCount > 0" class="absolute -top-1 -right-1 bg-red-600 text-white text-[8px]
+               px-1.5 py-px rounded-full font-bold leading-none badge-pulse">
+        {{ unreadMessageCount }}
+      </span>
+
       <!-- Tooltip -->
       <span class="absolute left-full ml-2 px-2 py-1 rounded-lg bg-white text-gray-950 font-bold shadow-lg text-xs
                    font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 border border-gray-200

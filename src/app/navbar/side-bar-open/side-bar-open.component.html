@@ -33,6 +33,11 @@
         {{ incomingRequestCount }}
       </span>
 
+      <span *ngIf="item.name === 'Messages' && unreadMessageCount > 0"
+        class="bg-red-600 text-white text-[9px] px-1.5 py-px rounded-full font-bold badge-pulse">
+        {{ unreadMessageCount }}
+      </span>
+
     </a>
 
   </ng-container>

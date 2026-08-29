@@ -18,6 +18,8 @@ import { selectMyNotifications } from 'src/app/state/notification/notification.s
 import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
 import { selectIncomingRequestCount } from 'src/app/state/connection/connection.selectors';
 import { loadPendingRequests } from 'src/app/state/connection/connection.actions';
+import { selectConversations } from 'src/app/state/message/message.selectors';
+import { loadConversations } from 'src/app/state/message/message.actions';
 
 const KNOWN_SIDEBAR_MODES: SidebarDisplay[] = ['expanded', 'collapsed', 'hidden'];
 
@@ -42,6 +44,7 @@ export class SideBarComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
   incomingRequestCount: number = 0;
   notificationLength: number = 0;
+  unreadMessageCount: number = 0;
 
   private destroy$ = new Subject<void>();
 
@@ -130,6 +133,7 @@ export class SideBarComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(loadMyNotifications());
     this.store.dispatch(loadPendingRequests());
+    this.store.dispatch(loadConversations());
 
     if (this.storeStateWatched) return;
     this.storeStateWatched = true;
@@ -170,6 +174,10 @@ export class SideBarComponent implements OnInit, OnDestroy {
 
       this.store.select(selectIncomingRequestCount).subscribe(count => {
         this.incomingRequestCount = count;
+      }),
+
+      this.store.select(selectConversations).subscribe(conversations => {
+        this.unreadMessageCount = (conversations ?? []).reduce((sum, c) => sum + (c.unreadCount || 0), 0);
       })
 
     );

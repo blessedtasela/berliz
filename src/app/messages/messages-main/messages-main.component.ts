@@ -174,4 +174,13 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
   isMine(message: Message): boolean {
     return message.senderId !== this.activeUserId;
   }
+
+  photoSrc(photo: string | undefined | null): string {
+    return photo ? 'data:image/*;base64,' + photo : '';
+  }
+
+  get activeContactPhoto(): string {
+    const convo = this.conversations.find(c => c.otherUserId === this.activeUserId);
+    return this.photoSrc(convo?.otherUserPhoto);
+  }
 }

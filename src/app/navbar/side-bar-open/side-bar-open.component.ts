@@ -18,6 +18,8 @@ import { selectMyNotifications } from 'src/app/state/notification/notification.s
 import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
 import { loadPendingRequests } from 'src/app/state/connection/connection.actions';
 import { selectIncomingRequestCount } from 'src/app/state/connection/connection.selectors';
+import { loadConversations } from 'src/app/state/message/message.actions';
+import { selectConversations } from 'src/app/state/message/message.selectors';
 import { SIDEBAR_NAV_ITEMS } from '../sidebar-nav-items';
 
 @Component({
@@ -36,6 +38,7 @@ export class SideBarOpenComponent implements OnInit, OnDestroy {
   userData: any;
   notificationLength = 0;
   incomingRequestCount = 0;
+  unreadMessageCount = 0;
 
   private destroy$ = new Subject<void>();
 
@@ -85,6 +88,14 @@ export class SideBarOpenComponent implements OnInit, OnDestroy {
     this.store.select(selectIncomingRequestCount)
       .pipe(takeUntil(this.destroy$))
       .subscribe(count => this.incomingRequestCount = count);
+
+    // Unread message count, for the sidebar badge.
+    this.store.dispatch(loadConversations());
+    this.store.select(selectConversations)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(conversations => {
+        this.unreadMessageCount = (conversations ?? []).reduce((sum, c) => sum + (c.unreadCount || 0), 0);
+      });
   }
 
   // -----------------------------

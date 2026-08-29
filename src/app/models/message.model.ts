@@ -29,7 +29,10 @@ export interface MessageRequest {
 export interface ConversationSummary {
   otherUserId: number;
   otherUserName: string;
+  otherHandle?: string;
   otherUserRole: string;
+  /** Base64, same encoding as User.profilePhoto elsewhere in the app. */
+  otherUserPhoto?: string;
 
   lastMessage: string;
   lastMessageDate: Date;

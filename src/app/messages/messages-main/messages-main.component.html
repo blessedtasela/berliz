@@ -24,20 +24,26 @@
             </div>
 
             <div *ngIf="!loading" class="flex flex-col divide-y divide-gray-100 overflow-y-auto" style="max-height: 480px;">
-                <button *ngFor="let c of conversations" type="button" (click)="openConversation(c.otherUserId)"
-                    class="text-left px-4 py-3 hover:bg-gray-50 transition flex items-center gap-3"
+                <div *ngFor="let c of conversations"
+                    class="px-4 py-3 hover:bg-gray-50 transition flex items-center gap-3"
                     [class.bg-sky-50]="activeUserId === c.otherUserId">
-                    <div class="w-9 h-9 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
-                        <i-feather name="user" class="text-sky-600" style="width:16px;height:16px;"></i-feather>
-                    </div>
-                    <div class="flex-1 min-w-0">
+                    <a [routerLink]="['/dashboard/user', c.otherUserId]" (click)="$event.stopPropagation()" class="shrink-0">
+                        <img *ngIf="c.otherUserPhoto; else convoAvatarFallback" [src]="photoSrc(c.otherUserPhoto)" alt=""
+                            class="w-9 h-9 rounded-full object-cover object-top border border-sky-100" />
+                        <ng-template #convoAvatarFallback>
+                            <div class="w-9 h-9 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center">
+                                <i-feather name="user" class="text-sky-600" style="width:16px;height:16px;"></i-feather>
+                            </div>
+                        </ng-template>
+                    </a>
+                    <button type="button" (click)="openConversation(c.otherUserId)" class="flex-1 min-w-0 text-left">
                         <div class="flex items-center justify-between gap-2">
                             <span class="text-sm font-semibold text-gray-900 truncate">{{ c.otherUserName }}</span>
                             <span *ngIf="c.unreadCount > 0" class="text-[10px] font-bold text-white bg-sky-600 rounded-full px-1.5 py-0.5 shrink-0">{{ c.unreadCount }}</span>
                         </div>
                         <p class="text-xs text-gray-400 truncate">{{ c.lastMessage }}</p>
-                    </div>
-                </button>
+                    </button>
+                </div>
 
                 <!-- Start a new conversation -->
                 <div *ngIf="startableContacts.length > 0" class="pt-1">
@@ -62,8 +68,12 @@
             </div>
         </div>
 
-        <!-- Thread -->
-        <div class="flex flex-col" style="max-height: 480px;">
+        <!-- Thread. min-h-0 on this grid item AND on the scrolling messages
+             div below is required — grid/flex items default to min-height:
+             auto, so without it a long thread grows past the grid track
+             instead of scrolling internally, pushing the compose box below
+             out of view. -->
+        <div class="flex flex-col min-h-0" style="max-height: 480px;">
 
             <div *ngIf="activeUserId == null" class="flex-1 flex items-center justify-center py-16">
                 <p class="text-xs text-gray-400">Select a conversation to view messages.</p>
@@ -71,18 +81,23 @@
 
             <ng-container *ngIf="activeUserId != null">
 
-                <div class="border-b border-gray-100 px-4 py-3 flex items-center gap-2.5 shrink-0">
-                    <div class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
-                        <i-feather name="user" class="text-sky-600" style="width:14px;height:14px;"></i-feather>
-                    </div>
+                <a [routerLink]="['/dashboard/user', activeUserId]"
+                    class="border-b border-gray-100 px-4 py-3 flex items-center gap-2.5 shrink-0 hover:bg-gray-50 transition">
+                    <img *ngIf="activeContactPhoto; else threadAvatarFallback" [src]="activeContactPhoto" alt=""
+                        class="w-8 h-8 rounded-full object-cover object-top border border-sky-100 shrink-0" />
+                    <ng-template #threadAvatarFallback>
+                        <div class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
+                            <i-feather name="user" class="text-sky-600" style="width:14px;height:14px;"></i-feather>
+                        </div>
+                    </ng-template>
                     <span class="text-sm font-semibold text-gray-900 truncate">{{ activeContactName }}</span>
-                </div>
+                </a>
 
                 <div *ngIf="loadingConversation" class="flex-1 flex items-center justify-center">
                     <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
                 </div>
 
-                <div *ngIf="!loadingConversation" class="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
+                <div *ngIf="!loadingConversation" class="flex-1 min-h-0 overflow-y-auto p-4 flex flex-col gap-2">
                     <div *ngIf="activeMessages.length === 0" class="flex-1 flex items-center justify-center">
                         <p class="text-xs text-gray-400">No messages yet — say hello.</p>
                     </div>
