@@ -115,7 +115,7 @@ export class ConnectionsMainComponent implements OnInit, OnDestroy {
   }
 
   message(connection: Connection): void {
-    this.router.navigate(['/dashboard/messages']);
+    this.router.navigate(['/dashboard/messages'], { queryParams: { userId: connection.otherUserId } });
   }
 
   // ── Find people ──────────────────────────────────────────────────────────

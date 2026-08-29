@@ -111,15 +111,17 @@
 
           <button *ngIf="exercise.demo" type="button" (click)="toggleDemo(exercise)"
             class="shrink-0 w-7 h-7 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition"
-            [attr.aria-label]="openDemoId === exercise.id ? 'Hide demo' : 'Play demo'">
-            <i-feather [name]="openDemoId === exercise.id ? 'x' : 'play-circle'"
+            [attr.aria-label]="openDemoId === exercise.id ? 'Hide demo' : 'Show demo'">
+            <i-feather [name]="openDemoId === exercise.id ? 'x' : 'image'"
               style="width:14px;height:14px;"></i-feather>
           </button>
         </div>
 
-        <!-- Demo clip -->
-        <video *ngIf="exercise.demo && openDemoId === exercise.id" [src]="'data:video/mp4;base64,' + exercise.demo"
-          class="w-full rounded-xl border border-gray-100 bg-gray-50" controls autoplay muted loop playsinline></video>
+        <!-- Demo image — /exercise/updateDemo validates this server-side as an
+             image (isValidImageType/isValidImageSize), not a video, so this
+             renders as a still photo demonstrating the movement. -->
+        <img *ngIf="exercise.demo && openDemoId === exercise.id" [src]="'data:image/jpeg;base64,' + exercise.demo"
+          class="w-full rounded-xl border border-gray-100 bg-gray-50 object-cover" alt="{{ exercise.name }} demo" />
 
         <div class="border-t border-gray-100"></div>
 

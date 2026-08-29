@@ -9,11 +9,22 @@
 
 export type WorkoutAssignmentStatus = 'ASSIGNED' | 'IN_PROGRESS' | 'COMPLETED';
 
+export type ExerciseDifficultyLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+
 export interface WorkoutExerciseResponse {
     id: number;
     workoutId: number;
     exerciseId: number;
     exerciseName: string;
+    exerciseDescription?: string;
+    /** Base64 demo image, same encoding as Exercise.demo elsewhere in the app. */
+    exerciseDemo?: string;
+    /** Why this exercise matters. */
+    exerciseBenefit?: string;
+    /** Step-by-step form instructions, one step per line. */
+    exerciseHowToPerform?: string;
+    exerciseDifficultyLevel?: ExerciseDifficultyLevel | string;
+    exerciseMuscleGroups?: string[];
     position: number;
     sets: number;
     reps: number;

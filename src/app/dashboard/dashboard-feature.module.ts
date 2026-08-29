@@ -321,6 +321,18 @@ const dashboardRoutes: Routes = [
           expectedRole: expectedRoleAll
         }
       },
+      // Step-by-step workout detail view — must stay AFTER the 'builder'
+      // static-segment routes above, since ':id' would otherwise greedily
+      // match '/dashboard/workouts/builder' as an id.
+      {
+        path: 'workouts/:id',
+        loadComponent: () => import('../workouts/workout-detail/workout-detail.component').then(m => m.WorkoutDetailComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { alias: 'workoutName' },
+          expectedRole: expectedRoleAll
+        }
+      },
 
       // Exercise library — read-only browsing for any signed-in user
       {
