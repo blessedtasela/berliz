@@ -172,7 +172,7 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
   }
 
   message(): void {
-    this.router.navigate(['/dashboard/messages']);
+    this.router.navigate(['/dashboard/messages'], { queryParams: { userId: this.userId } });
   }
 
   // -------------------------

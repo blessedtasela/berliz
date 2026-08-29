@@ -160,7 +160,7 @@ export class MembersDirectoryComponent implements OnInit, OnDestroy {
   messageMember(member: PublicDirectoryEntry, event: Event): void {
     event.preventDefault();
     event.stopPropagation();
-    this.router.navigate(['/dashboard/messages']);
+    this.router.navigate(['/dashboard/messages'], { queryParams: { userId: member.id } });
   }
 
   // ── Filters ──────────────────────────────────────────────────────────────

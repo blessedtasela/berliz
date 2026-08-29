@@ -25,28 +25,34 @@
 
             <div *ngIf="!loading" class="flex flex-col divide-y divide-gray-100 overflow-y-auto" style="max-height: 480px;">
                 <button *ngFor="let c of conversations" type="button" (click)="openConversation(c.otherUserId)"
-                    class="text-left px-4 py-3 hover:bg-gray-50 transition flex items-start gap-2.5"
-                    [class.bg-gray-50]="activeUserId === c.otherUserId">
-                    <div class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
-                        <i-feather name="user" class="text-sky-600" style="width:14px;height:14px;"></i-feather>
+                    class="text-left px-4 py-3 hover:bg-gray-50 transition flex items-center gap-3"
+                    [class.bg-sky-50]="activeUserId === c.otherUserId">
+                    <div class="w-9 h-9 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
+                        <i-feather name="user" class="text-sky-600" style="width:16px;height:16px;"></i-feather>
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between gap-2">
-                            <span class="text-xs font-bold text-gray-900 truncate">{{ c.otherUserName }}</span>
+                            <span class="text-sm font-semibold text-gray-900 truncate">{{ c.otherUserName }}</span>
                             <span *ngIf="c.unreadCount > 0" class="text-[10px] font-bold text-white bg-sky-600 rounded-full px-1.5 py-0.5 shrink-0">{{ c.unreadCount }}</span>
                         </div>
-                        <p class="text-[11px] text-gray-400 truncate">{{ c.lastMessage }}</p>
+                        <p class="text-xs text-gray-400 truncate">{{ c.lastMessage }}</p>
                     </div>
                 </button>
 
                 <!-- Start a new conversation -->
-                <div *ngIf="startableContacts.length > 0" class="px-4 py-2">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Start a conversation</p>
+                <div *ngIf="startableContacts.length > 0" class="pt-1">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide px-4 pt-3 pb-1">Start a conversation</p>
                     <button *ngFor="let contact of startableContacts" type="button" (click)="startConversation(contact)"
-                        class="w-full text-left py-1.5 flex items-center gap-2 hover:text-sky-600 transition"
-                        [class.text-sky-600]="activeUserId === contact.userId">
-                        <i-feather name="plus-circle" style="width:12px;height:12px;"></i-feather>
-                        <span class="text-xs font-medium truncate">{{ contact.name }}</span>
+                        class="w-full text-left px-4 py-3 hover:bg-gray-50 transition flex items-center gap-3"
+                        [class.bg-sky-50]="activeUserId === contact.userId">
+                        <div class="w-9 h-9 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center shrink-0">
+                            <i-feather name="user" class="text-gray-400" style="width:16px;height:16px;"></i-feather>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <span class="block text-sm font-semibold text-gray-900 truncate">{{ contact.name }}</span>
+                            <span class="text-xs text-gray-400">Tap to start chatting</span>
+                        </div>
+                        <i-feather name="plus-circle" class="text-sky-500 shrink-0" style="width:16px;height:16px;"></i-feather>
                     </button>
                 </div>
 
@@ -64,6 +70,13 @@
             </div>
 
             <ng-container *ngIf="activeUserId != null">
+
+                <div class="border-b border-gray-100 px-4 py-3 flex items-center gap-2.5 shrink-0">
+                    <div class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
+                        <i-feather name="user" class="text-sky-600" style="width:14px;height:14px;"></i-feather>
+                    </div>
+                    <span class="text-sm font-semibold text-gray-900 truncate">{{ activeContactName }}</span>
+                </div>
 
                 <div *ngIf="loadingConversation" class="flex-1 flex items-center justify-center">
                     <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>

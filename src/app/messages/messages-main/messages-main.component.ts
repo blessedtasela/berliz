@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
@@ -65,6 +66,7 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     private snackBar: SnackBarService,
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
@@ -84,6 +86,14 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
         if (error) this.snackBar.openSnackBar(error || genericError, 'error');
       }),
     );
+
+    // Deep link from a "Message" button elsewhere in the app
+    // (?userId=<otherUserId>) -- open that thread straight away rather than
+    // making the user hunt for the person in the list again.
+    const requestedUserId = Number(this.route.snapshot.queryParamMap.get('userId'));
+    if (requestedUserId > 0) {
+      this.openConversation(requestedUserId);
+    }
   }
 
   ngOnDestroy(): void {
@@ -111,6 +121,14 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
       seen.add(c.userId);
       return true;
     });
+  }
+
+  /** Display name for the open thread's other party -- from the conversation list, else the startable-contacts list. */
+  get activeContactName(): string {
+    if (this.activeUserId == null) return '';
+    return this.conversations.find(c => c.otherUserId === this.activeUserId)?.otherUserName
+      ?? this.startableContacts.find(c => c.userId === this.activeUserId)?.name
+      ?? 'Conversation';
   }
 
   refresh(): void {
