@@ -32,3 +32,19 @@ export interface CommentRequest {
   postId: number;
   content: string;
 }
+
+/** Mirrors the backend `CommentPageResponse` -- one page of a post's comments, newest first. */
+export interface CommentPage {
+  comments: CommentResponse[];
+  hasMore: boolean;
+  totalCount: number;
+}
+
+/** Mirrors the backend `PostActivityEvent` -- pushed privately over `/user/queue/postActivity` when someone comments on your post or mentions you. */
+export interface PostActivityEvent {
+  type: 'comment' | 'mention';
+  postId: number;
+  commentId: number;
+  actorName: string;
+  preview: string;
+}

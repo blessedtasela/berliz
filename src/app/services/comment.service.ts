@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../models/Api.interface';
-import { CommentRequest, CommentResponse } from '../models/comment.interface';
+import { CommentPage, CommentRequest, CommentResponse } from '../models/comment.interface';
 
 /** Comments on a post — mirrors `CommentRest` on the backend. */
 @Injectable({
@@ -26,8 +26,10 @@ export class CommentService {
     return this.httpClient.delete<ApiResponse<void>>(this.url + `/comment/delete/${id}`);
   }
 
-  /** All comments on a post, oldest first. */
-  getComments(postId: number): Observable<ApiResponse<CommentResponse[]>> {
-    return this.httpClient.get<ApiResponse<CommentResponse[]>>(this.url + `/comment/post/${postId}`);
+  /** One page of a post's comments, newest first -- page 0 (default) is the most recent `size` (default 10). */
+  getComments(postId: number, page = 0, size = 10): Observable<ApiResponse<CommentPage>> {
+    return this.httpClient.get<ApiResponse<CommentPage>>(this.url + `/comment/post/${postId}`, {
+      params: { page, size },
+    });
   }
 }

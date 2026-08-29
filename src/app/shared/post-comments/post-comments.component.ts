@@ -52,9 +52,16 @@ export class PostCommentsComponent implements OnChanges, OnDestroy {
   @ViewChild('draftInput') draftInputRef?: ElementRef<HTMLInputElement>;
   @ViewChild('editInput') editInputRef?: ElementRef<HTMLInputElement>;
 
+  /** Always kept in chronological (oldest-first) order for display, even though the backend serves pages newest-first -- see load()/loadMore(). */
   comments: CommentResponse[] = [];
   private loaded = false;
   loading = false;
+
+  /** Comments per page, and the next page index to request (0 = most recent). */
+  private readonly pageSize = 10;
+  private nextPage = 0;
+  hasMore = false;
+  loadingMore = false;
 
   draft = '';
   posting = false;
@@ -100,17 +107,43 @@ export class PostCommentsComponent implements OnChanges, OnDestroy {
     this.destroy$.complete();
   }
 
+  /** Loads the most recent page (page 0). */
   private load(): void {
     this.loading = true;
-    this.commentService.getComments(this.post.id).subscribe({
+    this.commentService.getComments(this.post.id, 0, this.pageSize).subscribe({
       next: res => {
         this.loading = false;
         this.loaded = true;
-        this.comments = res.data ?? [];
+        // The backend serves newest-first; reverse this page to chronological
+        // (oldest-first) order for display -- "load earlier" then prepends
+        // each further-back page the same way.
+        this.comments = [...(res.data?.comments ?? [])].reverse();
+        this.hasMore = res.data?.hasMore ?? false;
+        this.nextPage = 1;
       },
       error: () => {
         this.loading = false;
         this.snackBarService.openSnackBar('Could not load comments', 'error');
+      },
+    });
+  }
+
+  /** Fetches the next (older) page and prepends it above what's already shown. */
+  loadMore(): void {
+    if (this.loadingMore || !this.hasMore) return;
+
+    this.loadingMore = true;
+    this.commentService.getComments(this.post.id, this.nextPage, this.pageSize).subscribe({
+      next: res => {
+        this.loadingMore = false;
+        const older = [...(res.data?.comments ?? [])].reverse();
+        this.comments = [...older, ...this.comments];
+        this.hasMore = res.data?.hasMore ?? false;
+        this.nextPage += 1;
+      },
+      error: () => {
+        this.loadingMore = false;
+        this.snackBarService.openSnackBar('Could not load earlier comments', 'error');
       },
     });
   }

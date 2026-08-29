@@ -8,7 +8,7 @@ const CATEGORY_KEY_PREFIX = 'browserNotify_';
 /** Preference defaults when a category has never been explicitly set. */
 const DEFAULT_CATEGORY_ENABLED: Record<NotificationCategory, boolean> = {
   message: true,
-  post: false,
+  post: true,
   connection: true,
 };
 
@@ -17,11 +17,12 @@ const DEFAULT_CATEGORY_ENABLED: Record<NotificationCategory, boolean> = {
  * tab (or another tab of the app) is open, even if the tab isn't focused.
  * This is NOT push-when-the-browser-is-closed (that needs a service worker +
  * VAPID keys + a push subscription stored server-side, a materially bigger
- * project) — it only fires for events the app actually observes live, which
- * today is just incoming messages (MessageEffects.receiveMessage$ has the
- * only real-time STOMP channel in the app). The "post"/"connection"
- * categories are captured as preferences now so the toggle exists, but
- * nothing dispatches them yet until a matching live event stream exists.
+ * project) — it only fires for events the app actually observes live over a
+ * private per-user STOMP queue: incoming messages
+ * (MessageEffects.receiveMessage$, `/user/queue/messages`) and post
+ * comments/mentions (PostActivityEffects.receivePostActivity$,
+ * `/user/queue/postActivity`). The "connection" category is still just a
+ * captured preference with no live stream feeding it yet.
  * Preferences are per-device (localStorage), not synced across devices.
  */
 @Injectable({ providedIn: 'root' })

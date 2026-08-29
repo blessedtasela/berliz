@@ -100,6 +100,7 @@ import { progressEntryFeatureKey, progressEntryReducer } from './state/progress-
 import { ProgressEntryEffects } from './state/progress-entry/progress-entry.effects';
 import { messageFeatureKey, messageReducer } from './state/message/message.reducer';
 import { MessageEffects } from './state/message/message.effects';
+import { PostActivityEffects } from './state/post-activity/post-activity.effects';
 import { payoutFeatureKey, payoutReducer } from './state/payout/payout.reducer';
 import { PayoutEffects } from './state/payout/payout.effects';
 import { clientIntakeFeatureKey, clientIntakeReducer } from './state/client-intake/client-intake.reducer';
@@ -188,7 +189,7 @@ const dbConfig: DBConfig = {
 
     // Store and Effects Modules for NgRx
     StoreModule.forRoot({}),
-    EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects, WorkoutEffects, AnalyticsEffects, UserProfileEffects, FaqEffects, BookingEffects, AvailabilityEffects, PlanEffects, ProgressShareEffects, ProgressEntryEffects, MessageEffects, PayoutEffects, ClientIntakeEffects, ConnectionEffects]),
+    EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects, WorkoutEffects, AnalyticsEffects, UserProfileEffects, FaqEffects, BookingEffects, AvailabilityEffects, PlanEffects, ProgressShareEffects, ProgressEntryEffects, MessageEffects, PayoutEffects, ClientIntakeEffects, ConnectionEffects, PostActivityEffects]),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: !isDevMode(),

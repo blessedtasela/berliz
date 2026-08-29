@@ -8,6 +8,14 @@
         <p class="text-xs" [class.text-gray-400]="!dark" [class.text-zinc-500]="dark">No comments yet — be the first to reply.</p>
     </div>
 
+    <button *ngIf="!loading && hasMore" type="button" (click)="loadMore()" [disabled]="loadingMore"
+        class="self-center text-[11px] font-semibold flex items-center gap-1.5 py-1 transition disabled:opacity-60"
+        [class.text-sky-600]="!dark" [class.hover:text-sky-700]="!dark"
+        [class.text-sky-500]="dark" [class.hover:text-sky-400]="dark">
+        <i-feather *ngIf="loadingMore" name="loader" class="animate-spin" style="width:11px;height:11px;"></i-feather>
+        {{ loadingMore ? 'Loading…' : 'Load earlier comments' }}
+    </button>
+
     <div *ngFor="let comment of comments; trackBy: trackByCommentId" class="flex items-start gap-2.5">
         <a [routerLink]="[profileRoutePrefix, comment.authorUsername || comment.authorId]" class="shrink-0">
             <img *ngIf="commentPhotoSrc(comment) as src" [src]="src" alt="" class="w-7 h-7 rounded-full object-cover border"
