@@ -2,6 +2,8 @@
 export interface Plan {
   id: number;
   name: string;
+  /** Who this tier is for — drives which subset shows on a given role's plans page. */
+  targetRole: 'client' | 'trainer' | 'center';
   description: string;
   price: number;
   /** e.g. "monthly" — the only interval supported today. */

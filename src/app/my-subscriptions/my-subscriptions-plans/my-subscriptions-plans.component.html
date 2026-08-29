@@ -14,14 +14,14 @@
   </div>
 
   <!-- Empty state -->
-  <div *ngIf="!loading && plans.length === 0"
+  <div *ngIf="!loading && visiblePlans.length === 0"
     class="rounded-xl border border-dashed border-gray-200 bg-white p-6 text-center">
     <p class="text-xs text-gray-400">No plans are available right now. Please check back later.</p>
   </div>
 
-  <div *ngIf="plans.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  <div *ngIf="visiblePlans.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
-    <div *ngFor="let plan of plans" class="relative border border-gray-200 rounded-xl bg-white p-4 flex flex-col gap-3
+    <div *ngFor="let plan of visiblePlans" class="relative border border-gray-200 rounded-xl bg-white p-4 flex flex-col gap-3
              hover:shadow-sm hover:-translate-y-0.5 transition">
 
       <!-- Plan name -->
@@ -52,6 +52,25 @@
 
     </div>
 
+  </div>
+
+  <!-- Redeem a code -->
+  <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+    <div class="flex-1">
+      <p class="text-xs font-semibold text-gray-900">Have a code?</p>
+      <p class="text-[11px] text-gray-400 mt-0.5">Redeem an admin-issued code for free access to a plan — no payment needed.</p>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <input type="text" [(ngModel)]="redeemCode" placeholder="e.g. BERLIZ-XXXXXXXX"
+        class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 placeholder-gray-400 uppercase
+               focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition w-48"
+        (keyup.enter)="redeem()" />
+      <button type="button" (click)="redeem()" [disabled]="!redeemCode.trim() || redeeming"
+        class="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-900 text-white
+               hover:bg-black active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+        {{ redeeming ? 'Redeeming…' : 'Redeem' }}
+      </button>
+    </div>
   </div>
 
 </section>
