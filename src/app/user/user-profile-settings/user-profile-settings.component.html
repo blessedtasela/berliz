@@ -5,6 +5,45 @@
         (stateChange)="onStateChange($event)" [states]="states" [cities]="cities">
     </app-user-profile-settings-form>
 
+    <!-- ═══════════ USERNAME ═══════════
+         Auto-assigned from your name when your account was created, so this
+         is always set to something -- change it any time. Must be unique;
+         3-30 characters, lowercase letters/numbers/underscores only. -->
+    <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+
+        <div>
+            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Username</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                Your @handle — used in your profile link and when people @mention you in comments.
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div class="flex flex-col gap-2">
+            <div class="flex items-center gap-2 max-w-sm">
+                <span class="text-sm font-semibold text-gray-400 shrink-0">&#64;</span>
+                <input type="text" [(ngModel)]="usernameDraft"
+                    (ngModelChange)="usernameError = null"
+                    placeholder="username" maxlength="30"
+                    class="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900
+                           placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition" />
+                <button type="button" (click)="saveUsername()"
+                    [disabled]="savingUsername || !usernameChanged"
+                    class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-red-600 text-white
+                           hover:bg-red-700 active:scale-[0.98] transition shrink-0
+                           disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5">
+                    <i-feather *ngIf="savingUsername" name="loader" class="animate-spin" style="width:12px;height:12px;"></i-feather>
+                    Save
+                </button>
+            </div>
+            <p *ngIf="usernameError" class="text-[11px] text-red-600">{{ usernameError }}</p>
+            <p *ngIf="!usernameError" class="text-[11px] text-gray-400">
+                3-30 characters: lowercase letters, numbers, and underscores only.
+            </p>
+        </div>
+    </div>
+
     <!-- ═══════════ PUBLIC PROFILE VISIBILITY ═══════════
          Private by default. Name, photo, role and join date are always visible
          on /user/:id; this switch controls bio, location and created workouts. -->

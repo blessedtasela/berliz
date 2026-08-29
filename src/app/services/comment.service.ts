@@ -18,6 +18,10 @@ export class CommentService {
     return this.httpClient.post<ApiResponse<CommentResponse>>(this.url + '/comment/add', request);
   }
 
+  updateComment(request: CommentRequest): Observable<ApiResponse<CommentResponse>> {
+    return this.httpClient.put<ApiResponse<CommentResponse>>(this.url + '/comment/update', request);
+  }
+
   deleteComment(id: number): Observable<ApiResponse<void>> {
     return this.httpClient.delete<ApiResponse<void>>(this.url + `/comment/delete/${id}`);
   }

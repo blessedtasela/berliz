@@ -71,6 +71,12 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   private localMessagePopupEnabled: boolean | null = null;
   savingMessagePopupEnabled = false;
 
+  // ── Username ─────────────────────────────────────────────────────────────
+  usernameDraft = '';
+  savingUsername = false;
+  usernameError: string | null = null;
+  private readonly USERNAME_PATTERN = /^[a-z0-9_]{3,30}$/;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -99,6 +105,9 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
           this.user = user;
           this.serverVisibility = user.profileVisibility === 'public' ? 'public' : 'private';
           this.serverMessagePopupEnabled = user.messagePopupEnabled !== false;
+          // Only seed the draft the first time (or if the field was empty) --
+          // don't clobber whatever the user is mid-typing on a later refreshUser().
+          if (!this.usernameDraft) this.usernameDraft = user.username ?? '';
           this.initOrPatchForm();
           this.originalValue = structuredClone(user);
           this.updateUserForm.patchValue(user);
@@ -190,6 +199,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
 
   /** Link to the page other people would see. */
   get publicProfileLink(): string | null {
+    if (this.user?.username) return `/user/${this.user.username}`;
     return this.user?.id ? `/user/${this.user.id}` : null;
   }
 
@@ -231,6 +241,49 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     if (this.savingMessagePopupEnabled) return;
 
     this.store.dispatch(updateMessagePopupEnabled({ messagePopupEnabled: !this.messagePopupEnabled }));
+  }
+
+  // -------------------------
+  // USERNAME
+  // -------------------------
+
+  get usernameChanged(): boolean {
+    return this.usernameDraft.trim().toLowerCase() !== (this.user?.username ?? '');
+  }
+
+  /** Same shape the backend enforces (UserServiceImplement.USERNAME_PATTERN) -- checked client-side just to fail fast, the server is still the real authority. */
+  get usernameFormatValid(): boolean {
+    return this.USERNAME_PATTERN.test(this.usernameDraft.trim().toLowerCase());
+  }
+
+  saveUsername(): void {
+    if (this.savingUsername || !this.usernameChanged) return;
+
+    const candidate = this.usernameDraft.trim().toLowerCase();
+    this.usernameDraft = candidate;
+    if (!this.usernameFormatValid) {
+      this.usernameError = 'Username must be 3-30 characters: lowercase letters, numbers, and underscores only';
+      return;
+    }
+
+    this.usernameError = null;
+    this.savingUsername = true;
+    this.userService.updateUsername(candidate)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          this.savingUsername = false;
+          this.user = { ...this.user, username: candidate };
+          this.snackBarService.openSnackBar(res.data || 'Username updated', '');
+          this.store.dispatch(refreshUser());
+        },
+        error: err => {
+          this.savingUsername = false;
+          // Taken / disallowed-word / bad-format rejections all come back as a
+          // real 400 with the message in the body (GlobalExceptionHandler).
+          this.usernameError = err.error?.message || genericError;
+        },
+      });
   }
 
   // ═══════════ BROWSER NOTIFICATIONS ═══════════

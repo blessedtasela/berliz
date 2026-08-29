@@ -16,6 +16,9 @@ export interface CommentResponse {
   /** True when the viewer authored this comment, or authored the post it's on -- either can delete it. */
   canDelete: boolean;
 
+  /** True only when the viewer authored this comment -- editing is stricter than deleting. */
+  canEdit: boolean;
+
   date: string;
   lastUpdate: string;
 
@@ -24,6 +27,8 @@ export interface CommentResponse {
 
 /** Mirrors the backend `CommentRequest`. */
 export interface CommentRequest {
+  /** Required for update; omitted on create. */
+  id?: number;
   postId: number;
   content: string;
 }

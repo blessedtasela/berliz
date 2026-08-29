@@ -1,13 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs/operators';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { PostResponse } from 'src/app/models/post.interface';
 import { CommentResponse } from 'src/app/models/comment.interface';
+import { PublicDirectoryEntry } from 'src/app/models/users.interface';
 import { CommentService } from 'src/app/services/comment.service';
 import { CurrentUserPhotoService } from 'src/app/services/current-user-photo.service';
+import { UserService } from 'src/app/services/user.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 /** One chunk of a comment's text -- either plain text, or an `@username` mention that should link out. Rendered via *ngFor so no innerHTML/sanitizer is ever needed for user-generated text. */
@@ -16,11 +20,14 @@ interface CommentPart {
   mention?: string;
 }
 
+/** Matches an in-progress `@handle` right at the end of the text up to the cursor -- ^ or whitespace before it, so "email@x" mid-word never triggers suggestions. */
+const MENTION_IN_PROGRESS = /(?:^|\s)@([a-zA-Z0-9_]{0,30})$/;
+
 /**
- * The comment thread for one post -- list + add/delete + `@username` mention
- * linking. Reused everywhere a post card can appear (dashboard-timeline's
- * feed/my-timeline, and the read-only Timeline sections on both profile
- * pages) so the load/add/delete/mention logic lives in exactly one place.
+ * The comment thread for one post -- list + add/edit/delete + `@username`
+ * mention linking and autocomplete. Reused everywhere a post card can appear
+ * (dashboard-timeline's feed/my-timeline, and the read-only Timeline
+ * sections on both profile pages) so this logic lives in exactly one place.
  *
  * The parent owns whether the thread is open (a per-post toggle button next
  * to Like, styled to match that page's own action bar -- kept in each parent
@@ -34,13 +41,16 @@ interface CommentPart {
   imports: [CommonModule, RouterModule, FormsModule, IconsModule],
   templateUrl: './post-comments.component.html'
 })
-export class PostCommentsComponent implements OnChanges {
+export class PostCommentsComponent implements OnChanges, OnDestroy {
   @Input() post!: PostResponse;
   @Input() open = false;
   /** Where a commenter's name/avatar links to -- '/dashboard/user' inside the dashboard shell, '/user' on the public profile page. */
   @Input() profileRoutePrefix: string = '/dashboard/user';
   /** The dashboard shell is light-themed; the public profile page (`/user/:username`) is dark -- flips the panel's palette to match instead of looking pasted-in. */
   @Input() dark = false;
+
+  @ViewChild('draftInput') draftInputRef?: ElementRef<HTMLInputElement>;
+  @ViewChild('editInput') editInputRef?: ElementRef<HTMLInputElement>;
 
   comments: CommentResponse[] = [];
   private loaded = false;
@@ -49,19 +59,45 @@ export class PostCommentsComponent implements OnChanges {
   draft = '';
   posting = false;
 
+  editingCommentId: number | null = null;
+  editDraft = '';
+  savingEdit = false;
+
+  /** '@' autocomplete -- shared between the add box and whichever comment is being edited, since only one can be focused at a time. */
+  mentionActiveField: 'draft' | 'edit' | null = null;
+  mentionSuggestions: PublicDirectoryEntry[] = [];
+  private mentionQuery$ = new Subject<string>();
+  private destroy$ = new Subject<void>();
+
   myPhotoSrc = '../../../assets/icons/user.png';
 
   constructor(
     private commentService: CommentService,
     private currentUserPhoto: CurrentUserPhotoService,
+    private userService: UserService,
     private snackBarService: SnackBarService,
-  ) {}
+  ) {
+    this.mentionQuery$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      switchMap(q => this.userService.getPublicDirectory(q, null)),
+      takeUntil(this.destroy$),
+    ).subscribe({
+      next: res => this.mentionSuggestions = (res.data ?? []).slice(0, 6),
+      error: () => this.mentionSuggestions = [],
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['open'] && this.open && !this.loaded && !this.loading) {
       this.load();
       this.currentUserPhoto.get().subscribe(src => this.myPhotoSrc = src);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private load(): void {
@@ -91,6 +127,7 @@ export class PostCommentsComponent implements OnChanges {
         if (!comment) return;
         this.comments = [...this.comments, comment];
         this.draft = '';
+        this.closeMentions();
         this.post.commentCount = (this.post.commentCount ?? 0) + 1;
       },
       error: () => {
@@ -107,10 +144,111 @@ export class PostCommentsComponent implements OnChanges {
       next: () => {
         this.comments = this.comments.filter(c => c.id !== comment.id);
         this.post.commentCount = Math.max(0, (this.post.commentCount ?? 1) - 1);
+        if (this.editingCommentId === comment.id) this.cancelEdit();
       },
       error: () => this.snackBarService.openSnackBar('Could not delete comment', 'error'),
     });
   }
+
+  // ── Edit ─────────────────────────────────────────────────────────────────
+
+  startEdit(comment: CommentResponse): void {
+    this.editingCommentId = comment.id;
+    this.editDraft = comment.content;
+    this.closeMentions();
+  }
+
+  cancelEdit(): void {
+    this.editingCommentId = null;
+    this.editDraft = '';
+    this.closeMentions();
+  }
+
+  saveEdit(comment: CommentResponse): void {
+    const content = this.editDraft.trim();
+    if (!content || this.savingEdit) return;
+
+    this.savingEdit = true;
+    this.commentService.updateComment({ id: comment.id, postId: this.post.id, content }).subscribe({
+      next: res => {
+        this.savingEdit = false;
+        const updated = res.data;
+        if (!updated) return;
+        const idx = this.comments.findIndex(c => c.id === comment.id);
+        if (idx > -1) this.comments[idx] = updated;
+        this.cancelEdit();
+      },
+      error: () => {
+        this.savingEdit = false;
+        this.snackBarService.openSnackBar('Could not update comment — try again', 'error');
+      },
+    });
+  }
+
+  // ── Mention autocomplete ─────────────────────────────────────────────────
+
+  onDraftInput(input: HTMLInputElement): void {
+    this.handleMentionTyping(this.draft, input.selectionStart ?? this.draft.length, 'draft');
+  }
+
+  onEditInput(input: HTMLInputElement): void {
+    this.handleMentionTyping(this.editDraft, input.selectionStart ?? this.editDraft.length, 'edit');
+  }
+
+  private handleMentionTyping(text: string, cursor: number, field: 'draft' | 'edit'): void {
+    const upToCursor = text.slice(0, cursor);
+    const match = MENTION_IN_PROGRESS.exec(upToCursor);
+    if (!match) {
+      this.closeMentions();
+      return;
+    }
+    this.mentionActiveField = field;
+    this.mentionQuery$.next(match[1]);
+  }
+
+  closeMentions(): void {
+    this.mentionActiveField = null;
+    this.mentionSuggestions = [];
+  }
+
+  selectMention(user: PublicDirectoryEntry): void {
+    if (!this.mentionActiveField || !user.username) { this.closeMentions(); return; }
+
+    const isDraft = this.mentionActiveField === 'draft';
+    const text = isDraft ? this.draft : this.editDraft;
+    const inputEl = isDraft ? this.draftInputRef?.nativeElement : this.editInputRef?.nativeElement;
+    const cursor = inputEl?.selectionStart ?? text.length;
+
+    const match = MENTION_IN_PROGRESS.exec(text.slice(0, cursor));
+    if (!match) { this.closeMentions(); return; }
+
+    // '@' plus the partial query typed so far, immediately before the cursor.
+    const atIndex = cursor - 1 - match[1].length;
+    const before = text.slice(0, atIndex);
+    const after = text.slice(cursor);
+    const inserted = `@${user.username} `;
+    const newText = before + inserted + after;
+
+    if (isDraft) this.draft = newText; else this.editDraft = newText;
+    this.closeMentions();
+
+    setTimeout(() => {
+      if (!inputEl) return;
+      inputEl.focus();
+      const pos = (before + inserted).length;
+      inputEl.setSelectionRange(pos, pos);
+    });
+  }
+
+  suggestionPhotoSrc(entry: PublicDirectoryEntry): string | null {
+    return entry.profilePhoto ? 'data:image/*;base64,' + entry.profilePhoto : null;
+  }
+
+  trackBySuggestionId(_: number, entry: PublicDirectoryEntry): number {
+    return entry.id;
+  }
+
+  // ── Display helpers ──────────────────────────────────────────────────────
 
   commentPhotoSrc(comment: CommentResponse): string | null {
     return comment.authorPhoto ? 'data:image/*;base64,' + comment.authorPhoto : null;
