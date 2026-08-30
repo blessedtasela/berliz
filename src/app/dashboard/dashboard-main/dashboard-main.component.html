@@ -26,6 +26,9 @@
         <app-dashboard-todo-list [todoData]="myTodo"></app-dashboard-todo-list>
     </div>
 
+    <!-- Messages, Connections, Timeline, Members, Progress, FAQs -->
+    <app-dashboard-quick-links></app-dashboard-quick-links>
+
     <!-- Admin only -->
     <ng-container *ngIf="userData?.role === 'admin'">
         <app-dashboard-top-users></app-dashboard-top-users>
