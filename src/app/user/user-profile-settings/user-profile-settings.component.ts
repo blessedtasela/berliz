@@ -33,6 +33,8 @@ import {
 import { selectSavingVisibility, selectSavingSidebarDisplay, selectSavingMessagePopupEnabled } from 'src/app/state/user-profile/user-profile.selector';
 import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 import { BrowserNotificationService, NotificationCategory } from 'src/app/services/browser-notification.service';
+import { BlockService } from 'src/app/services/block.service';
+import { BlockedUser } from 'src/app/models/block.model';
 
 @Component({
   selector: 'app-user-profile-settings',
@@ -77,6 +79,10 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   usernameError: string | null = null;
   private readonly USERNAME_PATTERN = /^[a-z0-9_]{3,30}$/;
 
+  // ── Blocked users ────────────────────────────────────────────────────────
+  blockedUsers: BlockedUser[] = [];
+  loadingBlockedUsers = false;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -91,11 +97,13 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     private router: Router,
     public sidebarState: SidebarStateService,
     private browserNotifications: BrowserNotificationService,
+    private blockService: BlockService,
   ) { }
 
   ngOnInit(): void {
     // Load user initially
     this.store.dispatch(loadUser());
+    this.loadBlockedUsers();
 
     // Subscribe to user state
     this.store.select(selectUser)
@@ -283,6 +291,35 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
           // real 400 with the message in the body (GlobalExceptionHandler).
           this.usernameError = err.error?.message || genericError;
         },
+      });
+  }
+
+  // -------------------------
+  // BLOCKED USERS
+  // -------------------------
+
+  loadBlockedUsers(): void {
+    this.loadingBlockedUsers = true;
+    this.blockService.getBlockedUsers()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          this.loadingBlockedUsers = false;
+          this.blockedUsers = res.data ?? [];
+        },
+        error: () => this.loadingBlockedUsers = false,
+      });
+  }
+
+  unblock(user: BlockedUser): void {
+    this.blockService.unblockUser(user.blockedUserId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.blockedUsers = this.blockedUsers.filter(b => b.blockedUserId !== user.blockedUserId);
+          this.snackBarService.openSnackBar(`Unblocked ${user.blockedUserName}`, '');
+        },
+        error: () => this.snackBarService.openSnackBar('Could not unblock', 'error'),
       });
   }
 

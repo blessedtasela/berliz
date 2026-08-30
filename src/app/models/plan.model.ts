@@ -21,7 +21,7 @@ export interface PlanSubscriptionResponse {
   planId: number;
   planName: string;
   planPrice: number;
-  /** Always PENDING_PAYMENT today — an admin activates it manually. */
+  /** PENDING_PAYMENT until Stripe checkout confirms payment, or an admin activates it manually. */
   status: string;
   date?: Date;
   message?: string;

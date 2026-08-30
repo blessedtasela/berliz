@@ -89,6 +89,15 @@ export const routes: Routes = [
   // page loads for anyone, content requires sign-in.
   { path: 'members', loadComponent: () => import('./members-directory/members-directory.component').then(m => m.MembersDirectoryComponent), data: { breadcrumb: 'Members' } },
 
+  // Stripe Checkout's success/cancel redirect targets -- registered at
+  // exactly these root paths because StripePaymentServiceImplement's default
+  // successUrl/cancelUrl are hardcoded to `${frontendUrl}/payment/success`
+  // and `/payment/cancel` (my-subscriptions-plans.component.ts doesn't
+  // override them). No guard: whoever Stripe redirects back is already
+  // mid-checkout, and the pages themselves show nothing sensitive.
+  { path: 'payment/success', loadComponent: () => import('./payment/payment-success/payment-success.component').then(m => m.PaymentSuccessComponent), data: { breadcrumb: 'Payment successful' } },
+  { path: 'payment/cancel', loadComponent: () => import('./payment/payment-cancel/payment-cancel.component').then(m => m.PaymentCancelComponent), data: { breadcrumb: 'Payment cancelled' } },
+
 
   // ── DASHBOARD ──────────────────────────────────────────
   // Entire /dashboard subtree (dashboard shell, user profile/settings,

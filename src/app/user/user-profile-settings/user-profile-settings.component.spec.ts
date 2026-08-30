@@ -13,6 +13,7 @@ import { UserService } from 'src/app/services/user.service';
 import { CountryService } from 'src/app/services/country.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SidebarStateService } from 'src/app/services/sidebar-state.service';
+import { BlockService } from 'src/app/services/block.service';
 import { updateMessagePopupEnabled } from 'src/app/state/user-profile/user-profile.actions';
 
 describe('UserProfileSettingsComponent', () => {
@@ -30,6 +31,8 @@ describe('UserProfileSettingsComponent', () => {
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     const sidebarStateSpy = jasmine.createSpyObj('SidebarStateService', ['setMode'],
       { mode$: of('collapsed'), mobileOverlayOpen$: of(false) });
+    const blockServiceSpy = jasmine.createSpyObj('BlockService', ['getBlockedUsers', 'unblockUser']);
+    blockServiceSpy.getBlockedUsers.and.returnValue(of({ data: [], message: '', success: true, statusCode: 200 }));
 
     TestBed.configureTestingModule({
       declarations: [UserProfileSettingsComponent],
@@ -44,7 +47,8 @@ describe('UserProfileSettingsComponent', () => {
         { provide: SnackBarService, useValue: snackbarSpy },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: Router, useValue: routerSpy },
-        { provide: SidebarStateService, useValue: sidebarStateSpy }
+        { provide: SidebarStateService, useValue: sidebarStateSpy },
+        { provide: BlockService, useValue: blockServiceSpy }
       ]
     });
     store = TestBed.inject(MockStore);

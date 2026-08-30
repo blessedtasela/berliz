@@ -13,6 +13,7 @@ import { PostService } from 'src/app/services/post.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { UserService } from 'src/app/services/user.service';
+import { ContentReportService } from 'src/app/services/content-report.service';
 import { imageValidator } from 'src/validators/form-validators.module';
 
 type TimelineTab = 'feed' | 'mine';
@@ -64,6 +65,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private userService: UserService,
     private snackBarService: SnackBarService,
+    private contentReportService: ContentReportService,
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
   }
@@ -232,6 +234,17 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
         this.snackBarService.openSnackBar('Post deleted', '');
       },
       error: () => this.snackBarService.openSnackBar('Could not delete post', 'error'),
+    });
+  }
+
+  /** Native prompt for the optional reason -- matches this component's existing use of confirm() for delete; a less-frequent secondary action than commenting, so it doesn't need PostCommentsComponent's inline report form treatment. */
+  reportPost(post: PostResponse): void {
+    const reason = window.prompt('Why are you reporting this post? (optional)');
+    if (reason === null) return; // cancelled
+
+    this.contentReportService.addReport({ targetType: 'post', targetId: post.id, reason: reason.trim() || undefined }).subscribe({
+      next: res => this.snackBarService.openSnackBar(res.data?.message || 'Report submitted', ''),
+      error: err => this.snackBarService.openSnackBar(err.error?.message || 'Could not submit report', 'error'),
     });
   }
 

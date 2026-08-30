@@ -99,6 +99,10 @@
                 class="text-gray-300 hover:text-red-600 transition p-1">
                 <i-feather name="trash-2" style="width:14px;height:14px;"></i-feather>
             </button>
+            <button *ngIf="!isMine(post)" type="button" (click)="reportPost(post)" title="Report"
+                class="text-gray-300 hover:text-amber-500 transition p-1">
+                <i-feather name="flag" style="width:14px;height:14px;"></i-feather>
+            </button>
         </div>
 
         <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ post.content }}</p>

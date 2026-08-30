@@ -13,6 +13,7 @@ import { CommentService } from 'src/app/services/comment.service';
 import { CurrentUserPhotoService } from 'src/app/services/current-user-photo.service';
 import { UserService } from 'src/app/services/user.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { ContentReportService } from 'src/app/services/content-report.service';
 
 /** One chunk of a comment's text -- either plain text, or an `@username` mention that should link out. Rendered via *ngFor so no innerHTML/sanitizer is ever needed for user-generated text. */
 interface CommentPart {
@@ -70,6 +71,10 @@ export class PostCommentsComponent implements OnChanges, OnDestroy {
   editDraft = '';
   savingEdit = false;
 
+  reportingCommentId: number | null = null;
+  reportReason = '';
+  submittingReport = false;
+
   /** '@' autocomplete -- shared between the add box and whichever comment is being edited, since only one can be focused at a time. */
   mentionActiveField: 'draft' | 'edit' | null = null;
   mentionSuggestions: PublicDirectoryEntry[] = [];
@@ -83,6 +88,7 @@ export class PostCommentsComponent implements OnChanges, OnDestroy {
     private currentUserPhoto: CurrentUserPhotoService,
     private userService: UserService,
     private snackBarService: SnackBarService,
+    private contentReportService: ContentReportService,
   ) {
     this.mentionQuery$.pipe(
       debounceTime(200),
@@ -214,6 +220,40 @@ export class PostCommentsComponent implements OnChanges, OnDestroy {
       error: () => {
         this.savingEdit = false;
         this.snackBarService.openSnackBar('Could not update comment — try again', 'error');
+      },
+    });
+  }
+
+  // ── Report ───────────────────────────────────────────────────────────────
+
+  startReport(comment: CommentResponse): void {
+    this.reportingCommentId = comment.id;
+    this.reportReason = '';
+    this.closeMentions();
+  }
+
+  cancelReport(): void {
+    this.reportingCommentId = null;
+    this.reportReason = '';
+  }
+
+  submitReport(comment: CommentResponse): void {
+    if (this.submittingReport) return;
+
+    this.submittingReport = true;
+    this.contentReportService.addReport({
+      targetType: 'comment',
+      targetId: comment.id,
+      reason: this.reportReason.trim() || undefined,
+    }).subscribe({
+      next: res => {
+        this.submittingReport = false;
+        this.snackBarService.openSnackBar(res.data?.message || 'Report submitted', '');
+        this.cancelReport();
+      },
+      error: err => {
+        this.submittingReport = false;
+        this.snackBarService.openSnackBar(err.error?.message || 'Could not submit report', 'error');
       },
     });
   }

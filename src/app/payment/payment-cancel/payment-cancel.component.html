@@ -1,0 +1,21 @@
+<section class="w-full min-h-[70vh] font-sans flex items-center justify-center px-4">
+    <div class="max-w-sm w-full flex flex-col items-center text-center gap-5">
+
+        <div class="w-16 h-16 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center">
+            <i-feather name="x" class="text-gray-400" style="width:28px;height:28px;"></i-feather>
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <h1 class="text-lg font-bold text-gray-900">Checkout cancelled</h1>
+            <p class="text-sm text-gray-500 leading-relaxed">
+                No payment was made — nothing was charged. You can pick a plan and try again any time.
+            </p>
+        </div>
+
+        <a routerLink="/dashboard/my-subscriptions"
+            class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                   hover:bg-red-700 active:scale-[0.98] transition">
+            Back to plans
+        </a>
+    </div>
+</section>

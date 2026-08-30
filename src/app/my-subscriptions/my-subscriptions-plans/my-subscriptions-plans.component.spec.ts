@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Actions } from '@ngrx/effects';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -18,6 +19,7 @@ describe('MySubscriptionsPlansComponent', () => {
   let store: MockStore;
   let actions$: Subject<any>;
   let snackBarSpy: jasmine.SpyObj<SnackBarService>;
+  let httpMock: HttpTestingController;
 
   const plans: Plan[] = [
     {
@@ -38,7 +40,7 @@ describe('MySubscriptionsPlansComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [MySubscriptionsPlansComponent],
-      imports: [CommonModule, IconsModule],
+      imports: [CommonModule, IconsModule, HttpClientTestingModule],
       providers: [
         provideMockStore({
           selectors: [
@@ -53,9 +55,14 @@ describe('MySubscriptionsPlansComponent', () => {
 
     store = TestBed.inject(MockStore);
     spyOn(store, 'dispatch').and.callThrough();
+    httpMock = TestBed.inject(HttpTestingController);
 
     fixture = TestBed.createComponent(MySubscriptionsPlansComponent);
     component = fixture.componentInstance;
+  });
+
+  afterEach(() => {
+    httpMock.verify();
   });
 
   it('dispatches loadPlans on init and populates plans from the store', () => {
@@ -86,7 +93,7 @@ describe('MySubscriptionsPlansComponent', () => {
     expect(component.selectingPlanId).toBe(1);
   });
 
-  it('shows a success snackbar and clears the in-flight state when selectPlanSuccess arrives', () => {
+  it('requests a Stripe checkout session for the new PENDING_PAYMENT subscription when selectPlanSuccess arrives', () => {
     fixture.detectChanges();
     component.choosePlan(plans[0]);
 
@@ -100,10 +107,39 @@ describe('MySubscriptionsPlansComponent', () => {
     };
     actions$.next(selectPlanSuccess({ response } as any));
 
+    expect(component.redirectingToCheckout).toBeTrue();
+    const req = httpMock.expectOne(r => r.url.endsWith('/payment/stripe/create-checkout-session'));
+    expect(req.request.body).toEqual({ subscriptionId: 10, amount: 17, productName: 'Basic' });
+
+    // Flushing a real checkoutUrl here would make the component actually set
+    // window.location.href, navigating this test page away mid-suite -- so
+    // this deliberately flushes a response with no checkoutUrl instead. That
+    // still exercises the whole success callback (and its own error-guard
+    // branch), without ever reaching the real-navigation line; the request
+    // shape assertion above is what actually proves checkout is wired up.
+    req.flush({ message: 'no url', data: { sessionId: 's1', checkoutUrl: '' }, success: true, statusCode: 200 });
+
+    expect(component.redirectingToCheckout).toBeFalse();
+    expect(component.selectingPlanId).toBeNull();
+    expect(snackBarSpy.openSnackBar).toHaveBeenCalledWith('Could not start checkout — try again', 'error');
+  });
+
+  it('falls back to the old "request received" toast if selectPlanSuccess ever has no subscriptionId', () => {
+    fixture.detectChanges();
+    component.choosePlan(plans[0]);
+
+    const response = {
+      message: 'Your request for the Basic plan has been received',
+      data: null,
+      success: true, statusCode: 200
+    };
+    actions$.next(selectPlanSuccess({ response } as any));
+
     expect(snackBarSpy.openSnackBar).toHaveBeenCalledWith(
       'Your request for the Basic plan has been received', ''
     );
     expect(component.selectingPlanId).toBeNull();
+    httpMock.expectNone(r => r.url.endsWith('/payment/stripe/create-checkout-session'));
   });
 
   it('shows an error snackbar and clears the in-flight state when selectPlanFailure arrives', () => {

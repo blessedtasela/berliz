@@ -14,6 +14,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { PostService } from 'src/app/services/post.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
+import { BlockService } from 'src/app/services/block.service';
+import { BlockedUser } from 'src/app/models/block.model';
 
 import * as ConnectionActions from 'src/app/state/connection/connection.actions';
 import {
@@ -64,6 +66,8 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
   /** Which post's comment thread (PostCommentsComponent) is expanded inline, if any. Only one open at a time. */
   openCommentsPostId: number | null = null;
 
+  blockedUsers: BlockedUser[] = [];
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -74,6 +78,7 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
     private postService: PostService,
     private snackBarService: SnackBarService,
     public lightbox: PhotoLightboxService,
+    private blockService: BlockService,
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
   }
@@ -81,6 +86,7 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.store.dispatch(ConnectionActions.loadPendingRequests());
     this.store.dispatch(ConnectionActions.loadMyConnections());
+    this.blockService.getBlockedUsers().subscribe(res => this.blockedUsers = res.data ?? []);
 
     this.store.select(selectMyConnections).pipe(takeUntil(this.destroy$)).subscribe(l => this.connections = l);
     this.store.select(selectPendingRequests).pipe(takeUntil(this.destroy$)).subscribe(l => this.pendingRequests = l);
@@ -191,6 +197,35 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
 
   message(): void {
     this.router.navigate(['/dashboard/messages']);
+  }
+
+  get isBlocked(): boolean {
+    return this.userId != null && this.blockedUsers.some(b => b.blockedUserId === this.userId);
+  }
+
+  toggleBlock(): void {
+    if (!this.userId) return;
+
+    if (this.isBlocked) {
+      if (!confirm(`Unblock ${this.fullName}?`)) return;
+      const id = this.userId;
+      this.blockService.unblockUser(id).subscribe({
+        next: () => {
+          this.blockedUsers = this.blockedUsers.filter(b => b.blockedUserId !== id);
+          this.snackBarService.openSnackBar('Unblocked', '');
+        },
+        error: () => this.snackBarService.openSnackBar('Could not unblock', 'error'),
+      });
+    } else {
+      if (!confirm(`Block ${this.fullName}? They won't be able to message you, mention you, or comment on your posts.`)) return;
+      this.blockService.blockUser(this.userId).subscribe({
+        next: res => {
+          if (res.data) this.blockedUsers = [...this.blockedUsers, res.data];
+          this.snackBarService.openSnackBar(res.data?.message || 'Blocked', '');
+        },
+        error: err => this.snackBarService.openSnackBar(err.error?.message || 'Could not block', 'error'),
+      });
+    }
   }
 
   // -------------------------

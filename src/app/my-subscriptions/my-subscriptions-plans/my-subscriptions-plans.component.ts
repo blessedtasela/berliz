@@ -5,6 +5,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { Plan } from 'src/app/models/plan.model';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { StripeService } from 'src/app/services/stripe.service';
 import { loadPlans } from 'src/app/state/plan/plan.actions';
 import { selectPlanLoading, selectPlans } from 'src/app/state/plan/plan.selectors';
 import { selectPlan, selectPlanFailure, selectPlanSuccess } from 'src/app/state/subscription/subscription.actions';
@@ -24,10 +25,14 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
+  /** True while waiting on the Stripe checkout-session request, after selectPlan already succeeded -- distinct from selectingPlanId so the card can show "Redirecting to payment..." instead of just going quiet. */
+  redirectingToCheckout = false;
+
   constructor(
     private store: Store,
     private actions$: Actions,
     private snackBar: SnackBarService,
+    private stripeService: StripeService,
   ) { }
 
   ngOnInit(): void {
@@ -44,11 +49,16 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
     this.actions$
       .pipe(ofType(selectPlanSuccess), takeUntil(this.destroy$))
       .subscribe(({ response }) => {
-        this.selectingPlanId = null;
-        this.snackBar.openSnackBar(
-          response?.data?.message || response?.message || 'Your plan request has been received.',
-          ''
-        );
+        const subscription = response?.data;
+        if (!subscription?.subscriptionId) {
+          // Shouldn't happen (selectPlan always creates a subscription on
+          // success), but degrade to the old "request received" toast rather
+          // than silently doing nothing if the shape is ever unexpected.
+          this.selectingPlanId = null;
+          this.snackBar.openSnackBar(response?.message || 'Your plan request has been received.', '');
+          return;
+        }
+        this.goToCheckout(subscription.subscriptionId, subscription.planPrice, subscription.planName);
       });
 
     this.actions$
@@ -68,5 +78,33 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
     if (this.selectingPlanId != null) return;
     this.selectingPlanId = plan.id;
     this.store.dispatch(selectPlan({ planId: plan.id }));
+  }
+
+  /** selectPlan() only ever gets the subscription to PENDING_PAYMENT (see PlanSubscriptionResponse) -- this is what actually collects payment, redirecting to Stripe's hosted Checkout page. The webhook (StripePaymentServiceImplement.handleCheckoutSessionCompleted) flips the subscription active once Stripe confirms. */
+  private goToCheckout(subscriptionId: number, amount: number, planName: string): void {
+    this.redirectingToCheckout = true;
+    this.stripeService.createCheckoutSession({
+      subscriptionId,
+      amount,
+      productName: planName,
+    }).subscribe({
+      next: res => {
+        const checkoutUrl = res.data?.checkoutUrl;
+        if (!checkoutUrl) {
+          this.redirectingToCheckout = false;
+          this.selectingPlanId = null;
+          this.snackBar.openSnackBar('Could not start checkout — try again', 'error');
+          return;
+        }
+        // A real cross-origin navigation to Stripe's hosted page, not an
+        // Angular route -- window.location, not the router.
+        window.location.href = checkoutUrl;
+      },
+      error: err => {
+        this.redirectingToCheckout = false;
+        this.selectingPlanId = null;
+        this.snackBar.openSnackBar(err.error?.message || 'Could not start checkout — try again', 'error');
+      },
+    });
   }
 }

@@ -1,0 +1,22 @@
+<section class="w-full min-h-[70vh] font-sans flex items-center justify-center px-4">
+    <div class="max-w-sm w-full flex flex-col items-center text-center gap-5">
+
+        <div class="w-16 h-16 rounded-full bg-green-50 border border-green-200 flex items-center justify-center">
+            <i-feather name="check" class="text-green-600" style="width:28px;height:28px;"></i-feather>
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <h1 class="text-lg font-bold text-gray-900">Payment received</h1>
+            <p class="text-sm text-gray-500 leading-relaxed">
+                Thanks — your payment went through. Your subscription activates automatically within a
+                few moments as Stripe confirms it.
+            </p>
+        </div>
+
+        <a routerLink="/dashboard/my-subscriptions"
+            class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                   hover:bg-red-700 active:scale-[0.98] transition">
+            View my subscription
+        </a>
+    </div>
+</section>

@@ -1,0 +1,72 @@
+<div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+    <div>
+        <h1 class="text-xl font-bold text-gray-900">Content Reports</h1>
+        <p class="text-sm text-gray-500">Reported Timeline posts and comments.</p>
+    </div>
+    <div class="flex bg-gray-100 rounded-xl p-1 gap-1">
+        <button type="button" (click)="selectFilter('pending')"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+            [ngClass]="statusFilter === 'pending' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'">
+            Pending
+        </button>
+        <button type="button" (click)="selectFilter('resolved')"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+            [ngClass]="statusFilter === 'resolved' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'">
+            Resolved
+        </button>
+        <button type="button" (click)="selectFilter('dismissed')"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+            [ngClass]="statusFilter === 'dismissed' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'">
+            Dismissed
+        </button>
+    </div>
+</div>
+
+<div *ngIf="loading" class="flex items-center justify-center py-16">
+    <div class="w-8 h-8 rounded-full border-2 border-gray-200 border-t-red-600 animate-spin"></div>
+</div>
+
+<div *ngIf="!loading && reports.length === 0" class="bg-white border border-gray-200 rounded-2xl p-14 flex flex-col items-center justify-center gap-3 text-center">
+    <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+        <i-feather name="flag" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+    </div>
+    <p class="text-sm font-bold text-gray-900">No {{ statusFilter }} reports</p>
+</div>
+
+<div *ngIf="!loading && reports.length > 0" class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+    <div class="divide-y divide-gray-100">
+        <div *ngFor="let report of reports; trackBy: trackByReport" class="flex items-start gap-3 px-4 py-4">
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1.5 flex-wrap mb-1">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold capitalize bg-sky-50 text-sky-700 border border-sky-200">
+                        {{ report.targetType }}
+                    </span>
+                    <span class="text-[11px] text-gray-400">reported by {{ report.reporterName }}</span>
+                    <span class="text-[11px] text-gray-300">&middot;</span>
+                    <span class="text-[11px] text-gray-400">{{ formatDate(report.date) }}</span>
+                </div>
+
+                <div class="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 mb-1.5">
+                    <p *ngIf="report.targetContentPreview" class="text-xs text-gray-700 whitespace-pre-line line-clamp-3">{{ report.targetContentPreview }}</p>
+                    <p *ngIf="!report.targetContentPreview" class="text-xs text-gray-400 italic">Content no longer exists (deleted).</p>
+                    <p *ngIf="report.targetAuthorName" class="text-[11px] text-gray-400 mt-1">by {{ report.targetAuthorName }}</p>
+                </div>
+
+                <p *ngIf="report.reason" class="text-xs text-gray-600">
+                    <span class="font-semibold text-gray-900">Reason:</span> {{ report.reason }}
+                </p>
+            </div>
+
+            <div *ngIf="statusFilter === 'pending'" class="flex flex-col gap-1.5 shrink-0">
+                <button type="button" (click)="dismiss(report)"
+                    class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 text-gray-600 hover:border-gray-300 transition">
+                    Dismiss
+                </button>
+                <button type="button" (click)="resolve(report)"
+                    class="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 hover:bg-red-700 text-white transition">
+                    Resolve
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

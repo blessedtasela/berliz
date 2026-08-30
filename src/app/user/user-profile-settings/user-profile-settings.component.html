@@ -44,6 +44,42 @@
         </div>
     </div>
 
+    <!-- ═══════════ BLOCKED USERS ═══════════
+         Blocking stops someone messaging you, mentioning you, or commenting
+         on your posts. Managed from a profile's own Block button; this is
+         just the review-and-undo list. -->
+    <div *ngIf="blockedUsers.length > 0" class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+
+        <div>
+            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Blocked users</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                They can't message you, mention you, or comment on your posts.
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div class="flex flex-col divide-y divide-gray-100">
+            <div *ngFor="let b of blockedUsers" class="flex items-center justify-between gap-3 py-2">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <img *ngIf="b.blockedUserPhoto" [src]="'data:image/*;base64,' + b.blockedUserPhoto" alt=""
+                        class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
+                    <div *ngIf="!b.blockedUserPhoto" class="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0">
+                        <i-feather name="user" class="text-gray-400" style="width:14px;height:14px;"></i-feather>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-xs font-bold text-gray-900 truncate">{{ b.blockedUserName }}</p>
+                        <p *ngIf="b.blockedHandle" class="text-[11px] text-gray-400 truncate">&#64;{{ b.blockedHandle }}</p>
+                    </div>
+                </div>
+                <button type="button" (click)="unblock(b)"
+                    class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 text-gray-600 hover:border-red-300 hover:text-red-600 transition">
+                    Unblock
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- ═══════════ PUBLIC PROFILE VISIBILITY ═══════════
          Private by default. Name, photo, role and join date are always visible
          on /user/:id; this switch controls bio, location and created workouts. -->
