@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 /**
  * Photo-or-initials avatar, standalone so it can drop into any module
@@ -14,6 +14,7 @@ import { Component, Input } from '@angular/core';
   imports: [CommonModule],
   template: `
     <img *ngIf="photoSrc; else initialsFallback" [src]="photoSrc" alt=""
+      (error)="photoFailed = true"
       class="rounded-full object-cover object-top border shrink-0"
       [ngClass]="borderClass"
       [style.width.px]="size" [style.height.px]="size" />
@@ -27,7 +28,7 @@ import { Component, Input } from '@angular/core';
     </ng-template>
   `,
 })
-export class AvatarComponent {
+export class AvatarComponent implements OnChanges {
   /** Base64 photo payload (same encoding as User.profilePhoto elsewhere), or null/undefined for the initials fallback. */
   @Input() photo: string | null | undefined;
   @Input() name = '';
@@ -35,8 +36,17 @@ export class AvatarComponent {
   /** Tailwind classes for the ring/background -- callers pick a palette (e.g. red for messaging, gray for a neutral list). */
   @Input() borderClass = 'border-gray-200 bg-gray-50 text-gray-500';
 
+  /** Set once the <img> actually fails to load (corrupt/invalid data) -- falls back to initials rather than a broken-image icon. */
+  photoFailed = false;
+
   get photoSrc(): string | null {
-    return this.photo ? 'data:image/*;base64,' + this.photo : null;
+    return this.photo && !this.photoFailed ? 'data:image/*;base64,' + this.photo : null;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // A new photo deserves a fresh chance to load -- don't stay stuck on the
+    // initials fallback forever just because a *previous* photo failed.
+    if (changes['photo']) this.photoFailed = false;
   }
 
   get initials(): string {
