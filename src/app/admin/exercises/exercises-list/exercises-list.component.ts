@@ -3,9 +3,10 @@ import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { Exercises } from 'src/app/models/exercise.interface';
 import { ExerciseService } from 'src/app/services/exercise.service';
+import { StrapiService } from 'src/app/services/strapi.service';
 import { Store } from '@ngrx/store';
 import { loadExercises } from 'src/app/state/exercise/exercise.actions';
 import { selectExercises } from 'src/app/state/exercise/exercise.selectors';
@@ -32,8 +33,11 @@ export class ExercisesListComponent implements OnDestroy {
 
   private subscriptions: Subscription[] = [];
 
+  uploadingVideoFor: number | null = null;
+
   constructor(private datePipe: DatePipe,
     private exerciseService: ExerciseService,
+    private strapiService: StrapiService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
@@ -182,12 +186,58 @@ export class ExercisesListComponent implements OnDestroy {
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
-  onVideoSelected(event: any, id: number): void {
+  /** The small still image (validated server-side as an image, not a video — see updateDemo). */
+  onDemoImageSelected(event: any, id: number): void {
     const selectedDemo = event.target.files[0];
     if (selectedDemo) {
       this.selectedDemo = selectedDemo;
       this.updateDemo(id);
     }
+  }
+
+  /** The real demo video — uploaded to Strapi first, then attached via updateExerciseVideo. */
+  onDemoVideoSelected(event: any, id: number): void {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    this.uploadingVideoFor = id;
+    this.ngxService.start();
+    this.strapiService.uploadToStrapi(file).pipe(take(1)).subscribe({
+      next: (res) => {
+        const uploaded = res?.[0];
+        if (!uploaded?.url) {
+          this.uploadingVideoFor = null;
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar('Upload failed — no file returned', 'error');
+          return;
+        }
+        this.exerciseService.updateExerciseVideo(id, {
+          strapiId: uploaded.id,
+          name: uploaded.name,
+          videoUrl: uploaded.url,
+          mimeType: uploaded.mime,
+          byteSize: uploaded.size,
+        }).subscribe({
+          next: (response: any) => {
+            this.uploadingVideoFor = null;
+            this.ngxService.stop();
+            this.snackbarService.openSnackBar(response?.message || 'Video updated', '');
+            this.handleEmitEvent();
+          },
+          error: (err: any) => {
+            this.uploadingVideoFor = null;
+            this.ngxService.stop();
+            this.snackbarService.openSnackBar(err?.error?.message || genericError, 'error');
+          }
+        });
+      },
+      error: (err: any) => {
+        this.uploadingVideoFor = null;
+        this.ngxService.stop();
+        this.snackbarService.openSnackBar(err?.error?.message || genericError, 'error');
+      }
+    });
   }
 
   updateDemo(id: number): void {

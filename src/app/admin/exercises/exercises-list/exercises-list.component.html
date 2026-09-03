@@ -3,10 +3,9 @@
     <div class="sm:hidden divide-y divide-gray-100">
         <div *ngFor="let exercise of exercisesData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors">
             <div class="w-12 h-12 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center shrink-0">
-                <video *ngIf="exercise.demo" [src]="'data:video/mp4;base64,' + exercise.demo"
-                    class="w-full h-full object-cover object-top" autoplay [muted]="true" loop>
-                </video>
-                <i-feather *ngIf="!exercise.demo" name="video" class="text-gray-300"
+                <img *ngIf="exercise.demo" [src]="'data:image/jpeg;base64,' + exercise.demo"
+                    class="w-full h-full object-cover object-top" />
+                <i-feather *ngIf="!exercise.demo" name="image" class="text-gray-300"
                     style="width:18px;height:18px;"></i-feather>
             </div>
 
@@ -17,17 +16,24 @@
                         [ngClass]="exercise.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
                         {{ exercise.status === 'true' ? 'Active' : 'Inactive' }}
                     </span>
+                    <i-feather *ngIf="exercise.video" name="film" class="text-blue-500 shrink-0" style="width:12px;height:12px;" title="Has demo video"></i-feather>
                 </div>
                 <p class="text-xs text-gray-400 mt-0.5 truncate">updated {{ formatDate(exercise.lastUpdate) }}</p>
             </div>
 
             <div class="flex items-center gap-0.5 shrink-0">
-                <label for="fileInput-{{exercise.id}}" title="Replace demo video"
+                <label for="fileInput-{{exercise.id}}" title="Replace demo image"
                     class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center cursor-pointer">
-                    <i-feather name="upload" class="text-gray-500" style="width:16px;height:16px;"></i-feather>
+                    <i-feather name="image" class="text-gray-500" style="width:16px;height:16px;"></i-feather>
                 </label>
-                <input accept="video/*" type="file" id="fileInput-{{exercise.id}}" class="hidden"
-                    (change)="onVideoSelected($event, exercise.id)">
+                <input accept="image/*" type="file" id="fileInput-{{exercise.id}}" class="hidden"
+                    (change)="onDemoImageSelected($event, exercise.id)">
+                <label for="videoInput-{{exercise.id}}" title="Replace demo video"
+                    class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center cursor-pointer">
+                    <i-feather [name]="uploadingVideoFor === exercise.id ? 'loader' : 'film'" [class.animate-spin]="uploadingVideoFor === exercise.id" class="text-gray-500" style="width:16px;height:16px;"></i-feather>
+                </label>
+                <input accept="video/*" type="file" id="videoInput-{{exercise.id}}" class="hidden"
+                    (change)="onDemoVideoSelected($event, exercise.id)">
                 <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center"
                     (click)="openUpdateExercise(exercise.id)" title="Edit">
                     <i-feather name="edit-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
@@ -60,21 +66,29 @@
                     <td class="px-4 py-3">
                         <div class="flex items-center gap-2">
                             <div class="w-10 h-10 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center shrink-0">
-                                <video *ngIf="exercise.demo" [src]="'data:video/mp4;base64,' + exercise.demo"
-                                    class="w-full h-full object-cover object-top" autoplay [muted]="true" loop>
-                                </video>
-                                <i-feather *ngIf="!exercise.demo" name="video" class="text-gray-300"
+                                <img *ngIf="exercise.demo" [src]="'data:image/jpeg;base64,' + exercise.demo"
+                                    class="w-full h-full object-cover object-top" />
+                                <i-feather *ngIf="!exercise.demo" name="image" class="text-gray-300"
                                     style="width:16px;height:16px;"></i-feather>
                             </div>
-                            <label for="fileInput-{{exercise.id}}" title="Replace demo video"
+                            <label for="fileInput-{{exercise.id}}" title="Replace demo image"
                                 class="flex items-center gap-1 px-2 py-1 rounded-lg border border-gray-200 bg-white
                                        text-[11px] font-semibold text-gray-600 hover:bg-gray-50 hover:text-red-600
                                        cursor-pointer transition">
-                                <i-feather name="upload" style="width:11px;height:11px;"></i-feather>
-                                Video
+                                <i-feather name="image" style="width:11px;height:11px;"></i-feather>
+                                Image
                             </label>
-                            <input accept="video/*" type="file" id="fileInput-{{exercise.id}}" class="hidden"
-                                (change)="onVideoSelected($event, exercise.id)">
+                            <input accept="image/*" type="file" id="fileInput-{{exercise.id}}" class="hidden"
+                                (change)="onDemoImageSelected($event, exercise.id)">
+
+                            <label for="videoInput-{{exercise.id}}" title="Replace demo video"
+                                class="flex items-center gap-1 px-2 py-1 rounded-lg border text-[11px] font-semibold cursor-pointer transition"
+                                [ngClass]="exercise.video ? 'border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-red-600'">
+                                <i-feather [name]="uploadingVideoFor === exercise.id ? 'loader' : 'film'" [class.animate-spin]="uploadingVideoFor === exercise.id" style="width:11px;height:11px;"></i-feather>
+                                {{ exercise.video ? 'Video' : 'Add video' }}
+                            </label>
+                            <input accept="video/*" type="file" id="videoInput-{{exercise.id}}" class="hidden"
+                                (change)="onDemoVideoSelected($event, exercise.id)">
                         </div>
                     </td>
                     <td class="px-4 py-3 font-semibold text-gray-900">{{ exercise.name }}</td>

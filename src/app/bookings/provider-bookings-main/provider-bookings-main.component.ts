@@ -95,7 +95,7 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
   }
 
   onStartIntakeRequested(event: { clientId: number; clientName: string }): void {
-    this.router.navigate(['/client-intake/new', event.clientId], {
+    this.router.navigate(['/dashboard/client-intake/new', event.clientId], {
       queryParams: { clientName: event.clientName }
     });
   }

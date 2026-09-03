@@ -135,6 +135,12 @@ export class HubGridComponent implements OnChanges {
     'equipments': '/services/equipment',
     'workouts': '/dashboard/workouts',
     'my-workouts': '/dashboard/workouts',
+    // No dedicated route exists for the client roster — it's a section of the
+    // trainer's own profile page, not a standalone /dashboard/hub/my-clients page.
+    'my-clients': '/dashboard/partnership/trainer-details',
+    // The provider (requests-from-clients) view is now a toggle inside the
+    // unified Bookings page rather than its own route.
+    'my-provider-bookings': '/dashboard/my-bookings',
   };
 
   resolveRoute(key: string): string {

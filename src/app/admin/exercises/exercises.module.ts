@@ -15,6 +15,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
+import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 
 
 
@@ -37,6 +38,7 @@ import { AuthGuard } from 'src/app/services/auth.guard';
     FooterModule,
     NavbarModule,
     AdminSearchModule,
+    StrapiUrlPipe,
     RouterModule.forChild([
       { path: '', component: ExercisesComponent },
       { path: ':id', component: ExerciseDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Exercise Details', expectedRole: ['admin'] } },

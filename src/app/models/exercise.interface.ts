@@ -1,3 +1,5 @@
+import { VideoResponse } from './Media.interface';
+
 // Note: the backend /exercise endpoints return the raw Exercise JPA entity
 // (no ApiResponse wrapper, no ExerciseResponse DTO). muscleGroups/categories
 // below reflect the actual (partial) shape Jackson serializes for those
@@ -6,7 +8,16 @@ export interface Exercises {
     id: number;
     name: string;
     description: string;
+    /** Small still image (base64 in API responses) — NOT the demo video below. */
     demo: any;
+    /** Why this exercise matters — shown as a callout on the detail page. */
+    benefit: string | null;
+    /** Step-by-step form instructions, one step per line — split client-side into a numbered list. */
+    howToPerform: string | null;
+    /** "BEGINNER" | "INTERMEDIATE" | "ADVANCED" — nullable, existing exercises predate this field. */
+    difficultyLevel: string | null;
+    /** Strapi-hosted demo video, distinct from the `demo` still image. Null until an admin attaches one. */
+    video: VideoResponse | null;
     muscleGroups: { id: number; name: string }[];
     categories: { id: number; name: string }[];
     /**

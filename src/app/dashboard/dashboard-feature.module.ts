@@ -40,7 +40,7 @@ import { MyFaqsModule } from '../my-faqs/my-faqs.module';
 import { MyFaqsPageComponent } from '../my-faqs/my-faqs-page/my-faqs-page.component';
 
 import { MyBookingsModule } from '../bookings/bookings.module';
-import { MyBookingsMainComponent } from '../bookings/my-bookings-main/my-bookings-main.component';
+import { ManageBookingsComponent } from '../bookings/manage-bookings/manage-bookings.component';
 import { ProviderBookingsMainComponent } from '../bookings/provider-bookings-main/provider-bookings-main.component';
 
 import { MyLikedTrainersComponent } from '../liked-trainers/my-liked-trainers/my-liked-trainers.component';
@@ -163,6 +163,18 @@ const dashboardRoutes: Routes = [
         }
       },
 
+      // Peer sessions — user-to-user workout sessions, proposed from an
+      // existing connection (see ConnectionsMainComponent.proposeSession).
+      {
+        path: 'my-sessions',
+        loadComponent: () => import('../peer-sessions/my-sessions/my-sessions.component').then(m => m.MySessionsComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'My Sessions',
+          expectedRole: expectedRoleAll
+        }
+      },
+
       // Notifications
       {
         path: 'my-notifications',
@@ -218,13 +230,16 @@ const dashboardRoutes: Routes = [
         }
       },
 
-      // Bookings (client-made) — anyone can book a trainer or center.
+      // Bookings — everyone's own booking history, plus (for a trainer/center)
+      // a toggle to the requests-from-clients view. Previously the client-made
+      // view and the provider-side view were two separate routes, and the
+      // provider one had no sidebar entry at all — see ManageBookingsComponent.
       {
         path: 'my-bookings',
-        component: MyBookingsMainComponent,
+        component: ManageBookingsComponent,
         canActivate: [AuthGuard],
         data: {
-          breadcrumb: 'My Bookings',
+          breadcrumb: 'Bookings',
           expectedRole: expectedRoleAll
         }
       },
@@ -345,6 +360,18 @@ const dashboardRoutes: Routes = [
         }
       },
 
+      // Exercise detail — placed after the static 'exercises' segment above,
+      // same reasoning as workouts/:id vs workouts/builder.
+      {
+        path: 'exercises/:id',
+        loadComponent: () => import('../dashboard/exercise-detail/exercise-detail.component').then(m => m.ExerciseDetailComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { alias: 'exerciseName' },
+          expectedRole: expectedRoleAll
+        }
+      },
+
       // Workouts assigned to me — now also the "Workouts" tab on
       // /dashboard/my-tasks. Kept as a standalone route because
       // my-workouts.component.html still deep-links here (and old bookmarks).
@@ -416,7 +443,7 @@ const dashboardRoutes: Routes = [
           { path: 'my-subscriptions', component: MySubscriptionsMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Subscriptions', expectedRole: expectedRoleAll } },
           { path: 'my-faqs', component: MyFaqsPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'FAQs', expectedRole: expectedRoleAll } },
           { path: 'my-todos', component: MyTodoListMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'To-do List', expectedRole: expectedRoleAll } },
-          { path: 'my-bookings', component: MyBookingsMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'My Bookings', expectedRole: expectedRoleAll } },
+          { path: 'my-bookings', component: ManageBookingsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Bookings', expectedRole: expectedRoleAll } },
           { path: 'my-provider-bookings', component: ProviderBookingsMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Bookings', expectedRole: ['trainer', 'center'] } },
           { path: 'liked-trainers', component: MyLikedTrainersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Liked Trainers', expectedRole: expectedRoleAll } },
           { path: 'my-testimonials', component: MyTestimonialsPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'My Testimonials', expectedRole: expectedRoleAll } },

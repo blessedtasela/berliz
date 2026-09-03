@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FeatherModule } from 'angular-feather';
 import {
   Camera,
+  Film,
   Heart,
   Github,
   AlignJustify,
@@ -173,6 +174,7 @@ Image,
 // Select some icons (use an object, not an array)
 const icons = {
   Camera,
+  Film,
   Heart,
   Github,
   AlignJustify,

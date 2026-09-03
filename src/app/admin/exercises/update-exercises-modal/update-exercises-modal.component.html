@@ -34,9 +34,9 @@
             Everything looks good
         </p>
 
-        <!-- Current demo -->
-        <video *ngIf="exerciseData.demo" [src]="'data:video/mp4;base64,' + exerciseData.demo" loop autoplay
-            [muted]="true" class="w-full h-40 object-cover object-top rounded-xl border border-gray-200 bg-gray-50"></video>
+        <!-- Current demo image (a small still — the real demo video is attached from the exercises list, not here) -->
+        <img *ngIf="exerciseData.demo" [src]="'data:image/jpeg;base64,' + exerciseData.demo"
+            class="w-full h-40 object-cover object-top rounded-xl border border-gray-200 bg-gray-50" />
 
         <!-- Name -->
         <div class="flex flex-col gap-1">
@@ -69,6 +69,35 @@
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Description is required
             </p>
+        </div>
+
+        <!-- Benefit -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Benefit</label>
+            <textarea formControlName="benefit" placeholder="Why this exercise matters, e.g. &quot;Builds explosive power through the hips and core.&quot;"
+                rows="2" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"></textarea>
+        </div>
+
+        <!-- How to perform -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">How to perform</label>
+            <textarea formControlName="howToPerform" placeholder="One step per line" rows="4"
+                class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"></textarea>
+            <p class="text-[10px] text-gray-400">One instruction per line — shown as a numbered list.</p>
+        </div>
+
+        <!-- Difficulty level -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Difficulty level</label>
+            <select formControlName="difficultyLevel" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                <option value="">Not set</option>
+                <option value="BEGINNER">Beginner</option>
+                <option value="INTERMEDIATE">Intermediate</option>
+                <option value="ADVANCED">Advanced</option>
+            </select>
         </div>
 
         <!-- Muscle groups -->
