@@ -1,4 +1,4 @@
-<div class="z-10 text-red-600 font-bold cursor-pointer fixed bottom-8 right-4" 
-(click)="scrollToTop()" *ngIf="showScroll">
-<i-feather name="chevron-up" style="width: 50px;"></i-feather>
-</div>
+<button type="button" (click)="scrollToTop()" *ngIf="showScroll" aria-label="Scroll to top"
+    class="fixed bottom-8 left-4 z-40 w-12 h-12 rounded-full bg-red-600 text-white shadow-xl flex items-center justify-center hover:bg-red-700 transition">
+    <i-feather name="chevron-up" style="width:22px;height:22px;"></i-feather>
+</button>
