@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -30,16 +31,45 @@ export class UserListComponent {
   showCropper: boolean = false;
   updatePhotoId: number = 0;
 
+  /** Which row's photo preview is showing, positioned next to its thumbnail
+   *  rather than screen-center so the mouse can actually reach it. */
+  hoveredPhotoUserId: number | null = null;
+  photoPreviewTop = 0;
+  photoPreviewLeft = 0;
+  private photoPreviewCloseTimer: ReturnType<typeof setTimeout> | undefined;
+
   constructor(private store: Store,
     private userService: UserService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private datePipe: DatePipe,
+    private router: Router,
     private rxStompService: RxStompService) {
   }
 
   ngOnInit(): void {
+  }
+
+  goToProfile(id: number): void {
+    this.router.navigate(['/user', id]);
+  }
+
+  /** Opens next to the hovered thumbnail; onLeave below gives a grace period
+   *  so moving the mouse from the thumbnail up into the preview (they don't
+   *  touch) doesn't close it mid-transit. */
+  onPhotoEnter(event: MouseEvent, userId: number): void {
+    clearTimeout(this.photoPreviewCloseTimer);
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    const previewSize = 224; // w-56
+    this.photoPreviewTop = Math.max(8, rect.top - previewSize - 8);
+    this.photoPreviewLeft = Math.max(8, Math.min(rect.left, window.innerWidth - previewSize - 8));
+    this.hoveredPhotoUserId = userId;
+  }
+
+  onPhotoLeave(): void {
+    clearTimeout(this.photoPreviewCloseTimer);
+    this.photoPreviewCloseTimer = setTimeout(() => { this.hoveredPhotoUserId = null; }, 200);
   }
 
   handleEmitEvent() {

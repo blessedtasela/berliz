@@ -14,9 +14,15 @@
 </span>
 
 <!-- Preview card. Fixed-position so the table's overflow-x-auto scroller
-     can't clip it; coordinates come from the trigger's bounding rect. -->
-<div *ngIf="open && isLinked" class="fixed z-50 w-60 bg-white rounded-xl border border-gray-200 shadow-lg p-3
-            flex items-start gap-3 pointer-events-none" [style.top.px]="cardTop" [style.left.px]="cardLeft">
+     can't clip it; coordinates come from the trigger's bounding rect. Stays
+     open while the mouse is over the card itself too (onEnter/onLeave below),
+     since it renders outside the trigger's own box -- without that, moving
+     the mouse from the trigger toward the card reads as a mouseleave and
+     closes it before it can ever be clicked. -->
+<div *ngIf="open && isLinked" (mouseenter)="onEnter()" (mouseleave)="onLeave()" (click)="navigate()"
+    class="fixed z-50 w-60 bg-white rounded-xl border border-gray-200 shadow-lg p-3
+            flex items-start gap-3 cursor-pointer hover:border-red-200 transition"
+    [style.top.px]="cardTop" [style.left.px]="cardLeft">
 
     <img [src]="photoSrc" [alt]="fullName"
         class="w-10 h-10 rounded-full object-cover object-top bg-gray-100 border border-gray-200 shrink-0" />

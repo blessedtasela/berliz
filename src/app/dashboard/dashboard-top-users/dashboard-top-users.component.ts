@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
@@ -26,7 +27,18 @@ export class DashboardTopUsersComponent {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private datePipe: DatePipe,
+    private router: Router,
     private rxStompService: RxStompService) { }
+
+  photoSrc(user: Users): string {
+    return user.profilePhoto
+      ? 'data:image/*;base64,' + user.profilePhoto
+      : '../../../assets/icons/user.png';
+  }
+
+  goToProfile(user: Users): void {
+    this.router.navigate(['/user', user.id]);
+  }
 
   ngOnInit(): void {
     this.handleEmitEvent()

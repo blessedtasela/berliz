@@ -103,7 +103,7 @@
         </div>
 
         <!-- ── PRIVATE STATE ─────────────────────────────────────────── -->
-        <div *ngIf="isPrivate" class="bg-white border border-gray-200 rounded-2xl p-10
+        <div *ngIf="isPrivate && !viewedAsAdminOverride" class="bg-white border border-gray-200 rounded-2xl p-10
                     flex flex-col items-center justify-center gap-3 text-center">
             <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
                 <i-feather name="lock" class="text-gray-400" style="width:22px;height:22px;"></i-feather>
@@ -114,7 +114,18 @@
             </p>
         </div>
 
-        <ng-container *ngIf="!isPrivate">
+        <!-- Admin bypass notice -- content below is visible only because the
+             viewer is Berliz's super admin; the owner still keeps it private. -->
+        <div *ngIf="viewedAsAdminOverride" class="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3
+                    flex items-center gap-3">
+            <i-feather name="eye" class="text-amber-600 shrink-0" style="width:16px;height:16px;"></i-feather>
+            <p class="text-[11px] text-amber-800 leading-relaxed">
+                <span class="font-bold">Viewing as admin.</span>
+                {{ (fullName || 'This member') + ' keeps this profile private — regular visitors see none of the content below.' }}
+            </p>
+        </div>
+
+        <ng-container *ngIf="!isPrivate || viewedAsAdminOverride">
 
             <!-- Bio -->
             <div *ngIf="profile.bio" class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-2">

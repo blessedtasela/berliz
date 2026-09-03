@@ -20,12 +20,10 @@
 
             <span class="text-[11px] text-gray-400 font-medium w-5 shrink-0 mt-1">{{ i + 1 }}</span>
 
-            <div
-                class="w-8 h-8 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0 mt-0.5">
-                <span class="text-xs font-bold text-red-600">
-                    {{ user.email.charAt(0).toUpperCase() }}
-                </span>
-            </div>
+            <button type="button" (click)="goToProfile(user)" title="View profile" class="shrink-0 mt-0.5">
+                <img [src]="photoSrc(user)" [alt]="user.firstname"
+                    class="w-8 h-8 rounded-full object-cover object-top border border-gray-200 hover:opacity-80 transition" />
+            </button>
 
             <div class="flex-1 min-w-0 flex flex-col gap-1">
 

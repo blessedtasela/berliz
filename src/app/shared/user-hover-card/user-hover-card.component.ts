@@ -50,6 +50,10 @@ export class UserHoverCardComponent {
   private static readonly CARD_WIDTH = 240;
   private static readonly CARD_HEIGHT = 132;
 
+  /** Bridges the gap between the trigger and the card so a diagonal mouse
+   *  move between them doesn't read as "left" before it arrives. */
+  private closeTimer: ReturnType<typeof setTimeout> | undefined;
+
   constructor(private router: Router) {}
 
   get fullName(): string {
@@ -79,6 +83,10 @@ export class UserHoverCardComponent {
 
   onEnter(): void {
     if (!this.isLinked) return;
+    clearTimeout(this.closeTimer);
+
+    // Already open (re-entering from the card) -- keep the existing position.
+    if (this.open) return;
 
     const rect = this.triggerRef?.nativeElement.getBoundingClientRect();
     if (!rect) return;
@@ -95,8 +103,12 @@ export class UserHoverCardComponent {
     this.open = true;
   }
 
+  /** Closes on a short delay rather than immediately, so moving the mouse
+   *  from the trigger to the card (they don't touch) doesn't close it
+   *  mid-transit -- onEnter cancels this if the card/trigger is re-entered. */
   onLeave(): void {
-    this.open = false;
+    clearTimeout(this.closeTimer);
+    this.closeTimer = setTimeout(() => { this.open = false; }, 200);
   }
 
   /** A fixed-position card would detach from its trigger once the page scrolls. */

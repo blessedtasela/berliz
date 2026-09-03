@@ -19,6 +19,7 @@ import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comment
 
 import {
   clearPublicProfile,
+  loadPublicProfile,
   loadPublicProfileByUsername,
 } from 'src/app/state/user-profile/user-profile.actions';
 import {
@@ -96,7 +97,16 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
           this.error = 'Invalid profile link';
           return;
         }
-        this.store.dispatch(loadPublicProfileByUsername({ username }));
+        // Admin tables and the user-hover-card link here by numeric id rather
+        // than username (they don't carry the target's username). A purely
+        // numeric segment is never a real username (signup requires letters),
+        // so route it through the by-id lookup instead of a doomed by-username one.
+        const asId = Number(username);
+        if (username.trim() !== '' && Number.isInteger(asId) && String(asId) === username.trim()) {
+          this.store.dispatch(loadPublicProfile({ id: asId }));
+        } else {
+          this.store.dispatch(loadPublicProfileByUsername({ username }));
+        }
       });
 
     this.store.select(selectPublicProfile)
@@ -144,6 +154,12 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
 
   get isPrivate(): boolean {
     return !!this.profile?.isPrivate;
+  }
+
+  /** Berliz's super admin viewing a private profile anyway -- the content
+   *  block below is populated even though isPrivate stays true. */
+  get viewedAsAdminOverride(): boolean {
+    return !!this.profile?.viewedAsAdminOverride;
   }
 
   get fullName(): string {

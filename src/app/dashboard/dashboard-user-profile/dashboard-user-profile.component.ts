@@ -24,6 +24,7 @@ import {
 } from 'src/app/state/connection/connection.selectors';
 import {
   clearPublicProfile,
+  loadPublicProfile,
   loadPublicProfileByUsername,
 } from 'src/app/state/user-profile/user-profile.actions';
 import {
@@ -100,7 +101,15 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
         // for the previous person under the new username.
         this.userId = null;
         this.posts = [];
-        this.store.dispatch(loadPublicProfileByUsername({ username }));
+        // Some callers (admin tables, user-hover-card) link here by numeric id
+        // rather than username. A purely numeric segment is never a real
+        // username, so route it through the by-id lookup instead.
+        const asId = Number(username);
+        if (username.trim() !== '' && Number.isInteger(asId) && String(asId) === username.trim()) {
+          this.store.dispatch(loadPublicProfile({ id: asId }));
+        } else {
+          this.store.dispatch(loadPublicProfileByUsername({ username }));
+        }
       });
 
     this.store.select(selectPublicProfile).pipe(takeUntil(this.destroy$)).subscribe(profile => {
@@ -144,6 +153,12 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
 
   get isPrivate(): boolean {
     return !!this.profile?.isPrivate;
+  }
+
+  /** Berliz's super admin viewing a private profile anyway -- the content
+   *  block below is populated even though isPrivate stays true. */
+  get viewedAsAdminOverride(): boolean {
+    return !!this.profile?.viewedAsAdminOverride;
   }
 
   get isSelf(): boolean {

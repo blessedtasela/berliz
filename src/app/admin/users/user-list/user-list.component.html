@@ -23,9 +23,11 @@
     <div class="sm:hidden divide-y divide-gray-100">
         <div *ngFor="let user of usersData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors">
             <div class="relative shrink-0">
-                <img [src]="'data:image/*;base64,' + user.profilePhoto"
-                    onerror="this.src='../../../assets/icons/user.png';"
-                    class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200">
+                <button type="button" (click)="goToProfile(user.id)" title="View profile">
+                    <img [src]="'data:image/*;base64,' + user.profilePhoto"
+                        onerror="this.src='../../../assets/icons/user.png';"
+                        class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200">
+                </button>
                 <label [attr.for]="'fileInput-m-' + user.id" title="Change photo"
                     class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white border border-gray-200 flex items-center justify-center cursor-pointer">
                     <i-feather name="camera" class="text-red-600" style="width:11px;height:11px;"></i-feather>
@@ -76,17 +78,24 @@
                     <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
                     <td class="px-4 py-3">
                         <div class="flex items-center gap-2">
-                            <div class="group relative">
-                                <!-- Default image -->
-                                <img [src]="'data:image/*;base64,' + user.profilePhoto"
-                                    onerror="this.src='../../../assets/icons/user.png';"
-                                    class="w-10 h-10 rounded-xl object-cover object-top border border-gray-200">
-                                <!-- Image preview on mouseover -->
-                                <div class="hidden group-hover:block fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2
-                                    -translate-y-1/2 rounded-2xl border border-gray-200 bg-white p-2 shadow-2xl">
+                            <div class="relative">
+                                <!-- Default image -- click goes to the public profile; hover previews it larger. -->
+                                <button type="button" (click)="goToProfile(user.id)"
+                                    (mouseenter)="onPhotoEnter($event, user.id)" (mouseleave)="onPhotoLeave()"
+                                    title="View profile">
                                     <img [src]="'data:image/*;base64,' + user.profilePhoto"
                                         onerror="this.src='../../../assets/icons/user.png';"
-                                        class="w-96 h-96 rounded-xl object-cover object-top">
+                                        class="w-10 h-10 rounded-xl object-cover object-top border border-gray-200 hover:opacity-80 transition">
+                                </button>
+                                <!-- Preview, positioned above the thumbnail rather than screen-center so the
+                                     mouse can actually reach it; stays open while hovering the preview itself. -->
+                                <div *ngIf="hoveredPhotoUserId === user.id" (mouseenter)="onPhotoEnter($event, user.id)"
+                                    (mouseleave)="onPhotoLeave()" (click)="goToProfile(user.id)"
+                                    class="fixed z-50 rounded-2xl border border-gray-200 bg-white p-2 shadow-2xl cursor-pointer"
+                                    [style.top.px]="photoPreviewTop" [style.left.px]="photoPreviewLeft">
+                                    <img [src]="'data:image/*;base64,' + user.profilePhoto"
+                                        onerror="this.src='../../../assets/icons/user.png';"
+                                        class="w-56 h-56 rounded-xl object-cover object-top">
                                 </div>
                             </div>
                             <label [attr.for]="'fileInput-' + user.id" title="Change photo"

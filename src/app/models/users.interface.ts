@@ -75,6 +75,10 @@ export interface PublicUserProfile {
     memberSince: string;
     isPrivate: boolean;
 
+    /** True only when isPrivate is also true and the fields below are populated
+     *  anyway because the viewer is Berliz's super admin. */
+    viewedAsAdminOverride?: boolean;
+
     bio?: string;
     city?: string;
     country?: string;

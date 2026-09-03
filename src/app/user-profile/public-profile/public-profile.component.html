@@ -108,7 +108,7 @@
             <!-- ── PRIVATE STATE ─────────────────────────────────────────
                  Not an error page — the hero above still stands, this just
                  replaces everything the owner chose not to share. -->
-            <div *ngIf="isPrivate" class="bg-zinc-900 border border-zinc-800 rounded-xl p-10
+            <div *ngIf="isPrivate && !viewedAsAdminOverride" class="bg-zinc-900 border border-zinc-800 rounded-xl p-10
                         flex flex-col items-center justify-center gap-3 text-center">
 
                 <div class="w-14 h-14 rounded-full bg-zinc-950 border border-zinc-800 flex items-center justify-center">
@@ -121,8 +121,19 @@
                 </p>
             </div>
 
+            <!-- Admin bypass notice -- content below is visible only because the
+                 viewer is Berliz's super admin; the owner still keeps it private. -->
+            <div *ngIf="viewedAsAdminOverride" class="bg-amber-950/40 border border-amber-800 rounded-xl px-4 py-3
+                        flex items-center gap-3">
+                <i-feather name="eye" class="text-amber-500 shrink-0" style="width:16px;height:16px;"></i-feather>
+                <p class="text-[11px] text-amber-300 leading-relaxed">
+                    <span class="font-bold">Viewing as admin.</span>
+                    {{ (fullName || 'This member') + ' keeps this profile private — regular visitors see none of the content below.' }}
+                </p>
+            </div>
+
             <!-- ── PUBLIC CONTENT ────────────────────────────────────────── -->
-            <ng-container *ngIf="!isPrivate">
+            <ng-container *ngIf="!isPrivate || viewedAsAdminOverride">
 
                 <!-- Bio -->
                 <div *ngIf="profile.bio" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 flex flex-col gap-2">
