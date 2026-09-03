@@ -7,6 +7,7 @@ import { NewsletterPopupComponent } from './shared/newsletter-popup/newsletter-p
 import { NewsletterTriggerService } from './shared/newsletter-popup/newsletter-trigger.service';
 import { InactivityService } from './services/inactivity.service';
 import { SeoService } from './services/seo.service';
+import { ScrollRestorationService } from './services/scroll-restoration.service';
 
 @Component({
   selector: 'app-root',
@@ -33,6 +34,7 @@ export class AppComponent implements OnInit {
     private newsletterTrigger: NewsletterTriggerService,
     private inactivityService: InactivityService,
     private seoService: SeoService,
+    private scrollRestoration: ScrollRestorationService,
   ) {
     this.sidebarState.mode$.subscribe(mode => {
       this.sidebarMode = mode;
@@ -66,6 +68,9 @@ export class AppComponent implements OnInit {
     // are refreshed silently by AuthInterceptor while the user is active; this
     // is what ends a session that has genuinely been left unattended.
     this.inactivityService.start();
+    // Keeps your scroll position across a hard refresh -- see the service
+    // doc comment for why this doesn't just come from the browser for free.
+    this.scrollRestoration.init();
   }
   private updateLayout(url: string) {
 

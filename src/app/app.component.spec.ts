@@ -9,6 +9,7 @@ import { SidebarStateService } from './services/sidebar-state.service';
 import { NewsletterTriggerService } from './shared/newsletter-popup/newsletter-trigger.service';
 import { InactivityService } from './services/inactivity.service';
 import { SeoService } from './services/seo.service';
+import { ScrollRestorationService } from './services/scroll-restoration.service';
 
 describe('AppComponent', () => {
   beforeEach(() => {
@@ -20,6 +21,7 @@ describe('AppComponent', () => {
       mode$: of('expanded')
     });
     const inactivityServiceSpy = jasmine.createSpyObj('InactivityService', ['start']);
+    const scrollRestorationSpy = jasmine.createSpyObj('ScrollRestorationService', ['init']);
 
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],
@@ -31,7 +33,8 @@ describe('AppComponent', () => {
         { provide: SidebarStateService, useValue: sidebarStateSpy },
         { provide: NewsletterTriggerService, useValue: {} },
         { provide: InactivityService, useValue: inactivityServiceSpy },
-        { provide: SeoService, useValue: {} }
+        { provide: SeoService, useValue: {} },
+        { provide: ScrollRestorationService, useValue: scrollRestorationSpy }
       ]
     });
   });

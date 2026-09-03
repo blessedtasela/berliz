@@ -1,0 +1,16 @@
+<div class="fixed top-20 left-3 z-40 flex items-center bg-white rounded-full border border-gray-200 shadow-lg overflow-hidden">
+
+    <button type="button" (click)="goBack()" [disabled]="!canGoBack" title="Back" aria-label="Go back"
+        class="w-9 h-9 flex items-center justify-center transition"
+        [ngClass]="canGoBack ? 'text-gray-700 hover:bg-gray-100 active:scale-95' : 'text-gray-300 cursor-not-allowed'">
+        <i-feather name="chevron-left" style="width:16px;height:16px;"></i-feather>
+    </button>
+
+    <div class="w-px h-5 bg-gray-200"></div>
+
+    <button type="button" (click)="goForward()" title="Forward" aria-label="Go forward"
+        class="w-9 h-9 flex items-center justify-center text-gray-700 hover:bg-gray-100 active:scale-95 transition">
+        <i-feather name="chevron-right" style="width:16px;height:16px;"></i-feather>
+    </button>
+
+</div>

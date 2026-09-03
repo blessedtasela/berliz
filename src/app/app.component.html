@@ -1,5 +1,10 @@
 <ngx-ui-loader></ngx-ui-loader>
 
+<!-- Mounted once, outside the layout switch below -- the app's own back/forward
+     chrome, present on every layout (login included) rather than relying on
+     the browser's, which isn't there at all once this runs as an installed PWA. -->
+<app-nav-history-controls></app-nav-history-controls>
+
 <ng-container [ngSwitch]="activeLayout" class="break-all">
 
     <!-- LOGIN LAYOUT -->
