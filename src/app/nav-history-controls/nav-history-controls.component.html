@@ -1,16 +1,18 @@
-<div class="fixed top-20 left-3 z-40 flex items-center bg-white rounded-full border border-gray-200 shadow-lg overflow-hidden">
+<!-- Hidden entirely until there's somewhere in-app to go back to -- not a
+     permanent fixture. Same floating-circle language as the scroll-to-top
+     and message-popup buttons (solid red-600, white icon, shadow-xl)
+     instead of a generic pill, so it actually reads as part of this app. -->
+<div *ngIf="canGoBack" class="fixed top-20 left-3 z-40 flex items-center gap-2">
 
-    <button type="button" (click)="goBack()" [disabled]="!canGoBack" title="Back" aria-label="Go back"
-        class="w-9 h-9 flex items-center justify-center transition"
-        [ngClass]="canGoBack ? 'text-gray-700 hover:bg-gray-100 active:scale-95' : 'text-gray-300 cursor-not-allowed'">
-        <i-feather name="chevron-left" style="width:16px;height:16px;"></i-feather>
+    <button type="button" (click)="goBack()" title="Back" aria-label="Go back"
+        class="w-10 h-10 rounded-full bg-red-600 text-white shadow-xl flex items-center justify-center hover:bg-red-700 active:scale-95 transition">
+        <i-feather name="chevron-left" style="width:18px;height:18px;"></i-feather>
     </button>
 
-    <div class="w-px h-5 bg-gray-200"></div>
-
-    <button type="button" (click)="goForward()" title="Forward" aria-label="Go forward"
-        class="w-9 h-9 flex items-center justify-center text-gray-700 hover:bg-gray-100 active:scale-95 transition">
-        <i-feather name="chevron-right" style="width:16px;height:16px;"></i-feather>
+    <!-- Forward has nothing to do until back has actually been used once. -->
+    <button *ngIf="hasGoneBack" type="button" (click)="goForward()" title="Forward" aria-label="Go forward"
+        class="w-10 h-10 rounded-full bg-white text-red-600 border border-gray-200 shadow-xl flex items-center justify-center hover:bg-gray-50 active:scale-95 transition">
+        <i-feather name="chevron-right" style="width:18px;height:18px;"></i-feather>
     </button>
 
 </div>
