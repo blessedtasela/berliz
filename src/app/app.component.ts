@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, NavigationError } from '@angular/router';
 import { BlurService } from './services/blur.service';
 import { MatDialog } from '@angular/material/dialog';
 import { SidebarDisplay, SidebarStateService } from './services/sidebar-state.service';
@@ -49,6 +49,21 @@ export class AppComponent implements OnInit {
         // the only place we consider showing the newsletter popup.
         this.newsletterTrigger.registerPageview();
         this.maybeShowNewsletter();
+      }
+
+      // Every lazy route (dashboard included) fetches its chunk on first
+      // navigation -- there's no preloading strategy and no service worker, so
+      // a tab left open across a deploy is still holding chunk hashes that no
+      // longer exist on the server. That failure surfaces here as
+      // NavigationError, not an exception anywhere visible, so without this
+      // the click/login just silently does nothing and only a manual refresh
+      // (which fetches the current build) recovers. A hard reload of the
+      // attempted URL does the same thing automatically.
+      if (event instanceof NavigationError) {
+        const msg = String((event.error as any)?.message || event.error || '');
+        if (/loading chunk|chunkloaderror|failed to fetch dynamically imported module/i.test(msg)) {
+          window.location.href = event.url;
+        }
       }
     });
 

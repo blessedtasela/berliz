@@ -156,7 +156,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
           // Keep the spinner running through navigation -- /dashboard is lazy-loaded
           // with no preloading strategy, so the chunk fetch/parse can visibly stall
           // the (already spinner-free) login page for a second or two otherwise.
-          this.router.navigateByUrl(this.returnUrl).finally(() => this.ngxService.stop());
+          this.navigateAfterLogin();
         },
         error: (error: any) => {
           this.ngxService.stop();
@@ -212,7 +212,33 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
     this.userService.startRefreshTokenTimer();
     this.responseMessage = response?.message;
     this.snackBarService.openSnackBar(this.responseMessage, '');
-    this.router.navigateByUrl(this.returnUrl);
+    this.navigateAfterLogin();
+  }
+
+  /**
+   * Router.navigateByUrl() resolves `false` (never rejects, under normal
+   * config) whenever a navigation is silently dropped instead of completing --
+   * in practice here that's almost always the /dashboard lazy chunk failing to
+   * load because this tab has been open since before the last deploy replaced
+   * it (no service worker, so a long-lived tab can sit on a stale build
+   * indefinitely; the reported bug -- "login successful" but nothing happens
+   * until a manual refresh -- is exactly that: a hard reload fetches the
+   * current build, so the same URL that just silently failed then works).
+   * Falling back to a real page load here means the user never has to know to
+   * refresh -- the app does it for them.
+   */
+  private navigateAfterLogin(): void {
+    const target = this.returnUrl;
+    this.router.navigateByUrl(target)
+      .then(succeeded => {
+        if (!succeeded) {
+          window.location.href = target;
+        }
+      })
+      .catch(() => {
+        window.location.href = target;
+      })
+      .finally(() => this.ngxService.stop());
   }
 
   private handleSocialAuthError(error: any): void {
