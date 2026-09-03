@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -27,6 +28,7 @@ describe('ExercisesListComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [ExercisesListComponent],
+      imports: [HttpClientTestingModule],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         DatePipe,
