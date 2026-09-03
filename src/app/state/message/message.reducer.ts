@@ -11,6 +11,7 @@ export const messageReducer = createReducer(
 
   on(
     A.loadConversationsFailure, A.sendMessageFailure, A.markConversationReadFailure,
+    A.editMessageFailure, A.deleteMessageFailure,
     (state, { error }) => ({ ...state, loading: false, error })
   ),
 
@@ -19,7 +20,7 @@ export const messageReducer = createReducer(
   })),
 
   on(A.loadConversation, (s, { otherUserId }) => ({
-    ...s, loadingConversation: true, error: null, activeConversationUserId: otherUserId
+    ...s, loadingConversation: true, error: null, activeConversationUserId: otherUserId, typingUserIds: []
   })),
 
   on(A.loadConversationSuccess, (s, { response }) => ({
@@ -31,7 +32,7 @@ export const messageReducer = createReducer(
   })),
 
   on(A.clearActiveConversation, s => ({
-    ...s, activeConversationUserId: null, activeConversationMessages: []
+    ...s, activeConversationUserId: null, activeConversationMessages: [], typingUserIds: []
   })),
 
   // A sent message is echoed back by the REST response -- append it to the
@@ -79,6 +80,32 @@ export const messageReducer = createReducer(
       activeConversationMessages: isActiveThread
         ? [...s.activeConversationMessages, message]
         : s.activeConversationMessages,
+      // A message arriving means that person is done typing, whether or not
+      // a "stopped typing" event happens to follow it.
+      typingUserIds: s.typingUserIds.filter(id => id !== message.senderId),
     };
   }),
+
+  // Edited/unsent, either the echo from the caller's own REST call or the
+  // WebSocket event pushed to the other party -- both carry the updated row.
+  on(A.editMessageSuccess, A.deleteMessageSuccess, (s, { response }) => {
+    const updated = response.data;
+    if (!updated) return s;
+    return {
+      ...s,
+      activeConversationMessages: s.activeConversationMessages.map(m => m.id === updated.id ? updated : m),
+    };
+  }),
+
+  on(A.receiveMessageEvent, (s, { message }) => ({
+    ...s,
+    activeConversationMessages: s.activeConversationMessages.map(m => m.id === message.id ? message : m),
+  })),
+
+  on(A.receiveTyping, (s, { fromUserId, typing }) => ({
+    ...s,
+    typingUserIds: typing
+      ? (s.typingUserIds.includes(fromUserId) ? s.typingUserIds : [...s.typingUserIds, fromUserId])
+      : s.typingUserIds.filter(id => id !== fromUserId),
+  })),
 );

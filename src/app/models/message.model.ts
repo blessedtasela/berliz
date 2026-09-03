@@ -17,6 +17,11 @@ export interface Message {
   date: Date;
   lastUpdate: Date;
 
+  /** Set only on first edit -- drives an "(edited)" label. */
+  editedAt?: Date | null;
+  /** Soft-delete/"unsend" flag -- body is null/empty once true. */
+  deleted: boolean;
+
   message?: string;
 }
 

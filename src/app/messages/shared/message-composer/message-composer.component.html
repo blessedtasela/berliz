@@ -1,0 +1,9 @@
+<div class="flex items-center gap-2 border-t border-gray-100 p-3 shrink-0">
+    <input type="text" [(ngModel)]="body" (ngModelChange)="onInput()" (keydown.enter)="submit()"
+        [placeholder]="placeholder"
+        class="flex-1 text-sm text-gray-700 border border-gray-200 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+    <button type="button" (click)="submit()" [disabled]="!body.trim()" aria-label="Send message"
+        class="shrink-0 w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center hover:bg-red-700 disabled:opacity-40 transition">
+        <i-feather name="send" style="width:15px;height:15px;"></i-feather>
+    </button>
+</div>

@@ -11,10 +11,12 @@ import {
   selectActiveConversationMessages,
   selectActiveConversationUserId,
   selectConversations,
+  selectIsActivePartyTyping,
   selectLoadingConversation,
   selectMessageError,
   selectMessageLoading,
 } from 'src/app/state/message/message.selectors';
+import { ConversationRowData } from 'src/app/messages/shared/conversation-row/conversation-row.component';
 
 import { loadMyTrainers } from 'src/app/state/booking/booking.actions';
 import { selectMyTrainers } from 'src/app/state/booking/booking.selectors';
@@ -57,8 +59,7 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
   activeUserId: number | null = null;
   activeMessages: Message[] = [];
   loadingConversation = false;
-
-  draftBody = '';
+  activePartyTyping = false;
 
   private subscriptions: Subscription[] = [];
   private destroy$ = new Subject<void>();
@@ -82,6 +83,7 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
       this.store.select(selectActiveConversationUserId).pipe(takeUntil(this.destroy$)).subscribe(id => this.activeUserId = id),
       this.store.select(selectActiveConversationMessages).pipe(takeUntil(this.destroy$)).subscribe(m => this.activeMessages = m),
       this.store.select(selectLoadingConversation).pipe(takeUntil(this.destroy$)).subscribe(l => this.loadingConversation = l),
+      this.store.select(selectIsActivePartyTyping).pipe(takeUntil(this.destroy$)).subscribe(t => this.activePartyTyping = t),
       this.store.select(selectMessageError).pipe(takeUntil(this.destroy$)).subscribe(error => {
         if (error) this.snackBar.openSnackBar(error || genericError, 'error');
       }),
@@ -123,12 +125,14 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
     });
   }
 
-  /** Display name for the open thread's other party -- from the conversation list, else the startable-contacts list. */
-  get activeContactName(): string {
-    if (this.activeUserId == null) return '';
-    return this.conversations.find(c => c.otherUserId === this.activeUserId)?.otherUserName
-      ?? this.startableContacts.find(c => c.userId === this.activeUserId)?.name
-      ?? 'Conversation';
+  /** The open thread's other party, as a display row -- from the conversation list, else the startable-contacts list. */
+  get activeContact(): ConversationRowData & { role: string } {
+    const convo = this.conversations.find(c => c.otherUserId === this.activeUserId);
+    if (convo) {
+      return { userId: convo.otherUserId, name: convo.otherUserName, photo: convo.otherUserPhoto, role: convo.otherUserRole };
+    }
+    const contact = this.startableContacts.find(c => c.userId === this.activeUserId);
+    return { userId: this.activeUserId ?? 0, name: contact?.name ?? 'Conversation', role: '' };
   }
 
   refresh(): void {
@@ -161,26 +165,31 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
     this.openConversation(contact.userId);
   }
 
-  send(): void {
-    const body = this.draftBody.trim();
-    if (!body || this.activeUserId == null) return;
-
+  send(body: string): void {
+    if (this.activeUserId == null) return;
     this.store.dispatch(MessageActions.sendMessage({
       request: { recipientId: this.activeUserId, body }
     }));
-    this.draftBody = '';
+  }
+
+  setTyping(typing: boolean): void {
+    if (this.activeUserId == null) return;
+    this.store.dispatch(MessageActions.setTyping({ otherUserId: this.activeUserId, typing }));
+  }
+
+  unsend(messageId: number): void {
+    this.store.dispatch(MessageActions.deleteMessage({ messageId }));
   }
 
   isMine(message: Message): boolean {
     return message.senderId !== this.activeUserId;
   }
 
-  photoSrc(photo: string | undefined | null): string {
-    return photo ? 'data:image/*;base64,' + photo : '';
-  }
-
-  get activeContactPhoto(): string {
-    const convo = this.conversations.find(c => c.otherUserId === this.activeUserId);
-    return this.photoSrc(convo?.otherUserPhoto);
+  /** The id of the sender's own most recent message in the open thread -- drives the "Seen" receipt. */
+  get lastMineMessageId(): number | null {
+    for (let i = this.activeMessages.length - 1; i >= 0; i--) {
+      if (this.isMine(this.activeMessages[i])) return this.activeMessages[i].id;
+    }
+    return null;
   }
 }

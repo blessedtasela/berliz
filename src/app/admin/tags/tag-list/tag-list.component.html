@@ -20,7 +20,7 @@
                 <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center"
                     (click)="updateTagStatus(tag.id)"
                     [title]="tag.status === 'false' ? 'Activate' : 'Deactivate'">
-                    <i-feather [name]="tag.status === 'false' ? 'check-circle' : 'slash'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                    <i-feather [name]="tag.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
                 <button class="w-9 h-9 rounded-lg active:bg-red-50 flex items-center justify-center"
                     (click)="deleteTag(tag.id)" title="Delete">

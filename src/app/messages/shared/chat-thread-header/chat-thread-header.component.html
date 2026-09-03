@@ -1,0 +1,21 @@
+<div class="flex items-center gap-2.5 min-w-0 flex-1">
+    <button *ngIf="showBack" type="button" (click)="back.emit()" class="shrink-0" aria-label="Back to conversations">
+        <i-feather name="arrow-left" style="width:16px;height:16px;"></i-feather>
+    </button>
+
+    <a [routerLink]="['/dashboard/user', userId]" (click)="$event.stopPropagation()"
+        class="flex items-center gap-2.5 min-w-0 flex-1 group">
+        <app-avatar [photo]="photo" [name]="name" [size]="32" borderClass="border-red-100 bg-red-50 text-red-600"></app-avatar>
+
+        <div class="min-w-0">
+            <p class="text-sm font-semibold truncate group-hover:underline">{{ name }}</p>
+            <p *ngIf="typing" class="text-[11px] text-red-500 italic truncate">typing…</p>
+            <p *ngIf="!typing && certifiedLabel" class="text-[10px] font-bold tracking-wider uppercase text-red-600 truncate">
+                {{ certifiedLabel }}
+            </p>
+        </div>
+    </a>
+</div>
+<button *ngIf="showClose" type="button" (click)="close.emit()" class="shrink-0" aria-label="Close messages">
+    <i-feather name="x" style="width:16px;height:16px;"></i-feather>
+</button>

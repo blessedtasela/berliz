@@ -13,3 +13,9 @@ export const selectTotalUnreadCount = createSelector(selectConversations, list =
 export const selectActiveConversationUserId = createSelector(selectState, s => s.activeConversationUserId);
 export const selectActiveConversationMessages = createSelector(selectState, s => s.activeConversationMessages);
 export const selectLoadingConversation = createSelector(selectState, s => s.loadingConversation);
+
+/** Whether the open thread's other party is currently typing. */
+export const selectIsActivePartyTyping = createSelector(
+  selectState,
+  s => s.activeConversationUserId != null && s.typingUserIds.includes(s.activeConversationUserId)
+);

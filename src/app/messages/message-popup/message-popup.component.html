@@ -2,27 +2,30 @@
 
     <!-- Panel -->
     <div *ngIf="open"
-        class="fixed right-6 z-50 w-80 max-h-[32rem] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden font-sans transition-[bottom] duration-200"
+        class="fixed right-6 z-50 w-96 max-w-[calc(100vw-3rem)] h-[36rem] max-h-[calc(100vh-8rem)] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden font-sans transition-[bottom] duration-200"
         [ngClass]="raised ? 'bottom-40' : 'bottom-24'">
 
-        <!-- Header -->
-        <div class="flex items-center justify-between px-4 py-3 bg-gray-900 text-white shrink-0">
-            <div class="flex items-center gap-2 min-w-0">
-                <button *ngIf="view === 'thread'" type="button" (click)="backToList()" class="shrink-0"
-                    aria-label="Back to conversations">
-                    <i-feather name="arrow-left" style="width:16px;height:16px;"></i-feather>
-                </button>
-                <h3 class="text-sm font-bold truncate">Messages</h3>
-            </div>
+        <!-- List header -->
+        <div *ngIf="view === 'list'" class="flex items-center justify-between px-4 py-3 bg-gray-900 text-white shrink-0">
+            <h3 class="text-sm font-bold">Messages</h3>
             <div class="flex items-center gap-3 shrink-0">
-                <button type="button" (click)="goToFullPage()" aria-label="Open full messaging center"
-                    title="Open full page">
+                <button type="button" (click)="goToFullPage()" aria-label="Open full messaging center" title="Open full page">
                     <i-feather name="arrow-up-right" style="width:14px;height:14px;"></i-feather>
                 </button>
                 <button type="button" (click)="closePopup()" aria-label="Close messages popup">
                     <i-feather name="x" style="width:16px;height:16px;"></i-feather>
                 </button>
             </div>
+        </div>
+
+        <!-- Thread header -->
+        <div *ngIf="view === 'thread'" class="flex items-center justify-between px-3 py-2.5 bg-gray-900 text-white shrink-0">
+            <app-chat-thread-header
+                [userId]="activeContact.userId" [name]="activeContact.name" [photo]="activeContact.photo"
+                [role]="activeContact.role" [typing]="activePartyTyping"
+                [showBack]="true" [showClose]="true"
+                (back)="backToList()" (close)="closePopup()">
+            </app-chat-thread-header>
         </div>
 
         <!-- LIST VIEW -->
@@ -32,49 +35,38 @@
                 No conversations yet.
             </div>
 
-            <button *ngFor="let c of conversations" type="button" (click)="openConversation(c.otherUserId)"
-                class="w-full flex items-center justify-between gap-2 px-4 py-3 border-b border-gray-100 hover:bg-gray-50 text-left">
-                <div class="min-w-0">
-                    <p class="text-xs font-bold text-gray-900 truncate">{{ c.otherUserName }}</p>
-                    <p class="text-[11px] text-gray-400 truncate">{{ c.lastMessage }}</p>
-                </div>
-                <span *ngIf="c.unreadCount > 0"
-                    class="shrink-0 bg-red-600 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                    {{ c.unreadCount }}
-                </span>
-            </button>
+            <app-conversation-row *ngFor="let c of conversations"
+                [row]="{ userId: c.otherUserId, name: c.otherUserName, photo: c.otherUserPhoto, preview: c.lastMessage, unreadCount: c.unreadCount }"
+                [active]="activeUserId === c.otherUserId"
+                (open)="openConversation($event)">
+            </app-conversation-row>
 
             <ng-container *ngIf="startableContacts.length">
                 <p class="px-4 pt-3 pb-1 text-[10px] font-bold text-gray-400 uppercase tracking-wide">Start a conversation</p>
-                <button *ngFor="let contact of startableContacts" type="button" (click)="startConversation(contact)"
-                    class="w-full flex items-center gap-2 px-4 py-3 border-b border-gray-100 hover:bg-gray-50 text-left">
-                    <p class="text-xs font-bold text-gray-900 truncate">{{ contact.name }}</p>
-                </button>
+                <app-conversation-row *ngFor="let contact of startableContacts"
+                    [row]="contact" [active]="activeUserId === contact.userId"
+                    (open)="startConversation(contact)">
+                </app-conversation-row>
             </ng-container>
         </div>
 
         <!-- THREAD VIEW -->
         <div *ngIf="view === 'thread'" class="flex-1 flex flex-col min-h-0">
 
-            <div class="flex-1 overflow-y-auto px-3 py-2 space-y-2">
+            <div class="flex-1 overflow-y-auto px-3 py-3 space-y-3">
                 <div *ngIf="loadingConversation" class="text-[11px] text-gray-400 text-center py-4">Loading…</div>
 
-                <div *ngFor="let m of activeMessages" class="flex" [ngClass]="isMine(m) ? 'justify-end' : 'justify-start'">
-                    <div class="max-w-[75%] rounded-xl px-3 py-1.5 text-xs"
-                        [ngClass]="isMine(m) ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-900'">
-                        {{ m.body }}
-                    </div>
+                <div *ngIf="!loadingConversation && activeMessages.length === 0" class="text-xs text-gray-400 text-center py-8">
+                    Say hello 👋
                 </div>
+
+                <app-message-bubble *ngFor="let m of activeMessages"
+                    [message]="m" [mine]="isMine(m)" [isLastMine]="isMine(m) && m.id === lastMineMessageId"
+                    (unsend)="unsend($event)">
+                </app-message-bubble>
             </div>
 
-            <div class="flex items-center gap-2 border-t border-gray-100 p-2 shrink-0">
-                <input type="text" [(ngModel)]="draftBody" (keyup.enter)="send()" placeholder="Type a message…"
-                    class="flex-1 text-xs rounded-full border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-red-300" />
-                <button type="button" (click)="send()" [disabled]="!draftBody.trim()" aria-label="Send message"
-                    class="shrink-0 w-7 h-7 rounded-full bg-red-600 text-white flex items-center justify-center disabled:opacity-40">
-                    <i-feather name="send" style="width:13px;height:13px;"></i-feather>
-                </button>
-            </div>
+            <app-message-composer (send)="send($event)" (typing)="setTyping($event)"></app-message-composer>
         </div>
     </div>
 

@@ -1,0 +1,35 @@
+<div class="flex flex-col group" [ngClass]="mine ? 'items-end' : 'items-start'">
+
+    <div class="flex items-center gap-1.5" [ngClass]="mine ? 'flex-row-reverse' : 'flex-row'">
+        <div class="max-w-[75%] rounded-2xl px-3 py-2"
+            [ngClass]="message.deleted
+                ? 'bg-gray-50 border border-dashed border-gray-200 text-gray-400 italic'
+                : (mine ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-800')">
+
+            <p *ngIf="!message.deleted" class="text-sm whitespace-pre-wrap break-words">{{ message.body }}</p>
+            <p *ngIf="message.deleted" class="text-xs flex items-center gap-1">
+                <i-feather name="x-circle" style="width:11px;height:11px;"></i-feather>
+                Message unsent
+            </p>
+
+            <p *ngIf="!message.deleted" class="text-[10px] mt-0.5 flex items-center gap-1"
+                [ngClass]="mine ? 'text-red-100' : 'text-gray-400'">
+                {{ message.date | date:'shortTime' }}
+                <span *ngIf="message.editedAt">&middot; edited</span>
+            </p>
+        </div>
+
+        <!-- Unsend -- own messages only, revealed on hover so the thread doesn't clutter with controls. -->
+        <button *ngIf="canUnsend" type="button" (click)="unsend.emit(message.id)"
+            class="opacity-0 group-hover:opacity-100 transition shrink-0 text-gray-300 hover:text-red-600"
+            aria-label="Unsend message" title="Unsend">
+            <i-feather name="trash-2" style="width:12px;height:12px;"></i-feather>
+        </button>
+    </div>
+
+    <p *ngIf="isLastMine && message.isRead && !message.deleted" class="text-[10px] text-gray-400 mt-0.5 mr-0.5 flex items-center gap-1">
+        <i-feather name="check-circle" style="width:10px;height:10px;"></i-feather>
+        Seen
+    </p>
+
+</div>

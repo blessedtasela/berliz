@@ -47,6 +47,31 @@ export class MessageEffects {
     ))
   ));
 
+  editMessage$ = createEffect(() => this.actions$.pipe(
+    ofType(A.editMessage),
+    mergeMap(({ messageId, request }) => this.svc.editMessage(messageId, request).pipe(
+      map(response => A.editMessageSuccess({ response })),
+      catchError(e => of(A.editMessageFailure({ error: e?.error?.message || 'Failed to edit message' })))
+    ))
+  ));
+
+  deleteMessage$ = createEffect(() => this.actions$.pipe(
+    ofType(A.deleteMessage),
+    mergeMap(({ messageId }) => this.svc.deleteMessage(messageId).pipe(
+      map(response => A.deleteMessageSuccess({ response })),
+      catchError(e => of(A.deleteMessageFailure({ error: e?.error?.message || 'Failed to unsend message' })))
+    ))
+  ));
+
+  // Fire-and-forget -- the sender doesn't need a success/failure round trip,
+  // the recipient finds out via /user/queue/message-events like everyone else.
+  setTyping$ = createEffect(() => this.actions$.pipe(
+    ofType(A.setTyping),
+    mergeMap(({ otherUserId, typing }) => this.svc.setTyping(otherUserId, typing).pipe(
+      catchError(() => of(null)) // best-effort; a dropped typing signal isn't worth surfacing
+    ))
+  ), { dispatch: false });
+
   // Live push -- unlike every other watch() in the app (a refresh signal),
   // this one carries the actual Message payload straight from the private
   // per-user queue the backend's convertAndSendToUser delivers to. Requires
@@ -55,5 +80,30 @@ export class MessageEffects {
   // never receives anything on /user/queue/*, it just silently never fires.
   receiveMessage$ = createEffect(() => this.rxStompService.watch('/user/queue/messages').pipe(
     map(stompMessage => A.receiveMessage({ message: JSON.parse(stompMessage.body) as Message }))
+  ));
+
+  // The second private queue -- typing signals and edited/deleted echoes,
+  // separate from /user/queue/messages so a plain new-message listener never
+  // has to filter these out. See MessageEventResponse on the backend.
+  receiveMessageEvents$ = createEffect(() => this.rxStompService.watch('/user/queue/message-events').pipe(
+    map(stompMessage => {
+      const event = JSON.parse(stompMessage.body) as {
+        type: 'edited' | 'deleted' | 'typing';
+        message?: Message;
+        fromUserId?: number;
+        fromName?: string;
+        typing?: boolean;
+      };
+
+      if (event.type === 'typing') {
+        return A.receiveTyping({
+          fromUserId: event.fromUserId as number,
+          fromName: event.fromName as string,
+          typing: !!event.typing,
+        });
+      }
+
+      return A.receiveMessageEvent({ kind: event.type, message: event.message as Message });
+    })
   ));
 }

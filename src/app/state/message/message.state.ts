@@ -11,6 +11,9 @@ export interface MessageState {
     activeConversationUserId: number | null;
     activeConversationMessages: Message[];
     loadingConversation: boolean;
+
+    /** Who's currently typing in the open thread -- practically at most one id, but a set is just as cheap. */
+    typingUserIds: number[];
 }
 
 export const initialMessageState: MessageState = {
@@ -22,4 +25,6 @@ export const initialMessageState: MessageState = {
     activeConversationUserId: null,
     activeConversationMessages: [],
     loadingConversation: false,
+
+    typingUserIds: [],
 };

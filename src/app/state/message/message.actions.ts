@@ -31,3 +31,26 @@ export const markConversationReadFailure = createAction('[Message] Mark Conversa
 
 // ── LIVE PUSH (from /user/queue/messages -- carries the actual message, unlike every other watch() in the app) ──
 export const receiveMessage = createAction('[Message] Receive', props<{ message: Message }>());
+
+// ── EDIT ──────────────────────────────────────────────────────────────
+export const editMessage = createAction('[Message] Edit', props<{ messageId: number; request: MessageRequest }>());
+export const editMessageSuccess = createAction('[Message] Edit Success', props<Res<Message>>());
+export const editMessageFailure = createAction('[Message] Edit Failure', props<Err>());
+
+// ── DELETE (unsend, soft) ────────────────────────────────────────────
+export const deleteMessage = createAction('[Message] Delete', props<{ messageId: number }>());
+export const deleteMessageSuccess = createAction('[Message] Delete Success', props<Res<Message>>());
+export const deleteMessageFailure = createAction('[Message] Delete Failure', props<Err>());
+
+// ── TYPING (fire-and-forget outbound, no success/failure needed) ────────
+export const setTyping = createAction('[Message] Set Typing', props<{ otherUserId: number; typing: boolean }>());
+
+// ── LIVE PUSH from /user/queue/message-events ────────────────────────
+export const receiveTyping = createAction(
+  '[Message] Receive Typing',
+  props<{ fromUserId: number; fromName: string; typing: boolean }>()
+);
+export const receiveMessageEvent = createAction(
+  '[Message] Receive Message Event',
+  props<{ kind: 'edited' | 'deleted'; message: Message }>()
+);

@@ -14,6 +14,7 @@ import {
   selectActiveConversationMessages,
   selectActiveConversationUserId,
   selectConversations,
+  selectIsActivePartyTyping,
   selectLoadingConversation,
   selectMessageError,
   selectMessageLoading,
@@ -39,7 +40,7 @@ describe('MessagesMainComponent', () => {
   ];
 
   const messages: Message[] = [
-    { id: 1, senderId: 5, senderName: 'Coach Sam', recipientId: 1, recipientName: 'Jane Doe', body: 'Hey!', isRead: false, date: new Date(), lastUpdate: new Date() }
+    { id: 1, senderId: 5, senderName: 'Coach Sam', recipientId: 1, recipientName: 'Jane Doe', body: 'Hey!', isRead: false, date: new Date(), lastUpdate: new Date(), deleted: false }
   ];
 
   const connections: Connection[] = [
@@ -63,6 +64,7 @@ describe('MessagesMainComponent', () => {
             { selector: selectActiveConversationUserId, value: null },
             { selector: selectActiveConversationMessages, value: [] },
             { selector: selectLoadingConversation, value: false },
+            { selector: selectIsActivePartyTyping, value: false },
             { selector: selectMessageError, value: null },
           ]
         }),
@@ -118,26 +120,53 @@ describe('MessagesMainComponent', () => {
     expect(store.dispatch).toHaveBeenCalledWith(MessageActions.markConversationRead({ otherUserId: 7 }));
   });
 
-  it('send dispatches sendMessage with the draft body and clears it', () => {
+  it('send dispatches sendMessage for the active conversation', () => {
     fixture.detectChanges();
     component.activeUserId = 5;
-    component.draftBody = 'Hello coach';
 
-    component.send();
+    component.send('Hello coach');
 
     expect(store.dispatch).toHaveBeenCalledWith(MessageActions.sendMessage({ request: { recipientId: 5, body: 'Hello coach' } }));
-    expect(component.draftBody).toBe('');
   });
 
-  it('send does nothing when the draft is empty', () => {
+  it('setTyping dispatches setTyping for the active conversation', () => {
     fixture.detectChanges();
     component.activeUserId = 5;
-    component.draftBody = '   ';
-    (store.dispatch as jasmine.Spy).calls.reset();
 
-    component.send();
+    component.setTyping(true);
 
-    expect(store.dispatch).not.toHaveBeenCalled();
+    expect(store.dispatch).toHaveBeenCalledWith(MessageActions.setTyping({ otherUserId: 5, typing: true }));
+  });
+
+  it('unsend dispatches deleteMessage', () => {
+    fixture.detectChanges();
+
+    component.unsend(1);
+
+    expect(store.dispatch).toHaveBeenCalledWith(MessageActions.deleteMessage({ messageId: 1 }));
+  });
+
+  it('lastMineMessageId finds the most recent own message in the open thread', () => {
+    fixture.detectChanges();
+    component.activeUserId = 5; // the other party -- so "mine" is anyone else
+    component.activeMessages = [
+      { ...messages[0], id: 1, senderId: 1 },
+      { ...messages[0], id: 2, senderId: 5 },
+      { ...messages[0], id: 3, senderId: 1 },
+    ];
+
+    expect(component.lastMineMessageId).toBe(3);
+  });
+
+  it('activeContact prefers the conversation summary (with role, for the Certified badge), falling back to a startable contact', () => {
+    fixture.detectChanges();
+
+    component.activeUserId = 5;
+    expect(component.activeContact).toEqual({ userId: 5, name: 'Coach Sam', photo: undefined, role: 'trainer' });
+
+    component.activeUserId = 7; // a Connection, not yet in conversations
+    expect(component.activeContact.name).toBe('Jordan Lee');
+    expect(component.activeContact.role).toBe('');
   });
 
   it('isMine identifies a message as the current user\'s when it was not sent by the active conversation partner', () => {

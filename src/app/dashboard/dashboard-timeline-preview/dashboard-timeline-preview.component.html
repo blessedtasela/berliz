@@ -1,0 +1,65 @@
+<div class="relative overflow-hidden bg-white rounded-2xl border border-gray-200 shadow-sm font-sans">
+
+  <!-- Subtle premium accent -- a soft red glow in the corner, not a full dark takeover. -->
+  <div class="pointer-events-none absolute -top-10 -right-10 w-40 h-40 rounded-full bg-red-600/5 blur-2xl"></div>
+
+  <div class="relative p-4 flex flex-col gap-4">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+          <i-feather name="file-text" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+          <h2 class="text-gray-800 text-base font-bold">See what others are doing</h2>
+          <p class="text-[11px] text-gray-400">Fresh from your connections' timelines</p>
+        </div>
+      </div>
+      <a routerLink="/dashboard/timeline" class="text-red-600 text-xs font-semibold hover:underline shrink-0">
+        View timeline
+      </a>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex items-center justify-center py-6">
+      <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
+    </div>
+
+    <!-- Empty -->
+    <a *ngIf="!loading && posts.length === 0" routerLink="/dashboard/timeline"
+      class="flex flex-col items-center text-center py-6 gap-2 rounded-xl border border-dashed border-gray-200 hover:border-red-300 hover:bg-red-50/40 transition">
+      <i-feather name="award" class="text-gray-300" style="width:28px;height:28px;"></i-feather>
+      <p class="text-xs text-gray-500">Nothing here yet — be the first to share something.</p>
+      <span class="text-[11px] font-semibold text-red-600">Start your timeline →</span>
+    </a>
+
+    <!-- Post previews -->
+    <div *ngIf="!loading && posts.length > 0" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+      <a *ngFor="let post of posts" routerLink="/dashboard/timeline"
+        class="flex flex-col gap-2 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:border-red-300 hover:bg-red-50/40 transition group">
+
+        <div class="flex items-center gap-2 min-w-0">
+          <app-avatar [name]="post.authorName" [size]="26" borderClass="border-red-100 bg-red-50 text-red-600"></app-avatar>
+          <span class="text-xs font-bold text-gray-900 truncate">{{ post.authorName }}</span>
+        </div>
+
+        <p class="text-[11px] text-gray-500 leading-relaxed line-clamp-3 flex-1">{{ post.content }}</p>
+
+        <div class="flex items-center gap-1 text-[10px] text-gray-400 pt-1 border-t border-gray-200 group-hover:border-red-100">
+          <i-feather name="heart" style="width:11px;height:11px;" [class.text-red-500]="post.likedByMe"></i-feather>
+          {{ post.likes }} {{ post.likes === 1 ? 'like' : 'likes' }}
+        </div>
+      </a>
+    </div>
+
+    <!-- CTA -->
+    <a *ngIf="!loading && posts.length > 0" routerLink="/dashboard/timeline"
+      class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+             hover:bg-red-700 active:scale-[0.98] transition">
+      See what others are doing
+      <i-feather name="arrow-right" style="width:13px;height:13px;"></i-feather>
+    </a>
+
+  </div>
+</div>
