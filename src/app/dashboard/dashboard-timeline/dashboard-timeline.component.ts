@@ -8,7 +8,8 @@ import { Subject } from 'rxjs';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
-import { PostResponse } from 'src/app/models/post.interface';
+import { PostMediaViewerComponent } from './post-media-viewer.component';
+import { PostActivityType, PostResponse } from 'src/app/models/post.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { PostService } from 'src/app/services/post.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -26,13 +27,33 @@ type TimelineTab = 'feed' | 'mine';
  * viewer on DashboardUserProfileComponent which fetches its own copy
  * independently).
  */
+/** Activity a post can be framed as. GENERAL is the plain-post default and isn't shown as a chip. */
+interface ActivityOption {
+  value: Exclude<PostActivityType, 'GENERAL'>;
+  label: string;
+  icon: string;
+  /** Tailwind classes for the badge/chip (text + subtle bg + border). */
+  tone: string;
+}
+
+const ACTIVITY_OPTIONS: ActivityOption[] = [
+  { value: 'WORKOUT', label: 'Workout', icon: 'zap', tone: 'text-orange-600 bg-orange-50 border-orange-100' },
+  { value: 'SESSION', label: 'Completed session', icon: 'check-circle', tone: 'text-emerald-600 bg-emerald-50 border-emerald-100' },
+  { value: 'PROGRESS', label: 'Progress', icon: 'trending-up', tone: 'text-sky-600 bg-sky-50 border-sky-100' },
+  { value: 'MILESTONE', label: 'Milestone', icon: 'award', tone: 'text-violet-600 bg-violet-50 border-violet-100' },
+  { value: 'TESTIMONIAL', label: 'Testimonial', icon: 'message-square', tone: 'text-rose-600 bg-rose-50 border-rose-100' },
+  { value: 'REVIEW', label: 'Review', icon: 'star', tone: 'text-amber-600 bg-amber-50 border-amber-100' },
+];
+
 @Component({
   selector: 'app-dashboard-timeline',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule],
+  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostMediaViewerComponent],
   templateUrl: './dashboard-timeline.component.html'
 })
 export class DashboardTimelineComponent implements OnInit, OnDestroy {
+
+  readonly activityOptions = ACTIVITY_OPTIONS;
 
   tab: TimelineTab = 'feed';
 
@@ -42,10 +63,17 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
 
   // ── Compose ──────────────────────────────────────────────────────────────
   draftContent = '';
+  draftActivityType: PostActivityType = 'GENERAL';
   posting = false;
   uploadedPhoto: { strapiId: number; photoUrl: string } | null = null;
   uploading = false;
   uploadError: string | null = null;
+
+  // ── Read view ────────────────────────────────────────────────────────────
+  /** Posts whose long text the reader has expanded past the 5-line clamp. */
+  private readonly expandedPosts = new Set<number>();
+  /** The post whose media is open in the full-screen viewer, if any. */
+  viewerPost: PostResponse | null = null;
 
   currentUserId: number | null = null;
   myPhotoSrc = '../../../assets/icons/user.png';
@@ -147,12 +175,18 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     return !this.posting && !this.uploading && this.draftContent.trim().length > 0;
   }
 
+  setActivityType(type: PostActivityType): void {
+    // Tapping the active chip again clears it back to a plain post.
+    this.draftActivityType = this.draftActivityType === type ? 'GENERAL' : type;
+  }
+
   submitPost(): void {
     if (!this.canPost) return;
 
     this.posting = true;
     this.postService.addPost({
       content: this.draftContent.trim(),
+      activityType: this.draftActivityType === 'GENERAL' ? undefined : this.draftActivityType,
       photo: this.uploadedPhoto ? { photoUrl: this.uploadedPhoto.photoUrl, strapiId: this.uploadedPhoto.strapiId } : null,
     }).subscribe({
       next: res => {
@@ -163,6 +197,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
           if (this.tab === 'feed') { this.feedPosts = [post, ...this.feedPosts]; }
         }
         this.draftContent = '';
+        this.draftActivityType = 'GENERAL';
         this.uploadedPhoto = null;
         this.snackBarService.openSnackBar('Posted', '');
       },
@@ -235,5 +270,38 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
 
   trackByPostId(_: number, post: PostResponse): number {
     return post.id;
+  }
+
+  // ── Read view: activity badge, "see more", media lightbox ─────────────────
+
+  /** The chip/badge metadata for a post's activity, or null for a plain (GENERAL) post. */
+  activityMeta(post: PostResponse): ActivityOption | null {
+    if (!post.activityType || post.activityType === 'GENERAL') return null;
+    return this.activityOptions.find(o => o.value === post.activityType) ?? null;
+  }
+
+  /** True when the body is long enough that we clamp it to 5 lines and offer "See more". */
+  isLongContent(post: PostResponse): boolean {
+    const text = post.content ?? '';
+    const lineBreaks = (text.match(/\n/g) ?? []).length;
+    return lineBreaks >= 5 || text.length > 280;
+  }
+
+  isExpanded(post: PostResponse): boolean {
+    return this.expandedPosts.has(post.id);
+  }
+
+  toggleExpanded(post: PostResponse): void {
+    if (this.expandedPosts.has(post.id)) this.expandedPosts.delete(post.id);
+    else this.expandedPosts.add(post.id);
+  }
+
+  openViewer(post: PostResponse): void {
+    if (!post.photoUrl) return;
+    this.viewerPost = post;
+  }
+
+  closeViewer(): void {
+    this.viewerPost = null;
   }
 }
