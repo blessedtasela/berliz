@@ -22,8 +22,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
 @Component({
   selector: 'app-my-equipment-page',
   standalone: true,
-  imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, StrapiUrlPipe],
-  imports: [CommonModule, RouterModule, IconsModule, StrapiUrlPipe, SharedModule],
+  imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, StrapiUrlPipe, SharedModule],
   templateUrl: './my-equipment-page.component.html',
   styleUrls: ['./my-equipment-page.component.css']
 })

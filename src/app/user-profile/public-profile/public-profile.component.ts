@@ -81,7 +81,7 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private snackBarService: SnackBarService,
-    public lightbox: PhotoLightboxService
+    public lightbox: PhotoLightboxService,
     public authRedirect: AuthRedirectService
   ) {
     this.needsLogin = !this.authService.isAuthenticated();

@@ -23,23 +23,6 @@
                 <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
             </div>
 
-            <div *ngIf="!loading" class="flex flex-col divide-y divide-gray-100 overflow-y-auto" style="max-height: 480px;">
-                <button *ngFor="let c of conversations" type="button" (click)="openConversation(c.otherUserId)"
-                    class="text-left px-4 py-3 hover:bg-gray-50 transition flex items-start gap-2.5"
-                    [class.bg-gray-50]="activeUserId === c.otherUserId">
-                    <img *ngIf="photoSrc(c) as src" [src]="src" alt="" (click)="lightbox.open(src); $event.stopPropagation()"
-                        class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
-                    <div *ngIf="!photoSrc(c)" class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
-                        <i-feather name="user" class="text-sky-600" style="width:14px;height:14px;"></i-feather>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="text-xs font-bold text-gray-900 truncate">{{ c.otherUserName }}</span>
-                            <span *ngIf="c.unreadCount > 0" class="text-[10px] font-bold text-white bg-sky-600 rounded-full px-1.5 py-0.5 shrink-0">{{ c.unreadCount }}</span>
-                        </div>
-                        <p class="text-[11px] text-gray-400 truncate">{{ c.lastMessage }}</p>
-                    </div>
-                </button>
             <div *ngIf="!loading" class="flex flex-col divide-y divide-gray-100 overflow-y-auto" style="max-height: 520px;">
 
                 <app-conversation-row *ngFor="let c of conversations"

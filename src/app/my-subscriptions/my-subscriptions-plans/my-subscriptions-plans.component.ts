@@ -125,6 +125,8 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
         this.snackBar.openSnackBar(err.error?.message || 'Could not start checkout — try again', 'error');
       },
     });
+  }
+
   redeem(): void {
     const code = this.redeemCode.trim();
     if (!code || this.redeeming) return;

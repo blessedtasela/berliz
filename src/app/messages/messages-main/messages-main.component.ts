@@ -187,9 +187,6 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
     return message.senderId !== this.activeUserId;
   }
 
-  /** Conversation list only ever rendered a static icon -- ConversationSummaryResponse had no photo field until now. */
-  photoSrc(c: ConversationSummary): string | null {
-    return c.otherUserPhoto ? 'data:image/*;base64,' + c.otherUserPhoto : null;
   /** The id of the sender's own most recent message in the open thread -- drives the "Seen" receipt. */
   get lastMineMessageId(): number | null {
     for (let i = this.activeMessages.length - 1; i >= 0; i--) {

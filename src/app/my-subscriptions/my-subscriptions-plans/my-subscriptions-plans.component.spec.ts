@@ -43,8 +43,7 @@ describe('MySubscriptionsPlansComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [MySubscriptionsPlansComponent],
-      imports: [CommonModule, IconsModule, HttpClientTestingModule],
-      imports: [CommonModule, FormsModule, IconsModule],
+      imports: [CommonModule, FormsModule, IconsModule, HttpClientTestingModule],
       providers: [
         provideMockStore({
           selectors: [

@@ -237,10 +237,8 @@ const dashboardRoutes: Routes = [
       // provider one had no sidebar entry at all — see ManageBookingsComponent.
       {
         path: 'my-bookings',
-        component: MyBookingsMainComponent,
-        canActivate: [AuthGuard, RoleGuard],
         component: ManageBookingsComponent,
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuard, RoleGuard],
         data: {
           breadcrumb: 'Bookings',
           expectedRole: expectedRoleAll
@@ -446,7 +444,7 @@ const dashboardRoutes: Routes = [
           { path: 'my-subscriptions', component: MySubscriptionsMainComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Subscriptions', expectedRole: expectedRoleAll } },
           { path: 'my-faqs', component: MyFaqsPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'FAQs', expectedRole: expectedRoleAll } },
           { path: 'my-todos', component: MyTodoListMainComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'To-do List', expectedRole: expectedRoleAll } },
-          { path: 'my-bookings', component: MyBookingsMainComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'My Bookings', expectedRole: expectedRoleAll } },
+          { path: 'my-bookings', component: ManageBookingsComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'My Bookings', expectedRole: expectedRoleAll } },
           { path: 'my-provider-bookings', component: ProviderBookingsMainComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Bookings', expectedRole: ['trainer', 'center'] } },
           { path: 'liked-trainers', component: MyLikedTrainersComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Liked Trainers', expectedRole: expectedRoleAll } },
           { path: 'my-testimonials', component: MyTestimonialsPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'My Testimonials', expectedRole: expectedRoleAll } },

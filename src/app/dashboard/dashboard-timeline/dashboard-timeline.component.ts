@@ -8,7 +8,6 @@ import { Subject } from 'rxjs';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comments.component';
-import { PostResponse } from 'src/app/models/post.interface';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { PostMediaViewerComponent } from './post-media-viewer.component';
 import { PostActivityType, PostResponse } from 'src/app/models/post.interface';
@@ -52,8 +51,7 @@ const ACTIVITY_OPTIONS: ActivityOption[] = [
 @Component({
   selector: 'app-dashboard-timeline',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, PostCommentsComponent],
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostMediaViewerComponent],
+  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostMediaViewerComponent],
   templateUrl: './dashboard-timeline.component.html'
 })
 export class DashboardTimelineComponent implements OnInit, OnDestroy {
@@ -82,9 +80,6 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
 
   currentUserId: number | null = null;
   myPhotoSrc = '../../../assets/icons/user.png';
-
-  /** Feed thumbnails are cropped (object-cover) to keep the feed tidy — clicking one opens the full, uncropped image + caption, IG-style. */
-  expandedPost: PostResponse | null = null;
 
   /** Which post's comment thread (PostCommentsComponent) is expanded inline, if any. Only one open at a time. */
   openCommentsPostId: number | null = null;
@@ -236,15 +231,6 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     return post.authorPhoto ? 'data:image/*;base64,' + post.authorPhoto : null;
   }
 
-  openLightbox(post: PostResponse): void {
-    if (!post.photoUrl) return;
-    this.expandedPost = post;
-  }
-
-  closeLightbox(): void {
-    this.expandedPost = null;
-  }
-
   toggleLike(post: PostResponse): void {
     const wasLiked = post.likedByMe;
     post.likedByMe = !wasLiked;
@@ -318,6 +304,8 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
 
   toggleComments(post: PostResponse): void {
     this.openCommentsPostId = this.openCommentsPostId === post.id ? null : post.id;
+  }
+
   // ── Read view: activity badge, "see more", media lightbox ─────────────────
 
   /** The chip/badge metadata for a post's activity, or null for a plain (GENERAL) post. */

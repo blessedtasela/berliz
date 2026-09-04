@@ -37,8 +37,6 @@ export interface ConversationSummary {
   /** The other side's @handle -- named otherHandle (not otherUsername) to match ConversationSummaryResponse; see that DTO's field comment for why. */
   otherHandle?: string;
   otherUserRole: string;
-  otherHandle?: string;
-  otherUserRole: string;
   /** Base64, same encoding as User.profilePhoto elsewhere in the app. */
   otherUserPhoto?: string;
 
