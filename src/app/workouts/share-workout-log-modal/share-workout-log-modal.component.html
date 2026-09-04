@@ -1,0 +1,102 @@
+<div class="bg-white rounded-2xl font-sans flex flex-col overflow-hidden max-h-[80vh] w-[440px] max-w-[95vw]">
+
+  <!-- ═══════════════════ HEADER ═══════════════════ -->
+  <div class="flex items-start justify-between gap-3 px-5 py-4 border-b border-gray-100 shrink-0">
+    <div class="min-w-0">
+      <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+        <i-feather name="users" style="width:13px;height:13px;" class="text-red-600"></i-feather>
+        Share this session
+      </h2>
+      <p class="text-[11px] text-gray-400 mt-0.5">
+        Anyone added can view and edit it — great for training partners logging together.
+      </p>
+    </div>
+    <button type="button" (click)="close()"
+      class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 shrink-0">
+      <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+    </button>
+  </div>
+
+  <div class="flex flex-col gap-4 p-5 overflow-y-auto">
+
+    <!-- ── CURRENTLY SHARED WITH ───────────────────────────────────────── -->
+    <div class="flex flex-col gap-1.5">
+      <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">
+        Shared with ({{ log.collaborators?.length || 0 }})
+      </label>
+
+      <p *ngIf="!log.collaborators?.length" class="text-[11px] text-gray-400">
+        Not shared with anyone yet.
+      </p>
+
+      <div *ngFor="let collaborator of log.collaborators; trackBy: trackByUserId"
+        class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-gray-50 border border-gray-100">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold text-gray-800 truncate">{{ collaborator.name || collaborator.email }}</p>
+          <p class="text-[10px] text-gray-400 truncate">{{ collaborator.email }}</p>
+        </div>
+        <button type="button" (click)="remove(collaborator.userId)" [disabled]="busyUserId === collaborator.userId"
+          class="shrink-0 w-6 h-6 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition disabled:opacity-50">
+          <i-feather *ngIf="busyUserId !== collaborator.userId" name="x" style="width:11px;height:11px;"></i-feather>
+          <i-feather *ngIf="busyUserId === collaborator.userId" name="loader" style="width:11px;height:11px;" class="animate-spin"></i-feather>
+        </button>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <!-- ── ADD A CONNECTION (owner only) ───────────────────────────────── -->
+    <ng-container *ngIf="isOwner; else notOwner">
+      <div class="flex flex-col gap-1">
+        <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Add a connection</label>
+        <div class="relative">
+          <i-feather name="search" style="width:13px;height:13px;"
+            class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i-feather>
+          <input type="text" [(ngModel)]="searchTerm" placeholder="Search your connections..." class="w-full pl-8 pr-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1.5 max-h-48 overflow-y-auto pr-1">
+        <div *ngFor="let connection of shareableConnections; trackBy: trackByUserId"
+          class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl border border-gray-200 hover:border-red-200 transition">
+          <div class="min-w-0">
+            <p class="text-xs font-semibold text-gray-800 truncate">{{ connection.otherUserName }}</p>
+            <p class="text-[10px] text-gray-400 truncate capitalize">{{ connection.otherUserRole }}</p>
+          </div>
+          <button type="button" (click)="share(connection)" [disabled]="busyUserId === connection.otherUserId"
+            class="shrink-0 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-red-600 text-white hover:bg-red-700
+                   active:scale-[0.98] transition disabled:opacity-60 flex items-center gap-1">
+            <i-feather *ngIf="busyUserId !== connection.otherUserId" name="plus-circle" style="width:10px;height:10px;"></i-feather>
+            <i-feather *ngIf="busyUserId === connection.otherUserId" name="loader" style="width:10px;height:10px;" class="animate-spin"></i-feather>
+            Add
+          </button>
+        </div>
+
+        <p *ngIf="shareableConnections.length === 0" class="text-[11px] text-gray-400 text-center py-4">
+          {{ connections.length === 0 ? 'Connect with someone first to share sessions with them.' : 'No more connections to add.' }}
+        </p>
+      </div>
+    </ng-container>
+    <ng-template #notOwner>
+      <p class="text-[11px] text-gray-400 bg-gray-50 border border-gray-100 rounded-xl px-3 py-2">
+        Only the session's owner can add more people — you can still remove your own access above.
+      </p>
+    </ng-template>
+
+    <!-- Error -->
+    <p *ngIf="error"
+      class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
+      <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+      {{ error }}
+    </p>
+  </div>
+
+  <!-- ═══════════════════ FOOTER ═══════════════════ -->
+  <div class="flex items-center justify-end gap-2 px-5 py-4 border-t border-gray-100 shrink-0">
+    <button type="button" (click)="close()"
+      class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
+      Done
+    </button>
+  </div>
+</div>

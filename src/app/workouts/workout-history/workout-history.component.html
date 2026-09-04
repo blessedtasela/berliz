@@ -1,0 +1,134 @@
+<div class="flex flex-col gap-4 font-sans">
+
+  <!-- ═══════════════════ HEADER ═══════════════════ -->
+  <div class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+      <div class="min-w-0">
+        <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2 flex-wrap">
+          <i-feather name="trending-up" style="width:14px;height:14px;" class="text-red-600 shrink-0"></i-feather>
+          Workout history
+          <span class="text-[10px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+            {{ logs.length }}
+          </span>
+        </h2>
+        <p class="text-[11px] text-gray-400 mt-0.5">
+          Every session you've actually done — sets, reps, and weight. Miss a day, train out of order, whatever — just log what happened.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2 w-full sm:w-auto sm:shrink-0">
+        <app-refresh-button [loading]="loading" (refresh)="refresh()"></app-refresh-button>
+        <a routerLink="/dashboard/workouts"
+          class="flex-1 sm:flex-none justify-center px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition flex items-center gap-2">
+          <i-feather name="zap" style="width:13px;height:13px;"></i-feather>
+          Plans
+        </a>
+        <button type="button" (click)="logWorkout()" class="flex-1 sm:flex-none justify-center px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                 hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+          <i-feather name="plus-circle" style="width:13px;height:13px;"></i-feather>
+          Log a workout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ LOADING ═══════════════════ -->
+  <div *ngIf="loading" class="flex items-center justify-center py-10">
+    <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
+  </div>
+
+  <!-- ═══════════════════ EMPTY STATE ═══════════════════ -->
+  <div *ngIf="!loading && logs.length === 0"
+    class="bg-white rounded-2xl border border-gray-200 p-10 flex flex-col items-center justify-center gap-3 text-center">
+    <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
+      <i-feather name="trending-up" style="width:22px;height:22px;" class="text-gray-400"></i-feather>
+    </div>
+    <p class="text-sm font-bold text-gray-900">No sessions logged yet</p>
+    <p class="text-[11px] text-gray-400 max-w-xs">
+      Log today's session (or a past one) to start building your training history.
+    </p>
+    <button type="button" (click)="logWorkout()" class="mt-1 px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+             hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+      <i-feather name="plus-circle" style="width:13px;height:13px;"></i-feather>
+      Log a workout
+    </button>
+  </div>
+
+  <!-- ═══════════════════ TIMELINE ═══════════════════ -->
+  <div *ngIf="!loading" class="flex flex-col gap-3">
+    <div *ngFor="let log of logs; trackBy: trackByLogId"
+      class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+
+      <!-- Card header -->
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-bold text-gray-900">{{ log.logDate | date:'EEEE, MMM d, y' }}</span>
+            <span *ngIf="log.workoutName" class="text-[10px] font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+              from "{{ log.workoutName }}"
+            </span>
+          </div>
+          <p *ngIf="log.title" class="text-[11px] text-gray-500 mt-0.5 font-semibold">{{ log.title }}</p>
+          <div class="flex items-center gap-2 flex-wrap mt-0.5">
+            <p *ngIf="log.durationMinutes" class="text-[10px] text-gray-400 flex items-center gap-1">
+              <i-feather name="clock" style="width:10px;height:10px;"></i-feather>
+              {{ log.durationMinutes }} min
+            </p>
+            <p *ngIf="attributionLabel(log) as label" class="text-[10px] text-purple-600 flex items-center gap-1">
+              <i-feather name="users" style="width:10px;height:10px;"></i-feather>
+              {{ label }}
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1 shrink-0">
+          <button type="button" (click)="shareLog(log)"
+            class="w-7 h-7 rounded-lg flex items-center justify-center transition"
+            [ngClass]="log.collaborators?.length ? 'text-purple-600 hover:bg-purple-50' : 'text-gray-400 hover:text-gray-700 hover:bg-gray-100'">
+            <i-feather name="users" style="width:12px;height:12px;"></i-feather>
+          </button>
+          <button type="button" (click)="editLog(log)"
+            class="w-7 h-7 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 flex items-center justify-center transition">
+            <i-feather name="edit-2" style="width:12px;height:12px;"></i-feather>
+          </button>
+          <button *ngIf="isOwnLog(log)" type="button" (click)="deleteLog(log)"
+            class="w-7 h-7 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition">
+            <i-feather name="trash-2" style="width:12px;height:12px;"></i-feather>
+          </button>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-100"></div>
+
+      <!-- Exercises -->
+      <div class="flex flex-col gap-2">
+        <div *ngFor="let exercise of sortedExercises(log); trackBy: trackByExerciseId"
+          class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="text-[11px] font-bold text-gray-800 flex items-center gap-1.5 flex-wrap">
+              <i-feather *ngIf="isSupersetContinuation(log, exercise)" name="chevron-down"
+                style="width:10px;height:10px;" class="text-purple-500 shrink-0"></i-feather>
+              {{ exercise.exerciseName }}
+              <span *ngIf="exercise.supersetGroup != null"
+                class="text-[9px] font-semibold text-purple-600 bg-purple-50 border border-purple-100 px-1.5 py-0.5 rounded-full">
+                superset
+              </span>
+            </p>
+            <p class="text-[11px] text-gray-500 mt-0.5">{{ setsSummary(exercise) }}</p>
+            <p *ngIf="exercise.notes" class="text-[10px] text-gray-400 mt-0.5 italic">{{ exercise.notes }}</p>
+          </div>
+
+          <button *ngIf="exercise.exerciseId != null" type="button" (click)="viewProgress(exercise)"
+            class="shrink-0 text-[10px] font-semibold text-red-600 hover:text-red-700 transition flex items-center gap-1">
+            <i-feather name="trending-up" style="width:10px;height:10px;"></i-feather>
+            Progress
+          </button>
+        </div>
+      </div>
+
+      <p *ngIf="log.notes" class="text-[11px] text-gray-500 bg-gray-50 border border-gray-100 rounded-xl px-3 py-2">
+        {{ log.notes }}
+      </p>
+    </div>
+  </div>
+</div>

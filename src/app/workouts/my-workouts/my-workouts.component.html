@@ -38,6 +38,11 @@
 
       <div class="flex items-center gap-2 w-full sm:w-auto sm:shrink-0">
         <app-refresh-button [loading]="loading" (refresh)="refresh()"></app-refresh-button>
+        <a routerLink="/dashboard/workouts/history"
+          class="flex-1 sm:flex-none justify-center px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition flex items-center gap-2">
+          <i-feather name="trending-up" style="width:13px;height:13px;"></i-feather>
+          History
+        </a>
         <a routerLink="/dashboard/my-assigned-workouts"
           class="flex-1 sm:flex-none justify-center px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition flex items-center gap-2">
           <i-feather name="inbox" style="width:13px;height:13px;"></i-feather>

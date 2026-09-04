@@ -337,6 +337,17 @@ const dashboardRoutes: Routes = [
           expectedRole: expectedRoleAll
         }
       },
+      // Training history (what was actually performed) — must stay BEFORE
+      // 'workouts/:id' below, same reasoning as 'builder' above.
+      {
+        path: 'workouts/history',
+        loadComponent: () => import('../workouts/workout-history/workout-history.component').then(m => m.WorkoutHistoryComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Workout History',
+          expectedRole: expectedRoleAll
+        }
+      },
       // Step-by-step workout detail view — must stay AFTER the 'builder'
       // static-segment routes above, since ':id' would otherwise greedily
       // match '/dashboard/workouts/builder' as an id.
