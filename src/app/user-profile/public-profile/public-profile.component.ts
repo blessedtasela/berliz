@@ -16,6 +16,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comments.component';
+import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 
 import {
   clearPublicProfile,
@@ -81,6 +82,7 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private snackBarService: SnackBarService,
     public lightbox: PhotoLightboxService
+    public authRedirect: AuthRedirectService
   ) {
     this.needsLogin = !this.authService.isAuthenticated();
   }
@@ -220,7 +222,7 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
   quickAdd(template: WorkoutResponse): void {
     if (!this.authService.isAuthenticated()) {
       this.snackBarService.openSnackBar('Log in to add this workout', '');
-      this.router.navigate(['/login']);
+      this.authRedirect.goToLogin();
       return;
     }
 

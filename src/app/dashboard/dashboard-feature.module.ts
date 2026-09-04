@@ -41,7 +41,7 @@ import { MyFaqsModule } from '../my-faqs/my-faqs.module';
 import { MyFaqsPageComponent } from '../my-faqs/my-faqs-page/my-faqs-page.component';
 
 import { MyBookingsModule } from '../bookings/bookings.module';
-import { MyBookingsMainComponent } from '../bookings/my-bookings-main/my-bookings-main.component';
+import { ManageBookingsComponent } from '../bookings/manage-bookings/manage-bookings.component';
 import { ProviderBookingsMainComponent } from '../bookings/provider-bookings-main/provider-bookings-main.component';
 
 import { MyLikedTrainersComponent } from '../liked-trainers/my-liked-trainers/my-liked-trainers.component';
@@ -164,6 +164,18 @@ const dashboardRoutes: Routes = [
         }
       },
 
+      // Peer sessions — user-to-user workout sessions, proposed from an
+      // existing connection (see ConnectionsMainComponent.proposeSession).
+      {
+        path: 'my-sessions',
+        loadComponent: () => import('../peer-sessions/my-sessions/my-sessions.component').then(m => m.MySessionsComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'My Sessions',
+          expectedRole: expectedRoleAll
+        }
+      },
+
       // Notifications
       {
         path: 'my-notifications',
@@ -219,13 +231,18 @@ const dashboardRoutes: Routes = [
         }
       },
 
-      // Bookings (client-made) — anyone can book a trainer or center.
+      // Bookings — everyone's own booking history, plus (for a trainer/center)
+      // a toggle to the requests-from-clients view. Previously the client-made
+      // view and the provider-side view were two separate routes, and the
+      // provider one had no sidebar entry at all — see ManageBookingsComponent.
       {
         path: 'my-bookings',
         component: MyBookingsMainComponent,
         canActivate: [AuthGuard, RoleGuard],
+        component: ManageBookingsComponent,
+        canActivate: [AuthGuard],
         data: {
-          breadcrumb: 'My Bookings',
+          breadcrumb: 'Bookings',
           expectedRole: expectedRoleAll
         }
       },
@@ -322,6 +339,18 @@ const dashboardRoutes: Routes = [
           expectedRole: expectedRoleAll
         }
       },
+      // Step-by-step workout detail view — must stay AFTER the 'builder'
+      // static-segment routes above, since ':id' would otherwise greedily
+      // match '/dashboard/workouts/builder' as an id.
+      {
+        path: 'workouts/:id',
+        loadComponent: () => import('../workouts/workout-detail/workout-detail.component').then(m => m.WorkoutDetailComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { alias: 'workoutName' },
+          expectedRole: expectedRoleAll
+        }
+      },
 
       // Exercise library — read-only browsing for any signed-in user
       {
@@ -330,6 +359,18 @@ const dashboardRoutes: Routes = [
         canActivate: [AuthGuard, RoleGuard],
         data: {
           breadcrumb: 'Exercises',
+          expectedRole: expectedRoleAll
+        }
+      },
+
+      // Exercise detail — placed after the static 'exercises' segment above,
+      // same reasoning as workouts/:id vs workouts/builder.
+      {
+        path: 'exercises/:id',
+        loadComponent: () => import('../dashboard/exercise-detail/exercise-detail.component').then(m => m.ExerciseDetailComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { alias: 'exerciseName' },
           expectedRole: expectedRoleAll
         }
       },
@@ -374,7 +415,6 @@ const dashboardRoutes: Routes = [
         children: [
           { path: '', component: HubMainComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: null, expectedRole: expectedRoleAll } },
 
-          // Admin hub routes (lazy-loaded)
           { path: 'users', loadChildren: () => import('../admin/users/users.module').then(m => m.UsersModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Users', expectedRole: ['admin'] } },
           { path: 'newsletters', loadChildren: () => import('../admin/newsletters/newsletters.module').then(m => m.NewslettersModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Newsletters', expectedRole: ['admin'] } },
           { path: 'partners', loadChildren: () => import('../admin/partners/partners.module').then(m => m.PartnersModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Partners', expectedRole: ['admin'] } },
@@ -413,6 +453,44 @@ const dashboardRoutes: Routes = [
           { path: 'client-intake/new/:clientId', component: ClientIntakeFormComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'New Client Intake', expectedRole: ['trainer'] } },
           { path: 'client-intake/:id', component: ClientIntakeFormComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Client Intake', expectedRole: expectedRoleAll } },
           { path: 'my-client-intakes', component: MyClientIntakesComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Client Intakes', expectedRole: ['trainer'] } },
+
+          { path: 'users', loadChildren: () => import('../admin/users/users.module').then(m => m.UsersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Users', expectedRole: ['admin'] } },
+          { path: 'newsletters', loadChildren: () => import('../admin/newsletters/newsletters.module').then(m => m.NewslettersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Newsletters', expectedRole: ['admin'] } },
+          { path: 'partners', loadChildren: () => import('../admin/partners/partners.module').then(m => m.PartnersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Partners', expectedRole: ['admin'] } },
+          { path: 'contact-us', loadChildren: () => import('../admin/contact-us/contact-us.module').then(m => m.ContactUsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Contact Us', expectedRole: ['admin'] } },
+          { path: 'problem-reports', loadChildren: () => import('../admin/problem-reports/problem-reports.module').then(m => m.ProblemReportsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Problem Reports', expectedRole: ['admin'] } },
+          { path: 'trainers', loadChildren: () => import('../admin/trainers/trainers.module').then(m => m.TrainersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Trainers', expectedRole: ['admin'] } },
+          { path: 'centers', loadChildren: () => import('../admin/centers/centers.module').then(m => m.CentersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Centers', expectedRole: ['admin'] } },
+          { path: 'tags', loadChildren: () => import('../admin/tags/tags.module').then(m => m.TagsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Tags', expectedRole: ['admin'] } },
+          { path: 'todo-lists', loadChildren: () => import('../admin/todo-lists/todo-lists.module').then(m => m.TodoListsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Todo Lists', expectedRole: ['admin'] } },
+          { path: 'muscle-groups', loadChildren: () => import('../admin/muscle-groups/muscle-groups.module').then(m => m.MuscleGroupsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Muscle Groups', expectedRole: ['admin'] } },
+          { path: 'exercises', loadChildren: () => import('../admin/exercises/exercises.module').then(m => m.ExercisesModule), canActivate: [AuthGuard], data: { breadcrumb: 'Exercises', expectedRole: ['admin'] } },
+          { path: 'tasks', loadChildren: () => import('../admin/tasks/tasks.module').then(m => m.TasksModule), canActivate: [AuthGuard], data: { breadcrumb: 'Tasks', expectedRole: ['admin'] } },
+          { path: 'sub-tasks', loadChildren: () => import('../admin/sub-tasks/sub-tasks.module').then(m => m.SubTasksModule), canActivate: [AuthGuard], data: { breadcrumb: 'Sub Tasks', expectedRole: ['admin'] } },
+          { path: 'categories', loadChildren: () => import('../admin/categories/categories.module').then(m => m.CategoriesModule), canActivate: [AuthGuard], data: { breadcrumb: 'Categories', expectedRole: ['admin'] } },
+          { path: 'clients', loadChildren: () => import('../admin/clients/clients.module').then(m => m.ClientsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Clients', expectedRole: ['admin'] } },
+          { path: 'subscriptions', loadChildren: () => import('../admin/subscriptions/subscriptions.module').then(m => m.SubscriptionsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Subscriptions', expectedRole: ['admin'] } },
+          { path: 'trainer-pricing', loadChildren: () => import('../admin/trainer-pricing/trainer-pricing.module').then(m => m.TrainerPricingModule), canActivate: [AuthGuard], data: { breadcrumb: 'Trainer Pricing', expectedRole: ['admin'] } },
+          { path: 'center-pricing', loadChildren: () => import('../admin/center-pricing/center-pricing.module').then(m => m.CenterPricingModule), canActivate: [AuthGuard], data: { breadcrumb: 'Center Pricing', expectedRole: ['admin'] } },
+          { path: 'equipments', loadComponent: () => import('../admin/equipment/equipment-page/equipment-page.component').then(m => m.EquipmentPageComponent), canActivate: [AuthGuard], data: { breadcrumb: 'Equipment', expectedRole: ['admin'] } },
+          { path: 'testimonials', loadChildren: () => import('../admin/testimonials/testimonials.module').then(m => m.TestimonialsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Testimonials', expectedRole: ['admin'] } },
+          { path: 'faqs', loadChildren: () => import('../admin/faqs/faqs.module').then(m => m.FaqsModule), canActivate: [AuthGuard], data: { breadcrumb: 'FAQs', expectedRole: ['admin'] } },
+          { path: 'members', loadChildren: () => import('../admin/members/members.module').then(m => m.MembersModule), canActivate: [AuthGuard], data: { breadcrumb: 'Members', expectedRole: ['admin'] } },
+          { path: 'payments', loadChildren: () => import('../admin/payments/payments.module').then(m => m.PaymentsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Payments', expectedRole: ['admin'] } },
+          { path: 'bookings', loadChildren: () => import('../admin/bookings/bookings.module').then(m => m.BookingsModule), canActivate: [AuthGuard], data: { breadcrumb: 'Bookings', expectedRole: ['admin'] } },
+          { path: 'settings', component: UserProfileSettingsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Settings', expectedRole: expectedRoleAll } },
+          { path: 'my-notifications', component: MyNotificationsPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Notifications', expectedRole: expectedRoleAll } },
+          { path: 'my-tasks', component: MyTasksPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Tasks', expectedRole: expectedRoleAll } },
+          { path: 'my-subscriptions', component: MySubscriptionsMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Subscriptions', expectedRole: expectedRoleAll } },
+          { path: 'my-faqs', component: MyFaqsPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'FAQs', expectedRole: expectedRoleAll } },
+          { path: 'my-todos', component: MyTodoListMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'To-do List', expectedRole: expectedRoleAll } },
+          { path: 'my-bookings', component: ManageBookingsComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Bookings', expectedRole: expectedRoleAll } },
+          { path: 'my-provider-bookings', component: ProviderBookingsMainComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Bookings', expectedRole: ['trainer', 'center'] } },
+          { path: 'liked-trainers', component: MyLikedTrainersComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Liked Trainers', expectedRole: expectedRoleAll } },
+          { path: 'my-testimonials', component: MyTestimonialsPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'My Testimonials', expectedRole: expectedRoleAll } },
+          { path: 'client-intake/new/:clientId', component: ClientIntakeFormComponent, canActivate: [AuthGuard], data: { breadcrumb: 'New Client Intake', expectedRole: ['trainer'] } },
+          { path: 'client-intake/:id', component: ClientIntakeFormComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Client Intake', expectedRole: expectedRoleAll } },
+          { path: 'my-client-intakes', component: MyClientIntakesComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Client Intakes', expectedRole: ['trainer'] } },
 
           {
             path: 'partnership',

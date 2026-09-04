@@ -7,7 +7,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { loadMySubscriptions } from 'src/app/state/subscription/subscription.actions';
-import { selectMySubscriptions } from 'src/app/state/subscription/subscription.selectors';
+import { selectMySubscriptions, selectSubscriptionLoading } from 'src/app/state/subscription/subscription.selectors';
 
 @Component({
   selector: 'app-my-subscriptions-main',
@@ -17,6 +17,7 @@ import { selectMySubscriptions } from 'src/app/state/subscription/subscription.s
 export class MySubscriptionsMainComponent implements OnInit, OnDestroy {
   subscriptionsList: Subscriptions[] = [];
   isAdmin = false;
+  loading = false;
 
   private destroy$ = new Subject<void>();
 
@@ -29,24 +30,24 @@ export class MySubscriptionsMainComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-
     this.isAdmin = this.authService.isAdmin();
 
-    // Wait until user is loaded before fetching subscriptions
-    this.store.select(selectUser)
-      .subscribe(() => {
-        this.loadSubscriptions();
+    this.store.select(selectMySubscriptions)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(subs => this.subscriptionsList = subs);
+    this.store.select(selectSubscriptionLoading)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(loading => this.loading = loading);
 
-      });
+    // Wait until user is loaded before fetching subscriptions — dispatch
+    // only, the subscriptions above (set up once) already react to it.
+    this.store.select(selectUser)
+      .pipe(filter(Boolean), takeUntil(this.destroy$))
+      .subscribe(() => this.loadSubscriptions());
   }
 
   private loadSubscriptions() {
     this.store.dispatch(loadMySubscriptions());
-    this.store.select(selectMySubscriptions)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(subs => {
-        this.subscriptionsList = subs;
-      });
   }
 
   handleRefresh() {

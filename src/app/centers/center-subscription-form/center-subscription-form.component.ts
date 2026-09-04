@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, FormControl, ValidatorFn, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 @Component({
   selector: 'app-center-subscription-form',
@@ -24,6 +26,7 @@ export class CenterSubscriptionFormComponent {
 
   constructor(private fb: FormBuilder,
     private router: Router,
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -68,10 +71,21 @@ export class CenterSubscriptionFormComponent {
     if (this.centerSubscriptionForm.invalid) {
       this.invalidForm = true
       console.log('please complete all fields');
+      return;
     }
-    else {
-      const confirmResult = window.confirm("You are leaving to an external link. Do you want to proceed?");
 
+    this.dialog.open(PromptModalComponent, {
+      width: '400px',
+      maxWidth: '95vw',
+      data: {
+        confirmation: true,
+        title: 'Leaving Berliz',
+        message: 'You are leaving to an external link (WhatsApp). Do you want to proceed?',
+        confirmText: 'Proceed',
+        cancelText: 'Cancel',
+        icon: 'external-link'
+      }
+    }).afterClosed().subscribe(confirmResult => {
       if (confirmResult) {
         // redirect client to whatsapp with the inputted data
         const formValue = this.centerSubscriptionForm.value;
@@ -93,9 +107,6 @@ export class CenterSubscriptionFormComponent {
         this.centerSubscriptionForm.reset();
         // Redirect the user to the WhatsApp URL
         window.location.href = whatsappURL;
-        
-      }
-      else {
 
       }
 
@@ -119,6 +130,6 @@ export class CenterSubscriptionFormComponent {
  window.scrollTo({ top: 0, behavior: 'smooth' });
  */
 
-    }
+    });
   }
 }

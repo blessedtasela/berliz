@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
@@ -10,10 +11,12 @@ import {
   selectActiveConversationMessages,
   selectActiveConversationUserId,
   selectConversations,
+  selectIsActivePartyTyping,
   selectLoadingConversation,
   selectMessageError,
   selectMessageLoading,
 } from 'src/app/state/message/message.selectors';
+import { ConversationRowData } from 'src/app/messages/shared/conversation-row/conversation-row.component';
 
 import { loadMyTrainers } from 'src/app/state/booking/booking.actions';
 import { selectMyTrainers } from 'src/app/state/booking/booking.selectors';
@@ -57,8 +60,7 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
   activeUserId: number | null = null;
   activeMessages: Message[] = [];
   loadingConversation = false;
-
-  draftBody = '';
+  activePartyTyping = false;
 
   private subscriptions: Subscription[] = [];
   private destroy$ = new Subject<void>();
@@ -67,6 +69,7 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
     private store: Store,
     private snackBar: SnackBarService,
     public lightbox: PhotoLightboxService,
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
@@ -82,10 +85,19 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
       this.store.select(selectActiveConversationUserId).pipe(takeUntil(this.destroy$)).subscribe(id => this.activeUserId = id),
       this.store.select(selectActiveConversationMessages).pipe(takeUntil(this.destroy$)).subscribe(m => this.activeMessages = m),
       this.store.select(selectLoadingConversation).pipe(takeUntil(this.destroy$)).subscribe(l => this.loadingConversation = l),
+      this.store.select(selectIsActivePartyTyping).pipe(takeUntil(this.destroy$)).subscribe(t => this.activePartyTyping = t),
       this.store.select(selectMessageError).pipe(takeUntil(this.destroy$)).subscribe(error => {
         if (error) this.snackBar.openSnackBar(error || genericError, 'error');
       }),
     );
+
+    // Deep link from a "Message" button elsewhere in the app
+    // (?userId=<otherUserId>) -- open that thread straight away rather than
+    // making the user hunt for the person in the list again.
+    const requestedUserId = Number(this.route.snapshot.queryParamMap.get('userId'));
+    if (requestedUserId > 0) {
+      this.openConversation(requestedUserId);
+    }
   }
 
   ngOnDestroy(): void {
@@ -115,24 +127,60 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
     });
   }
 
+  /** The open thread's other party, as a display row -- from the conversation list, else the startable-contacts list. */
+  get activeContact(): ConversationRowData & { role: string } {
+    const convo = this.conversations.find(c => c.otherUserId === this.activeUserId);
+    if (convo) {
+      return { userId: convo.otherUserId, name: convo.otherUserName, photo: convo.otherUserPhoto, role: convo.otherUserRole };
+    }
+    const contact = this.startableContacts.find(c => c.userId === this.activeUserId);
+    return { userId: this.activeUserId ?? 0, name: contact?.name ?? 'Conversation', role: '' };
+  }
+
+  refresh(): void {
+    this.store.dispatch(MessageActions.loadConversations());
+    this.store.dispatch(loadMyTrainers());
+    this.store.dispatch(loadMyConnections());
+    if (this.activeUserId != null) {
+      this.store.dispatch(MessageActions.loadConversation({ otherUserId: this.activeUserId }));
+    }
+  }
+
   openConversation(otherUserId: number): void {
     this.store.dispatch(MessageActions.loadConversation({ otherUserId }));
     this.store.dispatch(MessageActions.markConversationRead({ otherUserId }));
   }
 
+  /**
+   * Starting a brand-new thread is just opening a conversation that happens to
+   * have zero messages yet -- loadConversation() already handles that (an
+   * empty array back from the server, no error) and correctly sets the
+   * store's activeConversationUserId. This used to set only the component's
+   * OWN local activeUserId field and dispatch clearActiveConversation()
+   * instead, leaving the store's activeConversationUserId untouched -- which
+   * silently broke sending the first message: sendMessageSuccess's reducer
+   * only appends to activeConversationMessages when the STORE's
+   * activeConversationUserId matches the sent message's recipientId, so the
+   * message posted fine but never appeared in the sender's own thread.
+   */
   startConversation(contact: StartableContact): void {
-    this.activeUserId = contact.userId;
-    this.store.dispatch(MessageActions.clearActiveConversation());
+    this.openConversation(contact.userId);
   }
 
-  send(): void {
-    const body = this.draftBody.trim();
-    if (!body || this.activeUserId == null) return;
-
+  send(body: string): void {
+    if (this.activeUserId == null) return;
     this.store.dispatch(MessageActions.sendMessage({
       request: { recipientId: this.activeUserId, body }
     }));
-    this.draftBody = '';
+  }
+
+  setTyping(typing: boolean): void {
+    if (this.activeUserId == null) return;
+    this.store.dispatch(MessageActions.setTyping({ otherUserId: this.activeUserId, typing }));
+  }
+
+  unsend(messageId: number): void {
+    this.store.dispatch(MessageActions.deleteMessage({ messageId }));
   }
 
   isMine(message: Message): boolean {
@@ -142,5 +190,11 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
   /** Conversation list only ever rendered a static icon -- ConversationSummaryResponse had no photo field until now. */
   photoSrc(c: ConversationSummary): string | null {
     return c.otherUserPhoto ? 'data:image/*;base64,' + c.otherUserPhoto : null;
+  /** The id of the sender's own most recent message in the open thread -- drives the "Seen" receipt. */
+  get lastMineMessageId(): number | null {
+    for (let i = this.activeMessages.length - 1; i >= 0; i--) {
+      if (this.isMine(this.activeMessages[i])) return this.activeMessages[i].id;
+    }
+    return null;
   }
 }

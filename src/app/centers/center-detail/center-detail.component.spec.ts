@@ -35,7 +35,13 @@ describe('CenterDetailComponent', () => {
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         provideMockStore(),
-        { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({})) } },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            paramMap: of(convertToParamMap({})),
+            snapshot: { queryParamMap: convertToParamMap({}) }
+          }
+        },
         { provide: Router, useValue: routerSpy },
         { provide: CenterService, useValue: centerServiceSpy },
         { provide: TestimonialDialogService, useValue: testimonialDialogSpy },

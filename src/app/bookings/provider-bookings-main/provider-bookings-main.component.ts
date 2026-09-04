@@ -13,7 +13,7 @@ import {
   updateBookingStatusFailure,
   updateBookingStatusSuccess
 } from 'src/app/state/booking/booking.actions';
-import { selectProviderBookings } from 'src/app/state/booking/booking.selectors';
+import { selectBookingLoading, selectProviderBookings } from 'src/app/state/booking/booking.selectors';
 
 import { genericError } from 'src/validators/form-validators.module';
 
@@ -32,6 +32,7 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
   activeTab: 'bookings' | 'availability' | 'earnings' = 'bookings';
 
   bookings: Booking[] = [];
+  loading = false;
 
   private destroy$ = new Subject<void>();
 
@@ -47,6 +48,9 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     this.store.select(selectProviderBookings)
       .pipe(takeUntil(this.destroy$))
       .subscribe(bookings => this.bookings = bookings ?? []);
+    this.store.select(selectBookingLoading)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(loading => this.loading = loading);
 
     this.actions$
       .pipe(ofType(updateBookingStatusSuccess), takeUntil(this.destroy$))
@@ -82,12 +86,16 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     return this.bookings.filter(b => b.status === 'cancelled');
   }
 
+  refresh(): void {
+    this.store.dispatch(loadMyProviderBookings());
+  }
+
   onStatusChangeRequested(event: { id: number; status: string }): void {
     this.store.dispatch(updateBookingStatus(event));
   }
 
   onStartIntakeRequested(event: { clientId: number; clientName: string }): void {
-    this.router.navigate(['/client-intake/new', event.clientId], {
+    this.router.navigate(['/dashboard/client-intake/new', event.clientId], {
       queryParams: { clientName: event.clientName }
     });
   }

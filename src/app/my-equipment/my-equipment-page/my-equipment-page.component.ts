@@ -8,6 +8,7 @@ import { CenterService } from 'src/app/services/center.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { CenterEquipment } from 'src/app/models/centers.interface';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { genericError } from 'src/validators/form-validators.module';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
@@ -22,6 +23,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
   selector: 'app-my-equipment-page',
   standalone: true,
   imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, StrapiUrlPipe],
+  imports: [CommonModule, RouterModule, IconsModule, StrapiUrlPipe, SharedModule],
   templateUrl: './my-equipment-page.component.html',
   styleUrls: ['./my-equipment-page.component.css']
 })
@@ -54,6 +56,10 @@ export class MyEquipmentPageComponent implements OnInit {
           this.snackBar.openSnackBar(genericError, 'error');
         }
       });
+  }
+
+  refresh(): void {
+    this.load();
   }
 
   toggleFeatured(item: CenterEquipment): void {

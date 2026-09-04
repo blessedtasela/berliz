@@ -8,8 +8,8 @@
                     style="width:18px;height:18px;"></i-feather>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-gray-900">{{ details.title || 'Are you sure?' }}</h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">This action may be irreversible</p>
+                <h2 class="text-sm font-bold text-gray-900">{{ details.title || (details.confirmation ? 'Are you sure?' : 'Heads up') }}</h2>
+                <p *ngIf="details.confirmation" class="text-[11px] text-gray-400 mt-0.5">This action may be irreversible</p>
             </div>
         </div>
         <button (click)="closeDialog()"
@@ -25,13 +25,13 @@
 
     <!-- Actions -->
     <div class="flex gap-2 justify-end">
-        <button (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+        <button *ngIf="details.confirmation" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
              hover:bg-gray-50 transition">
-            Cancel
+            {{ details.cancelText || 'Cancel' }}
         </button>
         <button (click)="handleChangeAction()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
              hover:bg-red-700 active:scale-[0.98] transition">
-            Confirm
+            {{ details.confirmText || (details.confirmation ? 'Confirm' : 'OK') }}
         </button>
     </div>
 

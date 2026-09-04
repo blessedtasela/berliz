@@ -17,7 +17,7 @@ describe('MessageEffects', () => {
 
   const sampleMessage: Message = {
     id: 1, senderId: 5, senderName: 'Coach Sam', recipientId: 1, recipientName: 'Jane Doe',
-    body: 'Hey!', isRead: false, date: new Date(), lastUpdate: new Date(),
+    body: 'Hey!', isRead: false, date: new Date(), lastUpdate: new Date(), deleted: false,
   };
 
   const sampleConversation: ConversationSummary = {

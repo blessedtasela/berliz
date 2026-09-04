@@ -78,7 +78,7 @@
                         {{ center.likes || 0 }}
                     </span>
 
-                    <a [routerLink]="['/centers', center.id, formatUrl(center.name)]" class="px-3 py-1.5 rounded-lg bg-red-600 text-white text-[11px] font-semibold
+                    <a [routerLink]="['/centers', formatUrl(center.name)]" class="px-3 py-1.5 rounded-lg bg-red-600 text-white text-[11px] font-semibold
                               hover:bg-red-700 active:scale-[0.98] transition">
                         View center
                     </a>

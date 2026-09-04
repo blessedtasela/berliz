@@ -14,6 +14,7 @@ import { WorkoutResponse } from 'src/app/models/workout.interface';
 
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 
 import { likeCategory, loadCategory, loadMyCategoryLikes } from 'src/app/state/category/category.actions';
 import { selectLikedCategoryIds, selectSelectedCategory } from 'src/app/state/category/category.selectors';
@@ -72,7 +73,8 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
     private store: Store,
     private dialog: MatDialog,
     private actions$: Actions,
-    private snackbar: SnackBarService
+    private snackbar: SnackBarService,
+    private authRedirect: AuthRedirectService
   ) { }
 
   ngOnInit(): void {
@@ -237,7 +239,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
 
     ref.afterClosed().subscribe(result => {
       if (result) {
-        this.router.navigate(['/login']);
+        this.authRedirect.goToLogin();
       }
     });
   }

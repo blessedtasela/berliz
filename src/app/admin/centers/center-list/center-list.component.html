@@ -37,6 +37,11 @@
                     (click)="openUpdateCenter(center.id)" title="Edit">
                     <i-feather name="edit-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
+                <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center"
+                    (click)="updateCenterStatus(center.id)"
+                    [title]="center.status === 'false' ? 'Activate' : 'Deactivate'">
+                    <i-feather [name]="center.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                </button>
                 <button class="w-9 h-9 rounded-lg active:bg-red-50 flex items-center justify-center"
                     (click)="deleteCenter(center.id)" title="Delete">
                     <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>

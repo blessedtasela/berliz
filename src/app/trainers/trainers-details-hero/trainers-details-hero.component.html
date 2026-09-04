@@ -1,7 +1,18 @@
 <!-- ═══════════════════════════════════════════════
      TRAINER PROFILE HERO
 ════════════════════════════════════════════════ -->
-<section class="relative w-full bg-zinc-950 font-sans overflow-hidden">
+<!--
+     z-10 (not just `relative`) is required, not decorative: the "Available in"
+     dropdown below is `position:absolute` with `z-20`, but that only wins
+     against siblings INSIDE this section's own stacking context. Without a
+     raised z-index here, the next section on the page ("Book a session",
+     a later DOM sibling of this whole hero) paints on top of it regardless,
+     because both are z-index:auto at the parent level and later-DOM-order
+     wins. `overflow-hidden` was dropped too -- it clipped that same dropdown
+     against this section's own bottom edge and wasn't actually needed to
+     contain the ambient glow div below (already bounded by inset-x-0/h-64).
+-->
+<section class="relative z-10 w-full bg-zinc-950 font-sans">
 
     <!-- Ambient glow -->
     <div class="absolute inset-x-0 top-0 h-64 pointer-events-none"
@@ -84,7 +95,7 @@
 
             <div class="relative">
                 <button type="button" (click)="toggleLocations()"
-                    class="w-full text-left bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1 transition"
+                    class="w-full h-full text-left bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1 transition"
                     [ngClass]="hasLocations ? 'hover:border-red-600/40 cursor-pointer' : 'cursor-default'">
                     <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold flex items-center justify-between">
                         Available in

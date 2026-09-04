@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { LoginFormComponent } from './login-form.component';
@@ -20,6 +20,7 @@ describe('LoginFormComponent', () => {
   let snackBarService: jasmine.SpyObj<SnackBarService>;
   let ngxService: jasmine.SpyObj<NgxUiLoaderService>;
   let router: Router;
+  let returnUrl: string | null;
 
   const successResponse = (accessToken = 'access-jwt', refreshToken = 'refresh-jwt') => ({
     message: 'Login successful',
@@ -46,6 +47,7 @@ describe('LoginFormComponent', () => {
 
     snackBarService = jasmine.createSpyObj('SnackBarService', ['openSnackBar', 'dismiss']);
     ngxService = jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']);
+    returnUrl = null;
 
     TestBed.configureTestingModule({
       declarations: [LoginFormComponent],
@@ -56,6 +58,10 @@ describe('LoginFormComponent', () => {
         { provide: SnackBarService, useValue: snackBarService },
         { provide: NgxUiLoaderService, useValue: ngxService },
         { provide: MatDialog, useValue: jasmine.createSpyObj('MatDialog', ['open']) },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { get queryParamMap() { return convertToParamMap(returnUrl ? { returnUrl } : {}); } } }
+        },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     });
@@ -64,6 +70,7 @@ describe('LoginFormComponent', () => {
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
     spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
+    spyOn(router, 'navigateByUrl').and.returnValue(Promise.resolve(true));
     localStorage.removeItem('token');
     localStorage.removeItem('refresh_token');
   });
@@ -117,7 +124,7 @@ describe('LoginFormComponent', () => {
       expect(localStorage.getItem('token')).toBe('access-jwt');
       expect(localStorage.getItem('refresh_token')).toBe('refresh-jwt');
       expect(userService.startRefreshTokenTimer).toHaveBeenCalled();
-      expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
+      expect(router.navigateByUrl).toHaveBeenCalledWith('/dashboard');
     }));
 
     it('shows an error and does not navigate when the backend rejects the Google token', fakeAsync(() => {
@@ -129,7 +136,7 @@ describe('LoginFormComponent', () => {
       onCredential('bad-token');
 
       expect(localStorage.getItem('token')).toBeNull();
-      expect(router.navigate).not.toHaveBeenCalledWith(['/dashboard']);
+      expect(router.navigateByUrl).not.toHaveBeenCalled();
       expect(snackBarService.openSnackBar).toHaveBeenCalledWith('Invalid or expired Google token', 'error');
     }));
   });
@@ -146,7 +153,7 @@ describe('LoginFormComponent', () => {
 
       expect(userService.loginWithFacebook).toHaveBeenCalledWith('fb-access-token');
       expect(localStorage.getItem('token')).toBe('access-jwt');
-      expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
+      expect(router.navigateByUrl).toHaveBeenCalledWith('/dashboard');
     }));
 
     it('shows a "not configured" message and never calls the backend when Facebook Login is unavailable', fakeAsync(() => {
@@ -175,8 +182,52 @@ describe('LoginFormComponent', () => {
       component.loginWithFacebook();
       tick();
 
-      expect(router.navigate).not.toHaveBeenCalledWith(['/dashboard']);
+      expect(router.navigateByUrl).not.toHaveBeenCalled();
       expect(snackBarService.openSnackBar).toHaveBeenCalledWith('Invalid Facebook token', 'error');
     }));
+  });
+
+  describe('login() -- returning to where the user was, not always /dashboard', () => {
+
+    function fillAndSubmit() {
+      fixture.detectChanges();
+      component.loginForm.setValue({ email: 'jane@example.com', password: 'password123' });
+      component.login();
+    }
+
+    it('goes to /dashboard when there is no returnUrl (a plain, unprompted visit to /login)', () => {
+      userService.login.and.returnValue(of(successResponse()));
+
+      fillAndSubmit();
+
+      expect(router.navigateByUrl).toHaveBeenCalledWith('/dashboard');
+    });
+
+    it('returns to the returnUrl a login gate (AuthGuard, AuthRedirectService) attached', () => {
+      returnUrl = '/dashboard/messages';
+      userService.login.and.returnValue(of(successResponse()));
+
+      fillAndSubmit();
+
+      expect(router.navigateByUrl).toHaveBeenCalledWith('/dashboard/messages');
+    });
+
+    it('falls back to /dashboard rather than following a protocol-relative returnUrl (open-redirect guard)', () => {
+      returnUrl = '//evil.example.com';
+      userService.login.and.returnValue(of(successResponse()));
+
+      fillAndSubmit();
+
+      expect(router.navigateByUrl).toHaveBeenCalledWith('/dashboard');
+    });
+
+    it('does not navigate when the backend responds without an access token', () => {
+      userService.login.and.returnValue(of(failureResponse('Incorrect email or password')));
+
+      fillAndSubmit();
+
+      expect(router.navigateByUrl).not.toHaveBeenCalled();
+      expect(snackBarService.openSnackBar).toHaveBeenCalledWith('Incorrect email or password', 'error');
+    });
   });
 });

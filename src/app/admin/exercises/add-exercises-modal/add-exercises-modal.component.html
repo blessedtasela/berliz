@@ -47,23 +47,24 @@
             </p>
         </div>
 
-        <!-- Demo video -->
+        <!-- Demo image -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Demo video</label>
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Demo image</label>
             <div class="flex items-center gap-3">
                 <div
                     class="w-16 h-16 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 text-gray-400">
-                    <i-feather name="video" style="width:18px;height:18px;"></i-feather>
+                    <i-feather name="image" style="width:18px;height:18px;"></i-feather>
                 </div>
-                <input formControlName="demo" (change)="onVideoSelected($event)" type="file" accept="video/*" class="block w-full text-xs text-gray-500 cursor-pointer
+                <input formControlName="demo" (change)="onVideoSelected($event)" type="file" accept="image/*" class="block w-full text-xs text-gray-500 cursor-pointer
                            file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold
                            file:bg-red-50 file:text-red-600 hover:file:bg-red-100 file:cursor-pointer transition">
             </div>
             <p *ngIf="addExerciseForm.get('demo')?.invalid && (addExerciseForm.get('demo')?.dirty || invalidForm)"
                 class="text-red-500 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
-                A demo video is required
+                A demo image is required
             </p>
+            <p class="text-[10px] text-gray-400">A real demo video can be attached from the exercises list after this is created.</p>
         </div>
 
         <!-- Description -->
@@ -80,6 +81,35 @@
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Description is required
             </p>
+        </div>
+
+        <!-- Benefit -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Benefit</label>
+            <textarea formControlName="benefit" placeholder="Why this exercise matters, e.g. &quot;Builds explosive power through the hips and core.&quot;"
+                rows="2" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"></textarea>
+        </div>
+
+        <!-- How to perform -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">How to perform</label>
+            <textarea formControlName="howToPerform" placeholder="One step per line" rows="4"
+                class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"></textarea>
+            <p class="text-[10px] text-gray-400">One instruction per line — shown as a numbered list.</p>
+        </div>
+
+        <!-- Difficulty level -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Difficulty level</label>
+            <select formControlName="difficultyLevel" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                <option value="">Not set</option>
+                <option value="BEGINNER">Beginner</option>
+                <option value="INTERMEDIATE">Intermediate</option>
+                <option value="ADVANCED">Advanced</option>
+            </select>
         </div>
 
         <!-- Muscle groups -->

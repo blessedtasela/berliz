@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FeatherModule } from 'angular-feather';
 import {
   Camera,
+  Film,
   Heart,
   Github,
   AlignJustify,
@@ -167,12 +168,14 @@ import {
   TrendingUp,
 Image,
   Maximize2,
+  Target,
 
 } from 'angular-feather/icons';
 
 // Select some icons (use an object, not an array)
 const icons = {
   Camera,
+  Film,
   Heart,
   Github,
   AlignJustify,
@@ -337,6 +340,7 @@ const icons = {
   TrendingUp,
   Image,
   Maximize2,
+  Target,
 };
 
 @NgModule({

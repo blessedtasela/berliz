@@ -8,6 +8,7 @@ import { Notifications } from 'src/app/models/Notifications.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { NotificationDetailsComponent } from 'src/app/shared/notification-details/notification-details.component';
 import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
+import { markAsRead } from 'src/app/state/notification/notification.actions';
 
 @Component({
   selector: 'notification-dropdown-component',
@@ -91,6 +92,10 @@ export class NotificationDropdownComponent implements OnInit, OnDestroy {
       destination: '/app/markNotificationRead',
       body: JSON.stringify({ id: n.id })
     });
+
+    // Drive the store, not just this dropdown's local list -- the navbar/sidebar
+    // unread badges select from selectMyNotifications, which only this updates.
+    this.store.dispatch(markAsRead({ id: n.id }));
 
     n.read = true;
     this.notifications = this.notifications.filter(x => !x.read);

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 
 import { ConnectionsMainComponent } from './connections-main.component';
@@ -35,6 +36,7 @@ describe('ConnectionsMainComponent', () => {
   beforeEach(() => {
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     router = jasmine.createSpyObj('Router', ['navigate']);
+    const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
 
     TestBed.configureTestingModule({
       declarations: [ConnectionsMainComponent],
@@ -51,6 +53,7 @@ describe('ConnectionsMainComponent', () => {
         }),
         { provide: SnackBarService, useValue: snackbarSpy },
         { provide: Router, useValue: router },
+        { provide: MatDialog, useValue: dialogSpy },
       ]
     });
 
@@ -100,6 +103,6 @@ describe('ConnectionsMainComponent', () => {
 
     component.message(connections[0]);
 
-    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/messages']);
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/messages'], { queryParams: { userId: 4 } });
   });
 });

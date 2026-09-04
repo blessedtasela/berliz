@@ -146,8 +146,8 @@ export class DashboardMembersComponent implements OnInit, OnDestroy {
     if (request) this.store.dispatch(respondToConnectionRequest({ id: request.id, status: 'rejected' }));
   }
 
-  messageMember(): void {
-    this.router.navigate(['/dashboard/messages']);
+  messageMember(member: PublicDirectoryEntry): void {
+    this.router.navigate(['/dashboard/messages'], { queryParams: { userId: member.id } });
   }
 
   // ── Filters ──────────────────────────────────────────────────────────────

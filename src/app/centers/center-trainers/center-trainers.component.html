@@ -1,45 +1,45 @@
-<section class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
+<section class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col gap-4">
 
     <div class="flex items-center justify-between gap-3">
         <div>
-            <h2 class="text-sm font-bold text-gray-900">Trainers</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h2 class="text-sm font-bold text-white">Trainers</h2>
+            <p class="text-[11px] text-zinc-500 mt-0.5">
                 {{ centerTrainers.length }}
                 {{ centerTrainers.length === 1 ? 'coach' : 'coaches' }} affiliated with this center
             </p>
         </div>
         <button *ngIf="centerTrainers.length > 6" type="button" (click)="allTrainers()"
-            class="text-[11px] font-semibold text-red-600 hover:text-red-700 transition shrink-0">
+            class="text-[11px] font-semibold text-red-400 hover:text-red-300 transition shrink-0">
             {{ !showAllTrainers ? 'See all' : 'See less' }}
         </button>
     </div>
 
-    <div class="border-t border-gray-100"></div>
+    <div class="border-t border-zinc-800"></div>
 
     <div *ngIf="centerTrainers.length; else noTrainers" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <div *ngFor="let t of centerTrainers; let i = index" [ngClass]="{ 'hidden': i >= 6 && !showAllTrainers }"
-            class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col gap-2 hover:border-red-200 transition">
+            class="bg-zinc-950 border border-zinc-800 rounded-xl p-3 flex flex-col gap-2 hover:border-red-900 transition">
 
             <div class="flex items-center gap-3">
                 <img [src]="t.photoUrl | strapiUrl" [alt]="t.trainerName"
-                    class="w-11 h-11 rounded-xl object-cover object-top border border-gray-200"
+                    class="w-11 h-11 rounded-xl object-cover object-top border border-zinc-800"
                     onerror="this.src='assets/avatar.png';" />
                 <div class="min-w-0">
-                    <p class="text-xs font-bold text-gray-900 truncate">{{ t.trainerName }}</p>
-                    <p class="text-[10px] text-gray-400 truncate">
+                    <p class="text-xs font-bold text-white truncate">{{ t.trainerName }}</p>
+                    <p class="text-[10px] text-zinc-500 truncate">
                         {{ t.experience ? t.experience + ' of experience' : 'Certified trainer' }}
                     </p>
                 </div>
             </div>
 
-            <p *ngIf="t.motto" class="text-[11px] text-gray-600 italic line-clamp-2">"{{ t.motto }}"</p>
+            <p *ngIf="t.motto" class="text-[11px] text-zinc-400 italic line-clamp-2">"{{ t.motto }}"</p>
 
-            <div class="flex items-center justify-between pt-2 border-t border-gray-200">
-                <span class="text-[10px] uppercase tracking-wide text-gray-400">
+            <div class="flex items-center justify-between pt-2 border-t border-zinc-800">
+                <span class="text-[10px] uppercase tracking-wide text-zinc-500">
                     {{ t.status === 'ACTIVE' ? 'Active' : t.status }}
                 </span>
                 <a *ngIf="t.slug" [routerLink]="['/trainers', t.slug]"
-                    class="text-[10px] font-semibold text-red-600 hover:text-red-700 transition flex items-center gap-1">
+                    class="text-[10px] font-semibold text-red-400 hover:text-red-300 transition flex items-center gap-1">
                     View profile
                     <i-feather name="arrow-right" style="width:11px;height:11px;"></i-feather>
                 </a>
@@ -48,7 +48,7 @@
     </div>
 
     <ng-template #noTrainers>
-        <div class="flex items-center gap-2 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3">
+        <div class="flex items-center gap-2 text-zinc-500 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-3">
             <i-feather name="info" style="width:13px;height:13px;"></i-feather>
             <span class="text-xs">No trainers affiliated with this center yet.</span>
         </div>

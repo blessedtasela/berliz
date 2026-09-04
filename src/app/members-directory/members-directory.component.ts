@@ -12,6 +12,7 @@ import { Connection } from 'src/app/models/connection.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
+import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { loadPublicDirectory } from 'src/app/state/user-profile/user-profile.actions';
 import {
   selectPublicDirectory,
@@ -85,6 +86,7 @@ export class MembersDirectoryComponent implements OnInit, OnDestroy {
     private router: Router,
     private snackBar: SnackBarService,
     public lightbox: PhotoLightboxService,
+    public authRedirect: AuthRedirectService,
   ) {
     this.needsLogin = !this.authService.isAuthenticated();
     this.currentUserId = this.authService.getCurrentUserId();
@@ -163,7 +165,7 @@ export class MembersDirectoryComponent implements OnInit, OnDestroy {
   messageMember(member: PublicDirectoryEntry, event: Event): void {
     event.preventDefault();
     event.stopPropagation();
-    this.router.navigate(['/dashboard/messages']);
+    this.router.navigate(['/dashboard/messages'], { queryParams: { userId: member.id } });
   }
 
   // ── Filters ──────────────────────────────────────────────────────────────

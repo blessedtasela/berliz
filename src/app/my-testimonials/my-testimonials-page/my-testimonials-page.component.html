@@ -12,10 +12,13 @@
             </div>
         </div>
 
-        <button *ngIf="!loading" type="button" (click)="writeAnother()"
-            class="text-xs font-semibold text-white bg-gray-900 hover:bg-gray-800 rounded-lg px-3 py-2 transition shrink-0">
-            Write a testimonial
-        </button>
+        <div class="flex items-center gap-2 shrink-0">
+            <app-refresh-button [loading]="loading" (refresh)="refresh()"></app-refresh-button>
+            <button *ngIf="!loading" type="button" (click)="writeAnother()"
+                class="text-xs font-semibold text-white bg-gray-900 hover:bg-gray-800 rounded-lg px-3 py-2 transition">
+                Write a testimonial
+            </button>
+        </div>
     </div>
 
     <!-- Loading -->

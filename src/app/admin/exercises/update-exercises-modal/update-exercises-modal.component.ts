@@ -51,6 +51,9 @@ export class UpdateExercisesModalComponent {
         'id': new FormControl(this.exerciseData.id, [Validators.required]),
         'name': new FormControl(this.exerciseData.name, [Validators.required, Validators.minLength(2)]),
         'description': new FormControl(this.exerciseData.description, [Validators.required, Validators.minLength(20)]),
+        'benefit': new FormControl(this.exerciseData.benefit ?? ''),
+        'howToPerform': new FormControl(this.exerciseData.howToPerform ?? ''),
+        'difficultyLevel': new FormControl(this.exerciseData.difficultyLevel ?? ''),
         'categoryIds': this.formBuilder.array(this.selectedCategoryIds, this.validateCheckbox()),
         'muscleGroupIds': this.formBuilder.array(this.selectedMuscleGroupIds, this.validateCheckbox()),
       });
@@ -60,6 +63,9 @@ export class UpdateExercisesModalComponent {
         'id': new FormControl(this.exerciseData.id, [Validators.required]),
         'name': new FormControl(this.exerciseData.name, [Validators.required, Validators.minLength(2)]),
         'description': new FormControl(this.exerciseData.description, [Validators.required, Validators.minLength(20)]),
+        'benefit': new FormControl(this.exerciseData.benefit ?? ''),
+        'howToPerform': new FormControl(this.exerciseData.howToPerform ?? ''),
+        'difficultyLevel': new FormControl(this.exerciseData.difficultyLevel ?? ''),
       });
     }
     this.handleEmitEvent();

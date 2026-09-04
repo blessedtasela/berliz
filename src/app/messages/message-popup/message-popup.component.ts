@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subject, Subscription, takeUntil } from 'rxjs';
@@ -12,10 +12,12 @@ import {
   selectActiveConversationMessages,
   selectActiveConversationUserId,
   selectConversations,
+  selectIsActivePartyTyping,
   selectLoadingConversation,
   selectMessageError,
   selectTotalUnreadCount,
 } from 'src/app/state/message/message.selectors';
+import { ConversationRowData } from 'src/app/messages/shared/conversation-row/conversation-row.component';
 
 import { loadMyTrainers } from 'src/app/state/booking/booking.actions';
 import { selectMyTrainers } from 'src/app/state/booking/booking.selectors';
@@ -59,6 +61,16 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
   open = false;
   view: 'list' | 'thread' = 'list';
 
+  // Mirrors ScrollToTopComponent's own show threshold (no shared state between
+  // the two -- they're independent siblings mounted in different places) so the
+  // bubble/panel can lift out of the way once that button appears in the same corner.
+  raised = false;
+
+  @HostListener('window:scroll', [])
+  onWindowScroll(): void {
+    this.raised = window.scrollY > 2000;
+  }
+
   conversations: ConversationSummary[] = [];
   unreadCount = 0;
   myTrainers: MyTrainerSummary[] = [];
@@ -67,8 +79,7 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
   activeUserId: number | null = null;
   activeMessages: Message[] = [];
   loadingConversation = false;
-
-  draftBody = '';
+  activePartyTyping = false;
 
   private subscriptions: Subscription[] = [];
   private destroy$ = new Subject<void>();
@@ -102,6 +113,7 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
       this.store.select(selectActiveConversationUserId).pipe(takeUntil(this.destroy$)).subscribe(id => this.activeUserId = id),
       this.store.select(selectActiveConversationMessages).pipe(takeUntil(this.destroy$)).subscribe(m => this.activeMessages = m),
       this.store.select(selectLoadingConversation).pipe(takeUntil(this.destroy$)).subscribe(l => this.loadingConversation = l),
+      this.store.select(selectIsActivePartyTyping).pipe(takeUntil(this.destroy$)).subscribe(t => this.activePartyTyping = t),
       this.store.select(selectMessageError).pipe(takeUntil(this.destroy$)).subscribe(error => {
         if (error) this.snackBar.openSnackBar(error || genericError, 'error');
       }),
@@ -149,28 +161,58 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
     this.view = 'thread';
   }
 
+  /**
+   * Starting a brand-new thread is just opening a conversation that happens to
+   * have zero messages yet -- see messages-main.component.ts's startConversation
+   * for the full explanation of the bug this replaced (only the component's
+   * own local activeUserId was set, never the store's activeConversationUserId,
+   * so a first message posted successfully but never appeared in the sender's
+   * own thread).
+   */
   startConversation(contact: StartableContact): void {
-    this.activeUserId = contact.userId;
-    this.store.dispatch(MessageActions.clearActiveConversation());
-    this.view = 'thread';
+    this.openConversation(contact.userId);
   }
 
   backToList(): void {
     this.view = 'list';
   }
 
-  send(): void {
-    const body = this.draftBody.trim();
-    if (!body || this.activeUserId == null) return;
-
+  send(body: string): void {
+    if (this.activeUserId == null) return;
     this.store.dispatch(MessageActions.sendMessage({
       request: { recipientId: this.activeUserId, body }
     }));
-    this.draftBody = '';
+  }
+
+  setTyping(typing: boolean): void {
+    if (this.activeUserId == null) return;
+    this.store.dispatch(MessageActions.setTyping({ otherUserId: this.activeUserId, typing }));
+  }
+
+  unsend(messageId: number): void {
+    this.store.dispatch(MessageActions.deleteMessage({ messageId }));
   }
 
   isMine(message: Message): boolean {
     return message.senderId !== this.activeUserId;
+  }
+
+  /** The id of the sender's own most recent message in the open thread -- drives the "Seen" receipt. */
+  get lastMineMessageId(): number | null {
+    for (let i = this.activeMessages.length - 1; i >= 0; i--) {
+      if (this.isMine(this.activeMessages[i])) return this.activeMessages[i].id;
+    }
+    return null;
+  }
+
+  /** The open thread's other party, as a display row -- from the conversation list, else the startable-contacts list. */
+  get activeContact(): ConversationRowData & { role: string } {
+    const convo = this.conversations.find(c => c.otherUserId === this.activeUserId);
+    if (convo) {
+      return { userId: convo.otherUserId, name: convo.otherUserName, photo: convo.otherUserPhoto, role: convo.otherUserRole };
+    }
+    const contact = this.startableContacts.find(c => c.userId === this.activeUserId);
+    return { userId: this.activeUserId ?? 0, name: contact?.name ?? 'Conversation', role: '' };
   }
 
   goToFullPage(): void {

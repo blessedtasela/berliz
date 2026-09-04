@@ -16,9 +16,10 @@ export class PromptModalComponent implements OnInit {
     public dialogRef: MatDialogRef<PromptModalComponent>) { }
 
   ngOnInit(): void {
-    if (this.dialogData && this.dialogData.confirmation) {
-      this.details = this.dialogData;
-    }
+    // `confirmation` just decides whether a Cancel button is offered alongside
+    // Confirm/OK -- a plain informational alert (no confirmation) is just as
+    // valid a use of this modal and shouldn't be dropped here.
+    this.details = this.dialogData || {};
   }
 
   handleChangeAction() {

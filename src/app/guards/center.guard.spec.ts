@@ -1,26 +1,22 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, Router, convertToParamMap } from '@angular/router';
-import { of } from 'rxjs';
+import { ActivatedRouteSnapshot, Router, convertToParamMap } from '@angular/router';
 import { CenterGuard } from './center.guard';
-import { CenterService } from '../services/center.service';
+import { SnackBarService } from '../services/snack-bar.service';
 
 describe('CenterGuard', () => {
   let guard: CenterGuard;
   let mockRouter: Partial<Router>;
-  let mockCenterService: { getActiveCenters: jasmine.Spy };
+  let mockSnackbar: { openSnackBar: jasmine.Spy };
 
   beforeEach(() => {
     mockRouter = { navigate: jasmine.createSpy('navigate') };
-    mockCenterService = { getActiveCenters: jasmine.createSpy('getActiveCenters') };
-
-    spyOn(window, 'alert');
-    spyOn(window, 'scrollTo');
+    mockSnackbar = { openSnackBar: jasmine.createSpy('openSnackBar') };
 
     TestBed.configureTestingModule({
       providers: [
         CenterGuard,
         { provide: Router, useValue: mockRouter },
-        { provide: CenterService, useValue: mockCenterService }
+        { provide: SnackBarService, useValue: mockSnackbar }
       ]
     });
 
@@ -31,39 +27,25 @@ describe('CenterGuard', () => {
     expect(guard).toBeTruthy();
   });
 
-  it('redirects immediately for a missing/invalid id param', (done) => {
-    const route = { paramMap: convertToParamMap({}) } as ActivatedRouteSnapshot;
-    const state = {} as RouterStateSnapshot;
+  it('allows access for a valid slug', () => {
+    const route = { paramMap: convertToParamMap({ name: 'downtown-fitness' }) } as ActivatedRouteSnapshot;
 
-    guard.canActivate(route, state).subscribe(result => {
-      expect(result).toBe(false);
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/centers']);
-      expect(mockCenterService.getActiveCenters).not.toHaveBeenCalled();
-      done();
-    });
+    expect(guard.canActivate(route)).toBe(true);
+    expect(mockRouter.navigate).not.toHaveBeenCalled();
   });
 
-  it('allows access when the center exists in the active list', (done) => {
-    mockCenterService.getActiveCenters.and.returnValue(of({ data: [{ id: 5 }] } as any));
-    const route = { paramMap: convertToParamMap({ id: '5' }) } as ActivatedRouteSnapshot;
-    const state = {} as RouterStateSnapshot;
+  it('redirects for a missing/too-short slug', () => {
+    const route = { paramMap: convertToParamMap({ name: 'a' }) } as ActivatedRouteSnapshot;
 
-    guard.canActivate(route, state).subscribe(result => {
-      expect(result).toBe(true);
-      expect(mockRouter.navigate).not.toHaveBeenCalled();
-      done();
-    });
+    expect(guard.canActivate(route)).toBe(false);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/centers']);
   });
 
-  it('redirects when the center is not in the active list', (done) => {
-    mockCenterService.getActiveCenters.and.returnValue(of({ data: [] } as any));
-    const route = { paramMap: convertToParamMap({ id: '999' }) } as ActivatedRouteSnapshot;
-    const state = {} as RouterStateSnapshot;
+  it('redirects and shows a snackbar for an invalid slug format', () => {
+    const route = { paramMap: convertToParamMap({ name: 'invalid name!' }) } as ActivatedRouteSnapshot;
 
-    guard.canActivate(route, state).subscribe(result => {
-      expect(result).toBe(false);
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/centers']);
-      done();
-    });
+    expect(guard.canActivate(route)).toBe(false);
+    expect(mockSnackbar.openSnackBar).toHaveBeenCalledWith('Invalid center name format', 'error');
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/centers']);
   });
 });

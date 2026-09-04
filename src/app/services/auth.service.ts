@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import jwt_decode from 'jwt-decode';
+import { AuthRedirectService } from './auth-redirect.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor(private router: Router) {}
+  constructor(private authRedirect: AuthRedirectService) {}
 
   getToken(): string | null {
     return localStorage.getItem('token');
@@ -91,6 +91,6 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('refresh_token');
-    this.router.navigate(['/login']);
+    this.authRedirect.goToLogin();
   }
 }

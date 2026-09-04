@@ -1,14 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 
 import { Plan } from 'src/app/models/plan.model';
+import { AuthService } from 'src/app/services/auth.service';
+import { BypassCodeService } from 'src/app/services/bypass-code.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StripeService } from 'src/app/services/stripe.service';
 import { loadPlans } from 'src/app/state/plan/plan.actions';
 import { selectPlanLoading, selectPlans } from 'src/app/state/plan/plan.selectors';
-import { selectPlan, selectPlanFailure, selectPlanSuccess } from 'src/app/state/subscription/subscription.actions';
+import { loadMySubscriptions, selectPlan, selectPlanFailure, selectPlanSuccess } from 'src/app/state/subscription/subscription.actions';
 
 @Component({
   selector: 'app-my-subscriptions-plans',
@@ -23,6 +25,10 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
   /** The plan currently being submitted, so only that card shows a busy state. */
   selectingPlanId: number | null = null;
 
+  // ── Redeem a code ────────────────────────────────────────────────────────
+  redeemCode = '';
+  redeeming = false;
+
   private destroy$ = new Subject<void>();
 
   /** True while waiting on the Stripe checkout-session request, after selectPlan already succeeded -- distinct from selectingPlanId so the card can show "Redirecting to payment..." instead of just going quiet. */
@@ -31,9 +37,22 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     private actions$: Actions,
+    private authService: AuthService,
+    private bypassCodeService: BypassCodeService,
     private snackBar: SnackBarService,
     private stripeService: StripeService,
   ) { }
+
+  /** Which subset of the shared Plan catalog this signed-in role should see. */
+  private get myTargetRole(): 'client' | 'trainer' | 'center' {
+    const role = this.authService.getCurrentUserRole();
+    return role === 'trainer' ? 'trainer' : role === 'center' ? 'center' : 'client';
+  }
+
+  get visiblePlans(): Plan[] {
+    const role = this.myTargetRole;
+    return this.plans.filter(p => p.targetRole === role);
+  }
 
   ngOnInit(): void {
     this.store.dispatch(loadPlans());
@@ -106,5 +125,24 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
         this.snackBar.openSnackBar(err.error?.message || 'Could not start checkout — try again', 'error');
       },
     });
+  redeem(): void {
+    const code = this.redeemCode.trim();
+    if (!code || this.redeeming) return;
+
+    this.redeeming = true;
+    this.bypassCodeService.redeem(code)
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => {
+          this.redeeming = false;
+          this.redeemCode = '';
+          this.snackBar.openSnackBar(res?.message || 'Code redeemed!', '');
+          this.store.dispatch(loadMySubscriptions());
+        },
+        error: (err) => {
+          this.redeeming = false;
+          this.snackBar.openSnackBar(err?.error?.message || 'Could not redeem that code.', 'error');
+        }
+      });
   }
 }

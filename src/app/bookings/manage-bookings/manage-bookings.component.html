@@ -1,0 +1,33 @@
+<div class="flex flex-col gap-4 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div>
+            <h1 class="text-sm font-bold text-gray-900">Bookings</h1>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                {{ isProvider ? 'Your own bookings, and requests from clients.' : 'Sessions you\'ve requested with trainers and centers.' }}
+            </p>
+        </div>
+
+        <!-- Toggle — only shown to trainers/centers, who have both a personal and a provider view -->
+        <div *ngIf="isProvider" class="flex items-center gap-1 bg-gray-100 rounded-xl p-1">
+            <button type="button" (click)="setView('mine')"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+                [ngClass]="view === 'mine' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'">
+                My bookings
+            </button>
+            <button type="button" (click)="setView('requests')"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5"
+                [ngClass]="view === 'requests' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'">
+                Requests
+                <span *ngIf="pendingRequestCount > 0" class="inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full text-[10px] font-bold text-white bg-red-600">
+                    {{ pendingRequestCount }}
+                </span>
+            </button>
+        </div>
+    </div>
+
+    <app-my-bookings-main *ngIf="view === 'mine'"></app-my-bookings-main>
+    <app-provider-bookings-main *ngIf="isProvider && view === 'requests'"></app-provider-bookings-main>
+
+</div>

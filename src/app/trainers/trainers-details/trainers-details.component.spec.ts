@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 
@@ -24,7 +24,13 @@ describe('TrainersDetailsComponent', () => {
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         provideMockStore(),
-        { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => '1' }), snapshot: { paramMap: { get: () => '1' } } } },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            paramMap: of({ get: () => '1' }),
+            snapshot: { paramMap: { get: () => '1' }, queryParamMap: convertToParamMap({}) }
+          }
+        },
         { provide: Router, useValue: routerSpy },
         { provide: TrainerService, useValue: trainerServiceSpy },
         { provide: TestimonialDialogService, useValue: testimonialDialogSpy },

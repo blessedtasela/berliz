@@ -13,7 +13,7 @@ import { Store } from '@ngrx/store';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { selectCurrentTrainer, selectTrainerLikes } from 'src/app/state/trainer/trainer.selector';
 import { loadTrainerLikes } from 'src/app/state/trainer/trainer.actions';
-import { Router } from '@angular/router';
+import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 
@@ -53,7 +53,7 @@ export class TrainersSearchResultComponent implements OnInit, OnDestroy {
     private trainerService: TrainerService,
     private snackbar: SnackBarService,
     private dialog: MatDialog,
-    private router: Router,
+    private authRedirect: AuthRedirectService,
   ) { }
 
   ngOnInit(): void {
@@ -96,7 +96,7 @@ export class TrainersSearchResultComponent implements OnInit, OnDestroy {
 
       loginDialogRef.afterClosed().subscribe((result) => {
         if (result) {
-          this.router.navigate(['/login']);
+          this.authRedirect.goToLogin();
         }
       });
       return;

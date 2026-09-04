@@ -41,4 +41,19 @@ describe('DashboardMainComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('greeting matches the time of day', () => {
+    jasmine.clock().install();
+
+    jasmine.clock().mockDate(new Date(2024, 0, 1, 9));
+    expect(component.greeting).toBe('Good morning');
+
+    jasmine.clock().mockDate(new Date(2024, 0, 1, 14));
+    expect(component.greeting).toBe('Good afternoon');
+
+    jasmine.clock().mockDate(new Date(2024, 0, 1, 20));
+    expect(component.greeting).toBe('Good evening');
+
+    jasmine.clock().uninstall();
+  });
 });

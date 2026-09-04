@@ -1,41 +1,41 @@
-<section class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4">
+<section class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col gap-4">
 
     <div class="flex items-center justify-between gap-3">
         <div>
-            <h2 class="text-sm font-bold text-gray-900">Member reviews</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h2 class="text-sm font-bold text-white">Member reviews</h2>
+            <p class="text-[11px] text-zinc-500 mt-0.5">
                 {{ centerReviews.length }}
                 {{ centerReviews.length === 1 ? 'review' : 'reviews' }} from people who train here
             </p>
         </div>
         <button *ngIf="centerReviews.length > 4" type="button" (click)="allReviews()"
-            class="text-[11px] font-semibold text-red-600 hover:text-red-700 transition shrink-0">
+            class="text-[11px] font-semibold text-red-400 hover:text-red-300 transition shrink-0">
             {{ !showAllReviews ? 'See all' : 'See less' }}
         </button>
     </div>
 
-    <div class="border-t border-gray-100"></div>
+    <div class="border-t border-zinc-800"></div>
 
     <div *ngIf="centerReviews.length; else noReviews" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div *ngFor="let review of centerReviews; let i = index" [ngClass]="{ 'hidden': i >= 4 && !showAllReviews }"
-            class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col gap-2">
+            class="bg-zinc-950 border border-zinc-800 rounded-xl p-3 flex flex-col gap-2">
 
             <div class="flex items-center gap-3">
                 <img src="assets/icons/user.png" [alt]="review.memberName"
-                    class="w-9 h-9 rounded-xl object-cover object-top border border-gray-200 bg-white" />
+                    class="w-9 h-9 rounded-xl object-cover object-top border border-zinc-800 bg-zinc-900" />
                 <div class="min-w-0">
-                    <p class="text-xs font-bold text-gray-900 truncate">{{ review.memberName }}</p>
-                    <p class="text-[10px] uppercase tracking-wide text-gray-400">
+                    <p class="text-xs font-bold text-white truncate">{{ review.memberName }}</p>
+                    <p class="text-[10px] uppercase tracking-wide text-zinc-500">
                         {{ review.date | date: 'mediumDate' }}
                     </p>
                 </div>
             </div>
 
-            <p class="text-[11px] text-gray-700 leading-relaxed">{{ review.comment }}</p>
+            <p class="text-[11px] text-zinc-400 leading-relaxed">{{ review.comment }}</p>
 
-            <div class="flex items-center gap-1.5 pt-2 border-t border-gray-200">
-                <i-feather name="heart" style="width:11px;height:11px;" class="text-red-600"></i-feather>
-                <span class="text-[10px] text-gray-400">
+            <div class="flex items-center gap-1.5 pt-2 border-t border-zinc-800">
+                <i-feather name="heart" style="width:11px;height:11px;" class="text-red-400"></i-feather>
+                <span class="text-[10px] text-zinc-500">
                     {{ review.likes || 0 }} {{ review.likes === 1 ? 'person finds' : 'people find' }} this helpful
                 </span>
             </div>
@@ -43,7 +43,7 @@
     </div>
 
     <ng-template #noReviews>
-        <div class="flex items-center gap-2 text-gray-400 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3">
+        <div class="flex items-center gap-2 text-zinc-500 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-3">
             <i-feather name="info" style="width:13px;height:13px;"></i-feather>
             <span class="text-xs">No reviews published for this center yet.</span>
         </div>

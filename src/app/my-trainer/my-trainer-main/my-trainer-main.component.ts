@@ -45,6 +45,7 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
   trainer!: Trainers | null;
 
   dataReady = false;
+  refreshing = false;
 
   private totalRequests = 8;
   // Tracks which of the 8 sections has resolved at least once, keyed by name
@@ -171,6 +172,13 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
     this.store.dispatch(loadMyTrainerPhotoAlbum());
     this.store.dispatch(loadMyTrainerVideoAlbum());
     this.store.dispatch(loadMyTrainerSubscription());
+  }
+
+  refresh(): void {
+    if (this.refreshing) return;
+    this.refreshing = true;
+    this.loadData();
+    setTimeout(() => { this.refreshing = false; this.cdr.detectChanges(); }, 500);
   }
 
   // ── Derived state ─────────────────────────────────────────────────────────

@@ -1,0 +1,15 @@
+<div class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition" [class.bg-red-50]="active">
+    <a [routerLink]="['/dashboard/user', row.userId]" (click)="$event.stopPropagation()" class="shrink-0">
+        <app-avatar [photo]="row.photo" [name]="row.name" [size]="36" borderClass="border-red-100 bg-red-50 text-red-600"></app-avatar>
+    </a>
+
+    <button type="button" (click)="open.emit(row.userId)" class="flex-1 min-w-0 text-left">
+        <div class="flex items-center justify-between gap-2">
+            <span class="text-sm font-semibold text-gray-900 truncate">{{ row.name }}</span>
+            <span *ngIf="row.unreadCount" class="text-[10px] font-bold text-white bg-red-600 rounded-full px-1.5 py-0.5 shrink-0">
+                {{ row.unreadCount }}
+            </span>
+        </div>
+        <p class="text-xs text-gray-400 truncate">{{ row.preview || 'Tap to start chatting' }}</p>
+    </button>
+</div>

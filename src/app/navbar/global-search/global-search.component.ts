@@ -173,7 +173,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         id: c.id,
         label: c.name,
         sublabel: c.address || c.location,
-        link: ['/centers', c.id, slug(c.name)]
+        link: ['/centers', slug(c.name)]
       })
     },
     {

@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ForgotPasswordModalComponent } from 'src/app/dashboard/user/forgot-password-modal/forgot-password-modal.component';
 import { Login } from 'src/app/models/users.interface';
@@ -15,7 +15,7 @@ import { emailExtensionValidator, genericError } from 'src/validators/form-valid
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.css']
 })
-export class LoginFormComponent implements AfterViewInit {
+export class LoginFormComponent implements OnInit, AfterViewInit {
   loginForm!: FormGroup;
   loginInterface: Login | undefined;
   invalidForm: boolean = false;
@@ -30,12 +30,26 @@ export class LoginFormComponent implements AfterViewInit {
 
   constructor(private fb: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private dialog: MatDialog,
     private userService: UserService,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private socialAuthService: SocialAuthService) {
     this.invalidLogin = ''
+  }
+
+  /**
+   * Where to send the user once they're signed in. Set by AuthGuard when it
+   * blocked a protected route, or by AuthRedirectService.goToLogin() when some
+   * other "you need to log in to do that" gate sent them here — defaults to
+   * /dashboard when neither applies (a plain, unprompted visit to /login).
+   * Only ever a same-origin relative path — never trust this into an open
+   * redirect to an attacker-controlled host.
+   */
+  private get returnUrl(): string {
+    const url = this.route.snapshot.queryParamMap.get('returnUrl');
+    return url && url.startsWith('/') && !url.startsWith('//') ? url : '/dashboard';
   }
 
   ngAfterViewInit(): void {
@@ -60,7 +74,7 @@ export class LoginFormComponent implements AfterViewInit {
 
     if (token) {
       this.userService.checkToken().subscribe({
-        next: () => this.router.navigate(['/dashboard']),
+        next: () => this.router.navigateByUrl(this.returnUrl),
         error: () => {
           // token invalid/expired → clear it and stay on login
           localStorage.removeItem('token');
@@ -120,12 +134,11 @@ export class LoginFormComponent implements AfterViewInit {
     this.userService.login(this.loginForm.value)
       .subscribe({
         next: (response: any) => {
-          this.ngxService.stop();
-
           const auth = response?.data;
           if (!auth?.accessToken) {
             // Backend responded 200 but login didn't actually succeed
             // (e.g. wrong password, unactivated account) — don't navigate.
+            this.ngxService.stop();
             this.responseMessage = response?.message || genericError;
             this.snackBarService.openSnackBar(this.responseMessage, "error");
             return;
@@ -140,7 +153,10 @@ export class LoginFormComponent implements AfterViewInit {
           this.responseMessage = response?.message;
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.loginForm.reset();
-          this.router.navigate(['/dashboard']);
+          // Keep the spinner running through navigation -- /dashboard is lazy-loaded
+          // with no preloading strategy, so the chunk fetch/parse can visibly stall
+          // the (already spinner-free) login page for a second or two otherwise.
+          this.navigateAfterLogin();
         },
         error: (error: any) => {
           this.ngxService.stop();
@@ -196,7 +212,33 @@ export class LoginFormComponent implements AfterViewInit {
     this.userService.startRefreshTokenTimer();
     this.responseMessage = response?.message;
     this.snackBarService.openSnackBar(this.responseMessage, '');
-    this.router.navigate(['/dashboard']);
+    this.navigateAfterLogin();
+  }
+
+  /**
+   * Router.navigateByUrl() resolves `false` (never rejects, under normal
+   * config) whenever a navigation is silently dropped instead of completing --
+   * in practice here that's almost always the /dashboard lazy chunk failing to
+   * load because this tab has been open since before the last deploy replaced
+   * it (no service worker, so a long-lived tab can sit on a stale build
+   * indefinitely; the reported bug -- "login successful" but nothing happens
+   * until a manual refresh -- is exactly that: a hard reload fetches the
+   * current build, so the same URL that just silently failed then works).
+   * Falling back to a real page load here means the user never has to know to
+   * refresh -- the app does it for them.
+   */
+  private navigateAfterLogin(): void {
+    const target = this.returnUrl;
+    this.router.navigateByUrl(target)
+      .then(succeeded => {
+        if (!succeeded) {
+          window.location.href = target;
+        }
+      })
+      .catch(() => {
+        window.location.href = target;
+      })
+      .finally(() => this.ngxService.stop());
   }
 
   private handleSocialAuthError(error: any): void {

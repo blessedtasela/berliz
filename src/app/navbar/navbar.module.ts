@@ -38,6 +38,10 @@ import { NotificationDropdownComponent } from './notification-dropdown/notificat
 import { GlobalSearchComponent } from './global-search/global-search.component';
 import { MessagePopupComponent } from '../messages/message-popup/message-popup.component';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { ChatThreadHeaderComponent } from '../messages/shared/chat-thread-header/chat-thread-header.component';
+import { MessageBubbleComponent } from '../messages/shared/message-bubble/message-bubble.component';
+import { ConversationRowComponent } from '../messages/shared/conversation-row/conversation-row.component';
+import { MessageComposerComponent } from '../messages/shared/message-composer/message-composer.component';
 
 
 @NgModule({
@@ -83,7 +87,11 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
     BreadcrumbModule,
     MatIconModule,
     ImageCropperModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ChatThreadHeaderComponent,
+    MessageBubbleComponent,
+    ConversationRowComponent,
+    MessageComposerComponent,
   ],
   exports: [
     NavigationBarComponent,

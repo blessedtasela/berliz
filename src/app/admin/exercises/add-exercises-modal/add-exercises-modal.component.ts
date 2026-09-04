@@ -43,6 +43,9 @@ export class AddExercisesModalComponent implements OnInit{
         'name': ['', [Validators.required, Validators.minLength(2)]],
         'demo': ['', [Validators.required, fileValidator]],
         'description': ['', [Validators.required, Validators.minLength(20)]],
+        'benefit': [''],
+        'howToPerform': [''],
+        'difficultyLevel': [''],
         'categoryIds': this.formBuilder.array([], this.validateCheckbox()),
         'muscleGroupIds': this.formBuilder.array([], this.validateCheckbox()),
       });
@@ -122,6 +125,9 @@ export class AddExercisesModalComponent implements OnInit{
       requestData.append('description', this.addExerciseForm.get('description')?.value);
       requestData.append('demo', this.selectedDemo);
       requestData.append('muscleGroups', muscleGroupIdsString);
+      requestData.append('benefit', this.addExerciseForm.get('benefit')?.value ?? '');
+      requestData.append('howToPerform', this.addExerciseForm.get('howToPerform')?.value ?? '');
+      requestData.append('difficultyLevel', this.addExerciseForm.get('difficultyLevel')?.value ?? '');
       this.exerciseService.addExercise(requestData)
         .subscribe((response: any) => {
           this.onAddExerciseEmit.emit();

@@ -33,7 +33,12 @@ import * as TestimonialActions from 'src/app/state/testimonial/testimonial.actio
 import * as TestimonialSelectors from 'src/app/state/testimonial/testimonial.selectors';
 
 /**
- * PUBLIC center profile page — route `/centers/:id`.
+ * PUBLIC center profile page — route `/centers/:name`.
+ *
+ * `:name` is the center name slugified with dashes (same convention
+ * TrainersDetailsComponent/TrainerGuard use for `/trainers/:name`). We
+ * resolve the slug back to the real `Centers` record, then pull every
+ * public sub-entity for that center id.
  *
  * Introduction / equipment / pricing / photo albums / video albums / locations /
  * trainer roster are fetched directly via CenterService's public
@@ -87,23 +92,8 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscription.add(
       this.route.paramMap.subscribe(params => {
-        const idParam = params.get('id');
-
-        if (idParam === null) {
-          this.showNotFound("Missing 'id' parameter");
-          return;
-        }
-
-        const id = +idParam;
-        if (isNaN(id) || id <= 0) {
-          this.showNotFound("Invalid 'id' parameter: not a valid positive number");
-          return;
-        }
-
-        this.centerId = id;
-        this.notFound = false;
-        this.loading = true;
-        this.fetchCenter();
+        const name = params.get('name');
+        this.resolveCenter(name);
       })
     );
   }
@@ -117,35 +107,89 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
   // ===========================================================================
 
   /**
-   * There is no public "get center by id" endpoint, so we follow the pattern
-   * already used by CenterGuard / CenterPageComponent: load the active centers
-   * and resolve the one matching the route id client-side. The center's public
+   * There is no public "get center by name" endpoint (mirrors trainers, which
+   * are also resolved this way), so we follow the pattern already used by
+   * CenterPageComponent: load the active centers and resolve the one whose
+   * slugified name matches the route param, client-side. Once resolved,
+   * `loadCenterDetails()` fetches everything else. The center's public
    * sub-sections (introduction, equipment, etc.) do have per-center public
-   * endpoints, fetched below directly through CenterService.
+   * endpoints, fetched there directly through CenterService.
    */
-  private fetchCenter(): void {
-    // Id-scoped public endpoints, via the store.
-    this.store.dispatch(CenterActions.loadActiveCenters());
-    this.store.dispatch(CenterActions.loadActiveCenterAnnouncements({ id: this.centerId }));
-    this.store.dispatch(CenterActions.loadActiveCenterReviews({ id: this.centerId }));
-    this.store.dispatch(TestimonialActions.loadTestimonialsByCenter({ centerId: this.centerId }));
+  private resolveCenter(name: string | null): void {
+    this.loading = true;
+    this.notFound = false;
 
-    // Reference data used to enrich the page
+    if (!name) {
+      this.loading = false;
+      this.notFound = true;
+      return;
+    }
+
+    this.store.dispatch(CenterActions.loadActiveCenters());
+
+    // Reference data used to enrich the page — categories are needed as soon
+    // as the center itself resolves, so dispatch/select it alongside.
     this.store.dispatch(CategoryActions.loadActiveCategories());
-    this.store.dispatch(TrainerActions.loadActiveTrainers());
+    this.subscription.add(
+      this.store.select(CategorySelectors.selectActiveCategories).subscribe(categories => {
+        this.allCategories = categories ?? [];
+        this.buildCategories();
+      })
+    );
+
+    const target = name.toLowerCase();
 
     this.subscription.add(
       this.store.select(CenterSelectors.selectActiveCenters).subscribe(centers => {
         if (!centers || centers.length === 0) {
           return;
         }
-        const match = centers.find(c => c.id === this.centerId) ?? null;
-        this.center = match;
+
+        const match = centers.find(c => this.formatStringToUrl(c.name) === target) ?? null;
         this.loading = false;
-        this.notFound = match === null;
+
+        if (!match) {
+          this.notFound = true;
+          this.center = null;
+          return;
+        }
+
+        this.notFound = false;
+        this.center = match;
         this.buildCategories();
+
+        // Only fire the id-scoped fetches once, the first time this center resolves.
+        if (this.centerId !== match.id) {
+          this.centerId = match.id;
+          this.loadCenterDetails();
+          this.resumePendingAction();
+        }
       })
     );
+  }
+
+  /**
+   * A login gate (BookingDialogService/TestimonialDialogService) sent the
+   * user here with ?action=book|testimonial after signing in -- finish what
+   * they were trying to do instead of leaving them to find the button again.
+   * Fires once and strips the query param so a manual refresh doesn't reopen it.
+   */
+  private resumePendingAction(): void {
+    const action = this.route.snapshot.queryParamMap.get('action');
+    if (!action) return;
+
+    if (action === 'book') this.bookSession();
+    if (action === 'testimonial') this.leaveTestimonial();
+
+    this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+  }
+
+  private loadCenterDetails(): void {
+    // Id-scoped public endpoints, via the store.
+    this.store.dispatch(CenterActions.loadActiveCenterAnnouncements({ id: this.centerId }));
+    this.store.dispatch(CenterActions.loadActiveCenterReviews({ id: this.centerId }));
+    this.store.dispatch(TestimonialActions.loadTestimonialsByCenter({ centerId: this.centerId }));
+    this.store.dispatch(TrainerActions.loadActiveTrainers());
 
     this.subscription.add(
       this.store.select(CenterSelectors.selectActiveCenterAnnouncements).subscribe(list => {
@@ -169,13 +213,6 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.store.select(TestimonialSelectors.selectTestimonialsByCenter).subscribe(list => {
         this.centerTestimonials = this.forThisCenter(list);
-      })
-    );
-
-    this.subscription.add(
-      this.store.select(CategorySelectors.selectActiveCategories).subscribe(categories => {
-        this.allCategories = categories ?? [];
-        this.buildCategories();
       })
     );
 
@@ -252,12 +289,6 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
         date: a.date,
       } as CenterTrainerCard;
     });
-  }
-
-  private showNotFound(reason: string): void {
-    console.warn(`[CenterDetail] ${reason}`);
-    this.loading = false;
-    this.notFound = true;
   }
 
   // ===========================================================================

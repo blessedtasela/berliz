@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 import { Users } from 'src/app/models/users.interface';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { loadUser } from 'src/app/state/user/user.actions';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { BookingFormComponent, BookingFormData } from './booking-form/booking-form.component';
@@ -21,7 +21,7 @@ export class BookingDialogService {
   constructor(
     private store: Store,
     private dialog: MatDialog,
-    private router: Router,
+    private authRedirect: AuthRedirectService,
   ) {
     this.store.dispatch(loadUser());
     this.store.select(selectUser).subscribe(user => this.user = user);
@@ -45,8 +45,12 @@ export class BookingDialogService {
       });
 
       loginDialogRef.afterClosed().subscribe(result => {
+        // 'book' -- the trainer/center page this dialog was opened from checks
+        // for this on return and re-opens the form automatically, since it
+        // already has everything (data) needed without round-tripping it
+        // through the URL.
         if (result) {
-          this.router.navigate(['/login']);
+          this.authRedirect.goToLogin('book');
         }
       });
       return;

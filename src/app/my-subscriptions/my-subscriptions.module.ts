@@ -21,6 +21,7 @@ import { MySubscriptionsFormComponent } from './my-subscriptions-form/my-subscri
 import { MySubscriptionsTimelineComponent } from './my-subscriptions-timeline/my-subscriptions-timeline.component';
 import { MySubscriptionsAnalyticsComponent } from './my-subscriptions-analytics/my-subscriptions-analytics.component';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { SharedModule } from '../shared/shared.module';
 
 
 
@@ -50,7 +51,8 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
     FooterModule,
     FormsModule,
     ReactiveFormsModule,
-    FeatherModule
+    FeatherModule,
+    SharedModule
   ]
 })
 export class MySubscriptionsModule { }

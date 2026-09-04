@@ -10,6 +10,7 @@ import {
   Output
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Notifications } from 'src/app/models/Notifications.interface';
 import { NotificationService } from 'src/app/services/notification.service';
@@ -73,7 +74,8 @@ export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
     private snackbar: SnackBarService,
     private dialog: MatDialog,
     private rxStomp: RxStompService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private router: Router,
   ) { }
 
   // ---------------------------------------------------------
@@ -303,6 +305,16 @@ export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
   readNotification(id: number): void {
     const notification = this.notificationData.find(n => n.id === id);
     if (!notification) return;
+
+    // Known entity types deep-link straight to the relevant page instead of
+    // opening the detail dialog — there's nothing more to show beyond "go
+    // there". Unknown/legacy notifications (no entityType set) keep the
+    // existing dialog behavior.
+    if (notification.entityType === 'message' && notification.entityId) {
+      this.notificationService.markAsRead(id).subscribe();
+      this.router.navigate(['/dashboard/messages'], { queryParams: { userId: notification.entityId } });
+      return;
+    }
 
     const dialogRef = this.dialog.open(NotificationDetailsComponent, {
       width: '500px',

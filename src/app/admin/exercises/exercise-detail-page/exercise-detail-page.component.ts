@@ -83,4 +83,9 @@ export class ExerciseDetailPageComponent implements OnInit, OnDestroy {
     const date = new Date(dateString);
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
+
+  /** howToPerform is one step per line — split client-side into a numbered list. */
+  howToSteps(howToPerform: string | null): string[] {
+    return (howToPerform ?? '').split('\n').map(s => s.trim()).filter(Boolean);
+  }
 }

@@ -1,0 +1,32 @@
+<div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 font-sans flex flex-col gap-4">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <h2 class="text-gray-800 text-base font-bold">More on Berliz</h2>
+  </div>
+
+  <!-- Link grid -->
+  <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+    <a *ngFor="let link of links" [routerLink]="link.route"
+      class="relative flex flex-col gap-2 p-3 rounded-xl border border-gray-200 bg-gray-50
+             hover:border-red-300 hover:bg-red-50 transition group">
+
+      <div class="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center
+                  group-hover:border-red-200 transition shrink-0">
+        <i-feather [name]="link.icon" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+      </div>
+
+      <div class="min-w-0">
+        <p class="text-xs font-bold text-gray-900">{{ link.name }}</p>
+        <p class="text-[10px] text-gray-400 mt-0.5 leading-snug line-clamp-2">{{ link.description }}</p>
+      </div>
+
+      <span *ngIf="badgeFor(link) > 0"
+        class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white
+               text-[10px] font-bold flex items-center justify-center border-2 border-white">
+        {{ badgeFor(link) > 9 ? '9+' : badgeFor(link) }}
+      </span>
+    </a>
+  </div>
+
+</div>

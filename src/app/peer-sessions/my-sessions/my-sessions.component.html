@@ -1,0 +1,109 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center shrink-0">
+                <i-feather name="users" class="text-purple-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <h1 class="text-sm font-bold text-gray-900">My sessions</h1>
+                <p class="text-[11px] text-gray-400">Workout sessions you've planned with your connections</p>
+            </div>
+        </div>
+        <button type="button" (click)="refresh()" [disabled]="loading"
+            class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition disabled:opacity-40" title="Refresh">
+            <i-feather name="refresh-cw" [class.animate-spin]="loading" class="text-gray-500" style="width:15px;height:15px;"></i-feather>
+        </button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex items-center justify-center py-16">
+        <i-feather name="loader" class="text-gray-300 animate-spin" style="width:20px;height:20px;"></i-feather>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!loading && sessions.length === 0"
+        class="flex flex-col items-center justify-center py-16 gap-3 text-center bg-white rounded-2xl border border-gray-200">
+        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+            <i-feather name="users" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        </div>
+        <p class="text-sm text-gray-400">No sessions yet.</p>
+        <a routerLink="/dashboard/connections"
+            class="text-xs font-semibold text-purple-600 hover:text-purple-700 transition">Propose one from your connections</a>
+    </div>
+
+    <ng-container *ngIf="!loading && sessions.length > 0">
+
+        <!-- Pending -->
+        <div *ngIf="pending.length > 0" class="flex flex-col gap-2">
+            <span class="text-[11px] font-bold uppercase tracking-wide text-gray-400">Awaiting response ({{ pending.length }})</span>
+            <div *ngFor="let s of pending" class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-2">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-gray-900 truncate">{{ s.otherUserName }}</p>
+                        <p class="text-[11px] text-gray-400">{{ s.scheduledAt | date:'medium' }} &middot; {{ s.durationMinutes }} min</p>
+                    </div>
+                    <span class="text-[10px] font-semibold uppercase tracking-wide rounded-full px-2 py-1 shrink-0
+                                 bg-amber-50 text-amber-700 border border-amber-100">
+                        {{ s.direction === 'incoming' ? 'Invited you' : 'Awaiting them' }}
+                    </span>
+                </div>
+                <p *ngIf="s.notes" class="text-xs text-gray-600">{{ s.notes }}</p>
+                <div class="flex items-center justify-end gap-2 pt-1">
+                    <ng-container *ngIf="s.direction === 'incoming'; else outgoingPending">
+                        <button type="button" (click)="respond(s, 'declined')"
+                            class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Decline</button>
+                        <button type="button" (click)="respond(s, 'confirmed')"
+                            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 text-white hover:bg-red-700 transition">Confirm</button>
+                    </ng-container>
+                    <ng-template #outgoingPending>
+                        <button type="button" (click)="cancel(s)"
+                            class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Withdraw</button>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmed -->
+        <div *ngIf="confirmed.length > 0" class="flex flex-col gap-2">
+            <span class="text-[11px] font-bold uppercase tracking-wide text-gray-400">Confirmed ({{ confirmed.length }})</span>
+            <div *ngFor="let s of confirmed" class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-2">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-gray-900 truncate">{{ s.otherUserName }}</p>
+                        <p class="text-[11px] text-gray-400">{{ s.scheduledAt | date:'medium' }} &middot; {{ s.durationMinutes }} min</p>
+                    </div>
+                    <span class="text-[10px] font-semibold uppercase tracking-wide rounded-full px-2 py-1 shrink-0
+                                 bg-emerald-50 text-emerald-700 border border-emerald-100">
+                        Confirmed
+                    </span>
+                </div>
+                <p *ngIf="s.notes" class="text-xs text-gray-600">{{ s.notes }}</p>
+                <div class="flex items-center justify-end gap-2 pt-1">
+                    <button type="button" (click)="cancel(s)"
+                        class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Cancel</button>
+                    <button type="button" (click)="complete(s)"
+                        class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900 text-white hover:bg-gray-800 transition">Mark complete</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Past -->
+        <div *ngIf="past.length > 0" class="flex flex-col gap-2">
+            <span class="text-[11px] font-bold uppercase tracking-wide text-gray-400">Past ({{ past.length }})</span>
+            <div *ngFor="let s of past" class="bg-white rounded-2xl border border-gray-200 p-4 flex items-center justify-between gap-3 opacity-70">
+                <div class="min-w-0">
+                    <p class="text-sm font-semibold text-gray-900 truncate">{{ s.otherUserName }}</p>
+                    <p class="text-[11px] text-gray-400">{{ s.scheduledAt | date:'medium' }}</p>
+                </div>
+                <span class="text-[10px] font-semibold uppercase tracking-wide rounded-full px-2 py-1 shrink-0"
+                    [ngClass]="s.status === 'completed' ? 'bg-gray-100 text-gray-600 border border-gray-200' : 'bg-red-50 text-red-600 border border-red-100'">
+                    {{ s.status }}
+                </span>
+            </div>
+        </div>
+
+    </ng-container>
+
+</section>

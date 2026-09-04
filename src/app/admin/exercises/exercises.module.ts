@@ -17,7 +17,7 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
 import { AuthGuard } from 'src/app/services/auth.guard';
 import { RoleGuard } from 'src/app/services/role.guard';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
-
+import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 
 
 @NgModule({
@@ -40,6 +40,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
     FooterModule,
     NavbarModule,
     AdminSearchModule,
+    StrapiUrlPipe,
     RouterModule.forChild([
       { path: '', component: ExercisesComponent },
       { path: ':id', component: ExerciseDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Exercise Details', expectedRole: ['admin'] } },

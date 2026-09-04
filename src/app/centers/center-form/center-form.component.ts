@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 @Component({
   selector: 'app-center-form',
@@ -10,7 +12,7 @@ export class CenterFormComponent {
   centerForm: FormGroup;
   invalidForm: boolean = false;
 
-  constructor(fb: FormBuilder){
+  constructor(fb: FormBuilder, private dialog: MatDialog){
     this.centerForm = fb.group({
       'name': ['', [Validators.required, Validators.minLength(6)]],
       'facebookUrl': ['', [Validators.pattern('^(https?:\\/\\/)?(www\\.)?facebook\\.com\\/.+$')]],
@@ -24,9 +26,21 @@ export class CenterFormComponent {
     if (this.centerForm.invalid) {
       console.log('Invalid form');
       this.invalidForm = true;
-    } else {
-      const confirmResult = window.confirm("You are leaving to an external link. Do you want to proceed?");
+      return false;
+    }
 
+    this.dialog.open(PromptModalComponent, {
+      width: '400px',
+      maxWidth: '95vw',
+      data: {
+        confirmation: true,
+        title: 'Leaving Berliz',
+        message: 'You are leaving to an external link (WhatsApp). Do you want to proceed?',
+        confirmText: 'Proceed',
+        cancelText: 'Cancel',
+        icon: 'external-link'
+      }
+    }).afterClosed().subscribe(confirmResult => {
       if (confirmResult) {
         // redirect client to whatsapp with the inputted data
         const formValue = this.centerForm.value;
@@ -50,15 +64,11 @@ export class CenterFormComponent {
 
         // Redirect the user to the WhatsApp URL
         window.location.href = whatsappURL;
-        this.centerForm.reset();
-      }
-      else {
-
       }
       console.log('You submitted: ', this.centerForm.value)
       this.centerForm.reset();
       this.invalidForm = false;
-    }
+    });
     return false;
   }
 }

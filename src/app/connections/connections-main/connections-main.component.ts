@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -26,6 +27,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
 import { genericError } from 'src/validators/form-validators.module';
+import { ProposeSessionModalComponent } from 'src/app/peer-sessions/propose-session-modal/propose-session-modal.component';
 
 type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
 
@@ -65,6 +67,9 @@ export class ConnectionsMainComponent implements OnInit, OnDestroy {
     private snackBar: SnackBarService,
     private authService: AuthService,
     public lightbox: PhotoLightboxService,
+
+    private dialog: MatDialog,
+
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
   }
@@ -129,6 +134,15 @@ export class ConnectionsMainComponent implements OnInit, OnDestroy {
     this.store.dispatch(MessageActions.loadConversation({ otherUserId: connection.otherUserId }));
     this.store.dispatch(MessageActions.markConversationRead({ otherUserId: connection.otherUserId }));
     this.router.navigate(['/dashboard/messages']);
+    this.router.navigate(['/dashboard/messages'], { queryParams: { userId: connection.otherUserId } });
+  }
+
+  proposeSession(connection: Connection): void {
+    this.dialog.open(ProposeSessionModalComponent, {
+      width: '420px',
+      maxWidth: '95vw',
+      data: { participantId: connection.otherUserId, participantName: connection.otherUserName },
+    });
   }
 
   // ── Find people ──────────────────────────────────────────────────────────

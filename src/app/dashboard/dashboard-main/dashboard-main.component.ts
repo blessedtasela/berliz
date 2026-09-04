@@ -28,6 +28,15 @@ export class DashboardMainComponent {
 
   userData: Users | null = null;
   data: any;
+
+  /** Time-of-day greeting for the Overview hero -- purely cosmetic, no backend involved. */
+  get greeting(): string {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  }
+
   myTodo: TodoList[] = [];
   mySubscriptions: Subscriptions[] = [];
   currentRoute: string = '';

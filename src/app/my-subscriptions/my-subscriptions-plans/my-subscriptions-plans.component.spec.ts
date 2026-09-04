@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { FormsModule } from '@angular/forms';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Actions } from '@ngrx/effects';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -8,6 +9,7 @@ import { Subject } from 'rxjs';
 import { MySubscriptionsPlansComponent } from './my-subscriptions-plans.component';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { BypassCodeService } from 'src/app/services/bypass-code.service';
 import { Plan } from 'src/app/models/plan.model';
 import { loadPlans } from 'src/app/state/plan/plan.actions';
 import { selectPlanLoading, selectPlans } from 'src/app/state/plan/plan.selectors';
@@ -25,22 +27,24 @@ describe('MySubscriptionsPlansComponent', () => {
     {
       id: 1, name: 'Basic', description: 'One center', price: 17,
       billingInterval: 'monthly', accessScope: 'One center and its trainer(s)',
-      isActive: true, sortOrder: 1
+      isActive: true, sortOrder: 1, targetRole: 'client'
     },
     {
       id: 3, name: 'Exclusive', description: 'Everything', price: 69,
       billingInterval: 'monthly', accessScope: 'All trainers and centers on Berliz',
-      isActive: true, sortOrder: 3
+      isActive: true, sortOrder: 3, targetRole: 'client'
     }
   ];
 
   beforeEach(() => {
     actions$ = new Subject<any>();
     snackBarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
+    const bypassCodeServiceSpy = jasmine.createSpyObj('BypassCodeService', ['redeem']);
 
     TestBed.configureTestingModule({
       declarations: [MySubscriptionsPlansComponent],
       imports: [CommonModule, IconsModule, HttpClientTestingModule],
+      imports: [CommonModule, FormsModule, IconsModule],
       providers: [
         provideMockStore({
           selectors: [
@@ -49,7 +53,8 @@ describe('MySubscriptionsPlansComponent', () => {
           ]
         }),
         { provide: Actions, useValue: actions$ },
-        { provide: SnackBarService, useValue: snackBarSpy }
+        { provide: SnackBarService, useValue: snackBarSpy },
+        { provide: BypassCodeService, useValue: bypassCodeServiceSpy }
       ]
     });
 

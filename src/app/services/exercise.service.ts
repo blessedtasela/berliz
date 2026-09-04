@@ -47,6 +47,11 @@ export class ExerciseService {
     return this.httpClient.put<{ message: string }>(this.url + "/exercise/updateDemo", data);
   }
 
+  /** Attach (video: a StrapiUploadResponse-shaped object) or remove (video: null) an exercise's demo video. */
+  updateExerciseVideo(id: number, video: any) {
+    return this.httpClient.put<{ message: string }>(this.url + "/exercise/updateExerciseVideo", { id, video });
+  }
+
   // ── Discovery ───────────────────────────────────────────────────────────────
 
   /**

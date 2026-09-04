@@ -1,3 +1,13 @@
+/** Activity a post is framed as. `GENERAL` is a plain post; the rest badge it in the feed. */
+export type PostActivityType =
+  | 'GENERAL'
+  | 'WORKOUT'
+  | 'SESSION'
+  | 'TESTIMONIAL'
+  | 'REVIEW'
+  | 'PROGRESS'
+  | 'MILESTONE';
+
 /** Mirrors the backend `PostResponse` (see PostMapper). */
 export interface PostResponse {
   id: number;
@@ -8,6 +18,8 @@ export interface PostResponse {
   authorPhoto?: string;
   content: string;
   photoUrl?: string | null;
+  /** Always set by the server — `"GENERAL"` for a plain post. */
+  activityType?: PostActivityType;
   likes: number;
   likedByMe: boolean;
   /** Denormalized counter, maintained the same way `likes` is. */
@@ -21,6 +33,8 @@ export interface PostResponse {
 export interface PostRequest {
   id?: number;
   content: string;
+  /** Omit or `"GENERAL"` for a plain post. */
+  activityType?: PostActivityType;
   photo?: {
     photoUrl: string;
     strapiId: number;

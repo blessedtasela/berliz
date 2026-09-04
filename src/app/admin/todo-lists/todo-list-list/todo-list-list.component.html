@@ -23,6 +23,12 @@
                     (click)="openUpdateTodo(todo.id)" title="Edit">
                     <i-feather name="edit-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
+                <button *ngIf="todo.status === 'pending' || todo.status === 'in-progress' || todo.status === 'completed'"
+                    class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center"
+                    (click)="updateTodoStatus(todo.id)"
+                    [title]="todo.status === 'pending' ? 'Begin task' : todo.status === 'in-progress' ? 'Mark completed' : 'Restart task'">
+                    <i-feather name="arrow-right-circle" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                </button>
                 <button class="w-9 h-9 rounded-lg active:bg-red-50 flex items-center justify-center"
                     (click)="deleteTodo(todo.id)" title="Delete">
                     <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
