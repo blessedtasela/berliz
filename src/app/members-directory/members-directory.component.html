@@ -1,17 +1,18 @@
 <!-- ═══════════════════════════════════════════════
      MEMBER DIRECTORY  /members
-     Light treatment, matching /user/:id -- a preview of app content gated
-     behind login, not a marketing page, so it matches the dashboard's own
-     look rather than the dark treatment trainer/center pages keep.
+     Theme follows the VIEWER, not the route: dark (matching trainers/centers
+     and the rest of the public site) while anonymous, white/dashboard-style
+     once signed in -- content past the logged-out gate only ever renders
+     once logged in, same split as /user/:id.
 ════════════════════════════════════════════════ -->
 
-<section class="w-full bg-gray-50 font-sans min-h-screen px-4 pt-24 pb-20">
+<section class="w-full font-sans min-h-screen px-4 pt-24 pb-20" [ngClass]="needsLogin ? 'bg-zinc-950' : 'bg-gray-50'">
     <div class="max-w-6xl mx-auto flex flex-col gap-8">
 
         <!-- ── HEADER ─────────────────────────────────────────────────────── -->
         <div class="flex flex-col gap-2 text-center sm:text-left">
-            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Members</h1>
-            <p class="text-sm text-gray-400 max-w-xl">
+            <h1 class="text-2xl sm:text-3xl font-bold" [ngClass]="needsLogin ? 'text-white' : 'text-gray-900'">Members</h1>
+            <p class="text-sm" [ngClass]="needsLogin ? 'text-zinc-500' : 'text-gray-400'">
                 Browse Berliz members who have made their profile public. Find clients, trainers
                 and centers, and visit their profile to see more.
             </p>
@@ -21,14 +22,14 @@
              Page loads for anyone, but content requires an account — matches
              /user/:id's gating. Real enforcement is server-side; this is just
              so an anonymous visitor gets an honest prompt instead of a 401. -->
-        <div *ngIf="needsLogin" class="bg-white border border-gray-200 rounded-xl p-14
+        <div *ngIf="needsLogin" class="bg-zinc-900 border border-zinc-800 rounded-xl p-14
                     flex flex-col items-center justify-center gap-4 text-center">
-            <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
-                <i-feather name="lock" class="text-gray-400" style="width:22px;height:22px;"></i-feather>
+            <div class="w-14 h-14 rounded-full bg-zinc-950 border border-zinc-800 flex items-center justify-center">
+                <i-feather name="lock" class="text-zinc-600" style="width:22px;height:22px;"></i-feather>
             </div>
             <div class="flex flex-col gap-1">
-                <p class="text-sm font-bold text-gray-900">Log in to view members</p>
-                <p class="text-[11px] text-gray-400 max-w-xs leading-relaxed">
+                <p class="text-sm font-bold text-white">Log in to view members</p>
+                <p class="text-[11px] text-zinc-500 max-w-xs leading-relaxed">
                     Any Berliz account can browse members — clients, trainers, centers and more.
                 </p>
             </div>
@@ -36,9 +37,9 @@
                 class="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold transition">
                 Log in
             </a>
-            <p class="text-[11px] text-gray-400">
+            <p class="text-[11px] text-zinc-500">
                 New here?
-                <a routerLink="/sign-up" class="font-semibold text-red-600 hover:text-red-700 transition">
+                <a routerLink="/sign-up" class="font-semibold text-red-500 hover:text-red-400 transition">
                     Join free
                 </a>
                 to browse members.

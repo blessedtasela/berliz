@@ -1,23 +1,24 @@
 <!-- ═══════════════════════════════════════════════
      PUBLIC USER PROFILE  /user/:username
-     Light treatment -- unlike trainer/center profiles (which stay dark and
-     fully open to sell a stranger on signing up), this is a preview of app
-     content gated behind login, not a marketing page, so it matches the
-     dashboard's own look instead.
+     Theme follows the VIEWER, not the route: dark (matching trainers/centers
+     and the rest of the public site) while anonymous, white/dashboard-style
+     once signed in -- the logged-out gate below is the only thing an
+     anonymous visitor ever sees here (the backend requires auth for the
+     actual data), everything past it only ever renders once logged in.
 ════════════════════════════════════════════════ -->
 
 <!-- ── LOGGED-OUT GATE ───────────────────────────────────────────────── -->
-<section *ngIf="needsLogin" class="w-full bg-gray-50 font-sans min-h-[70vh] flex items-center justify-center px-4">
+<section *ngIf="needsLogin" class="w-full bg-zinc-950 font-sans min-h-[70vh] flex items-center justify-center px-4">
 
     <div class="flex flex-col items-center justify-center gap-6 text-center max-w-sm">
 
-        <div class="w-20 h-20 rounded-full bg-white border border-gray-200 flex items-center justify-center">
-            <i-feather name="lock" class="text-gray-400" style="width:32px;height:32px;"></i-feather>
+        <div class="w-20 h-20 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+            <i-feather name="lock" class="text-zinc-600" style="width:32px;height:32px;"></i-feather>
         </div>
 
         <div class="flex flex-col gap-2">
-            <h1 class="text-lg font-bold text-gray-900">Log in to view this profile</h1>
-            <p class="text-sm text-gray-400 leading-relaxed">
+            <h1 class="text-lg font-bold text-white">Log in to view this profile</h1>
+            <p class="text-sm text-zinc-500 leading-relaxed">
                 Any Berliz account can view member profiles.
             </p>
         </div>
