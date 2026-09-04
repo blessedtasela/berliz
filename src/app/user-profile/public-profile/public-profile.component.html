@@ -1,20 +1,23 @@
 <!-- ═══════════════════════════════════════════════
      PUBLIC USER PROFILE  /user/:username
-     Dark treatment, matching the public trainer/center profiles.
+     Light treatment -- unlike trainer/center profiles (which stay dark and
+     fully open to sell a stranger on signing up), this is a preview of app
+     content gated behind login, not a marketing page, so it matches the
+     dashboard's own look instead.
 ════════════════════════════════════════════════ -->
 
 <!-- ── LOGGED-OUT GATE ───────────────────────────────────────────────── -->
-<section *ngIf="needsLogin" class="w-full bg-zinc-950 font-sans min-h-[70vh] flex items-center justify-center px-4">
+<section *ngIf="needsLogin" class="w-full bg-gray-50 font-sans min-h-[70vh] flex items-center justify-center px-4">
 
     <div class="flex flex-col items-center justify-center gap-6 text-center max-w-sm">
 
-        <div class="w-20 h-20 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center">
-            <i-feather name="lock" class="text-zinc-600" style="width:32px;height:32px;"></i-feather>
+        <div class="w-20 h-20 rounded-full bg-white border border-gray-200 flex items-center justify-center">
+            <i-feather name="lock" class="text-gray-400" style="width:32px;height:32px;"></i-feather>
         </div>
 
         <div class="flex flex-col gap-2">
-            <h1 class="text-lg font-bold text-white">Log in to view this profile</h1>
-            <p class="text-sm text-zinc-500 leading-relaxed">
+            <h1 class="text-lg font-bold text-gray-900">Log in to view this profile</h1>
+            <p class="text-sm text-gray-400 leading-relaxed">
                 Any Berliz account can view member profiles.
             </p>
         </div>
@@ -27,25 +30,25 @@
 </section>
 
 <!-- ── LOADING ───────────────────────────────────────────────────────── -->
-<section *ngIf="!needsLogin && loading" class="w-full bg-zinc-950 font-sans min-h-[70vh] flex items-center justify-center px-4">
+<section *ngIf="!needsLogin && loading" class="w-full bg-gray-50 font-sans min-h-[70vh] flex items-center justify-center px-4">
     <div class="flex flex-col items-center gap-4 text-center">
-        <div class="w-14 h-14 rounded-full border-2 border-zinc-800 border-t-red-600 animate-spin"></div>
-        <p class="text-xs text-zinc-500">Loading profile…</p>
+        <div class="w-14 h-14 rounded-full border-2 border-gray-200 border-t-red-600 animate-spin"></div>
+        <p class="text-xs text-gray-400">Loading profile…</p>
     </div>
 </section>
 
 <!-- ── NOT FOUND ─────────────────────────────────────────────────────── -->
-<section *ngIf="!needsLogin && notFound" class="w-full bg-zinc-950 font-sans min-h-[70vh] flex items-center justify-center px-4">
+<section *ngIf="!needsLogin && notFound" class="w-full bg-gray-50 font-sans min-h-[70vh] flex items-center justify-center px-4">
 
     <div class="flex flex-col items-center justify-center gap-6 text-center max-w-sm">
 
-        <div class="w-20 h-20 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center">
-            <i-feather name="user-x" class="text-zinc-600" style="width:32px;height:32px;"></i-feather>
+        <div class="w-20 h-20 rounded-full bg-white border border-gray-200 flex items-center justify-center">
+            <i-feather name="user-x" class="text-gray-400" style="width:32px;height:32px;"></i-feather>
         </div>
 
         <div class="flex flex-col gap-2">
-            <h1 class="text-lg font-bold text-white">Profile not found</h1>
-            <p class="text-sm text-zinc-500 leading-relaxed">
+            <h1 class="text-lg font-bold text-gray-900">Profile not found</h1>
+            <p class="text-sm text-gray-400 leading-relaxed">
                 {{ error || 'This profile is no longer available, or the link is incorrect.' }}
             </p>
         </div>
@@ -63,11 +66,11 @@
 
     <!-- Hero — always rendered, private or not. Name, photo, role and join
          date are what every registered account exposes. -->
-    <section class="w-full bg-zinc-950 font-sans px-4 pt-14 pb-8">
+    <section class="w-full bg-gray-50 font-sans px-4 pt-14 pb-8">
         <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center sm:items-end gap-5 text-center sm:text-left">
 
             <button type="button" (click)="lightbox.open(photoSrc)"
-                class="w-24 h-24 rounded-full shrink-0 border-4 border-zinc-900 bg-zinc-900 overflow-hidden group relative">
+                class="w-24 h-24 rounded-full shrink-0 border-4 border-white bg-gray-50 overflow-hidden group relative">
                 <img [src]="photoSrc" [alt]="fullName" class="w-full h-full object-cover object-top" />
                 <span class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center">
                     <i-feather name="maximize-2" style="width:16px;height:16px;"
@@ -77,22 +80,22 @@
 
             <div class="flex flex-col gap-2 min-w-0">
 
-                <h1 class="text-2xl font-bold text-white truncate">{{ fullName || 'Berliz member' }}</h1>
+                <h1 class="text-2xl font-bold text-gray-900 truncate">{{ fullName || 'Berliz member' }}</h1>
 
                 <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
 
-                    <span class="text-[10px] font-semibold uppercase tracking-wide text-red-400 bg-red-950/60
-                                 border border-red-900 px-2.5 py-1 rounded-full">
+                    <span class="text-[10px] font-semibold uppercase tracking-wide text-red-600 bg-red-50
+                                 border border-red-100 px-2.5 py-1 rounded-full">
                         {{ profile.role || 'member' }}
                     </span>
 
                     <span *ngIf="profile.memberSince"
-                        class="text-[11px] font-semibold text-zinc-400 flex items-center gap-1.5">
+                        class="text-[11px] font-semibold text-gray-400 flex items-center gap-1.5">
                         <i-feather name="calendar" style="width:12px;height:12px;"></i-feather>
                         Member since {{ profile.memberSince | date:'MMM yyyy' }}
                     </span>
 
-                    <span *ngIf="location" class="text-[11px] font-semibold text-zinc-400 flex items-center gap-1.5">
+                    <span *ngIf="location" class="text-[11px] font-semibold text-gray-400 flex items-center gap-1.5">
                         <i-feather name="map-pin" style="width:12px;height:12px;"></i-feather>
                         {{ location }}
                     </span>
@@ -102,31 +105,31 @@
         </div>
     </section>
 
-    <div class="w-full bg-zinc-950 font-sans px-4 pb-20">
+    <div class="w-full bg-gray-50 font-sans px-4 pb-20">
         <div class="max-w-4xl mx-auto flex flex-col gap-5">
 
             <!-- ── PRIVATE STATE ─────────────────────────────────────────
                  Not an error page — the hero above still stands, this just
                  replaces everything the owner chose not to share. -->
-            <div *ngIf="isPrivate && !viewedAsAdminOverride" class="bg-zinc-900 border border-zinc-800 rounded-xl p-10
+            <div *ngIf="isPrivate && !viewedAsAdminOverride" class="bg-white border border-gray-200 rounded-xl p-10
                         flex flex-col items-center justify-center gap-3 text-center">
 
-                <div class="w-14 h-14 rounded-full bg-zinc-950 border border-zinc-800 flex items-center justify-center">
-                    <i-feather name="lock" class="text-zinc-600" style="width:22px;height:22px;"></i-feather>
+                <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+                    <i-feather name="lock" class="text-gray-400" style="width:22px;height:22px;"></i-feather>
                 </div>
 
-                <p class="text-sm font-bold text-white">This profile is private</p>
-                <p class="text-[11px] text-zinc-500 max-w-xs leading-relaxed">
+                <p class="text-sm font-bold text-gray-900">This profile is private</p>
+                <p class="text-[11px] text-gray-400 max-w-xs leading-relaxed">
                     {{ (fullName || 'This member') + ' keeps their bio, location and workouts to themselves.' }}
                 </p>
             </div>
 
             <!-- Admin bypass notice -- content below is visible only because the
                  viewer is Berliz's super admin; the owner still keeps it private. -->
-            <div *ngIf="viewedAsAdminOverride" class="bg-amber-950/40 border border-amber-800 rounded-xl px-4 py-3
+            <div *ngIf="viewedAsAdminOverride" class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3
                         flex items-center gap-3">
-                <i-feather name="eye" class="text-amber-500 shrink-0" style="width:16px;height:16px;"></i-feather>
-                <p class="text-[11px] text-amber-300 leading-relaxed">
+                <i-feather name="eye" class="text-amber-600 shrink-0" style="width:16px;height:16px;"></i-feather>
+                <p class="text-[11px] text-amber-800 leading-relaxed">
                     <span class="font-bold">Viewing as admin.</span>
                     {{ (fullName || 'This member') + ' keeps this profile private — regular visitors see none of the content below.' }}
                 </p>
@@ -136,27 +139,27 @@
             <ng-container *ngIf="!isPrivate || viewedAsAdminOverride">
 
                 <!-- Bio -->
-                <div *ngIf="profile.bio" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 flex flex-col gap-2">
-                    <span class="text-[11px] uppercase tracking-wide text-zinc-500 font-semibold">About</span>
-                    <p class="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">{{ profile.bio }}</p>
+                <div *ngIf="profile.bio" class="bg-white border border-gray-200 rounded-xl p-5 flex flex-col gap-2">
+                    <span class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">About</span>
+                    <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ profile.bio }}</p>
                 </div>
 
                 <!-- Timeline -->
                 <div *ngIf="posts.length > 0" class="flex flex-col gap-3">
 
                     <div class="flex items-center justify-between gap-2">
-                        <h2 class="text-xs font-bold text-white uppercase tracking-wide">Timeline</h2>
-                        <span class="text-[11px] font-semibold text-zinc-500">{{ posts.length }}</span>
+                        <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Timeline</h2>
+                        <span class="text-[11px] font-semibold text-gray-400">{{ posts.length }}</span>
                     </div>
 
                     <div class="flex flex-col gap-3">
                         <div *ngFor="let post of posts; trackBy: trackByPostId"
-                            class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col gap-3">
+                            class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3">
 
-                            <p class="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">{{ post.content }}</p>
+                            <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ post.content }}</p>
 
                             <button *ngIf="post.photoUrl | strapiUrl as src" type="button" (click)="lightbox.open(src)"
-                                class="relative w-full max-h-96 overflow-hidden rounded-xl border border-zinc-800 group cursor-zoom-in">
+                                class="relative w-full max-h-96 overflow-hidden rounded-xl border border-gray-200 group cursor-zoom-in">
                                 <img [src]="src" alt="" class="w-full max-h-96 object-cover" />
                                 <span class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center">
                                     <i-feather name="maximize-2" style="width:18px;height:18px;"
@@ -164,15 +167,15 @@
                                 </span>
                             </button>
 
-                            <div class="border-t border-zinc-800 pt-2 flex items-center gap-3 text-[11px] text-zinc-500">
+                            <div class="border-t border-gray-200 pt-2 flex items-center gap-3 text-[11px] text-gray-400">
                                 <span class="flex items-center gap-1.5">
                                     <i-feather name="heart" style="width:11px;height:11px;" [attr.fill]="post.likedByMe ? 'currentColor' : 'none'"
-                                        [class.text-red-500]="post.likedByMe"></i-feather>
+                                        [class.text-red-600]="post.likedByMe"></i-feather>
                                     {{ post.likes }}
                                 </span>
                                 <button type="button" (click)="toggleComments(post)"
-                                    class="flex items-center gap-1.5 transition hover:text-sky-500"
-                                    [class.text-sky-500]="openCommentsPostId === post.id">
+                                    class="flex items-center gap-1.5 transition hover:text-sky-600"
+                                    [class.text-sky-600]="openCommentsPostId === post.id">
                                     <i-feather name="message-circle" style="width:11px;height:11px;"></i-feather>
                                     {{ post.commentCount || 0 }}
                                 </button>
@@ -180,7 +183,7 @@
                             </div>
 
                             <app-post-comments [post]="post" [open]="openCommentsPostId === post.id"
-                                [dark]="true" profileRoutePrefix="/user"></app-post-comments>
+                                profileRoutePrefix="/user"></app-post-comments>
                         </div>
                     </div>
                 </div>
@@ -189,56 +192,56 @@
                 <div class="flex flex-col gap-3">
 
                     <div class="flex items-center justify-between gap-2">
-                        <h2 class="text-xs font-bold text-white uppercase tracking-wide">Workouts created</h2>
-                        <span class="text-[11px] font-semibold text-zinc-500">{{ workouts.length }}</span>
+                        <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Workouts created</h2>
+                        <span class="text-[11px] font-semibold text-gray-400">{{ workouts.length }}</span>
                     </div>
 
                     <div *ngIf="workouts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
 
                         <div *ngFor="let template of workouts; trackBy: trackByWorkoutId"
-                            class="bg-zinc-900 rounded-xl border border-zinc-800 p-4 flex flex-col gap-3 hover:border-red-900 transition">
+                            class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-3 hover:border-red-200 transition">
 
                             <!-- Card header -->
                             <div class="flex items-start justify-between gap-2">
                                 <div class="min-w-0">
-                                    <h3 class="text-xs font-bold text-white truncate">{{ template.name }}</h3>
-                                    <p class="text-[11px] text-zinc-500 mt-0.5 line-clamp-2">
+                                    <h3 class="text-xs font-bold text-gray-900 truncate">{{ template.name }}</h3>
+                                    <p class="text-[11px] text-gray-400 mt-0.5 line-clamp-2">
                                         {{ template.description || 'No description' }}
                                     </p>
                                 </div>
-                                <span class="text-[10px] font-semibold text-red-400 bg-red-950/60 border border-red-900
+                                <span class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100
                                              px-2 py-0.5 rounded-full shrink-0">
                                     {{ exerciseCount(template) }} ex
                                 </span>
                             </div>
 
-                            <div class="border-t border-zinc-800"></div>
+                            <div class="border-t border-gray-200"></div>
 
                             <!-- Exercise chips -->
                             <div class="flex flex-col gap-1.5">
-                                <span class="text-[11px] uppercase tracking-wide text-zinc-500 font-semibold">Includes</span>
+                                <span class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Includes</span>
                                 <div *ngIf="exerciseChips(template).length > 0" class="flex flex-wrap gap-1.5">
                                     <span *ngFor="let name of exerciseChips(template)"
-                                        class="text-[10px] font-semibold text-zinc-300 bg-zinc-950 border border-zinc-800
+                                        class="text-[10px] font-semibold text-gray-700 bg-gray-50 border border-gray-200
                                                px-2 py-0.5 rounded-full">
                                         {{ name }}
                                     </span>
                                     <span *ngIf="extraExerciseCount(template) > 0"
-                                        class="text-[10px] font-semibold text-zinc-500 bg-zinc-950 border border-zinc-800
+                                        class="text-[10px] font-semibold text-gray-400 bg-gray-50 border border-gray-200
                                                px-2 py-0.5 rounded-full">
                                         +{{ extraExerciseCount(template) }} more
                                     </span>
                                 </div>
-                                <p *ngIf="exerciseChips(template).length === 0" class="text-[11px] text-zinc-500">
+                                <p *ngIf="exerciseChips(template).length === 0" class="text-[11px] text-gray-400">
                                     No exercises yet
                                 </p>
                             </div>
 
-                            <div class="border-t border-zinc-800 mt-auto"></div>
+                            <div class="border-t border-gray-200 mt-auto"></div>
 
                             <!-- Actions -->
                             <div class="flex items-center justify-between gap-2">
-                                <span class="text-[10px] font-semibold text-zinc-500 flex items-center gap-1.5">
+                                <span class="text-[10px] font-semibold text-gray-400 flex items-center gap-1.5">
                                     <i-feather name="globe" style="width:11px;height:11px;"></i-feather>
                                     Template
                                 </span>
@@ -259,13 +262,13 @@
                     </div>
 
                     <!-- Empty -->
-                    <div *ngIf="workouts.length === 0" class="bg-zinc-900 border border-zinc-800 rounded-xl p-10
+                    <div *ngIf="workouts.length === 0" class="bg-white border border-gray-200 rounded-xl p-10
                                 flex flex-col items-center justify-center gap-3 text-center">
-                        <div class="w-14 h-14 rounded-full bg-zinc-950 border border-zinc-800 flex items-center justify-center">
-                            <i-feather name="layers" class="text-zinc-600" style="width:22px;height:22px;"></i-feather>
+                        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+                            <i-feather name="layers" class="text-gray-400" style="width:22px;height:22px;"></i-feather>
                         </div>
-                        <p class="text-sm font-bold text-white">No workouts shared yet</p>
-                        <p class="text-[11px] text-zinc-500 max-w-xs">
+                        <p class="text-sm font-bold text-gray-900">No workouts shared yet</p>
+                        <p class="text-[11px] text-gray-400 max-w-xs">
                             {{ (fullName || 'This member') + ' has not published any workout templates.' }}
                         </p>
                     </div>
@@ -276,37 +279,37 @@
                 <div *ngIf="profile.role === 'trainer' && testimonials.length > 0" class="flex flex-col gap-3">
 
                     <div class="flex items-center justify-between gap-2">
-                        <h2 class="text-xs font-bold text-white uppercase tracking-wide">Testimonials</h2>
-                        <span class="text-[11px] font-semibold text-zinc-500">{{ testimonials.length }}</span>
+                        <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Testimonials</h2>
+                        <span class="text-[11px] font-semibold text-gray-400">{{ testimonials.length }}</span>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
 
                         <div *ngFor="let t of testimonials; trackBy: trackByTestimonialId"
-                            class="bg-zinc-900 rounded-xl border border-zinc-800 p-4 flex flex-col gap-3 hover:border-red-900 transition">
+                            class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-3 hover:border-red-200 transition">
 
                             <div class="w-8 h-8 rounded-xl bg-red-600/10 border border-red-600/20 flex items-center justify-center shrink-0">
-                                <i-feather name="message-circle" class="text-red-500" style="width:13px;height:13px;"></i-feather>
+                                <i-feather name="message-circle" class="text-red-600" style="width:13px;height:13px;"></i-feather>
                             </div>
 
-                            <p class="text-xs text-zinc-300 leading-relaxed italic line-clamp-4">
+                            <p class="text-xs text-gray-700 leading-relaxed italic line-clamp-4">
                                 "{{ t.testimonial }}"
                             </p>
 
-                            <div class="border-t border-zinc-800 mt-auto"></div>
+                            <div class="border-t border-gray-200 mt-auto"></div>
 
                             <div class="flex items-center gap-3 min-w-0">
-                                <div class="w-8 h-8 rounded-full bg-zinc-800 border-2 border-red-600 flex items-center
+                                <div class="w-8 h-8 rounded-full bg-gray-100 border-2 border-red-600 flex items-center
                                             justify-center shrink-0">
-                                    <span class="text-[11px] font-extrabold text-red-500">
+                                    <span class="text-[11px] font-extrabold text-red-600">
                                         {{ (t.userFirstname || '?').charAt(0) | uppercase }}
                                     </span>
                                 </div>
                                 <div class="flex flex-col leading-tight min-w-0">
-                                    <span class="text-[11px] font-extrabold text-white truncate">
+                                    <span class="text-[11px] font-extrabold text-gray-900 truncate">
                                         {{ t.userFirstname }} {{ t.userLastname }}
                                     </span>
-                                    <span class="text-[10px] text-zinc-500">
+                                    <span class="text-[10px] text-gray-400">
                                         {{ t.date | date:'mediumDate' }}
                                     </span>
                                 </div>
