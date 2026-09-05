@@ -8,7 +8,6 @@ import { Categories } from 'src/app/models/categories.interface';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
-import { AddMuscleGroupModalComponent } from '../../muscle-groups/add-muscle-group-modal/add-muscle-group-modal.component';
 import { ExerciseService } from 'src/app/services/exercise.service';
 import { loadActiveMuscleGroups } from 'src/app/state/muscle-group/muscle-group.actions';
 import { selectActiveMuscleGroups } from 'src/app/state/muscle-group/muscle-group.selectors';
@@ -33,7 +32,7 @@ export class AddExercisesModalComponent implements OnInit{
   constructor(private formBuilder: FormBuilder,
     private store: Store,
     private exerciseService: ExerciseService,
-    public dialogRef: MatDialogRef<AddMuscleGroupModalComponent>,
+    public dialogRef: MatDialogRef<AddExercisesModalComponent>,
     private ngxService: NgxUiLoaderService,
     private cd: ChangeDetectorRef,
     private snackbarService: SnackBarService) { }

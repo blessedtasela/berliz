@@ -7,7 +7,6 @@ import { Categories } from 'src/app/models/categories.interface';
 import { ClientService } from 'src/app/services/client.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { genericError } from 'src/validators/form-validators.module';
-import { AddClientModalComponent } from '../add-client-modal/add-client-modal.component';
 import { Users } from 'src/app/models/users.interface';
 import { Clients } from 'src/app/models/clients.interface';
 import { Store } from '@ngrx/store';
@@ -32,7 +31,7 @@ export class UpdateClientModalComponent {
   constructor(private formBuilder: FormBuilder,
     private store: Store,
     private clientService: ClientService,
-    public dialogRef: MatDialogRef<AddClientModalComponent>,
+    public dialogRef: MatDialogRef<UpdateClientModalComponent>,
     private ngxService: NgxUiLoaderService,
     private cd: ChangeDetectorRef,
     private snackbarService: SnackBarService,
