@@ -1,0 +1,90 @@
+<div class="max-w-lg w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="calendar" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Edit weekly availability</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">{{ providerName }}</p>
+            </div>
+        </div>
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
+    </div>
+
+    <div *ngIf="loading" class="flex items-center justify-center py-10 gap-2 text-gray-400">
+        <i-feather name="loader" class="animate-spin" style="width:16px;height:16px;"></i-feather>
+        <span class="text-xs">Loading availability...</span>
+    </div>
+
+    <div *ngIf="!loading" class="flex flex-col gap-4">
+
+        <span class="self-start text-[11px] font-semibold text-gray-500 bg-gray-100 border border-gray-200 rounded-full px-2.5 py-1">
+            {{ activeCount }} of 7 days active
+        </span>
+
+        <div class="flex flex-col gap-2">
+            <div *ngFor="let day of days" class="rounded-xl border p-3 sm:p-3.5 transition"
+                [ngClass]="day.invalid ? 'border-red-300 bg-red-50' : (day.isActive ? 'border-red-100 bg-red-50/40' : 'border-gray-200 bg-gray-50')">
+
+                <div class="flex items-center gap-3 flex-wrap">
+
+                    <button type="button" (click)="toggleDay(day)"
+                        class="shrink-0 w-9 h-5 rounded-full relative transition-colors"
+                        [ngClass]="day.isActive ? 'bg-red-600' : 'bg-gray-300'"
+                        [attr.aria-pressed]="day.isActive">
+                        <span class="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform shadow"
+                            [ngClass]="day.isActive ? 'translate-x-4' : 'translate-x-0.5'"></span>
+                    </button>
+
+                    <span class="w-10 shrink-0 text-xs font-bold" [ngClass]="day.isActive ? 'text-gray-900' : 'text-gray-400'">
+                        {{ day.name }}
+                    </span>
+
+                    <ng-container *ngIf="day.isActive; else dayOff">
+                        <div class="flex items-center gap-2 flex-1 min-w-[220px]">
+                            <input type="time" [(ngModel)]="day.startTime" (ngModelChange)="day.invalid = false"
+                                class="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg border text-xs text-gray-900 bg-white
+                                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                                [ngClass]="day.invalid ? 'border-red-400' : 'border-gray-200'" />
+                            <span class="text-gray-400 text-xs shrink-0">to</span>
+                            <input type="time" [(ngModel)]="day.endTime" (ngModelChange)="day.invalid = false"
+                                class="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg border text-xs text-gray-900 bg-white
+                                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                                [ngClass]="day.invalid ? 'border-red-400' : 'border-gray-200'" />
+                        </div>
+                    </ng-container>
+                    <ng-template #dayOff>
+                        <span class="flex-1 text-xs text-gray-400 italic">Closed</span>
+                    </ng-template>
+
+                </div>
+
+                <p *ngIf="day.invalid" class="text-red-500 text-[11px] flex items-center gap-1 mt-2 ml-12">
+                    <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                    Start time must be before end time
+                </p>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-gray-100 mt-1">
+            <button type="button" (click)="closeDialog()"
+                class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
+                Cancel
+            </button>
+            <button type="button" (click)="save()" [disabled]="saving" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2
+                       disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100">
+                <i-feather [name]="saving ? 'loader' : 'save'" [ngClass]="{'animate-spin': saving}" style="width:13px;height:13px;"></i-feather>
+                {{ saving ? 'Saving…' : 'Save schedule' }}
+            </button>
+        </div>
+
+    </div>
+
+</div>

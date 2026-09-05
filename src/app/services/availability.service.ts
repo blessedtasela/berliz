@@ -31,6 +31,16 @@ export class AvailabilityService {
     return this.httpClient.get<ApiResponse<Availability[]>>(this.url + "/availability/getProviderAvailability" + params);
   }
 
+  /** Admin-only: bulk replace-the-week on behalf of a specific trainer/center. */
+  setProviderAvailability(trainerId: number | undefined, centerId: number | undefined, days: AvailabilityDay[]) {
+    let params = '';
+    if (trainerId != null) params = `?trainerId=${trainerId}`;
+    else if (centerId != null) params = `?centerId=${centerId}`;
+    return this.httpClient.post<ApiResponse<Availability[]>>(this.url + "/availability/setProviderAvailability" + params, { days }, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
   getAvailableSlots(trainerId: number | undefined, centerId: number | undefined, date: string) {
     let params = `?date=${date}`;
     if (trainerId != null) params += `&trainerId=${trainerId}`;

@@ -17,6 +17,7 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
 import { AuthGuard } from 'src/app/services/auth.guard';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { AdminAvailabilityModule } from 'src/app/admin/availability/admin-availability.module';
 
 
 
@@ -43,6 +44,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     AdminSearchModule,
     StrapiUrlPipe,
     ImageCropperModule,
+    AdminAvailabilityModule,
     RouterModule.forChild([
       { path: '', component: CentersComponent },
       { path: ':id', component: CenterDetailPageComponent, canActivate: [AuthGuard], data: { breadcrumb: 'Center Details', expectedRole: ['admin'] } },

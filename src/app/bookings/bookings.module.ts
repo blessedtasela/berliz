@@ -34,7 +34,8 @@ import { EarningsViewComponent } from './earnings-view/earnings-view.component';
   ],
   exports: [
     MyBookingsMainComponent,
-    ProviderBookingsMainComponent
+    ProviderBookingsMainComponent,
+    MyAvailabilityEditorComponent
   ]
 })
 export class MyBookingsModule { }

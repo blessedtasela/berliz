@@ -25,6 +25,7 @@ import { CenterVideoAlbumComponent } from './center-video-album/center-video-alb
 import { CenterTrainersComponent } from './center-trainers/center-trainers.component';
 import { CenterReviewComponent } from './center-review/center-review.component';
 import { CenterLikeComponent } from './center-like/center-like.component';
+import { MyBookingsModule } from '../bookings/bookings.module';
 
 
 
@@ -59,6 +60,7 @@ import { CenterLikeComponent } from './center-like/center-like.component';
     ImageCropperModule,
     RouterModule,
     SharedModule,
+    MyBookingsModule,
   ]
 })
 export class PartnerModule { }

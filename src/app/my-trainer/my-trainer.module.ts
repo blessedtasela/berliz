@@ -24,6 +24,7 @@ import { NavbarModule } from '../navbar/navbar.module';
 import { MyTrainerSubModalComponent } from './my-trainer-sub-modal/my-trainer-sub-modal.component';
 import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
 import { MyTrainerSharedProgressComponent } from './my-trainer-shared-progress/my-trainer-shared-progress.component';
+import { MyBookingsModule } from '../bookings/bookings.module';
 
 
 
@@ -56,6 +57,7 @@ import { MyTrainerSharedProgressComponent } from './my-trainer-shared-progress/m
     ImageCropperModule,
     NgxFileDropModule,
     StrapiUrlPipe,
+    MyBookingsModule,
   ]
 })
 export class MyTrainerModule { }
