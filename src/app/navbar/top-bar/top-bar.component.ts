@@ -16,7 +16,6 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { Users } from 'src/app/models/users.interface';
-import { AuthService } from 'src/app/services/auth.service';
 import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { loadUser } from 'src/app/state/user/user.actions';
@@ -66,7 +65,6 @@ export class TopBarComponent implements OnInit {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private rxStompService: RxStompService,
-    private authService: AuthService,
     public sidebarState: SidebarStateService
   ) {
     this.currentRoute = this.router.url;
@@ -77,10 +75,17 @@ export class TopBarComponent implements OnInit {
     });
   }
 
+  /**
+   * No auth check here: this component only ever mounts inside AppComponent's
+   * 'sidebar' layout branch, which itself only renders once AppComponent has
+   * confirmed the user is authenticated (see AppComponent#updateLayout) --
+   * checking again here just added a second, ONE-TIME check with no retry.
+   * If it ever ran during a momentary unauthenticated flash (e.g. right as a
+   * token was refreshing), this whole component silently never loaded any
+   * data for the rest of the session, since ngOnInit only fires once per
+   * instance -- exactly the "topbar/sidebar go blank until I refresh" bug.
+   */
   ngOnInit() {
-    if (!this.authService.isAuthenticated()) {
-      return;
-    }
     this.onResize();
     this.subscribeToCloseSideBar();
     this.store.dispatch(loadUser());

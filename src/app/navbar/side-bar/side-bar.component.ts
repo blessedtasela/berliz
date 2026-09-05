@@ -7,7 +7,6 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { AuthService } from 'src/app/services/auth.service';
 import {
   SidebarDisplay,
   SidebarStateService,
@@ -55,7 +54,6 @@ export class SideBarComponent implements OnInit, OnDestroy {
     private store: Store,
     private snackbarService: SnackBarService,
     private rxStompService: RxStompService,
-    private authService: AuthService,
     private sidebarState: SidebarStateService
   ) {
     this.currentRoute = this.router.url;
@@ -94,10 +92,17 @@ export class SideBarComponent implements OnInit, OnDestroy {
   // -----------------------------
   // INIT
   // -----------------------------
+  /**
+   * No auth check here: this component only ever mounts inside AppComponent's
+   * 'sidebar' layout branch, which itself only renders once AppComponent has
+   * confirmed the user is authenticated (see AppComponent#updateLayout) --
+   * checking again here just added a second, ONE-TIME check with no retry.
+   * If it ever ran during a momentary unauthenticated flash (e.g. right as a
+   * token was refreshing), this whole component silently never loaded any
+   * data for the rest of the session, since ngOnInit only fires once per
+   * instance -- exactly the "topbar/sidebar go blank until I refresh" bug.
+   */
   ngOnInit() {
-    if (!this.authService.isAuthenticated()) {
-      return;
-    }
     this.onResize();
 
     this.sidebarState.mode$
