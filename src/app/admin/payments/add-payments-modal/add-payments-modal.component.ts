@@ -1,9 +1,8 @@
-import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
+import { Component, EventEmitter, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription } from 'rxjs';
 import { Users } from 'src/app/models/users.interface';
 import { PaymentService } from 'src/app/services/payment.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -11,131 +10,85 @@ import { selectUsers } from 'src/app/state/user/user.selector';
 import { loadActiveUsers } from 'src/app/state/user/user.actions';
 import { genericError } from 'src/validators/form-validators.module';
 
+/**
+ * Admin-recorded payment for a user with an active subscription. Rebuilt
+ * against the real backend contract (PaymentRequest: email + paymentMethod
+ * + amount) — the previous version of this form posted the same
+ * copy-pasted {name, photo, description, likes, tagIds} shape used
+ * (wrongly) across several other admin "add" modals. Payment processing
+ * itself isn't integrated yet (see the payment/subscription model design
+ * notes) — paymentMethod is a free-text record of how it was collected
+ * (e.g. "Manual"), not a live charge.
+ */
 @Component({
   selector: 'app-add-payments-modal',
   templateUrl: './add-payments-modal.component.html',
   styleUrls: ['./add-payments-modal.component.css']
 })
-export class AddPaymentsModalComponent {
+export class AddPaymentsModalComponent implements OnInit {
   onAddPaymentEmit = new EventEmitter();
   addPaymentForm!: FormGroup;
-  invalidForm: boolean = false;
+  invalidForm = false;
+  submitting = false;
   responseMessage: any;
-  users: Users[] = [];
-  selectedPhoto: any;
-  subscription = new Subscription;
 
-  constructor(private formBuilder: FormBuilder,
+  users: Users[] = [];
+
+  constructor(
+    private formBuilder: FormBuilder,
     private paymentService: PaymentService,
     private store: Store,
     public dialogRef: MatDialogRef<AddPaymentsModalComponent>,
     private ngxService: NgxUiLoaderService,
-    private cd: ChangeDetectorRef,
-    private snackbarService: SnackBarService) {
-
-  }
+    private snackbarService: SnackBarService,
+  ) { }
 
   ngOnInit(): void {
     this.addPaymentForm = this.formBuilder.group({
-      'name': ['', [Validators.required, Validators.minLength(2)]],
-      'photo': ['', [Validators.required, Validators.minLength(2)]],
-      'description': ['', [Validators.required, Validators.minLength(20)]],
-      'likes': ['0',],
-      'tagIds': this.formBuilder.array([], this.validateCheckbox()),
+      email: ['', [Validators.required, Validators.email]],
+      paymentMethod: ['Manual', Validators.required],
+      amount: ['', [Validators.required, Validators.min(0.01)]],
     });
 
-    this.store.select(selectUsers).subscribe((cachedData) => {
-      if (!cachedData?.length) {
-        this.store.dispatch(loadActiveUsers());
-        this.handleEmitEvent();
-      } else {
-        this.users = cachedData
-      }
-    })
+    this.store.dispatch(loadActiveUsers());
+    this.store.select(selectUsers).subscribe(users => this.users = users);
   }
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe()
-  }
-
-  handleEmitEvent() {
-    console.log("isCached false");
-    this.subscription.add(
-      this.store.select(selectUsers).subscribe((users) => {
-        this.users = users;
-        this.cd.detectChanges(); // Manually trigger change detection
-      })
-    );
-  }
-
-
-  onCheckboxChanged(event: any) {
-    const users = this.addPaymentForm.get('tagIds') as FormArray;
-    if (event.target.checked) {
-      users.push(this.formBuilder.group({ tagIds: event.target.value }));
-    } else {
-      const index = users.controls.findIndex((control) => control.value.tagIds === event.target.value);
-      users.removeAt(index);
+  addPayment(): void {
+    if (this.addPaymentForm.invalid || this.submitting) {
+      this.invalidForm = true;
+      return;
     }
-  }
 
-  validateCheckbox(): ValidatorFn {
-    return (formArray: AbstractControl) => {
-      const checkboxes = formArray.value;
-      const isChecked = checkboxes.length > 0;
-      return isChecked ? null : { noCheckboxChecked: true };
-    };
-  }
-
-  addCategory(): void {
+    this.submitting = true;
     this.ngxService.start();
-    if (this.addPaymentForm.invalid) {
-      this.invalidForm = true
-      this.responseMessage = "Invalid form"
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(this.responseMessage, "error");
-    } else {
-      // Get the selected tagIds values as an array
-      const selectedTagIds = this.addPaymentForm.value.tagIds.map((tag: any) => tag.tagIds);
-
-      // Convert the array to a comma-separated string
-      const tagIdsString = selectedTagIds.join(',');
-      const formData = {
-        ...this.addPaymentForm.value,
-        tagIds: tagIdsString
-      };
-      this.paymentService.addPayment(formData)
-        .subscribe((response: any) => {
-          this.onAddPaymentEmit.emit();
-          this.addPaymentForm.reset();
-          this.invalidForm = false;
-          this.dialogRef.close('Category added successfully');
-          this.responseMessage = response?.message;
-          this.snackbarService.openSnackBar(this.responseMessage, "");
-          this.ngxService.stop();
-        }, (error: any) => {
-          this.ngxService.stop();
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackbarService.openSnackBar(this.responseMessage, "error");
-        });
-    }
-    this.ngxService.stop();
+    this.paymentService.addPayment({
+      ...this.addPaymentForm.value,
+      amount: Number(this.addPaymentForm.value.amount),
+    }).subscribe({
+      next: (response: any) => {
+        this.ngxService.stop();
+        this.submitting = false;
+        this.onAddPaymentEmit.emit();
+        this.responseMessage = response?.message;
+        this.snackbarService.openSnackBar(this.responseMessage, '');
+        this.dialogRef.close('Payment added successfully');
+      },
+      error: (error: any) => {
+        this.ngxService.stop();
+        this.submitting = false;
+        this.responseMessage = error.error?.message || genericError;
+        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+      }
+    });
   }
 
-  closeDialog() {
-    this.dialogRef.close('Dialog closed without adding a category');
+  closeDialog(): void {
+    this.dialogRef.close('Dialog closed without adding a payment');
   }
 
-  clear() {
-    this.addPaymentForm.reset();
-    this.onCheckboxChanged(event)
+  clear(): void {
+    this.addPaymentForm.reset({ paymentMethod: 'Manual' });
+    this.invalidForm = false;
   }
-
-
 }
-

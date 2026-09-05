@@ -1,1 +1,71 @@
-<p>update-payments-modal works!</p>
+<div class="max-w-lg w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="edit-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-gray-900">Edit payment</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">{{ paymentData.userFirstname }} {{ paymentData.userLastname }}</p>
+            </div>
+        </div>
+        <button type="button" (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
+    </div>
+
+    <div *ngIf="isActive" class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 flex items-start gap-2">
+        <i-feather name="alert-triangle" class="text-amber-500 shrink-0" style="width:14px;height:14px;margin-top:1px;"></i-feather>
+        <p class="text-xs text-amber-700">This payment is already active and can no longer be edited.</p>
+    </div>
+
+    <form [formGroup]="updatePaymentForm" class="flex flex-col gap-4">
+
+        <p *ngIf="updatePaymentForm.invalid && invalidForm"
+            class="text-red-500 text-[11px] flex items-center gap-1">
+            <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+            Please complete all required fields
+        </p>
+
+        <!-- Payment method -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Payment method</label>
+            <input formControlName="paymentMethod" type="text" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition disabled:bg-gray-100 disabled:text-gray-400"
+                [ngClass]="updatePaymentForm.get('paymentMethod')?.invalid && invalidForm ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'">
+        </div>
+
+        <!-- Amount -->
+        <div class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Amount (CAD)</label>
+            <input formControlName="amount" type="number" min="0.01" step="0.01" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition disabled:bg-gray-100 disabled:text-gray-400"
+                [ngClass]="updatePaymentForm.get('amount')?.invalid && invalidForm ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'">
+            <p *ngIf="updatePaymentForm.get('amount')?.invalid && invalidForm"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                Enter an amount greater than 0
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div class="flex items-center justify-end gap-2">
+            <button type="button" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+                       hover:bg-gray-50 active:scale-[0.98] transition">
+                Cancel
+            </button>
+            <button type="submit" [disabled]="submitting || isActive" (click)="updatePayment()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                       hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2
+                       disabled:opacity-50 disabled:cursor-not-allowed">
+                <i-feather name="check" style="width:13px;height:13px;"></i-feather>
+                {{ submitting ? 'Saving…' : 'Save changes' }}
+            </button>
+        </div>
+
+    </form>
+
+</div>
