@@ -38,7 +38,23 @@ export class SeoService {
     const cleanPath = this.stripQueryAndFragment(url);
     const data = this.resolveMetaData(cleanPath);
     const canonicalUrl = this.buildCanonicalUrl(cleanPath);
+    this.apply(data, canonicalUrl);
+  }
 
+  /**
+   * Overrides the route-driven tags with real per-entity data once it
+   * resolves — e.g. a specific trainer/center's own name, photo and
+   * description instead of the generic directory-page copy `updateForRoute`
+   * already applied on navigation (that fires on `NavigationEnd`, before an
+   * async lookup like "which trainer is `/trainers/:name`" can complete).
+   * `canonicalUrl` must be the real absolute page URL (e.g.
+   * `${environment.baseUrl}/trainers/jane-doe`).
+   */
+  updatePageData(data: MetaData, canonicalUrl: string): void {
+    this.apply(data, canonicalUrl);
+  }
+
+  private apply(data: MetaData, canonicalUrl: string): void {
     this.titleService.setTitle(data.title);
 
     this.setTag('name', 'description', data.description);

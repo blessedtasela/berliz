@@ -15,6 +15,8 @@ import {
 } from 'src/app/models/trainers.interface';
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { TrainerService } from 'src/app/services/trainer.service';
+import { SeoService } from 'src/app/services/seo.service';
+import { environment } from 'src/environments/environment';
 import { TestimonialDialogService } from 'src/app/testimonial/testimonial-dialog.service';
 import { BookingDialogService } from 'src/app/booking/booking-dialog.service';
 import { loadTestimonialsByTrainer } from 'src/app/state/testimonial/testimonial.actions';
@@ -75,6 +77,7 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
     private router: Router,
     private store: Store,
     private trainerService: TrainerService,
+    private seoService: SeoService,
     private testimonialDialog: TestimonialDialogService,
     private bookingDialog: BookingDialogService
   ) { }
@@ -123,9 +126,39 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
 
         this.trainer = match;
         this.trainerId = match.id;
+        this.updateSeoTags(match);
         this.loadPublicProfile();
         this.resumePendingAction();
       });
+  }
+
+  /** Overrides the generic route-driven "Trainers" SEO tags with this trainer's own. */
+  private updateSeoTags(trainer: Trainers): void {
+    const url = `${environment.baseUrl}/trainers/${trainer.name.replace(/ /g, '-')}`;
+    const description = trainer.motto
+      ? `${trainer.motto} — book ${trainer.name}, a certified personal trainer on Berliz.`
+      : `Book ${trainer.name}, a certified personal trainer on Berliz.`;
+
+    this.seoService.updatePageData({
+      title: `${trainer.name} — Personal Trainer | Berliz`,
+      description,
+      imageUrl: trainer.photoResponse?.photoUrl || `${environment.assetsUrl}berliz-site.png`,
+      ogType: 'profile',
+      structuredData: {
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: trainer.name,
+        jobTitle: 'Personal Trainer',
+        description,
+        image: trainer.photoResponse?.photoUrl,
+        url,
+        worksFor: {
+          '@type': 'Organization',
+          name: 'Berliz Fitness',
+          url: environment.baseUrl,
+        },
+      },
+    }, url);
   }
 
   /**

@@ -19,6 +19,8 @@ import {
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { CenterService } from 'src/app/services/center.service';
+import { SeoService } from 'src/app/services/seo.service';
+import { environment } from 'src/environments/environment';
 import { TestimonialDialogService } from 'src/app/testimonial/testimonial-dialog.service';
 import { BookingDialogService } from 'src/app/booking/booking-dialog.service';
 import { CenterTrainerCard } from '../center-trainers/center-trainers.component';
@@ -85,6 +87,7 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private store: Store,
     private centerService: CenterService,
+    private seoService: SeoService,
     private testimonialDialog: TestimonialDialogService,
     private bookingDialog: BookingDialogService,
   ) { }
@@ -156,6 +159,7 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
 
         this.notFound = false;
         this.center = match;
+        this.updateSeoTags(match);
         this.buildCategories();
 
         // Only fire the id-scoped fetches once, the first time this center resolves.
@@ -166,6 +170,29 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
         }
       })
     );
+  }
+
+  /** Overrides the generic route-driven "Centers" SEO tags with this center's own. */
+  private updateSeoTags(center: Centers): void {
+    const url = `${environment.baseUrl}/centers/${this.formatStringToUrl(center.name)}`;
+    const description = center.motto
+      ? `${center.motto} — ${center.address}. Book sessions at ${center.name} on Berliz.`
+      : `${center.name} on Berliz — ${center.address}. Browse trainers and book sessions.`;
+
+    this.seoService.updatePageData({
+      title: `${center.name} — Fitness Center | Berliz`,
+      description,
+      imageUrl: center.photoResponse?.photoUrl || `${environment.assetsUrl}berliz-site.png`,
+      structuredData: {
+        '@context': 'https://schema.org',
+        '@type': 'ExerciseGym',
+        name: center.name,
+        description,
+        image: center.photoResponse?.photoUrl,
+        address: center.address,
+        url,
+      },
+    }, url);
   }
 
   /**
