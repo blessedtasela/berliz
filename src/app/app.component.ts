@@ -8,6 +8,7 @@ import { NewsletterTriggerService } from './shared/newsletter-popup/newsletter-t
 import { InactivityService } from './services/inactivity.service';
 import { SeoService } from './services/seo.service';
 import { ScrollRestorationService } from './services/scroll-restoration.service';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -35,6 +36,7 @@ export class AppComponent implements OnInit {
     private inactivityService: InactivityService,
     private seoService: SeoService,
     private scrollRestoration: ScrollRestorationService,
+    private authService: AuthService,
   ) {
     this.sidebarState.mode$.subscribe(mode => {
       this.sidebarMode = mode;
@@ -129,8 +131,17 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    // EVERYTHING ELSE USES SIDEBAR
-    this.activeLayout = 'sidebar';
+    // EVERYTHING ELSE IS A PROTECTED (SIDEBAR) ROUTE -- but only actually show
+    // the signed-in app chrome to someone who's actually signed in. Without
+    // this check, a route the URL-pattern lists above don't cover (chiefly
+    // the wildcard 404) fell through to 'sidebar' unconditionally, so a
+    // logged-out visitor hitting a bad URL -- or a token expiring mid-session,
+    // between AuthGuard's checks -- saw the authenticated sidebar/topbar
+    // chrome instead of the public one. AuthGuard already redirects a bare
+    // "not logged in" hit on a real protected route to /login before it ever
+    // reaches here; this is the backstop for everything that isn't gated by
+    // that guard at all.
+    this.activeLayout = this.authService.isAuthenticated() ? 'sidebar' : 'topbar';
   }
 
   /**

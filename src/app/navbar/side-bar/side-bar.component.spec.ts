@@ -9,7 +9,6 @@ import { SideBarComponent } from './side-bar.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { AuthService } from 'src/app/services/auth.service';
 import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 
 describe('SideBarComponent', () => {
@@ -23,8 +22,6 @@ describe('SideBarComponent', () => {
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     const rxStompSpy = jasmine.createSpyObj('RxStompService', ['watch']);
     rxStompSpy.watch.and.returnValue(NEVER);
-    const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
-    authServiceSpy.isAuthenticated.and.returnValue(true);
     const sidebarStateSpy = jasmine.createSpyObj('SidebarStateService',
       ['setMode', 'setMobileOverlayOpen', 'openSidebar', 'isMobileViewport', 'applyPreferredMode'],
       { mode$: of('collapsed'), mobileOverlayOpen$: of(false) });
@@ -39,7 +36,6 @@ describe('SideBarComponent', () => {
         { provide: MatDialog, useValue: dialogSpy },
         { provide: SnackBarService, useValue: snackbarSpy },
         { provide: RxStompService, useValue: rxStompSpy },
-        { provide: AuthService, useValue: authServiceSpy },
         { provide: SidebarStateService, useValue: sidebarStateSpy }
       ]
     });

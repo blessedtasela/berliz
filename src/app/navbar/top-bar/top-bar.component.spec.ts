@@ -10,7 +10,6 @@ import { TopBarComponent } from './top-bar.component';
 import { UserService } from 'src/app/services/user.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { AuthService } from 'src/app/services/auth.service';
 import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 
 describe('TopBarComponent', () => {
@@ -25,7 +24,6 @@ describe('TopBarComponent', () => {
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     const rxStompSpy = jasmine.createSpyObj('RxStompService', ['watch']);
     rxStompSpy.watch.and.returnValue(of({}));
-    const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
     const sidebarStateSpy = jasmine.createSpyObj('SidebarStateService',
       ['setMode', 'setMobileOverlayOpen', 'openSidebar', 'isMobileViewport'],
       { mode$: of('collapsed'), mobileOverlayOpen$: of(false), showFloatingButton$: of(false) });
@@ -41,7 +39,6 @@ describe('TopBarComponent', () => {
         { provide: NgxUiLoaderService, useValue: ngxServiceSpy },
         { provide: SnackBarService, useValue: snackbarSpy },
         { provide: RxStompService, useValue: rxStompSpy },
-        { provide: AuthService, useValue: authServiceSpy },
         { provide: SidebarStateService, useValue: sidebarStateSpy }
       ]
     });
