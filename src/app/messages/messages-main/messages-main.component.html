@@ -77,11 +77,14 @@
                     </div>
                     <app-message-bubble *ngFor="let m of activeMessages"
                         [message]="m" [mine]="isMine(m)" [isLastMine]="isMine(m) && m.id === lastMineMessageId"
-                        (unsend)="unsend($event)">
+                        (unsend)="unsend($event)" (reply)="startReply($event)" (edit)="startEdit($event)">
                     </app-message-bubble>
                 </div>
 
-                <app-message-composer (send)="send($event)" (typing)="setTyping($event)"></app-message-composer>
+                <app-message-composer [replyTo]="replyTo" [editingMessage]="editingMessage"
+                    (send)="send($event)" (saveEdit)="saveEdit($event)"
+                    (cancelReply)="cancelReply()" (cancelEdit)="cancelEdit()"
+                    (typing)="setTyping($event)"></app-message-composer>
             </ng-container>
         </div>
     </div>

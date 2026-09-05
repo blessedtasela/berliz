@@ -1,10 +1,13 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { ConversationSummary, Message } from 'src/app/models/message.model';
+import { ComposerSendPayload } from 'src/app/messages/shared/message-composer/message-composer.component';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { MyTrainerSummary } from 'src/app/models/progress-share.model';
 
 import * as MessageActions from 'src/app/state/message/message.actions';
@@ -81,6 +84,10 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
   loadingConversation = false;
   activePartyTyping = false;
 
+  /** Set by a bubble's "Reply"/"Edit" action; consumed by the composer, one active at a time. */
+  replyTo: Message | null = null;
+  editingMessage: Message | null = null;
+
   private subscriptions: Subscription[] = [];
   private destroy$ = new Subject<void>();
 
@@ -88,6 +95,7 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
     private store: Store,
     private router: Router,
     private snackBar: SnackBarService,
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -159,6 +167,8 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
     this.store.dispatch(MessageActions.loadConversation({ otherUserId }));
     this.store.dispatch(MessageActions.markConversationRead({ otherUserId }));
     this.view = 'thread';
+    this.replyTo = null;
+    this.editingMessage = null;
   }
 
   /**
@@ -177,10 +187,10 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
     this.view = 'list';
   }
 
-  send(body: string): void {
+  send(payload: ComposerSendPayload): void {
     if (this.activeUserId == null) return;
     this.store.dispatch(MessageActions.sendMessage({
-      request: { recipientId: this.activeUserId, body }
+      request: { recipientId: this.activeUserId, body: payload.body, replyToMessageId: payload.replyToMessageId }
     }));
   }
 
@@ -189,8 +199,46 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
     this.store.dispatch(MessageActions.setTyping({ otherUserId: this.activeUserId, typing }));
   }
 
+  startReply(message: Message): void {
+    this.editingMessage = null;
+    this.replyTo = message;
+  }
+
+  cancelReply(): void {
+    this.replyTo = null;
+  }
+
+  startEdit(message: Message): void {
+    this.replyTo = null;
+    this.editingMessage = message;
+  }
+
+  cancelEdit(): void {
+    this.editingMessage = null;
+  }
+
+  saveEdit(payload: { messageId: number; body: string }): void {
+    this.editingMessage = null;
+    this.store.dispatch(MessageActions.editMessage({
+      messageId: payload.messageId,
+      request: { recipientId: this.activeUserId ?? 0, body: payload.body }
+    }));
+  }
+
+  /** Unsending is irreversible and easy to hit by accident on a hover action -- confirm first. */
   unsend(messageId: number): void {
-    this.store.dispatch(MessageActions.deleteMessage({ messageId }));
+    const dialogRef = this.dialog.open(PromptModalComponent, {
+      data: {
+        message: 'unsend this message? Everyone in the conversation will see "Message unsent" instead.',
+        confirmation: true,
+        disableClose: true,
+      },
+    });
+
+    dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
+      this.store.dispatch(MessageActions.deleteMessage({ messageId }));
+      dialogRef.close();
+    });
   }
 
   isMine(message: Message): boolean {

@@ -6,6 +6,17 @@
                 ? 'bg-gray-50 border border-dashed border-gray-200 text-gray-400 italic'
                 : (mine ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-800')">
 
+            <!-- Quoted reply preview -->
+            <div *ngIf="!message.deleted && message.replyToMessageId" class="mb-1.5 pl-2 py-0.5 border-l-2 rounded-r"
+                [ngClass]="mine ? 'border-white/50 bg-white/10' : 'border-gray-400 bg-gray-200/50'">
+                <p class="text-[10px] font-bold truncate" [ngClass]="mine ? 'text-white/80' : 'text-gray-600'">
+                    {{ message.replyToSenderName }}
+                </p>
+                <p class="text-[10px] truncate" [ngClass]="mine ? 'text-white/70' : 'text-gray-500'">
+                    {{ message.replyToDeleted ? 'Message unsent' : message.replyToBody }}
+                </p>
+            </div>
+
             <p *ngIf="!message.deleted" class="text-sm whitespace-pre-wrap break-words">{{ message.body }}</p>
             <p *ngIf="message.deleted" class="text-xs flex items-center gap-1">
                 <i-feather name="x-circle" style="width:11px;height:11px;"></i-feather>
@@ -19,12 +30,21 @@
             </p>
         </div>
 
-        <!-- Unsend -- own messages only, revealed on hover so the thread doesn't clutter with controls. -->
-        <button *ngIf="canUnsend" type="button" (click)="unsend.emit(message.id)"
-            class="opacity-0 group-hover:opacity-100 transition shrink-0 text-gray-300 hover:text-red-600"
-            aria-label="Unsend message" title="Unsend">
-            <i-feather name="trash-2" style="width:12px;height:12px;"></i-feather>
-        </button>
+        <!-- Actions -- own messages get up to 3, everyone else just Reply -- revealed on hover so the thread doesn't clutter with controls. -->
+        <div class="opacity-0 group-hover:opacity-100 transition shrink-0 flex items-center gap-1.5">
+            <button *ngIf="canReply" type="button" (click)="reply.emit(message)" aria-label="Reply" title="Reply"
+                class="text-gray-300 hover:text-gray-600">
+                <i-feather name="corner-up-left" style="width:12px;height:12px;"></i-feather>
+            </button>
+            <button *ngIf="canEdit" type="button" (click)="edit.emit(message)" aria-label="Edit" title="Edit"
+                class="text-gray-300 hover:text-gray-600">
+                <i-feather name="edit-2" style="width:12px;height:12px;"></i-feather>
+            </button>
+            <button *ngIf="canUnsend" type="button" (click)="unsend.emit(message.id)" aria-label="Unsend message" title="Unsend"
+                class="text-gray-300 hover:text-red-600">
+                <i-feather name="trash-2" style="width:12px;height:12px;"></i-feather>
+            </button>
+        </div>
     </div>
 
     <p *ngIf="isLastMine && message.isRead && !message.deleted" class="text-[10px] text-gray-400 mt-0.5 mr-0.5 flex items-center gap-1">
