@@ -16,6 +16,16 @@
                 <option value="lastUpdate">Last update</option>
             </select>
         </div>
+        <a routerLink="/dashboard/hub/exercise-suggestions"
+            class="relative flex items-center gap-1.5 px-4 py-2 rounded-xl border border-gray-200 text-gray-600 text-xs font-semibold
+                   hover:bg-gray-50 transition">
+            <i-feather name="git-pull-request" style="width:13px;height:13px;"></i-feather>
+            Suggestions
+            <span *ngIf="whatsNew.isNew('exercise-suggestions')"
+                class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white leading-none">
+                NEW
+            </span>
+        </a>
         <button type="button" (click)="openAddExercise()"
             class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold
                    hover:bg-red-700 active:scale-[0.98] transition">

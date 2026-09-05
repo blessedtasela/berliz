@@ -309,6 +309,17 @@ const dashboardRoutes: Routes = [
         }
       },
 
+      // Scheduled runs — solo plans or group runs discoverable by city.
+      {
+        path: 'runs',
+        loadComponent: () => import('../runs/runs.component').then(m => m.RunsComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Runs',
+          expectedRole: expectedRoleAll
+        }
+      },
+
       // Workouts — anyone can build a workout
       {
         path: 'workouts',
@@ -436,6 +447,9 @@ const dashboardRoutes: Routes = [
           { path: 'todo-lists', loadChildren: () => import('../admin/todo-lists/todo-lists.module').then(m => m.TodoListsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Todo Lists', expectedRole: ['admin'] } },
           { path: 'muscle-groups', loadChildren: () => import('../admin/muscle-groups/muscle-groups.module').then(m => m.MuscleGroupsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Muscle Groups', expectedRole: ['admin'] } },
           { path: 'exercises', loadChildren: () => import('../admin/exercises/exercises.module').then(m => m.ExercisesModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Exercises', expectedRole: ['admin'] } },
+          // Crowdsourced catalog pipeline — custom exercise names users logged
+          // that aren't in the catalog yet, queued for admin review/approval.
+          { path: 'exercise-suggestions', loadComponent: () => import('../admin/exercise-suggestions/exercise-suggestions.component').then(m => m.ExerciseSuggestionsComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Exercise Suggestions', expectedRole: ['admin'] } },
           { path: 'tasks', loadChildren: () => import('../admin/tasks/tasks.module').then(m => m.TasksModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Tasks', expectedRole: ['admin'] } },
           { path: 'sub-tasks', loadChildren: () => import('../admin/sub-tasks/sub-tasks.module').then(m => m.SubTasksModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Sub Tasks', expectedRole: ['admin'] } },
           { path: 'categories', loadChildren: () => import('../admin/categories/categories.module').then(m => m.CategoriesModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Categories', expectedRole: ['admin'] } },

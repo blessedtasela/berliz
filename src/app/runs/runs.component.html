@@ -1,0 +1,278 @@
+<div class="flex flex-col gap-4 font-sans">
+
+  <!-- ═══════════════════ HEADER ═══════════════════ -->
+  <div class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+      <div class="min-w-0">
+        <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2 flex-wrap">
+          <i-feather name="wind" style="width:14px;height:14px;" class="text-red-600 shrink-0"></i-feather>
+          Runs
+        </h2>
+        <p class="text-[11px] text-gray-400 mt-0.5">
+          Find runners in your city, invite your connections, or just track your own time — solo or group.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 w-full sm:w-auto sm:shrink-0">
+        <button type="button" (click)="createRun()" class="flex-1 sm:flex-none justify-center px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+                 hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+          <i-feather name="plus-circle" style="width:13px;height:13px;"></i-feather>
+          Schedule a run
+        </button>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <!-- Tabs -->
+    <div class="flex items-center gap-2">
+      <button type="button" (click)="setTab('discover')" class="rounded-xl px-4 py-2 text-xs font-semibold transition"
+        [ngClass]="activeTab === 'discover' ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+        Discover
+      </button>
+      <button type="button" (click)="setTab('mine')" class="rounded-xl px-4 py-2 text-xs font-semibold transition"
+        [ngClass]="activeTab === 'mine' ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+        My runs
+        <span *ngIf="myRuns.length" class="ml-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+          [ngClass]="activeTab === 'mine' ? 'bg-white/20' : 'bg-white'">{{ myRuns.length }}</span>
+      </button>
+      <button type="button" (click)="setTab('history')" class="rounded-xl px-4 py-2 text-xs font-semibold transition"
+        [ngClass]="activeTab === 'history' ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+        History
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ DISCOVER ═══════════════════ -->
+  <ng-container *ngIf="activeTab === 'discover'">
+    <div class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+      <div class="relative max-w-sm">
+        <i-feather name="search" style="width:13px;height:13px;"
+          class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i-feather>
+        <input type="text" [(ngModel)]="city" (keydown.enter)="refreshDiscover()" placeholder="Search a city..." class="w-full pl-8 pr-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
+      </div>
+      <button type="button" (click)="refreshDiscover()"
+        class="self-start px-3 py-1.5 rounded-xl text-[11px] font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
+        Search
+      </button>
+    </div>
+
+    <div *ngIf="discoverLoading" class="flex items-center justify-center py-10">
+      <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
+    </div>
+
+    <div *ngIf="!discoverLoading && hasSearchedDiscover && discoverable.length === 0"
+      class="bg-white rounded-2xl border border-gray-200 p-10 flex flex-col items-center justify-center gap-3 text-center">
+      <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
+        <i-feather name="wind" style="width:22px;height:22px;" class="text-gray-400"></i-feather>
+      </div>
+      <p class="text-sm font-bold text-gray-900">No public runs in {{ city }} yet</p>
+      <p class="text-[11px] text-gray-400 max-w-xs">Be the first — schedule a group run and mark it open to anyone.</p>
+    </div>
+
+    <div *ngIf="!discoverLoading" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div *ngFor="let event of discoverable; trackBy: trackByEventId"
+        class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-2">
+        <div class="flex items-start justify-between gap-2">
+          <div class="min-w-0">
+            <p class="text-xs font-bold text-gray-900 truncate">{{ event.title || 'Group run' }}</p>
+            <p class="text-[11px] text-gray-400">{{ event.scheduledAt | date:'EEE, MMM d · h:mm a' }}</p>
+          </div>
+          <span class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full shrink-0">
+            {{ confirmedParticipants(event).length }}{{ event.maxParticipants ? '/' + event.maxParticipants : '' }} runners
+          </span>
+        </div>
+        <p class="text-[11px] text-gray-500">Hosted by {{ event.creatorName }}</p>
+        <p *ngIf="event.notes" class="text-[11px] text-gray-400 line-clamp-2">{{ event.notes }}</p>
+
+        <button *ngIf="!event.myStatus" type="button" (click)="requestToJoin(event)" [disabled]="busyEventId === event.id"
+          class="mt-1 px-3 py-1.5 rounded-xl text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700
+                 active:scale-[0.98] transition disabled:opacity-60 flex items-center justify-center gap-1.5 w-fit">
+          <i-feather *ngIf="busyEventId !== event.id" name="user-plus" style="width:11px;height:11px;"></i-feather>
+          <i-feather *ngIf="busyEventId === event.id" name="loader" style="width:11px;height:11px;" class="animate-spin"></i-feather>
+          Request to join
+        </button>
+        <span *ngIf="event.myStatus === 'REQUESTED'" class="mt-1 text-[11px] font-semibold text-amber-600 flex items-center gap-1 w-fit">
+          <i-feather name="clock" style="width:11px;height:11px;"></i-feather>
+          Request pending
+        </span>
+        <span *ngIf="event.myStatus === 'ACCEPTED'" class="mt-1 text-[11px] font-semibold text-green-600 flex items-center gap-1 w-fit">
+          <i-feather name="check" style="width:11px;height:11px;"></i-feather>
+          You're in
+        </span>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ═══════════════════ MY RUNS ═══════════════════ -->
+  <ng-container *ngIf="activeTab === 'mine'">
+    <div *ngIf="myRunsLoading" class="flex items-center justify-center py-10">
+      <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
+    </div>
+
+    <div *ngIf="!myRunsLoading && myRuns.length === 0"
+      class="bg-white rounded-2xl border border-gray-200 p-10 flex flex-col items-center justify-center gap-3 text-center">
+      <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
+        <i-feather name="wind" style="width:22px;height:22px;" class="text-gray-400"></i-feather>
+      </div>
+      <p class="text-sm font-bold text-gray-900">No runs yet</p>
+      <p class="text-[11px] text-gray-400 max-w-xs">Schedule a solo plan or a group run to see it here.</p>
+    </div>
+
+    <div *ngIf="!myRunsLoading" class="flex flex-col gap-3">
+      <div *ngFor="let event of myRuns; trackBy: trackByEventId"
+        class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xs font-bold text-gray-900">{{ event.title || (event.solo ? 'Solo run' : 'Group run') }}</span>
+              <span *ngIf="event.solo" class="text-[10px] font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">Solo</span>
+              <span *ngIf="!event.solo" class="text-[10px] font-semibold text-purple-600 bg-purple-50 border border-purple-100 px-2 py-0.5 rounded-full">{{ event.city }}</span>
+              <span *ngIf="event.status === 'CANCELLED'" class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">Cancelled</span>
+            </div>
+            <p class="text-[11px] text-gray-400 mt-0.5">{{ event.scheduledAt | date:'EEE, MMM d · h:mm a' }}</p>
+          </div>
+
+          <div *ngIf="isCreator(event) && event.status === 'SCHEDULED'" class="flex items-center gap-1 shrink-0">
+            <button *ngIf="!event.solo" type="button" (click)="inviteRunner(event)"
+              class="w-7 h-7 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 flex items-center justify-center transition">
+              <i-feather name="user-plus" style="width:12px;height:12px;"></i-feather>
+            </button>
+            <button type="button" (click)="editRun(event)"
+              class="w-7 h-7 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 flex items-center justify-center transition">
+              <i-feather name="edit-2" style="width:12px;height:12px;"></i-feather>
+            </button>
+            <button type="button" (click)="cancelRun(event)"
+              class="w-7 h-7 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition">
+              <i-feather name="trash-2" style="width:12px;height:12px;"></i-feather>
+            </button>
+          </div>
+        </div>
+
+        <!-- Invited/requested by someone else -- respond to your own spot -->
+        <div *ngIf="!isCreator(event) && (event.myStatus === 'INVITED')"
+          class="flex items-center justify-between gap-2 bg-purple-50 border border-purple-100 rounded-xl px-3 py-2">
+          <p class="text-[11px] text-purple-700 font-semibold">{{ event.creatorName }} invited you</p>
+          <div class="flex items-center gap-1.5">
+            <button type="button" (click)="respond(event, false)" class="px-2.5 py-1 rounded-lg text-[10px] font-semibold border border-gray-200 text-gray-500 hover:text-red-600 transition">Decline</button>
+            <button type="button" (click)="respond(event, true)" class="px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-red-600 text-white hover:bg-red-700 transition">Accept</button>
+          </div>
+        </div>
+        <p *ngIf="!isCreator(event) && event.myStatus === 'REQUESTED'" class="text-[11px] text-amber-600 font-semibold flex items-center gap-1">
+          <i-feather name="clock" style="width:11px;height:11px;"></i-feather>
+          Waiting for {{ event.creatorName }} to confirm you
+        </p>
+
+        <!-- Creator: pending join requests to approve -->
+        <div *ngIf="isCreator(event) && pendingRequests(event).length > 0" class="flex flex-col gap-1.5">
+          <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Requests to join</span>
+          <div *ngFor="let p of pendingRequests(event); trackBy: trackByUserId"
+            class="flex items-center justify-between gap-2 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2">
+            <p class="text-[11px] text-amber-700 font-semibold">{{ p.name }}</p>
+            <div class="flex items-center gap-1.5">
+              <button type="button" (click)="respondToRunner(event, p.userId, false)" class="px-2.5 py-1 rounded-lg text-[10px] font-semibold border border-gray-200 text-gray-500 hover:text-red-600 transition">Decline</button>
+              <button type="button" (click)="respondToRunner(event, p.userId, true)" class="px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-red-600 text-white hover:bg-red-700 transition">Confirm</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Confirmed roster -->
+        <div *ngIf="!event.solo && confirmedParticipants(event).length > 0" class="flex flex-wrap gap-1.5">
+          <span *ngFor="let p of confirmedParticipants(event); trackBy: trackByUserId"
+            class="text-[10px] font-semibold text-gray-600 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded-full">
+            {{ p.name }}
+          </span>
+        </div>
+
+        <p *ngIf="event.notes" class="text-[11px] text-gray-500 bg-gray-50 border border-gray-100 rounded-xl px-3 py-2">{{ event.notes }}</p>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ═══════════════════ HISTORY ═══════════════════ -->
+  <ng-container *ngIf="activeTab === 'history'">
+
+    <div class="flex justify-end">
+      <button type="button" (click)="logRun()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+               hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
+        <i-feather name="plus-circle" style="width:13px;height:13px;"></i-feather>
+        Log a run
+      </button>
+    </div>
+
+    <div *ngIf="!historyLoading && runLogs.length > 0" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+          <i-feather name="wind" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+          <p class="text-lg font-extrabold text-gray-900">{{ stats.totalRuns }}</p>
+          <p class="text-[11px] text-gray-400">Runs logged</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+          [ngClass]="stats.weekStreak > 0 ? 'bg-orange-50 border border-orange-100' : 'bg-gray-50 border border-gray-200'">
+          <i-feather name="zap" [ngClass]="stats.weekStreak > 0 ? 'text-orange-500' : 'text-gray-400'" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+          <p class="text-lg font-extrabold text-gray-900">{{ stats.weekStreak }} wk</p>
+          <p class="text-[11px] text-gray-400">Current streak</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-green-50 border border-green-100 flex items-center justify-center shrink-0">
+          <i-feather name="clock" class="text-green-600" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+          <p class="text-lg font-extrabold text-gray-900">{{ formatDuration(stats.totalDurationSeconds) }}</p>
+          <p class="text-[11px] text-gray-400">Total time</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+          <i-feather name="trending-up" class="text-blue-600" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+          <p class="text-lg font-extrabold text-gray-900">{{ stats.bestPaceMinPerKm ? formatPace(stats.bestPaceMinPerKm) : '—' }}</p>
+          <p class="text-[11px] text-gray-400">Best pace</p>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="historyLoading" class="flex items-center justify-center py-10">
+      <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
+    </div>
+
+    <div *ngIf="!historyLoading && runLogs.length === 0"
+      class="bg-white rounded-2xl border border-gray-200 p-10 flex flex-col items-center justify-center gap-3 text-center">
+      <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
+        <i-feather name="clock" style="width:22px;height:22px;" class="text-gray-400"></i-feather>
+      </div>
+      <p class="text-sm font-bold text-gray-900">No runs logged yet</p>
+      <p class="text-[11px] text-gray-400 max-w-xs">Log today's run (or a past one) to start building your history.</p>
+    </div>
+
+    <div *ngIf="!historyLoading && runLogs.length > 0" class="flex flex-col gap-2">
+      <div *ngFor="let entry of runLogs; trackBy: trackByLogId"
+        class="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-bold text-gray-900">{{ entry.title || (entry.runEventTitle || 'Run') }}</p>
+          <p class="text-[11px] text-gray-400 mt-0.5">
+            {{ entry.ranAt | date:'MMM d, y' }} · {{ formatDuration(entry.durationSeconds) }}
+            <ng-container *ngIf="entry.distanceKm"> · {{ entry.distanceKm }} km<ng-container *ngIf="paceFor(entry)"> · {{ paceFor(entry) }}</ng-container></ng-container>
+          </p>
+        </div>
+        <div class="flex items-center gap-1 shrink-0">
+          <button type="button" (click)="editLog(entry)" class="w-7 h-7 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 flex items-center justify-center transition">
+            <i-feather name="edit-2" style="width:12px;height:12px;"></i-feather>
+          </button>
+          <button type="button" (click)="deleteLog(entry)" class="w-7 h-7 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition">
+            <i-feather name="trash-2" style="width:12px;height:12px;"></i-feather>
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

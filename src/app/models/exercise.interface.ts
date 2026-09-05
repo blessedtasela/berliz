@@ -31,6 +31,33 @@ export interface Exercises {
     status: string;
 }
 
+export type ExerciseSuggestionStatus = 'PENDING' | 'APPROVED' | 'DISMISSED';
+
+/**
+ * A custom exercise name a user typed instead of picking from the catalog —
+ * mirrors the backend ExerciseSuggestionResponse (GET /exerciseSuggestion/getAll,
+ * admin only). This is how the catalog grows from real usage: every gap a user
+ * hits while logging a workout becomes a reviewable suggestion here.
+ */
+export interface ExerciseSuggestionResponse {
+    id: number;
+    name: string;
+    occurrenceCount: number;
+
+    firstSuggestedByUserId: number;
+    firstSuggestedByName: string;
+    lastSuggestedByUserId: number;
+    lastSuggestedByName: string;
+
+    status: ExerciseSuggestionStatus | string;
+
+    createdExerciseId: number | null;
+
+    date: Date;
+    lastUpdate: Date;
+    message?: string;
+}
+
 /** Mirrors the backend ExerciseLikeResponse (GET /exercise/getMyExerciseLikes). */
 export interface ExerciseLikes {
     id: number;

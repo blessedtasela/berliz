@@ -1,0 +1,88 @@
+<div class="bg-white rounded-2xl font-sans flex flex-col overflow-hidden max-h-[90vh] w-[420px] max-w-[95vw]">
+
+  <!-- ═══════════════════ HEADER ═══════════════════ -->
+  <div class="flex items-start justify-between gap-3 px-5 py-4 border-b border-gray-100 shrink-0">
+    <div class="min-w-0">
+      <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+        <i-feather name="clock" style="width:13px;height:13px;" class="text-red-600"></i-feather>
+        {{ isEdit ? 'Edit run' : 'Log a run' }}
+      </h2>
+      <p class="text-[11px] text-gray-400 mt-0.5">Just the time matters — distance is optional.</p>
+    </div>
+    <button type="button" (click)="close()"
+      class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 shrink-0">
+      <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+    </button>
+  </div>
+
+  <div class="flex flex-col gap-4 p-5 overflow-y-auto">
+
+    <div class="flex flex-col gap-1">
+      <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Date</label>
+      <input type="date" [(ngModel)]="ranAt" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Duration</label>
+      <div class="grid grid-cols-3 gap-2">
+        <div class="flex flex-col gap-1">
+          <input type="number" min="0" [(ngModel)]="hours" placeholder="0" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs text-center
+                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
+          <span class="text-[10px] text-gray-400 text-center">hours</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <input type="number" min="0" max="59" [(ngModel)]="minutes" placeholder="0" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs text-center
+                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
+          <span class="text-[10px] text-gray-400 text-center">min</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <input type="number" min="0" max="59" [(ngModel)]="seconds" placeholder="0" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs text-center
+                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
+          <span class="text-[10px] text-gray-400 text-center">sec</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Distance in km (optional)</label>
+      <input type="number" min="0" step="0.01" [(ngModel)]="distanceKm" placeholder="e.g. 5" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
+      <p class="text-[10px] text-gray-400">Add this to see your pace on the history page.</p>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Title (optional)</label>
+      <input type="text" [(ngModel)]="title" placeholder="e.g. Morning loop" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Notes (optional)</label>
+      <textarea [(ngModel)]="notes" rows="2" placeholder="How did it feel?" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs resize-none
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400"></textarea>
+    </div>
+
+    <p *ngIf="error"
+      class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
+      <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+      {{ error }}
+    </p>
+  </div>
+
+  <!-- ═══════════════════ FOOTER ═══════════════════ -->
+  <div class="flex items-center justify-between gap-2 px-5 py-4 border-t border-gray-100 shrink-0">
+    <button type="button" (click)="close()"
+      class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
+      Cancel
+    </button>
+    <button type="button" (click)="save()" [disabled]="!canSubmit"
+      class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2" [ngClass]="canSubmit
+        ? 'bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]'
+        : 'bg-gray-100 text-gray-400 cursor-not-allowed'">
+      <i-feather *ngIf="!submitting" name="save" style="width:13px;height:13px;"></i-feather>
+      <i-feather *ngIf="submitting" name="loader" style="width:13px;height:13px;" class="animate-spin"></i-feather>
+      {{ isEdit ? 'Save changes' : 'Log run' }}
+    </button>
+  </div>
+</div>

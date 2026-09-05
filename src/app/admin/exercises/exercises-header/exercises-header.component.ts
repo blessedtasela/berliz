@@ -9,6 +9,7 @@ import { Exercises } from 'src/app/models/exercise.interface';
 import { AddExercisesModalComponent } from '../add-exercises-modal/add-exercises-modal.component';
 import { loadExercises } from 'src/app/state/exercise/exercise.actions';
 import { selectExercises } from 'src/app/state/exercise/exercise.selectors';
+import { WhatsNewService } from 'src/app/services/whats-new.service';
 
 @Component({
   selector: 'app-exercises-header',
@@ -26,7 +27,8 @@ export class ExercisesHeaderComponent {
 
   constructor(private dialog: MatDialog,
     private store: Store,
-    private rxStompService: RxStompService) {
+    private rxStompService: RxStompService,
+    public whatsNew: WhatsNewService) {
   }
 
   ngOnInit() {
