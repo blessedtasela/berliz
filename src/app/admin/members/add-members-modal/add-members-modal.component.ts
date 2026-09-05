@@ -1,135 +1,115 @@
-import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
+import { Component, EventEmitter, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription } from 'rxjs';
-import { Subscriptions } from 'src/app/models/subscriptions.interface';
-import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { genericError } from 'src/validators/form-validators.module';
-import { AddCategoryModalComponent } from '../../categories/add-category-modal/add-category-modal.component';
-import { MemberService } from 'src/app/services/member.service';
 import { Store } from '@ngrx/store';
-import { loadActiveSubscriptions } from 'src/app/state/subscription/subscription.actions';
-import { selectActiveSubscriptions } from 'src/app/state/subscription/subscription.selectors';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Users } from 'src/app/models/users.interface';
+import { Categories } from 'src/app/models/categories.interface';
+import { MemberService } from 'src/app/services/member.service';
+import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { selectUsers } from 'src/app/state/user/user.selector';
+import { loadActiveUsers } from 'src/app/state/user/user.actions';
+import { selectActiveCategories } from 'src/app/state/category/category.selectors';
+import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { genericError } from 'src/validators/form-validators.module';
 
+/**
+ * Admin-added member profile for an existing user. Rebuilt against the
+ * real backend contract (MemberRequest: userId + height/weight/
+ * medicalConditions/motivation/targetWeight + optional categoryIds) — the
+ * previous version of this form was a copy-paste of add-category-modal
+ * (down to its unrelated {name, photo, description, likes, tagIds} fields
+ * and even `MatDialogRef<AddCategoryModalComponent>`) that the backend has
+ * never accepted.
+ */
 @Component({
   selector: 'app-add-members-modal',
   templateUrl: './add-members-modal.component.html',
   styleUrls: ['./add-members-modal.component.css']
 })
-export class AddMembersModalComponent {
+export class AddMembersModalComponent implements OnInit {
   onAddMemberEmit = new EventEmitter();
   addMemberForm!: FormGroup;
-  invalidForm: boolean = false;
+  invalidForm = false;
+  submitting = false;
   responseMessage: any;
-  subscriptions: Subscriptions[] = [];
-  selectedPhoto: any;
-  subscription = new Subscription;
 
-  constructor(private formBuilder: FormBuilder,
+  users: Users[] = [];
+  categories: Categories[] = [];
+
+  constructor(
+    private formBuilder: FormBuilder,
     private memberService: MemberService,
     private store: Store,
-    public dialogRef: MatDialogRef<AddCategoryModalComponent>,
+    public dialogRef: MatDialogRef<AddMembersModalComponent>,
     private ngxService: NgxUiLoaderService,
-    private cd: ChangeDetectorRef,
-    private snackbarService: SnackBarService) {
-
-  }
+    private snackbarService: SnackBarService,
+  ) { }
 
   ngOnInit(): void {
     this.addMemberForm = this.formBuilder.group({
-      'name': ['', [Validators.required, Validators.minLength(2)]],
-      'photo': ['', [Validators.required, Validators.minLength(2)]],
-      'description': ['', [Validators.required, Validators.minLength(20)]],
-      'likes': ['0',],
-      'tagIds': this.formBuilder.array([], this.validateCheckbox()),
+      userId: ['', Validators.required],
+      height: ['', [Validators.required, Validators.min(1)]],
+      weight: ['', [Validators.required, Validators.min(1)]],
+      targetWeight: ['', [Validators.required, Validators.min(1)]],
+      motivation: ['', [Validators.required, Validators.minLength(10)]],
+      medicalConditions: ['None'],
+      categoryIds: [[]],
     });
 
-    this.handleEmitEvent();
+    this.store.dispatch(loadActiveUsers());
+    this.store.dispatch(loadActiveCategories());
+    this.store.select(selectUsers).subscribe(users => this.users = users);
+    this.store.select(selectActiveCategories).subscribe(categories => this.categories = categories);
   }
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe()
+  onCategoryToggle(categoryId: number, event: any): void {
+    const control = this.addMemberForm.get('categoryIds');
+    const current: number[] = control?.value || [];
+    const checked = event.target.checked;
+    control?.setValue(checked ? [...current, categoryId] : current.filter(id => id !== categoryId));
   }
 
-  handleEmitEvent() {
-    this.store.dispatch(loadActiveSubscriptions());
-    this.subscription.add(
-      this.store.select(selectActiveSubscriptions).subscribe((subs) => {
-        this.subscriptions = subs;
-        this.cd.detectChanges(); // Manually trigger change detection
-      })
-    );
-  }
-
-
-  onCheckboxChanged(event: any) {
-    const tags = this.addMemberForm.get('tagIds') as FormArray;
-    if (event.target.checked) {
-      tags.push(this.formBuilder.group({ tagIds: event.target.value }));
-    } else {
-      const index = tags.controls.findIndex((control) => control.value.tagIds === event.target.value);
-      tags.removeAt(index);
+  addMember(): void {
+    if (this.addMemberForm.invalid || this.submitting) {
+      this.invalidForm = true;
+      return;
     }
-  }
 
-  validateCheckbox(): ValidatorFn {
-    return (formArray: AbstractControl) => {
-      const checkboxes = formArray.value;
-      const isChecked = checkboxes.length > 0;
-      return isChecked ? null : { noCheckboxChecked: true };
-    };
-  }
-
-  addCategory(): void {
+    this.submitting = true;
     this.ngxService.start();
-    if (this.addMemberForm.invalid) {
-      this.invalidForm = true
-      this.responseMessage = "Invalid form"
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(this.responseMessage, "error");
-    } else {
-      // Get the selected tagIds values as an array
-      const selectedTagIds = this.addMemberForm.value.tagIds.map((tag: any) => tag.tagIds);
-
-      // Convert the array to a comma-separated string
-      const tagIdsString = selectedTagIds.join(',');
-      const formData = {
-        ...this.addMemberForm.value,
-        tagIds: tagIdsString
-      };
-      this.memberService.addMember(formData)
-        .subscribe((response: any) => {
-          this.onAddMemberEmit.emit();
-          this.addMemberForm.reset();
-          this.invalidForm = false;
-          this.dialogRef.close('Category added successfully');
-          this.responseMessage = response?.message;
-          this.snackbarService.openSnackBar(this.responseMessage, "");
-          this.ngxService.stop();
-        }, (error: any) => {
-          this.ngxService.stop();
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackbarService.openSnackBar(this.responseMessage, "error");
-        });
-    }
-    this.ngxService.stop();
+    this.memberService.addMember({
+      userId: Number(this.addMemberForm.value.userId),
+      height: Number(this.addMemberForm.value.height),
+      weight: Number(this.addMemberForm.value.weight),
+      targetWeight: Number(this.addMemberForm.value.targetWeight),
+      motivation: this.addMemberForm.value.motivation,
+      medicalConditions: this.addMemberForm.value.medicalConditions,
+      categoryIds: this.addMemberForm.value.categoryIds,
+    }).subscribe({
+      next: (response: any) => {
+        this.ngxService.stop();
+        this.submitting = false;
+        this.onAddMemberEmit.emit();
+        this.responseMessage = response?.message;
+        this.snackbarService.openSnackBar(this.responseMessage, '');
+        this.dialogRef.close('Member added successfully');
+      },
+      error: (error: any) => {
+        this.ngxService.stop();
+        this.submitting = false;
+        this.responseMessage = error.error?.message || genericError;
+        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+      }
+    });
   }
 
-  closeDialog() {
-    this.dialogRef.close('Dialog closed without adding a category');
+  closeDialog(): void {
+    this.dialogRef.close('Dialog closed without adding a member');
   }
 
-  clear() {
-    this.addMemberForm.reset();
-    this.onCheckboxChanged(event)
+  clear(): void {
+    this.addMemberForm.reset({ medicalConditions: 'None', categoryIds: [] });
+    this.invalidForm = false;
   }
-
-
 }
-
