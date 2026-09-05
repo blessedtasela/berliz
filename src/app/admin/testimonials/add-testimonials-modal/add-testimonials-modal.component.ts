@@ -1,154 +1,116 @@
-import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
+import { Component, EventEmitter, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription, forkJoin, take } from 'rxjs';
+import { Clients } from 'src/app/models/clients.interface';
 import { Centers } from 'src/app/models/centers.interface';
-import { Users } from 'src/app/models/users.interface';
+import { Trainers } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TestimonialService } from 'src/app/services/testimonial.service';
+import { selectClients } from 'src/app/state/client/client.selectors';
+import { loadClients } from 'src/app/state/client/client.actions';
 import { selectCenters } from 'src/app/state/center/center.selectors';
 import { loadCenters } from 'src/app/state/center/center.actions';
-import { selectUsers } from 'src/app/state/user/user.selector';
-import { loadActiveUsers } from 'src/app/state/user/user.actions';
+import { selectTrainers } from 'src/app/state/trainer/trainer.selector';
+import { loadTrainers } from 'src/app/state/trainer/trainer.actions';
 import { genericError } from 'src/validators/form-validators.module';
 
+/**
+ * Admin-authored testimonial on behalf of a client. Rebuilt against the
+ * real backend contract (TestimonialRequest: email + clientId + optional
+ * centerId XOR trainerId + testimonial text) — the previous version of
+ * this form posted an unrelated {name, photo, description, likes, tagIds}
+ * shape (copy-pasted from some other entity's form) that the backend has
+ * never accepted.
+ */
 @Component({
   selector: 'app-add-testimonials-modal',
   templateUrl: './add-testimonials-modal.component.html',
   styleUrls: ['./add-testimonials-modal.component.css']
 })
-export class AddTestimonialsModalComponent {
+export class AddTestimonialsModalComponent implements OnInit {
   onAddTestimonialEmit = new EventEmitter();
   addTestimonialForm!: FormGroup;
-  invalidForm: boolean = false;
+  invalidForm = false;
+  submitting = false;
   responseMessage: any;
-  users: Users[] = [];
-  centers: Centers[] = [];
-  subscriptions: Subscription[] = [];
 
-  constructor(private formBuilder: FormBuilder,
+  clients: Clients[] = [];
+  centers: Centers[] = [];
+  trainers: Trainers[] = [];
+
+  constructor(
+    private formBuilder: FormBuilder,
     private testimonialService: TestimonialService,
     private store: Store,
     public dialogRef: MatDialogRef<AddTestimonialsModalComponent>,
     private ngxService: NgxUiLoaderService,
-    private cd: ChangeDetectorRef,
-    private snackbarService: SnackBarService) { }
+    private snackbarService: SnackBarService,
+  ) { }
 
   ngOnInit(): void {
     this.addTestimonialForm = this.formBuilder.group({
-      'name': ['', [Validators.required, Validators.minLength(2)]],
-      'photo': ['', [Validators.required, Validators.minLength(2)]],
-      'description': ['', [Validators.required, Validators.minLength(20)]],
-      'likes': ['0',],
-      'tagIds': this.formBuilder.array([], this.validateCheckbox()),
+      clientId: ['', Validators.required],
+      target: ['general'], // 'general' | 'center' | 'trainer'
+      centerId: [''],
+      trainerId: [''],
+      testimonial: ['', [Validators.required, Validators.minLength(10)]],
     });
-    forkJoin([
-      this.store.select(selectUsers).pipe(take(1)),
-      this.store.select(selectCenters).pipe(take(1))
-    ]).subscribe(([users, centers]) => {
-      if (!users?.length) {
-        this.store.dispatch(loadActiveUsers());
-        this.handleEmitEvent();
-      } else {
-        this.users = users
-      }
-      if (!centers?.length) {
-        this.store.dispatch(loadCenters());
-        this.handleEmitEvent();
-      } else {
-        this.centers = centers
-      }
-    })
+
+    this.store.dispatch(loadClients());
+    this.store.dispatch(loadCenters());
+    this.store.dispatch(loadTrainers());
+    this.store.select(selectClients).subscribe(clients => this.clients = clients);
+    this.store.select(selectCenters).subscribe(centers => this.centers = centers);
+    this.store.select(selectTrainers).subscribe(trainers => this.trainers = trainers);
   }
 
-  ngOnDestroy() {
-    this.subscriptions.forEach((sub)=> sub.unsubscribe())
-  }
-
-  handleEmitEvent() {
-    console.log("isCached false");
-    this.subscriptions.push(
-      this.store.select(selectUsers).subscribe((users) => {
-        this.users = users;
-        this.cd.detectChanges(); // Manually trigger change detection
-      }),
-      this.store.select(selectCenters).subscribe((centers) => {
-        this.centers = centers;
-        this.cd.detectChanges(); // Manually trigger change detection
-      })
-    );
-  }
-
-
-  onCheckboxChanged(event: any) {
-    const centers = this.addTestimonialForm.get('tagIds') as FormArray;
-    if (event.target.checked) {
-      centers.push(this.formBuilder.group({ tagIds: event.target.value }));
-    } else {
-      const index = centers.controls.findIndex((control) => control.value.tagIds === event.target.value);
-      centers.removeAt(index);
+  addTestimonial(): void {
+    if (this.addTestimonialForm.invalid || this.submitting) {
+      this.invalidForm = true;
+      return;
     }
-  }
 
-  validateCheckbox(): ValidatorFn {
-    return (formArray: AbstractControl) => {
-      const checkboxes = formArray.value;
-      const isChecked = checkboxes.length > 0;
-      return isChecked ? null : { noCheckboxChecked: true };
-    };
-  }
+    const { clientId, target, centerId, trainerId, testimonial } = this.addTestimonialForm.value;
+    const client = this.clients.find(c => c.id === Number(clientId));
+    if (!client) {
+      this.snackbarService.openSnackBar('Selected client could not be found.', 'error');
+      return;
+    }
 
-  addCategory(): void {
+    this.submitting = true;
     this.ngxService.start();
-    if (this.addTestimonialForm.invalid) {
-      this.invalidForm = true
-      this.responseMessage = "Invalid form"
-      this.ngxService.stop();
-      this.snackbarService.openSnackBar(this.responseMessage, "error");
-    } else {
-      // Get the selected tagIds values as an array
-      const selectedTagIds = this.addTestimonialForm.value.tagIds.map((tag: any) => tag.tagIds);
-
-      // Convert the array to a comma-separated string
-      const tagIdsString = selectedTagIds.join(',');
-      const formData = {
-        ...this.addTestimonialForm.value,
-        tagIds: tagIdsString
-      };
-      this.testimonialService.addTestimonial(formData)
-        .subscribe((response: any) => {
-          this.onAddTestimonialEmit.emit();
-          this.addTestimonialForm.reset();
-          this.invalidForm = false;
-          this.dialogRef.close('Category added successfully');
-          this.responseMessage = response?.message;
-          this.snackbarService.openSnackBar(this.responseMessage, "");
-          this.ngxService.stop();
-        }, (error: any) => {
-          this.ngxService.stop();
-          console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackbarService.openSnackBar(this.responseMessage, "error");
-        });
-    }
-    this.ngxService.stop();
+    this.testimonialService.addTestimonial({
+      email: client.user.email,
+      clientId: client.id,
+      centerId: target === 'center' ? Number(centerId) : null,
+      trainerId: target === 'trainer' ? Number(trainerId) : null,
+      testimonial,
+    }).subscribe({
+      next: (response: any) => {
+        this.ngxService.stop();
+        this.submitting = false;
+        this.onAddTestimonialEmit.emit();
+        this.responseMessage = response?.message;
+        this.snackbarService.openSnackBar(this.responseMessage, '');
+        this.dialogRef.close('Testimonial added successfully');
+      },
+      error: (error: any) => {
+        this.ngxService.stop();
+        this.submitting = false;
+        this.responseMessage = error.error?.message || genericError;
+        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+      }
+    });
   }
 
-  closeDialog() {
-    this.dialogRef.close('Dialog closed without adding a category');
+  closeDialog(): void {
+    this.dialogRef.close('Dialog closed without adding a testimonial');
   }
 
-  clear() {
-    this.addTestimonialForm.reset();
-    this.onCheckboxChanged(event)
+  clear(): void {
+    this.addTestimonialForm.reset({ target: 'general' });
+    this.invalidForm = false;
   }
-
-
 }
-
