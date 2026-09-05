@@ -9,24 +9,32 @@ import { AuthService } from './auth.service';
  * session.
  *
  * Reasoning:
- *  - The backend access token lives 1 hour and the refresh token 24 hours
- *    (`JWTUtility.createAccessToken` / `createRefreshToken`). Since
- *    `AuthInterceptor` now refreshes silently and reliably, an *active* user's
- *    session survives every access-token expiry and only ends when the 24h
- *    refresh token itself expires. That is far too long to leave an unattended
- *    machine logged in.
- *  - So the real session bound for an idle user has to come from the client.
- *    30 minutes is the usual figure for an app holding personal and billing
- *    data: comfortably longer than any realistic pause in a workout/booking
- *    flow (reading a plan, filling a long form, taking a call), short enough to
- *    protect a walked-away-from screen. It also sits below the 1h access-token
- *    lifetime, so an idle session ends before its own access token would have
- *    expired anyway — a returning user never sits in the ambiguous state of
- *    "idle for ages but still technically holding a token".
+ *  - The backend access token lives 1 hour and the refresh token 30 days
+ *    (`JWTUtility.createAccessToken` / `createRefreshToken`), and the refresh
+ *    token rotates (a fresh 30-day one is issued) on every silent refresh
+ *    (`AuthInterceptor` + `UserServiceImplement.refreshToken`). So an
+ *    *actively used* session — at least one request within any 30-day span —
+ *    never hits a server-side expiry at all; the explicit product decision
+ *    (2026-09) is "don't make someone log back in just because time passed,
+ *    only because they've genuinely gone quiet for days."
+ *  - This constant is what actually enforces that on the client: an open tab
+ *    left truly idle (no mouse/keyboard/scroll/touch at all) this long logs
+ *    out locally even though the tokens would still be valid, so an
+ *    unattended device doesn't sit signed in forever.
+ *  - Deliberately 14 days, not the full 30-day refresh-token horizon:
+ *    `timer()` below schedules this via the browser's `setTimeout`, which
+ *    silently overflows past ~24.8 days (2^31-1 ms, a 32-bit signed int
+ *    internally) — a delay past that ceiling wraps around and fires almost
+ *    immediately instead of waiting, which would have made this log everyone
+ *    out right away instead of never. 14 days stays comfortably clear of that
+ *    ceiling while still reading as "genuinely gone quiet for weeks," not a
+ *    session-length concern.
  *
- * Tune here — this is the only place the value is defined.
+ * Tune here — this is the only place the value is defined. Keep any future
+ * change well under ~24 days (2^31-1 ms) or the setTimeout overflow above
+ * bites again.
  */
-export const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+export const INACTIVITY_TIMEOUT_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
 
 /**
  * Activity events are only sampled this often. `mousemove` alone fires dozens of

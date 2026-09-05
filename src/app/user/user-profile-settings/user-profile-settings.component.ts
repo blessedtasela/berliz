@@ -35,6 +35,10 @@ import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 import { BrowserNotificationService, NotificationCategory } from 'src/app/services/browser-notification.service';
 import { BlockService } from 'src/app/services/block.service';
 import { BlockedUser } from 'src/app/models/block.model';
+import { NavControlsService, NavControlsStyle } from 'src/app/services/nav-controls.service';
+import { WhatsNewService } from 'src/app/services/whats-new.service';
+import { WebAuthnService } from 'src/app/services/webauthn.service';
+import { WebAuthnCredentialResponse } from 'src/app/models/webauthn.interface';
 
 @Component({
   selector: 'app-user-profile-settings',
@@ -98,12 +102,16 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     public sidebarState: SidebarStateService,
     private browserNotifications: BrowserNotificationService,
     private blockService: BlockService,
+    private navControls: NavControlsService,
+    public whatsNew: WhatsNewService,
+    public webAuthnService: WebAuthnService,
   ) { }
 
   ngOnInit(): void {
     // Load user initially
     this.store.dispatch(loadUser());
     this.loadBlockedUsers();
+    this.loadPasskeys();
 
     // Subscribe to user state
     this.store.select(selectUser)
@@ -342,6 +350,92 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
 
   isNotificationCategoryEnabled(category: NotificationCategory): boolean {
     return this.browserNotifications.isCategoryEnabled(category);
+  }
+
+  // ═══════════ PASSKEYS ═══════════
+
+  passkeys: WebAuthnCredentialResponse[] = [];
+  passkeysLoading = false;
+  addingPasskey = false;
+  removingPasskeyId: number | null = null;
+
+  loadPasskeys(): void {
+    this.passkeysLoading = true;
+    this.webAuthnService.getMyCredentials()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => { this.passkeys = res?.data ?? []; this.passkeysLoading = false; },
+        error: () => { this.passkeys = []; this.passkeysLoading = false; },
+      });
+  }
+
+  addPasskey(): void {
+    this.addingPasskey = true;
+    const label = this.guessDeviceLabel();
+    this.webAuthnService.registerPasskey(label)
+      .then(() => {
+        this.addingPasskey = false;
+        this.snackBarService.openSnackBar('Passkey added', '');
+        this.loadPasskeys();
+      })
+      .catch(err => {
+        this.addingPasskey = false;
+        if (err?.name === 'NotAllowedError') return; // user cancelled — not an error worth a toast
+        this.snackBarService.openSnackBar(err?.message || 'Could not add this passkey.', 'error');
+      });
+  }
+
+  removePasskey(credential: WebAuthnCredentialResponse): void {
+    if (this.removingPasskeyId) return;
+    this.removingPasskeyId = credential.id;
+    this.webAuthnService.deleteCredential(credential.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.removingPasskeyId = null;
+          this.passkeys = this.passkeys.filter(p => p.id !== credential.id);
+          this.snackBarService.openSnackBar('Passkey removed', '');
+        },
+        error: (err) => {
+          this.removingPasskeyId = null;
+          this.snackBarService.openSnackBar(err?.error?.message || 'Could not remove this passkey.', 'error');
+        },
+      });
+  }
+
+  /** A rough, best-effort device name so a user with several passkeys can tell them apart without typing one themselves. */
+  private guessDeviceLabel(): string {
+    const ua = navigator.userAgent;
+    if (/iPhone/.test(ua)) return 'iPhone';
+    if (/iPad/.test(ua)) return 'iPad';
+    if (/Macintosh/.test(ua)) return 'Mac';
+    if (/Android/.test(ua)) return 'Android device';
+    if (/Windows/.test(ua)) return 'Windows device';
+    return 'Passkey';
+  }
+
+  // ═══════════ IN-APP NAVIGATION ═══════════
+  // Per-device (localStorage) — see NavControlsService.
+
+  get navControlsStyle(): NavControlsStyle {
+    return this.navControls.style;
+  }
+
+  setNavControlsStyle(style: NavControlsStyle): void {
+    this.navControls.setStyle(style);
+    // Marked seen on interaction rather than on page load — Settings is a
+    // long page with many unrelated sections, so simply landing here isn't
+    // good evidence the user actually noticed this one.
+    this.whatsNew.markSeen('nav-controls-settings');
+  }
+
+  get navControlsHasCustomPosition(): boolean {
+    return this.navControls.hasCustomPosition;
+  }
+
+  resetNavControlsPosition(): void {
+    this.navControls.resetPosition();
+    this.snackBarService.openSnackBar('Position reset — it\'ll reappear centered at the bottom.', '');
   }
 
   async toggleBrowserNotifications(): Promise<void> {
