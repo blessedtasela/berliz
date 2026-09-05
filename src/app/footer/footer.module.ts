@@ -12,6 +12,8 @@ import { PhoneComponent } from './phone/phone.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SocialComponent } from './social/social.component';
 import { UnderConstructionComponent } from './under-construction/under-construction.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { BerlizFeedbackModalComponent } from './berliz-feedback-modal/berliz-feedback-modal.component';
 
 
 @NgModule({
@@ -22,7 +24,8 @@ import { UnderConstructionComponent } from './under-construction/under-construct
     NewsletterComponent,
     PhoneComponent,
     SocialComponent,
-    UnderConstructionComponent
+    UnderConstructionComponent,
+    BerlizFeedbackModalComponent
   ],
   imports: [
     CommonModule,
@@ -32,6 +35,7 @@ import { UnderConstructionComponent } from './under-construction/under-construct
     FeatherModule,
     IconsModule,
     ReactiveFormsModule,
+    MatDialogModule,
   ],
   exports: [
     FooterComponent,
