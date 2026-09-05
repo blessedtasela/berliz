@@ -30,6 +30,12 @@ export interface Message {
   /** True if the quoted original was later unsent -- replyToBody is null in that case too. */
   replyToDeleted?: boolean | null;
 
+  /** Already-uploaded (Strapi) image/file attached to this message -- null once unsent, same as body. */
+  attachmentUrl?: string | null;
+  attachmentName?: string | null;
+  attachmentMime?: string | null;
+  attachmentSize?: number | null;
+
   message?: string;
 }
 
@@ -38,6 +44,11 @@ export interface MessageRequest {
   body: string;
   /** Optional -- the message this one quotes. Must belong to the same conversation. */
   replyToMessageId?: number | null;
+  /** Optional -- already uploaded to Strapi (StrapiService.uploadToStrapi) before sending. */
+  attachmentUrl?: string | null;
+  attachmentName?: string | null;
+  attachmentMime?: string | null;
+  attachmentSize?: number | null;
 }
 
 /** One row per conversation — the inbox list. */

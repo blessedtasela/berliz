@@ -182,7 +182,15 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
   send(payload: ComposerSendPayload): void {
     if (this.activeUserId == null) return;
     this.store.dispatch(MessageActions.sendMessage({
-      request: { recipientId: this.activeUserId, body: payload.body, replyToMessageId: payload.replyToMessageId }
+      request: {
+        recipientId: this.activeUserId,
+        body: payload.body,
+        replyToMessageId: payload.replyToMessageId,
+        attachmentUrl: payload.attachmentUrl,
+        attachmentName: payload.attachmentName,
+        attachmentMime: payload.attachmentMime,
+        attachmentSize: payload.attachmentSize,
+      }
     }));
   }
 

@@ -23,13 +23,34 @@
         </button>
     </div>
 
+    <!-- Pending attachment preview — image thumbnail, or a name/size card for anything else. -->
+    <div *ngIf="pendingAttachment && !isEditing" class="flex items-start gap-2 px-3 pt-2.5">
+        <div class="flex-1 min-w-0 border-l-2 border-gray-300 pl-2.5 py-1 bg-gray-50 rounded-r-lg flex items-center gap-2">
+            <img *ngIf="isImageAttachment" [src]="pendingAttachment.url" noZoom
+                class="w-9 h-9 rounded object-cover shrink-0" alt="" />
+            <i-feather *ngIf="!isImageAttachment" name="file" style="width:16px;height:16px;" class="shrink-0 text-gray-500"></i-feather>
+            <p class="text-[11px] text-gray-600 truncate">{{ pendingAttachment.name }}</p>
+        </div>
+        <button type="button" (click)="removeAttachment()" aria-label="Remove attachment"
+            class="text-gray-400 hover:text-gray-600 shrink-0 mt-1.5">
+            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+        </button>
+    </div>
+
     <!-- Row is deliberately roomy (WhatsApp-style) — the input fills all
          remaining width via flex-1 rather than being capped by a max-width. -->
     <div class="flex items-center gap-2 p-3">
+        <button *ngIf="!isEditing" type="button" (click)="fileInput.click()" [disabled]="uploadingAttachment"
+            aria-label="Attach a file" title="Attach a file" class="shrink-0 w-9 h-9 rounded-full text-gray-400 hover:text-gray-600
+                   hover:bg-gray-100 flex items-center justify-center transition disabled:opacity-40">
+            <i-feather [name]="uploadingAttachment ? 'loader' : 'paperclip'" style="width:16px;height:16px;"></i-feather>
+        </button>
+        <input #fileInput type="file" class="hidden" (change)="onFileSelected($event)" />
+
         <input type="text" [(ngModel)]="body" (ngModelChange)="onInput()" (keydown.enter)="submit()"
             [placeholder]="isEditing ? 'Edit your message…' : placeholder" class="flex-1 min-w-0 text-sm text-gray-700 border border-gray-200 rounded-full px-4 py-2.5
                    focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
-        <button type="button" (click)="submit()" [disabled]="!body.trim()"
+        <button type="button" (click)="submit()" [disabled]="!body.trim() && !pendingAttachment"
             [attr.aria-label]="isEditing ? 'Save changes' : 'Send message'" class="shrink-0 w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center
                    hover:bg-red-700 disabled:opacity-40 transition">
             <i-feather [name]="isEditing ? 'check' : 'send'" style="width:15px;height:15px;"></i-feather>

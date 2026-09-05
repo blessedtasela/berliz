@@ -47,4 +47,17 @@ export class MessageBubbleComponent {
   get canReply(): boolean {
     return !this.message.deleted;
   }
+
+  get isImageAttachment(): boolean {
+    return !!this.message.attachmentMime?.startsWith('image/');
+  }
+
+  /** e.g. "2.4 MB" -- attachmentSize is always bytes, same as the browser File API it came from. */
+  get formattedAttachmentSize(): string {
+    const bytes = this.message.attachmentSize;
+    if (!bytes) return '';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
 }
