@@ -7,27 +7,27 @@ import { Subject, takeUntil } from 'rxjs';
 import { Users } from 'src/app/models/users.interface';
 import { loadUser } from 'src/app/state/user/user.actions';
 import { selectUser } from 'src/app/state/user/user.selector';
-import { addCenterReview, addCenterReviewSuccess, addCenterReviewFailure } from 'src/app/state/center/center.actions';
+import { addTrainerReview, addTrainerReviewSuccess, addTrainerReviewFailure } from 'src/app/state/trainer/trainer.actions';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 /**
- * "Leave a review" form for a center's public profile. Context-aware: the
- * center is already known from the page it's embedded in, so there's no
- * "who is this about" picker — centerId comes in as an @Input from the
- * parent (center-detail) page.
+ * "Leave a review" form for a trainer's public profile. Context-aware:
+ * the trainer is already known from the page it's embedded in, so unlike a
+ * generic review form there's no "who is this about" picker — trainerId
+ * comes in as an @Input from the parent (trainers-details) page.
  *
- * Submission is gated to logged-in members; actual eligibility (must have a
- * completed booking with this center) is enforced server-side and surfaced
+ * Submission is gated to logged-in clients; actual eligibility (must have a
+ * completed booking with this trainer) is enforced server-side and surfaced
  * as an error if the user doesn't qualify, rather than pre-checked here.
  */
 @Component({
-  selector: 'app-center-review-form',
-  templateUrl: './center-review-form.component.html',
-  styleUrls: ['./center-review-form.component.css']
+  selector: 'app-trainer-add-review',
+  templateUrl: './trainer-add-review.component.html',
+  styleUrls: ['./trainer-add-review.component.css']
 })
-export class CenterReviewFormComponent implements OnInit, OnDestroy {
-  @Input() centerId!: number;
+export class TrainerAddReviewComponent implements OnInit, OnDestroy {
+  @Input() trainerId: number | undefined;
 
   user: Users | null = null;
   reviewForm: FormGroup;
@@ -43,7 +43,7 @@ export class CenterReviewFormComponent implements OnInit, OnDestroy {
     private snackBar: SnackBarService,
   ) {
     this.reviewForm = this.fb.group({
-      comment: ['', [Validators.required, Validators.minLength(10)]],
+      review: ['', [Validators.required, Validators.minLength(10)]],
     });
   }
 
@@ -54,7 +54,7 @@ export class CenterReviewFormComponent implements OnInit, OnDestroy {
       .subscribe(user => this.user = user);
 
     this.actions$
-      .pipe(ofType(addCenterReviewSuccess), takeUntil(this.destroy$))
+      .pipe(ofType(addTrainerReviewSuccess), takeUntil(this.destroy$))
       .subscribe(() => {
         this.submitting = false;
         this.reviewForm.reset();
@@ -62,7 +62,7 @@ export class CenterReviewFormComponent implements OnInit, OnDestroy {
       });
 
     this.actions$
-      .pipe(ofType(addCenterReviewFailure), takeUntil(this.destroy$))
+      .pipe(ofType(addTrainerReviewFailure), takeUntil(this.destroy$))
       .subscribe(({ error }) => {
         this.submitting = false;
         this.snackBar.openSnackBar(error || genericError, 'error');
@@ -79,14 +79,13 @@ export class CenterReviewFormComponent implements OnInit, OnDestroy {
   }
 
   submit(): void {
-    if (this.reviewForm.invalid || this.submitting || !this.centerId) return;
+    if (this.reviewForm.invalid || this.submitting || !this.trainerId) return;
 
     this.submitting = true;
-    // Backend expects Map<String, String> — centerId must be sent as a string.
-    this.store.dispatch(addCenterReview({
+    this.store.dispatch(addTrainerReview({
       data: {
-        centerId: String(this.centerId),
-        comment: this.reviewForm.value.comment,
+        trainerId: this.trainerId,
+        review: this.reviewForm.value.review,
       }
     }));
   }

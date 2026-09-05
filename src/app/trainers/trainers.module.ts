@@ -32,6 +32,7 @@ import { TrainersListComponent } from './trainers-list/trainers-list.component';
 import { TrainersMainComponent } from './trainers-main/trainers-main.component';
 import { TrainerVideoAlbumComponent } from './trainer-video-album/trainer-video-album.component';
 import { TrainerPricingCardComponent } from './trainer-pricing-card/trainer-pricing-card.component';
+import { TrainerAddReviewComponent } from './trainer-add-review/trainer-add-review.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { TrainerPricingCardComponent } from './trainer-pricing-card/trainer-pric
     TrainersListComponent,
     TrainersMainComponent,
     TrainerVideoAlbumComponent,
-    TrainerPricingCardComponent
+    TrainerPricingCardComponent,
+    TrainerAddReviewComponent
   ],
   imports: [
     CommonModule,
