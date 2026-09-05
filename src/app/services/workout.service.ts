@@ -6,6 +6,9 @@ import { ApiResponse } from '../models/Api.interface';
 import {
   WorkoutResponse,
   WorkoutAssignmentResponse,
+  WorkoutLogResponse,
+  WorkoutLogRequest,
+  ExerciseProgressPoint,
 } from '../models/workout.interface';
 
 @Injectable({
@@ -76,5 +79,44 @@ export class WorkoutService {
   getAssignmentsIMade() {
     return this.httpClient.get<ApiResponse<WorkoutAssignmentResponse[]>>(
       `${this.url}/workout/getAssignmentsIMade`);
+  }
+
+  // ─────────────────────────────
+  // WORKOUT LOG (history — what a user actually performed)
+  // ─────────────────────────────
+
+  addWorkoutLog(data: WorkoutLogRequest) {
+    return this.httpClient.post<ApiResponse<WorkoutLogResponse>>(`${this.url}/workoutLog/add`, data);
+  }
+
+  updateWorkoutLog(data: WorkoutLogRequest) {
+    return this.httpClient.put<ApiResponse<WorkoutLogResponse>>(`${this.url}/workoutLog/update`, data);
+  }
+
+  deleteWorkoutLog(id: number) {
+    return this.httpClient.delete<ApiResponse<any>>(`${this.url}/workoutLog/delete/${id}`);
+  }
+
+  getWorkoutLog(id: number) {
+    return this.httpClient.get<ApiResponse<WorkoutLogResponse>>(`${this.url}/workoutLog/getLog/${id}`);
+  }
+
+  getMyWorkoutLogs() {
+    return this.httpClient.get<ApiResponse<WorkoutLogResponse[]>>(`${this.url}/workoutLog/getMyLogs`);
+  }
+
+  getExerciseProgress(exerciseId: number) {
+    return this.httpClient.get<ApiResponse<ExerciseProgressPoint[]>>(
+      `${this.url}/workoutLog/getExerciseProgress/${exerciseId}`);
+  }
+
+  // Owner/admin only — target must be one of the owner's accepted connections.
+  shareWorkoutLog(id: number, userId: number) {
+    return this.httpClient.post<ApiResponse<WorkoutLogResponse>>(`${this.url}/workoutLog/${id}/share/${userId}`, {});
+  }
+
+  // Owner/admin, or a collaborator removing their own access.
+  unshareWorkoutLog(id: number, userId: number) {
+    return this.httpClient.delete<ApiResponse<WorkoutLogResponse>>(`${this.url}/workoutLog/${id}/share/${userId}`);
   }
 }

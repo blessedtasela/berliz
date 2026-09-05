@@ -99,3 +99,104 @@ export interface WorkoutAssignmentRequest {
     assignedToUserId: number;
     scheduledDate?: string | null;
 }
+
+// ── Workout HISTORY (what a user actually performed) ────────────────────────
+// Separate from WorkoutResponse/WorkoutAssignmentResponse above: a log entry
+// only needs a date, so a user can skip days, train out of plan order, or
+// record something that isn't in any saved plan at all. Mirrors the backend
+// /workoutLog contract (WorkoutLogResponse / WorkoutLogExerciseResponse /
+// WorkoutLogSetResponse, all wrapped in ApiResponse<T>).
+
+export type SetType = 'NORMAL' | 'WARMUP' | 'DROPSET' | 'FAILURE' | 'AMRAP';
+
+export type WeightUnit = 'lbs' | 'kg';
+
+export interface WorkoutLogSetResponse {
+    id: number;
+    setNumber: number;
+    reps: number | null;
+    weight: number | null;
+    weightUnit: WeightUnit | string | null;
+    setType: SetType | string | null;
+    restSeconds: number | null;
+}
+
+export interface WorkoutLogExerciseResponse {
+    id: number;
+    /** Null for an ad-hoc entry — exerciseName covers both cases either way. */
+    exerciseId: number | null;
+    exerciseName: string;
+    exerciseDifficultyLevel?: ExerciseDifficultyLevel | string;
+    exerciseMuscleGroups?: string[];
+    position: number;
+    /** Exercises sharing the same non-null number were done back to back as a superset. */
+    supersetGroup: number | null;
+    notes: string | null;
+    sets: WorkoutLogSetResponse[];
+}
+
+export interface WorkoutLogCollaboratorResponse {
+    userId: number;
+    name: string;
+    email: string;
+}
+
+export interface WorkoutLogResponse {
+    id: number;
+    userId: number;
+    creatorName: string | null;
+    /** Optional provenance link to a saved plan — never required. */
+    workoutId: number | null;
+    workoutName: string | null;
+    title: string | null;
+    logDate: string | Date;
+    notes: string | null;
+    durationMinutes: number | null;
+    /** Equals userId/creatorName until a collaborator edits this entry. */
+    lastEditedByUserId: number | null;
+    lastEditedByName: string | null;
+    lastEditedAt: Date | null;
+    /** Other users this session is shared with — each can view and edit it. */
+    collaborators: WorkoutLogCollaboratorResponse[];
+    date: Date;
+    lastUpdate: Date;
+    exercises: WorkoutLogExerciseResponse[];
+    message?: string;
+}
+
+export interface WorkoutLogSetRequest {
+    setNumber?: number;
+    reps?: number | null;
+    weight?: number | null;
+    weightUnit?: WeightUnit | string | null;
+    setType?: SetType | string;
+    restSeconds?: number | null;
+}
+
+export interface WorkoutLogExerciseRequest {
+    exerciseId?: number | null;
+    customExerciseName?: string | null;
+    position?: number;
+    supersetGroup?: number | null;
+    notes?: string | null;
+    sets: WorkoutLogSetRequest[];
+}
+
+export interface WorkoutLogRequest {
+    id?: number;
+    workoutId?: number | null;
+    title?: string | null;
+    logDate?: string;
+    notes?: string | null;
+    durationMinutes?: number | null;
+    exercises: WorkoutLogExerciseRequest[];
+}
+
+/** One session's worth of sets for a single catalog exercise — GET /workoutLog/getExerciseProgress/{id}. */
+export interface ExerciseProgressPoint {
+    logDate: string | Date;
+    workoutLogId: number;
+    sets: WorkoutLogSetResponse[];
+    bestWeight: number | null;
+    bestReps: number | null;
+}

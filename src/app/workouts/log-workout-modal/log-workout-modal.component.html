@@ -1,0 +1,168 @@
+<div class="bg-white rounded-2xl font-sans flex flex-col overflow-hidden max-h-[90vh] w-[560px] max-w-[95vw]">
+
+  <!-- ═══════════════════ HEADER ═══════════════════ -->
+  <div class="flex items-start justify-between gap-3 px-5 py-4 border-b border-gray-100 shrink-0">
+    <div class="min-w-0">
+      <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+        <i-feather name="zap" style="width:13px;height:13px;" class="text-red-600"></i-feather>
+        {{ isEdit ? 'Edit session' : 'Log a workout' }}
+      </h2>
+      <p class="text-[11px] text-gray-400 mt-0.5">
+        Record exactly what you did — skipped days and off-plan exercises are totally fine.
+      </p>
+    </div>
+    <button type="button" (click)="close()"
+      class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 shrink-0">
+      <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+    </button>
+  </div>
+
+  <div class="flex flex-col gap-4 p-5 overflow-y-auto">
+
+    <!-- ── DAY DETAILS ──────────────────────────────────────────────────── -->
+    <div class="grid grid-cols-2 gap-3">
+      <div class="flex flex-col gap-1">
+        <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Date</label>
+        <input type="date" [(ngModel)]="logDate" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Duration (min, optional)</label>
+        <input type="number" min="0" [(ngModel)]="durationMinutes" placeholder="45" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Title (optional)</label>
+      <input type="text" [(ngModel)]="title" placeholder="e.g. Chest, Shoulders & Triceps" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <!-- ── EXERCISES ────────────────────────────────────────────────────── -->
+    <div class="flex flex-col gap-3">
+      <div *ngFor="let ex of exercises; let i = index; trackBy: trackByIndex"
+        class="border border-gray-200 rounded-xl p-3 flex flex-col gap-3 bg-gray-50/40">
+
+        <!-- Exercise header: catalog / custom toggle + name -->
+        <div class="flex items-start justify-between gap-2">
+          <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+            <div class="flex items-center gap-1.5">
+              <button type="button" (click)="setExerciseMode(i, 'catalog')" class="px-2 py-0.5 rounded-lg text-[10px] font-semibold border transition" [ngClass]="ex.mode === 'catalog'
+                  ? 'bg-red-600 text-white border-red-600' : 'bg-white text-gray-500 border-gray-200'">
+                From catalog
+              </button>
+              <button type="button" (click)="setExerciseMode(i, 'custom')" class="px-2 py-0.5 rounded-lg text-[10px] font-semibold border transition" [ngClass]="ex.mode === 'custom'
+                  ? 'bg-red-600 text-white border-red-600' : 'bg-white text-gray-500 border-gray-200'">
+                Custom
+              </button>
+
+              <label *ngIf="i > 0" class="ml-auto flex items-center gap-1.5 text-[10px] font-semibold text-gray-500">
+                <input type="checkbox" [checked]="isSupersetChecked(i)"
+                  (change)="toggleSuperset(i, $any($event.target).checked)" class="rounded" />
+                Superset with above
+              </label>
+            </div>
+
+            <select *ngIf="ex.mode === 'catalog'" [(ngModel)]="ex.exerciseId" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+                     focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+              <option [ngValue]="null" disabled>Select an exercise…</option>
+              <option *ngFor="let c of catalogExercises" [ngValue]="c.id">{{ c.name }}</option>
+            </select>
+
+            <input *ngIf="ex.mode === 'custom'" type="text" [(ngModel)]="ex.customExerciseName"
+              placeholder="e.g. Sled push" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+                     focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
+          </div>
+
+          <button type="button" (click)="removeExercise(i)"
+            class="w-7 h-7 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition shrink-0">
+            <i-feather name="trash-2" style="width:12px;height:12px;"></i-feather>
+          </button>
+        </div>
+
+        <!-- Sets table -->
+        <div class="flex flex-col gap-1.5">
+          <div class="grid gap-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wide px-1"
+            style="grid-template-columns: 28px 1fr 1fr 1fr 1fr 28px;">
+            <span>#</span>
+            <span>Reps</span>
+            <span>Weight</span>
+            <span>Unit</span>
+            <span>Type</span>
+            <span></span>
+          </div>
+
+          <div *ngFor="let set of ex.sets; let j = index; trackBy: trackByIndex" class="grid gap-1.5 items-center"
+            style="grid-template-columns: 28px 1fr 1fr 1fr 1fr 28px;">
+            <span class="text-[11px] font-semibold text-gray-400 text-center">{{ j + 1 }}</span>
+            <input type="number" min="0" [(ngModel)]="set.reps" placeholder="10" class="w-full px-2 py-1.5 bg-white border border-gray-200 rounded-lg text-gray-900 text-xs
+                     focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
+            <input type="number" min="0" step="0.5" [(ngModel)]="set.weight" placeholder="0" class="w-full px-2 py-1.5 bg-white border border-gray-200 rounded-lg text-gray-900 text-xs
+                     focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
+            <select [(ngModel)]="set.weightUnit" class="w-full px-1.5 py-1.5 bg-white border border-gray-200 rounded-lg text-gray-900 text-xs
+                     focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+              <option value="lbs">lbs</option>
+              <option value="kg">kg</option>
+            </select>
+            <select [(ngModel)]="set.setType" class="w-full px-1.5 py-1.5 bg-white border border-gray-200 rounded-lg text-gray-900 text-xs
+                     focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+              <option *ngFor="let t of setTypes" [value]="t.value">{{ t.label }}</option>
+            </select>
+            <button type="button" (click)="removeSet(i, j)"
+              class="w-6 h-6 rounded-lg text-gray-300 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition mx-auto">
+              <i-feather name="x" style="width:11px;height:11px;"></i-feather>
+            </button>
+          </div>
+
+          <button type="button" (click)="addSet(i)"
+            class="mt-1 self-start text-[11px] font-semibold text-red-600 hover:text-red-700 transition flex items-center gap-1">
+            <i-feather name="plus-circle" style="width:11px;height:11px;"></i-feather>
+            Add set
+          </button>
+        </div>
+
+        <input type="text" [(ngModel)]="ex.notes" placeholder="Notes for this exercise (optional)" class="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-gray-700 text-[11px]
+                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
+      </div>
+
+      <button type="button" (click)="addExercise()" class="self-start px-3 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+               hover:bg-gray-50 transition flex items-center gap-2">
+        <i-feather name="plus-circle" style="width:13px;height:13px;"></i-feather>
+        Add exercise
+      </button>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Session notes (optional)</label>
+      <textarea [(ngModel)]="notes" rows="2" placeholder="How did it feel? Anything to remember for next time?" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs resize-none
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400"></textarea>
+    </div>
+
+    <!-- Error -->
+    <p *ngIf="error"
+      class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
+      <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+      {{ error }}
+    </p>
+  </div>
+
+  <!-- ═══════════════════ FOOTER ═══════════════════ -->
+  <div class="flex items-center justify-between gap-2 px-5 py-4 border-t border-gray-100 shrink-0">
+    <button type="button" (click)="close()"
+      class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
+      Cancel
+    </button>
+
+    <button type="button" (click)="save()" [disabled]="!canSubmit"
+      class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2" [ngClass]="canSubmit
+        ? 'bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]'
+        : 'bg-gray-100 text-gray-400 cursor-not-allowed'">
+      <i-feather *ngIf="!submitting" name="save" style="width:13px;height:13px;"></i-feather>
+      <i-feather *ngIf="submitting" name="loader" style="width:13px;height:13px;" class="animate-spin"></i-feather>
+      {{ isEdit ? 'Save changes' : 'Log session' }}
+    </button>
+  </div>
+</div>
