@@ -12,6 +12,7 @@ import {
 } from 'src/app/models/workout.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { WhatsNewService } from 'src/app/services/whats-new.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 import { loadActiveExercises } from 'src/app/state/exercise/exercise.actions';
@@ -63,6 +64,7 @@ export class MyWorkoutsComponent implements OnInit, OnDestroy {
     private actions$: Actions,
     private authService: AuthService,
     private snackbar: SnackBarService,
+    public whatsNew: WhatsNewService,
   ) { }
 
   ngOnInit(): void {
