@@ -11,6 +11,7 @@ import { SocialAuthService } from 'src/app/services/social-auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MatDialog } from '@angular/material/dialog';
+import { WebAuthnService } from 'src/app/services/webauthn.service';
 
 describe('LoginFormComponent', () => {
   let component: LoginFormComponent;
@@ -47,6 +48,8 @@ describe('LoginFormComponent', () => {
 
     snackBarService = jasmine.createSpyObj('SnackBarService', ['openSnackBar', 'dismiss']);
     ngxService = jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']);
+    const webAuthnServiceSpy = jasmine.createSpyObj('WebAuthnService', ['isPlatformAuthenticatorAvailable', 'loginWithPasskey']);
+    webAuthnServiceSpy.isPlatformAuthenticatorAvailable.and.returnValue(Promise.resolve(false));
     returnUrl = null;
 
     TestBed.configureTestingModule({
@@ -58,6 +61,7 @@ describe('LoginFormComponent', () => {
         { provide: SnackBarService, useValue: snackBarService },
         { provide: NgxUiLoaderService, useValue: ngxService },
         { provide: MatDialog, useValue: jasmine.createSpyObj('MatDialog', ['open']) },
+        { provide: WebAuthnService, useValue: webAuthnServiceSpy },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { get queryParamMap() { return convertToParamMap(returnUrl ? { returnUrl } : {}); } } }

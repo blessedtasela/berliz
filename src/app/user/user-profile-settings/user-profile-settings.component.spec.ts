@@ -14,6 +14,7 @@ import { CountryService } from 'src/app/services/country.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 import { BlockService } from 'src/app/services/block.service';
+import { WebAuthnService } from 'src/app/services/webauthn.service';
 import { updateMessagePopupEnabled } from 'src/app/state/user-profile/user-profile.actions';
 
 describe('UserProfileSettingsComponent', () => {
@@ -33,6 +34,9 @@ describe('UserProfileSettingsComponent', () => {
       { mode$: of('collapsed'), mobileOverlayOpen$: of(false) });
     const blockServiceSpy = jasmine.createSpyObj('BlockService', ['getBlockedUsers', 'unblockUser']);
     blockServiceSpy.getBlockedUsers.and.returnValue(of({ data: [], message: '', success: true, statusCode: 200 }));
+    const webAuthnServiceSpy = jasmine.createSpyObj('WebAuthnService',
+      ['getMyCredentials', 'registerPasskey', 'deleteCredential', 'isPlatformAuthenticatorAvailable']);
+    webAuthnServiceSpy.getMyCredentials.and.returnValue(of({ data: [], message: '', success: true, statusCode: 200 }));
 
     TestBed.configureTestingModule({
       declarations: [UserProfileSettingsComponent],
@@ -48,7 +52,8 @@ describe('UserProfileSettingsComponent', () => {
         { provide: MatDialog, useValue: dialogSpy },
         { provide: Router, useValue: routerSpy },
         { provide: SidebarStateService, useValue: sidebarStateSpy },
-        { provide: BlockService, useValue: blockServiceSpy }
+        { provide: BlockService, useValue: blockServiceSpy },
+        { provide: WebAuthnService, useValue: webAuthnServiceSpy }
       ]
     });
     store = TestBed.inject(MockStore);
