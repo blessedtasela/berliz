@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as e from 'cors';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ForgotPasswordModalComponent } from 'src/app/dashboard/user/forgot-password-modal/forgot-password-modal.component';
@@ -29,8 +29,19 @@ export class LoginFormComponent implements AfterViewInit {
   @ViewChild('activationEmail')
   activationEmail!: NgForm;
 
+  /**
+   * Set when this page is opened inside the mobile app's in-app browser
+   * (Berliz Mobile has no native Google/Facebook SDK integration — it opens
+   * this page instead and waits for a redirect back to itself). Holds the
+   * app's own callback URL, e.g. an `exp://...` or `berliz://...` URI.
+   * Present regardless of which method the user actually completes login
+   * with (password or social) — see completeAuth().
+   */
+  private mobileRedirect: string | null = null;
+
   constructor(private fb: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private dialog: MatDialog,
     private userService: UserService,
     private ngxService: NgxUiLoaderService,
@@ -56,6 +67,14 @@ export class LoginFormComponent implements AfterViewInit {
       email: ['', Validators.compose([Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])])],
       password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
     });
+
+    this.mobileRedirect = this.route.snapshot.queryParamMap.get('mobileRedirect');
+
+    // Skip the "already logged in, bounce to /dashboard" auto-redirect when
+    // this is the mobile hand-off flow — a real web session token here
+    // (this browser's own login, unrelated to the phone) has nothing to do
+    // with the app waiting for a callback, and redirecting away would strand it.
+    if (this.mobileRedirect) return;
 
     const token = localStorage.getItem('token');
 
@@ -133,15 +152,10 @@ export class LoginFormComponent implements AfterViewInit {
           }
 
           this.invalidForm = false;
-          localStorage.setItem('token', auth.accessToken);
-          localStorage.setItem('refresh_token', auth.refreshToken);
           this.loginInterface = auth;
-          this.userService.startRefreshTokenTimer();
           this.invalidLogin = '';
-          this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
           this.loginForm.reset();
-          this.router.navigate(['/dashboard']);
+          this.completeAuth(auth, response?.message);
         },
         error: (error: any) => {
           this.ngxService.stop();
@@ -192,18 +206,37 @@ export class LoginFormComponent implements AfterViewInit {
       return;
     }
 
-    localStorage.setItem('token', auth.accessToken);
-    localStorage.setItem('refresh_token', auth.refreshToken);
-    this.userService.startRefreshTokenTimer();
-    this.responseMessage = response?.message;
-    this.snackBarService.openSnackBar(this.responseMessage, '');
-    this.router.navigate(['/dashboard']);
+    this.completeAuth(auth, response?.message);
   }
 
   private handleSocialAuthError(error: any): void {
     this.ngxService.stop();
     this.responseMessage = error.error?.message || genericError;
     this.snackBarService.openSnackBar(this.responseMessage, 'error');
+  }
+
+  /**
+   * Shared success path for password login and both social providers. When
+   * this page was opened by the mobile app (mobileRedirect present), hand
+   * the tokens back to it via a redirect instead of establishing a session
+   * in this browser — the tab is inside an ephemeral in-app browser the
+   * mobile app closes right after, so there's no reason to persist
+   * anything here, and doing so would leave a logged-in web session behind
+   * on a page the user never intended to browse.
+   */
+  private completeAuth(auth: { accessToken: string; refreshToken: string }, message?: string): void {
+    if (this.mobileRedirect) {
+      const url = `${this.mobileRedirect}?accessToken=${encodeURIComponent(auth.accessToken)}&refreshToken=${encodeURIComponent(auth.refreshToken)}`;
+      window.location.href = url;
+      return;
+    }
+
+    localStorage.setItem('token', auth.accessToken);
+    localStorage.setItem('refresh_token', auth.refreshToken);
+    this.userService.startRefreshTokenTimer();
+    this.responseMessage = message;
+    this.snackBarService.openSnackBar(this.responseMessage, '');
+    this.router.navigate(['/dashboard']);
   }
 
   clear() {
