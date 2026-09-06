@@ -1,0 +1,168 @@
+<div class="flex items-start gap-2.5">
+    <a [routerLink]="[profileRoutePrefix, comment.authorUsername || comment.authorId]" class="shrink-0">
+        <img *ngIf="photoSrc() as src" [src]="src" alt="" class="w-7 h-7 rounded-full object-cover border"
+            [class.border-gray-200]="!dark" [class.border-zinc-700]="dark" />
+        <div *ngIf="!photoSrc()" class="w-7 h-7 rounded-full flex items-center justify-center border"
+            [ngClass]="dark ? 'bg-sky-500/10 border-sky-900' : 'bg-sky-50 border-sky-100'">
+            <i-feather name="user" class="text-sky-500" style="width:12px;height:12px;"></i-feather>
+        </div>
+    </a>
+
+    <div class="flex-1 min-w-0">
+        <div class="rounded-xl px-3 py-2" [ngClass]="dark ? 'bg-zinc-800/60' : 'bg-gray-50'">
+
+            <!-- READ MODE -->
+            <ng-container *ngIf="!editing">
+                <div class="flex items-center justify-between gap-2">
+                    <a [routerLink]="[profileRoutePrefix, comment.authorUsername || comment.authorId]"
+                        class="text-xs font-bold hover:text-sky-500 transition truncate"
+                        [class.text-gray-900]="!dark" [class.text-white]="dark">{{ comment.authorName }}</a>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button *ngIf="comment.canEdit" type="button" (click)="startEdit()"
+                            class="hover:text-sky-500 transition p-0.5"
+                            [class.text-gray-300]="!dark" [class.text-zinc-600]="dark">
+                            <i-feather name="edit-2" style="width:11px;height:11px;"></i-feather>
+                        </button>
+                        <button *ngIf="!comment.canEdit" type="button" (click)="startReport()" title="Report"
+                            class="hover:text-amber-500 transition p-0.5"
+                            [class.text-gray-300]="!dark" [class.text-zinc-600]="dark">
+                            <i-feather name="flag" style="width:11px;height:11px;"></i-feather>
+                        </button>
+                        <button *ngIf="comment.canDelete" type="button" (click)="remove()"
+                            class="hover:text-red-500 transition p-0.5"
+                            [class.text-gray-300]="!dark" [class.text-zinc-600]="dark">
+                            <i-feather name="trash-2" style="width:11px;height:11px;"></i-feather>
+                        </button>
+                    </div>
+                </div>
+                <p class="text-xs leading-relaxed whitespace-pre-line break-words" [class.text-gray-700]="!dark" [class.text-zinc-300]="dark">
+                    <span *ngFor="let part of parts()">
+                        <a *ngIf="part.mention" [routerLink]="[profileRoutePrefix, part.mention]"
+                            class="text-sky-500 font-semibold hover:underline">{{ part.text }}</a>
+                        <ng-container *ngIf="!part.mention">{{ part.text }}</ng-container>
+                    </span>
+                </p>
+
+                <!-- REPORT -->
+                <div *ngIf="reporting" class="flex flex-col gap-1.5 mt-2 pt-2 border-t"
+                    [class.border-gray-200]="!dark" [class.border-zinc-700]="dark">
+                    <input type="text" [(ngModel)]="reportReason" (keydown.enter)="submitReport()"
+                        placeholder="Why are you reporting this? (optional)"
+                        class="w-full text-xs rounded-lg px-3 py-2 border focus:outline-none focus:ring-1 transition"
+                        [ngClass]="dark
+                            ? 'bg-zinc-900 border-zinc-700 text-zinc-200 focus:border-amber-500 focus:ring-amber-500/30'
+                            : 'bg-white border-gray-200 text-gray-700 focus:border-amber-400 focus:ring-amber-400/30'" />
+                    <div class="flex items-center gap-1.5 justify-end">
+                        <button type="button" (click)="cancelReport()"
+                            class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition"
+                            [class.text-gray-500]="!dark" [class.hover:bg-gray-100]="!dark"
+                            [class.text-zinc-400]="dark" [class.hover:bg-zinc-800]="dark">
+                            Cancel
+                        </button>
+                        <button type="button" (click)="submitReport()" [disabled]="submittingReport"
+                            class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-amber-500 hover:bg-amber-600 text-white transition disabled:opacity-40 disabled:cursor-not-allowed">
+                            Report
+                        </button>
+                    </div>
+                </div>
+            </ng-container>
+
+            <!-- EDIT MODE -->
+            <div *ngIf="editing" class="flex flex-col gap-1.5">
+                <app-mention-input [(value)]="editDraft" [dark]="dark" placeholder="Edit your comment…"
+                    (submitted)="saveEdit()"></app-mention-input>
+                <div class="flex items-center gap-1.5 justify-end">
+                    <button type="button" (click)="cancelEdit()"
+                        class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition"
+                        [class.text-gray-500]="!dark" [class.hover:bg-gray-100]="!dark"
+                        [class.text-zinc-400]="dark" [class.hover:bg-zinc-800]="dark">
+                        Cancel
+                    </button>
+                    <button type="button" (click)="saveEdit()"
+                        [disabled]="!editDraft || !editDraft.trim() || savingEdit"
+                        class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-sky-600 hover:bg-sky-700 text-white transition disabled:opacity-40 disabled:cursor-not-allowed">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTION ROW -->
+        <div class="flex items-center gap-3 mt-1 px-1">
+            <span class="text-[10px]" [class.text-gray-400]="!dark" [class.text-zinc-500]="dark">
+                {{ comment.date | date:'medium' }}<span *ngIf="comment.lastUpdate !== comment.date"> · edited</span>
+            </span>
+            <button type="button" (click)="toggleLike()"
+                class="flex items-center gap-1 text-[10px] font-semibold transition"
+                [class.text-red-500]="comment.likedByMe"
+                [class.text-gray-400]="!comment.likedByMe && !dark" [class.hover:text-red-500]="!comment.likedByMe && !dark"
+                [class.text-zinc-500]="!comment.likedByMe && dark" [class.hover:text-red-400]="!comment.likedByMe && dark">
+                <i-feather name="heart" style="width:11px;height:11px;"
+                    [attr.fill]="comment.likedByMe ? 'currentColor' : 'none'"></i-feather>
+                Like
+            </button>
+            <button *ngIf="comment.likeCount > 0" type="button" (click)="openLikers()"
+                class="text-[10px] font-semibold transition"
+                [class.text-gray-400]="!dark" [class.hover:text-sky-600]="!dark"
+                [class.text-zinc-500]="dark" [class.hover:text-sky-400]="dark">
+                {{ comment.likeCount }} {{ comment.likeCount === 1 ? 'like' : 'likes' }}
+            </button>
+            <button type="button" (click)="toggleReply()"
+                class="text-[10px] font-semibold transition"
+                [class.text-sky-600]="replying"
+                [class.text-gray-400]="!replying && !dark" [class.hover:text-sky-600]="!replying && !dark"
+                [class.text-zinc-500]="!replying && dark" [class.hover:text-sky-400]="!replying && dark">
+                Reply
+            </button>
+        </div>
+
+        <!-- REPLY COMPOSER -->
+        <div *ngIf="replying" class="flex items-center gap-2 mt-1.5 px-1">
+            <div class="flex-1">
+                <app-mention-input [(value)]="replyDraft" [dark]="dark"
+                    placeholder="Write a reply… use @username to mention" (submitted)="submitReply()"></app-mention-input>
+            </div>
+            <button type="button" (click)="submitReply()" [disabled]="!replyDraft || !replyDraft.trim() || postingReply"
+                class="w-8 h-8 rounded-lg bg-sky-600 hover:bg-sky-700 text-white flex items-center justify-center
+                       shrink-0 transition disabled:opacity-40 disabled:cursor-not-allowed">
+                <i-feather *ngIf="!postingReply" name="send" style="width:13px;height:13px;"></i-feather>
+                <i-feather *ngIf="postingReply" name="loader" class="animate-spin" style="width:13px;height:13px;"></i-feather>
+            </button>
+        </div>
+
+        <!-- REPLIES -->
+        <button *ngIf="!repliesOpen && comment.replyCount > 0" type="button" (click)="openReplies()"
+            class="text-[10px] font-semibold mt-1.5 px-1 flex items-center gap-1 transition"
+            [class.text-sky-600]="!dark" [class.hover:text-sky-700]="!dark"
+            [class.text-sky-500]="dark" [class.hover:text-sky-400]="dark">
+            <i-feather name="corner-down-right" style="width:11px;height:11px;"></i-feather>
+            View {{ comment.replyCount }} {{ comment.replyCount === 1 ? 'reply' : 'replies' }}
+        </button>
+
+        <div *ngIf="repliesOpen" class="mt-2 pl-3 border-l flex flex-col gap-3"
+            [class.border-gray-200]="!dark" [class.border-zinc-800]="dark">
+
+            <div *ngIf="repliesLoading" class="flex items-center py-1">
+                <i-feather name="loader" class="animate-spin" [class.text-gray-300]="!dark" [class.text-zinc-600]="dark" style="width:12px;height:12px;"></i-feather>
+            </div>
+
+            <app-comment-node *ngFor="let reply of replies; trackBy: trackByCommentId"
+                [comment]="reply" [post]="post" [dark]="dark" [profileRoutePrefix]="profileRoutePrefix" [depth]="depth + 1"
+                (removed)="onChildRemoved($event)"></app-comment-node>
+
+            <button *ngIf="repliesHasMore" type="button" (click)="loadMoreReplies()" [disabled]="loadingMoreReplies"
+                class="self-start text-[10px] font-semibold flex items-center gap-1.5 transition disabled:opacity-60"
+                [class.text-sky-600]="!dark" [class.hover:text-sky-700]="!dark"
+                [class.text-sky-500]="dark" [class.hover:text-sky-400]="dark">
+                <i-feather *ngIf="loadingMoreReplies" name="loader" class="animate-spin" style="width:10px;height:10px;"></i-feather>
+                {{ loadingMoreReplies ? 'Loading…' : 'Load more replies' }}
+            </button>
+
+            <button type="button" (click)="closeReplies()" class="self-start text-[10px] font-semibold transition"
+                [class.text-gray-400]="!dark" [class.hover:text-sky-600]="!dark"
+                [class.text-zinc-500]="dark" [class.hover:text-sky-400]="dark">
+                Hide replies
+            </button>
+        </div>
+    </div>
+</div>

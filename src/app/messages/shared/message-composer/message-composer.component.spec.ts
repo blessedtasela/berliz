@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { MessageComposerComponent } from './message-composer.component';
+import { MessageComposerComponent, ComposerSendPayload } from './message-composer.component';
 
 describe('MessageComposerComponent', () => {
   let component: MessageComposerComponent;
@@ -18,19 +18,19 @@ describe('MessageComposerComponent', () => {
   });
 
   it('submit emits the trimmed body and clears the draft', () => {
-    const sent: string[] = [];
-    component.send.subscribe(body => sent.push(body));
+    const sent: ComposerSendPayload[] = [];
+    component.send.subscribe(payload => sent.push(payload));
 
     component.body = '  Hello coach  ';
     component.submit();
 
-    expect(sent).toEqual(['Hello coach']);
+    expect(sent.map(p => p.body)).toEqual(['Hello coach']);
     expect(component.body).toBe('');
   });
 
   it('submit does nothing for an empty/whitespace-only draft', () => {
-    const sent: string[] = [];
-    component.send.subscribe(body => sent.push(body));
+    const sent: ComposerSendPayload[] = [];
+    component.send.subscribe(payload => sent.push(payload));
 
     component.body = '   ';
     component.submit();

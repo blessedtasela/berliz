@@ -9,7 +9,8 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comments.component';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
-import { PostMediaViewerComponent } from './post-media-viewer.component';
+import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
+import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-detail-sheet.component';
 import { PostActivityType, PostResponse } from 'src/app/models/post.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { PostService } from 'src/app/services/post.service';
@@ -51,7 +52,7 @@ const ACTIVITY_OPTIONS: ActivityOption[] = [
 @Component({
   selector: 'app-dashboard-timeline',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostMediaViewerComponent],
+  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent],
   templateUrl: './dashboard-timeline.component.html'
 })
 export class DashboardTimelineComponent implements OnInit, OnDestroy {
@@ -75,8 +76,8 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   // ── Read view ────────────────────────────────────────────────────────────
   /** Posts whose long text the reader has expanded past the 5-line clamp. */
   private readonly expandedPosts = new Set<number>();
-  /** The post whose media is open in the full-screen viewer, if any. */
-  viewerPost: PostResponse | null = null;
+  /** The post whose media + comments sheet is open, if any. */
+  sheetPost: PostResponse | null = null;
 
   currentUserId: number | null = null;
   myPhotoSrc = '../../../assets/icons/user.png';
@@ -250,6 +251,15 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     });
   }
 
+  /** Opens the "liked by" list for a post. */
+  openPostLikers(post: PostResponse): void {
+    this.dialog.open(LikersModalComponent, {
+      width: '380px',
+      maxWidth: '95vw',
+      data: { kind: 'post', id: post.id, routePrefix: '/dashboard/user' },
+    });
+  }
+
   deletePost(post: PostResponse): void {
     this.dialog.open(PromptModalComponent, {
       width: '400px',
@@ -330,12 +340,8 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     else this.expandedPosts.add(post.id);
   }
 
-  openViewer(post: PostResponse): void {
-    if (!post.photoUrl) return;
-    this.viewerPost = post;
-  }
-
-  closeViewer(): void {
-    this.viewerPost = null;
+  /** Opens the media + comments bottom sheet for a post. */
+  openPostSheet(post: PostResponse): void {
+    this.sheetPost = post;
   }
 }

@@ -162,9 +162,9 @@ describe('MessagePopupComponent', () => {
     fixture.detectChanges();
     component.activeUserId = 5;
 
-    component.send('Hello coach');
+    component.send({ body: 'Hello coach', replyToMessageId: null });
 
-    expect(store.dispatch).toHaveBeenCalledWith(MessageActions.sendMessage({ request: { recipientId: 5, body: 'Hello coach' } }));
+    expect(store.dispatch).toHaveBeenCalledWith(MessageActions.sendMessage({ request: { recipientId: 5, body: 'Hello coach', replyToMessageId: null } }));
   });
 
   it('setTyping dispatches setTyping for the active conversation', () => {

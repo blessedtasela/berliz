@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../models/Api.interface';
+import { LikerResponse } from '../models/comment.interface';
 import { PostRequest, PostResponse } from '../models/post.interface';
 
 /** Timeline/posts — mirrors `PostRest` on the backend. */
@@ -43,5 +44,10 @@ export class PostService {
 
   toggleLike(id: number): Observable<ApiResponse<PostResponse>> {
     return this.httpClient.put<ApiResponse<PostResponse>>(this.url + `/post/like/${id}`, {});
+  }
+
+  /** Who liked a post, most recent first. */
+  getPostLikes(id: number): Observable<ApiResponse<LikerResponse[]>> {
+    return this.httpClient.get<ApiResponse<LikerResponse[]>>(this.url + `/post/${id}/likes`);
   }
 }

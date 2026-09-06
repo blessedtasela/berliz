@@ -159,21 +159,22 @@
 
                             <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ post.content }}</p>
 
-                            <button *ngIf="post.photoUrl | strapiUrl as src" type="button" (click)="lightbox.open(src)"
-                                class="relative w-full max-h-96 overflow-hidden rounded-xl border border-gray-200 group cursor-zoom-in">
+                            <button *ngIf="post.photoUrl | strapiUrl as src" type="button" (click)="openPostSheet(post)"
+                                class="relative w-full max-h-96 overflow-hidden rounded-xl border border-gray-200 group">
                                 <img [src]="src" alt="" class="w-full max-h-96 object-cover" />
                                 <span class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center">
-                                    <i-feather name="maximize-2" style="width:18px;height:18px;"
-                                        class="text-white opacity-0 group-hover:opacity-100 transition drop-shadow"></i-feather>
+                                    <span class="text-[11px] font-bold text-white bg-black/50 px-2.5 py-1 rounded-full opacity-0 group-hover:opacity-100 transition">View</span>
                                 </span>
                             </button>
 
                             <div class="border-t border-gray-200 pt-2 flex items-center gap-3 text-[11px] text-gray-400">
-                                <span class="flex items-center gap-1.5">
+                                <button type="button" (click)="post.likes > 0 && openPostLikers(post)"
+                                    class="flex items-center gap-1.5 transition"
+                                    [class.hover:text-sky-600]="post.likes > 0" [class.cursor-default]="post.likes === 0">
                                     <i-feather name="heart" style="width:11px;height:11px;" [attr.fill]="post.likedByMe ? 'currentColor' : 'none'"
                                         [class.text-red-600]="post.likedByMe"></i-feather>
                                     {{ post.likes }}
-                                </span>
+                                </button>
                                 <button type="button" (click)="toggleComments(post)"
                                     class="flex items-center gap-1.5 transition hover:text-sky-600"
                                     [class.text-sky-600]="openCommentsPostId === post.id">
@@ -186,6 +187,9 @@
                             <app-post-comments [post]="post" [open]="openCommentsPostId === post.id"
                                 profileRoutePrefix="/user"></app-post-comments>
                         </div>
+
+                        <app-post-detail-sheet *ngIf="sheetPost" [post]="sheetPost"
+                            profileRoutePrefix="/user" (closed)="sheetPost = null"></app-post-detail-sheet>
                     </div>
                 </div>
 

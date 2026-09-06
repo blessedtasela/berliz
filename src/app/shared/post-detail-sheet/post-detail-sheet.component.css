@@ -1,0 +1,18 @@
+:host {
+  display: contents;
+}
+
+.sheet {
+  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: transform;
+  touch-action: none;
+}
+
+.sheet.is-dragging,
+.sheet.is-reduced {
+  transition: none;
+}
+
+.backdrop {
+  transition: opacity 0.28s ease;
+}

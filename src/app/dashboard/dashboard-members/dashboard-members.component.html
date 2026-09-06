@@ -57,7 +57,6 @@
 
             <a [routerLink]="['/dashboard/user', member.username || member.id]" class="flex flex-col items-center gap-3 w-full">
                 <img [src]="photoSrc(member)" [alt]="fullName(member)"
-                    (click)="lightbox.open(photoSrc(member)); $event.stopPropagation(); $event.preventDefault()"
                     class="w-16 h-16 rounded-full object-cover object-top border-2 border-gray-100 shrink-0" />
 
                 <div class="flex flex-col gap-1.5 min-w-0 w-full">
