@@ -169,11 +169,13 @@
                             </button>
 
                             <div class="border-t border-gray-200 pt-2 flex items-center gap-3 text-[11px] text-gray-400">
-                                <span class="flex items-center gap-1.5">
+                                <button type="button" (click)="post.likes > 0 && openPostLikers(post)"
+                                    class="flex items-center gap-1.5 transition"
+                                    [class.hover:text-sky-600]="post.likes > 0" [class.cursor-default]="post.likes === 0">
                                     <i-feather name="heart" style="width:11px;height:11px;" [attr.fill]="post.likedByMe ? 'currentColor' : 'none'"
                                         [class.text-red-600]="post.likedByMe"></i-feather>
                                     {{ post.likes }}
-                                </span>
+                                </button>
                                 <button type="button" (click)="toggleComments(post)"
                                     class="flex items-center gap-1.5 transition hover:text-sky-600"
                                     [class.text-sky-600]="openCommentsPostId === post.id">

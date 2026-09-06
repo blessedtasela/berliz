@@ -9,6 +9,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comments.component';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { PostMediaViewerComponent } from './post-media-viewer.component';
 import { PostActivityType, PostResponse } from 'src/app/models/post.interface';
 import { AuthService } from 'src/app/services/auth.service';
@@ -247,6 +248,15 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
         post.likes += wasLiked ? 1 : -1;
         this.snackBarService.openSnackBar('Could not update like', 'error');
       },
+    });
+  }
+
+  /** Opens the "liked by" list for a post. */
+  openPostLikers(post: PostResponse): void {
+    this.dialog.open(LikersModalComponent, {
+      width: '380px',
+      maxWidth: '95vw',
+      data: { kind: 'post', id: post.id, routePrefix: '/dashboard/user' },
     });
   }
 

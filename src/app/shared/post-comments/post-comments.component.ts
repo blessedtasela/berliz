@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, take, takeUntil } from 'rxjs/operators';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { PostResponse } from 'src/app/models/post.interface';
@@ -14,6 +15,7 @@ import { CurrentUserPhotoService } from 'src/app/services/current-user-photo.ser
 import { UserService } from 'src/app/services/user.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { ContentReportService } from 'src/app/services/content-report.service';
+import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 
 /** One chunk of a comment's text -- either plain text, or an `@username` mention that should link out. Rendered via *ngFor so no innerHTML/sanitizer is ever needed for user-generated text. */
 interface CommentPart {
@@ -39,7 +41,7 @@ const MENTION_IN_PROGRESS = /(?:^|\s)@([a-zA-Z0-9_]{0,30})$/;
 @Component({
   selector: 'app-post-comments',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule],
+  imports: [CommonModule, RouterModule, FormsModule, IconsModule, MatDialogModule],
   templateUrl: './post-comments.component.html'
 })
 export class PostCommentsComponent implements OnChanges, OnDestroy {
@@ -92,6 +94,7 @@ export class PostCommentsComponent implements OnChanges, OnDestroy {
     private userService: UserService,
     private snackBarService: SnackBarService,
     private contentReportService: ContentReportService,
+    private dialog: MatDialog,
   ) {
     this.mentionQuery$.pipe(
       debounceTime(200),
@@ -190,6 +193,37 @@ export class PostCommentsComponent implements OnChanges, OnDestroy {
         this.posting = false;
         this.snackBarService.openSnackBar('Could not post comment — try again', 'error');
       },
+    });
+  }
+
+  // ── Likes ────────────────────────────────────────────────────────────────
+
+  /** Optimistic like toggle -- flip locally, reconcile from the server, roll back on error. */
+  toggleCommentLike(comment: CommentResponse): void {
+    const wasLiked = comment.likedByMe;
+    comment.likedByMe = !wasLiked;
+    comment.likeCount = Math.max(0, (comment.likeCount ?? 0) + (wasLiked ? -1 : 1));
+
+    this.commentService.toggleCommentLike(comment.id).pipe(take(1)).subscribe({
+      next: res => {
+        if (!res.data) return;
+        comment.likedByMe = res.data.likedByMe;
+        comment.likeCount = res.data.likeCount;
+      },
+      error: () => {
+        comment.likedByMe = wasLiked;
+        comment.likeCount = Math.max(0, (comment.likeCount ?? 0) + (wasLiked ? 1 : -1));
+        this.snackBarService.openSnackBar('Could not update like', 'error');
+      },
+    });
+  }
+
+  openCommentLikers(comment: CommentResponse): void {
+    this.dialog.open(LikersModalComponent, {
+      width: '380px',
+      maxWidth: '95vw',
+      panelClass: 'liked-by-dialog',
+      data: { kind: 'comment', id: comment.id, routePrefix: this.profileRoutePrefix },
     });
   }
 

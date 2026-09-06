@@ -32,13 +32,14 @@ that ships a feature — add the row under the right domain, and log it under
 | Timeline / feed of connections' posts | ✅ | `dashboard-timeline` |
 | Create post — text, image/video, activity type badge | ✅ | Types: GENERAL, WORKOUT, SESSION, TESTIMONIAL, REVIEW, PROGRESS, MILESTONE |
 | Post like + like count | ✅ | Toggle like; denormalized counter |
-| See who liked a post | 🚧 | Tap the like count → liker list — see [Changelog](#changelog) |
+| See who liked a post | ✅ | Tap the "N likes" text → block-filtered liker list (`GET /post/{id}/likes`) |
 | Comments on posts | ✅ | Lazy-loaded thread, paginated "load earlier" |
 | `@username` mentions in comments (autocomplete + linkify) | ✅ | Notifies the mentioned user |
 | Edit / delete own comment; post author can delete any comment on their post | ✅ | |
-| Comment failed-load state with Retry | 🚧 | Was silently showing "no comments yet" on any fetch error |
-| Comment likes | 🚧 | Like/unlike a comment + count |
-| Threaded comment replies (nested) | 🚧 | Fully nested; deleting a comment removes its subtree |
+| Comment failed-load state with Retry | ✅ | Was silently showing "no comments yet" on any fetch error |
+| Comment likes + who-liked | ✅ | Heart toggles; "N likes" opens the liker list (`PUT /comment/like/{id}`, `GET /comment/{id}/likes`) |
+| Comment visibility & blocking | ✅ | `getComments` hides the thread when blocked by the post author; blocked users' comments filtered |
+| Threaded comment replies (nested) | 🚧 | Backend done (arbitrary depth, subtree delete). Frontend recursive UI is WS6b |
 | Media viewer for post images/video | ✅ | Instagram-style full-screen (`post-media-viewer`) on the feed; plain lightbox on profile pages |
 | Draggable media + comments sheet (half / full, swipe to dismiss) | 🚧 | Replaces the post-image lightbox on all surfaces |
 | Profile avatars link to that user's profile | 🚧 | Everywhere except the top-bar avatar (opens the account menu) |
@@ -155,6 +156,11 @@ _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
 - **Top-bar avatar opens the account menu, not a photo lightbox.** The global
   `ClickablePhotoDirective` was hijacking the click; the top-bar + dropdown avatars now
   carry `noZoom`. (WS8a)
+- **Comment likes + "who liked" (posts & comments).** Backend: `comment_like` table,
+  `PUT /comment/like/{id}`, `GET /comment/{id}/likes`, `GET /post/{id}/likes`, block-aware
+  comment reads. Frontend: heart toggle per comment (optimistic), a "N likes" affordance on
+  post cards and comments opening `LikersModalComponent` (avatar + name + @handle, links to
+  profile). (WS2–WS6a)
 - 🚧 **Comment likes** — like/unlike + count, backend `CommentLike` entity + `PUT /comment/like/{id}`.
 - 🚧 **Threaded replies** — nested to arbitrary depth; `GET /comment/{id}/replies`; delete
   cascades the subtree; reply notifies the parent comment's author.

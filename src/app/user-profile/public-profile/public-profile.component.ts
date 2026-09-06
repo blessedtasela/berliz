@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
 import { Subject, takeUntil } from 'rxjs';
@@ -16,6 +17,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comments.component';
+import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 
 import {
@@ -48,7 +50,7 @@ import {
 @Component({
   selector: 'app-public-profile',
   standalone: true,
-  imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, StrapiUrlPipe, PostCommentsComponent],
+  imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, MatDialogModule, StrapiUrlPipe, PostCommentsComponent],
   templateUrl: './public-profile.component.html'
 })
 export class PublicProfileComponent implements OnInit, OnDestroy {
@@ -82,9 +84,19 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private snackBarService: SnackBarService,
     public lightbox: PhotoLightboxService,
-    public authRedirect: AuthRedirectService
+    public authRedirect: AuthRedirectService,
+    private dialog: MatDialog,
   ) {
     this.needsLogin = !this.authService.isAuthenticated();
+  }
+
+  /** Opens the "liked by" list for a post. */
+  openPostLikers(post: PostResponse): void {
+    this.dialog.open(LikersModalComponent, {
+      width: '380px',
+      maxWidth: '95vw',
+      data: { kind: 'post', id: post.id, routePrefix: '/user' },
+    });
   }
 
   ngOnInit(): void {

@@ -71,9 +71,26 @@
                         <ng-container *ngIf="!part.mention">{{ part.text }}</ng-container>
                     </span>
                 </p>
-                <span class="text-[10px] mt-0.5 block" [class.text-gray-400]="!dark" [class.text-zinc-500]="dark">
-                    {{ comment.date | date:'medium' }}<span *ngIf="comment.lastUpdate !== comment.date"> · edited</span>
-                </span>
+                <div class="flex items-center gap-3 mt-1">
+                    <span class="text-[10px]" [class.text-gray-400]="!dark" [class.text-zinc-500]="dark">
+                        {{ comment.date | date:'medium' }}<span *ngIf="comment.lastUpdate !== comment.date"> · edited</span>
+                    </span>
+                    <button type="button" (click)="toggleCommentLike(comment)"
+                        class="flex items-center gap-1 text-[10px] font-semibold transition"
+                        [class.text-red-500]="comment.likedByMe"
+                        [class.text-gray-400]="!comment.likedByMe && !dark" [class.hover:text-red-500]="!comment.likedByMe && !dark"
+                        [class.text-zinc-500]="!comment.likedByMe && dark" [class.hover:text-red-400]="!comment.likedByMe && dark">
+                        <i-feather name="heart" style="width:11px;height:11px;"
+                            [attr.fill]="comment.likedByMe ? 'currentColor' : 'none'"></i-feather>
+                        Like
+                    </button>
+                    <button *ngIf="comment.likeCount > 0" type="button" (click)="openCommentLikers(comment)"
+                        class="text-[10px] font-semibold transition"
+                        [class.text-gray-400]="!dark" [class.hover:text-sky-600]="!dark"
+                        [class.text-zinc-500]="dark" [class.hover:text-sky-400]="dark">
+                        {{ comment.likeCount }} {{ comment.likeCount === 1 ? 'like' : 'likes' }}
+                    </button>
+                </div>
 
                 <!-- REPORT -->
                 <div *ngIf="reportingCommentId === comment.id" class="flex flex-col gap-1.5 mt-2 pt-2 border-t"

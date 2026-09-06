@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comments.component';
+import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { Connection } from 'src/app/models/connection.model';
 import { PostResponse } from 'src/app/models/post.interface';
 import { PublicUserProfile } from 'src/app/models/users.interface';
@@ -48,7 +50,7 @@ type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
 @Component({
   selector: 'app-dashboard-user-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, SharedModule, PostCommentsComponent],
+  imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent],
   templateUrl: './dashboard-user-profile.component.html'
 })
 export class DashboardUserProfileComponent implements OnInit, OnDestroy {
@@ -80,8 +82,18 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
     private snackBarService: SnackBarService,
     public lightbox: PhotoLightboxService,
     private blockService: BlockService,
+    private dialog: MatDialog,
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
+  }
+
+  /** Opens the "liked by" list for a post. */
+  openPostLikers(post: PostResponse): void {
+    this.dialog.open(LikersModalComponent, {
+      width: '380px',
+      maxWidth: '95vw',
+      data: { kind: 'post', id: post.id, routePrefix: '/dashboard/user' },
+    });
   }
 
   ngOnInit(): void {
