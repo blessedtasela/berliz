@@ -39,7 +39,8 @@ that ships a feature — add the row under the right domain, and log it under
 | Comment failed-load state with Retry | ✅ | Was silently showing "no comments yet" on any fetch error |
 | Comment likes + who-liked | ✅ | Heart toggles; "N likes" opens the liker list (`PUT /comment/like/{id}`, `GET /comment/{id}/likes`) |
 | Comment visibility & blocking | ✅ | `getComments` hides the thread when blocked by the post author; blocked users' comments filtered |
-| Threaded comment replies (nested) | 🚧 | Backend done (arbitrary depth, subtree delete). Frontend recursive UI is WS6b |
+| Threaded comment replies (nested, arbitrary depth) | ✅ | Recursive `CommentNodeComponent`; per-comment Reply box, "View N replies" lazy-load + paging; deleting a comment removes its subtree |
+| `@username` autocomplete (shared) | ✅ | `MentionInputComponent` — one input+dropdown reused by the root box, every edit field, and every reply box |
 | Media viewer for post images/video | ✅ | Instagram-style full-screen (`post-media-viewer`) on the feed; plain lightbox on profile pages |
 | Draggable media + comments sheet (half / full, swipe to dismiss) | 🚧 | Replaces the post-image lightbox on all surfaces |
 | Profile avatars link to that user's profile | 🚧 | Everywhere except the top-bar avatar (opens the account menu) |
@@ -161,6 +162,11 @@ _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
   comment reads. Frontend: heart toggle per comment (optimistic), a "N likes" affordance on
   post cards and comments opening `LikersModalComponent` (avatar + name + @handle, links to
   profile). (WS2–WS6a)
+- **Threaded comment replies (nested).** Recursive `CommentNodeComponent` — Reply box per
+  comment, "View N replies" lazy-loads via `GET /comment/{id}/replies` with paging, replies
+  can be replied to (unbounded depth, indent capped). `@mention` autocomplete extracted into
+  a shared `MentionInputComponent` used by the root box, edit fields, and reply boxes.
+  `post-comments.component` slimmed to just list + paging + compose. (WS6b)
 - 🚧 **Comment likes** — like/unlike + count, backend `CommentLike` entity + `PUT /comment/like/{id}`.
 - 🚧 **Threaded replies** — nested to arbitrary depth; `GET /comment/{id}/replies`; delete
   cascades the subtree; reply notifies the parent comment's author.
