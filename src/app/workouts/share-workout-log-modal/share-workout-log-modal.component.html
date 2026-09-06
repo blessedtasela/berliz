@@ -22,10 +22,10 @@
     <!-- ── CURRENTLY SHARED WITH ───────────────────────────────────────── -->
     <div class="flex flex-col gap-1.5">
       <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">
-        Shared with ({{ log.collaborators?.length || 0 }})
+        Shared with ({{ log.collaborators.length }})
       </label>
 
-      <p *ngIf="!log.collaborators?.length" class="text-[11px] text-gray-400">
+      <p *ngIf="!log.collaborators.length" class="text-[11px] text-gray-400">
         Not shared with anyone yet.
       </p>
 

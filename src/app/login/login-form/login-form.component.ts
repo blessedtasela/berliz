@@ -8,6 +8,7 @@ import { Login } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { SocialAuthService } from 'src/app/services/social-auth.service';
+import { WebAuthnService } from 'src/app/services/webauthn.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
@@ -25,6 +26,9 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
   responseMessage: any;
   /** True once the official "Sign in with Google" button has actually rendered. */
   googleReady = false;
+  /** True once we've confirmed this device actually has Face ID/Touch ID/Windows Hello available. */
+  passkeyAvailable = false;
+  passkeyLoading = false;
   @ViewChild('activationEmail')
   activationEmail!: NgForm;
 
@@ -35,7 +39,8 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
-    private socialAuthService: SocialAuthService) {
+    private socialAuthService: SocialAuthService,
+    private webAuthnService: WebAuthnService) {
     this.invalidLogin = ''
   }
 
@@ -82,6 +87,23 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
         }
       });
     }
+
+    this.webAuthnService.isPlatformAuthenticatorAvailable().then(available => this.passkeyAvailable = available);
+  }
+
+  loginWithPasskey(): void {
+    this.passkeyLoading = true;
+    this.webAuthnService.loginWithPasskey()
+      .then(response => {
+        this.passkeyLoading = false;
+        this.handleSocialAuthResponse(response);
+      })
+      .catch(err => {
+        this.passkeyLoading = false;
+        // A user-cancelled prompt isn't a real error -- don't scare them with a red toast for it.
+        if (err?.name === 'NotAllowedError') return;
+        this.snackBarService.openSnackBar(err?.message || 'Passkey login failed.', 'error');
+      });
   }
 
 

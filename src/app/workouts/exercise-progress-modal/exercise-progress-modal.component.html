@@ -21,6 +21,14 @@
       <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
     </div>
 
+    <!-- Trend chart -- oldest to newest, left to right, so it reads as "over time" the same direction as the list below reads newest-first. -->
+    <svg *ngIf="!loading && hasChart" [attr.viewBox]="chartViewBox" class="w-full h-24 mb-1">
+      <path [attr.d]="chartLinePath" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <circle *ngFor="let c of chartCoords; trackBy: trackByIndex" [attr.cx]="c.x" [attr.cy]="c.y"
+        [attr.r]="c.isRecord ? 4 : 2.5" [attr.fill]="c.isRecord ? '#dc2626' : '#fca5a5'" />
+    </svg>
+    <p *ngIf="!loading && hasChart" class="text-[10px] text-gray-400 text-center -mt-2 mb-1">Weight over time — darker dot is your all-time best</p>
+
     <div *ngIf="!loading && displayPoints.length === 0"
       class="flex flex-col items-center gap-2 py-8 text-center">
       <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">

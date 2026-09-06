@@ -1,0 +1,95 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="git-pull-request" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <h1 class="text-sm font-bold text-gray-900">Exercise suggestions</h1>
+                <p class="text-[11px] text-gray-400">Custom exercise names users logged that aren't in the catalog yet — approve to add them for real.</p>
+            </div>
+        </div>
+        <app-refresh-button [loading]="loading" (refresh)="refresh()"></app-refresh-button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex items-center gap-2">
+        <button type="button" (click)="setTab('PENDING')" class="rounded-xl px-4 py-2 text-xs font-semibold transition flex items-center gap-1.5" [ngClass]="activeTab === 'PENDING'
+                ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+            Pending
+            <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+                [ngClass]="activeTab === 'PENDING' ? 'bg-white/20' : 'bg-white'">{{ countFor('PENDING') }}</span>
+        </button>
+        <button type="button" (click)="setTab('APPROVED')" class="rounded-xl px-4 py-2 text-xs font-semibold transition flex items-center gap-1.5" [ngClass]="activeTab === 'APPROVED'
+                ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+            Approved
+            <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+                [ngClass]="activeTab === 'APPROVED' ? 'bg-white/20' : 'bg-white'">{{ countFor('APPROVED') }}</span>
+        </button>
+        <button type="button" (click)="setTab('DISMISSED')" class="rounded-xl px-4 py-2 text-xs font-semibold transition flex items-center gap-1.5" [ngClass]="activeTab === 'DISMISSED'
+                ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+            Dismissed
+            <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+                [ngClass]="activeTab === 'DISMISSED' ? 'bg-white/20' : 'bg-white'">{{ countFor('DISMISSED') }}</span>
+        </button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex items-center justify-center py-10">
+        <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!loading && filtered.length === 0"
+        class="bg-white rounded-2xl border border-gray-200 p-10 flex flex-col items-center justify-center gap-3 text-center">
+        <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
+            <i-feather name="git-pull-request" style="width:22px;height:22px;" class="text-gray-400"></i-feather>
+        </div>
+        <p class="text-sm font-bold text-gray-900">Nothing here</p>
+        <p class="text-[11px] text-gray-400 max-w-xs">
+            {{ activeTab === 'PENDING' ? 'No new suggestions right now — check back once users log more custom exercises.' : 'Nothing in this list yet.' }}
+        </p>
+    </div>
+
+    <!-- List -->
+    <div *ngIf="!loading" class="flex flex-col gap-2">
+        <div *ngFor="let s of filtered; trackBy: trackById"
+            class="bg-white rounded-2xl border border-gray-200 p-4 flex items-center justify-between gap-3">
+
+            <div class="min-w-0 flex items-center gap-3">
+                <span class="text-lg font-extrabold text-red-600 bg-red-50 border border-red-100 rounded-xl w-11 h-11 flex items-center justify-center shrink-0">
+                    {{ s.occurrenceCount }}
+                </span>
+                <div class="min-w-0">
+                    <p class="text-sm font-bold text-gray-900 truncate">{{ s.name }}</p>
+                    <p class="text-[11px] text-gray-400 truncate">
+                        Suggested {{ s.occurrenceCount }} time{{ s.occurrenceCount === 1 ? '' : 's' }} — first by
+                        {{ s.firstSuggestedByName || 'a user' }}, most recently {{ s.lastSuggestedByName || 'a user' }}
+                    </p>
+                    <p *ngIf="s.createdExerciseId" class="text-[11px] text-green-600 mt-0.5 flex items-center gap-1">
+                        <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
+                        Added to catalog
+                    </p>
+                </div>
+            </div>
+
+            <div *ngIf="activeTab === 'PENDING'" class="flex items-center gap-2 shrink-0">
+                <button type="button" (click)="dismiss(s)" [disabled]="busyId === s.id"
+                    class="px-3 py-1.5 rounded-xl text-[11px] font-semibold border border-gray-200 text-gray-500
+                           hover:text-red-600 hover:border-red-200 transition disabled:opacity-60 flex items-center gap-1.5">
+                    <i-feather name="x" style="width:11px;height:11px;"></i-feather>
+                    Dismiss
+                </button>
+                <button type="button" (click)="approve(s)" [disabled]="busyId === s.id"
+                    class="px-3 py-1.5 rounded-xl text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700
+                           active:scale-[0.98] transition disabled:opacity-60 flex items-center gap-1.5">
+                    <i-feather *ngIf="busyId !== s.id" name="plus-circle" style="width:11px;height:11px;"></i-feather>
+                    <i-feather *ngIf="busyId === s.id" name="loader" style="width:11px;height:11px;" class="animate-spin"></i-feather>
+                    Add to catalog
+                </button>
+            </div>
+        </div>
+    </div>
+</section>

@@ -23,6 +23,10 @@ export class ExerciseProgressModalComponent implements OnInit {
   points: ExerciseProgressPoint[] = [];
   loading = true;
 
+  private readonly chartWidth = 380;
+  private readonly chartHeight = 100;
+  private readonly chartPad = 10;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { exerciseId: number; exerciseName: string },
     public dialogRef: MatDialogRef<ExerciseProgressModalComponent>,
@@ -47,6 +51,46 @@ export class ExerciseProgressModalComponent implements OnInit {
   /** Newest first for display, even though the trend math below reads oldest-first. */
   get displayPoints(): ExerciseProgressPoint[] {
     return [...this.points].reverse();
+  }
+
+  // ── Trend chart (inline SVG — chronological, oldest-first) ───────────────
+  // Only sessions with a recorded weight plot on the line; bodyweight-only
+  // sessions (bestWeight null) are skipped here but still show in the list.
+
+  private get chartablePoints(): { point: ExerciseProgressPoint; weight: number }[] {
+    return this.points
+      .filter((p): p is ExerciseProgressPoint & { bestWeight: number } => p.bestWeight != null)
+      .map(point => ({ point, weight: point.bestWeight as number }));
+  }
+
+  get hasChart(): boolean {
+    return this.chartablePoints.length >= 2;
+  }
+
+  get chartCoords(): { x: number; y: number; weight: number; isRecord: boolean }[] {
+    const entries = this.chartablePoints;
+    if (entries.length === 0) return [];
+
+    const weights = entries.map(e => e.weight);
+    const min = Math.min(...weights);
+    const max = Math.max(...weights);
+    const range = max - min || 1;
+    const stepX = entries.length > 1 ? (this.chartWidth - this.chartPad * 2) / (entries.length - 1) : 0;
+
+    return entries.map((e, i) => ({
+      x: this.chartPad + i * stepX,
+      y: this.chartPad + (this.chartHeight - this.chartPad * 2) * (1 - (e.weight - min) / range),
+      weight: e.weight,
+      isRecord: e.weight === max,
+    }));
+  }
+
+  get chartLinePath(): string {
+    return this.chartCoords.map((c, i) => `${i === 0 ? 'M' : 'L'} ${c.x} ${c.y}`).join(' ');
+  }
+
+  get chartViewBox(): string {
+    return `0 0 ${this.chartWidth} ${this.chartHeight}`;
   }
 
   /** Change in bestWeight vs. the session right before this one (chronologically). */
@@ -86,5 +130,9 @@ export class ExerciseProgressModalComponent implements OnInit {
 
   trackByWorkoutLogId(_: number, point: ExerciseProgressPoint): number {
     return point.workoutLogId;
+  }
+
+  trackByIndex(i: number): number {
+    return i;
   }
 }

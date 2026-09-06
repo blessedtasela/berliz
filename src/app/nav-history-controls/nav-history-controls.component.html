@@ -1,18 +1,33 @@
-<!-- Hidden entirely until there's somewhere in-app to go back to -- not a
-     permanent fixture. Same floating-circle language as the scroll-to-top
-     and message-popup buttons (solid red-600, white icon, shadow-xl)
-     instead of a generic pill, so it actually reads as part of this app. -->
-<div *ngIf="canGoBack" class="fixed top-20 left-3 z-40 flex items-center gap-2">
+<!-- Hidden entirely until there's somewhere in-app to go back to, and entirely
+     off when the user has chosen 'off' in Settings -> In-app navigation. -->
+<ng-container *ngIf="canGoBack && style !== 'off'">
 
-    <button type="button" (click)="goBack()" title="Back" aria-label="Go back"
-        class="w-10 h-10 rounded-full bg-red-600 text-white shadow-xl flex items-center justify-center hover:bg-red-700 active:scale-95 transition">
-        <i-feather name="chevron-left" style="width:18px;height:18px;"></i-feather>
-    </button>
+    <!-- ═══════════ BUTTON STYLE ═══════════
+         Frosted glass, not a solid fill, so it never fully hides whatever it's
+         sitting on top of. Anchored bottom-left; cdkDrag's free-position offset
+         (persisted per-device) is what actually places it, so a user can drag
+         it anywhere and it'll stay there next time. A thin center bar reads as
+         a grab handle, same visual language as an iOS control-center pill. -->
+    <div *ngIf="style === 'button'" cdkDrag cdkDragBoundary="body" [cdkDragFreeDragPosition]="dragPosition"
+        (cdkDragEnded)="onDragEnded($event)" class="fixed z-40 left-4 bottom-6 flex items-center gap-1 px-1.5 py-1.5 rounded-full
+               bg-white/70 backdrop-blur-md border border-gray-200/70 shadow-lg
+               cursor-grab active:cursor-grabbing select-none">
 
-    <!-- Forward has nothing to do until back has actually been used once. -->
-    <button *ngIf="hasGoneBack" type="button" (click)="goForward()" title="Forward" aria-label="Go forward"
-        class="w-10 h-10 rounded-full bg-white text-red-600 border border-gray-200 shadow-xl flex items-center justify-center hover:bg-gray-50 active:scale-95 transition">
-        <i-feather name="chevron-right" style="width:18px;height:18px;"></i-feather>
-    </button>
+        <button type="button" (click)="goBack()" title="Back" aria-label="Go back" class="w-9 h-9 rounded-full flex items-center justify-center text-red-600
+                   hover:bg-red-50/70 active:scale-90 transition">
+            <i-feather name="chevron-left" style="width:18px;height:18px;"></i-feather>
+        </button>
 
-</div>
+        <div class="w-6 h-1 rounded-full bg-gray-300/70 shrink-0"></div>
+
+        <!-- Forward has nothing to do until back has actually been used once. -->
+        <button *ngIf="hasGoneBack" type="button" (click)="goForward()" title="Forward" aria-label="Go forward" class="w-9 h-9 rounded-full flex items-center justify-center text-gray-500
+                   hover:bg-gray-100/70 active:scale-90 transition">
+            <i-feather name="chevron-right" style="width:18px;height:18px;"></i-feather>
+        </button>
+    </div>
+
+    <!-- 'swipe' style has no visible element at all — see the component's
+         window:touchstart/touchend listeners for the edge-swipe gesture.
+         'off' renders nothing, matched by the *ngIf on the outer ng-container. -->
+</ng-container>

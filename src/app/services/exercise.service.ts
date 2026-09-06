@@ -1,7 +1,8 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { ExerciseLikes, Exercises } from '../models/exercise.interface';
+import { ExerciseLikes, Exercises, ExerciseSuggestionResponse } from '../models/exercise.interface';
+import { ApiResponse } from '../models/Api.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -76,6 +77,20 @@ export class ExerciseService {
 
   getMyExerciseLikes() {
     return this.httpClient.get<ExerciseLikes[]>(this.url + "/exercise/getMyExerciseLikes");
+  }
+
+  // ── Crowdsourced catalog suggestions (admin only) ────────────────────────────
+
+  getExerciseSuggestions() {
+    return this.httpClient.get<ApiResponse<ExerciseSuggestionResponse[]>>(this.url + "/exerciseSuggestion/getAll");
+  }
+
+  approveExerciseSuggestion(id: number) {
+    return this.httpClient.post<ApiResponse<ExerciseSuggestionResponse>>(this.url + `/exerciseSuggestion/${id}/approve`, {});
+  }
+
+  dismissExerciseSuggestion(id: number) {
+    return this.httpClient.post<ApiResponse<ExerciseSuggestionResponse>>(this.url + `/exerciseSuggestion/${id}/dismiss`, {});
   }
 
 }

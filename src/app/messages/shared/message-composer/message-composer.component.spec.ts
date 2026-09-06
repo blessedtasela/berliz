@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MessageComposerComponent } from './message-composer.component';
 
 describe('MessageComposerComponent', () => {
@@ -6,7 +7,7 @@ describe('MessageComposerComponent', () => {
   let fixture: ComponentFixture<MessageComposerComponent>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ imports: [MessageComposerComponent] });
+    TestBed.configureTestingModule({ imports: [MessageComposerComponent, HttpClientTestingModule] });
     fixture = TestBed.createComponent(MessageComposerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

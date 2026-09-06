@@ -32,6 +32,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { name: 'Tasks', icon: 'activity', route: '/dashboard/my-tasks' },
   { name: 'To-do list', icon: 'calendar', route: '/dashboard/my-todos' },
   { name: 'Workouts', icon: 'zap', route: '/dashboard/workouts' },
+  { name: 'Runs', icon: 'wind', route: '/dashboard/runs' },
   { name: 'My Progress', icon: 'trending-up', route: '/dashboard/my-progress' },
   { name: 'Exercises & Gear', icon: 'layers', route: '/dashboard/exercises' },
   { name: 'Find a Provider', icon: 'search', route: '/dashboard/find-providers' },
