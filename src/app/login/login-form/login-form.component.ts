@@ -32,6 +32,16 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
   @ViewChild('activationEmail')
   activationEmail!: NgForm;
 
+  /**
+   * Set when this page is opened inside the Berliz mobile app's in-app
+   * browser — the app has no native Google/Facebook SDK, so it opens this
+   * page instead and waits for a redirect back to itself. Holds the app's
+   * own callback URI (e.g. `exp://…` / `berliz://…`), read from
+   * `?mobileRedirect=`. Present regardless of which method the user
+   * completes login with — see completeAuth().
+   */
+  private mobileRedirect: string | null = null;
+
   constructor(private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
@@ -75,6 +85,16 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
       password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
     });
 
+    this.webAuthnService.isPlatformAuthenticatorAvailable().then(available => this.passkeyAvailable = available);
+
+    this.mobileRedirect = this.route.snapshot.queryParamMap.get('mobileRedirect');
+
+    // Skip the "already logged in here → bounce to returnUrl" shortcut when
+    // this is the mobile hand-off flow (see completeAuth) — a stray web
+    // session in this ephemeral in-app browser is unrelated to the app
+    // waiting for its token callback, and navigating away would strand it.
+    if (this.mobileRedirect) return;
+
     const token = localStorage.getItem('token');
 
     if (token) {
@@ -87,8 +107,6 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
         }
       });
     }
-
-    this.webAuthnService.isPlatformAuthenticatorAvailable().then(available => this.passkeyAvailable = available);
   }
 
   loginWithPasskey(): void {
@@ -167,18 +185,13 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
           }
 
           this.invalidForm = false;
-          localStorage.setItem('token', auth.accessToken);
-          localStorage.setItem('refresh_token', auth.refreshToken);
           this.loginInterface = auth;
-          this.userService.startRefreshTokenTimer();
           this.invalidLogin = '';
-          this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
           this.loginForm.reset();
           // Keep the spinner running through navigation -- /dashboard is lazy-loaded
           // with no preloading strategy, so the chunk fetch/parse can visibly stall
           // the (already spinner-free) login page for a second or two otherwise.
-          this.navigateAfterLogin();
+          this.completeAuth(auth, response?.message);
         },
         error: (error: any) => {
           this.ngxService.stop();
@@ -229,10 +242,32 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
       return;
     }
 
+    this.completeAuth(auth, response?.message);
+  }
+
+  /**
+   * Shared success tail for password login and both social providers. When
+   * this page was opened by the Berliz mobile app (`mobileRedirect`
+   * present), hand the tokens back to it via a redirect instead of
+   * establishing a session in this browser — the tab is inside an
+   * ephemeral in-app browser the mobile app closes right after, so
+   * persisting anything here would just leave a stray logged-in web
+   * session on a page the user never meant to browse. The app side
+   * (`AuthContext`) is what actually stores the session.
+   */
+  private completeAuth(auth: { accessToken: string; refreshToken: string }, message?: string): void {
+    if (this.mobileRedirect) {
+      const sep = this.mobileRedirect.includes('?') ? '&' : '?';
+      window.location.href =
+        `${this.mobileRedirect}${sep}accessToken=${encodeURIComponent(auth.accessToken)}` +
+        `&refreshToken=${encodeURIComponent(auth.refreshToken)}`;
+      return;
+    }
+
     localStorage.setItem('token', auth.accessToken);
     localStorage.setItem('refresh_token', auth.refreshToken);
     this.userService.startRefreshTokenTimer();
-    this.responseMessage = response?.message;
+    this.responseMessage = message;
     this.snackBarService.openSnackBar(this.responseMessage, '');
     this.navigateAfterLogin();
   }
