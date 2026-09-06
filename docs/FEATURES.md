@@ -41,8 +41,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Comment visibility & blocking | ✅ | `getComments` hides the thread when blocked by the post author; blocked users' comments filtered |
 | Threaded comment replies (nested, arbitrary depth) | ✅ | Recursive `CommentNodeComponent`; per-comment Reply box, "View N replies" lazy-load + paging; deleting a comment removes its subtree |
 | `@username` autocomplete (shared) | ✅ | `MentionInputComponent` — one input+dropdown reused by the root box, every edit field, and every reply box |
-| Media viewer for post images/video | ✅ | Instagram-style full-screen (`post-media-viewer`) on the feed; plain lightbox on profile pages |
-| Draggable media + comments sheet (half / full, swipe to dismiss) | 🚧 | Replaces the post-image lightbox on all surfaces |
+| Draggable media + comments sheet (half / full, swipe to dismiss) | ✅ | `PostDetailSheetComponent` — media pinned top, post text + full comment thread scroll below; opens at half height, drag the grabber up to full or flick down to dismiss; honours `prefers-reduced-motion`. Replaced the old `post-media-viewer` lightbox for post images on feed + both profile pages |
 | Profile avatars link to that user's profile | 🚧 | Everywhere except the top-bar avatar (opens the account menu) |
 
 ## 3. Messaging
@@ -167,6 +166,12 @@ _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
   can be replied to (unbounded depth, indent capped). `@mention` autocomplete extracted into
   a shared `MentionInputComponent` used by the root box, edit fields, and reply boxes.
   `post-comments.component` slimmed to just list + paging + compose. (WS6b)
+- **Media + comments bottom sheet replaces the post-image lightbox.** New
+  `PostDetailSheetComponent`: tap a post image on the feed, the dashboard profile, or the
+  public profile → a bottom sheet opens at ~half height with the media on top and the full
+  comment thread below; drag the grabber to snap full / flick down to dismiss; Esc + backdrop
+  close; `prefers-reduced-motion` opens straight at full. `post-media-viewer.component` deleted.
+  Non-post images still use the plain `PhotoLightboxService`. (WS7)
 - 🚧 **Comment likes** — like/unlike + count, backend `CommentLike` entity + `PUT /comment/like/{id}`.
 - 🚧 **Threaded replies** — nested to arbitrary depth; `GET /comment/{id}/replies`; delete
   cascades the subtree; reply notifies the parent comment's author.

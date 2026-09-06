@@ -9,6 +9,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comments.component';
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
+import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-detail-sheet.component';
 import { Connection } from 'src/app/models/connection.model';
 import { PostResponse } from 'src/app/models/post.interface';
 import { PublicUserProfile } from 'src/app/models/users.interface';
@@ -50,7 +51,7 @@ type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
 @Component({
   selector: 'app-dashboard-user-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent],
+  imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent],
   templateUrl: './dashboard-user-profile.component.html'
 })
 export class DashboardUserProfileComponent implements OnInit, OnDestroy {
@@ -68,6 +69,9 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
 
   /** Which post's comment thread (PostCommentsComponent) is expanded inline, if any. Only one open at a time. */
   openCommentsPostId: number | null = null;
+
+  /** The post whose media + comments sheet is open, if any. */
+  sheetPost: PostResponse | null = null;
 
   blockedUsers: BlockedUser[] = [];
 
@@ -94,6 +98,11 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
       maxWidth: '95vw',
       data: { kind: 'post', id: post.id, routePrefix: '/dashboard/user' },
     });
+  }
+
+  /** Opens the media + comments bottom sheet for a post. */
+  openPostSheet(post: PostResponse): void {
+    this.sheetPost = post;
   }
 
   ngOnInit(): void {

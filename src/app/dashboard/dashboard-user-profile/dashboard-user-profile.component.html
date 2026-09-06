@@ -162,12 +162,11 @@
 
                     <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ post.content }}</p>
 
-                    <button *ngIf="post.photoUrl | strapiUrl as src" type="button" (click)="lightbox.open(src)"
-                        class="relative w-full max-h-96 overflow-hidden rounded-xl border border-gray-100 group cursor-zoom-in">
+                    <button *ngIf="post.photoUrl | strapiUrl as src" type="button" (click)="openPostSheet(post)"
+                        class="relative w-full max-h-96 overflow-hidden rounded-xl border border-gray-100 group">
                         <img [src]="src" alt="" class="w-full max-h-96 object-cover" />
                         <span class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition flex items-center justify-center">
-                            <i-feather name="maximize-2" style="width:20px;height:20px;"
-                                class="text-white opacity-0 group-hover:opacity-100 transition drop-shadow"></i-feather>
+                            <span class="text-[11px] font-bold text-white bg-black/50 px-2.5 py-1 rounded-full opacity-0 group-hover:opacity-100 transition">View</span>
                         </span>
                     </button>
 
@@ -196,6 +195,9 @@
 
                     <app-post-comments [post]="post" [open]="openCommentsPostId === post.id"></app-post-comments>
                 </div>
+
+                <app-post-detail-sheet *ngIf="sheetPost" [post]="sheetPost"
+                    profileRoutePrefix="/dashboard/user" (closed)="sheetPost = null"></app-post-detail-sheet>
 
                 <!-- Empty -->
                 <div *ngIf="!postsLoading && posts.length === 0" class="bg-white border border-gray-200 rounded-2xl p-10
