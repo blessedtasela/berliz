@@ -42,7 +42,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Threaded comment replies (nested, arbitrary depth) | ✅ | Recursive `CommentNodeComponent`; per-comment Reply box, "View N replies" lazy-load + paging; deleting a comment removes its subtree |
 | `@username` autocomplete (shared) | ✅ | `MentionInputComponent` — one input+dropdown reused by the root box, every edit field, and every reply box |
 | Draggable media + comments sheet (half / full, swipe to dismiss) | ✅ | `PostDetailSheetComponent` — media pinned top, post text + full comment thread scroll below; opens at half height, drag the grabber up to full or flick down to dismiss; honours `prefers-reduced-motion`. Replaced the old `post-media-viewer` lightbox for post images on feed + both profile pages |
-| Profile avatars link to that user's profile | 🚧 | Everywhere except the top-bar avatar (opens the account menu) |
+| Profile avatars link to that user's profile | ✅ | `ClickablePhotoDirective` now leaves images inside a link/button alone; comment authors, connections, member cards, and the likers list navigate to the profile. Top-bar avatar still opens the account menu; profile-header avatars still enlarge |
 
 ## 3. Messaging
 
@@ -172,6 +172,11 @@ _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
   comment thread below; drag the grabber to snap full / flick down to dismiss; Esc + backdrop
   close; `prefers-reduced-motion` opens straight at full. `post-media-viewer.component` deleted.
   Non-post images still use the plain `PhotoLightboxService`. (WS7)
+- **Avatars navigate instead of zooming.** `ClickablePhotoDirective` now ignores any image
+  inside a link/button (that ancestor's action owns the click) and only makes *bare* images
+  zoomable. Removed the explicit `lightbox.open(...)` handlers that were blocking navigation
+  on comment-author, connections, and member-directory avatars; wrapped the connection
+  request-row avatars in a profile link. (WS8b)
 - 🚧 **Comment likes** — like/unlike + count, backend `CommentLike` entity + `PUT /comment/like/{id}`.
 - 🚧 **Threaded replies** — nested to arbitrary depth; `GET /comment/{id}/replies`; delete
   cascades the subtree; reply notifies the parent comment's author.

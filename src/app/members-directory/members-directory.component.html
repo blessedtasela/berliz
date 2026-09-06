@@ -99,7 +99,6 @@
                            text-center hover:border-red-200 hover:bg-gray-50 transition">
 
                     <img [src]="photoSrc(member)" [alt]="fullName(member)"
-                        (click)="lightbox.open(photoSrc(member)); $event.stopPropagation(); $event.preventDefault()"
                         class="w-16 h-16 rounded-full object-cover object-top border-2 border-gray-200 bg-gray-50 shrink-0" />
 
                     <div class="flex flex-col gap-1.5 min-w-0 w-full">
