@@ -8,7 +8,6 @@ import { DashboardNotificationComponent } from './dashboard-notification.compone
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { AuthService } from 'src/app/services/auth.service';
 
 describe('DashboardNotificationComponent', () => {
   let component: DashboardNotificationComponent;
@@ -18,8 +17,6 @@ describe('DashboardNotificationComponent', () => {
     const rxStompServiceSpy = jasmine.createSpyObj('RxStompService', ['watch', 'publish']);
     rxStompServiceSpy.watch.and.returnValue(NEVER);
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
-    const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
-    authServiceSpy.isAuthenticated.and.returnValue(false);
     const notificationServiceSpy = jasmine.createSpyObj('NotificationService', ['markAsRead']);
     const snackbarServiceSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
 
@@ -30,7 +27,6 @@ describe('DashboardNotificationComponent', () => {
         provideMockStore(),
         { provide: RxStompService, useValue: rxStompServiceSpy },
         { provide: MatDialog, useValue: dialogSpy },
-        { provide: AuthService, useValue: authServiceSpy },
         { provide: NotificationService, useValue: notificationServiceSpy },
         { provide: SnackBarService, useValue: snackbarServiceSpy }
       ]

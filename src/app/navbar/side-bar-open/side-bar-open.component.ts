@@ -4,7 +4,6 @@ import { NavigationEnd, Router } from '@angular/router';
 import { merge, Subject } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
 
-import { AuthService } from 'src/app/services/auth.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
@@ -48,7 +47,6 @@ export class SideBarOpenComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private snackbarService: SnackBarService,
     private rxStompService: RxStompService,
-    private authService: AuthService,
     private store: Store
   ) {
 
@@ -67,8 +65,13 @@ export class SideBarOpenComponent implements OnInit, OnDestroy {
   // -----------------------------
   // INIT
   // -----------------------------
+  // No auth check here: this component only ever mounts nested inside
+  // SideBarComponent, which itself only mounts inside AppComponent's
+  // 'sidebar' layout branch -- already gated on auth (see
+  // AppComponent#updateLayout). A redundant one-time check here previously
+  // meant that if it ever ran during a momentary unauthenticated flash, this
+  // component silently never loaded any data for the rest of the session.
   ngOnInit(): void {
-    if (!this.authService.isAuthenticated()) return;
     this.onResize();
 
     // Load user from store

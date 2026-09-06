@@ -9,7 +9,6 @@ import { SideBarOpenComponent } from './side-bar-open.component';
 import { UserService } from 'src/app/services/user.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { AuthService } from 'src/app/services/auth.service';
 
 describe('SideBarOpenComponent', () => {
   let component: SideBarOpenComponent;
@@ -22,8 +21,6 @@ describe('SideBarOpenComponent', () => {
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     const rxStompSpy = jasmine.createSpyObj('RxStompService', ['watch']);
     rxStompSpy.watch.and.returnValue(NEVER);
-    const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
-    authServiceSpy.isAuthenticated.and.returnValue(true);
 
     TestBed.configureTestingModule({
       declarations: [SideBarOpenComponent],
@@ -34,8 +31,7 @@ describe('SideBarOpenComponent', () => {
         { provide: UserService, useValue: userServiceSpy },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: SnackBarService, useValue: snackbarSpy },
-        { provide: RxStompService, useValue: rxStompSpy },
-        { provide: AuthService, useValue: authServiceSpy }
+        { provide: RxStompService, useValue: rxStompSpy }
       ]
     });
     fixture = TestBed.createComponent(SideBarOpenComponent);
