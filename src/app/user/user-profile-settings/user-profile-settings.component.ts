@@ -36,6 +36,7 @@ import { BrowserNotificationService, NotificationCategory } from 'src/app/servic
 import { BlockService } from 'src/app/services/block.service';
 import { BlockedUser } from 'src/app/models/block.model';
 import { NavControlsService, NavControlsStyle } from 'src/app/services/nav-controls.service';
+import { NavbarStyleService, NavbarStyle } from 'src/app/services/navbar-style.service';
 import { WhatsNewService } from 'src/app/services/whats-new.service';
 import { WebAuthnService } from 'src/app/services/webauthn.service';
 import { WebAuthnCredentialResponse } from 'src/app/models/webauthn.interface';
@@ -104,6 +105,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     private blockService: BlockService,
     private navControls: NavControlsService,
     public whatsNew: WhatsNewService,
+    private navbarStyleService: NavbarStyleService,
     public webAuthnService: WebAuthnService,
   ) { }
 
@@ -412,6 +414,17 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     if (/Android/.test(ua)) return 'Android device';
     if (/Windows/.test(ua)) return 'Windows device';
     return 'Passkey';
+  }
+
+  // ═══════════ NAVBAR APPEARANCE ═══════════
+  // Per-device (localStorage) — see NavbarStyleService.
+
+  get navbarStyle(): NavbarStyle {
+    return this.navbarStyleService.style;
+  }
+
+  setNavbarStyle(style: NavbarStyle): void {
+    this.navbarStyleService.setStyle(style);
   }
 
   // ═══════════ IN-APP NAVIGATION ═══════════

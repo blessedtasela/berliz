@@ -39,7 +39,7 @@
       <div class="flex items-center gap-2 w-full sm:w-auto sm:shrink-0">
         <app-refresh-button [loading]="loading" (refresh)="refresh()"></app-refresh-button>
         <a routerLink="/dashboard/workouts/history"
-          class="relative flex-1 sm:flex-none sm:w-36 justify-center px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition flex items-center gap-2">
+          class="relative flex-1 min-w-0 sm:flex-none sm:w-36 justify-center px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition flex items-center gap-2">
           <i-feather name="trending-up" style="width:13px;height:13px;"></i-feather>
           History
           <span *ngIf="whatsNew.isNew('workout-history')"
@@ -48,11 +48,11 @@
           </span>
         </a>
         <a routerLink="/dashboard/my-assigned-workouts"
-          class="flex-1 sm:flex-none sm:w-36 justify-center px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition flex items-center gap-2">
+          class="flex-1 min-w-0 sm:flex-none sm:w-36 justify-center px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition flex items-center gap-2">
           <i-feather name="inbox" style="width:13px;height:13px;"></i-feather>
           Assigned to me
         </a>
-        <button type="button" (click)="createWorkout()" class="flex-1 sm:flex-none sm:w-36 justify-center px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
+        <button type="button" (click)="createWorkout()" class="flex-1 min-w-0 sm:flex-none sm:w-36 justify-center px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
                  hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
           <i-feather name="plus" style="width:13px;height:13px;"></i-feather>
           New workout

@@ -12,7 +12,7 @@ import { NgxUiLoaderConfig, SPINNER, NgxUiLoaderModule } from 'ngx-ui-loader';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule } from '@angular/material/dialog';
 import { ExamplePdfViewerComponent } from './example-pdf-viewer/example-pdf-viewer.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { SharedModule } from './shared/shared.module';
@@ -233,6 +233,17 @@ const dbConfig: DBConfig = {
   exports: [],
 
   providers: [
+    // App-wide default: every MatDialog closes only via its own Cancel/X/Done
+    // button, never by clicking the backdrop or pressing Escape -- a modal
+    // holding partly-filled form data (which is most of them here) shouldn't
+    // vanish from a stray click outside it. Set once here rather than on each
+    // of the ~100 individual `dialog.open(...)` call sites; an individual
+    // call can still override this by passing its own `disableClose` if a
+    // specific dialog genuinely needs the old behavior.
+    {
+      provide: MAT_DIALOG_DEFAULT_OPTIONS,
+      useValue: { disableClose: true, hasBackdrop: true }
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
