@@ -4,11 +4,23 @@
         <i-feather name="loader" class="animate-spin" [class.text-gray-300]="!dark" [class.text-zinc-600]="dark" style="width:16px;height:16px;"></i-feather>
     </div>
 
-    <div *ngIf="!loading && comments.length === 0" class="text-center py-2">
+    <!-- A failed load is deliberately NOT shown as "no comments yet" -- comments may well exist. -->
+    <div *ngIf="!loading && loadError" class="flex flex-col items-center gap-1.5 py-3">
+        <p class="text-xs" [class.text-gray-400]="!dark" [class.text-zinc-500]="dark">Couldn't load comments.</p>
+        <button type="button" (click)="retryLoad()"
+            class="text-[11px] font-semibold flex items-center gap-1.5 py-1 transition"
+            [class.text-sky-600]="!dark" [class.hover:text-sky-700]="!dark"
+            [class.text-sky-500]="dark" [class.hover:text-sky-400]="dark">
+            <i-feather name="refresh-cw" style="width:11px;height:11px;"></i-feather>
+            Retry
+        </button>
+    </div>
+
+    <div *ngIf="!loading && !loadError && comments.length === 0" class="text-center py-2">
         <p class="text-xs" [class.text-gray-400]="!dark" [class.text-zinc-500]="dark">No comments yet — be the first to reply.</p>
     </div>
 
-    <button *ngIf="!loading && hasMore" type="button" (click)="loadMore()" [disabled]="loadingMore"
+    <button *ngIf="!loading && !loadError && hasMore" type="button" (click)="loadMore()" [disabled]="loadingMore"
         class="self-center text-[11px] font-semibold flex items-center gap-1.5 py-1 transition disabled:opacity-60"
         [class.text-sky-600]="!dark" [class.hover:text-sky-700]="!dark"
         [class.text-sky-500]="dark" [class.hover:text-sky-400]="dark">
@@ -16,6 +28,7 @@
         {{ loadingMore ? 'Loading…' : 'Load earlier comments' }}
     </button>
 
+    <ng-container *ngIf="!loading && !loadError">
     <div *ngFor="let comment of comments; trackBy: trackByCommentId" class="flex items-start gap-2.5">
         <a [routerLink]="[profileRoutePrefix, comment.authorUsername || comment.authorId]" class="shrink-0">
             <img *ngIf="commentPhotoSrc(comment) as src" [src]="src" alt="" class="w-7 h-7 rounded-full object-cover border"
@@ -131,6 +144,7 @@
             </div>
         </div>
     </div>
+    </ng-container>
 
     <!-- Add a comment -->
     <div class="flex items-center gap-2">

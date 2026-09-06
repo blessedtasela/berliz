@@ -55,8 +55,11 @@ export class PostCommentsComponent implements OnChanges, OnDestroy {
 
   /** Always kept in chronological (oldest-first) order for display, even though the backend serves pages newest-first -- see load()/loadMore(). */
   comments: CommentResponse[] = [];
-  private loaded = false;
+  /** The post id the current `comments` were successfully loaded for -- null until a load succeeds, and reset when the bound post changes so a feed refresh that swaps `post` under the same trackBy re-fetches instead of showing a stale/empty thread. */
+  private loadedForPostId: number | null = null;
   loading = false;
+  /** True when the last load attempt failed -- lets the template show a retry affordance instead of the identical-looking "no comments yet" empty state. */
+  loadError = false;
 
   /** Comments per page, and the next page index to request (0 = most recent). */
   private readonly pageSize = 10;
@@ -102,10 +105,20 @@ export class PostCommentsComponent implements OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['open'] && this.open && !this.loaded && !this.loading) {
+    const openedNow = changes['open']?.currentValue === true;
+    const postSwapped = !!changes['post'] && !changes['post'].firstChange
+      && changes['post'].previousValue?.id !== this.post?.id;
+
+    if (this.open && !this.loading && this.loadedForPostId !== this.post?.id && (openedNow || postSwapped)) {
       this.load();
       this.currentUserPhoto.get().subscribe(src => this.myPhotoSrc = src);
     }
+  }
+
+  /** Manual re-attempt after a failed load (the template's "Retry"). */
+  retryLoad(): void {
+    if (this.loading) return;
+    this.load();
   }
 
   ngOnDestroy(): void {
@@ -116,10 +129,11 @@ export class PostCommentsComponent implements OnChanges, OnDestroy {
   /** Loads the most recent page (page 0). */
   private load(): void {
     this.loading = true;
+    this.loadError = false;
     this.commentService.getComments(this.post.id, 0, this.pageSize).subscribe({
       next: res => {
         this.loading = false;
-        this.loaded = true;
+        this.loadedForPostId = this.post.id;
         // The backend serves newest-first; reverse this page to chronological
         // (oldest-first) order for display -- "load earlier" then prepends
         // each further-back page the same way.
@@ -129,6 +143,9 @@ export class PostCommentsComponent implements OnChanges, OnDestroy {
       },
       error: () => {
         this.loading = false;
+        // Leave `loadedForPostId` unset so re-opening or Retry re-attempts. Without
+        // this flag a failed fetch is indistinguishable from a genuinely empty thread.
+        this.loadError = true;
         this.snackBarService.openSnackBar('Could not load comments', 'error');
       },
     });
