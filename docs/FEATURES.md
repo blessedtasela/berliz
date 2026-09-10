@@ -21,6 +21,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Public profile page (`/user/:username`) | ✅ | Visibility toggle: private vs public; admin can view-through with a banner |
 | Profile photo with in-app cropper | ✅ | |
 | Account settings (merged Profile + Settings) | ✅ | Includes "what's new" badges, passkey management, sidebar display prefs |
+| Value-first onboarding checklist | ✅ | Dismissible, role-aware first-run checklist at the top of the dashboard home (log a workout / connect / find a provider — or profile/post/connect for providers); progress is data-derived where possible, dismissal + click-steps persist in `localStorage`. No paywall in the path |
 | Block / unblock users | ✅ | Two-directional enforcement across messaging, mentions, comments |
 | Report content (posts, comments) | ✅ | Feeds admin content-report queue |
 
@@ -127,7 +128,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D9 | Verified activity badge (wearable-imported or trainer-confirmed) | ✅ | ✚ |
 | D10 | Transparent trainer/center pricing + book CTA on every relevant surface | ✅ | ✚ |
 | D11 | Pre-renewal reminder + ≤2-tap cancel | 📋 | ✚ |
-| D12 | Value-first onboarding (one real action before any paywall) | 📋 | — |
+| D12 | Value-first onboarding (one real action before any paywall) | ✅ | — |
 | D13 | Dark mode (app-wide) | 📋 | — |
 | D14 | "Do this workout" — clone a linked workout from a feed post | ✅ | ✚ |
 | D15 | Saved / bookmarked posts & workouts | ✅ | ✚ |
@@ -152,6 +153,13 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **D12 — Value-first onboarding.** New `OnboardingChecklistComponent` at the top of the
+  dashboard home: a dismissible, role-aware first-run checklist. Members get "log your first
+  workout / connect with someone / find a trainer or gym"; trainers & centers get "complete
+  your profile / share your first post / connect with a member". "Logged a workout" and "has
+  a connection" are derived from real data; link-only steps and the dismissal persist in
+  `localStorage`. The card auto-hides once every step is done. Frontend-only.
 
 - **D2 — "Your time in Berliz" recap.** `GET /recap/me?period=month|quarter|year|all` —
   recomputed on read from the user's own logs, never gated: active days, workout/run counts,

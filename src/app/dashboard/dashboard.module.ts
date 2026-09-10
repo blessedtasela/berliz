@@ -37,6 +37,7 @@ import { ConsistencyRingComponent } from '../shared/consistency-ring/consistency
 import { AccountabilityCardComponent } from '../shared/accountability-card/accountability-card.component';
 import { ChallengesCardComponent } from '../shared/challenges-card/challenges-card.component';
 import { RecapCardComponent } from '../shared/recap/recap-card.component';
+import { OnboardingChecklistComponent } from '../shared/onboarding-checklist/onboarding-checklist.component';
 
 
 
@@ -82,7 +83,8 @@ import { RecapCardComponent } from '../shared/recap/recap-card.component';
     ConsistencyRingComponent,
     AccountabilityCardComponent,
     ChallengesCardComponent,
-    RecapCardComponent
+    RecapCardComponent,
+    OnboardingChecklistComponent
   ]
 })
 export class DashboardModule { }
