@@ -1,7 +1,23 @@
 <div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
     <!-- Mobile: card rows (matches admin/categories pattern) -->
     <div class="sm:hidden divide-y divide-gray-100">
-        <!-- No rows are ever bound here yet (component ships with a static empty tbody upstream); markup kept in sync with the desktop table for when data lands. -->
+        <div *ngFor="let centerPricing of centerPricingData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors">
+            <div class="min-w-0 flex-1" (click)="openCenterPricingDetails(centerPricing.id)">
+                <p class="font-semibold text-gray-900 truncate">{{ centerPricing.centerName }}</p>
+                <p class="text-xs text-gray-400 mt-0.5 truncate">{{ centerPricing.price }} usd</p>
+                <p class="text-[10px] text-gray-400 mt-0.5">{{ formatDate(centerPricing.date) }}</p>
+            </div>
+            <div class="flex items-center gap-0.5 shrink-0">
+                <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center"
+                    (click)="openUpdateCenterPricing(centerPricing.id)" title="Edit">
+                    <i-feather name="edit-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                </button>
+                <button class="w-9 h-9 rounded-lg active:bg-red-50 flex items-center justify-center"
+                    (click)="deleteCenterPricing(centerPricing.id)" title="Delete">
+                    <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+                </button>
+            </div>
+        </div>
     </div>
 
     <div class="hidden sm:block overflow-x-auto">
@@ -17,10 +33,35 @@
                     <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100"></tbody>
+            <tbody class="divide-y divide-gray-100">
+                <tr *ngFor="let centerPricing of centerPricingData; let i = index" class="hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
+                    <td class="px-4 py-3 font-semibold text-gray-900">{{ centerPricing.centerName }}</td>
+                    <td class="px-4 py-3 text-gray-500 tabular-nums">{{ centerPricing.id }}</td>
+                    <td class="px-4 py-3 text-right font-semibold text-gray-900 tabular-nums">{{ centerPricing.price }} usd</td>
+                    <td class="px-4 py-3 text-gray-500">{{ formatDate(centerPricing.date) }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ formatDate(centerPricing.lastUpdate) }}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center justify-end gap-1">
+                            <button class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
+                                (click)="openCenterPricingDetails(centerPricing.id)" title="View">
+                                <i-feather name="eye" class="text-gray-500" style="width:15px;height:15px;"></i-feather>
+                            </button>
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                                (click)="openUpdateCenterPricing(centerPricing.id)" title="Edit">
+                                <i-feather name="edit-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+                            </button>
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                                (click)="deleteCenterPricing(centerPricing.id)" title="Delete">
+                                <i-feather name="trash-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </div>
-    <div class="flex flex-col items-center justify-center py-16 gap-3 text-center">
+    <div *ngIf="centerPricingData.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-center">
         <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
             <i-feather name="inbox" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
         </div>
