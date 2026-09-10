@@ -6,6 +6,7 @@ import { take } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { LikerResponse } from 'src/app/models/comment.interface';
+import { reactionEmoji } from 'src/app/models/post.interface';
 import { CommentService } from 'src/app/services/comment.service';
 import { PostService } from 'src/app/services/post.service';
 
@@ -30,7 +31,7 @@ export interface LikersModalData {
   template: `
     <div class="bg-white rounded-2xl w-full max-w-sm shadow-xl flex flex-col max-h-[70vh]">
       <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <h2 class="text-sm font-bold text-gray-900">Liked by</h2>
+        <h2 class="text-sm font-bold text-gray-900">Reactions</h2>
         <button type="button" (click)="dialogRef.close()"
           class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400">
           <i-feather name="x" style="width:14px;height:14px;"></i-feather>
@@ -61,10 +62,11 @@ export interface LikersModalData {
           <div *ngIf="!photoSrc(liker)" class="w-9 h-9 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
             <i-feather name="user" class="text-sky-500" style="width:14px;height:14px;"></i-feather>
           </div>
-          <div class="min-w-0">
+          <div class="min-w-0 flex-1">
             <p class="text-xs font-bold text-gray-900 capitalize truncate">{{ liker.name }}</p>
             <p *ngIf="liker.username" class="text-[10px] text-sky-500 truncate">&#64;{{ liker.username }}</p>
           </div>
+          <span class="text-base leading-none shrink-0" [attr.title]="liker.reaction">{{ emoji(liker.reaction) }}</span>
         </a>
       </div>
     </div>
@@ -107,6 +109,10 @@ export class LikersModalComponent {
 
   photoSrc(liker: LikerResponse): string | null {
     return liker.profilePhoto ? 'data:image/*;base64,' + liker.profilePhoto : null;
+  }
+
+  emoji(reaction?: string): string {
+    return reactionEmoji(reaction);
   }
 
   trackById(_: number, liker: LikerResponse): number {

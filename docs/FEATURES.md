@@ -117,7 +117,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D2 | "Year/Season in Berliz" recap — auto-generated, shareable, **permanently free** | 📋 | ✚ |
 | D3 | Belt / rank progression tracker (per discipline; trainer/center promotes; milestone post) | 📋 | ✚ |
 | D4 | Accountability partners + "nudge when a streak slips" | 📋 | ✚ |
-| D5 | Multi-reactions (💪🔥👏❤️) on posts & comments | 📋 | ✚ |
+| D5 | Multi-reactions (👍💪🔥👏❤️) on posts & comments | ✅ | ✚ |
 | D6 | Friend-scoped segments & leaderboards for runs and classes | 📋 | ✚ |
 | D7 | Challenges — individual / group / center, progress board + completion badge | 📋 | ✚ |
 | D8 | PR detection → one-tap MILESTONE post | 📋 | ✚ |
@@ -149,6 +149,15 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **D5 — Multi-reactions on posts and comments.** A like now carries a type:
+  👍 Like (default) / 💪 Strong / 🔥 Fire / 👏 Clap / ❤️ Love. Backend: `reaction` column on
+  `post_like` / `comment_like` (V33), `ReactionType` enum, `?reaction=` on the like endpoints,
+  `myReaction` on `PostResponse`/`CommentResponse`, `reaction` on `LikerResponse`. Frontend:
+  new shared `ReactionButtonComponent` — plain click toggles 👍, hover (desktop) / long-press
+  (touch) opens the emoji picker; a "N reactions" affordance opens the list. Wired on the feed,
+  the dashboard profile, and comment threads; the "Reactions" modal shows each person's emoji.
+  (The bare public `/user/:username` page keeps its read-only reaction count.)
 
 - **Comment thread: failed load no longer looks empty.** Distinct loading / error+Retry /
   empty / list states in `PostCommentsComponent`; re-fetches when the bound post is swapped

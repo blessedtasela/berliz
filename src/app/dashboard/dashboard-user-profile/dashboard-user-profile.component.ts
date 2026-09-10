@@ -9,9 +9,10 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comments.component';
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
+import { ReactionButtonComponent } from 'src/app/shared/reaction-button/reaction-button.component';
 import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-detail-sheet.component';
 import { Connection } from 'src/app/models/connection.model';
-import { PostResponse } from 'src/app/models/post.interface';
+import { PostResponse, ReactionType } from 'src/app/models/post.interface';
 import { PublicUserProfile } from 'src/app/models/users.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { PostService } from 'src/app/services/post.service';
@@ -51,7 +52,7 @@ type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
 @Component({
   selector: 'app-dashboard-user-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent],
+  imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent],
   templateUrl: './dashboard-user-profile.component.html'
 })
 export class DashboardUserProfileComponent implements OnInit, OnDestroy {
@@ -268,13 +269,21 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
   // TIMELINE
   // -------------------------
 
-  toggleLike(post: PostResponse): void {
-    // Optimistic flip so the like feels instant; corrected by the server response.
-    const wasLiked = post.likedByMe;
-    post.likedByMe = !wasLiked;
-    post.likes += wasLiked ? -1 : 1;
+  onReact(post: PostResponse, reaction: ReactionType): void {
+    // Optimistic so it feels instant; corrected by the server response.
+    const prev = { reaction: post.myReaction ?? null, count: post.likes, liked: post.likedByMe };
 
-    this.postService.toggleLike(post.id).subscribe({
+    if (prev.reaction === reaction) {
+      post.myReaction = null;
+      post.likedByMe = false;
+      post.likes = Math.max(0, prev.count - 1);
+    } else {
+      post.myReaction = reaction;
+      post.likedByMe = true;
+      post.likes = prev.reaction ? prev.count : prev.count + 1;
+    }
+
+    this.postService.toggleLike(post.id, reaction).subscribe({
       next: res => {
         const updated = res.data;
         if (!updated) return;
@@ -282,10 +291,10 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
         if (idx > -1) this.posts[idx] = updated;
       },
       error: () => {
-        // Roll back on failure.
-        post.likedByMe = wasLiked;
-        post.likes += wasLiked ? 1 : -1;
-        this.snackBarService.openSnackBar('Could not update like', 'error');
+        post.myReaction = prev.reaction;
+        post.likedByMe = prev.liked;
+        post.likes = prev.count;
+        this.snackBarService.openSnackBar('Could not update reaction', 'error');
       },
     });
   }

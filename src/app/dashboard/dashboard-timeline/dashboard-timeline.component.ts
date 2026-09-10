@@ -11,7 +11,8 @@ import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comment
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-detail-sheet.component';
-import { PostActivityType, PostResponse } from 'src/app/models/post.interface';
+import { ReactionButtonComponent } from 'src/app/shared/reaction-button/reaction-button.component';
+import { PostActivityType, PostResponse, ReactionType } from 'src/app/models/post.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { PostService } from 'src/app/services/post.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -52,7 +53,7 @@ const ACTIVITY_OPTIONS: ActivityOption[] = [
 @Component({
   selector: 'app-dashboard-timeline',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent],
+  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent],
   templateUrl: './dashboard-timeline.component.html'
 })
 export class DashboardTimelineComponent implements OnInit, OnDestroy {
@@ -232,21 +233,29 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     return post.authorPhoto ? 'data:image/*;base64,' + post.authorPhoto : null;
   }
 
-  toggleLike(post: PostResponse): void {
-    const wasLiked = post.likedByMe;
-    post.likedByMe = !wasLiked;
-    post.likes += wasLiked ? -1 : 1;
+  /** Add / switch / remove the viewer's reaction on a post. Optimistic; server reconciles. */
+  onReact(post: PostResponse, reaction: ReactionType): void {
+    const prev = { reaction: post.myReaction ?? null, count: post.likes, liked: post.likedByMe };
 
-    this.postService.toggleLike(post.id).subscribe({
+    if (prev.reaction === reaction) {
+      post.myReaction = null;
+      post.likedByMe = false;
+      post.likes = Math.max(0, prev.count - 1);
+    } else {
+      post.myReaction = reaction;
+      post.likedByMe = true;
+      post.likes = prev.reaction ? prev.count : prev.count + 1;
+    }
+
+    this.postService.toggleLike(post.id, reaction).subscribe({
       next: res => {
-        const updated = res.data;
-        if (!updated) return;
-        this.applyToBothLists(updated);
+        if (res.data) this.applyToBothLists(res.data);
       },
       error: () => {
-        post.likedByMe = wasLiked;
-        post.likes += wasLiked ? 1 : -1;
-        this.snackBarService.openSnackBar('Could not update like', 'error');
+        post.myReaction = prev.reaction;
+        post.likedByMe = prev.liked;
+        post.likes = prev.count;
+        this.snackBarService.openSnackBar('Could not update reaction', 'error');
       },
     });
   }

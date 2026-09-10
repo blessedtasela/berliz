@@ -1,0 +1,50 @@
+<span class="relative inline-flex items-center gap-1.5"
+    (pointerenter)="onEnter()" (pointerleave)="onLeave()">
+
+    <button type="button"
+        (click)="onTrigger()"
+        (pointerdown)="onPressStart()" (pointerup)="onPressEnd()" (pointercancel)="onPressEnd()"
+        class="inline-flex items-center gap-1.5 font-semibold transition select-none"
+        [ngClass]="{
+            'text-xs px-2.5 py-1.5 rounded-lg': size === 'md',
+            'text-[11px] py-1': size === 'sm',
+            'text-red-600': reacted && !dark,
+            'text-red-400': reacted && dark,
+            'bg-red-50': reacted && size === 'md' && !dark,
+            'text-gray-400 hover:bg-gray-50': !reacted && !dark && size === 'md',
+            'text-gray-400': !reacted && !dark && size === 'sm',
+            'text-zinc-400': !reacted && dark
+        }">
+        <span *ngIf="reacted" class="text-sm leading-none">{{ triggerEmoji }}</span>
+        <i-feather *ngIf="!reacted" name="heart" style="width:13px;height:13px;"></i-feather>
+        {{ triggerLabel }}
+    </button>
+
+    <button *ngIf="count > 0" type="button" (click)="openList.emit()"
+        class="font-semibold transition"
+        [ngClass]="{
+            'text-xs': size === 'md',
+            'text-[11px]': size === 'sm',
+            'text-gray-500 hover:text-sky-600': !dark,
+            'text-zinc-400 hover:text-sky-400': dark
+        }">
+        {{ count }} {{ count === 1 ? 'reaction' : 'reactions' }}
+    </button>
+
+    <!-- picker -->
+    <span *ngIf="pickerOpen"
+        class="absolute bottom-full left-0 mb-1.5 flex items-center gap-0.5 rounded-full border px-1.5 py-1 shadow-lg z-20"
+        [ngClass]="dark ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-gray-200'">
+        <button *ngFor="let r of reactions" type="button" (click)="pick(r.type)"
+            [attr.aria-label]="r.label" [title]="r.label"
+            class="w-8 h-8 rounded-full flex items-center justify-center text-lg leading-none transition hover:scale-125"
+            [ngClass]="{
+                'bg-gray-100': !dark && myReaction === r.type,
+                'bg-zinc-800': dark && myReaction === r.type,
+                'hover:bg-gray-100': !dark,
+                'hover:bg-zinc-800': dark
+            }">
+            {{ r.emoji }}
+        </button>
+    </span>
+</span>

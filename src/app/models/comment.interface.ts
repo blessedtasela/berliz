@@ -1,3 +1,5 @@
+import { ReactionType } from './post.interface';
+
 /** Mirrors the backend `CommentResponse` (see CommentMapper). */
 export interface CommentResponse {
   id: number;
@@ -14,10 +16,12 @@ export interface CommentResponse {
   parentId?: number | null;
   /** Direct replies to this comment. The client lazy-loads them via CommentService.getReplies. */
   replyCount: number;
-  /** Likes on this comment. */
+  /** Total reactions of any type — still named `likeCount` server-side. */
   likeCount: number;
-  /** Whether the viewer has liked this comment. */
+  /** Whether the viewer has reacted at all. */
   likedByMe: boolean;
+  /** The viewer's reaction, or null/absent. */
+  myReaction?: ReactionType | null;
 
   /** Usernames mentioned in `content` (parsed from `@username` tokens server-side), for linkifying. */
   mentionedUsernames: string[];
@@ -52,6 +56,8 @@ export interface LikerResponse {
   /** Base64 bytes of the user's profile photo, same as elsewhere. */
   profilePhoto?: string;
   likedAt?: string;
+  /** Which reaction this person left (`REACTIONS` type). */
+  reaction?: ReactionType;
 }
 
 /** Mirrors the backend `CommentPageResponse` -- one page of a post's comments, newest first. */

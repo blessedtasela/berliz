@@ -6,13 +6,14 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
 
 import { IconsModule } from 'src/app/icons/icons.module';
-import { PostResponse } from 'src/app/models/post.interface';
+import { PostResponse, ReactionType } from 'src/app/models/post.interface';
 import { CommentResponse } from 'src/app/models/comment.interface';
 import { CommentService } from 'src/app/services/comment.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { ContentReportService } from 'src/app/services/content-report.service';
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { MentionInputComponent } from 'src/app/shared/mention-input/mention-input.component';
+import { ReactionButtonComponent } from 'src/app/shared/reaction-button/reaction-button.component';
 
 /** One chunk of a comment's text -- plain text, or an `@username` mention that links out. Rendered via *ngFor so user-generated text never touches innerHTML. */
 interface CommentPart {
@@ -35,7 +36,7 @@ interface CommentPart {
 @Component({
   selector: 'app-comment-node',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule, MatDialogModule, MentionInputComponent, CommentNodeComponent],
+  imports: [CommonModule, RouterModule, FormsModule, IconsModule, MatDialogModule, MentionInputComponent, ReactionButtonComponent, CommentNodeComponent],
   templateUrl: './comment-node.component.html',
 })
 export class CommentNodeComponent {
@@ -101,24 +102,35 @@ export class CommentNodeComponent {
     return comment.id;
   }
 
-  // ── Like ─────────────────────────────────────────────────────────────────
+  // ── Reactions ────────────────────────────────────────────────────────────
 
-  toggleLike(): void {
+  /** Add / switch / remove the viewer's reaction. Optimistic, reconciled from the server. */
+  onReact(reaction: ReactionType): void {
     const c = this.comment;
-    const wasLiked = c.likedByMe;
-    c.likedByMe = !wasLiked;
-    c.likeCount = Math.max(0, (c.likeCount ?? 0) + (wasLiked ? -1 : 1));
+    const prev = { reaction: c.myReaction ?? null, count: c.likeCount ?? 0, liked: c.likedByMe };
 
-    this.commentService.toggleCommentLike(c.id).pipe(take(1)).subscribe({
+    if (prev.reaction === reaction) {
+      c.myReaction = null;
+      c.likedByMe = false;
+      c.likeCount = Math.max(0, prev.count - 1);
+    } else {
+      c.myReaction = reaction;
+      c.likedByMe = true;
+      c.likeCount = prev.reaction ? prev.count : prev.count + 1;
+    }
+
+    this.commentService.toggleCommentLike(c.id, reaction).pipe(take(1)).subscribe({
       next: res => {
         if (!res.data) return;
         c.likedByMe = res.data.likedByMe;
         c.likeCount = res.data.likeCount;
+        c.myReaction = res.data.myReaction ?? null;
       },
       error: () => {
-        c.likedByMe = wasLiked;
-        c.likeCount = Math.max(0, (c.likeCount ?? 0) + (wasLiked ? 1 : -1));
-        this.snackBar.openSnackBar('Could not update like', 'error');
+        c.myReaction = prev.reaction;
+        c.likedByMe = prev.liked;
+        c.likeCount = prev.count;
+        this.snackBar.openSnackBar('Could not update reaction', 'error');
       },
     });
   }

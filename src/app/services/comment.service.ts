@@ -40,9 +40,14 @@ export class CommentService {
     });
   }
 
-  /** Toggles the current user's like on a comment; resolves with the updated comment. */
-  toggleCommentLike(id: number): Observable<ApiResponse<CommentResponse>> {
-    return this.httpClient.put<ApiResponse<CommentResponse>>(this.url + `/comment/like/${id}`, {});
+  /**
+   * Sets the current user's reaction on a comment; resolves with the updated comment.
+   * `reaction` defaults to `LIKE`; sending the same reaction again clears it, a different
+   * one switches it.
+   */
+  toggleCommentLike(id: number, reaction: string = 'LIKE'): Observable<ApiResponse<CommentResponse>> {
+    return this.httpClient.put<ApiResponse<CommentResponse>>(
+      this.url + `/comment/like/${id}`, {}, { params: { reaction } });
   }
 
   /** Who liked a comment, most recent first. */
