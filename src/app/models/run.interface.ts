@@ -62,6 +62,8 @@ export interface RunLogResponse {
 
     date: Date;
     lastUpdate: Date;
+    /** "You just beat this" lines — present only on the response to a fresh log. */
+    personalBests?: string[];
     message?: string;
 }
 

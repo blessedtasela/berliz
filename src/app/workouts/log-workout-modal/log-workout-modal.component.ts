@@ -15,6 +15,7 @@ import {
   WorkoutLogResponse,
 } from 'src/app/models/workout.interface';
 import { WorkoutService } from 'src/app/services/workout.service';
+import { PrCelebrationService } from 'src/app/services/pr-celebration.service';
 import { loadActiveExercises } from 'src/app/state/exercise/exercise.actions';
 import { selectActiveExercises } from 'src/app/state/exercise/exercise.selectors';
 
@@ -78,6 +79,7 @@ export class LogWorkoutModalComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<LogWorkoutModalComponent>,
     private store: Store,
     private workoutService: WorkoutService,
+    private prCelebration: PrCelebrationService,
   ) { }
 
   ngOnInit(): void {
@@ -251,9 +253,10 @@ export class LogWorkoutModalComponent implements OnInit, OnDestroy {
       : this.workoutService.addWorkoutLog(request);
 
     request$.pipe(take(1)).subscribe({
-      next: () => {
+      next: (res) => {
         this.submitting = false;
         this.dialogRef.close(true);
+        if (!this.isEdit) this.prCelebration.maybeCelebrate(res.data?.personalBests, 'workout');
       },
       error: (err) => {
         this.submitting = false;

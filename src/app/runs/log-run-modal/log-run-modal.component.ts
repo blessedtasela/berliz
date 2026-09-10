@@ -7,6 +7,7 @@ import { take } from 'rxjs';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { RunLogRequest, RunLogResponse } from 'src/app/models/run.interface';
 import { RunService } from 'src/app/services/run.service';
+import { PrCelebrationService } from 'src/app/services/pr-celebration.service';
 
 /**
  * Log a completed run's actual time — duration is the only required field
@@ -38,6 +39,7 @@ export class LogRunModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { log?: RunLogResponse; runEventId?: number },
     public dialogRef: MatDialogRef<LogRunModalComponent>,
     private runService: RunService,
+    private prCelebration: PrCelebrationService,
   ) { }
 
   ngOnInit(): void {
@@ -91,9 +93,10 @@ export class LogRunModalComponent implements OnInit {
     const request$ = this.isEdit ? this.runService.updateRunLog(request) : this.runService.logRun(request);
 
     request$.pipe(take(1)).subscribe({
-      next: () => {
+      next: (res) => {
         this.submitting = false;
         this.dialogRef.close(true);
+        if (!this.isEdit) this.prCelebration.maybeCelebrate(res.data?.personalBests, 'run');
       },
       error: (err) => {
         this.submitting = false;

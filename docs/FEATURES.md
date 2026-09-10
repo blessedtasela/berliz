@@ -120,7 +120,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D5 | Multi-reactions (👍💪🔥👏❤️) on posts & comments | ✅ | ✚ |
 | D6 | Friend-scoped segments & leaderboards for runs and classes | 📋 | ✚ |
 | D7 | Challenges — individual / group / center, progress board + completion badge | 📋 | ✚ |
-| D8 | PR detection → one-tap MILESTONE post | 📋 | ✚ |
+| D8 | PR detection → one-tap MILESTONE post | ✅ | ✚ |
 | D9 | Verified activity badge (wearable-imported or trainer-confirmed) | 📋 | ✚ |
 | D10 | Transparent trainer/center pricing + book CTA on every relevant surface | 📋 | — |
 | D11 | Pre-renewal reminder + ≤2-tap cancel | 📋 | ✚ |
@@ -149,6 +149,13 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **D8 — Personal-best detection → milestone post.** On a fresh workout/run log the
+  backend returns `personalBests[]` — run: longest distance / longest time / fastest pace;
+  workout: heaviest set / longest session — comparing against the user's own history (never
+  blocks the save; a first-ever log yields nothing). The log modals then pop
+  `PrCelebrationModalComponent` ("🏆 New personal best!") with a pre-filled, editable draft
+  that one tap posts as a `MILESTONE`. Backend on `com.berliz@f4b54f4`.
 
 - **D1 — Training consistency streak.** `GET /streak/me` returns the current streak, the
   all-time best, whether today counts yet, and Monday–Sunday of the current week with a
