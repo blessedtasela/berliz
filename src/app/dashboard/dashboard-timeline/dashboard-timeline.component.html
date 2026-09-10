@@ -176,6 +176,14 @@
                 <i-feather name="message-circle" style="width:13px;height:13px;"></i-feather>
                 {{ post.commentCount || 0 }}
             </button>
+
+            <button type="button" (click)="saved.toggle('POST', post.id)" [attr.aria-label]="saved.isSaved('POST', post.id) ? 'Remove from saved' : 'Save'"
+                class="ml-auto p-1.5 rounded-lg transition"
+                [class.text-amber-500]="saved.isSaved('POST', post.id)"
+                [class.text-gray-300]="!saved.isSaved('POST', post.id)" [class.hover:text-gray-500]="!saved.isSaved('POST', post.id)">
+                <i-feather name="bookmark" style="width:14px;height:14px;"
+                    [attr.fill]="saved.isSaved('POST', post.id) ? 'currentColor' : 'none'"></i-feather>
+            </button>
         </div>
 
         <!-- ── COMMENTS ──────────────────────────────────────────────────── -->

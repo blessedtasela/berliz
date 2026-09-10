@@ -127,7 +127,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D12 | Value-first onboarding (one real action before any paywall) | 📋 | — |
 | D13 | Dark mode (app-wide) | 📋 | — |
 | D14 | "Do this workout" — clone a linked workout from a feed post | ✅ | ✚ |
-| D15 | Saved / bookmarked posts & workouts | 📋 | ✚ |
+| D15 | Saved / bookmarked posts & workouts | ✅ | ✚ |
 
 ## 9. Platform / admin
 
@@ -149,6 +149,13 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **D15 — Bookmarks.** `saved_item(user, type, id)` (V35) + `SavedService` FE state holding
+  a `"POST:12"` set: `POST /saved`, `DELETE /saved/{type}/{id}`, `GET /saved/refs`
+  (lightweight), `GET /saved` (hydrated, drops dead/blocked refs). A bookmark toggle on every
+  post card (feed + both profiles); a "Saved" entry in the account dropdown opens
+  `SavedItemsModalComponent` listing saved posts + workouts, each removable in place and
+  workouts cloneable. Backend on `com.berliz@13e373f`.
 
 - **D14 — Link a workout template to a post → one-tap clone.** `Post` gains an optional
   `workout_fk` (V34); `PostRequest.workoutId` on create/update, `PostResponse.workoutId` +

@@ -80,6 +80,12 @@
                 Account settings
             </a>
 
+            <button (click)="openSaved()"
+                class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition text-left">
+                <i-feather name="bookmark" style="width:14px;height:14px;" class="text-gray-400"></i-feather>
+                Saved
+            </button>
+
             <a routerLink="/dashboard/partnership" (click)="closeDropdown()"
                 class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition">
                 <i-feather name="briefcase" style="width:14px;height:14px;" class="text-gray-400"></i-feather>

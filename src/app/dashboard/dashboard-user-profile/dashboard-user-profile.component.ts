@@ -11,6 +11,7 @@ import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comment
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { ReactionButtonComponent } from 'src/app/shared/reaction-button/reaction-button.component';
 import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-detail-sheet.component';
+import { SavedService } from 'src/app/services/saved.service';
 import { Connection } from 'src/app/models/connection.model';
 import { PostResponse, ReactionType } from 'src/app/models/post.interface';
 import { PublicUserProfile } from 'src/app/models/users.interface';
@@ -87,9 +88,11 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
     private snackBarService: SnackBarService,
     public lightbox: PhotoLightboxService,
     private blockService: BlockService,
+    public saved: SavedService,
     private dialog: MatDialog,
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
+    this.saved.refresh();
   }
 
   /** Opens the "liked by" list for a post. */

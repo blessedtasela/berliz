@@ -181,6 +181,11 @@
                                     <i-feather name="message-circle" style="width:11px;height:11px;"></i-feather>
                                     {{ post.commentCount || 0 }}
                                 </button>
+                                <button type="button" (click)="saved.toggle('POST', post.id)" class="transition hover:text-amber-500"
+                                    [class.text-amber-500]="saved.isSaved('POST', post.id)">
+                                    <i-feather name="bookmark" style="width:11px;height:11px;"
+                                        [attr.fill]="saved.isSaved('POST', post.id) ? 'currentColor' : 'none'"></i-feather>
+                                </button>
                                 <span>{{ post.date | date:'mediumDate' }}</span>
                             </div>
 

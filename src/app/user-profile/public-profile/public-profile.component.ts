@@ -20,6 +20,7 @@ import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comment
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-detail-sheet.component';
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
+import { SavedService } from 'src/app/services/saved.service';
 
 import {
   clearPublicProfile,
@@ -89,9 +90,11 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
     private snackBarService: SnackBarService,
     public lightbox: PhotoLightboxService,
     public authRedirect: AuthRedirectService,
+    public saved: SavedService,
     private dialog: MatDialog,
   ) {
     this.needsLogin = !this.authService.isAuthenticated();
+    this.saved.refresh();
   }
 
   /** Opens the "liked by" list for a post. */

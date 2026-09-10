@@ -21,6 +21,7 @@ import { UserService } from 'src/app/services/user.service';
 import { ContentReportService } from 'src/app/services/content-report.service';
 import { WorkoutService } from 'src/app/services/workout.service';
 import { WorkoutResponse } from 'src/app/models/workout.interface';
+import { SavedService } from 'src/app/services/saved.service';
 import { imageValidator } from 'src/validators/form-validators.module';
 
 type TimelineTab = 'feed' | 'mine';
@@ -103,6 +104,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     private snackBarService: SnackBarService,
     private contentReportService: ContentReportService,
     private workoutService: WorkoutService,
+    public saved: SavedService,
     private dialog: MatDialog,
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
@@ -110,6 +112,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.refresh();
+    this.saved.refresh();
     this.workoutService.getTemplates().subscribe({
       next: res => this.myTemplates = res.data ?? [],
       error: () => { /* the picker just stays empty */ },
