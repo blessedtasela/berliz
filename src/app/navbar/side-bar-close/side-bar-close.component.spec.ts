@@ -7,7 +7,6 @@ import { of } from 'rxjs';
 import { SideBarCloseComponent } from './side-bar-close.component';
 import { UserService } from 'src/app/services/user.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { AuthService } from 'src/app/services/auth.service';
 
 describe('SideBarCloseComponent', () => {
   let component: SideBarCloseComponent;
@@ -18,8 +17,6 @@ describe('SideBarCloseComponent', () => {
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     const userServiceSpy = jasmine.createSpyObj('UserService', ['logout']);
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
-    const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
-    authServiceSpy.isAuthenticated.and.returnValue(true);
 
     TestBed.configureTestingModule({
       declarations: [SideBarCloseComponent],
@@ -28,8 +25,7 @@ describe('SideBarCloseComponent', () => {
         { provide: Router, useValue: routerSpy },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: UserService, useValue: userServiceSpy },
-        { provide: SnackBarService, useValue: snackbarSpy },
-        { provide: AuthService, useValue: authServiceSpy }
+        { provide: SnackBarService, useValue: snackbarSpy }
       ]
     });
     fixture = TestBed.createComponent(SideBarCloseComponent);

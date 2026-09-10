@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { Subject, of } from 'rxjs';
 
 import { MessagePopupComponent } from './message-popup.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -33,6 +34,7 @@ describe('MessagePopupComponent', () => {
   let fixture: ComponentFixture<MessagePopupComponent>;
   let store: MockStore;
   let router: jasmine.SpyObj<Router>;
+  let matDialogSpy: jasmine.SpyObj<MatDialog>;
 
   const conversations: ConversationSummary[] = [
     { otherUserId: 5, otherUserName: 'Coach Sam', otherUserRole: 'trainer', lastMessage: 'Hey!', lastMessageDate: new Date(), unreadCount: 1 }
@@ -54,6 +56,7 @@ describe('MessagePopupComponent', () => {
   function setup(user: Partial<Users> | null, url = '/dashboard/home') {
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     router = jasmine.createSpyObj('Router', ['navigate'], { url, events: of() });
+    matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
 
     TestBed.configureTestingModule({
       declarations: [MessagePopupComponent],
@@ -76,6 +79,7 @@ describe('MessagePopupComponent', () => {
         }),
         { provide: SnackBarService, useValue: snackbarSpy },
         { provide: Router, useValue: router },
+        { provide: MatDialog, useValue: matDialogSpy },
       ]
     });
 
@@ -162,9 +166,11 @@ describe('MessagePopupComponent', () => {
     fixture.detectChanges();
     component.activeUserId = 5;
 
-    component.send('Hello coach');
+    component.send({ body: 'Hello coach', replyToMessageId: null });
 
-    expect(store.dispatch).toHaveBeenCalledWith(MessageActions.sendMessage({ request: { recipientId: 5, body: 'Hello coach' } }));
+    expect(store.dispatch).toHaveBeenCalledWith(MessageActions.sendMessage({
+      request: jasmine.objectContaining({ recipientId: 5, body: 'Hello coach', replyToMessageId: null }) as any
+    }));
   });
 
   it('setTyping dispatches setTyping for the active conversation', () => {
@@ -177,13 +183,20 @@ describe('MessagePopupComponent', () => {
     expect(store.dispatch).toHaveBeenCalledWith(MessageActions.setTyping({ otherUserId: 5, typing: true }));
   });
 
-  it('unsend dispatches deleteMessage', () => {
+  it('unsend dispatches deleteMessage once the confirmation dialog reports confirmed', () => {
     setup({ messagePopupEnabled: true } as Partial<Users>);
     fixture.detectChanges();
+    const onEmitStatusChange = new Subject<void>();
+    const dialogRefSpy = { componentInstance: { onEmitStatusChange }, close: jasmine.createSpy('close') };
+    matDialogSpy.open.and.returnValue(dialogRefSpy as any);
 
     component.unsend(1);
+    expect(store.dispatch).not.toHaveBeenCalledWith(MessageActions.deleteMessage({ messageId: 1 }));
+
+    onEmitStatusChange.next();
 
     expect(store.dispatch).toHaveBeenCalledWith(MessageActions.deleteMessage({ messageId: 1 }));
+    expect(dialogRefSpy.close).toHaveBeenCalled();
   });
 
   it('lastMineMessageId finds the most recent own message in the open thread', () => {

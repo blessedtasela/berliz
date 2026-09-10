@@ -8,7 +8,6 @@ import { NotificationDetailsComponent } from 'src/app/shared/notification-detail
 import { TimeAgoPipe } from 'src/app/shared/pipes/time-ago.pipe';
 import { NotificationService } from 'src/app/services/notification.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { AuthService } from 'src/app/services/auth.service';
 import { Store } from '@ngrx/store';
 import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
 import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
@@ -28,15 +27,18 @@ export class DashboardNotificationComponent implements OnInit, OnDestroy {
     private rxStompService: RxStompService,
     private store: Store,
     private dialog: MatDialog,
-    private authService: AuthService,
     private notificationService: NotificationService,
     private snackbarService: SnackBarService
   ) { }
 
+  // No auth check here: this component only ever mounts inside
+  // DashboardMainComponent, itself only reachable via AppComponent's
+  // 'sidebar' layout branch -- already gated on auth (see
+  // AppComponent#updateLayout). A redundant one-time check here previously
+  // meant that if it ever ran during a momentary unauthenticated flash, this
+  // component silently never loaded any notifications for the rest of the
+  // session.
   ngOnInit(): void {
-    if (!this.authService.isAuthenticated()) {
-      return;
-    }
     this.loadInitialNotifications();
     this.watchNotificationEvents();
   }

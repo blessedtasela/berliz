@@ -25,8 +25,6 @@ import { RxStompService } from './services/rx-stomp.service';
 import { rxStompServiceFactory } from './rx-stomp-service-factory';
 import { DBConfig } from 'ngx-indexed-db';
 import { NgxIndexedDBModule } from 'ngx-indexed-db';
-import { RefreshTokenOverlayComponent } from './refresh-token-overlay/refresh-token-overlay.component';
-import { ResfreshTokenModalComponent } from './resfresh-token-modal/resfresh-token-modal.component';
 import { NavbarModule } from './navbar/navbar.module';
 import { FooterModule } from './footer/footer.module';
 import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb.component';
@@ -155,8 +153,6 @@ const dbConfig: DBConfig = {
     AppComponent,
     PageNotFoundComponent,
     ExamplePdfViewerComponent,
-    RefreshTokenOverlayComponent,
-    ResfreshTokenModalComponent,
     RouterBreadcrumbComponent,
     UnderConstructionPageComponent,
   ],
