@@ -34,6 +34,7 @@ import { DashboardCategoryDetailComponent } from './dashboard-category-detail/da
 import { DashboardQuickLinksComponent } from './dashboard-quick-links/dashboard-quick-links.component';
 import { DashboardTimelinePreviewComponent } from './dashboard-timeline-preview/dashboard-timeline-preview.component';
 import { ConsistencyRingComponent } from '../shared/consistency-ring/consistency-ring.component';
+import { AccountabilityCardComponent } from '../shared/accountability-card/accountability-card.component';
 
 
 
@@ -76,7 +77,8 @@ import { ConsistencyRingComponent } from '../shared/consistency-ring/consistency
     SharedModule,
     UserHoverCardComponent,
     DashboardTimelinePreviewComponent,
-    ConsistencyRingComponent
+    ConsistencyRingComponent,
+    AccountabilityCardComponent
   ]
 })
 export class DashboardModule { }

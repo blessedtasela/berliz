@@ -116,7 +116,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D1 | Training streaks + weekly consistency ring (dashboard) | ✅ | ✚ |
 | D2 | "Year/Season in Berliz" recap — auto-generated, shareable, **permanently free** | 📋 | ✚ |
 | D3 | Belt / rank progression tracker (per discipline; trainer/center promotes; milestone post) | ✅ | ✚ |
-| D4 | Accountability partners + "nudge when a streak slips" | 📋 | ✚ |
+| D4 | Accountability partners + "nudge when a streak slips" | ✅ | ✚ |
 | D5 | Multi-reactions (👍💪🔥👏❤️) on posts & comments | ✅ | ✚ |
 | D6 | Friend-scoped segments & leaderboards for runs and classes | 📋 | ✚ |
 | D7 | Challenges — individual / group / center, progress board + completion badge | 📋 | ✚ |
@@ -149,6 +149,15 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **D4 — Accountability partners + streak-slip nudges.** `accountability_partner(user,
+  partner)` + `accountability_nudge` for rate-limiting (V37). No scheduler — "lapsing" is
+  recomputed on read via `StreakService.daysSinceLastActivity`. `PUT /accountability/partners`
+  (accepted connections, max 3), `GET /accountability/partners` (per-partner days-since +
+  lapsing + nudgedRecently), `POST /accountability/nudge/{id}` (notification, ~1/day/pair).
+  FE: `AccountabilityCardComponent` on the dashboard beside the streak ring — lapsing
+  partners get a one-tap Nudge; "Manage" opens `ManagePartnersModalComponent` to pick from
+  connections. Backend on `com.berliz@9f67b43`.
 
 - **D3 — Belt / rank progression tracker.** `rank_award(user, discipline, rank, note,
   awarded_by, awarded_at)` (V36). `POST /rank/award` (trainer / center only) records the

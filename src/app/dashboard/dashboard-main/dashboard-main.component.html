@@ -24,8 +24,11 @@
         </a>
     </div>
 
-    <!-- Training consistency -->
-    <app-consistency-ring></app-consistency-ring>
+    <!-- Training consistency + accountability -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+        <app-consistency-ring></app-consistency-ring>
+        <app-accountability-card></app-accountability-card>
+    </div>
 
     <!-- Action cards -->
     <app-dashboard-action [data]="data"></app-dashboard-action>
