@@ -64,8 +64,8 @@ export class AppComponent implements OnInit {
       // (which fetches the current build) recovers. A hard reload of the
       // attempted URL does the same thing automatically.
       if (event instanceof NavigationError) {
-        const msg = String((event.error as any)?.message || event.error || '');
-        if (/loading chunk|chunkloaderror|failed to fetch dynamically imported module/i.test(msg)) {
+        const msg = String((event.error as any)?.message || (event.error as any)?.name || event.error || '');
+        if (/chunkloaderror|loading chunk [\w-]+ failed|loading css chunk|failed to fetch dynamically imported module|error loading dynamically imported module|importing a module script failed|not a valid javascript mime type|responded with a mime type of "text\/html"/i.test(msg)) {
           window.location.href = event.url;
         }
       }
@@ -91,7 +91,7 @@ export class AppComponent implements OnInit {
   }
   private updateLayout(url: string) {
 
-    // LOGIN ROUTES
+    // LOGIN ROUTES — always the bare login chrome, no matter the auth state.
     if (
       url === '/login' ||
       url.startsWith('/login/') ||
@@ -105,7 +105,20 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    // PUBLIC TOPBAR ROUTES
+    // A SIGNED-IN USER GETS THE APP (SIDEBAR) CHROME EVERYWHERE ELSE — this
+    // check comes BEFORE the public-route list on purpose. The reported bug:
+    // logging in from a public page (e.g. a trainer's public profile) sent
+    // the user back to that same page, which matched the public list below
+    // and left them looking at the logged-out marketing topbar with no way
+    // to reach their dashboard without visiting /login again. Someone who's
+    // authenticated is "in the app" — they should see their own nav on a
+    // public browse page too, exactly like every other product does.
+    if (this.authService.isAuthenticated()) {
+      this.activeLayout = 'sidebar';
+      return;
+    }
+
+    // NOT SIGNED IN — PUBLIC TOPBAR ROUTES.
     if (
       url.startsWith('/pricing') ||
       url.startsWith('/about') ||
@@ -131,17 +144,11 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    // EVERYTHING ELSE IS A PROTECTED (SIDEBAR) ROUTE -- but only actually show
-    // the signed-in app chrome to someone who's actually signed in. Without
-    // this check, a route the URL-pattern lists above don't cover (chiefly
-    // the wildcard 404) fell through to 'sidebar' unconditionally, so a
-    // logged-out visitor hitting a bad URL -- or a token expiring mid-session,
-    // between AuthGuard's checks -- saw the authenticated sidebar/topbar
-    // chrome instead of the public one. AuthGuard already redirects a bare
-    // "not logged in" hit on a real protected route to /login before it ever
-    // reaches here; this is the backstop for everything that isn't gated by
-    // that guard at all.
-    this.activeLayout = this.authService.isAuthenticated() ? 'sidebar' : 'topbar';
+    // NOT SIGNED IN, and it's not a known public route (chiefly the wildcard
+    // 404): fall back to the public topbar rather than flashing the
+    // authenticated chrome. AuthGuard already bounces a logged-out hit on a
+    // real protected route to /login before it reaches here.
+    this.activeLayout = 'topbar';
   }
 
   /**

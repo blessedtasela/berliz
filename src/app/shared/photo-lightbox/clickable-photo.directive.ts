@@ -2,21 +2,20 @@ import { Directive, ElementRef, HostListener } from '@angular/core';
 import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
 
 /**
- * Auto-attaches to every `<img>` in the app (any template whose module/standalone
- * component imports this directive) and makes it click-to-zoom via the shared
- * PhotoLightboxService, instead of every page wiring its own click handler.
+ * OPT-IN click-to-zoom. Add `appZoom` to an `<img>` that is genuinely there
+ * to be looked at full-size — a profile photo on a profile page, an exercise
+ * demo, a gallery shot, a post image:
+ *   <img src="..." appZoom>
  *
- * Opt an image out with `noZoom` (e.g. tiny decorative icons, or an image that's
- * already its own meaningful click target like a file-picker thumbnail):
- *   <img src="..." noZoom>
- *
- * Images that sit inside a routerLink/button (avatar-that-navigates-to-profile,
- * "remove photo" preview, etc.) still zoom on click and stop the click from
- * also triggering the ancestor -- the ancestor action stays one extra click
- * away (click elsewhere on the row/button) rather than being silently lost.
+ * It used to auto-attach to every image in the app (`img:not([noZoom])`),
+ * which meant a stray tap on any 24px avatar hijacked the click to open a
+ * lightbox — and, worse, an avatar sitting inside a routerLink stopped
+ * navigating because this swallowed the click. Zoom is now off by default;
+ * only images explicitly marked with `appZoom` open the lightbox. Leftover
+ * `noZoom` attributes elsewhere are now harmless no-ops.
  */
 @Directive({
-  selector: 'img[src]:not([noZoom])',
+  selector: 'img[src][appZoom]',
   standalone: true,
   host: { class: 'cursor-zoom-in' },
 })

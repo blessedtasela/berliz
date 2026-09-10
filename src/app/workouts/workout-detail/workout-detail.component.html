@@ -70,7 +70,7 @@
       </div>
 
       <!-- Demo image -->
-      <img *ngIf="exercise.exerciseDemo" [src]="'data:image/jpeg;base64,' + exercise.exerciseDemo" alt="{{ exercise.exerciseName }} demo"
+      <img *ngIf="exercise.exerciseDemo" [src]="'data:image/jpeg;base64,' + exercise.exerciseDemo" alt="{{ exercise.exerciseName }} demo" appZoom
         class="w-full max-h-72 object-cover rounded-xl border border-gray-100" />
 
       <!-- Sets / reps / rest -->
