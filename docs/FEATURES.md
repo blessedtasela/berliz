@@ -65,6 +65,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Workout logging (sessions, sets, exercises) | ✅ | `workout_log` tables |
 | Share a workout log to the feed | ✅ | |
 | Runs — schedule, log, group runs | ✅ | `run` tables; group runs with scheduling/logging |
+| Run leaderboard (connection-scoped) | ✅ | "Leaderboard" tab on `/dashboard/runs` — you + your connections ranked by distance / best pace / session count over a week / 30 days / year, with a verified-run count. Plain totals, no GPS traces. `GET /run/leaderboard` |
 | Tasks & To-do lists | ✅ | Personal + admin-assignable |
 | Progress entries (measurements/metrics over time) | ✅ | |
 | Progress sharing | ✅ | `progress_share` |
@@ -122,14 +123,14 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D3 | Belt / rank progression tracker (per discipline; trainer/center promotes; milestone post) | ✅ | ✚ |
 | D4 | Accountability partners + "nudge when a streak slips" | ✅ | ✚ |
 | D5 | Multi-reactions (👍💪🔥👏❤️) on posts & comments | ✅ | ✚ |
-| D6 | Friend-scoped segments & leaderboards for runs and classes | 📋 | ✚ |
+| D6 | Friend-scoped segments & leaderboards for runs and classes | ✅ (scoped) | ✚ |
 | D7 | Challenges — open / connections-only, progress board + completion badge | ✅ | ✚ |
 | D8 | PR detection → one-tap MILESTONE post | ✅ | ✚ |
 | D9 | Verified activity badge (wearable-imported or trainer-confirmed) | ✅ | ✚ |
 | D10 | Transparent trainer/center pricing + book CTA on every relevant surface | ✅ | ✚ |
-| D11 | Pre-renewal reminder + ≤2-tap cancel | 📋 | ✚ |
+| D11 | Pre-renewal reminder + ≤2-tap cancel | ⏸ deferred | ✚ | — depends on the payment/subscription build (not started) |
 | D12 | Value-first onboarding (one real action before any paywall) | ✅ | — |
-| D13 | Dark mode (app-wide) | 📋 | — |
+| D13 | Dark mode (app-wide) | ⏸ deferred | — | large theming pass; not in this batch |
 | D14 | "Do this workout" — clone a linked workout from a feed post | ✅ | ✚ |
 | D15 | Saved / bookmarked posts & workouts | ✅ | ✚ |
 
@@ -153,6 +154,14 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **D6 (scoped) — connection-scoped run leaderboard.** `GET /run/leaderboard?period=week|
+  month|year&metric=distance|pace|sessions` ranks the current user + their accepted
+  connections from logged runs in the window — totals only, no GPS traces or route-segment
+  matching (the full D6 segment-matching stays out of scope). Each row carries the run
+  count, total minutes, and a verified-run count (D9). FE: a new "Leaderboard" tab on
+  `/dashboard/runs` (`RunLeaderboardComponent`) with period + metric switchers, medal-tinted
+  ranks, avatars linking to profiles, and a "you're #N" line. Backend on `com.berliz@9140a9e`.
 
 - **D12 — Value-first onboarding.** New `OnboardingChecklistComponent` at the top of the
   dashboard home: a dismissible, role-aware first-run checklist. Members get "log your first

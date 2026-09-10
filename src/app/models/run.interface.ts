@@ -74,6 +74,35 @@ export interface RunLogResponse {
     message?: string;
 }
 
+// ── D6 (scoped) — run leaderboard among connections ──────────────────────
+
+export type RunLeaderboardPeriod = 'week' | 'month' | 'year';
+export type RunLeaderboardMetric = 'distance' | 'pace' | 'sessions';
+
+export interface RunLeaderboardEntry {
+    rank: number;
+    userId: number;
+    name: string;
+    profilePhoto: any;
+    me: boolean;
+
+    totalDistanceKm: number;
+    totalRunMinutes: number;
+    runCount: number;
+    bestPaceMinPerKm: number | null;
+    verifiedCount: number;
+}
+
+export interface RunLeaderboardResponse {
+    period: RunLeaderboardPeriod | string;
+    metric: RunLeaderboardMetric | string;
+    from: string | Date;
+    to: string | Date;
+    entries: RunLeaderboardEntry[];
+    myRank: number | null;
+    message?: string;
+}
+
 export interface RunLogRequest {
     id?: number;
     runEventId?: number | null;

@@ -14,13 +14,14 @@ import { WhatsNewService } from 'src/app/services/whats-new.service';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { VerifiedBadgeComponent } from 'src/app/shared/verified-badge/verified-badge.component';
+import { RunLeaderboardComponent } from './run-leaderboard/run-leaderboard.component';
 import { selectUser } from 'src/app/state/user/user.selector';
 
 import { CreateRunModalComponent } from './create-run-modal/create-run-modal.component';
 import { LogRunModalComponent } from './log-run-modal/log-run-modal.component';
 import { InviteRunnerModalComponent } from './invite-runner-modal/invite-runner-modal.component';
 
-type RunsTab = 'discover' | 'mine' | 'history';
+type RunsTab = 'discover' | 'mine' | 'history' | 'leaderboard';
 
 interface RunStats {
   totalRuns: number;
@@ -44,7 +45,7 @@ interface RunStats {
 @Component({
   selector: 'app-runs',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, IconsModule, SharedModule, VerifiedBadgeComponent],
+  imports: [CommonModule, FormsModule, MatDialogModule, IconsModule, SharedModule, VerifiedBadgeComponent, RunLeaderboardComponent],
   templateUrl: './runs.component.html',
 })
 export class RunsComponent implements OnInit {

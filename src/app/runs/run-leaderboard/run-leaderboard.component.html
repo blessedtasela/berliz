@@ -1,0 +1,76 @@
+<div class="flex flex-col gap-4">
+
+  <div class="flex flex-col gap-2">
+    <h2 class="text-sm font-bold text-gray-900">Leaderboard</h2>
+    <p class="text-[11px] text-gray-400">You and your connections, ranked by logged runs. No trackers or routes needed.</p>
+  </div>
+
+  <!-- Switchers -->
+  <div class="flex flex-wrap items-center gap-2">
+    <div class="flex gap-1.5">
+      <button *ngFor="let p of periods" type="button" (click)="setPeriod(p.key)"
+        class="text-[11px] font-semibold px-2.5 py-1 rounded-lg transition"
+        [ngClass]="period === p.key ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+        {{ p.label }}
+      </button>
+    </div>
+    <span class="w-px h-4 bg-gray-200"></span>
+    <div class="flex gap-1.5">
+      <button *ngFor="let m of metrics" type="button" (click)="setMetric(m.key)"
+        class="text-[11px] font-semibold px-2.5 py-1 rounded-lg transition"
+        [ngClass]="metric === m.key ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+        {{ m.label }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="flex items-center justify-center py-10">
+    <div class="w-6 h-6 rounded-full border-2 border-gray-200 border-t-red-600 animate-spin"></div>
+  </div>
+
+  <ng-container *ngIf="!loading && data as d">
+    <div *ngIf="d.entries?.length; else emptyState" class="flex flex-col gap-1.5">
+      <div *ngFor="let e of d.entries; trackBy: trackByUserId"
+        class="flex items-center gap-3 rounded-xl border px-3 py-2.5 transition"
+        [ngClass]="e.me ? 'border-red-200 bg-red-50/50' : 'border-gray-200 bg-white'">
+
+        <span class="w-6 text-center text-sm font-extrabold shrink-0"
+          [ngClass]="e.rank === 1 ? 'text-amber-500' : e.rank === 2 ? 'text-gray-400' : e.rank === 3 ? 'text-orange-400' : 'text-gray-300'">
+          {{ e.rank }}
+        </span>
+
+        <a [routerLink]="e.me ? null : ['/dashboard/user', e.userId]" class="shrink-0">
+          <img *ngIf="photo(e) as src" [src]="src" alt="" noZoom
+            class="w-8 h-8 rounded-full object-cover object-top border border-gray-200" />
+          <span *ngIf="!photo(e)" class="w-8 h-8 rounded-full bg-red-50 border border-red-100 flex items-center justify-center">
+            <i-feather name="user" class="text-red-500" style="width:13px;height:13px;"></i-feather>
+          </span>
+        </a>
+
+        <div class="min-w-0 flex-1">
+          <p class="text-xs font-bold text-gray-900 capitalize truncate">
+            {{ e.name }}<span *ngIf="e.me" class="text-gray-400 font-semibold"> (You)</span>
+          </p>
+          <p class="text-[10px] text-gray-400 flex items-center gap-1.5">
+            {{ e.runCount }} {{ e.runCount === 1 ? 'run' : 'runs' }} · {{ e.totalRunMinutes }} min
+            <span *ngIf="e.verifiedCount" class="inline-flex items-center gap-0.5 text-emerald-600 font-semibold">
+              <i-feather name="check-circle" style="width:9px;height:9px;"></i-feather>{{ e.verifiedCount }}
+            </span>
+          </p>
+        </div>
+
+        <span class="text-xs font-extrabold text-gray-900 shrink-0 tabular-nums">{{ metricValue(e) }}</span>
+      </div>
+
+      <p *ngIf="d.myRank" class="text-[11px] text-gray-400 mt-1">You're #{{ d.myRank }} of {{ d.entries.length }}.</p>
+    </div>
+
+    <ng-template #emptyState>
+      <div class="rounded-xl border border-dashed border-gray-200 py-10 flex flex-col items-center gap-2 text-center">
+        <i-feather name="bar-chart-2" class="text-gray-300" style="width:20px;height:20px;"></i-feather>
+        <p class="text-sm font-bold text-gray-900">Nothing logged yet</p>
+        <p class="text-[11px] text-gray-400 max-w-xs">Once you or your connections log a run in this window, the board fills in.</p>
+      </div>
+    </ng-template>
+  </ng-container>
+</div>
