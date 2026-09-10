@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { memoizePhotoUri, memoizeMediaUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -25,6 +26,10 @@ import { selectExercises, selectSelectedExercise } from 'src/app/state/exercise/
 export class ExerciseDetailPageComponent implements OnInit, OnDestroy {
   exerciseData: Exercises | null = null;
   loading = true;
+
+  private _demoUri = memoizeMediaUri('image/jpeg');
+  /** Stable data-URI for the exercise's base64 still-image demo. */
+  get demoSrc(): string | null { return this._demoUri(this.exerciseData?.demo); }
 
   private destroy$ = new Subject<void>();
 

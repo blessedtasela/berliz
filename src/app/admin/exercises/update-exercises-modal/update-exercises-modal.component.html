@@ -35,7 +35,7 @@
         </p>
 
         <!-- Current demo image (a small still — the real demo video is attached from the exercises list, not here) -->
-        <img *ngIf="exerciseData.demo" [src]="'data:image/jpeg;base64,' + exerciseData.demo"
+        <img *ngIf="exerciseData.demo" [src]="demoSrc"
             class="w-full h-40 object-cover object-top rounded-xl border border-gray-200 bg-gray-50" />
 
         <!-- Name -->

@@ -34,7 +34,7 @@
         </div>
 
         <!-- Still image: exerciseData.demo is a small BYTEA image, NOT a video -->
-        <img *ngIf="exerciseData.demo" [src]="'data:image/jpeg;base64,' + exerciseData.demo"
+        <img *ngIf="exerciseData.demo" [src]="demoSrc"
             class="w-full h-40 object-contain rounded-xl border border-gray-200 bg-gray-50" />
 
         <!-- Real demo video, Strapi-hosted -->

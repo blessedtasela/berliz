@@ -13,6 +13,7 @@ import { Store } from '@ngrx/store';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { loadMyPartner } from 'src/app/state/partner/partner.actions';
 import { selectMyPartner } from 'src/app/state/partner/partner.selectors';
+import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
   selector: 'app-partner-null',
@@ -25,6 +26,13 @@ export class PartnerNullComponent {
   @Input() partnerData!: Partner;
   @Output() onEmit = new EventEmitter()
   subscriptions: Subscription[] = [];
+
+  private _photoUri = memoizePhotoUri();
+
+  /** Stable data-URI for the user's base64 profile photo. */
+  get userPhotoSrc(): string | null {
+    return this._photoUri(this.user?.profilePhoto);
+  }
   roles: Role[] = [{
     id: 1, role: 'center'
   }, {

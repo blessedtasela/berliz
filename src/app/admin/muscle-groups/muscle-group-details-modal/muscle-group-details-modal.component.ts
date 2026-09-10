@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { memoizePhotoUri, memoizeMediaUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { Component, EventEmitter, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
@@ -16,6 +17,9 @@ import { UpdateTrainerPhotoModalComponent } from 'src/app/shared/update-trainer-
 export class MuscleGroupDetailsModalComponent {
   onEmit = new EventEmitter();
   muscleGroupData!: MuscleGroups;
+  private _imgUri = memoizePhotoUri();
+  /** Stable data-URI for the muscle group's base64 image. */
+  get imageSrc(): string | null { return this._imgUri(this.muscleGroupData?.image); }
   responseMessage: any;
   subscriptions: Subscription[] = []
 

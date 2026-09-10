@@ -9,6 +9,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { Exercises } from 'src/app/models/exercise.interface';
 import { loadExercise } from 'src/app/state/exercise/exercise.actions';
 import { selectExercises, selectSelectedExercise } from 'src/app/state/exercise/exercise.selectors';
+import { memoizeMediaUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 /**
  * Public exercise detail page — /dashboard/exercises/:id. Mirrors
@@ -29,6 +30,12 @@ export class ExerciseDetailComponent implements OnInit, OnDestroy {
   loading = true;
 
   private destroy$ = new Subject<void>();
+  private _demoUri = memoizeMediaUri('image/jpeg');
+
+  /** Stable data-URI for the exercise's base64 still-image demo. */
+  get demoSrc(): string | null {
+    return this._demoUri(this.exercise?.demo);
+  }
 
   constructor(
     private route: ActivatedRoute,

@@ -88,6 +88,18 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
   myTrainers: MyTrainerSummary[] = [];
   connections: Connection[] = [];
 
+  /**
+   * Derived once whenever `conversations` / `myTrainers` / `connections`
+   * change — NOT a getter. As a getter it was rebuilt (new arrays + Sets)
+   * 3-4× on every change-detection pass and, feeding a `*ngFor` with no
+   * trackBy, forced Angular to tear down and rebuild every row + avatar each
+   * tick — which re-decodes each base64 avatar. With the popup open during
+   * any CD churn (the window:scroll HostListener alone makes every scroll a
+   * full-app CD) that pegs the renderer and crashes the tab on mobile.
+   */
+  startableContacts: StartableContact[] = [];
+  activeContact: ConversationRowData & { role: string } = { userId: 0, name: 'Conversation', role: '' };
+
   activeUserId: number | null = null;
   activeMessages: Message[] = [];
   loadingConversation = false;
@@ -128,11 +140,11 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
       this.store.select(selectUser).pipe(takeUntil(this.destroy$))
         .subscribe(user => this.popupEnabled = user?.messagePopupEnabled !== false),
 
-      this.store.select(selectConversations).pipe(takeUntil(this.destroy$)).subscribe(c => this.conversations = c),
+      this.store.select(selectConversations).pipe(takeUntil(this.destroy$)).subscribe(c => { this.conversations = c; this.recomputeContacts(); }),
       this.store.select(selectTotalUnreadCount).pipe(takeUntil(this.destroy$)).subscribe(n => this.unreadCount = n),
-      this.store.select(selectMyTrainers).pipe(takeUntil(this.destroy$)).subscribe(t => this.myTrainers = t),
-      this.store.select(selectMyConnections).pipe(takeUntil(this.destroy$)).subscribe(c => this.connections = c),
-      this.store.select(selectActiveConversationUserId).pipe(takeUntil(this.destroy$)).subscribe(id => this.activeUserId = id),
+      this.store.select(selectMyTrainers).pipe(takeUntil(this.destroy$)).subscribe(t => { this.myTrainers = t; this.recomputeContacts(); }),
+      this.store.select(selectMyConnections).pipe(takeUntil(this.destroy$)).subscribe(c => { this.connections = c; this.recomputeContacts(); }),
+      this.store.select(selectActiveConversationUserId).pipe(takeUntil(this.destroy$)).subscribe(id => { this.activeUserId = id; this.recomputeActiveContact(); }),
       this.store.select(selectActiveConversationMessages).pipe(takeUntil(this.destroy$)).subscribe(m => this.activeMessages = m),
       this.store.select(selectLoadingConversation).pipe(takeUntil(this.destroy$)).subscribe(l => this.loadingConversation = l),
       this.store.select(selectIsActivePartyTyping).pipe(takeUntil(this.destroy$)).subscribe(t => this.activePartyTyping = t),
@@ -149,8 +161,13 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  /** Booked trainers + accepted connections who don't already have a conversation started, deduped by userId. */
-  get startableContacts(): StartableContact[] {
+  /** trackBy so rows (and their avatars) are reused across CD instead of
+   *  torn down and rebuilt every tick. */
+  trackByUserId = (_: number, x: { userId: number }) => x.userId;
+  trackByConversationUserId = (_: number, c: ConversationSummary) => c.otherUserId;
+  trackByMessageId = (_: number, m: Message) => m.id;
+
+  private recomputeContacts(): void {
     const existingIds = new Set(this.conversations.map(c => c.otherUserId));
 
     const fromTrainers: StartableContact[] = this.myTrainers
@@ -162,11 +179,12 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
       .map(c => ({ userId: c.otherUserId, name: c.otherUserName }));
 
     const seen = new Set<number>();
-    return [...fromTrainers, ...fromConnections].filter(c => {
+    this.startableContacts = [...fromTrainers, ...fromConnections].filter(c => {
       if (seen.has(c.userId)) return false;
       seen.add(c.userId);
       return true;
     });
+    this.recomputeActiveContact();
   }
 
   togglePopup(): void {
@@ -277,13 +295,14 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
   }
 
   /** The open thread's other party, as a display row -- from the conversation list, else the startable-contacts list. */
-  get activeContact(): ConversationRowData & { role: string } {
+  private recomputeActiveContact(): void {
     const convo = this.conversations.find(c => c.otherUserId === this.activeUserId);
     if (convo) {
-      return { userId: convo.otherUserId, name: convo.otherUserName, photo: convo.otherUserPhoto, role: convo.otherUserRole };
+      this.activeContact = { userId: convo.otherUserId, name: convo.otherUserName, photo: convo.otherUserPhoto, role: convo.otherUserRole };
+      return;
     }
     const contact = this.startableContacts.find(c => c.userId === this.activeUserId);
-    return { userId: this.activeUserId ?? 0, name: contact?.name ?? 'Conversation', role: '' };
+    this.activeContact = { userId: this.activeUserId ?? 0, name: contact?.name ?? 'Conversation', role: '' };
   }
 
   goToFullPage(): void {

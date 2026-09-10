@@ -19,7 +19,7 @@
     </div>
 
     <!-- Demo video -->
-    <video *ngIf="exerciseData.demo" [src]="'data:video/mp4;base64,' + exerciseData.demo" loop autoplay [muted]="true"
+    <video *ngIf="exerciseData.demo" [src]="demoSrc" loop autoplay [muted]="true"
         class="w-full h-40 object-cover object-top rounded-xl border border-gray-200 bg-gray-50"></video>
 
     <!-- Status -->

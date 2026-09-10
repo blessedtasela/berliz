@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter, Inject, OnInit } from '@angular/core';
+import { memoizePhotoUri, memoizeMediaUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl, FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -21,6 +22,9 @@ export class UpdateMuscleGroupModalComponent implements OnInit {
   responseMessage: any;
   bodyParts: BodyParts[] = [];
   muscleGroupData: MuscleGroups;
+  private _imgUri = memoizePhotoUri();
+  /** Stable data-URI for the muscle group's base64 image. */
+  get imageSrc(): string | null { return this._imgUri(this.muscleGroupData?.image); }
 
   constructor(private formBuilder: FormBuilder,
     private muscleGroupService: MuscleGroupService,

@@ -1,4 +1,5 @@
 import { Component, Inject } from '@angular/core';
+import { memoizePhotoUri, memoizeMediaUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Users } from 'src/app/models/users.interface';
 import { DatePipe } from '@angular/common';
@@ -16,6 +17,9 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 })
 export class UserDetailsModalComponent {
   userData!: Users;
+  private _photoUri = memoizePhotoUri();
+  /** Stable data-URI for the user's base64 profile photo. */
+  get photoSrc(): string | null { return this._photoUri(this.userData?.profilePhoto); }
   responseMessage: any;
   profilePhoto: any;
   passwordForceChnageForm!: FormGroup;

@@ -123,7 +123,7 @@
         <!-- Demo image — /exercise/updateDemo validates this server-side as an
              image (isValidImageType/isValidImageSize), not a video, so this
              renders as a still photo demonstrating the movement. -->
-        <img *ngIf="exercise.demo && openDemoId === exercise.id" [src]="'data:image/jpeg;base64,' + exercise.demo"
+        <img *ngIf="exercise.demo && openDemoId === exercise.id" [src]="demoSrc(exercise)"
           class="w-full rounded-xl border border-gray-100 bg-gray-50 object-cover" alt="{{ exercise.name }} demo" />
 
         <div class="border-t border-gray-100"></div>

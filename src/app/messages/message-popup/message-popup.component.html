@@ -35,7 +35,7 @@
                 No conversations yet.
             </div>
 
-            <app-conversation-row *ngFor="let c of conversations"
+            <app-conversation-row *ngFor="let c of conversations; trackBy: trackByConversationUserId"
                 [row]="{ userId: c.otherUserId, name: c.otherUserName, photo: c.otherUserPhoto, preview: c.lastMessage, unreadCount: c.unreadCount }"
                 [active]="activeUserId === c.otherUserId"
                 (open)="openConversation($event)">
@@ -43,7 +43,7 @@
 
             <ng-container *ngIf="startableContacts.length">
                 <p class="px-4 pt-3 pb-1 text-[10px] font-bold text-gray-400 uppercase tracking-wide">Start a conversation</p>
-                <app-conversation-row *ngFor="let contact of startableContacts"
+                <app-conversation-row *ngFor="let contact of startableContacts; trackBy: trackByUserId"
                     [row]="contact" [active]="activeUserId === contact.userId"
                     (open)="startConversation(contact)">
                 </app-conversation-row>
@@ -60,7 +60,7 @@
                     Say hello 👋
                 </div>
 
-                <app-message-bubble *ngFor="let m of activeMessages"
+                <app-message-bubble *ngFor="let m of activeMessages; trackBy: trackByMessageId"
                     [message]="m" [mine]="isMine(m)" [isLastMine]="isMine(m) && m.id === lastMineMessageId"
                     (unsend)="unsend($event)" (reply)="startReply($event)" (edit)="startEdit($event)">
                 </app-message-bubble>
