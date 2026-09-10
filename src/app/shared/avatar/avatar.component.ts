@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { photoDataUri } from '../photo-lightbox/photo-data-uri';
 
 /**
  * Photo-or-initials avatar, standalone so it can drop into any module
@@ -40,7 +41,7 @@ export class AvatarComponent implements OnChanges {
   photoFailed = false;
 
   get photoSrc(): string | null {
-    return this.photo && !this.photoFailed ? 'data:image/*;base64,' + this.photo : null;
+    return this.photo && !this.photoFailed ? photoDataUri(this.photo) : null;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
