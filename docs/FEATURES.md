@@ -119,7 +119,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D4 | Accountability partners + "nudge when a streak slips" | ✅ | ✚ |
 | D5 | Multi-reactions (👍💪🔥👏❤️) on posts & comments | ✅ | ✚ |
 | D6 | Friend-scoped segments & leaderboards for runs and classes | 📋 | ✚ |
-| D7 | Challenges — individual / group / center, progress board + completion badge | 📋 | ✚ |
+| D7 | Challenges — open / connections-only, progress board + completion badge | ✅ | ✚ |
 | D8 | PR detection → one-tap MILESTONE post | ✅ | ✚ |
 | D9 | Verified activity badge (wearable-imported or trainer-confirmed) | 📋 | ✚ |
 | D10 | Transparent trainer/center pricing + book CTA on every relevant surface | 📋 | — |
@@ -149,6 +149,15 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **D7 — Challenges.** `challenge` + `challenge_participant` (V38). A challenge has a metric
+  (SESSIONS / DISTANCE_KM / ACTIVE_DAYS) + goal over a date window and a scope (OPEN /
+  CONNECTIONS). Progress is recomputed on read from each participant's workout/run logs in
+  the window (no scheduler). `POST/GET /challenge`, `GET /challenge/{id}` (leaderboard),
+  `POST /challenge/{id}/join`, `DELETE /challenge/{id}/leave`. FE: `ChallengesCardComponent`
+  on the dashboard — joined challenges with a progress bar, open ones to join,
+  `CreateChallengeModalComponent` + `ChallengeDetailModalComponent` (leaderboard).
+  Backend on `com.berliz@8814c24`.
 
 - **D4 — Accountability partners + streak-slip nudges.** `accountability_partner(user,
   partner)` + `accountability_nudge` for rate-limiting (V37). No scheduler — "lapsing" is

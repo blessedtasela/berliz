@@ -1,0 +1,51 @@
+<div class="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-3">
+
+  <div class="flex items-center justify-between gap-2">
+    <div class="flex items-center gap-2">
+      <i-feather name="flag" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+      <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Challenges</h2>
+    </div>
+    <button type="button" (click)="create()" class="text-[11px] font-semibold text-sky-600 hover:text-sky-800 transition flex items-center gap-1">
+      <i-feather name="plus" style="width:12px;height:12px;"></i-feather> New
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="flex items-center gap-2 text-gray-300 py-1">
+    <i-feather name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>
+    <span class="text-[11px] font-semibold">Loading…</span>
+  </div>
+
+  <p *ngIf="!loading && !challenges.length" class="text-[11px] text-gray-400">
+    No challenges yet. Start one — sessions, distance, or active days over a date range.
+  </p>
+
+  <!-- Joined -->
+  <button *ngFor="let c of mine" type="button" (click)="open(c)"
+    class="w-full text-left flex flex-col gap-1.5 rounded-xl border border-gray-100 px-3 py-2.5 hover:bg-gray-50 transition">
+    <div class="flex items-center justify-between gap-2">
+      <span class="text-xs font-bold text-gray-900 truncate">{{ c.title }}</span>
+      <span class="text-[10px] font-semibold shrink-0" [class.text-emerald-600]="c.myCompleted" [class.text-gray-400]="!c.myCompleted">
+        {{ c.myProgress }} / {{ c.goal }} {{ unit(c) }}
+      </span>
+    </div>
+    <div class="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+      <div class="h-full rounded-full transition-all" [class.bg-emerald-500]="c.myCompleted" [class.bg-red-500]="!c.myCompleted"
+        [style.width.%]="pct(c)"></div>
+    </div>
+  </button>
+
+  <!-- Discover -->
+  <ng-container *ngIf="discover.length">
+    <p class="text-[10px] font-bold uppercase tracking-wide text-gray-400 mt-1">Open to join</p>
+    <div *ngFor="let c of discover" class="flex items-center justify-between gap-2 rounded-xl border border-gray-100 px-3 py-2">
+      <button type="button" (click)="open(c)" class="min-w-0 text-left flex-1">
+        <span class="text-xs font-bold text-gray-900 truncate block">{{ c.title }}</span>
+        <span class="text-[10px] text-gray-400">{{ c.goal }} {{ unit(c) }} · {{ c.participantCount }} in</span>
+      </button>
+      <button type="button" (click)="join(c, $event)" [disabled]="joiningId === c.id"
+        class="shrink-0 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg bg-sky-600 text-white hover:bg-sky-700 transition disabled:opacity-50">
+        Join
+      </button>
+    </div>
+  </ng-container>
+</div>
