@@ -97,10 +97,12 @@ that ships a feature — add the row under the right domain, and log it under
 | Feature | Status | Notes |
 |---|---|---|
 | Subscription plans (3-tier), role-targeted | ✅ | See [[project_payment_subscription_model]] |
-| Stripe payments + webhook | ✅ | |
+| Stripe Checkout (one-time + recurring) | ✅ | Plan pick → hosted Stripe Checkout → `checkout.session.completed` webhook records the `Payment` + activates the sub, capturing the Stripe subscription/customer id |
+| Stripe recurring lifecycle | ✅ | Webhook handles `invoice.paid` (record renewal, extend `endDate`), `invoice.payment_failed` (→ PAST_DUE + grace), `customer.subscription.deleted` (→ CANCELLED); nightly sweep expires auto-renew-off past `endDate` and past-due beyond the 5-day grace |
+| Stripe refunds | ✅ | Admin "Refund via Stripe" on a payment row → `POST /payment/stripe/refund/{id}` reverses the charge and stamps the row |
 | Bypass / promo codes | ✅ | |
-| Pre-renewal reminder + one-tap cancel | ✅ | Daily sweep emails + bells a member ~2 days before renewal (once/period); "Cancel auto-renew" / "Resume auto-renew" in the My Subscriptions menu — cancel keeps access until `endDate`. `POST /subscription/cancel` \| `/resume` |
-| Payouts (to trainers/partners) | ✅ | |
+| Pre-renewal reminder + one-tap cancel | ✅ | Daily sweep emails + bells a member ~2 days before renewal (once/period); "Cancel auto-renew" / "Resume auto-renew" in the My Subscriptions menu — cancel keeps access until `endDate` and also sets Stripe `cancel_at_period_end`. `POST /subscription/cancel` \| `/resume` |
+| Stripe Connect payouts (to trainers/partners) | ✅ | Express onboarding link + `Transfer.create` to the provider's connected account |
 | Bills / orders / store / products | ✅ | Commerce primitives present |
 
 ## 7. Notifications
@@ -155,6 +157,20 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **Stripe recurring-subscription lifecycle, refunds, past-due.** `Subscription` now keeps
+  `stripe_subscription_id` / `stripe_customer_id` / `past_due_since` (V41); `Payment` keeps
+  `stripe_invoice_id` / `stripe_refund_id` / `refunded_at`. The webhook grew from
+  `checkout.session.completed`-only to also handle `invoice.paid` /
+  `invoice.payment_succeeded` (record the renewal `Payment`, push `endDate` out a month,
+  clear the past-due + reminder stamps, dedupe on invoice id, skip the first
+  `subscription_create` invoice), `invoice.payment_failed` (→ `PAST_DUE` + `pastDueSince`,
+  notify), and `customer.subscription.deleted` (→ `CANCELLED`). D11 cancel/resume now also
+  drives Stripe `cancel_at_period_end`. New `POST /payment/stripe/refund/{paymentId}`
+  (admin-only) reverses a charge and stamps the row — surfaced as a "Refund via Stripe"
+  action in the admin payments list. `SubscriptionRenewalReminderScheduler` gained the first
+  end-user-`Subscription` expiry sweep (auto-renew-off past `endDate`; `PAST_DUE` past a
+  5-day grace → inactive). Backend on `com.berliz@560942d`.
 
 - **D11 — Pre-renewal reminder + easy cancel.** `Subscription` gains `auto_renew` /
   `cancelled_at` / `renewal_reminder_sent_at` (V40). `POST /subscription/cancel` turns off

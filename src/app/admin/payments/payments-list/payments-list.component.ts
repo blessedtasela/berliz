@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { Payments } from 'src/app/models/payment.interface';
 import { selectPayments } from 'src/app/state/payment/payment.selectors';
 import { PaymentService } from 'src/app/services/payment.service';
+import { StripeService } from 'src/app/services/stripe.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
@@ -30,6 +31,7 @@ export class PaymentsListComponent {
   constructor(private datePipe: DatePipe,
     private store: Store,
     private paymentService: PaymentService,
+    private stripeService: StripeService,
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
@@ -172,6 +174,37 @@ export class PaymentsListComponent {
         this.responseMessage = genericError;
       }
       this.snackbarService.openSnackBar(this.responseMessage, 'error');
+    });
+  }
+
+  /** Admin-only full Stripe refund. Only offered for a Stripe payment that isn't already refunded. */
+  canRefund(payment: Payments): boolean {
+    return payment?.paymentMethod === 'stripe' && !payment?.stripeRefundId;
+  }
+
+  refundPayment(payment: Payments) {
+    if (!this.canRefund(payment)) return;
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = {
+      message: `Refund ${payment.amount} to ${payment.userEmail || 'this customer'} via Stripe? This reverses the charge.`,
+      confirmation: true,
+      disableClose: true,
+    };
+    const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
+    dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
+      this.ngxService.start();
+      this.stripeService.refundPayment(payment.id).subscribe({
+        next: (response: any) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(response?.message || 'Refund issued', '');
+          this.handleEmitEvent();
+          dialogRef.close('refunded');
+        },
+        error: (error: any) => {
+          this.ngxService.stop();
+          this.snackbarService.openSnackBar(error.error?.message || error.error || genericError, 'error');
+        },
+      });
     });
   }
 
