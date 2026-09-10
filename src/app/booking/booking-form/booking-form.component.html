@@ -55,14 +55,18 @@
                     <span class="text-xs">Loading times...</span>
                 </div>
 
-                <div *ngIf="!slotsLoading && slots.length === 0"
+                <div *ngIf="!slotsLoading && visibleSlots.length === 0"
                     class="flex flex-col items-center justify-center gap-1.5 py-6 rounded-xl border border-dashed border-gray-200 bg-gray-50">
                     <i-feather name="calendar" class="text-gray-300" style="width:18px;height:18px;"></i-feather>
-                    <p class="text-xs text-gray-400">{{ slotsMessage || 'No open slots on this day.' }}</p>
+                    <p class="text-xs text-gray-400">
+                        {{ allSlotsWithinLeadTime
+                            ? 'No more slots today — bookings need at least an hour\'s notice. Try tomorrow.'
+                            : (slotsMessage || 'No open slots on this day.') }}
+                    </p>
                 </div>
 
-                <div *ngIf="!slotsLoading && slots.length > 0" class="flex flex-wrap gap-2">
-                    <button type="button" *ngFor="let slot of slots" (click)="selectSlot(slot)"
+                <div *ngIf="!slotsLoading && visibleSlots.length > 0" class="flex flex-wrap gap-2">
+                    <button type="button" *ngFor="let slot of visibleSlots" (click)="selectSlot(slot)"
                         class="px-3 py-2 rounded-xl border text-xs font-semibold transition"
                         [ngClass]="selectedSlot === slot
                             ? 'bg-red-600 border-red-600 text-white'
@@ -103,7 +107,7 @@
 
             <p *ngIf="pastDate" class="text-red-500 text-[11px] flex items-center gap-1 -mt-2">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
-                Pick a date and time in the future
+                Pick a time at least an hour from now
             </p>
 
             <div class="flex flex-col gap-1">
