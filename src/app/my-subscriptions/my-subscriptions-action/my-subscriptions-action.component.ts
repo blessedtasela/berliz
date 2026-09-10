@@ -19,6 +19,11 @@ export class MySubscriptionsActionComponent {
 
   open = false;
 
+  /** D11 — the member has turned auto-renew off; access still runs to endDate. */
+  get autoRenewOff(): boolean {
+    return this.subscription?.autoRenew === false;
+  }
+
   constructor(
     private dialog: MatDialog,
     private subscriptionService: SubscriptionService,
@@ -66,6 +71,49 @@ export class MySubscriptionsActionComponent {
           this.snackbar.openSnackBar(err.error?.message || 'Error', 'error');
         }
       });
+    });
+  }
+
+  /** D11 — turn off auto-renew (≤2 taps: this menu item + the confirm). */
+  cancelAutoRenew() {
+    this.open = false;
+    const dialogRef = this.dialog.open(PromptModalComponent, {
+      data: {
+        message: "Stop this subscription from renewing? You'll keep full access until it ends.",
+        confirmation: true
+      }
+    });
+
+    dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
+      this.loader.start();
+      this.subscriptionService.cancelMySubscription().subscribe({
+        next: (res: any) => {
+          this.loader.stop();
+          this.snackbar.openSnackBar(res?.message || 'Auto-renew turned off', '');
+          this.refresh.emit();
+        },
+        error: (err: any) => {
+          this.loader.stop();
+          this.snackbar.openSnackBar(err.error?.message || err.error || 'Could not cancel', 'error');
+        }
+      });
+    });
+  }
+
+  /** D11 — undo a cancel (non-destructive, no confirm). */
+  resumeAutoRenew() {
+    this.open = false;
+    this.loader.start();
+    this.subscriptionService.resumeMySubscription().subscribe({
+      next: (res: any) => {
+        this.loader.stop();
+        this.snackbar.openSnackBar(res?.message || 'Auto-renew turned back on', '');
+        this.refresh.emit();
+      },
+      error: (err: any) => {
+        this.loader.stop();
+        this.snackbar.openSnackBar(err.error?.message || err.error || 'Could not resume', 'error');
+      }
     });
   }
 

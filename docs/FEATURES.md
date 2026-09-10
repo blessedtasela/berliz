@@ -99,6 +99,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Subscription plans (3-tier), role-targeted | ✅ | See [[project_payment_subscription_model]] |
 | Stripe payments + webhook | ✅ | |
 | Bypass / promo codes | ✅ | |
+| Pre-renewal reminder + one-tap cancel | ✅ | Daily sweep emails + bells a member ~2 days before renewal (once/period); "Cancel auto-renew" / "Resume auto-renew" in the My Subscriptions menu — cancel keeps access until `endDate`. `POST /subscription/cancel` \| `/resume` |
 | Payouts (to trainers/partners) | ✅ | |
 | Bills / orders / store / products | ✅ | Commerce primitives present |
 
@@ -128,9 +129,9 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D8 | PR detection → one-tap MILESTONE post | ✅ | ✚ |
 | D9 | Verified activity badge (wearable-imported or trainer-confirmed) | ✅ | ✚ |
 | D10 | Transparent trainer/center pricing + book CTA on every relevant surface | ✅ | ✚ |
-| D11 | Pre-renewal reminder + ≤2-tap cancel | ⏸ deferred | ✚ | — depends on the payment/subscription build (not started) |
+| D11 | Pre-renewal reminder + ≤2-tap cancel | ✅ | ✚ | |
 | D12 | Value-first onboarding (one real action before any paywall) | ✅ | — |
-| D13 | Dark mode (app-wide) | ⏸ deferred | — | large theming pass; not in this batch |
+| D13 | Dark mode (app-wide) | ⏸ deferred | — | ~150 components with hard-coded light classes; needs its own dedicated theming pass, not a batch |
 | D14 | "Do this workout" — clone a linked workout from a feed post | ✅ | ✚ |
 | D15 | Saved / bookmarked posts & workouts | ✅ | ✚ |
 
@@ -154,6 +155,17 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **D11 — Pre-renewal reminder + easy cancel.** `Subscription` gains `auto_renew` /
+  `cancelled_at` / `renewal_reminder_sent_at` (V40). `POST /subscription/cancel` turns off
+  auto-renew for the caller's active subscription (idempotent) and keeps `status` active so
+  access runs to `endDate` — the existing expiry sweep flips it then; `POST /subscription/resume`
+  undoes it; `renewSubscription` clears both stamps for the next cycle. New
+  `SubscriptionRenewalReminderScheduler` (daily `@Scheduled`, same model as
+  `TrainerSubscriptionScheduler`) sends a one-time bell + email ~2 days before renewal. FE:
+  "Cancel auto-renew" / "Resume auto-renew" in the My Subscriptions row menu (cancel behind a
+  one-tap confirm), plus a "Won't renew · access until …" badge on the active card. Backend
+  on `com.berliz@3cc0c91`.
 
 - **D6 (scoped) — connection-scoped run leaderboard.** `GET /run/leaderboard?period=week|
   month|year&metric=distance|pace|sessions` ranks the current user + their accepted

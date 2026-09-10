@@ -21,6 +21,9 @@ export interface Subscriptions {
   lastUpdate: Date;
   status: string;
   checked?: boolean;
+  /** D11 — false once the member cancels; access still runs to endDate. */
+  autoRenew?: boolean;
+  cancelledAt?: Date | null;
 }
 
 export interface RenewData {

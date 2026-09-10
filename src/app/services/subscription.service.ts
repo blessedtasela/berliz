@@ -63,6 +63,16 @@ export class SubscriptionService {
     );
   }
 
+  /** D11 — turn off auto-renew on the current user's active subscription (idempotent). */
+  cancelMySubscription() {
+    return this.httpClient.post<{ message: string }>(`${this.url}/subscription/cancel`, null);
+  }
+
+  /** D11 — undo a cancel while still within the paid period. */
+  resumeMySubscription() {
+    return this.httpClient.post<{ message: string }>(`${this.url}/subscription/resume`, null);
+  }
+
   /** Self-service plan selection — creates a PENDING_PAYMENT Subscription for the
    *  current user against a plan-catalog tier. No payment gateway exists yet. */
   selectPlan(planId: number) {
