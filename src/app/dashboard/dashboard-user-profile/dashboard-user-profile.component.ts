@@ -15,6 +15,7 @@ import { SavedService } from 'src/app/services/saved.service';
 import { RanksCardComponent } from 'src/app/shared/ranks-card/ranks-card.component';
 import { AwardRankModalComponent } from 'src/app/shared/ranks-card/award-rank-modal.component';
 import { VerifiedBadgeComponent } from 'src/app/shared/verified-badge/verified-badge.component';
+import { BookProviderButtonComponent } from 'src/app/shared/book-provider-button/book-provider-button.component';
 import { WorkoutService } from 'src/app/services/workout.service';
 import { RunService } from 'src/app/services/run.service';
 import { WorkoutLogResponse } from 'src/app/models/workout.interface';
@@ -60,7 +61,7 @@ type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
 @Component({
   selector: 'app-dashboard-user-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, RanksCardComponent, VerifiedBadgeComponent],
+  imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, RanksCardComponent, VerifiedBadgeComponent, BookProviderButtonComponent],
   templateUrl: './dashboard-user-profile.component.html'
 })
 export class DashboardUserProfileComponent implements OnInit, OnDestroy {
@@ -210,6 +211,15 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
   /** Id of the profile being viewed (for the ranks card). */
   get viewedUserId(): number | null {
     return this.userId;
+  }
+
+  /** D10 — the viewed provider's Trainer / Center row id, taken from their own posts
+   *  (the timeline endpoint resolves it), so a signed-in visitor can book them. */
+  get viewedTrainerId(): number | null {
+    return this.posts.find(p => p.authorTrainerId != null)?.authorTrainerId ?? null;
+  }
+  get viewedCenterId(): number | null {
+    return this.posts.find(p => p.authorCenterId != null)?.authorCenterId ?? null;
   }
 
   /** A trainer / center viewing someone else can award them a rank. */

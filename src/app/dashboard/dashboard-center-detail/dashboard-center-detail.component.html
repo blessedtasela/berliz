@@ -147,7 +147,10 @@
 
     <!-- Pricing -->
     <div *ngIf="centerPricing" class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
-        <h2 class="text-sm font-bold text-gray-900">Pricing</h2>
+        <div class="flex flex-col gap-0.5">
+            <h2 class="text-sm font-bold text-gray-900">Pricing</h2>
+            <p class="text-[11px] text-gray-400">The full price — no "from", no hidden fees.</p>
+        </div>
         <div class="bg-gray-50 rounded-xl p-4 flex flex-col gap-1 w-fit">
             <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Per session</span>
             <span class="text-lg font-extrabold text-gray-900">${{ centerPricing.price }}</span>

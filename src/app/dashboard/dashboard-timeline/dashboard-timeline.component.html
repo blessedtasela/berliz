@@ -165,6 +165,15 @@
             </button>
         </div>
 
+        <!-- D10 — book a provider straight from their post -->
+        <div *ngIf="!isMine(post) && (post.authorTrainerId || post.authorCenterId)"
+            class="flex items-center gap-2.5 rounded-xl border border-red-100 bg-red-50/60 px-3 py-2">
+            <i-feather name="calendar" class="text-red-500 shrink-0" style="width:15px;height:15px;"></i-feather>
+            <span class="text-xs text-gray-600 flex-1">Train with <span class="font-bold text-gray-800">{{ post.authorName }}</span></span>
+            <app-book-provider-button [role]="post.authorRole" [trainerId]="post.authorTrainerId"
+                [centerId]="post.authorCenterId" [providerName]="post.authorName" size="sm" [subtle]="true"></app-book-provider-button>
+        </div>
+
         <div class="border-t border-gray-100 pt-2 flex items-center gap-1.5">
             <app-reaction-button [myReaction]="post.myReaction" [count]="post.likes"
                 (react)="onReact(post, $event)" (openList)="openPostLikers(post)"></app-reaction-button>

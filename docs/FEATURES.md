@@ -87,6 +87,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Client intake forms | ✅ | |
 | Testimonials & reviews (trainer/center) | ✅ | |
 | Trainer location + service mode (in-person / online / hybrid) | ✅ | |
+| Transparent pricing + Book CTA everywhere | ✅ | Provider pages state "full price — no 'from', no hidden fees"; a "Book a session" action appears on a trainer's/center's feed posts and on their profile header (`BookProviderButtonComponent`), not just the dedicated provider page |
 
 ## 6. Payments & subscriptions
 
@@ -123,7 +124,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D7 | Challenges — open / connections-only, progress board + completion badge | ✅ | ✚ |
 | D8 | PR detection → one-tap MILESTONE post | ✅ | ✚ |
 | D9 | Verified activity badge (wearable-imported or trainer-confirmed) | ✅ | ✚ |
-| D10 | Transparent trainer/center pricing + book CTA on every relevant surface | 📋 | — |
+| D10 | Transparent trainer/center pricing + book CTA on every relevant surface | ✅ | ✚ |
 | D11 | Pre-renewal reminder + ≤2-tap cancel | 📋 | ✚ |
 | D12 | Value-first onboarding (one real action before any paywall) | 📋 | — |
 | D13 | Dark mode (app-wide) | 📋 | — |
@@ -150,6 +151,15 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **D10 — Transparent pricing + Book CTA everywhere.** Provider pages already show the full
+  monthly rate per mode; added a "no 'from', no hidden fees" line to the trainer pricing card
+  and both dashboard provider pages. `PostResponse` now carries `authorRole` +
+  `authorTrainerId` / `authorCenterId` (resolved once per distinct provider author on the
+  feed / timeline endpoints). New shared `BookProviderButtonComponent` (login-gated via the
+  existing `BookingDialogService`) renders a "Book a session" action on a trainer's or
+  center's feed posts, on the dashboard user-profile header, and on the public profile
+  header. Backend on `com.berliz@de41f88`.
 
 - **D9 — Verified activity badge.** A logged workout or run can be confirmed by a trainer
   or center the athlete is an accepted connection of. `verified` / `verified_by_fk` /

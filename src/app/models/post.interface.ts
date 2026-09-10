@@ -33,6 +33,10 @@ export interface PostResponse {
   authorUsername?: string;
   authorEmail: string;
   authorPhoto?: string;
+  /** D10 — author role + resolved provider id, so the feed can show a Book CTA. */
+  authorRole?: string;
+  authorTrainerId?: number | null;
+  authorCenterId?: number | null;
   content: string;
   photoUrl?: string | null;
   /** Always set by the server — `"GENERAL"` for a plain post. */
