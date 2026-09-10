@@ -309,6 +309,41 @@
         </div>
     </div>
 
+    <!-- ═══════════ NAVBAR APPEARANCE ═══════════
+         Per-device (localStorage) — see NavbarStyleService. Controls the top
+         bar's background finish only (the dark sidebar is unaffected). -->
+    <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+
+        <div>
+            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Navbar appearance</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                Pick whether the top bar shows a frosted, see-through background or a plain solid one.
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div class="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Navbar background style">
+            <button type="button" role="radio" [attr.aria-checked]="navbarStyle === 'translucent'"
+                (click)="setNavbarStyle('translucent')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
+                [ngClass]="navbarStyle === 'translucent' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                <i-feather name="layers" style="width:16px;height:16px;"
+                    [ngClass]="navbarStyle === 'translucent' ? 'text-red-600' : 'text-gray-400'"></i-feather>
+                <span class="text-[11px] font-semibold"
+                    [ngClass]="navbarStyle === 'translucent' ? 'text-red-600' : 'text-gray-600'">Translucent</span>
+            </button>
+
+            <button type="button" role="radio" [attr.aria-checked]="navbarStyle === 'solid'"
+                (click)="setNavbarStyle('solid')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
+                [ngClass]="navbarStyle === 'solid' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                <i-feather name="square" style="width:16px;height:16px;"
+                    [ngClass]="navbarStyle === 'solid' ? 'text-red-600' : 'text-gray-400'"></i-feather>
+                <span class="text-[11px] font-semibold"
+                    [ngClass]="navbarStyle === 'solid' ? 'text-red-600' : 'text-gray-600'">Solid white</span>
+            </button>
+        </div>
+    </div>
+
     <!-- ═══════════ IN-APP NAVIGATION ═══════════
          Per-device (localStorage) — see NavControlsService. Controls
          NavHistoryControlsComponent, the floating back/forward control mounted

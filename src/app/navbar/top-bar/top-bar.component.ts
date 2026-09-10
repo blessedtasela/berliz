@@ -23,6 +23,7 @@ import { Store } from '@ngrx/store';
 import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
 import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
 import { GlobalSearchComponent } from '../global-search/global-search.component';
+import { NavbarStyleService } from 'src/app/services/navbar-style.service';
 
 @Component({
   selector: 'app-top-bar',
@@ -65,7 +66,8 @@ export class TopBarComponent implements OnInit {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private rxStompService: RxStompService,
-    public sidebarState: SidebarStateService
+    public sidebarState: SidebarStateService,
+    public navbarStyle: NavbarStyleService
   ) {
     this.currentRoute = this.router.url;
     this.router.events.subscribe(event => {

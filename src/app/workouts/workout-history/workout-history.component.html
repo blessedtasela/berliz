@@ -113,7 +113,7 @@
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
           <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-xs font-bold text-gray-900">{{ log.logDate | date:'EEEE, MMM d, y' }}</span>
+            <span class="text-xs font-bold text-gray-900">{{ log.logDate | date:'EEE dd MMM, y' }}</span>
             <span *ngIf="log.workoutName" class="text-[10px] font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
               from "{{ log.workoutName }}"
             </span>

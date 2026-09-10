@@ -37,17 +37,19 @@
                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
     </div>
 
-    <div class="grid grid-cols-2 gap-3">
-      <div class="flex flex-col gap-1">
-        <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Date &amp; time</label>
-        <input type="datetime-local" [(ngModel)]="scheduledAt" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
-                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
-      </div>
-      <div *ngIf="!solo" class="flex flex-col gap-1">
-        <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">City</label>
-        <input type="text" [(ngModel)]="city" placeholder="e.g. Vancouver" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
-                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
-      </div>
+    <!-- Date/time and City are each their own full-width row, not a shared
+         grid column — a native datetime-local picker squeezed into a half
+         column can render its date/time segments overlapping on some
+         browsers, so it always gets the modal's full width. -->
+    <div class="flex flex-col gap-1">
+      <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Date &amp; time</label>
+      <input type="datetime-local" [(ngModel)]="scheduledAt" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+    </div>
+    <div *ngIf="!solo" class="flex flex-col gap-1">
+      <label class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">City</label>
+      <input type="text" [(ngModel)]="city" placeholder="e.g. Vancouver" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400" />
     </div>
 
     <ng-container *ngIf="!solo">
