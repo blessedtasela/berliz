@@ -13,6 +13,9 @@
         </div>
     </div>
 
+    <!-- Value-first onboarding checklist (new users, dismissible) -->
+    <app-onboarding-checklist></app-onboarding-checklist>
+
     <!-- Success message -->
     <div *ngIf="successMessage"
         class="flex items-center gap-3 px-4 py-3 bg-green-50 border border-green-100 rounded-xl text-xs">
@@ -32,6 +35,9 @@
 
     <!-- Challenges -->
     <app-challenges-card></app-challenges-card>
+
+    <!-- Year in Berliz recap -->
+    <app-recap-card></app-recap-card>
 
     <!-- Action cards -->
     <app-dashboard-action [data]="data"></app-dashboard-action>

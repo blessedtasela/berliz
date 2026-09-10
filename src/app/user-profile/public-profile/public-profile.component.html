@@ -102,6 +102,11 @@
                     </span>
 
                 </div>
+
+                <!-- D10 — book this trainer / center -->
+                <app-book-provider-button *ngIf="viewedTrainerId || viewedCenterId"
+                    [role]="profile.role" [trainerId]="viewedTrainerId" [centerId]="viewedCenterId"
+                    [providerName]="fullName || 'this provider'" size="md"></app-book-provider-button>
             </div>
         </div>
     </section>

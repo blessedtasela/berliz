@@ -2,7 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../models/Api.interface';
-import { RunEventRequest, RunEventResponse, RunLogRequest, RunLogResponse } from '../models/run.interface';
+import {
+  RunEventRequest,
+  RunEventResponse,
+  RunLeaderboardMetric,
+  RunLeaderboardPeriod,
+  RunLeaderboardResponse,
+  RunLogRequest,
+  RunLogResponse,
+} from '../models/run.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -84,5 +92,24 @@ export class RunService {
 
   getMyRunLogs() {
     return this.httpClient.get<ApiResponse<RunLogResponse[]>>(`${this.url}/run/log/getMine`);
+  }
+
+  /** Another user's runs — allowed for an accepted connection (or admin). */
+  getUserRunLogs(userId: number) {
+    return this.httpClient.get<ApiResponse<RunLogResponse[]>>(`${this.url}/run/log/user/${userId}`);
+  }
+
+  /** D6 (scoped) — run leaderboard among me + my accepted connections. */
+  getRunLeaderboard(period: RunLeaderboardPeriod, metric: RunLeaderboardMetric) {
+    return this.httpClient.get<ApiResponse<RunLeaderboardResponse>>(`${this.url}/run/leaderboard`, {
+      params: { period, metric },
+    });
+  }
+
+  /** D9 — a connected trainer/center confirms (or retracts) a run. */
+  verifyRunLog(id: number, verified: boolean) {
+    return verified
+      ? this.httpClient.post<ApiResponse<RunLogResponse>>(`${this.url}/run/log/${id}/verify`, {})
+      : this.httpClient.delete<ApiResponse<RunLogResponse>>(`${this.url}/run/log/${id}/verify`);
   }
 }

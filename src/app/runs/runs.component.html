@@ -39,8 +39,15 @@
         [ngClass]="activeTab === 'history' ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
         History
       </button>
+      <button type="button" (click)="setTab('leaderboard')" class="rounded-xl px-4 py-2 text-xs font-semibold transition"
+        [ngClass]="activeTab === 'leaderboard' ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+        Leaderboard
+      </button>
     </div>
   </div>
+
+  <!-- ═══════════════════ LEADERBOARD ═══════════════════ -->
+  <app-run-leaderboard *ngIf="activeTab === 'leaderboard'"></app-run-leaderboard>
 
   <!-- ═══════════════════ DISCOVER ═══════════════════ -->
   <ng-container *ngIf="activeTab === 'discover'">
@@ -258,7 +265,10 @@
       <div *ngFor="let entry of runLogs; trackBy: trackByLogId"
         class="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
         <div class="min-w-0">
-          <p class="text-xs font-bold text-gray-900">{{ entry.title || (entry.runEventTitle || 'Run') }}</p>
+          <p class="text-xs font-bold text-gray-900 flex items-center gap-2">
+            <span class="truncate">{{ entry.title || (entry.runEventTitle || 'Run') }}</span>
+            <app-verified-badge *ngIf="entry.verified" [by]="entry.verifiedByName" size="sm"></app-verified-badge>
+          </p>
           <p class="text-[11px] text-gray-400 mt-0.5">
             {{ entry.ranAt | date:'MMM d, y' }} · {{ formatDuration(entry.durationSeconds) }}
             <ng-container *ngIf="entry.distanceKm"> · {{ entry.distanceKm }} km<ng-container *ngIf="paceFor(entry)"> · {{ paceFor(entry) }}</ng-container></ng-container>

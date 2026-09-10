@@ -22,6 +22,7 @@ import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { SavedService } from 'src/app/services/saved.service';
 import { RanksCardComponent } from 'src/app/shared/ranks-card/ranks-card.component';
+import { BookProviderButtonComponent } from 'src/app/shared/book-provider-button/book-provider-button.component';
 
 import {
   clearPublicProfile,
@@ -53,7 +54,7 @@ import {
 @Component({
   selector: 'app-public-profile',
   standalone: true,
-  imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, MatDialogModule, StrapiUrlPipe, PostCommentsComponent, PostDetailSheetComponent, RanksCardComponent],
+  imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, MatDialogModule, StrapiUrlPipe, PostCommentsComponent, PostDetailSheetComponent, RanksCardComponent, BookProviderButtonComponent],
   templateUrl: './public-profile.component.html'
 })
 export class PublicProfileComponent implements OnInit, OnDestroy {
@@ -213,6 +214,14 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
   /** This user's own timeline posts -- backend only populates this when the profile is public. */
   get posts(): PostResponse[] {
     return this.profile?.posts ?? [];
+  }
+
+  /** D10 — the viewed provider's Trainer / Center row id, read off their own posts. */
+  get viewedTrainerId(): number | null {
+    return this.posts.find(p => p.authorTrainerId != null)?.authorTrainerId ?? null;
+  }
+  get viewedCenterId(): number | null {
+    return this.posts.find(p => p.authorCenterId != null)?.authorCenterId ?? null;
   }
 
   /** Trainer-only: only ever populated when profile.role === 'trainer'. */

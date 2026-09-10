@@ -36,6 +36,8 @@ import { DashboardTimelinePreviewComponent } from './dashboard-timeline-preview/
 import { ConsistencyRingComponent } from '../shared/consistency-ring/consistency-ring.component';
 import { AccountabilityCardComponent } from '../shared/accountability-card/accountability-card.component';
 import { ChallengesCardComponent } from '../shared/challenges-card/challenges-card.component';
+import { RecapCardComponent } from '../shared/recap/recap-card.component';
+import { OnboardingChecklistComponent } from '../shared/onboarding-checklist/onboarding-checklist.component';
 
 
 
@@ -80,7 +82,9 @@ import { ChallengesCardComponent } from '../shared/challenges-card/challenges-ca
     DashboardTimelinePreviewComponent,
     ConsistencyRingComponent,
     AccountabilityCardComponent,
-    ChallengesCardComponent
+    ChallengesCardComponent,
+    RecapCardComponent,
+    OnboardingChecklistComponent
   ]
 })
 export class DashboardModule { }

@@ -12,6 +12,7 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-detail-sheet.component';
 import { ReactionButtonComponent } from 'src/app/shared/reaction-button/reaction-button.component';
+import { BookProviderButtonComponent } from 'src/app/shared/book-provider-button/book-provider-button.component';
 import { PostActivityType, PostResponse, ReactionType } from 'src/app/models/post.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { PostService } from 'src/app/services/post.service';
@@ -56,7 +57,7 @@ const ACTIVITY_OPTIONS: ActivityOption[] = [
 @Component({
   selector: 'app-dashboard-timeline',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent],
+  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, BookProviderButtonComponent],
   templateUrl: './dashboard-timeline.component.html'
 })
 export class DashboardTimelineComponent implements OnInit, OnDestroy {

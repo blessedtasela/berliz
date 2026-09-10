@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { Subject, takeUntil } from 'rxjs';
+import { forkJoin, Subject, takeUntil } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -14,6 +14,12 @@ import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-
 import { SavedService } from 'src/app/services/saved.service';
 import { RanksCardComponent } from 'src/app/shared/ranks-card/ranks-card.component';
 import { AwardRankModalComponent } from 'src/app/shared/ranks-card/award-rank-modal.component';
+import { VerifiedBadgeComponent } from 'src/app/shared/verified-badge/verified-badge.component';
+import { BookProviderButtonComponent } from 'src/app/shared/book-provider-button/book-provider-button.component';
+import { WorkoutService } from 'src/app/services/workout.service';
+import { RunService } from 'src/app/services/run.service';
+import { WorkoutLogResponse } from 'src/app/models/workout.interface';
+import { RunLogResponse } from 'src/app/models/run.interface';
 import { Connection } from 'src/app/models/connection.model';
 import { PostResponse, ReactionType } from 'src/app/models/post.interface';
 import { PublicUserProfile } from 'src/app/models/users.interface';
@@ -55,7 +61,7 @@ type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
 @Component({
   selector: 'app-dashboard-user-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, RanksCardComponent],
+  imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, RanksCardComponent, VerifiedBadgeComponent, BookProviderButtonComponent],
   templateUrl: './dashboard-user-profile.component.html'
 })
 export class DashboardUserProfileComponent implements OnInit, OnDestroy {
@@ -79,6 +85,13 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
 
   blockedUsers: BlockedUser[] = [];
 
+  /** D9 — a trainer/center viewing a connected member can confirm their logged activity. */
+  clientWorkoutLogs: WorkoutLogResponse[] = [];
+  clientRunLogs: RunLogResponse[] = [];
+  clientActivityLoading = false;
+  private clientActivityForUserId: number | null = null;
+  verifyingKey: string | null = null;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -92,6 +105,8 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
     private blockService: BlockService,
     public saved: SavedService,
     private dialog: MatDialog,
+    private workoutService: WorkoutService,
+    private runService: RunService,
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
     this.saved.refresh();
@@ -147,6 +162,7 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
       if (profile && profile.id !== this.userId) {
         this.userId = profile.id;
         this.fetchTimeline(profile.id);
+        this.maybeLoadClientActivity();
       }
     });
     this.store.select(selectPublicProfileLoading).pipe(takeUntil(this.destroy$)).subscribe(loading => this.loading = loading);
@@ -197,6 +213,15 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
     return this.userId;
   }
 
+  /** D10 — the viewed provider's Trainer / Center row id, taken from their own posts
+   *  (the timeline endpoint resolves it), so a signed-in visitor can book them. */
+  get viewedTrainerId(): number | null {
+    return this.posts.find(p => p.authorTrainerId != null)?.authorTrainerId ?? null;
+  }
+  get viewedCenterId(): number | null {
+    return this.posts.find(p => p.authorCenterId != null)?.authorCenterId ?? null;
+  }
+
   /** A trainer / center viewing someone else can award them a rank. */
   get canAwardRank(): boolean {
     const role = this.authService.getCurrentUserRole();
@@ -213,6 +238,86 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
       data: { userId: this.userId, userName: this.fullName || 'this member' },
     }).afterClosed().subscribe(awarded => {
       if (awarded) this.rankRefreshKey = Date.now();
+    });
+  }
+
+  // -------------------------
+  // D9 — VERIFY CLIENT ACTIVITY
+  // -------------------------
+
+  /** A trainer / center can confirm the logged activity of a member they're viewing. */
+  get canVerifyActivity(): boolean {
+    const role = this.authService.getCurrentUserRole();
+    return !this.isSelf && this.userId != null && (role === 'trainer' || role === 'center');
+  }
+
+  get hasClientActivity(): boolean {
+    return this.clientWorkoutLogs.length > 0 || this.clientRunLogs.length > 0;
+  }
+
+  private maybeLoadClientActivity(): void {
+    if (!this.canVerifyActivity || this.userId == null) return;
+    if (this.clientActivityForUserId === this.userId) return;
+    this.clientActivityForUserId = this.userId;
+    const uid = this.userId;
+    this.clientActivityLoading = true;
+    forkJoin({
+      workouts: this.workoutService.getUserWorkoutLogs(uid),
+      runs: this.runService.getUserRunLogs(uid),
+    }).subscribe({
+      next: ({ workouts, runs }) => {
+        this.clientWorkoutLogs = (workouts.data ?? []).slice(0, 8);
+        this.clientRunLogs = (runs.data ?? []).slice(0, 8);
+        this.clientActivityLoading = false;
+      },
+      error: () => {
+        // 403 when not an accepted connection — just show nothing.
+        this.clientWorkoutLogs = [];
+        this.clientRunLogs = [];
+        this.clientActivityLoading = false;
+      },
+    });
+  }
+
+  toggleVerifyWorkout(logEntry: WorkoutLogResponse): void {
+    const key = 'w:' + logEntry.id;
+    if (this.verifyingKey === key) return;
+    this.verifyingKey = key;
+    const next = !logEntry.verified;
+    this.workoutService.verifyWorkoutLog(logEntry.id, next).subscribe({
+      next: res => {
+        Object.assign(logEntry, {
+          verified: res.data?.verified ?? next,
+          verifiedByName: res.data?.verifiedByName ?? null,
+        });
+        this.verifyingKey = null;
+        this.snackBarService.openSnackBar(next ? 'Session verified' : 'Verification removed', 'success');
+      },
+      error: () => {
+        this.verifyingKey = null;
+        this.snackBarService.openSnackBar('Could not update verification', 'error');
+      },
+    });
+  }
+
+  toggleVerifyRun(logEntry: RunLogResponse): void {
+    const key = 'r:' + logEntry.id;
+    if (this.verifyingKey === key) return;
+    this.verifyingKey = key;
+    const next = !logEntry.verified;
+    this.runService.verifyRunLog(logEntry.id, next).subscribe({
+      next: res => {
+        Object.assign(logEntry, {
+          verified: res.data?.verified ?? next,
+          verifiedByName: res.data?.verifiedByName ?? null,
+        });
+        this.verifyingKey = null;
+        this.snackBarService.openSnackBar(next ? 'Run verified' : 'Verification removed', 'success');
+      },
+      error: () => {
+        this.verifyingKey = null;
+        this.snackBarService.openSnackBar('Could not update verification', 'error');
+      },
     });
   }
 

@@ -21,6 +21,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Public profile page (`/user/:username`) | ✅ | Visibility toggle: private vs public; admin can view-through with a banner |
 | Profile photo with in-app cropper | ✅ | |
 | Account settings (merged Profile + Settings) | ✅ | Includes "what's new" badges, passkey management, sidebar display prefs |
+| Value-first onboarding checklist | ✅ | Dismissible, role-aware first-run checklist at the top of the dashboard home (log a workout / connect / find a provider — or profile/post/connect for providers); progress is data-derived where possible, dismissal + click-steps persist in `localStorage`. No paywall in the path |
 | Block / unblock users | ✅ | Two-directional enforcement across messaging, mentions, comments |
 | Report content (posts, comments) | ✅ | Feeds admin content-report queue |
 
@@ -64,6 +65,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Workout logging (sessions, sets, exercises) | ✅ | `workout_log` tables |
 | Share a workout log to the feed | ✅ | |
 | Runs — schedule, log, group runs | ✅ | `run` tables; group runs with scheduling/logging |
+| Run leaderboard (connection-scoped) | ✅ | "Leaderboard" tab on `/dashboard/runs` — you + your connections ranked by distance / best pace / session count over a week / 30 days / year, with a verified-run count. Plain totals, no GPS traces. `GET /run/leaderboard` |
 | Tasks & To-do lists | ✅ | Personal + admin-assignable |
 | Progress entries (measurements/metrics over time) | ✅ | |
 | Progress sharing | ✅ | `progress_share` |
@@ -72,6 +74,8 @@ that ships a feature — add the row under the right domain, and log it under
 | Muscle-group taxonomy | ✅ | |
 | Fitness achievements | ✅ | `FitnessAchievement` |
 | Peer sessions (propose / schedule training with a connection) | ✅ | "My Sessions" |
+| "Your time in Berliz" recap | ✅ | Dashboard card + modal (30d / 90d / year / all-time) — active days, sessions, km, best streak, PRs, rank moves, top partners; one-tap "Share as post". Always free. `GET /recap/me` |
+| Verified activity | ✅ | A connected trainer/center confirms a logged workout/run; a "Verified" tick shows on the history list. `POST/DELETE /workoutLog/{id}/verify`, `/run/log/{id}/verify` |
 
 ## 5. Discovery & marketplace
 
@@ -86,6 +90,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Client intake forms | ✅ | |
 | Testimonials & reviews (trainer/center) | ✅ | |
 | Trainer location + service mode (in-person / online / hybrid) | ✅ | |
+| Transparent pricing + Book CTA everywhere | ✅ | Provider pages state "full price — no 'from', no hidden fees"; a "Book a session" action appears on a trainer's/center's feed posts and on their profile header (`BookProviderButtonComponent`), not just the dedicated provider page |
 
 ## 6. Payments & subscriptions
 
@@ -114,18 +119,18 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | # | Feature | 📋 | Backend? |
 |---|---|---|---|
 | D1 | Training streaks + weekly consistency ring (dashboard) | ✅ | ✚ |
-| D2 | "Year/Season in Berliz" recap — auto-generated, shareable, **permanently free** | 📋 | ✚ |
+| D2 | "Year/Season in Berliz" recap — auto-generated, shareable, **permanently free** | ✅ | ✚ |
 | D3 | Belt / rank progression tracker (per discipline; trainer/center promotes; milestone post) | ✅ | ✚ |
 | D4 | Accountability partners + "nudge when a streak slips" | ✅ | ✚ |
 | D5 | Multi-reactions (👍💪🔥👏❤️) on posts & comments | ✅ | ✚ |
-| D6 | Friend-scoped segments & leaderboards for runs and classes | 📋 | ✚ |
+| D6 | Friend-scoped segments & leaderboards for runs and classes | ✅ (scoped) | ✚ |
 | D7 | Challenges — open / connections-only, progress board + completion badge | ✅ | ✚ |
 | D8 | PR detection → one-tap MILESTONE post | ✅ | ✚ |
-| D9 | Verified activity badge (wearable-imported or trainer-confirmed) | 📋 | ✚ |
-| D10 | Transparent trainer/center pricing + book CTA on every relevant surface | 📋 | — |
-| D11 | Pre-renewal reminder + ≤2-tap cancel | 📋 | ✚ |
-| D12 | Value-first onboarding (one real action before any paywall) | 📋 | — |
-| D13 | Dark mode (app-wide) | 📋 | — |
+| D9 | Verified activity badge (wearable-imported or trainer-confirmed) | ✅ | ✚ |
+| D10 | Transparent trainer/center pricing + book CTA on every relevant surface | ✅ | ✚ |
+| D11 | Pre-renewal reminder + ≤2-tap cancel | ⏸ deferred | ✚ | — depends on the payment/subscription build (not started) |
+| D12 | Value-first onboarding (one real action before any paywall) | ✅ | — |
+| D13 | Dark mode (app-wide) | ⏸ deferred | — | large theming pass; not in this batch |
 | D14 | "Do this workout" — clone a linked workout from a feed post | ✅ | ✚ |
 | D15 | Saved / bookmarked posts & workouts | ✅ | ✚ |
 
@@ -149,6 +154,51 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **D6 (scoped) — connection-scoped run leaderboard.** `GET /run/leaderboard?period=week|
+  month|year&metric=distance|pace|sessions` ranks the current user + their accepted
+  connections from logged runs in the window — totals only, no GPS traces or route-segment
+  matching (the full D6 segment-matching stays out of scope). Each row carries the run
+  count, total minutes, and a verified-run count (D9). FE: a new "Leaderboard" tab on
+  `/dashboard/runs` (`RunLeaderboardComponent`) with period + metric switchers, medal-tinted
+  ranks, avatars linking to profiles, and a "you're #N" line. Backend on `com.berliz@9140a9e`.
+
+- **D12 — Value-first onboarding.** New `OnboardingChecklistComponent` at the top of the
+  dashboard home: a dismissible, role-aware first-run checklist. Members get "log your first
+  workout / connect with someone / find a trainer or gym"; trainers & centers get "complete
+  your profile / share your first post / connect with a member". "Logged a workout" and "has
+  a connection" are derived from real data; link-only steps and the dismissal persist in
+  `localStorage`. The card auto-hides once every step is done. Frontend-only.
+
+- **D2 — "Your time in Berliz" recap.** `GET /recap/me?period=month|quarter|year|all` —
+  recomputed on read from the user's own logs, never gated: active days, workout/run counts,
+  total minutes + km, longest in-window streak, personal-best lines, rank moves, top training
+  partners (workout-log collaborators + confirmed peer sessions), new connections, a headline
+  and a ready-to-post `shareText`. FE: `RecapCardComponent` on the dashboard (trailing-year
+  teaser) opens `RecapModalComponent` with a 30d / 90d / year / all-time switcher and a
+  one-tap "Share as post" that drops the summary onto the timeline as a `MILESTONE`. Backend
+  on `com.berliz@f0b893e`.
+
+- **D10 — Transparent pricing + Book CTA everywhere.** Provider pages already show the full
+  monthly rate per mode; added a "no 'from', no hidden fees" line to the trainer pricing card
+  and both dashboard provider pages. `PostResponse` now carries `authorRole` +
+  `authorTrainerId` / `authorCenterId` (resolved once per distinct provider author on the
+  feed / timeline endpoints). New shared `BookProviderButtonComponent` (login-gated via the
+  existing `BookingDialogService`) renders a "Book a session" action on a trainer's or
+  center's feed posts, on the dashboard user-profile header, and on the public profile
+  header. Backend on `com.berliz@de41f88`.
+
+- **D9 — Verified activity badge.** A logged workout or run can be confirmed by a trainer
+  or center the athlete is an accepted connection of. `verified` / `verified_by_fk` /
+  `verified_at` on `workout_log` + `run_log` (V39), surfaced on `WorkoutLogResponse` /
+  `RunLogResponse`. `POST/DELETE /workoutLog/{id}/verify` and `/run/log/{id}/verify`
+  (trainer/center + connected + not self; verifying notifies the owner via
+  `/topic/activityVerified`). `GET /workoutLog/getUserLogs/{userId}` +
+  `GET /run/log/user/{userId}` let a connection list another user's own logs. FE: a shared
+  `VerifiedBadgeComponent` tick on the workout-history and runs-history lists; a "Verify
+  activity" card on `dashboard-user-profile` (trainer/center viewing a connected member)
+  listing recent sessions with a one-tap Verify / ✓ Verified toggle. Backend on
+  `com.berliz@419664c`.
 
 - **D7 — Challenges.** `challenge` + `challenge_participant` (V38). A challenge has a metric
   (SESSIONS / DISTANCE_KM / ACTIVE_DAYS) + goal over a date window and a scope (OPEN /
