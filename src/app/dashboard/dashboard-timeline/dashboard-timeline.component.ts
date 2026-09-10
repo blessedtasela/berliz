@@ -9,14 +9,19 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comments.component';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
-import { PostMediaViewerComponent } from './post-media-viewer.component';
-import { PostActivityType, PostResponse } from 'src/app/models/post.interface';
+import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
+import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-detail-sheet.component';
+import { ReactionButtonComponent } from 'src/app/shared/reaction-button/reaction-button.component';
+import { PostActivityType, PostResponse, ReactionType } from 'src/app/models/post.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { PostService } from 'src/app/services/post.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { UserService } from 'src/app/services/user.service';
 import { ContentReportService } from 'src/app/services/content-report.service';
+import { WorkoutService } from 'src/app/services/workout.service';
+import { WorkoutResponse } from 'src/app/models/workout.interface';
+import { SavedService } from 'src/app/services/saved.service';
 import { imageValidator } from 'src/validators/form-validators.module';
 
 type TimelineTab = 'feed' | 'mine';
@@ -51,7 +56,7 @@ const ACTIVITY_OPTIONS: ActivityOption[] = [
 @Component({
   selector: 'app-dashboard-timeline',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostMediaViewerComponent],
+  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent],
   templateUrl: './dashboard-timeline.component.html'
 })
 export class DashboardTimelineComponent implements OnInit, OnDestroy {
@@ -67,6 +72,11 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   // ── Compose ──────────────────────────────────────────────────────────────
   draftContent = '';
   draftActivityType: PostActivityType = 'GENERAL';
+  /** Optional workout template attached to a WORKOUT-type draft. */
+  draftWorkoutId: number | null = null;
+  myTemplates: WorkoutResponse[] = [];
+  /** The post whose linked template is currently being cloned. */
+  cloningWorkoutPostId: number | null = null;
   posting = false;
   uploadedPhoto: { strapiId: number; photoUrl: string } | null = null;
   uploading = false;
@@ -75,8 +85,8 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   // ── Read view ────────────────────────────────────────────────────────────
   /** Posts whose long text the reader has expanded past the 5-line clamp. */
   private readonly expandedPosts = new Set<number>();
-  /** The post whose media is open in the full-screen viewer, if any. */
-  viewerPost: PostResponse | null = null;
+  /** The post whose media + comments sheet is open, if any. */
+  sheetPost: PostResponse | null = null;
 
   currentUserId: number | null = null;
   myPhotoSrc = '../../../assets/icons/user.png';
@@ -93,6 +103,8 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private snackBarService: SnackBarService,
     private contentReportService: ContentReportService,
+    private workoutService: WorkoutService,
+    public saved: SavedService,
     private dialog: MatDialog,
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
@@ -100,6 +112,11 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.refresh();
+    this.saved.refresh();
+    this.workoutService.getTemplates().subscribe({
+      next: res => this.myTemplates = res.data ?? [],
+      error: () => { /* the picker just stays empty */ },
+    });
     this.userService.getUser().subscribe({
       next: res => {
         const photo = res.data?.profilePhoto;
@@ -200,6 +217,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
       content: this.draftContent.trim(),
       activityType: this.draftActivityType === 'GENERAL' ? undefined : this.draftActivityType,
       photo: this.uploadedPhoto ? { photoUrl: this.uploadedPhoto.photoUrl, strapiId: this.uploadedPhoto.strapiId } : null,
+      workoutId: this.draftActivityType === 'WORKOUT' && this.draftWorkoutId ? this.draftWorkoutId : undefined,
     }).subscribe({
       next: res => {
         this.posting = false;
@@ -210,6 +228,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
         }
         this.draftContent = '';
         this.draftActivityType = 'GENERAL';
+        this.draftWorkoutId = null;
         this.uploadedPhoto = null;
         this.snackBarService.openSnackBar('Posted', '');
       },
@@ -231,22 +250,39 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     return post.authorPhoto ? 'data:image/*;base64,' + post.authorPhoto : null;
   }
 
-  toggleLike(post: PostResponse): void {
-    const wasLiked = post.likedByMe;
-    post.likedByMe = !wasLiked;
-    post.likes += wasLiked ? -1 : 1;
+  /** Add / switch / remove the viewer's reaction on a post. Optimistic; server reconciles. */
+  onReact(post: PostResponse, reaction: ReactionType): void {
+    const prev = { reaction: post.myReaction ?? null, count: post.likes, liked: post.likedByMe };
 
-    this.postService.toggleLike(post.id).subscribe({
+    if (prev.reaction === reaction) {
+      post.myReaction = null;
+      post.likedByMe = false;
+      post.likes = Math.max(0, prev.count - 1);
+    } else {
+      post.myReaction = reaction;
+      post.likedByMe = true;
+      post.likes = prev.reaction ? prev.count : prev.count + 1;
+    }
+
+    this.postService.toggleLike(post.id, reaction).subscribe({
       next: res => {
-        const updated = res.data;
-        if (!updated) return;
-        this.applyToBothLists(updated);
+        if (res.data) this.applyToBothLists(res.data);
       },
       error: () => {
-        post.likedByMe = wasLiked;
-        post.likes += wasLiked ? 1 : -1;
-        this.snackBarService.openSnackBar('Could not update like', 'error');
+        post.myReaction = prev.reaction;
+        post.likedByMe = prev.liked;
+        post.likes = prev.count;
+        this.snackBarService.openSnackBar('Could not update reaction', 'error');
       },
+    });
+  }
+
+  /** Opens the "liked by" list for a post. */
+  openPostLikers(post: PostResponse): void {
+    this.dialog.open(LikersModalComponent, {
+      width: '380px',
+      maxWidth: '95vw',
+      data: { kind: 'post', id: post.id, routePrefix: '/dashboard/user' },
     });
   }
 
@@ -330,12 +366,24 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     else this.expandedPosts.add(post.id);
   }
 
-  openViewer(post: PostResponse): void {
-    if (!post.photoUrl) return;
-    this.viewerPost = post;
+  /** Opens the media + comments bottom sheet for a post. */
+  openPostSheet(post: PostResponse): void {
+    this.sheetPost = post;
   }
 
-  closeViewer(): void {
-    this.viewerPost = null;
+  /** Clone the workout template linked on a post into the viewer's own workouts. */
+  addWorkoutFromPost(post: PostResponse): void {
+    if (!post.workoutId || this.cloningWorkoutPostId === post.id) return;
+    this.cloningWorkoutPostId = post.id;
+    this.workoutService.cloneTemplate(post.workoutId).subscribe({
+      next: () => {
+        this.cloningWorkoutPostId = null;
+        this.snackBarService.openSnackBar('Added to your workouts', '');
+      },
+      error: err => {
+        this.cloningWorkoutPostId = null;
+        this.snackBarService.openSnackBar(err?.error?.message || 'Could not add this workout', 'error');
+      },
+    });
   }
 }

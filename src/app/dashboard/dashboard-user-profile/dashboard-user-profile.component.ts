@@ -1,14 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comments.component';
+import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
+import { ReactionButtonComponent } from 'src/app/shared/reaction-button/reaction-button.component';
+import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-detail-sheet.component';
+import { SavedService } from 'src/app/services/saved.service';
+import { RanksCardComponent } from 'src/app/shared/ranks-card/ranks-card.component';
+import { AwardRankModalComponent } from 'src/app/shared/ranks-card/award-rank-modal.component';
 import { Connection } from 'src/app/models/connection.model';
-import { PostResponse } from 'src/app/models/post.interface';
+import { PostResponse, ReactionType } from 'src/app/models/post.interface';
 import { PublicUserProfile } from 'src/app/models/users.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { PostService } from 'src/app/services/post.service';
@@ -48,7 +55,7 @@ type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
 @Component({
   selector: 'app-dashboard-user-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, SharedModule, PostCommentsComponent],
+  imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, RanksCardComponent],
   templateUrl: './dashboard-user-profile.component.html'
 })
 export class DashboardUserProfileComponent implements OnInit, OnDestroy {
@@ -67,6 +74,9 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
   /** Which post's comment thread (PostCommentsComponent) is expanded inline, if any. Only one open at a time. */
   openCommentsPostId: number | null = null;
 
+  /** The post whose media + comments sheet is open, if any. */
+  sheetPost: PostResponse | null = null;
+
   blockedUsers: BlockedUser[] = [];
 
   private destroy$ = new Subject<void>();
@@ -80,8 +90,25 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
     private snackBarService: SnackBarService,
     public lightbox: PhotoLightboxService,
     private blockService: BlockService,
+    public saved: SavedService,
+    private dialog: MatDialog,
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
+    this.saved.refresh();
+  }
+
+  /** Opens the "liked by" list for a post. */
+  openPostLikers(post: PostResponse): void {
+    this.dialog.open(LikersModalComponent, {
+      width: '380px',
+      maxWidth: '95vw',
+      data: { kind: 'post', id: post.id, routePrefix: '/dashboard/user' },
+    });
+  }
+
+  /** Opens the media + comments bottom sheet for a post. */
+  openPostSheet(post: PostResponse): void {
+    this.sheetPost = post;
   }
 
   ngOnInit(): void {
@@ -163,6 +190,30 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
 
   get isSelf(): boolean {
     return this.currentUserId != null && this.userId === this.currentUserId;
+  }
+
+  /** Id of the profile being viewed (for the ranks card). */
+  get viewedUserId(): number | null {
+    return this.userId;
+  }
+
+  /** A trainer / center viewing someone else can award them a rank. */
+  get canAwardRank(): boolean {
+    const role = this.authService.getCurrentUserRole();
+    return !this.isSelf && this.userId != null && (role === 'trainer' || role === 'center');
+  }
+
+  rankRefreshKey = 0;
+
+  openAwardRank(): void {
+    if (!this.userId) return;
+    this.dialog.open(AwardRankModalComponent, {
+      width: '360px',
+      maxWidth: '95vw',
+      data: { userId: this.userId, userName: this.fullName || 'this member' },
+    }).afterClosed().subscribe(awarded => {
+      if (awarded) this.rankRefreshKey = Date.now();
+    });
   }
 
   get fullName(): string {
@@ -247,13 +298,21 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
   // TIMELINE
   // -------------------------
 
-  toggleLike(post: PostResponse): void {
-    // Optimistic flip so the like feels instant; corrected by the server response.
-    const wasLiked = post.likedByMe;
-    post.likedByMe = !wasLiked;
-    post.likes += wasLiked ? -1 : 1;
+  onReact(post: PostResponse, reaction: ReactionType): void {
+    // Optimistic so it feels instant; corrected by the server response.
+    const prev = { reaction: post.myReaction ?? null, count: post.likes, liked: post.likedByMe };
 
-    this.postService.toggleLike(post.id).subscribe({
+    if (prev.reaction === reaction) {
+      post.myReaction = null;
+      post.likedByMe = false;
+      post.likes = Math.max(0, prev.count - 1);
+    } else {
+      post.myReaction = reaction;
+      post.likedByMe = true;
+      post.likes = prev.reaction ? prev.count : prev.count + 1;
+    }
+
+    this.postService.toggleLike(post.id, reaction).subscribe({
       next: res => {
         const updated = res.data;
         if (!updated) return;
@@ -261,10 +320,10 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
         if (idx > -1) this.posts[idx] = updated;
       },
       error: () => {
-        // Roll back on failure.
-        post.likedByMe = wasLiked;
-        post.likes += wasLiked ? 1 : -1;
-        this.snackBarService.openSnackBar('Could not update like', 'error');
+        post.myReaction = prev.reaction;
+        post.likedByMe = prev.liked;
+        post.likes = prev.count;
+        this.snackBarService.openSnackBar('Could not update reaction', 'error');
       },
     });
   }

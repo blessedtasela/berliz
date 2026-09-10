@@ -38,6 +38,17 @@
             </button>
         </div>
 
+        <!-- Attach one of your workout templates (WORKOUT posts only) -->
+        <div *ngIf="draftActivityType === 'WORKOUT'" class="flex items-center gap-2">
+            <i-feather name="zap" class="text-orange-500 shrink-0" style="width:13px;height:13px;"></i-feather>
+            <select [(ngModel)]="draftWorkoutId"
+                class="flex-1 text-[11px] rounded-lg px-2.5 py-1.5 border border-gray-200 bg-white text-gray-700
+                       focus:outline-none focus:ring-1 focus:border-orange-400 focus:ring-orange-400/30">
+                <option [ngValue]="null">Link a workout template (optional)…</option>
+                <option *ngFor="let w of myTemplates" [ngValue]="w.id">{{ w.name }}</option>
+            </select>
+        </div>
+
         <!-- Photo preview / uploader -->
         <div *ngIf="uploadedPhoto" class="relative w-fit">
             <img [src]="uploadedPhoto.photoUrl | strapiUrl" alt="" class="max-h-40 rounded-xl border border-gray-200" />
@@ -133,7 +144,7 @@
             </button>
         </div>
 
-        <button *ngIf="post.photoUrl" type="button" (click)="openViewer(post)"
+        <button *ngIf="post.photoUrl" type="button" (click)="openPostSheet(post)"
             class="group relative block w-full overflow-hidden rounded-xl border border-gray-100">
             <img [src]="post.photoUrl | strapiUrl" alt=""
                 class="w-full max-h-96 object-cover transition group-hover:brightness-95" />
@@ -142,14 +153,21 @@
             </span>
         </button>
 
-        <div class="border-t border-gray-100 pt-2 flex items-center gap-1.5">
-            <button type="button" (click)="toggleLike(post)"
-                class="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition"
-                [class.text-red-600]="post.likedByMe" [class.bg-red-50]="post.likedByMe"
-                [class.text-gray-400]="!post.likedByMe" [class.hover:bg-gray-50]="!post.likedByMe">
-                <i-feather name="heart" style="width:13px;height:13px;" [attr.fill]="post.likedByMe ? 'currentColor' : 'none'"></i-feather>
-                {{ post.likes }}
+        <!-- Linked workout template -->
+        <div *ngIf="post.workoutId" class="flex items-center gap-2.5 rounded-xl border border-orange-100 bg-orange-50/60 px-3 py-2">
+            <i-feather name="zap" class="text-orange-500 shrink-0" style="width:15px;height:15px;"></i-feather>
+            <span class="text-xs font-bold text-gray-800 truncate flex-1">{{ post.workoutName || 'Workout template' }}</span>
+            <button type="button" (click)="addWorkoutFromPost(post)" [disabled]="cloningWorkoutPostId === post.id"
+                class="shrink-0 text-[11px] font-semibold text-orange-700 hover:text-orange-900 flex items-center gap-1 transition disabled:opacity-50">
+                <i-feather [name]="cloningWorkoutPostId === post.id ? 'loader' : 'plus'"
+                    [class.animate-spin]="cloningWorkoutPostId === post.id" style="width:12px;height:12px;"></i-feather>
+                Add to my workouts
             </button>
+        </div>
+
+        <div class="border-t border-gray-100 pt-2 flex items-center gap-1.5">
+            <app-reaction-button [myReaction]="post.myReaction" [count]="post.likes"
+                (react)="onReact(post, $event)" (openList)="openPostLikers(post)"></app-reaction-button>
 
             <button type="button" (click)="toggleComments(post)"
                 class="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition"
@@ -158,16 +176,22 @@
                 <i-feather name="message-circle" style="width:13px;height:13px;"></i-feather>
                 {{ post.commentCount || 0 }}
             </button>
+
+            <button type="button" (click)="saved.toggle('POST', post.id)" [attr.aria-label]="saved.isSaved('POST', post.id) ? 'Remove from saved' : 'Save'"
+                class="ml-auto p-1.5 rounded-lg transition"
+                [class.text-amber-500]="saved.isSaved('POST', post.id)"
+                [class.text-gray-300]="!saved.isSaved('POST', post.id)" [class.hover:text-gray-500]="!saved.isSaved('POST', post.id)">
+                <i-feather name="bookmark" style="width:14px;height:14px;"
+                    [attr.fill]="saved.isSaved('POST', post.id) ? 'currentColor' : 'none'"></i-feather>
+            </button>
         </div>
 
         <!-- ── COMMENTS ──────────────────────────────────────────────────── -->
         <app-post-comments [post]="post" [open]="openCommentsPostId === post.id"></app-post-comments>
     </div>
 
-    <!-- Full-screen media viewer -->
-    <app-post-media-viewer *ngIf="viewerPost && viewerPost.photoUrl"
-        [url]="viewerPost.photoUrl" [caption]="viewerPost.authorName"
-        (closed)="closeViewer()"></app-post-media-viewer>
+    <!-- Media + comments bottom sheet -->
+    <app-post-detail-sheet *ngIf="sheetPost" [post]="sheetPost" (closed)="sheetPost = null"></app-post-detail-sheet>
 
     <!-- Empty -->
     <div *ngIf="!loading && posts.length === 0" class="bg-white border border-gray-200 rounded-2xl p-14 flex flex-col items-center justify-center gap-3 text-center">

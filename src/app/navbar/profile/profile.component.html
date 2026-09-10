@@ -30,7 +30,8 @@
 
     <div class="flex items-center gap-2 cursor-pointer" (click)="toggleProfile()" (click)="stopPropagation($event)">
 
-        <img [src]="'data:image/*;base64,' + userData.profilePhoto"
+        <!-- noZoom: this avatar's job is to open the account menu (parent click), not a photo lightbox. -->
+        <img [src]="'data:image/*;base64,' + userData.profilePhoto" noZoom
             class="w-8 h-8 rounded-full object-cover object-top border border-gray-200"
             onerror="this.src='../../../assets/icons/user.png';" />
 
@@ -53,7 +54,7 @@
 
         <!-- User info -->
         <div class="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
-            <img [src]="'data:image/*;base64,' + userData.profilePhoto"
+            <img [src]="'data:image/*;base64,' + userData.profilePhoto" noZoom
                 class="w-10 h-10 rounded-full object-cover object-top border border-gray-200 shrink-0"
                 onerror="this.src='../../../assets/icons/user.png';" />
             <div class="min-w-0">
@@ -78,6 +79,12 @@
                 <i-feather name="settings" style="width:14px;height:14px;" class="text-gray-400"></i-feather>
                 Account settings
             </a>
+
+            <button (click)="openSaved()"
+                class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition text-left">
+                <i-feather name="bookmark" style="width:14px;height:14px;" class="text-gray-400"></i-feather>
+                Saved
+            </button>
 
             <a routerLink="/dashboard/partnership" (click)="closeDropdown()"
                 class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition">

@@ -1,0 +1,9 @@
+:host {
+  display: inline-flex;
+}
+
+/* keep the popover reachable without a gap that drops the hover */
+.relative > span[class*="bottom-full"] {
+  padding-bottom: 6px;
+  margin-bottom: 0;
+}

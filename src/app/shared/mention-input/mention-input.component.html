@@ -1,0 +1,26 @@
+<div class="relative">
+    <input #input type="text" [ngModel]="value" (ngModelChange)="onModel($event)"
+        (input)="onInput(input)" (keydown.enter)="onEnter(); $event.preventDefault()" (keydown.escape)="close()"
+        [placeholder]="placeholder"
+        class="w-full text-xs rounded-lg px-3 py-2 border focus:outline-none focus:ring-1 transition"
+        [ngClass]="dark
+            ? 'bg-zinc-800 border-zinc-700 text-zinc-200 placeholder-zinc-500 focus:border-sky-500 focus:ring-sky-500/30'
+            : 'bg-gray-50 border-gray-200 text-gray-700 placeholder-gray-400 focus:border-sky-400 focus:ring-sky-400/30'" />
+
+    <div *ngIf="suggestions.length > 0"
+        class="absolute z-20 top-full left-0 right-0 mt-1 rounded-lg border shadow-lg overflow-hidden"
+        [ngClass]="dark ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-gray-200'">
+        <button *ngFor="let s of suggestions; trackBy: trackById" type="button" (click)="select(s)"
+            class="w-full flex items-center gap-2 px-2.5 py-1.5 text-left transition"
+            [ngClass]="dark ? 'hover:bg-zinc-800' : 'hover:bg-gray-50'">
+            <img *ngIf="photoSrc(s) as src" [src]="src" alt="" class="w-6 h-6 rounded-full object-cover shrink-0" />
+            <div *ngIf="!photoSrc(s)" class="w-6 h-6 rounded-full bg-sky-500/10 flex items-center justify-center shrink-0">
+                <i-feather name="user" class="text-sky-500" style="width:11px;height:11px;"></i-feather>
+            </div>
+            <div class="min-w-0">
+                <p class="text-[11px] font-semibold truncate" [class.text-gray-900]="!dark" [class.text-white]="dark">{{ s.firstname }} {{ s.lastname }}</p>
+                <p class="text-[10px] text-sky-500 truncate">&#64;{{ s.username }}</p>
+            </div>
+        </button>
+    </div>
+</div>

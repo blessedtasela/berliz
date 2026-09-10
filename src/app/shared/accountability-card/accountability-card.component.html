@@ -1,0 +1,40 @@
+<div class="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-3">
+
+  <div class="flex items-center justify-between gap-2">
+    <div class="flex items-center gap-2">
+      <i-feather name="users" class="text-sky-600" style="width:15px;height:15px;"></i-feather>
+      <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Accountability</h2>
+    </div>
+    <button type="button" (click)="manage()" class="text-[11px] font-semibold text-sky-600 hover:text-sky-800 transition">
+      {{ partners.length ? 'Manage' : 'Set up' }}
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="flex items-center gap-2 text-gray-300 py-1">
+    <i-feather name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>
+    <span class="text-[11px] font-semibold">Loading…</span>
+  </div>
+
+  <p *ngIf="!loading && !partners.length" class="text-[11px] text-gray-400">
+    Pick a couple of connections to keep each other honest — they'll get a nudge from you if your streak slips, and vice versa.
+  </p>
+
+  <ng-container *ngIf="!loading && partners.length">
+    <div *ngFor="let p of partners" class="flex items-center gap-2.5">
+      <img *ngIf="p.profilePhoto" [src]="'data:image/*;base64,' + p.profilePhoto" alt="" noZoom
+        class="w-8 h-8 rounded-full object-cover object-top border border-gray-200 shrink-0" />
+      <div *ngIf="!p.profilePhoto" class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
+        <i-feather name="user" class="text-sky-500" style="width:13px;height:13px;"></i-feather>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="text-xs font-bold text-gray-900 capitalize truncate">{{ p.name }}</p>
+        <p class="text-[10px]" [class.text-amber-600]="p.lapsing" [class.text-gray-400]="!p.lapsing">{{ daysLabel(p) }}</p>
+      </div>
+      <button *ngIf="p.lapsing" type="button" (click)="nudge(p)" [disabled]="p.nudgedRecently || nudging.has(p.userId)"
+        class="shrink-0 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition disabled:opacity-50 flex items-center gap-1">
+        <i-feather [name]="nudging.has(p.userId) ? 'loader' : 'bell'" [class.animate-spin]="nudging.has(p.userId)" style="width:11px;height:11px;"></i-feather>
+        {{ p.nudgedRecently ? 'Nudged' : 'Nudge' }}
+      </button>
+    </div>
+  </ng-container>
+</div>

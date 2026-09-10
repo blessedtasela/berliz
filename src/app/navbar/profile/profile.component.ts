@@ -10,6 +10,7 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { SavedItemsModalComponent } from 'src/app/shared/saved-items-modal/saved-items-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
 import { Store } from '@ngrx/store';
 import { selectUser } from 'src/app/state/user/user.selector';
@@ -194,6 +195,11 @@ export class ProfileComponent {
 
   toggleProfile() {
     this.profileOpen = !this.profileOpen;
+  }
+
+  openSaved() {
+    this.closeDropdown();
+    this.dialog.open(SavedItemsModalComponent, { width: '460px', maxWidth: '95vw' });
   }
 
   logout() {

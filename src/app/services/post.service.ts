@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../models/Api.interface';
+import { LikerResponse } from '../models/comment.interface';
 import { PostRequest, PostResponse } from '../models/post.interface';
 
 /** Timeline/posts — mirrors `PostRest` on the backend. */
@@ -41,7 +42,17 @@ export class PostService {
     return this.httpClient.get<ApiResponse<PostResponse[]>>(this.url + '/post/feed');
   }
 
-  toggleLike(id: number): Observable<ApiResponse<PostResponse>> {
-    return this.httpClient.put<ApiResponse<PostResponse>>(this.url + `/post/like/${id}`, {});
+  /**
+   * Sets the current user's reaction on a post. `reaction` defaults to `LIKE`; sending the
+   * same reaction again clears it, a different one switches it (the total is unchanged).
+   */
+  toggleLike(id: number, reaction: string = 'LIKE'): Observable<ApiResponse<PostResponse>> {
+    return this.httpClient.put<ApiResponse<PostResponse>>(
+      this.url + `/post/like/${id}`, {}, { params: { reaction } });
+  }
+
+  /** Who liked a post, most recent first. */
+  getPostLikes(id: number): Observable<ApiResponse<LikerResponse[]>> {
+    return this.httpClient.get<ApiResponse<LikerResponse[]>>(this.url + `/post/${id}/likes`);
   }
 }

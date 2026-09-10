@@ -161,6 +161,8 @@ export interface WorkoutLogResponse {
     date: Date;
     lastUpdate: Date;
     exercises: WorkoutLogExerciseResponse[];
+    /** "You just beat this" lines — present only on the response to a fresh log. */
+    personalBests?: string[];
     message?: string;
 }
 

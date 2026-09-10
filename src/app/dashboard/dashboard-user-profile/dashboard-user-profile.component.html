@@ -133,6 +133,16 @@
                 <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ profile.bio }}</p>
             </div>
 
+            <!-- Ranks -->
+            <div *ngIf="viewedUserId" class="flex flex-col gap-2">
+                <app-ranks-card [userId]="viewedUserId" [refreshKey]="rankRefreshKey"></app-ranks-card>
+                <button *ngIf="canAwardRank" type="button" (click)="openAwardRank()"
+                    class="self-start flex items-center gap-1.5 text-[11px] font-semibold text-sky-600 hover:text-sky-800 transition">
+                    <i-feather name="award" style="width:12px;height:12px;"></i-feather>
+                    Award a rank
+                </button>
+            </div>
+
             <!-- ── TIMELINE ──────────────────────────────────────────── -->
             <div class="flex flex-col gap-3">
                 <div class="flex items-center justify-between gap-2">
@@ -162,23 +172,17 @@
 
                     <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ post.content }}</p>
 
-                    <button *ngIf="post.photoUrl | strapiUrl as src" type="button" (click)="lightbox.open(src)"
-                        class="relative w-full max-h-96 overflow-hidden rounded-xl border border-gray-100 group cursor-zoom-in">
+                    <button *ngIf="post.photoUrl | strapiUrl as src" type="button" (click)="openPostSheet(post)"
+                        class="relative w-full max-h-96 overflow-hidden rounded-xl border border-gray-100 group">
                         <img [src]="src" alt="" class="w-full max-h-96 object-cover" />
                         <span class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition flex items-center justify-center">
-                            <i-feather name="maximize-2" style="width:20px;height:20px;"
-                                class="text-white opacity-0 group-hover:opacity-100 transition drop-shadow"></i-feather>
+                            <span class="text-[11px] font-bold text-white bg-black/50 px-2.5 py-1 rounded-full opacity-0 group-hover:opacity-100 transition">View</span>
                         </span>
                     </button>
 
                     <div class="border-t border-gray-100 pt-2 flex items-center gap-1.5">
-                        <button type="button" (click)="toggleLike(post)"
-                            class="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition"
-                            [class.text-red-600]="post.likedByMe" [class.bg-red-50]="post.likedByMe"
-                            [class.text-gray-400]="!post.likedByMe" [class.hover:bg-gray-50]="!post.likedByMe">
-                            <i-feather name="heart" style="width:13px;height:13px;" [attr.fill]="post.likedByMe ? 'currentColor' : 'none'"></i-feather>
-                            {{ post.likes }}
-                        </button>
+                        <app-reaction-button [myReaction]="post.myReaction" [count]="post.likes"
+                            (react)="onReact(post, $event)" (openList)="openPostLikers(post)"></app-reaction-button>
 
                         <button type="button" (click)="toggleComments(post)"
                             class="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition"
@@ -187,10 +191,21 @@
                             <i-feather name="message-circle" style="width:13px;height:13px;"></i-feather>
                             {{ post.commentCount || 0 }}
                         </button>
+
+                        <button type="button" (click)="saved.toggle('POST', post.id)"
+                            class="ml-auto p-1.5 rounded-lg transition"
+                            [class.text-amber-500]="saved.isSaved('POST', post.id)"
+                            [class.text-gray-300]="!saved.isSaved('POST', post.id)" [class.hover:text-gray-500]="!saved.isSaved('POST', post.id)">
+                            <i-feather name="bookmark" style="width:14px;height:14px;"
+                                [attr.fill]="saved.isSaved('POST', post.id) ? 'currentColor' : 'none'"></i-feather>
+                        </button>
                     </div>
 
                     <app-post-comments [post]="post" [open]="openCommentsPostId === post.id"></app-post-comments>
                 </div>
+
+                <app-post-detail-sheet *ngIf="sheetPost" [post]="sheetPost"
+                    profileRoutePrefix="/dashboard/user" (closed)="sheetPost = null"></app-post-detail-sheet>
 
                 <!-- Empty -->
                 <div *ngIf="!postsLoading && posts.length === 0" class="bg-white border border-gray-200 rounded-2xl p-10
