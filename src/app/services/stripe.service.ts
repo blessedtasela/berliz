@@ -21,4 +21,12 @@ export class StripeService {
       request
     );
   }
+
+  /** Admin-only — full Stripe refund of a payment. */
+  refundPayment(paymentId: number): Observable<ApiResponse<{ id?: number; message?: string }>> {
+    return this.httpClient.post<ApiResponse<{ id?: number; message?: string }>>(
+      this.url + `/payment/stripe/refund/${paymentId}`,
+      null
+    );
+  }
 }

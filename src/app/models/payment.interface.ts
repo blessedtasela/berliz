@@ -18,5 +18,9 @@ export interface Payments {
   date: Date;
   lastUpdate: Date;
 
+  /** Set once this Stripe payment has been refunded. */
+  stripeRefundId?: string | null;
+  refundedAt?: Date | null;
+
   message?: string;
 }
