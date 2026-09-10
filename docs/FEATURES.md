@@ -72,6 +72,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Muscle-group taxonomy | ✅ | |
 | Fitness achievements | ✅ | `FitnessAchievement` |
 | Peer sessions (propose / schedule training with a connection) | ✅ | "My Sessions" |
+| "Your time in Berliz" recap | ✅ | Dashboard card + modal (30d / 90d / year / all-time) — active days, sessions, km, best streak, PRs, rank moves, top partners; one-tap "Share as post". Always free. `GET /recap/me` |
 | Verified activity | ✅ | A connected trainer/center confirms a logged workout/run; a "Verified" tick shows on the history list. `POST/DELETE /workoutLog/{id}/verify`, `/run/log/{id}/verify` |
 
 ## 5. Discovery & marketplace
@@ -116,7 +117,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | # | Feature | 📋 | Backend? |
 |---|---|---|---|
 | D1 | Training streaks + weekly consistency ring (dashboard) | ✅ | ✚ |
-| D2 | "Year/Season in Berliz" recap — auto-generated, shareable, **permanently free** | 📋 | ✚ |
+| D2 | "Year/Season in Berliz" recap — auto-generated, shareable, **permanently free** | ✅ | ✚ |
 | D3 | Belt / rank progression tracker (per discipline; trainer/center promotes; milestone post) | ✅ | ✚ |
 | D4 | Accountability partners + "nudge when a streak slips" | ✅ | ✚ |
 | D5 | Multi-reactions (👍💪🔥👏❤️) on posts & comments | ✅ | ✚ |
@@ -151,6 +152,15 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **D2 — "Your time in Berliz" recap.** `GET /recap/me?period=month|quarter|year|all` —
+  recomputed on read from the user's own logs, never gated: active days, workout/run counts,
+  total minutes + km, longest in-window streak, personal-best lines, rank moves, top training
+  partners (workout-log collaborators + confirmed peer sessions), new connections, a headline
+  and a ready-to-post `shareText`. FE: `RecapCardComponent` on the dashboard (trailing-year
+  teaser) opens `RecapModalComponent` with a 30d / 90d / year / all-time switcher and a
+  one-tap "Share as post" that drops the summary onto the timeline as a `MILESTONE`. Backend
+  on `com.berliz@f0b893e`.
 
 - **D10 — Transparent pricing + Book CTA everywhere.** Provider pages already show the full
   monthly rate per mode; added a "no 'from', no hidden fees" line to the trainer pricing card
