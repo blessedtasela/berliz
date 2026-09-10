@@ -26,6 +26,7 @@ import {
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { genericError } from 'src/validators/form-validators.module';
 import { ProposeSessionModalComponent } from 'src/app/peer-sessions/propose-session-modal/propose-session-modal.component';
 
@@ -182,12 +183,15 @@ export class ConnectionsMainComponent implements OnInit, OnDestroy {
     return `${member.firstname ?? ''} ${member.lastname ?? ''}`.trim();
   }
 
+  private readonly _memberUri = memoizePhotoUriByKey();
+  private readonly _connUri = memoizePhotoUriByKey();
+
   photoSrc(member: PublicDirectoryEntry): string {
-    return member.profilePhoto ? 'data:image/*;base64,' + member.profilePhoto : 'assets/avatar.png';
+    return this._memberUri(member.id, member.profilePhoto) ?? 'assets/avatar.png';
   }
 
   /** Incoming/Sent/Connections rows only ever rendered a static icon -- ConnectionResponse had no photo field until now. */
   connectionPhotoSrc(c: Connection): string | null {
-    return c.otherUserPhoto ? 'data:image/*;base64,' + c.otherUserPhoto : null;
+    return this._connUri(c.otherUserId, c.otherUserPhoto);
   }
 }

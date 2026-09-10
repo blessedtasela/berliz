@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -69,10 +69,19 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
   // bubble/panel can lift out of the way once that button appears in the same corner.
   raised = false;
 
-  @HostListener('window:scroll', [])
-  onWindowScroll(): void {
-    this.raised = window.scrollY > 2000;
-  }
+  /** Scroll handler kept OUTSIDE Angular's zone -- this component is mounted at
+   *  the app root, so an in-zone window:scroll listener ran a full app-wide
+   *  change-detection pass on every scroll event. We only re-enter the zone on
+   *  the rare frame `raised` actually flips. */
+  private onScroll = (): void => {
+    const raised = window.scrollY > 2000;
+    if (raised !== this.raised) {
+      this.zone.run(() => {
+        this.raised = raised;
+        this.cdr.markForCheck();
+      });
+    }
+  };
 
   conversations: ConversationSummary[] = [];
   unreadCount = 0;
@@ -96,9 +105,14 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
     private router: Router,
     private snackBar: SnackBarService,
     private dialog: MatDialog,
+    private zone: NgZone,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
+    this.zone.runOutsideAngular(() =>
+      window.addEventListener('scroll', this.onScroll, { passive: true }));
+
     this.store.dispatch(MessageActions.loadConversations());
     this.store.dispatch(loadMyTrainers());
     this.store.dispatch(loadMyConnections());
@@ -129,6 +143,7 @@ export class MessagePopupComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    window.removeEventListener('scroll', this.onScroll);
     this.destroy$.next();
     this.destroy$.complete();
     this.subscriptions.forEach(s => s.unsubscribe());

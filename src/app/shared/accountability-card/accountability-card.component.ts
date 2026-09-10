@@ -8,6 +8,7 @@ import { PartnerStatusResponse } from 'src/app/models/accountability.interface';
 import { AccountabilityService } from 'src/app/services/accountability.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { ManagePartnersModalComponent } from './manage-partners-modal.component';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 /**
  * Dashboard card: your accountability partners and, for any who've gone quiet,
@@ -24,6 +25,11 @@ export class AccountabilityCardComponent implements OnInit {
   partners: PartnerStatusResponse[] = [];
   loading = true;
   nudging = new Set<number>();
+
+  private readonly _rowUri = memoizePhotoUriByKey();
+  photoSrc(p: PartnerStatusResponse): string | null {
+    return this._rowUri(p.userId, p.profilePhoto);
+  }
 
   constructor(
     private accountability: AccountabilityService,

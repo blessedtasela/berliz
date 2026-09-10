@@ -5,6 +5,7 @@ import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rx
 import { Trainers } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
   selector: 'app-trainers-list',
@@ -17,6 +18,12 @@ export class TrainersListComponent {
   @Input()filteredTrainersData: Trainers[] = [];
   @Input()counter: number = 0;
   @Input()totalTrainers: number = 0;
+
+  private readonly _rowUri = memoizePhotoUriByKey();
+  /** Stable data-URI per trainer id -- don't concat `'data:' + photo` in the template (re-decodes every CD). */
+  photoSrc(trainer: Trainers): string | null {
+    return this._rowUri(trainer.id, trainer.photoResponse as unknown as string);
+  }
 
   constructor(private datePipe: DatePipe,
     private trainerService: TrainerService,

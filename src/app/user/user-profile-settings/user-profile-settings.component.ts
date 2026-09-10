@@ -40,6 +40,7 @@ import { NavbarStyleService, NavbarStyle } from 'src/app/services/navbar-style.s
 import { WhatsNewService } from 'src/app/services/whats-new.service';
 import { WebAuthnService } from 'src/app/services/webauthn.service';
 import { WebAuthnCredentialResponse } from 'src/app/models/webauthn.interface';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
   selector: 'app-user-profile-settings',
@@ -86,6 +87,11 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
 
   // ── Blocked users ────────────────────────────────────────────────────────
   blockedUsers: BlockedUser[] = [];
+
+  private readonly _blockedUri = memoizePhotoUriByKey();
+  blockedPhotoSrc(b: BlockedUser): string | null {
+    return this._blockedUri(b.blockedUserId, b.blockedUserPhoto);
+  }
   loadingBlockedUsers = false;
 
   private destroy$ = new Subject<void>();

@@ -23,6 +23,7 @@ import {
   sendConnectionRequest,
 } from 'src/app/state/connection/connection.actions';
 import { selectConnectionError, selectMyConnections, selectPendingRequests } from 'src/app/state/connection/connection.selectors';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
 
@@ -179,8 +180,10 @@ export class DashboardMembersComponent implements OnInit, OnDestroy {
     return `${member.firstname ?? ''} ${member.lastname ?? ''}`.trim();
   }
 
+  private readonly _rowUri = memoizePhotoUriByKey();
+
   photoSrc(member: PublicDirectoryEntry): string {
-    return member.profilePhoto ? 'data:image/*;base64,' + member.profilePhoto : 'assets/avatar.png';
+    return this._rowUri(member.id, member.profilePhoto) ?? 'assets/avatar.png';
   }
 
   location(member: PublicDirectoryEntry): string | null {

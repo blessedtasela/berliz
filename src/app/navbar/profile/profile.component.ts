@@ -14,6 +14,7 @@ import { SavedItemsModalComponent } from 'src/app/shared/saved-items-modal/saved
 import { genericError } from 'src/validators/form-validators.module';
 import { Store } from '@ngrx/store';
 import { selectUser } from 'src/app/state/user/user.selector';
+import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
   selector: 'app-profile',
@@ -30,6 +31,12 @@ export class ProfileComponent {
   imageChangedEvent: any = '';
   croppedImage: any = '';
   showCropper: boolean = false;
+
+  private readonly _uri = memoizePhotoUri();
+  /** Stable data-URI for the avatar — never build `'data:' + photo` in the template (re-decodes every CD). */
+  get photoSrc(): string | null {
+    return this._uri(this.userData?.profilePhoto);
+  }
 
   constructor(
     private userService: UserService,
