@@ -85,4 +85,16 @@ export class RunService {
   getMyRunLogs() {
     return this.httpClient.get<ApiResponse<RunLogResponse[]>>(`${this.url}/run/log/getMine`);
   }
+
+  /** Another user's runs — allowed for an accepted connection (or admin). */
+  getUserRunLogs(userId: number) {
+    return this.httpClient.get<ApiResponse<RunLogResponse[]>>(`${this.url}/run/log/user/${userId}`);
+  }
+
+  /** D9 — a connected trainer/center confirms (or retracts) a run. */
+  verifyRunLog(id: number, verified: boolean) {
+    return verified
+      ? this.httpClient.post<ApiResponse<RunLogResponse>>(`${this.url}/run/log/${id}/verify`, {})
+      : this.httpClient.delete<ApiResponse<RunLogResponse>>(`${this.url}/run/log/${id}/verify`);
+  }
 }

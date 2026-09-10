@@ -62,6 +62,13 @@ export interface RunLogResponse {
 
     date: Date;
     lastUpdate: Date;
+
+    /** D9 — a connected trainer/center confirmed this run. */
+    verified?: boolean;
+    verifiedById?: number | null;
+    verifiedByName?: string | null;
+    verifiedAt?: string | Date | null;
+
     /** "You just beat this" lines — present only on the response to a fresh log. */
     personalBests?: string[];
     message?: string;

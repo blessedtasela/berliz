@@ -143,6 +143,45 @@
                 </button>
             </div>
 
+            <!-- D9 — verify client activity (trainer / center viewing a connected member) -->
+            <div *ngIf="canVerifyActivity && (clientActivityLoading || hasClientActivity)"
+                class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
+                <div class="flex items-center gap-2">
+                    <i-feather name="check-circle" class="text-emerald-600" style="width:14px;height:14px;"></i-feather>
+                    <span class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Verify activity</span>
+                </div>
+                <p class="text-[11px] text-gray-500 -mt-1">Confirm sessions you coached or witnessed. Verified activity carries a badge across {{ fullName || 'their' }} feed and leaderboards.</p>
+
+                <div *ngIf="clientActivityLoading" class="py-4 flex items-center justify-center">
+                    <div class="w-5 h-5 rounded-full border-2 border-gray-200 border-t-emerald-600 animate-spin"></div>
+                </div>
+
+                <ng-container *ngIf="!clientActivityLoading">
+                    <div *ngFor="let w of clientWorkoutLogs" class="flex items-center justify-between gap-3 py-1.5 border-b border-gray-50 last:border-0">
+                        <div class="min-w-0">
+                            <p class="text-[11px] font-bold text-gray-800 truncate">{{ w.title || w.workoutName || 'Workout' }}</p>
+                            <p class="text-[10px] text-gray-400">{{ w.logDate | date:'MMM d, y' }}</p>
+                        </div>
+                        <button type="button" (click)="toggleVerifyWorkout(w)" [disabled]="verifyingKey === 'w:' + w.id"
+                            class="shrink-0 text-[10px] font-semibold px-2.5 py-1 rounded-lg transition disabled:opacity-50"
+                            [ngClass]="w.verified ? 'bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+                            {{ w.verified ? '✓ Verified' : 'Verify' }}
+                        </button>
+                    </div>
+                    <div *ngFor="let r of clientRunLogs" class="flex items-center justify-between gap-3 py-1.5 border-b border-gray-50 last:border-0">
+                        <div class="min-w-0">
+                            <p class="text-[11px] font-bold text-gray-800 truncate">{{ r.title || r.runEventTitle || 'Run' }}</p>
+                            <p class="text-[10px] text-gray-400">{{ r.ranAt | date:'MMM d, y' }}</p>
+                        </div>
+                        <button type="button" (click)="toggleVerifyRun(r)" [disabled]="verifyingKey === 'r:' + r.id"
+                            class="shrink-0 text-[10px] font-semibold px-2.5 py-1 rounded-lg transition disabled:opacity-50"
+                            [ngClass]="r.verified ? 'bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+                            {{ r.verified ? '✓ Verified' : 'Verify' }}
+                        </button>
+                    </div>
+                </ng-container>
+            </div>
+
             <!-- ── TIMELINE ──────────────────────────────────────────── -->
             <div class="flex flex-col gap-3">
                 <div class="flex items-center justify-between gap-2">

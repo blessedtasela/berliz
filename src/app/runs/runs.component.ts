@@ -13,6 +13,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { WhatsNewService } from 'src/app/services/whats-new.service';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { VerifiedBadgeComponent } from 'src/app/shared/verified-badge/verified-badge.component';
 import { selectUser } from 'src/app/state/user/user.selector';
 
 import { CreateRunModalComponent } from './create-run-modal/create-run-modal.component';
@@ -43,7 +44,7 @@ interface RunStats {
 @Component({
   selector: 'app-runs',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, IconsModule, SharedModule],
+  imports: [CommonModule, FormsModule, MatDialogModule, IconsModule, SharedModule, VerifiedBadgeComponent],
   templateUrl: './runs.component.html',
 })
 export class RunsComponent implements OnInit {

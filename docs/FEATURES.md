@@ -72,6 +72,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Muscle-group taxonomy | ✅ | |
 | Fitness achievements | ✅ | `FitnessAchievement` |
 | Peer sessions (propose / schedule training with a connection) | ✅ | "My Sessions" |
+| Verified activity | ✅ | A connected trainer/center confirms a logged workout/run; a "Verified" tick shows on the history list. `POST/DELETE /workoutLog/{id}/verify`, `/run/log/{id}/verify` |
 
 ## 5. Discovery & marketplace
 
@@ -121,7 +122,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D6 | Friend-scoped segments & leaderboards for runs and classes | 📋 | ✚ |
 | D7 | Challenges — open / connections-only, progress board + completion badge | ✅ | ✚ |
 | D8 | PR detection → one-tap MILESTONE post | ✅ | ✚ |
-| D9 | Verified activity badge (wearable-imported or trainer-confirmed) | 📋 | ✚ |
+| D9 | Verified activity badge (wearable-imported or trainer-confirmed) | ✅ | ✚ |
 | D10 | Transparent trainer/center pricing + book CTA on every relevant surface | 📋 | — |
 | D11 | Pre-renewal reminder + ≤2-tap cancel | 📋 | ✚ |
 | D12 | Value-first onboarding (one real action before any paywall) | 📋 | — |
@@ -149,6 +150,18 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **D9 — Verified activity badge.** A logged workout or run can be confirmed by a trainer
+  or center the athlete is an accepted connection of. `verified` / `verified_by_fk` /
+  `verified_at` on `workout_log` + `run_log` (V39), surfaced on `WorkoutLogResponse` /
+  `RunLogResponse`. `POST/DELETE /workoutLog/{id}/verify` and `/run/log/{id}/verify`
+  (trainer/center + connected + not self; verifying notifies the owner via
+  `/topic/activityVerified`). `GET /workoutLog/getUserLogs/{userId}` +
+  `GET /run/log/user/{userId}` let a connection list another user's own logs. FE: a shared
+  `VerifiedBadgeComponent` tick on the workout-history and runs-history lists; a "Verify
+  activity" card on `dashboard-user-profile` (trainer/center viewing a connected member)
+  listing recent sessions with a one-tap Verify / ✓ Verified toggle. Backend on
+  `com.berliz@419664c`.
 
 - **D7 — Challenges.** `challenge` + `challenge_participant` (V38). A challenge has a metric
   (SESSIONS / DISTANCE_KM / ACTIVE_DAYS) + goal over a date window and a scope (OPEN /

@@ -10,6 +10,7 @@ import { WorkoutService } from 'src/app/services/workout.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { VerifiedBadgeComponent } from 'src/app/shared/verified-badge/verified-badge.component';
 
 import { AuthService } from 'src/app/services/auth.service';
 import { WhatsNewService } from 'src/app/services/whats-new.service';
@@ -43,7 +44,7 @@ const KG_TO_LBS = 2.20462;
 @Component({
   selector: 'app-workout-history',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatDialogModule, IconsModule, SharedModule],
+  imports: [CommonModule, RouterModule, MatDialogModule, IconsModule, SharedModule, VerifiedBadgeComponent],
   templateUrl: './workout-history.component.html',
 })
 export class WorkoutHistoryComponent implements OnInit {

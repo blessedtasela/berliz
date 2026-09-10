@@ -119,4 +119,16 @@ export class WorkoutService {
   unshareWorkoutLog(id: number, userId: number) {
     return this.httpClient.delete<ApiResponse<WorkoutLogResponse>>(`${this.url}/workoutLog/${id}/share/${userId}`);
   }
+
+  /** Another user's own sessions — allowed for an accepted connection (or admin). */
+  getUserWorkoutLogs(userId: number) {
+    return this.httpClient.get<ApiResponse<WorkoutLogResponse[]>>(`${this.url}/workoutLog/getUserLogs/${userId}`);
+  }
+
+  /** D9 — a connected trainer/center confirms (or retracts) a session. */
+  verifyWorkoutLog(id: number, verified: boolean) {
+    return verified
+      ? this.httpClient.post<ApiResponse<WorkoutLogResponse>>(`${this.url}/workoutLog/${id}/verify`, {})
+      : this.httpClient.delete<ApiResponse<WorkoutLogResponse>>(`${this.url}/workoutLog/${id}/verify`);
+  }
 }

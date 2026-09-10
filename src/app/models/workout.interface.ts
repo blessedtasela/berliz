@@ -160,6 +160,13 @@ export interface WorkoutLogResponse {
     collaborators: WorkoutLogCollaboratorResponse[];
     date: Date;
     lastUpdate: Date;
+
+    /** D9 — a connected trainer/center confirmed this session. */
+    verified?: boolean;
+    verifiedById?: number | null;
+    verifiedByName?: string | null;
+    verifiedAt?: string | Date | null;
+
     exercises: WorkoutLogExerciseResponse[];
     /** "You just beat this" lines — present only on the response to a fresh log. */
     personalBests?: string[];
