@@ -18,6 +18,7 @@ import { MuscleGroupDetailsModalComponent } from '../../muscle-groups/muscle-gro
 import { UpdateMuscleGroupModalComponent } from '../../muscle-groups/update-muscle-group-modal/update-muscle-group-modal.component';
 import { UpdateExercisesModalComponent } from '../update-exercises-modal/update-exercises-modal.component';
 import { ExercisesDetailsModalComponent } from '../exercises-details-modal/exercises-details-modal.component';
+import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
   selector: 'app-exercises-list',
@@ -34,6 +35,13 @@ export class ExercisesListComponent implements OnDestroy {
   private subscriptions: Subscription[] = [];
 
   uploadingVideoFor: number | null = null;
+
+  private _demoUri = memoizeMediaUriByKey('image/jpeg');
+
+  /** Stable data-URI for an exercise's base64 still-image demo. */
+  demoSrc(exercise: Exercises): string | null {
+    return this._demoUri(exercise.id, exercise.demo);
+  }
 
   constructor(private datePipe: DatePipe,
     private exerciseService: ExerciseService,

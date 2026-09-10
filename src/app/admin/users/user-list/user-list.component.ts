@@ -16,6 +16,7 @@ import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { UpdateEmailModalComponent } from 'src/app/shared/update-email-modal/update-email-modal.component';
 import { Store } from '@ngrx/store';
 import { selectUsers } from 'src/app/state/user/user.selector';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
   selector: 'app-user-list',
@@ -37,6 +38,13 @@ export class UserListComponent {
   photoPreviewTop = 0;
   photoPreviewLeft = 0;
   private photoPreviewCloseTimer: ReturnType<typeof setTimeout> | undefined;
+
+  private _photoUri = memoizePhotoUriByKey();
+
+  /** Stable data-URI for a user's base64 profile photo. */
+  photoSrc(user: Users): string | null {
+    return this._photoUri(user.id, user.profilePhoto);
+  }
 
   constructor(private store: Store,
     private userService: UserService,

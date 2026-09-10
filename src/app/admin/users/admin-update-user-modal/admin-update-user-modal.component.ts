@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Inject } from '@angular/core';
+import { memoizePhotoUri, memoizeMediaUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -20,6 +21,9 @@ export class AdminUpdateUserModalComponent {
   countries: any[] = [];
   responseMessage: any;
   userData: any;
+  private _photoUri = memoizePhotoUri();
+  /** Stable data-URI for the user's base64 profile photo. */
+  get photoSrc(): string | null { return this._photoUri(this.userData?.profilePhoto); }
 
   constructor(private fb: FormBuilder,
     private userService: UserService,

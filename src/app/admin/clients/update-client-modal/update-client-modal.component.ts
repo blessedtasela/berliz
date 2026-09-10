@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter, Inject } from '@angular/core';
+import { memoizePhotoUri, memoizeMediaUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl, FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -27,6 +28,9 @@ export class UpdateClientModalComponent {
   categories: Categories[] = [];
   client!: Clients;
   selectedCategoriesId: any;
+  private _photoUri = memoizePhotoUri();
+  /** Stable data-URI for the client's base64 profile photo. */
+  get photoSrc(): string | null { return this._photoUri(this.client?.user?.profilePhoto); }
   subscriptions: Subscription[] = [];
 
   constructor(private formBuilder: FormBuilder,

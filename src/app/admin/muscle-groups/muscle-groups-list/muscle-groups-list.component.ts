@@ -15,6 +15,7 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
 import { genericError } from 'src/validators/form-validators.module';
 import { UpdateMuscleGroupModalComponent } from '../update-muscle-group-modal/update-muscle-group-modal.component';
 import { MuscleGroupDetailsModalComponent } from '../muscle-group-details-modal/muscle-group-details-modal.component';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
   selector: 'app-muscle-groups-list',
@@ -29,6 +30,12 @@ export class MuscleGroupsListComponent implements OnDestroy {
   selectedImage: any;
 
   private subscriptions: Subscription[] = [];
+  private _imgUri = memoizePhotoUriByKey();
+
+  /** Stable data-URI for a muscle group's base64 image. */
+  imageSrc(mg: MuscleGroups): string | null {
+    return this._imgUri(mg.id, mg.image);
+  }
 
   constructor(private datePipe: DatePipe,
     private muscleGroupService: MuscleGroupService,

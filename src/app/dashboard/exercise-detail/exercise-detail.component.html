@@ -26,7 +26,7 @@
         <!-- Video (real demo) or still image fallback -->
         <video *ngIf="exercise.video?.videoUrl" [src]="exercise.video!.videoUrl | strapiUrl" controls
             class="w-full rounded-2xl border border-gray-200 bg-black"></video>
-        <img *ngIf="!exercise.video?.videoUrl && exercise.demo" [src]="'data:image/jpeg;base64,' + exercise.demo" appZoom
+        <img *ngIf="!exercise.video?.videoUrl && exercise.demo" [src]="demoSrc" appZoom
             class="w-full h-52 object-cover rounded-2xl border border-gray-200 bg-gray-50" />
 
         <div class="rounded-2xl border border-gray-200 bg-white p-6 flex flex-col gap-5">

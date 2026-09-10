@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { memoizePhotoUri, memoizeMediaUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { Component, EventEmitter, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Clients } from 'src/app/models/clients.interface';
@@ -11,6 +12,9 @@ import { CategoryDetailsModalComponent } from '../../categories/category-details
 })
 export class ClientsDetailsModalComponent {
   clientData!: Clients;
+  private _photoUri = memoizePhotoUri();
+  /** Stable data-URI for the client's base64 profile photo. */
+  get photoSrc(): string | null { return this._photoUri(this.clientData?.user?.profilePhoto); }
   responseMessage: any;
   onRejectApplicationEmit = new EventEmitter();
 

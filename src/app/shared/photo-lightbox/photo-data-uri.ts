@@ -76,3 +76,54 @@ export function memoizePhotoUriByKey(): (key: string | number, base64: string | 
     return val;
   };
 }
+
+/**
+ * Build a data URI with an explicit media type — for payloads whose type the
+ * caller already knows (e.g. an exercise demo clip is always `video/mp4`), so
+ * no byte-sniffing is needed. Pass-through for values that are already a URI.
+ */
+export function mediaDataUri(base64: string | null | undefined, mime: string): string | null {
+  if (!base64 || typeof base64 !== 'string') return null;
+  if (/^(data:|https?:|blob:)/i.test(base64)) return base64;
+  return `data:${mime};base64,${base64}`;
+}
+
+/**
+ * Memoized `mediaDataUri` for a single explicit-MIME payload — same
+ * stable-reference contract as {@link memoizePhotoUri}, so a template can bind
+ * to it without rebuilding a multi-MB string (and forcing the browser to
+ * re-decode a video) on every change-detection pass.
+ *
+ *   private _demo = memoizeMediaUri('video/mp4');
+ *   get demoSrc() { return this._demo(this.exercise.demo); }
+ */
+export function memoizeMediaUri(mime: string): (base64: string | null | undefined) => string | null {
+  const UNSET = Symbol('unset');
+  let lastKey: unknown = UNSET;
+  let lastVal: string | null = null;
+  return (base64) => {
+    if (base64 !== lastKey) {
+      lastKey = base64;
+      lastVal = mediaDataUri(base64 ?? null, mime);
+    }
+    return lastVal;
+  };
+}
+
+/**
+ * Per-row `memoizeMediaUri` for explicit-MIME payloads rendered inside `*ngFor`
+ * (exercise demo grids, etc.). Keyed by a stable id.
+ *
+ *   private _demoRow = memoizeMediaUriByKey('video/mp4');
+ *   demoSrc(e: Exercise) { return this._demoRow(e.id, e.demo); }
+ */
+export function memoizeMediaUriByKey(mime: string): (key: string | number, base64: string | null | undefined) => string | null {
+  const cache = new Map<string | number, { key: unknown; val: string | null }>();
+  return (id, base64) => {
+    const hit = cache.get(id);
+    if (hit && hit.key === base64) return hit.val;
+    const val = mediaDataUri(base64 ?? null, mime);
+    cache.set(id, { key: base64, val });
+    return val;
+  };
+}
