@@ -133,6 +133,16 @@
                 <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ profile.bio }}</p>
             </div>
 
+            <!-- Ranks -->
+            <div *ngIf="viewedUserId" class="flex flex-col gap-2">
+                <app-ranks-card [userId]="viewedUserId" [refreshKey]="rankRefreshKey"></app-ranks-card>
+                <button *ngIf="canAwardRank" type="button" (click)="openAwardRank()"
+                    class="self-start flex items-center gap-1.5 text-[11px] font-semibold text-sky-600 hover:text-sky-800 transition">
+                    <i-feather name="award" style="width:12px;height:12px;"></i-feather>
+                    Award a rank
+                </button>
+            </div>
+
             <!-- ── TIMELINE ──────────────────────────────────────────── -->
             <div class="flex flex-col gap-3">
                 <div class="flex items-center justify-between gap-2">

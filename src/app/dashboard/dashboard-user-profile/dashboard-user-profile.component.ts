@@ -12,6 +12,8 @@ import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.c
 import { ReactionButtonComponent } from 'src/app/shared/reaction-button/reaction-button.component';
 import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-detail-sheet.component';
 import { SavedService } from 'src/app/services/saved.service';
+import { RanksCardComponent } from 'src/app/shared/ranks-card/ranks-card.component';
+import { AwardRankModalComponent } from 'src/app/shared/ranks-card/award-rank-modal.component';
 import { Connection } from 'src/app/models/connection.model';
 import { PostResponse, ReactionType } from 'src/app/models/post.interface';
 import { PublicUserProfile } from 'src/app/models/users.interface';
@@ -53,7 +55,7 @@ type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
 @Component({
   selector: 'app-dashboard-user-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent],
+  imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, RanksCardComponent],
   templateUrl: './dashboard-user-profile.component.html'
 })
 export class DashboardUserProfileComponent implements OnInit, OnDestroy {
@@ -188,6 +190,30 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
 
   get isSelf(): boolean {
     return this.currentUserId != null && this.userId === this.currentUserId;
+  }
+
+  /** Id of the profile being viewed (for the ranks card). */
+  get viewedUserId(): number | null {
+    return this.userId;
+  }
+
+  /** A trainer / center viewing someone else can award them a rank. */
+  get canAwardRank(): boolean {
+    const role = this.authService.getCurrentUserRole();
+    return !this.isSelf && this.userId != null && (role === 'trainer' || role === 'center');
+  }
+
+  rankRefreshKey = 0;
+
+  openAwardRank(): void {
+    if (!this.userId) return;
+    this.dialog.open(AwardRankModalComponent, {
+      width: '360px',
+      maxWidth: '95vw',
+      data: { userId: this.userId, userName: this.fullName || 'this member' },
+    }).afterClosed().subscribe(awarded => {
+      if (awarded) this.rankRefreshKey = Date.now();
+    });
   }
 
   get fullName(): string {

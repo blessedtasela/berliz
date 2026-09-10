@@ -115,7 +115,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 |---|---|---|---|
 | D1 | Training streaks + weekly consistency ring (dashboard) | ✅ | ✚ |
 | D2 | "Year/Season in Berliz" recap — auto-generated, shareable, **permanently free** | 📋 | ✚ |
-| D3 | Belt / rank progression tracker (per discipline; trainer/center promotes; milestone post) | 📋 | ✚ |
+| D3 | Belt / rank progression tracker (per discipline; trainer/center promotes; milestone post) | ✅ | ✚ |
 | D4 | Accountability partners + "nudge when a streak slips" | 📋 | ✚ |
 | D5 | Multi-reactions (👍💪🔥👏❤️) on posts & comments | ✅ | ✚ |
 | D6 | Friend-scoped segments & leaderboards for runs and classes | 📋 | ✚ |
@@ -149,6 +149,14 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **D3 — Belt / rank progression tracker.** `rank_award(user, discipline, rank, note,
+  awarded_by, awarded_at)` (V36). `POST /rank/award` (trainer / center only) records the
+  promotion, notifies the member, and drops a `MILESTONE` post on their timeline;
+  `GET /rank/user/{id}` / `/rank/me` return disciplines with current rank + since + history.
+  FE: `RanksCardComponent` (🥋, current rank per discipline, expandable history) on the
+  dashboard and public profiles; an "Award a rank" button + `AwardRankModalComponent` for a
+  trainer/center viewing a member. Backend on `com.berliz@c77a371`.
 
 - **D15 — Bookmarks.** `saved_item(user, type, id)` (V35) + `SavedService` FE state holding
   a `"POST:12"` set: `POST /saved`, `DELETE /saved/{type}/{id}`, `GET /saved/refs`

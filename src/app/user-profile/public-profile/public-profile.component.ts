@@ -21,6 +21,7 @@ import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.c
 import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-detail-sheet.component';
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { SavedService } from 'src/app/services/saved.service';
+import { RanksCardComponent } from 'src/app/shared/ranks-card/ranks-card.component';
 
 import {
   clearPublicProfile,
@@ -52,7 +53,7 @@ import {
 @Component({
   selector: 'app-public-profile',
   standalone: true,
-  imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, MatDialogModule, StrapiUrlPipe, PostCommentsComponent, PostDetailSheetComponent],
+  imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, MatDialogModule, StrapiUrlPipe, PostCommentsComponent, PostDetailSheetComponent, RanksCardComponent],
   templateUrl: './public-profile.component.html'
 })
 export class PublicProfileComponent implements OnInit, OnDestroy {
