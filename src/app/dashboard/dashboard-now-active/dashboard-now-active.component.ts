@@ -9,6 +9,7 @@ import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { selectUsers } from 'src/app/state/user/user.selector';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
   selector: 'app-dashboard-now-active',
@@ -29,10 +30,10 @@ export class DashboardNowActiveComponent {
     private router: Router,
     private rxStompService: RxStompService) { }
 
+  private readonly _rowUri = memoizePhotoUriByKey();
+
   photoSrc(user: Users): string {
-    return user.profilePhoto
-      ? 'data:image/*;base64,' + user.profilePhoto
-      : '../../../assets/icons/user.png';
+    return this._rowUri(user.id, user.profilePhoto) ?? '../../../assets/icons/user.png';
   }
 
   goToProfile(user: Users): void {

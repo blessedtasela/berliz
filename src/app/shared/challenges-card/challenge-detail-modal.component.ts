@@ -6,8 +6,9 @@ import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { IconsModule } from 'src/app/icons/icons.module';
-import { CHALLENGE_METRICS, ChallengeResponse } from 'src/app/models/challenge.interface';
+import { CHALLENGE_METRICS, ChallengeParticipantResponse, ChallengeResponse } from 'src/app/models/challenge.interface';
 import { ChallengeService } from 'src/app/services/challenge.service';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 /** Challenge detail + leaderboard. Returns true on close if membership changed. */
@@ -47,9 +48,9 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
             <p class="text-[10px] font-bold uppercase tracking-wide text-gray-400">Leaderboard</p>
             <div *ngFor="let p of c.leaderboard; let i = index" class="flex items-center gap-2.5">
               <span class="w-5 text-[11px] font-bold text-gray-400 text-right">{{ i + 1 }}</span>
-              <img *ngIf="p.profilePhoto" [src]="'data:image/*;base64,' + p.profilePhoto" alt="" noZoom
+              <img *ngIf="photoSrc(p) as src" [src]="src" alt="" noZoom
                 class="w-7 h-7 rounded-full object-cover object-top border border-gray-200 shrink-0" />
-              <div *ngIf="!p.profilePhoto" class="w-7 h-7 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
+              <div *ngIf="!photoSrc(p)" class="w-7 h-7 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
                 <i-feather name="user" class="text-sky-500" style="width:12px;height:12px;"></i-feather>
               </div>
               <span class="text-xs font-bold text-gray-900 capitalize truncate flex-1">{{ p.name }}</span>
@@ -98,6 +99,12 @@ export class ChallengeDetailModalComponent {
       next: () => { this.busy = false; this.changed = true; this.load(); },
       error: () => { this.busy = false; this.snackBar.openSnackBar('Could not update', 'error'); },
     });
+  }
+
+  private readonly _rowUri = memoizePhotoUriByKey();
+
+  photoSrc(p: ChallengeParticipantResponse): string | null {
+    return this._rowUri(p.userId, p.profilePhoto);
   }
 
   goalLabel(c: ChallengeResponse): string {

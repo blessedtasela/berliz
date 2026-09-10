@@ -11,6 +11,7 @@ import {
   RunLeaderboardResponse,
 } from 'src/app/models/run.interface';
 import { RunService } from 'src/app/services/run.service';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 const PERIODS: { key: RunLeaderboardPeriod; label: string }[] = [
   { key: 'week', label: 'This week' },
@@ -71,8 +72,10 @@ export class RunLeaderboardComponent implements OnInit {
     });
   }
 
+  private readonly _rowUri = memoizePhotoUriByKey();
+
   photo(entry: RunLeaderboardEntry): string | null {
-    return entry.profilePhoto ? 'data:image/*;base64,' + entry.profilePhoto : null;
+    return this._rowUri(entry.userId, entry.profilePhoto);
   }
 
   metricValue(entry: RunLeaderboardEntry): string {

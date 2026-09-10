@@ -14,6 +14,7 @@ import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-
 import { ReactionButtonComponent } from 'src/app/shared/reaction-button/reaction-button.component';
 import { BookProviderButtonComponent } from 'src/app/shared/book-provider-button/book-provider-button.component';
 import { PostActivityType, PostResponse, ReactionType } from 'src/app/models/post.interface';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { AuthService } from 'src/app/services/auth.service';
 import { PostService } from 'src/app/services/post.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -246,9 +247,11 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     return this.currentUserId != null && post.authorId === this.currentUserId;
   }
 
+  private readonly _authorUri = memoizePhotoUriByKey();
+
   /** Post cards only ever rendered a static icon -- PostResponse had no author photo field until now. */
   authorPhotoSrc(post: PostResponse): string | null {
-    return post.authorPhoto ? 'data:image/*;base64,' + post.authorPhoto : null;
+    return this._authorUri(post.id, post.authorPhoto);
   }
 
   /** Add / switch / remove the viewer's reaction on a post. Optimistic; server reconciles. */

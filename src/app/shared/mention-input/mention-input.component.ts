@@ -7,6 +7,7 @@ import { debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs/o
 import { IconsModule } from 'src/app/icons/icons.module';
 import { PublicDirectoryEntry } from 'src/app/models/users.interface';
 import { UserService } from 'src/app/services/user.service';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 /** Matches an in-progress `@handle` right at the end of the text up to the cursor -- ^ or whitespace before it, so "email@x" mid-word never triggers suggestions. */
 const MENTION_IN_PROGRESS = /(?:^|\s)@([a-zA-Z0-9_]{0,30})$/;
@@ -108,8 +109,10 @@ export class MentionInputComponent implements OnDestroy {
     });
   }
 
+  private readonly _rowUri = memoizePhotoUriByKey();
+
   photoSrc(entry: PublicDirectoryEntry): string | null {
-    return entry.profilePhoto ? 'data:image/*;base64,' + entry.profilePhoto : null;
+    return this._rowUri(entry.id, entry.profilePhoto);
   }
 
   trackById(_: number, entry: PublicDirectoryEntry): number {

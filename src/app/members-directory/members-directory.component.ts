@@ -28,6 +28,7 @@ import {
 } from 'src/app/state/connection/connection.actions';
 import { selectConnectionError, selectMyConnections, selectPendingRequests } from 'src/app/state/connection/connection.selectors';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 /** A directory row's connection status, derived client-side from myConnections + pendingRequests. */
 type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
@@ -203,10 +204,10 @@ export class MembersDirectoryComponent implements OnInit, OnDestroy {
     return `${member.firstname ?? ''} ${member.lastname ?? ''}`.trim();
   }
 
+  private readonly _rowUri = memoizePhotoUriByKey();
+
   photoSrc(member: PublicDirectoryEntry): string {
-    return member.profilePhoto
-      ? 'data:image/*;base64,' + member.profilePhoto
-      : '../../assets/icons/user.png';
+    return this._rowUri(member.id, member.profilePhoto) ?? '../../assets/icons/user.png';
   }
 
   location(member: PublicDirectoryEntry): string | null {

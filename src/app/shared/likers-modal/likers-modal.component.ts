@@ -9,6 +9,7 @@ import { LikerResponse } from 'src/app/models/comment.interface';
 import { reactionEmoji } from 'src/app/models/post.interface';
 import { CommentService } from 'src/app/services/comment.service';
 import { PostService } from 'src/app/services/post.service';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 export interface LikersModalData {
   /** Which entity's likers to list. */
@@ -107,8 +108,10 @@ export class LikersModalComponent {
     });
   }
 
+  private readonly _rowUri = memoizePhotoUriByKey();
+
   photoSrc(liker: LikerResponse): string | null {
-    return liker.profilePhoto ? 'data:image/*;base64,' + liker.profilePhoto : null;
+    return this._rowUri(liker.userId, liker.profilePhoto);
   }
 
   emoji(reaction?: string): string {

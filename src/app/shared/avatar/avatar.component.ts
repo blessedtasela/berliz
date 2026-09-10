@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { photoDataUri } from '../photo-lightbox/photo-data-uri';
+import { memoizePhotoUri } from '../photo-lightbox/photo-data-uri';
 
 /**
  * Photo-or-initials avatar, standalone so it can drop into any module
@@ -40,8 +40,13 @@ export class AvatarComponent implements OnChanges {
   /** Set once the <img> actually fails to load (corrupt/invalid data) -- falls back to initials rather than a broken-image icon. */
   photoFailed = false;
 
+  /** Memoized so the data-URI string keeps a stable reference across change
+   *  detection -- otherwise every CD tick reassigns <img [src]> and the browser
+   *  re-decodes the image (see memoizePhotoUri). */
+  private readonly _uri = memoizePhotoUri();
+
   get photoSrc(): string | null {
-    return this.photo && !this.photoFailed ? photoDataUri(this.photo) : null;
+    return this.photoFailed ? null : this._uri(this.photo);
   }
 
   ngOnChanges(changes: SimpleChanges): void {

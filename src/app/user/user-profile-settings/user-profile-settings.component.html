@@ -62,9 +62,9 @@
         <div class="flex flex-col divide-y divide-gray-100">
             <div *ngFor="let b of blockedUsers" class="flex items-center justify-between gap-3 py-2">
                 <div class="flex items-center gap-2.5 min-w-0">
-                    <img *ngIf="b.blockedUserPhoto" [src]="'data:image/*;base64,' + b.blockedUserPhoto" alt=""
+                    <img *ngIf="blockedPhotoSrc(b) as src" [src]="src" alt=""
                         class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
-                    <div *ngIf="!b.blockedUserPhoto" class="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0">
+                    <div *ngIf="!blockedPhotoSrc(b)" class="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0">
                         <i-feather name="user" class="text-gray-400" style="width:14px;height:14px;"></i-feather>
                     </div>
                     <div class="min-w-0">

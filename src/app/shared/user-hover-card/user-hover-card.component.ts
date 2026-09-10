@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 /**
  * A user reference inside an admin table: shows the name/email as an inline
@@ -69,10 +70,10 @@ export class UserHoverCardComponent {
     return !!this.userId;
   }
 
+  private readonly _uri = memoizePhotoUri();
+
   get photoSrc(): string {
-    return this.photo
-      ? 'data:image/*;base64,' + this.photo
-      : '../../../assets/icons/user.png';
+    return this._uri(this.photo) ?? '../../../assets/icons/user.png';
   }
 
   get initials(): string {

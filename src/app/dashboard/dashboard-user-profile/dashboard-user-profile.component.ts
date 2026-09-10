@@ -28,6 +28,7 @@ import { PostService } from 'src/app/services/post.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
 import { BlockService } from 'src/app/services/block.service';
+import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { BlockedUser } from 'src/app/models/block.model';
 
 import * as ConnectionActions from 'src/app/state/connection/connection.actions';
@@ -326,10 +327,10 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
     return `${this.profile.firstname ?? ''} ${this.profile.lastname ?? ''}`.trim();
   }
 
+  private readonly _uri = memoizePhotoUri();
+
   get photoSrc(): string {
-    return this.profile?.profilePhoto
-      ? 'data:image/*;base64,' + this.profile.profilePhoto
-      : '../../../assets/icons/user.png';
+    return this._uri(this.profile?.profilePhoto) ?? '../../../assets/icons/user.png';
   }
 
   get location(): string | null {

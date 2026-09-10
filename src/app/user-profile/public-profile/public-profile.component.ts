@@ -23,6 +23,7 @@ import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { SavedService } from 'src/app/services/saved.service';
 import { RanksCardComponent } from 'src/app/shared/ranks-card/ranks-card.component';
 import { BookProviderButtonComponent } from 'src/app/shared/book-provider-button/book-provider-button.component';
+import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 import {
   clearPublicProfile,
@@ -195,10 +196,10 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
     return `${this.profile.firstname ?? ''} ${this.profile.lastname ?? ''}`.trim();
   }
 
+  private readonly _uri = memoizePhotoUri();
+
   get photoSrc(): string {
-    return this.profile?.profilePhoto
-      ? 'data:image/*;base64,' + this.profile.profilePhoto
-      : '../../../assets/icons/user.png';
+    return this._uri(this.profile?.profilePhoto) ?? '../../../assets/icons/user.png';
   }
 
   get location(): string | null {

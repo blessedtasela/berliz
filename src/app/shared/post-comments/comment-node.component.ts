@@ -14,6 +14,7 @@ import { ContentReportService } from 'src/app/services/content-report.service';
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { MentionInputComponent } from 'src/app/shared/mention-input/mention-input.component';
 import { ReactionButtonComponent } from 'src/app/shared/reaction-button/reaction-button.component';
+import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 /** One chunk of a comment's text -- plain text, or an `@username` mention that links out. Rendered via *ngFor so user-generated text never touches innerHTML. */
 interface CommentPart {
@@ -78,15 +79,25 @@ export class CommentNodeComponent {
     private dialog: MatDialog,
   ) {}
 
+  // Both of these are called from the template of a component that RECURSES to
+  // arbitrary depth, so they must not allocate on every change-detection pass:
+  // memoize by the underlying value and return a stable reference otherwise.
+  private readonly _uri = memoizePhotoUri();
+  private _partsKey: string | null | undefined;
+  private _parts: CommentPart[] = [];
+
   photoSrc(): string | null {
-    return this.comment.authorPhoto ? 'data:image/*;base64,' + this.comment.authorPhoto : null;
+    return this._uri(this.comment?.authorPhoto);
   }
 
   /** Splits the comment into plain-text and @mention chunks for the template's *ngFor. */
   parts(): CommentPart[] {
+    const content = this.comment?.content ?? '';
+    if (content === this._partsKey) return this._parts;
+    this._partsKey = content;
+
     const out: CommentPart[] = [];
     const re = /@([a-zA-Z0-9_]{3,30})/g;
-    const content = this.comment.content ?? '';
     let last = 0;
     let m: RegExpExecArray | null;
     while ((m = re.exec(content)) !== null) {
@@ -95,6 +106,7 @@ export class CommentNodeComponent {
       last = m.index + m[0].length;
     }
     if (last < content.length) out.push({ text: content.slice(last) });
+    this._parts = out;
     return out;
   }
 

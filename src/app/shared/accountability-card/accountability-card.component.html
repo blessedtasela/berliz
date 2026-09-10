@@ -21,9 +21,9 @@
 
   <ng-container *ngIf="!loading && partners.length">
     <div *ngFor="let p of partners" class="flex items-center gap-2.5">
-      <img *ngIf="p.profilePhoto" [src]="'data:image/*;base64,' + p.profilePhoto" alt="" noZoom
+      <img *ngIf="photoSrc(p) as src" [src]="src" alt="" noZoom
         class="w-8 h-8 rounded-full object-cover object-top border border-gray-200 shrink-0" />
-      <div *ngIf="!p.profilePhoto" class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
+      <div *ngIf="!photoSrc(p)" class="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0">
         <i-feather name="user" class="text-sky-500" style="width:13px;height:13px;"></i-feather>
       </div>
       <div class="min-w-0 flex-1">
