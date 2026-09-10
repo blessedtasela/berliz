@@ -19,6 +19,8 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { UserService } from 'src/app/services/user.service';
 import { ContentReportService } from 'src/app/services/content-report.service';
+import { WorkoutService } from 'src/app/services/workout.service';
+import { WorkoutResponse } from 'src/app/models/workout.interface';
 import { imageValidator } from 'src/validators/form-validators.module';
 
 type TimelineTab = 'feed' | 'mine';
@@ -69,6 +71,11 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   // ── Compose ──────────────────────────────────────────────────────────────
   draftContent = '';
   draftActivityType: PostActivityType = 'GENERAL';
+  /** Optional workout template attached to a WORKOUT-type draft. */
+  draftWorkoutId: number | null = null;
+  myTemplates: WorkoutResponse[] = [];
+  /** The post whose linked template is currently being cloned. */
+  cloningWorkoutPostId: number | null = null;
   posting = false;
   uploadedPhoto: { strapiId: number; photoUrl: string } | null = null;
   uploading = false;
@@ -95,6 +102,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private snackBarService: SnackBarService,
     private contentReportService: ContentReportService,
+    private workoutService: WorkoutService,
     private dialog: MatDialog,
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
@@ -102,6 +110,10 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.refresh();
+    this.workoutService.getTemplates().subscribe({
+      next: res => this.myTemplates = res.data ?? [],
+      error: () => { /* the picker just stays empty */ },
+    });
     this.userService.getUser().subscribe({
       next: res => {
         const photo = res.data?.profilePhoto;
@@ -202,6 +214,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
       content: this.draftContent.trim(),
       activityType: this.draftActivityType === 'GENERAL' ? undefined : this.draftActivityType,
       photo: this.uploadedPhoto ? { photoUrl: this.uploadedPhoto.photoUrl, strapiId: this.uploadedPhoto.strapiId } : null,
+      workoutId: this.draftActivityType === 'WORKOUT' && this.draftWorkoutId ? this.draftWorkoutId : undefined,
     }).subscribe({
       next: res => {
         this.posting = false;
@@ -212,6 +225,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
         }
         this.draftContent = '';
         this.draftActivityType = 'GENERAL';
+        this.draftWorkoutId = null;
         this.uploadedPhoto = null;
         this.snackBarService.openSnackBar('Posted', '');
       },
@@ -352,5 +366,21 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   /** Opens the media + comments bottom sheet for a post. */
   openPostSheet(post: PostResponse): void {
     this.sheetPost = post;
+  }
+
+  /** Clone the workout template linked on a post into the viewer's own workouts. */
+  addWorkoutFromPost(post: PostResponse): void {
+    if (!post.workoutId || this.cloningWorkoutPostId === post.id) return;
+    this.cloningWorkoutPostId = post.id;
+    this.workoutService.cloneTemplate(post.workoutId).subscribe({
+      next: () => {
+        this.cloningWorkoutPostId = null;
+        this.snackBarService.openSnackBar('Added to your workouts', '');
+      },
+      error: err => {
+        this.cloningWorkoutPostId = null;
+        this.snackBarService.openSnackBar(err?.error?.message || 'Could not add this workout', 'error');
+      },
+    });
   }
 }

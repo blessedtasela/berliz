@@ -126,7 +126,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D11 | Pre-renewal reminder + ≤2-tap cancel | 📋 | ✚ |
 | D12 | Value-first onboarding (one real action before any paywall) | 📋 | — |
 | D13 | Dark mode (app-wide) | 📋 | — |
-| D14 | "Do this workout" — clone a shared workout from a feed post | 📋 | — |
+| D14 | "Do this workout" — clone a linked workout from a feed post | ✅ | ✚ |
 | D15 | Saved / bookmarked posts & workouts | 📋 | ✚ |
 
 ## 9. Platform / admin
@@ -149,6 +149,12 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **D14 — Link a workout template to a post → one-tap clone.** `Post` gains an optional
+  `workout_fk` (V34); `PostRequest.workoutId` on create/update, `PostResponse.workoutId` +
+  `workoutName` on read. The feed composer shows a template picker when the WORKOUT chip is
+  active; a WORKOUT post with a link renders an orange strip with "Add to my workouts" that
+  clones it via `POST /workout/cloneTemplate/{id}`. Backend on `com.berliz@0e8643e`.
 
 - **D8 — Personal-best detection → milestone post.** On a fresh workout/run log the
   backend returns `personalBests[]` — run: longest distance / longest time / fastest pace;

@@ -37,6 +37,9 @@ export interface PostResponse {
   photoUrl?: string | null;
   /** Always set by the server — `"GENERAL"` for a plain post. */
   activityType?: PostActivityType;
+  /** Optional — a linked workout template the reader can clone into their own workouts. */
+  workoutId?: number | null;
+  workoutName?: string | null;
   /** Total reactions of any type — the field is still named `likes` server-side. */
   likes: number;
   /** True when the viewer has reacted at all. */
@@ -56,6 +59,8 @@ export interface PostRequest {
   content: string;
   /** Omit or `"GENERAL"` for a plain post. */
   activityType?: PostActivityType;
+  /** Optional — id of a workout template to link (WORKOUT posts). */
+  workoutId?: number;
   photo?: {
     photoUrl: string;
     strapiId: number;
