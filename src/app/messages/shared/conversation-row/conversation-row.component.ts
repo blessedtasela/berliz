@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { AvatarComponent } from 'src/app/shared/avatar/avatar.component';
 
 /** Shape both a real ConversationSummary and a "start a conversation" StartableContact can satisfy. */
@@ -16,7 +15,7 @@ export interface ConversationRowData {
 @Component({
   selector: 'app-conversation-row',
   standalone: true,
-  imports: [CommonModule, RouterModule, AvatarComponent],
+  imports: [CommonModule, AvatarComponent],
   templateUrl: './conversation-row.component.html',
 })
 export class ConversationRowComponent {
