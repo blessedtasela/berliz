@@ -33,6 +33,7 @@ import { DashboardMembersComponent } from './dashboard-members/dashboard-members
 import { DashboardCategoryDetailComponent } from './dashboard-category-detail/dashboard-category-detail.component';
 import { DashboardQuickLinksComponent } from './dashboard-quick-links/dashboard-quick-links.component';
 import { DashboardTimelinePreviewComponent } from './dashboard-timeline-preview/dashboard-timeline-preview.component';
+import { ConsistencyRingComponent } from '../shared/consistency-ring/consistency-ring.component';
 
 
 
@@ -74,7 +75,8 @@ import { DashboardTimelinePreviewComponent } from './dashboard-timeline-preview/
     ReactiveFormsModule,
     SharedModule,
     UserHoverCardComponent,
-    DashboardTimelinePreviewComponent
+    DashboardTimelinePreviewComponent,
+    ConsistencyRingComponent
   ]
 })
 export class DashboardModule { }

@@ -113,7 +113,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 
 | # | Feature | 📋 | Backend? |
 |---|---|---|---|
-| D1 | Training streaks + weekly consistency ring (dashboard + profile) | 📋 | ✚ |
+| D1 | Training streaks + weekly consistency ring (dashboard) | ✅ | ✚ |
 | D2 | "Year/Season in Berliz" recap — auto-generated, shareable, **permanently free** | 📋 | ✚ |
 | D3 | Belt / rank progression tracker (per discipline; trainer/center promotes; milestone post) | 📋 | ✚ |
 | D4 | Accountability partners + "nudge when a streak slips" | 📋 | ✚ |
@@ -149,6 +149,12 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
+
+- **D1 — Training consistency streak.** `GET /streak/me` returns the current streak, the
+  all-time best, whether today counts yet, and Monday–Sunday of the current week with a
+  per-day active flag (an active day = ≥1 logged workout or logged run). New
+  `ConsistencyRingComponent` on the dashboard home: 🔥 + streak number, this week as
+  filled/empty day dots, and the best/total line. Backend on `com.berliz@e09bcef`.
 
 - **D5 — Multi-reactions on posts and comments.** A like now carries a type:
   👍 Like (default) / 💪 Strong / 🔥 Fire / 👏 Clap / ❤️ Love. Backend: `reaction` column on

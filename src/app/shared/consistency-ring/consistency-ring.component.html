@@ -1,0 +1,44 @@
+<div *ngIf="!failed" class="bg-white border border-gray-200 rounded-2xl p-4 flex items-center gap-4">
+
+  <div *ngIf="loading" class="flex items-center gap-3 text-gray-300">
+    <i-feather name="loader" class="animate-spin" style="width:18px;height:18px;"></i-feather>
+    <span class="text-xs font-semibold">Loading your streak…</span>
+  </div>
+
+  <ng-container *ngIf="!loading && streak">
+    <!-- flame + number -->
+    <div class="shrink-0 flex flex-col items-center justify-center w-16">
+      <div class="relative flex items-center justify-center">
+        <span class="text-2xl leading-none"
+          [class.grayscale]="streak.currentStreak === 0" [class.opacity-40]="streak.currentStreak === 0">🔥</span>
+      </div>
+      <span class="text-lg font-extrabold text-gray-900 leading-none mt-0.5">{{ streak.currentStreak }}</span>
+    </div>
+
+    <div class="flex-1 min-w-0">
+      <p class="text-xs font-bold text-gray-900">{{ headline }}</p>
+
+      <!-- this week -->
+      <div class="flex items-center gap-1.5 mt-2">
+        <div *ngFor="let d of streak.week" class="flex flex-col items-center gap-1">
+          <span class="w-6 h-6 rounded-full border flex items-center justify-center transition"
+            [ngClass]="{
+              'bg-red-500 border-red-500 text-white': d.active,
+              'border-red-400 ring-2 ring-red-100': d.today && !d.active,
+              'border-gray-200 bg-gray-50': !d.active && !d.today && !d.future,
+              'border-dashed border-gray-200': d.future
+            }">
+            <i-feather *ngIf="d.active" name="check" style="width:12px;height:12px;"></i-feather>
+          </span>
+          <span class="text-[9px] font-semibold uppercase tracking-wide"
+            [class.text-red-500]="d.today" [class.text-gray-400]="!d.today">{{ d.label }}</span>
+        </div>
+      </div>
+
+      <p class="text-[10px] text-gray-400 mt-2">
+        Best: <span class="font-bold text-gray-600">{{ streak.longestStreak }}</span> ·
+        {{ streak.totalActiveDays }} active {{ streak.totalActiveDays === 1 ? 'day' : 'days' }} total
+      </p>
+    </div>
+  </ng-container>
+</div>
