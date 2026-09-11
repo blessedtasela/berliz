@@ -16,6 +16,7 @@ import { ProviderBookingsMainComponent } from './provider-bookings-main/provider
 import { MyAvailabilityEditorComponent } from './my-availability-editor/my-availability-editor.component';
 import { EarningsViewComponent } from './earnings-view/earnings-view.component';
 import { ManageBookingsComponent } from './manage-bookings/manage-bookings.component';
+import { ReviewBookingModalComponent } from './review-booking-modal/review-booking-modal.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { ManageBookingsComponent } from './manage-bookings/manage-bookings.compo
     ProviderBookingsMainComponent,
     MyAvailabilityEditorComponent,
     EarningsViewComponent,
-    ManageBookingsComponent
+    ManageBookingsComponent,
+    ReviewBookingModalComponent
   ],
   imports: [
     CommonModule,

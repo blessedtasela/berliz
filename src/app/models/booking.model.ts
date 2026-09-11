@@ -5,6 +5,8 @@ export interface Booking {
   clientFirstname: string;
   clientLastname: string;
   clientEmail: string;
+  clientUsername?: string;
+  clientPhoto?: string;
 
   trainerId: number | null;
   trainerName: string | null;

@@ -225,6 +225,11 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
     return this.posts.find(p => p.authorCenterId != null)?.authorCenterId ?? null;
   }
 
+  /** The trainer/center's coaching/business name (not this account's real name) for the Book CTA. */
+  get viewedProviderName(): string | null {
+    return this.posts.find(p => p.authorTrainerId != null || p.authorCenterId != null)?.authorName ?? null;
+  }
+
   /** Trainer-only: only ever populated when profile.role === 'trainer'. */
   get testimonials(): Testimonials[] {
     return this.profile?.testimonials ?? [];

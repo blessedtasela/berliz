@@ -1,5 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Booking } from 'src/app/models/booking.model';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { ReviewBookingModalComponent } from '../review-booking-modal/review-booking-modal.component';
 
 @Component({
   selector: 'app-booking-card',
@@ -7,6 +10,8 @@ import { Booking } from 'src/app/models/booking.model';
   styleUrls: ['./booking-card.component.css']
 })
 export class BookingCardComponent {
+
+  constructor(private dialog: MatDialog) { }
 
   /** 'client' shows who you booked with + a cancel action while pending.
    *  'provider' shows who booked you + confirm/complete/cancel actions. */
@@ -71,11 +76,63 @@ export class BookingCardComponent {
     return this.mode === 'provider' && (this.booking.status === 'confirmed' || this.booking.status === 'completed');
   }
 
+  /** Client cancelling their own pending request -- a confirm step guards against an accidental tap. */
   cancel(): void {
-    this.cancelRequested.emit(this.booking.id);
+    this.dialog.open(PromptModalComponent, {
+      width: '360px',
+      maxWidth: '95vw',
+      data: {
+        confirmation: true,
+        title: 'Cancel this booking?',
+        message: 'This request will be withdrawn. You can always send a new one.',
+        confirmText: 'Cancel booking',
+        cancelText: 'Keep it',
+        icon: 'x-circle'
+      }
+    }).afterClosed().subscribe(confirmed => {
+      if (confirmed) this.cancelRequested.emit(this.booking.id);
+    });
+  }
+
+  /** Provider cancelling a pending/confirmed booking -- same accidental-tap guard as the client side. */
+  private confirmProviderCancel(): void {
+    this.dialog.open(PromptModalComponent, {
+      width: '360px',
+      maxWidth: '95vw',
+      data: {
+        confirmation: true,
+        title: 'Cancel this session?',
+        message: `${this.counterpartyName} will be notified this session is no longer happening.`,
+        confirmText: 'Cancel session',
+        cancelText: 'Keep it',
+        icon: 'x-circle'
+      }
+    }).afterClosed().subscribe(confirmed => {
+      if (confirmed) this.statusChangeRequested.emit({ id: this.booking.id, status: 'cancelled' });
+    });
+  }
+
+  /** A pending request opens for review (who it's from, when, notes) before the provider decides. */
+  private reviewAndConfirm(): void {
+    this.dialog.open(ReviewBookingModalComponent, {
+      width: '400px',
+      maxWidth: '95vw',
+      data: { booking: this.booking }
+    }).afterClosed().subscribe((decision: 'confirmed' | 'declined' | undefined) => {
+      if (decision === 'confirmed') this.statusChangeRequested.emit({ id: this.booking.id, status: 'confirmed' });
+      else if (decision === 'declined') this.statusChangeRequested.emit({ id: this.booking.id, status: 'cancelled' });
+    });
   }
 
   setStatus(status: string): void {
+    if (this.mode === 'provider' && status === 'cancelled') {
+      this.confirmProviderCancel();
+      return;
+    }
+    if (this.mode === 'provider' && status === 'confirmed') {
+      this.reviewAndConfirm();
+      return;
+    }
     this.statusChangeRequested.emit({ id: this.booking.id, status });
   }
 
