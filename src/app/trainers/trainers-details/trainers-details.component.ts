@@ -113,8 +113,11 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
       .subscribe(response => {
 
         const trainers = response?.data ?? [];
-        const target = name.toLowerCase();
-        const match = trainers.find(t => t.name?.replace(/ /g, '-').toLowerCase() === target);
+        // Compare case-insensitively: the route param arrives lowercased by
+        // UrlLowerCaseSerializer on refresh/direct-load, but trainer.name
+        // keeps its original casing — a case-sensitive match here 404s any
+        // mixed-case name specifically (and only) on refresh.
+        const match = trainers.find(t => t.name?.replace(/ /g, '-').toLowerCase() === name.toLowerCase());
 
         this.resolved = true;
 

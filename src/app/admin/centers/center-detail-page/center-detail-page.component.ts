@@ -1,11 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
 import { loadCenters } from 'src/app/state/center/center.actions';
 import { selectCenters } from 'src/app/state/center/center.selectors';
+import { AdminAvailabilityModalComponent } from 'src/app/admin/availability/admin-availability-modal/admin-availability-modal.component';
 
 /**
  * Routed detail page for a single center — `/dashboard/centers/:id`
@@ -31,7 +33,8 @@ export class CenterDetailPageComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private store: Store,
-    private datePipe: DatePipe) {
+    private datePipe: DatePipe,
+    private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -77,6 +80,18 @@ export class CenterDetailPageComponent implements OnInit, OnDestroy {
 
   openUrl(url: any) {
     window.open(url, '_blank');
+  }
+
+  openAvailability(): void {
+    if (!this.centerData) return;
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '560px';
+    dialogConfig.maxWidth = '95vw';
+    dialogConfig.maxHeight = '90vh';
+    dialogConfig.data = { centerId: this.centerData.id, name: this.centerData.name };
+    this.dialog.open(AdminAvailabilityModalComponent, dialogConfig);
   }
 
   formatDate(dateString: any): any {

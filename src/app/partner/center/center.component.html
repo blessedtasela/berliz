@@ -53,6 +53,11 @@
                         (change)="onImgSelected($event)" />
                 </form>
             </div>
+            <p *ngIf="updateCenterPhotoForm.get('photo')?.errors?.['invalidSize']"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                File must be under 10MB
+            </p>
 
             <p class="text-sm font-bold text-gray-900">{{ centerData.name }}</p>
 
@@ -101,6 +106,8 @@
     <app-center-video-album [center]="centerData" (emitEvent)="emitData()"></app-center-video-album>
 
     <app-center-announcements [center]="centerData" (emitEvent)="emitData()"></app-center-announcements>
+
+    <app-my-availability-editor></app-my-availability-editor>
 
     <!-- ══════════════════════════════════════════════════════════
          INSIGHTS — derived from trainer/public activity, not editable

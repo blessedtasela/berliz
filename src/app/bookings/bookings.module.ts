@@ -41,7 +41,8 @@ import { ManageBookingsComponent } from './manage-bookings/manage-bookings.compo
   exports: [
     MyBookingsMainComponent,
     ProviderBookingsMainComponent,
-    ManageBookingsComponent
+    ManageBookingsComponent,
+    MyAvailabilityEditorComponent
   ]
 })
 export class MyBookingsModule { }

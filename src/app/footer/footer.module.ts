@@ -13,6 +13,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SocialComponent } from './social/social.component';
 import { UnderConstructionComponent } from './under-construction/under-construction.component';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { MatDialogModule } from '@angular/material/dialog';
+import { BerlizFeedbackModalComponent } from './berliz-feedback-modal/berliz-feedback-modal.component';
 
 
 @NgModule({
@@ -23,7 +25,8 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
     NewsletterComponent,
     PhoneComponent,
     SocialComponent,
-    UnderConstructionComponent
+    UnderConstructionComponent,
+    BerlizFeedbackModalComponent
   ],
   imports: [
     ClickablePhotoDirective,
@@ -34,6 +37,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
     FeatherModule,
     IconsModule,
     ReactiveFormsModule,
+    MatDialogModule,
   ],
   exports: [
     FooterComponent,

@@ -27,6 +27,7 @@ import { MyTrainerSharedProgressComponent } from './my-trainer-shared-progress/m
 import { MyEquipmentPageComponent } from '../my-equipment/my-equipment-page/my-equipment-page.component';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 import { SharedModule } from '../shared/shared.module';
+import { MyBookingsModule } from '../bookings/bookings.module';
 
 
 
@@ -62,6 +63,7 @@ import { SharedModule } from '../shared/shared.module';
     StrapiUrlPipe,
     MyEquipmentPageComponent,
     SharedModule,
+    MyBookingsModule,
   ]
 })
 export class MyTrainerModule { }

@@ -6,7 +6,6 @@ import { Role, Users } from 'src/app/models/users.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
-import { AddPartnerModalComponent } from '../add-partner-modal/add-partner-modal.component';
 import { Partner } from 'src/app/models/partners.interface';
 import { Store } from '@ngrx/store';
 import { selectUsers } from 'src/app/state/user/user.selector';
@@ -46,7 +45,7 @@ export class UpdatePartnerModalComponent {
     private partnerService: PartnerService,
     private store: Store,
     private cdr: ChangeDetectorRef,
-    public dialogRef: MatDialogRef<AddPartnerModalComponent>,
+    public dialogRef: MatDialogRef<UpdatePartnerModalComponent>,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: any) {

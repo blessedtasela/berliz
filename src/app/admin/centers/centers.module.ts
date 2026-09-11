@@ -19,6 +19,7 @@ import { RoleGuard } from 'src/app/services/role.guard';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { AdminAvailabilityModule } from 'src/app/admin/availability/admin-availability.module';
 
 
 
@@ -46,6 +47,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
     AdminSearchModule,
     StrapiUrlPipe,
     ImageCropperModule,
+    AdminAvailabilityModule,
     RouterModule.forChild([
       { path: '', component: CentersComponent },
       { path: ':id', component: CenterDetailPageComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Center Details', expectedRole: ['admin'] } },

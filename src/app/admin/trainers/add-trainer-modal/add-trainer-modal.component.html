@@ -142,10 +142,15 @@
                             'border-gray-200 bg-gray-50': !(addTrainerForm.get('photo')?.invalid && addTrainerForm.get('photo')?.dirty)
                           }">
             </div>
-            <p *ngIf="addTrainerForm.get('photo')?.invalid && addTrainerForm.get('photo')?.dirty"
+            <p *ngIf="addTrainerForm.get('photo')?.invalid && addTrainerForm.get('photo')?.dirty && !addTrainerForm.get('photo')?.errors?.['invalidSize']"
                 class="text-red-500 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Upload a valid image
+            </p>
+            <p *ngIf="addTrainerForm.get('photo')?.errors?.['invalidSize']"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                File must be under 10MB
             </p>
         </div>
 

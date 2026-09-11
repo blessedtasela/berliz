@@ -1,0 +1,42 @@
+<div class="flex items-center justify-between mb-4">
+    <div>
+        <h1 class="text-xl font-bold text-gray-900">Platform Feedback</h1>
+        <p class="text-sm text-gray-500">Feedback about Berliz itself, submitted from the "Give Feedback" footer link.</p>
+    </div>
+    <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">{{ feedbackList.length }} total</span>
+</div>
+
+<div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="bg-gray-50 border-b border-gray-200">
+                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">ID</th>
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">User</th>
+                    <th class="px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Message</th>
+                    <th class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                <tr *ngFor="let feedback of feedbackList; trackBy: trackByFeedback" class="hover:bg-gray-50 transition-colors">
+                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 font-semibold text-gray-900">{{ feedback.id }}</td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3">
+                        <div class="font-semibold text-gray-900">{{ feedback.userName }}</div>
+                        <a href="mailto:{{ feedback.userEmail }}" class="text-xs text-gray-500 hover:text-red-600 transition-colors">{{ feedback.userEmail }}</a>
+                    </td>
+                    <td class="px-3 py-2.5 sm:px-4 sm:py-3 text-gray-600 max-w-md" [title]="feedback.message">{{ feedback.message }}</td>
+                    <td class="hidden sm:table-cell px-3 py-2.5 sm:px-4 sm:py-3 text-gray-600">{{ formatDate(feedback.date) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="!loading && feedbackList.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-center">
+        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+            <i-feather name="inbox" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        </div>
+        <p class="text-sm text-gray-400">No feedback yet.</p>
+    </div>
+    <div *ngIf="loading" class="flex items-center justify-center py-16">
+        <i-feather name="loader" class="text-red-500 animate-spin" style="width:20px;height:20px;"></i-feather>
+    </div>
+</div>
