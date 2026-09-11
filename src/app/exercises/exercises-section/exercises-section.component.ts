@@ -11,6 +11,7 @@ import { selectActiveExercises } from 'src/app/state/exercise/exercise.selectors
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 import { selectUser } from 'src/app/state/user/user.selector';
+import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 /**
  * PUBLIC exercise browsing. Rendered as its own full page at
@@ -52,6 +53,13 @@ export class ExercisesSectionComponent implements OnInit, OnDestroy {
 
   showFullData = false;
   visibleItems = this.pageSize;
+
+  private _demoUri = memoizeMediaUriByKey('video/mp4');
+
+  /** Stable data-URI for an exercise's base64 demo clip (rebuilt only when the payload changes). */
+  demoSrc(exercise: Exercises): string | null {
+    return this._demoUri(exercise.id, exercise.demo);
+  }
 
   private subscriptions: Subscription[] = [];
 

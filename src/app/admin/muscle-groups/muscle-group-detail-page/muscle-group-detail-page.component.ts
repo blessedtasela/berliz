@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { memoizePhotoUri, memoizeMediaUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -24,6 +25,10 @@ import { selectMuscleGroups } from 'src/app/state/muscle-group/muscle-group.sele
 export class MuscleGroupDetailPageComponent implements OnInit, OnDestroy {
   muscleGroupData: MuscleGroups | null = null;
   loading = true;
+
+  private _imgUri = memoizePhotoUri();
+  /** Stable data-URI for the muscle group's base64 image. */
+  get imageSrc(): string | null { return this._imgUri(this.muscleGroupData?.image); }
 
   private destroy$ = new Subject<void>();
 

@@ -24,7 +24,7 @@
         <div *ngFor="let user of usersData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors">
             <div class="relative shrink-0">
                 <button type="button" (click)="goToProfile(user.id)" title="View profile">
-                    <img [src]="'data:image/*;base64,' + user.profilePhoto"
+                    <img [src]="photoSrc(user)"
                         onerror="this.src='../../../assets/icons/user.png';"
                         class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200">
                 </button>
@@ -88,7 +88,7 @@
                                 <button type="button" (click)="goToProfile(user.id)"
                                     (mouseenter)="onPhotoEnter($event, user.id)" (mouseleave)="onPhotoLeave()"
                                     title="View profile">
-                                    <img [src]="'data:image/*;base64,' + user.profilePhoto"
+                                    <img [src]="photoSrc(user)"
                                         onerror="this.src='../../../assets/icons/user.png';"
                                         class="w-10 h-10 rounded-xl object-cover object-top border border-gray-200 hover:opacity-80 transition">
                                 </button>
@@ -98,7 +98,7 @@
                                     (mouseleave)="onPhotoLeave()" (click)="goToProfile(user.id)"
                                     class="fixed z-50 rounded-2xl border border-gray-200 bg-white p-2 shadow-2xl cursor-pointer"
                                     [style.top.px]="photoPreviewTop" [style.left.px]="photoPreviewLeft">
-                                    <img [src]="'data:image/*;base64,' + user.profilePhoto"
+                                    <img [src]="photoSrc(user)"
                                         onerror="this.src='../../../assets/icons/user.png';"
                                         class="w-56 h-56 rounded-xl object-cover object-top">
                                 </div>

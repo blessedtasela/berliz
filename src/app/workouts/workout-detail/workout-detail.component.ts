@@ -7,6 +7,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { WorkoutExerciseResponse, WorkoutResponse } from 'src/app/models/workout.interface';
 import { WorkoutService } from 'src/app/services/workout.service';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 /**
  * Read-only "what's actually in this workout" view — `/dashboard/workouts/:id`.
@@ -30,6 +31,13 @@ export class WorkoutDetailComponent implements OnInit {
 
   workout: WorkoutResponse | null = null;
   loading = false;
+
+  private _demoUri = memoizeMediaUriByKey('image/jpeg');
+
+  /** Stable data-URI for a workout exercise's base64 still-image demo. */
+  demoSrc(exercise: WorkoutExerciseResponse): string | null {
+    return this._demoUri(exercise.id, exercise.exerciseDemo);
+  }
 
   constructor(
     private route: ActivatedRoute,

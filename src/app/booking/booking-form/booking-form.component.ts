@@ -52,6 +52,15 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   readonly maxNotesLength = 500;
   readonly durationOptions = [30, 45, 60, 90, 120];
 
+  /**
+   * A client can't grab a slot that starts in the next hour -- the provider
+   * needs lead time to see the request and get ready. Only bites on today's
+   * slots; every future day is entirely bookable. (The backend is the real
+   * gate; this just keeps un-bookable times off the picker so a client
+   * doesn't pick one and get a rejection.)
+   */
+  readonly minLeadTimeMinutes = 60;
+
   // ── Calendar / slot-picker state ──────────────────────────────────────
   dateStrip: DateStripDay[] = this.buildDateStrip();
   selectedDate: string = this.dateStrip[0].value;
@@ -60,6 +69,25 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   slots: AvailableSlot[] = [];
   slotDurationMinutes = 60;
   slotsLoading = false;
+
+  /** The earliest a slot may start given the lead-time rule -- recomputed on read so it stays current as the dialog sits open. */
+  private get earliestBookableTime(): number {
+    return Date.now() + this.minLeadTimeMinutes * 60_000;
+  }
+
+  /** `slots` minus any that start inside the lead-time window (only ever trims today). */
+  get visibleSlots(): AvailableSlot[] {
+    const cutoff = this.earliestBookableTime;
+    return this.slots.filter(s => {
+      const start = new Date(`${this.selectedDate}T${s.startTime}`).getTime();
+      return isNaN(start) || start >= cutoff;
+    });
+  }
+
+  /** True when the day has slots but the lead-time rule hid all of them -- distinct from "genuinely fully booked". */
+  get allSlotsWithinLeadTime(): boolean {
+    return this.slots.length > 0 && this.visibleSlots.length === 0;
+  }
 
   /** null = not yet known (first response pending). */
   availabilityConfigured: boolean | null = null;
@@ -221,8 +249,11 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     }
 
     const scheduledAt = new Date(`${this.selectedDate}T${this.selectedSlot.startTime}`);
-    if (isNaN(scheduledAt.getTime()) || scheduledAt.getTime() < Date.now()) {
-      this.snackBar.openSnackBar('That time has already passed — pick another slot.', 'error');
+    if (isNaN(scheduledAt.getTime()) || scheduledAt.getTime() < this.earliestBookableTime) {
+      this.snackBar.openSnackBar(
+        `Pick a slot at least ${this.minLeadTimeMinutes} minutes out — the provider needs time to confirm.`,
+        'error'
+      );
       this.selectedSlot = null;
       this.fetchSlotsForSelectedDate();
       return;
@@ -251,7 +282,7 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     const value = this.bookingForm.value;
     const scheduledAt = new Date(`${value.date}T${value.time}`);
 
-    if (isNaN(scheduledAt.getTime()) || scheduledAt.getTime() < Date.now()) {
+    if (isNaN(scheduledAt.getTime()) || scheduledAt.getTime() < this.earliestBookableTime) {
       this.pastDate = true;
       return;
     }

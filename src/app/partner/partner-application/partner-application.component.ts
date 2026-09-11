@@ -11,6 +11,7 @@ import { TrainerFormModalComponent } from 'src/app/shared/trainer-form-modal/tra
 import { Store } from '@ngrx/store';
 import { loadMyPartner } from 'src/app/state/partner/partner.actions';
 import { selectMyPartner } from 'src/app/state/partner/partner.selectors';
+import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
   selector: 'app-partner-application',
@@ -25,6 +26,13 @@ export class PartnerApplicationComponent {
   @Output() onEmit = new EventEmitter;
   responseMessage: any;
   subscriptions: Subscription[] = [];
+
+  private _photoUri = memoizePhotoUri();
+
+  /** Stable data-URI for the applicant's base64 profile photo. */
+  get userPhotoSrc(): string | null {
+    return this._photoUri(this.user?.profilePhoto);
+  }
 
   constructor(
     private store: Store,

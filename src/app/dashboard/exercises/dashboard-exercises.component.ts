@@ -26,6 +26,7 @@ import { selectActiveMuscleGroups } from 'src/app/state/muscle-group/muscle-grou
 import { selectUser } from 'src/app/state/user/user.selector';
 
 import { EquipmentFormModalComponent } from './equipment-form-modal/equipment-form-modal.component';
+import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 /**
  * READ-ONLY exercise library for any signed-in user — `/dashboard/exercises`.
@@ -67,6 +68,12 @@ export class DashboardExercisesComponent implements OnInit, OnDestroy {
   openDemoId: number | null = null;
 
   private subs: Subscription[] = [];
+  private _demoUri = memoizeMediaUriByKey('image/jpeg');
+
+  /** Stable data-URI for an exercise's base64 still-image demo. */
+  demoSrc(exercise: Exercises): string | null {
+    return this._demoUri(exercise.id, exercise.demo);
+  }
 
   refreshing = false;
 

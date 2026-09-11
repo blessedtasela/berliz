@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter, Inject } from '@angular/core';
+import { memoizePhotoUri, memoizeMediaUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { FormGroup, FormBuilder, FormControl, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -30,6 +31,9 @@ export class UpdateExercisesModalComponent {
   subscriptions: Subscription[] = [];
   exerciseData: Exercises;
   selectedMuscleGroupIds: any;
+  private _demoUri = memoizeMediaUri('image/jpeg');
+  /** Stable data-URI for the exercise's base64 still-image demo. */
+  get demoSrc(): string | null { return this._demoUri(this.exerciseData?.demo); }
   selectedCategoryIds: any;
 
   constructor(private formBuilder: FormBuilder,

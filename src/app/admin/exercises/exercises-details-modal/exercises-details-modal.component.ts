@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { memoizePhotoUri, memoizeMediaUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { Component, EventEmitter, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
@@ -16,6 +17,9 @@ import { UpdateTrainerPhotoModalComponent } from 'src/app/shared/update-trainer-
 export class ExercisesDetailsModalComponent {
   onEmit = new EventEmitter();
   exerciseData!: Exercises;
+  private _demoUri = memoizeMediaUri('video/mp4');
+  /** Stable data-URI for the exercise's base64 demo clip. */
+  get demoSrc(): string | null { return this._demoUri(this.exerciseData?.demo); }
   responseMessage: any;
   subscriptions: Subscription[] = []
 

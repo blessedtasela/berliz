@@ -22,6 +22,10 @@
                     [title]="payment.status === 'false' ? 'Activate' : 'Deactivate'">
                     <i-feather [name]="payment.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
+                <button *ngIf="canRefund(payment)" class="w-9 h-9 rounded-lg active:bg-amber-50 flex items-center justify-center"
+                    (click)="refundPayment(payment)" title="Refund via Stripe">
+                    <i-feather name="rotate-ccw" class="text-amber-600" style="width:16px;height:16px;"></i-feather>
+                </button>
                 <button class="w-9 h-9 rounded-lg active:bg-red-50 flex items-center justify-center"
                     (click)="deletePayment(payment.id)" title="Delete">
                     <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
@@ -73,6 +77,15 @@
                                 (click)="updatePaymentStatus(payment.id)">
                                 {{ payment.status === 'false' ? 'Activate' : 'Deactivate' }}
                             </button>
+                            <button *ngIf="canRefund(payment)"
+                                class="w-8 h-8 rounded-lg hover:bg-amber-50 flex items-center justify-center transition"
+                                (click)="refundPayment(payment)" title="Refund via Stripe">
+                                <i-feather name="rotate-ccw" class="text-amber-600" style="width:15px;height:15px;"></i-feather>
+                            </button>
+                            <span *ngIf="payment.stripeRefundId" title="Refunded"
+                                class="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-100 px-1.5 py-0.5 rounded-full">
+                                Refunded
+                            </span>
                             <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
                                 (click)="deletePayment(payment.id)" title="Delete">
                                 <i-feather name="trash-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>

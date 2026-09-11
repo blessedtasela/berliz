@@ -6,6 +6,7 @@ import { Trainers } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
+import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
   selector: 'app-update-trainer-photo-modal',
@@ -19,6 +20,13 @@ export class UpdateTrainerPhotoModalComponent {
   invalidForm: boolean = false;
   selectedImage: any;
   trainer: Trainers;
+
+  private _photoUri = memoizePhotoUri();
+
+  /** Stable data-URI for the trainer's current base64 display photo. */
+  get currentPhotoSrc(): string | null {
+    return this._photoUri(this.trainer?.photoResponse as unknown as string);
+  }
 
   constructor(private trainerService: TrainerService,
     private ngxService: NgxUiLoaderService,

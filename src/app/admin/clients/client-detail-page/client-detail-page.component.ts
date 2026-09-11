@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -24,6 +25,10 @@ import { selectClients } from 'src/app/state/client/client.selectors';
 export class ClientDetailPageComponent implements OnInit, OnDestroy {
   clientData: Clients | null = null;
   loading = true;
+
+  private _photoUri = memoizePhotoUri();
+  /** Stable data-URI for the client's base64 profile photo. */
+  get photoSrc(): string | null { return this._photoUri(this.clientData?.user?.profilePhoto); }
 
   private destroy$ = new Subject<void>();
 
