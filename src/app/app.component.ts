@@ -91,63 +91,39 @@ export class AppComponent implements OnInit {
   }
   private updateLayout(url: string) {
 
-    // LOGIN ROUTES — always the bare login chrome, no matter the auth state.
+    // The chrome is chosen by the ROUTE, never by auth state. A signed-in user
+    // browsing a public page — a trainer's/center's public page, /members, the
+    // marketing site, "Home" from the footer — gets the PUBLIC top navbar
+    // there, exactly like a logged-out visitor, instead of being stuck behind
+    // the dashboard side/top bar. The public navbar already shows a
+    // "Dashboard" link once you're signed in, so you can't get stranded. The
+    // dashboard chrome shows ONLY on genuinely protected routes (the
+    // /dashboard subtree, which contains every admin page too); AuthGuard on
+    // those still bounces a logged-out hit to /login before this runs.
+    const path = url.split(/[?#]/)[0];
+
+    // LOGIN / AUTH-FLOW ROUTES — bare login chrome, no matter the auth state.
     if (
-      url === '/login' ||
-      url.startsWith('/login/') ||
-      url.startsWith('/sign-up') ||
-      url.startsWith('/quick-sign-up') ||
-      url.startsWith('/user/activate') ||
-      url.startsWith('/reset-password') ||
-      url.startsWith('/forgot-password')
+      path === '/login' ||
+      path.startsWith('/login/') ||
+      path.startsWith('/sign-up') ||
+      path.startsWith('/quick-sign-up') ||
+      path.startsWith('/user/activate') ||
+      path.startsWith('/reset-password') ||
+      path.startsWith('/forgot-password')
     ) {
       this.activeLayout = 'login';
       return;
     }
 
-    // A SIGNED-IN USER GETS THE APP (SIDEBAR) CHROME EVERYWHERE ELSE — this
-    // check comes BEFORE the public-route list on purpose. The reported bug:
-    // logging in from a public page (e.g. a trainer's public profile) sent
-    // the user back to that same page, which matched the public list below
-    // and left them looking at the logged-out marketing topbar with no way
-    // to reach their dashboard without visiting /login again. Someone who's
-    // authenticated is "in the app" — they should see their own nav on a
-    // public browse page too, exactly like every other product does.
-    if (this.authService.isAuthenticated()) {
+    // PROTECTED APP ROUTES — the whole /dashboard subtree.
+    if (path === '/dashboard' || path.startsWith('/dashboard/')) {
       this.activeLayout = 'sidebar';
       return;
     }
 
-    // NOT SIGNED IN — PUBLIC TOPBAR ROUTES.
-    if (
-      url.startsWith('/pricing') ||
-      url.startsWith('/about') ||
-      url.startsWith('/contact') ||
-      url.startsWith('/blog') ||
-      url.startsWith('/home') ||
-      url.startsWith('/services') ||
-      url.startsWith('/centers') ||
-      url.startsWith('/trainers') ||
-      url.startsWith('/testimonials') ||
-      url.startsWith('/equipments') ||
-      url.startsWith('/exercises') ||
-      url.startsWith('/members') ||
-      url.startsWith('/user') ||
-      url.startsWith('/faqs') ||
-      url.startsWith('/report-problem') ||
-      url.startsWith('/help-center') ||
-      url.startsWith('/terms') ||
-      url.startsWith('/privacy') ||
-      url.startsWith('/shop')
-    ) {
-      this.activeLayout = 'topbar';
-      return;
-    }
-
-    // NOT SIGNED IN, and it's not a known public route (chiefly the wildcard
-    // 404): fall back to the public topbar rather than flashing the
-    // authenticated chrome. AuthGuard already bounces a logged-out hit on a
-    // real protected route to /login before it reaches here.
+    // EVERYTHING ELSE — the public marketing / browse site, plus the 404
+    // wildcard. Public navbar + footer, signed in or not.
     this.activeLayout = 'topbar';
   }
 
@@ -166,6 +142,10 @@ export class AppComponent implements OnInit {
    */
   private maybeShowNewsletter() {
     if (this.activeLayout !== 'topbar') return;
+    // The public navbar now also renders for signed-in users on public pages
+    // (see updateLayout) — but a marketing/newsletter interstitial still has no
+    // place in front of someone who already has an account.
+    if (this.authService.isAuthenticated()) return;
     if (!this.newsletterTrigger.shouldShow()) return;
 
     // Record the impression *now*, not when the dialog renders: a slow page (or
