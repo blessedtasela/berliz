@@ -39,9 +39,12 @@ export class TrainerDataComponent {
   destroy$ = new Subject<void>();
 
   countries: Country[] = [];
+  private countryMap = new Map<string, Country>();
   /** Available states/cities per location row, indexed the same as the `locations` FormArray. */
   locationStates: string[][] = [];
   locationCities: string[][] = [];
+  /** Name → id lookups for the currently-loaded states per row, so a city fetch (by state id) can follow a name-bound select. */
+  private stateMaps: Map<string, number>[] = [];
 
   constructor(private formBuilder: FormBuilder,
     private ngxService: NgxUiLoaderService,
@@ -69,7 +72,10 @@ export class TrainerDataComponent {
 
     (this.trainer?.locations ?? []).forEach(loc => this.addLocation(loc));
 
-    this.locationService.countries$.subscribe(countries => this.countries = countries);
+    this.locationService.countries$.subscribe(countries => {
+      this.countries = countries;
+      this.countryMap = new Map(countries.map(c => [c.name, c]));
+    });
 
     this.originalValue = this.updateTrainerForm.getRawValue();
   }
@@ -86,13 +92,21 @@ export class TrainerDataComponent {
     }));
     this.locationStates.push([]);
     this.locationCities.push([]);
+    this.stateMaps.push(new Map());
 
     if (existing?.country) {
       const i = this.locationsArray.length - 1;
-      this.locationService.getStates(existing.country).subscribe(states => this.locationStates[i] = states);
-      if (existing.stateProvince) {
-        this.locationService.getCities(existing.country, existing.stateProvince)
-          .subscribe(cities => this.locationCities[i] = cities);
+      const countryId = this.countryMap.get(existing.country)?.id;
+      if (countryId) {
+        this.locationService.getStates(countryId).subscribe(states => {
+          this.stateMaps[i] = new Map(states.map(s => [s.name, s.id]));
+          this.locationStates[i] = states.map(s => s.name);
+
+          const stateId = existing.stateProvince ? this.stateMaps[i].get(existing.stateProvince) : undefined;
+          if (stateId) {
+            this.locationService.getCities(stateId).subscribe(cities => this.locationCities[i] = cities.map(c => c.name));
+          }
+        });
       }
     }
   }
@@ -101,6 +115,7 @@ export class TrainerDataComponent {
     this.locationsArray.removeAt(index);
     this.locationStates.splice(index, 1);
     this.locationCities.splice(index, 1);
+    this.stateMaps.splice(index, 1);
   }
 
   onLocationCountryChange(index: number): void {
@@ -110,19 +125,24 @@ export class TrainerDataComponent {
     group.get('city')?.setValue('');
     this.locationCities[index] = [];
     this.locationStates[index] = [];
-    if (country) {
-      this.locationService.getStates(country).subscribe(states => this.locationStates[index] = states);
+    this.stateMaps[index] = new Map();
+    const countryId = this.countryMap.get(country)?.id;
+    if (countryId) {
+      this.locationService.getStates(countryId).subscribe(states => {
+        this.stateMaps[index] = new Map(states.map(s => [s.name, s.id]));
+        this.locationStates[index] = states.map(s => s.name);
+      });
     }
   }
 
   onLocationStateChange(index: number): void {
     const group = this.locationsArray.at(index);
-    const country = group.get('country')?.value;
     const state = group.get('stateProvince')?.value;
     group.get('city')?.setValue('');
     this.locationCities[index] = [];
-    if (country && state) {
-      this.locationService.getCities(country, state).subscribe(cities => this.locationCities[index] = cities);
+    const stateId = this.stateMaps[index]?.get(state);
+    if (stateId) {
+      this.locationService.getCities(stateId).subscribe(cities => this.locationCities[index] = cities.map(c => c.name));
     }
   }
 
