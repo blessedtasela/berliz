@@ -18,7 +18,11 @@ describe('AvatarComponent', () => {
 
   it('builds a data URI from the base64 photo when one is set', () => {
     component.photo = 'abc123';
-    expect(component.photoSrc).toBe('data:image/*;base64,abc123');
+    // No recognizable magic-byte prefix -- falls back to image/jpeg, same as
+    // photoDataUri()'s own default. NOT 'image/*': that's not a valid
+    // data-URI media type, which is exactly why some profile photos used to
+    // fail to render on Safari/Firefox.
+    expect(component.photoSrc).toBe('data:image/jpeg;base64,abc123');
   });
 
   it('falls back to initials when there is no photo', () => {
@@ -43,7 +47,7 @@ describe('AvatarComponent', () => {
   it('falls back to initials once the <img> reports a load error', () => {
     component.photo = 'not-a-real-image';
     component.name = 'Jordan Lee';
-    expect(component.photoSrc).toBe('data:image/*;base64,not-a-real-image');
+    expect(component.photoSrc).toBe('data:image/jpeg;base64,not-a-real-image');
 
     fixture.detectChanges();
     const img: HTMLImageElement = fixture.nativeElement.querySelector('img');

@@ -24,6 +24,7 @@ import { selectMyNotifications } from 'src/app/state/notification/notification.s
 import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
 import { GlobalSearchComponent } from '../global-search/global-search.component';
 import { NavbarStyleService } from 'src/app/services/navbar-style.service';
+import { photoDataUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
   selector: 'app-top-bar',
@@ -117,9 +118,7 @@ export class TopBarComponent implements OnInit {
       this.store.select(selectUser).subscribe(user => {
         this.userData = user;
 
-        this.profilePhoto = user?.profilePhoto
-          ? `data:image/jpeg;base64,${user.profilePhoto}`
-          : null;
+        this.profilePhoto = user?.profilePhoto ? photoDataUri(user.profilePhoto) : null;
       }),
 
       this.store.select(selectMyNotifications).subscribe(notifications => {
