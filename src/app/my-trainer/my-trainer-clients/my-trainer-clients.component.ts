@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { TrainerClients } from 'src/app/models/trainers.interface';
 import { selectTrainerClients } from 'src/app/state/trainer/trainer.selector';
 import { loadTrainerClients } from 'src/app/state/trainer/trainer.actions';
+import { photoDataUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
   selector: 'app-my-trainer-clients',
@@ -70,11 +71,14 @@ export class MyTrainerClientsComponent {
     this.showAll = !this.showAll;
   }
 
+  /**
+   * NOTE: this grid still renders placeholder markup ("client name here",
+   * a hardcoded 'client-photo-here' photo arg) rather than real per-client
+   * data -- that's a separate, unfinished feature, not a data-URI bug. This
+   * just fixes the same invalid-`image/*`-MIME issue every other photo
+   * helper had, for whenever it's wired up for real.
+   */
   getProfilePhoto(photo: string): string {
-    if (!photo) return 'assets/avatar.png';
-    if (photo.startsWith('data:image') || photo.startsWith('http') || photo.startsWith('blob:')) {
-      return photo;
-    }
-    return 'data:image/png;base64,' + photo;
+    return photoDataUri(photo) ?? 'assets/avatar.png';
   }
 }

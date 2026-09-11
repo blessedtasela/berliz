@@ -18,6 +18,7 @@ import { loadMyNotifications } from 'src/app/state/notification/notification.act
 import { selectIncomingRequestCount } from 'src/app/state/connection/connection.selectors';
 import { loadPendingRequests } from 'src/app/state/connection/connection.actions';
 import { selectConversations } from 'src/app/state/message/message.selectors';
+import { photoDataUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { loadConversations } from 'src/app/state/message/message.actions';
 
 const KNOWN_SIDEBAR_MODES: SidebarDisplay[] = ['expanded', 'collapsed', 'hidden'];
@@ -148,9 +149,7 @@ export class SideBarComponent implements OnInit, OnDestroy {
       this.store.select(selectUser).subscribe(user => {
         this.userData = user;
 
-        this.profilePhoto = user?.profilePhoto
-          ? `data:image/jpeg;base64,${user.profilePhoto}`
-          : null;
+        this.profilePhoto = user?.profilePhoto ? photoDataUri(user.profilePhoto) : null;
 
         // Seed the runtime sidebar mode from the user's saved "Sidebar display"
         // preference the first time it's seen this session (SidebarStateService

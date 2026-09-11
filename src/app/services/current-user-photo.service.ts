@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map, shareReplay } from 'rxjs/operators';
 import { UserService } from './user.service';
+import { photoDataUri } from '../shared/photo-lightbox/photo-data-uri';
 
 /**
  * The signed-in viewer's own profile photo (as a data: URI, or the fallback
@@ -22,7 +23,7 @@ export class CurrentUserPhotoService {
   get(): Observable<string> {
     if (!this.photo$) {
       this.photo$ = this.userService.getUser().pipe(
-        map(res => res.data?.profilePhoto ? 'data:image/*;base64,' + res.data.profilePhoto : CurrentUserPhotoService.FALLBACK),
+        map(res => (res.data?.profilePhoto && photoDataUri(res.data.profilePhoto)) || CurrentUserPhotoService.FALLBACK),
         catchError(() => of(CurrentUserPhotoService.FALLBACK)),
         shareReplay(1),
       );

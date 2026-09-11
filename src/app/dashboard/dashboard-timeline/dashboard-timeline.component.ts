@@ -14,7 +14,7 @@ import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-
 import { ReactionButtonComponent } from 'src/app/shared/reaction-button/reaction-button.component';
 import { BookProviderButtonComponent } from 'src/app/shared/book-provider-button/book-provider-button.component';
 import { PostActivityType, PostResponse, ReactionType } from 'src/app/models/post.interface';
-import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
+import { memoizePhotoUriByKey, photoDataUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { AuthService } from 'src/app/services/auth.service';
 import { PostService } from 'src/app/services/post.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -122,7 +122,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     this.userService.getUser().subscribe({
       next: res => {
         const photo = res.data?.profilePhoto;
-        if (photo) { this.myPhotoSrc = 'data:image/*;base64,' + photo; }
+        if (photo) { this.myPhotoSrc = photoDataUri(photo) ?? this.myPhotoSrc; }
       },
       error: () => { /* keep the placeholder avatar */ },
     });

@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { TrainerTestimonials } from 'src/app/models/trainers.interface';
 import { selectMyTrainerTestimonials } from 'src/app/state/trainer/trainer.selector';
 import { loadMyTrainerTestimonials } from 'src/app/state/trainer/trainer.actions';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
   selector: 'app-my-trainer-testimonials',
@@ -19,6 +20,17 @@ export class MyTrainerTestimonialsComponent {
   sortOrder: 'newest' | 'oldest' | 'client' = 'newest';
   pageSize: number = 5;
 
+  /**
+   * `filtered`/`visible` used to be methods re-run on every change-detection
+   * pass (the template called them straight from *ngIf/*ngFor), rebuilding a
+   * fresh sorted array each tick -- which fed a trackBy-less *ngFor, so every
+   * card (and its avatar image) was torn down and rebuilt every tick. Now
+   * recomputed only when an actual input changes.
+   */
+  filtered: TrainerTestimonials[] = [];
+  visible: TrainerTestimonials[] = [];
+
+  private photoUri = memoizePhotoUriByKey();
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -42,11 +54,25 @@ export class MyTrainerTestimonialsComponent {
           ...t,
           expanded: false
         }));
+        this.recompute();
       })
     );
   }
 
-  filteredTestimonials(): TrainerTestimonials[] {
+  onSearchChange(): void {
+    this.recompute();
+  }
+
+  onSortChange(): void {
+    this.recompute();
+  }
+
+  toggleShowAll(): void {
+    this.showAll = !this.showAll;
+    this.recomputeVisible();
+  }
+
+  private recompute(): void {
     let result = [...this.trainerTestimonials];
 
     if (this.searchTerm.trim()) {
@@ -72,24 +98,18 @@ export class MyTrainerTestimonialsComponent {
       }
     });
 
-    return result;
+    this.filtered = result;
+    this.recomputeVisible();
   }
 
-  visibleTestimonials(): TrainerTestimonials[] {
-    const all = this.filteredTestimonials();
-    return this.showAll ? all : all.slice(0, this.pageSize);
+  private recomputeVisible(): void {
+    this.visible = this.showAll ? this.filtered : this.filtered.slice(0, this.pageSize);
   }
 
-  toggleShowAll(): void {
-    this.showAll = !this.showAll;
-  }
+  trackById = (_: number, t: TrainerTestimonials) => t.id;
 
-  getProfilePhoto(photo: string): string {
-    if (!photo) return 'assets/avatar.png';
-    if (photo.startsWith('data:image') || photo.startsWith('http') || photo.startsWith('blob:')) {
-      return photo;
-    }
-    return 'data:image/png;base64,' + photo;
+  getProfilePhoto(testimonial: TrainerTestimonials): string {
+    return this.photoUri(testimonial.id, testimonial.clientPhotoUrl) ?? 'assets/avatar.png';
   }
 
   formatDate(date: any): string {
