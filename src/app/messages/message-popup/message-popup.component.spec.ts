@@ -266,6 +266,9 @@ describe('MessagePopupComponent', () => {
       fixture.detectChanges();
       spyOnProperty(window, 'scrollY').and.returnValue(2500);
 
+      // The scroll listener is registered directly on `window` (outside Angular's
+      // zone, for perf — see the component's ngOnInit), not exposed as a public
+      // method any more, so dispatch a real scroll event to exercise it.
       window.dispatchEvent(new Event('scroll'));
 
       expect(component.raised).toBeTrue();
