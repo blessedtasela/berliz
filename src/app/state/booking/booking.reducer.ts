@@ -50,10 +50,10 @@ export const bookingReducer = createReducer(
 
   on(A.updateBookingStatusSuccess, A.cancelBookingSuccess, (s, { response }) => ({
     ...s, loading: false,
-    selectedBooking: response.data ?? s.selectedBooking,
-    bookings: response.data ? upsert(s.bookings, response.data) : s.bookings,
-    myBookings: response.data ? upsert(s.myBookings, response.data) : s.myBookings,
-    providerBookings: response.data ? upsert(s.providerBookings, response.data) : s.providerBookings,
+    selectedBooking: response.data?.id ? response.data : s.selectedBooking,
+    bookings: response.data?.id ? upsert(s.bookings, response.data) : s.bookings,
+    myBookings: response.data?.id ? upsert(s.myBookings, response.data) : s.myBookings,
+    providerBookings: response.data?.id ? upsert(s.providerBookings, response.data) : s.providerBookings,
   })),
 
   on(A.loadMyTrainers, state => ({ ...state, myTrainersLoading: true, error: null })),

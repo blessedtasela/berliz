@@ -58,7 +58,7 @@ export class TrainerComponent {
   ngOnInit(): void {
 
     this.updateTrainerPhotoForm = this.formbuilder.group({
-      photo: ['', [Validators.required, imageValidator]],
+      photo: ['', [Validators.required, imageValidator()]],
       id: [this.trainerData.id],
     });
 

@@ -35,10 +35,15 @@
                             'border-gray-200 bg-gray-50': !(updateTrainerPhotoForm.get('photo')?.invalid && updateTrainerPhotoForm.get('photo')?.touched)
                           }">
             </div>
-            <p *ngIf="updateTrainerPhotoForm.get('photo')?.invalid && updateTrainerPhotoForm.get('photo')?.dirty"
+            <p *ngIf="updateTrainerPhotoForm.get('photo')?.invalid && updateTrainerPhotoForm.get('photo')?.dirty && !updateTrainerPhotoForm.get('photo')?.errors?.['invalidSize']"
                 class="text-red-500 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Please select a file
+            </p>
+            <p *ngIf="updateTrainerPhotoForm.get('photo')?.errors?.['invalidSize']"
+                class="text-red-500 text-[11px] flex items-center gap-1">
+                <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+                File must be under 10MB
             </p>
         </div>
 

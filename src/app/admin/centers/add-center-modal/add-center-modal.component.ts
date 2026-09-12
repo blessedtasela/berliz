@@ -8,7 +8,6 @@ import { Categories } from 'src/app/models/categories.interface';
 import { Partner } from 'src/app/models/partners.interface';
 import { CenterService } from 'src/app/services/center.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { TrainerFormModalComponent } from 'src/app/shared/trainer-form-modal/trainer-form-modal.component';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
@@ -36,7 +35,7 @@ export class AddCenterModalComponent {
   showCropper: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
-    public dialogRef: MatDialogRef<TrainerFormModalComponent>,
+    public dialogRef: MatDialogRef<AddCenterModalComponent>,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,

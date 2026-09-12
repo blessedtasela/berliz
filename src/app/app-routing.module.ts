@@ -110,7 +110,6 @@ export const routes: Routes = [
     path: 'dashboard',
     loadChildren: () => import('./dashboard/dashboard-feature.module').then(m => m.DashboardFeatureModule)
   },
-
   { path: '**', component: PageNotFoundComponent }
 ];
 

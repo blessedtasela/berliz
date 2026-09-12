@@ -1,0 +1,14 @@
+/* Tint the native date/time picker icon to match the red accent instead of
+   the default grey/black, and give it a comfortable tap target on mobile. */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  filter: invert(24%) sepia(89%) saturate(3000%) hue-rotate(347deg) brightness(90%) contrast(95%);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+  background-color: rgb(254 226 226);
+}

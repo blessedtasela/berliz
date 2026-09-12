@@ -223,6 +223,11 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
     return this.posts.find(p => p.authorCenterId != null)?.authorCenterId ?? null;
   }
 
+  /** The trainer/center's coaching/business name (not this account's real name) for the Book CTA. */
+  get viewedProviderName(): string | null {
+    return this.posts.find(p => p.authorTrainerId != null || p.authorCenterId != null)?.authorName ?? null;
+  }
+
   /** A trainer / center viewing someone else can award them a rank. */
   get canAwardRank(): boolean {
     const role = this.authService.getCurrentUserRole();
