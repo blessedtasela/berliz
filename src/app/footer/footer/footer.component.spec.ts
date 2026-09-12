@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 
 import { FooterComponent } from './footer.component';
 
@@ -15,7 +16,8 @@ describe('FooterComponent', () => {
       declarations: [FooterComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: MatDialog, useValue: jasmine.createSpyObj('MatDialog', ['open']) }
       ]
     });
     fixture = TestBed.createComponent(FooterComponent);

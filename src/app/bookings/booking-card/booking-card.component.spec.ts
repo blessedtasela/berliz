@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import { BookingCardComponent } from './booking-card.component';
 import { Booking } from 'src/app/models/booking.model';
@@ -11,7 +12,10 @@ describe('BookingCardComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [BookingCardComponent],
-      schemas: [NO_ERRORS_SCHEMA]
+      schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        { provide: MatDialog, useValue: jasmine.createSpyObj('MatDialog', ['open']) }
+      ]
     });
 
     fixture = TestBed.createComponent(BookingCardComponent);
