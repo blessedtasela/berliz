@@ -266,7 +266,7 @@ describe('MessagePopupComponent', () => {
       fixture.detectChanges();
       spyOnProperty(window, 'scrollY').and.returnValue(2500);
 
-      component.onWindowScroll();
+      window.dispatchEvent(new Event('scroll'));
 
       expect(component.raised).toBeTrue();
     });
@@ -275,10 +275,10 @@ describe('MessagePopupComponent', () => {
       setup({ messagePopupEnabled: true } as Partial<Users>);
       fixture.detectChanges();
       const scrollY = spyOnProperty(window, 'scrollY').and.returnValue(2500);
-      component.onWindowScroll();
+      window.dispatchEvent(new Event('scroll'));
 
       scrollY.and.returnValue(0);
-      component.onWindowScroll();
+      window.dispatchEvent(new Event('scroll'));
 
       expect(component.raised).toBeFalse();
     });
