@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { TodoList } from 'src/app/models/todoList.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StateService } from 'src/app/services/state.service';
+import { TodaysTodoPromptService } from 'src/app/services/todays-todo-prompt.service';
 import { TodaysTodoModalComponent } from '../todays-todo-modal/todays-todo-modal.component';
 import { Users } from 'src/app/models/users.interface';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
@@ -50,7 +51,8 @@ export class DashboardMainComponent {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private stateService: StateService
+    private stateService: StateService,
+    private todaysTodoPrompt: TodaysTodoPromptService,
   ) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -114,6 +116,10 @@ export class DashboardMainComponent {
   }
 
   private evaluateTodaysTodoPopup(): void {
+    // User preference (Settings → Daily planning prompt): 'off' skips entirely,
+    // 'morning' only shows before the cutoff hour. See TodaysTodoPromptService.
+    if (!this.todaysTodoPrompt.isAllowedNow()) return;
+
     const today = this.todayKey();
 
     // Already prompted today — don't ask again until tomorrow.

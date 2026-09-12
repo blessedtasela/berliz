@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, FormArray, FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
 import { Partner } from 'src/app/models/partners.interface';
@@ -14,6 +14,9 @@ import { selectActiveCategories } from 'src/app/state/category/category.selector
 import { loadActivePartners } from 'src/app/state/partner/partner.actions';
 import { selectActivePartners } from 'src/app/state/partner/partner.selectors';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
+import { StrapiService } from 'src/app/services/strapi.service';
+import { PhotoResponse } from 'src/app/models/Media.interface';
+import { MediaOwnerType } from 'src/app/models/Media.enum';
 
 @Component({
   selector: 'app-add-center-modal',
@@ -33,6 +36,8 @@ export class AddCenterModalComponent {
   imageChangedEvent: any = null;
   croppedImageBlob: Blob | null = null;
   showCropper: boolean = false;
+  photoRequest: PhotoResponse | null = null;
+  uploadingPhoto: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<AddCenterModalComponent>,
@@ -40,7 +45,8 @@ export class AddCenterModalComponent {
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,
     private store: Store,
-    private centerService: CenterService) { }
+    private centerService: CenterService,
+    private strapiService: StrapiService) { }
 
 
   ngOnInit(): void {
@@ -113,7 +119,7 @@ export class AddCenterModalComponent {
     this.croppedImageBlob = null;
   }
 
-  confirmCrop(): void {
+  async confirmCrop(): Promise<void> {
     if (!this.croppedImageBlob) {
       this.snackBarService.openSnackBar('Please crop the image first', 'error');
       return;
@@ -129,6 +135,32 @@ export class AddCenterModalComponent {
     this.showCropper = false;
     this.imageChangedEvent = null;
     this.croppedImageBlob = null;
+
+    try {
+      this.uploadingPhoto = true;
+      const res = (await this.strapiService.uploadToStrapi(file).pipe(take(1)).toPromise()) ?? [];
+      const uploaded = res[0];
+      if (!uploaded) {
+        throw new Error('No file returned from Strapi');
+      }
+
+      this.photoRequest = {
+        id: 0,
+        strapiId: uploaded.id,
+        photoUrl: uploaded.url,
+        name: uploaded.name,
+        mimeType: uploaded.mime,
+        byteSize: uploaded.size,
+        ownerId: 0,
+        mediaOwnerType: MediaOwnerType.CENTER_PROFILE,
+        date: new Date(),
+        lastUpdate: new Date(),
+      };
+    } catch (err: any) {
+      this.snackBarService.openSnackBar(err?.error?.message || err?.message || 'Photo upload failed', 'error');
+    } finally {
+      this.uploadingPhoto = false;
+    }
   }
 
   validateCheckbox(): ValidatorFn {
@@ -147,33 +179,34 @@ export class AddCenterModalComponent {
       categories.push(new FormControl({ categoryIds: event.target.value }));
     } else {
       // Remove the control by its value
-      const index = categories.controls.findIndex((control) => control.value.tagIds === event.target.value);
+      const index = categories.controls.findIndex((control) => control.value.categoryIds === event.target.value);
       categories.removeAt(index);
     }
   }
 
   addTrainer(): void {
+    // CenterRequest.categoryIds is a comma-separated String on the backend.
     const selectedCategoryIds = this.addCenterForm.value.categoryIds.map((categories: any) => categories.categoryIds);
     const categoryToStrings = selectedCategoryIds.join(',');
 
-    const requestData = new FormData();
-    requestData.append('partnerId', this.addCenterForm.get('id')?.value);
-    requestData.append('name', this.addCenterForm.get('name')?.value);
-    requestData.append('motto', this.addCenterForm.get('motto')?.value);
-    requestData.append('address', this.addCenterForm.get('address')?.value);
-    requestData.append('location', this.addCenterForm.get('location')?.value);
-    requestData.append('experience', this.addCenterForm.get('experience')?.value);
-    requestData.append('photo', this.selectedPhoto);
-    requestData.append('categoryIds', categoryToStrings);
-
-    if (this.addCenterForm.invalid) {
+    if (this.addCenterForm.invalid || !this.photoRequest) {
       this.ngxService.start();
       this.invalidForm = true;
-      this.responseMessage = "Invalid form. Please complete all sections";
+      this.responseMessage = this.photoRequest ? "Invalid form. Please complete all sections" : "Please select a photo";
       this.snackBarService.openSnackBar(this.responseMessage, "error");
       this.ngxService.stop();
     } else {
       this.ngxService.start();
+      const requestData = {
+        partnerId: this.addCenterForm.get('id')?.value,
+        name: this.addCenterForm.get('name')?.value,
+        motto: this.addCenterForm.get('motto')?.value,
+        address: this.addCenterForm.get('address')?.value,
+        location: this.addCenterForm.get('location')?.value,
+        experience: this.addCenterForm.get('experience')?.value,
+        categoryIds: categoryToStrings,
+        photoRequest: this.photoRequest,
+      };
       this.centerService.addCenter(requestData)
         .subscribe((response: any) => {
           this.addCenterForm.reset();
@@ -201,6 +234,7 @@ export class AddCenterModalComponent {
     this.addCenterForm.reset();
     this.selectedPhoto = null;
     this.displayPhoto = "../../../assets/icons/user.png";
+    this.photoRequest = null;
     this.showCropper = false;
     this.imageChangedEvent = null;
     this.croppedImageBlob = null;

@@ -344,6 +344,52 @@
         </div>
     </div>
 
+    <!-- ═══════════ DAILY PLANNING PROMPT ═══════════
+         Per-device (localStorage) — see TodaysTodoPromptService. Controls the
+         "what are you doing today" popup on the Dashboard home. Skipped
+         automatically (any setting) if a task's already due today. -->
+    <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+
+        <div>
+            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Daily planning prompt</h2>
+            <p class="text-[11px] text-gray-400 mt-0.5">
+                How often Berliz asks what you're doing today when you open the Dashboard.
+                We recommend mornings — it's a planning prompt, not much use once your day's underway.
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <div class="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Daily planning prompt frequency">
+            <button type="button" role="radio" [attr.aria-checked]="todaysTodoPromptFrequency === 'daily'"
+                (click)="setTodaysTodoPromptFrequency('daily')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
+                [ngClass]="todaysTodoPromptFrequency === 'daily' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                <i-feather name="calendar" style="width:16px;height:16px;"
+                    [ngClass]="todaysTodoPromptFrequency === 'daily' ? 'text-red-600' : 'text-gray-400'"></i-feather>
+                <span class="text-[11px] font-semibold"
+                    [ngClass]="todaysTodoPromptFrequency === 'daily' ? 'text-red-600' : 'text-gray-600'">Every login</span>
+            </button>
+
+            <button type="button" role="radio" [attr.aria-checked]="todaysTodoPromptFrequency === 'morning'"
+                (click)="setTodaysTodoPromptFrequency('morning')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
+                [ngClass]="todaysTodoPromptFrequency === 'morning' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                <i-feather name="sunrise" style="width:16px;height:16px;"
+                    [ngClass]="todaysTodoPromptFrequency === 'morning' ? 'text-red-600' : 'text-gray-400'"></i-feather>
+                <span class="text-[11px] font-semibold"
+                    [ngClass]="todaysTodoPromptFrequency === 'morning' ? 'text-red-600' : 'text-gray-600'">Mornings only</span>
+            </button>
+
+            <button type="button" role="radio" [attr.aria-checked]="todaysTodoPromptFrequency === 'off'"
+                (click)="setTodaysTodoPromptFrequency('off')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
+                [ngClass]="todaysTodoPromptFrequency === 'off' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                <i-feather name="bell-off" style="width:16px;height:16px;"
+                    [ngClass]="todaysTodoPromptFrequency === 'off' ? 'text-red-600' : 'text-gray-400'"></i-feather>
+                <span class="text-[11px] font-semibold"
+                    [ngClass]="todaysTodoPromptFrequency === 'off' ? 'text-red-600' : 'text-gray-600'">Off</span>
+            </button>
+        </div>
+    </div>
+
     <!-- ═══════════ IN-APP NAVIGATION ═══════════
          Per-device (localStorage) — see NavControlsService. Controls
          NavHistoryControlsComponent, the floating back/forward control mounted
@@ -404,11 +450,33 @@
             </ng-container>
         </p>
 
-        <button *ngIf="navControlsStyle === 'button' && navControlsHasCustomPosition" type="button"
-            (click)="resetNavControlsPosition()" class="self-start text-[11px] font-semibold text-gray-500 hover:text-red-600 transition flex items-center gap-1.5">
-            <i-feather name="rotate-ccw" style="width:11px;height:11px;"></i-feather>
-            Reset position
-        </button>
+        <ng-container *ngIf="navControlsStyle === 'button'">
+            <div class="grid grid-cols-2 gap-2" role="radiogroup" aria-label="In-app navigation button appearance">
+                <button type="button" role="radio" [attr.aria-checked]="navControlsAppearance === 'translucent'"
+                    (click)="setNavControlsAppearance('translucent')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
+                    [ngClass]="navControlsAppearance === 'translucent' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                    <i-feather name="layers" style="width:16px;height:16px;"
+                        [ngClass]="navControlsAppearance === 'translucent' ? 'text-red-600' : 'text-gray-400'"></i-feather>
+                    <span class="text-[11px] font-semibold"
+                        [ngClass]="navControlsAppearance === 'translucent' ? 'text-red-600' : 'text-gray-600'">Translucent</span>
+                </button>
+
+                <button type="button" role="radio" [attr.aria-checked]="navControlsAppearance === 'solid'"
+                    (click)="setNavControlsAppearance('solid')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
+                    [ngClass]="navControlsAppearance === 'solid' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                    <i-feather name="square" style="width:16px;height:16px;"
+                        [ngClass]="navControlsAppearance === 'solid' ? 'text-red-600' : 'text-gray-400'"></i-feather>
+                    <span class="text-[11px] font-semibold"
+                        [ngClass]="navControlsAppearance === 'solid' ? 'text-red-600' : 'text-gray-600'">Solid white</span>
+                </button>
+            </div>
+
+            <button *ngIf="navControlsHasCustomPosition" type="button"
+                (click)="resetNavControlsPosition()" class="self-start text-[11px] font-semibold text-gray-500 hover:text-red-600 transition flex items-center gap-1.5">
+                <i-feather name="rotate-ccw" style="width:11px;height:11px;"></i-feather>
+                Reset position
+            </button>
+        </ng-container>
     </div>
 
     <!-- ═══════════ BROWSER NOTIFICATIONS ═══════════

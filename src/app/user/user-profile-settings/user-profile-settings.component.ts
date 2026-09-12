@@ -35,8 +35,9 @@ import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 import { BrowserNotificationService, NotificationCategory } from 'src/app/services/browser-notification.service';
 import { BlockService } from 'src/app/services/block.service';
 import { BlockedUser } from 'src/app/models/block.model';
-import { NavControlsService, NavControlsStyle } from 'src/app/services/nav-controls.service';
+import { NavControlsService, NavControlsStyle, NavControlsAppearance } from 'src/app/services/nav-controls.service';
 import { NavbarStyleService, NavbarStyle } from 'src/app/services/navbar-style.service';
+import { TodaysTodoPromptService, TodaysTodoPromptFrequency } from 'src/app/services/todays-todo-prompt.service';
 import { WhatsNewService } from 'src/app/services/whats-new.service';
 import { WebAuthnService } from 'src/app/services/webauthn.service';
 import { WebAuthnCredentialResponse } from 'src/app/models/webauthn.interface';
@@ -112,6 +113,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     private navControls: NavControlsService,
     public whatsNew: WhatsNewService,
     private navbarStyleService: NavbarStyleService,
+    private todaysTodoPromptService: TodaysTodoPromptService,
     public webAuthnService: WebAuthnService,
   ) { }
 
@@ -433,6 +435,18 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     this.navbarStyleService.setStyle(style);
   }
 
+  // ═══════════ DAILY PLANNING PROMPT ═══════════
+  // Per-device (localStorage) — see TodaysTodoPromptService. Controls the
+  // "what are you doing today" popup DashboardMainComponent shows.
+
+  get todaysTodoPromptFrequency(): TodaysTodoPromptFrequency {
+    return this.todaysTodoPromptService.frequency;
+  }
+
+  setTodaysTodoPromptFrequency(frequency: TodaysTodoPromptFrequency): void {
+    this.todaysTodoPromptService.setFrequency(frequency);
+  }
+
   // ═══════════ IN-APP NAVIGATION ═══════════
   // Per-device (localStorage) — see NavControlsService.
 
@@ -455,6 +469,14 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   resetNavControlsPosition(): void {
     this.navControls.resetPosition();
     this.snackBarService.openSnackBar('Position reset — it\'ll reappear centered at the bottom.', '');
+  }
+
+  get navControlsAppearance(): NavControlsAppearance {
+    return this.navControls.appearance;
+  }
+
+  setNavControlsAppearance(appearance: NavControlsAppearance): void {
+    this.navControls.setAppearance(appearance);
   }
 
   async toggleBrowserNotifications(): Promise<void> {

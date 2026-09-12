@@ -6,7 +6,6 @@ import { Categories } from 'src/app/models/categories.interface';
 import { Partner } from 'src/app/models/partners.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
-import { TrainerFormModalComponent } from 'src/app/shared/trainer-form-modal/trainer-form-modal.component';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
 import { Store } from '@ngrx/store';
 import { loadActivePartners } from 'src/app/state/partner/partner.actions';
@@ -14,6 +13,10 @@ import { selectActivePartners } from 'src/app/state/partner/partner.selectors';
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
+import { take } from 'rxjs';
+import { StrapiService } from 'src/app/services/strapi.service';
+import { PhotoResponse } from 'src/app/models/Media.interface';
+import { MediaOwnerType } from 'src/app/models/Media.enum';
 
 @Component({
   selector: 'app-add-trainer-modal',
@@ -32,6 +35,8 @@ export class AddTrainerModalComponent {
   imageChangedEvent: any = null;
   croppedImageBlob: Blob | null = null;
   showCropper: boolean = false;
+  photoRequest: PhotoResponse | null = null;
+  uploadingPhoto: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<AddTrainerModalComponent>,
@@ -39,6 +44,7 @@ export class AddTrainerModalComponent {
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,
     private trainerService: TrainerService,
+    private strapiService: StrapiService,
     private store: Store) { }
 
 
@@ -105,7 +111,7 @@ export class AddTrainerModalComponent {
     this.croppedImageBlob = null;
   }
 
-  confirmCrop(): void {
+  async confirmCrop(): Promise<void> {
     if (!this.croppedImageBlob) {
       this.snackBarService.openSnackBar('Please crop the image first', 'error');
       return;
@@ -121,6 +127,32 @@ export class AddTrainerModalComponent {
     this.showCropper = false;
     this.imageChangedEvent = null;
     this.croppedImageBlob = null;
+
+    try {
+      this.uploadingPhoto = true;
+      const res = (await this.strapiService.uploadToStrapi(file).pipe(take(1)).toPromise()) ?? [];
+      const uploaded = res[0];
+      if (!uploaded) {
+        throw new Error('No file returned from Strapi');
+      }
+
+      this.photoRequest = {
+        id: 0,
+        strapiId: uploaded.id,
+        photoUrl: uploaded.url,
+        name: uploaded.name,
+        mimeType: uploaded.mime,
+        byteSize: uploaded.size,
+        ownerId: 0,
+        mediaOwnerType: MediaOwnerType.TRAINER,
+        date: new Date(),
+        lastUpdate: new Date(),
+      };
+    } catch (err: any) {
+      this.snackBarService.openSnackBar(err?.error?.message || err?.message || 'Photo upload failed', 'error');
+    } finally {
+      this.uploadingPhoto = false;
+    }
   }
 
   validateCheckbox(): ValidatorFn {
@@ -134,37 +166,39 @@ export class AddTrainerModalComponent {
 
   onCheckboxChanged(event: any) {
     const categories = this.addTrainerForm.get('categoryIds') as FormArray;
+    const categoryId = Number(event.target.value);
 
     if (event.target.checked) {
-      categories.push(this.formBuilder.group({ categoryIds: event.target.value }));
+      categories.push(this.formBuilder.group({ categoryIds: categoryId }));
     } else {
       // Remove the control by its value
-      const index = categories.controls.findIndex((control) => control.value.tagIds === event.target.value);
+      const index = categories.controls.findIndex((control) => control.value.categoryIds === categoryId);
       categories.removeAt(index);
     }
   }
 
   addTrainer(): void {
+    // TrainerRequest.categoryIds is a List<Integer> on the backend, not a
+    // comma-separated string (that's the Center convention, not Trainer's).
     const selectedCategoryIds = this.addTrainerForm.value.categoryIds.map((categories: any) => categories.categoryIds);
-    const categoryToStrings = selectedCategoryIds.join(',');
 
-    const requestData = new FormData();
-    requestData.append('partnerId', this.addTrainerForm.get('id')?.value);
-    requestData.append('name', this.addTrainerForm.get('name')?.value);
-    requestData.append('motto', this.addTrainerForm.get('motto')?.value);
-    requestData.append('address', this.addTrainerForm.get('address')?.value);
-    requestData.append('experience', this.addTrainerForm.get('experience')?.value);
-    requestData.append('photo', this.selectedPhoto);
-    requestData.append('categoryIds', categoryToStrings);
-
-    if (this.addTrainerForm.invalid) {
+    if (this.addTrainerForm.invalid || !this.photoRequest) {
       this.ngxService.start();
       this.invalidForm = true;
-      this.responseMessage = "Invalid form. Please complete all sections";
+      this.responseMessage = this.photoRequest ? "Invalid form. Please complete all sections" : "Please select a photo";
       this.snackBarService.openSnackBar(this.responseMessage, "error");
       this.ngxService.stop();
     } else {
       this.ngxService.start();
+      const requestData = {
+        partnerId: this.addTrainerForm.get('id')?.value,
+        name: this.addTrainerForm.get('name')?.value,
+        motto: this.addTrainerForm.get('motto')?.value,
+        address: this.addTrainerForm.get('address')?.value,
+        experience: this.addTrainerForm.get('experience')?.value,
+        categoryIds: selectedCategoryIds,
+        photoRequest: this.photoRequest,
+      };
       this.trainerService.addTrainer(requestData)
         .subscribe((response: any) => {
           this.addTrainerForm.reset();
@@ -192,6 +226,7 @@ export class AddTrainerModalComponent {
     this.addTrainerForm.reset();
     this.selectedPhoto = null;
     this.displayPhoto = "../../../assets/icons/user.png";
+    this.photoRequest = null;
     this.showCropper = false;
     this.imageChangedEvent = null;
     this.croppedImageBlob = null;

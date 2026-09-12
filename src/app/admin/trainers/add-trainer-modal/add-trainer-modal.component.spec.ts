@@ -8,6 +8,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { AddTrainerModalComponent } from './add-trainer-modal.component';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { StrapiService } from 'src/app/services/strapi.service';
 
 describe('AddTrainerModalComponent', () => {
   let component: AddTrainerModalComponent;
@@ -28,7 +29,8 @@ describe('AddTrainerModalComponent', () => {
         { provide: TrainerService, useValue: trainerServiceSpy },
         { provide: MatDialogRef, useValue: dialogRefSpy },
         { provide: NgxUiLoaderService, useValue: ngxServiceSpy },
-        { provide: SnackBarService, useValue: snackBarServiceSpy }
+        { provide: SnackBarService, useValue: snackBarServiceSpy },
+        { provide: StrapiService, useValue: jasmine.createSpyObj('StrapiService', ['uploadToStrapi']) }
       ]
     });
     fixture = TestBed.createComponent(AddTrainerModalComponent);

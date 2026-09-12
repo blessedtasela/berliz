@@ -9,6 +9,7 @@ import { UpdateTrainerModalComponent } from './update-trainer-modal.component';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
+import { StrapiService } from 'src/app/services/strapi.service';
 
 describe('UpdateTrainerModalComponent', () => {
   let component: UpdateTrainerModalComponent;
@@ -31,6 +32,7 @@ describe('UpdateTrainerModalComponent', () => {
         { provide: MatDialogRef, useValue: dialogRefSpy },
         { provide: NgxUiLoaderService, useValue: ngxServiceSpy },
         { provide: SnackBarService, useValue: snackBarServiceSpy },
+        { provide: StrapiService, useValue: jasmine.createSpyObj('StrapiService', ['uploadToStrapi']) },
         { provide: MAT_DIALOG_DATA, useValue: { trainerData: { categories: [], photoResponse: { photoUrl: '' } } } }
       ]
     });

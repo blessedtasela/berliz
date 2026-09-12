@@ -6,6 +6,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { CenterService } from 'src/app/services/center.service';
+import { StrapiService } from 'src/app/services/strapi.service';
 
 import { AddCenterModalComponent } from './add-center-modal.component';
 
@@ -23,7 +24,8 @@ describe('AddCenterModalComponent', () => {
         { provide: MatDialogRef, useValue: jasmine.createSpyObj('MatDialogRef', ['close']) },
         { provide: NgxUiLoaderService, useValue: jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']) },
         { provide: SnackBarService, useValue: jasmine.createSpyObj('SnackBarService', ['openSnackBar']) },
-        { provide: CenterService, useValue: jasmine.createSpyObj('CenterService', ['addCenter']) }
+        { provide: CenterService, useValue: jasmine.createSpyObj('CenterService', ['addCenter']) },
+        { provide: StrapiService, useValue: jasmine.createSpyObj('StrapiService', ['uploadToStrapi']) }
       ]
     });
     fixture = TestBed.createComponent(AddCenterModalComponent);
