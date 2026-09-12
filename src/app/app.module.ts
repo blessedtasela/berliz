@@ -34,6 +34,7 @@ import { NgxFileDropModule } from 'ngx-file-drop';
 import { UnderConstructionPageComponent } from './under-construction-page/under-construction-page.component';
 import { TimeAgoPipe } from './shared/pipes/time-ago.pipe';
 import { AuthInterceptor } from './services/auth.interceptor';
+import { ClientMetaInterceptor } from './services/client-meta.interceptor';
 import { GlobalErrorHandlerService } from './services/global-error-handler.service';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
@@ -239,6 +240,11 @@ const dbConfig: DBConfig = {
     {
       provide: MAT_DIALOG_DEFAULT_OPTIONS,
       useValue: { disableClose: true, hasBackdrop: true }
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ClientMetaInterceptor,
+      multi: true
     },
     {
       provide: HTTP_INTERCEPTORS,

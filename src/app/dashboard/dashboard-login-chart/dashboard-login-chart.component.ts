@@ -64,6 +64,8 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
   uniqueActiveUsers = 0;
   averageSessionMinutes = 0;
   devices: DeviceBucket[] = [];
+  /** web / ios / android split — see LoginStats.platformBreakdown. */
+  platforms: DeviceBucket[] = [];
 
   private chart!: Chart<'line', number[], string>;
   private subscriptions: Subscription[] = [];
@@ -76,6 +78,18 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
     { key: 'desktop', label: 'Desktop', color: 'rgba(220,38,38,0.85)' },
     { key: 'mobile', label: 'Mobile', color: 'rgba(17,24,39,0.75)' },
     { key: 'tablet', label: 'Tablet', color: 'rgba(234,179,8,0.85)' },
+    { key: 'unknown', label: 'Unknown', color: 'rgba(156,163,175,0.6)' }
+  ];
+
+  /**
+   * Platform is the client's own explicit report (X-Client-Platform), not a
+   * User-Agent guess — see LoginStats.platformBreakdown. "unknown" here means
+   * "logged in before this header existed", not a bug.
+   */
+  private static readonly PLATFORM_META: { key: string; label: string; color: string }[] = [
+    { key: 'web', label: 'Web', color: 'rgba(220,38,38,0.85)' },
+    { key: 'ios', label: 'iOS', color: 'rgba(17,24,39,0.75)' },
+    { key: 'android', label: 'Android', color: 'rgba(34,197,94,0.8)' },
     { key: 'unknown', label: 'Unknown', color: 'rgba(156,163,175,0.6)' }
   ];
 
@@ -149,6 +163,7 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
       this.uniqueActiveUsers = 0;
       this.averageSessionMinutes = 0;
       this.devices = [];
+      this.platforms = [];
       this.renderChart([], []);
       return;
     }
@@ -161,6 +176,7 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
     this.uniqueActiveUsers = stats.uniqueActiveUsers ?? 0;
     this.averageSessionMinutes = stats.averageSessionMinutes ?? 0;
     this.devices = this.buildDevices(stats.deviceBreakdown ?? {});
+    this.platforms = this.buildPlatforms(stats.platformBreakdown ?? {});
 
     this.renderChart(labels, values);
   }
@@ -182,6 +198,7 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
 
     const counts = new Map<string, number>(keys.map(k => [k, 0]));
     const deviceCounts: Record<string, number> = {};
+    const platformCounts: Record<string, number> = {};
     let measuredSessions = 0;
     let totalMinutes = 0;
 
@@ -195,6 +212,9 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
 
       const device = (entry.deviceType ?? 'unknown').toLowerCase();
       deviceCounts[device] = (deviceCounts[device] ?? 0) + 1;
+
+      const platform = (entry.platform ?? 'unknown').toLowerCase();
+      platformCounts[platform] = (platformCounts[platform] ?? 0) + 1;
 
       if (entry.durationMinutes != null && entry.durationMinutes >= 0) {
         measuredSessions++;
@@ -212,6 +232,7 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
       ? 0
       : Math.round((totalMinutes * 10) / measuredSessions) / 10;
     this.devices = this.buildDevices(deviceCounts);
+    this.platforms = this.buildPlatforms(platformCounts);
 
     this.renderChart(labels, values);
   }
@@ -219,8 +240,19 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
   // ── Shared rendering ────────────────────────────────────────────────────────
 
   private buildDevices(breakdown: Record<string, number>): DeviceBucket[] {
-    const buckets = DashboardLoginChartComponent.DEVICE_META
-      .map(meta => ({ ...meta, count: breakdown[meta.key] ?? 0, percent: 0 }))
+    return this.buildBuckets(breakdown, DashboardLoginChartComponent.DEVICE_META);
+  }
+
+  private buildPlatforms(breakdown: Record<string, number>): DeviceBucket[] {
+    return this.buildBuckets(breakdown, DashboardLoginChartComponent.PLATFORM_META);
+  }
+
+  private buildBuckets(
+    breakdown: Record<string, number>,
+    meta: { key: string; label: string; color: string }[]
+  ): DeviceBucket[] {
+    const buckets = meta
+      .map(m => ({ ...m, count: breakdown[m.key] ?? 0, percent: 0 }))
       .filter(bucket => bucket.count > 0);
 
     const total = buckets.reduce((sum, b) => sum + b.count, 0);
