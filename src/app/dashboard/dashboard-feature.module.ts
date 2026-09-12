@@ -164,14 +164,16 @@ const dashboardRoutes: Routes = [
         }
       },
 
-      // Peer sessions — user-to-user workout sessions, proposed from an
-      // existing connection (see ConnectionsMainComponent.proposeSession).
+      // Sessions hub — client bookings (trainer/center), user-to-user peer
+      // sessions (proposed from an existing connection, see
+      // ConnectionsMainComponent.proposeSession), and group runs, each its
+      // own tab in MySessionsComponent.
       {
         path: 'my-sessions',
         loadComponent: () => import('../peer-sessions/my-sessions/my-sessions.component').then(m => m.MySessionsComponent),
         canActivate: [AuthGuard],
         data: {
-          breadcrumb: 'My Sessions',
+          breadcrumb: 'Sessions',
           expectedRole: expectedRoleAll
         }
       },

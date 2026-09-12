@@ -25,7 +25,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { name: 'Messages', icon: 'message-circle', route: '/dashboard/messages' },
   { name: 'Timeline', icon: 'file-text', route: '/dashboard/timeline' },
   { name: 'Connections', icon: 'users', route: '/dashboard/connections' },
-  { name: 'My Sessions', icon: 'user-check', route: '/dashboard/my-sessions' },
+  { name: 'Sessions', icon: 'user-check', route: '/dashboard/my-sessions' },
   { name: 'Members', icon: 'grid', route: '/dashboard/member-directory' },
 
   { label: 'Training' },
