@@ -169,6 +169,11 @@ import {
 Image,
   Maximize2,
   Target,
+  BarChart2,
+  DollarSign,
+  ExternalLink,
+  List,
+  Tag,
 
 } from 'angular-feather/icons';
 
@@ -341,6 +346,11 @@ const icons = {
   Image,
   Maximize2,
   Target,
+  BarChart2,
+  DollarSign,
+  ExternalLink,
+  List,
+  Tag,
 };
 
 @NgModule({

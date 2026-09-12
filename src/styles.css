@@ -129,6 +129,16 @@ body {
   height: auto;
   min-height: 100%;
   overflow: auto;
+  /* Stops Android Chrome's own edge-swipe-back gesture from competing with
+     NavHistoryControlsComponent's in-app 'swipe' style -- without this, a
+     swipe from the left edge could trigger the BROWSER's back navigation
+     (a full page reload) instead of, or alongside, the app's own router
+     navigation. The component's touchmove handler calls preventDefault()
+     for the same reason; this is the belt to that suspenders, since some
+     browsers recognize the edge-swipe gesture before JS ever sees a touch
+     event. Horizontal only -- vertical scrolling/pull-to-refresh elsewhere
+     in the app is unaffected. */
+  overscroll-behavior-x: none;
 }
 
 .disabled-horizontal-icon {
