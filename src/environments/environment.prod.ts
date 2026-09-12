@@ -11,6 +11,10 @@ const berliz = 'https://berliz.fitness';
 export const environment = {
     production: true,
     api: 'https://berliz-api.up.railway.app',
+    // Sent as X-Client-Version on every request (ClientMetaInterceptor) so the
+    // admin login analytics can break down usage by app build, same as the
+    // mobile app's Constants.expoConfig.version. Bump alongside package.json.
+    appVersion: '0.1',
 
     baseUrl: berliz,
     assetsUrl: `${berliz}/assets/berliz-files/`,

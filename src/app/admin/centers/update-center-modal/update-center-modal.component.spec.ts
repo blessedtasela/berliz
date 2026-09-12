@@ -9,6 +9,7 @@ import { UpdateCenterModalComponent } from './update-center-modal.component';
 import { CenterService } from 'src/app/services/center.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
+import { StrapiService } from 'src/app/services/strapi.service';
 
 describe('UpdateCenterModalComponent', () => {
   let component: UpdateCenterModalComponent;
@@ -31,6 +32,7 @@ describe('UpdateCenterModalComponent', () => {
         { provide: NgxUiLoaderService, useValue: ngxServiceSpy },
         { provide: SnackBarService, useValue: snackBarServiceSpy },
         { provide: MatDialogRef, useValue: dialogRefSpy },
+        { provide: StrapiService, useValue: jasmine.createSpyObj('StrapiService', ['uploadToStrapi']) },
         { provide: MAT_DIALOG_DATA, useValue: { centerData: { categoryIds: [] } } }
       ]
     });

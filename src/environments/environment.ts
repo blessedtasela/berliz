@@ -2,6 +2,10 @@ export const berliz = 'https://www.berliz.fitness';
 
 export const environment = {
     production: false,
+    // Sent as X-Client-Version on every request (ClientMetaInterceptor) so the
+    // admin login analytics can break down usage by app build, same as the
+    // mobile app's Constants.expoConfig.version. Bump alongside package.json.
+    appVersion: '0.1',
     // api: 'https://berliz-server-fd9efef771e8.herokuapp.com',
         // Railway backend
     // api: 'https://berliz-api.up.railway.app',

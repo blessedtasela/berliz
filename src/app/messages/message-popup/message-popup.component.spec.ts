@@ -266,7 +266,10 @@ describe('MessagePopupComponent', () => {
       fixture.detectChanges();
       spyOnProperty(window, 'scrollY').and.returnValue(2500);
 
-      component.onWindowScroll();
+      // The scroll listener is registered directly on `window` (outside Angular's
+      // zone, for perf — see the component's ngOnInit), not exposed as a public
+      // method any more, so dispatch a real scroll event to exercise it.
+      window.dispatchEvent(new Event('scroll'));
 
       expect(component.raised).toBeTrue();
     });
@@ -275,10 +278,10 @@ describe('MessagePopupComponent', () => {
       setup({ messagePopupEnabled: true } as Partial<Users>);
       fixture.detectChanges();
       const scrollY = spyOnProperty(window, 'scrollY').and.returnValue(2500);
-      component.onWindowScroll();
+      window.dispatchEvent(new Event('scroll'));
 
       scrollY.and.returnValue(0);
-      component.onWindowScroll();
+      window.dispatchEvent(new Event('scroll'));
 
       expect(component.raised).toBeFalse();
     });
