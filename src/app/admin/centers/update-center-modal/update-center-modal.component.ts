@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, EventEmitter, Inject } from '@angular/cor
 import { FormGroup, FormBuilder, FormControl, Validators, ValidatorFn, AbstractControl, FormArray } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { Centers } from 'src/app/models/centers.interface';
 import { CenterService } from 'src/app/services/center.service';
@@ -13,6 +13,10 @@ import { Store } from '@ngrx/store';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
+import { ImageCroppedEvent } from 'ngx-image-cropper';
+import { StrapiService } from 'src/app/services/strapi.service';
+import { PhotoResponse } from 'src/app/models/Media.interface';
+import { MediaOwnerType } from 'src/app/models/Media.enum';
 
 @Component({
   selector: 'app-update-center-modal',
@@ -30,6 +34,12 @@ export class UpdateCenterModalComponent {
   selectedCategoriesId: any;
   user!: Users | null;
   subscriptions: Subscription[] = []
+  previewUrl: string | null = null;
+  photoRequest: PhotoResponse | null = null;
+  uploadingPhoto: boolean = false;
+  imageChangedEvent: any = null;
+  croppedImageBlob: Blob | null = null;
+  showCropper: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<UpdateCenterModalComponent>,
@@ -38,6 +48,7 @@ export class UpdateCenterModalComponent {
     private snackBarService: SnackBarService,
     private cdr: ChangeDetectorRef,
     private centerService: CenterService,
+    private strapiService: StrapiService,
     @Inject(MAT_DIALOG_DATA) private data: any) {
     this.center = this.data.centerData;
   }
@@ -45,6 +56,7 @@ export class UpdateCenterModalComponent {
   ngOnInit(): void {
     this.handleEmitEvent();
     this.selectedCategoriesId = this.center.categoryIds;
+    this.previewUrl = this.center.photoResponse?.photoUrl || null;
     this.updateCenterForm = this.formBuilder.group({
       'id': this.center?.id,
       'name': new FormControl(this.center.name, Validators.compose([Validators.required, Validators.minLength(3)])),
@@ -77,6 +89,76 @@ export class UpdateCenterModalComponent {
     this.dialogRef.close('Dialog closed without completing center aplication')
   }
 
+  onPhotoSelected(event: any): void {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    this.imageChangedEvent = event;
+    this.showCropper = true;
+  }
+
+  imageCropped(event: ImageCroppedEvent): void {
+    this.croppedImageBlob = event.blob || null;
+  }
+
+  loadImageFailed(): void {
+    this.snackBarService.openSnackBar('Failed to load image', 'error');
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+  }
+
+  cancelCrop(): void {
+    if (this.imageChangedEvent?.target) {
+      this.imageChangedEvent.target.value = '';
+    }
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+    this.croppedImageBlob = null;
+  }
+
+  async confirmCrop(): Promise<void> {
+    if (!this.croppedImageBlob) {
+      this.snackBarService.openSnackBar('Please crop the image first', 'error');
+      return;
+    }
+
+    const file = new File([this.croppedImageBlob], `center_${Date.now()}.jpeg`, {
+      type: this.croppedImageBlob.type || 'image/jpeg'
+    });
+
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+    this.croppedImageBlob = null;
+
+    this.previewUrl = URL.createObjectURL(file);
+
+    try {
+      this.uploadingPhoto = true;
+      const res = (await this.strapiService.uploadToStrapi(file).pipe(take(1)).toPromise()) ?? [];
+      const uploaded = res[0];
+      if (!uploaded) {
+        throw new Error('No file returned from Strapi');
+      }
+
+      this.photoRequest = {
+        id: this.center.photoResponse?.id ?? 0,
+        strapiId: uploaded.id,
+        photoUrl: uploaded.url,
+        name: uploaded.name,
+        mimeType: uploaded.mime,
+        byteSize: uploaded.size,
+        ownerId: 0,
+        mediaOwnerType: MediaOwnerType.CENTER_PROFILE,
+        date: new Date(),
+        lastUpdate: new Date(),
+      };
+    } catch (err: any) {
+      this.snackBarService.openSnackBar(err?.error?.message || err?.message || 'Photo upload failed', 'error');
+    } finally {
+      this.uploadingPhoto = false;
+    }
+  }
+
   validateCheckbox(): ValidatorFn {
     return (formArray: AbstractControl) => {
       const checkboxes = formArray.value;
@@ -104,7 +186,8 @@ export class UpdateCenterModalComponent {
     const categoryToStrings = selectedCategoryIds.join(',');
     const formData = {
       ...this.updateCenterForm.value,
-      categoryIds: categoryToStrings
+      categoryIds: categoryToStrings,
+      ...(this.photoRequest ? { photoRequest: this.photoRequest } : {}),
     };
 
     if (this.updateCenterForm.invalid) {
@@ -140,6 +223,9 @@ export class UpdateCenterModalComponent {
 
   clear() {
     this.updateCenterForm.reset();
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+    this.croppedImageBlob = null;
   }
 
 }
