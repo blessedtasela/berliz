@@ -201,7 +201,7 @@
                     <div class="flex items-center justify-between gap-3">
                         <div class="min-w-0">
                             <p class="text-sm font-semibold text-gray-900 truncate">{{ r.title || 'Group run' }}</p>
-                            <p class="text-[11px] text-gray-400">{{ r.scheduledAt | date:'medium' }}{{ r.city ? ' · ' + r.city : '' }} &middot; {{ (r.participants ?? []).length }} runners</p>
+                            <p class="text-[11px] text-gray-400">{{ r.scheduledAt | date:'medium' }}{{ r.city ? ' · ' + r.city : '' }} &middot; {{ r.participants.length }} runners</p>
                         </div>
                         <span class="text-[10px] font-semibold uppercase tracking-wide rounded-full px-2 py-1 shrink-0 bg-emerald-50 text-emerald-700 border border-emerald-100">
                             Confirmed
