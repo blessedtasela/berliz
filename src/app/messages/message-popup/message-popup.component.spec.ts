@@ -216,10 +216,16 @@ describe('MessagePopupComponent', () => {
     setup({ messagePopupEnabled: true } as Partial<Users>);
     fixture.detectChanges();
 
-    component.activeUserId = 5;
+    // activeContact is derived once when the store's activeConversationUserId
+    // changes (see recomputeActiveContact) rather than a getter, so drive it
+    // through the selector like production does instead of poking the
+    // component's cached activeUserId field directly.
+    store.overrideSelector(selectActiveConversationUserId, 5);
+    store.refreshState();
     expect(component.activeContact).toEqual({ userId: 5, name: 'Coach Sam', photo: undefined, role: 'trainer' });
 
-    component.activeUserId = 7; // a Connection, not yet in conversations
+    store.overrideSelector(selectActiveConversationUserId, 7); // a Connection, not yet in conversations
+    store.refreshState();
     expect(component.activeContact.name).toBe('Jordan Lee');
     expect(component.activeContact.role).toBe('');
   });
