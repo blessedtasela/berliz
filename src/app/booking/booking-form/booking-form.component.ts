@@ -53,13 +53,17 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   readonly durationOptions = [30, 45, 60, 90, 120];
 
   /**
-   * A client can't grab a slot that starts in the next hour -- the provider
+   * A client can't grab a slot starting inside this window -- the provider
    * needs lead time to see the request and get ready. Only bites on today's
-   * slots; every future day is entirely bookable. (The backend is the real
-   * gate; this just keeps un-bookable times off the picker so a client
-   * doesn't pick one and get a rejection.)
+   * slots; every future day is entirely bookable. Starts at the platform
+   * default and is overwritten with this specific provider's own value once
+   * the slots response comes back (see AvailableSlotsResponse.leadTimeMinutes
+   * -- they may have set a longer or shorter notice window in their own
+   * availability settings). The backend is the real gate either way; this
+   * just keeps an un-bookable time off the picker so a client doesn't pick
+   * one and get a rejection.
    */
-  readonly minLeadTimeMinutes = 60;
+  minLeadTimeMinutes = 60;
 
   // ── Calendar / slot-picker state ──────────────────────────────────────
   dateStrip: DateStripDay[] = this.buildDateStrip();
@@ -134,6 +138,7 @@ export class BookingFormComponent implements OnInit, OnDestroy {
         this.availabilityConfigured = response.availabilityConfigured;
         this.slots = response.slots ?? [];
         this.slotDurationMinutes = response.slotDurationMinutes ?? 60;
+        this.minLeadTimeMinutes = response.leadTimeMinutes ?? 60;
         this.slotsMessage = response.message ?? '';
         this.selectedSlot = null;
       });

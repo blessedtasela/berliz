@@ -41,6 +41,8 @@ export interface AvailableSlotsResponse {
   centerId: number | null;
   date: string;
   slotDurationMinutes: number;
+  /** This provider's effective minimum-notice window in minutes — their own override if set, else the platform default. */
+  leadTimeMinutes: number;
   availabilityConfigured: boolean;
   slots: AvailableSlot[];
   message?: string;
