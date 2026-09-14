@@ -60,7 +60,7 @@
                     <i-feather name="calendar" class="text-gray-300" style="width:18px;height:18px;"></i-feather>
                     <p class="text-xs text-gray-400">
                         {{ allSlotsWithinLeadTime
-                            ? 'No more slots today — bookings need at least an hour\'s notice. Try tomorrow.'
+                            ? 'No more slots today — bookings need at least ' + minLeadTimeMinutes + ' minutes\' notice. Try tomorrow.'
                             : (slotsMessage || 'No open slots on this day.') }}
                     </p>
                 </div>
@@ -107,7 +107,7 @@
 
             <p *ngIf="pastDate" class="text-red-500 text-[11px] flex items-center gap-1 -mt-2">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
-                Pick a time at least an hour from now
+                Pick a time at least {{ minLeadTimeMinutes }} minutes from now
             </p>
 
             <div class="flex flex-col gap-1">

@@ -141,6 +141,12 @@ export class HubGridComponent implements OnChanges {
     // The provider (requests-from-clients) view is now a toggle inside the
     // unified Bookings page rather than its own route.
     'my-provider-bookings': '/dashboard/my-bookings',
+    // There's no /dashboard/hub/partnership route at all -- the real page
+    // (trainer/center profile: intro, pricing, benefits, availability,
+    // photo/video album, plus a "not yet a partner" / "application pending"
+    // state for anyone else) lives at /dashboard/partnership. Without this
+    // override the tile 404'd for every trainer/center who clicked it.
+    'partnership': '/dashboard/partnership',
   };
 
   resolveRoute(key: string): string {

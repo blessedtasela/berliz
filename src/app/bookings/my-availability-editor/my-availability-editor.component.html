@@ -77,6 +77,49 @@
             </button>
         </div>
 
+        <!-- ═══════════ BOOKING NOTICE (lead time) ═══════════
+             How far ahead a client must book -- per-provider override of the
+             platform default, see AvailabilityService.resolveLeadTimeMinutes. -->
+        <div class="rounded-xl border border-gray-200 bg-gray-50 p-3.5 flex flex-col gap-3 mt-1">
+            <div>
+                <h3 class="text-xs font-bold text-gray-900">Booking notice</h3>
+                <p class="text-[11px] text-gray-400 mt-0.5">
+                    How far ahead a client must book — they can't grab a slot starting sooner than this.
+                    Leave it on the platform default unless you need more (or less) time to prepare.
+                </p>
+            </div>
+
+            <div *ngIf="leadTimeLoading" class="flex items-center gap-2 text-gray-400 py-1">
+                <i-feather name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>
+                <span class="text-xs">Loading...</span>
+            </div>
+
+            <div *ngIf="!leadTimeLoading" class="flex items-center gap-2 flex-wrap">
+                <div class="flex items-center gap-1.5">
+                    <input type="number" min="0" step="5"
+                        [ngModel]="leadTimeMinutes"
+                        (ngModelChange)="leadTimeMinutes = $event === '' || $event === null ? null : +$event"
+                        [placeholder]="defaultLeadTimeMinutes + ' (default)'"
+                        class="w-28 px-2.5 py-1.5 rounded-lg border border-gray-200 bg-white text-xs text-gray-900
+                               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+                    <span class="text-xs text-gray-500">minutes</span>
+                </div>
+
+                <button type="button" (click)="saveLeadTime()" [disabled]="leadTimeSaving"
+                    class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900 text-white hover:bg-gray-800
+                           active:scale-[0.98] transition flex items-center gap-1.5
+                           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100">
+                    <i-feather [name]="leadTimeSaving ? 'loader' : 'save'" [ngClass]="{'animate-spin': leadTimeSaving}" style="width:12px;height:12px;"></i-feather>
+                    Save
+                </button>
+
+                <button *ngIf="leadTimeMinutes != null" type="button" (click)="resetLeadTime()" [disabled]="leadTimeSaving"
+                    class="text-[11px] font-semibold text-gray-500 hover:text-red-600 transition disabled:opacity-50">
+                    Use default ({{ defaultLeadTimeMinutes }} min)
+                </button>
+            </div>
+        </div>
+
     </div>
 
 </div>
