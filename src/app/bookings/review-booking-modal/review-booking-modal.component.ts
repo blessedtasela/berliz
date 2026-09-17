@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 import { Booking } from 'src/app/models/booking.model';
 import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
@@ -27,6 +28,7 @@ export class ReviewBookingModalComponent {
   constructor(
     public dialogRef: MatDialogRef<ReviewBookingModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ReviewBookingModalData,
+    private router: Router,
   ) {
     this.booking = data.booking;
   }
@@ -40,8 +42,19 @@ export class ReviewBookingModalComponent {
     return this._uri(this.booking.clientPhoto);
   }
 
-  get clientProfileUrl(): string | null {
-    return this.booking.clientUsername ? `/user/${this.booking.clientUsername}` : null;
+  get hasClientProfile(): boolean {
+    return !!this.booking.clientUsername;
+  }
+
+  /** Stays in the protected dashboard layout (sidebar/top bar) -- the public
+   *  /user/:username page would otherwise take an already-signed-in trainer
+   *  out of the app entirely. Closes with no decision (undefined) rather than
+   *  declining/cancelling the request -- they're just stepping away to look,
+   *  the request is still there to review when they come back. */
+  viewClientProfile(): void {
+    if (!this.booking.clientUsername) return;
+    this.dialogRef.close(undefined);
+    this.router.navigate(['/dashboard/user', this.booking.clientUsername]);
   }
 
   decline(): void {
