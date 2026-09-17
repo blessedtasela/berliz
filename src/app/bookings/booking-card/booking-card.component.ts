@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Booking } from 'src/app/models/booking.model';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { ReviewBookingModalComponent } from '../review-booking-modal/review-booking-modal.component';
@@ -11,7 +12,7 @@ import { ReviewBookingModalComponent } from '../review-booking-modal/review-book
 })
 export class BookingCardComponent {
 
-  constructor(private dialog: MatDialog) { }
+  constructor(private dialog: MatDialog, private router: Router) { }
 
   /** 'client' shows who you booked with + a cancel action while pending.
    *  'provider' shows who booked you + confirm/complete/cancel actions. */
@@ -20,6 +21,7 @@ export class BookingCardComponent {
 
   @Output() cancelRequested = new EventEmitter<number>();
   @Output() statusChangeRequested = new EventEmitter<{ id: number; status: string }>();
+  @Output() deleteRequested = new EventEmitter<number>();
   @Output() startIntakeRequested = new EventEmitter<{ clientId: number; clientName: string }>();
 
   get counterpartyName(): string {
@@ -74,6 +76,22 @@ export class BookingCardComponent {
   /** A trainer can start (or revisit) an intake once they've actually taken the client on. */
   get canStartIntake(): boolean {
     return this.mode === 'provider' && (this.booking.status === 'confirmed' || this.booking.status === 'completed');
+  }
+
+  /** A cancel could've been an accidental tap (or a change of mind) -- a cancelled
+   *  request isn't a dead end, the provider can bring it back for review. */
+  get canProviderReopen(): boolean {
+    return this.mode === 'provider' && this.booking.status === 'cancelled';
+  }
+
+  get canProviderDelete(): boolean {
+    return this.mode === 'provider' && this.booking.status === 'cancelled';
+  }
+
+  /** Cancelling doesn't have to be the end of the conversation -- let the provider
+   *  reach out directly if they still want to work something out with this client. */
+  get canFollowUp(): boolean {
+    return this.mode === 'provider' && this.booking.status === 'cancelled' && !!this.booking.clientId;
   }
 
   /** Client cancelling their own pending request -- a confirm step guards against an accidental tap. */
@@ -134,6 +152,34 @@ export class BookingCardComponent {
       return;
     }
     this.statusChangeRequested.emit({ id: this.booking.id, status });
+  }
+
+  /** Bring a cancelled request back for another look -- same review modal as a
+   *  fresh request, so the provider sees the client's profile/notes again rather
+   *  than a one-tap silent reversal. */
+  reopen(): void {
+    this.reviewAndConfirm();
+  }
+
+  remove(): void {
+    this.dialog.open(PromptModalComponent, {
+      width: '360px',
+      maxWidth: '95vw',
+      data: {
+        confirmation: true,
+        title: 'Delete this cancelled request?',
+        message: 'This removes it from your list for good. This can\'t be undone.',
+        confirmText: 'Delete',
+        cancelText: 'Keep it',
+        icon: 'trash-2'
+      }
+    }).afterClosed().subscribe(confirmed => {
+      if (confirmed) this.deleteRequested.emit(this.booking.id);
+    });
+  }
+
+  followUp(): void {
+    this.router.navigate(['/dashboard/messages'], { queryParams: { userId: this.booking.clientId } });
   }
 
   startIntake(): void {

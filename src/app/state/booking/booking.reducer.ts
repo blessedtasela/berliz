@@ -17,13 +17,14 @@ export const bookingReducer = createReducer(
 
   on(
     A.createBooking, A.loadMyBookings, A.loadMyProviderBookings, A.loadAllBookings,
-    A.loadBooking, A.updateBookingStatus, A.cancelBooking,
+    A.loadBooking, A.updateBookingStatus, A.cancelBooking, A.deleteBooking,
     state => ({ ...state, loading: true, error: null })
   ),
 
   on(
     A.createBookingFailure, A.loadMyBookingsFailure, A.loadMyProviderBookingsFailure,
     A.loadAllBookingsFailure, A.loadBookingFailure, A.updateBookingStatusFailure, A.cancelBookingFailure,
+    A.deleteBookingFailure,
     (state, { error }) => ({ ...state, loading: false, error })
   ),
 
@@ -54,6 +55,14 @@ export const bookingReducer = createReducer(
     bookings: response.data?.id ? upsert(s.bookings, response.data) : s.bookings,
     myBookings: response.data?.id ? upsert(s.myBookings, response.data) : s.myBookings,
     providerBookings: response.data?.id ? upsert(s.providerBookings, response.data) : s.providerBookings,
+  })),
+
+  on(A.deleteBookingSuccess, (s, { id }) => ({
+    ...s, loading: false,
+    bookings: s.bookings.filter(b => b.id !== id),
+    myBookings: s.myBookings.filter(b => b.id !== id),
+    providerBookings: s.providerBookings.filter(b => b.id !== id),
+    selectedBooking: s.selectedBooking?.id === id ? null : s.selectedBooking,
   })),
 
   on(A.loadMyTrainers, state => ({ ...state, myTrainersLoading: true, error: null })),
