@@ -247,6 +247,18 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   went to `PENDING_PAYMENT` awaiting a Stripe Checkout session — but Checkout can't
   meaningfully complete a $0 charge. A free plan now activates immediately.
   `berliz@bdf0e68f` / `com.berliz@9e9ef81` (+ test).
+- **Renew modal explains what renewing does while still active.** Shows an inline
+  banner ("adds on top of that date, doesn't replace it") plus a live "New access
+  until" preview, computed the same way the backend actually extends the date.
+  `berliz@df64d3fc` (+ tests).
+- **Fixed the bio field silently requiring 900 characters.** A prior commit updating
+  the bio min-length hint text to "10 characters" only changed the display copy —
+  the real `Validators.minLength(900)` on the profile-edit page was never touched,
+  so it stayed impossible to satisfy. Fixed to match, and aligned the separate bio
+  field on the full profile-settings form (was `minLength(8)`) to the same standard.
+  Also: today's-todo's task field no longer requires 20 characters minimum, and both
+  it and its due-date field show a specific inline error instead of only a vague
+  "Missing required fields" banner. `berliz@00972467` (+ test).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
