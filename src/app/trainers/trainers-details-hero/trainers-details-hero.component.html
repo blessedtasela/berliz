@@ -77,13 +77,14 @@
                 </span>
             </div>
 
-            <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1">
+            <button type="button" (click)="viewLikers()" [disabled]="!trainer?.likes"
+                class="text-left bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1 transition enabled:hover:border-red-800 enabled:cursor-pointer disabled:cursor-default">
                 <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold">Likes</span>
                 <span class="text-sm font-bold text-white flex items-center gap-1.5">
                     <i-feather name="heart" class="text-red-500" style="width:13px;height:13px;"></i-feather>
                     {{ trainer?.likes || 0 }}
                 </span>
-            </div>
+            </button>
 
             <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1">
                 <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold">Reviews</span>

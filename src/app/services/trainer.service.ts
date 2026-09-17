@@ -20,6 +20,7 @@ import {
 
 import { CenterTrainers } from '../models/centers.interface';
 import { ApiResponse } from '../models/Api.interface';
+import { LikerResponse } from '../models/comment.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -79,6 +80,11 @@ export class TrainerService {
 
   getTrainerLikes() {
     return this.httpClient.get<ApiResponse<TrainerLikes[]>>(`${this.url}/trainer/getTrainerLikes`);
+  }
+
+  /** Who liked THIS specific trainer, newest first — public, for the "liked by" list. */
+  getTrainerLikers(id: number) {
+    return this.httpClient.get<ApiResponse<LikerResponse[]>>(`${this.url}/trainer/${id}/likes`);
   }
 
   getMyTrainerLikes() {

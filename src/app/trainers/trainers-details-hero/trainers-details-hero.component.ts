@@ -1,5 +1,7 @@
 import { Component, ElementRef, HostListener, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Trainers } from 'src/app/models/trainers.interface';
+import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 
 /**
@@ -20,7 +22,16 @@ export class TrainersDetailsHeroComponent {
   /** Whether the "Available in" tile's location list dropdown is open. */
   locationsOpen = false;
 
-  constructor(private elementRef: ElementRef<HTMLElement>) { }
+  constructor(private elementRef: ElementRef<HTMLElement>, private dialog: MatDialog) { }
+
+  viewLikers(): void {
+    if (!this.trainer?.id) return;
+    this.dialog.open(LikersModalComponent, {
+      width: '380px',
+      maxWidth: '95vw',
+      data: { kind: 'trainer', id: this.trainer.id, routePrefix: '/user' }
+    });
+  }
 
   get photoUrl(): string {
     const url = this.trainer?.photoResponse?.photoUrl;

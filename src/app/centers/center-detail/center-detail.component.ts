@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
+import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { Subscription, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Categories } from 'src/app/models/categories.interface';
@@ -90,7 +92,23 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     private seoService: SeoService,
     private testimonialDialog: TestimonialDialogService,
     private bookingDialog: BookingDialogService,
+    private dialog: MatDialog,
   ) { }
+
+  /** Overridden by the dashboard-native subclass so its own "View profile" links
+   *  never send a signed-in user out to the public /user/:username page. */
+  protected get likersRoutePrefix(): string {
+    return '/user';
+  }
+
+  viewLikers(): void {
+    if (!this.center?.id) return;
+    this.dialog.open(LikersModalComponent, {
+      width: '380px',
+      maxWidth: '95vw',
+      data: { kind: 'center', id: this.center.id, routePrefix: this.likersRoutePrefix }
+    });
+  }
 
   ngOnInit(): void {
     this.subscription.add(

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 
@@ -18,6 +19,7 @@ describe('TrainersDetailsComponent', () => {
     const trainerServiceSpy = jasmine.createSpyObj('TrainerService', ['getTrainer']);
     const testimonialDialogSpy = jasmine.createSpyObj('TestimonialDialogService', ['openTestimonialForm']);
     const bookingDialogSpy = jasmine.createSpyObj('BookingDialogService', ['openBookingForm']);
+    const matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
 
     TestBed.configureTestingModule({
       declarations: [TrainersDetailsComponent],
@@ -34,7 +36,8 @@ describe('TrainersDetailsComponent', () => {
         { provide: Router, useValue: routerSpy },
         { provide: TrainerService, useValue: trainerServiceSpy },
         { provide: TestimonialDialogService, useValue: testimonialDialogSpy },
-        { provide: BookingDialogService, useValue: bookingDialogSpy }
+        { provide: BookingDialogService, useValue: bookingDialogSpy },
+        { provide: MatDialog, useValue: matDialogSpy }
       ]
     });
     fixture = TestBed.createComponent(TrainersDetailsComponent);

@@ -53,12 +53,13 @@
                             <p *ngIf="center.motto" class="text-xs text-zinc-500 italic mt-1">{{ center.motto }}</p>
                         </div>
 
-                        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-950/60 border border-red-900 shrink-0">
+                        <button type="button" (click)="viewLikers()" [disabled]="!center.likes"
+                            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-950/60 border border-red-900 shrink-0 transition enabled:hover:border-red-700 enabled:cursor-pointer disabled:cursor-default">
                             <i-feather name="thumbs-up" style="width:12px;height:12px;" class="text-red-400"></i-feather>
                             <span class="text-[11px] font-semibold text-red-400">
                                 {{ center.likes || 0 }} {{ center.likes === 1 ? 'like' : 'likes' }}
                             </span>
-                        </div>
+                        </button>
                     </div>
 
                     <div class="border-t border-zinc-800"></div>

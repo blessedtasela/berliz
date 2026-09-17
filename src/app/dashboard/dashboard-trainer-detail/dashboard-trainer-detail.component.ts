@@ -17,6 +17,10 @@ export class DashboardTrainerDetailComponent extends TrainersDetailsComponent {
 
   resolveStrapiUrl = resolveStrapiUrl;
 
+  protected override get likersRoutePrefix(): string {
+    return '/dashboard/user';
+  }
+
   get photoUrl(): string {
     const url = this.trainer?.photoResponse?.photoUrl;
     return url ? resolveStrapiUrl(url) : 'assets/avatar.png';

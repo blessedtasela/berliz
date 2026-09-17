@@ -53,13 +53,14 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="bg-white border border-gray-200 rounded-xl px-4 py-3 flex flex-col gap-1">
+        <button type="button" (click)="viewLikers()" [disabled]="!center?.likes"
+            class="text-left bg-white border border-gray-200 rounded-xl px-4 py-3 flex flex-col gap-1 transition enabled:hover:border-red-300 enabled:cursor-pointer disabled:cursor-default">
             <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Likes</span>
             <span class="text-sm font-bold text-gray-900 flex items-center gap-1.5">
                 <i-feather name="heart" class="text-red-600" style="width:13px;height:13px;"></i-feather>
                 {{ center?.likes || 0 }}
             </span>
-        </div>
+        </button>
         <div class="bg-white border border-gray-200 rounded-xl px-4 py-3 flex flex-col gap-1">
             <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Reviews</span>
             <span class="text-sm font-bold text-gray-900 flex items-center gap-1.5">

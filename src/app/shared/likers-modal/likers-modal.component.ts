@@ -7,13 +7,15 @@ import { take } from 'rxjs';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { LikerResponse } from 'src/app/models/comment.interface';
 import { reactionEmoji } from 'src/app/models/post.interface';
+import { CenterService } from 'src/app/services/center.service';
 import { CommentService } from 'src/app/services/comment.service';
 import { PostService } from 'src/app/services/post.service';
+import { TrainerService } from 'src/app/services/trainer.service';
 import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 export interface LikersModalData {
   /** Which entity's likers to list. */
-  kind: 'post' | 'comment';
+  kind: 'post' | 'comment' | 'trainer' | 'center';
   id: number;
   /** Where a liker's name/avatar links -- '/dashboard/user' in the shell, '/user' on public pages. */
   routePrefix?: string;
@@ -32,7 +34,7 @@ export interface LikersModalData {
   template: `
     <div class="bg-white rounded-2xl w-full max-w-sm shadow-xl flex flex-col max-h-[70vh]">
       <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <h2 class="text-sm font-bold text-gray-900">Reactions</h2>
+        <h2 class="text-sm font-bold text-gray-900">{{ title }}</h2>
         <button type="button" (click)="dialogRef.close()"
           class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400">
           <i-feather name="x" style="width:14px;height:14px;"></i-feather>
@@ -82,6 +84,8 @@ export class LikersModalComponent {
   constructor(
     private postService: PostService,
     private commentService: CommentService,
+    private trainerService: TrainerService,
+    private centerService: CenterService,
     public dialogRef: MatDialogRef<LikersModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: LikersModalData,
   ) {
@@ -89,12 +93,17 @@ export class LikersModalComponent {
     this.load();
   }
 
+  get title(): string {
+    return this.data.kind === 'trainer' || this.data.kind === 'center' ? 'Likes' : 'Reactions';
+  }
+
   load(): void {
     this.loading = true;
     this.error = false;
-    const request$ = this.data.kind === 'post'
-      ? this.postService.getPostLikes(this.data.id)
-      : this.commentService.getCommentLikes(this.data.id);
+    const request$ = this.data.kind === 'post' ? this.postService.getPostLikes(this.data.id)
+      : this.data.kind === 'comment' ? this.commentService.getCommentLikes(this.data.id)
+      : this.data.kind === 'trainer' ? this.trainerService.getTrainerLikers(this.data.id)
+      : this.centerService.getCenterLikers(this.data.id);
 
     request$.pipe(take(1)).subscribe({
       next: res => {
