@@ -239,7 +239,7 @@
                 </textarea>
                 <p *ngIf="showError('bio')" class="text-[11px] text-red-500 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
-                    Bio is required
+                    {{ form.get('bio')?.errors?.['minlength'] ? 'Bio must be at least 10 characters.' : 'Bio is required' }}
                 </p>
             </div>
 

@@ -35,4 +35,17 @@ describe('UserProfileComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  // Regression: minLength was accidentally left at 900 (a stray "900" the display text
+  // was updated away from without updating the actual validator to match), which made
+  // the bio field impossible for any real user to satisfy.
+  it('accepts a bio of 10+ characters and rejects anything shorter', () => {
+    const bio = component.bioForm.get('bio');
+
+    bio?.setValue('too short');
+    expect(bio?.hasError('minlength')).toBeTrue();
+
+    bio?.setValue('a'.repeat(10));
+    expect(bio?.valid).toBeTrue();
+  });
 });

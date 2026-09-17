@@ -45,7 +45,7 @@ export class TodaysTodoModalComponent implements OnInit {
     this.email = this.authService.getCurrentUserEmail();
 
     this.addTodoForm = this.formBuilder.group({
-      task: ['', [Validators.required, Validators.minLength(20)]],
+      task: ['', Validators.required],
       dueDate: ['', Validators.required],
       priority: ['NORMAL', Validators.required],
     });
@@ -58,7 +58,7 @@ export class TodaysTodoModalComponent implements OnInit {
     if (this.addTodoForm.invalid) {
       this.invalidForm = true;
       this.addTodoForm.markAllAsTouched();
-      this.snackBarService.openSnackBar('Please enter a task with at least 20 characters.', 'error');
+      this.snackBarService.openSnackBar('Please fill in what you\'re working on and pick a due date.', 'error');
       return;
     }
 

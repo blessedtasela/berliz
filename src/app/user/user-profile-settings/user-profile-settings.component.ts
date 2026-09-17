@@ -520,7 +520,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
         state: [this.user.state, Validators.required],
         city: [this.user.city, Validators.required],
         address: [this.user.address, [Validators.required, Validators.minLength(8)]],
-        bio: [this.user.bio, [Validators.required, Validators.minLength(8)]],
+        bio: [this.user.bio, [Validators.required, Validators.minLength(10)]],
         email: [
           this.user.email,
           [Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])]

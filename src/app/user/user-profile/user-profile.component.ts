@@ -44,7 +44,7 @@ export class UserProfileComponent {
 
   ngOnInit(): void {
     this.bioForm = this.fb.group({
-      bio: ['', [Validators.required, Validators.minLength(900), Validators.maxLength(1200)]]
+      bio: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1200)]]
     });
 
     this.loadUserFromStore();
