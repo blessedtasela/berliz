@@ -19,6 +19,16 @@
         </button>
     </div>
 
+    <!-- You still have time left -- explain what renewing now actually does. -->
+    <div *ngIf="isCurrentlyActive" class="flex items-start gap-2 px-3 py-2.5 rounded-xl bg-amber-50 border border-amber-100">
+        <i-feather name="info" class="text-amber-600 shrink-0 mt-0.5" style="width:13px;height:13px;"></i-feather>
+        <p class="text-[11px] text-amber-800 leading-relaxed">
+            You already have an active <span class="font-semibold">{{ data.subscription.plan }}</span> subscription
+            until <span class="font-semibold">{{ data.subscription.endDate | date:'mediumDate' }}</span>. Renewing now
+            adds on top of that date — it won't replace or shorten the time you already have.
+        </p>
+    </div>
+
     <!-- Duration -->
     <div class="flex flex-col gap-1">
         <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
@@ -27,6 +37,9 @@
         <input type="number" min="1" class="w-full px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-900
                    focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
             [(ngModel)]="durationMonths" />
+        <p class="text-[11px] text-gray-400 mt-1">
+            New access until <span class="font-semibold text-gray-600">{{ newEndDatePreview | date:'mediumDate' }}</span>
+        </p>
     </div>
 
     <div class="border-t border-gray-100"></div>
