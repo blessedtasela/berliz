@@ -1,4 +1,5 @@
-import { Injectable, NgZone, OnDestroy } from '@angular/core';
+import { Injectable, NgZone, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { EMPTY, Subscription, fromEvent, merge, timer } from 'rxjs';
 import { startWith, switchMap, throttleTime } from 'rxjs/operators';
 
@@ -53,7 +54,8 @@ export class InactivityService implements OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private zone: NgZone
+    private zone: NgZone,
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) { }
 
   /**
@@ -62,6 +64,9 @@ export class InactivityService implements OnDestroy {
    */
   start(): void {
     if (this.subscription) return; // already running
+    // No `document` during build-time prerendering, and no point tracking
+    // inactivity server-side anyway — skip entirely off-browser.
+    if (!isPlatformBrowser(this.platformId)) return;
 
     // The listeners must not drag Angular through a change-detection cycle on
     // every mousemove, so they live outside the zone; only the logout is

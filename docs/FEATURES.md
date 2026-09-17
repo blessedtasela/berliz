@@ -148,12 +148,34 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | Hub, News & updates | ✅ | |
 | Global search (multi-entity) | ✅ | Top-bar |
 | Partner one-pager, brand assets | ✅ | |
+| Build-time prerendering of public marketing routes (SEO) | ✅ | `/`, `/about`, `/services` + its 3 children, `/contact`, `/trainers`, `/centers`, `/members` are statically rendered at build time (Angular Universal) so crawlers that don't run JS see real title/meta/OG/canonical/JSON-LD instead of an empty shell. Dashboard and every other route stay client-rendered only — see `docs/DEPLOYMENT.md` |
 
 ---
 
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Prerendering for public routes
+_Branch: `feat/prerender-public-routes`_
+
+- **Build-time prerendering (Angular Universal) for the 9 public marketing routes.**
+  `ng add @nguniversal/express-engine` scaffolded `server.ts` / `main.server.ts` /
+  `app.server.module.ts` and the `server`/`prerender` architect targets; `angular.json`'s
+  `prerender` target points at `prerender-routes.txt` (exactly the 9 `sitemap.xml` routes,
+  no dynamic `:id` routes). Fixed real crashes/hangs surfaced by rendering outside a
+  browser: `AuthService`/`InactivityService`/`ScrollRestorationService`/
+  `NavigationBarComponent` guarded `window`/`document`/`localStorage` access with
+  `isPlatformBrowser`; the newsletter `MatDialog` popup (`AppComponent.maybeShowNewsletter`)
+  skipped entirely off-browser since its focus-trap throws against the server's synthetic
+  DOM; `rxStompServiceFactory` only calls `.activate()` in the browser (opening a live
+  WebSocket and reading `localStorage` server-side crashed `/services`/`/centers`, whose
+  components inject `RxStompService` for live updates); and the landing page's
+  `HeroSectionComponent`/`TestimonialComponent` only start their carousel `setInterval`s in
+  the browser (an uncleared interval kept the render's zone permanently "unstable," hanging
+  `/` — which redirects to `/home` — forever). Netlify's build command is now
+  `npm run prerender` and publish dir `dist/berliz/browser` — see `docs/DEPLOYMENT.md`.
+  Dashboard and every other route are unaffected (still plain CSR, additive change only).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_

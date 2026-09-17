@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/berliz",
+            "outputPath": "dist/berliz/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -108,6 +108,64 @@
             "scripts": [],
             "karmaConfig": "karma.conf.js"
           }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/berliz/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false,
+              "vendorChunk": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "configurations": {
+            "development": {
+              "browserTarget": "berliz:build:development",
+              "serverTarget": "berliz:server:development"
+            },
+            "production": {
+              "browserTarget": "berliz:build:production",
+              "serverTarget": "berliz:server:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "routesFile": "prerender-routes.txt"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "berliz:build:production",
+              "serverTarget": "berliz:server:production"
+            },
+            "development": {
+              "browserTarget": "berliz:build:development",
+              "serverTarget": "berliz:server:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

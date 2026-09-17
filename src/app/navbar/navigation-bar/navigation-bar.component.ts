@@ -1,4 +1,5 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -26,7 +27,8 @@ export class NavigationBarComponent implements OnInit {
 
 
   constructor(private router: Router,
-    private authService: AuthService,) {
+    private authService: AuthService,
+    @Inject(PLATFORM_ID) private platformId: Object,) {
     this.currentRoute = this.router.url;
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -39,6 +41,9 @@ export class NavigationBarComponent implements OnInit {
   }
 
   ngOnInit() {
+    // No `window`/`document` during build-time prerendering.
+    if (!isPlatformBrowser(this.platformId)) return;
+
     // this.subscribeToCloseNavBarOnMouseDown()
     this.subscribeToCloseNavBarOnScroll()
     // this.subscribeToCloseNavBarOnClick()
