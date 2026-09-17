@@ -193,6 +193,30 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   right below it read "Keep my profile private" — heading and content disagreeing at a
   glance. Heading is now the neutral "Profile visibility"; the label now states the current
   setting directly rather than reading as an instruction. `berliz@ea65f9ca`.
+- **Fixed expired/invalid JWTs never triggering the frontend's auto-refresh.** `JWTFilter`
+  had no try/catch around token parsing, so any JJWT failure escaped to Spring Boot's
+  generic `/error` fallback with a message that never varied by cause — the frontend's
+  refresh-on-401 logic specifically looked for "jwt expired" in that message, so an
+  ordinary expired access token (the most common cause of a 401) never triggered a
+  refresh; the app would just keep 401ing every request until a manual reload/re-login.
+  Backend now reports the real reason against the real path; frontend now attempts a
+  refresh on any 401 instead of pattern-matching. `berliz@3c9542df` / `com.berliz@e9560a6`
+  (5 new tests).
+- **Fixed false "User not found" when an unrelated profile extra fails to load.**
+  `getPublicProfile` shared one try/catch around its whole body, so an exception building
+  ANY optional extra (templates, testimonials, timeline posts, resolving a professional
+  name) silently became a 404 — indistinguishable from the user genuinely not existing,
+  confusing since their name still showed fine in the member directory (a separate query).
+  Each block now degrades on its own instead of taking the whole profile down.
+  `com.berliz@e9560a6` (regression test).
+- **Messaging UI: Instagram-style list, wider bubbles.** The full Messages page's
+  conversation list used a hard `divide-y` line between every row; dropped it to match
+  the popup's own divider-free list. Message bubble max-width bumped 75% → 85%.
+  `berliz@5b04c3b6`.
+- **"Who liked this trainer/center" list.** The Likes stat tile on all four trainer/center
+  detail views (public + dashboard-native) is now clickable, opening the same likers
+  modal used for post/comment likes. New `GET /trainer/{id}/likes` / `/center/{id}/likes`.
+  `berliz@bff86e37` / `com.berliz@5234484` (+ tests).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
