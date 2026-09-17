@@ -27,16 +27,6 @@ export interface BookingFormData {
   providerName: string;
 }
 
-interface DateStripDay {
-  value: string; // yyyy-MM-dd
-  dayLabel: string; // "Mon"
-  dateLabel: string; // "14"
-  isToday: boolean;
-}
-
-const DATE_STRIP_LENGTH = 21;
-const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
 @Component({
   selector: 'app-booking-form',
   templateUrl: './booking-form.component.html',
@@ -66,8 +56,7 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   minLeadTimeMinutes = 60;
 
   // ── Calendar / slot-picker state ──────────────────────────────────────
-  dateStrip: DateStripDay[] = this.buildDateStrip();
-  selectedDate: string = this.dateStrip[0].value;
+  selectedDate: string = this.formatDateLocal(new Date());
   selectedSlot: AvailableSlot | null = null;
 
   slots: AvailableSlot[] = [];
@@ -175,28 +164,6 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     return this.maxNotesLength - value.length;
   }
 
-  /** Today's date in yyyy-MM-dd, used as the manual-entry date input's `min`. */
-  get minDate(): string {
-    return this.formatDateLocal(new Date());
-  }
-
-  // ── Date strip ───────────────────────────────────────────────────────
-  private buildDateStrip(): DateStripDay[] {
-    const days: DateStripDay[] = [];
-    const today = new Date();
-    for (let i = 0; i < DATE_STRIP_LENGTH; i++) {
-      const d = new Date(today);
-      d.setDate(today.getDate() + i);
-      days.push({
-        value: this.formatDateLocal(d),
-        dayLabel: WEEKDAY_LABELS[d.getDay()],
-        dateLabel: String(d.getDate()),
-        isToday: i === 0
-      });
-    }
-    return days;
-  }
-
   private formatDateLocal(d: Date): string {
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -204,9 +171,9 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     return `${y}-${m}-${day}`;
   }
 
-  selectDate(day: DateStripDay): void {
-    if (this.selectedDate === day.value) return;
-    this.selectedDate = day.value;
+  selectDate(dateValue: string): void {
+    if (this.selectedDate === dateValue) return;
+    this.selectedDate = dateValue;
     this.selectedSlot = null;
     this.fetchSlotsForSelectedDate();
   }

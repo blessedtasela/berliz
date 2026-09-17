@@ -7,6 +7,8 @@ import { take } from 'rxjs';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { PeerSessionService } from 'src/app/services/peer-session.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { DateStripComponent } from 'src/app/shared/date-strip/date-strip.component';
+import { TimePickerComponent } from 'src/app/shared/time-picker/time-picker.component';
 import { genericError } from 'src/validators/form-validators.module';
 
 export interface ProposeSessionModalData {
@@ -22,7 +24,7 @@ export interface ProposeSessionModalData {
 @Component({
   selector: 'app-propose-session-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IconsModule],
+  imports: [CommonModule, ReactiveFormsModule, IconsModule, DateStripComponent, TimePickerComponent],
   templateUrl: './propose-session-modal.component.html',
   styleUrls: ['./propose-session-modal.component.css']
 })
@@ -31,7 +33,6 @@ export class ProposeSessionModalComponent {
   form: FormGroup;
   invalidForm = false;
   saving = false;
-  readonly minDate = new Date().toISOString().split('T')[0];
 
   constructor(
     private fb: FormBuilder,
