@@ -45,7 +45,8 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
 
   actionMessages: Record<string, string> = {
     delete: 'delete',
-    pause: 'pause',
+    paused: 'pause',
+    complete: 'mark as completed',
     completed: 'mark as completed',
     'in-progress': 'start',
     pending: 'restart',
