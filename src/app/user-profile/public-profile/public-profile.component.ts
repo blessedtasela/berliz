@@ -191,9 +191,10 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
     return !!this.profile?.viewedAsAdminOverride;
   }
 
+  /** Trainer/center's professional name when applicable, otherwise their personal name. */
   get fullName(): string {
     if (!this.profile) return '';
-    return `${this.profile.firstname ?? ''} ${this.profile.lastname ?? ''}`.trim();
+    return this.profile.displayName || `${this.profile.firstname ?? ''} ${this.profile.lastname ?? ''}`.trim();
   }
 
   private readonly _uri = memoizePhotoUri();
@@ -227,7 +228,9 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
 
   /** The trainer/center's coaching/business name (not this account's real name) for the Book CTA. */
   get viewedProviderName(): string | null {
-    return this.posts.find(p => p.authorTrainerId != null || p.authorCenterId != null)?.authorName ?? null;
+    return this.profile?.displayName
+      ?? this.posts.find(p => p.authorTrainerId != null || p.authorCenterId != null)?.authorName
+      ?? null;
   }
 
   /** Trainer-only: only ever populated when profile.role === 'trainer'. */

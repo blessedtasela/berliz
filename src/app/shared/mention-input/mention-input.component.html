@@ -18,7 +18,7 @@
                 <i-feather name="user" class="text-sky-500" style="width:11px;height:11px;"></i-feather>
             </div>
             <div class="min-w-0">
-                <p class="text-[11px] font-semibold truncate" [class.text-gray-900]="!dark" [class.text-white]="dark">{{ s.firstname }} {{ s.lastname }}</p>
+                <p class="text-[11px] font-semibold truncate" [class.text-gray-900]="!dark" [class.text-white]="dark">{{ s.displayName || (s.firstname + ' ' + s.lastname) }}</p>
                 <p class="text-[10px] text-sky-500 truncate">&#64;{{ s.username }}</p>
             </div>
         </button>
