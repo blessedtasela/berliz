@@ -155,6 +155,21 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — 2026-09 bug-fix backlog (product feedback)
+_Committed directly to `master`, one batch per commit — see commit messages for detail._
+
+- **Trainer/center professional display name.** `PublicUserProfileResponse` /
+  `PublicDirectoryEntryResponse` gained a resolved `displayName` (trainer/center's own
+  `name` field, not their personal firstname/lastname) so a trainer or center that coaches
+  under a different name shows correctly everywhere another user sees them: profile header,
+  member directory, connection search, @mention suggestions. Frontend: `berliz@5854496e`.
+  Backend: `com.berliz@3f04cb1`.
+- **Booking/peer-session date & time pickers.** New shared `app-date-strip` (was hard-capped
+  at 21 days with no way past it — now has a "More" control plus a "Pick" custom-date escape
+  hatch) and `app-time-picker` (replaces native `<input type="time">`, which silently ignores
+  `placeholder` and overlapped neighbouring fields in the Propose Session modal). Wired into
+  Booking and Propose Session. `berliz@8666fe69`.
+
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
 
