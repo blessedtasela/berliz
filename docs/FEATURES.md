@@ -217,6 +217,14 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   detail views (public + dashboard-native) is now clickable, opening the same likers
   modal used for post/comment likes. New `GET /trainer/{id}/likes` / `/center/{id}/likes`.
   `berliz@bff86e37` / `com.berliz@5234484` (+ tests).
+- **Stripe payment redirect stays in the protected app.** `/payment/success` and
+  `/payment/cancel` aren't under `/dashboard`, so the route-driven chrome switch put
+  them on the public marketing navbar — jarring mid-checkout, since reaching either
+  page requires already being signed in. `berliz@5619eaf9` (+ test).
+- **Fixed selecting a free ($0) plan doing nothing.** Every plan, including free ones,
+  went to `PENDING_PAYMENT` awaiting a Stripe Checkout session — but Checkout can't
+  meaningfully complete a $0 charge. A free plan now activates immediately.
+  `berliz@bdf0e68f` / `com.berliz@9e9ef81` (+ test).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
