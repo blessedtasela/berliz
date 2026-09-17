@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { statistics, hero } from '../../models/landing.model';
 import { DashboardService } from 'src/app/services/dashboard.service';
@@ -20,12 +21,21 @@ export class HeroSectionComponent implements OnInit {
   centerValue: any
   responseMessage: any;
 
-  constructor(private dashboardService: DashboardService) {
+  constructor(
+    private dashboardService: DashboardService,
+    @Inject(PLATFORM_ID) private platformId: Object,
+  ) {
 
   }
 
   ngOnInit() {
-    this.heroCounter();
+    // Never cleared, so during a one-shot build-time prerender (no ngOnDestroy)
+    // this timer keeps Angular's zone permanently "unstable" and hangs the
+    // render forever -- and auto-advancing a hero carousel makes no sense in a
+    // static snapshot anyway.
+    if (isPlatformBrowser(this.platformId)) {
+      this.heroCounter();
+    }
     this.getBerlizDetails();
     this.stats = [
       { id: 1, name: "Partners", iconUrl: "globe", value: 65, counterValue: 0 },

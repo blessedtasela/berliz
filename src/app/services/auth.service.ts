@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import jwt_decode from 'jwt-decode';
 import { AuthRedirectService } from './auth-redirect.service';
 
@@ -7,14 +8,24 @@ import { AuthRedirectService } from './auth-redirect.service';
 })
 export class AuthService {
 
-  constructor(private authRedirect: AuthRedirectService) {}
+  constructor(
+    private authRedirect: AuthRedirectService,
+    @Inject(PLATFORM_ID) private platformId: Object,
+  ) {}
+
+  // `localStorage` doesn't exist during build-time prerendering (Node has no
+  // browser globals) — every accessor below goes through this so a prerendered
+  // page always renders as "logged out" instead of crashing the build.
+  private get isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return this.isBrowser ? localStorage.getItem('token') : null;
   }
 
   getRefreshToken(): string | null {
-    return localStorage.getItem('refresh_token');
+    return this.isBrowser ? localStorage.getItem('refresh_token') : null;
   }
 
   isAuthenticated(): boolean {
@@ -89,8 +100,10 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refresh_token');
+    if (this.isBrowser) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refresh_token');
+    }
     this.authRedirect.goToLogin();
   }
 }

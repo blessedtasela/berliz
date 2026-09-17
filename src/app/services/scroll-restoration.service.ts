@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
@@ -24,9 +25,16 @@ export class ScrollRestorationService {
 
   private restoreAttempted = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object,
+  ) {}
 
   init(): void {
+    // No `window`/`location` during build-time prerendering, and nothing to
+    // restore server-side anyway — skip entirely off-browser.
+    if (!isPlatformBrowser(this.platformId)) return;
+
     this.trackScroll();
 
     this.router.events

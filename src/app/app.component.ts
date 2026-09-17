@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router, NavigationEnd, NavigationError } from '@angular/router';
 import { BlurService } from './services/blur.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -37,6 +38,7 @@ export class AppComponent implements OnInit {
     private seoService: SeoService,
     private scrollRestoration: ScrollRestorationService,
     private authService: AuthService,
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) {
     this.sidebarState.mode$.subscribe(mode => {
       this.sidebarMode = mode;
@@ -65,7 +67,7 @@ export class AppComponent implements OnInit {
       // attempted URL does the same thing automatically.
       if (event instanceof NavigationError) {
         const msg = String((event.error as any)?.message || (event.error as any)?.name || event.error || '');
-        if (/chunkloaderror|loading chunk [\w-]+ failed|loading css chunk|failed to fetch dynamically imported module|error loading dynamically imported module|importing a module script failed|not a valid javascript mime type|responded with a mime type of "text\/html"/i.test(msg)) {
+        if (isPlatformBrowser(this.platformId) && /chunkloaderror|loading chunk [\w-]+ failed|loading css chunk|failed to fetch dynamically imported module|error loading dynamically imported module|importing a module script failed|not a valid javascript mime type|responded with a mime type of "text\/html"/i.test(msg)) {
           window.location.href = event.url;
         }
       }
@@ -149,6 +151,10 @@ export class AppComponent implements OnInit {
    * landing page is covered by the topbar gate.
    */
   private maybeShowNewsletter() {
+    // A MatDialog opened during build-time prerendering runs against the
+    // server's synthetic DOM (domino), where its focus-trap logic throws --
+    // and a modal makes no sense in a static snapshot anyway.
+    if (!isPlatformBrowser(this.platformId)) return;
     if (this.activeLayout !== 'topbar') return;
     // The public navbar now also renders for signed-in users on public pages
     // (see updateLayout) — but a marketing/newsletter interstitial still has no

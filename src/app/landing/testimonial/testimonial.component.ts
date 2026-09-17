@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Testimonials } from 'src/app/models/testimonials.model';
@@ -16,7 +17,10 @@ export class TestimonialComponent implements OnInit, OnDestroy {
   private intervalId: any;
   private subscription!: Subscription;
 
-  constructor(private store: Store) { }
+  constructor(
+    private store: Store,
+    @Inject(PLATFORM_ID) private platformId: Object,
+  ) { }
 
   ngOnInit() {
     this.store.dispatch(loadActiveTestimonials());
@@ -24,7 +28,13 @@ export class TestimonialComponent implements OnInit, OnDestroy {
       this.testimonials = testimonials ?? [];
       this.testimonialIndex = 0;
     });
-    this.testimonialCounter();
+    // A recurring timer never clears during a one-shot build-time prerender
+    // (ngOnDestroy never fires), which keeps Angular's zone permanently
+    // "unstable" and hangs the render forever -- and auto-advancing a
+    // carousel makes no sense in a static snapshot anyway.
+    if (isPlatformBrowser(this.platformId)) {
+      this.testimonialCounter();
+    }
   }
 
   ngOnDestroy() {

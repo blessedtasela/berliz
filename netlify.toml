@@ -36,8 +36,15 @@
   [headers.values]
     Cross-Origin-Opener-Policy = "same-origin-allow-popups"
 [build]
-  command = "npm run build"
-  publish = "dist/berliz"
+  # `prerender` runs the full production browser build (same as the old `ng
+  # build`) and then, on top of it, statically renders the 9 public routes
+  # listed in prerender-routes.txt into their own <route>/index.html files --
+  # see docs/DEPLOYMENT.md. Netlify's static file server already prefers an
+  # exact file/folder match over the SPA redirect below, so every other route
+  # (dashboard, login, dynamic /trainers/:id, etc.) still falls through to the
+  # plain CSR shell unchanged.
+  command = "npm run prerender"
+  publish = "dist/berliz/browser"
 
 [build.environment]
   NODE_VERSION = "20"

@@ -1,0 +1,10 @@
+/
+/about
+/services
+/services/faqs
+/services/equipment
+/services/exercises
+/contact
+/trainers
+/centers
+/members

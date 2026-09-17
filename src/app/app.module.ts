@@ -1,4 +1,4 @@
-import { ErrorHandler, NgModule, isDevMode } from '@angular/core';
+import { ErrorHandler, NgModule, PLATFORM_ID, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -254,6 +254,7 @@ const dbConfig: DBConfig = {
     {
       provide: RxStompService,
       useFactory: rxStompServiceFactory,
+      deps: [PLATFORM_ID],
     },
     {
       provide: UrlSerializer,
