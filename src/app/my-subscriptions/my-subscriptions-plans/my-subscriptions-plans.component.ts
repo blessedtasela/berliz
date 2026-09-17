@@ -77,6 +77,19 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
           this.snackBar.openSnackBar(response?.message || 'Your plan request has been received.', '');
           return;
         }
+
+        // A $0 plan has nothing for Stripe to charge -- the backend activates it
+        // immediately instead of leaving it PENDING_PAYMENT, so there's no
+        // checkout to send the user through. Sending it through goToCheckout
+        // anyway (a zero-amount Checkout Session) is why picking "Free" used to
+        // look like it did nothing.
+        if (subscription.planPrice <= 0) {
+          this.selectingPlanId = null;
+          this.snackBar.openSnackBar(response?.message || `Your ${subscription.planName} plan is now active.`, '');
+          this.store.dispatch(loadMySubscriptions());
+          return;
+        }
+
         this.goToCheckout(subscription.subscriptionId, subscription.planPrice, subscription.planName);
       });
 
