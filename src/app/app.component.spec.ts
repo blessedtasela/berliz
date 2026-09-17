@@ -90,4 +90,20 @@ describe('AppComponent', () => {
 
     expect(fixture.componentInstance.activeLayout).toBe('topbar');
   });
+
+  // Stripe Checkout's success/cancel redirect only ever happens at the tail of an
+  // authenticated flow (choosing a plan requires being signed in) -- landing back
+  // on the dark public marketing navbar looked like the payment had signed them
+  // out, even though they're still fully logged in.
+  it('uses the protected sidebar layout on the Stripe payment success/cancel redirect', async () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const router = TestBed.inject(Router);
+    fixture.detectChanges();
+
+    await router.navigateByUrl('/payment/success?session_id=cs_test_123');
+    expect(fixture.componentInstance.activeLayout).toBe('sidebar');
+
+    await router.navigateByUrl('/payment/cancel');
+    expect(fixture.componentInstance.activeLayout).toBe('sidebar');
+  });
 });
