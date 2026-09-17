@@ -48,3 +48,11 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # `ng run berliz:prerender` builds the browser AND server bundles in the
+  # same Node process (Angular's architect schedules both targets and awaits
+  # them together, effectively doubling peak webpack memory vs a plain `ng
+  # build`) -- with this app's large chunk graph that blew past V8's default
+  # ~2GB old-space ceiling and OOM-killed the Netlify build ("JavaScript heap
+  # out of memory" during "Generating server application bundles"). Raise the
+  # ceiling; bump further if a future build still OOMs.
+  NODE_OPTIONS = "--max-old-space-size=4096"
