@@ -123,23 +123,17 @@ export class AuthInterceptor implements HttpInterceptor {
     return this.withTimeout(next.handle(this.withToken(request, token)), request.url).pipe(
       catchError((error: HttpErrorResponse) => {
 
-        // 401 handling
+        // 401 handling -- a request that carried a bearer token (we already know one was
+        // attached, see the `!token` check above) came back 401 only when the backend
+        // rejected it, for whatever reason (expired, malformed, bad signature, revoked).
+        // This used to only attempt a refresh when the error MESSAGE contained specific
+        // substrings like "jwt expired" -- fragile, and it silently broke whenever the
+        // backend's wording didn't happen to match (which, until a paired backend fix,
+        // was true for the single most common case: an ordinary expired access token).
+        // Always attempt a refresh instead; if the refresh token is itself invalid,
+        // handleExpiredToken already logs the user out.
         if (error.status === 401) {
-
-          const msg = (error.error?.message || '').toLowerCase();
-
-          const isTokenExpired =
-            msg.includes('jwt expired') ||
-            msg.includes('token expired') ||
-            msg.includes('refresh token expired');
-
-          // only here we try refresh / logout
-          if (isTokenExpired) {
-            return this.handleExpiredToken(request, next, error);
-          }
-
-          // not a token problem -> do NOT logout, just bubble error
-          return throwError(() => error);
+          return this.handleExpiredToken(request, next, error);
         }
 
         // 403 -> forbidden, but no logout
