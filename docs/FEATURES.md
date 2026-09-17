@@ -184,6 +184,10 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   request, Message jumps to that client's thread, Delete (confirm-gated) clears it for good.
   New `DELETE /booking/{id}` (provider-only, cancelled bookings only, blocked if a Payout
   already references it). `berliz@89966853` / `com.berliz` (delete endpoint + tests).
+- **Review-booking modal's "View profile" no longer leaves the dashboard.** It built a link
+  to the public `/user/:username` page — which takes an already-signed-in trainer out of the
+  app entirely — instead of the protected `/dashboard/user/:username` route that exists for
+  exactly this. `berliz@e7acf58a`.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
