@@ -7,7 +7,7 @@ import { Users } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
-import { SIDEBAR_NAV_ITEMS } from '../sidebar-nav-items';
+import { filterSidebarNavItems, SidebarNavItem } from '../sidebar-nav-items';
 
 @Component({
   selector: 'app-side-bar-close',
@@ -16,7 +16,10 @@ import { SIDEBAR_NAV_ITEMS } from '../sidebar-nav-items';
 })
 export class SideBarCloseComponent implements OnDestroy {
 
-  readonly navItems = SIDEBAR_NAV_ITEMS;
+  /** Role-filtered every read — see filterSidebarNavItems; cheap enough (one pass over ~20 items) to not bother memoizing. */
+  get navItems(): SidebarNavItem[] {
+    return filterSidebarNavItems(this.userData?.role);
+  }
 
   @Input() userData!: Users;
   @Input() notificationLength: number = 0;

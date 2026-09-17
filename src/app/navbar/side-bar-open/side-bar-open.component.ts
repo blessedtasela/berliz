@@ -19,7 +19,7 @@ import { loadPendingRequests } from 'src/app/state/connection/connection.actions
 import { selectIncomingRequestCount } from 'src/app/state/connection/connection.selectors';
 import { loadConversations } from 'src/app/state/message/message.actions';
 import { selectConversations } from 'src/app/state/message/message.selectors';
-import { SIDEBAR_NAV_ITEMS } from '../sidebar-nav-items';
+import { filterSidebarNavItems, SidebarNavItem } from '../sidebar-nav-items';
 
 @Component({
   selector: 'app-side-bar-open',
@@ -28,7 +28,10 @@ import { SIDEBAR_NAV_ITEMS } from '../sidebar-nav-items';
 })
 export class SideBarOpenComponent implements OnInit, OnDestroy {
 
-  readonly navItems = SIDEBAR_NAV_ITEMS;
+  /** Role-filtered every read — see filterSidebarNavItems; cheap enough (one pass over ~20 items) to not bother memoizing. */
+  get navItems(): SidebarNavItem[] {
+    return filterSidebarNavItems(this.userData?.role);
+  }
 
   currentRoute: string | null = null;
   openMenu = false;

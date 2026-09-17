@@ -3,7 +3,9 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 
+import { take } from 'rxjs/operators';
 import { DAY_NAMES_SHORT } from 'src/app/models/availability.model';
+import { AvailabilityService } from 'src/app/services/availability.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import {
   loadMyAvailability,
@@ -40,16 +42,25 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
   loading = false;
   saving = false;
 
+  /** The platform default every provider starts on until they override it — mirrors the backend's own AvailabilityServiceImplement.DEFAULT_LEAD_TIME_MINUTES. */
+  readonly defaultLeadTimeMinutes = 60;
+  /** null = using the platform default; a number = this provider's own override. Bound to the input as a string so the field can sit genuinely empty rather than showing a stray 0. */
+  leadTimeMinutes: number | null = null;
+  leadTimeLoading = true;
+  leadTimeSaving = false;
+
   private destroy$ = new Subject<void>();
 
   constructor(
     private store: Store,
     private actions$: Actions,
+    private availabilityService: AvailabilityService,
     private snackBar: SnackBarService,
   ) { }
 
   ngOnInit(): void {
     this.store.dispatch(loadMyAvailability());
+    this.loadLeadTime();
 
     this.store.select(selectAvailabilityLoading)
       .pipe(takeUntil(this.destroy$))
@@ -137,5 +148,50 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
         endTime: d.endTime,
       }))
     }));
+  }
+
+  // ── Lead time ────────────────────────────────────────────────────────────
+  // Plain service calls rather than NgRx -- this is one lightweight value with
+  // no other slice of state to coordinate with, unlike the weekly days above.
+
+  private loadLeadTime(): void {
+    this.leadTimeLoading = true;
+    this.availabilityService.getMyLeadTime()
+      .pipe(take(1))
+      .subscribe({
+        next: res => {
+          this.leadTimeMinutes = res?.data ?? null;
+          this.leadTimeLoading = false;
+        },
+        error: () => { this.leadTimeLoading = false; },
+      });
+  }
+
+  saveLeadTime(): void {
+    if (this.leadTimeSaving) return;
+    if (this.leadTimeMinutes != null && this.leadTimeMinutes < 0) {
+      this.snackBar.openSnackBar('Lead time can\'t be negative.', 'error');
+      return;
+    }
+
+    this.leadTimeSaving = true;
+    this.availabilityService.setMyLeadTime(this.leadTimeMinutes)
+      .pipe(take(1))
+      .subscribe({
+        next: res => {
+          this.leadTimeSaving = false;
+          this.snackBar.openSnackBar(res?.message || 'Lead time updated.', '');
+        },
+        error: (err: any) => {
+          this.leadTimeSaving = false;
+          this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+        },
+      });
+  }
+
+  /** Clears the override so this provider goes back to the platform default. */
+  resetLeadTime(): void {
+    this.leadTimeMinutes = null;
+    this.saveLeadTime();
   }
 }

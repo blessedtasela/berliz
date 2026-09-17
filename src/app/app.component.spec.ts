@@ -76,7 +76,11 @@ describe('AppComponent', () => {
     expect(fixture.componentInstance.activeLayout).toBe('topbar');
   });
 
-  it('uses the sidebar layout on the same unmatched route when logged in', async () => {
+  // Chrome is now chosen purely by route, never by auth state (see
+  // updateLayout's own comment) -- an unmatched route stays on the public
+  // topbar even for a signed-in user, rather than leaking the dashboard
+  // chrome onto a path that was never meant to have it.
+  it('stays on the public topbar layout on the same unmatched route even when logged in', async () => {
     authServiceSpy.isAuthenticated.and.returnValue(true);
     const fixture = TestBed.createComponent(AppComponent);
     const router = TestBed.inject(Router);
@@ -84,6 +88,6 @@ describe('AppComponent', () => {
 
     await router.navigateByUrl('/this-route-does-not-exist');
 
-    expect(fixture.componentInstance.activeLayout).toBe('sidebar');
+    expect(fixture.componentInstance.activeLayout).toBe('topbar');
   });
 });

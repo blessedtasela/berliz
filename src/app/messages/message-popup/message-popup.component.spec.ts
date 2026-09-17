@@ -216,10 +216,10 @@ describe('MessagePopupComponent', () => {
     setup({ messagePopupEnabled: true } as Partial<Users>);
     fixture.detectChanges();
 
-    // activeContact is derived once when the store's activeConversationUserId
-    // changes (see recomputeActiveContact) rather than a getter, so drive it
-    // through the selector like production does instead of poking the
-    // component's cached activeUserId field directly.
+    // activeContact is derived once per activeUserId change (not a getter --
+    // see recomputeActiveContact's doc comment), driven by the store
+    // subscription -- so drive it through the store, same as the real app,
+    // rather than assigning the field directly.
     store.overrideSelector(selectActiveConversationUserId, 5);
     store.refreshState();
     expect(component.activeContact).toEqual({ userId: 5, name: 'Coach Sam', photo: undefined, role: 'trainer' });

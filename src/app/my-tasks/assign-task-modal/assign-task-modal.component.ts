@@ -44,7 +44,7 @@ export class AssignTaskModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.assignTaskForm = this.fb.group({
-      userId: ['', [Validators.required]],
+      email: ['', [Validators.required]],
       description: ['', [Validators.required, Validators.minLength(10)]],
       priority: ['MEDIUM', [Validators.required]],
       startDate: ['', [Validators.required]],
@@ -118,7 +118,7 @@ export class AssignTaskModalComponent implements OnInit, OnDestroy {
     // resolved server-side from the authenticated trainer (same as the other
     // /trainer* endpoints), so it is deliberately not sent here.
     const payload = {
-      userId: Number(value.userId),
+      email: value.email,
       description: value.description,
       priority: value.priority,
       startDate: value.startDate,

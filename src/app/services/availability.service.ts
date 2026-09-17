@@ -47,4 +47,16 @@ export class AvailabilityService {
     else if (centerId != null) params += `&centerId=${centerId}`;
     return this.httpClient.get<ApiResponse<AvailableSlotsResponse>>(this.url + "/availability/getAvailableSlots" + params);
   }
+
+  /** The currently authenticated trainer/center's own lead-time override — null means "using the platform default". */
+  getMyLeadTime() {
+    return this.httpClient.get<ApiResponse<number | null>>(this.url + "/availability/leadTime");
+  }
+
+  /** minutes null resets to the platform default. Returns the resolved EFFECTIVE value. */
+  setMyLeadTime(minutes: number | null) {
+    return this.httpClient.put<ApiResponse<number>>(this.url + "/availability/leadTime", { leadTimeMinutes: minutes }, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
 }

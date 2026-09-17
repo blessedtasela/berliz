@@ -30,7 +30,7 @@
 
     <p *ngIf="isInvalid('bio')" class="text-[11px] text-red-500 flex items-center gap-1">
       <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
-      Minimum 900 characters required.
+      Minimum 10 characters required.
     </p>
 
     <p *ngIf="isValid('bio')" class="text-[11px] text-green-600 flex items-center gap-1">
@@ -38,7 +38,7 @@
       Looks good.
     </p>
 
-    <span class="text-[10px] ml-auto font-semibold" [ngClass]="charCountClass('bio', 900, 1200)">
+    <span class="text-[10px] ml-auto font-semibold" [ngClass]="charCountClass('bio', 10, 1200)">
       {{ charCount('bio') }} / 1200
     </span>
 
