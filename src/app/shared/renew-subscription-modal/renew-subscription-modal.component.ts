@@ -21,6 +21,23 @@ export class RenewSubscriptionModalComponent {
     private snackbar: SnackBarService
   ) {}
 
+  /** True while the subscription being "renewed" still has time left -- the user needs
+   *  to know this is adding on top of, not replacing, what they already have. */
+  get isCurrentlyActive(): boolean {
+    const sub = this.data.subscription;
+    return sub?.status === 'true' && !!sub.endDate && new Date(sub.endDate).getTime() > Date.now();
+  }
+
+  /** What their access will run to after this renewal -- extends the CURRENT end date
+   *  when still active (matches the backend's own math), otherwise starts from today. */
+  get newEndDatePreview(): Date {
+    const sub = this.data.subscription;
+    const base = this.isCurrentlyActive ? new Date(sub.endDate) : new Date();
+    const result = new Date(base);
+    result.setMonth(result.getMonth() + (Number(this.durationMonths) || 0));
+    return result;
+  }
+
   close() {
     this.dialogRef.close();
   }
