@@ -188,6 +188,11 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   to the public `/user/:username` page — which takes an already-signed-in trainer out of the
   app entirely — instead of the protected `/dashboard/user/:username` route that exists for
   exactly this. `berliz@e7acf58a`.
+- **Fixed the private/public account wording mismatch in Settings.** The visibility section
+  was statically headed "Public profile" even for a private (default) account, whose label
+  right below it read "Keep my profile private" — heading and content disagreeing at a
+  glance. Heading is now the neutral "Profile visibility"; the label now states the current
+  setting directly rather than reading as an instruction. `berliz@ea65f9ca`.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
