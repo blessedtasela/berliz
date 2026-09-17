@@ -169,6 +169,21 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   hatch) and `app-time-picker` (replaces native `<input type="time">`, which silently ignores
   `placeholder` and overlapped neighbouring fields in the Propose Session modal). Wired into
   Booking and Propose Session. `berliz@8666fe69`.
+- **In-app nav "Reset position" actually moves the button.** `CdkDrag` only reads
+  `[cdkDragFreeDragPosition]` for its initial position; Settings' reset now calls
+  `setFreeDragPosition()` on the drag directive by hand. `berliz@2a25861b`.
+- **Fixed a false "trainer not available" rejection.** Picking a real calendar slot
+  round-tripped an instant through the browser's timezone and back through the server's
+  `ZoneId.systemDefault()` — two unrelated zones re-interpreting the same wall-clock slot,
+  which could shift it outside the provider's availability window. The client now sends the
+  slot's raw local date/time alongside the instant; the server resolves `scheduledAt` from
+  those directly, in the same zone basis the slot was generated in. `berliz@6ab1cd16` /
+  `com.berliz@b92222a` (+ regression tests).
+- **Reopen / delete / message a cancelled booking.** Providers previously had zero actions
+  on a cancelled booking — Reopen re-runs the same review-the-client modal as a fresh
+  request, Message jumps to that client's thread, Delete (confirm-gated) clears it for good.
+  New `DELETE /booking/{id}` (provider-only, cancelled bookings only, blocked if a Payout
+  already references it). `berliz@89966853` / `com.berliz` (delete endpoint + tests).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
