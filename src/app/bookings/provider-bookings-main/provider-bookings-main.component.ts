@@ -8,6 +8,9 @@ import { Booking } from 'src/app/models/booking.model';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 import {
+  deleteBooking,
+  deleteBookingFailure,
+  deleteBookingSuccess,
   loadMyProviderBookings,
   updateBookingStatus,
   updateBookingStatusFailure,
@@ -63,6 +66,18 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
       .subscribe(({ error }) => {
         this.snackBar.openSnackBar(error || genericError, 'error');
       });
+
+    this.actions$
+      .pipe(ofType(deleteBookingSuccess), takeUntil(this.destroy$))
+      .subscribe(({ response }) => {
+        this.snackBar.openSnackBar(response?.message || 'Booking deleted', '');
+      });
+
+    this.actions$
+      .pipe(ofType(deleteBookingFailure), takeUntil(this.destroy$))
+      .subscribe(({ error }) => {
+        this.snackBar.openSnackBar(error || genericError, 'error');
+      });
   }
 
   ngOnDestroy(): void {
@@ -92,6 +107,10 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
 
   onStatusChangeRequested(event: { id: number; status: string }): void {
     this.store.dispatch(updateBookingStatus(event));
+  }
+
+  onDeleteRequested(id: number): void {
+    this.store.dispatch(deleteBooking({ id }));
   }
 
   onStartIntakeRequested(event: { clientId: number; clientName: string }): void {

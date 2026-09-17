@@ -177,6 +177,77 @@ _Branch: `feat/prerender-public-routes`_
   `npm run prerender` and publish dir `dist/berliz/browser` — see `docs/DEPLOYMENT.md`.
   Dashboard and every other route are unaffected (still plain CSR, additive change only).
 
+### Unreleased — 2026-09 bug-fix backlog (product feedback)
+_Committed directly to `master`, one batch per commit — see commit messages for detail._
+
+- **Trainer/center professional display name.** `PublicUserProfileResponse` /
+  `PublicDirectoryEntryResponse` gained a resolved `displayName` (trainer/center's own
+  `name` field, not their personal firstname/lastname) so a trainer or center that coaches
+  under a different name shows correctly everywhere another user sees them: profile header,
+  member directory, connection search, @mention suggestions. Frontend: `berliz@5854496e`.
+  Backend: `com.berliz@3f04cb1`.
+- **Booking/peer-session date & time pickers.** New shared `app-date-strip` (was hard-capped
+  at 21 days with no way past it — now has a "More" control plus a "Pick" custom-date escape
+  hatch) and `app-time-picker` (replaces native `<input type="time">`, which silently ignores
+  `placeholder` and overlapped neighbouring fields in the Propose Session modal). Wired into
+  Booking and Propose Session. `berliz@8666fe69`.
+- **In-app nav "Reset position" actually moves the button.** `CdkDrag` only reads
+  `[cdkDragFreeDragPosition]` for its initial position; Settings' reset now calls
+  `setFreeDragPosition()` on the drag directive by hand. `berliz@2a25861b`.
+- **Fixed a false "trainer not available" rejection.** Picking a real calendar slot
+  round-tripped an instant through the browser's timezone and back through the server's
+  `ZoneId.systemDefault()` — two unrelated zones re-interpreting the same wall-clock slot,
+  which could shift it outside the provider's availability window. The client now sends the
+  slot's raw local date/time alongside the instant; the server resolves `scheduledAt` from
+  those directly, in the same zone basis the slot was generated in. `berliz@6ab1cd16` /
+  `com.berliz@b92222a` (+ regression tests).
+- **Reopen / delete / message a cancelled booking.** Providers previously had zero actions
+  on a cancelled booking — Reopen re-runs the same review-the-client modal as a fresh
+  request, Message jumps to that client's thread, Delete (confirm-gated) clears it for good.
+  New `DELETE /booking/{id}` (provider-only, cancelled bookings only, blocked if a Payout
+  already references it). `berliz@89966853` / `com.berliz` (delete endpoint + tests).
+- **Review-booking modal's "View profile" no longer leaves the dashboard.** It built a link
+  to the public `/user/:username` page — which takes an already-signed-in trainer out of the
+  app entirely — instead of the protected `/dashboard/user/:username` route that exists for
+  exactly this. `berliz@e7acf58a`.
+- **Fixed the private/public account wording mismatch in Settings.** The visibility section
+  was statically headed "Public profile" even for a private (default) account, whose label
+  right below it read "Keep my profile private" — heading and content disagreeing at a
+  glance. Heading is now the neutral "Profile visibility"; the label now states the current
+  setting directly rather than reading as an instruction. `berliz@ea65f9ca`.
+- **Fixed expired/invalid JWTs never triggering the frontend's auto-refresh.** `JWTFilter`
+  had no try/catch around token parsing, so any JJWT failure escaped to Spring Boot's
+  generic `/error` fallback with a message that never varied by cause — the frontend's
+  refresh-on-401 logic specifically looked for "jwt expired" in that message, so an
+  ordinary expired access token (the most common cause of a 401) never triggered a
+  refresh; the app would just keep 401ing every request until a manual reload/re-login.
+  Backend now reports the real reason against the real path; frontend now attempts a
+  refresh on any 401 instead of pattern-matching. `berliz@3c9542df` / `com.berliz@e9560a6`
+  (5 new tests).
+- **Fixed false "User not found" when an unrelated profile extra fails to load.**
+  `getPublicProfile` shared one try/catch around its whole body, so an exception building
+  ANY optional extra (templates, testimonials, timeline posts, resolving a professional
+  name) silently became a 404 — indistinguishable from the user genuinely not existing,
+  confusing since their name still showed fine in the member directory (a separate query).
+  Each block now degrades on its own instead of taking the whole profile down.
+  `com.berliz@e9560a6` (regression test).
+- **Messaging UI: Instagram-style list, wider bubbles.** The full Messages page's
+  conversation list used a hard `divide-y` line between every row; dropped it to match
+  the popup's own divider-free list. Message bubble max-width bumped 75% → 85%.
+  `berliz@5b04c3b6`.
+- **"Who liked this trainer/center" list.** The Likes stat tile on all four trainer/center
+  detail views (public + dashboard-native) is now clickable, opening the same likers
+  modal used for post/comment likes. New `GET /trainer/{id}/likes` / `/center/{id}/likes`.
+  `berliz@bff86e37` / `com.berliz@5234484` (+ tests).
+- **Stripe payment redirect stays in the protected app.** `/payment/success` and
+  `/payment/cancel` aren't under `/dashboard`, so the route-driven chrome switch put
+  them on the public marketing navbar — jarring mid-checkout, since reaching either
+  page requires already being signed in. `berliz@5619eaf9` (+ test).
+- **Fixed selecting a free ($0) plan doing nothing.** Every plan, including free ones,
+  went to `PENDING_PAYMENT` awaiting a Stripe Checkout session — but Checkout can't
+  meaningfully complete a $0 charge. A free plan now activates immediately.
+  `berliz@bdf0e68f` / `com.berliz@9e9ef81` (+ test).
+
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
 

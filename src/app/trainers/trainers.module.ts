@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TrainersSearchResultComponent } from './trainers-search-result/trainers-search-result.component';
 import { TrainersSearchComponent } from './trainers-search/trainers-search.component';
 import { RouterModule } from '@angular/router';
+import { MatDialogModule } from '@angular/material/dialog';
 import { TrainerDetailHeroComponent } from './trainer-detail-hero/trainer-detail-hero.component';
 import { TrainerCategoryComponent } from './trainer-category/trainer-category.component';
 import { TrainerBenefitsComponent } from './trainer-benefits/trainer-benefits.component';
@@ -74,7 +75,8 @@ import { TrainerAddReviewComponent } from './trainer-add-review/trainer-add-revi
     ReactiveFormsModule,
     RouterModule,
     IconsModule,
-    FormsModule
+    FormsModule,
+    MatDialogModule
   ]
 })
 export class TrainersModule { }

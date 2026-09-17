@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../models/Api.interface';
+import { LikerResponse } from '../models/comment.interface';
 import {
   Centers,
   CenterLikes,
@@ -70,6 +71,11 @@ export class CenterService {
 
   getCenterLikes(): Observable<ApiResponse<CenterLikes[]>> {
     return this.http.get<ApiResponse<CenterLikes[]>>(`${this.url}/center/getCenterLikes`);
+  }
+
+  /** Who liked THIS specific center, newest first — public, for the "liked by" list. */
+  getCenterLikers(id: number): Observable<ApiResponse<LikerResponse[]>> {
+    return this.http.get<ApiResponse<LikerResponse[]>>(`${this.url}/center/${id}/likes`);
   }
 
   updateMyCenterTrainers(data: any): Observable<ApiResponse<string>> {

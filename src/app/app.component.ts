@@ -118,8 +118,16 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    // PROTECTED APP ROUTES — the whole /dashboard subtree.
-    if (path === '/dashboard' || path.startsWith('/dashboard/')) {
+    // PROTECTED APP ROUTES — the whole /dashboard subtree, plus Stripe Checkout's
+    // success/cancel redirect targets. Unlike the public content pages this
+    // function otherwise defers to the marketing chrome for, these two are only
+    // ever reached at the tail of an authenticated checkout flow (choosing a plan
+    // requires being signed in) -- landing back on the dark public navbar,
+    // mid-purchase, was jarring and looked like the payment had signed them out.
+    if (
+      path === '/dashboard' || path.startsWith('/dashboard/') ||
+      path === '/payment/success' || path === '/payment/cancel'
+    ) {
       this.activeLayout = 'sidebar';
       return;
     }

@@ -32,19 +32,7 @@
 
             <div class="flex flex-col gap-1.5">
                 <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Pick a date</label>
-                <div class="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
-                    <button type="button" *ngFor="let day of dateStrip" (click)="selectDate(day)"
-                        class="shrink-0 w-12 py-2 rounded-xl border text-center transition flex flex-col items-center gap-0.5"
-                        [ngClass]="selectedDate === day.value
-                            ? 'bg-red-600 border-red-600 text-white'
-                            : 'bg-gray-50 border-gray-200 text-gray-600 hover:border-red-200'">
-                        <span class="text-[9px] font-semibold uppercase tracking-wide"
-                            [ngClass]="selectedDate === day.value ? 'text-red-100' : 'text-gray-400'">
-                            {{ day.isToday ? 'Today' : day.dayLabel }}
-                        </span>
-                        <span class="text-sm font-bold leading-none">{{ day.dateLabel }}</span>
-                    </button>
-                </div>
+                <app-date-strip [selectedDate]="selectedDate" (dateSelected)="selectDate($event)"></app-date-strip>
             </div>
 
             <div class="flex flex-col gap-1.5">
@@ -86,23 +74,16 @@
                 This {{ providerKind }} hasn't set their availability yet — you can still request a time and they'll confirm manually.
             </p>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div class="flex flex-col gap-1">
-                    <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date</label>
-                    <input type="date" formControlName="date" [min]="minDate" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
-                               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="{
-                                'border-red-400 bg-red-50': bookingForm.get('date')?.invalid && bookingForm.get('date')?.touched,
-                                'border-gray-200 bg-gray-50': !(bookingForm.get('date')?.invalid && bookingForm.get('date')?.touched)
-                              }" />
-                </div>
-                <div class="flex flex-col gap-1">
-                    <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Time</label>
-                    <input type="time" formControlName="time" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
-                               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="{
-                                'border-red-400 bg-red-50': bookingForm.get('time')?.invalid && bookingForm.get('time')?.touched,
-                                'border-gray-200 bg-gray-50': !(bookingForm.get('time')?.invalid && bookingForm.get('time')?.touched)
-                              }" />
-                </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date</label>
+                <app-date-strip [selectedDate]="bookingForm.value.date"
+                    [invalid]="!!(bookingForm.get('date')?.invalid && bookingForm.get('date')?.touched)"
+                    (dateSelected)="bookingForm.patchValue({ date: $event })"></app-date-strip>
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Time</label>
+                <app-time-picker formControlName="time" placeholder="Select a time"
+                    [invalid]="!!(bookingForm.get('time')?.invalid && bookingForm.get('time')?.touched)"></app-time-picker>
             </div>
 
             <p *ngIf="pastDate" class="text-red-500 text-[11px] flex items-center gap-1 -mt-2">

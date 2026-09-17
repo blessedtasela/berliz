@@ -49,6 +49,22 @@
                 <i-feather name="file-text" style="width:11px;height:11px;"></i-feather>
                 Start Intake
             </button>
+
+            <button *ngIf="canProviderReopen" type="button" (click)="reopen()"
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-gray-800 text-white hover:bg-gray-700 transition flex items-center gap-1">
+                <i-feather name="rotate-ccw" style="width:11px;height:11px;"></i-feather>
+                Reopen
+            </button>
+            <button *ngIf="canFollowUp" type="button" (click)="followUp()"
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition flex items-center gap-1">
+                <i-feather name="message-circle" style="width:11px;height:11px;"></i-feather>
+                Message
+            </button>
+            <button *ngIf="canProviderDelete" type="button" (click)="remove()"
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-gray-200 text-gray-400 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition flex items-center gap-1">
+                <i-feather name="trash-2" style="width:11px;height:11px;"></i-feather>
+                Delete
+            </button>
         </div>
     </div>
 </div>

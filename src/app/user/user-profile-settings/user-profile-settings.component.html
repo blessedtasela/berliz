@@ -86,7 +86,7 @@
     <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
-            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Public profile</h2>
+            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Profile visibility</h2>
             <p class="text-[11px] text-gray-400 mt-0.5">
                 Your name, photo, role and join date are always shown. Everything else is private
                 until you turn this on.
@@ -107,7 +107,7 @@
 
                 <div class="flex flex-col gap-0.5 min-w-0">
                     <p class="text-xs font-bold text-gray-900">
-                        {{ isProfilePublic ? 'Make my profile public' : 'Keep my profile private' }}
+                        {{ isProfilePublic ? 'Your profile is public' : 'Your profile is private' }}
                     </p>
                     <p class="text-[11px] text-gray-400 leading-relaxed">
                         {{ isProfilePublic
@@ -125,7 +125,8 @@
 
             <!-- Switch -->
             <button type="button" role="switch" [attr.aria-checked]="isProfilePublic"
-                aria-label="Make my profile public" (click)="toggleProfileVisibility()"
+                [attr.aria-label]="isProfilePublic ? 'Make my profile private' : 'Make my profile public'"
+                (click)="toggleProfileVisibility()"
                 [disabled]="savingVisibility"
                 class="relative w-11 h-6 rounded-full transition shrink-0 disabled:opacity-60
                        disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-red-200"

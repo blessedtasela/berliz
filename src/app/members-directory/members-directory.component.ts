@@ -201,7 +201,7 @@ export class MembersDirectoryComponent implements OnInit, OnDestroy {
   }
 
   fullName(member: PublicDirectoryEntry): string {
-    return `${member.firstname ?? ''} ${member.lastname ?? ''}`.trim();
+    return member.displayName || `${member.firstname ?? ''} ${member.lastname ?? ''}`.trim();
   }
 
   private readonly _rowUri = memoizePhotoUriByKey();

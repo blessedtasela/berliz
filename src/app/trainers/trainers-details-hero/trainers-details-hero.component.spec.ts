@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import { TrainersDetailsHeroComponent } from './trainers-details-hero.component';
 
@@ -8,9 +9,14 @@ describe('TrainersDetailsHeroComponent', () => {
   let fixture: ComponentFixture<TrainersDetailsHeroComponent>;
 
   beforeEach(() => {
+    const matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+
     TestBed.configureTestingModule({
       declarations: [TrainersDetailsHeroComponent],
-      schemas: [NO_ERRORS_SCHEMA]
+      schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        { provide: MatDialog, useValue: matDialogSpy }
+      ]
     });
     fixture = TestBed.createComponent(TrainersDetailsHeroComponent);
     component = fixture.componentInstance;

@@ -80,6 +80,8 @@
                     Cancelled
                 </span>
                 <app-booking-card *ngFor="let b of cancelled" mode="provider" [booking]="b"
+                    (statusChangeRequested)="onStatusChangeRequested($event)"
+                    (deleteRequested)="onDeleteRequested($event)"
                     (startIntakeRequested)="onStartIntakeRequested($event)"></app-booking-card>
             </div>
 

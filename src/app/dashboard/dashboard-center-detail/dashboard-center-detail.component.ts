@@ -15,6 +15,10 @@ export class DashboardCenterDetailComponent extends CenterDetailComponent {
 
   resolveStrapiUrl = resolveStrapiUrl;
 
+  protected override get likersRoutePrefix(): string {
+    return '/dashboard/user';
+  }
+
   get photoUrl(): string {
     return this.center?.photoResponse?.photoUrl ? resolveStrapiUrl(this.center.photoResponse.photoUrl) : 'assets/avatar.png';
   }

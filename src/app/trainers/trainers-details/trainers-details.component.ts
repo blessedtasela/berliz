@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
+import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { Subscription, of } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
 import {
@@ -79,8 +81,24 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
     private trainerService: TrainerService,
     private seoService: SeoService,
     private testimonialDialog: TestimonialDialogService,
-    private bookingDialog: BookingDialogService
+    private bookingDialog: BookingDialogService,
+    private dialog: MatDialog
   ) { }
+
+  /** Overridden by the dashboard-native subclass so its own "View profile" links
+   *  never send a signed-in user out to the public /user/:username page. */
+  protected get likersRoutePrefix(): string {
+    return '/user';
+  }
+
+  viewLikers(): void {
+    if (!this.trainer?.id) return;
+    this.dialog.open(LikersModalComponent, {
+      width: '380px',
+      maxWidth: '95vw',
+      data: { kind: 'trainer', id: this.trainer.id, routePrefix: this.likersRoutePrefix }
+    });
+  }
 
   ngOnInit(): void {
     this.subs.push(

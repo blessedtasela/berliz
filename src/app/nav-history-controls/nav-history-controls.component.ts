@@ -1,7 +1,7 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { CdkDragEnd, DragDropModule } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragEnd, DragDropModule } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { IconsModule } from '../icons/icons.module';
@@ -41,6 +41,15 @@ import { NavControlsAppearance, NavControlsPosition, NavControlsService, NavCont
 })
 export class NavHistoryControlsComponent implements OnInit, OnDestroy {
 
+  /**
+   * CdkDrag only reads [cdkDragFreeDragPosition] to set its INITIAL position --
+   * once the element has been dragged, CDK tracks the free-drag offset
+   * internally, and simply changing the bound input again (e.g. after
+   * "Reset position" in Settings) is a silent no-op. Reset needs to call
+   * setFreeDragPosition() on the directive itself to actually move it.
+   */
+  @ViewChild(CdkDrag) private dragRef?: CdkDrag;
+
   private navigationCount = 0;
   hasGoneBack = false;
 
@@ -79,10 +88,21 @@ export class NavHistoryControlsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    let firstPositionEmission = true;
     this.subscriptions.push(
       this.navControls.style$.subscribe(style => this.style = style),
       this.navControls.appearance$.subscribe(appearance => this.appearance = appearance),
-      this.navControls.position$.subscribe(saved => this.dragPosition = saved ?? this.defaultPosition()),
+      this.navControls.position$.subscribe(saved => {
+        this.dragPosition = saved ?? this.defaultPosition();
+        // The first emission is just this component's own initial read, already
+        // applied via the [cdkDragFreeDragPosition] template binding at create
+        // time -- only emissions AFTER that (e.g. Settings' "Reset position")
+        // need to be pushed into the already-rendered drag directive by hand.
+        if (!firstPositionEmission) {
+          this.dragRef?.setFreeDragPosition(this.dragPosition);
+        }
+        firstPositionEmission = false;
+      }),
     );
 
     if (typeof document !== 'undefined') {

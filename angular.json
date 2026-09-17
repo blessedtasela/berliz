@@ -29,6 +29,12 @@
                 "glob": "**/*",
                 "input": "node_modules/ngx-extended-pdf-viewer/assets/",
                 "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/.well-known",
+                "output": "/.well-known/",
+                "ignore": ["**/.gitkeep"]
               }
             ],
             "styles": [

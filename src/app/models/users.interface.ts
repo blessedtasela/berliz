@@ -75,6 +75,10 @@ export interface PublicUserProfile {
     memberSince: string;
     isPrivate: boolean;
 
+    /** Trainer/center professional name when applicable, otherwise firstname + lastname.
+     *  Always prefer this over combining firstname/lastname yourself. */
+    displayName?: string;
+
     /** True only when isPrivate is also true and the fields below are populated
      *  anyway because the viewer is Berliz's super admin. */
     viewedAsAdminOverride?: boolean;
@@ -108,6 +112,9 @@ export interface PublicDirectoryEntry {
     city?: string;
     country?: string;
     memberSince: string;
+
+    /** Trainer/center professional name when applicable, otherwise firstname + lastname. */
+    displayName?: string;
 }
 
 export interface Category {

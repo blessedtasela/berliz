@@ -23,7 +23,7 @@
                 <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
             </div>
 
-            <div *ngIf="!loading" class="flex flex-col divide-y divide-gray-100 overflow-y-auto" style="max-height: 520px;">
+            <div *ngIf="!loading" class="flex flex-col overflow-y-auto" style="max-height: 520px;">
 
                 <app-conversation-row *ngFor="let c of conversations; trackBy: trackByConversationUserId"
                     [row]="{ userId: c.otherUserId, name: c.otherUserName, photo: c.otherUserPhoto, preview: c.lastMessage, unreadCount: c.unreadCount }"

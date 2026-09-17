@@ -42,6 +42,11 @@ export class BookingService {
     });
   }
 
+  /** Provider-only, and only once the booking is already cancelled -- clears it off their list entirely. */
+  deleteBooking(id: number) {
+    return this.httpClient.delete<ApiResponse<string>>(this.url + `/booking/${id}`);
+  }
+
   getBooking(id: number) {
     return this.httpClient.get<ApiResponse<Booking>>(this.url + `/booking/getBooking/${id}`);
   }

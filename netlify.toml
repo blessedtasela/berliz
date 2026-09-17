@@ -9,6 +9,22 @@
     Content-Type = "application/xml"
 
 [[headers]]
+  # iOS universal links (the mobile app's linking config, RootNavigator.tsx)
+  # -- this file has no extension by spec, so Netlify's default MIME
+  # detection would otherwise serve it as application/octet-stream.
+  for = "/.well-known/apple-app-site-association"
+  [headers.values]
+    Content-Type = "application/json"
+
+[[headers]]
+  # Android App Links -- same reasoning as the AASA rule above, and
+  # explicit here even though the .json extension already gets this
+  # right by default, for parity with it.
+  for = "/.well-known/assetlinks.json"
+  [headers.values]
+    Content-Type = "application/json"
+
+[[headers]]
   # Netlify's default COOP (same-origin) blocks the postMessage calls Google
   # Identity Services needs between the page and its Sign-In iframe/popup —
   # this is what breaks the Google button in production while it works fine

@@ -37,6 +37,10 @@ export const cancelBooking = createAction('[Booking] Cancel', props<Id>());
 export const cancelBookingSuccess = createAction('[Booking] Cancel Success', props<Res<Booking>>());
 export const cancelBookingFailure = createAction('[Booking] Cancel Failure', props<Err>());
 
+export const deleteBooking = createAction('[Booking] Delete', props<Id>());
+export const deleteBookingSuccess = createAction('[Booking] Delete Success', props<Id & { response: ApiResponse<string> }>());
+export const deleteBookingFailure = createAction('[Booking] Delete Failure', props<Err>());
+
 // ── MY TRAINERS — distinct trainers/centers the client has booked with ─────
 export const loadMyTrainers = createAction('[Booking] Load My Trainers');
 export const loadMyTrainersSuccess = createAction('[Booking] Load My Trainers Success', props<Res<MyTrainerSummary[]>>());

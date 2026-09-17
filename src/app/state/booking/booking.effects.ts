@@ -68,6 +68,14 @@ export class BookingEffects {
     ))
   ));
 
+  deleteBooking$ = createEffect(() => this.actions$.pipe(
+    ofType(A.deleteBooking),
+    mergeMap(({ id }) => this.svc.deleteBooking(id).pipe(
+      map(response => A.deleteBookingSuccess({ id, response })),
+      catchError(e => of(A.deleteBookingFailure({ error: e?.error?.message || 'Failed to delete booking' })))
+    ))
+  ));
+
   loadMyTrainers$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadMyTrainers),
     mergeMap(() => this.svc.getMyTrainers().pipe(
