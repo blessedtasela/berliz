@@ -236,6 +236,13 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       trainerId: this.data.trainerId ?? null,
       centerId: this.data.centerId ?? null,
       scheduledAt: scheduledAt.toISOString(),
+      // The server re-resolves the booking's instant from these instead of
+      // trusting scheduledAt above -- it's the same day/time the slot was
+      // generated against, so it can't drift outside the provider's
+      // availability window from a browser-vs-server timezone mismatch
+      // (scheduledAt is still sent so the request satisfies the "required" check).
+      localDate: this.selectedDate,
+      localTime: this.selectedSlot.startTime,
       durationMinutes: this.slotDurationMinutes,
       notes: (this.bookingForm.value.notes ?? '').trim()
     };
