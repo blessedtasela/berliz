@@ -307,6 +307,14 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   full pill back at its last free position. Covers the "some users want it, some find
   it in the way" spectrum: full control, edge-parked, or fully off. `berliz@e67406f8`
   (+ tests).
+- **Fixed "null null" showing up as a name on incomplete profiles.** 17 call sites
+  across 10 backend mapper/service classes (comments, posts, messages, connections,
+  peer sessions, trainer/center likers, feedback, blocks, content reports) built a
+  displayed name via plain `firstname + " " + lastname` concatenation — Java prints
+  the literal word "null" for whichever half is null (an OAuth signup that never
+  collected a last name, an admin-created account, etc.), which is exactly what
+  showed up as a comment author's name. New `DisplayNameUtil.fullName()` is the one
+  shared null-safe join every call site now uses. `com.berliz@fdf1cee` (+ test).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
