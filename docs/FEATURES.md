@@ -259,6 +259,18 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   Also: today's-todo's task field no longer requires 20 characters minimum, and both
   it and its due-date field show a specific inline error instead of only a vague
   "Missing required fields" banner. `berliz@00972467` (+ test).
+- **In-app nav control: long-press-to-hide + edge-docking.** Two new per-device
+  gestures on the floating back/forward pill, on top of the existing Settings toggle
+  (style `button`/`swipe`/`off`, already there before this entry). Long-press the pill
+  and a red "✕" target fades in above it; drag the pill onto it and release to hide the
+  control entirely (same effect as switching to `off`, reversible from Settings) — a
+  `dragOccurred` flag on the press/drag handlers keeps the native `mouseup`/`touchend`
+  reset from racing CDK's own `cdkDragEnded` reset when a drag actually happened.
+  Separately, dragging the pill to either screen edge collapses it to a small peek tab
+  instead (`NavControlsService.docked`/`dockY`, persisted); tap the tab to bring the
+  full pill back at its last free position. Covers the "some users want it, some find
+  it in the way" spectrum: full control, edge-parked, or fully off. `berliz@e67406f8`
+  (+ tests).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
