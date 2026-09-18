@@ -46,6 +46,31 @@
   for = "/*"
   [headers.values]
     Cross-Origin-Opener-Policy = "same-origin-allow-popups"
+
+[[headers]]
+  # Baseline hardening headers. Built from what's actually loaded live
+  # (accounts.google.com + connect.facebook.net for social login,
+  # static.cloudflareinsights.com from Cloudflare's own beacon,
+  # berliz-api.up.railway.app + wss for the backend/WebSocket,
+  # media.berliz.fitness for Strapi-hosted images) rather than guessed.
+  # camera/microphone/geolocation are confirmed unused anywhere in src/;
+  # payment=(self) because Stripe Checkout is wired for this origin even
+  # though the publishable key isn't filled in yet.
+  #
+  # CSP ships Report-Only for now: this site has live OAuth popups/iframes
+  # and an unwired Stripe integration that can't be fully exercised from
+  # here, and a wrong enforcing CSP could silently break login. Report-Only
+  # logs violations (check the browser devtools console / Netlify's own
+  # reporting) without blocking anything -- once confirmed clean for a few
+  # days, rename Content-Security-Policy-Report-Only to Content-Security-Policy.
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(self)"
+    Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'self' https://accounts.google.com https://connect.facebook.net https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://accounts.google.com; img-src 'self' data: https://media.berliz.fitness; font-src 'self' data:; connect-src 'self' https://berliz-api.up.railway.app wss://berliz-api.up.railway.app https://media.berliz.fitness; frame-src https://accounts.google.com https://www.facebook.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+
 [build]
   # `prerender` runs the full production browser build (same as the old `ng
   # build`) and then, on top of it, statically renders the 9 public routes

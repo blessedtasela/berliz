@@ -26,7 +26,10 @@ export class ContactUsFormComponent implements OnInit {
     this.contactUsForm = this.formBuilder.group({
       'name': ['', [Validators.required, fullNameValidator()]],
       'email': ['', [Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])]],
-      'message': ['', [Validators.required, Validators.minLength(20)]]
+      // Backend's ContactUs.message is an unbounded TEXT column with no @Size
+      // validation -- this is a client-side guard against unbounded payloads,
+      // not a substitute for one.
+      'message': ['', [Validators.required, Validators.minLength(20), Validators.maxLength(2000)]]
     });
   }
 

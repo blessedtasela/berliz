@@ -28,6 +28,19 @@ interface PendingAttachment {
 const MAX_ATTACHMENT_BYTES = 25 * 1024 * 1024;
 
 /**
+ * Attachments here are intentionally open to any document/image/video type
+ * (see FEATURES.md), so an allowlist would break legitimate use -- this is a
+ * blocklist of executable/script extensions instead, the realistic risk for
+ * a "share any file" feature. Client-side only, like everything in this
+ * component; the server must independently re-validate.
+ */
+const BLOCKED_ATTACHMENT_EXTENSIONS = [
+  '.exe', '.bat', '.cmd', '.com', '.pif', '.scr', '.msi', '.msp',
+  '.vbs', '.vbe', '.js', '.jse', '.wsf', '.wsh', '.ps1', '.psm1',
+  '.jar', '.app', '.apk', '.dmg', '.sh', '.bin', '.cpl', '.gadget',
+];
+
+/**
  * Compose bar -- input + send, plus reply-with-quote and edit-in-place.
  * Emits `typing(true)` as soon as the user starts typing and `typing(false)`
  * ~2s after they stop, so both the popup and the full page get a real
@@ -91,6 +104,11 @@ export class MessageComposerComponent implements OnChanges, OnDestroy {
     if (!file) return;
     if (file.size > MAX_ATTACHMENT_BYTES) {
       this.snackBar.openSnackBar('That file is too large to attach (max 25MB).', 'error');
+      return;
+    }
+    const ext = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
+    if (BLOCKED_ATTACHMENT_EXTENSIONS.includes(ext)) {
+      this.snackBar.openSnackBar('That file type can\'t be attached.', 'error');
       return;
     }
 

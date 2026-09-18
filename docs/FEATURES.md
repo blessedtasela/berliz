@@ -156,6 +156,42 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Frontend security hardening
+_Branch: `feat/security-hardening`_
+
+- **Fixed a real stored-XSS.** `highlight()` in the todo-list item and notification-item
+  components returned unescaped user text bound via `[innerHTML]` — a todo task title or
+  notification text containing markup rendered as live HTML for any viewer. New shared
+  `escapeHtml()` (`src/validators/form-validators.module.ts`) fixes both, matching the
+  escape-before-`innerHTML` pattern `comment-node.component.ts` already used correctly.
+  Regression tests added proving the exploit string is neutralized and real search-match
+  highlighting still works.
+- **Closed file-upload validation gaps.** Message attachments (blocklist of
+  executable/script extensions), center photo album (previously zero validation — now
+  type+size checked), center video album (added type check alongside its existing size
+  check), user avatar (previously zero validation before the cropper — now type+size
+  checked), and the trainer-photo/partner-file modals (their `fileValidator` was size-only
+  despite an image/pdf `accept` hint — now actually type-checked) all reuse or extend the
+  existing `imageValidator`/new `typedFileValidator` pattern.
+- **Added missing input length caps.** The shared comment/reply box (`mention-input`) had
+  zero validation; the dashboard post-composer textarea and the contact-us message field
+  had no ceiling. All three now cap length client-side (server-side columns are unbounded
+  TEXT with no `@Size` validation — flagged, not a frontend fix).
+- **Added security headers** (`netlify.toml`): `X-Content-Type-Options`, `Referrer-Policy`,
+  `Strict-Transport-Security`, `Permissions-Policy`, and a `Content-Security-Policy-Report-Only`
+  built from the live site's actual script/frame/connect origins (Google/Facebook SDKs,
+  Cloudflare Insights, the Railway API + WSS, Strapi media) rather than guessed — ships
+  Report-Only first since a wrong enforcing CSP could silently break OAuth login.
+- **`npm audit fix`** (non-breaking only): production-scope vulnerabilities 39 → 30
+  (`lodash`, `path-to-regexp`, `brace-expansion`, `browserslist`, `nanoid` patched). Remaining
+  findings need a major Angular version bump or a migration off `@nguniversal` — out of
+  scope for this pass, documented as accepted risk (practical exploitability is low since
+  prerendering never runs a live Node/Express server in production).
+- Audited but N/A or out of scope for this repo: DB-level concerns (no direct DB access from
+  the frontend), password hashing/rate-limiting/parameterized queries (backend-only), bot
+  protection (needs a chosen CAPTCHA provider + backend verification — not implemented),
+  httpOnly-cookie token migration (bigger cross-repo change, flagged not done).
+
 ### Unreleased — Prerendering for public routes
 _Branch: `feat/prerender-public-routes`_
 

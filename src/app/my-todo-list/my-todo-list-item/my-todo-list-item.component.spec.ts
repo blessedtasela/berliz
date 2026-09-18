@@ -32,4 +32,31 @@ describe('MyTodoListItemComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  // Regression test for a stored-XSS fix: highlight() used to return the raw
+  // task text unescaped and was bound via [innerHTML] in the template, so a
+  // task title containing markup rendered as live HTML for anyone who viewed
+  // it (see form-validators.module.ts's escapeHtml()).
+  describe('highlight() XSS fix', () => {
+    it('escapes HTML in the task text so it cannot execute as markup', () => {
+      component.searchQuery = '';
+      const result = component.highlight('<img src=x onerror="alert(1)">');
+      expect(result).not.toContain('<img');
+      expect(result).toContain('&lt;img');
+    });
+
+    it('still wraps a real search match in a highlight <span>', () => {
+      component.searchQuery = 'gym';
+      const result = component.highlight('Go to the gym today');
+      expect(result).toContain('<span class="bg-yellow-200 rounded px-0.5">gym</span>');
+    });
+
+    it('escapes HTML even when a search query is active', () => {
+      component.searchQuery = 'gym';
+      const result = component.highlight('<b>gym</b> day');
+      expect(result).not.toContain('<b>');
+      expect(result).toContain('&lt;b&gt;');
+      expect(result).toContain('<span class="bg-yellow-200 rounded px-0.5">gym</span>');
+    });
+  });
 });

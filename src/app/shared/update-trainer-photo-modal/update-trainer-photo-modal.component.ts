@@ -5,7 +5,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerService } from 'src/app/services/trainer.service';
-import { fileValidator, genericError } from 'src/validators/form-validators.module';
+import { imageValidator, genericError } from 'src/validators/form-validators.module';
 import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
@@ -45,7 +45,7 @@ export class UpdateTrainerPhotoModalComponent {
 
   ngOnInit(): void {
     this.updateTrainerPhotoForm = this.fb.group({
-      'photo': ['', [Validators.required, fileValidator]],
+      'photo': ['', [Validators.required, imageValidator(10)]],
       'id': [ this.trainer.id],
     })
   }

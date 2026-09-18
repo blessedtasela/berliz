@@ -73,6 +73,10 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
 
   // ── Compose ──────────────────────────────────────────────────────────────
   draftContent = '';
+  // No backend-enforced cap exists on post content (TEXT column, no @Size
+  // validation) -- this is a client-side guard against unbounded payloads,
+  // not a substitute for one.
+  readonly maxContentLength = 5000;
   draftActivityType: PostActivityType = 'GENERAL';
   /** Optional workout template attached to a WORKOUT-type draft. */
   draftWorkoutId: number | null = null;

@@ -34,6 +34,10 @@ export class MentionInputComponent implements OnDestroy {
 
   @Input() dark = false;
   @Input() placeholder = 'Write a comment… use @username to mention';
+  // No backend-enforced cap exists on comment content (TEXT column, no @Size
+  // validation) -- this is a client-side guard against unbounded payloads,
+  // not a substitute for one.
+  @Input() maxLength = 2000;
 
   @Output() submitted = new EventEmitter<void>();
 

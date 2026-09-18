@@ -64,6 +64,39 @@ export function imageValidator(
   };
 }
 
+/**
+ * Generic MIME-type-prefix + size validator for a `FormControl` bound to a
+ * file input (`imageValidator` is the image-only shorthand of this same
+ * check). `allowedTypePrefixes` matches against `File.type` the same way
+ * `imageValidator` matches `'image/'` -- e.g. `['video/']` or
+ * `['image/', 'application/pdf']`. Client-side only, like every validator in
+ * this file -- the server must independently re-validate.
+ */
+export function typedFileValidator(
+  allowedTypePrefixes: string[],
+  maxSizeInMB: number
+): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const file = control.value;
+
+    if (!file) return null; // Required validator will catch empty
+
+    const selectedFile = file instanceof File ? file : file?.[0];
+    if (!selectedFile) return null;
+
+    if (!allowedTypePrefixes.some(prefix => selectedFile.type.startsWith(prefix))) {
+      return { invalidType: true };
+    }
+
+    const maxSizeBytes = maxSizeInMB * 1024 * 1024;
+    if (selectedFile.size > maxSizeBytes) {
+      return { fileTooLarge: true };
+    }
+
+    return null;
+  };
+}
+
 export function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password')?.value || control.get('newPassword')?.value;
   const confirmPassword = control.get('confirmPassword')?.value;
@@ -158,6 +191,22 @@ export function fullNameValidator(): ValidatorFn {
   };
 }
 
+
+/**
+ * Escapes HTML-special characters so user-supplied text can be safely combined
+ * with real markup (e.g. a search-match `<span>` wrapper) before going into an
+ * `[innerHTML]` binding. Angular's `{{ }}` interpolation already does this
+ * automatically -- this is only needed where a component builds an HTML
+ * string by hand (highlighting a search match inside otherwise-plain text).
+ */
+export function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 export const genericError = "Something went wrong on our end — give it another shot.";
 

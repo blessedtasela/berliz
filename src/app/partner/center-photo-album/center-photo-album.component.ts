@@ -43,6 +43,7 @@ export class CenterPhotoAlbumComponent implements OnInit, OnChanges, OnDestroy {
   readonly MIN_PHOTOS = 6;
   readonly MIN_COMMENT = 100;
   readonly MAX_COMMENT = 1200;
+  readonly MAX_PHOTO_MB = 10;
 
   slots: PhotoSlot[] = [];
 
@@ -159,8 +160,14 @@ export class CenterPhotoAlbumComponent implements OnInit, OnChanges, OnDestroy {
     const files: FileList = event.target.files;
     if (!files?.length) return;
 
+    const maxBytes = this.MAX_PHOTO_MB * 1024 * 1024;
+    let rejected = 0;
     const available = this.MAX_PHOTOS - this.photoCount;
     Array.from(files).slice(0, available).forEach(file => {
+      if (!file.type.startsWith('image/') || file.size > maxBytes) {
+        rejected++;
+        return;
+      }
       const idx = this.slots.findIndex(s => !s.rawFile && !s.previewUrl);
       if (idx === -1) return;
       this.slots[idx].rawFile = file;
@@ -168,6 +175,11 @@ export class CenterPhotoAlbumComponent implements OnInit, OnChanges, OnDestroy {
       this.slots[idx].uploaded = false;
       this.slots[idx].uploadedResponse = null;
     });
+
+    if (rejected > 0) {
+      this.snackbar.openSnackBar(
+        `${rejected} file(s) skipped — images only, up to ${this.MAX_PHOTO_MB}MB each.`, 'error');
+    }
 
     (event.target as HTMLInputElement).value = '';
     this.cdr.detectChanges();

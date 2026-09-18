@@ -5,7 +5,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Partner } from 'src/app/models/partners.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { fileValidator, genericError } from 'src/validators/form-validators.module';
+import { typedFileValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
   selector: 'app-update-partner-file-modal',
@@ -48,8 +48,8 @@ export class UpdatePartnerFileModalComponent implements OnInit {
     this.updatePartnerForm = this.fb.group({
       id:            [this.partnerData?.id, Validators.required],
       // File controls — required + file size validator
-      certification: [null, [Validators.required, fileValidator]],
-      resume:        [null, [Validators.required, fileValidator]],
+      certification: [null, [Validators.required, typedFileValidator(['application/pdf'], 10)]],
+      resume:        [null, [Validators.required, typedFileValidator(['application/pdf'], 10)]],
     });
   }
 
