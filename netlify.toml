@@ -1,6 +1,17 @@
 [[redirects]]
+  # Deliberately NOT /index.html: prerendering "/" makes the prerender builder
+  # rename the plain CSR shell it just built to index.original.html and write
+  # the "/" route's own SSG-rendered content to index.html instead (see
+  # worker.js in @nguniversal/builders). Falling back to /index.html here
+  # would hand every non-prerendered route (dashboard, login, dynamic
+  # /trainers/:id, etc.) the landing page's server-rendered markup as its
+  # initial HTML -- harmless once Angular's CSR bootstrap overwrites it
+  # (confirmed: /dashboard still correctly resolves to /login), but wrong raw
+  # markup/title for that split second and for any crawler hitting the URL
+  # directly. index.original.html is the actual generic empty <app-root>
+  # shell every route besides the 9 prerendered ones needs.
   from = "/*"
-  to = "/index.html"
+  to = "/index.original.html"
   status = 200
 
 [[headers]]
