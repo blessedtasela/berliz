@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 
 import { TodoList } from 'src/app/models/todoList.interface';
+import { escapeHtml } from 'src/validators/form-validators.module';
 
 @Component({
   selector: 'app-my-todo-list-item',
@@ -175,17 +176,21 @@ export class MyTodoListItemComponent implements OnDestroy {
   // HELPERS
   // ---------------------------------------------------------
 
+  // This is bound via [innerHTML] in the template to render the <span> match
+  // highlight as real markup, so `text` -- a user-authored todo task title --
+  // must be HTML-escaped first or it becomes a stored-XSS vector.
   highlight(text: string): string {
-    if (!this.searchQuery?.trim()) return text;
+    const escaped = escapeHtml(text);
+    if (!this.searchQuery?.trim()) return escaped;
 
     const words = this.searchQuery
       .split(/\s+/)
       .filter(w => w.trim().length > 0)
-      .map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+      .map(w => escapeHtml(w).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
 
     const regex = new RegExp(words.join('|'), 'gi');
 
-    return text.replace(
+    return escaped.replace(
       regex,
       match => `<span class="bg-yellow-200 rounded px-0.5">${match}</span>`
     );

@@ -160,6 +160,11 @@ export class CenterVideoAlbumComponent implements OnInit, OnChanges, OnDestroy {
     const available = this.MAX_VIDEOS - this.videoCount;
 
     Array.from(files).slice(0, available).forEach(file => {
+      if (!file.type.startsWith('video/')) {
+        this.snackbar.openSnackBar(`${file.name} isn't a video file.`, 'error');
+        return;
+      }
+
       const fileMB = file.size / 1024 / 1024;
       if (fileMB > this.MAX_FILE_MB) {
         this.snackbar.openSnackBar(

@@ -9,6 +9,7 @@ import {
   HostListener
 } from '@angular/core';
 import { Notifications } from 'src/app/models/Notifications.interface';
+import { escapeHtml } from 'src/validators/form-validators.module';
 
 @Component({
   selector: 'notification-item',
@@ -176,17 +177,21 @@ export class NotificationItemComponent implements OnChanges {
     return { icon: 'bell', color: 'text-gray-500' };
   }
 
+  // This is bound via [innerHTML] in the template to render the <span> match
+  // highlight as real markup, so `text` must be HTML-escaped first or it
+  // becomes a stored-XSS vector.
   highlight(text: string, query: string): string {
-    if (!query) return text;
+    const escaped = escapeHtml(text);
+    if (!query) return escaped;
 
     const words = query
       .split(/\s+/)
       .filter(w => w.trim().length > 0)
-      .map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+      .map(w => escapeHtml(w).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
 
     const regex = new RegExp(words.join('|'), 'gi');
 
-    return text.replace(regex, match =>
+    return escaped.replace(regex, match =>
       `<span class="text-red-600 font-semibold">${match}</span>`
     );
   }

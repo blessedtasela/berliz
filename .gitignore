@@ -46,3 +46,11 @@ Thumbs.db
 
 # Local-only notes containing secrets/unlisted URLs — never commit
 docs/PARTNER_PROGRAM.md
+
+# Never commit real secrets/credentials, even though nothing in this repo
+# currently needs a .env (config lives in src/environments/*.ts) — insurance
+# against a future accidental add.
+.env
+.env.*
+*.pem
+*.key

@@ -1,7 +1,7 @@
 <div class="relative">
     <input #input type="text" [ngModel]="value" (ngModelChange)="onModel($event)"
         (input)="onInput(input)" (keydown.enter)="onEnter(); $event.preventDefault()" (keydown.escape)="close()"
-        [placeholder]="placeholder"
+        [placeholder]="placeholder" [maxlength]="maxLength"
         class="w-full text-xs rounded-lg px-3 py-2 border focus:outline-none focus:ring-1 transition"
         [ngClass]="dark
             ? 'bg-zinc-800 border-zinc-700 text-zinc-200 placeholder-zinc-500 focus:border-sky-500 focus:ring-sky-500/30'
