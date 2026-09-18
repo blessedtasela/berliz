@@ -1,11 +1,18 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { CdkDrag, CdkDragEnd, DragDropModule } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragEnd, CdkDragMove, CdkDragStart, DragDropModule } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { IconsModule } from '../icons/icons.module';
-import { NavControlsAppearance, NavControlsPosition, NavControlsService, NavControlsStyle } from '../services/nav-controls.service';
+import { SnackBarService } from '../services/snack-bar.service';
+import {
+  NavControlsAppearance,
+  NavControlsDockSide,
+  NavControlsPosition,
+  NavControlsService,
+  NavControlsStyle
+} from '../services/nav-controls.service';
 
 /**
  * The app's own back/forward navigation chrome — mounted once in AppComponent
@@ -32,6 +39,18 @@ import { NavControlsAppearance, NavControlsPosition, NavControlsService, NavCont
  * Shown only when there's actually somewhere to go, not as a permanent
  * fixture: hidden until there's an in-app page to go back to, and "forward"
  * only appears once "back" has actually been used.
+ *
+ * Within 'button', two extra per-device gestures on top of ordinary dragging
+ * (some users find a floating control obstructive, some rely on it heavily —
+ * this gives a spectrum from "gone for good" down to "out of the way for now"
+ * without forcing everyone through Settings for either):
+ *  - Long-press the pill, then (still holding) drag it onto the "x" target
+ *    that appears — releasing there switches to 'off', same as the Settings
+ *    toggle (reversible there too). A deliberate two-step gesture on purpose,
+ *    so it can't fire from an ordinary drag-to-reposition.
+ *  - Drag the pill (no long-press needed) and release it near either screen
+ *    edge — collapses it to a small peek tab docked there instead of turning
+ *    it off outright. Tap the tab to bring the full pill back.
  */
 @Component({
   selector: 'app-nav-history-controls',
@@ -50,12 +69,29 @@ export class NavHistoryControlsComponent implements OnInit, OnDestroy {
    */
   @ViewChild(CdkDrag) private dragRef?: CdkDrag;
 
+  /** The "drag here to hide" target — only rendered (and only queryable) once armed. */
+  @ViewChild('dismissTarget') private dismissTargetRef?: ElementRef<HTMLElement>;
+
   private navigationCount = 0;
   hasGoneBack = false;
 
   style: NavControlsStyle = 'button';
   appearance: NavControlsAppearance = 'translucent';
   dragPosition: NavControlsPosition = { x: 0, y: 0 };
+
+  docked: NavControlsDockSide = null;
+  dockY = 160;
+
+  /** True once a long-press on the pill has been held long enough to show the
+   *  dismiss ("x") target; only meaningful mid-drag. */
+  dismissArmed = false;
+  /** True while dismissArmed and the pointer is currently over the dismiss target. */
+  dismissHover = false;
+
+  private pressTimer: ReturnType<typeof setTimeout> | null = null;
+  private static readonly LONG_PRESS_MS = 450;
+  private static readonly DISMISS_HOVER_RADIUS_PX = 44;
+  private static readonly DOCK_EDGE_THRESHOLD_PX = 56;
 
   /** Left-edge swipe tracking for 'swipe' style — only armed while a touch actually started near the edge. */
   private swipeTracking = false;
@@ -81,7 +117,12 @@ export class NavHistoryControlsComponent implements OnInit, OnDestroy {
   private readonly onTouchEndBound = (event: TouchEvent) => this.handleTouchEnd(event);
   private readonly onTouchCancelBound = () => { this.swipeTracking = false; };
 
-  constructor(private location: Location, private router: Router, private navControls: NavControlsService) {
+  constructor(
+    private location: Location,
+    private router: Router,
+    private navControls: NavControlsService,
+    private snackBar: SnackBarService,
+  ) {
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe(() => this.navigationCount++);
@@ -103,6 +144,8 @@ export class NavHistoryControlsComponent implements OnInit, OnDestroy {
         }
         firstPositionEmission = false;
       }),
+      this.navControls.docked$.subscribe(docked => this.docked = docked),
+      this.navControls.dockY$.subscribe(y => { if (y != null) this.dockY = y; }),
     );
 
     if (typeof document !== 'undefined') {
@@ -115,6 +158,7 @@ export class NavHistoryControlsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
+    this.clearPressTimer();
     if (typeof document !== 'undefined') {
       document.removeEventListener('touchstart', this.onTouchStartBound);
       document.removeEventListener('touchmove', this.onTouchMoveBound);
@@ -152,9 +196,111 @@ export class NavHistoryControlsComponent implements OnInit, OnDestroy {
       : 'bg-white/70 backdrop-blur-md border border-gray-200/70';
   }
 
+  // ── Long-press → drag-to-dismiss, and drag-to-edge → dock ────────────────
+
+  /** True once cdkDragStarted has actually fired for the current press --
+   *  distinguishes "held still, never dragged" (onPressEnd must clean up,
+   *  since cdkDragEnded never fires) from "dragged" (onDragEnded owns
+   *  cleanup, and must not race with onPressEnd over which one resets
+   *  dismissArmed/dismissHover first -- their firing order relative to each
+   *  other for the SAME native pointerup isn't guaranteed). */
+  private dragOccurred = false;
+
+  /** Starts the long-press timer. Bound to (mousedown)/(touchstart) on the pill
+   *  itself, alongside (not instead of) cdkDrag's own listeners on the same
+   *  element -- both can observe the same native event independently. */
+  onPressStart(): void {
+    if (this.docked) return; // docked tab is tap-to-undock, not a long-press target
+    this.clearPressTimer();
+    this.dragOccurred = false;
+    this.pressTimer = setTimeout(() => { this.dismissArmed = true; }, NavHistoryControlsComponent.LONG_PRESS_MS);
+  }
+
+  /** A quick press-and-release before the timer fired (a normal click, or a
+   *  fast drag that starts moving right away), or a long-press held past the
+   *  threshold but released WITHOUT ever actually dragging -- either way, if
+   *  no drag occurred there's nothing for onDragEnded to clean up, so this is
+   *  the only place that will reset dismissArmed/dismissHover for this press. */
+  onPressEnd(): void {
+    this.clearPressTimer();
+    if (!this.dragOccurred) {
+      this.dismissArmed = false;
+      this.dismissHover = false;
+    }
+  }
+
+  /** cdkDrag started actually moving the pill. If the long-press timer hasn't
+   *  fired yet, this is an ordinary fast drag, not a hold-then-drag -- cancel
+   *  it so the dismiss target never appears. If it already fired, dismissArmed
+   *  is already true and stays that way for the rest of this drag. */
+  onDragStarted(_event: CdkDragStart): void {
+    this.dragOccurred = true;
+    if (this.pressTimer) this.clearPressTimer();
+  }
+
+  /** Only does anything meaningful once armed -- tracks whether the pointer is
+   *  currently close enough to the dismiss target to highlight it. */
+  onDragMoved(event: CdkDragMove): void {
+    if (!this.dismissArmed || !this.dismissTargetRef) return;
+    const rect = this.dismissTargetRef.nativeElement.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = event.pointerPosition.x - cx;
+    const dy = event.pointerPosition.y - cy;
+    this.dismissHover = Math.hypot(dx, dy) <= NavHistoryControlsComponent.DISMISS_HOVER_RADIUS_PX;
+  }
+
   onDragEnded(event: CdkDragEnd): void {
+    this.clearPressTimer();
+
+    if (this.dismissArmed && this.dismissHover) {
+      // Released on the "x" -- hide the control entirely, same effect as
+      // choosing "Off" in Settings (and reversible there the same way).
+      // Deliberately does NOT save a new position: this drag was a dismiss
+      // gesture, not a reposition, so wherever it's re-enabled from Settings
+      // it should reappear right where it always was.
+      this.dismissArmed = false;
+      this.dismissHover = false;
+      this.navControls.setStyle('off');
+      this.snackBar.openSnackBar('In-app navigation hidden — turn it back on any time in Settings.', '');
+      return;
+    }
+    this.dismissArmed = false;
+    this.dismissHover = false;
+
+    if (typeof window !== 'undefined') {
+      const dockEdge = this.edgeDockSideFor(event.dropPoint.x);
+      if (dockEdge) {
+        this.navControls.setDocked(dockEdge, event.dropPoint.y);
+        return;
+      }
+    }
+
+    // Not dismissed, not docked -- an ordinary reposition. Also the path that
+    // undocks: dragging a docked tab back out and releasing away from either
+    // edge lands here, clearing `docked` via the normal position update.
+    if (this.docked) this.navControls.setDocked(null);
     const point = event.source.getFreeDragPosition();
     this.navControls.setPosition(point); // pushes back through position$, which sets dragPosition
+  }
+
+  /** Tap (not drag) on the collapsed peek tab brings the full pill back. */
+  onDockedTabClick(): void {
+    this.navControls.setDocked(null);
+  }
+
+  private edgeDockSideFor(clientX: number): NavControlsDockSide {
+    if (typeof window === 'undefined') return null;
+    if (clientX <= NavHistoryControlsComponent.DOCK_EDGE_THRESHOLD_PX) return 'left';
+    if (window.innerWidth - clientX <= NavHistoryControlsComponent.DOCK_EDGE_THRESHOLD_PX) return 'right';
+    return null;
+  }
+
+  private clearPressTimer(): void {
+    if (this.pressTimer) {
+      clearTimeout(this.pressTimer);
+      this.pressTimer = null;
+    }
   }
 
   // ── Edge-swipe-back (only active while style === 'swipe') ────────────────
