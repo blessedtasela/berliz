@@ -409,6 +409,12 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
 - **Settings is its own sidebar item again.** Folded into Profile a while back
   to fight sidebar overflow; the sidebar's had a scrollable container since,
   so that tradeoff no longer holds. `berliz@eb8d03eb` (+ test).
+- **Sidebar child dropdown for My Trainer/Center Profile.** A chevron expands
+  Introduction/Pricing/Benefits/Photo Album/Video Album etc. as sub-items,
+  each jumping straight to that section (router fragment) instead of always
+  landing at the top. Auto-expands while that item's own route is active.
+  Added `scrollToFragment()` since Angular's `anchorScrolling` fires before
+  either target page's async-loaded content exists. `berliz@5754295c` (+ tests).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
