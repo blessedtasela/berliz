@@ -165,7 +165,7 @@ instead).
 | Platform growth campaigns (admin) | ✅ | Same `Promotion` entity with no trainer/center owner — e.g. "first N sign-ups get a free session." Managed at `/dashboard/hub/campaigns` (admin only) and surfaced as a real Hub tile (`DashboardServiceImplement` now includes a `campaigns` count, `hub-grid.component.ts` groups it under Content & programs). A live `free_session` + `new_members` campaign is auto-granted as a `SessionCredit` to every account the moment it activates (email confirmation for form signup; immediately for Google/Facebook/quick signup, none of which have a separate activation step) |
 | Session credits ("My Rewards") | ✅ | `/dashboard/my-rewards` — free-session/discount credits earned from a platform campaign or a referral, shown to redeem manually with the provider (no per-session Stripe charge exists yet to auto-apply a discount against — see [§6](#6-payments--subscriptions)). Backend: `SessionCredit`, `/session-credit/mine` |
 | Referral program | ✅ | Every user gets a shareable link (`/sign-up?ref=<userId>`) from the My Rewards page. `?ref=` is honored across every account-creation path -- full form signup, quick sign-up (`/quick-sign-up?ref=`), and Google/Facebook on either `/login` or `/quick-sign-up` (`?ref=` forwarded as `referredBy` to `/auth/google`\|`/auth/facebook`) -- tracking a pending `Referral`; once the account is active (immediately for social, on email confirmation otherwise), both sides get a free-session `SessionCredit`. Backend: `Referral`, `ReferralServiceImplement`, `/referral/mine` |
-| "Promo Partner" visibility incentive | ✅ | Deliberately built as a zero-cost-to-run incentive rather than a new flag/field: a trainer/center with at least one live promotion already gets the public badge (above) for free — that visibility *is* the incentive for participating. A dedicated search-ranking boost or commission-rate discount for campaign participants is a recommended next step, not built |
+| "Promo Partner" incentive | ✅ | Three layers: (1) the public profile badge every live promotion already earns for free; (2) a search-ranking boost — `getActiveTrainers`/`getActiveCenters` sort a provider with a live promotion first (stable sort, no schema change); (3) a real payout benefit — `PayoutServiceImplement` charges 10% commission instead of the standard 15% for a completed booking whose provider currently has a live promotion |
 | Social-share unlock, referral leaderboard, corporate/gym co-marketing partnerships | 📋 | Raised as growth ideas, not built — no data model or UI exists for any of these yet |
 
 ---
@@ -173,6 +173,27 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Growth & marketing follow-ups: referral coverage, Hub discovery, Promo Partner payout
+
+Closes the three gaps the promotions/growth feature launch (below) documented:
+
+- **Referral attribution now covers every signup path**, not just the full form.
+  `loginOrCreate` (Google/Facebook) and `quickAdd` both accept an optional
+  `referredBy`; `LoginFormComponent`/`QuickSignupComponent` read `?ref=` and forward
+  it. Social accounts track-and-complete the referral in the same call (no
+  separate activation step to defer to).
+- **Growth campaigns now show up as a real Hub tile.** `DashboardServiceImplement`'s
+  admin map gained a `campaigns` count (`PromotionRepo.countPlatformPromotions()`);
+  `hub-grid.component.ts` groups it under Content & programs. Previously only
+  reachable by typing the URL.
+- **"Promo Partner" incentive extended beyond the free badge**, per the original
+  plan's recommended next step: `getActiveTrainers`/`getActiveCenters` sort a
+  provider with a live promotion first (search-ranking boost), and
+  `PayoutServiceImplement` now charges 10% commission instead of 15% on a
+  completed booking whose provider currently has a live promotion — a real,
+  ongoing payout benefit for running one, not just one-time visibility. New unit
+  test coverage for both the discounted-rate math and the sort order.
 
 ### Unreleased — Growth & marketing: promotions, campaigns, referrals
 
@@ -361,6 +382,14 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   collected a last name, an admin-created account, etc.), which is exactly what
   showed up as a comment author's name. New `DisplayNameUtil.fullName()` is the one
   shared null-safe join every call site now uses. `com.berliz@fdf1cee` (+ test).
+- **Fixed a `LazyInitializationException` crashing the hourly trainer-subscription
+  expiry sweep.** `expireSubscriptions()` fetched active subscriptions, then touched
+  each one's lazy `@OneToOne` trainer — with no surrounding transaction, that repo
+  call's own short-lived Hibernate session had already closed by the time the loop
+  got there. Caught live in the running dev server's log. Added `@Transactional`
+  so one session spans the whole sweep; had zero test coverage before, now covers
+  the expire / not-yet-due / no-trainer / empty-list paths. `com.berliz@24a6198`
+  (+ tests).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
