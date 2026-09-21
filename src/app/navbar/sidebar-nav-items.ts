@@ -58,7 +58,8 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { name: 'Bookings', icon: 'clock', route: '/dashboard/my-bookings' },
 
   { label: 'Account' },
-  { name: 'Profile', icon: 'user', route: '/dashboard/profile' },
+  { name: 'Profile', icon: 'user', route: '/dashboard/profile/view' },
+  { name: 'Settings', icon: 'settings', route: '/dashboard/profile/edit' },
   { name: 'Rewards', icon: 'gift', route: '/dashboard/my-rewards' },
   { name: 'Subscriptions', icon: 'airplay', route: '/dashboard/my-subscriptions' },
   { name: 'Hub', icon: 'globe', route: '/dashboard/hub' },
