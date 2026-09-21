@@ -54,6 +54,7 @@ export class PromotionFormModalComponent {
       startDate: [this.toDateInput(p?.startDate)],
       endDate: [this.toDateInput(p?.endDate)],
       usageLimit: [p?.usageLimit ?? null],
+      code: [p?.code ?? ''],
     });
   }
 
@@ -85,6 +86,7 @@ export class PromotionFormModalComponent {
       startDate: value.startDate ? new Date(value.startDate).toISOString() : null,
       endDate: value.endDate ? new Date(value.endDate).toISOString() : null,
       usageLimit: value.usageLimit !== null && value.usageLimit !== '' ? Number(value.usageLimit) : null,
+      code: value.code?.trim() || null,
     };
 
     this.invalidForm = false;

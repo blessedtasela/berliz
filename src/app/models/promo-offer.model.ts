@@ -22,6 +22,8 @@ export interface PromoOffer {
   endDate: string | null;
   usageLimit: number | null;
   usageCount: number | null;
+  /** Present only for the owner's own "My Promotions"/admin listing, or a successful redeem-by-code response -- never on a public badge/feed entry. */
+  code?: string | null;
   active: boolean;
   live: boolean;
   date: string;
@@ -38,11 +40,13 @@ export interface PromoOfferRequest {
   startDate?: string | null;
   endDate?: string | null;
   usageLimit?: number | null;
+  /** Optional -- shares this promotion privately (a corporate/gym partner code) instead of showing it publicly. */
+  code?: string | null;
 }
 
 export interface SessionCredit {
   id: number;
-  reason: 'platform_promo' | 'referral';
+  reason: 'platform_promo' | 'referral' | 'share_bonus';
   type: PromotionType;
   value: number | null;
   status: 'available' | 'applied' | 'expired';
@@ -57,4 +61,10 @@ export interface ReferralStats {
   completedReferrals: number;
   pendingReferrals: number;
   referrerId: number;
+}
+
+export interface ReferralLeaderboardEntry {
+  userId: number;
+  name: string;
+  completedReferrals: number;
 }

@@ -166,13 +166,38 @@ instead).
 | Session credits ("My Rewards") | ✅ | `/dashboard/my-rewards` — free-session/discount credits earned from a platform campaign or a referral, shown to redeem manually with the provider (no per-session Stripe charge exists yet to auto-apply a discount against — see [§6](#6-payments--subscriptions)). Backend: `SessionCredit`, `/session-credit/mine` |
 | Referral program | ✅ | Every user gets a shareable link (`/sign-up?ref=<userId>`) from the My Rewards page. `?ref=` is honored across every account-creation path -- full form signup, quick sign-up (`/quick-sign-up?ref=`), and Google/Facebook on either `/login` or `/quick-sign-up` (`?ref=` forwarded as `referredBy` to `/auth/google`\|`/auth/facebook`) -- tracking a pending `Referral`; once the account is active (immediately for social, on email confirmation otherwise), both sides get a free-session `SessionCredit`. Backend: `Referral`, `ReferralServiceImplement`, `/referral/mine` |
 | "Promo Partner" incentive | ✅ | Three layers: (1) the public profile badge every live promotion already earns for free; (2) a search-ranking boost — `getActiveTrainers`/`getActiveCenters` sort a provider with a live promotion first (stable sort, no schema change); (3) a real payout benefit — `PayoutServiceImplement` charges 10% commission instead of the standard 15% for a completed booking whose provider currently has a live promotion |
-| Social-share unlock, referral leaderboard, corporate/gym co-marketing partnerships | 📋 | Raised as growth ideas, not built — no data model or UI exists for any of these yet |
+| Referral leaderboard | ✅ | "My Rewards" shows the top 10 referrers by completed-referral count, name resolved the same way as everywhere else (trainer/center professional name where applicable). `GET /referral/leaderboard` |
+| Social-share unlock | ✅ | "Share for a bonus free session" on My Rewards -- native share sheet where available (falls back to copy-link), grants a one-time `share_bonus` `SessionCredit` on first share. Trust-based (confirms a share was triggered, doesn't verify a post was actually made), same trust level as the rest of session-credit redemption today |
+| Corporate/gym co-marketing partner codes | ✅ | Any promotion (provider or platform) can carry a private `code` -- set it and it's hidden from the public badge/Deals feed/auto-signup-grant entirely, reachable only by redeeming the exact code (`POST /promotion/redeem/{code}`, "Have a code?" on My Rewards). A platform campaign's code grants an immediate `SessionCredit`, once per user; a provider's coded promo is just surfaced for the caller to see -- the discount is honored manually when booking, same as any other provider promo |
 
 ---
 
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Growth & marketing: leaderboard, share bonus, partner codes
+
+Closes the last documented gap: "social-share unlock, referral leaderboard,
+corporate/gym co-marketing partnerships — raised as growth ideas, not built."
+
+- **Referral leaderboard** — top 10 referrers by completed-referral count on
+  My Rewards. `ReferralRepo.topReferrers` (grouped/ordered JPQL), names
+  resolved via the same `DisplayNameUtil` every other surface uses.
+- **Social-share unlock** — "Share for a bonus free session": native share
+  sheet (falls back to copy-link), grants a one-time `share_bonus`
+  `SessionCredit` the first time. Trust-based, matching how every other
+  session credit already works (no per-session payment to verify against).
+- **Corporate/gym co-marketing partner codes** — `Promotion` gained an
+  optional `code` (V46 migration). A coded promotion is invisible on the
+  public badge, the Deals feed, and the auto-signup-grant path — reachable
+  only via `POST /promotion/redeem/{code}`. A coded platform campaign grants
+  an immediate `SessionCredit` (once per user); a coded provider promo is
+  just surfaced, honored manually like any other provider offer. "Have a
+  code?" box on My Rewards; the promotion form gained an optional code field
+  (self-serve trainer/center promos and admin campaigns both support it, not
+  just admin — a trainer sharing a private rate with one gym partner is a
+  legitimate real use case too).
 
 ### Unreleased — Growth & marketing follow-ups: referral coverage, Hub discovery, Promo Partner payout
 
@@ -406,15 +431,6 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   accepted, peer-session proposed/confirmed, and booking status-change events —
   to route straight to Connections / My Sessions / My Bookings.
   `berliz@abda644f` / `com.berliz@772a8c5` (+ tests).
-- **Settings is its own sidebar item again.** Folded into Profile a while back
-  to fight sidebar overflow; the sidebar's had a scrollable container since,
-  so that tradeoff no longer holds. `berliz@eb8d03eb` (+ test).
-- **Sidebar child dropdown for My Trainer/Center Profile.** A chevron expands
-  Introduction/Pricing/Benefits/Photo Album/Video Album etc. as sub-items,
-  each jumping straight to that section (router fragment) instead of always
-  landing at the top. Auto-expands while that item's own route is active.
-  Added `scrollToFragment()` since Angular's `anchorScrolling` fires before
-  either target page's async-loaded content exists. `berliz@5754295c` (+ tests).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_

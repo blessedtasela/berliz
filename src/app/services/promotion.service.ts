@@ -49,4 +49,9 @@ export class PromotionService {
   getPlatformCampaigns() {
     return this.httpClient.get<ApiResponse<PromoOffer[]>>(this.url + "/promotion/platform");
   }
+
+  /** Redeems a promotion's private code (the corporate/gym co-marketing mechanism). */
+  redeemCode(code: string) {
+    return this.httpClient.post<ApiResponse<PromoOffer>>(this.url + "/promotion/redeem/" + encodeURIComponent(code), {});
+  }
 }

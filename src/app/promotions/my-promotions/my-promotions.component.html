@@ -50,6 +50,9 @@
                         <span *ngIf="!p.active" class="text-[10px] font-bold uppercase tracking-wide bg-gray-100 text-gray-500 border border-gray-200 rounded-full px-2 py-0.5 shrink-0">
                             Paused
                         </span>
+                        <span *ngIf="p.code" class="text-[10px] font-mono font-bold bg-purple-50 text-purple-700 border border-purple-100 rounded-full px-2 py-0.5 shrink-0">
+                            Code: {{ p.code }}
+                        </span>
                     </div>
                     <p class="text-sm font-bold text-gray-900 mt-1">{{ p.title }}</p>
                     <p *ngIf="p.description" class="text-xs text-gray-500 mt-0.5">{{ p.description }}</p>
