@@ -67,6 +67,11 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
     return url && url.startsWith('/') && !url.startsWith('//') ? url : '/dashboard';
   }
 
+  /** From a shared referral link (?ref=<userId>) -- only meaningful if signing in here creates a brand-new account. */
+  private get referredBy(): string | null {
+    return this.route.snapshot.queryParamMap.get('ref');
+  }
+
   ngAfterViewInit(): void {
     this.socialAuthService.renderGoogleButton('googleSignInButton', (idToken) => this.handleGoogleCredential(idToken))
       .then(() => { this.googleReady = true; })
@@ -213,7 +218,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
 
   private handleGoogleCredential(idToken: string): void {
     this.ngxService.start();
-    this.userService.loginWithGoogle(idToken).subscribe({
+    this.userService.loginWithGoogle(idToken, this.referredBy).subscribe({
       next: (response: any) => this.handleSocialAuthResponse(response),
       error: (error: any) => this.handleSocialAuthError(error),
     });
@@ -223,7 +228,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
     this.socialAuthService.loginWithFacebook()
       .then((accessToken) => {
         this.ngxService.start();
-        this.userService.loginWithFacebook(accessToken).subscribe({
+        this.userService.loginWithFacebook(accessToken, this.referredBy).subscribe({
           next: (response: any) => this.handleSocialAuthResponse(response),
           error: (error: any) => this.handleSocialAuthError(error),
         });

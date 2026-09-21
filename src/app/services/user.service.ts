@@ -70,11 +70,13 @@ export class UserService {
    * Verifies a Google ID token (obtained client-side via Google Identity Services)
    * server-side and logs the user in, creating an account on first sign-in. Issues the
    * same JWT pair as {@link login}.
+   * @param referredBy optional referring user's id (from a shared ?ref= link) -- only
+   *   meaningful the first time this email signs in, when it creates a brand-new account.
    */
-  loginWithGoogle(idToken: string): Observable<ApiResponse<AuthResponse>> {
+  loginWithGoogle(idToken: string, referredBy?: string | number | null): Observable<ApiResponse<AuthResponse>> {
     return this.httpClient.post<ApiResponse<AuthResponse>>(
       this.url + "/auth/google",
-      { token: idToken },
+      { token: idToken, ...(referredBy ? { referredBy: String(referredBy) } : {}) },
       {
         headers: new HttpHeaders()
           .set('Content-Type', 'application/json')
@@ -86,11 +88,13 @@ export class UserService {
    * Verifies a Facebook user access token (obtained client-side via the Facebook JS
    * SDK) server-side and logs the user in, creating an account on first sign-in.
    * Issues the same JWT pair as {@link login}.
+   * @param referredBy optional referring user's id (from a shared ?ref= link) -- only
+   *   meaningful the first time this email signs in, when it creates a brand-new account.
    */
-  loginWithFacebook(accessToken: string): Observable<ApiResponse<AuthResponse>> {
+  loginWithFacebook(accessToken: string, referredBy?: string | number | null): Observable<ApiResponse<AuthResponse>> {
     return this.httpClient.post<ApiResponse<AuthResponse>>(
       this.url + "/auth/facebook",
-      { token: accessToken },
+      { token: accessToken, ...(referredBy ? { referredBy: String(referredBy) } : {}) },
       {
         headers: new HttpHeaders()
           .set('Content-Type', 'application/json')

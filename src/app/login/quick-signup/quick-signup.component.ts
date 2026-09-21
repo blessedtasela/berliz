@@ -1,7 +1,7 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ForgotPasswordModalComponent } from 'src/app/dashboard/user/forgot-password-modal/forgot-password-modal.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -21,13 +21,18 @@ export class QuickSignupComponent implements AfterViewInit {
   /** True once the official "Sign in with Google" button has actually rendered. */
   googleReady = false;
 
+  /** From a shared referral link (?ref=<userId>) -- passed through to quickAdd/social signup so both sides get a reward once this account activates. */
+  private referredBy: string | null = null;
+
   constructor(private fb: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private dialog: MatDialog,
     private userService: UserService,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
     private socialAuthService: SocialAuthService) {
+    this.referredBy = this.route.snapshot.queryParamMap.get('ref');
   }
 
   ngOnInit(): void {
@@ -64,7 +69,10 @@ export class QuickSignupComponent implements AfterViewInit {
       this.ngxService.stop();
     } else {
       this.ngxService.start();
-      this.userService.quickAdd(this.quickSignupForm.value)
+      const payload = this.referredBy
+        ? { ...this.quickSignupForm.value, referredBy: this.referredBy }
+        : this.quickSignupForm.value;
+      this.userService.quickAdd(payload)
         .subscribe((response: any) => {
           this.quickSignupForm.reset();
           this.invalidForm = false;
@@ -99,7 +107,7 @@ export class QuickSignupComponent implements AfterViewInit {
 
   private handleGoogleCredential(idToken: string): void {
     this.ngxService.start();
-    this.userService.loginWithGoogle(idToken).subscribe({
+    this.userService.loginWithGoogle(idToken, this.referredBy).subscribe({
       next: (response: any) => this.handleSocialAuthResponse(response),
       error: (error: any) => this.handleSocialAuthError(error),
     });
@@ -109,7 +117,7 @@ export class QuickSignupComponent implements AfterViewInit {
     this.socialAuthService.loginWithFacebook()
       .then((accessToken) => {
         this.ngxService.start();
-        this.userService.loginWithFacebook(accessToken).subscribe({
+        this.userService.loginWithFacebook(accessToken, this.referredBy).subscribe({
           next: (response: any) => this.handleSocialAuthResponse(response),
           error: (error: any) => this.handleSocialAuthError(error),
         });
