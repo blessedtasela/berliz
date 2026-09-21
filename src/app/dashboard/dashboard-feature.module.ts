@@ -258,6 +258,39 @@ const dashboardRoutes: Routes = [
         }
       },
 
+      // Self-service promotions on the trainer/center's own profile.
+      {
+        path: 'my-promotions',
+        loadComponent: () => import('../promotions/my-promotions/my-promotions.component').then(m => m.MyPromotionsComponent),
+        canActivate: [AuthGuard, RoleGuard],
+        data: {
+          breadcrumb: 'Promotions',
+          expectedRole: ['trainer', 'center', 'admin']
+        }
+      },
+
+      // Free-session/discount credits (platform campaigns + referrals) and the referral share link. Every role.
+      {
+        path: 'my-rewards',
+        loadComponent: () => import('../promotions/my-rewards/my-rewards.component').then(m => m.MyRewardsComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Rewards',
+          expectedRole: expectedRoleAll
+        }
+      },
+
+      // "Deals" feed — every live promotion platform-wide. Signed-in only.
+      {
+        path: 'deals',
+        loadComponent: () => import('../promotions/deals-page/deals-page.component').then(m => m.DealsPageComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Deals',
+          expectedRole: expectedRoleAll
+        }
+      },
+
       // Liked trainers — dashboard-native list (vs the public /trainers grid).
       {
         path: 'liked-trainers',
@@ -461,6 +494,7 @@ const dashboardRoutes: Routes = [
           { path: 'trainer-pricing', loadChildren: () => import('../admin/trainer-pricing/trainer-pricing.module').then(m => m.TrainerPricingModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Trainer Pricing', expectedRole: ['admin'] } },
           { path: 'center-pricing', loadChildren: () => import('../admin/center-pricing/center-pricing.module').then(m => m.CenterPricingModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Center Pricing', expectedRole: ['admin'] } },
           { path: 'equipments', loadComponent: () => import('../admin/equipment/equipment-page/equipment-page.component').then(m => m.EquipmentPageComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Equipment', expectedRole: ['admin'] } },
+          { path: 'campaigns', loadComponent: () => import('../promotions/admin-campaigns/admin-campaigns.component').then(m => m.AdminCampaignsComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Campaigns', expectedRole: ['admin'] } },
           { path: 'testimonials', loadChildren: () => import('../admin/testimonials/testimonials.module').then(m => m.TestimonialsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Testimonials', expectedRole: ['admin'] } },
           { path: 'faqs', loadChildren: () => import('../admin/faqs/faqs.module').then(m => m.FaqsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'FAQs', expectedRole: ['admin'] } },
           { path: 'members', loadChildren: () => import('../admin/members/members.module').then(m => m.MembersModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Members', expectedRole: ['admin'] } },
@@ -518,6 +552,7 @@ const dashboardRoutes: Routes = [
       { path: 'trainer-pricing', loadChildren: () => import('../admin/trainer-pricing/trainer-pricing.module').then(m => m.TrainerPricingModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Trainer Pricing', expectedRole: ['admin'] } },
       { path: 'center-pricing', loadChildren: () => import('../admin/center-pricing/center-pricing.module').then(m => m.CenterPricingModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Center Pricing', expectedRole: ['admin'] } },
       { path: 'equipments', loadComponent: () => import('../admin/equipment/equipment-page/equipment-page.component').then(m => m.EquipmentPageComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Equipment', expectedRole: ['admin'] } },
+      { path: 'campaigns', loadComponent: () => import('../promotions/admin-campaigns/admin-campaigns.component').then(m => m.AdminCampaignsComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Campaigns', expectedRole: ['admin'] } },
       { path: 'testimonials', loadChildren: () => import('../admin/testimonials/testimonials.module').then(m => m.TestimonialsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Testimonials', expectedRole: ['admin'] } },
       { path: 'faqs', loadChildren: () => import('../admin/faqs/faqs.module').then(m => m.FaqsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'FAQs', expectedRole: ['admin'] } },
       { path: 'members', loadChildren: () => import('../admin/members/members.module').then(m => m.MembersModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Members', expectedRole: ['admin'] } },

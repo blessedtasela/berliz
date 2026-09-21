@@ -44,6 +44,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { label: 'My Profile', roles: ['trainer', 'center'] },
   { name: 'My Trainer Profile', icon: 'briefcase', route: '/dashboard/partnership', roles: ['trainer'] },
   { name: 'My Center Profile', icon: 'briefcase', route: '/dashboard/partnership', roles: ['center'] },
+  { name: 'Promotions', icon: 'tag', route: '/dashboard/my-promotions', roles: ['trainer', 'center'] },
 
   { label: 'Training' },
   { name: 'Tasks', icon: 'activity', route: '/dashboard/my-tasks' },
@@ -53,10 +54,12 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { name: 'My Progress', icon: 'trending-up', route: '/dashboard/my-progress' },
   { name: 'Exercises & Gear', icon: 'layers', route: '/dashboard/exercises' },
   { name: 'Find a Provider', icon: 'search', route: '/dashboard/find-providers' },
+  { name: 'Deals', icon: 'tag', route: '/dashboard/deals' },
   { name: 'Bookings', icon: 'clock', route: '/dashboard/my-bookings' },
 
   { label: 'Account' },
   { name: 'Profile', icon: 'user', route: '/dashboard/profile' },
+  { name: 'Rewards', icon: 'gift', route: '/dashboard/my-rewards' },
   { name: 'Subscriptions', icon: 'airplay', route: '/dashboard/my-subscriptions' },
   { name: 'Hub', icon: 'globe', route: '/dashboard/hub' },
   { name: 'FAQs', icon: 'message-square', route: '/dashboard/my-faqs' },

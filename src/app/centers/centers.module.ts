@@ -8,6 +8,7 @@ import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
 import { CenterSearchComponent } from './center-search/center-search.component';
 import { CenterDetailComponent } from './center-detail/center-detail.component';
+import { PromoBadgeListComponent } from '../promotions/promo-badge-list/promo-badge-list.component';
 import { CenterSearchResultComponent } from './center-search-result/center-search-result.component';
 import { RouterModule } from '@angular/router';
 import { ChatWithCenterComponent } from './chat-with-center/chat-with-center.component';
@@ -65,6 +66,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
     FooterModule,
     IconsModule,
     RouterModule,
+    PromoBadgeListComponent,
     FormsModule,
     ReactiveFormsModule,
     StrapiUrlPipe

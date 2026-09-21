@@ -150,11 +150,59 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | Partner one-pager, brand assets | ✅ | |
 | Build-time prerendering of public marketing routes (SEO) | ✅ | `/`, `/about`, `/services` + its 3 children, `/contact`, `/trainers`, `/centers`, `/members` are statically rendered at build time (Angular Universal) so crawlers that don't run JS see real title/meta/OG/canonical/JSON-LD instead of an empty shell. Dashboard and every other route stay client-rendered only — see `docs/DEPLOYMENT.md` |
 
+## 10. Growth & marketing
+
+New domain — `Promotion`/`SessionCredit`/`Referral`, not to be confused with the admin
+subscription **bypass/discount codes** in [§6](#6-payments--subscriptions), which are a
+separate, older mechanism (comps a full subscription; these grant a session-level reward
+instead).
+
+| Feature | Status | Notes |
+|---|---|---|
+| Provider self-serve promotions | ✅ | A trainer/center creates offers on their own profile (`/dashboard/my-promotions`): % off, $ off, free session, or custom; audience (new members / everyone); optional date window + redemption cap; pause/resume. Backend: `Promotion` (trainer_fk/center_fk set), `PromotionServiceImplement`, `/promotion/*` |
+| Public offer badges on trainer/center profiles | ✅ | Live promotions render as a badge/callout on both the public (`/trainers/:name`, `/centers/:name`) and dashboard (`/dashboard/find-trainers/:name`, `/dashboard/find-centers/:id/:name`) profile pages — `PromoBadgeListComponent`, reused across all four templates |
+| "Deals" feed | ✅ | `/dashboard/deals` — every currently-live promotion platform-wide (provider offers + Berliz campaigns). Signed-in only; the underlying `/promotion/feed` endpoint is public (also feeds each provider's own profile badge) but this route requires auth. Links out to each provider's dashboard profile page |
+| Platform growth campaigns (admin) | ✅ | Same `Promotion` entity with no trainer/center owner — e.g. "first N sign-ups get a free session." Managed at `/dashboard/hub/campaigns` (admin only). A live `free_session` + `new_members` campaign is auto-granted as a `SessionCredit` to every account the moment it activates (email confirmation for form signup; immediately for Google/Facebook signup, which has no separate activation step) |
+| Session credits ("My Rewards") | ✅ | `/dashboard/my-rewards` — free-session/discount credits earned from a platform campaign or a referral, shown to redeem manually with the provider (no per-session Stripe charge exists yet to auto-apply a discount against — see [§6](#6-payments--subscriptions)). Backend: `SessionCredit`, `/session-credit/mine` |
+| Referral program | ✅ | Every user gets a shareable link (`/sign-up?ref=<userId>`) from the My Rewards page. A referred account signing up via the **full form signup** tracks a pending `Referral`; once that account activates, both sides get a free-session `SessionCredit`. Backend: `Referral`, `ReferralServiceImplement`, `/referral/mine` |
+| "Promo Partner" visibility incentive | ✅ | Deliberately built as a zero-cost-to-run incentive rather than a new flag/field: a trainer/center with at least one live promotion already gets the public badge (above) for free — that visibility *is* the incentive for participating. A dedicated search-ranking boost or commission-rate discount for campaign participants is a recommended next step, not built |
+| Referral attribution for social/quick signup | 📋 | Only the full `/sign-up` form (`SignupRequest.referredBy`) carries a `?ref=` id through today. Google/Facebook login and `/quick-sign-up` use separate endpoints with no field for it yet — a new social/quick-signup account can't currently be attributed to a referrer |
+| Admin campaign discovery via Hub tiles | 📋 | `/dashboard/hub/campaigns` and `/dashboard/campaigns` both work by direct navigation (and are wired into `dashboard-feature.module.ts` the same way every other admin section is), but the Hub's tile grid is driven by backend-supplied entity counts (`hub-grid.component.ts`'s `items` input) — no `campaigns` count key exists yet, so no Hub tile surfaces it. Small backend addition, not started |
+| Social-share unlock, referral leaderboard, corporate/gym co-marketing partnerships | 📋 | Raised as growth ideas, not built — no data model or UI exists for any of these yet |
+
 ---
 
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Growth & marketing: promotions, campaigns, referrals
+
+- **New domain, full-stack, in response to a product request to give Berliz real marketing/growth
+  tooling ahead of launch.** New tables `promotion`, `session_credit`, `referral`
+  (`V45__create_promotion_credit_referral_tables.sql`); new entities/DTOs/mapper/repos/
+  service+impl/REST for all three (`PromotionRest`, `SessionCreditRest`, `ReferralRest`),
+  following the existing `Connection`/`PeerSession` self-contained-entity pattern.
+- **Provider self-serve promotions** — trainer/center create offers on their own profile
+  (`/dashboard/my-promotions`); shown publicly as a badge on all four trainer/center detail
+  templates via one shared `PromoBadgeListComponent`.
+- **"Deals" feed** (`/dashboard/deals`, signed-in only) — every live promotion platform-wide.
+- **Platform growth campaigns** (admin, `/dashboard/hub/campaigns`) reuse the same
+  `Promotion` entity with no trainer/center owner. A live `free_session` + `new_members`
+  campaign auto-grants a `SessionCredit` to every account on activation — wired into both
+  `UserServiceImplement.activateAccount` (form signup) and `SocialAuthServiceImplement`'s
+  new-account branch (Google/Facebook, which activates immediately).
+- **Referral program** — `/dashboard/my-rewards` surfaces a shareable `?ref=<userId>` link;
+  `SignupRequest.referredBy` tracks it as a pending `Referral` at signup, completed (both
+  sides rewarded a free-session credit) on account activation. Not yet wired into social or
+  quick-signup — see the Growth & marketing table for the exact gap.
+- **"Promo Partner" incentive** deliberately kept to what's free to run: the public badge a
+  live promotion already earns a trainer/center *is* the incentive — no new visibility
+  mechanism was built for this pass.
+- Also fixed in passing: `src/app/models/promotion.model.ts` (the pre-existing landing-page
+  marketing-banner model, unrelated `Promotions` interface) was almost clobbered by a
+  same-named-file collision while building this — new types live in `promo-offer.model.ts`
+  instead; the original file was restored untouched.
 
 ### Unreleased — Frontend security hardening
 _Branch: `feat/security-hardening`_

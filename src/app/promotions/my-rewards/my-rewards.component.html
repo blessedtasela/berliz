@@ -1,0 +1,82 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
+            <i-feather name="gift" class="text-emerald-600" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+            <h1 class="text-sm font-bold text-gray-900">My rewards</h1>
+            <p class="text-[11px] text-gray-400">Free sessions and discounts you've earned, plus your referral link</p>
+        </div>
+    </div>
+
+    <!-- Referral card -->
+    <div class="bg-gradient-to-r from-amber-500 to-red-600 rounded-2xl p-5 text-white flex flex-col gap-3">
+        <div class="flex items-center gap-2">
+            <i-feather name="users" style="width:16px;height:16px;"></i-feather>
+            <p class="text-sm font-bold">Refer a friend, you both get a free session</p>
+        </div>
+        <p class="text-xs text-white/85" *ngIf="!statsLoading">
+            {{ stats?.completedReferrals || 0 }} friend{{ stats?.completedReferrals === 1 ? '' : 's' }} joined so far
+            <ng-container *ngIf="stats?.pendingReferrals">&middot; {{ stats?.pendingReferrals }} pending</ng-container>
+        </p>
+        <div class="flex items-center gap-2" *ngIf="referralLink">
+            <input type="text" readonly [value]="referralLink"
+                class="flex-1 min-w-0 px-3 py-2 rounded-lg bg-white/15 text-xs text-white placeholder-white/60 border border-white/20 focus:outline-none" />
+            <button type="button" (click)="copyLink()"
+                class="shrink-0 px-3 py-2 rounded-lg bg-white text-red-700 text-xs font-semibold hover:bg-white/90 transition flex items-center gap-1.5">
+                <i-feather [name]="copied ? 'check' : 'copy'" style="width:13px;height:13px;"></i-feather>
+                {{ copied ? 'Copied' : 'Copy link' }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex items-center justify-center py-10">
+        <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
+    </div>
+
+    <ng-container *ngIf="!loading">
+
+        <!-- Available credits -->
+        <div class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Available</p>
+
+            <div *ngIf="available.length === 0" class="py-4 text-center">
+                <p class="text-xs text-gray-400">No rewards available yet -- refer a friend or watch for a Berliz launch offer.</p>
+            </div>
+
+            <div *ngFor="let c of available" class="flex items-center justify-between gap-3 py-1.5">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
+                        <i-feather name="gift" class="text-emerald-600" style="width:14px;height:14px;"></i-feather>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-xs font-bold text-gray-900 truncate">{{ creditLabel(c) }}</p>
+                        <p class="text-[11px] text-gray-400 truncate">{{ c.note || (c.reason === 'referral' ? 'Referral reward' : 'Berliz promotion') }}</p>
+                    </div>
+                </div>
+                <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-1 shrink-0">
+                    Show this to your trainer/center
+                </span>
+            </div>
+        </div>
+
+        <!-- History -->
+        <div *ngIf="used.length > 0" class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">History</p>
+            <div *ngFor="let c of used" class="flex items-center justify-between gap-3 py-1.5 opacity-60">
+                <div class="min-w-0">
+                    <p class="text-xs font-bold text-gray-900 truncate">{{ creditLabel(c) }}</p>
+                    <p class="text-[11px] text-gray-400 truncate">{{ c.note }}</p>
+                </div>
+                <span class="text-[10px] font-semibold text-gray-500 bg-gray-50 border border-gray-200 rounded-full px-2 py-1 shrink-0 capitalize">
+                    {{ c.status }}
+                </span>
+            </div>
+        </div>
+
+    </ng-container>
+
+</section>

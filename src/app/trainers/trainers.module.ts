@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TrainersDetailsComponent } from './trainers-details/trainers-details.component';
+import { PromoBadgeListComponent } from '../promotions/promo-badge-list/promo-badge-list.component';
 import { TrainersHeroComponent } from './trainers-hero/trainers-hero.component';
 import { NavbarModule } from '../navbar/navbar.module';
 import { FooterModule } from '../footer/footer.module';
@@ -75,6 +76,7 @@ import { TrainerAddReviewComponent } from './trainer-add-review/trainer-add-revi
     ReactiveFormsModule,
     RouterModule,
     IconsModule,
+    PromoBadgeListComponent,
     FormsModule,
     MatDialogModule
   ]

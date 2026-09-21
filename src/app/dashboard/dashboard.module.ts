@@ -29,6 +29,7 @@ import { ProfileSettingsToggleComponent } from './profile-settings-toggle/profil
 import { FindProvidersComponent } from './find-providers/find-providers.component';
 import { DashboardTrainerDetailComponent } from './dashboard-trainer-detail/dashboard-trainer-detail.component';
 import { DashboardCenterDetailComponent } from './dashboard-center-detail/dashboard-center-detail.component';
+import { PromoBadgeListComponent } from '../promotions/promo-badge-list/promo-badge-list.component';
 import { DashboardMembersComponent } from './dashboard-members/dashboard-members.component';
 import { DashboardCategoryDetailComponent } from './dashboard-category-detail/dashboard-category-detail.component';
 import { DashboardQuickLinksComponent } from './dashboard-quick-links/dashboard-quick-links.component';
@@ -76,6 +77,7 @@ import { OnboardingChecklistComponent } from '../shared/onboarding-checklist/onb
     NavbarModule,
     FooterModule,
     FormsModule,
+    PromoBadgeListComponent,
     ReactiveFormsModule,
     SharedModule,
     UserHoverCardComponent,

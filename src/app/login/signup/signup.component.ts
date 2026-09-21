@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
@@ -30,13 +30,19 @@ export class SignupComponent {
   imagePreview: string = '';
   @ViewChild(LocationFormComponent) locationFormComponent!: LocationFormComponent;
 
+  /** From a shared referral link (?ref=<userId>) -- passed through to signup so both sides get a reward once this account activates. */
+  private referredBy: string | null = null;
+
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
     private router: Router,
+    private route: ActivatedRoute,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService
-  ) { }
+  ) {
+    this.referredBy = this.route.snapshot.queryParamMap.get('ref');
+  }
 
   ngOnInit(): void {
     this.formIndex = this.getIndex();
@@ -180,6 +186,9 @@ export class SignupComponent {
         data.append(key, value);
       }
     });
+    if (this.referredBy) {
+      data.append('referredBy', this.referredBy);
+    }
 
     this.userService.signup(data).subscribe(
       (resp: any) => {
