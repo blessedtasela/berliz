@@ -396,6 +396,16 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   either — `@InjectMocks` silently left both null, the first call NPE'd, the
   surrounding try/catch swallowed it, and the test saw a null access token instead
   of the real failure. Added the missing mocks. `com.berliz@1b63fe6`.
+- **Notification bell deep-links to connections/sessions/bookings, not just
+  messages.** Only `entityType="message"` ever routed anywhere — every other
+  notification (and the whole dropdown surface, which had no deep-link at all)
+  fell through to a dialog repeating the notification's own text. Extracted
+  the routing switch into a shared `navigateToNotificationEntity()` util so the
+  dropdown and the My Notifications page can't drift apart, and extended it —
+  plus the matching backend `entityType`/`entityId` on connection-request/
+  accepted, peer-session proposed/confirmed, and booking status-change events —
+  to route straight to Connections / My Sessions / My Bookings.
+  `berliz@abda644f` / `com.berliz@772a8c5` (+ tests).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
