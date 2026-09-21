@@ -9,6 +9,7 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { NotificationDetailsComponent } from 'src/app/shared/notification-details/notification-details.component';
 import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
 import { markAsRead } from 'src/app/state/notification/notification.actions';
+import { navigateToNotificationEntity } from 'src/app/utils/notification-entity-link.util';
 
 @Component({
   selector: 'notification-dropdown-component',
@@ -99,6 +100,15 @@ export class NotificationDropdownComponent implements OnInit, OnDestroy {
 
     n.read = true;
     this.notifications = this.notifications.filter(x => !x.read);
+
+    // Known entity types deep-link straight to the relevant page instead of
+    // opening the detail dialog — there's nothing more to show beyond "go
+    // there". Unknown/legacy notifications (no entityType set) keep the
+    // existing dialog behavior.
+    if (navigateToNotificationEntity(this.router, n)) {
+      this.close.emit();
+      return;
+    }
 
     this.dialog.open(NotificationDetailsComponent, {
       width: '450px',

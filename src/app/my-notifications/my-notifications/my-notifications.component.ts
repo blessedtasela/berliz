@@ -18,6 +18,7 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { NotificationDetailsComponent } from 'src/app/shared/notification-details/notification-details.component';
+import { navigateToNotificationEntity } from 'src/app/utils/notification-entity-link.util';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { Store } from '@ngrx/store';
 import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
@@ -310,9 +311,8 @@ export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
     // opening the detail dialog — there's nothing more to show beyond "go
     // there". Unknown/legacy notifications (no entityType set) keep the
     // existing dialog behavior.
-    if (notification.entityType === 'message' && notification.entityId) {
+    if (navigateToNotificationEntity(this.router, notification)) {
       this.notificationService.markAsRead(id).subscribe();
-      this.router.navigate(['/dashboard/messages'], { queryParams: { userId: notification.entityId } });
       return;
     }
 
