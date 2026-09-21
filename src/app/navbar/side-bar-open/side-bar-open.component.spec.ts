@@ -42,4 +42,48 @@ describe('SideBarOpenComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  describe('child sub-menus (e.g. My Trainer Profile -> Introduction, Pricing, ...)', () => {
+    const item = {
+      name: 'My Trainer Profile', route: '/dashboard/partnership',
+      children: [
+        { name: 'Introduction', route: '/dashboard/partnership/trainer-details', fragment: 'introduction' },
+        { name: 'Pricing', route: '/dashboard/partnership/trainer-details', fragment: 'pricing' },
+      ],
+    };
+
+    it('is hidden by default when the parent route is not active', () => {
+      component.currentRoute = '/dashboard';
+      expect(component.isChildrenVisible(item)).toBeFalse();
+    });
+
+    it('auto-expands while the parent route is active, with no manual toggle needed', () => {
+      component.currentRoute = '/dashboard/partnership';
+      expect(component.isChildrenVisible(item)).toBeTrue();
+    });
+
+    it('expands on a manual chevron toggle even when the parent route is not active', () => {
+      component.currentRoute = '/dashboard';
+      component.toggleChildren(item, new Event('click'));
+      expect(component.isChildrenVisible(item)).toBeTrue();
+    });
+
+    it('collapses again on a second toggle', () => {
+      component.currentRoute = '/dashboard';
+      component.toggleChildren(item, new Event('click'));
+      component.toggleChildren(item, new Event('click'));
+      expect(component.isChildrenVisible(item)).toBeFalse();
+    });
+
+    it('marks a child active only when both its route and fragment match currentRoute', () => {
+      component.currentRoute = '/dashboard/partnership/trainer-details#pricing';
+      expect(component.isChildActive(item.children[1])).toBeTrue();
+      expect(component.isChildActive(item.children[0])).toBeFalse();
+    });
+
+    it('does not consider a child active from the base route alone (no fragment)', () => {
+      component.currentRoute = '/dashboard/partnership/trainer-details';
+      expect(component.isChildActive(item.children[0])).toBeFalse();
+    });
+  });
 });

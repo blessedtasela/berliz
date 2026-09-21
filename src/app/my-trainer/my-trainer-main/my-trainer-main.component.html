@@ -196,22 +196,22 @@
      ══════════════════════════════════════════════════════════ -->
 <div *ngIf="dataReady; else loading">
 
-    <app-my-trainer-introduction [trainerIntroduction]="trainerIntroduction">
+    <app-my-trainer-introduction id="introduction" class="block scroll-mt-20" [trainerIntroduction]="trainerIntroduction">
     </app-my-trainer-introduction>
 
-    <app-my-trainer-pricing [trainerPricing]="trainerPricing">
+    <app-my-trainer-pricing id="pricing" class="block scroll-mt-20" [trainerPricing]="trainerPricing">
     </app-my-trainer-pricing>
 
-    <app-my-trainer-benefits [trainerBenefit]="trainerBenefit">
+    <app-my-trainer-benefits id="benefits" class="block scroll-mt-20" [trainerBenefit]="trainerBenefit">
     </app-my-trainer-benefits>
 
-    <app-my-trainer-feature-videos [trainerFeatureVideos]="trainerFeatureVideo">
+    <app-my-trainer-feature-videos id="feature-videos" class="block scroll-mt-20" [trainerFeatureVideos]="trainerFeatureVideo">
     </app-my-trainer-feature-videos>
 
-    <app-my-trainer-photo-album [trainerPhotoAlbum]="trainerPhotoAlbum">
+    <app-my-trainer-photo-album id="photo-album" class="block scroll-mt-20" [trainerPhotoAlbum]="trainerPhotoAlbum">
     </app-my-trainer-photo-album>
 
-    <app-my-trainer-video-album [trainerVideoAlbum]="trainerVideoAlbum">
+    <app-my-trainer-video-album id="video-album" class="block scroll-mt-20" [trainerVideoAlbum]="trainerVideoAlbum">
     </app-my-trainer-video-album>
 
     <app-my-trainer-subscriptions [trainerSubscription]="trainerSubscription" [trainer]="trainer">

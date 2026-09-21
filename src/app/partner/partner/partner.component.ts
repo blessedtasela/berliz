@@ -1,7 +1,9 @@
 
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subscription, combineLatest } from 'rxjs';
+import { scrollToFragment } from 'src/app/utils/scroll-to-fragment.util';
 import { Centers } from 'src/app/models/centers.interface';
 import { Partner } from 'src/app/models/partners.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
@@ -38,6 +40,7 @@ export class PartnerComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
     public fallback: FallbackService,
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit() {
@@ -92,7 +95,12 @@ export class PartnerComponent implements OnInit, OnDestroy {
         this.store.select(selectTrainerLoading),
       ]).subscribe(([partnerLoading, centerLoading, trainerLoading]) => {
         if (!partnerLoading && !centerLoading && !trainerLoading) {
+          // Only the very first time -- a later refresh (websocket, child
+          // "onEmit") flipping this again shouldn't yank the page back to
+          // whatever section a sidebar link originally landed on.
+          const firstTimeReady = !this.dataReady;
           this.dataReady = true;
+          if (firstTimeReady) scrollToFragment(this.route.snapshot.fragment);
         }
       }),
     );

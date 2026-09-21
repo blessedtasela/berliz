@@ -13,6 +13,18 @@ export interface SidebarNavItem {
    * the always-shown items too, this is purely additive.
    */
   roles?: string[];
+  /** Sub-items shown expanded under this one (manually via its chevron, or
+   *  automatically while any of its own route is active) -- e.g. My Trainer/
+   *  Center Profile's Introduction/Pricing/Benefits sections. Each jumps to
+   *  a specific part of the parent's page via router fragment, not a
+   *  separate route of its own. */
+  children?: SidebarNavChildItem[];
+}
+
+export interface SidebarNavChildItem {
+  name: string;
+  route: string;
+  fragment?: string;
 }
 
 /**
@@ -42,8 +54,32 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   // availability, plus clients/reviews/shared-progress for a trainer) is one
   // click away instead of only reachable by stumbling into a Hub tile.
   { label: 'My Profile', roles: ['trainer', 'center'] },
-  { name: 'My Trainer Profile', icon: 'briefcase', route: '/dashboard/partnership', roles: ['trainer'] },
-  { name: 'My Center Profile', icon: 'briefcase', route: '/dashboard/partnership', roles: ['center'] },
+  {
+    name: 'My Trainer Profile', icon: 'briefcase', route: '/dashboard/partnership', roles: ['trainer'],
+    // The overview lives at /dashboard/partnership itself; the actual editable
+    // sections are further in, on /dashboard/partnership/trainer-details.
+    children: [
+      { name: 'Introduction', route: '/dashboard/partnership/trainer-details', fragment: 'introduction' },
+      { name: 'Pricing', route: '/dashboard/partnership/trainer-details', fragment: 'pricing' },
+      { name: 'Benefits', route: '/dashboard/partnership/trainer-details', fragment: 'benefits' },
+      { name: 'Feature Videos', route: '/dashboard/partnership/trainer-details', fragment: 'feature-videos' },
+      { name: 'Photo Album', route: '/dashboard/partnership/trainer-details', fragment: 'photo-album' },
+      { name: 'Video Album', route: '/dashboard/partnership/trainer-details', fragment: 'video-album' },
+    ],
+  },
+  {
+    name: 'My Center Profile', icon: 'briefcase', route: '/dashboard/partnership', roles: ['center'],
+    // Unlike trainers, a center's sections render directly on /dashboard/partnership
+    // itself -- no separate "-details" sub-route exists for centers.
+    children: [
+      { name: 'Introduction', route: '/dashboard/partnership', fragment: 'introduction' },
+      { name: 'Pricing', route: '/dashboard/partnership', fragment: 'pricing' },
+      { name: 'Equipment', route: '/dashboard/partnership', fragment: 'equipment' },
+      { name: 'Locations', route: '/dashboard/partnership', fragment: 'locations' },
+      { name: 'Photo Album', route: '/dashboard/partnership', fragment: 'photo-album' },
+      { name: 'Video Album', route: '/dashboard/partnership', fragment: 'video-album' },
+    ],
+  },
   { name: 'Promotions', icon: 'tag', route: '/dashboard/my-promotions', roles: ['trainer', 'center'] },
 
   { label: 'Training' },

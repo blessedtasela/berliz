@@ -1,6 +1,8 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription, catchError, forkJoin, of } from 'rxjs';
+import { scrollToFragment } from 'src/app/utils/scroll-to-fragment.util';
 import {
   TrainerBenefits,
   TrainerFeatureVideo,
@@ -74,7 +76,8 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
     private rxStompService: RxStompService,
     private store: Store,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -139,9 +142,14 @@ export class MyTrainerMainComponent implements OnInit, OnDestroy {
     this.completedKeys.add(key);
 
     if (this.completedKeys.size >= this.totalRequests) {
+      const firstTimeReady = !this.dataReady;
       this.computeProfileCompletion();
       this.dataReady = true;
       this.cdr.detectChanges();
+      // Only the very first time -- a later refresh (websocket, "refresh"
+      // button) recomputing completion shouldn't yank the page back to
+      // whatever section a sidebar link originally landed on.
+      if (firstTimeReady) scrollToFragment(this.route.snapshot.fragment);
     }
   }
 

@@ -37,6 +37,12 @@ export class SideBarOpenComponent implements OnInit, OnDestroy {
   openMenu = false;
   mdScreen = false;
 
+  /** Name of the one nav item whose children are pinned open by a manual
+   *  click on its chevron -- independent of isChildrenVisible's own
+   *  auto-expand-when-active behavior below, so a user can also peek at
+   *  another item's children without navigating there first. */
+  private manuallyExpandedItem: string | null = null;
+
   userData: any;
   notificationLength = 0;
   incomingRequestCount = 0;
@@ -143,6 +149,25 @@ export class SideBarOpenComponent implements OnInit, OnDestroy {
 
   isPath(path: string): boolean {
     return this.currentRoute === '/' + path;
+  }
+
+  // -----------------------------
+  // CHILD SUB-MENUS (e.g. My Trainer/Center Profile -> Introduction, Pricing, ...)
+  // -----------------------------
+  isChildrenVisible(item: SidebarNavItem): boolean {
+    if (!item.children?.length) return false;
+    return this.manuallyExpandedItem === item.name || this.isActive(item.route || '', false);
+  }
+
+  toggleChildren(item: SidebarNavItem, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.manuallyExpandedItem = this.manuallyExpandedItem === item.name ? null : (item.name ?? null);
+  }
+
+  isChildActive(child: { route: string; fragment?: string }): boolean {
+    const target = child.fragment ? `${child.route}#${child.fragment}` : child.route;
+    return this.currentRoute === target;
   }
 
   setRouterName(routeName: string): void {
