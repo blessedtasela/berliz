@@ -390,6 +390,12 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   so one session spans the whole sweep; had zero test coverage before, now covers
   the expire / not-yet-due / no-trainer / empty-list paths. `com.berliz@24a6198`
   (+ tests).
+- **Fixed `SocialAuthServiceImplementTest`'s two new-user tests failing after the
+  referral-attribution wiring landed.** The new-user path in social login started
+  calling `promotionService`/`referralService`, but the test had no `@Mock` for
+  either — `@InjectMocks` silently left both null, the first call NPE'd, the
+  surrounding try/catch swallowed it, and the test saw a null access token instead
+  of the real failure. Added the missing mocks. `com.berliz@1b63fe6`.
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
