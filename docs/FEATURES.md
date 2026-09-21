@@ -406,6 +406,9 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   accepted, peer-session proposed/confirmed, and booking status-change events —
   to route straight to Connections / My Sessions / My Bookings.
   `berliz@abda644f` / `com.berliz@772a8c5` (+ tests).
+- **Settings is its own sidebar item again.** Folded into Profile a while back
+  to fight sidebar overflow; the sidebar's had a scrollable container since,
+  so that tradeoff no longer holds. `berliz@eb8d03eb` (+ test).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
