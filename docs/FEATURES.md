@@ -466,6 +466,12 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   unconditional snackbar at the end fired on every call regardless of
   outcome (including a bogus error toast on top of a successful send's own
   success toast). `berliz@dcd245857` (+ tests).
+- **Inline error styling for the booking-duration and location dropdowns.**
+  Booking form's duration select and location-form's country/state/city/
+  countryCode `ng-select`s (used across several booking/address flows) had
+  zero invalid-state indication, unlike every text field around them —
+  reused the existing `berliz-select--error` class already defined for
+  this. `berliz@aa53a31ea` (+ tests).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
