@@ -458,6 +458,14 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   `BerlizFeedbackModalComponent` the public footer already opens); header
   gained a subtle background + slightly larger avatar. `berliz@83332192`
   (+ tests).
+- **Built the bulk newsletter modal's template.** Admins had zero UI at all —
+  the template was still the unedited CLI stub despite a real reactive form
+  and working submit behind it. Mirrors the single-recipient newsletter
+  modal minus the recipient field. Also fixed the submit handler: the
+  invalid-form branch never told the admin anything, and a stray
+  unconditional snackbar at the end fired on every call regardless of
+  outcome (including a bogus error toast on top of a successful send's own
+  success toast). `berliz@dcd245857` (+ tests).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
