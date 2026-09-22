@@ -431,6 +431,26 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   accepted, peer-session proposed/confirmed, and booking status-change events —
   to route straight to Connections / My Sessions / My Bookings.
   `berliz@abda644f` / `com.berliz@772a8c5` (+ tests).
+- **Settings is its own sidebar item again.** Folded into Profile a while back
+  to fight sidebar overflow; the sidebar's had a scrollable container since,
+  so that tradeoff no longer holds. `berliz@eb8d03eb` (+ test).
+- **Sidebar child dropdown for My Trainer/Center Profile.** A chevron expands
+  Introduction/Pricing/Benefits/Photo Album/Video Album etc. as sub-items,
+  each jumping straight to that section (router fragment) instead of always
+  landing at the top. Auto-expands while that item's own route is active.
+  Added `scrollToFragment()` since Angular's `anchorScrolling` fires before
+  either target page's async-loaded content exists. `berliz@5754295c` (+ tests).
+- **Notification deep-linking extended to every remaining entity type.**
+  Comment/mention/reply notifications route to the timeline with
+  `?postId=` (new `GET /post/{id}`, fetched independently since the post
+  might not be on whichever timeline tab is loaded, or loaded at all);
+  workout/run verification, rank promotion, trainer/center profile
+  self-confirmations, account settings, task/faq/workout CRUD, and
+  payment/subscription/payout all route to their existing page. Also fixed
+  a bug found along the way: `PayoutServiceImplement`'s notifications never
+  set a `targetUser`, so the trainer/center a payout was actually about
+  never received either one — only the admin audit copy existed.
+  `berliz@e70574c5` / `com.berliz@884e962` (+ tests).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
