@@ -3,7 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { SignupComponent } from './signup.component';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { CountryService } from 'src/app/services/country.service';
@@ -36,7 +36,8 @@ describe('SignupComponent', () => {
         { provide: CountryService, useValue: countryServiceMock },
         { provide: SnackBarService, useValue: snackBarServiceMock },
         { provide: NgxUiLoaderService, useValue: ngxUiLoaderServiceMock },
-        { provide: Router, useValue: routerMock }
+        { provide: Router, useValue: routerMock },
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } }
       ]
     });
 

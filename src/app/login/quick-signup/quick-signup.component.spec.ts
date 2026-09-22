@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { QuickSignupComponent } from './quick-signup.component';
@@ -46,6 +46,7 @@ describe('QuickSignupComponent', () => {
         { provide: SnackBarService, useValue: snackBarService },
         { provide: NgxUiLoaderService, useValue: jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']) },
         { provide: MatDialog, useValue: jasmine.createSpyObj('MatDialog', ['open']) },
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     });
@@ -87,7 +88,7 @@ describe('QuickSignupComponent', () => {
     const onCredential = socialAuthService.renderGoogleButton.calls.mostRecent().args[1] as (t: string) => void;
     onCredential('the-google-id-token');
 
-    expect(userService.loginWithGoogle).toHaveBeenCalledWith('the-google-id-token');
+    expect(userService.loginWithGoogle).toHaveBeenCalledWith('the-google-id-token', null);
     expect(localStorage.getItem('token')).toBe('access-jwt');
     expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
   }));
@@ -102,7 +103,7 @@ describe('QuickSignupComponent', () => {
       component.loginWithFacebook();
       tick();
 
-      expect(userService.loginWithFacebook).toHaveBeenCalledWith('fb-access-token');
+      expect(userService.loginWithFacebook).toHaveBeenCalledWith('fb-access-token', null);
       expect(localStorage.getItem('token')).toBe('access-jwt');
       expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
     }));

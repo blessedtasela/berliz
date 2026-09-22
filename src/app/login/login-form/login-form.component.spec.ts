@@ -124,7 +124,7 @@ describe('LoginFormComponent', () => {
       const onCredential = socialAuthService.renderGoogleButton.calls.mostRecent().args[1] as (t: string) => void;
       onCredential('the-google-id-token');
 
-      expect(userService.loginWithGoogle).toHaveBeenCalledWith('the-google-id-token');
+      expect(userService.loginWithGoogle).toHaveBeenCalledWith('the-google-id-token', null);
       expect(localStorage.getItem('token')).toBe('access-jwt');
       expect(localStorage.getItem('refresh_token')).toBe('refresh-jwt');
       expect(userService.startRefreshTokenTimer).toHaveBeenCalled();
@@ -155,7 +155,7 @@ describe('LoginFormComponent', () => {
       component.loginWithFacebook();
       tick();
 
-      expect(userService.loginWithFacebook).toHaveBeenCalledWith('fb-access-token');
+      expect(userService.loginWithFacebook).toHaveBeenCalledWith('fb-access-token', null);
       expect(localStorage.getItem('token')).toBe('access-jwt');
       expect(router.navigateByUrl).toHaveBeenCalledWith('/dashboard');
     }));
