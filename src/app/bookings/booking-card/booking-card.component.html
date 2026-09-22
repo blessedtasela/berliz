@@ -26,6 +26,11 @@
             "{{ booking.notes }}"
         </p>
 
+        <span *ngIf="booking.appliedRewardLabel" class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-0.5 mt-1.5">
+            <i-feather name="gift" style="width:10px;height:10px;"></i-feather>
+            {{ booking.appliedRewardLabel }}
+        </span>
+
         <div class="flex items-center gap-1.5 mt-2 flex-wrap">
             <button *ngIf="canClientCancel" type="button" (click)="cancel()"
                 class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition">

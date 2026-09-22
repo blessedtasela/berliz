@@ -3,9 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, take } from 'rxjs';
 
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { SessionCreditService } from 'src/app/services/session-credit.service';
+import { PromotionService } from 'src/app/services/promotion.service';
 import {
   createBooking,
   createBookingFailure,
@@ -17,6 +19,7 @@ import {
 } from 'src/app/state/availability/availability.actions';
 import { selectAvailabilityLoading, selectAvailableSlots } from 'src/app/state/availability/availability.selectors';
 import { AvailableSlot } from 'src/app/models/availability.model';
+import { SessionCredit, PromoOffer } from 'src/app/models/promo-offer.model';
 
 import { genericError } from 'src/validators/form-validators.module';
 
@@ -97,6 +100,10 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     return this.data.centerId != null ? 'center' : 'trainer';
   }
 
+  // ── Redemption enforcement: an available reward the client can attach ──
+  availableCredits: SessionCredit[] = [];
+  providerPromotions: PromoOffer[] = [];
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -104,16 +111,21 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     private store: Store,
     private actions$: Actions,
     private snackBar: SnackBarService,
+    private sessionCreditService: SessionCreditService,
+    private promotionService: PromotionService,
     public dialogRef: MatDialogRef<BookingFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: BookingFormData
   ) { }
 
   ngOnInit(): void {
+    this.loadRewardOptions();
     this.bookingForm = this.fb.group({
       date: ['', Validators.required],
       time: ['', Validators.required],
       durationMinutes: [60, Validators.required],
-      notes: ['', Validators.maxLength(this.maxNotesLength)]
+      notes: ['', Validators.maxLength(this.maxNotesLength)],
+      // '' = none, otherwise 'credit:<id>' or 'promo:<id>' -- at most one reward per booking.
+      reward: ['']
     });
 
     this.store.select(selectAvailabilityLoading)
@@ -157,6 +169,46 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     this.store.dispatch(clearAvailableSlots());
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private loadRewardOptions(): void {
+    this.sessionCreditService.getMine().pipe(take(1)).subscribe({
+      next: (res) => { this.availableCredits = (res?.data ?? []).filter(c => c.status === 'available'); },
+      error: () => { this.availableCredits = []; }
+    });
+
+    const provider$ = this.data.centerId != null
+      ? this.promotionService.getPublicForCenter(this.data.centerId)
+      : this.promotionService.getPublicForTrainer(this.data.trainerId!);
+    provider$.pipe(take(1)).subscribe({
+      next: (res) => { this.providerPromotions = res?.data ?? []; },
+      error: () => { this.providerPromotions = []; }
+    });
+  }
+
+  creditLabel(c: SessionCredit): string {
+    switch (c.type) {
+      case 'percentage': return `${c.value ?? ''}% off`;
+      case 'fixed': return `$${c.value ?? ''} off`;
+      default: return 'Free session';
+    }
+  }
+
+  promoLabel(p: PromoOffer): string {
+    switch (p.type) {
+      case 'percentage': return `${p.value ?? ''}% off -- ${p.title}`;
+      case 'fixed': return `$${p.value ?? ''} off -- ${p.title}`;
+      default: return p.title;
+    }
+  }
+
+  /** Parses the form's `reward` control into the request fields createBooking needs. */
+  private get rewardPayload(): { sessionCreditId?: number; promotionId?: number } {
+    const selected: string = this.bookingForm.value.reward;
+    if (!selected) return {};
+    const [kind, idStr] = selected.split(':');
+    const id = Number(idStr);
+    return kind === 'credit' ? { sessionCreditId: id } : { promotionId: id };
   }
 
   get remaining(): number {
@@ -244,7 +296,8 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       localDate: this.selectedDate,
       localTime: this.selectedSlot.startTime,
       durationMinutes: this.slotDurationMinutes,
-      notes: (this.bookingForm.value.notes ?? '').trim()
+      notes: (this.bookingForm.value.notes ?? '').trim(),
+      ...this.rewardPayload
     };
 
     this.submitting = true;
@@ -273,7 +326,8 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       centerId: this.data.centerId ?? null,
       scheduledAt: scheduledAt.toISOString(),
       durationMinutes: Number(value.durationMinutes),
-      notes: (value.notes ?? '').trim()
+      notes: (value.notes ?? '').trim(),
+      ...this.rewardPayload
     };
 
     this.invalidForm = false;

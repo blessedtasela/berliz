@@ -163,7 +163,8 @@ instead).
 | Public offer badges on trainer/center profiles | ✅ | Live promotions render as a badge/callout on both the public (`/trainers/:name`, `/centers/:name`) and dashboard (`/dashboard/find-trainers/:name`, `/dashboard/find-centers/:id/:name`) profile pages — `PromoBadgeListComponent`, reused across all four templates |
 | "Deals" feed | ✅ | `/dashboard/deals` — every currently-live promotion platform-wide (provider offers + Berliz campaigns). Signed-in only; the underlying `/promotion/feed` endpoint is public (also feeds each provider's own profile badge) but this route requires auth. Links out to each provider's dashboard profile page |
 | Platform growth campaigns (admin) | ✅ | Same `Promotion` entity with no trainer/center owner — e.g. "first N sign-ups get a free session." Managed at `/dashboard/hub/campaigns` (admin only) and surfaced as a real Hub tile (`DashboardServiceImplement` now includes a `campaigns` count, `hub-grid.component.ts` groups it under Content & programs). A live `free_session` + `new_members` campaign is auto-granted as a `SessionCredit` to every account the moment it activates (email confirmation for form signup; immediately for Google/Facebook/quick signup, none of which have a separate activation step) |
-| Session credits ("My Rewards") | ✅ | `/dashboard/my-rewards` — free-session/discount credits earned from a platform campaign or a referral, shown to redeem manually with the provider (no per-session Stripe charge exists yet to auto-apply a discount against — see [§6](#6-payments--subscriptions)). Backend: `SessionCredit`, `/session-credit/mine` |
+| Session credits ("My Rewards") | ✅ | `/dashboard/my-rewards` — free-session/discount credits earned from a platform campaign or a referral. Redemption is enforced at booking time (see below), not just shown; actually honoring the discount in real money still happens manually since there's no per-session Stripe charge yet to auto-apply it against — see [§6](#6-payments--subscriptions). Backend: `SessionCredit`, `/session-credit/mine` |
+| Reward redemption at booking time | ✅ | The booking form lets a client attach one of their own available `SessionCredit`s or the provider's own live `Promotion` to the request. A credit flips `available` → `applied` (and a capped promotion's `usageCount` increments) the moment the booking is *created* — not deferred to confirmation — so the same reward can't be attached to two pending bookings at once; both revert automatically if the booking is cancelled before being honored. The applied reward shows as a label on the booking card for the provider to see and honor. `Booking.sessionCredit`/`Booking.promotion` (V47) |
 | Referral program | ✅ | Every user gets a shareable link (`/sign-up?ref=<userId>`) from the My Rewards page. `?ref=` is honored across every account-creation path -- full form signup, quick sign-up (`/quick-sign-up?ref=`), and Google/Facebook on either `/login` or `/quick-sign-up` (`?ref=` forwarded as `referredBy` to `/auth/google`\|`/auth/facebook`) -- tracking a pending `Referral`; once the account is active (immediately for social, on email confirmation otherwise), both sides get a free-session `SessionCredit`. Backend: `Referral`, `ReferralServiceImplement`, `/referral/mine` |
 | "Promo Partner" incentive | ✅ | Three layers: (1) the public profile badge every live promotion already earns for free; (2) a search-ranking boost — `getActiveTrainers`/`getActiveCenters` sort a provider with a live promotion first (stable sort, no schema change); (3) a real payout benefit — `PayoutServiceImplement` charges 10% commission instead of the standard 15% for a completed booking whose provider currently has a live promotion |
 | Referral leaderboard | ✅ | "My Rewards" shows the top 10 referrers by completed-referral count, name resolved the same way as everywhere else (trainer/center professional name where applicable). `GET /referral/leaderboard` |
@@ -175,6 +176,36 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Growth & marketing: reward redemption enforced at booking time
+
+Closes the last documented gap from the original growth-feature plan: "a
+client's session credit or a provider's promo isn't automatically
+applied/deducted anywhere; it's shown to the client, and honored manually by
+the provider." Genuine enforcement, not just honesty-system display:
+
+- `Booking` gained optional `sessionCredit`/`promotion` links (V47). The
+  booking form lets a client pick one of their own available `SessionCredit`s
+  or the target provider's own live `Promotion` when requesting a session.
+- Reserved at **creation** time, not confirmation: a credit flips
+  `available` → `applied` and a capped promotion's `usageCount` increments
+  immediately, so the same credit can't be attached to two pending bookings
+  at once and a capped promo can't be oversold past its limit.
+- Reverted automatically (credit back to `available`, promo's `usageCount`
+  decremented) if the booking is cancelled before being honored, from both
+  cancellation paths (`cancelBooking` while pending, `updateStatus` →
+  cancelled while confirmed) -- the client never loses a reward to a booking
+  that fell through.
+- The applied reward renders as a label on the shared `BookingCardComponent`
+  so the provider actually sees what to honor, instead of a generic "shown
+  somewhere, remembered by nobody." New `BookingRewardRedemptionTest`
+  (6 cases: apply, reject someone else's credit, reject an already-used
+  credit, apply/reject a promotion, revert on cancel).
+- Still true, and stays true until per-session Stripe charges exist: no real
+  money is deducted anywhere. This closes the *tracking/enforcement* gap, not
+  the *payment* gap -- the provider still honors the discount manually when
+  the client shows up, same as before, but now the system actually remembers
+  what was promised and stops it being spent twice.
 
 ### Unreleased — Growth & marketing: leaderboard, share bonus, partner codes
 
@@ -466,12 +497,6 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   unconditional snackbar at the end fired on every call regardless of
   outcome (including a bogus error toast on top of a successful send's own
   success toast). `berliz@dcd245857` (+ tests).
-- **Inline error styling for the booking-duration and location dropdowns.**
-  Booking form's duration select and location-form's country/state/city/
-  countryCode `ng-select`s (used across several booking/address flows) had
-  zero invalid-state indication, unlike every text field around them —
-  reused the existing `berliz-select--error` class already defined for
-  this. `berliz@aa53a31ea` (+ tests).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_

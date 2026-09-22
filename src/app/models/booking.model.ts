@@ -24,5 +24,8 @@ export interface Booking {
   date: Date;
   lastUpdate: Date;
 
+  /** Present only when a reward was redeemed against this booking, e.g. "Free session (redeemed reward)" or "20% off -- New member special". */
+  appliedRewardLabel?: string | null;
+
   message?: string;
 }

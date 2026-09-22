@@ -108,6 +108,21 @@
 
         </ng-container>
 
+        <!-- ── Redeem a reward ───────────────────────────────────────────── -->
+        <div *ngIf="availabilityConfigured !== null && (availableCredits.length > 0 || providerPromotions.length > 0)" class="flex flex-col gap-1">
+            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Apply a reward (optional)</label>
+            <select formControlName="reward" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                <option value="">None</option>
+                <optgroup label="Your rewards" *ngIf="availableCredits.length > 0">
+                    <option *ngFor="let c of availableCredits" [value]="'credit:' + c.id">{{ creditLabel(c) }}</option>
+                </optgroup>
+                <optgroup [label]="data.providerName + '\'s offers'" *ngIf="providerPromotions.length > 0">
+                    <option *ngFor="let p of providerPromotions" [value]="'promo:' + p.id">{{ promoLabel(p) }}</option>
+                </optgroup>
+            </select>
+        </div>
+
         <!-- ── Notes ─────────────────────────────────────────────────────── -->
         <div *ngIf="availabilityConfigured !== null" class="flex flex-col gap-1">
             <div class="flex items-center justify-between">
