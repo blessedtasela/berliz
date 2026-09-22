@@ -2,7 +2,8 @@
 
   <!-- Country -->
   <ng-select formControlName="country" [items]="countries" bindLabel="name" bindValue="code"
-             placeholder="Select Country" [clearable]="false" class="w-full rounded-md border focus:outline-none">
+             placeholder="Select Country" [clearable]="false" class="w-full rounded-md border focus:outline-none"
+             [ngClass]="{'berliz-select--error': form.get('country')?.invalid && form.get('country')?.touched}">
     <ng-template ng-option-tmp let-item="item">
       <span class="mr-2">{{ item.emoji }}</span> {{ item.name }}
     </ng-template>
@@ -14,12 +15,14 @@
   <!-- State -->
   <ng-select formControlName="state" [items]="states" placeholder="Select State / Province"
              [clearable]="false" [addTag]="addState" (click)="onStateClick()"
-             class="w-full rounded-md border focus:outline-none"></ng-select>
+             class="w-full rounded-md border focus:outline-none"
+             [ngClass]="{'berliz-select--error': form.get('state')?.invalid && form.get('state')?.touched}"></ng-select>
 
   <!-- City -->
   <ng-select formControlName="city" [items]="cities" placeholder="Select City"
              [clearable]="false" [addTag]="addCity" (click)="onCityClick()"
-             class="w-full rounded-md border focus:outline-none"></ng-select>
+             class="w-full rounded-md border focus:outline-none"
+             [ngClass]="{'berliz-select--error': form.get('city')?.invalid && form.get('city')?.touched}"></ng-select>
 
   <!-- Address -->
   <input formControlName="address" type="text" placeholder="123 Main St, Suite 400"
@@ -33,7 +36,8 @@
 
   <!-- Country Code -->
   <ng-select formControlName="countryCode" [items]="countries" bindValue="dialCode"
-             placeholder="Country Code" [clearable]="false" class="w-full rounded-md border focus:outline-none">
+             placeholder="Country Code" [clearable]="false" class="w-full rounded-md border focus:outline-none"
+             [ngClass]="{'berliz-select--error': form.get('countryCode')?.invalid && form.get('countryCode')?.touched}">
     <ng-template ng-option-tmp let-item="item">
       <span class="mr-2">{{ item.emoji }}</span> ({{item.name}}) {{item.dialCode}}
     </ng-template>

@@ -6,8 +6,11 @@ import { Actions } from '@ngrx/effects';
 import { provideMockStore } from '@ngrx/store/testing';
 import { Subject } from 'rxjs';
 
+import { of } from 'rxjs';
 import { BookingFormComponent, BookingFormData } from './booking-form.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { SessionCreditService } from 'src/app/services/session-credit.service';
+import { PromotionService } from 'src/app/services/promotion.service';
 import { selectAvailabilityLoading, selectAvailableSlots } from 'src/app/state/availability/availability.selectors';
 
 describe('BookingFormComponent', () => {
@@ -18,6 +21,13 @@ describe('BookingFormComponent', () => {
     const snackBarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
     const dialogData: BookingFormData = { trainerId: 1, providerName: 'Test Trainer' };
+    // Reward redemption (session credits / provider promos): both fetched
+    // on init to populate the optional "Apply a reward" picker.
+    const sessionCreditServiceSpy = jasmine.createSpyObj('SessionCreditService', ['getMine']);
+    sessionCreditServiceSpy.getMine.and.returnValue(of({ data: [] }));
+    const promotionServiceSpy = jasmine.createSpyObj('PromotionService', ['getPublicForTrainer', 'getPublicForCenter']);
+    promotionServiceSpy.getPublicForTrainer.and.returnValue(of({ data: [] }));
+    promotionServiceSpy.getPublicForCenter.and.returnValue(of({ data: [] }));
 
     TestBed.configureTestingModule({
       declarations: [BookingFormComponent],
@@ -32,6 +42,8 @@ describe('BookingFormComponent', () => {
         }),
         { provide: Actions, useValue: new Subject() },
         { provide: SnackBarService, useValue: snackBarSpy },
+        { provide: SessionCreditService, useValue: sessionCreditServiceSpy },
+        { provide: PromotionService, useValue: promotionServiceSpy },
         { provide: MatDialogRef, useValue: dialogRefSpy },
         { provide: MAT_DIALOG_DATA, useValue: dialogData }
       ]
