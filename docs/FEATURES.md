@@ -451,6 +451,13 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   set a `targetUser`, so the trainer/center a payout was actually about
   never received either one — only the admin audit copy existed.
   `berliz@e70574c5` / `com.berliz@884e962` (+ tests).
+- **Account dropdown polish.** "Partnership" only made sense for a trainer/
+  center, but showed for every role — gated behind a new `isProvider`
+  getter, matching the sidebar. Added a labeled "Links" section (Rewards &
+  referrals, Help & FAQs, Give feedback — reuses the same
+  `BerlizFeedbackModalComponent` the public footer already opens); header
+  gained a subtle background + slightly larger avatar. `berliz@83332192`
+  (+ tests).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
