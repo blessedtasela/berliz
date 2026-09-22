@@ -49,13 +49,13 @@
     </div>
 
     <!-- Dropdown -->
-    <div *ngIf="profileOpen" id="profileDropdown" class="absolute top-full mt-2 w-56 bg-white 
+    <div *ngIf="profileOpen" id="profileDropdown" class="absolute top-full mt-2 w-64 bg-white
     border border-gray-200 rounded-2xl shadow-2xl z-[100] overflow-hidden -right-4">
 
         <!-- User info -->
-        <div class="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
+        <div class="flex items-center gap-3 px-4 py-3.5 bg-gray-50/60 border-b border-gray-100">
             <img [src]="photoSrc || '../../../assets/icons/user.png'" noZoom
-                class="w-10 h-10 rounded-full object-cover object-top border border-gray-200 shrink-0"
+                class="w-11 h-11 rounded-full object-cover object-top border border-gray-200 shrink-0"
                 onerror="this.src='../../../assets/icons/user.png';" />
             <div class="min-w-0">
                 <p class="text-xs font-bold text-gray-900 capitalize truncate">
@@ -65,8 +65,8 @@
             </div>
         </div>
 
-        <!-- Menu items -->
-        <div class="py-1">
+        <!-- Account -->
+        <div class="py-1.5">
 
             <a routerLink="/dashboard/profile" (click)="closeDropdown()"
                 class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition">
@@ -86,7 +86,7 @@
                 Saved
             </button>
 
-            <a routerLink="/dashboard/partnership" (click)="closeDropdown()"
+            <a *ngIf="isProvider" routerLink="/dashboard/partnership" (click)="closeDropdown()"
                 class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition">
                 <i-feather name="briefcase" style="width:14px;height:14px;" class="text-gray-400"></i-feather>
                 Partnership
@@ -98,6 +98,31 @@
                 Change password
             </button>
 
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Links -->
+        <div class="py-1.5">
+            <p class="px-4 pt-1 pb-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Links</p>
+
+            <a routerLink="/dashboard/my-rewards" (click)="closeDropdown()"
+                class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition">
+                <i-feather name="gift" style="width:14px;height:14px;" class="text-gray-400"></i-feather>
+                Rewards & referrals
+            </a>
+
+            <a routerLink="/dashboard/my-faqs" (click)="closeDropdown()"
+                class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition">
+                <i-feather name="info" style="width:14px;height:14px;" class="text-gray-400"></i-feather>
+                Help & FAQs
+            </a>
+
+            <button (click)="openFeedback()"
+                class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition text-left">
+                <i-feather name="message-square" style="width:14px;height:14px;" class="text-gray-400"></i-feather>
+                Give feedback
+            </button>
         </div>
 
         <div class="border-t border-gray-100"></div>
