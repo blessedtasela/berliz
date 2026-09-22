@@ -42,6 +42,11 @@ export class PostService {
     return this.httpClient.get<ApiResponse<PostResponse[]>>(this.url + '/post/feed');
   }
 
+  /** One post by id — for the notification bell's deep link. */
+  getPostById(id: number): Observable<ApiResponse<PostResponse>> {
+    return this.httpClient.get<ApiResponse<PostResponse>>(this.url + `/post/${id}`);
+  }
+
   /**
    * Sets the current user's reaction on a post. `reaction` defaults to `LIKE`; sending the
    * same reaction again clears it, a different one switches it (the total is unchanged).

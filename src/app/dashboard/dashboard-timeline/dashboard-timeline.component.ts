@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
@@ -112,6 +112,8 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     private workoutService: WorkoutService,
     public saved: SavedService,
     private dialog: MatDialog,
+    private route: ActivatedRoute,
+    private router: Router,
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
   }
@@ -119,6 +121,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.refresh();
     this.saved.refresh();
+    this.openPostFromQueryParam();
     this.workoutService.getTemplates().subscribe({
       next: res => this.myTemplates = res.data ?? [],
       error: () => { /* the picker just stays empty */ },
@@ -377,6 +380,31 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   /** Opens the media + comments bottom sheet for a post. */
   openPostSheet(post: PostResponse): void {
     this.sheetPost = post;
+  }
+
+  /**
+   * Notification bell deep link -- ?postId=<id> lands here from a "commented
+   * on your post" / "mentioned you" / "replied to your comment" notification.
+   * Fetched independently rather than found in feedPosts/myPosts: the post
+   * might belong to a connection and not be on whichever tab is active (or
+   * not loaded yet at all), and this is the one case that needs the exact
+   * post regardless of tab. The query param is cleared after so a reload
+   * doesn't reopen the sheet.
+   */
+  private openPostFromQueryParam(): void {
+    const postId = Number(this.route.snapshot.queryParamMap.get('postId'));
+    if (!postId) return;
+
+    this.postService.getPostById(postId).subscribe({
+      next: res => {
+        if (res.data) this.openPostSheet(res.data);
+        this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+      },
+      error: () => {
+        this.snackBarService.openSnackBar('That post is no longer available', 'error');
+        this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+      },
+    });
   }
 
   /** Clone the workout template linked on a post into the viewer's own workouts. */
