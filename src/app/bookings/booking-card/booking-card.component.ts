@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Booking } from 'src/app/models/booking.model';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { ReviewBookingModalComponent } from '../review-booking-modal/review-booking-modal.component';
+import { BookingDetailsModalComponent } from '../booking-details-modal/booking-details-modal.component';
 
 @Component({
   selector: 'app-booking-card',
@@ -184,5 +185,22 @@ export class BookingCardComponent {
 
   startIntake(): void {
     this.startIntakeRequested.emit({ clientId: this.booking.clientId, clientName: this.counterpartyName });
+  }
+
+  /** Clicking the card body (not one of its action buttons -- see the
+   *  template's stopPropagation wrapper around them) shows more info. A
+   *  still-pending request in provider mode already has a richer
+   *  confirm/decline flow behind "Review request" -- open that instead of
+   *  a second, read-only view of the same thing. */
+  showDetails(): void {
+    if (this.canProviderConfirm) {
+      this.setStatus('confirmed');
+      return;
+    }
+    this.dialog.open(BookingDetailsModalComponent, {
+      width: '400px',
+      maxWidth: '95vw',
+      data: { booking: this.booking, mode: this.mode },
+    });
   }
 }
