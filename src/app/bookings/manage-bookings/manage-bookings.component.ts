@@ -31,12 +31,28 @@ export class ManageBookingsComponent implements OnInit, OnDestroy {
 
   constructor(private store: Store) { }
 
+  /** Only ever pushes the default forward automatically, once, right after
+   *  we first learn the viewer is a provider -- never overrides a view
+   *  they've since clicked into themselves. */
+  private defaultedToRequests = false;
+
   ngOnInit(): void {
     this.store.select(selectUser)
       .pipe(takeUntil(this.destroy$))
       .subscribe(user => {
         this.user = user;
-        if (this.isProvider) this.store.dispatch(loadMyProviderBookings());
+        if (this.isProvider) {
+          this.store.dispatch(loadMyProviderBookings());
+          // A trainer/center's real activity here is requests FROM clients,
+          // not bookings they themselves made with someone else -- landing
+          // on "My bookings" by default meant they had to know to click
+          // "Requests" before seeing anything, even fully confirmed/completed
+          // sessions.
+          if (!this.defaultedToRequests) {
+            this.defaultedToRequests = true;
+            this.view = 'requests';
+          }
+        }
       });
 
     this.store.select(selectProviderBookings)

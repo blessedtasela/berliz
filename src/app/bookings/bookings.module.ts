@@ -17,6 +17,7 @@ import { MyAvailabilityEditorComponent } from './my-availability-editor/my-avail
 import { EarningsViewComponent } from './earnings-view/earnings-view.component';
 import { ManageBookingsComponent } from './manage-bookings/manage-bookings.component';
 import { ReviewBookingModalComponent } from './review-booking-modal/review-booking-modal.component';
+import { BookingDetailsModalComponent } from './booking-details-modal/booking-details-modal.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { ReviewBookingModalComponent } from './review-booking-modal/review-booki
     MyAvailabilityEditorComponent,
     EarningsViewComponent,
     ManageBookingsComponent,
-    ReviewBookingModalComponent
+    ReviewBookingModalComponent,
+    BookingDetailsModalComponent
   ],
   imports: [
     CommonModule,
