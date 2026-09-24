@@ -75,7 +75,7 @@ export function navigateToNotificationEntity(router: Router, notification: Notif
       return true;
 
     case 'faq':
-      router.navigate(['/dashboard/my-faqs']);
+      router.navigate(['/dashboard/my-faqs'], notification.entityId ? { queryParams: { faqId: notification.entityId } } : {});
       return true;
 
     case 'payment':

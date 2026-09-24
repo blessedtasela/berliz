@@ -1,0 +1,98 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i-feather name="bar-chart-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <h1 class="text-sm font-bold text-gray-900">Your time in Berliz</h1>
+                <p class="text-[11px] text-gray-400">Active days, sessions, streaks, and rank moves over time</p>
+            </div>
+        </div>
+
+        <div class="flex gap-1.5 flex-wrap">
+            <button *ngFor="let p of periods" type="button" (click)="setPeriod(p.key)"
+                class="text-[11px] font-semibold px-2.5 py-1 rounded-lg transition"
+                [ngClass]="period === p.key ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+                {{ p.label }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex items-center justify-center py-16">
+        <i-feather name="loader" class="text-gray-300 animate-spin" style="width:20px;height:20px;"></i-feather>
+    </div>
+
+    <ng-container *ngIf="!loading && recap as r">
+        <div class="bg-white rounded-2xl border border-gray-200 p-5 flex flex-col gap-4">
+            <p class="text-sm font-bold text-gray-900">{{ r.headline }}</p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div class="bg-gray-50 rounded-xl p-3 flex flex-col gap-0.5">
+                    <span class="text-lg font-extrabold text-gray-900">{{ r.activeDays }}</span>
+                    <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Active days</span>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-3 flex flex-col gap-0.5">
+                    <span class="text-lg font-extrabold text-gray-900">{{ r.workoutCount }}</span>
+                    <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Workouts</span>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-3 flex flex-col gap-0.5">
+                    <span class="text-lg font-extrabold text-gray-900">{{ r.runCount }}</span>
+                    <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Runs</span>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-3 flex flex-col gap-0.5">
+                    <span class="text-lg font-extrabold text-gray-900">{{ r.totalRunKm }}</span>
+                    <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">km run</span>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-3 flex flex-col gap-0.5">
+                    <span class="text-lg font-extrabold text-gray-900">{{ r.longestStreakDays }}</span>
+                    <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Best streak</span>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-3 flex flex-col gap-0.5">
+                    <span class="text-lg font-extrabold text-gray-900">{{ r.newConnections }}</span>
+                    <span class="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">New connections</span>
+                </div>
+            </div>
+
+            <div *ngIf="r.personalBests?.length" class="flex flex-col gap-1.5">
+                <p class="text-[10px] font-bold uppercase tracking-wide text-gray-400">Personal bests</p>
+                <div *ngFor="let pb of r.personalBests" class="flex items-center gap-2 text-xs text-gray-700">
+                    <i-feather name="award" class="text-amber-500 shrink-0" style="width:12px;height:12px;"></i-feather>
+                    {{ pb }}
+                </div>
+            </div>
+
+            <div *ngIf="r.rankMoves?.length" class="flex flex-col gap-1.5">
+                <p class="text-[10px] font-bold uppercase tracking-wide text-gray-400">Rank moves</p>
+                <div *ngFor="let m of r.rankMoves" class="text-xs text-gray-700">
+                    <span class="font-bold">{{ m.rank }}</span> in {{ m.discipline }}
+                    <span class="text-gray-400">&middot; {{ m.awardedAt | date:'MMM d' }}</span>
+                </div>
+            </div>
+
+            <div *ngIf="r.topPartners?.length" class="flex flex-col gap-1.5">
+                <p class="text-[10px] font-bold uppercase tracking-wide text-gray-400">Top training partners</p>
+                <div *ngFor="let p of r.topPartners" class="flex items-center justify-between text-xs">
+                    <span class="font-bold text-gray-800 capitalize truncate">{{ p.name }}</span>
+                    <span class="text-gray-400 shrink-0">{{ p.sessionsTogether }} together</span>
+                </div>
+            </div>
+
+            <p *ngIf="!r.workoutCount && !r.runCount" class="text-xs text-gray-400">
+                Nothing logged in this window yet — log a workout or a run and your recap fills in.
+            </p>
+
+            <div class="border-t border-gray-100 pt-3 flex items-center justify-end">
+                <button type="button" (click)="shareAsPost()" [disabled]="!recap || sharing"
+                    class="text-xs font-semibold px-3 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition disabled:opacity-50 flex items-center gap-1.5">
+                    <i-feather [name]="sharing ? 'loader' : 'share-2'" [class.animate-spin]="sharing" style="width:13px;height:13px;"></i-feather>
+                    {{ sharing ? 'Sharing…' : 'Share as post' }}
+                </button>
+            </div>
+        </div>
+    </ng-container>
+
+</section>

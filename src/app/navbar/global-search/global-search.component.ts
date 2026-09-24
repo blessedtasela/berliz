@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
+  BehaviorSubject,
   Observable,
   Subject,
   combineLatest,
@@ -21,6 +22,7 @@ import {
   take,
   takeUntil
 } from 'rxjs';
+import { PostService } from 'src/app/services/post.service';
 
 // ── PUBLIC ENTITIES ───────────────────────────────────────────────────────────
 import { loadActiveTrainers } from 'src/app/state/trainer/trainer.actions';
@@ -39,6 +41,12 @@ import { loadActiveExercises } from 'src/app/state/exercise/exercise.actions';
 import { selectActiveExercises } from 'src/app/state/exercise/exercise.selectors';
 import { loadActiveTestimonials } from 'src/app/state/testimonial/testimonial.actions';
 import { selectActiveTestimonials } from 'src/app/state/testimonial/testimonial.selectors';
+import { loadWorkoutTemplates } from 'src/app/state/workout/workout.actions';
+import { selectWorkoutTemplates } from 'src/app/state/workout/workout.selector';
+import { loadActiveFaqs } from 'src/app/state/faq/faq.actions';
+import { selectActiveFaqs } from 'src/app/state/faq/faq.selectors';
+import { loadPublicDirectory } from 'src/app/state/user-profile/user-profile.actions';
+import { selectPublicDirectory } from 'src/app/state/user-profile/user-profile.selector';
 
 // ── ADMIN ENTITIES ────────────────────────────────────────────────────────────
 import { loadAllUsers } from 'src/app/state/user/user.actions';
@@ -65,6 +73,8 @@ export interface GlobalSearchItem {
   label: string;
   sublabel?: string;
   link: any[];
+  /** Optional -- e.g. { faqId: 5 } for a deep link that targets one item within a list page rather than a dedicated route. */
+  queryParams?: Record<string, any>;
 }
 
 export interface GlobalSearchGroup {
@@ -86,8 +96,10 @@ interface SearchSource {
   label: string;
   icon: string;
   adminOnly: boolean;
-  load: any;
-  select: any;
+  /** Either load/select (an existing NgRx slice), or fetch$ for an entity with no store slice of its own (e.g. posts) -- fetched once and cached locally instead. */
+  load?: any;
+  select?: any;
+  fetch$?: () => Observable<{ data?: any[] }>;
   match: (entity: any, query: string) => boolean;
   toItem: (entity: any) => GlobalSearchItem;
 }
@@ -203,7 +215,73 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         id: e.id,
         label: e.name,
         sublabel: (e.muscleGroups || []).map((m: any) => m?.name).filter(Boolean).join(', '),
-        link: ['/dashboard/exercises']
+        // Deep link to the exercise itself, not just the library list.
+        link: ['/dashboard/exercises', e.id]
+      })
+    },
+    {
+      key: 'workoutTemplates',
+      label: 'Workouts',
+      icon: 'zap',
+      adminOnly: false,
+      load: loadWorkoutTemplates(),
+      select: selectWorkoutTemplates,
+      match: (w, q) => has(w?.name, q) || has(w?.description, q),
+      toItem: w => ({
+        id: w.id,
+        label: w.name,
+        sublabel: truncate(w.description, 60),
+        link: ['/dashboard/workouts', w.id]
+      })
+    },
+    {
+      key: 'faqs',
+      label: 'FAQs',
+      icon: 'message-square',
+      adminOnly: false,
+      load: loadActiveFaqs(),
+      select: selectActiveFaqs,
+      match: (f, q) => has(f?.question, q) || has(f?.answer, q),
+      toItem: f => ({
+        id: f.id,
+        label: f.question,
+        sublabel: truncate(f.answer, 60),
+        // Deep link to the specific FAQ -- MyFaqsComponent expands + scrolls to it.
+        link: ['/dashboard/my-faqs'],
+        queryParams: { faqId: f.id }
+      })
+    },
+    {
+      key: 'members',
+      label: 'Members',
+      icon: 'users',
+      adminOnly: false,
+      load: loadPublicDirectory({ search: null, role: null }),
+      select: selectPublicDirectory,
+      match: (m, q) => has(`${m?.firstname || ''} ${m?.lastname || ''}`, q) || has(m?.username, q),
+      toItem: m => ({
+        id: m.id,
+        label: `${m.firstname || ''} ${m.lastname || ''}`.trim() || m.username,
+        sublabel: m.role,
+        link: ['/dashboard/user', m.id]
+      })
+    },
+    {
+      // No NgRx slice for the feed -- fetched once via PostService.getFeed()
+      // (own posts + accepted connections') and cached locally instead.
+      key: 'posts',
+      label: 'Posts',
+      icon: 'file-text',
+      adminOnly: false,
+      fetch$: () => this.postService.getFeed(),
+      match: (p, q) => has(p?.content, q),
+      toItem: p => ({
+        id: p.id,
+        label: truncate(p.content, 80),
+        sublabel: p.authorName,
+        // DashboardTimelineComponent opens the media+comments sheet for this post on load -- same deep link the notification system already uses for 'post'.
+        link: ['/dashboard/timeline'],
+        queryParams: { postId: p.id }
       })
     },
     {
@@ -397,7 +475,8 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private postService: PostService
   ) { }
 
   ngOnInit(): void {
@@ -537,12 +616,25 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
    * slice is still empty — global search should never re-fetch data a page has
    * already put in the store.
    */
+  /** Data for a `fetch$`-based source (no NgRx slice) -- populated once per key, on first search. */
+  private serviceData = new Map<string, BehaviorSubject<any[]>>();
+
   private primeStores(): void {
     this.activeSources().forEach(source => {
       if (this.primed.has(source.key)) {
         return;
       }
       this.primed.add(source.key);
+
+      if (source.fetch$) {
+        const subject$ = new BehaviorSubject<any[]>([]);
+        this.serviceData.set(source.key, subject$);
+        source.fetch$().pipe(take(1)).subscribe({
+          next: (res) => subject$.next(res?.data ?? []),
+          error: () => subject$.next([]),
+        });
+        return;
+      }
 
       this.store
         .select(source.select)
@@ -555,11 +647,18 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
     });
   }
 
+  /** The live data stream for a source, whichever kind it is. */
+  private dataFor(source: SearchSource): Observable<any> {
+    return source.fetch$
+      ? (this.serviceData.get(source.key) ?? of([]))
+      : this.store.select(source.select);
+  }
+
   private search(query: string): Observable<GlobalSearchGroup[]> {
     const sources = this.activeSources();
 
     const streams: Observable<GlobalSearchGroup>[] = sources.map(source =>
-      this.store.select(source.select).pipe(
+      this.dataFor(source).pipe(
         map((data: any) => ({
           key: source.key,
           label: source.label,

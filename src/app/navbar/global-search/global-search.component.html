@@ -67,7 +67,7 @@
 
                 <!-- Rows -->
                 <a *ngFor="let item of group.items | slice:0:visibleCount(group); trackBy: trackByItem"
-                    [routerLink]="item.link" (click)="onSelect()" class="flex items-center gap-3 px-2.5 py-2.5 md:py-2 rounded-xl cursor-pointer transition
+                    [routerLink]="item.link" [queryParams]="item.queryParams" (click)="onSelect()" class="flex items-center gap-3 px-2.5 py-2.5 md:py-2 rounded-xl cursor-pointer transition
                            hover:bg-gray-50">
 
                     <span class="w-7 h-7 shrink-0 rounded-lg bg-red-50 border border-red-100 flex items-center

@@ -1,21 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { RouterModule } from '@angular/router';
 import { take } from 'rxjs/operators';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { RecapResponse } from 'src/app/models/recap.interface';
 import { RecapService } from 'src/app/services/recap.service';
-import { RecapModalComponent } from './recap-modal.component';
 
 /**
  * D2 — a dashboard entry point into the "Your time in Berliz" recap. Loads the
- * trailing-year summary for a teaser; the button opens the full modal.
+ * trailing-year summary for a teaser; the button links to the full recap
+ * page (/dashboard/recap) -- a real route rather than a dialog, so it's a
+ * genuine deep link: bookmarkable, shareable, and something a future
+ * notification can point straight at.
  */
 @Component({
   selector: 'app-recap-card',
   standalone: true,
-  imports: [CommonModule, IconsModule],
+  imports: [CommonModule, RouterModule, IconsModule],
   template: `
     <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-950 via-gray-900 to-gray-900 p-5 flex flex-col gap-3">
       <div class="pointer-events-none absolute -top-12 -right-10 w-40 h-40 rounded-full bg-red-600/20 blur-3xl"></div>
@@ -36,11 +38,11 @@ import { RecapModalComponent } from './recap-modal.component';
         </span>
       </div>
 
-      <button type="button" (click)="open()"
+      <a routerLink="/dashboard/recap"
         class="relative self-start mt-1 text-[11px] font-semibold px-3 py-1.5 rounded-lg bg-white/10 text-white hover:bg-white/20 transition flex items-center gap-1.5">
         See your recap
         <i-feather name="arrow-right" style="width:12px;height:12px;"></i-feather>
-      </button>
+      </a>
     </div>
   `,
 })
@@ -48,20 +50,12 @@ export class RecapCardComponent implements OnInit {
   recap?: RecapResponse;
   loading = true;
 
-  constructor(private recapService: RecapService, private dialog: MatDialog) {}
+  constructor(private recapService: RecapService) {}
 
   ngOnInit(): void {
     this.recapService.getMyRecap('year').pipe(take(1)).subscribe({
       next: res => { this.recap = res.data; this.loading = false; },
       error: () => { this.loading = false; },
-    });
-  }
-
-  open(): void {
-    this.dialog.open(RecapModalComponent, {
-      width: '540px',
-      maxWidth: '95vw',
-      data: { period: 'year' },
     });
   }
 }

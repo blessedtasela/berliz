@@ -74,7 +74,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Muscle-group taxonomy | ✅ | |
 | Fitness achievements | ✅ | `FitnessAchievement` |
 | Peer sessions (propose / schedule training with a connection) | ✅ | "My Sessions" |
-| "Your time in Berliz" recap | ✅ | Dashboard card + modal (30d / 90d / year / all-time) — active days, sessions, km, best streak, PRs, rank moves, top partners; one-tap "Share as post". Always free. `GET /recap/me` |
+| "Your time in Berliz" recap | ✅ | Real deep-linkable route (`/dashboard/recap?period=`, replacing the old dialog-only entry point) — 30d / 90d / year / all-time, active days, sessions, km, best streak, PRs, rank moves, top partners; one-tap "Share as post" (now surfaces the actual backend rejection reason instead of a generic "could not share" on failure). Always free. `GET /recap/me` |
 | Verified activity | ✅ | A connected trainer/center confirms a logged workout/run; a "Verified" tick shows on the history list. `POST/DELETE /workoutLog/{id}/verify`, `/run/log/{id}/verify` |
 
 ## 5. Discovery & marketplace
@@ -144,9 +144,9 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | Full admin suite | ✅ | Users, trainers, centers, categories, tags, equipment, FAQs, testimonials, newsletters, bookings, payments, subscriptions, tasks, to-do lists, partners, muscle-groups, exercises, problem reports, content reports |
 | Analytics dashboard | ✅ | `Analytics` |
 | Berliz feedback + problem reports | ✅ | |
-| Help center / FAQs | ✅ | Public + per-user |
+| Help center / FAQs | ✅ | Public + per-user. Deep-linkable to a specific FAQ (`/dashboard/my-faqs?faqId=`) — expands and scrolls to it, used by global search and the notification entity-link resolver |
 | Hub, News & updates | ✅ | |
-| Global search (multi-entity) | ✅ | Top-bar |
+| Global search (multi-entity) | ✅ | Top-bar. Public: trainers, centers, services, exercises, testimonials, equipment, workout templates, FAQs, members, posts (own + connections' feed). Admin-only: users, tasks, payments, subscriptions, partners, contact-us, newsletters, tags, muscle groups. Client-side filtering over data each entity's own NgRx slice (or, for posts, a locally-cached one-time fetch — the only entity with no store slice) already loads; deep-links to the specific item where a route/anchor exists (exercises, workout templates, FAQs, members, posts, testimonials), otherwise to that entity's list page |
 | Partner one-pager, brand assets | ✅ | |
 | Build-time prerendering of public marketing routes (SEO) | ✅ | `/`, `/about`, `/services` + its 3 children, `/contact`, `/trainers`, `/centers`, `/members` are statically rendered at build time (Angular Universal) so crawlers that don't run JS see real title/meta/OG/canonical/JSON-LD instead of an empty shell. Dashboard and every other route stay client-rendered only — see `docs/DEPLOYMENT.md` |
 
@@ -176,6 +176,38 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Recap deep link + share-error transparency, global search expansion, FAQ deep link
+
+- **Recap gets a real route.** `/dashboard/recap?period=` replaces the
+  dialog-only entry point (`RecapModalComponent` retired, its content moved
+  to `RecapPageComponent`) — bookmarkable, shareable within the app, and
+  ready for a future "your recap is ready" notification to point straight at
+  it (`notification-entity-link.util.ts` gained a `recap` case, though
+  nothing publishes that notification type yet). The dashboard card's
+  "See your recap" now `routerLink`s there instead of opening a dialog.
+- **"Could not share the recap" now shows the real reason.** The share
+  button's error handler read a hardcoded string regardless of what the
+  backend actually said; now reads `err.error?.message` first, falling back
+  to the generic string only when the backend didn't give one — the same
+  pattern every other error handler in this codebase already uses. Root
+  cause of any individual failure (content moderation, auth, etc.) is now
+  actually visible instead of a dead end.
+- **Global search covers far more of the app.** Added workout templates,
+  FAQs, the public member directory, and posts (own + connections' feed --
+  the one entity with no NgRx slice, so it's fetched once via
+  `PostService.getFeed()` and cached locally instead; `SearchSource` gained
+  an optional `fetch$` alongside the existing `load`/`select` pair to
+  support that without disturbing the other ~15 existing sources).
+- **Search results deep-link to the specific item, not just the list**,
+  wherever a route/anchor exists for one: exercises now link to
+  `/dashboard/exercises/:id` (was the bare list) using the detail page built
+  earlier this session; FAQs, posts, and members already had somewhere
+  specific to land and now do.
+- **FAQs are deep-linkable** (`/dashboard/my-faqs?faqId=`) — expands and
+  smooth-scrolls to the specific question. Used by global search and the
+  notification entity-link resolver (previously `case 'faq'` only ever
+  landed on the generic list, dropping the entityId on the floor).
 
 ### Unreleased — Growth & marketing: reward redemption enforced at booking time
 
