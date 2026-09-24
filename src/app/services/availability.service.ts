@@ -13,11 +13,33 @@ export class AvailabilityService {
 
   constructor(private httpClient: HttpClient) { }
 
-  /** Bulk replace-the-week for the currently authenticated trainer/center. */
+  /**
+   * Bulk replace-the-week for the currently authenticated trainer/center.
+   * Always stamps the browser's own IANA zone alongside the days -- the app
+   * server runs in UTC (its container's default), not this trainer/center's
+   * real local time, so without a stored zone their "09:00-17:00" was being
+   * interpreted as 9am-5pm UTC. For most zones that silently shifts the
+   * whole window by several hours, which on the day-of shows up as slots
+   * "disappearing" once the shifted window and the lead-time cutoff stop
+   * overlapping (see AvailabilityServiceImplement.effectiveZone on the
+   * backend for the fallback this replaces once saved).
+   */
   setMyAvailability(days: AvailabilityDay[]) {
-    return this.httpClient.post<ApiResponse<Availability[]>>(this.url + "/availability/setMine", { days }, {
+    return this.httpClient.post<ApiResponse<Availability[]>>(this.url + "/availability/setMine", {
+      days,
+      timezone: this.browserTimezone(),
+    }, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     });
+  }
+
+  /** Undefined in a pre-Intl-API environment (practically never in a real browser) -- the backend just leaves the stored zone untouched when omitted. */
+  private browserTimezone(): string | undefined {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch {
+      return undefined;
+    }
   }
 
   getMyAvailability() {

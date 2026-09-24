@@ -42,6 +42,15 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
   loading = false;
   saving = false;
 
+  /** Shown so a trainer/center understands their hours are zone-aware -- see AvailabilityService.setMyAvailability's own doc comment for the bug this closes. */
+  get detectedTimezone(): string {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch {
+      return 'your local time';
+    }
+  }
+
   /** The platform default every provider starts on until they override it — mirrors the backend's own AvailabilityServiceImplement.DEFAULT_LEAD_TIME_MINUTES. */
   readonly defaultLeadTimeMinutes = 60;
   /** null = using the platform default; a number = this provider's own override. Bound to the input as a string so the field can sit genuinely empty rather than showing a stray 0. */
