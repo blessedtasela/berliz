@@ -31,8 +31,12 @@ export class NavbarStyleService {
   }
 
   /** Tailwind classes for the top bar's own background — solid is opaque
-   *  white with no blur, translucent is a frosted-glass effect. */
+   *  white with no blur, translucent is a frosted-glass effect. Dark-mode
+   *  companions included directly since this string fully replaces
+   *  top-bar's own [ngClass] binding rather than merging with a static one. */
   get bgClasses(): string {
-    return this.style === 'solid' ? 'bg-white' : 'bg-white/70 backdrop-blur-md';
+    return this.style === 'solid'
+      ? 'bg-white dark:bg-gray-900'
+      : 'bg-white/70 dark:bg-gray-900/70 backdrop-blur-md';
   }
 }

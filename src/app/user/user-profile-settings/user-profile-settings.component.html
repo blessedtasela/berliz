@@ -9,16 +9,16 @@
          Auto-assigned from your name when your account was created, so this
          is always set to something -- change it any time. Must be unique;
          3-30 characters, lowercase letters/numbers/underscores only. -->
-    <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
-            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Username</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Username</h2>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                 Your @handle — used in your profile link and when people @mention you in comments.
             </p>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <div class="flex flex-col gap-2">
             <div class="flex items-center gap-2 max-w-sm">
@@ -26,7 +26,7 @@
                 <input type="text" [(ngModel)]="usernameDraft"
                     (ngModelChange)="usernameError = null"
                     placeholder="username" maxlength="30"
-                    class="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900
+                    class="flex-1 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-gray-100
                            placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition" />
                 <button type="button" (click)="saveUsername()"
                     [disabled]="savingUsername || !usernameChanged"
@@ -48,32 +48,32 @@
          Blocking stops someone messaging you, mentioning you, or commenting
          on your posts. Managed from a profile's own Block button; this is
          just the review-and-undo list. -->
-    <div *ngIf="blockedUsers.length > 0" class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div *ngIf="blockedUsers.length > 0" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
-            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Blocked users</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Blocked users</h2>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                 They can't message you, mention you, or comment on your posts.
             </p>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <div class="flex flex-col divide-y divide-gray-100">
             <div *ngFor="let b of blockedUsers" class="flex items-center justify-between gap-3 py-2">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <img *ngIf="blockedPhotoSrc(b) as src" [src]="src" alt=""
-                        class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
-                    <div *ngIf="!blockedPhotoSrc(b)" class="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0">
+                        class="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-gray-700 shrink-0" />
+                    <div *ngIf="!blockedPhotoSrc(b)" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center shrink-0">
                         <i-feather name="user" class="text-gray-400" style="width:14px;height:14px;"></i-feather>
                     </div>
                     <div class="min-w-0">
-                        <p class="text-xs font-bold text-gray-900 truncate">{{ b.blockedUserName }}</p>
+                        <p class="text-xs font-bold text-gray-900 dark:text-gray-100 truncate">{{ b.blockedUserName }}</p>
                         <p *ngIf="b.blockedHandle" class="text-[11px] text-gray-400 truncate">&#64;{{ b.blockedHandle }}</p>
                     </div>
                 </div>
                 <button type="button" (click)="unblock(b)"
-                    class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 text-gray-600 hover:border-red-300 hover:text-red-600 transition">
+                    class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-red-300 hover:text-red-600 transition">
                     Unblock
                 </button>
             </div>
@@ -83,30 +83,30 @@
     <!-- ═══════════ PUBLIC PROFILE VISIBILITY ═══════════
          Private by default. Name, photo, role and join date are always visible
          on /user/:id; this switch controls bio, location and created workouts. -->
-    <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
-            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Profile visibility</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Profile visibility</h2>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                 Your name, photo, role and join date are always shown. Everything else is private
                 until you turn this on.
             </p>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <div class="flex items-start justify-between gap-4">
 
             <div class="flex items-start gap-2.5 min-w-0">
 
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                    [ngClass]="isProfilePublic ? 'bg-green-50 border border-green-200' : 'bg-gray-100 border border-gray-200'">
+                    [ngClass]="isProfilePublic ? 'bg-green-50 border border-green-200' : 'bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700'">
                     <i-feather [name]="isProfilePublic ? 'globe' : 'lock'" style="width:14px;height:14px;"
                         [ngClass]="isProfilePublic ? 'text-green-600' : 'text-gray-400'"></i-feather>
                 </div>
 
                 <div class="flex flex-col gap-0.5 min-w-0">
-                    <p class="text-xs font-bold text-gray-900">
+                    <p class="text-xs font-bold text-gray-900 dark:text-gray-100">
                         {{ isProfilePublic ? 'Your profile is public' : 'Your profile is private' }}
                     </p>
                     <p class="text-[11px] text-gray-400 leading-relaxed">
@@ -130,7 +130,7 @@
                 [disabled]="savingVisibility"
                 class="relative w-11 h-6 rounded-full transition shrink-0 disabled:opacity-60
                        disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
-                [ngClass]="isProfilePublic ? 'bg-red-600' : 'bg-gray-200'">
+                [ngClass]="isProfilePublic ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-700'">
                 <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
                     [ngClass]="isProfilePublic ? 'translate-x-5' : 'translate-x-0'"></span>
             </button>
@@ -145,11 +145,11 @@
          desktop-only: on mobile there's no useful difference between it and
          "hidden" (both are just tucked behind the menu button), so mobile
          only ever offers Collapsed / Hidden. -->
-    <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
-            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Sidebar display</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Sidebar display</h2>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                 <ng-container *ngIf="!(sidebarState.isMobile$ | async)">
                     Choose the default width on desktop: full labels, icon-only, or tucked away.
                 </ng-container>
@@ -161,7 +161,7 @@
             </p>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <div class="grid gap-2" role="radiogroup" aria-label="Sidebar display"
             [ngClass]="(sidebarState.isMobile$ | async) ? 'grid-cols-2' : 'grid-cols-3'">
@@ -171,33 +171,33 @@
                 [disabled]="savingSidebarDisplay"
                 class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition
                        disabled:opacity-60 disabled:cursor-not-allowed"
-                [ngClass]="sidebarDisplay === 'expanded' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                [ngClass]="sidebarDisplay === 'expanded' ? 'border-red-600 bg-red-50' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'">
                 <i-feather name="layout" style="width:16px;height:16px;"
                     [ngClass]="sidebarDisplay === 'expanded' ? 'text-red-600' : 'text-gray-400'"></i-feather>
                 <span class="text-[11px] font-semibold"
-                    [ngClass]="sidebarDisplay === 'expanded' ? 'text-red-600' : 'text-gray-600'">Expanded</span>
+                    [ngClass]="sidebarDisplay === 'expanded' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'">Expanded</span>
             </button>
 
             <button type="button" role="radio" [attr.aria-checked]="sidebarDisplay === 'collapsed'"
                 (click)="setSidebarDisplay('collapsed')" [disabled]="savingSidebarDisplay"
                 class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition
                        disabled:opacity-60 disabled:cursor-not-allowed"
-                [ngClass]="sidebarDisplay === 'collapsed' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                [ngClass]="sidebarDisplay === 'collapsed' ? 'border-red-600 bg-red-50' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'">
                 <i-feather name="align-justify" style="width:16px;height:16px;"
                     [ngClass]="sidebarDisplay === 'collapsed' ? 'text-red-600' : 'text-gray-400'"></i-feather>
                 <span class="text-[11px] font-semibold"
-                    [ngClass]="sidebarDisplay === 'collapsed' ? 'text-red-600' : 'text-gray-600'">Collapsed</span>
+                    [ngClass]="sidebarDisplay === 'collapsed' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'">Collapsed</span>
             </button>
 
             <button type="button" role="radio" [attr.aria-checked]="sidebarDisplay === 'hidden'"
                 (click)="setSidebarDisplay('hidden')" [disabled]="savingSidebarDisplay"
                 class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition
                        disabled:opacity-60 disabled:cursor-not-allowed"
-                [ngClass]="sidebarDisplay === 'hidden' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                [ngClass]="sidebarDisplay === 'hidden' ? 'border-red-600 bg-red-50' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'">
                 <i-feather name="eye-off" style="width:16px;height:16px;"
                     [ngClass]="sidebarDisplay === 'hidden' ? 'text-red-600' : 'text-gray-400'"></i-feather>
                 <span class="text-[11px] font-semibold"
-                    [ngClass]="sidebarDisplay === 'hidden' ? 'text-red-600' : 'text-gray-600'">Hidden</span>
+                    [ngClass]="sidebarDisplay === 'hidden' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'">Hidden</span>
             </button>
 
         </div>
@@ -207,31 +207,31 @@
          On by default. Controls only the floating chat bubble that follows you
          around the app — the full messaging center at /dashboard/messages always
          works regardless of this setting. -->
-    <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
-            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Message popup</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Message popup</h2>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                 A floating chat bubble follows you around the app so you never have to leave a
                 page to reply. Turn it off to use the messaging center only.
             </p>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <div class="flex items-start justify-between gap-4">
 
             <div class="flex items-start gap-2.5 min-w-0">
 
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                    [ngClass]="messagePopupEnabled ? 'bg-green-50 border border-green-200' : 'bg-gray-100 border border-gray-200'">
+                    [ngClass]="messagePopupEnabled ? 'bg-green-50 border border-green-200' : 'bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700'">
                     <i-feather [name]="messagePopupEnabled ? 'message-circle' : 'message-square'"
                         style="width:14px;height:14px;"
                         [ngClass]="messagePopupEnabled ? 'text-green-600' : 'text-gray-400'"></i-feather>
                 </div>
 
                 <div class="flex flex-col gap-0.5 min-w-0">
-                    <p class="text-xs font-bold text-gray-900">
+                    <p class="text-xs font-bold text-gray-900 dark:text-gray-100">
                         {{ messagePopupEnabled ? 'Popup shown everywhere' : 'Popup turned off' }}
                     </p>
                     <p class="text-[11px] text-gray-400 leading-relaxed">
@@ -248,7 +248,7 @@
                 [disabled]="savingMessagePopupEnabled"
                 class="relative w-11 h-6 rounded-full transition shrink-0 disabled:opacity-60
                        disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
-                [ngClass]="messagePopupEnabled ? 'bg-red-600' : 'bg-gray-200'">
+                [ngClass]="messagePopupEnabled ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-700'">
                 <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
                     [ngClass]="messagePopupEnabled ? 'translate-x-5' : 'translate-x-0'"></span>
             </button>
@@ -258,12 +258,12 @@
 
     <!-- ═══════════ PASSKEYS ═══════════
          Face ID / Touch ID / Windows Hello sign-in — see WebAuthnService. -->
-    <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div class="flex items-start justify-between gap-3">
             <div>
-                <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Passkeys</h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">
+                <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Passkeys</h2>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                     Sign in with Face ID, Touch ID, or Windows Hello instead of typing your password.
                 </p>
             </div>
@@ -276,7 +276,7 @@
             </button>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <p *ngIf="!webAuthnService.isSupported" class="text-[11px] text-gray-400 italic">
             Your browser doesn't support passkeys.
@@ -291,7 +291,7 @@
         </p>
 
         <div *ngIf="webAuthnService.isSupported && !passkeysLoading" class="flex flex-col gap-1.5">
-            <div *ngFor="let credential of passkeys" class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-gray-50 border border-gray-100">
+            <div *ngFor="let credential of passkeys" class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100">
                 <div class="min-w-0 flex items-center gap-2.5">
                     <div class="w-8 h-8 rounded-lg bg-green-50 border border-green-200 flex items-center justify-center shrink-0">
                         <i-feather name="key" style="width:14px;height:14px;" class="text-green-600"></i-feather>
@@ -310,37 +310,89 @@
         </div>
     </div>
 
+    <!-- ═══════════ APPEARANCE (LIGHT / DARK / SYSTEM) ═══════════
+         Per-device (localStorage) — see ThemeService. Only the dashboard
+         chrome and pages converted to dark: variants so far respond to
+         this; the public marketing site stays permanently dark by design
+         regardless. -->
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
+
+        <div>
+            <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide flex items-center gap-1.5">
+                Appearance
+                <span *ngIf="whatsNew.isNew('theme-settings')"
+                    class="bg-red-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full leading-none normal-case tracking-normal">
+                    NEW
+                </span>
+            </h2>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                Choose Light, Dark, or match your device's own setting.
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100 dark:border-gray-800 dark:border-gray-800"></div>
+
+        <div class="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Appearance">
+            <button type="button" role="radio" [attr.aria-checked]="themeMode === 'light'"
+                (click)="setThemeMode('light')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
+                [ngClass]="themeMode === 'light' ? 'border-red-600 bg-red-50 dark:bg-red-950/40' : 'border-gray-200 dark:border-gray-700 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'">
+                <i-feather name="sun" style="width:16px;height:16px;"
+                    [ngClass]="themeMode === 'light' ? 'text-red-600' : 'text-gray-400 dark:text-gray-500'"></i-feather>
+                <span class="text-[11px] font-semibold"
+                    [ngClass]="themeMode === 'light' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400 dark:text-gray-400'">Light</span>
+            </button>
+
+            <button type="button" role="radio" [attr.aria-checked]="themeMode === 'dark'"
+                (click)="setThemeMode('dark')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
+                [ngClass]="themeMode === 'dark' ? 'border-red-600 bg-red-50 dark:bg-red-950/40' : 'border-gray-200 dark:border-gray-700 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'">
+                <i-feather name="moon" style="width:16px;height:16px;"
+                    [ngClass]="themeMode === 'dark' ? 'text-red-600' : 'text-gray-400 dark:text-gray-500'"></i-feather>
+                <span class="text-[11px] font-semibold"
+                    [ngClass]="themeMode === 'dark' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400 dark:text-gray-400'">Dark</span>
+            </button>
+
+            <button type="button" role="radio" [attr.aria-checked]="themeMode === 'system'"
+                (click)="setThemeMode('system')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
+                [ngClass]="themeMode === 'system' ? 'border-red-600 bg-red-50 dark:bg-red-950/40' : 'border-gray-200 dark:border-gray-700 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'">
+                <i-feather name="smartphone" style="width:16px;height:16px;"
+                    [ngClass]="themeMode === 'system' ? 'text-red-600' : 'text-gray-400 dark:text-gray-500'"></i-feather>
+                <span class="text-[11px] font-semibold"
+                    [ngClass]="themeMode === 'system' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400 dark:text-gray-400'">System</span>
+            </button>
+        </div>
+    </div>
+
     <!-- ═══════════ NAVBAR APPEARANCE ═══════════
          Per-device (localStorage) — see NavbarStyleService. Controls the top
          bar's background finish only (the dark sidebar is unaffected). -->
-    <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
-            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Navbar appearance</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Navbar appearance</h2>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                 Pick whether the top bar shows a frosted, see-through background or a plain solid one.
             </p>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <div class="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Navbar background style">
             <button type="button" role="radio" [attr.aria-checked]="navbarStyle === 'translucent'"
                 (click)="setNavbarStyle('translucent')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
-                [ngClass]="navbarStyle === 'translucent' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                [ngClass]="navbarStyle === 'translucent' ? 'border-red-600 bg-red-50' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'">
                 <i-feather name="layers" style="width:16px;height:16px;"
                     [ngClass]="navbarStyle === 'translucent' ? 'text-red-600' : 'text-gray-400'"></i-feather>
                 <span class="text-[11px] font-semibold"
-                    [ngClass]="navbarStyle === 'translucent' ? 'text-red-600' : 'text-gray-600'">Translucent</span>
+                    [ngClass]="navbarStyle === 'translucent' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'">Translucent</span>
             </button>
 
             <button type="button" role="radio" [attr.aria-checked]="navbarStyle === 'solid'"
                 (click)="setNavbarStyle('solid')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
-                [ngClass]="navbarStyle === 'solid' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                [ngClass]="navbarStyle === 'solid' ? 'border-red-600 bg-red-50' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'">
                 <i-feather name="square" style="width:16px;height:16px;"
                     [ngClass]="navbarStyle === 'solid' ? 'text-red-600' : 'text-gray-400'"></i-feather>
                 <span class="text-[11px] font-semibold"
-                    [ngClass]="navbarStyle === 'solid' ? 'text-red-600' : 'text-gray-600'">Solid white</span>
+                    [ngClass]="navbarStyle === 'solid' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'">Solid white</span>
             </button>
         </div>
     </div>
@@ -349,44 +401,44 @@
          Per-device (localStorage) — see TodaysTodoPromptService. Controls the
          "what are you doing today" popup on the Dashboard home. Skipped
          automatically (any setting) if a task's already due today. -->
-    <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
-            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Daily planning prompt</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Daily planning prompt</h2>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                 How often Berliz asks what you're doing today when you open the Dashboard.
                 We recommend mornings — it's a planning prompt, not much use once your day's underway.
             </p>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <div class="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Daily planning prompt frequency">
             <button type="button" role="radio" [attr.aria-checked]="todaysTodoPromptFrequency === 'daily'"
                 (click)="setTodaysTodoPromptFrequency('daily')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
-                [ngClass]="todaysTodoPromptFrequency === 'daily' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                [ngClass]="todaysTodoPromptFrequency === 'daily' ? 'border-red-600 bg-red-50' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'">
                 <i-feather name="calendar" style="width:16px;height:16px;"
                     [ngClass]="todaysTodoPromptFrequency === 'daily' ? 'text-red-600' : 'text-gray-400'"></i-feather>
                 <span class="text-[11px] font-semibold"
-                    [ngClass]="todaysTodoPromptFrequency === 'daily' ? 'text-red-600' : 'text-gray-600'">Every login</span>
+                    [ngClass]="todaysTodoPromptFrequency === 'daily' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'">Every login</span>
             </button>
 
             <button type="button" role="radio" [attr.aria-checked]="todaysTodoPromptFrequency === 'morning'"
                 (click)="setTodaysTodoPromptFrequency('morning')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
-                [ngClass]="todaysTodoPromptFrequency === 'morning' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                [ngClass]="todaysTodoPromptFrequency === 'morning' ? 'border-red-600 bg-red-50' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'">
                 <i-feather name="sunrise" style="width:16px;height:16px;"
                     [ngClass]="todaysTodoPromptFrequency === 'morning' ? 'text-red-600' : 'text-gray-400'"></i-feather>
                 <span class="text-[11px] font-semibold"
-                    [ngClass]="todaysTodoPromptFrequency === 'morning' ? 'text-red-600' : 'text-gray-600'">Mornings only</span>
+                    [ngClass]="todaysTodoPromptFrequency === 'morning' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'">Mornings only</span>
             </button>
 
             <button type="button" role="radio" [attr.aria-checked]="todaysTodoPromptFrequency === 'off'"
                 (click)="setTodaysTodoPromptFrequency('off')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
-                [ngClass]="todaysTodoPromptFrequency === 'off' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                [ngClass]="todaysTodoPromptFrequency === 'off' ? 'border-red-600 bg-red-50' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'">
                 <i-feather name="bell-off" style="width:16px;height:16px;"
                     [ngClass]="todaysTodoPromptFrequency === 'off' ? 'text-red-600' : 'text-gray-400'"></i-feather>
                 <span class="text-[11px] font-semibold"
-                    [ngClass]="todaysTodoPromptFrequency === 'off' ? 'text-red-600' : 'text-gray-600'">Off</span>
+                    [ngClass]="todaysTodoPromptFrequency === 'off' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'">Off</span>
             </button>
         </div>
     </div>
@@ -395,51 +447,51 @@
          Per-device (localStorage) — see NavControlsService. Controls
          NavHistoryControlsComponent, the floating back/forward control mounted
          once in AppComponent. -->
-    <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
-            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide flex items-center gap-1.5">
+            <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide flex items-center gap-1.5">
                 In-app navigation
                 <span *ngIf="whatsNew.isNew('nav-controls-settings')"
                     class="bg-red-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full leading-none normal-case tracking-normal">
                     NEW
                 </span>
             </h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                 Berliz shows its own back/forward control since your browser's own buttons don't work
                 once the app is installed or opened without browser chrome. Pick how you'd like it to work.
             </p>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <div class="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Navigation control style">
 
             <button type="button" role="radio" [attr.aria-checked]="navControlsStyle === 'button'"
                 (click)="setNavControlsStyle('button')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
-                [ngClass]="navControlsStyle === 'button' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                [ngClass]="navControlsStyle === 'button' ? 'border-red-600 bg-red-50' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'">
                 <i-feather name="circle" style="width:16px;height:16px;"
                     [ngClass]="navControlsStyle === 'button' ? 'text-red-600' : 'text-gray-400'"></i-feather>
                 <span class="text-[11px] font-semibold"
-                    [ngClass]="navControlsStyle === 'button' ? 'text-red-600' : 'text-gray-600'">Button</span>
+                    [ngClass]="navControlsStyle === 'button' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'">Button</span>
             </button>
 
             <button type="button" role="radio" [attr.aria-checked]="navControlsStyle === 'swipe'"
                 (click)="setNavControlsStyle('swipe')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
-                [ngClass]="navControlsStyle === 'swipe' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                [ngClass]="navControlsStyle === 'swipe' ? 'border-red-600 bg-red-50' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'">
                 <i-feather name="chevrons-right" style="width:16px;height:16px;"
                     [ngClass]="navControlsStyle === 'swipe' ? 'text-red-600' : 'text-gray-400'"></i-feather>
                 <span class="text-[11px] font-semibold"
-                    [ngClass]="navControlsStyle === 'swipe' ? 'text-red-600' : 'text-gray-600'">Swipe</span>
+                    [ngClass]="navControlsStyle === 'swipe' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'">Swipe</span>
             </button>
 
             <button type="button" role="radio" [attr.aria-checked]="navControlsStyle === 'off'"
                 (click)="setNavControlsStyle('off')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
-                [ngClass]="navControlsStyle === 'off' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                [ngClass]="navControlsStyle === 'off' ? 'border-red-600 bg-red-50' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'">
                 <i-feather name="eye-off" style="width:16px;height:16px;"
                     [ngClass]="navControlsStyle === 'off' ? 'text-red-600' : 'text-gray-400'"></i-feather>
                 <span class="text-[11px] font-semibold"
-                    [ngClass]="navControlsStyle === 'off' ? 'text-red-600' : 'text-gray-600'">Off</span>
+                    [ngClass]="navControlsStyle === 'off' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'">Off</span>
             </button>
         </div>
 
@@ -455,20 +507,20 @@
             <div class="grid grid-cols-2 gap-2" role="radiogroup" aria-label="In-app navigation button appearance">
                 <button type="button" role="radio" [attr.aria-checked]="navControlsAppearance === 'translucent'"
                     (click)="setNavControlsAppearance('translucent')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
-                    [ngClass]="navControlsAppearance === 'translucent' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                    [ngClass]="navControlsAppearance === 'translucent' ? 'border-red-600 bg-red-50' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'">
                     <i-feather name="layers" style="width:16px;height:16px;"
                         [ngClass]="navControlsAppearance === 'translucent' ? 'text-red-600' : 'text-gray-400'"></i-feather>
                     <span class="text-[11px] font-semibold"
-                        [ngClass]="navControlsAppearance === 'translucent' ? 'text-red-600' : 'text-gray-600'">Translucent</span>
+                        [ngClass]="navControlsAppearance === 'translucent' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'">Translucent</span>
                 </button>
 
                 <button type="button" role="radio" [attr.aria-checked]="navControlsAppearance === 'solid'"
                     (click)="setNavControlsAppearance('solid')" class="flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition"
-                    [ngClass]="navControlsAppearance === 'solid' ? 'border-red-600 bg-red-50' : 'border-gray-200 hover:border-gray-300'">
+                    [ngClass]="navControlsAppearance === 'solid' ? 'border-red-600 bg-red-50' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'">
                     <i-feather name="square" style="width:16px;height:16px;"
                         [ngClass]="navControlsAppearance === 'solid' ? 'text-red-600' : 'text-gray-400'"></i-feather>
                     <span class="text-[11px] font-semibold"
-                        [ngClass]="navControlsAppearance === 'solid' ? 'text-red-600' : 'text-gray-600'">Solid white</span>
+                        [ngClass]="navControlsAppearance === 'solid' ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'">Solid white</span>
                 </button>
             </div>
 
@@ -485,16 +537,16 @@
          priority events (currently: messages) while this device has the app
          open, even in a background tab. Per-device, not synced across
          devices. Not push-when-the-browser-is-fully-closed. -->
-    <div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
-            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Browser notifications</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Browser notifications</h2>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                 Get a system notification for priority activity while Berliz is open on this device.
             </p>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <p *ngIf="!browserNotificationsSupported" class="text-[11px] text-gray-400 italic">
             Your browser doesn't support notifications.
@@ -511,12 +563,12 @@
             <div class="flex items-start justify-between gap-4">
                 <div class="flex items-start gap-2.5 min-w-0">
                     <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                        [ngClass]="browserNotificationsEnabled ? 'bg-green-50 border border-green-200' : 'bg-gray-100 border border-gray-200'">
+                        [ngClass]="browserNotificationsEnabled ? 'bg-green-50 border border-green-200' : 'bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700'">
                         <i-feather [name]="browserNotificationsEnabled ? 'bell' : 'bell-off'" style="width:14px;height:14px;"
                             [ngClass]="browserNotificationsEnabled ? 'text-green-600' : 'text-gray-400'"></i-feather>
                     </div>
                     <div class="flex flex-col gap-0.5 min-w-0">
-                        <p class="text-xs font-bold text-gray-900">
+                        <p class="text-xs font-bold text-gray-900 dark:text-gray-100">
                             {{ browserNotificationsEnabled ? 'Notifications on' : 'Notifications off' }}
                         </p>
                         <p class="text-[11px] text-gray-400 leading-relaxed">
@@ -531,24 +583,24 @@
                     aria-label="Enable browser notifications" (click)="toggleBrowserNotifications()"
                     class="relative w-11 h-6 rounded-full transition shrink-0
                            focus:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
-                    [ngClass]="browserNotificationsEnabled ? 'bg-red-600' : 'bg-gray-200'">
+                    [ngClass]="browserNotificationsEnabled ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-700'">
                     <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
                         [ngClass]="browserNotificationsEnabled ? 'translate-x-5' : 'translate-x-0'"></span>
                 </button>
             </div>
 
             <!-- Per-category toggles -->
-            <div *ngIf="browserNotificationsEnabled" class="flex flex-col gap-2 pt-1 border-t border-gray-100">
+            <div *ngIf="browserNotificationsEnabled" class="flex flex-col gap-2 pt-1 border-t border-gray-100 dark:border-gray-800">
 
                 <div class="flex items-center justify-between gap-4 pt-2">
                     <div class="flex items-center gap-2 min-w-0">
                         <i-feather name="message-circle" style="width:13px;height:13px;" class="text-gray-400 shrink-0"></i-feather>
-                        <span class="text-xs font-semibold text-gray-700">Messages</span>
+                        <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Messages</span>
                     </div>
                     <button type="button" role="switch" [attr.aria-checked]="isNotificationCategoryEnabled('message')"
                         (click)="toggleNotificationCategory('message')"
                         class="relative w-9 h-5 rounded-full transition shrink-0"
-                        [ngClass]="isNotificationCategoryEnabled('message') ? 'bg-red-600' : 'bg-gray-200'">
+                        [ngClass]="isNotificationCategoryEnabled('message') ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-700'">
                         <span class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform"
                             [ngClass]="isNotificationCategoryEnabled('message') ? 'translate-x-4' : 'translate-x-0'"></span>
                     </button>
@@ -557,12 +609,12 @@
                 <div class="flex items-center justify-between gap-4">
                     <div class="flex items-center gap-2 min-w-0">
                         <i-feather name="user-plus" style="width:13px;height:13px;" class="text-gray-400 shrink-0"></i-feather>
-                        <span class="text-xs font-semibold text-gray-700">Connection requests</span>
+                        <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Connection requests</span>
                     </div>
                     <button type="button" role="switch" [attr.aria-checked]="isNotificationCategoryEnabled('connection')"
                         (click)="toggleNotificationCategory('connection')"
                         class="relative w-9 h-5 rounded-full transition shrink-0"
-                        [ngClass]="isNotificationCategoryEnabled('connection') ? 'bg-red-600' : 'bg-gray-200'">
+                        [ngClass]="isNotificationCategoryEnabled('connection') ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-700'">
                         <span class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform"
                             [ngClass]="isNotificationCategoryEnabled('connection') ? 'translate-x-4' : 'translate-x-0'"></span>
                     </button>
@@ -571,12 +623,12 @@
                 <div class="flex items-center justify-between gap-4">
                     <div class="flex items-center gap-2 min-w-0">
                         <i-feather name="activity" style="width:13px;height:13px;" class="text-gray-400 shrink-0"></i-feather>
-                        <span class="text-xs font-semibold text-gray-700">Posts &amp; feed activity</span>
+                        <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Posts &amp; feed activity</span>
                     </div>
                     <button type="button" role="switch" [attr.aria-checked]="isNotificationCategoryEnabled('post')"
                         (click)="toggleNotificationCategory('post')"
                         class="relative w-9 h-5 rounded-full transition shrink-0"
-                        [ngClass]="isNotificationCategoryEnabled('post') ? 'bg-red-600' : 'bg-gray-200'">
+                        [ngClass]="isNotificationCategoryEnabled('post') ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-700'">
                         <span class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform"
                             [ngClass]="isNotificationCategoryEnabled('post') ? 'translate-x-4' : 'translate-x-0'"></span>
                     </button>

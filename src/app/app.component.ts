@@ -10,6 +10,7 @@ import { InactivityService } from './services/inactivity.service';
 import { SeoService } from './services/seo.service';
 import { ScrollRestorationService } from './services/scroll-restoration.service';
 import { AuthService } from './services/auth.service';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -38,8 +39,15 @@ export class AppComponent implements OnInit {
     private seoService: SeoService,
     private scrollRestoration: ScrollRestorationService,
     private authService: AuthService,
+    private themeService: ThemeService,
     @Inject(PLATFORM_ID) private platformId: Object,
   ) {
+    // Applied once, up front, same as every other per-device display
+    // preference in this constructor — before the sidebar layout (the only
+    // one this affects) ever paints.
+    this.themeService.apply();
+    this.themeService.watchSystemChanges();
+
     this.sidebarState.mode$.subscribe(mode => {
       this.sidebarMode = mode;
     });
