@@ -21,6 +21,9 @@
 
     <form [formGroup]="bookingForm" (ngSubmit)="submitForm()" class="flex flex-col gap-4">
 
+        <app-draft-resume-banner [draft]="pendingDraft" itemLabel="booking"
+            (resume)="resumeDraft()" (startFresh)="discardPendingDraft()"></app-draft-resume-banner>
+
         <!-- ── Initial probe loading ────────────────────────────────────── -->
         <div *ngIf="availabilityConfigured === null" class="flex items-center justify-center py-8 gap-2 text-gray-400">
             <i-feather name="loader" class="animate-spin" style="width:16px;height:16px;"></i-feather>

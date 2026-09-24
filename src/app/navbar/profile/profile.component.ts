@@ -10,7 +10,6 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
-import { SavedItemsModalComponent } from 'src/app/shared/saved-items-modal/saved-items-modal.component';
 import { BerlizFeedbackModalComponent } from 'src/app/footer/berliz-feedback-modal/berliz-feedback-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
 import { Store } from '@ngrx/store';
@@ -207,7 +206,7 @@ export class ProfileComponent {
 
   openSaved() {
     this.closeDropdown();
-    this.dialog.open(SavedItemsModalComponent, { width: '460px', maxWidth: '95vw' });
+    this.router.navigate(['/dashboard/saved']);
   }
 
   openFeedback(): void {

@@ -178,6 +178,29 @@ const dashboardRoutes: Routes = [
         }
       },
 
+      // Every unfinished post/booking/etc, see DraftService.
+      {
+        path: 'my-drafts',
+        loadComponent: () => import('../my-drafts/my-drafts.component').then(m => m.MyDraftsComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'My Drafts',
+          expectedRole: expectedRoleAll
+        }
+      },
+
+      // Bookmarked posts + workout templates — was a dialog off the profile
+      // menu, promoted to its own deep-linkable page.
+      {
+        path: 'saved',
+        loadComponent: () => import('../saved-page/saved-page.component').then(m => m.SavedPageComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Saved',
+          expectedRole: expectedRoleAll
+        }
+      },
+
       // Notifications
       {
         path: 'my-notifications',
@@ -287,6 +310,18 @@ const dashboardRoutes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: 'Deals',
+          expectedRole: expectedRoleAll
+        }
+      },
+
+      // "Your time in Berliz" recap — a real deep link (?period=) instead of
+      // only reachable through the dashboard card's dialog.
+      {
+        path: 'recap',
+        loadComponent: () => import('../shared/recap/recap-page.component').then(m => m.RecapPageComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Recap',
           expectedRole: expectedRoleAll
         }
       },

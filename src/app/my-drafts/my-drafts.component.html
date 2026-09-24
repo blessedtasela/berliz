@@ -1,0 +1,55 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
+                <i-feather name="clock" class="text-amber-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <h1 class="text-sm font-bold text-gray-900">My Drafts</h1>
+                <p class="text-[11px] text-gray-400">Unfinished posts, bookings and more — pick up where you left off</p>
+            </div>
+        </div>
+        <button type="button" (click)="refresh()" class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition" title="Refresh">
+            <i-feather name="refresh-cw" class="text-gray-500" style="width:15px;height:15px;"></i-feather>
+        </button>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="drafts.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-center bg-white rounded-2xl border border-gray-200">
+        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+            <i-feather name="check-circle" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        </div>
+        <p class="text-sm text-gray-400">Nothing left unfinished — you're all caught up.</p>
+    </div>
+
+    <!-- Drafts list -->
+    <div *ngIf="drafts.length > 0" class="flex flex-col gap-2">
+        <div *ngFor="let draft of drafts; trackBy: trackByDraft"
+            class="bg-white rounded-2xl border border-gray-200 p-4 flex items-start justify-between gap-3">
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-bold uppercase tracking-wide text-amber-600 bg-amber-50 border border-amber-100 rounded-full px-2 py-0.5">
+                        {{ draft.type }}
+                    </span>
+                    <span class="text-[11px] text-gray-400">{{ draft.savedAt | date:'MMM d, y, h:mm a' }}</span>
+                </div>
+                <p class="text-sm font-semibold text-gray-900 mt-1.5">{{ draft.label }}</p>
+                <p *ngIf="draft.preview" class="text-xs text-gray-500 mt-0.5 line-clamp-2 whitespace-pre-line">{{ draft.preview }}</p>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <button type="button" (click)="resume(draft)"
+                    class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition">
+                    Resume
+                </button>
+                <button type="button" (click)="discard(draft)" title="Discard"
+                    class="w-8 h-8 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition">
+                    <i-feather name="trash-2" style="width:14px;height:14px;"></i-feather>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</section>

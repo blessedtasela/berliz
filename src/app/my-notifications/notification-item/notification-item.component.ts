@@ -9,6 +9,7 @@ import {
   HostListener
 } from '@angular/core';
 import { Notifications } from 'src/app/models/Notifications.interface';
+import { notificationHasDeepLink } from 'src/app/utils/notification-entity-link.util';
 import { escapeHtml } from 'src/validators/form-validators.module';
 
 @Component({
@@ -154,6 +155,11 @@ export class NotificationItemComponent implements OnChanges {
     event.stopPropagation();
     this.deleteItem.emit(this.item);
     this.menuOpen = false;
+  }
+
+  /** Small hint icon: this notification is known enough to jump straight to what it's about, rather than only showing text. */
+  get hasDeepLink(): boolean {
+    return notificationHasDeepLink(this.item);
   }
 
   // -----------------------------------

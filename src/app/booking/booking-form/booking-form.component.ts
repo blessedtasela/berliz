@@ -8,6 +8,8 @@ import { Subject, takeUntil, take } from 'rxjs';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SessionCreditService } from 'src/app/services/session-credit.service';
 import { PromotionService } from 'src/app/services/promotion.service';
+import { DraftService } from 'src/app/services/draft.service';
+import { DraftEntry } from 'src/app/models/draft.model';
 import {
   createBooking,
   createBookingFailure,
@@ -28,6 +30,17 @@ export interface BookingFormData {
   trainerId?: number;
   centerId?: number;
   providerName: string;
+}
+
+/** Everything DraftService needs to fully restore an in-progress booking. */
+interface BookingDraftData {
+  selectedDate: string;
+  selectedSlot: AvailableSlot | null;
+  manualDate: string;
+  manualTime: string;
+  durationMinutes: number;
+  notes: string;
+  reward: string;
 }
 
 @Component({
@@ -104,6 +117,14 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   availableCredits: SessionCredit[] = [];
   providerPromotions: PromoOffer[] = [];
 
+  /** One booking draft per provider -- a client could plausibly be mid-booking with one provider while browsing another. */
+  private get draftId(): string {
+    return String(this.data.trainerId ?? this.data.centerId ?? 'unknown');
+  }
+
+  /** Set on init when a previous session left this exact provider's booking mid-draft. */
+  pendingDraft: DraftEntry<BookingDraftData> | null = null;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -113,6 +134,7 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     private snackBar: SnackBarService,
     private sessionCreditService: SessionCreditService,
     private promotionService: PromotionService,
+    private draftService: DraftService,
     public dialogRef: MatDialogRef<BookingFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: BookingFormData
   ) { }
@@ -127,6 +149,9 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       // '' = none, otherwise 'credit:<id>' or 'promo:<id>' -- at most one reward per booking.
       reward: ['']
     });
+
+    this.pendingDraft = this.draftService.get<BookingDraftData>('booking', this.draftId);
+    this.bookingForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.saveDraft());
 
     this.store.select(selectAvailabilityLoading)
       .pipe(takeUntil(this.destroy$))
@@ -150,6 +175,7 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       .pipe(ofType(createBookingSuccess), takeUntil(this.destroy$))
       .subscribe(({ response }) => {
         this.submitting = false;
+        this.draftService.discard('booking', this.draftId);
         this.snackBar.openSnackBar(
           response?.data?.message || response?.message || 'Your booking request has been sent.',
           ''
@@ -228,6 +254,7 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     this.selectedDate = dateValue;
     this.selectedSlot = null;
     this.fetchSlotsForSelectedDate();
+    this.saveDraft();
   }
 
   private fetchSlotsForSelectedDate(): void {
@@ -240,6 +267,56 @@ export class BookingFormComponent implements OnInit, OnDestroy {
 
   selectSlot(slot: AvailableSlot): void {
     this.selectedSlot = slot;
+    this.saveDraft();
+  }
+
+  // ── Draft (unfinished booking) ──────────────────────────────────────────
+
+  /** "Continue" on the resume banner. */
+  resumeDraft(): void {
+    if (!this.pendingDraft) return;
+    const d = this.pendingDraft.data;
+    this.selectedDate = d.selectedDate;
+    this.selectedSlot = d.selectedSlot;
+    this.bookingForm.patchValue({
+      date: d.manualDate,
+      time: d.manualTime,
+      durationMinutes: d.durationMinutes,
+      notes: d.notes,
+      reward: d.reward,
+    });
+    this.fetchSlotsForSelectedDate();
+    this.pendingDraft = null;
+  }
+
+  /** "Start fresh" on the resume banner -- throws the saved draft away, leaves the (already-default) form as-is. */
+  discardPendingDraft(): void {
+    this.draftService.discard('booking', this.draftId);
+    this.pendingDraft = null;
+  }
+
+  /** Called on every meaningful edit (date/slot picks directly, everything else via bookingForm.valueChanges). */
+  private saveDraft(): void {
+    const value = this.bookingForm?.value ?? {};
+    const hasContent = !!this.selectedSlot || !!value.date || !!value.time || !!(value.notes ?? '').trim() || !!value.reward;
+    if (!hasContent) {
+      this.draftService.discard('booking', this.draftId);
+      return;
+    }
+    this.draftService.save<BookingDraftData>('booking', {
+      selectedDate: this.selectedDate,
+      selectedSlot: this.selectedSlot,
+      manualDate: value.date ?? '',
+      manualTime: value.time ?? '',
+      durationMinutes: value.durationMinutes ?? 60,
+      notes: value.notes ?? '',
+      reward: value.reward ?? '',
+    }, {
+      id: this.draftId,
+      label: `Booking with ${this.data.providerName}`,
+      preview: this.selectedSlot ? `${this.selectedDate} · ${this.slotLabel(this.selectedSlot)}` : (value.date ? `${value.date} ${value.time || ''}`.trim() : undefined),
+      route: '/dashboard/find-providers',
+    });
   }
 
   slotLabel(slot: AvailableSlot): string {

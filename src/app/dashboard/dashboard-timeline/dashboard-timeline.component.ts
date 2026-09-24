@@ -24,7 +24,18 @@ import { ContentReportService } from 'src/app/services/content-report.service';
 import { WorkoutService } from 'src/app/services/workout.service';
 import { WorkoutResponse } from 'src/app/models/workout.interface';
 import { SavedService } from 'src/app/services/saved.service';
+import { DraftService } from 'src/app/services/draft.service';
+import { DraftEntry } from 'src/app/models/draft.model';
+import { DraftResumeBannerComponent } from 'src/app/shared/draft-resume-banner/draft-resume-banner.component';
 import { imageValidator } from 'src/validators/form-validators.module';
+
+/** Everything DraftService needs to fully restore the composer — see PostDraftData below. */
+interface PostDraftData {
+  content: string;
+  activityType: PostActivityType;
+  workoutId: number | null;
+  uploadedPhoto: { strapiId: number; photoUrl: string } | null;
+}
 
 type TimelineTab = 'feed' | 'mine';
 
@@ -58,7 +69,7 @@ const ACTIVITY_OPTIONS: ActivityOption[] = [
 @Component({
   selector: 'app-dashboard-timeline',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, BookProviderButtonComponent],
+  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, BookProviderButtonComponent, DraftResumeBannerComponent],
   templateUrl: './dashboard-timeline.component.html'
 })
 export class DashboardTimelineComponent implements OnInit, OnDestroy {
@@ -88,6 +99,9 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   uploading = false;
   uploadError: string | null = null;
 
+  /** Set on init when a previous session left the composer mid-draft — shows the resume banner rather than silently restoring or losing it. */
+  pendingDraft: DraftEntry<PostDraftData> | null = null;
+
   // ── Read view ────────────────────────────────────────────────────────────
   /** Posts whose long text the reader has expanded past the 5-line clamp. */
   private readonly expandedPosts = new Set<number>();
@@ -114,6 +128,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
+    private draftService: DraftService,
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
   }
@@ -122,6 +137,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     this.refresh();
     this.saved.refresh();
     this.openPostFromQueryParam();
+    this.pendingDraft = this.draftService.get<PostDraftData>('post');
     this.workoutService.getTemplates().subscribe({
       next: res => this.myTemplates = res.data ?? [],
       error: () => { /* the picker just stays empty */ },
@@ -165,6 +181,42 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
 
   // ── Compose ──────────────────────────────────────────────────────────────
 
+  /** "Continue" on the resume banner -- applies the saved draft's fields to the live composer. */
+  resumeDraft(): void {
+    if (!this.pendingDraft) return;
+    const d = this.pendingDraft.data;
+    this.draftContent = d.content;
+    this.draftActivityType = d.activityType;
+    this.draftWorkoutId = d.workoutId;
+    this.uploadedPhoto = d.uploadedPhoto;
+    this.pendingDraft = null;
+  }
+
+  /** "Start fresh" on the resume banner -- throws the saved draft away, leaves the (already-empty) composer as-is. */
+  discardPendingDraft(): void {
+    this.draftService.discard('post');
+    this.pendingDraft = null;
+  }
+
+  /** Called on every composer edit. Autosaves a non-empty draft; clears any saved draft once the composer is genuinely empty again. */
+  saveDraft(): void {
+    const hasContent = this.draftContent.trim().length > 0 || !!this.uploadedPhoto || this.draftActivityType !== 'GENERAL';
+    if (!hasContent) {
+      this.draftService.discard('post');
+      return;
+    }
+    this.draftService.save<PostDraftData>('post', {
+      content: this.draftContent,
+      activityType: this.draftActivityType,
+      workoutId: this.draftWorkoutId,
+      uploadedPhoto: this.uploadedPhoto,
+    }, {
+      label: 'Post',
+      preview: this.draftContent.trim().slice(0, 120) || undefined,
+      route: '/dashboard/timeline',
+    });
+  }
+
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
@@ -191,6 +243,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
           return;
         }
         this.uploadedPhoto = { strapiId: uploaded.id, photoUrl: uploaded.url };
+        this.saveDraft();
       },
       error: (err) => {
         this.uploading = false;
@@ -207,6 +260,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   removePhoto(): void {
     this.uploadedPhoto = null;
     this.uploadError = null;
+    this.saveDraft();
   }
 
   get canPost(): boolean {
@@ -216,6 +270,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   setActivityType(type: PostActivityType): void {
     // Tapping the active chip again clears it back to a plain post.
     this.draftActivityType = this.draftActivityType === type ? 'GENERAL' : type;
+    this.saveDraft();
   }
 
   submitPost(): void {
@@ -239,6 +294,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
         this.draftActivityType = 'GENERAL';
         this.draftWorkoutId = null;
         this.uploadedPhoto = null;
+        this.draftService.discard('post');
         this.snackBarService.openSnackBar('Posted', '');
       },
       error: () => {

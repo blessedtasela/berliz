@@ -21,9 +21,13 @@
 
     <!-- ── COMPOSE ───────────────────────────────────────────────────────── -->
     <div class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+
+        <app-draft-resume-banner [draft]="pendingDraft" itemLabel="post"
+            (resume)="resumeDraft()" (startFresh)="discardPendingDraft()"></app-draft-resume-banner>
+
         <div class="flex items-start gap-3">
             <img [src]="myPhotoSrc" alt="" class="w-9 h-9 rounded-full object-cover object-top border border-gray-200 shrink-0" />
-            <textarea [(ngModel)]="draftContent" rows="3" placeholder="Share an update…" [maxlength]="maxContentLength"
+            <textarea [(ngModel)]="draftContent" (ngModelChange)="saveDraft()" rows="3" placeholder="Share an update…" [maxlength]="maxContentLength"
                 class="flex-1 resize-none bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-900
                        placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition"></textarea>
         </div>
@@ -41,7 +45,7 @@
         <!-- Attach one of your workout templates (WORKOUT posts only) -->
         <div *ngIf="draftActivityType === 'WORKOUT'" class="flex items-center gap-2">
             <i-feather name="zap" class="text-orange-500 shrink-0" style="width:13px;height:13px;"></i-feather>
-            <select [(ngModel)]="draftWorkoutId"
+            <select [(ngModel)]="draftWorkoutId" (ngModelChange)="saveDraft()"
                 class="flex-1 text-[11px] rounded-lg px-2.5 py-1.5 border border-gray-200 bg-white text-gray-700
                        focus:outline-none focus:ring-1 focus:border-orange-400 focus:ring-orange-400/30">
                 <option [ngValue]="null">Link a workout template (optional)…</option>

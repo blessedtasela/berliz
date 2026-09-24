@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { FilterState } from 'src/app/models/FilterState.interface';
+import { FilterState, SearchSortOption } from 'src/app/models/FilterState.interface';
 import { Notifications } from 'src/app/models/Notifications.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -22,6 +22,19 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
   isSearch = false;
   isAdmin = false;
   refreshing = false;
+
+  // Was never bound to app-search-panel's [sortOptions] at all -- the input
+  // defaulted to [], so the panel's whole filter-chip row rendered empty.
+  sortOptions: SearchSortOption[] = [
+    { key: 'unread', label: 'Unread', priority: true },
+    { key: 'read', label: 'Read', priority: true },
+    { key: 'today', label: 'Today', priority: true },
+    { key: 'yesterday', label: 'Yesterday', priority: true },
+    { key: 'week', label: 'This Week', priority: true },
+    { key: 'month', label: 'This Month', priority: false },
+    { key: 'range', label: 'Date Range', priority: false },
+    { key: 'exact-date', label: 'Exact Date', priority: false },
+  ];
 
   private subscriptions: Subscription[] = [];
 
@@ -67,31 +80,49 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
   }
 
   onFilterStateChange(state: FilterState) {
+    this.isSearch = !!(state.query || (state.selectedSorts && state.selectedSorts.length));
     this.notificationData = this.rawNotifications.filter(notification => this.matchesFilter(notification, state));
     this.totalNotifications = this.notificationData.length;
   }
 
   private matchesFilter(notification: Notifications, state: FilterState): boolean {
-    const filterState = state as any;
-    if (!filterState) {
-      return true;
+    if (!state) return true;
+
+    // The real text field is `notification` (see Notifications.interface.ts)
+    // -- `title` never existed on this model, and `message` is optional, so
+    // matching against those two alone meant a search almost never matched
+    // anything: every result got filtered out.
+    if (state.query) {
+      const term = state.query.toLowerCase();
+      const content = `${notification.notification ?? ''} ${notification.message ?? ''}`.toLowerCase();
+      if (!content.includes(term)) return false;
     }
 
-    if (filterState.query) {
-      const term = String(filterState.query).toLowerCase();
-      const content = `${(notification as any).title ?? ''} ${(notification as any).message ?? ''}`.toLowerCase();
-      if (!content.includes(term)) {
-        return false;
-      }
+    const selectedSorts = (state.selectedSorts || []).filter(s => s !== 'range' && s !== 'exact-date');
+    if (selectedSorts.length > 0) {
+      const now = new Date();
+      const date = new Date(notification.date);
+      const normalizeDay = (d: Date) => { const c = new Date(d); c.setHours(0, 0, 0, 0); return c.getTime(); };
+      const todayKey = normalizeDay(now);
+      const yesterdayKey = normalizeDay(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1));
+
+      const matchesAllSelected = selectedSorts.every(sort => {
+        switch (sort) {
+          case 'read': return notification.read === true;
+          case 'unread': return notification.read === false;
+          case 'today': return normalizeDay(date) === todayKey;
+          case 'yesterday': return normalizeDay(date) === yesterdayKey;
+          case 'week': return (now.getTime() - date.getTime()) / 86_400_000 <= 7;
+          case 'month': return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+          default: return true;
+        }
+      });
+      if (!matchesAllSelected) return false;
     }
 
-    if (filterState.type && (notification as any).type !== filterState.type) {
-      return false;
-    }
-
-    if (filterState.status && (notification as any).status !== filterState.status) {
-      return false;
-    }
+    if (state.startDate && new Date(notification.date) < new Date(state.startDate)) return false;
+    if (state.endDate && new Date(notification.date) > new Date(state.endDate)) return false;
+    if (state.exactDate && new Date(notification.date).toDateString() !== new Date(state.exactDate).toDateString()) return false;
 
     return true;
   }
@@ -117,21 +148,6 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
         this.loadNotifications();
       })
     );
-  }
-
-  /** Child component sends filtered results */
-  handleSearchResults(results: Notifications[]): void {
-    this.isSearch = true;
-    this.notificationData = results;
-    this.totalNotifications = results.length;
-    console.log('PARENT RECEIVED:', this.notificationData.length); // 👈 add this
-  }
-
-  /** Reset search and show full list again */
-  clearSearch(): void {
-    this.isSearch = false;
-    this.notificationData = this.rawNotifications;
-    this.totalNotifications = this.rawNotifications.length;
   }
 
   webSocketListeners() {

@@ -7,6 +7,7 @@ import { IconsModule } from '../icons/icons.module';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 import { DateStripComponent } from 'src/app/shared/date-strip/date-strip.component';
 import { TimePickerComponent } from 'src/app/shared/time-picker/time-picker.component';
+import { DraftResumeBannerComponent } from 'src/app/shared/draft-resume-banner/draft-resume-banner.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { TimePickerComponent } from 'src/app/shared/time-picker/time-picker.comp
     MatDialogModule,
     IconsModule,
     DateStripComponent,
-    TimePickerComponent
+    TimePickerComponent,
+    DraftResumeBannerComponent
   ]
 })
 export class BookingModule { }
