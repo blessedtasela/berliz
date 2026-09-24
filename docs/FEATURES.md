@@ -542,6 +542,16 @@ _Committed directly to `master`, one batch per commit — see commit messages fo
   three specs were updated — two had no `ActivatedRoute` provider at all,
   and two had stale single-argument `toHaveBeenCalledWith` assertions.
   `berliz@9d0898963`.
+- **Fixed two My Bookings bugs.** A trainer/center landed on "My bookings"
+  (their own client-side bookings, almost always empty for a provider)
+  instead of "Requests" (sessions clients booked WITH them — their actual
+  activity), so confirmed/completed bookings were invisible until they
+  clicked over manually — now defaults a provider straight to Requests,
+  without overriding a manual switch back. Also, clicking a booking card
+  did nothing for any status except a still-pending request in provider
+  mode; added a read-only "Booking details" modal (counterparty, full
+  date/time/notes/applied reward, requested/updated timestamps) for every
+  other status/mode. `berliz@8f7d9ea32` (+ tests).
 
 ### Unreleased — "Post interaction & UX" work
 _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
