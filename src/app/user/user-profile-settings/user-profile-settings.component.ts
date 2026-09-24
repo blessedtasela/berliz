@@ -37,6 +37,7 @@ import { BlockService } from 'src/app/services/block.service';
 import { BlockedUser } from 'src/app/models/block.model';
 import { NavControlsService, NavControlsStyle, NavControlsAppearance } from 'src/app/services/nav-controls.service';
 import { NavbarStyleService, NavbarStyle } from 'src/app/services/navbar-style.service';
+import { ThemeService, ThemeMode } from 'src/app/services/theme.service';
 import { TodaysTodoPromptService, TodaysTodoPromptFrequency } from 'src/app/services/todays-todo-prompt.service';
 import { WhatsNewService } from 'src/app/services/whats-new.service';
 import { WebAuthnService } from 'src/app/services/webauthn.service';
@@ -113,6 +114,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     private navControls: NavControlsService,
     public whatsNew: WhatsNewService,
     private navbarStyleService: NavbarStyleService,
+    private themeService: ThemeService,
     private todaysTodoPromptService: TodaysTodoPromptService,
     public webAuthnService: WebAuthnService,
   ) { }
@@ -433,6 +435,21 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
 
   setNavbarStyle(style: NavbarStyle): void {
     this.navbarStyleService.setStyle(style);
+  }
+
+  // ═══════════ APPEARANCE (LIGHT / DARK / SYSTEM) ═══════════
+  // Per-device (localStorage) — see ThemeService. Only affects the
+  // dashboard chrome + whatever pages have been converted to dark: variants
+  // so far — the public marketing site stays permanently dark by design,
+  // same as before this setting existed.
+
+  get themeMode(): ThemeMode {
+    return this.themeService.mode;
+  }
+
+  setThemeMode(mode: ThemeMode): void {
+    this.themeService.setMode(mode);
+    this.whatsNew.markSeen('theme-settings');
   }
 
   // ═══════════ DAILY PLANNING PROMPT ═══════════

@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
  * shipped feature, never reuse or rename a key once it's live (that would
  * silently re-surface the badge for everyone who already saw it).
  */
-export type WhatsNewKey = 'workout-history' | 'exercise-suggestions' | 'nav-controls-settings' | 'scheduled-runs';
+export type WhatsNewKey = 'workout-history' | 'exercise-suggestions' | 'nav-controls-settings' | 'scheduled-runs' | 'theme-settings';
 
 const SEEN_KEY_PREFIX = 'whatsNewSeen_';
 

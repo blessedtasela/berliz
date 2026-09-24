@@ -133,7 +133,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D10 | Transparent trainer/center pricing + book CTA on every relevant surface | ✅ | ✚ |
 | D11 | Pre-renewal reminder + ≤2-tap cancel | ✅ | ✚ | |
 | D12 | Value-first onboarding (one real action before any paywall) | ✅ | — |
-| D13 | Dark mode (app-wide) | ⏸ deferred | — | ~150 components with hard-coded light classes; needs its own dedicated theming pass, not a batch |
+| D13 | Dark mode (app-wide) | 🚧 | — | Real infrastructure now: Tailwind `darkMode: 'class'`, a `ThemeService` (Light/Dark/System, per-device like the other display prefs), a toggle in Settings ("Appearance" card). Converted so far: the dashboard shell (`sidebar` layout wrapper + `TopBar`) and the full Settings page. The public marketing site (`topbar` layout) is untouched on purpose — it's permanently dark by brand design already, same as the mobile app's own legal/marketing screens. The other ~560 dashboard templates still render their existing light-only classes for now — a real, non-broken intermediate state (dark chrome, light content cards), not full app-wide coverage yet. |
 | D14 | "Do this workout" — clone a linked workout from a feed post | ✅ | ✚ |
 | D15 | Saved / bookmarked posts & workouts | ✅ | ✚ |
 
@@ -176,6 +176,28 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Dark mode infrastructure + dashboard shell + Settings (D13)
+
+Real theming infrastructure, not a CSS-variable rewrite: Tailwind's own `darkMode: 'class'`
+strategy, so every `dark:` utility already available in Tailwind just works once the `dark`
+class is on `<html>`. New `ThemeService` (`light` / `dark` / `system`, per-device localStorage,
+same pattern as `NavbarStyleService`/`NavControlsService`) applies it once in `AppComponent`'s
+constructor and re-applies on live OS-level scheme changes while in `system` mode.
+
+New "Appearance" card in Settings (`user-profile-settings`), styled the same 3-option
+radio-card pattern as the existing Sidebar display / Navbar appearance cards, with a `NEW`
+badge via the existing `WhatsNewService`.
+
+Converted so far: the dashboard shell (`AppComponent`'s `sidebar` layout wrapper, `TopBar`)
+and the entire Settings page (all 10 cards). Deliberately **not** touched: the public
+marketing site (`topbar` layout in `AppComponent`) — it's permanently dark by brand design
+already (`bg-black` wrapper), same design intent as the mobile app's own always-dark
+Trainer/Center-detail and legal pages, so a light/dark toggle has nothing to do there. The
+remaining ~560 dashboard templates keep their existing light-only classes for now, which
+means the dashboard currently renders as dark chrome around light content cards — a real,
+non-broken intermediate state, not full coverage. Converting the rest is its own follow-up
+pass, same scale of effort as the original mobile app's own dark-mode rollout.
 
 ### Unreleased — Growth & marketing: reward redemption enforced at booking time
 
