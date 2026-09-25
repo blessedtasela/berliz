@@ -93,7 +93,7 @@
     </div>
 
     <div *ngIf="activeTab === 'earnings'" class="rounded-2xl border border-gray-100 bg-white p-4 sm:p-5">
-        <app-earnings-view></app-earnings-view>
+        <app-earnings-view [deepLinkPayoutId]="deepLinkPayoutId"></app-earnings-view>
     </div>
 
 </section>
