@@ -258,6 +258,7 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.store.select(TestimonialSelectors.selectTestimonialsByCenter).subscribe(list => {
         this.centerTestimonials = this.forThisCenter(list);
+        this.scrollToDeepLinkTestimonial();
       })
     );
 
@@ -312,6 +313,28 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
 
   private forThisCenter<T extends { centerId: number }>(list: T[] | null): T[] {
     return (list ?? []).filter(item => item.centerId === this.centerId);
+  }
+
+  /** Deep link target -- ?testimonialId=<id> from search/notifications. Scrolled to (and briefly highlighted) once its section has actually rendered. */
+  private deepLinkTestimonialId: number | null = null;
+  private deepLinkTestimonialHandled = false;
+  highlightedTestimonialId: number | null = null;
+
+  private scrollToDeepLinkTestimonial(): void {
+    if (this.deepLinkTestimonialId === null) {
+      const raw = this.route.snapshot.queryParamMap.get('testimonialId');
+      this.deepLinkTestimonialId = raw ? Number(raw) : 0;
+    }
+    if (!this.deepLinkTestimonialId || this.deepLinkTestimonialHandled) return;
+
+    const exists = this.centerTestimonials.some(t => t.id === this.deepLinkTestimonialId);
+    if (!exists) return;
+
+    this.deepLinkTestimonialHandled = true;
+    this.highlightedTestimonialId = this.deepLinkTestimonialId;
+    setTimeout(() => {
+      document.getElementById(`testimonial-${this.deepLinkTestimonialId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
   }
 
   private buildCategories(): void {

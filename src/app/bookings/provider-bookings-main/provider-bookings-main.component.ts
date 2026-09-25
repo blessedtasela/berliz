@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
@@ -37,6 +37,9 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
   bookings: Booking[] = [];
   loading = false;
 
+  /** ?payoutId=<id> from a notification deep link -- passed through to EarningsViewComponent, which scrolls to and highlights that row. */
+  deepLinkPayoutId: number | null = null;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -44,9 +47,16 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     private actions$: Actions,
     private snackBar: SnackBarService,
     private router: Router,
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
+    const rawPayoutId = this.route.snapshot.queryParamMap.get('payoutId');
+    if (rawPayoutId) {
+      this.deepLinkPayoutId = Number(rawPayoutId);
+      this.activeTab = 'earnings';
+    }
+
     this.store.dispatch(loadMyProviderBookings());
     this.store.select(selectProviderBookings)
       .pipe(takeUntil(this.destroy$))

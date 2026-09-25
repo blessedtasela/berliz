@@ -7,4 +7,4 @@
 <app-admin-search [selector]="selectUsers" [fields]="userSearchFields"
   placeholder="Search users..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-user-header [usersData]="usersData" [totalUsers]="totalUsers" [usersLength]="usersLength"></app-user-header>
-<app-user-list [usersData]="usersData"></app-user-list>
+<app-user-list [usersData]="usersData" [deepLinkUserId]="deepLinkUserId"></app-user-list>
