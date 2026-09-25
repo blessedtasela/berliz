@@ -218,7 +218,10 @@
         </div>
 
         <div *ngIf="centerTestimonials.length > 0" class="flex flex-col gap-2">
-            <div *ngFor="let testimonial of centerTestimonials" class="bg-gray-50 rounded-xl p-4 flex flex-col gap-2">
+            <div *ngFor="let testimonial of centerTestimonials" [id]="'testimonial-' + testimonial.id"
+                class="bg-gray-50 rounded-xl p-4 flex flex-col gap-2 border transition-colors duration-700"
+                [class.border-transparent]="highlightedTestimonialId !== testimonial.id"
+                [class.border-red-500]="highlightedTestimonialId === testimonial.id">
                 <p class="text-xs text-gray-600 leading-relaxed italic">"{{ testimonial.testimonial }}"</p>
                 <div class="flex items-center justify-between gap-2 pt-2 border-t border-gray-200">
                     <span class="text-[11px] font-semibold text-red-600 uppercase tracking-wide truncate">{{ testimonialAuthor(testimonial) }}</span>

@@ -254,8 +254,31 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
 
       this.store.select(selectTestimonialsByTrainer).subscribe(list => {
         this.trainerTestimonials = (list ?? []).filter(t => t.trainerId === id);
+        this.scrollToDeepLinkTestimonial();
       })
     );
+  }
+
+  /** Deep link target -- ?testimonialId=<id> from search/notifications. Scrolled to (and briefly highlighted) once its section has actually rendered. */
+  private deepLinkTestimonialId: number | null = null;
+  private deepLinkTestimonialHandled = false;
+  highlightedTestimonialId: number | null = null;
+
+  private scrollToDeepLinkTestimonial(): void {
+    if (this.deepLinkTestimonialId === null) {
+      const raw = this.route.snapshot.queryParamMap.get('testimonialId');
+      this.deepLinkTestimonialId = raw ? Number(raw) : 0;
+    }
+    if (!this.deepLinkTestimonialId || this.deepLinkTestimonialHandled) return;
+
+    const exists = this.trainerTestimonials.some(t => t.id === this.deepLinkTestimonialId);
+    if (!exists) return;
+
+    this.deepLinkTestimonialHandled = true;
+    this.highlightedTestimonialId = this.deepLinkTestimonialId;
+    setTimeout(() => {
+      document.getElementById(`testimonial-${this.deepLinkTestimonialId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
   }
 
   /**

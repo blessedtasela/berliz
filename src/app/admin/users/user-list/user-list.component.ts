@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -23,8 +23,10 @@ import { memoizePhotoUriByKey, photoDataUri } from 'src/app/shared/photo-lightbo
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.css']
 })
-export class UserListComponent {
+export class UserListComponent implements OnChanges {
   @Input() usersData: Users[] = [];
+  @Input() deepLinkUserId: number | null = null;
+  private deepLinkHandled = false;
   responseMessage: any;
   showFullData: boolean = false;
   imageChangedEvent: any = '';
@@ -57,6 +59,13 @@ export class UserListComponent {
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnChanges(): void {
+    if (!this.deepLinkUserId || this.deepLinkHandled) return;
+    if (!this.usersData.some(u => u.id === this.deepLinkUserId)) return;
+    this.deepLinkHandled = true;
+    this.openUserDetails(this.deepLinkUserId);
   }
 
   goToProfile(id: number): void {

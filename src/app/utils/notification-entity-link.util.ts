@@ -14,13 +14,14 @@ const KNOWN_ENTITY_TYPES = new Set([
   'message', 'connection', 'peerSession', 'booking', 'post', 'workoutLog',
   'workout', 'run', 'task', 'faq', 'payment', 'subscription', 'payout',
   'partnership', 'centerProfile', 'trainerProfile', 'accountSettings',
-  'memberProfile', 'accountabilityNudge', 'recap',
+  'memberProfile', 'accountabilityNudge', 'recap', 'clientIntake',
+  'testimonial', 'category',
 ]);
 
 /** True when this notification's entityType is one navigateToNotificationEntity can actually route (and, for the types that need one, it has an entityId too). */
 export function notificationHasDeepLink(notification: Notifications): boolean {
   if (!notification.entityType || !KNOWN_ENTITY_TYPES.has(notification.entityType)) return false;
-  if ((notification.entityType === 'message' || notification.entityType === 'post') && !notification.entityId) return false;
+  if ((notification.entityType === 'message' || notification.entityType === 'post' || notification.entityType === 'clientIntake') && !notification.entityId) return false;
   return true;
 }
 
@@ -61,13 +62,20 @@ export function navigateToNotificationEntity(router: Router, notification: Notif
       router.navigate(['/dashboard/timeline'], { queryParams: { postId: notification.entityId } });
       return true;
 
+    // A verified/self-logged workout -- has its own entityId, unlike the
+    // template-level 'workout' self-confirmation below.
     case 'workoutLog':
+      router.navigate(['/dashboard/workouts/history'], notification.entityId ? { queryParams: { logId: notification.entityId } } : {});
+      return true;
+
+    // Template create/update/delete self-confirmation -- notify() never sets
+    // an entityId here, so there's nothing more specific to deep-link to.
     case 'workout':
       router.navigate(['/dashboard/workouts']);
       return true;
 
     case 'run':
-      router.navigate(['/dashboard/runs']);
+      router.navigate(['/dashboard/runs'], notification.entityId ? { queryParams: { logId: notification.entityId } } : {});
       return true;
 
     case 'task':
@@ -83,8 +91,10 @@ export function navigateToNotificationEntity(router: Router, notification: Notif
       router.navigate(['/dashboard/my-subscriptions']);
       return true;
 
+    // Lands on the provider's own Bookings page, which is where the
+    // Earnings tab (and this specific payout row) actually lives.
     case 'payout':
-      router.navigate(['/dashboard/my-bookings']);
+      router.navigate(['/dashboard/my-bookings'], notification.entityId ? { queryParams: { payoutId: notification.entityId } } : {});
       return true;
 
     case 'partnership':
@@ -112,8 +122,23 @@ export function navigateToNotificationEntity(router: Router, notification: Notif
       router.navigate(['/dashboard/recap']);
       return true;
 
-    // 'testimonial' / 'category' have no single obvious destination page yet
-    // -- falls through to the caller's existing detail-dialog behavior.
+    case 'clientIntake':
+      if (!notification.entityId) return false;
+      router.navigate(['/dashboard/client-intake', notification.entityId]);
+      return true;
+
+    // Both notify() the acting admin only (self-confirmation on add/update/
+    // delete/status change), so the admin list is always the right target --
+    // there is no other recipient to deep-link a specific record for.
+    case 'testimonial':
+      if (notification.entityId) router.navigate(['/dashboard/hub/testimonials', notification.entityId]);
+      else router.navigate(['/dashboard/hub/testimonials']);
+      return true;
+
+    case 'category':
+      router.navigate(['/dashboard/hub/categories']);
+      return true;
+
     default:
       return false;
   }

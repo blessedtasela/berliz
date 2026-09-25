@@ -30,8 +30,10 @@
 
     <!-- Payout list -->
     <div *ngIf="payouts.length > 0" class="flex flex-col gap-2">
-        <div *ngFor="let p of payouts"
-            class="p-3 border border-gray-200 rounded-xl bg-white flex items-start justify-between gap-3">
+        <div *ngFor="let p of payouts" [id]="'payout-' + p.id"
+            class="p-3 border rounded-xl bg-white flex items-start justify-between gap-3 transition-colors duration-700"
+            [class.border-gray-200]="highlightedPayoutId !== p.id"
+            [class.border-red-500]="highlightedPayoutId === p.id">
             <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between gap-2">
                     <p class="text-sm font-semibold text-gray-900">

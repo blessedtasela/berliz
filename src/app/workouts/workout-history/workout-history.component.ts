@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { take } from 'rxjs';
 
@@ -52,16 +52,24 @@ export class WorkoutHistoryComponent implements OnInit {
   logs: WorkoutLogResponse[] = [];
   loading = false;
 
+  /** ?logId=<id> from a notification/search deep link. Scrolled to (and briefly highlighted) once its card has actually rendered. */
+  highlightedLogId: number | null = null;
+  private deepLinkLogId: number | null = null;
+  private deepLinkHandled = false;
+
   constructor(
     private workoutService: WorkoutService,
     private dialog: MatDialog,
     private snackbar: SnackBarService,
     private authService: AuthService,
     private whatsNew: WhatsNewService,
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
     this.whatsNew.markSeen('workout-history');
+    const raw = this.route.snapshot.queryParamMap.get('logId');
+    this.deepLinkLogId = raw ? Number(raw) : null;
     this.refresh();
   }
 
@@ -73,12 +81,24 @@ export class WorkoutHistoryComponent implements OnInit {
         next: (res) => {
           this.logs = res?.data ?? [];
           this.loading = false;
+          this.scrollToDeepLinkLog();
         },
         error: () => {
           this.logs = [];
           this.loading = false;
         },
       });
+  }
+
+  private scrollToDeepLinkLog(): void {
+    if (!this.deepLinkLogId || this.deepLinkHandled) return;
+    if (!this.logs.some(l => l.id === this.deepLinkLogId)) return;
+
+    this.deepLinkHandled = true;
+    this.highlightedLogId = this.deepLinkLogId;
+    setTimeout(() => {
+      document.getElementById(`workout-log-${this.deepLinkLogId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
   }
 
   // ── Stats (all computed client-side from the already-loaded logs — no

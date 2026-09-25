@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -28,6 +28,11 @@ export class EarningsViewComponent implements OnInit, OnDestroy {
   pendingTotal = 0;
   paidTotal = 0;
 
+  /** ?payoutId=<id> from a notification deep link, set by the parent tab host. Scrolled to (and briefly highlighted) once its row has actually rendered. */
+  @Input() deepLinkPayoutId: number | null = null;
+  highlightedPayoutId: number | null = null;
+  private deepLinkHandled = false;
+
   private destroy$ = new Subject<void>();
 
   constructor(private store: Store) { }
@@ -37,7 +42,10 @@ export class EarningsViewComponent implements OnInit, OnDestroy {
 
     this.store.select(selectMyPayouts)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(payouts => this.payouts = payouts ?? []);
+      .subscribe(payouts => {
+        this.payouts = payouts ?? [];
+        this.scrollToDeepLinkPayout();
+      });
 
     this.store.select(selectPayoutLoading)
       .pipe(takeUntil(this.destroy$))
@@ -55,6 +63,17 @@ export class EarningsViewComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private scrollToDeepLinkPayout(): void {
+    if (!this.deepLinkPayoutId || this.deepLinkHandled) return;
+    if (!this.payouts.some(p => p.id === this.deepLinkPayoutId)) return;
+
+    this.deepLinkHandled = true;
+    this.highlightedPayoutId = this.deepLinkPayoutId;
+    setTimeout(() => {
+      document.getElementById(`payout-${this.deepLinkPayoutId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
   }
 
   statusClasses(status: string): string {

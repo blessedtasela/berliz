@@ -262,8 +262,10 @@
     </div>
 
     <div *ngIf="!historyLoading && runLogs.length > 0" class="flex flex-col gap-2">
-      <div *ngFor="let entry of runLogs; trackBy: trackByLogId"
-        class="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
+      <div *ngFor="let entry of runLogs; trackBy: trackByLogId" [id]="'run-log-' + entry.id"
+        class="bg-white rounded-xl border p-4 flex items-center justify-between gap-3 transition-colors duration-700"
+        [class.border-gray-200]="highlightedLogId !== entry.id"
+        [class.border-red-500]="highlightedLogId === entry.id">
         <div class="min-w-0">
           <p class="text-xs font-bold text-gray-900 flex items-center gap-2">
             <span class="truncate">{{ entry.title || (entry.runEventTitle || 'Run') }}</span>

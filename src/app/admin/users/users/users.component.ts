@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
@@ -18,6 +19,9 @@ export class UsersComponent {
   searchComponent: string = 'user'
   isSearch: boolean = true;
 
+  /** ?userId=<id> from search -- passed through to UserListComponent, which opens that user's details modal once it has loaded. */
+  deepLinkUserId: number | null = null;
+
   readonly selectUsers = selectUsers;
   readonly userSearchFields: AdminSearchField<Users>[] = [
     { value: 'email', label: 'Email', accessor: u => u.email },
@@ -28,10 +32,14 @@ export class UsersComponent {
   ];
 
   constructor(private store: Store,
+    private route: ActivatedRoute,
     private rxStompService: RxStompService) {
   }
 
   ngOnInit(): void {
+    const raw = this.route.snapshot.queryParamMap.get('userId');
+    this.deepLinkUserId = raw ? Number(raw) : null;
+
     this.store.dispatch(loadAllUsers());
     this.handleEmitEvent()
     // this.userStateService.allUsersData$.subscribe((cachedData) => {

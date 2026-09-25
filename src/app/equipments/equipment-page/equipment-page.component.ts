@@ -1,4 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
@@ -56,22 +57,44 @@ export class EquipmentPageComponent implements OnInit, OnDestroy {
   showFullData = false;
   visibleItems = this.pageSize;
 
+  /** ?equipmentId=<id> from search -- opens that item's details modal once it's actually loaded. */
+  private deepLinkEquipmentId: number | null = null;
+  private deepLinkHandled = false;
+
   private subscriptions: Subscription[] = [];
 
   constructor(
     private store: Store,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
+    const raw = this.route.snapshot.queryParamMap.get('equipmentId');
+    this.deepLinkEquipmentId = raw ? Number(raw) : null;
+
     this.store.dispatch(loadAllCenterEquipment());
     this.store.dispatch(loadActiveCategories());
 
     this.subscriptions.push(
-      this.store.select(selectCenterEquipment).subscribe(list => this.equipment = list ?? []),
+      this.store.select(selectCenterEquipment).subscribe(list => {
+        this.equipment = list ?? [];
+        this.openDeepLinkedEquipment();
+      }),
       this.store.select(selectActiveCategories).subscribe(list => this.categories = list ?? []),
       this.store.select(selectUser).subscribe(user => this.user = user ?? null)
     );
+  }
+
+  /** Only opens from within the login-gated preview slice -- never bypasses
+   *  the anonymous-visitor cap just because a deep link named a farther id. */
+  private openDeepLinkedEquipment(): void {
+    if (!this.deepLinkEquipmentId || this.deepLinkHandled) return;
+    const item = this.browsableEquipment.find(e => e.id === this.deepLinkEquipmentId);
+    if (!item) return;
+
+    this.deepLinkHandled = true;
+    this.openDetails(item);
   }
 
   ngOnDestroy(): void {
