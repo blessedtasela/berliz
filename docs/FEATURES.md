@@ -167,6 +167,7 @@ instead).
 | Reward redemption at booking time | ✅ | The booking form lets a client attach one of their own available `SessionCredit`s or the provider's own live `Promotion` to the request. A credit flips `available` → `applied` (and a capped promotion's `usageCount` increments) the moment the booking is *created* — not deferred to confirmation — so the same reward can't be attached to two pending bookings at once; both revert automatically if the booking is cancelled before being honored. The applied reward shows as a label on the booking card for the provider to see and honor. `Booking.sessionCredit`/`Booking.promotion` (V47) |
 | Referral program | ✅ | Every user gets a shareable link (`/sign-up?ref=<userId>`) from the My Rewards page. `?ref=` is honored across every account-creation path -- full form signup, quick sign-up (`/quick-sign-up?ref=`), and Google/Facebook on either `/login` or `/quick-sign-up` (`?ref=` forwarded as `referredBy` to `/auth/google`\|`/auth/facebook`) -- tracking a pending `Referral`; once the account is active (immediately for social, on email confirmation otherwise), both sides get a free-session `SessionCredit`. Backend: `Referral`, `ReferralServiceImplement`, `/referral/mine` |
 | "Promo Partner" incentive | ✅ | Three layers: (1) the public profile badge every live promotion already earns for free; (2) a search-ranking boost — `getActiveTrainers`/`getActiveCenters` sort a provider with a live promotion first (stable sort, no schema change); (3) a real payout benefit — `PayoutServiceImplement` charges 10% commission instead of the standard 15% for a completed booking whose provider currently has a live promotion |
+| Subscription-tier perks (search boost, Featured badge, capacity) | ✅ | A trainer/center on the platform's *top paid Plan tier* (§6) gets three additive perks, resolved via the new shared `SubscriptionTierService` (`Subscription.planTier.sortOrder` vs. the role's max active tier): (1) sorts ahead of everyone else in `getActiveTrainers`/`getActiveCenters` — even ahead of the free Promo Partner live-promotion boost above; (2) a `featured` flag on the trainer/center response DTO, rendered as a gold "Featured" badge on search-result cards, the dashboard find-a-provider grid, category-trainer cards, and both profile heroes; (3) guaranteed placement at the top of the public Deals feed for that provider's live promotions (`PromotionResponse.featured`). Every paid tier (not just the top one) also raises a provider's own asset-capacity cap — feature videos for trainers (base 4 + 2/tier), introductions for centers (base 3 + 1/tier). `my-subscriptions-plans` lists the concrete per-tier perks instead of relying on the admin-authored `accessScope` text to describe them |
 | Referral leaderboard | ✅ | "My Rewards" shows the top 10 referrers by completed-referral count, name resolved the same way as everywhere else (trainer/center professional name where applicable). `GET /referral/leaderboard` |
 | Social-share unlock | ✅ | "Share for a bonus free session" on My Rewards -- native share sheet where available (falls back to copy-link), grants a one-time `share_bonus` `SessionCredit` on first share. Trust-based (confirms a share was triggered, doesn't verify a post was actually made), same trust level as the rest of session-credit redemption today |
 | Corporate/gym co-marketing partner codes | ✅ | Any promotion (provider or platform) can carry a private `code` -- set it and it's hidden from the public badge/Deals feed/auto-signup-grant entirely, reachable only by redeeming the exact code (`POST /promotion/redeem/{code}`, "Have a code?" on My Rewards). A platform campaign's code grants an immediate `SessionCredit`, once per user; a provider's coded promo is just surfaced for the caller to see -- the discount is honored manually when booking, same as any other provider promo |
@@ -176,6 +177,29 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Trainer/center subscription-tier perks (search boost, Featured badge, capacity)
+
+- **Search-ranking boost + Featured badge.** A trainer/center on the platform's top paid
+  Plan tier now sorts first in `getActiveTrainers`/`getActiveCenters` (ahead of even the
+  free Promo Partner live-promotion boost) and carries a `featured` flag on its response
+  DTO. Rendered as a gold "Featured" badge on `trainers-search-result`/`center-search-result`
+  cards, the dashboard `find-providers` grid, `category-trainers` cards, and both public
+  profile heroes (`trainers-details-hero`, `center-detail`).
+- **Guaranteed Deals-feed placement.** `PromotionServiceImplement.getPublicFeed()` sorts a
+  top-tier provider's live promotion to the top of the feed and marks it
+  `PromotionResponse.featured`; the Deals page highlights it with a border + badge.
+- **Tier-scaled capacity caps.** Every paid tier (not just the top one) raises a provider's
+  own asset cap: feature videos for trainers (base 4 + 2/tier rank), introductions for
+  centers (base 3 + 1/tier rank) — parity across both roles via each role's existing
+  capacity-limited asset type.
+- **Plans page tells the truth.** `my-subscriptions-plans` now lists the concrete, computed
+  per-tier perks as bullets instead of relying on the admin-authored `accessScope` free text
+  to describe them, so the copy can't drift out of sync with what the backend actually
+  enforces.
+- New shared `SubscriptionTierService` (backend) resolves `Subscription.planTier.sortOrder`
+  against a role's max active tier once, instead of duplicating that logic across
+  `TrainerServiceImplement`, `CenterServiceImplement`, and `PromotionServiceImplement`.
 
 ### Unreleased — Dark mode: first batch of high-traffic surfaces (D13 continued)
 
