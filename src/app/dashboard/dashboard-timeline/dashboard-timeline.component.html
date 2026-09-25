@@ -8,35 +8,35 @@
     <!-- Page header -->
     <div class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+            <div class="w-9 h-9 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
                 <i-feather name="activity" class="text-red-600" style="width:16px;height:16px;"></i-feather>
             </div>
             <div>
-                <h1 class="text-sm font-bold text-gray-900">Timeline</h1>
-                <p class="text-[11px] text-gray-400">Share an update, and see what your connections are up to</p>
+                <h1 class="text-sm font-bold text-gray-900 dark:text-gray-100">Timeline</h1>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500">Share an update, and see what your connections are up to</p>
             </div>
         </div>
         <app-refresh-button [loading]="loading" (refresh)="refresh()"></app-refresh-button>
     </div>
 
     <!-- ── COMPOSE ───────────────────────────────────────────────────────── -->
-    <div class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-3">
 
         <app-draft-resume-banner [draft]="pendingDraft" itemLabel="post"
             (resume)="resumeDraft()" (startFresh)="discardPendingDraft()"></app-draft-resume-banner>
 
         <div class="flex items-start gap-3">
-            <img [src]="myPhotoSrc" alt="" class="w-9 h-9 rounded-full object-cover object-top border border-gray-200 shrink-0" />
+            <img [src]="myPhotoSrc" alt="" class="w-9 h-9 rounded-full object-cover object-top border border-gray-200 dark:border-gray-700 shrink-0" />
             <textarea [(ngModel)]="draftContent" (ngModelChange)="saveDraft()" rows="3" placeholder="Share an update…" [maxlength]="maxContentLength"
-                class="flex-1 resize-none bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-900
-                       placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition"></textarea>
+                class="flex-1 resize-none bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-gray-100
+                       placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition"></textarea>
         </div>
 
         <!-- What kind of update? (optional) -->
         <div class="flex flex-wrap gap-1.5">
             <button *ngFor="let opt of activityOptions" type="button" (click)="setActivityType(opt.value)"
                 class="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full border transition"
-                [ngClass]="draftActivityType === opt.value ? opt.tone : 'text-gray-500 bg-white border-gray-200 hover:border-gray-300'">
+                [ngClass]="draftActivityType === opt.value ? opt.tone : 'text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'">
                 <i-feather [name]="opt.icon" style="width:12px;height:12px;"></i-feather>
                 {{ opt.label }}
             </button>
@@ -46,7 +46,7 @@
         <div *ngIf="draftActivityType === 'WORKOUT'" class="flex items-center gap-2">
             <i-feather name="zap" class="text-orange-500 shrink-0" style="width:13px;height:13px;"></i-feather>
             <select [(ngModel)]="draftWorkoutId" (ngModelChange)="saveDraft()"
-                class="flex-1 text-[11px] rounded-lg px-2.5 py-1.5 border border-gray-200 bg-white text-gray-700
+                class="flex-1 text-[11px] rounded-lg px-2.5 py-1.5 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300
                        focus:outline-none focus:ring-1 focus:border-orange-400 focus:ring-orange-400/30">
                 <option [ngValue]="null">Link a workout template (optional)…</option>
                 <option *ngFor="let w of myTemplates" [ngValue]="w.id">{{ w.name }}</option>
@@ -55,19 +55,19 @@
 
         <!-- Photo preview / uploader -->
         <div *ngIf="uploadedPhoto" class="relative w-fit">
-            <img [src]="uploadedPhoto.photoUrl | strapiUrl" alt="" class="max-h-40 rounded-xl border border-gray-200" />
+            <img [src]="uploadedPhoto.photoUrl | strapiUrl" alt="" class="max-h-40 rounded-xl border border-gray-200 dark:border-gray-700" />
             <button type="button" (click)="removePhoto()"
-                class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gray-900 text-white flex items-center justify-center
-                       hover:bg-black transition">
+                class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 flex items-center justify-center
+                       hover:bg-black dark:hover:bg-white transition">
                 <i-feather name="x" style="width:12px;height:12px;"></i-feather>
             </button>
         </div>
 
-        <p *ngIf="uploadError" class="text-[11px] text-red-600">{{ uploadError }}</p>
+        <p *ngIf="uploadError" class="text-[11px] text-red-600 dark:text-red-400">{{ uploadError }}</p>
 
-        <div class="flex items-center justify-between gap-2 pt-1 border-t border-gray-100">
-            <label class="flex items-center gap-1.5 text-[11px] font-semibold text-gray-500 hover:text-gray-900
-                          cursor-pointer transition px-2 py-1.5 rounded-lg hover:bg-gray-50">
+        <div class="flex items-center justify-between gap-2 pt-1 border-t border-gray-100 dark:border-gray-800">
+            <label class="flex items-center gap-1.5 text-[11px] font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100
+                          cursor-pointer transition px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
                 <i-feather *ngIf="!uploading" name="image" style="width:14px;height:14px;"></i-feather>
                 <i-feather *ngIf="uploading" name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>
                 {{ uploading ? 'Uploading…' : 'Add photo' }}
@@ -86,46 +86,46 @@
     </div>
 
     <!-- ── TAB TOGGLE ────────────────────────────────────────────────────── -->
-    <div class="bg-gray-100 rounded-xl p-1 flex gap-1 w-fit">
+    <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-1 flex gap-1 w-fit">
         <button type="button" (click)="setTab('feed')"
             class="px-4 py-1.5 rounded-lg text-xs font-semibold transition"
-            [ngClass]="tab === 'feed' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'">
+            [ngClass]="tab === 'feed' ? 'bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'">
             Feed
         </button>
         <button type="button" (click)="setTab('mine')"
             class="px-4 py-1.5 rounded-lg text-xs font-semibold transition"
-            [ngClass]="tab === 'mine' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'">
+            [ngClass]="tab === 'mine' ? 'bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'">
             My Timeline
         </button>
     </div>
 
     <!-- ── FEED / MY TIMELINE ────────────────────────────────────────────── -->
-    <div *ngIf="loading && posts.length === 0" class="bg-white border border-gray-200 rounded-2xl p-10 flex items-center justify-center">
-        <div class="w-8 h-8 rounded-full border-2 border-gray-200 border-t-red-600 animate-spin"></div>
+    <div *ngIf="loading && posts.length === 0" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-10 flex items-center justify-center">
+        <div class="w-8 h-8 rounded-full border-2 border-gray-200 dark:border-gray-700 border-t-red-600 animate-spin"></div>
     </div>
 
     <div *ngFor="let post of posts; trackBy: trackByPostId"
-        class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
+        class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex flex-col gap-3">
 
         <div class="flex items-center justify-between gap-2">
             <a [routerLink]="isMine(post) ? null : ['/dashboard/user', post.authorUsername || post.authorId]"
                 class="flex items-center gap-2.5 min-w-0" [class.hover:opacity-80]="!isMine(post)">
-                <img *ngIf="authorPhotoSrc(post) as src" [src]="src" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
-                <div *ngIf="!authorPhotoSrc(post)" class="w-8 h-8 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <img *ngIf="authorPhotoSrc(post) as src" [src]="src" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-gray-700 shrink-0" />
+                <div *ngIf="!authorPhotoSrc(post)" class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
                     <i-feather name="user" class="text-red-600" style="width:14px;height:14px;"></i-feather>
                 </div>
                 <div class="flex flex-col leading-tight min-w-0">
-                    <span class="text-xs font-bold text-gray-900 truncate">{{ post.authorName }}{{ isMine(post) ? ' (You)' : '' }}</span>
-                    <span class="text-[10px] text-gray-400">{{ post.date | date:'mediumDate' }}</span>
+                    <span class="text-xs font-bold text-gray-900 dark:text-gray-100 truncate">{{ post.authorName }}{{ isMine(post) ? ' (You)' : '' }}</span>
+                    <span class="text-[10px] text-gray-400 dark:text-gray-500">{{ post.date | date:'mediumDate' }}</span>
                 </div>
             </a>
 
             <button *ngIf="isMine(post)" type="button" (click)="deletePost(post)"
-                class="text-gray-300 hover:text-red-600 transition p-1">
+                class="text-gray-300 dark:text-gray-600 hover:text-red-600 dark:hover:text-red-500 transition p-1">
                 <i-feather name="trash-2" style="width:14px;height:14px;"></i-feather>
             </button>
             <button *ngIf="!isMine(post)" type="button" (click)="reportPost(post)" title="Report"
-                class="text-gray-300 hover:text-amber-500 transition p-1">
+                class="text-gray-300 dark:text-gray-600 hover:text-amber-500 transition p-1">
                 <i-feather name="flag" style="width:14px;height:14px;"></i-feather>
             </button>
         </div>
@@ -138,7 +138,7 @@
         </span>
 
         <div>
-            <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line"
+            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line"
                 [ngStyle]="!isExpanded(post) && isLongContent(post)
                     ? { display: '-webkit-box', '-webkit-line-clamp': '5', '-webkit-box-orient': 'vertical', overflow: 'hidden' }
                     : {}">{{ post.content }}</p>
@@ -149,7 +149,7 @@
         </div>
 
         <button *ngIf="post.photoUrl" type="button" (click)="openPostSheet(post)"
-            class="group relative block w-full overflow-hidden rounded-xl border border-gray-100">
+            class="group relative block w-full overflow-hidden rounded-xl border border-gray-100 dark:border-gray-800">
             <img [src]="post.photoUrl | strapiUrl" alt=""
                 class="w-full max-h-96 object-cover transition group-hover:brightness-95" />
             <span class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/10">
@@ -158,11 +158,11 @@
         </button>
 
         <!-- Linked workout template -->
-        <div *ngIf="post.workoutId" class="flex items-center gap-2.5 rounded-xl border border-orange-100 bg-orange-50/60 px-3 py-2">
+        <div *ngIf="post.workoutId" class="flex items-center gap-2.5 rounded-xl border border-orange-100 dark:border-orange-900 bg-orange-50/60 dark:bg-orange-950/30 px-3 py-2">
             <i-feather name="zap" class="text-orange-500 shrink-0" style="width:15px;height:15px;"></i-feather>
-            <span class="text-xs font-bold text-gray-800 truncate flex-1">{{ post.workoutName || 'Workout template' }}</span>
+            <span class="text-xs font-bold text-gray-800 dark:text-gray-200 truncate flex-1">{{ post.workoutName || 'Workout template' }}</span>
             <button type="button" (click)="addWorkoutFromPost(post)" [disabled]="cloningWorkoutPostId === post.id"
-                class="shrink-0 text-[11px] font-semibold text-orange-700 hover:text-orange-900 flex items-center gap-1 transition disabled:opacity-50">
+                class="shrink-0 text-[11px] font-semibold text-orange-700 dark:text-orange-400 hover:text-orange-900 dark:hover:text-orange-300 flex items-center gap-1 transition disabled:opacity-50">
                 <i-feather [name]="cloningWorkoutPostId === post.id ? 'loader' : 'plus'"
                     [class.animate-spin]="cloningWorkoutPostId === post.id" style="width:12px;height:12px;"></i-feather>
                 Add to my workouts
@@ -171,21 +171,22 @@
 
         <!-- D10 — book a provider straight from their post -->
         <div *ngIf="!isMine(post) && (post.authorTrainerId || post.authorCenterId)"
-            class="flex items-center gap-2.5 rounded-xl border border-red-100 bg-red-50/60 px-3 py-2">
+            class="flex items-center gap-2.5 rounded-xl border border-red-100 dark:border-red-900 bg-red-50/60 dark:bg-red-950/30 px-3 py-2">
             <i-feather name="calendar" class="text-red-500 shrink-0" style="width:15px;height:15px;"></i-feather>
-            <span class="text-xs text-gray-600 flex-1">Train with <span class="font-bold text-gray-800">{{ post.authorName }}</span></span>
+            <span class="text-xs text-gray-600 dark:text-gray-400 flex-1">Train with <span class="font-bold text-gray-800 dark:text-gray-200">{{ post.authorName }}</span></span>
             <app-book-provider-button [role]="post.authorRole" [trainerId]="post.authorTrainerId"
                 [centerId]="post.authorCenterId" [providerName]="post.authorName" size="sm" [subtle]="true"></app-book-provider-button>
         </div>
 
-        <div class="border-t border-gray-100 pt-2 flex items-center gap-1.5">
+        <div class="border-t border-gray-100 dark:border-gray-800 pt-2 flex items-center gap-1.5">
             <app-reaction-button [myReaction]="post.myReaction" [count]="post.likes"
                 (react)="onReact(post, $event)" (openList)="openPostLikers(post)"></app-reaction-button>
 
             <button type="button" (click)="toggleComments(post)"
                 class="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition"
                 [class.text-sky-600]="openCommentsPostId === post.id" [class.bg-sky-50]="openCommentsPostId === post.id"
-                [class.text-gray-400]="openCommentsPostId !== post.id" [class.hover:bg-gray-50]="openCommentsPostId !== post.id">
+                [class.text-gray-400]="openCommentsPostId !== post.id" [class.hover:bg-gray-50]="openCommentsPostId !== post.id"
+                [class.dark:hover:bg-gray-800]="openCommentsPostId !== post.id">
                 <i-feather name="message-circle" style="width:13px;height:13px;"></i-feather>
                 {{ post.commentCount || 0 }}
             </button>
@@ -193,7 +194,8 @@
             <button type="button" (click)="saved.toggle('POST', post.id)" [attr.aria-label]="saved.isSaved('POST', post.id) ? 'Remove from saved' : 'Save'"
                 class="ml-auto p-1.5 rounded-lg transition"
                 [class.text-amber-500]="saved.isSaved('POST', post.id)"
-                [class.text-gray-300]="!saved.isSaved('POST', post.id)" [class.hover:text-gray-500]="!saved.isSaved('POST', post.id)">
+                [class.text-gray-300]="!saved.isSaved('POST', post.id)" [class.dark:text-gray-600]="!saved.isSaved('POST', post.id)"
+                [class.hover:text-gray-500]="!saved.isSaved('POST', post.id)" [class.dark:hover:text-gray-400]="!saved.isSaved('POST', post.id)">
                 <i-feather name="bookmark" style="width:14px;height:14px;"
                     [attr.fill]="saved.isSaved('POST', post.id) ? 'currentColor' : 'none'"></i-feather>
             </button>
@@ -207,14 +209,14 @@
     <app-post-detail-sheet *ngIf="sheetPost" [post]="sheetPost" (closed)="sheetPost = null"></app-post-detail-sheet>
 
     <!-- Empty -->
-    <div *ngIf="!loading && posts.length === 0" class="bg-white border border-gray-200 rounded-2xl p-14 flex flex-col items-center justify-center gap-3 text-center">
-        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
-            <i-feather name="activity" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+    <div *ngIf="!loading && posts.length === 0" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-14 flex flex-col items-center justify-center gap-3 text-center">
+        <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+            <i-feather name="activity" class="text-gray-300 dark:text-gray-600" style="width:22px;height:22px;"></i-feather>
         </div>
-        <p class="text-sm font-bold text-gray-900">
+        <p class="text-sm font-bold text-gray-900 dark:text-gray-100">
             {{ tab === 'feed' ? 'Nothing here yet' : 'No posts yet' }}
         </p>
-        <p class="text-xs text-gray-400 max-w-xs leading-relaxed">
+        <p class="text-xs text-gray-400 dark:text-gray-500 max-w-xs leading-relaxed">
             {{ tab === 'feed' ? 'Posts from you and your connections will show up here.' : 'Share your first update above.' }}
         </p>
     </div>

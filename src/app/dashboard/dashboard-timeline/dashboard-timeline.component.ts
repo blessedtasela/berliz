@@ -58,12 +58,12 @@ interface ActivityOption {
 }
 
 const ACTIVITY_OPTIONS: ActivityOption[] = [
-  { value: 'WORKOUT', label: 'Workout', icon: 'zap', tone: 'text-orange-600 bg-orange-50 border-orange-100' },
-  { value: 'SESSION', label: 'Completed session', icon: 'check-circle', tone: 'text-emerald-600 bg-emerald-50 border-emerald-100' },
-  { value: 'PROGRESS', label: 'Progress', icon: 'trending-up', tone: 'text-sky-600 bg-sky-50 border-sky-100' },
-  { value: 'MILESTONE', label: 'Milestone', icon: 'award', tone: 'text-violet-600 bg-violet-50 border-violet-100' },
-  { value: 'TESTIMONIAL', label: 'Testimonial', icon: 'message-square', tone: 'text-rose-600 bg-rose-50 border-rose-100' },
-  { value: 'REVIEW', label: 'Review', icon: 'star', tone: 'text-amber-600 bg-amber-50 border-amber-100' },
+  { value: 'WORKOUT', label: 'Workout', icon: 'zap', tone: 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border-orange-100 dark:border-orange-900' },
+  { value: 'SESSION', label: 'Completed session', icon: 'check-circle', tone: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border-emerald-100 dark:border-emerald-900' },
+  { value: 'PROGRESS', label: 'Progress', icon: 'trending-up', tone: 'text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/30 border-sky-100 dark:border-sky-900' },
+  { value: 'MILESTONE', label: 'Milestone', icon: 'award', tone: 'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/30 border-violet-100 dark:border-violet-900' },
+  { value: 'TESTIMONIAL', label: 'Testimonial', icon: 'message-square', tone: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 border-rose-100 dark:border-rose-900' },
+  { value: 'REVIEW', label: 'Review', icon: 'star', tone: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border-amber-100 dark:border-amber-900' },
 ];
 
 @Component({
