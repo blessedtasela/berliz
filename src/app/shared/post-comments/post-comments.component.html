@@ -1,15 +1,15 @@
-<div *ngIf="open" class="border-t pt-3 flex flex-col gap-3" [class.border-gray-100]="!dark" [class.border-zinc-800]="dark">
+<div *ngIf="open" class="border-t pt-3 flex flex-col gap-3" [class.border-gray-100]="!dark" [class.dark:border-gray-800]="!dark" [class.border-zinc-800]="dark">
 
     <div *ngIf="loading" class="flex items-center justify-center py-4">
-        <i-feather name="loader" class="animate-spin" [class.text-gray-300]="!dark" [class.text-zinc-600]="dark" style="width:16px;height:16px;"></i-feather>
+        <i-feather name="loader" class="animate-spin" [class.text-gray-300]="!dark" [class.dark:text-gray-600]="!dark" [class.text-zinc-600]="dark" style="width:16px;height:16px;"></i-feather>
     </div>
 
     <!-- A failed load is deliberately NOT shown as "no comments yet" -- comments may well exist. -->
     <div *ngIf="!loading && loadError" class="flex flex-col items-center gap-1.5 py-3">
-        <p class="text-xs" [class.text-gray-400]="!dark" [class.text-zinc-500]="dark">Couldn't load comments.</p>
+        <p class="text-xs" [class.text-gray-400]="!dark" [class.dark:text-gray-500]="!dark" [class.text-zinc-500]="dark">Couldn't load comments.</p>
         <button type="button" (click)="retryLoad()"
             class="text-[11px] font-semibold flex items-center gap-1.5 py-1 transition"
-            [class.text-sky-600]="!dark" [class.hover:text-sky-700]="!dark"
+            [class.text-sky-600]="!dark" [class.hover:text-sky-700]="!dark" [class.dark:text-sky-500]="!dark" [class.dark:hover:text-sky-400]="!dark"
             [class.text-sky-500]="dark" [class.hover:text-sky-400]="dark">
             <i-feather name="refresh-cw" style="width:11px;height:11px;"></i-feather>
             Retry
@@ -17,13 +17,13 @@
     </div>
 
     <div *ngIf="!loading && !loadError && comments.length === 0" class="text-center py-2">
-        <p class="text-xs" [class.text-gray-400]="!dark" [class.text-zinc-500]="dark">No comments yet — be the first to reply.</p>
+        <p class="text-xs" [class.text-gray-400]="!dark" [class.dark:text-gray-500]="!dark" [class.text-zinc-500]="dark">No comments yet — be the first to reply.</p>
     </div>
 
     <button *ngIf="!loading && !loadError && hasMore" type="button" (click)="loadMore()" [disabled]="loadingMore"
         class="self-center text-[11px] font-semibold flex items-center gap-1.5 py-1 transition disabled:opacity-60"
-        [class.text-sky-600]="!dark" [class.hover:text-sky-700]="!dark"
-        [class.text-sky-500]="dark" [class.hover:text-sky-400]="dark">
+        [class.text-sky-600]="!dark" [class.hover:text-sky-700]="!dark" [class.dark:text-sky-500]="!dark" [class.dark:hover:text-sky-400]="!dark"
+        [class.text-sky-500]="dark" [class.hover:text-sky-400]="dark"
         <i-feather *ngIf="loadingMore" name="loader" class="animate-spin" style="width:11px;height:11px;"></i-feather>
         {{ loadingMore ? 'Loading…' : 'Load earlier comments' }}
     </button>
@@ -37,7 +37,7 @@
     <!-- Add a comment -->
     <div class="flex items-center gap-2">
         <img [src]="myPhotoSrc" alt="" class="w-7 h-7 rounded-full object-cover border shrink-0"
-            [class.border-gray-200]="!dark" [class.border-zinc-700]="dark" />
+            [class.border-gray-200]="!dark" [class.dark:border-gray-700]="!dark" [class.border-zinc-700]="dark" />
         <div class="flex-1">
             <app-mention-input [(value)]="draft" [dark]="dark" (submitted)="submit()"></app-mention-input>
         </div>

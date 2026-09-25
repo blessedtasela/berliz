@@ -133,7 +133,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D10 | Transparent trainer/center pricing + book CTA on every relevant surface | ✅ | ✚ |
 | D11 | Pre-renewal reminder + ≤2-tap cancel | ✅ | ✚ | |
 | D12 | Value-first onboarding (one real action before any paywall) | ✅ | — |
-| D13 | Dark mode (app-wide) | 🚧 | — | Real infrastructure: Tailwind `darkMode: 'class'`, a `ThemeService` (Light/Dark/System, per-device like the other display prefs), a toggle in Settings ("Appearance" card). Converted so far: the dashboard shell (`sidebar` layout wrapper + `TopBar`), the full Settings page, a batch of high-traffic surfaces — Dashboard home's own inline markup, the whole Messages surface (conversation list, bubbles, composer, floating popup), Bookings (list + the shared `booking-card` used by both client and provider views), My FAQs, Connections — and now the Timeline/feed page (compose box, tab toggle, post cards) plus the shared `refresh-button` used across most dashboard pages. Deliberately left alone so far: `post-comments`/`comment-node`/`reaction-button` and similar components that already carry their own `dark` `@Input` (a *different*, pre-existing mechanism for rendering on the permanently-dark public profile vs. the light dashboard) — double-converting those to also react to `ThemeService` needs its own careful pass, not a drive-by addition. The public marketing site (`topbar` layout) is untouched on purpose — it's permanently dark by brand design already, same as the mobile app's own legal/marketing screens. Most of the dashboard (~545 remaining templates, including the ~16 dashboard-home widget components, admin screens, etc.) still renders its existing light-only classes — a real, non-broken intermediate state (dark chrome, light content cards in the untouched areas), not full app-wide coverage yet. |
+| D13 | Dark mode (app-wide) | 🚧 | — | Real infrastructure: Tailwind `darkMode: 'class'`, a `ThemeService` (Light/Dark/System, per-device like the other display prefs), a toggle in Settings ("Appearance" card). Converted so far: the dashboard shell (`sidebar` layout wrapper + `TopBar`), the full Settings page, a batch of high-traffic surfaces — Dashboard home's own inline markup, the whole Messages surface (conversation list, bubbles, composer, floating popup), Bookings (list + the shared `booking-card` used by both client and provider views), My FAQs, Connections, the Timeline/feed page (compose box, tab toggle, post cards) plus the shared `refresh-button` used across most dashboard pages — and now the shared `post-comments`/`comment-node`/`reaction-button`/`mention-input` components used by every comment thread (Timeline, dashboard user profiles, public profile once signed in). Those four already carry their own pre-existing `dark` `@Input` for the *separate*, always-dark public-profile/media-sheet rendering; the `ThemeService`-driven `dark:` classes were layered on only in their `!dark` branches, so the always-dark call sites (`post-detail-sheet`'s `[dark]="true"`) are untouched. The public marketing site (`topbar` layout) is untouched on purpose — it's permanently dark by brand design already, same as the mobile app's own legal/marketing screens. Most of the dashboard (~540 remaining templates, including the ~16 dashboard-home widget components, admin screens, etc.) still renders its existing light-only classes — a real, non-broken intermediate state (dark chrome, light content cards in the untouched areas), not full app-wide coverage yet. |
 | D14 | "Do this workout" — clone a linked workout from a feed post | ✅ | ✚ |
 | D15 | Saved / bookmarked posts & workouts | ✅ | ✚ |
 
@@ -200,6 +200,19 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 - New shared `SubscriptionTierService` (backend) resolves `Subscription.planTier.sortOrder`
   against a role's max active tier once, instead of duplicating that logic across
   `TrainerServiceImplement`, `CenterServiceImplement`, and `PromotionServiceImplement`.
+
+### Unreleased — Dark mode: shared comment-thread components (D13 continued)
+
+Fourth pass. Adds `ThemeService`-driven `dark:` classes to `post-comments`,
+`comment-node`, `reaction-button`, and `mention-input` — the components every
+comment thread is built from (Timeline posts, dashboard user profiles, and the
+public profile page once signed in). All four already had a pre-existing
+`dark` `@Input` for a *different*, older mechanism: rendering permanently dark
+inside the media-sheet/public-profile-while-anonymous contexts, independent of
+the viewer's theme choice. The new `dark:` classes were added only inside each
+component's `!dark` branch, so `post-detail-sheet`'s `[dark]="true"` usage
+(and any other always-dark call site) renders exactly as before — the two
+mechanisms now compose instead of one needing to learn about the other.
 
 ### Unreleased — Dark mode: Timeline/feed + shared refresh button (D13 continued)
 
