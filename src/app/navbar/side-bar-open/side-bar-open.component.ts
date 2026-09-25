@@ -37,11 +37,15 @@ export class SideBarOpenComponent implements OnInit, OnDestroy {
   openMenu = false;
   mdScreen = false;
 
-  /** Name of the one nav item whose children are pinned open by a manual
-   *  click on its chevron -- independent of isChildrenVisible's own
-   *  auto-expand-when-active behavior below, so a user can also peek at
-   *  another item's children without navigating there first. */
-  private manuallyExpandedItem: string | null = null;
+  /** Explicit open/closed override for the one item last toggled by its
+   *  chevron, taking precedence over isChildrenVisible's own
+   *  auto-expand-when-active behavior below. Without this, once a child link
+   *  is clicked (children navigate via a #fragment on the SAME parent route),
+   *  isActive(item.route) stays true for the rest of the visit to that page,
+   *  so a plain "is this the manually expanded item" flag could never express
+   *  "manually collapse it" -- the auto-expand always won and the chevron
+   *  appeared to do nothing. */
+  private manualChildrenOverride: { name: string; expanded: boolean } | null = null;
 
   userData: any;
   notificationLength = 0;
@@ -156,13 +160,15 @@ export class SideBarOpenComponent implements OnInit, OnDestroy {
   // -----------------------------
   isChildrenVisible(item: SidebarNavItem): boolean {
     if (!item.children?.length) return false;
-    return this.manuallyExpandedItem === item.name || this.isActive(item.route || '', false);
+    const override = this.manualChildrenOverride;
+    if (override !== null && override.name === item.name) return override.expanded;
+    return this.isActive(item.route || '', false);
   }
 
   toggleChildren(item: SidebarNavItem, event: Event): void {
     event.preventDefault();
     event.stopPropagation();
-    this.manuallyExpandedItem = this.manuallyExpandedItem === item.name ? null : (item.name ?? null);
+    this.manualChildrenOverride = { name: item.name ?? '', expanded: !this.isChildrenVisible(item) };
   }
 
   isChildActive(child: { route: string; fragment?: string }): boolean {
