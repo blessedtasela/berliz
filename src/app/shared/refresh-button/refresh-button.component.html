@@ -1,5 +1,5 @@
 <button type="button" (click)="onClick()" [disabled]="loading" [title]="title"
-    class="w-8 h-8 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center
+    class="w-8 h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center justify-center
            transition shrink-0 disabled:cursor-not-allowed disabled:opacity-60">
-    <i-feather name="refresh-cw" class="text-gray-500" [class.animate-spin]="loading" style="width:14px;height:14px;"></i-feather>
+    <i-feather name="refresh-cw" class="text-gray-500 dark:text-gray-400" [class.animate-spin]="loading" style="width:14px;height:14px;"></i-feather>
 </button>

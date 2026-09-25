@@ -133,7 +133,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D10 | Transparent trainer/center pricing + book CTA on every relevant surface | ✅ | ✚ |
 | D11 | Pre-renewal reminder + ≤2-tap cancel | ✅ | ✚ | |
 | D12 | Value-first onboarding (one real action before any paywall) | ✅ | — |
-| D13 | Dark mode (app-wide) | 🚧 | — | Real infrastructure: Tailwind `darkMode: 'class'`, a `ThemeService` (Light/Dark/System, per-device like the other display prefs), a toggle in Settings ("Appearance" card). Converted so far: the dashboard shell (`sidebar` layout wrapper + `TopBar`), the full Settings page, and a first batch of high-traffic surfaces — Dashboard home's own inline markup, the whole Messages surface (conversation list, bubbles, composer, floating popup), Bookings (list + the shared `booking-card` used by both client and provider views), My FAQs, and Connections. The public marketing site (`topbar` layout) is untouched on purpose — it's permanently dark by brand design already, same as the mobile app's own legal/marketing screens. Most of the dashboard (~550 remaining templates, including the ~16 dashboard-home widget components, Timeline, admin screens, etc.) still renders its existing light-only classes — a real, non-broken intermediate state (dark chrome, light content cards in the untouched areas), not full app-wide coverage yet. |
+| D13 | Dark mode (app-wide) | 🚧 | — | Real infrastructure: Tailwind `darkMode: 'class'`, a `ThemeService` (Light/Dark/System, per-device like the other display prefs), a toggle in Settings ("Appearance" card). Converted so far: the dashboard shell (`sidebar` layout wrapper + `TopBar`), the full Settings page, a batch of high-traffic surfaces — Dashboard home's own inline markup, the whole Messages surface (conversation list, bubbles, composer, floating popup), Bookings (list + the shared `booking-card` used by both client and provider views), My FAQs, Connections — and now the Timeline/feed page (compose box, tab toggle, post cards) plus the shared `refresh-button` used across most dashboard pages. Deliberately left alone so far: `post-comments`/`comment-node`/`reaction-button` and similar components that already carry their own `dark` `@Input` (a *different*, pre-existing mechanism for rendering on the permanently-dark public profile vs. the light dashboard) — double-converting those to also react to `ThemeService` needs its own careful pass, not a drive-by addition. The public marketing site (`topbar` layout) is untouched on purpose — it's permanently dark by brand design already, same as the mobile app's own legal/marketing screens. Most of the dashboard (~545 remaining templates, including the ~16 dashboard-home widget components, admin screens, etc.) still renders its existing light-only classes — a real, non-broken intermediate state (dark chrome, light content cards in the untouched areas), not full app-wide coverage yet. |
 | D14 | "Do this workout" — clone a linked workout from a feed post | ✅ | ✚ |
 | D15 | Saved / bookmarked posts & workouts | ✅ | ✚ |
 
@@ -200,6 +200,24 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 - New shared `SubscriptionTierService` (backend) resolves `Subscription.planTier.sortOrder`
   against a role's max active tier once, instead of duplicating that logic across
   `TrainerServiceImplement`, `CenterServiceImplement`, and `PromotionServiceImplement`.
+
+### Unreleased — Dark mode: Timeline/feed + shared refresh button (D13 continued)
+
+Third pass on top of the theme infra/shell/Settings and second-batch (Messages, Bookings,
+FAQs, Connections) work already on master. Added `dark:` variants to the Timeline/feed page
+(`dashboard-timeline`) — compose box (textarea, activity-type pills, workout-template select,
+photo uploader), the Feed/My Timeline tab toggle, and every post card (author row, content,
+photo frame, linked-workout and book-provider callouts, action bar, empty state) — plus the
+shared `refresh-button` component used across most dashboard pages.
+
+Explicitly deferred: `post-comments`, `comment-node`, `reaction-button`, and
+`draft-resume-banner` all render inside the post card but were left untouched this pass.
+The first three already carry their own `dark` `@Input` — a pre-existing mechanism (unrelated
+to `ThemeService`) that lets them render correctly on the permanently-dark public profile vs.
+the light dashboard; teaching them to *also* answer to the app-wide theme toggle needs its own
+careful pass so the two mechanisms don't fight each other. `draft-resume-banner` uses a solid
+`bg-amber-50` card that would need a real dark-mode treatment (not just swapped text colors)
+to avoid looking like a bright patch on a dark page — deferred rather than doing it half-right.
 
 ### Unreleased — Dark mode: first batch of high-traffic surfaces (D13 continued)
 
