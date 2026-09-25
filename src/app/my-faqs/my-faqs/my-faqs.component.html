@@ -2,43 +2,43 @@
 
   <!-- Page heading -->
   <div class="flex flex-col gap-1">
-    <h1 class="text-lg font-bold text-gray-900">Frequently Asked Questions</h1>
-    <p class="text-xs text-gray-500">Quick answers to common questions about Berliz.</p>
+    <h1 class="text-lg font-bold text-gray-900 dark:text-gray-100">Frequently Asked Questions</h1>
+    <p class="text-xs text-gray-500 dark:text-gray-400">Quick answers to common questions about Berliz.</p>
   </div>
 
   <!-- Loading -->
   <div *ngIf="loading && faqGroups.length === 0" class="flex flex-col items-center justify-center py-16 gap-3">
     <i-feather name="loader" class="text-red-500 animate-spin" style="width:20px;height:20px;"></i-feather>
-    <p class="text-xs text-gray-400">Loading FAQs...</p>
+    <p class="text-xs text-gray-400 dark:text-gray-500">Loading FAQs...</p>
   </div>
 
   <!-- Empty state -->
   <div *ngIf="!loading && faqGroups.length === 0"
-    class="flex flex-col items-center justify-center py-16 gap-3 text-center rounded-2xl border border-gray-200 bg-white">
-    <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
-      <i-feather name="inbox" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+    class="flex flex-col items-center justify-center py-16 gap-3 text-center rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+    <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+      <i-feather name="inbox" class="text-gray-300 dark:text-gray-600" style="width:22px;height:22px;"></i-feather>
     </div>
-    <p class="text-sm text-gray-400">No FAQs yet.</p>
+    <p class="text-sm text-gray-400 dark:text-gray-500">No FAQs yet.</p>
   </div>
 
   <!-- FAQ groups -->
   <div *ngFor="let group of faqGroups; trackBy: trackByCategory" class="flex flex-col gap-3">
     <div class="flex items-center gap-2">
-      <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">{{ group.category }}</span>
-      <div class="flex-1 h-px bg-gray-100"></div>
+      <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">{{ group.category }}</span>
+      <div class="flex-1 h-px bg-gray-100 dark:bg-gray-800"></div>
     </div>
 
-    <div class="rounded-2xl border border-gray-200 bg-white overflow-hidden divide-y divide-gray-100">
+    <div class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
       <div *ngFor="let faq of group.faqs; trackBy: trackByFaq" [id]="'faq-' + faq.id">
         <button type="button" (click)="toggle(faq.id)"
-          class="w-full flex items-center justify-between gap-4 px-4 py-3 text-left hover:bg-gray-50 transition">
-          <span class="text-sm font-semibold text-gray-900">{{ faq.question }}</span>
-          <i-feather name="chevron-down" class="shrink-0 text-gray-400 transition-transform"
+          class="w-full flex items-center justify-between gap-4 px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ faq.question }}</span>
+          <i-feather name="chevron-down" class="shrink-0 text-gray-400 dark:text-gray-500 transition-transform"
             [ngClass]="{ 'rotate-180 text-red-600': isExpanded(faq.id) }" style="width:15px;height:15px;">
           </i-feather>
         </button>
         <div *ngIf="isExpanded(faq.id)" class="px-4 pb-4">
-          <p class="text-sm text-gray-500 leading-relaxed whitespace-pre-line">{{ faq.answer }}</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-line">{{ faq.answer }}</p>
         </div>
       </div>
     </div>

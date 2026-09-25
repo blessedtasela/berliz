@@ -133,7 +133,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D10 | Transparent trainer/center pricing + book CTA on every relevant surface | ✅ | ✚ |
 | D11 | Pre-renewal reminder + ≤2-tap cancel | ✅ | ✚ | |
 | D12 | Value-first onboarding (one real action before any paywall) | ✅ | — |
-| D13 | Dark mode (app-wide) | 🚧 | — | Real infrastructure now: Tailwind `darkMode: 'class'`, a `ThemeService` (Light/Dark/System, per-device like the other display prefs), a toggle in Settings ("Appearance" card). Converted so far: the dashboard shell (`sidebar` layout wrapper + `TopBar`) and the full Settings page. The public marketing site (`topbar` layout) is untouched on purpose — it's permanently dark by brand design already, same as the mobile app's own legal/marketing screens. The other ~560 dashboard templates still render their existing light-only classes for now — a real, non-broken intermediate state (dark chrome, light content cards), not full app-wide coverage yet. |
+| D13 | Dark mode (app-wide) | 🚧 | — | Real infrastructure: Tailwind `darkMode: 'class'`, a `ThemeService` (Light/Dark/System, per-device like the other display prefs), a toggle in Settings ("Appearance" card). Converted so far: the dashboard shell (`sidebar` layout wrapper + `TopBar`), the full Settings page, and a first batch of high-traffic surfaces — Dashboard home's own inline markup, the whole Messages surface (conversation list, bubbles, composer, floating popup), Bookings (list + the shared `booking-card` used by both client and provider views), My FAQs, and Connections. The public marketing site (`topbar` layout) is untouched on purpose — it's permanently dark by brand design already, same as the mobile app's own legal/marketing screens. Most of the dashboard (~550 remaining templates, including the ~16 dashboard-home widget components, Timeline, admin screens, etc.) still renders its existing light-only classes — a real, non-broken intermediate state (dark chrome, light content cards in the untouched areas), not full app-wide coverage yet. |
 | D14 | "Do this workout" — clone a linked workout from a feed post | ✅ | ✚ |
 | D15 | Saved / bookmarked posts & workouts | ✅ | ✚ |
 
@@ -176,6 +176,25 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Dark mode: first batch of high-traffic surfaces (D13 continued)
+
+Second pass on top of the theme infrastructure/shell/Settings work already on master. Added
+`dark:` variants across: Dashboard home's own inline markup (the greeting hero and welcome
+gradient were already fixed-dark by design, so those needed no change); the whole Messages
+surface (`messages-main`, `conversation-row`, `message-bubble`, `message-composer`, the
+floating `message-popup`); Bookings (`my-bookings-main`'s header plus the shared
+`booking-card` component, which both the client-side list and the provider-side list already
+reuse, so converting it once covers both); My FAQs; and Connections (search, incoming/sent
+requests, the connections list).
+
+Semantic accent colors (status badges, the purple "propose session" button, brand-red
+buttons) were deliberately left alone — they already read fine on a dark background, and
+retuning every accent color for dark mode contrast is its own pass, not bundled into this one
+to keep the diff reviewable. The remaining ~550 dashboard templates (dashboard-home's own
+~16 widget components, Timeline, admin screens, and the rest) are still untouched — same
+transparent "real but partial" state as before, now covering more of what people actually
+look at daily.
 
 ### Unreleased — Recap deep link + share-error transparency, global search expansion, FAQ deep link
 

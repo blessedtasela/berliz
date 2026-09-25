@@ -4,17 +4,17 @@
      silently navigated away instead of opening the chat ("clicking a chat
      doesn't open it"). Profile access lives in the open thread's header. -->
 <button type="button" (click)="open.emit(row.userId)"
-    class="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition" [class.bg-red-50]="active">
+    class="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition" [ngClass]="active ? 'bg-red-50 dark:bg-red-950/40' : ''">
     <app-avatar [photo]="row.photo" [name]="row.name" [size]="36"
         borderClass="border-red-100 bg-red-50 text-red-600" class="shrink-0"></app-avatar>
 
     <span class="flex-1 min-w-0 block">
         <span class="flex items-center justify-between gap-2">
-            <span class="text-sm font-semibold text-gray-900 truncate">{{ row.name }}</span>
+            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{{ row.name }}</span>
             <span *ngIf="row.unreadCount" class="text-[10px] font-bold text-white bg-red-600 rounded-full px-1.5 py-0.5 shrink-0">
                 {{ row.unreadCount }}
             </span>
         </span>
-        <span class="block text-xs text-gray-400 truncate">{{ row.preview || 'Tap to start chatting' }}</span>
+        <span class="block text-xs text-gray-400 dark:text-gray-500 truncate">{{ row.preview || 'Tap to start chatting' }}</span>
     </span>
 </button>
