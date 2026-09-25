@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { provideMockStore } from '@ngrx/store/testing';
 
 import { MyFaqsComponent } from './my-faqs.component';
@@ -13,7 +14,8 @@ describe('MyFaqsComponent', () => {
       declarations: [MyFaqsComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        provideMockStore()
+        provideMockStore(),
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } }
       ]
     });
     fixture = TestBed.createComponent(MyFaqsComponent);
