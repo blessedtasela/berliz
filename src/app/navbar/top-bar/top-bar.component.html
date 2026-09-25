@@ -1,4 +1,4 @@
-<div [ngClass]="navbarStyle.bgClasses" class="fixed top-0 left-0 w-full border-b border-gray-200 shadow-sm z-50">
+<div [ngClass]="navbarStyle.bgClasses" class="fixed top-0 left-0 w-full border-b border-gray-200 dark:border-gray-800 shadow-sm z-50 dark:shadow-none">
     <div class="h-14 flex items-center justify-between px-5 gap-4">
 
         <!--
@@ -15,12 +15,12 @@
                  floating element, so it can never overlap page-specific content. -->
             <button *ngIf="sidebarState.showFloatingButton$ | async" type="button"
                 (click)="sidebarState.openSidebar()" aria-label="Show sidebar"
-                class="group relative shrink-0 w-9 h-9 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md hover:border-gray-300
+                class="group relative shrink-0 w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
                        flex items-center justify-center transition">
-                <i-feather name="align-justify" class="text-gray-700" style="width:16px;height:16px;"></i-feather>
+                <i-feather name="align-justify" class="text-gray-700 dark:text-gray-300" style="width:16px;height:16px;"></i-feather>
 
                 <!-- Tooltip -->
-                <span class="absolute top-full mt-2 left-0 px-2 py-1 rounded-lg bg-gray-900 text-white text-xs
+                <span class="absolute top-full mt-2 left-0 px-2 py-1 rounded-lg bg-gray-900 dark:bg-gray-700 text-white text-xs
                              font-medium whitespace-nowrap opacity-0 group-hover:opacity-100
                              pointer-events-none transition-opacity duration-150 z-50">
                     Change this anytime in Settings
@@ -39,16 +39,16 @@
               never push the search bar, bell, home or profile out of view.
             -->
             <div class="hidden sm:flex items-center min-w-0 overflow-hidden max-w-[140px] md:max-w-[170px] lg:max-w-[260px] xl:max-w-xs">
-                <span class="text-gray-300 mx-2 shrink-0">|</span>
+                <span class="text-gray-300 dark:text-gray-600 mx-2 shrink-0">|</span>
                 <app-navbar-breadcrumb></app-navbar-breadcrumb>
             </div>
 
 
             <!-- Bell -->
             <div class="relative">
-                <button (click)="toggleNotificationDropdown()" class="w-9 h-9 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md hover:border-gray-300
+                <button (click)="toggleNotificationDropdown()" class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
                  flex items-center justify-center transition relative">
-                    <i-feather name="bell" class="text-gray-700" style="width:16px;height:16px;"></i-feather>
+                    <i-feather name="bell" class="text-gray-700 dark:text-gray-300" style="width:16px;height:16px;"></i-feather>
                     <span *ngIf="notificationLength > 0" class="absolute -top-1 -right-1 bg-red-600 text-white text-[8px]
                    px-1.5 py-px rounded-full font-bold leading-none badge-pulse">
                         {{ notificationLength }}
@@ -74,9 +74,9 @@
 
             <!-- Compact trigger — mobile only, swaps the bar into search mode -->
             <button *ngIf="!isMobileSearchOpen" type="button" (click)="openMobileSearch()" aria-label="Open search"
-                class="md:hidden shrink-0 w-9 h-9 rounded-xl border border-gray-200 bg-white shadow-sm
-                       hover:shadow-md hover:border-gray-300 flex items-center justify-center transition">
-                <i-feather name="search" class="text-gray-700" style="width:16px;height:16px;"></i-feather>
+                class="md:hidden shrink-0 w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm
+                       hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 flex items-center justify-center transition">
+                <i-feather name="search" class="text-gray-700 dark:text-gray-300" style="width:16px;height:16px;"></i-feather>
             </button>
 
             <!-- The search itself: full width in mobile search mode, always on from md up -->
@@ -86,7 +86,7 @@
             </div>
 
             <button *ngIf="isMobileSearchOpen" type="button" (click)="closeMobileSearch()" aria-label="Close search"
-                class="md:hidden shrink-0 h-9 px-1 text-sm font-semibold text-gray-500 hover:text-gray-800
+                class="md:hidden shrink-0 h-9 px-1 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200
                        rounded-lg transition">
                 Cancel
             </button>
@@ -95,13 +95,13 @@
 
         <!-- RIGHT: Home + Profile -->
         <div class="items-center gap-3 shrink-0" [ngClass]="isMobileSearchOpen ? 'hidden md:flex' : 'flex'">
-            <button [routerLink]="['/dashboard']" title="Dashboard" class="w-9 h-9 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md hover:border-gray-300
+            <button [routerLink]="['/dashboard']" title="Dashboard" class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
                flex items-center justify-center transition">
-                <feather-icon name="home" class="text-gray-700"
+                <feather-icon name="home" class="text-gray-700 dark:text-gray-300"
                     style="width:16px;height:16px;width:16px;"></feather-icon>
             </button>
 
-            <div class="w-px h-6 bg-gray-200"></div>
+            <div class="w-px h-6 bg-gray-200 dark:bg-gray-700"></div>
 
             <app-profile [search]="isSearch" [userData]="userData"></app-profile>
         </div>
