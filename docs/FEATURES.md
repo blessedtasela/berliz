@@ -778,18 +778,6 @@ _Branch: `claude/xenodochial-kirch-459f51` → follow-on branch_
   zoomable. Removed the explicit `lightbox.open(...)` handlers that were blocking navigation
   on comment-author, connections, and member-directory avatars; wrapped the connection
   request-row avatars in a profile link. (WS8b)
-- 🚧 **Comment likes** — like/unlike + count, backend `CommentLike` entity + `PUT /comment/like/{id}`.
-- 🚧 **Threaded replies** — nested to arbitrary depth; `GET /comment/{id}/replies`; delete
-  cascades the subtree; reply notifies the parent comment's author.
-- 🚧 **Who liked** — `GET /post/{id}/likes` and `GET /comment/{id}/likes`; tap any like count
-  to see the list (block-filtered).
-- 🚧 **Comment visibility & blocking** — `getComments` now hides threads/authors in a block
-  relationship with the viewer (previously no block check at all).
-- 🚧 **Media + comments bottom sheet** — Instagram/TikTok-style, snap points half/full,
-  swipe-to-dismiss; replaces the post-image lightbox on feed, dashboard profile, and public
-  profile. `post-media-viewer` folded in and removed.
-- 🚧 **Avatar clicks go to the profile** everywhere except the top-bar avatar.
-- 🚧 **Top-bar avatar opens the account menu**, never a photo viewer.
 
 ### Earlier (from git history)
 - Image/file attachments in messaging
