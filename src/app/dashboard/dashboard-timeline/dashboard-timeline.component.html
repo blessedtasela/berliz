@@ -121,7 +121,7 @@
             </a>
 
             <button *ngIf="isMine(post)" type="button" (click)="deletePost(post)"
-                class="text-gray-300 dark:text-gray-600 hover:text-red-600 transition p-1">
+                class="text-gray-300 dark:text-gray-600 hover:text-red-600 dark:hover:text-red-500 transition p-1">
                 <i-feather name="trash-2" style="width:14px;height:14px;"></i-feather>
             </button>
             <button *ngIf="!isMine(post)" type="button" (click)="reportPost(post)" title="Report"
@@ -195,7 +195,7 @@
                 class="ml-auto p-1.5 rounded-lg transition"
                 [class.text-amber-500]="saved.isSaved('POST', post.id)"
                 [class.text-gray-300]="!saved.isSaved('POST', post.id)" [class.dark:text-gray-600]="!saved.isSaved('POST', post.id)"
-                [class.hover:text-gray-500]="!saved.isSaved('POST', post.id)">
+                [class.hover:text-gray-500]="!saved.isSaved('POST', post.id)" [class.dark:hover:text-gray-400]="!saved.isSaved('POST', post.id)">
                 <i-feather name="bookmark" style="width:14px;height:14px;"
                     [attr.fill]="saved.isSaved('POST', post.id) ? 'currentColor' : 'none'"></i-feather>
             </button>
