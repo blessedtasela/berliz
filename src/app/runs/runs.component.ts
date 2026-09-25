@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -65,6 +66,11 @@ export class RunsComponent implements OnInit {
 
   busyEventId: number | null = null;
 
+  /** ?logId=<id> from a notification/search deep link. Scrolled to (and briefly highlighted) once its card has actually rendered on the History tab. */
+  highlightedLogId: number | null = null;
+  private deepLinkLogId: number | null = null;
+  private deepLinkHandled = false;
+
   constructor(
     private runService: RunService,
     private dialog: MatDialog,
@@ -72,6 +78,7 @@ export class RunsComponent implements OnInit {
     private authService: AuthService,
     private whatsNew: WhatsNewService,
     private store: Store,
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
@@ -81,6 +88,11 @@ export class RunsComponent implements OnInit {
       this.refreshDiscover();
     });
     this.refreshMyRuns();
+
+    const raw = this.route.snapshot.queryParamMap.get('logId');
+    this.deepLinkLogId = raw ? Number(raw) : null;
+    if (this.deepLinkLogId) this.activeTab = 'history';
+
     this.refreshHistory();
   }
 
@@ -231,7 +243,11 @@ export class RunsComponent implements OnInit {
     this.runService.getMyRunLogs()
       .pipe(take(1))
       .subscribe({
-        next: (res) => { this.runLogs = res?.data ?? []; this.historyLoading = false; },
+        next: (res) => {
+          this.runLogs = res?.data ?? [];
+          this.historyLoading = false;
+          this.scrollToDeepLinkLog();
+        },
         error: () => { this.runLogs = []; this.historyLoading = false; },
       });
   }
@@ -325,6 +341,17 @@ export class RunsComponent implements OnInit {
 
   trackByLogId(_: number, entry: RunLogResponse): number {
     return entry.id;
+  }
+
+  private scrollToDeepLinkLog(): void {
+    if (!this.deepLinkLogId || this.deepLinkHandled) return;
+    if (!this.runLogs.some(l => l.id === this.deepLinkLogId)) return;
+
+    this.deepLinkHandled = true;
+    this.highlightedLogId = this.deepLinkLogId;
+    setTimeout(() => {
+      document.getElementById(`run-log-${this.deepLinkLogId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
   }
 
   trackByUserId(_: number, item: { userId: number }): number {

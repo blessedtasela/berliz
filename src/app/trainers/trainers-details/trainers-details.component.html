@@ -109,8 +109,10 @@
                 </div>
 
                 <div *ngIf="trainerTestimonials.length > 0" class="flex flex-col gap-3">
-                    <div *ngFor="let testimonial of trainerTestimonials"
-                        class="bg-zinc-950 border border-zinc-800 rounded-xl p-4 flex flex-col gap-2.5">
+                    <div *ngFor="let testimonial of trainerTestimonials" [id]="'testimonial-' + testimonial.id"
+                        class="bg-zinc-950 border rounded-xl p-4 flex flex-col gap-2.5 transition-colors duration-700"
+                        [class.border-zinc-800]="highlightedTestimonialId !== testimonial.id"
+                        [class.border-red-500]="highlightedTestimonialId === testimonial.id">
                         <p class="text-xs text-zinc-300 leading-relaxed italic">
                             "{{ testimonial.testimonial }}"
                         </p>

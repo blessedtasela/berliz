@@ -296,9 +296,13 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         id: t.id,
         label: truncate(t.testimonial),
         sublabel: t.clientName || t.trainerName || t.centerName,
-        // Testimonials have no standalone route — deep-link to the trainer
-        // they belong to, otherwise fall back to the services page.
-        link: t.trainerName ? ['/trainers', slug(t.trainerName)] : ['/services']
+        // Testimonials have no standalone route — deep-link to the specific
+        // card on the trainer/center profile it belongs to, otherwise fall
+        // back to the services page.
+        link: t.trainerName ? ['/trainers', slug(t.trainerName)]
+          : t.centerName ? ['/centers', slug(t.centerName)]
+          : ['/services'],
+        queryParams: (t.trainerName || t.centerName) ? { testimonialId: t.id } : undefined
       })
     },
     {
@@ -313,7 +317,8 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         id: e.id,
         label: e.name,
         sublabel: e.centerName,
-        link: ['/services/equipment']
+        link: ['/services/equipment'],
+        queryParams: { equipmentId: e.id }
       })
     },
 
@@ -331,7 +336,8 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         id: u.id,
         label: `${u.firstname || ''} ${u.lastname || ''}`.trim() || u.email,
         sublabel: u.email,
-        link: ['/dashboard/hub/users']
+        link: ['/dashboard/hub/users'],
+        queryParams: { userId: u.id }
       })
     },
     {
@@ -346,7 +352,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         id: t.id,
         label: truncate(t.description, 60),
         sublabel: t.trainerName,
-        link: ['/dashboard/hub/tasks']
+        link: ['/dashboard/hub/tasks', t.id]
       })
     },
     {
@@ -367,7 +373,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
           p.userEmail ||
           `Payment #${p.id}`,
         sublabel: p.paymentMethod,
-        link: ['/dashboard/hub/payments']
+        link: ['/dashboard/hub/payments', p.id]
       })
     },
     {
@@ -392,7 +398,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         sublabel: [s?.plan, s?.trainer?.name || s?.center?.name]
           .filter(Boolean)
           .join(' · '),
-        link: ['/dashboard/hub/subscriptions']
+        link: ['/dashboard/hub/subscriptions', s.id]
       })
     },
     {
@@ -408,7 +414,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         id: p.id,
         label: `${p.firstname || ''} ${p.lastname || ''}`.trim() || p.email,
         sublabel: p.role || p.email,
-        link: ['/dashboard/hub/partners']
+        link: ['/dashboard/hub/partners', p.id]
       })
     },
     {
@@ -423,7 +429,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         id: c.id,
         label: c.name || c.email,
         sublabel: truncate(c.message, 60),
-        link: ['/dashboard/hub/contact-us']
+        link: ['/dashboard/hub/contact-us', c.id]
       })
     },
     {
@@ -438,7 +444,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         id: n.id,
         label: n.email,
         sublabel: n.status,
-        link: ['/dashboard/hub/newsletters']
+        link: ['/dashboard/hub/newsletters', n.id]
       })
     },
     {
@@ -453,7 +459,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         id: t.id,
         label: t.name,
         sublabel: truncate(t.description, 60),
-        link: ['/dashboard/hub/tags']
+        link: ['/dashboard/hub/tags', t.id]
       })
     },
     {
@@ -468,7 +474,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         id: m.id,
         label: m.name,
         sublabel: m.bodyPart,
-        link: ['/dashboard/hub/muscle-groups']
+        link: ['/dashboard/hub/muscle-groups', m.id]
       })
     }
   ];
