@@ -292,6 +292,17 @@ const dashboardRoutes: Routes = [
         }
       },
 
+      // Self-service sellable-package catalog (session bundles, memberships, group classes).
+      {
+        path: 'my-packages',
+        loadComponent: () => import('../provider-packages/my-provider-packages/my-provider-packages.component').then(m => m.MyProviderPackagesComponent),
+        canActivate: [AuthGuard, RoleGuard],
+        data: {
+          breadcrumb: 'Packages',
+          expectedRole: ['trainer', 'center', 'admin']
+        }
+      },
+
       // Free-session/discount credits (platform campaigns + referrals) and the referral share link. Every role.
       {
         path: 'my-rewards',

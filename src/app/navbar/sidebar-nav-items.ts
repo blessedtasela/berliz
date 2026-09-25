@@ -81,6 +81,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
     ],
   },
   { name: 'Promotions', icon: 'tag', route: '/dashboard/my-promotions', roles: ['trainer', 'center'] },
+  { name: 'Packages', icon: 'package', route: '/dashboard/my-packages', roles: ['trainer', 'center'] },
 
   { label: 'Training' },
   { name: 'Tasks', icon: 'activity', route: '/dashboard/my-tasks' },
