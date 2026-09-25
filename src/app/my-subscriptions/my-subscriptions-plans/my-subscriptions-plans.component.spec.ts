@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 
 import { MySubscriptionsPlansComponent } from './my-subscriptions-plans.component';
 import { IconsModule } from 'src/app/icons/icons.module';
+import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { BypassCodeService } from 'src/app/services/bypass-code.service';
 import { Plan } from 'src/app/models/plan.model';
@@ -161,5 +162,54 @@ describe('MySubscriptionsPlansComponent', () => {
   it('cleans up its subscriptions on destroy without throwing', () => {
     fixture.detectChanges();
     expect(() => component.ngOnDestroy()).not.toThrow();
+  });
+
+  it('never shows provider (subscription-tier) perks for a client', () => {
+    fixture.detectChanges();
+    expect(component.isProviderRole).toBeFalse();
+  });
+
+  it('computes tier-based perks for a trainer plan, with Featured extras only on the top tier', () => {
+    const trainerPlans: Plan[] = [
+      { id: 10, name: 'Basic', description: '', price: 9, billingInterval: 'monthly', accessScope: '', isActive: true, sortOrder: 1, targetRole: 'trainer' },
+      { id: 11, name: 'Plus', description: '', price: 19, billingInterval: 'monthly', accessScope: '', isActive: true, sortOrder: 2, targetRole: 'trainer' },
+    ];
+    spyOn(TestBed.inject(AuthService), 'getCurrentUserRole').and.returnValue('trainer');
+    store.overrideSelector(selectPlans, trainerPlans);
+    store.refreshState();
+    fixture.detectChanges();
+
+    const [basic, plus] = trainerPlans;
+
+    expect(component.isTopTierPlan(basic)).toBeFalse();
+    expect(component.isTopTierPlan(plus)).toBeTrue();
+
+    expect(component.perksFor(basic)).toEqual([
+      'Boosts your ranking in search results over unsubscribed providers',
+      'Feature-video capacity raised to 6 (from a base of 4)',
+    ]);
+    expect(component.perksFor(plus)).toEqual([
+      'Boosts your ranking in search results over unsubscribed providers',
+      'Feature-video capacity raised to 8 (from a base of 4)',
+      '"Featured" badge on your profile and search cards',
+      'Guaranteed placement at the top of the public Deals feed',
+    ]);
+  });
+
+  it('computes tier-based perks for a center plan using the introduction-cap formula', () => {
+    const centerPlans: Plan[] = [
+      { id: 20, name: 'Basic', description: '', price: 9, billingInterval: 'monthly', accessScope: '', isActive: true, sortOrder: 1, targetRole: 'center' },
+    ];
+    spyOn(TestBed.inject(AuthService), 'getCurrentUserRole').and.returnValue('center');
+    store.overrideSelector(selectPlans, centerPlans);
+    store.refreshState();
+    fixture.detectChanges();
+
+    expect(component.perksFor(centerPlans[0])).toEqual([
+      'Boosts your ranking in search results over unsubscribed providers',
+      'Introduction capacity raised to 4 (from a base of 3)',
+      '"Featured" badge on your profile and search cards',
+      'Guaranteed placement at the top of the public Deals feed',
+    ]);
   });
 });

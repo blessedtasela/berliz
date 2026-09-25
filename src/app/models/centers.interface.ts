@@ -16,6 +16,8 @@ export interface Centers {
   categoryIds: number[];
   date: Date;
   lastUpdate: Date;
+  /** True when this center currently holds the platform's top paid subscription tier -- a "Featured" badge perk. */
+  featured?: boolean;
   message?: string;
 }
 

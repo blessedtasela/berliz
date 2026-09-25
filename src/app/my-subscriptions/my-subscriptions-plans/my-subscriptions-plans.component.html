@@ -21,8 +21,16 @@
 
   <div *ngIf="visiblePlans.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
-    <div *ngFor="let plan of visiblePlans" class="relative border border-gray-200 rounded-xl bg-white p-4 flex flex-col gap-3
-             hover:shadow-sm hover:-translate-y-0.5 transition">
+    <div *ngFor="let plan of visiblePlans" class="relative border rounded-xl bg-white p-4 flex flex-col gap-3
+             hover:shadow-sm hover:-translate-y-0.5 transition"
+      [ngClass]="isProviderRole && isTopTierPlan(plan) ? 'border-amber-300 ring-1 ring-amber-200' : 'border-gray-200'">
+
+      <!-- Featured-tier ribbon -->
+      <span *ngIf="isProviderRole && isTopTierPlan(plan)" class="absolute -top-2 right-3 flex items-center gap-1 text-[10px] font-bold
+                   text-amber-950 bg-amber-400 px-2 py-0.5 rounded-full shadow-sm">
+        <i-feather name="star" style="width:9px;height:9px;"></i-feather>
+        Top tier
+      </span>
 
       <!-- Plan name -->
       <h3 class="text-sm font-bold text-gray-900">{{ plan.name }}</h3>
@@ -41,6 +49,14 @@
         <i-feather name="check" style="width:12px;height:12px;" class="text-red-600 shrink-0 mt-0.5"></i-feather>
         <span>{{ plan.accessScope }}</span>
       </div>
+
+      <!-- Subscription-tier perks (trainer/center only) -->
+      <ul *ngIf="isProviderRole" class="flex flex-col gap-1.5">
+        <li *ngFor="let perk of perksFor(plan)" class="flex items-start gap-2 text-xs text-gray-700">
+          <i-feather name="check" style="width:12px;height:12px;" class="text-red-600 shrink-0 mt-0.5"></i-feather>
+          <span>{{ perk }}</span>
+        </li>
+      </ul>
 
       <!-- CTA -->
       <button type="button" (click)="choosePlan(plan)" [disabled]="selectingPlanId !== null"

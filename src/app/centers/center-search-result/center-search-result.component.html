@@ -49,6 +49,12 @@
                             <div class="absolute bottom-0 left-0 right-0 h-16
                                         bg-gradient-to-t from-zinc-900 to-transparent">
                             </div>
+                            <!-- Featured badge -- top paid subscription tier perk -->
+                            <span *ngIf="center.featured" class="absolute top-2 left-2 flex items-center gap-1 text-[10px] font-bold
+                                         text-zinc-900 bg-amber-400 px-2 py-0.5 rounded-full shadow-sm">
+                                <i-feather name="star" style="width:10px;height:10px;"></i-feather>
+                                Featured
+                            </span>
                         </div>
 
                         <!-- Body -->

@@ -66,6 +66,12 @@
                 <div class="relative w-full h-40 bg-gray-100 overflow-hidden">
                     <img [src]="trainerPhotoUrl(trainer)" [alt]="trainer.name" (error)="onImageError($event)"
                         class="w-full h-full object-cover object-top" />
+                    <!-- Featured badge -- top paid subscription tier perk -->
+                    <span *ngIf="trainer.featured" class="absolute top-2 left-2 flex items-center gap-1 text-[10px] font-bold
+                                 text-amber-950 bg-amber-400 px-2 py-0.5 rounded-full shadow-sm">
+                        <i-feather name="star" style="width:10px;height:10px;"></i-feather>
+                        Featured
+                    </span>
                 </div>
 
                 <div class="flex flex-col gap-2 p-4 flex-1">
@@ -114,6 +120,12 @@
                 <div class="relative w-full h-40 bg-gray-100 overflow-hidden">
                     <img [src]="centerPhotoUrl(center)" [alt]="center.name" (error)="onImageError($event)"
                         class="w-full h-full object-cover object-top" />
+                    <!-- Featured badge -- top paid subscription tier perk -->
+                    <span *ngIf="center.featured" class="absolute top-2 left-2 flex items-center gap-1 text-[10px] font-bold
+                                 text-amber-950 bg-amber-400 px-2 py-0.5 rounded-full shadow-sm">
+                        <i-feather name="star" style="width:10px;height:10px;"></i-feather>
+                        Featured
+                    </span>
                 </div>
 
                 <div class="flex flex-col gap-2 p-4 flex-1">

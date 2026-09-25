@@ -26,6 +26,8 @@ export interface PromoOffer {
   code?: string | null;
   active: boolean;
   live: boolean;
+  /** True when the owning trainer/center is on the platform's top paid subscription tier -- guarantees this offer's Deals-feed placement. */
+  featured?: boolean;
   date: string;
   lastUpdate: string;
   message?: string;

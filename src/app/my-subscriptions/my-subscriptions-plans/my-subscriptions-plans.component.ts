@@ -54,6 +54,40 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
     return this.plans.filter(p => p.targetRole === role);
   }
 
+  get isProviderRole(): boolean {
+    return this.myTargetRole === 'trainer' || this.myTargetRole === 'center';
+  }
+
+  /** The highest sortOrder among this role's visible plans -- matches the
+   *  backend's own "top tier" definition (SubscriptionTierService.topTierRank),
+   *  so this only ever lights up for the same tier that actually gets the
+   *  Featured badge + Deals-feed placement server-side. */
+  private get topSortOrder(): number {
+    return this.visiblePlans.reduce((max, p) => Math.max(max, p.sortOrder ?? 0), 0);
+  }
+
+  isTopTierPlan(plan: Plan): boolean {
+    return plan.sortOrder != null && plan.sortOrder === this.topSortOrder;
+  }
+
+  /** Concrete subscription-tier perks for a trainer/center plan -- mirrors the
+   *  real, server-enforced behavior (search-ranking boost, capacity cap,
+   *  Featured badge) rather than relying on the admin-authored `accessScope`
+   *  free text to describe them accurately. */
+  perksFor(plan: Plan): string[] {
+    const perks: string[] = ['Boosts your ranking in search results over unsubscribed providers'];
+    if (this.myTargetRole === 'trainer') {
+      perks.push(`Feature-video capacity raised to ${4 + plan.sortOrder * 2} (from a base of 4)`);
+    } else if (this.myTargetRole === 'center') {
+      perks.push(`Introduction capacity raised to ${3 + plan.sortOrder} (from a base of 3)`);
+    }
+    if (this.isTopTierPlan(plan)) {
+      perks.push('"Featured" badge on your profile and search cards');
+      perks.push('Guaranteed placement at the top of the public Deals feed');
+    }
+    return perks;
+  }
+
   ngOnInit(): void {
     this.store.dispatch(loadPlans());
 

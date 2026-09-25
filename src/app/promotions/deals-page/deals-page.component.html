@@ -27,11 +27,19 @@
 
     <!-- List -->
     <div *ngIf="!loading && deals.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div *ngFor="let p of deals" class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-2">
+        <div *ngFor="let p of deals" class="bg-white rounded-2xl p-4 flex flex-col gap-2"
+            [ngClass]="p.featured ? 'border-2 border-amber-300' : 'border border-gray-200'">
             <div class="flex items-center justify-between gap-2">
-                <span class="text-[10px] font-bold uppercase tracking-wide bg-amber-50 text-amber-700 border border-amber-100 rounded-full px-2 py-0.5">
-                    {{ label(p) }}
-                </span>
+                <div class="flex items-center gap-1.5">
+                    <span class="text-[10px] font-bold uppercase tracking-wide bg-amber-50 text-amber-700 border border-amber-100 rounded-full px-2 py-0.5">
+                        {{ label(p) }}
+                    </span>
+                    <!-- Featured badge -- top paid subscription tier perk (guaranteed Deals-feed placement) -->
+                    <span *ngIf="p.featured" class="flex items-center gap-1 text-[10px] font-bold text-amber-950 bg-amber-400 rounded-full px-2 py-0.5">
+                        <i-feather name="star" style="width:9px;height:9px;"></i-feather>
+                        Featured
+                    </span>
+                </div>
                 <span class="text-[10px] font-semibold text-gray-400 uppercase">{{ p.ownerType === 'platform' ? 'Berliz' : p.ownerType }}</span>
             </div>
             <div>

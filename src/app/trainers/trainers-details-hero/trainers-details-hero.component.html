@@ -42,9 +42,17 @@
             <!-- Identity -->
             <div class="flex-1 flex flex-col gap-3 text-center sm:text-left">
 
-                <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
-                    Berliz Certified Trainer
-                </span>
+                <div class="flex items-center gap-2 justify-center sm:justify-start">
+                    <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+                        Berliz Certified Trainer
+                    </span>
+                    <!-- Featured badge -- top paid subscription tier perk -->
+                    <span *ngIf="trainer?.featured" class="flex items-center gap-1 text-[10px] font-bold
+                                 text-zinc-900 bg-amber-400 px-2 py-0.5 rounded-full shadow-sm">
+                        <i-feather name="star" style="width:10px;height:10px;"></i-feather>
+                        Featured
+                    </span>
+                </div>
 
                 <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight uppercase">
                     {{ trainer?.name }}

@@ -31,6 +31,8 @@ export interface Trainers {
   serviceMode?: 'IN_PERSON' | 'HYBRID' | 'ONLINE';
   /** Cities/countries this trainer is available in. Public-facing replacement for `address`. */
   locations?: TrainerLocation[];
+  /** True when this trainer currently holds the platform's top paid subscription tier -- a "Featured" badge perk. */
+  featured?: boolean;
   message?: string;
 }
 
