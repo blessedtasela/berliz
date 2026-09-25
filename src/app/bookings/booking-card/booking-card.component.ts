@@ -24,6 +24,7 @@ export class BookingCardComponent {
   @Output() statusChangeRequested = new EventEmitter<{ id: number; status: string }>();
   @Output() deleteRequested = new EventEmitter<number>();
   @Output() startIntakeRequested = new EventEmitter<{ clientId: number; clientName: string }>();
+  @Output() sendIntakeRequested = new EventEmitter<{ clientId: number; clientName: string }>();
 
   get counterpartyName(): string {
     if (this.mode === 'client') {
@@ -183,8 +184,28 @@ export class BookingCardComponent {
     this.router.navigate(['/dashboard/messages'], { queryParams: { userId: this.booking.clientId } });
   }
 
+  /** Trainer fills the form in together with the client, right now (e.g. in person). */
   startIntake(): void {
     this.startIntakeRequested.emit({ clientId: this.booking.clientId, clientName: this.counterpartyName });
+  }
+
+  /** Sends a blank form for the client to fill out and sign on their own time --
+   *  confirmed first since it immediately emails/notifies the client. */
+  sendIntake(): void {
+    this.dialog.open(PromptModalComponent, {
+      width: '360px',
+      maxWidth: '95vw',
+      data: {
+        confirmation: true,
+        title: 'Send intake form?',
+        message: `${this.counterpartyName} will get an email and in-app notification with a link to fill it out and sign.`,
+        confirmText: 'Send',
+        cancelText: 'Cancel',
+        icon: 'send'
+      }
+    }).afterClosed().subscribe(confirmed => {
+      if (confirmed) this.sendIntakeRequested.emit({ clientId: this.booking.clientId, clientName: this.counterpartyName });
+    });
   }
 
   /** Clicking the card body (not one of its action buttons -- see the

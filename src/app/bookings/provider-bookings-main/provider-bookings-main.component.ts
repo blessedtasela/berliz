@@ -17,6 +17,11 @@ import {
   updateBookingStatusSuccess
 } from 'src/app/state/booking/booking.actions';
 import { selectBookingLoading, selectProviderBookings } from 'src/app/state/booking/booking.selectors';
+import {
+  createClientIntake,
+  createClientIntakeFailure,
+  createClientIntakeSuccess,
+} from 'src/app/state/client-intake/client-intake.actions';
 
 import { genericError } from 'src/validators/form-validators.module';
 
@@ -88,6 +93,18 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
       .subscribe(({ error }) => {
         this.snackBar.openSnackBar(error || genericError, 'error');
       });
+
+    this.actions$
+      .pipe(ofType(createClientIntakeSuccess), takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.snackBar.openSnackBar('Intake form sent', '');
+      });
+
+    this.actions$
+      .pipe(ofType(createClientIntakeFailure), takeUntil(this.destroy$))
+      .subscribe(({ error }) => {
+        this.snackBar.openSnackBar(error || genericError, 'error');
+      });
   }
 
   ngOnDestroy(): void {
@@ -127,5 +144,9 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     this.router.navigate(['/dashboard/client-intake/new', event.clientId], {
       queryParams: { clientName: event.clientName }
     });
+  }
+
+  onSendIntakeRequested(event: { clientId: number; clientName: string }): void {
+    this.store.dispatch(createClientIntake({ data: { clientId: event.clientId } }));
   }
 }

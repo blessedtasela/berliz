@@ -49,7 +49,8 @@
                 </span>
                 <app-booking-card *ngFor="let b of pending" mode="provider" [booking]="b"
                     (statusChangeRequested)="onStatusChangeRequested($event)"
-                    (startIntakeRequested)="onStartIntakeRequested($event)"></app-booking-card>
+                    (startIntakeRequested)="onStartIntakeRequested($event)"
+                    (sendIntakeRequested)="onSendIntakeRequested($event)"></app-booking-card>
             </div>
 
             <!-- Confirmed -->
@@ -60,7 +61,8 @@
                 </span>
                 <app-booking-card *ngFor="let b of confirmed" mode="provider" [booking]="b"
                     (statusChangeRequested)="onStatusChangeRequested($event)"
-                    (startIntakeRequested)="onStartIntakeRequested($event)"></app-booking-card>
+                    (startIntakeRequested)="onStartIntakeRequested($event)"
+                    (sendIntakeRequested)="onSendIntakeRequested($event)"></app-booking-card>
             </div>
 
             <!-- Completed -->
@@ -70,7 +72,8 @@
                     Completed
                 </span>
                 <app-booking-card *ngFor="let b of completed" mode="provider" [booking]="b"
-                    (startIntakeRequested)="onStartIntakeRequested($event)"></app-booking-card>
+                    (startIntakeRequested)="onStartIntakeRequested($event)"
+                    (sendIntakeRequested)="onSendIntakeRequested($event)"></app-booking-card>
             </div>
 
             <!-- Cancelled -->
@@ -82,7 +85,8 @@
                 <app-booking-card *ngFor="let b of cancelled" mode="provider" [booking]="b"
                     (statusChangeRequested)="onStatusChangeRequested($event)"
                     (deleteRequested)="onDeleteRequested($event)"
-                    (startIntakeRequested)="onStartIntakeRequested($event)"></app-booking-card>
+                    (startIntakeRequested)="onStartIntakeRequested($event)"
+                    (sendIntakeRequested)="onSendIntakeRequested($event)"></app-booking-card>
             </div>
 
         </div>
