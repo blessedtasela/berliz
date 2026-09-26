@@ -1,16 +1,16 @@
-<div class="bg-white border border-gray-200 rounded-xl font-sans">
+<div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl font-sans">
 
     <!-- Header -->
-    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wide">Overview</h2>
-        <span class="text-[11px] text-gray-400">{{ (data | keyvalue)?.length }} modules</span>
+    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+        <h2 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Overview</h2>
+        <span class="text-[11px] text-gray-400 dark:text-gray-500">{{ (data | keyvalue)?.length }} modules</span>
     </div>
 
     <!-- Scrollable cards -->
     <div class="overflow-x-auto px-4 py-4">
         <div class="flex gap-3" style="min-width: max-content;">
 
-            <a *ngFor="let item of (data | keyvalue) | slice:0:10" [routerLink]="resolveRoute(item.key)" class="w-44 flex flex-col gap-3 p-4 border border-gray-200 rounded-xl bg-white
+            <a *ngFor="let item of (data | keyvalue) | slice:0:10" [routerLink]="resolveRoute(item.key)" class="w-44 flex flex-col gap-3 p-4 border border-gray-200 dark:border-gray-800 rounded-xl bg-white dark:bg-gray-900
                hover:shadow-sm hover:-translate-y-0.5 transition cursor-pointer shrink-0">
 
                 <!-- Dot -->
@@ -20,10 +20,10 @@
 
                 <!-- Label + value -->
                 <div class="flex flex-col gap-0.5">
-                    <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wide truncate">
+                    <span class="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wide truncate">
                         {{ item.key }}
                     </span>
-                    <span class="text-2xl font-bold text-gray-900 leading-none">
+                    <span class="text-2xl font-bold text-gray-900 dark:text-gray-100 leading-none">
                         {{ item.value }}
                     </span>
                 </div>
@@ -37,12 +37,12 @@
             </a>
 
             <!-- Show more → full Hub grid -->
-            <a *ngIf="((data | keyvalue)?.length || 0) > 10" routerLink="/dashboard/hub" class="w-44 flex flex-col items-center justify-center gap-2 p-4 border border-dashed border-gray-300 rounded-xl bg-gray-50
-               hover:border-red-400 hover:bg-red-50 transition cursor-pointer shrink-0 text-center">
-                <div class="w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center">
+            <a *ngIf="((data | keyvalue)?.length || 0) > 10" routerLink="/dashboard/hub" class="w-44 flex flex-col items-center justify-center gap-2 p-4 border border-dashed border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800
+               hover:border-red-400 dark:hover:border-red-900 hover:bg-red-50 dark:hover:bg-red-950/20 transition cursor-pointer shrink-0 text-center">
+                <div class="w-9 h-9 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
                     <i-feather name="grid" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </div>
-                <span class="text-[11px] font-semibold text-gray-700">
+                <span class="text-[11px] font-semibold text-gray-700 dark:text-gray-300">
                     +{{ ((data | keyvalue)?.length || 0) - 10 }} more
                 </span>
                 <span class="text-[10px] text-red-600 font-semibold">View full hub →</span>

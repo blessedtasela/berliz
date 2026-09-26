@@ -193,9 +193,9 @@ export class DashboardTodoListComponent implements OnInit, OnDestroy {
   }
 
   taskStatusClass(task: Tasks): string {
-    if (this.isTaskComplete(task)) return 'bg-green-100 text-green-700';
-    if (this.isTaskOverdue(task)) return 'bg-red-100 text-red-600';
-    return this.isTaskActive(task) ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600';
+    if (this.isTaskComplete(task)) return 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400';
+    if (this.isTaskOverdue(task)) return 'bg-red-100 dark:bg-red-950/30 text-red-600 dark:text-red-400';
+    return this.isTaskActive(task) ? 'bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300';
   }
 
   taskTitle(task: Tasks): string {
@@ -293,9 +293,9 @@ export class DashboardTodoListComponent implements OnInit, OnDestroy {
 
   workoutStatusClass(status: string): string {
     switch (this.normalized(status)) {
-      case 'COMPLETED': return 'bg-green-50 text-green-700 border-green-100';
-      case 'IN_PROGRESS': return 'bg-orange-50 text-orange-600 border-orange-100';
-      default: return 'bg-gray-50 text-gray-500 border-gray-200';
+      case 'COMPLETED': return 'bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 border-green-100 dark:border-green-900';
+      case 'IN_PROGRESS': return 'bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 border-orange-100 dark:border-orange-900';
+      default: return 'bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700';
     }
   }
 
@@ -385,21 +385,21 @@ export class DashboardTodoListComponent implements OnInit, OnDestroy {
 
   statusClass(status: string): string {
     const map: Record<string, string> = {
-      'completed': 'bg-green-100 text-green-700',
-      'in-progress': 'bg-blue-100 text-blue-700',
-      'pending': 'bg-red-100 text-red-600',
-      'cancelled': 'bg-gray-200 text-gray-600'
+      'completed': 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400',
+      'in-progress': 'bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400',
+      'pending': 'bg-red-100 dark:bg-red-950/30 text-red-600 dark:text-red-400',
+      'cancelled': 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
     };
-    return map[status] ?? 'bg-gray-100 text-gray-600';
+    return map[status] ?? 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400';
   }
 
   priorityClass(priority: string): string {
     const map: Record<string, string> = {
-      'high': 'text-red-600',
-      'normal': 'text-blue-600',
-      'low': 'text-green-600'
+      'high': 'text-red-600 dark:text-red-400',
+      'normal': 'text-blue-600 dark:text-blue-400',
+      'low': 'text-green-600 dark:text-green-400'
     };
-    return map[priority?.toLowerCase()] ?? 'text-gray-500';
+    return map[priority?.toLowerCase()] ?? 'text-gray-500 dark:text-gray-400';
   }
 
   isDueNow(todo: TodoList): boolean {
@@ -412,12 +412,12 @@ export class DashboardTodoListComponent implements OnInit, OnDestroy {
   }
 
   getDueColor(todo: TodoList): string {
-    if (todo.status === 'completed') return 'text-green-600';
-    if (todo.status === 'cancelled') return 'text-gray-400';
-    if (this.isDueNow(todo)) return 'text-red-600';
-    if (this.isDueSoon(todo)) return 'text-yellow-600';
-    if (todo.status === 'in-progress') return 'text-blue-600';
-    return 'text-gray-500';
+    if (todo.status === 'completed') return 'text-green-600 dark:text-green-400';
+    if (todo.status === 'cancelled') return 'text-gray-400 dark:text-gray-500';
+    if (this.isDueNow(todo)) return 'text-red-600 dark:text-red-400';
+    if (this.isDueSoon(todo)) return 'text-yellow-600 dark:text-yellow-400';
+    if (todo.status === 'in-progress') return 'text-blue-600 dark:text-blue-400';
+    return 'text-gray-500 dark:text-gray-400';
   }
 
   getDueLabel(todo: TodoList): string {
