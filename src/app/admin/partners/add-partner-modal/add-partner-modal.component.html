@@ -3,18 +3,18 @@
     <!-- Header -->
     <div class="flex items-start justify-between gap-3">
         <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+            <div class="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
                 <i-feather name="briefcase" class="text-red-600" style="width:15px;height:15px;"></i-feather>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-gray-900">
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">
                     {{ formIndex === 0 ? 'Add a new partner' : 'Social details' }}
                 </h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">Step {{ formIndex + 1 }} of 2</p>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">Step {{ formIndex + 1 }} of 2</p>
             </div>
         </div>
         <button type="button" (click)="closeDialog()"
-            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 shrink-0">
             <i-feather name="x" style="width:14px;height:14px;"></i-feather>
         </button>
     </div>
@@ -28,95 +28,95 @@
                     addPartnerForm.get('certificate')?.invalid ||
                     addPartnerForm.get('motivation')?.invalid ||
                     addPartnerForm.get('cv')?.invalid) && invalidForm"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Please complete this section
             </p>
 
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">User email</label>
-                <select formControlName="email" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">User email</label>
+                <select formControlName="email" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="{
-                            'border-red-400 bg-red-50': addPartnerForm.get('email')?.invalid && addPartnerForm.get('email')?.dirty,
-                            'border-gray-200 bg-gray-50': !(addPartnerForm.get('email')?.invalid && addPartnerForm.get('email')?.dirty)
+                            'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addPartnerForm.get('email')?.invalid && addPartnerForm.get('email')?.dirty,
+                            'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(addPartnerForm.get('email')?.invalid && addPartnerForm.get('email')?.dirty)
                           }">
                     <option selected hidden>Please select an email</option>
                     <option *ngFor="let user of users">{{ user.email }}</option>
                 </select>
                 <p *ngIf="addPartnerForm.get('email')?.invalid && addPartnerForm.get('email')?.dirty"
-                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     Email is required
                 </p>
             </div>
 
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Relevant document or
+                <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Relevant document or
                     certificate</label>
                 <div class="flex items-center gap-3">
-                    <img class="w-16 h-16 object-cover object-top rounded-xl border border-gray-200"
+                    <img class="w-16 h-16 object-cover object-top rounded-xl border border-gray-200 dark:border-gray-700"
                         src="../../../assets/icons/user.png" alt="Certificate" />
                     <input formControlName="certificate" (change)="onCertificateSelected($event)" type="file"
-                        accept=".pdf" class="block w-full text-xs text-gray-500 cursor-pointer
+                        accept=".pdf" class="block w-full text-xs text-gray-500 dark:text-gray-400 cursor-pointer
                                file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0
-                               file:text-xs file:font-semibold file:bg-red-50 file:text-red-600
-                               hover:file:bg-red-100 file:cursor-pointer">
+                               file:text-xs file:font-semibold file:bg-red-50 dark:file:bg-red-950/30 file:text-red-600
+                               hover:file:bg-red-100 dark:hover:file:bg-red-950/50 file:cursor-pointer">
                 </div>
                 <p *ngIf="addPartnerForm.get('certificate')?.invalid && addPartnerForm.get('certificate')?.dirty && !addPartnerForm.get('certificate')?.errors?.['invalidSize']"
-                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     Certificate is required
                 </p>
                 <p *ngIf="addPartnerForm.get('certificate')?.errors?.['invalidSize']"
-                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     File must be under 10MB
                 </p>
             </div>
 
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">CV</label>
+                <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">CV</label>
                 <div class="flex items-center gap-3">
-                    <img class="w-16 h-16 object-cover object-top rounded-xl border border-gray-200"
+                    <img class="w-16 h-16 object-cover object-top rounded-xl border border-gray-200 dark:border-gray-700"
                         src="../../../assets/icons/user.png" alt="CV" />
-                    <input formControlName="cv" (change)="onCVSelected($event)" type="file" accept=".pdf" class="block w-full text-xs text-gray-500 cursor-pointer
+                    <input formControlName="cv" (change)="onCVSelected($event)" type="file" accept=".pdf" class="block w-full text-xs text-gray-500 dark:text-gray-400 cursor-pointer
                                file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0
-                               file:text-xs file:font-semibold file:bg-red-50 file:text-red-600
-                               hover:file:bg-red-100 file:cursor-pointer">
+                               file:text-xs file:font-semibold file:bg-red-50 dark:file:bg-red-950/30 file:text-red-600
+                               hover:file:bg-red-100 dark:hover:file:bg-red-950/50 file:cursor-pointer">
                 </div>
                 <p *ngIf="addPartnerForm.get('cv')?.invalid && addPartnerForm.get('cv')?.dirty && !addPartnerForm.get('cv')?.errors?.['invalidSize']"
-                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     Upload a valid file
                 </p>
                 <p *ngIf="addPartnerForm.get('cv')?.errors?.['invalidSize']"
-                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     File must be under 10MB
                 </p>
             </div>
 
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Motivation</label>
-                <textarea formControlName="motivation" rows="4" placeholder="Write the motivation here" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Motivation</label>
+                <textarea formControlName="motivation" rows="4" placeholder="Write the motivation here" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="{
-                            'border-red-400 bg-red-50': addPartnerForm.get('motivation')?.invalid && addPartnerForm.get('motivation')?.dirty,
-                            'border-gray-200 bg-gray-50': !(addPartnerForm.get('motivation')?.invalid && addPartnerForm.get('motivation')?.dirty)
+                            'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addPartnerForm.get('motivation')?.invalid && addPartnerForm.get('motivation')?.dirty,
+                            'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(addPartnerForm.get('motivation')?.invalid && addPartnerForm.get('motivation')?.dirty)
                           }"></textarea>
                 <p *ngIf="addPartnerForm.get('motivation')?.invalid && addPartnerForm.get('motivation')?.dirty"
-                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     At least 9 characters
                 </p>
             </div>
 
-            <div class="border-t border-gray-100"></div>
+            <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
             <div class="flex items-center justify-end gap-2">
-                <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
-                           hover:bg-gray-50 active:scale-[0.98] transition">
+                <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
+                           hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] transition">
                     Clear
                 </button>
                 <button type="button" (click)="toggleIndex(+1)" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
@@ -134,80 +134,80 @@
             <p *ngIf="(addPartnerForm.get('facebookUrl')?.invalid ||
                     addPartnerForm.get('instagramUrl')?.invalid ||
                     addPartnerForm.get('role')?.invalid) && invalidForm"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Please complete all sections
             </p>
 
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Facebook URL</label>
-                <input formControlName="facebookUrl" type="text" placeholder="https://www.facebook.com/my-profile/" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Facebook URL</label>
+                <input formControlName="facebookUrl" type="text" placeholder="https://www.facebook.com/my-profile/" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="{
-                            'border-red-400 bg-red-50': addPartnerForm.get('facebookUrl')?.invalid && addPartnerForm.get('facebookUrl')?.dirty,
-                            'border-gray-200 bg-gray-50': !(addPartnerForm.get('facebookUrl')?.invalid && addPartnerForm.get('facebookUrl')?.dirty)
+                            'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addPartnerForm.get('facebookUrl')?.invalid && addPartnerForm.get('facebookUrl')?.dirty,
+                            'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(addPartnerForm.get('facebookUrl')?.invalid && addPartnerForm.get('facebookUrl')?.dirty)
                           }">
                 <p *ngIf="addPartnerForm.get('facebookUrl')?.invalid && addPartnerForm.get('facebookUrl')?.dirty"
-                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     Please enter a valid Facebook URL
                 </p>
             </div>
 
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Instagram URL</label>
-                <input formControlName="instagramUrl" type="text" placeholder="https://www.instagram.com/my-profile/" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Instagram URL</label>
+                <input formControlName="instagramUrl" type="text" placeholder="https://www.instagram.com/my-profile/" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="{
-                            'border-red-400 bg-red-50': addPartnerForm.get('instagramUrl')?.invalid && addPartnerForm.get('instagramUrl')?.dirty,
-                            'border-gray-200 bg-gray-50': !(addPartnerForm.get('instagramUrl')?.invalid && addPartnerForm.get('instagramUrl')?.dirty)
+                            'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addPartnerForm.get('instagramUrl')?.invalid && addPartnerForm.get('instagramUrl')?.dirty,
+                            'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(addPartnerForm.get('instagramUrl')?.invalid && addPartnerForm.get('instagramUrl')?.dirty)
                           }">
                 <p *ngIf="addPartnerForm.get('instagramUrl')?.invalid && addPartnerForm.get('instagramUrl')?.dirty"
-                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     Please enter a valid Instagram URL
                 </p>
             </div>
 
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">YouTube URL
+                <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">YouTube URL
                     (optional)</label>
-                <input formControlName="youtubeUrl" type="text" placeholder="https://www.youtube.com/my-profile/" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                <input formControlName="youtubeUrl" type="text" placeholder="https://www.youtube.com/my-profile/" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="{
-                            'border-red-400 bg-red-50': addPartnerForm.get('youtubeUrl')?.invalid && addPartnerForm.get('youtubeUrl')?.dirty,
-                            'border-gray-200 bg-gray-50': !(addPartnerForm.get('youtubeUrl')?.invalid && addPartnerForm.get('youtubeUrl')?.dirty)
+                            'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addPartnerForm.get('youtubeUrl')?.invalid && addPartnerForm.get('youtubeUrl')?.dirty,
+                            'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(addPartnerForm.get('youtubeUrl')?.invalid && addPartnerForm.get('youtubeUrl')?.dirty)
                           }">
                 <p *ngIf="addPartnerForm.get('youtubeUrl')?.invalid && addPartnerForm.get('youtubeUrl')?.dirty"
-                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     Please enter a valid YouTube URL
                 </p>
             </div>
 
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Role</label>
-                <select formControlName="role" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Role</label>
+                <select formControlName="role" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="{
-                            'border-red-400 bg-red-50': addPartnerForm.get('role')?.invalid && addPartnerForm.get('role')?.dirty,
-                            'border-gray-200 bg-gray-50': !(addPartnerForm.get('role')?.invalid && addPartnerForm.get('role')?.dirty)
+                            'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addPartnerForm.get('role')?.invalid && addPartnerForm.get('role')?.dirty,
+                            'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(addPartnerForm.get('role')?.invalid && addPartnerForm.get('role')?.dirty)
                           }">
                     <option selected hidden>Please select a role</option>
                     <option *ngFor="let role of roles">{{ role.role }}</option>
                 </select>
                 <p *ngIf="addPartnerForm.get('role')?.invalid && addPartnerForm.get('role')?.dirty"
-                    class="text-red-500 text-[11px] flex items-center gap-1">
+                    class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     Select a role
                 </p>
             </div>
 
-            <div class="border-t border-gray-100"></div>
+            <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
             <div class="flex items-center justify-end gap-2">
-                <button type="button" (click)="toggleIndex(0)" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
-                           hover:bg-gray-50 active:scale-[0.98] transition">
+                <button type="button" (click)="toggleIndex(0)" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
+                           hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] transition">
                     Back
                 </button>
                 <button type="submit" (click)="addPartner()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
