@@ -35,15 +35,32 @@
         <!-- Posts -->
         <div *ngIf="posts.length > 0" class="flex flex-col gap-2">
             <span class="text-[11px] font-bold uppercase tracking-wide text-gray-400">Posts ({{ posts.length }})</span>
-            <div *ngFor="let p of posts" class="bg-white rounded-2xl border border-gray-200 p-4 flex items-start gap-3">
-                <div class="min-w-0 flex-1">
-                    <a [routerLink]="['/dashboard/user', p.authorId]" class="text-xs font-bold text-gray-900 hover:underline">{{ p.authorName }}</a>
-                    <p class="text-sm text-gray-600 line-clamp-3 whitespace-pre-line mt-0.5">{{ p.content }}</p>
+            <div *ngFor="let p of posts" class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+                <div class="flex items-start gap-3">
+                    <img *ngIf="p.authorPhoto" [src]="p.authorPhoto | strapiUrl" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
+                    <div *ngIf="!p.authorPhoto" class="w-8 h-8 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                        <i-feather name="user" class="text-red-600" style="width:14px;height:14px;"></i-feather>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <a [routerLink]="['/dashboard/user', p.authorUsername || p.authorId]" class="text-xs font-bold text-gray-900 hover:underline">{{ p.authorName }}</a>
+                        <p class="text-[10px] text-gray-400">{{ p.date | date:'mediumDate' }}</p>
+                    </div>
+                    <button type="button" (click)="remove('POST', p.id, p)" title="Remove from saved"
+                        class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-amber-500 hover:text-amber-700 hover:bg-amber-50 transition">
+                        <i-feather name="bookmark" style="width:14px;height:14px;" fill="currentColor"></i-feather>
+                    </button>
                 </div>
-                <button type="button" (click)="remove('POST', p.id, p)" title="Remove from saved"
-                    class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-amber-500 hover:text-amber-700 hover:bg-amber-50 transition">
-                    <i-feather name="bookmark" style="width:14px;height:14px;" fill="currentColor"></i-feather>
-                </button>
+
+                <a [routerLink]="['/dashboard/timeline']" [queryParams]="{ postId: p.id }" class="block">
+                    <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ p.content }}</p>
+                    <img *ngIf="p.photoUrl" [src]="p.photoUrl | strapiUrl" alt=""
+                        class="w-full max-h-96 object-cover rounded-xl border border-gray-100 mt-2" />
+                </a>
+
+                <div *ngIf="p.workoutId" class="flex items-center gap-2.5 rounded-xl border border-orange-100 bg-orange-50/60 px-3 py-2">
+                    <i-feather name="zap" class="text-orange-500 shrink-0" style="width:15px;height:15px;"></i-feather>
+                    <span class="text-xs font-bold text-gray-800 truncate flex-1">{{ p.workoutName || 'Workout template' }}</span>
+                </div>
             </div>
         </div>
 

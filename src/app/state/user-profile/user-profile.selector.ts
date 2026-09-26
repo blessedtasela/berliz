@@ -62,6 +62,16 @@ export const selectSavingMessagePopupEnabled = createSelector(
   state => state.savingMessagePopupEnabled
 );
 
+export const selectSavingEmailNotificationPreferences = createSelector(
+  selectUserProfileState,
+  state => state.savingEmailNotificationPreferences
+);
+
+export const selectMyEmailNotificationPreferences = createSelector(
+  selectUserProfileState,
+  state => state.myEmailNotificationPreferences
+);
+
 // ── PUBLIC DIRECTORY ──────────────────────────────────────────────────────
 export const selectPublicDirectory = createSelector(
   selectUserProfileState,

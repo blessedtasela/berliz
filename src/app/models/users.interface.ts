@@ -40,6 +40,11 @@ export interface Users {
     /** Whether the floating message popup widget shows up anywhere in the app. Defaults to true. */
     messagePopupEnabled?: boolean;
 
+    /** Email notification category preferences — whether these get emailed in addition to the in-app notification. All default to true. */
+    emailNotifyMessages?: boolean;
+    emailNotifyBookings?: boolean;
+    emailNotifyAccount?: boolean;
+
     date: string;
     lastUpdate: string;
 

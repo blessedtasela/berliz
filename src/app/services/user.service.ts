@@ -6,6 +6,7 @@ import { ProfileVisibility, PublicDirectoryEntry, PublicUserProfile, SidebarDisp
 import { AuthResponse } from '../models/Auth.interface';
 import { ApiResponse } from '../models/Api.interface';
 import { AuthRedirectService } from './auth-redirect.service';
+import { EmailNotificationPreferences } from '../state/user-profile/user-profile.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -266,6 +267,19 @@ export class UserService {
     return this.httpClient.put<ApiResponse<string>>(
       this.url + "/user/updateMessagePopupEnabled",
       { messagePopupEnabled: String(enabled) }
+    );
+  }
+
+  /** Sets any/all of the signed-in user's email notification category preferences in one call -- only the keys present are changed. */
+  updateEmailNotificationPreferences(preferences: EmailNotificationPreferences): Observable<ApiResponse<string>> {
+    const body: Record<string, string> = {};
+    if (preferences.emailNotifyMessages !== undefined) body['emailNotifyMessages'] = String(preferences.emailNotifyMessages);
+    if (preferences.emailNotifyBookings !== undefined) body['emailNotifyBookings'] = String(preferences.emailNotifyBookings);
+    if (preferences.emailNotifyAccount !== undefined) body['emailNotifyAccount'] = String(preferences.emailNotifyAccount);
+
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/updateEmailNotificationPreferences",
+      body
     );
   }
 

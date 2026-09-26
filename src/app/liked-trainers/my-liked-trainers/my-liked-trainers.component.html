@@ -32,9 +32,10 @@
         <div *ngFor="let like of likes" class="flex items-center gap-3 px-4 py-3 transition-opacity"
             [class.opacity-40]="removingId === like.trainerId">
 
-            <div class="w-9 h-9 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center shrink-0">
-                <i-feather name="user" class="text-gray-400" style="width:15px;height:15px;"></i-feather>
-            </div>
+            <a [routerLink]="['/dashboard/find-trainers', slugFor(like.trainerName)]" class="shrink-0">
+                <img [src]="photoUrl(like)" [alt]="like.trainerName" (error)="$any($event.target).src = 'assets/avatar.png'"
+                    class="w-9 h-9 rounded-full object-cover object-top border border-gray-200" />
+            </a>
 
             <div class="min-w-0 flex-1">
                 <a [routerLink]="['/dashboard/find-trainers', slugFor(like.trainerName)]"

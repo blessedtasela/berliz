@@ -14,7 +14,7 @@
 
     <!-- Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      <hub-card *ngFor="let item of group.items; trackBy: trackByItem" [label]="item.key" [value]="item.value"
+      <hub-card *ngFor="let item of group.items; trackBy: trackByItem" [label]="item.label" [value]="item.value"
         [icon]="group.icon" [link]="item.link">
       </hub-card>
     </div>
