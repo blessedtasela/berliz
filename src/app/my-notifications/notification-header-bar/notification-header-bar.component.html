@@ -1,24 +1,24 @@
-<div class="flex justify-between items-center px-3 py-3 border-b border-gray-100 mb-1">
+<div class="flex justify-between items-center px-3 py-3 border-b border-gray-100 dark:border-gray-800 mb-1">
 
   <!-- LEFT: pagination -->
   <div class="flex items-center gap-2">
 
-    <button class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition flex items-center justify-center"
+    <button class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-30 transition flex items-center justify-center"
       (click)="prev.emit()" [disabled]="startIndex === 1">
-      <i-feather name="chevron-left" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+      <i-feather name="chevron-left" style="width:14px;height:14px;" class="text-gray-600 dark:text-gray-400"></i-feather>
     </button>
 
-    <span class="text-xs text-gray-500">
-      <span class="font-semibold text-gray-900">{{ startIndex }}</span>
+    <span class="text-xs text-gray-500 dark:text-gray-400">
+      <span class="font-semibold text-gray-900 dark:text-gray-100">{{ startIndex }}</span>
       –
-      <span class="font-semibold text-gray-900">{{ endIndex }}</span>
-      <span class="text-gray-400"> of </span>
-      <span class="font-semibold text-gray-900">{{ total }}</span>
+      <span class="font-semibold text-gray-900 dark:text-gray-100">{{ endIndex }}</span>
+      <span class="text-gray-400 dark:text-gray-500"> of </span>
+      <span class="font-semibold text-gray-900 dark:text-gray-100">{{ total }}</span>
     </span>
 
-    <button class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition flex items-center justify-center"
+    <button class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-30 transition flex items-center justify-center"
       (click)="next.emit()" [disabled]="endIndex === total">
-      <i-feather name="chevron-right" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+      <i-feather name="chevron-right" style="width:14px;height:14px;" class="text-gray-600 dark:text-gray-400"></i-feather>
     </button>
 
   </div>
@@ -28,14 +28,14 @@
 
     <!-- Refresh -->
     <button type="button" (click)="refresh.emit()" [disabled]="refreshing" title="Refresh"
-      class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition disabled:opacity-60">
-      <i-feather name="refresh-cw" [class.animate-spin]="refreshing" style="width:13px;height:13px;" class="text-gray-500"></i-feather>
+      class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center justify-center transition disabled:opacity-60">
+      <i-feather name="refresh-cw" [class.animate-spin]="refreshing" style="width:13px;height:13px;" class="text-gray-500 dark:text-gray-400"></i-feather>
     </button>
 
     <!-- Select all -->
     <label class="flex items-center gap-1.5 cursor-pointer select-none group">
       <input type="checkbox" [checked]="selectAll" (change)="toggleSelectAll.emit()" class="hidden peer" />
-      <div class="w-4 h-4 rounded border border-gray-300 group-hover:border-red-400
+      <div class="w-4 h-4 rounded border border-gray-300 dark:border-gray-600 group-hover:border-red-400 dark:group-hover:border-red-500
                   peer-checked:bg-red-600 peer-checked:border-red-600
                   flex items-center justify-center transition">
         <svg *ngIf="selectAll" class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor"
@@ -43,7 +43,7 @@
           <path d="M5 13l4 4L19 7"></path>
         </svg>
       </div>
-      <span class="text-xs text-gray-600 font-medium">Select all</span>
+      <span class="text-xs text-gray-600 dark:text-gray-300 font-medium">Select all</span>
     </label>
 
     <!-- Bulk menu -->
@@ -51,34 +51,34 @@
 
       <button class="w-7 h-7 rounded-lg border flex items-center justify-center transition"
         [ngClass]="selectAll
-          ? 'border-red-200 bg-red-50 hover:bg-red-100 text-red-600'
-          : 'border-gray-200 bg-white text-gray-400'"
+          ? 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-950/70 text-red-600 dark:text-red-400'
+          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-400 dark:text-gray-500'"
         (click)="toggleMenu($event)">
         <i-feather name="more-horizontal" style="width:14px;height:14px;"></i-feather>
       </button>
 
       <div *ngIf="menuOpen" (click)="$event.stopPropagation()"
-        class="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-2xl z-[100] text-sm py-1">
+        class="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-[100] text-sm py-1">
 
-        <div class="px-4 py-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wide">
+        <div class="px-4 py-2 text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
           With selected
         </div>
 
-        <button class="w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition"
+        <button class="w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 transition"
           (click)="doBulk('read')">
-          <i-feather name="check-circle" style="width:13px;height:13px;" class="text-gray-400"></i-feather>
+          <i-feather name="check-circle" style="width:13px;height:13px;" class="text-gray-400 dark:text-gray-500"></i-feather>
           Mark as read
         </button>
 
-        <button class="w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition"
+        <button class="w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 transition"
           (click)="doBulk('unread')">
-          <i-feather name="circle" style="width:13px;height:13px;" class="text-gray-400"></i-feather>
+          <i-feather name="circle" style="width:13px;height:13px;" class="text-gray-400 dark:text-gray-500"></i-feather>
           Mark as unread
         </button>
 
-        <div class="border-t border-gray-100 my-1"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800 my-1"></div>
 
-        <button class="w-full text-left px-4 py-2 text-xs text-red-600 hover:bg-red-50 flex items-center gap-2 transition"
+        <button class="w-full text-left px-4 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center gap-2 transition"
           (click)="doBulk('delete')">
           <i-feather name="trash-2" style="width:13px;height:13px;"></i-feather>
           Delete
