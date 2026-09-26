@@ -133,7 +133,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D10 | Transparent trainer/center pricing + book CTA on every relevant surface | ✅ | ✚ |
 | D11 | Pre-renewal reminder + ≤2-tap cancel | ✅ | ✚ | |
 | D12 | Value-first onboarding (one real action before any paywall) | ✅ | — |
-| D13 | Dark mode (app-wide) | 🚧 | — | Real infrastructure: Tailwind `darkMode: 'class'`, a `ThemeService` (Light/Dark/System, per-device like the other display prefs), a toggle in Settings ("Appearance" card). Converted so far: the dashboard shell (`sidebar` layout wrapper + `TopBar`), the full Settings page, a batch of high-traffic surfaces — Dashboard home's own inline markup, the whole Messages surface (conversation list, bubbles, composer, floating popup), Bookings (list + the shared `booking-card` used by both client and provider views), My FAQs, Connections, the Timeline/feed page (compose box, tab toggle, post cards) plus the shared `refresh-button` used across most dashboard pages , the shared `post-comments`/`comment-node`/`reaction-button`/`mention-input` components used by every comment thread (Timeline, dashboard user profiles, public profile once signed in — those four already carry their own pre-existing `dark` `@Input` for the *separate*, always-dark public-profile/media-sheet rendering; the `ThemeService`-driven `dark:` classes were layered on only in their `!dark` branches, so always-dark call sites like `post-detail-sheet`'s `[dark]="true"` are untouched) — and now all ~14 Dashboard-home widget cards (Overview, Now active, Users, Notifications, Suggested, Trending exercises, Quick links, Timeline preview, Tasks/Workouts/Todos, and the login/activity/app/subscription analytics charts), the shared `user-hover-card` popover used throughout the admin tables, and the remaining four Dashboard-home widgets (`accountability-card`, `challenges-card`, `consistency-ring`, `onboarding-checklist`) that complete that page's coverage — `recap-card` is left alone on purpose, its permanently-dark gradient card was already fixed-dark by design. Chart canvases (Chart.js) still render with their existing light-only grid/tick colors — retuning every chart's internal color for dark-mode contrast is its own pass, not bundled into this one. The public marketing site (`topbar` layout) is untouched on purpose — it's permanently dark by brand design already, same as the mobile app's own legal/marketing screens. Most of the dashboard (~525 remaining templates, admin screens, detail pages, etc.) still renders its existing light-only classes — a real, non-broken intermediate state (dark chrome, light content cards in the untouched areas), not full app-wide coverage yet. |
+| D13 | Dark mode (app-wide) | 🚧 | — | Real infrastructure: Tailwind `darkMode: 'class'`, a `ThemeService` (Light/Dark/System, per-device like the other display prefs), a toggle in Settings ("Appearance" card). Converted so far: the dashboard shell (`sidebar` layout wrapper + `TopBar`), the full Settings page, a batch of high-traffic surfaces — Dashboard home's own inline markup, the whole Messages surface (conversation list, bubbles, composer, floating popup), Bookings (list + the shared `booking-card` used by both client and provider views), My FAQs, Connections, the Timeline/feed page (compose box, tab toggle, post cards) plus the shared `refresh-button` used across most dashboard pages , the shared `post-comments`/`comment-node`/`reaction-button`/`mention-input` components used by every comment thread (Timeline, dashboard user profiles, public profile once signed in — those four already carry their own pre-existing `dark` `@Input` for the *separate*, always-dark public-profile/media-sheet rendering; the `ThemeService`-driven `dark:` classes were layered on only in their `!dark` branches, so always-dark call sites like `post-detail-sheet`'s `[dark]="true"` are untouched) — and now all ~14 Dashboard-home widget cards (Overview, Now active, Users, Notifications, Suggested, Trending exercises, Quick links, Timeline preview, Tasks/Workouts/Todos, and the login/activity/app/subscription analytics charts), the shared `user-hover-card` popover used throughout the admin tables, and the remaining four Dashboard-home widgets (`accountability-card`, `challenges-card`, `consistency-ring`, `onboarding-checklist`) that complete that page's coverage — `recap-card` is left alone on purpose, its permanently-dark gradient card was already fixed-dark by design. Now starting on **`/dashboard/admin/*`** (the biggest remaining bucket, ~156 templates across ~28 CRUD sections): the shared `admin-search` bar used by every admin list, and the full `admin/trainers` section (header, list — mobile card rows + desktop table — add/update/detail modals, including the image-cropper sub-modal). Also added a global CSS rule (`html.dark .mat-dialog-container`) since Angular Material's dialog panel is a hardcoded-light surface from the imported `indigo-pink` prebuilt theme that never responds to Tailwind `dark:` classes on its own — every admin add/edit/detail modal renders directly against that panel with no background of its own, so this one override unlocks dark mode for every current and future Material dialog app-wide, not just this section. Chart canvases (Chart.js) still render with their existing light-only grid/tick colors — retuning every chart's internal color for dark-mode contrast is its own pass, not bundled into this one. The public marketing site (`topbar` layout) is untouched on purpose — it's permanently dark by brand design already, same as the mobile app's own legal/marketing screens. Most of the dashboard (~515 remaining templates — the rest of admin, detail pages, workouts, subscriptions, etc.) still renders its existing light-only classes — a real, non-broken intermediate state (dark chrome, light content cards in the untouched areas), not full app-wide coverage yet. |
 | D14 | "Do this workout" — clone a linked workout from a feed post | ✅ | ✚ |
 | D15 | Saved / bookmarked posts & workouts | ✅ | ✚ |
 
@@ -200,6 +200,33 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 - New shared `SubscriptionTierService` (backend) resolves `Subscription.planTier.sortOrder`
   against a role's max active tier once, instead of duplicating that logic across
   `TrainerServiceImplement`, `CenterServiceImplement`, and `PromotionServiceImplement`.
+
+### Unreleased — Dark mode: admin section, starting with Trainers (D13 continued)
+
+Seventh pass, and the start of the largest remaining bucket: `/dashboard/admin/*`
+(~156 templates across ~28 CRUD sections — trainers, centers, users, tags,
+exercises, categories, subscriptions, payments, etc.), none of it touched by
+any prior pass. This pass covers the shared `admin-search` bar (used by
+every admin list) and the complete `admin/trainers` section: header (results
+count, sort, "Add trainer"), list (mobile card rows + desktop table, photo
+hover-zoom, status pill, action buttons), and the add/update/detail modals
+including their image-cropper sub-modal.
+
+Also added a global CSS rule, `html.dark .mat-dialog-container` in
+`styles.css`: Angular Material's dialog panel comes from the imported
+`indigo-pink` prebuilt theme and is hardcoded light — it never reacts to
+Tailwind's `dark:` variants since those only compile onto classes Tailwind's
+JIT scanner finds in template source, and the panel's background isn't set
+by any template. Every admin add/edit/detail modal (and any other
+`MatDialog.open()` call in the app) renders its content directly against
+that panel with no `bg-*` of its own, so without this override a dark-theme
+viewer would see fully-converted modal content sitting inside a plain white
+box. This one override unlocks dark mode for every current and future
+Material dialog app-wide, not just this section — it isn't Trainers-specific,
+it just happened to be needed to make Trainers' own modals render correctly.
+
+The remaining ~27 admin sections follow the same list/header/modal shape and
+are still light-only; each subsequent pass converts a few more.
 
 ### Unreleased — Dark mode: the last four dashboard-home widgets (D13 continued)
 

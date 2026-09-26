@@ -339,6 +339,18 @@ body {
   padding: 0;
 }
 
+/* Angular Material's dialog panel is a hardcoded-light `indigo-pink` surface
+   (imported above) -- it never reacts to Tailwind's `dark:` variants, since
+   those only compile onto classes Tailwind's JIT scanner finds in template
+   source. Every admin CRUD modal (add/edit/detail) renders its own content
+   directly against this panel background with no bg-* class of its own, so
+   without this override a dark-themed viewer would see fully dark-mode'd
+   modal content sitting inside a plain white box. */
+html.dark .mat-dialog-container {
+  background-color: #111827; /* gray-900, matches the rest of the dark dashboard chrome */
+  color: #f3f4f6; /* gray-100 */
+}
+
 .badge-pulse {
   animation: badgePulse 1.4s ease-out infinite;
 }
