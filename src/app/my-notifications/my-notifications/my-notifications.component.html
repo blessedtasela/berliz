@@ -3,41 +3,43 @@
 
     <!-- EMPTY STATE -->
     <div *ngIf="groupedNotifications.length === 0"
-        class="bg-white border border-gray-200 rounded-2xl flex flex-col items-center justify-center py-14 gap-2 text-center">
-        <i-feather name="bell-off" class="text-gray-300" style="width:32px;height:32px;"></i-feather>
-        <p class="text-sm font-semibold text-gray-500">No notifications yet</p>
-        <p class="text-xs text-gray-400">Anything that needs your attention will show up here.</p>
+        class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl flex flex-col items-center justify-center py-14 gap-2 text-center">
+        <div class="w-11 h-11 rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex items-center justify-center">
+            <i-feather name="bell-off" class="text-gray-300 dark:text-gray-600" style="width:20px;height:20px;"></i-feather>
+        </div>
+        <p class="text-sm font-semibold text-gray-500 dark:text-gray-400">No notifications yet</p>
+        <p class="text-xs text-gray-400 dark:text-gray-500">Anything that needs your attention will show up here.</p>
     </div>
 
     <!-- CONTENT -->
     <div *ngIf="groupedNotifications.length > 0"
-        class="bg-white border border-gray-200 rounded-2xl overflow-hidden flex flex-col">
+        class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden flex flex-col">
 
         <!-- HEADER BAR -->
         <div
-            class="flex justify-between items-center gap-3 px-4 py-3 bg-white border-b border-gray-100 sticky top-0 z-20">
+            class="flex justify-between items-center gap-3 px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-20">
 
             <!-- Pagination -->
             <div class="flex items-center gap-2">
 
                 <button
-                    class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 active:scale-[0.98] transition flex items-center justify-center"
+                    class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] transition flex items-center justify-center"
                     (click)="prevPage()">
-                    <i-feather name="chevron-left" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+                    <i-feather name="chevron-left" style="width:14px;height:14px;" class="text-gray-600 dark:text-gray-400"></i-feather>
                 </button>
 
-                <span class="text-xs text-gray-500">
-                    <span class="font-semibold text-gray-900">{{ startIndex }}</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">
+                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{ startIndex }}</span>
                     –
-                    <span class="font-semibold text-gray-900">{{ endIndex }}</span>
-                    <span class="text-gray-400"> of </span>
-                    <span class="font-semibold text-gray-900">{{ notificationsLength }}</span>
+                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{ endIndex }}</span>
+                    <span class="text-gray-400 dark:text-gray-500"> of </span>
+                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{ notificationsLength }}</span>
                 </span>
 
                 <button
-                    class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 active:scale-[0.98] transition flex items-center justify-center"
+                    class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] transition flex items-center justify-center"
                     (click)="nextPage()">
-                    <i-feather name="chevron-right" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+                    <i-feather name="chevron-right" style="width:14px;height:14px;" class="text-gray-600 dark:text-gray-400"></i-feather>
                 </button>
 
             </div>
@@ -47,48 +49,48 @@
 
                 <!-- Refresh -->
                 <button type="button" (click)="refresh.emit()" [disabled]="refreshing" title="Refresh"
-                    class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition disabled:opacity-60">
-                    <i-feather name="refresh-cw" [class.animate-spin]="refreshing" style="width:13px;height:13px;" class="text-gray-500"></i-feather>
+                    class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center justify-center transition disabled:opacity-60">
+                    <i-feather name="refresh-cw" [class.animate-spin]="refreshing" style="width:13px;height:13px;" class="text-gray-500 dark:text-gray-400"></i-feather>
                 </button>
 
                 <!-- Select All -->
-                <button (click)="toggleSelectAll($event)" class="w-4 h-4 rounded-full border border-gray-300 hover:border-red-400
-                       flex items-center justify-center bg-white transition shrink-0">
-                    <div *ngIf="isSelectAllChecked()" class="w-2 h-2 rounded-full bg-red-600"></div>
+                <button (click)="toggleSelectAll($event)" class="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 hover:border-red-400 dark:hover:border-red-500
+                       flex items-center justify-center bg-white dark:bg-gray-900 transition shrink-0">
+                    <div *ngIf="isSelectAllChecked()" class="w-2 h-2 rounded-full bg-red-600 dark:bg-red-500"></div>
                 </button>
 
                 <!-- Bulk menu trigger -->
                 <button (click)="toggleBulkAction($event)"
-                    class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition"
-                    [ngClass]="{ 'border-red-200 bg-red-50': showBulkAction }">
-                    <i-feather name="more-horizontal" style="width:14px;height:14px;" class="text-gray-500"></i-feather>
+                    class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center justify-center transition"
+                    [ngClass]="{ 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40': showBulkAction }">
+                    <i-feather name="more-horizontal" style="width:14px;height:14px;" class="text-gray-500 dark:text-gray-400"></i-feather>
                 </button>
 
                 <!-- Bulk Menu -->
                 <div *ngIf="showBulkAction"
-                    class="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-2xl z-[100] py-1">
+                    class="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-[100] py-1">
 
-                    <div class="px-4 py-2 text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                    <div class="px-4 py-2 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
                         With selected
                     </div>
 
                     <button (click)="submitBulkAction('read')"
-                        class="w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition">
+                        class="w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 transition">
                         <i-feather name="check-circle" style="width:13px;height:13px;"
-                            class="text-gray-400"></i-feather>
+                            class="text-gray-400 dark:text-gray-500"></i-feather>
                         Mark as read
                     </button>
 
                     <button (click)="submitBulkAction('unread')"
-                        class="w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition">
-                        <i-feather name="circle" style="width:13px;height:13px;" class="text-gray-400"></i-feather>
+                        class="w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 transition">
+                        <i-feather name="circle" style="width:13px;height:13px;" class="text-gray-400 dark:text-gray-500"></i-feather>
                         Mark as unread
                     </button>
 
-                    <div class="border-t border-gray-100 my-1"></div>
+                    <div class="border-t border-gray-100 dark:border-gray-800 my-1"></div>
 
                     <button (click)="submitBulkAction('delete')"
-                        class="w-full text-left px-4 py-2 text-xs text-red-600 hover:bg-red-50 flex items-center gap-2 transition">
+                        class="w-full text-left px-4 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center gap-2 transition">
                         <i-feather name="trash-2" style="width:13px;height:13px;"></i-feather>
                         Delete
                     </button>
@@ -104,29 +106,29 @@
             <div *ngFor="let group of groupedNotifications">
 
                 <!-- Group Header -->
-                <div class="sticky top-[57px] z-10 bg-white/95 backdrop-blur py-1.5 flex items-center gap-2">
-                    <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                <div class="sticky top-[57px] z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur py-1.5 flex items-center gap-2">
+                    <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
                         {{ group.label }}
                     </span>
-                    <span class="h-px flex-1 bg-gray-100"></span>
+                    <span class="h-px flex-1 bg-gray-100 dark:bg-gray-800"></span>
                 </div>
 
                 <!-- Items -->
-                <div class="flex flex-col gap-2.5 mt-2">
+                <div class="flex flex-col gap-2 mt-2">
 
-                    <div *ngFor="let n of group.items" class="relative rounded-xl border p-3.5 flex items-start gap-3 transition
-                          hover:shadow-md hover:-translate-y-0.5" [ngClass]="{
-                            'ring-2 ring-red-500 ring-offset-1': focusedIndex === n.index,
-                            'bg-red-50 border-red-100': !n.read && focusedIndex !== n.index,
-                            'bg-white border-gray-200': n.read && focusedIndex !== n.index
+                    <div *ngFor="let n of group.items" class="relative rounded-xl border p-3 flex items-start gap-3 transition
+                          hover:shadow-sm dark:hover:shadow-none hover:border-gray-300 dark:hover:border-gray-700" [ngClass]="{
+                            'ring-2 ring-red-500 ring-offset-1 dark:ring-offset-gray-900': focusedIndex === n.index,
+                            'bg-red-50 dark:bg-red-950/20 border-red-100 dark:border-red-900/60': !n.read && focusedIndex !== n.index,
+                            'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800': n.read && focusedIndex !== n.index
                           }">
 
                         <!-- Unread accent -->
-                        <div *ngIf="!n.read" class="absolute left-0 top-0 h-full w-1 bg-red-600 rounded-l-xl"></div>
+                        <div *ngIf="!n.read" class="absolute left-0 top-0 h-full w-1 bg-red-600 dark:bg-red-500 rounded-l-xl"></div>
 
                         <!-- Icon -->
                         <div
-                            class="w-8 h-8 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">
+                            class="w-8 h-8 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex items-center justify-center shrink-0">
                             <ng-container *ngIf="getNotificationMeta(n) as meta">
                                 <i-feather [name]="meta.icon" [ngClass]="meta.color"
                                     style="width:15px;height:15px;"></i-feather>
@@ -143,18 +145,24 @@
                                     </span>
                                 </ng-container>
 
-                                <span class="text-[10px] text-gray-400 flex items-center gap-1 shrink-0">
+                                <span class="text-[10px] text-gray-400 dark:text-gray-500 flex items-center gap-1 shrink-0">
                                     <i-feather name="clock" style="width:10px;height:10px;"></i-feather>
                                     {{ formatDate(n.date) }}
                                 </span>
                             </div>
 
                             <span class="mt-1 text-xs leading-snug break-words" [ngClass]="{
-                                  'font-semibold text-gray-900': !n.read,
-                                  'font-medium text-gray-600': n.read
+                                  'font-semibold text-gray-900 dark:text-gray-100': !n.read,
+                                  'font-medium text-gray-600 dark:text-gray-400': n.read
                                 }">
                                 {{ n.notification.length > 120 ? (n.notification | slice:0:120) + '…' : n.notification
                                 }}
+                            </span>
+
+                            <!-- Deep-link hint -- this row goes somewhere when clicked, same as the notification bell dropdown. -->
+                            <span *ngIf="hasDeepLink(n)" class="mt-1 text-[10px] font-semibold text-red-600 dark:text-red-400 flex items-center gap-0.5">
+                                View
+                                <i-feather name="arrow-right" style="width:10px;height:10px;"></i-feather>
                             </span>
                         </div>
 
@@ -162,39 +170,39 @@
                         <div class="flex flex-col items-center gap-2 shrink-0">
 
                             <!-- Checkbox -->
-                            <button (click)="onToggleSelect($event, n)" class="w-4 h-4 rounded-full border border-gray-300 hover:border-red-400
-                                   flex items-center justify-center bg-white transition">
-                                <div *ngIf="n.checked" class="w-2 h-2 rounded-full bg-red-600"></div>
+                            <button (click)="onToggleSelect($event, n)" class="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 hover:border-red-400 dark:hover:border-red-500
+                                   flex items-center justify-center bg-white dark:bg-gray-900 transition">
+                                <div *ngIf="n.checked" class="w-2 h-2 rounded-full bg-red-600 dark:bg-red-500"></div>
                             </button>
 
                             <!-- Row menu -->
                             <button (click)="onOpenMenu($event, n.index)"
-                                class="w-6 h-6 rounded-md hover:bg-gray-100 flex items-center justify-center transition">
+                                class="w-6 h-6 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition">
                                 <i-feather name="more-horizontal" style="width:13px;height:13px;"
-                                    class="text-gray-500"></i-feather>
+                                    class="text-gray-500 dark:text-gray-400"></i-feather>
                             </button>
 
                             <div *ngIf="menuOpen[n.index]"
-                                class="absolute right-3 top-12 w-44 bg-white border border-gray-200 rounded-xl shadow-2xl z-[100] py-1">
+                                class="absolute right-3 top-12 w-44 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-[100] py-1">
 
                                 <button (click)="markAsRead(n.id)"
-                                    class="w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition">
+                                    class="w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 transition">
                                     <i-feather name="check-circle" style="width:13px;height:13px;"
-                                        class="text-gray-400"></i-feather>
+                                        class="text-gray-400 dark:text-gray-500"></i-feather>
                                     Mark as read
                                 </button>
 
                                 <button (click)="markAsUnread(n.id)"
-                                    class="w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition">
+                                    class="w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 transition">
                                     <i-feather name="circle" style="width:13px;height:13px;"
-                                        class="text-gray-400"></i-feather>
+                                        class="text-gray-400 dark:text-gray-500"></i-feather>
                                     Mark as unread
                                 </button>
 
-                                <div class="border-t border-gray-100 my-1"></div>
+                                <div class="border-t border-gray-100 dark:border-gray-800 my-1"></div>
 
                                 <button (click)="deleteNotification(n.id)"
-                                    class="w-full text-left px-4 py-2 text-xs text-red-600 hover:bg-red-50 flex items-center gap-2 transition">
+                                    class="w-full text-left px-4 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center gap-2 transition">
                                     <i-feather name="trash-2" style="width:13px;height:13px;"></i-feather>
                                     Delete
                                 </button>
@@ -208,26 +216,26 @@
         </div>
 
         <!-- FOOTER PAGINATION -->
-        <div class="border-t border-gray-100 px-4 py-3 flex items-center justify-center gap-3">
+        <div class="border-t border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center justify-center gap-3">
 
             <button
-                class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 active:scale-[0.98] transition flex items-center justify-center"
+                class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] transition flex items-center justify-center"
                 (click)="prevPage()">
-                <i-feather name="chevron-left" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+                <i-feather name="chevron-left" style="width:14px;height:14px;" class="text-gray-600 dark:text-gray-400"></i-feather>
             </button>
 
-            <span class="text-xs text-gray-500">
-                <span class="font-semibold text-gray-900">{{ startIndex }}</span>
+            <span class="text-xs text-gray-500 dark:text-gray-400">
+                <span class="font-semibold text-gray-900 dark:text-gray-100">{{ startIndex }}</span>
                 –
-                <span class="font-semibold text-gray-900">{{ endIndex }}</span>
-                <span class="text-gray-400"> of </span>
-                <span class="font-semibold text-gray-900">{{ notificationsLength }}</span>
+                <span class="font-semibold text-gray-900 dark:text-gray-100">{{ endIndex }}</span>
+                <span class="text-gray-400 dark:text-gray-500"> of </span>
+                <span class="font-semibold text-gray-900 dark:text-gray-100">{{ notificationsLength }}</span>
             </span>
 
             <button
-                class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 active:scale-[0.98] transition flex items-center justify-center"
+                class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] transition flex items-center justify-center"
                 (click)="nextPage()">
-                <i-feather name="chevron-right" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+                <i-feather name="chevron-right" style="width:14px;height:14px;" class="text-gray-600 dark:text-gray-400"></i-feather>
             </button>
 
         </div>
