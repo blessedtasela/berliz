@@ -1,28 +1,28 @@
-<div class="bg-white border border-gray-200 rounded-xl font-sans">
+<div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl font-sans">
 
     <!-- Header -->
-    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wide">Now active</h2>
-        <span class="text-[11px] text-gray-400">{{ users.length }} total</span>
+    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+        <h2 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Now active</h2>
+        <span class="text-[11px] text-gray-400 dark:text-gray-500">{{ users.length }} total</span>
     </div>
 
     <!-- Empty -->
     <div *ngIf="users.length === 0" class="flex flex-col items-center py-10 gap-2 text-center">
-        <i-feather name="activity" class="text-gray-300" style="width:28px;height:28px;"></i-feather>
-        <p class="text-xs text-gray-400 italic">No active users right now</p>
+        <i-feather name="activity" class="text-gray-300 dark:text-gray-600" style="width:28px;height:28px;"></i-feather>
+        <p class="text-xs text-gray-400 dark:text-gray-500 italic">No active users right now</p>
     </div>
 
     <!-- List -->
-    <div *ngIf="users.length > 0" class="divide-y divide-gray-100">
+    <div *ngIf="users.length > 0" class="divide-y divide-gray-100 dark:divide-gray-800">
 
         <div *ngFor="let user of users; let i = index"
-            class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition">
+            class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
 
-            <span class="text-[11px] text-gray-400 font-medium w-5 shrink-0 mt-1">{{ i + 1 }}</span>
+            <span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium w-5 shrink-0 mt-1">{{ i + 1 }}</span>
 
             <button type="button" (click)="goToProfile(user)" title="View profile" class="shrink-0 mt-0.5">
                 <img [src]="photoSrc(user)" [alt]="user.firstname"
-                    class="w-8 h-8 rounded-full object-cover object-top border border-gray-200 hover:opacity-80 transition" />
+                    class="w-8 h-8 rounded-full object-cover object-top border border-gray-200 dark:border-gray-700 hover:opacity-80 transition" />
             </button>
 
             <div class="flex-1 min-w-0 flex flex-col gap-1">
@@ -32,11 +32,11 @@
                 </app-user-hover-card>
 
                 <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
-                    <span class="text-[10px] text-gray-400 flex items-center gap-1">
+                    <span class="text-[10px] text-gray-400 dark:text-gray-500 flex items-center gap-1">
                         <i-feather name="calendar" style="width:10px;height:10px;"></i-feather>
                         Created {{ formatDate(user.date) }}
                     </span>
-                    <span class="text-[10px] text-gray-400 flex items-center gap-1">
+                    <span class="text-[10px] text-gray-400 dark:text-gray-500 flex items-center gap-1">
                         <i-feather name="refresh-cw" class="text-red-500" style="width:10px;height:10px;"></i-feather>
                         Updated {{ formatDate(user.lastUpdate) }}
                     </span>
@@ -45,7 +45,7 @@
             </div>
 
             <span
-                class="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 bg-gray-100 text-gray-500 border border-gray-200 mt-0.5">
+                class="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 mt-0.5">
                 {{ user.status }}
             </span>
 

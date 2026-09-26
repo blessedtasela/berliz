@@ -133,7 +133,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D10 | Transparent trainer/center pricing + book CTA on every relevant surface | ✅ | ✚ |
 | D11 | Pre-renewal reminder + ≤2-tap cancel | ✅ | ✚ | |
 | D12 | Value-first onboarding (one real action before any paywall) | ✅ | — |
-| D13 | Dark mode (app-wide) | 🚧 | — | Real infrastructure: Tailwind `darkMode: 'class'`, a `ThemeService` (Light/Dark/System, per-device like the other display prefs), a toggle in Settings ("Appearance" card). Converted so far: the dashboard shell (`sidebar` layout wrapper + `TopBar`), the full Settings page, a batch of high-traffic surfaces — Dashboard home's own inline markup, the whole Messages surface (conversation list, bubbles, composer, floating popup), Bookings (list + the shared `booking-card` used by both client and provider views), My FAQs, Connections, the Timeline/feed page (compose box, tab toggle, post cards) plus the shared `refresh-button` used across most dashboard pages — and now the shared `post-comments`/`comment-node`/`reaction-button`/`mention-input` components used by every comment thread (Timeline, dashboard user profiles, public profile once signed in). Those four already carry their own pre-existing `dark` `@Input` for the *separate*, always-dark public-profile/media-sheet rendering; the `ThemeService`-driven `dark:` classes were layered on only in their `!dark` branches, so the always-dark call sites (`post-detail-sheet`'s `[dark]="true"`) are untouched. The public marketing site (`topbar` layout) is untouched on purpose — it's permanently dark by brand design already, same as the mobile app's own legal/marketing screens. Most of the dashboard (~540 remaining templates, including the ~16 dashboard-home widget components, admin screens, etc.) still renders its existing light-only classes — a real, non-broken intermediate state (dark chrome, light content cards in the untouched areas), not full app-wide coverage yet. |
+| D13 | Dark mode (app-wide) | 🚧 | — | Real infrastructure: Tailwind `darkMode: 'class'`, a `ThemeService` (Light/Dark/System, per-device like the other display prefs), a toggle in Settings ("Appearance" card). Converted so far: the dashboard shell (`sidebar` layout wrapper + `TopBar`), the full Settings page, a batch of high-traffic surfaces — Dashboard home's own inline markup, the whole Messages surface (conversation list, bubbles, composer, floating popup), Bookings (list + the shared `booking-card` used by both client and provider views), My FAQs, Connections, the Timeline/feed page (compose box, tab toggle, post cards) plus the shared `refresh-button` used across most dashboard pages , the shared `post-comments`/`comment-node`/`reaction-button`/`mention-input` components used by every comment thread (Timeline, dashboard user profiles, public profile once signed in — those four already carry their own pre-existing `dark` `@Input` for the *separate*, always-dark public-profile/media-sheet rendering; the `ThemeService`-driven `dark:` classes were layered on only in their `!dark` branches, so always-dark call sites like `post-detail-sheet`'s `[dark]="true"` are untouched) — and now all ~14 Dashboard-home widget cards (Overview, Now active, Users, Notifications, Suggested, Trending exercises, Quick links, Timeline preview, Tasks/Workouts/Todos, and the login/activity/app/subscription analytics charts), plus the shared `user-hover-card` popover used throughout the admin tables. Chart canvases (Chart.js) still render with their existing light-only grid/tick colors — retuning every chart's internal color for dark-mode contrast is its own pass, not bundled into this one. The public marketing site (`topbar` layout) is untouched on purpose — it's permanently dark by brand design already, same as the mobile app's own legal/marketing screens. Most of the dashboard (~525 remaining templates, admin screens, detail pages, etc.) still renders its existing light-only classes — a real, non-broken intermediate state (dark chrome, light content cards in the untouched areas), not full app-wide coverage yet. |
 | D14 | "Do this workout" — clone a linked workout from a feed post | ✅ | ✚ |
 | D15 | Saved / bookmarked posts & workouts | ✅ | ✚ |
 
@@ -200,6 +200,21 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 - New shared `SubscriptionTierService` (backend) resolves `Subscription.planTier.sortOrder`
   against a role's max active tier once, instead of duplicating that logic across
   `TrainerServiceImplement`, `CenterServiceImplement`, and `PromotionServiceImplement`.
+
+### Unreleased — Dark mode: dashboard-home widgets (D13 continued)
+
+Fifth pass. Adds `dark:` classes to every Dashboard-home widget card: Overview
+(module shortcuts), Now active, Users, Notifications, Suggested (programs +
+workout templates), Trending exercises, Quick links, Timeline preview, the
+Tasks/Workouts/Todos combo widget, and the login/activity/app-analytics/
+subscription-analytics chart cards — plus the shared `user-hover-card` popover
+used throughout admin tables. `dashboard-todo-list`'s `.ts` status/priority
+color-mapping methods (`statusClass`, `priorityClass`, `taskStatusClass`,
+`workoutStatusClass`, `getDueColor`) got `dark:` companions added to their
+returned class strings too, since those drive the same badges as the
+template. Left alone: the Chart.js canvases' own internal grid/axis/tick
+colors (still light-only) — retuning every chart's color config for dark-mode
+contrast is a separate, more involved pass.
 
 ### Unreleased — Dark mode: shared comment-thread components (D13 continued)
 
