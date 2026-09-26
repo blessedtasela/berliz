@@ -33,9 +33,9 @@ export class HubGridComponent implements OnChanges {
   /**
    * Data / content the admin curates.
    */
-  private readonly CONTENT_KEYS = ['categories', 'tags', 'exercises', 'muscle-groups', 'newsletters',
+  private readonly CONTENT_KEYS = ['categories', 'tags', 'exercises', 'exercise-suggestions', 'muscle-groups', 'newsletters',
     'testimonials', 'faqs', 'tasks', 'sub-tasks', 'todo-lists', 'trainer-pricing', 'center-pricing',
-    'equipments', 'campaigns', 'workouts', 'contact-us', 'problem-reports', 'feedback', 'payments', 'subscriptions', 'bookings'];
+    'equipments', 'campaigns', 'workouts', 'contact-us', 'problem-reports', 'content-reports', 'feedback', 'payments', 'subscriptions', 'bookings'];
 
   /**
    * "Mine as an individual" counts. The backend appends these for EVERY role
