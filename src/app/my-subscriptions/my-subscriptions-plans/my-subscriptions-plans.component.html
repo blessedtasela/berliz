@@ -1,8 +1,8 @@
 <section class="font-sans flex flex-col gap-6">
 
   <div>
-    <h2 class="text-base font-bold text-gray-900">Choose your plan</h2>
-    <p class="text-xs text-gray-400 mt-0.5">
+    <h2 class="text-base font-bold text-gray-900 dark:text-gray-100">Choose your plan</h2>
+    <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
       Flexible options designed to match your fitness journey. Selecting a plan takes you to a secure
       Stripe checkout page to complete payment.
     </p>
@@ -10,20 +10,20 @@
 
   <!-- Loading skeleton -->
   <div *ngIf="loading && plans.length === 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    <div *ngFor="let i of [1,2,3]" class="rounded-xl border border-gray-200 bg-white p-4 h-48 animate-pulse"></div>
+    <div *ngFor="let i of [1,2,3]" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 h-48 animate-pulse"></div>
   </div>
 
   <!-- Empty state -->
   <div *ngIf="!loading && visiblePlans.length === 0"
-    class="rounded-xl border border-dashed border-gray-200 bg-white p-6 text-center">
-    <p class="text-xs text-gray-400">No plans are available right now. Please check back later.</p>
+    class="rounded-xl border border-dashed border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 text-center">
+    <p class="text-xs text-gray-400 dark:text-gray-500">No plans are available right now. Please check back later.</p>
   </div>
 
   <div *ngIf="visiblePlans.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
-    <div *ngFor="let plan of visiblePlans" class="relative border rounded-xl bg-white p-4 flex flex-col gap-3
+    <div *ngFor="let plan of visiblePlans" class="relative border rounded-xl bg-white dark:bg-gray-900 p-4 flex flex-col gap-3
              hover:shadow-sm hover:-translate-y-0.5 transition"
-      [ngClass]="isProviderRole && isTopTierPlan(plan) ? 'border-amber-300 ring-1 ring-amber-200' : 'border-gray-200'">
+      [ngClass]="isProviderRole && isTopTierPlan(plan) ? 'border-amber-300 dark:border-amber-800 ring-1 ring-amber-200 dark:ring-amber-900' : 'border-gray-200 dark:border-gray-800'">
 
       <!-- Featured-tier ribbon -->
       <span *ngIf="isProviderRole && isTopTierPlan(plan)" class="absolute -top-2 right-3 flex items-center gap-1 text-[10px] font-bold
@@ -33,26 +33,26 @@
       </span>
 
       <!-- Plan name -->
-      <h3 class="text-sm font-bold text-gray-900">{{ plan.name }}</h3>
-      <p class="text-xs text-gray-400 leading-relaxed">{{ plan.description }}</p>
+      <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ plan.name }}</h3>
+      <p class="text-xs text-gray-400 dark:text-gray-500 leading-relaxed">{{ plan.description }}</p>
 
-      <div class="border-t border-gray-100"></div>
+      <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
       <!-- Price -->
       <div class="flex items-baseline gap-1">
         <span class="text-lg font-bold text-red-600">{{ plan.price | currency }}</span>
-        <span class="text-[11px] text-gray-400">/ {{ plan.billingInterval || 'month' }}</span>
+        <span class="text-[11px] text-gray-400 dark:text-gray-500">/ {{ plan.billingInterval || 'month' }}</span>
       </div>
 
       <!-- Access scope -->
-      <div class="flex items-start gap-2 text-xs text-gray-700">
+      <div class="flex items-start gap-2 text-xs text-gray-700 dark:text-gray-300">
         <i-feather name="check" style="width:12px;height:12px;" class="text-red-600 shrink-0 mt-0.5"></i-feather>
         <span>{{ plan.accessScope }}</span>
       </div>
 
       <!-- Subscription-tier perks (trainer/center only) -->
       <ul *ngIf="isProviderRole" class="flex flex-col gap-1.5">
-        <li *ngFor="let perk of perksFor(plan)" class="flex items-start gap-2 text-xs text-gray-700">
+        <li *ngFor="let perk of perksFor(plan)" class="flex items-start gap-2 text-xs text-gray-700 dark:text-gray-300">
           <i-feather name="check" style="width:12px;height:12px;" class="text-red-600 shrink-0 mt-0.5"></i-feather>
           <span>{{ perk }}</span>
         </li>
@@ -72,19 +72,19 @@
   </div>
 
   <!-- Redeem a code -->
-  <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+  <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
     <div class="flex-1">
-      <p class="text-xs font-semibold text-gray-900">Have a code?</p>
-      <p class="text-[11px] text-gray-400 mt-0.5">Redeem an admin-issued code for free access to a plan — no payment needed.</p>
+      <p class="text-xs font-semibold text-gray-900 dark:text-gray-100">Have a code?</p>
+      <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">Redeem an admin-issued code for free access to a plan — no payment needed.</p>
     </div>
     <div class="flex items-center gap-2 shrink-0">
       <input type="text" [(ngModel)]="redeemCode" placeholder="e.g. BERLIZ-XXXXXXXX"
-        class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 placeholder-gray-400 uppercase
+        class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 uppercase
                focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition w-48"
         (keyup.enter)="redeem()" />
       <button type="button" (click)="redeem()" [disabled]="!redeemCode.trim() || redeeming"
-        class="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-900 text-white
-               hover:bg-black active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+        class="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-900 dark:bg-gray-700 text-white
+               hover:bg-black dark:hover:bg-gray-600 active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
         {{ redeeming ? 'Redeeming…' : 'Redeem' }}
       </button>
     </div>

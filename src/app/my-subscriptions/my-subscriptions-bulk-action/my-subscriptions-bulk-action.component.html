@@ -1,16 +1,16 @@
-<div class="border border-gray-200 rounded-xl p-4 bg-white flex flex-col gap-3">
+<div class="border border-gray-200 dark:border-gray-800 rounded-xl p-4 bg-white dark:bg-gray-900 flex flex-col gap-3">
 
     <div class="flex items-center justify-between">
-        <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Bulk actions</span>
+        <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Bulk actions</span>
         <button (click)="toggleBulkMode()" class="text-[11px] px-3 py-1 rounded-full border font-semibold transition"
             [ngClass]="bulkMode
-        ? 'border-red-200 bg-red-50 text-red-600 hover:bg-red-100'
-        : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+        ? 'border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/30'
+        : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'">
             {{ bulkMode ? 'Cancel' : 'Enable bulk mode' }}
         </button>
     </div>
 
-    <p *ngIf="!bulkMode" class="text-[11px] text-gray-400">
+    <p *ngIf="!bulkMode" class="text-[11px] text-gray-400 dark:text-gray-500">
         Enable bulk mode to manage multiple subscriptions at once.
     </p>
 
@@ -20,7 +20,7 @@
         <label class="flex items-center gap-2 cursor-pointer select-none">
             <input type="checkbox" (change)="toggleSelectAll($any($event.target).checked)"
                 class="w-3.5 h-3.5 accent-red-600" />
-            <span class="text-xs text-gray-600 font-medium">Select all</span>
+            <span class="text-xs text-gray-600 dark:text-gray-400 font-medium">Select all</span>
         </label>
 
         <!-- Subscription checkboxes -->
@@ -28,33 +28,33 @@
             <label *ngFor="let sub of subscriptions" class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" [checked]="isSelected(sub.id)"
                     (change)="toggleSelect(sub.id, $any($event.target).checked)" class="w-3.5 h-3.5 accent-red-600" />
-                <span class="text-xs text-gray-700">{{ sub.plan }}</span>
+                <span class="text-xs text-gray-700 dark:text-gray-300">{{ sub.plan }}</span>
                 <span class="text-[10px] ml-auto font-semibold"
-                    [ngClass]="sub.status === 'true' ? 'text-green-600' : 'text-gray-400'">
+                    [ngClass]="sub.status === 'true' ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'">
                     {{ sub.status === 'true' ? 'Active' : 'Expired' }}
                 </span>
             </label>
         </div>
 
         <!-- Selected count -->
-        <p class="text-[11px] text-gray-500">
+        <p class="text-[11px] text-gray-500 dark:text-gray-400">
             {{ selectedIds.length }} selected
         </p>
 
         <!-- Actions -->
-        <div class="flex flex-wrap gap-2 pt-1 border-t border-gray-100">
+        <div class="flex flex-wrap gap-2 pt-1 border-t border-gray-100 dark:border-gray-800">
             <button (click)="bulk('true')"
-                class="px-3 py-1.5 rounded-xl text-[11px] font-semibold bg-green-50 text-green-700 border border-green-100 hover:bg-green-100 active:scale-[0.98] transition flex items-center gap-1.5">
+                class="px-3 py-1.5 rounded-xl text-[11px] font-semibold bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-100 dark:border-green-900 hover:bg-green-100 dark:hover:bg-green-950/50 active:scale-[0.98] transition flex items-center gap-1.5">
                 <i-feather name="check-circle" style="width:12px;height:12px;"></i-feather>
                 Activate
             </button>
             <button (click)="bulk('false')"
-                class="px-3 py-1.5 rounded-xl text-[11px] font-semibold bg-yellow-50 text-yellow-700 border border-yellow-100 hover:bg-yellow-100 active:scale-[0.98] transition flex items-center gap-1.5">
+                class="px-3 py-1.5 rounded-xl text-[11px] font-semibold bg-yellow-50 dark:bg-yellow-950/20 text-yellow-700 dark:text-yellow-400 border border-yellow-100 dark:border-yellow-900 hover:bg-yellow-100 dark:hover:bg-yellow-950/40 active:scale-[0.98] transition flex items-center gap-1.5">
                 <i-feather name="pause-circle" style="width:12px;height:12px;"></i-feather>
                 Deactivate
             </button>
             <button (click)="bulk('delete')"
-                class="px-3 py-1.5 rounded-xl text-[11px] font-semibold bg-red-50 text-red-600 border border-red-100 hover:bg-red-100 active:scale-[0.98] transition flex items-center gap-1.5">
+                class="px-3 py-1.5 rounded-xl text-[11px] font-semibold bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900 hover:bg-red-100 dark:hover:bg-red-950/30 active:scale-[0.98] transition flex items-center gap-1.5">
                 <i-feather name="trash-2" style="width:12px;height:12px;"></i-feather>
                 Delete
             </button>
