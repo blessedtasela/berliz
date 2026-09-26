@@ -165,22 +165,23 @@ export class NotificationItemComponent implements OnChanges {
   // -----------------------------------
   // META
   // -----------------------------------
+  /** `bg` colors the icon's chip -- kept a shade lighter than `color` itself so the icon still reads clearly against it in both themes. */
   get meta() {
     const text = (this.item.notification || '').toLowerCase();
 
     if (text.includes('cancelled')) {
-      return { icon: 'x-circle', color: 'text-red-600' };
+      return { icon: 'x-circle', color: 'text-red-600 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-950/40 border-red-100 dark:border-red-900' };
     }
     if (text.includes('completed')) {
-      return { icon: 'check-circle', color: 'text-green-600' };
+      return { icon: 'check-circle', color: 'text-green-600 dark:text-green-400', bg: 'bg-green-50 dark:bg-green-950/40 border-green-100 dark:border-green-900' };
     }
     if (text.includes('pending')) {
-      return { icon: 'clock', color: 'text-blue-500' };
+      return { icon: 'clock', color: 'text-blue-500 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950/40 border-blue-100 dark:border-blue-900' };
     }
     if (text.includes('added')) {
-      return { icon: 'plus-circle', color: 'text-blue-600' };
+      return { icon: 'plus-circle', color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950/40 border-blue-100 dark:border-blue-900' };
     }
-    return { icon: 'bell', color: 'text-gray-500' };
+    return { icon: 'bell', color: 'text-gray-500 dark:text-gray-400', bg: 'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700' };
   }
 
   // This is bound via [innerHTML] in the template to render the <span> match

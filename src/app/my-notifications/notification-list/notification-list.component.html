@@ -27,26 +27,26 @@
 
   <!-- Pagination -->
   <div *ngIf="sections.length > 0"
-    class="sticky bottom-0 z-20 bg-white border-t border-gray-100 px-4 py-3 flex items-center justify-center gap-4">
+    class="sticky bottom-0 z-20 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center justify-center gap-4">
 
     <button
-      class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition flex items-center justify-center"
+      class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-30 transition flex items-center justify-center"
       (click)="prev.emit()" [disabled]="startIndex === 1">
-      <i-feather name="chevron-left" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+      <i-feather name="chevron-left" style="width:14px;height:14px;" class="text-gray-600 dark:text-gray-400"></i-feather>
     </button>
 
-    <span class="text-xs text-gray-500">
-      <span class="font-semibold text-gray-900">{{ startIndex }}</span>
+    <span class="text-xs text-gray-500 dark:text-gray-400">
+      <span class="font-semibold text-gray-900 dark:text-gray-100">{{ startIndex }}</span>
       –
-      <span class="font-semibold text-gray-900">{{ endIndex }}</span>
-      <span class="text-gray-400"> of </span>
-      <span class="font-semibold text-gray-900">{{ total }}</span>
+      <span class="font-semibold text-gray-900 dark:text-gray-100">{{ endIndex }}</span>
+      <span class="text-gray-400 dark:text-gray-500"> of </span>
+      <span class="font-semibold text-gray-900 dark:text-gray-100">{{ total }}</span>
     </span>
 
     <button
-      class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition flex items-center justify-center"
+      class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-30 transition flex items-center justify-center"
       (click)="next.emit()" [disabled]="endIndex === total">
-      <i-feather name="chevron-right" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+      <i-feather name="chevron-right" style="width:14px;height:14px;" class="text-gray-600 dark:text-gray-400"></i-feather>
     </button>
 
   </div>
