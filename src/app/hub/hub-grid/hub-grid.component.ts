@@ -2,6 +2,8 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 export interface HubGridItem {
   key: string;
+  /** Human-readable version of `key` for display -- see humanizeKey(). */
+  label: string;
   value: string | number;
   link: string;
 }
@@ -73,7 +75,7 @@ export class HubGridComponent implements OnChanges {
       .sort((a, b) => rank(a) - rank(b) || a.localeCompare(b))
       .forEach(key => {
         const slug = this.formatUrl(key);
-        const item: HubGridItem = { key, value: items[key], link: this.resolveRoute(key) };
+        const item: HubGridItem = { key, label: this.humanizeKey(key), value: items[key], link: this.resolveRoute(key) };
 
         if (this.PEOPLE_KEYS.includes(slug)) {
           people.push(item);
@@ -122,8 +124,24 @@ export class HubGridComponent implements OnChanges {
     return groups.filter(g => g.items.length > 0);
   }
 
+  /**
+   * "muscleGroups" -> "muscle-groups". Every PEOPLE_KEYS/CONTENT_KEYS/PERSONAL_KEYS
+   * entry and ROUTE_OVERRIDES key is written kebab-case, but the backend's
+   * DashboardResponse fields are camelCase -- without inserting a dash at the
+   * camelCase boundary (not just replacing literal whitespace), a multi-word key
+   * never matched any of those lists, so it silently fell into "Other" and its
+   * fallback route was the broken, un-hyphenated /dashboard/hub/musclegroups.
+   */
   formatUrl(name: string): string {
-    return name.replace(/\s+/g, '-').toLowerCase();
+    return name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').replace(/\s+/g, '-').toLowerCase();
+  }
+
+  /** "trainerPricing" -> "Trainer Pricing". The backend's DashboardResponse keys are raw
+   *  camelCase field names -- rendering them as-is (as `label` used to) showed the DTO's
+   *  own shape ("TRAINERPRICING") instead of a readable word ("TRAINER PRICING"). */
+  private humanizeKey(key: string): string {
+    const spaced = key.replace(/([a-z0-9])([A-Z])/g, '$1 $2');
+    return spaced.charAt(0).toUpperCase() + spaced.slice(1);
   }
 
   /**

@@ -123,47 +123,39 @@
                             'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800': n.read && focusedIndex !== n.index
                           }">
 
-                        <!-- Unread accent -->
-                        <div *ngIf="!n.read" class="absolute left-0 top-0 h-full w-1 bg-red-600 dark:bg-red-500 rounded-l-xl"></div>
-
-                        <!-- Icon -->
-                        <div
-                            class="w-8 h-8 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex items-center justify-center shrink-0">
-                            <ng-container *ngIf="getNotificationMeta(n) as meta">
-                                <i-feather [name]="meta.icon" [ngClass]="meta.color"
-                                    style="width:15px;height:15px;"></i-feather>
-                            </ng-container>
-                        </div>
+                        <!-- Status dot -- same simple indicator the notification bell dropdown uses, replacing the
+                             left accent bar + icon box + uppercase category pill this row used to carry (that read
+                             as busier and more cluttered than the dropdown for what's ultimately the same content). -->
+                        <span class="w-2 h-2 rounded-full mt-1.5 shrink-0" [ngClass]="n.read ? 'bg-gray-300 dark:bg-gray-600' : 'bg-red-600 dark:bg-red-500'"></span>
 
                         <!-- Text -->
                         <div class="flex flex-col flex-1 min-w-0 cursor-pointer" (click)="readNotification(n.id)">
                             <div class="flex items-center justify-between gap-2">
-                                <ng-container *ngIf="getNotificationMeta(n) as meta">
-                                    <span class="text-[11px] font-semibold uppercase tracking-wide truncate"
-                                        [ngClass]="meta.color">
-                                        {{ meta.label }}
-                                    </span>
-                                </ng-container>
+                                <span class="text-xs leading-snug break-words" [ngClass]="{
+                                      'font-semibold text-gray-900 dark:text-gray-100': !n.read,
+                                      'font-medium text-gray-600 dark:text-gray-400': n.read
+                                    }">
+                                    {{ n.notification.length > 120 ? (n.notification | slice:0:120) + '…' : n.notification }}
+                                </span>
 
-                                <span class="text-[10px] text-gray-400 dark:text-gray-500 flex items-center gap-1 shrink-0">
-                                    <i-feather name="clock" style="width:10px;height:10px;"></i-feather>
-                                    {{ formatDate(n.date) }}
+                                <span *ngIf="!n.read"
+                                    class="text-[9px] font-bold bg-red-600 dark:bg-red-500 text-white px-1.5 py-px rounded-full shrink-0 mt-0.5">
+                                    New
                                 </span>
                             </div>
 
-                            <span class="mt-1 text-xs leading-snug break-words" [ngClass]="{
-                                  'font-semibold text-gray-900 dark:text-gray-100': !n.read,
-                                  'font-medium text-gray-600 dark:text-gray-400': n.read
-                                }">
-                                {{ n.notification.length > 120 ? (n.notification | slice:0:120) + '…' : n.notification
-                                }}
-                            </span>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-[10px] text-gray-400 dark:text-gray-500 flex items-center gap-1">
+                                    <i-feather name="clock" style="width:10px;height:10px;"></i-feather>
+                                    {{ formatDate(n.date) }}
+                                </span>
 
-                            <!-- Deep-link hint -- this row goes somewhere when clicked, same as the notification bell dropdown. -->
-                            <span *ngIf="hasDeepLink(n)" class="mt-1 text-[10px] font-semibold text-red-600 dark:text-red-400 flex items-center gap-0.5">
-                                View
-                                <i-feather name="arrow-right" style="width:10px;height:10px;"></i-feather>
-                            </span>
+                                <!-- Deep-link hint -- this row goes somewhere when clicked, same as the notification bell dropdown. -->
+                                <span *ngIf="hasDeepLink(n)" class="text-[10px] font-semibold text-red-600 dark:text-red-400 flex items-center gap-0.5">
+                                    View
+                                    <i-feather name="arrow-right" style="width:10px;height:10px;"></i-feather>
+                                </span>
+                            </div>
                         </div>
 
                         <!-- Right actions -->

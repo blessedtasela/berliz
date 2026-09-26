@@ -29,8 +29,12 @@ import {
   updateMessagePopupEnabled,
   updateMessagePopupEnabledFailure,
   updateMessagePopupEnabledSuccess,
+  updateEmailNotificationPreferences,
+  updateEmailNotificationPreferencesFailure,
+  updateEmailNotificationPreferencesSuccess,
+  EmailNotificationPreferences,
 } from 'src/app/state/user-profile/user-profile.actions';
-import { selectSavingVisibility, selectSavingSidebarDisplay, selectSavingMessagePopupEnabled } from 'src/app/state/user-profile/user-profile.selector';
+import { selectSavingVisibility, selectSavingSidebarDisplay, selectSavingMessagePopupEnabled, selectSavingEmailNotificationPreferences } from 'src/app/state/user-profile/user-profile.selector';
 import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 import { BrowserNotificationService, NotificationCategory } from 'src/app/services/browser-notification.service';
 import { BlockService } from 'src/app/services/block.service';
@@ -80,6 +84,15 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   /** Set once the user flips the toggle in this session; takes precedence. */
   private localMessagePopupEnabled: boolean | null = null;
   savingMessagePopupEnabled = false;
+
+  // ── Email notification preferences ──────────────────────────────────────
+  /** Values on the user record from /user/getUser. On until proven otherwise. */
+  private serverEmailNotifyMessages = true;
+  private serverEmailNotifyBookings = true;
+  private serverEmailNotifyAccount = true;
+  /** Keys the user has flipped in this session; take precedence per-key. */
+  private localEmailNotificationPreferences: EmailNotificationPreferences = {};
+  savingEmailNotificationPreferences = false;
 
   // ── Username ─────────────────────────────────────────────────────────────
   usernameDraft = '';
@@ -133,6 +146,9 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
           this.user = user;
           this.serverVisibility = user.profileVisibility === 'public' ? 'public' : 'private';
           this.serverMessagePopupEnabled = user.messagePopupEnabled !== false;
+          this.serverEmailNotifyMessages = user.emailNotifyMessages !== false;
+          this.serverEmailNotifyBookings = user.emailNotifyBookings !== false;
+          this.serverEmailNotifyAccount = user.emailNotifyAccount !== false;
           // Only seed the draft the first time (or if the field was empty) --
           // don't clobber whatever the user is mid-typing on a later refreshUser().
           if (!this.usernameDraft) this.usernameDraft = user.username ?? '';
@@ -210,6 +226,24 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     this.actions$
       .pipe(ofType(updateMessagePopupEnabledFailure), takeUntil(this.destroy$))
       .subscribe(({ error }) => this.snackBarService.openSnackBar(error, 'error'));
+
+    // Email notification preferences — in-flight flag plus success/failure feedback.
+    this.store.select(selectSavingEmailNotificationPreferences)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(saving => this.savingEmailNotificationPreferences = saving);
+
+    this.actions$
+      .pipe(ofType(updateEmailNotificationPreferencesSuccess), takeUntil(this.destroy$))
+      .subscribe(({ response, preferences }) => {
+        this.localEmailNotificationPreferences = { ...this.localEmailNotificationPreferences, ...preferences };
+        this.snackBarService.openSnackBar(response?.message || 'Email notification preferences updated', '');
+        // Keep /user/getUser in sync so a reload doesn't show the old value.
+        this.store.dispatch(refreshUser());
+      });
+
+    this.actions$
+      .pipe(ofType(updateEmailNotificationPreferencesFailure), takeUntil(this.destroy$))
+      .subscribe(({ error }) => this.snackBarService.openSnackBar(error, 'error'));
   }
 
   // -------------------------
@@ -269,6 +303,49 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     if (this.savingMessagePopupEnabled) return;
 
     this.store.dispatch(updateMessagePopupEnabled({ messagePopupEnabled: !this.messagePopupEnabled }));
+  }
+
+  // -------------------------
+  // EMAIL NOTIFICATION PREFERENCES
+  // -------------------------
+
+  get emailNotifyMessages(): boolean {
+    return this.localEmailNotificationPreferences.emailNotifyMessages ?? this.serverEmailNotifyMessages;
+  }
+
+  get emailNotifyBookings(): boolean {
+    return this.localEmailNotificationPreferences.emailNotifyBookings ?? this.serverEmailNotifyBookings;
+  }
+
+  get emailNotifyAccount(): boolean {
+    return this.localEmailNotificationPreferences.emailNotifyAccount ?? this.serverEmailNotifyAccount;
+  }
+
+  get allEmailNotificationsEnabled(): boolean {
+    return this.emailNotifyMessages && this.emailNotifyBookings && this.emailNotifyAccount;
+  }
+
+  toggleEmailNotifyMessages(): void {
+    if (this.savingEmailNotificationPreferences) return;
+    this.store.dispatch(updateEmailNotificationPreferences({ preferences: { emailNotifyMessages: !this.emailNotifyMessages } }));
+  }
+
+  toggleEmailNotifyBookings(): void {
+    if (this.savingEmailNotificationPreferences) return;
+    this.store.dispatch(updateEmailNotificationPreferences({ preferences: { emailNotifyBookings: !this.emailNotifyBookings } }));
+  }
+
+  toggleEmailNotifyAccount(): void {
+    if (this.savingEmailNotificationPreferences) return;
+    this.store.dispatch(updateEmailNotificationPreferences({ preferences: { emailNotifyAccount: !this.emailNotifyAccount } }));
+  }
+
+  /** One-tap shortcut: turn every email notification category on, or off, at once. */
+  setAllEmailNotifications(enabled: boolean): void {
+    if (this.savingEmailNotificationPreferences) return;
+    this.store.dispatch(updateEmailNotificationPreferences({
+      preferences: { emailNotifyMessages: enabled, emailNotifyBookings: enabled, emailNotifyAccount: enabled }
+    }));
   }
 
   // -------------------------

@@ -1,4 +1,5 @@
 import { PublicDirectoryEntry, ProfileVisibility, PublicUserProfile, SidebarDisplay } from '../../models/users.interface';
+import { EmailNotificationPreferences } from './user-profile.actions';
 
 export interface UserProfileState {
   /** The profile currently being viewed at /user/:id. */
@@ -30,6 +31,15 @@ export interface UserProfileState {
   myMessagePopupEnabled: boolean | null;
   savingMessagePopupEnabled: boolean;
 
+  /**
+   * Email notification preference keys the signed-in user has successfully saved
+   * in this session, merged over the value on the user record from /user/getUser
+   * (same pattern as myMessagePopupEnabled) — only the keys actually changed are
+   * present here, so an unrelated key falls back to the server value.
+   */
+  myEmailNotificationPreferences: EmailNotificationPreferences;
+  savingEmailNotificationPreferences: boolean;
+
   /** Anonymous-facing member directory — /members. Backend caps this at 100 rows. */
   directory: PublicDirectoryEntry[];
   directoryLoading: boolean;
@@ -49,6 +59,9 @@ export const initialUserProfileState: UserProfileState = {
 
   myMessagePopupEnabled: null,
   savingMessagePopupEnabled: false,
+
+  myEmailNotificationPreferences: {},
+  savingEmailNotificationPreferences: false,
 
   directory: [],
   directoryLoading: false,
