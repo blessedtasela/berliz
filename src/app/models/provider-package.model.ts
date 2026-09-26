@@ -28,6 +28,18 @@ export interface ProviderPackage {
   message?: string;
 }
 
+/** Response from POST /subscription/purchasePackage — the created/reused PENDING_PAYMENT Subscription, ready to hand to StripeService.createCheckoutSession. */
+export interface PackagePurchaseResponse {
+  subscriptionId: number;
+  packageId: number;
+  packageName: string;
+  price: number;
+  currency: string;
+  status: string;
+  date: string;
+  message?: string;
+}
+
 export interface ProviderPackageRequest {
   name: string;
   description?: string | null;

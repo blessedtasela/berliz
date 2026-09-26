@@ -1,0 +1,173 @@
+<div class="min-h-screen bg-gray-50 dark:bg-gray-950 font-sans">
+
+  <!-- Resolving -->
+  <div *ngIf="resolving" class="flex items-center justify-center py-24 gap-2 text-gray-400 dark:text-gray-500">
+    <i-feather name="loader" class="animate-spin" style="width:18px;height:18px;"></i-feather>
+    <span class="text-sm">Loading...</span>
+  </div>
+
+  <!-- Not found -->
+  <div *ngIf="!resolving && notFound" class="flex flex-col items-center justify-center py-24 gap-3 px-4 text-center">
+    <i-feather name="alert-circle" class="text-gray-300 dark:text-gray-700" style="width:32px;height:32px;"></i-feather>
+    <p class="text-sm text-gray-500 dark:text-gray-400">We couldn't find that {{ kind }}.</p>
+    <a [routerLink]="kind === 'trainer' ? '/trainers' : '/centers'"
+      class="text-xs font-semibold text-red-600 hover:text-red-700">
+      Back to {{ kind === 'trainer' ? 'trainers' : 'centers' }}
+    </a>
+  </div>
+
+  <div *ngIf="!resolving && !notFound" class="max-w-2xl mx-auto px-4 py-8 flex flex-col gap-6">
+
+    <!-- Provider header -->
+    <div class="flex items-center gap-3">
+      <img [src]="providerPhotoUrl || '../../../assets/icons/user.png'"
+        class="w-12 h-12 rounded-full object-cover object-top border border-gray-200 dark:border-gray-700"
+        onerror="this.src='../../../assets/icons/user.png';" />
+      <div>
+        <h1 class="text-base font-bold text-gray-900 dark:text-gray-100">Book {{ providerName }}</h1>
+        <a [routerLink]="kind === 'trainer' ? ['/trainers', providerName.replace(' ', '-')] : ['/centers', providerName.replace(' ', '-')]"
+          class="text-[11px] text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition">
+          View full profile
+        </a>
+      </div>
+    </div>
+
+    <!-- Packages -->
+    <div *ngIf="packages.length > 0" class="flex flex-col gap-2">
+      <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Choose how you want to book</label>
+
+      <button type="button" (click)="chooseSingle()"
+        class="w-full text-left px-4 py-3 rounded-xl border transition flex items-center justify-between gap-3"
+        [ngClass]="isSingleSelected
+          ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800'
+          : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'">
+        <span>
+          <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100">Single session</span>
+          <span class="block text-[11px] text-gray-400 dark:text-gray-500">Pay {{ providerName }} directly, no package needed</span>
+        </span>
+        <i-feather *ngIf="isSingleSelected" name="check-circle" class="text-red-600 dark:text-red-400 shrink-0" style="width:16px;height:16px;"></i-feather>
+      </button>
+
+      <div *ngFor="let pkg of packages" class="w-full px-4 py-3 rounded-xl border transition flex items-center justify-between gap-3"
+        [ngClass]="isPackageSelected(pkg)
+          ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800'
+          : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800'">
+
+        <button type="button" (click)="choosePackage(pkg)" class="flex-1 text-left min-w-0">
+          <span class="flex items-center gap-1.5">
+            <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100 truncate">{{ pkg.name }}</span>
+            <span *ngIf="isPackageOwned(pkg)" class="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400">
+              Owned
+            </span>
+          </span>
+          <span class="block text-[11px] text-gray-400 dark:text-gray-500 truncate">
+            {{ pkg.sessionCount ? pkg.sessionCount + ' sessions' : (pkg.billingType === 'RECURRING' ? 'Unlimited, renews monthly' : 'Membership') }}
+            <span *ngIf="pkg.groupSize > 1"> · group of {{ pkg.groupSize }}</span>
+            <span *ngIf="isPackageOwned(pkg) && isPackageOwned(pkg) as owned">
+              · {{ ownedByPackageId.get(pkg.id)?.sessionsRemaining ?? 'Unlimited' }}{{ ownedByPackageId.get(pkg.id)?.sessionsRemaining != null ? ' left' : '' }}
+            </span>
+          </span>
+        </button>
+
+        <div class="shrink-0 flex items-center gap-2">
+          <span *ngIf="!isPackageOwned(pkg)" class="text-xs font-bold text-gray-900 dark:text-gray-100">${{ pkg.price }}</span>
+          <button *ngIf="!isPackageOwned(pkg)" type="button" [disabled]="buyingPackageId === pkg.id"
+            (click)="buyPackage(pkg)"
+            class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 transition
+                   disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1">
+            <i-feather [name]="buyingPackageId === pkg.id ? 'loader' : 'shopping-cart'" [ngClass]="{'animate-spin': buyingPackageId === pkg.id}" style="width:11px;height:11px;"></i-feather>
+            Buy
+          </button>
+          <i-feather *ngIf="isPackageOwned(pkg) && isPackageSelected(pkg)" name="check-circle" class="text-red-600 dark:text-red-400" style="width:16px;height:16px;"></i-feather>
+        </div>
+      </div>
+
+      <p *ngIf="selectedOption.kind === 'buyPackage'" class="text-[11px] text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900 rounded-xl px-3 py-2.5 flex items-start gap-1.5">
+        <i-feather name="info" class="shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
+        Buying this package takes you to checkout first. Once it's paid, come back here to book your session with it.
+      </p>
+    </div>
+
+    <!-- ── Initial probe loading ─────────────────────────────────────── -->
+    <div *ngIf="availabilityConfigured === null" class="flex items-center justify-center py-8 gap-2 text-gray-400 dark:text-gray-500">
+      <i-feather name="loader" class="animate-spin" style="width:16px;height:16px;"></i-feather>
+      <span class="text-xs">Checking availability...</span>
+    </div>
+
+    <!-- ── CALENDAR / SLOT PICKER ────────────────────────────────────── -->
+    <ng-container *ngIf="availabilityConfigured === true">
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Pick a date</label>
+        <app-date-strip [selectedDate]="selectedDate" (dateSelected)="selectDate($event)"></app-date-strip>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Available times</label>
+
+        <div *ngIf="slotsLoading" class="flex items-center justify-center py-6 gap-2 text-gray-400 dark:text-gray-500">
+          <i-feather name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>
+          <span class="text-xs">Loading times...</span>
+        </div>
+
+        <div *ngIf="!slotsLoading && visibleSlots.length === 0"
+          class="flex flex-col items-center justify-center gap-1.5 py-6 rounded-xl border border-dashed border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+          <i-feather name="calendar" class="text-gray-300 dark:text-gray-700" style="width:18px;height:18px;"></i-feather>
+          <p class="text-xs text-gray-400 dark:text-gray-500">
+            {{ allSlotsWithinLeadTime
+              ? 'No more slots today — bookings need at least ' + minLeadTimeMinutes + ' minutes\' notice. Try tomorrow.'
+              : (slotsMessage || 'No open slots on this day.') }}
+          </p>
+        </div>
+
+        <div *ngIf="!slotsLoading && visibleSlots.length > 0" class="flex flex-wrap gap-2">
+          <button type="button" *ngFor="let slot of visibleSlots" (click)="selectSlot(slot)"
+            class="px-3 py-2 rounded-xl border text-xs font-semibold transition flex flex-col items-center gap-0.5"
+            [ngClass]="selectedSlot === slot
+              ? 'bg-red-600 border-red-600 text-white'
+              : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:border-red-300 dark:hover:border-red-800'">
+            <span>{{ slotLabel(slot) }}</span>
+            <span *ngIf="showsCapacity(slot)" class="text-[9px] font-normal opacity-80">{{ slot.remaining }} of {{ slot.capacity }} left</span>
+          </button>
+        </div>
+      </div>
+
+    </ng-container>
+
+    <!-- ── MANUAL FALLBACK ───────────────────────────────────────────── -->
+    <p *ngIf="useManualEntry" class="text-[11px] text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900 rounded-xl px-3 py-2.5 flex items-start gap-1.5">
+      <i-feather name="info" class="shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
+      This {{ kind }} hasn't set their availability yet. Please check back later or contact them directly.
+    </p>
+
+    <!-- ── Notes ─────────────────────────────────────────────────────── -->
+    <div *ngIf="availabilityConfigured === true" class="flex flex-col gap-1">
+      <div class="flex items-center justify-between">
+        <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
+          Notes <span class="normal-case text-gray-300 dark:text-gray-600">(optional)</span>
+        </label>
+        <span class="text-[11px]" [ngClass]="remainingNotesChars < 0 ? 'text-red-500' : 'text-gray-400 dark:text-gray-500'">
+          {{ remainingNotesChars }} left
+        </span>
+      </div>
+      <textarea [(ngModel)]="notes" rows="3" maxlength="500"
+        placeholder="Anything the trainer or center should know before your session."
+        class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 resize-none
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"></textarea>
+    </div>
+
+    <p *ngIf="availabilityConfigured === true" class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
+      <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+      Your booking starts as pending until {{ providerName }} confirms it.
+    </p>
+
+    <button type="button" (click)="submit()" [disabled]="submitting || availabilityConfigured !== true"
+      class="w-full px-4 py-3 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition
+             flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100">
+      <i-feather [name]="submitting ? 'loader' : 'send'" [ngClass]="{'animate-spin': submitting}" style="width:14px;height:14px;"></i-feather>
+      {{ submitting ? 'Sending…' : 'Request booking' }}
+    </button>
+
+  </div>
+
+</div>

@@ -9,6 +9,12 @@ import { CenterGuard } from '../guards/center.guard';
 // the `centers` path segment from app-routing.module.ts.
 const routes: Routes = [
   { path: '', component: CenterPageComponent, data: { breadcrumb: 'Centers' } },
+  {
+    path: ':name/book',
+    loadComponent: () => import('../booking/booking-page/booking-page.component').then(m => m.BookingPageComponent),
+    canActivate: [CenterGuard],
+    data: { kind: 'center', breadcrumb: 'Book' }
+  },
   { path: ':name', component: CenterDetailComponent, canActivate: [CenterGuard], data: { breadcrumb: { alias: 'centerName' } } },
 ];
 
