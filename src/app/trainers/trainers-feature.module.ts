@@ -9,6 +9,12 @@ import { TrainerGuard } from '../guards/trainer.guard';
 // `trainers` path segment from app-routing.module.ts.
 const routes: Routes = [
   { path: '', component: TrainersMainComponent, data: { breadcrumb: 'Trainers' } },
+  {
+    path: ':name/book',
+    loadComponent: () => import('../booking/booking-page/booking-page.component').then(m => m.BookingPageComponent),
+    canActivate: [TrainerGuard],
+    data: { kind: 'trainer', breadcrumb: 'Book' }
+  },
   { path: ':name', component: TrainersDetailsComponent, canActivate: [TrainerGuard], data: { breadcrumb: { alias: 'trainerName' } } },
 ];
 

@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../models/Api.interface';
 import { PlanSubscriptionResponse } from '../models/plan.model';
 import { Subscriptions } from '../models/subscriptions.interface';
+import { PackagePurchaseResponse } from '../models/provider-package.model';
 
 @Injectable({
   providedIn: 'root'
@@ -79,6 +80,17 @@ export class SubscriptionService {
     return this.httpClient.post<ApiResponse<PlanSubscriptionResponse>>(
       `${this.url}/subscription/selectPlan`,
       { planId },
+      { headers: new HttpHeaders().set('Content-Type', 'application/json') }
+    );
+  }
+
+  /** A client buying a trainer/center's ProviderPackage — creates a PENDING_PAYMENT
+   *  Subscription tied to that package; follow up with StripeService.createCheckoutSession
+   *  using the returned subscriptionId, same two-step flow as selectPlan. */
+  purchasePackage(packageId: number) {
+    return this.httpClient.post<ApiResponse<PackagePurchaseResponse>>(
+      `${this.url}/subscription/purchasePackage`,
+      { packageId },
       { headers: new HttpHeaders().set('Content-Type', 'application/json') }
     );
   }

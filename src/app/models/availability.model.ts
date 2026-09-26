@@ -34,6 +34,10 @@ export interface AvailableSlot {
   startTime: string;
   /** "HH:mm:ss" */
   endTime: string;
+  /** This slot's window capacity (1 = an ordinary 1:1 slot). */
+  capacity?: number;
+  /** capacity minus bookings already overlapping this slot. */
+  remaining?: number;
 }
 
 export interface AvailableSlotsResponse {
