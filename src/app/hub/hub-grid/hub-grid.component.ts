@@ -46,7 +46,8 @@ export class HubGridComponent implements OnChanges {
    */
   private readonly PERSONAL_KEYS = ['my-tasks', 'my-todos', 'my-subscriptions', 'my-workouts',
     'my-testimonials', 'liked-trainers', 'partnership', 'my-clients', 'my-members',
-    'members-testimonial', 'clients-tasks', 'todos', 'my-bookings', 'my-provider-bookings'];
+    'members-testimonial', 'clients-tasks', 'todos', 'my-bookings', 'my-provider-bookings',
+    'my-notifications', 'my-packages'];
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['items']) {
@@ -147,6 +148,13 @@ export class HubGridComponent implements OnChanges {
     // state for anyone else) lives at /dashboard/partnership. Without this
     // override the tile 404'd for every trainer/center who clicked it.
     'partnership': '/dashboard/partnership',
+    // /dashboard/hub/my-notifications is a second, separately-registered route
+    // to an older, unstyled duplicate page that nothing in the app actually
+    // links to -- the real one (search/filters, metrics widgets, deep-linking)
+    // is at /dashboard/my-notifications, same as the sidebar's own link.
+    'my-notifications': '/dashboard/my-notifications',
+    // Trainer/center self-service package builder -- no /dashboard/hub/my-packages route exists.
+    'my-packages': '/dashboard/my-packages',
   };
 
   resolveRoute(key: string): string {
