@@ -3,146 +3,146 @@
     <!-- Header -->
     <div class="flex items-start justify-between gap-3">
         <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+            <div class="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
                 <i-feather name="user" class="text-red-600" style="width:15px;height:15px;"></i-feather>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-gray-900">{{ userData.firstname }} {{ userData.lastname }}</h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">ID {{ userData.id }} &middot; Joined {{
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ userData.firstname }} {{ userData.lastname }}</h2>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">ID {{ userData.id }} &middot; Joined {{
                     formatDate(userData.date) }}</p>
             </div>
         </div>
         <button type="button" (click)="closeDialog()"
-            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 shrink-0">
             <i-feather name="x" style="width:14px;height:14px;"></i-feather>
         </button>
     </div>
 
     <!-- Photo -->
     <img [src]="photoSrc"
-        class="w-full h-40 object-cover object-top rounded-xl border border-gray-200"
+        class="w-full h-40 object-cover object-top rounded-xl border border-gray-200 dark:border-gray-700"
         onerror="this.src='../../../assets/icons/user.png';" />
 
     <!-- Status -->
     <span class="w-fit px-2.5 py-1 rounded-full text-[11px] font-semibold" [ngClass]="userData.status === 'true'
-            ? 'bg-green-50 text-green-700 border border-green-200'
-            : 'bg-gray-100 text-gray-500 border border-gray-200'">
+            ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900'
+            : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-gray-600'">
         {{ userData.status === 'true' ? 'Active' : 'Inactive' }}
     </span>
 
     <!-- Details -->
-    <div class="bg-gray-50 border border-gray-100 rounded-xl divide-y divide-gray-100">
+    <div class="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl divide-y divide-gray-100 dark:divide-gray-700">
         <div class="flex items-center justify-between px-4 py-2.5">
-            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Email</span>
-            <span class="text-xs font-medium text-gray-900 text-right">{{ userData.email }}</span>
+            <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Email</span>
+            <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ userData.email }}</span>
         </div>
         <div class="flex items-center justify-between px-4 py-2.5">
-            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Role</span>
-            <span class="text-xs font-medium text-gray-900 text-right">{{ userData.role }}</span>
+            <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Role</span>
+            <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ userData.role }}</span>
         </div>
         <div class="flex items-center justify-between px-4 py-2.5">
-            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Phone</span>
-            <span class="text-xs font-medium text-gray-900 text-right">{{ userData.phone }}</span>
+            <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Phone</span>
+            <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ userData.phone }}</span>
         </div>
         <div class="flex items-center justify-between px-4 py-2.5">
-            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Gender</span>
-            <span class="text-xs font-medium text-gray-900 text-right">{{ userData.gender }}</span>
+            <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Gender</span>
+            <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ userData.gender }}</span>
         </div>
         <div class="flex items-center justify-between px-4 py-2.5">
-            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Birthday</span>
-            <span class="text-xs font-medium text-gray-900 text-right">{{ userData.dob }}</span>
+            <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Birthday</span>
+            <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ userData.dob }}</span>
         </div>
         <div class="flex items-center justify-between px-4 py-2.5">
-            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Country</span>
-            <span class="text-xs font-medium text-gray-900 text-right">{{ userData.country }}</span>
+            <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Country</span>
+            <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ userData.country }}</span>
         </div>
         <div class="flex items-center justify-between px-4 py-2.5">
-            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">State</span>
-            <span class="text-xs font-medium text-gray-900 text-right">{{ userData.state }}</span>
+            <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">State</span>
+            <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ userData.state }}</span>
         </div>
         <div class="flex items-center justify-between px-4 py-2.5">
-            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">City</span>
-            <span class="text-xs font-medium text-gray-900 text-right">{{ userData.city }}</span>
+            <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">City</span>
+            <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ userData.city }}</span>
         </div>
         <div class="flex items-center justify-between px-4 py-2.5">
-            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Address</span>
-            <span class="text-xs font-medium text-gray-900 text-right">{{ userData.address }}</span>
+            <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Address</span>
+            <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ userData.address }}</span>
         </div>
         <div class="flex items-center justify-between px-4 py-2.5">
-            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Postal code</span>
-            <span class="text-xs font-medium text-gray-900 text-right">{{ userData.postalCode }}</span>
+            <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Postal code</span>
+            <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ userData.postalCode }}</span>
         </div>
         <div class="flex items-center justify-between px-4 py-2.5">
-            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</span>
-            <span class="text-xs font-medium text-gray-900 text-right">{{ formatDate(userData.lastUpdate) }}</span>
+            <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Last update</span>
+            <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ formatDate(userData.lastUpdate) }}</span>
         </div>
     </div>
 
     <!-- Bio -->
     <div *ngIf="userData.bio" class="flex flex-col gap-1">
-        <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Bio</span>
-        <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+        <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Bio</span>
+        <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl px-4 py-3">
             {{ userData.bio }}
         </p>
     </div>
 
-    <div class="border-t border-gray-100"></div>
+    <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
     <!-- Force password change -->
     <form [formGroup]="passwordForceChnageForm" (ngSubmit)="forcePasswordChnage()" class="flex flex-col gap-4">
 
         <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+            <div class="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
                 <i-feather name="lock" class="text-red-600" style="width:15px;height:15px;"></i-feather>
             </div>
             <div>
-                <h3 class="text-sm font-bold text-gray-900">Force password change</h3>
-                <p class="text-[11px] text-gray-400 mt-0.5">Set a new password on this user's behalf.</p>
+                <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100">Force password change</h3>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">Set a new password on this user's behalf.</p>
             </div>
         </div>
 
         <p *ngIf="passwordForceChnageForm.invalid && invalidForm"
-            class="text-red-500 text-[11px] flex items-center gap-1">
+            class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
             <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
             Please enter a password
         </p>
 
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">New password</label>
-            <input formControlName="password" id="password" type="password" placeholder="Enter a new password" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">New password</label>
+            <input formControlName="password" id="password" type="password" placeholder="Enter a new password" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
-                        'border-red-400 bg-red-50': passwordForceChnageForm.get('password')?.invalid && passwordForceChnageForm.get('password')?.touched,
-                        'border-gray-200 bg-gray-50': !(passwordForceChnageForm.get('password')?.invalid && passwordForceChnageForm.get('password')?.touched)
+                        'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': passwordForceChnageForm.get('password')?.invalid && passwordForceChnageForm.get('password')?.touched,
+                        'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(passwordForceChnageForm.get('password')?.invalid && passwordForceChnageForm.get('password')?.touched)
                       }">
             <p *ngIf="passwordForceChnageForm.get('password')?.invalid && (passwordForceChnageForm.get('password')?.dirty || passwordForceChnageForm.get('password')?.touched)"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Must be at least 8 characters
             </p>
         </div>
 
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Confirm password</label>
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Confirm password</label>
             <input formControlName="confirmPassword" id="confirmPassword" type="password" placeholder="Re-type password"
-                class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+                class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
-                        'border-red-400 bg-red-50': passwordForceChnageForm.get('confirmPassword')?.invalid && passwordForceChnageForm.get('confirmPassword')?.touched,
-                        'border-gray-200 bg-gray-50': !(passwordForceChnageForm.get('confirmPassword')?.invalid && passwordForceChnageForm.get('confirmPassword')?.touched)
+                        'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': passwordForceChnageForm.get('confirmPassword')?.invalid && passwordForceChnageForm.get('confirmPassword')?.touched,
+                        'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(passwordForceChnageForm.get('confirmPassword')?.invalid && passwordForceChnageForm.get('confirmPassword')?.touched)
                       }">
             <p *ngIf="passwordForceChnageForm.hasError('passwordMismatch') && passwordForceChnageForm.get('confirmPassword')?.dirty"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Passwords do not match
             </p>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <div class="flex items-center justify-end gap-2">
-            <button type="button" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
-                       hover:bg-gray-50 active:scale-[0.98] transition">
+            <button type="button" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300
+                       hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] transition">
                 Close
             </button>
             <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
