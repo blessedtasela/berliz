@@ -1,25 +1,25 @@
 <!-- heatmap -->
-<div class="bg-white border border-gray-200 rounded-2xl p-4 font-sans
+<div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 font-sans
          flex flex-col max-h-[350px] overflow-hidden gap-3">
 
     <!-- Header -->
     <div class="flex justify-between items-center mb-4 shrink-0">
 
         <button (click)="prevMonth()"
-            class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition">
-            <i-feather name="chevron-left" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+            class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center justify-center transition">
+            <i-feather name="chevron-left" style="width:14px;height:14px;" class="text-gray-600 dark:text-gray-400"></i-feather>
         </button>
 
         <div class="flex flex-col items-center">
-            <h3 class="text-sm font-semibold text-gray-800">
+            <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-200">
                 {{ currentDate | date:'MMMM yyyy' }}
             </h3>
-            <span class="text-[10px] text-gray-400">{{ todos.length }} tasks this month</span>
+            <span class="text-[10px] text-gray-400 dark:text-gray-500">{{ todos.length }} tasks this month</span>
         </div>
 
         <button (click)="nextMonth()"
-            class="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition">
-            <i-feather name="chevron-right" style="width:14px;height:14px;" class="text-gray-600"></i-feather>
+            class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center justify-center transition">
+            <i-feather name="chevron-right" style="width:14px;height:14px;" class="text-gray-600 dark:text-gray-400"></i-feather>
         </button>
 
     </div>
@@ -30,7 +30,7 @@
         <!-- Day labels -->
         <div class="grid grid-cols-7 mb-1.5">
             <div *ngFor="let d of ['Su','Mo','Tu','We','Th','Fr','Sa']"
-                class="text-center text-[10px] font-semibold text-gray-400">
+                class="text-center text-[10px] font-semibold text-gray-400 dark:text-gray-500">
                 {{ d }}
             </div>
         </div>
@@ -69,16 +69,16 @@
     <div class="flex items-center justify-between mt-3 shrink-0">
 
         <div class="flex items-center gap-1.5">
-            <span class="text-[10px] text-gray-400">Less</span>
-            <div class="w-3 h-3 rounded-sm bg-gray-100"></div>
-            <div class="w-3 h-3 rounded-sm bg-red-200"></div>
-            <div class="w-3 h-3 rounded-sm bg-red-400"></div>
+            <span class="text-[10px] text-gray-400 dark:text-gray-500">Less</span>
+            <div class="w-3 h-3 rounded-sm bg-gray-100 dark:bg-gray-800"></div>
+            <div class="w-3 h-3 rounded-sm bg-red-200 dark:bg-red-900"></div>
+            <div class="w-3 h-3 rounded-sm bg-red-400 dark:bg-red-700"></div>
             <div class="w-3 h-3 rounded-sm bg-red-600"></div>
             <div class="w-3 h-3 rounded-sm bg-orange-500"></div>
-            <span class="text-[10px] text-gray-400">More</span>
+            <span class="text-[10px] text-gray-400 dark:text-gray-500">More</span>
         </div>
 
-        <div class="flex items-center gap-1 text-[10px] text-gray-400">
+        <div class="flex items-center gap-1 text-[10px] text-gray-400 dark:text-gray-500">
             <i-feather name="zap" style="width:10px;height:10px;" class="text-orange-500"></i-feather>
             <span>3+ day streak</span>
         </div>

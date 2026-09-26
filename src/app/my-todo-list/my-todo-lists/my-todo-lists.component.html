@@ -1,4 +1,4 @@
-<div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 font-sans">
+<div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm p-4 font-sans">
 
   <app-my-todo-list-header [startIndex]="startIndex" [endIndex]="endIndex" [total]="total" [selectAll]="selectAll"
     (toggleSelectAll)="toggleSelectAll.emit()" (bulkAction)="bulkAction.emit($event)" (prev)="prev.emit()"
@@ -14,20 +14,20 @@
 
 
   <!-- 🔥 CLEAN PAGINATION (CENTERED BETWEEN END + FOOTER SPACE) -->
-  <div class="sticky bottom-0 z-20 bg-white border-t border-gray-200 px-4 py-3">
+  <div class="sticky bottom-0 z-20 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-4 py-3">
 
-    <div class="flex items-center justify-center gap-6 text-xs text-gray-600">
+    <div class="flex items-center justify-center gap-6 text-xs text-gray-600 dark:text-gray-400">
 
-      <button class="px-3 py-1 border rounded-md hover:bg-gray-50 disabled:opacity-40" (click)="prev.emit()"
+      <button class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40" (click)="prev.emit()"
         [disabled]="startIndex === 1">
         Prev
       </button>
 
-      <div class="font-medium text-gray-700">
+      <div class="font-medium text-gray-700 dark:text-gray-300">
         {{ startIndex }} - {{ endIndex }} of {{ total }}
       </div>
 
-      <button class="px-3 py-1 border rounded-md hover:bg-gray-50 disabled:opacity-40" (click)="next.emit()"
+      <button class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40" (click)="next.emit()"
         [disabled]="endIndex === total">
         Next
       </button>
