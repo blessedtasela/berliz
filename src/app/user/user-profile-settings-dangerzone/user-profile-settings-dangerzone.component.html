@@ -1,22 +1,22 @@
-<div class="bg-white border border-gray-200 rounded-xl p-4 font-sans flex flex-col gap-3 mt-6">
+<div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3 mt-6">
 
   <div>
-    <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wide">Danger zone</h2>
-    <p class="text-[11px] text-gray-400 mt-0.5">These actions are irreversible. Proceed with caution.</p>
+    <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Danger zone</h2>
+    <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">These actions are irreversible. Proceed with caution.</p>
   </div>
 
-  <div class="border-t border-gray-100"></div>
+  <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
   <div class="flex flex-wrap gap-2">
 
-    <button (click)="onUpdateEmail()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-900 text-white
-             hover:bg-black active:scale-[0.98] transition flex items-center gap-2">
+    <button (click)="onUpdateEmail()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-900 dark:bg-gray-700 text-white
+             hover:bg-black dark:hover:bg-gray-600 active:scale-[0.98] transition flex items-center gap-2">
       <i-feather name="mail" style="width:13px;height:13px;"></i-feather>
       Update email
     </button>
 
-    <button (click)="onDeactivate()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-red-200 bg-red-50 text-red-600
-             hover:bg-red-100 active:scale-[0.98] transition flex items-center gap-2">
+    <button (click)="onDeactivate()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400
+             hover:bg-red-100 dark:hover:bg-red-950/30 active:scale-[0.98] transition flex items-center gap-2">
       <i-feather name="alert-triangle" style="width:13px;height:13px;"></i-feather>
       Deactivate account
     </button>

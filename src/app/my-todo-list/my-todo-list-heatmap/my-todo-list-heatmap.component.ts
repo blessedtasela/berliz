@@ -116,12 +116,12 @@ export class MyTodoListHeatmapComponent implements OnChanges {
 
   private getColor(count: number, streak: boolean): string {
 
-    if (!count) return 'bg-gray-100';
+    if (!count) return 'bg-gray-100 dark:bg-gray-800';
 
     if (streak) return 'bg-orange-500 text-white';
 
-    if (count <= 2) return 'bg-red-200';
-    if (count <= 5) return 'bg-red-400';
+    if (count <= 2) return 'bg-red-200 dark:bg-red-900';
+    if (count <= 5) return 'bg-red-400 dark:bg-red-700';
 
     return 'bg-red-600';
   }

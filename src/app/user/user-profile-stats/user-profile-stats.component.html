@@ -1,14 +1,14 @@
 <div *ngIf="stats && (stats | keyvalue).length > 0; else noStats"
-  class="mt-3 flex items-center gap-4 border border-gray-200 bg-gray-50 rounded-xl px-4 py-2.5">
+  class="mt-3 flex items-center gap-4 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-xl px-4 py-2.5">
   <ng-container *ngFor="let item of stats | keyvalue; let last = last">
     <div class="flex flex-col items-center">
-      <span class="text-sm font-bold text-gray-900">{{ item.value }}</span>
-      <span class="text-[10px] text-gray-400">{{ item.key }}</span>
+      <span class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ item.value }}</span>
+      <span class="text-[10px] text-gray-400 dark:text-gray-500">{{ item.key }}</span>
     </div>
-    <div *ngIf="!last" class="h-6 w-px bg-gray-200"></div>
+    <div *ngIf="!last" class="h-6 w-px bg-gray-200 dark:bg-gray-700"></div>
   </ng-container>
 </div>
 
 <ng-template #noStats>
-  <p class="mt-3 text-[11px] text-gray-400 italic">No profile stats available yet</p>
+  <p class="mt-3 text-[11px] text-gray-400 dark:text-gray-500 italic">No profile stats available yet</p>
 </ng-template>

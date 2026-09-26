@@ -1,7 +1,7 @@
-<div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+<div class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden">
     <!-- Mobile: card rows (matches admin/categories pattern) -->
-    <div class="sm:hidden divide-y divide-gray-100">
-        <div *ngFor="let category of testimonialsData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors">
+    <div class="sm:hidden divide-y divide-gray-100 dark:divide-gray-800">
+        <div *ngFor="let category of testimonialsData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 dark:active:bg-gray-800 transition-colors">
             <div class="min-w-0 flex-1" (click)="openTestimonialDetails(category.id)">
                 <div class="flex items-center gap-2 flex-wrap">
                     <app-user-hover-card [userId]="category.userId" [firstname]="category.userFirstname"
@@ -9,29 +9,29 @@
                         [label]="category.userEmail">
                     </app-user-hover-card>
                     <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
-                        [ngClass]="category.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
+                        [ngClass]="category.status === 'true' ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-gray-600'">
                         {{ category.status === 'true' ? 'Active' : 'Inactive' }}
                     </span>
                 </div>
-                <p class="text-xs text-gray-400 mt-0.5 truncate">{{ category.likes }} likes &middot; updated {{ formatDate(category.lastUpdate) }}</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate">{{ category.likes }} likes &middot; updated {{ formatDate(category.lastUpdate) }}</p>
             </div>
             <div class="flex items-center gap-0.5 shrink-0">
-                <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center"
+                <button class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="toggleFeatured(category.id)"
                     [title]="category.featured ? 'Remove from public page' : 'Feature on public page'">
-                    <i-feather name="star" [ngClass]="category.featured ? 'text-amber-500 fill-current' : 'text-gray-400'"
+                    <i-feather name="star" [ngClass]="category.featured ? 'text-amber-500 fill-current' : 'text-gray-400 dark:text-gray-500'"
                         style="width:16px;height:16px;"></i-feather>
                 </button>
-                <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center"
+                <button class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="openUpdateTestimonial(category.id)" title="Edit">
                     <i-feather name="edit-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
-                <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center"
+                <button class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="updateTestimonialStatus(category.id)"
                     [title]="category.status === 'false' ? 'Activate' : 'Deactivate'">
                     <i-feather [name]="category.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
-                <button class="w-9 h-9 rounded-lg active:bg-red-50 flex items-center justify-center"
+                <button class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"
                     (click)="deleteTestimonial(category.id)" title="Delete">
                     <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
@@ -42,20 +42,20 @@
     <div class="hidden sm:block overflow-x-auto">
         <table class="w-full text-sm">
             <thead>
-                <tr class="bg-gray-50 border-b border-gray-200">
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">User email</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Status</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Testimonial ID</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Likes</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</th>
-                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
+                <tr class="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">SN</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">User email</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Status</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Date</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Testimonial ID</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Likes</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Last update</th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
-                <tr *ngFor="let category of testimonialsData; let i = index" class="hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
+            <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                <tr *ngFor="let category of testimonialsData; let i = index" class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ i + 1 }}</td>
                     <td class="px-4 py-3">
                         <app-user-hover-card [userId]="category.userId" [firstname]="category.userFirstname"
                             [lastname]="category.userLastname" [email]="category.userEmail"
@@ -64,36 +64,36 @@
                     </td>
                     <td class="px-4 py-3">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold"
-                            [ngClass]="category.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
+                            [ngClass]="category.status === 'true' ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-gray-600'">
                             {{ category.status === 'true' ? 'Active' : 'Inactive' }}
                         </span>
                     </td>
-                    <td class="px-4 py-3 text-gray-500">{{ formatDate(category.date) }}</td>
-                    <td class="px-4 py-3 text-gray-500 tabular-nums">{{ category.id }}</td>
-                    <td class="px-4 py-3 text-gray-600 tabular-nums">{{ category.likes }}</td>
-                    <td class="px-4 py-3 text-gray-500">{{ formatDate(category.lastUpdate) }}</td>
+                    <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ formatDate(category.date) }}</td>
+                    <td class="px-4 py-3 text-gray-500 dark:text-gray-400 tabular-nums">{{ category.id }}</td>
+                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400 tabular-nums">{{ category.likes }}</td>
+                    <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ formatDate(category.lastUpdate) }}</td>
                     <td class="px-4 py-3">
                         <div class="flex items-center justify-end gap-1">
-                            <button class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
+                            <button class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition"
                                 (click)="openTestimonialDetails(category.id)" title="View">
-                                <i-feather name="eye" class="text-gray-500" style="width:15px;height:15px;"></i-feather>
+                                <i-feather name="eye" class="text-gray-500 dark:text-gray-400" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
                                 (click)="openUpdateTestimonial(category.id)" title="Edit">
                                 <i-feather name="edit-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
+                            <button class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition"
                                 (click)="toggleFeatured(category.id)"
                                 [title]="category.featured ? 'Remove from public page' : 'Feature on public page'">
-                                <i-feather name="star" [ngClass]="category.featured ? 'text-amber-500 fill-current' : 'text-gray-400'"
+                                <i-feather name="star" [ngClass]="category.featured ? 'text-amber-500 fill-current' : 'text-gray-400 dark:text-gray-500'"
                                     style="width:15px;height:15px;"></i-feather>
                             </button>
                             <button class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition"
-                                [ngClass]="category.status === 'true' ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-red-600 text-white hover:bg-red-700'"
+                                [ngClass]="category.status === 'true' ? 'bg-gray-800 dark:bg-gray-700 text-white hover:bg-gray-700 dark:hover:bg-gray-600' : 'bg-red-600 text-white hover:bg-red-700'"
                                 (click)="updateTestimonialStatus(category.id)">
                                 {{ category.status === 'false' ? 'Activate' : 'Deactivate' }}
                             </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
                                 (click)="deleteTestimonial(category.id)" title="Delete">
                                 <i-feather name="trash-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
                             </button>
@@ -104,9 +104,9 @@
         </table>
     </div>
     <div *ngIf="testimonialsData.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-center">
-        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
-            <i-feather name="inbox" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+            <i-feather name="inbox" class="text-gray-300 dark:text-gray-600" style="width:22px;height:22px;"></i-feather>
         </div>
-        <p class="text-sm text-gray-400">No testimonials yet.</p>
+        <p class="text-sm text-gray-400 dark:text-gray-500">No testimonials yet.</p>
     </div>
 </div>

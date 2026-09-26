@@ -1,10 +1,10 @@
 <div class="relative">
 
-    <img [src]="src" class="w-24 h-24 rounded-full object-cover object-top border-4 border-white shadow-md bg-white cursor-pointer"
+    <img [src]="src" class="w-24 h-24 rounded-full object-cover object-top border-4 border-white dark:border-gray-900 shadow-md bg-white dark:bg-gray-900 cursor-pointer"
         (click)="showModal = true" />
 
     <label for="avatarFileInput" class="absolute bottom-0 right-0 w-7 h-7 bg-red-600 rounded-full flex items-center justify-center
-           shadow cursor-pointer hover:bg-red-700 transition border-2 border-white">
+           shadow cursor-pointer hover:bg-red-700 transition border-2 border-white dark:border-gray-900">
         <i-feather name="camera" style="width:12px;height:12px;" class="text-white"></i-feather>
     </label>
 
@@ -19,9 +19,9 @@
     <div class="relative" (click)="$event.stopPropagation()">
 
         <img [src]="src"
-            class="max-w-[280px] max-h-[280px] rounded-full object-cover object-top border-4 border-white shadow-2xl" />
+            class="max-w-[280px] max-h-[280px] rounded-full object-cover object-top border-4 border-white dark:border-gray-900 shadow-2xl" />
 
-        <button (click)="showModal = false" class="absolute -top-2.5 -right-2.5 w-7 h-7 rounded-full bg-gray-900 border-2 border-white
+        <button (click)="showModal = false" class="absolute -top-2.5 -right-2.5 w-7 h-7 rounded-full bg-gray-900 border-2 border-white dark:border-gray-700
              flex items-center justify-center text-white hover:bg-red-600 transition">
             <i-feather name="x" style="width:12px;height:12px;"></i-feather>
         </button>

@@ -133,7 +133,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | D10 | Transparent trainer/center pricing + book CTA on every relevant surface | ✅ | ✚ |
 | D11 | Pre-renewal reminder + ≤2-tap cancel | ✅ | ✚ | |
 | D12 | Value-first onboarding (one real action before any paywall) | ✅ | — |
-| D13 | Dark mode (app-wide) | 🚧 | — | Real infrastructure: Tailwind `darkMode: 'class'`, a `ThemeService` (Light/Dark/System, per-device like the other display prefs), a toggle in Settings ("Appearance" card). Converted so far: the dashboard shell (`sidebar` layout wrapper + `TopBar`), the full Settings page, a batch of high-traffic surfaces — Dashboard home's own inline markup, the whole Messages surface (conversation list, bubbles, composer, floating popup), Bookings (list + the shared `booking-card` used by both client and provider views), My FAQs, Connections, the Timeline/feed page (compose box, tab toggle, post cards) plus the shared `refresh-button` used across most dashboard pages , the shared `post-comments`/`comment-node`/`reaction-button`/`mention-input` components used by every comment thread (Timeline, dashboard user profiles, public profile once signed in — those four already carry their own pre-existing `dark` `@Input` for the *separate*, always-dark public-profile/media-sheet rendering; the `ThemeService`-driven `dark:` classes were layered on only in their `!dark` branches, so always-dark call sites like `post-detail-sheet`'s `[dark]="true"` are untouched) — and now all ~14 Dashboard-home widget cards (Overview, Now active, Users, Notifications, Suggested, Trending exercises, Quick links, Timeline preview, Tasks/Workouts/Todos, and the login/activity/app/subscription analytics charts), the shared `user-hover-card` popover used throughout the admin tables, and the remaining four Dashboard-home widgets (`accountability-card`, `challenges-card`, `consistency-ring`, `onboarding-checklist`) that complete that page's coverage — `recap-card` is left alone on purpose, its permanently-dark gradient card was already fixed-dark by design. Now working through **`/dashboard/admin/*`** (the biggest remaining bucket, ~156 templates across ~28 CRUD sections) — 22 sections fully converted so far (trainers, centers, users, tags, muscle-groups, categories, exercises, faqs, bookings, equipment, problem-reports, content-reports, berliz-feedback, exercise-suggestions, availability, payments, subscriptions, members, clients, partners, trainer-pricing, center-pricing), plus the shared `admin-search` bar used by every admin list. See the Changelog below for the full per-pass breakdown. Also added a global CSS rule (`html.dark .mat-dialog-container`) since Angular Material's dialog panel is a hardcoded-light surface from the imported `indigo-pink` prebuilt theme that never responds to Tailwind `dark:` classes on its own — every admin add/edit/detail modal renders directly against that panel with no background of its own, so this one override unlocks dark mode for every current and future Material dialog app-wide, not just these sections. Chart canvases (Chart.js) still render with their existing light-only grid/tick colors — retuning every chart's internal color for dark-mode contrast is its own pass, not bundled into this one. The public marketing site (`topbar` layout) is untouched on purpose — it's permanently dark by brand design already, same as the mobile app's own legal/marketing screens. Most of the dashboard (~410 remaining templates — the rest of admin, detail pages, workouts, etc.) still renders its existing light-only classes — a real, non-broken intermediate state (dark chrome, light content cards in the untouched areas), not full app-wide coverage yet. |
+| D13 | Dark mode (app-wide) | 🚧 | — | Real infrastructure: Tailwind `darkMode: 'class'`, a `ThemeService` (Light/Dark/System, per-device like the other display prefs), a toggle in Settings ("Appearance" card). Converted so far: the dashboard shell (`sidebar` layout wrapper + `TopBar`), the full Settings page, a batch of high-traffic surfaces — Dashboard home's own inline markup, the whole Messages surface (conversation list, bubbles, composer, floating popup), Bookings (list + the shared `booking-card` used by both client and provider views), My FAQs, Connections, the Timeline/feed page (compose box, tab toggle, post cards) plus the shared `refresh-button` used across most dashboard pages , the shared `post-comments`/`comment-node`/`reaction-button`/`mention-input` components used by every comment thread (Timeline, dashboard user profiles, public profile once signed in — those four already carry their own pre-existing `dark` `@Input` for the *separate*, always-dark public-profile/media-sheet rendering; the `ThemeService`-driven `dark:` classes were layered on only in their `!dark` branches, so always-dark call sites like `post-detail-sheet`'s `[dark]="true"` are untouched) — and now all ~14 Dashboard-home widget cards (Overview, Now active, Users, Notifications, Suggested, Trending exercises, Quick links, Timeline preview, Tasks/Workouts/Todos, and the login/activity/app/subscription analytics charts), the shared `user-hover-card` popover used throughout the admin tables, and the remaining four Dashboard-home widgets (`accountability-card`, `challenges-card`, `consistency-ring`, `onboarding-checklist`) that complete that page's coverage — `recap-card` is left alone on purpose, its permanently-dark gradient card was already fixed-dark by design. Now working through **`/dashboard/admin/*`** (the biggest remaining bucket, ~156 templates across ~28 CRUD sections) — 28 sections fully converted so far (trainers, centers, users, tags, muscle-groups, categories, exercises, faqs, bookings, equipment, problem-reports, content-reports, berliz-feedback, exercise-suggestions, availability, payments, subscriptions, members, clients, partners, trainer-pricing, center-pricing, testimonials, tasks, sub-tasks, todo-lists, contact-us, newsletters) — **the entire `/dashboard/admin/*` CRUD sweep is now complete.** Plus the shared `admin-search` bar used by every admin list. See the Changelog below for the full per-pass breakdown. Also added a global CSS rule (`html.dark .mat-dialog-container`) since Angular Material's dialog panel is a hardcoded-light surface from the imported `indigo-pink` prebuilt theme that never responds to Tailwind `dark:` classes on its own — every admin add/edit/detail modal renders directly against that panel with no background of its own, so this one override unlocks dark mode for every current and future Material dialog app-wide, not just these sections. Chart canvases (Chart.js) still render with their existing light-only grid/tick colors — retuning every chart's internal color for dark-mode contrast is its own pass, not bundled into this one. The public marketing site (`topbar` layout) is untouched on purpose — it's permanently dark by brand design already, same as the mobile app's own legal/marketing screens. Now moving through the rest of the dashboard's non-admin surfaces: the full **My To-do List** feature (header/list/item/section/form/metrics/heatmap/timeline/analytic-chart, plus the `getColor()` heatmap-intensity helper in its `.ts`, which returns Tailwind classes dynamically and needed its own `dark:` variants since Tailwind can't infer them from a runtime string), and the `src/app/user/*` profile surfaces — avatar, bio editor, profile identity/stats, account info, progress-sharing settings, photo cropper, danger zone, the full profile-settings form (personal info, gender pills, country/state/city pickers), and the My Progress check-in tracker (`user-progress`, not `user-profile-settings.component.html`, which was already converted in an earlier phase's Settings-page pass). Also added a global CSS override for `.berliz-select` (the shared `ng-select` styling for every country/state/city picker app-wide), mirroring the existing `.mat-dialog-container` fix — like that dialog panel, `ng-select`'s internals are plain CSS with hardcoded light colors, invisible to Tailwind's `dark:` variant scanner, so every picker on `location-form` and `partner/trainer-data` benefits from this fix too even though those components haven't been touched yet. and the full **Runs** feature (discover/my-runs/history/leaderboard tabs, create/log/invite modals — status pills for pending/accepted/invited/cancelled, history stat cards, the leaderboard's rank-medal colors). Note: a concurrent session independently finished dark mode for My Notifications and most of Messages/Connections/Hub around the same time, so those no longer need a pass here. Remaining (~325 templates — non-admin detail pages, workouts, my-subscriptions, my-trainer, remaining promotions/hub, payment, client-intake, saved-page, my-drafts, booking, remaining navbar/shared components, etc.) still renders its existing light-only classes — a real, non-broken intermediate state (dark chrome, light content cards in the untouched areas), not full app-wide coverage yet. |
 | D14 | "Do this workout" — clone a linked workout from a feed post | ✅ | ✚ |
 | D15 | Saved / bookmarked posts & workouts | ✅ | ✚ |
 
@@ -200,6 +200,104 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 - New shared `SubscriptionTierService` (backend) resolves `Subscription.planTier.sortOrder`
   against a role's max active tier once, instead of duplicating that logic across
   `TrainerServiceImplement`, `CenterServiceImplement`, and `PromotionServiceImplement`.
+
+### Unreleased — Dark mode: Runs feature (D13 continued)
+
+Twenty-ninth pass. Converts the full Runs feature: the tabbed shell
+(Discover/My runs/History/Leaderboard), Discover's searchable event
+cards with join-request states, My Runs' invite/pending/roster panels
+(purple "invited" banner, amber "pending request" banner), History's
+four stat cards and log rows with a highlight-on-scroll state, the
+Leaderboard's rank medals and verified-run badges, and all three
+modals (create/edit run, log a run, invite a runner). Verified with a
+real `ng build --configuration=development`.
+
+### Unreleased — Dark mode: user/* profile surfaces (D13 continued)
+
+Twenty-eighth pass. Converts the rest of `src/app/user/*`: the avatar
+(with a dark ring so its border blends into the page instead of
+staying a stark white circle), bio editor, profile identity/stats,
+account info, progress-sharing settings, the photo cropper modal, the
+danger zone card, the large personal-info settings form (gender pills,
+country/state/city `ng-select` pickers), and the My Progress check-in
+tracker (`user-progress` — weight/body-fat/photo log, distinct from
+`user-profile-settings.component.html`, already converted earlier).
+Several components (`user-bio-edit`, `user-account-info`,
+`user-profile-settings-form`) compute a Tailwind class string in their
+`.ts` (`charCountClass()`, `statusClass`, `fieldBorder()`) — same
+pattern as the to-do heatmap, so those got `dark:` variants added
+directly in the TS. Added a global `html.dark .berliz-select` CSS
+override (mirroring the existing `.mat-dialog-container` fix) since
+`ng-select`'s internals are plain CSS with hardcoded light colors that
+Tailwind's `dark:` scanner can't see — this also fixes the country/
+state/city pickers on `location-form` and `partner/trainer-data`
+before those components have been converted themselves. Verified with
+a real `ng build --configuration=development`.
+
+### Unreleased — Dark mode: My To-do List feature (D13 continued — first post-admin pass)
+
+Twenty-seventh pass, the first outside `/dashboard/admin/*`. Converts
+the whole My To-do List feature: pagination header, list/section/item
+cards (status + priority pills, dropdown menus), the add-task form
+(priority pill selector), the metrics summary cards, the completion
+heatmap, the timeline, and the Chart.js breakdown card's wrapper/
+legend (canvas internals untouched, as with other charts). The
+heatmap's day-cell color comes from a TS helper (`getColor()`) that
+returns a Tailwind class string at runtime — since Tailwind can't
+statically discover `dark:` variants inside a computed string unless
+they're written literally in the source, `dark:` classes were added
+directly to each returned string in the `.ts` file, not just the
+template. Verified with a real `ng build --configuration=development`.
+
+### Unreleased — Dark mode: admin/contact-us + admin/newsletters (D13 continued — sweep complete)
+
+Twenty-sixth pass. Converts both remaining admin CRUD sections in
+full: `admin/contact-us` (header, list, details modal/detail page,
+add/update submission modals, and the admin-reply review modal with
+its saved-subject/saved-body pickers) and `admin/newsletters` (header
+with its extra "Send Bulk" button, list, details modal/detail page,
+add/update subscriber modals, and both the per-subscriber and bulk
+message-composer modals). **This closes out the entire
+`/dashboard/admin/*` CRUD sweep** — all ~28 admin sections are now
+dark-mode complete. Verified with a real
+`ng build --configuration=development`.
+
+### Unreleased — Dark mode: admin/todo-lists (D13 continued)
+
+Twenty-fifth pass, continuing the admin CRUD sweep. Converts the
+complete `admin/todo-lists` section -- header, list (mobile cards +
+desktop table, status-driven pills for completed/in-progress/
+cancelled/pending), the details modal and standalone detail page
+(shared `user-hover-card`, priority/due-date/last-update block, task
+text), and the add/update form modals (user picker, task textarea, a
+green/red form-level validity banner pattern not seen in earlier
+sections). Verified with a real `ng build --configuration=development`.
+
+### Unreleased — Dark mode: admin/tasks + admin/sub-tasks (D13 continued)
+
+Twenty-fourth pass, continuing the admin CRUD sweep. Converts both
+task-management sections in full: headers, lists (mobile cards +
+desktop tables, shared `user-hover-card`, priority/status pills), the
+details modals and standalone detail pages (client/trainer/priority/
+date/sub-tasks/description blocks), and the add/update form modals
+(client + trainer pickers, priority radio-pill group, date-range
+inputs for tasks; task + exercise pickers and a read-only exercise
+field for sub-tasks). The update-task modal's "already active" amber
+warning banner keeps its tint in both themes. Verified with a real
+`ng build --configuration=development`.
+
+### Unreleased — Dark mode: admin/testimonials (D13 continued)
+
+Twenty-third pass, continuing the admin CRUD sweep. Converts the
+complete `admin/testimonials` section -- header, list (mobile cards +
+desktop table, shared `user-hover-card`, featured-star toggle), the
+details modal and standalone detail page (author/center/trainer/client
+key-value block, likes, testimonial text), and the add/update form
+modals (client picker, target radio-pill group for Berliz/center/
+trainer, conditional center/trainer pickers, testimonial textarea). The
+update modal's "already active, can't be edited" warning banner keeps
+its amber tint in both themes. Verified with a real
+`ng build --configuration=development`.
 
 ### Unreleased — Dark mode: admin/trainer-pricing + admin/center-pricing (D13 continued)
 

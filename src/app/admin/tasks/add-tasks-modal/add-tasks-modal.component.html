@@ -3,16 +3,16 @@
     <!-- Header -->
     <div class="flex items-start justify-between gap-3">
         <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+            <div class="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
                 <i-feather name="check-square" class="text-red-600" style="width:15px;height:15px;"></i-feather>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-gray-900">Assign a task</h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">Assign a client to a trainer for a date range.</p>
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Assign a task</h2>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">Assign a client to a trainer for a date range.</p>
             </div>
         </div>
         <button type="button" (click)="closeDialog()"
-            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 shrink-0">
             <i-feather name="x" style="width:14px;height:14px;"></i-feather>
         </button>
     </div>
@@ -20,22 +20,22 @@
     <form [formGroup]="addTaskForm" class="flex flex-col gap-4">
 
         <p *ngIf="addTaskForm.invalid && invalidForm"
-            class="text-red-500 text-[11px] flex items-center gap-1">
+            class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
             <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
             Please complete all required fields
         </p>
 
         <!-- Client -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Client</label>
-            <select formControlName="email" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Client</label>
+            <select formControlName="email" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-                [ngClass]="addTaskForm.get('email')?.invalid && invalidForm ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'">
+                [ngClass]="addTaskForm.get('email')?.invalid && invalidForm ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'">
                 <option value="" selected hidden>Select a client</option>
                 <option *ngFor="let user of users" [value]="user.email">{{ user.firstname }} {{ user.lastname }} — {{ user.email }}</option>
             </select>
             <p *ngIf="addTaskForm.get('email')?.invalid && invalidForm"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Select a client
             </p>
@@ -43,15 +43,15 @@
 
         <!-- Trainer -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Trainer</label>
-            <select formControlName="trainerId" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Trainer</label>
+            <select formControlName="trainerId" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-                [ngClass]="addTaskForm.get('trainerId')?.invalid && invalidForm ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'">
+                [ngClass]="addTaskForm.get('trainerId')?.invalid && invalidForm ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'">
                 <option value="" selected hidden>Select a trainer</option>
                 <option *ngFor="let trainer of trainers" [value]="trainer.id">{{ trainer.name }}</option>
             </select>
             <p *ngIf="addTaskForm.get('trainerId')?.invalid && invalidForm"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Select a trainer
             </p>
@@ -59,12 +59,12 @@
 
         <!-- Description -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Description</label>
-            <textarea formControlName="description" rows="3" placeholder="What should they work on?" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Description</label>
+            <textarea formControlName="description" rows="3" placeholder="What should they work on?" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-                [ngClass]="addTaskForm.get('description')?.invalid && invalidForm ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'"></textarea>
+                [ngClass]="addTaskForm.get('description')?.invalid && invalidForm ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'"></textarea>
             <p *ngIf="addTaskForm.get('description')?.invalid && invalidForm"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Write at least 10 characters
             </p>
@@ -72,29 +72,29 @@
 
         <!-- Priority -->
         <div class="flex flex-col gap-1.5">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Priority</label>
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Priority</label>
             <div class="flex gap-2">
                 <label class="cursor-pointer">
                     <input type="radio" formControlName="priority" value="LOW" class="peer sr-only">
                     <span class="inline-block rounded-full border px-3 py-1.5 text-xs font-medium transition
-                               bg-gray-50 border-gray-200 text-gray-600
-                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">
+                               bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
+                               peer-checked:bg-red-50 dark:peer-checked:bg-red-950/20 peer-checked:border-red-200 dark:peer-checked:border-red-900 peer-checked:text-red-600 dark:peer-checked:text-red-400">
                         Low
                     </span>
                 </label>
                 <label class="cursor-pointer">
                     <input type="radio" formControlName="priority" value="NORMAL" class="peer sr-only">
                     <span class="inline-block rounded-full border px-3 py-1.5 text-xs font-medium transition
-                               bg-gray-50 border-gray-200 text-gray-600
-                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">
+                               bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
+                               peer-checked:bg-red-50 dark:peer-checked:bg-red-950/20 peer-checked:border-red-200 dark:peer-checked:border-red-900 peer-checked:text-red-600 dark:peer-checked:text-red-400">
                         Normal
                     </span>
                 </label>
                 <label class="cursor-pointer">
                     <input type="radio" formControlName="priority" value="HIGH" class="peer sr-only">
                     <span class="inline-block rounded-full border px-3 py-1.5 text-xs font-medium transition
-                               bg-gray-50 border-gray-200 text-gray-600
-                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">
+                               bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
+                               peer-checked:bg-red-50 dark:peer-checked:bg-red-950/20 peer-checked:border-red-200 dark:peer-checked:border-red-900 peer-checked:text-red-600 dark:peer-checked:text-red-400">
                         High
                     </span>
                 </label>
@@ -104,24 +104,24 @@
         <!-- Dates -->
         <div class="grid grid-cols-2 gap-3">
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Start date</label>
-                <input formControlName="startDate" type="date" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Start date</label>
+                <input formControlName="startDate" type="date" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-                    [ngClass]="addTaskForm.get('startDate')?.invalid && invalidForm ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'">
+                    [ngClass]="addTaskForm.get('startDate')?.invalid && invalidForm ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'">
             </div>
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">End date</label>
-                <input formControlName="endDate" type="date" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+                <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">End date</label>
+                <input formControlName="endDate" type="date" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-                    [ngClass]="addTaskForm.get('endDate')?.invalid && invalidForm ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'">
+                    [ngClass]="addTaskForm.get('endDate')?.invalid && invalidForm ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'">
             </div>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <div class="flex items-center justify-end gap-2">
-            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
-                       hover:bg-gray-50 active:scale-[0.98] transition">
+            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
+                       hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] transition">
                 Clear
             </button>
             <button type="submit" [disabled]="submitting" (click)="addTask()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white

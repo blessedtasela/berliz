@@ -31,8 +31,8 @@ charCount(field: string): number {
 
 charCountClass(field: string, min: number, max: number): string {
   const len = this.charCount(field);
-  if (len < min) return 'text-red-500';
-  if (len <= max) return 'text-green-600';
+  if (len < min) return 'text-red-500 dark:text-red-400';
+  if (len <= max) return 'text-green-600 dark:text-green-400';
   return 'text-orange-500';
 }
 
