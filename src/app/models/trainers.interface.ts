@@ -155,6 +155,7 @@ export interface TrainerLikes {
   id: number;
   trainerId: number;
   trainerName: string;
+  trainerPhoto: PhotoResponse | null;
   userId: number;
   username: string;
   userEmail: string;

@@ -9,6 +9,7 @@ import { TrainerService } from 'src/app/services/trainer.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerLikes } from 'src/app/models/trainers.interface';
 import { genericError } from 'src/validators/form-validators.module';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 
 /**
  * Dashboard-native "Liked Trainers" list — what the hub tile now links to
@@ -52,9 +53,15 @@ export class MyLikedTrainersComponent implements OnInit {
       });
   }
 
-  /** Trainer profile route slug — matches TrainersSearchResultComponent's formatUrl(). */
+  /** Trainer profile route slug — matches FindProvidersComponent's formatUrl(), which
+   *  actually resolves against TrainersDetailsComponent's case-insensitive lookup. */
   slugFor(name: string): string {
-    return name?.replace(/ /g, '-') ?? '';
+    return name?.replace(/ /g, '-').toLowerCase() ?? '';
+  }
+
+  photoUrl(like: TrainerLikes): string {
+    const url = like.trainerPhoto?.photoUrl;
+    return url ? resolveStrapiUrl(url) : 'assets/avatar.png';
   }
 
   unlike(trainerId: number): void {
