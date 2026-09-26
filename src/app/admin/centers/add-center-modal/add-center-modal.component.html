@@ -1,7 +1,7 @@
 <!-- CROPPER MODAL -->
 <div *ngIf="showCropper"
     class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50 p-4 md:p-1">
-    <div class="bg-white p-4 rounded-2xl w-full max-w-md image-cropper-container">
+    <div class="bg-white dark:bg-gray-900 p-4 rounded-2xl w-full max-w-md image-cropper-container">
         <image-cropper class="image-cropper" [imageChangedEvent]="imageChangedEvent"
             (imageCropped)="imageCropped($event)" (loadImageFailed)="loadImageFailed()"
             [maintainAspectRatio]="true" [aspectRatio]="1/1" [resizeToWidth]="512">
@@ -12,7 +12,7 @@
                 class="px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition"
                 (click)="confirmCrop()">Use photo</button>
             <button type="button"
-                class="px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:bg-gray-50 active:scale-[0.98] transition"
+                class="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-[0.98] transition"
                 (click)="cancelCrop()">Cancel</button>
         </div>
     </div>
@@ -23,41 +23,41 @@
     <!-- Header -->
     <div class="flex items-start justify-between gap-3">
         <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+            <div class="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
                 <i-feather name="home" class="text-red-600" style="width:15px;height:15px;"></i-feather>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-gray-900">Complete center application</h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">Get ready to transform lives.</p>
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Complete center application</h2>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">Get ready to transform lives.</p>
             </div>
         </div>
         <button type="button" (click)="closeDialog()"
-            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 shrink-0">
             <i-feather name="x" style="width:14px;height:14px;"></i-feather>
         </button>
     </div>
 
     <form [formGroup]="addCenterForm" class="flex flex-col gap-4">
 
-        <p *ngIf="addCenterForm.invalid && invalidForm" class="text-red-500 text-[11px] flex items-center gap-1">
+        <p *ngIf="addCenterForm.invalid && invalidForm" class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
             <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
             Please complete all sections
         </p>
 
         <!-- Partner -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Partner</label>
-            <select formControlName="id" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Partner</label>
+            <select formControlName="id" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
-                        'border-red-400 bg-red-50': addCenterForm.get('id')?.invalid && addCenterForm.get('id')?.dirty,
-                        'border-gray-200 bg-gray-50': !(addCenterForm.get('id')?.invalid && addCenterForm.get('id')?.dirty)
+                        'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addCenterForm.get('id')?.invalid && addCenterForm.get('id')?.dirty,
+                        'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(addCenterForm.get('id')?.invalid && addCenterForm.get('id')?.dirty)
                       }">
                 <option selected hidden>Please select a partner</option>
                 <option *ngFor="let partner of activePartners" [value]="partner.id">{{ partner.email }}</option>
             </select>
             <p *ngIf="addCenterForm.get('id')?.invalid && addCenterForm.get('id')?.dirty"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Partner cannot be null
             </p>
@@ -65,15 +65,15 @@
 
         <!-- Center name -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Center name</label>
-            <input formControlName="name" type="text" placeholder="Display name e.g. Team Berliz" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Center name</label>
+            <input formControlName="name" type="text" placeholder="Display name e.g. Team Berliz" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
-                        'border-red-400 bg-red-50': addCenterForm.get('name')?.invalid && addCenterForm.get('name')?.dirty,
-                        'border-gray-200 bg-gray-50': !(addCenterForm.get('name')?.invalid && addCenterForm.get('name')?.dirty)
+                        'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addCenterForm.get('name')?.invalid && addCenterForm.get('name')?.dirty,
+                        'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(addCenterForm.get('name')?.invalid && addCenterForm.get('name')?.dirty)
                       }">
             <p *ngIf="addCenterForm.get('name')?.invalid && addCenterForm.get('name')?.dirty"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Center name is required
             </p>
@@ -81,15 +81,15 @@
 
         <!-- Experience -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Experience</label>
-            <input formControlName="experience" type="number" min="0" placeholder="Experience" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Experience</label>
+            <input formControlName="experience" type="number" min="0" placeholder="Experience" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
-                        'border-red-400 bg-red-50': addCenterForm.get('experience')?.invalid && addCenterForm.get('experience')?.dirty,
-                        'border-gray-200 bg-gray-50': !(addCenterForm.get('experience')?.invalid && addCenterForm.get('experience')?.dirty)
+                        'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addCenterForm.get('experience')?.invalid && addCenterForm.get('experience')?.dirty,
+                        'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(addCenterForm.get('experience')?.invalid && addCenterForm.get('experience')?.dirty)
                       }">
             <p *ngIf="addCenterForm.get('experience')?.invalid && addCenterForm.get('experience')?.dirty"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Experience is required
             </p>
@@ -97,15 +97,15 @@
 
         <!-- Motto -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Motto</label>
-            <textarea formControlName="motto" rows="3" placeholder="Write a short bio about discipline or motto" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Motto</label>
+            <textarea formControlName="motto" rows="3" placeholder="Write a short bio about discipline or motto" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
-                        'border-red-400 bg-red-50': addCenterForm.get('motto')?.invalid && addCenterForm.get('motto')?.dirty,
-                        'border-gray-200 bg-gray-50': !(addCenterForm.get('motto')?.invalid && addCenterForm.get('motto')?.dirty)
+                        'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addCenterForm.get('motto')?.invalid && addCenterForm.get('motto')?.dirty,
+                        'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(addCenterForm.get('motto')?.invalid && addCenterForm.get('motto')?.dirty)
                       }"></textarea>
             <p *ngIf="addCenterForm.get('motto')?.invalid && addCenterForm.get('motto')?.dirty"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 At least 10 characters
             </p>
@@ -113,15 +113,15 @@
 
         <!-- Location -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Location</label>
-            <textarea formControlName="location" rows="3" placeholder="Google maps location url e.g. https://g.co/kgs/Y2icb6" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Location</label>
+            <textarea formControlName="location" rows="3" placeholder="Google maps location url e.g. https://g.co/kgs/Y2icb6" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
-                        'border-red-400 bg-red-50': addCenterForm.get('location')?.invalid && addCenterForm.get('location')?.dirty,
-                        'border-gray-200 bg-gray-50': !(addCenterForm.get('location')?.invalid && addCenterForm.get('location')?.dirty)
+                        'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addCenterForm.get('location')?.invalid && addCenterForm.get('location')?.dirty,
+                        'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(addCenterForm.get('location')?.invalid && addCenterForm.get('location')?.dirty)
                       }"></textarea>
             <p *ngIf="addCenterForm.get('location')?.invalid && addCenterForm.get('location')?.dirty"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 At least 10 characters
             </p>
@@ -129,15 +129,15 @@
 
         <!-- Address -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Address</label>
-            <textarea formControlName="address" rows="3" placeholder="Write your street address or location here" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Address</label>
+            <textarea formControlName="address" rows="3" placeholder="Write your street address or location here" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
-                        'border-red-400 bg-red-50': addCenterForm.get('address')?.invalid && addCenterForm.get('address')?.dirty,
-                        'border-gray-200 bg-gray-50': !(addCenterForm.get('address')?.invalid && addCenterForm.get('address')?.dirty)
+                        'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addCenterForm.get('address')?.invalid && addCenterForm.get('address')?.dirty,
+                        'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(addCenterForm.get('address')?.invalid && addCenterForm.get('address')?.dirty)
                       }"></textarea>
             <p *ngIf="addCenterForm.get('address')?.invalid && addCenterForm.get('address')?.dirty"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 At least 10 characters
             </p>
@@ -145,26 +145,26 @@
 
         <!-- Cover photo -->
         <div class="flex flex-col gap-1.5">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Cover photo</label>
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Cover photo</label>
             <div class="flex items-center gap-3">
-                <img class="h-16 w-16 object-cover object-top rounded-xl border border-gray-200 shrink-0"
+                <img class="h-16 w-16 object-cover object-top rounded-xl border border-gray-200 dark:border-gray-700 shrink-0"
                     [src]="displayPhoto" alt="Display photo" />
-                <input formControlName="photo" (change)="onPhotoSelected($event)" type="file" accept="image/*" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 cursor-pointer
+                <input formControlName="photo" (change)="onPhotoSelected($event)" type="file" accept="image/*" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 cursor-pointer
                            file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold
-                           file:bg-white file:text-gray-600 file:border file:border-gray-200 file:cursor-pointer
+                           file:bg-white dark:file:bg-gray-800 file:text-gray-600 dark:file:text-gray-300 file:border file:border-gray-200 dark:file:border-gray-600 file:cursor-pointer
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="{
-                            'border-red-400 bg-red-50': addCenterForm.get('photo')?.invalid && addCenterForm.get('photo')?.dirty,
-                            'border-gray-200 bg-gray-50': !(addCenterForm.get('photo')?.invalid && addCenterForm.get('photo')?.dirty)
+                            'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addCenterForm.get('photo')?.invalid && addCenterForm.get('photo')?.dirty,
+                            'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(addCenterForm.get('photo')?.invalid && addCenterForm.get('photo')?.dirty)
                           }">
             </div>
             <p *ngIf="addCenterForm.get('photo')?.invalid && addCenterForm.get('photo')?.dirty && !addCenterForm.get('photo')?.errors?.['invalidSize']"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Upload a valid image
             </p>
             <p *ngIf="addCenterForm.get('photo')?.errors?.['invalidSize']"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 File must be under 10MB
             </p>
@@ -172,30 +172,30 @@
 
         <!-- Categories -->
         <div class="flex flex-col gap-1.5">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Categories</label>
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Categories</label>
             <div class="flex flex-wrap gap-2">
                 <label *ngFor="let category of categories; let i = index" class="cursor-pointer">
                     <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)" type="checkbox"
                         [value]="category.id" class="peer sr-only">
                     <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
-                               bg-gray-50 border-gray-200 text-gray-600
-                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">
+                               bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
+                               peer-checked:bg-red-50 dark:peer-checked:bg-red-950/20 peer-checked:border-red-200 dark:peer-checked:border-red-900 peer-checked:text-red-600 dark:peer-checked:text-red-400">
                         {{ category.name }}
                     </span>
                 </label>
             </div>
             <p *ngIf="addCenterForm.get('categoryIds')?.invalid && invalidForm"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Select at least one category
             </p>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <div class="flex items-center justify-end gap-2">
-            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
-                       hover:bg-gray-50 active:scale-[0.98] transition">
+            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300
+                       hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] transition">
                 Clear
             </button>
             <button type="submit" (click)="addTrainer()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
