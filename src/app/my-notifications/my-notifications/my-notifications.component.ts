@@ -455,30 +455,4 @@ export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
     return notificationHasDeepLink(n);
   }
 
-  getNotificationMeta(n: Notifications): { icon: string; color: string; label: string } {
-    const text = n.notification.toLowerCase();
-
-    if (text.includes('cancelled')) {
-      return { icon: 'x-circle', color: 'text-red-600 dark:text-red-400', label: 'Cancelled' };
-    }
-
-    if (text.includes('completed')) {
-      return { icon: 'check-circle', color: 'text-green-600 dark:text-green-400', label: 'Completed' };
-    }
-
-    if (text.includes('pending')) {
-      return { icon: 'clock', color: 'text-amber-500 dark:text-amber-400', label: 'Pending' };
-    }
-
-    if (text.includes('added') || text.includes('set a todo') || text.includes('have added')) {
-      return { icon: 'plus-circle', color: 'text-blue-600 dark:text-blue-400', label: 'New todo' };
-    }
-
-    if (text.includes('update')) {
-      return { icon: 'edit-3', color: 'text-purple-600 dark:text-purple-400', label: 'Updated' };
-    }
-
-    return { icon: 'bell', color: 'text-gray-500 dark:text-gray-400', label: 'Notification' };
-  }
-
 }
