@@ -3,22 +3,22 @@
     <!-- Header -->
     <div class="flex items-center justify-between gap-3 flex-wrap">
         <div>
-            <h1 class="text-sm font-bold text-gray-900">Bookings</h1>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h1 class="text-sm font-bold text-gray-900 dark:text-gray-100">Bookings</h1>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                 {{ isProvider ? 'Your own bookings, and requests from clients.' : 'Sessions you\'ve requested with trainers and centers.' }}
             </p>
         </div>
 
         <!-- Toggle — only shown to trainers/centers, who have both a personal and a provider view -->
-        <div *ngIf="isProvider" class="flex items-center gap-1 bg-gray-100 rounded-xl p-1">
+        <div *ngIf="isProvider" class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
             <button type="button" (click)="setView('mine')"
                 class="px-3 py-1.5 rounded-lg text-xs font-semibold transition"
-                [ngClass]="view === 'mine' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'">
+                [ngClass]="view === 'mine' ? 'bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'">
                 My bookings
             </button>
             <button type="button" (click)="setView('requests')"
                 class="px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5"
-                [ngClass]="view === 'requests' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'">
+                [ngClass]="view === 'requests' ? 'bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'">
                 Requests
                 <span *ngIf="pendingRequestCount > 0" class="inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full text-[10px] font-bold text-white bg-red-600">
                     {{ pendingRequestCount }}

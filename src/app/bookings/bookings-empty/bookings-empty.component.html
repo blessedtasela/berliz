@@ -1,8 +1,8 @@
-<div class="flex flex-col items-center justify-center py-16 gap-3 text-center bg-white rounded-2xl border border-gray-200">
-    <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
-        <i-feather name="calendar" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+<div class="flex flex-col items-center justify-center py-16 gap-3 text-center bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+    <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+        <i-feather name="calendar" class="text-gray-300 dark:text-gray-600" style="width:22px;height:22px;"></i-feather>
     </div>
-    <p class="text-sm text-gray-400">{{ message }}</p>
+    <p class="text-sm text-gray-400 dark:text-gray-500">{{ message }}</p>
 
     <div *ngIf="showFindProviderCta" class="flex items-center gap-2 mt-1">
         <a routerLink="/dashboard/find-providers" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600 text-white

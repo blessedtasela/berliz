@@ -3,18 +3,18 @@
     <!-- Header -->
     <div class="flex items-center justify-between gap-3 flex-wrap">
         <div>
-            <h2 class="text-sm font-bold text-gray-900">Your weekly schedule</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Your weekly schedule</h2>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                 Toggle the days you're open, then set the hours clients can book you.
                 Hours are in your own timezone ({{ detectedTimezone }}) — saving updates it if you've moved.
             </p>
         </div>
-        <span class="text-[11px] font-semibold text-gray-500 bg-gray-100 border border-gray-200 rounded-full px-2.5 py-1">
+        <span class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-2.5 py-1">
             {{ activeCount }} of 7 days active
         </span>
     </div>
 
-    <div *ngIf="loading" class="flex items-center justify-center py-10 gap-2 text-gray-400">
+    <div *ngIf="loading" class="flex items-center justify-center py-10 gap-2 text-gray-400 dark:text-gray-500">
         <i-feather name="loader" class="animate-spin" style="width:16px;height:16px;"></i-feather>
         <span class="text-xs">Loading your availability...</span>
     </div>
@@ -22,54 +22,54 @@
     <div *ngIf="!loading" class="flex flex-col gap-2">
 
         <div *ngFor="let day of days" class="rounded-xl border p-3 sm:p-3.5 transition"
-            [ngClass]="day.invalid ? 'border-red-300 bg-red-50' : (day.isActive ? 'border-red-100 bg-red-50/40' : 'border-gray-200 bg-gray-50')">
+            [ngClass]="day.invalid ? 'border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/20' : (day.isActive ? 'border-red-100 dark:border-red-900 bg-red-50/40 dark:bg-red-950/10' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800')">
 
             <div class="flex items-center gap-3 flex-wrap">
 
                 <!-- Toggle -->
                 <button type="button" (click)="toggleDay(day)"
                     class="shrink-0 w-9 h-5 rounded-full relative transition-colors"
-                    [ngClass]="day.isActive ? 'bg-red-600' : 'bg-gray-300'"
+                    [ngClass]="day.isActive ? 'bg-red-600' : 'bg-gray-300 dark:bg-gray-600'"
                     [attr.aria-pressed]="day.isActive">
                     <span class="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform shadow"
                         [ngClass]="day.isActive ? 'translate-x-4' : 'translate-x-0.5'"></span>
                 </button>
 
-                <span class="w-10 shrink-0 text-xs font-bold" [ngClass]="day.isActive ? 'text-gray-900' : 'text-gray-400'">
+                <span class="w-10 shrink-0 text-xs font-bold" [ngClass]="day.isActive ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400 dark:text-gray-500'">
                     {{ day.name }}
                 </span>
 
                 <ng-container *ngIf="day.isActive; else dayOff">
                     <div class="flex items-center gap-2 flex-1 min-w-[220px]">
                         <input type="time" [(ngModel)]="day.startTime" (ngModelChange)="day.invalid = false"
-                            class="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg border text-xs text-gray-900 bg-white
+                            class="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg border text-xs text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900
                                    focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-                            [ngClass]="day.invalid ? 'border-red-400' : 'border-gray-200'" />
-                        <span class="text-gray-400 text-xs shrink-0">to</span>
+                            [ngClass]="day.invalid ? 'border-red-400 dark:border-red-700' : 'border-gray-200 dark:border-gray-700'" />
+                        <span class="text-gray-400 dark:text-gray-500 text-xs shrink-0">to</span>
                         <input type="time" [(ngModel)]="day.endTime" (ngModelChange)="day.invalid = false"
-                            class="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg border text-xs text-gray-900 bg-white
+                            class="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg border text-xs text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900
                                    focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-                            [ngClass]="day.invalid ? 'border-red-400' : 'border-gray-200'" />
+                            [ngClass]="day.invalid ? 'border-red-400 dark:border-red-700' : 'border-gray-200 dark:border-gray-700'" />
                     </div>
                 </ng-container>
                 <ng-template #dayOff>
-                    <span class="flex-1 text-xs text-gray-400 italic">Closed</span>
+                    <span class="flex-1 text-xs text-gray-400 dark:text-gray-500 italic">Closed</span>
                 </ng-template>
 
             </div>
 
-            <p *ngIf="day.invalid" class="text-red-500 text-[11px] flex items-center gap-1 mt-2 ml-12">
+            <p *ngIf="day.invalid" class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1 mt-2 ml-12">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Start time must be before end time
             </p>
         </div>
 
-        <p class="text-[11px] text-gray-400 flex items-start gap-1.5 mt-1">
+        <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5 mt-1">
             <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
             Existing bookings are always protected — clients can never book over a time you've already confirmed.
         </p>
 
-        <div class="flex items-center justify-end gap-2 pt-2 border-t border-gray-100 mt-1">
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-gray-100 dark:border-gray-800 mt-1">
             <button type="button" (click)="save()" [disabled]="saving" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
                        hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2
                        disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100">
@@ -81,16 +81,16 @@
         <!-- ═══════════ BOOKING NOTICE (lead time) ═══════════
              How far ahead a client must book -- per-provider override of the
              platform default, see AvailabilityService.resolveLeadTimeMinutes. -->
-        <div class="rounded-xl border border-gray-200 bg-gray-50 p-3.5 flex flex-col gap-3 mt-1">
+        <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3.5 flex flex-col gap-3 mt-1">
             <div>
-                <h3 class="text-xs font-bold text-gray-900">Booking notice</h3>
-                <p class="text-[11px] text-gray-400 mt-0.5">
+                <h3 class="text-xs font-bold text-gray-900 dark:text-gray-100">Booking notice</h3>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                     How far ahead a client must book — they can't grab a slot starting sooner than this.
                     Leave it on the platform default unless you need more (or less) time to prepare.
                 </p>
             </div>
 
-            <div *ngIf="leadTimeLoading" class="flex items-center gap-2 text-gray-400 py-1">
+            <div *ngIf="leadTimeLoading" class="flex items-center gap-2 text-gray-400 dark:text-gray-500 py-1">
                 <i-feather name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>
                 <span class="text-xs">Loading...</span>
             </div>
@@ -101,13 +101,13 @@
                         [ngModel]="leadTimeMinutes"
                         (ngModelChange)="leadTimeMinutes = $event === '' || $event === null ? null : +$event"
                         [placeholder]="defaultLeadTimeMinutes + ' (default)'"
-                        class="w-28 px-2.5 py-1.5 rounded-lg border border-gray-200 bg-white text-xs text-gray-900
+                        class="w-28 px-2.5 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-xs text-gray-900 dark:text-gray-100
                                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
-                    <span class="text-xs text-gray-500">minutes</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">minutes</span>
                 </div>
 
                 <button type="button" (click)="saveLeadTime()" [disabled]="leadTimeSaving"
-                    class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900 text-white hover:bg-gray-800
+                    class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900 dark:bg-gray-700 text-white hover:bg-gray-800 dark:hover:bg-gray-600
                            active:scale-[0.98] transition flex items-center gap-1.5
                            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100">
                     <i-feather [name]="leadTimeSaving ? 'loader' : 'save'" [ngClass]="{'animate-spin': leadTimeSaving}" style="width:12px;height:12px;"></i-feather>
@@ -115,7 +115,7 @@
                 </button>
 
                 <button *ngIf="leadTimeMinutes != null" type="button" (click)="resetLeadTime()" [disabled]="leadTimeSaving"
-                    class="text-[11px] font-semibold text-gray-500 hover:text-red-600 transition disabled:opacity-50">
+                    class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition disabled:opacity-50">
                     Use default ({{ defaultLeadTimeMinutes }} min)
                 </button>
             </div>

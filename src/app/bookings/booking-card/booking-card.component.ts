@@ -43,10 +43,10 @@ export class BookingCardComponent {
 
   get statusClasses(): string {
     switch (this.booking.status) {
-      case 'confirmed': return 'bg-blue-50 text-blue-700 border border-blue-100';
-      case 'completed': return 'bg-green-50 text-green-700 border border-green-100';
-      case 'cancelled': return 'bg-gray-100 text-gray-500 border border-gray-200';
-      default: return 'bg-amber-50 text-amber-700 border border-amber-100'; // pending
+      case 'confirmed': return 'bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-900';
+      case 'completed': return 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-100 dark:border-green-900';
+      case 'cancelled': return 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-gray-600';
+      default: return 'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-900'; // pending
     }
   }
 
