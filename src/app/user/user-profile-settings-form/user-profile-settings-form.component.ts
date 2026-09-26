@@ -69,8 +69,8 @@ export class UserProfileSettingsFormComponent {
 
   fieldBorder(controlName: string): string {
     return this.showError(controlName)
-      ? 'border-red-300'
-      : 'border-gray-200';
+      ? 'border-red-300 dark:border-red-800'
+      : 'border-gray-200 dark:border-gray-700';
   }
 
   //-----------------------------------

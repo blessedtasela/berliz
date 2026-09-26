@@ -2,7 +2,7 @@
     (cropped)="onPhotoCropped($event)" (upload)="onPhotoUpload()" (cancel)="onCancelCrop()">
 </app-user-profile-photo-cropper>
 
-<div *ngIf="user" class="bg-white border border-gray-200 rounded-xl overflow-hidden font-sans">
+<div *ngIf="user" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden font-sans">
 
     <!-- Banner -->
     <app-user-profile-banner></app-user-profile-banner>
@@ -19,13 +19,13 @@
         <app-user-profile-stats [stats]="profileData"></app-user-profile-stats>
 
         <!-- Bio -->
-        <div class="w-full mt-5 border-t border-gray-100 pt-5">
+        <div class="w-full mt-5 border-t border-gray-100 dark:border-gray-800 pt-5">
             <app-user-bio-edit [form]="bioForm" (save)="onSaveBio()"></app-user-bio-edit>
         </div>
 
         <!-- Account info + settings -->
         <div
-            class="w-full mt-4 pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            class="w-full mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 
             <app-user-account-info [joined]="formatDate(user.date)" [status]="user.status">
             </app-user-account-info>

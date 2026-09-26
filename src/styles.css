@@ -84,6 +84,53 @@
   font-weight: 600;
 }
 
+/* Same reasoning as the .mat-dialog-container override below: .berliz-select's
+   rules above are plain CSS with hardcoded light colors, not Tailwind classes,
+   so Tailwind's dark: variant system can't touch them. Every country/state/city
+   picker (settings form, location-form, partner trainer-data) would otherwise
+   stay a bright white field inside an otherwise dark-mode'd form. */
+html.dark .berliz-select .ng-select-container {
+  background-color: #1f2937; /* gray-800 */
+  border-color: #374151; /* gray-700 */
+  color: #f3f4f6; /* gray-100 */
+}
+
+html.dark .berliz-select.ng-select-focused .ng-select-container {
+  background-color: #111827; /* gray-900 */
+}
+
+html.dark .berliz-select--error .ng-select-container {
+  border-color: #b91c1c; /* red-700 */
+}
+
+html.dark .berliz-select .ng-placeholder,
+html.dark .berliz-select .ng-clear-wrapper {
+  color: #6b7280; /* gray-500 */
+}
+
+html.dark .berliz-select .ng-value-container .ng-input > input {
+  color: #f3f4f6; /* gray-100 */
+}
+
+html.dark .berliz-select .ng-dropdown-panel {
+  background-color: #1f2937; /* gray-800 */
+  border-color: #374151; /* gray-700 */
+}
+
+html.dark .berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+  color: #f3f4f6; /* gray-100 */
+}
+
+html.dark .berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+  background-color: rgba(127, 29, 29, 0.2); /* red-950/20 */
+}
+
+html.dark .berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected,
+html.dark .berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked {
+  background-color: rgba(127, 29, 29, 0.3); /* red-950/30 */
+  color: #f87171; /* red-400 */
+}
+
 /* ─── Native date inputs ─────────────────────────────────────────────────
    The calendar icon's own hit-target is a hard-edged square baked into the
    browser's UA styling; inside our rounded-xl inputs it visibly poked past

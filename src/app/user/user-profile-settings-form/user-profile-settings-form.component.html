@@ -1,19 +1,19 @@
-<div class="bg-white border border-gray-200 rounded-xl font-sans">
+<div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl font-sans">
 
     <form [formGroup]="form" (ngSubmit)="onSubmitClick()">
 
         <!-- Header -->
-        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
             <div>
-                <h2 class="text-sm font-bold text-gray-900">Personal Information</h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">Update your account details</p>
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Personal Information</h2>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">Update your account details</p>
             </div>
             <div *ngIf="invalidForm">
-                <p *ngIf="form.invalid" class="text-[11px] text-red-500 flex items-center gap-1">
+                <p *ngIf="form.invalid" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     Please complete all fields
                 </p>
-                <p *ngIf="!form.invalid" class="text-[11px] text-green-600 flex items-center gap-1">
+                <p *ngIf="!form.invalid" class="text-[11px] text-green-600 dark:text-green-400 flex items-center gap-1">
                     <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
                     Everything looks good
                 </p>
@@ -25,13 +25,13 @@
 
             <!-- Firstname -->
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     First name
                 </label>
-                <input formControlName="firstname" type="text" placeholder="First name" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 border text-sm text-gray-900
+                <input formControlName="firstname" type="text" placeholder="First name" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="fieldBorder('firstname')" />
-                <p *ngIf="showError('firstname')" class="text-[11px] text-red-500 flex items-center gap-1">
+                <p *ngIf="showError('firstname')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
                     First name is required
                 </p>
@@ -39,13 +39,13 @@
 
             <!-- Lastname -->
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Last name
                 </label>
-                <input formControlName="lastname" type="text" placeholder="Last name" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 border text-sm text-gray-900
+                <input formControlName="lastname" type="text" placeholder="Last name" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="fieldBorder('lastname')" />
-                <p *ngIf="showError('lastname')" class="text-[11px] text-red-500 flex items-center gap-1">
+                <p *ngIf="showError('lastname')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
                     Last name is required
                 </p>
@@ -53,22 +53,22 @@
 
             <!-- Email (readonly) -->
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Email
                 </label>
-                <input formControlName="email" type="text" placeholder="Email" readonly class="w-full h-10 px-3 py-2 rounded-xl bg-gray-100 border border-gray-200 text-sm
-                           text-gray-400 focus:outline-none cursor-not-allowed" />
+                <input formControlName="email" type="text" placeholder="Email" readonly class="w-full h-10 px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm
+                           text-gray-400 dark:text-gray-500 focus:outline-none cursor-not-allowed" />
             </div>
 
             <!-- Phone -->
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Phone
                 </label>
-                <input formControlName="phone" type="tel" placeholder="+1 000 000 000" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 border text-sm text-gray-900
+                <input formControlName="phone" type="tel" placeholder="+1 000 000 000" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="fieldBorder('phone')" />
-                <p *ngIf="showError('phone')" class="text-[11px] text-red-500 flex items-center gap-1">
+                <p *ngIf="showError('phone')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
                     Must be at least 9 characters
                 </p>
@@ -76,13 +76,13 @@
 
             <!-- Date of birth -->
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Date of birth
                 </label>
-                <input formControlName="dob" type="date" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 border text-sm text-gray-900
+                <input formControlName="dob" type="date" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="fieldBorder('dob')" />
-                <p *ngIf="showError('dob')" class="text-[11px] text-red-500 flex items-center gap-1">
+                <p *ngIf="showError('dob')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
                     Date of birth is required
                 </p>
@@ -90,18 +90,18 @@
 
             <!-- Gender -->
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Gender
                 </label>
                 <div class="flex gap-2 mt-1">
                     <button *ngFor="let g of genders" type="button" (click)="onGenderSelect(g)"
                         class="px-3 py-1.5 rounded-full text-xs font-semibold border transition" [ngClass]="form.get('gender')?.value === g
-                            ? 'bg-gray-900 text-white border-gray-900'
-                            : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'">
+                            ? 'bg-gray-900 dark:bg-gray-700 text-white border-gray-900 dark:border-gray-700'
+                            : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'">
                         {{ g }}
                     </button>
                 </div>
-                <p *ngIf="showError('gender')" class="text-[11px] text-red-500 flex items-center gap-1 mt-1">
+                <p *ngIf="showError('gender')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1 mt-1">
                     <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
                     Please select a gender
                 </p>
@@ -109,7 +109,7 @@
 
             <!-- Country -->
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Country
                 </label>
 
@@ -120,7 +120,7 @@
                     [ngClass]="showError('country') ? 'berliz-select--error' : ''">
 
                     <ng-template ng-option-tmp let-item="item">
-                        <span class="text-sm text-gray-800">{{ item.name }}</span>
+                        <span class="text-sm text-gray-800 dark:text-gray-200">{{ item.name }}</span>
                     </ng-template>
 
                     <ng-template ng-tag-tmp let-search="searchTerm">
@@ -132,7 +132,7 @@
 
                 </ng-select>
 
-                <p *ngIf="showError('country')" class="text-[11px] text-red-500 flex items-center gap-1">
+                <p *ngIf="showError('country')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
                     Select or enter your country
                 </p>
@@ -140,7 +140,7 @@
 
             <!-- State -->
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     State / Province
                 </label>
 
@@ -151,7 +151,7 @@
                     [ngClass]="showError('state') ? 'berliz-select--error' : ''">
 
                     <ng-template ng-option-tmp let-item="item">
-                        <span class="text-sm text-gray-800">{{ item.name }}</span>
+                        <span class="text-sm text-gray-800 dark:text-gray-200">{{ item.name }}</span>
                     </ng-template>
 
                     <ng-template ng-tag-tmp let-search="searchTerm">
@@ -163,7 +163,7 @@
 
                 </ng-select>
 
-                <p *ngIf="showError('state')" class="text-[11px] text-red-500 flex items-center gap-1">
+                <p *ngIf="showError('state')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
                     Select or enter your state
                 </p>
@@ -171,7 +171,7 @@
 
             <!-- City -->
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     City
                 </label>
 
@@ -181,7 +181,7 @@
                     class="berliz-select" [ngClass]="showError('city') ? 'berliz-select--error' : ''">
 
                     <ng-template ng-option-tmp let-item="item">
-                        <span class="text-sm text-gray-800">{{ item.name }}</span>
+                        <span class="text-sm text-gray-800 dark:text-gray-200">{{ item.name }}</span>
                     </ng-template>
 
                     <ng-template ng-tag-tmp let-search="searchTerm">
@@ -193,7 +193,7 @@
 
                 </ng-select>
 
-                <p *ngIf="showError('city')" class="text-[11px] text-red-500 flex items-center gap-1">
+                <p *ngIf="showError('city')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
                     Select or enter your city
                 </p>
@@ -201,13 +201,13 @@
 
             <!-- Postal code -->
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Postal code
                 </label>
-                <input formControlName="postalCode" type="text" placeholder="A1A 1A1" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 border text-sm text-gray-900
+                <input formControlName="postalCode" type="text" placeholder="A1A 1A1" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="fieldBorder('postalCode')" />
-                <p *ngIf="showError('postalCode')" class="text-[11px] text-red-500 flex items-center gap-1">
+                <p *ngIf="showError('postalCode')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
                     Valid postal code required
                 </p>
@@ -215,14 +215,14 @@
 
             <!-- Address -->
             <div class="md:col-span-2 flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Address
                 </label>
-                <textarea formControlName="address" rows="3" placeholder="Write your full address..." class="w-full px-3 py-2 rounded-xl bg-gray-50 border text-sm text-gray-900
+                <textarea formControlName="address" rows="3" placeholder="Write your full address..." class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
-                           resize-none transition placeholder:text-gray-400" [ngClass]="fieldBorder('address')">
+                           resize-none transition placeholder:text-gray-400 dark:placeholder:text-gray-500" [ngClass]="fieldBorder('address')">
                 </textarea>
-                <p *ngIf="showError('address')" class="text-[11px] text-red-500 flex items-center gap-1">
+                <p *ngIf="showError('address')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
                     Address is required
                 </p>
@@ -230,14 +230,14 @@
 
             <!-- Bio -->
             <div class="md:col-span-2 flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Bio
                 </label>
-                <textarea formControlName="bio" rows="4" placeholder="Tell us about yourself..." class="w-full px-3 py-2 rounded-xl bg-gray-50 border text-sm text-gray-900
+                <textarea formControlName="bio" rows="4" placeholder="Tell us about yourself..." class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
-                           resize-none transition placeholder:text-gray-400" [ngClass]="fieldBorder('bio')">
+                           resize-none transition placeholder:text-gray-400 dark:placeholder:text-gray-500" [ngClass]="fieldBorder('bio')">
                 </textarea>
-                <p *ngIf="showError('bio')" class="text-[11px] text-red-500 flex items-center gap-1">
+                <p *ngIf="showError('bio')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
                     {{ form.get('bio')?.errors?.['minlength'] ? 'Bio must be at least 10 characters.' : 'Bio is required' }}
                 </p>
@@ -246,21 +246,21 @@
         </div>
 
         <!-- Footer -->
-        <div class="flex items-center justify-between px-4 py-3 border-t border-gray-100">
+        <div class="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-800">
 
             <!-- Left side: validation status -->
-            <span *ngIf="form.invalid && hasChanges()" class="text-xs text-red-500 flex items-center gap-1">
+            <span *ngIf="form.invalid && hasChanges()" class="text-xs text-red-500 dark:text-red-400 flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Some fields need attention
             </span>
 
             <span *ngIf="form.valid && hasChanges()"
-                class="text-xs text-gray-900 font-semibold flex items-center gap-1">
+                class="text-xs text-gray-900 dark:text-gray-100 font-semibold flex items-center gap-1">
                 <i-feather name="info" style="width:11px;height:11px;"></i-feather>
                 Unsaved changes
             </span>
 
-            <span *ngIf="!hasChanges()" class="text-xs text-gray-400 flex items-center gap-1">
+            <span *ngIf="!hasChanges()" class="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
                 <i-feather name="check" style="width:11px;height:11px;"></i-feather>
                 No changes made
             </span>

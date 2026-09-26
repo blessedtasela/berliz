@@ -14,6 +14,6 @@ export class UserAccountInfoComponent {
   }
 
   get statusClass(): string {
-    return this.status === 'true' ? 'text-green-600' : 'text-red-600';
+    return this.status === 'true' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
   }
 }
