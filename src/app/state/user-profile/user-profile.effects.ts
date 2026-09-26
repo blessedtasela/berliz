@@ -105,6 +105,23 @@ export class UserProfileEffects {
     )
   );
 
+  // switchMap for the same out-of-order reason as updateProfileVisibility$ above.
+  updateEmailNotificationPreferences$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(A.updateEmailNotificationPreferences),
+      switchMap(({ preferences }) =>
+        this.userService.updateEmailNotificationPreferences(preferences).pipe(
+          map(response => A.updateEmailNotificationPreferencesSuccess({ response, preferences })),
+          catchError(err =>
+            of(A.updateEmailNotificationPreferencesFailure({
+              error: err.error?.message || 'Could not update your email notification preferences'
+            }))
+          )
+        )
+      )
+    )
+  );
+
   // Only the newest search/role combo matters — switchMap so a fast typist
   // can't land a stale response on top of the current filter.
   loadPublicDirectory$ = createEffect(() =>

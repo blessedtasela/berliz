@@ -87,6 +87,30 @@ export const updateMessagePopupEnabledFailure = createAction(
 );
 
 // =============================================================================
+// MY EMAIL NOTIFICATION PREFERENCES  — authenticated, affects the caller only
+// =============================================================================
+export interface EmailNotificationPreferences {
+  emailNotifyMessages?: boolean;
+  emailNotifyBookings?: boolean;
+  emailNotifyAccount?: boolean;
+}
+
+export const updateEmailNotificationPreferences = createAction(
+  '[User Profile] Update Email Notification Preferences',
+  props<{ preferences: EmailNotificationPreferences }>()
+);
+
+export const updateEmailNotificationPreferencesSuccess = createAction(
+  '[User Profile] Update Email Notification Preferences Success',
+  props<Res<string> & { preferences: EmailNotificationPreferences }>()
+);
+
+export const updateEmailNotificationPreferencesFailure = createAction(
+  '[User Profile] Update Email Notification Preferences Failure',
+  props<Err>()
+);
+
+// =============================================================================
 // PUBLIC DIRECTORY  — /members, no auth required
 // =============================================================================
 export const loadPublicDirectory = createAction(

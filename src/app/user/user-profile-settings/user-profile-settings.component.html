@@ -256,6 +256,95 @@
         </div>
     </div>
 
+    <!-- ═══════════ EMAIL NOTIFICATIONS ═══════════
+         On by default per category. These are ADDITIONAL to the in-app
+         notification bell -- turning one off just means that category no
+         longer also lands in your inbox. -->
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
+
+        <div class="flex items-start justify-between gap-3">
+            <div>
+                <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Email notifications</h2>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                    Get an email for messages, booking updates, and account/partnership changes,
+                    on top of the in-app notification.
+                </p>
+            </div>
+            <div class="flex items-center gap-1 shrink-0">
+                <button type="button" (click)="setAllEmailNotifications(true)" [disabled]="savingEmailNotificationPreferences || allEmailNotificationsEnabled"
+                    class="px-2 py-1 rounded-lg text-[10px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition disabled:opacity-40">
+                    Allow all
+                </button>
+                <button type="button" (click)="setAllEmailNotifications(false)" [disabled]="savingEmailNotificationPreferences"
+                    class="px-2 py-1 rounded-lg text-[10px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition disabled:opacity-40">
+                    Stop all
+                </button>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
+
+        <!-- Messages -->
+        <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <i-feather name="message-circle" style="width:14px;height:14px;" class="text-gray-400 shrink-0"></i-feather>
+                <div class="flex flex-col leading-tight min-w-0">
+                    <p class="text-xs font-bold text-gray-900 dark:text-gray-100">Messages</p>
+                    <p class="text-[11px] text-gray-400">New direct messages you've received.</p>
+                </div>
+            </div>
+            <button type="button" role="switch" [attr.aria-checked]="emailNotifyMessages"
+                aria-label="Email me about new messages" (click)="toggleEmailNotifyMessages()"
+                [disabled]="savingEmailNotificationPreferences"
+                class="relative w-11 h-6 rounded-full transition shrink-0 disabled:opacity-60
+                       disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
+                [ngClass]="emailNotifyMessages ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-700'">
+                <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
+                    [ngClass]="emailNotifyMessages ? 'translate-x-5' : 'translate-x-0'"></span>
+            </button>
+        </div>
+
+        <!-- Bookings -->
+        <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <i-feather name="calendar" style="width:14px;height:14px;" class="text-gray-400 shrink-0"></i-feather>
+                <div class="flex flex-col leading-tight min-w-0">
+                    <p class="text-xs font-bold text-gray-900 dark:text-gray-100">Bookings</p>
+                    <p class="text-[11px] text-gray-400">Session requests, confirmations, cancellations, and intake forms.</p>
+                </div>
+            </div>
+            <button type="button" role="switch" [attr.aria-checked]="emailNotifyBookings"
+                aria-label="Email me about booking updates" (click)="toggleEmailNotifyBookings()"
+                [disabled]="savingEmailNotificationPreferences"
+                class="relative w-11 h-6 rounded-full transition shrink-0 disabled:opacity-60
+                       disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
+                [ngClass]="emailNotifyBookings ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-700'">
+                <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
+                    [ngClass]="emailNotifyBookings ? 'translate-x-5' : 'translate-x-0'"></span>
+            </button>
+        </div>
+
+        <!-- Account / partnership -->
+        <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <i-feather name="bell" style="width:14px;height:14px;" class="text-gray-400 shrink-0"></i-feather>
+                <div class="flex flex-col leading-tight min-w-0">
+                    <p class="text-xs font-bold text-gray-900 dark:text-gray-100">Account &amp; partnership changes</p>
+                    <p class="text-[11px] text-gray-400">Subscription, payment, and partnership status updates.</p>
+                </div>
+            </div>
+            <button type="button" role="switch" [attr.aria-checked]="emailNotifyAccount"
+                aria-label="Email me about account and partnership changes" (click)="toggleEmailNotifyAccount()"
+                [disabled]="savingEmailNotificationPreferences"
+                class="relative w-11 h-6 rounded-full transition shrink-0 disabled:opacity-60
+                       disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
+                [ngClass]="emailNotifyAccount ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-700'">
+                <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
+                    [ngClass]="emailNotifyAccount ? 'translate-x-5' : 'translate-x-0'"></span>
+            </button>
+        </div>
+    </div>
+
     <!-- ═══════════ PASSKEYS ═══════════
          Face ID / Touch ID / Windows Hello sign-in — see WebAuthnService. -->
     <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">

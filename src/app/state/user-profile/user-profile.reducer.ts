@@ -98,6 +98,26 @@ export const userProfileReducer = createReducer(
     error,
   })),
 
+  // ── MY EMAIL NOTIFICATION PREFERENCES ────────────────────────────────────
+  on(A.updateEmailNotificationPreferences, state => ({
+    ...state,
+    savingEmailNotificationPreferences: true,
+    error: null,
+  })),
+
+  on(A.updateEmailNotificationPreferencesSuccess, (state, { preferences }) => ({
+    ...state,
+    myEmailNotificationPreferences: { ...state.myEmailNotificationPreferences, ...preferences },
+    savingEmailNotificationPreferences: false,
+    error: null,
+  })),
+
+  on(A.updateEmailNotificationPreferencesFailure, (state, { error }) => ({
+    ...state,
+    savingEmailNotificationPreferences: false,
+    error,
+  })),
+
   // ── PUBLIC DIRECTORY ──────────────────────────────────────────────────────
   on(A.loadPublicDirectory, state => ({
     ...state,

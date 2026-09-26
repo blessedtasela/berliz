@@ -9,6 +9,7 @@ import { WorkoutResponse } from 'src/app/models/workout.interface';
 import { SavedService } from 'src/app/services/saved.service';
 import { WorkoutService } from 'src/app/services/workout.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 
 /**
  * Bookmarked posts and workout templates — `/dashboard/saved`. Used to be a
@@ -19,7 +20,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 @Component({
   selector: 'app-saved-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
+  imports: [CommonModule, RouterModule, IconsModule, StrapiUrlPipe],
   templateUrl: './saved-page.component.html',
 })
 export class SavedPageComponent implements OnInit {
