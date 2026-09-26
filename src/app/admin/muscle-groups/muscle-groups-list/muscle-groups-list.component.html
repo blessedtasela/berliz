@@ -1,14 +1,14 @@
-<div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+<div class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden">
     <!-- Mobile: card rows (matches admin/categories pattern) -->
-    <div class="sm:hidden divide-y divide-gray-100">
-        <div *ngFor="let muscleGroup of muscleGroupsData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors">
+    <div class="sm:hidden divide-y divide-gray-100 dark:divide-gray-800">
+        <div *ngFor="let muscleGroup of muscleGroupsData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 dark:active:bg-gray-800 transition-colors">
             <div class="relative shrink-0">
                 <img [src]="imageSrc(muscleGroup)"
                     onerror="this.src='../../../assets/icons/user.png';"
                     (click)="openCategoryDetails(muscleGroup.id)"
-                    class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200 cursor-pointer">
+                    class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700 cursor-pointer">
                 <label [attr.for]="'fileInput-m-' + muscleGroup.id" title="Change image"
-                    class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white border border-gray-200 flex items-center justify-center cursor-pointer">
+                    class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 flex items-center justify-center cursor-pointer">
                     <i-feather name="camera" class="text-red-600" style="width:11px;height:11px;"></i-feather>
                 </label>
                 <input accept="image/*" type="file" id="fileInput-m-{{muscleGroup.id}}" style="display: none;"
@@ -17,26 +17,26 @@
 
             <div class="min-w-0 flex-1" (click)="openCategoryDetails(muscleGroup.id)">
                 <div class="flex items-center gap-2">
-                    <p class="font-semibold text-gray-900 truncate">{{ muscleGroup.name }}</p>
+                    <p class="font-semibold text-gray-900 dark:text-gray-100 truncate">{{ muscleGroup.name }}</p>
                     <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
-                        [ngClass]="muscleGroup.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
+                        [ngClass]="muscleGroup.status === 'true' ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-gray-600'">
                         {{ muscleGroup.status === 'true' ? 'Active' : 'Inactive' }}
                     </span>
                 </div>
-                <p class="text-xs text-gray-400 mt-0.5 truncate">{{ muscleGroup.bodyPart }} &middot; updated {{ formatDate(muscleGroup.lastUpdate) }}</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate">{{ muscleGroup.bodyPart }} &middot; updated {{ formatDate(muscleGroup.lastUpdate) }}</p>
             </div>
 
             <div class="flex items-center gap-0.5 shrink-0">
-                <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center"
+                <button class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="openUpdateCategory(muscleGroup.id)" title="Edit">
                     <i-feather name="edit-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
-                <button class="w-9 h-9 rounded-lg active:bg-gray-100 flex items-center justify-center"
+                <button class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="updateCategoryStatus(muscleGroup.id)"
                     [title]="muscleGroup.status === 'false' ? 'Activate' : 'Deactivate'">
                     <i-feather [name]="muscleGroup.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
-                <button class="w-9 h-9 rounded-lg active:bg-red-50 flex items-center justify-center"
+                <button class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"
                     (click)="deleteCategory(muscleGroup.id)" title="Delete">
                     <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
@@ -47,38 +47,38 @@
     <div class="hidden sm:block overflow-x-auto">
         <table class="w-full text-sm">
             <thead>
-                <tr class="bg-gray-50 border-b border-gray-200">
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">SN</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Image</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Name</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Body Part</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Status</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Date</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">ID</th>
-                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Last update</th>
-                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
+                <tr class="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">SN</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Image</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Name</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Body Part</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Status</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Date</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">ID</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Last update</th>
+                    <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                 <tr *ngFor="let muscleGroup of muscleGroupsData; let i = index"
-                    class="hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 text-gray-500">{{ i + 1 }}</td>
+                    class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ i + 1 }}</td>
                     <td class="px-4 py-3">
                         <div class="flex items-center gap-2">
                             <div class="group relative">
                                 <img [src]="imageSrc(muscleGroup)"
                                     onerror="this.src='../../../assets/icons/user.png';"
                                     (click)="openCategoryDetails(muscleGroup.id)"
-                                    class="w-10 h-10 rounded-xl object-cover object-top border border-gray-200 cursor-pointer">
+                                    class="w-10 h-10 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700 cursor-pointer">
                                 <div class="hidden group-hover:block fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2
-                                    -translate-y-1/2 rounded-2xl border border-gray-200 bg-white p-2 shadow-2xl">
+                                    -translate-y-1/2 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2 shadow-2xl">
                                     <img [src]="imageSrc(muscleGroup)"
                                         onerror="this.src='../../../assets/icons/user.png';"
                                         class="w-96 h-96 rounded-xl object-cover object-top">
                                 </div>
                             </div>
                             <label [attr.for]="'fileInput-' + muscleGroup.id" title="Change image"
-                                class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition cursor-pointer">
+                                class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition cursor-pointer">
                                 <i-feather name="camera" class="text-red-600"
                                     style="width:15px;height:15px;"></i-feather>
                             </label>
@@ -86,34 +86,34 @@
                                 style="display: none;" (change)="onImgSelected($event, muscleGroup.id)">
                         </div>
                     </td>
-                    <td class="px-4 py-3 font-semibold text-gray-900">{{ muscleGroup.name }}</td>
-                    <td class="px-4 py-3 text-gray-600">{{ muscleGroup.bodyPart }}</td>
+                    <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{{ muscleGroup.name }}</td>
+                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ muscleGroup.bodyPart }}</td>
                     <td class="px-4 py-3">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold"
-                            [ngClass]="muscleGroup.status === 'true' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
+                            [ngClass]="muscleGroup.status === 'true' ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-gray-600'">
                             {{ muscleGroup.status === 'true' ? 'Active' : 'Inactive' }}
                         </span>
                     </td>
-                    <td class="px-4 py-3 text-gray-500">{{ formatDate(muscleGroup.date) }}</td>
-                    <td class="px-4 py-3 font-semibold text-gray-900">{{ muscleGroup.id }}</td>
-                    <td class="px-4 py-3 text-gray-500">{{ formatDate(muscleGroup.lastUpdate) }}</td>
+                    <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ formatDate(muscleGroup.date) }}</td>
+                    <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{{ muscleGroup.id }}</td>
+                    <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ formatDate(muscleGroup.lastUpdate) }}</td>
                     <td class="px-4 py-3">
                         <div class="flex items-center justify-end gap-1">
-                            <button class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"
+                            <button class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition"
                                 (click)="openCategoryDetails(muscleGroup.id)" title="View">
-                                <i-feather name="eye" class="text-gray-500" style="width:15px;height:15px;"></i-feather>
+                                <i-feather name="eye" class="text-gray-500 dark:text-gray-400" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
                                 (click)="openUpdateCategory(muscleGroup.id)" title="Edit">
                                 <i-feather name="edit-2" class="text-red-600"
                                     style="width:15px;height:15px;"></i-feather>
                             </button>
                             <button class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition"
-                                [ngClass]="muscleGroup.status === 'true' ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-red-600 text-white hover:bg-red-700'"
+                                [ngClass]="muscleGroup.status === 'true' ? 'bg-gray-800 dark:bg-gray-700 text-white hover:bg-gray-700 dark:hover:bg-gray-600' : 'bg-red-600 text-white hover:bg-red-700'"
                                 (click)="updateCategoryStatus(muscleGroup.id)">
                                 {{ muscleGroup.status === 'false' ? 'Activate' : 'Deactivate' }}
                             </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center transition"
+                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
                                 (click)="deleteCategory(muscleGroup.id)" title="Delete">
                                 <i-feather name="trash-2" class="text-red-600"
                                     style="width:15px;height:15px;"></i-feather>
@@ -125,9 +125,9 @@
         </table>
     </div>
     <div *ngIf="muscleGroupsData.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-center">
-        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
-            <i-feather name="inbox" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+            <i-feather name="inbox" class="text-gray-300 dark:text-gray-600" style="width:22px;height:22px;"></i-feather>
         </div>
-        <p class="text-sm text-gray-400">No muscle groups yet.</p>
+        <p class="text-sm text-gray-400 dark:text-gray-500">No muscle groups yet.</p>
     </div>
 </div>

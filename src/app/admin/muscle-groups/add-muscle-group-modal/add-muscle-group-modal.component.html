@@ -1,7 +1,7 @@
 <!-- CROPPER MODAL -->
 <div *ngIf="showCropper"
     class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50 p-4 md:p-1">
-    <div class="bg-white p-4 rounded-2xl w-full max-w-md image-cropper-container">
+    <div class="bg-white dark:bg-gray-900 p-4 rounded-2xl w-full max-w-md image-cropper-container">
         <image-cropper class="image-cropper" [imageChangedEvent]="imageChangedEvent"
             (imageCropped)="imageCropped($event)" (loadImageFailed)="loadImageFailed()"
             [maintainAspectRatio]="true" [aspectRatio]="1/1" [resizeToWidth]="512">
@@ -12,7 +12,7 @@
                 class="px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition"
                 (click)="confirmCrop()">Use photo</button>
             <button type="button"
-                class="px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:bg-gray-50 active:scale-[0.98] transition"
+                class="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-[0.98] transition"
                 (click)="cancelCrop()">Cancel</button>
         </div>
     </div>
@@ -23,16 +23,16 @@
     <!-- Header -->
     <div class="flex items-start justify-between gap-3">
         <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+            <div class="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
                 <i-feather name="activity" class="text-red-600" style="width:15px;height:15px;"></i-feather>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-gray-900">Add a new muscle group</h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">Provide the muscle group details and its body part.</p>
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Add a new muscle group</h2>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">Provide the muscle group details and its body part.</p>
             </div>
         </div>
         <button type="button" (click)="closeDialog()"
-            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 shrink-0">
             <i-feather name="x" style="width:14px;height:14px;"></i-feather>
         </button>
     </div>
@@ -43,28 +43,28 @@
                 addMuscleGroupForm.get('description')?.invalid ||
                 addMuscleGroupForm.get('image')?.invalid ||
                 addMuscleGroupForm.get('bodyPart')?.invalid) && invalidForm"
-            class="text-red-500 text-[11px] flex items-center gap-1">
+            class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
             <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
             Please complete all sections
         </p>
 
         <!-- Image -->
         <div class="flex flex-col gap-1.5">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Image</label>
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Image</label>
             <div class="flex items-center gap-3">
-                <img class="h-16 w-16 object-cover object-top rounded-xl border border-gray-200 shrink-0"
+                <img class="h-16 w-16 object-cover object-top rounded-xl border border-gray-200 dark:border-gray-700 shrink-0"
                     [src]="displayPhoto" alt="Display photo" />
-                <input formControlName="image" (change)="onImgSelected($event)" type="file" accept="image/*" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 cursor-pointer
+                <input formControlName="image" (change)="onImgSelected($event)" type="file" accept="image/*" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 cursor-pointer
                            file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold
-                           file:bg-white file:text-gray-600 file:border file:border-gray-200 file:cursor-pointer
+                           file:bg-white dark:file:bg-gray-800 file:text-gray-600 dark:file:text-gray-300 file:border file:border-gray-200 dark:file:border-gray-600 file:cursor-pointer
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="{
-                            'border-red-400 bg-red-50': (addMuscleGroupForm.get('image')?.invalid && addMuscleGroupForm.get('image')?.touched) || (addMuscleGroupForm.get('image')?.invalid && invalidForm),
-                            'border-gray-200 bg-gray-50': !((addMuscleGroupForm.get('image')?.invalid && addMuscleGroupForm.get('image')?.touched) || (addMuscleGroupForm.get('image')?.invalid && invalidForm))
+                            'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': (addMuscleGroupForm.get('image')?.invalid && addMuscleGroupForm.get('image')?.touched) || (addMuscleGroupForm.get('image')?.invalid && invalidForm),
+                            'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !((addMuscleGroupForm.get('image')?.invalid && addMuscleGroupForm.get('image')?.touched) || (addMuscleGroupForm.get('image')?.invalid && invalidForm))
                           }">
             </div>
             <p *ngIf="addMuscleGroupForm.get('image')?.invalid && invalidForm"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Image is required
             </p>
@@ -72,15 +72,15 @@
 
         <!-- Muscle group name -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Muscle group name</label>
-            <input formControlName="name" type="text" placeholder="Muscle group name" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Muscle group name</label>
+            <input formControlName="name" type="text" placeholder="Muscle group name" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
-                        'border-red-400 bg-red-50': (addMuscleGroupForm.get('name')?.invalid && addMuscleGroupForm.get('name')?.touched) || (addMuscleGroupForm.get('name')?.invalid && invalidForm),
-                        'border-gray-200 bg-gray-50': !((addMuscleGroupForm.get('name')?.invalid && addMuscleGroupForm.get('name')?.touched) || (addMuscleGroupForm.get('name')?.invalid && invalidForm))
+                        'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': (addMuscleGroupForm.get('name')?.invalid && addMuscleGroupForm.get('name')?.touched) || (addMuscleGroupForm.get('name')?.invalid && invalidForm),
+                        'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !((addMuscleGroupForm.get('name')?.invalid && addMuscleGroupForm.get('name')?.touched) || (addMuscleGroupForm.get('name')?.invalid && invalidForm))
                       }">
             <p *ngIf="(addMuscleGroupForm.get('name')?.invalid && addMuscleGroupForm.get('name')?.dirty) || (addMuscleGroupForm.get('name')?.invalid && invalidForm)"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Muscle group name is required
             </p>
@@ -88,18 +88,18 @@
 
         <!-- Body part -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Body part</label>
-            <select formControlName="bodyPart" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Body part</label>
+            <select formControlName="bodyPart" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
-                        'border-red-400 bg-red-50': (addMuscleGroupForm.get('bodyPart')?.invalid && addMuscleGroupForm.get('bodyPart')?.touched) || (addMuscleGroupForm.get('bodyPart')?.invalid && invalidForm),
-                        'border-gray-200 bg-gray-50': !((addMuscleGroupForm.get('bodyPart')?.invalid && addMuscleGroupForm.get('bodyPart')?.touched) || (addMuscleGroupForm.get('bodyPart')?.invalid && invalidForm))
+                        'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': (addMuscleGroupForm.get('bodyPart')?.invalid && addMuscleGroupForm.get('bodyPart')?.touched) || (addMuscleGroupForm.get('bodyPart')?.invalid && invalidForm),
+                        'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !((addMuscleGroupForm.get('bodyPart')?.invalid && addMuscleGroupForm.get('bodyPart')?.touched) || (addMuscleGroupForm.get('bodyPart')?.invalid && invalidForm))
                       }">
                 <option selected hidden>Select a body part</option>
                 <option *ngFor="let bodyPart of bodyParts">{{ bodyPart.name }}</option>
             </select>
             <p *ngIf="(addMuscleGroupForm.get('bodyPart')?.invalid && addMuscleGroupForm.get('bodyPart')?.dirty) || (addMuscleGroupForm.get('bodyPart')?.invalid && invalidForm)"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Select a body part
             </p>
@@ -107,25 +107,25 @@
 
         <!-- Description -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Description</label>
-            <textarea formControlName="description" rows="4" placeholder="Description" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Description</label>
+            <textarea formControlName="description" rows="4" placeholder="Description" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
-                        'border-red-400 bg-red-50': (addMuscleGroupForm.get('description')?.invalid && addMuscleGroupForm.get('description')?.touched) || (addMuscleGroupForm.get('description')?.invalid && invalidForm),
-                        'border-gray-200 bg-gray-50': !((addMuscleGroupForm.get('description')?.invalid && addMuscleGroupForm.get('description')?.touched) || (addMuscleGroupForm.get('description')?.invalid && invalidForm))
+                        'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': (addMuscleGroupForm.get('description')?.invalid && addMuscleGroupForm.get('description')?.touched) || (addMuscleGroupForm.get('description')?.invalid && invalidForm),
+                        'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !((addMuscleGroupForm.get('description')?.invalid && addMuscleGroupForm.get('description')?.touched) || (addMuscleGroupForm.get('description')?.invalid && invalidForm))
                       }"></textarea>
             <p *ngIf="(addMuscleGroupForm.get('description')?.invalid && addMuscleGroupForm.get('description')?.dirty) || (addMuscleGroupForm.get('description')?.invalid && invalidForm)"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Description is required
             </p>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <div class="flex items-center justify-end gap-2">
-            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
-                       hover:bg-gray-50 active:scale-[0.98] transition">
+            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300
+                       hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] transition">
                 Clear
             </button>
             <button type="submit" (click)="addMuscleGroup()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
