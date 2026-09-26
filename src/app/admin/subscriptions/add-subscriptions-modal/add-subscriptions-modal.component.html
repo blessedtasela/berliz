@@ -3,16 +3,16 @@
     <!-- Header -->
     <div class="flex items-start justify-between gap-3">
         <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+            <div class="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
                 <i-feather name="layers" class="text-red-600" style="width:15px;height:15px;"></i-feather>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-gray-900">Add subscription</h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">Select a user, then their center and trainer.</p>
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Add subscription</h2>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">Select a user, then their center and trainer.</p>
             </div>
         </div>
         <button type="button" (click)="closeDialog()"
-            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 shrink-0">
             <i-feather name="x" style="width:14px;height:14px;"></i-feather>
         </button>
     </div>
@@ -25,32 +25,32 @@
                 addSubscriptionForm.get('trainerId')?.invalid ||
                 addSubscriptionForm.get('mode')?.invalid ||
                 addSubscriptionForm.get('categoryIds')?.invalid) && invalidForm"
-            class="text-red-500 text-[11px] flex items-center gap-1">
+            class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
             <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
             Please complete all sections
         </p>
 
         <!-- Categories -->
         <div class="flex flex-col gap-1.5">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Categories (max 2)</label>
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Categories (max 2)</label>
             <div class="flex flex-wrap gap-2">
                 <label *ngFor="let category of categories; let i = index" class="cursor-pointer">
                     <input formArrayName="categoryIds" (change)="onCheckboxChanged($event)"
                         (change)="calculateTotalAmount()" type="checkbox" [value]="category.id" class="peer sr-only">
                     <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
-                               bg-gray-50 border-gray-200 text-gray-600
-                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">
+                               bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
+                               peer-checked:bg-red-50 dark:peer-checked:bg-red-950/20 peer-checked:border-red-200 dark:peer-checked:border-red-900 peer-checked:text-red-600 dark:peer-checked:text-red-400">
                         {{ category.name }}
                     </span>
                 </label>
             </div>
             <p *ngIf="addSubscriptionForm.get('categoryIds')?.invalid && invalidForm"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Select at least one category
             </p>
             <p *ngIf="addSubscriptionForm.hasError('noCheckboxChecked') && addSubscriptionForm.dirty"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Please select at most two categories
             </p>
@@ -58,32 +58,32 @@
 
         <!-- Mode -->
         <div class="flex flex-col gap-1.5">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Mode of training</label>
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Mode of training</label>
             <div class="flex flex-wrap gap-2">
                 <label class="cursor-pointer">
                     <input formControlName="mode" [value]="'online'" (change)="calculateTotalAmount()" type="radio"
                         class="peer sr-only">
                     <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
-                               bg-gray-50 border-gray-200 text-gray-600
-                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">Online</span>
+                               bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
+                               peer-checked:bg-red-50 dark:peer-checked:bg-red-950/20 peer-checked:border-red-200 dark:peer-checked:border-red-900 peer-checked:text-red-600 dark:peer-checked:text-red-400">Online</span>
                 </label>
                 <label class="cursor-pointer">
                     <input formControlName="mode" [value]="'hybrid'" (change)="calculateTotalAmount()" type="radio"
                         class="peer sr-only">
                     <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
-                               bg-gray-50 border-gray-200 text-gray-600
-                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">Hybrid</span>
+                               bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
+                               peer-checked:bg-red-50 dark:peer-checked:bg-red-950/20 peer-checked:border-red-200 dark:peer-checked:border-red-900 peer-checked:text-red-600 dark:peer-checked:text-red-400">Hybrid</span>
                 </label>
                 <label class="cursor-pointer">
                     <input formControlName="mode" [value]="'personal'" (change)="calculateTotalAmount()" type="radio"
                         class="peer sr-only">
                     <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
-                               bg-gray-50 border-gray-200 text-gray-600
-                               peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600">Personal</span>
+                               bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
+                               peer-checked:bg-red-50 dark:peer-checked:bg-red-950/20 peer-checked:border-red-200 dark:peer-checked:border-red-900 peer-checked:text-red-600 dark:peer-checked:text-red-400">Personal</span>
                 </label>
             </div>
             <p *ngIf="(addSubscriptionForm.get('mode')?.invalid && addSubscriptionForm.get('mode')?.dirty) || (addSubscriptionForm.get('mode')?.invalid && invalidForm)"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Please select a mode
             </p>
@@ -91,18 +91,18 @@
 
         <!-- User -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">User email</label>
-            <select formControlName="userId" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">User email</label>
+            <select formControlName="userId" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
-                        'border-red-400 bg-red-50': (addSubscriptionForm.get('userId')?.invalid && addSubscriptionForm.get('userId')?.touched) || (addSubscriptionForm.get('userId')?.invalid && invalidForm),
-                        'border-gray-200 bg-gray-50': !((addSubscriptionForm.get('userId')?.invalid && addSubscriptionForm.get('userId')?.touched) || (addSubscriptionForm.get('userId')?.invalid && invalidForm))
+                        'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': (addSubscriptionForm.get('userId')?.invalid && addSubscriptionForm.get('userId')?.touched) || (addSubscriptionForm.get('userId')?.invalid && invalidForm),
+                        'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !((addSubscriptionForm.get('userId')?.invalid && addSubscriptionForm.get('userId')?.touched) || (addSubscriptionForm.get('userId')?.invalid && invalidForm))
                       }">
                 <option selected>Select user email</option>
                 <option *ngFor="let user of users">{{ user.email }} ({{ user.role }})</option>
             </select>
             <p *ngIf="(addSubscriptionForm.get('userId')?.invalid && addSubscriptionForm.get('userId')?.dirty) || (addSubscriptionForm.get('userId')?.invalid && invalidForm)"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Please select a user
             </p>
@@ -110,18 +110,18 @@
 
         <!-- Duration -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Duration</label>
-            <select formControlName="months" (change)="calculateTotalAmount()" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Duration</label>
+            <select formControlName="months" (change)="calculateTotalAmount()" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
-                        'border-red-400 bg-red-50': (addSubscriptionForm.get('months')?.invalid && addSubscriptionForm.get('months')?.touched) || (addSubscriptionForm.get('months')?.invalid && invalidForm),
-                        'border-gray-200 bg-gray-50': !((addSubscriptionForm.get('months')?.invalid && addSubscriptionForm.get('months')?.touched) || (addSubscriptionForm.get('months')?.invalid && invalidForm))
+                        'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': (addSubscriptionForm.get('months')?.invalid && addSubscriptionForm.get('months')?.touched) || (addSubscriptionForm.get('months')?.invalid && invalidForm),
+                        'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !((addSubscriptionForm.get('months')?.invalid && addSubscriptionForm.get('months')?.touched) || (addSubscriptionForm.get('months')?.invalid && invalidForm))
                       }">
                 <option selected hidden>Select month</option>
                 <option *ngFor="let month of months" [value]="month.month">{{ month.month }} month(s)</option>
             </select>
             <p *ngIf="(addSubscriptionForm.get('months')?.invalid && addSubscriptionForm.get('months')?.dirty) || (addSubscriptionForm.get('months')?.invalid && invalidForm)"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Please select a subscription duration
             </p>
@@ -129,18 +129,18 @@
 
         <!-- Trainer -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Trainer</label>
-            <select formControlName="trainerId" (change)="onTrainerSelected($event)" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Trainer</label>
+            <select formControlName="trainerId" (change)="onTrainerSelected($event)" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
-                        'border-red-400 bg-red-50': (addSubscriptionForm.get('trainerId')?.invalid && addSubscriptionForm.get('trainerId')?.touched) || (addSubscriptionForm.get('trainerId')?.invalid && invalidForm),
-                        'border-gray-200 bg-gray-50': !((addSubscriptionForm.get('trainerId')?.invalid && addSubscriptionForm.get('trainerId')?.touched) || (addSubscriptionForm.get('trainerId')?.invalid && invalidForm))
+                        'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': (addSubscriptionForm.get('trainerId')?.invalid && addSubscriptionForm.get('trainerId')?.touched) || (addSubscriptionForm.get('trainerId')?.invalid && invalidForm),
+                        'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !((addSubscriptionForm.get('trainerId')?.invalid && addSubscriptionForm.get('trainerId')?.touched) || (addSubscriptionForm.get('trainerId')?.invalid && invalidForm))
                       }">
                 <option selected hidden>Select trainer</option>
                 <option *ngFor="let trainer of trainers" [value]="trainer.id">{{ trainer.name }}</option>
             </select>
             <p *ngIf="(addSubscriptionForm.get('trainerId')?.invalid && addSubscriptionForm.get('trainerId')?.dirty) || (addSubscriptionForm.get('trainerId')?.invalid && invalidForm)"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Please select a trainer
             </p>
@@ -148,34 +148,34 @@
 
         <!-- Center -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Center</label>
-            <select formControlName="centerId" (change)="onCenterSelected($event)" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Center</label>
+            <select formControlName="centerId" (change)="onCenterSelected($event)" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
-                        'border-red-400 bg-red-50': (addSubscriptionForm.get('centerId')?.invalid && addSubscriptionForm.get('centerId')?.touched) || (addSubscriptionForm.get('centerId')?.invalid && invalidForm),
-                        'border-gray-200 bg-gray-50': !((addSubscriptionForm.get('centerId')?.invalid && addSubscriptionForm.get('centerId')?.touched) || (addSubscriptionForm.get('centerId')?.invalid && invalidForm))
+                        'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': (addSubscriptionForm.get('centerId')?.invalid && addSubscriptionForm.get('centerId')?.touched) || (addSubscriptionForm.get('centerId')?.invalid && invalidForm),
+                        'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !((addSubscriptionForm.get('centerId')?.invalid && addSubscriptionForm.get('centerId')?.touched) || (addSubscriptionForm.get('centerId')?.invalid && invalidForm))
                       }">
                 <option selected hidden>Select center</option>
                 <option *ngFor="let center of centers" [value]="center.id">{{ center.name }}</option>
             </select>
             <p *ngIf="(addSubscriptionForm.get('centerId')?.invalid && addSubscriptionForm.get('centerId')?.dirty) || (addSubscriptionForm.get('centerId')?.invalid && invalidForm)"
-                class="text-red-500 text-[11px] flex items-center gap-1">
+                class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Please select a center
             </p>
         </div>
 
         <!-- Total -->
-        <div class="flex items-center justify-between rounded-xl bg-red-50 border border-red-100 px-4 py-3">
-            <span class="text-[11px] font-semibold text-red-500 uppercase tracking-wide">Total amount</span>
-            <span class="text-sm font-bold text-red-600">{{ formatTotalAmount(totalAmount) }} USD</span>
+        <div class="flex items-center justify-between rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 px-4 py-3">
+            <span class="text-[11px] font-semibold text-red-500 dark:text-red-400 uppercase tracking-wide">Total amount</span>
+            <span class="text-sm font-bold text-red-600 dark:text-red-400">{{ formatTotalAmount(totalAmount) }} USD</span>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <div class="flex items-center justify-end gap-2">
-            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
-                       hover:bg-gray-50 active:scale-[0.98] transition">
+            <button type="button" (click)="clear()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300
+                       hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] transition">
                 Clear
             </button>
             <button type="submit" (click)="addSubscription()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
