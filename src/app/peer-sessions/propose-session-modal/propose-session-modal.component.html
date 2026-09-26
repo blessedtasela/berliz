@@ -2,10 +2,10 @@
 
     <div class="flex items-center justify-between">
         <div>
-            <h2 class="text-sm font-bold text-gray-900">Propose a session</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">with {{ data.participantName }}</p>
+            <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Propose a session</h2>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">with {{ data.participantName }}</p>
         </div>
-        <button type="button" (click)="closeDialog()" class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center">
+        <button type="button" (click)="closeDialog()" class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center">
             <i-feather name="x" style="width:16px;height:16px;"></i-feather>
         </button>
     </div>
@@ -13,27 +13,27 @@
     <form *ngIf="form" [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-3">
 
         <div *ngIf="invalidForm && form.invalid"
-            class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
+            class="text-[11px] text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 rounded-xl px-3 py-2 flex items-center gap-1.5">
             <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
             Please complete all required fields.
         </div>
 
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Date</label>
+            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Date</label>
             <app-date-strip [selectedDate]="form.value.date" [invalid]="invalidForm && !!form.get('date')?.invalid"
                 (dateSelected)="form.patchValue({ date: $event })"></app-date-strip>
         </div>
 
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Time</label>
+            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Time</label>
             <app-time-picker formControlName="time" placeholder="Select a time"
                 [invalid]="invalidForm && !!form.get('time')?.invalid"></app-time-picker>
         </div>
 
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Duration</label>
+            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Duration</label>
             <select formControlName="durationMinutes"
-                class="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 text-sm text-gray-900
+                class="w-full px-3 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
                 <option [ngValue]="30">30 minutes</option>
                 <option [ngValue]="45">45 minutes</option>
@@ -44,15 +44,15 @@
         </div>
 
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Notes (optional)</label>
+            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Notes (optional)</label>
             <textarea formControlName="notes" rows="3" placeholder="What do you want to work on together?"
-                class="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 text-sm text-gray-900 resize-none placeholder-gray-400
+                class="w-full px-3 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100 resize-none placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"></textarea>
         </div>
 
-        <div class="border-t border-gray-100 pt-3 flex items-center justify-end gap-2">
+        <div class="border-t border-gray-100 dark:border-gray-800 pt-3 flex items-center justify-end gap-2">
             <button type="button" (click)="closeDialog()"
-                class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
+                class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
                 Cancel
             </button>
             <button type="submit" [disabled]="saving"
