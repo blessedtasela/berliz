@@ -1,15 +1,15 @@
-<div class="bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden max-w-96">
+<div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl overflow-hidden max-w-96">
 
     <!-- Header -->
-    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
         <div class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center">
+            <div class="w-7 h-7 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 flex items-center justify-center">
                 <i-feather name="bell" class="text-red-600" style="width:13px;height:13px;"></i-feather>
             </div>
-            <h3 class="text-sm font-bold text-gray-900">Notifications</h3>
+            <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100">Notifications</h3>
         </div>
         <button (click)="close.emit()"
-            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600">
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
             <i-feather name="x" style="width:14px;height:14px;"></i-feather>
         </button>
     </div>
@@ -18,23 +18,23 @@
     <div class="max-h-[60vh] overflow-y-auto px-3 py-3 flex flex-col gap-2">
 
         <div *ngIf="notifications.length === 0" class="flex flex-col items-center py-8 gap-2 text-center">
-            <i-feather name="check-circle" class="text-gray-300" style="width:28px;height:28px;"></i-feather>
-            <p class="text-xs text-gray-400 italic">No unread notifications</p>
+            <i-feather name="check-circle" class="text-gray-300 dark:text-gray-600" style="width:28px;height:28px;"></i-feather>
+            <p class="text-xs text-gray-400 dark:text-gray-500 italic">No unread notifications</p>
         </div>
 
         <div *ngFor="let n of notifications | slice:0:visibleCount" (click)="openNotification(n)"
             class="flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition" [ngClass]="n.read
-        ? 'bg-white border-gray-200 hover:border-gray-300'
-        : 'bg-red-50 border-red-100 hover:border-red-200'">
+        ? 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+        : 'bg-red-50 dark:bg-red-950/20 border-red-100 dark:border-red-900 hover:border-red-200 dark:hover:border-red-800'">
 
-            <span class="w-2 h-2 rounded-full mt-1.5 shrink-0" [ngClass]="n.read ? 'bg-gray-300' : 'bg-red-600'">
+            <span class="w-2 h-2 rounded-full mt-1.5 shrink-0" [ngClass]="n.read ? 'bg-gray-300 dark:bg-gray-600' : 'bg-red-600'">
             </span>
 
             <div class="flex-1 min-w-0">
-                <p class="text-xs font-medium text-gray-900 line-clamp-2 leading-snug">
+                <p class="text-xs font-medium text-gray-900 dark:text-gray-100 line-clamp-2 leading-snug">
                     {{ n.notification }}
                 </p>
-                <p class="text-[10px] text-gray-400 mt-1 flex items-center gap-1">
+                <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1 flex items-center gap-1">
                     <i-feather name="clock" style="width:10px;height:10px;"></i-feather>
                     {{ n.date | date:'mediumDate' }}
                 </p>
@@ -56,7 +56,7 @@
     </div>
 
     <!-- Footer -->
-    <div class="border-t border-gray-100 px-4 py-3 text-center">
+    <div class="border-t border-gray-100 dark:border-gray-800 px-4 py-3 text-center">
         <a (click)="close.emit(); goToAllNotifications()"
             class="text-xs font-semibold text-red-600 hover:underline cursor-pointer flex items-center justify-center gap-1">
             View all notifications
