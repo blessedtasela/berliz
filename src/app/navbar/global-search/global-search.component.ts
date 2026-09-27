@@ -102,10 +102,26 @@ interface SearchSource {
   fetch$?: () => Observable<{ data?: any[] }>;
   match: (entity: any, query: string) => boolean;
   toItem: (entity: any) => GlobalSearchItem;
+  /**
+   * The entity's own listing/browse page -- when the query matches this
+   * source's category itself (e.g. typing "trainer", or even a typo/partial
+   * like "rainer") rather than one specific trainer's name, a "See all
+   * Trainers" item pointing here is pinned to the top of the group so the
+   * visitor lands on the right page instead of getting zero results just
+   * because nobody happens to be named "Trainer".
+   */
+  browseAllLink?: any[];
 }
 
 const has = (value: any, query: string): boolean =>
   !!value && String(value).toLowerCase().includes(query);
+
+/** True when the query is a substring of the category's own label (or vice versa) -- catches "trainer", "trainers", and typos/partials like "rainer" alike. Exported for unit testing. */
+export const matchesCategory = (label: string, query: string): boolean => {
+  const l = label.toLowerCase();
+  const q = (query || '').toLowerCase();
+  return l.includes(q) || q.includes(l);
+};
 
 const slug = (name: string): string => (name || '').trim().replace(/\s+/g, '-');
 
@@ -165,13 +181,18 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
       adminOnly: false,
       load: loadActiveTrainers(),
       select: selectActiveTrainers,
-      match: (t, q) => has(t?.name, q),
+      // A featured trainer surfaces on a bare category search ("trainer",
+      // "rainer") even with no name match -- that's the whole point of paying
+      // for the search-boost perk (see the trainer/center subscription-tier
+      // perks feature). An ordinary name match still works exactly as before.
+      match: (t, q) => has(t?.name, q) || (!!t?.featured && matchesCategory('Trainers', q)),
       toItem: t => ({
         id: t.id,
         label: t.name,
-        sublabel: t.address || t.motto,
+        sublabel: t.featured ? `★ Featured${t.address ? ' · ' + t.address : ''}` : (t.address || t.motto),
         link: ['/trainers', slug(t.name)]
-      })
+      }),
+      browseAllLink: ['/trainers']
     },
     {
       key: 'centers',
@@ -180,13 +201,14 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
       adminOnly: false,
       load: loadActiveCenters(),
       select: selectActiveCenters,
-      match: (c, q) => has(c?.name, q),
+      match: (c, q) => has(c?.name, q) || (!!c?.featured && matchesCategory('Centers', q)),
       toItem: c => ({
         id: c.id,
         label: c.name,
-        sublabel: c.address || c.location,
+        sublabel: c.featured ? `★ Featured${c.address ? ' · ' + c.address : ''}` : (c.address || c.location),
         link: ['/centers', slug(c.name)]
-      })
+      }),
+      browseAllLink: ['/centers']
     },
     {
       key: 'categories',
@@ -201,7 +223,8 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         label: c.name,
         sublabel: truncate(c.description, 60),
         link: ['/services', c.id, c.name]
-      })
+      }),
+      browseAllLink: ['/services']
     },
     {
       key: 'exercises',
@@ -217,7 +240,8 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         sublabel: (e.muscleGroups || []).map((m: any) => m?.name).filter(Boolean).join(', '),
         // Deep link to the exercise itself, not just the library list.
         link: ['/dashboard/exercises', e.id]
-      })
+      }),
+      browseAllLink: ['/dashboard/exercises']
     },
     {
       key: 'workoutTemplates',
@@ -232,7 +256,8 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         label: w.name,
         sublabel: truncate(w.description, 60),
         link: ['/dashboard/workouts', w.id]
-      })
+      }),
+      browseAllLink: ['/dashboard/workouts']
     },
     {
       key: 'faqs',
@@ -249,7 +274,8 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         // Deep link to the specific FAQ -- MyFaqsComponent expands + scrolls to it.
         link: ['/dashboard/my-faqs'],
         queryParams: { faqId: f.id }
-      })
+      }),
+      browseAllLink: ['/dashboard/my-faqs']
     },
     {
       key: 'members',
@@ -264,7 +290,8 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         label: `${m.firstname || ''} ${m.lastname || ''}`.trim() || m.username,
         sublabel: m.role,
         link: ['/dashboard/user', m.id]
-      })
+      }),
+      browseAllLink: ['/members']
     },
     {
       // No NgRx slice for the feed -- fetched once via PostService.getFeed()
@@ -282,7 +309,8 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         // DashboardTimelineComponent opens the media+comments sheet for this post on load -- same deep link the notification system already uses for 'post'.
         link: ['/dashboard/timeline'],
         queryParams: { postId: p.id }
-      })
+      }),
+      browseAllLink: ['/dashboard/timeline']
     },
     {
       key: 'testimonials',
@@ -319,7 +347,8 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         sublabel: e.centerName,
         link: ['/services/equipment'],
         queryParams: { equipmentId: e.id }
-      })
+      }),
+      browseAllLink: ['/services/equipment']
     },
 
     // ── ADMIN ONLY ────────────────────────────────────────────────────────
@@ -660,16 +689,24 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
       : this.store.select(source.select);
   }
 
+  /** The synthetic "See all Trainers"-style item pinned to a group when the query matches the category itself -- see SearchSource.browseAllLink. */
+  private browseAllItem(source: SearchSource): GlobalSearchItem {
+    return {
+      id: `browse-all-${source.key}`,
+      label: `See all ${source.label}`,
+      link: source.browseAllLink as any[],
+    };
+  }
+
   private search(query: string): Observable<GlobalSearchGroup[]> {
     const sources = this.activeSources();
 
-    const streams: Observable<GlobalSearchGroup>[] = sources.map(source =>
-      this.dataFor(source).pipe(
-        map((data: any) => ({
-          key: source.key,
-          label: source.label,
-          icon: source.icon,
-          items: (Array.isArray(data) ? data : [])
+    const streams: Observable<GlobalSearchGroup>[] = sources.map(source => {
+      const categoryMatched = !!source.browseAllLink && matchesCategory(source.label, query);
+
+      return this.dataFor(source).pipe(
+        map((data: any) => {
+          const items = (Array.isArray(data) ? data : [])
             .filter((entity: any) => {
               try {
                 return source.match(entity, query);
@@ -677,10 +714,17 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
                 return false;
               }
             })
-            .map((entity: any) => source.toItem(entity))
-        }))
-      )
-    );
+            .map((entity: any) => source.toItem(entity));
+
+          return {
+            key: source.key,
+            label: source.label,
+            icon: source.icon,
+            items: categoryMatched ? [this.browseAllItem(source), ...items] : items,
+          };
+        })
+      );
+    });
 
     if (streams.length === 0) {
       return of([]);
