@@ -3,81 +3,81 @@
     <!-- Page header -->
     <div class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
+            <div class="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900 flex items-center justify-center shrink-0">
                 <i-feather name="bookmark" class="text-amber-600" style="width:16px;height:16px;" fill="currentColor"></i-feather>
             </div>
             <div>
-                <h1 class="text-sm font-bold text-gray-900">Saved</h1>
-                <p class="text-[11px] text-gray-400">Posts and workout templates you've bookmarked</p>
+                <h1 class="text-sm font-bold text-gray-900 dark:text-gray-100">Saved</h1>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500">Posts and workout templates you've bookmarked</p>
             </div>
         </div>
-        <button type="button" (click)="refresh()" [disabled]="loading" class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition disabled:opacity-40" title="Refresh">
-            <i-feather name="refresh-cw" [class.animate-spin]="loading" class="text-gray-500" style="width:15px;height:15px;"></i-feather>
+        <button type="button" (click)="refresh()" [disabled]="loading" class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition disabled:opacity-40" title="Refresh">
+            <i-feather name="refresh-cw" [class.animate-spin]="loading" class="text-gray-500 dark:text-gray-400" style="width:15px;height:15px;"></i-feather>
         </button>
     </div>
 
     <div *ngIf="loading" class="flex items-center justify-center py-16">
-        <i-feather name="loader" class="text-gray-300 animate-spin" style="width:20px;height:20px;"></i-feather>
+        <i-feather name="loader" class="text-gray-300 dark:text-gray-600 animate-spin" style="width:20px;height:20px;"></i-feather>
     </div>
 
     <!-- Empty state -->
     <div *ngIf="!loading && !posts.length && !workouts.length"
-        class="flex flex-col items-center justify-center py-16 gap-3 text-center bg-white rounded-2xl border border-gray-200">
-        <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
-            <i-feather name="bookmark" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+        class="flex flex-col items-center justify-center py-16 gap-3 text-center bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+        <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+            <i-feather name="bookmark" class="text-gray-300 dark:text-gray-600" style="width:22px;height:22px;"></i-feather>
         </div>
-        <p class="text-sm text-gray-400">Nothing saved yet.</p>
-        <p class="text-xs text-gray-400">Tap the bookmark on a post or workout to keep it here.</p>
+        <p class="text-sm text-gray-400 dark:text-gray-500">Nothing saved yet.</p>
+        <p class="text-xs text-gray-400 dark:text-gray-500">Tap the bookmark on a post or workout to keep it here.</p>
     </div>
 
     <ng-container *ngIf="!loading">
 
         <!-- Posts -->
         <div *ngIf="posts.length > 0" class="flex flex-col gap-2">
-            <span class="text-[11px] font-bold uppercase tracking-wide text-gray-400">Posts ({{ posts.length }})</span>
-            <div *ngFor="let p of posts" class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+            <span class="text-[11px] font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500">Posts ({{ posts.length }})</span>
+            <div *ngFor="let p of posts" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-3">
                 <div class="flex items-start gap-3">
-                    <img *ngIf="p.authorPhoto" [src]="p.authorPhoto | strapiUrl" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" />
-                    <div *ngIf="!p.authorPhoto" class="w-8 h-8 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                    <img *ngIf="p.authorPhoto" [src]="p.authorPhoto | strapiUrl" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-gray-700 shrink-0" />
+                    <div *ngIf="!p.authorPhoto" class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
                         <i-feather name="user" class="text-red-600" style="width:14px;height:14px;"></i-feather>
                     </div>
                     <div class="min-w-0 flex-1">
-                        <a [routerLink]="['/dashboard/user', p.authorUsername || p.authorId]" class="text-xs font-bold text-gray-900 hover:underline">{{ p.authorName }}</a>
-                        <p class="text-[10px] text-gray-400">{{ p.date | date:'mediumDate' }}</p>
+                        <a [routerLink]="['/dashboard/user', p.authorUsername || p.authorId]" class="text-xs font-bold text-gray-900 dark:text-gray-100 hover:underline">{{ p.authorName }}</a>
+                        <p class="text-[10px] text-gray-400 dark:text-gray-500">{{ p.date | date:'mediumDate' }}</p>
                     </div>
                     <button type="button" (click)="remove('POST', p.id, p)" title="Remove from saved"
-                        class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-amber-500 hover:text-amber-700 hover:bg-amber-50 transition">
+                        class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-amber-500 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 transition">
                         <i-feather name="bookmark" style="width:14px;height:14px;" fill="currentColor"></i-feather>
                     </button>
                 </div>
 
                 <a [routerLink]="['/dashboard/timeline']" [queryParams]="{ postId: p.id }" class="block">
-                    <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ p.content }}</p>
+                    <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{{ p.content }}</p>
                     <img *ngIf="p.photoUrl" [src]="p.photoUrl | strapiUrl" alt=""
-                        class="w-full max-h-96 object-cover rounded-xl border border-gray-100 mt-2" />
+                        class="w-full max-h-96 object-cover rounded-xl border border-gray-100 dark:border-gray-800 mt-2" />
                 </a>
 
-                <div *ngIf="p.workoutId" class="flex items-center gap-2.5 rounded-xl border border-orange-100 bg-orange-50/60 px-3 py-2">
+                <div *ngIf="p.workoutId" class="flex items-center gap-2.5 rounded-xl border border-orange-100 dark:border-orange-900 bg-orange-50/60 dark:bg-orange-950/10 px-3 py-2">
                     <i-feather name="zap" class="text-orange-500 shrink-0" style="width:15px;height:15px;"></i-feather>
-                    <span class="text-xs font-bold text-gray-800 truncate flex-1">{{ p.workoutName || 'Workout template' }}</span>
+                    <span class="text-xs font-bold text-gray-800 dark:text-gray-200 truncate flex-1">{{ p.workoutName || 'Workout template' }}</span>
                 </div>
             </div>
         </div>
 
         <!-- Workout templates -->
         <div *ngIf="workouts.length > 0" class="flex flex-col gap-2">
-            <span class="text-[11px] font-bold uppercase tracking-wide text-gray-400">Workout templates ({{ workouts.length }})</span>
-            <div *ngFor="let w of workouts" class="bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-3">
+            <span class="text-[11px] font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500">Workout templates ({{ workouts.length }})</span>
+            <div *ngFor="let w of workouts" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-4 flex items-center gap-3">
                 <i-feather name="zap" class="text-orange-500 shrink-0" style="width:16px;height:16px;"></i-feather>
-                <span class="text-sm font-bold text-gray-800 truncate flex-1">{{ w.name }}</span>
+                <span class="text-sm font-bold text-gray-800 dark:text-gray-200 truncate flex-1">{{ w.name }}</span>
                 <button type="button" (click)="clone(w)" [disabled]="cloningId === w.id"
-                    class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-orange-50 text-orange-700 border border-orange-100
-                           hover:bg-orange-100 transition disabled:opacity-50 flex items-center gap-1.5">
+                    class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-orange-50 dark:bg-orange-950/20 text-orange-700 dark:text-orange-400 border border-orange-100 dark:border-orange-900
+                           hover:bg-orange-100 dark:hover:bg-orange-950/30 transition disabled:opacity-50 flex items-center gap-1.5">
                     <i-feather [name]="cloningId === w.id ? 'loader' : 'plus'" [class.animate-spin]="cloningId === w.id" style="width:12px;height:12px;"></i-feather>
                     Add to my workouts
                 </button>
                 <button type="button" (click)="remove('WORKOUT', w.id, w)" title="Remove from saved"
-                    class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-amber-500 hover:text-amber-700 hover:bg-amber-50 transition">
+                    class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-amber-500 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 transition">
                     <i-feather name="bookmark" style="width:14px;height:14px;" fill="currentColor"></i-feather>
                 </button>
             </div>

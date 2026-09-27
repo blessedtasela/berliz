@@ -20,14 +20,14 @@
 
         <div class="flex items-center bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl
                     focus-within:border-red-500 focus-within:ring-1 focus-within:ring-red-500/30 transition">
-            <i-feather name="search" class="ml-3 text-gray-400 shrink-0" style="width:14px;height:14px;"></i-feather>
+            <i-feather name="search" class="ml-3 text-gray-400 dark:text-gray-500 shrink-0" style="width:14px;height:14px;"></i-feather>
             <input type="text" [ngModel]="searchTerm" (ngModelChange)="onSearchChange($event)"
                 placeholder="Search by name…"
-                class="flex-1 bg-transparent px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none" />
+                class="flex-1 bg-transparent px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none" />
         </div>
 
         <div *ngIf="searchLoading" class="flex items-center justify-center py-6">
-            <i-feather name="loader" class="text-gray-300 animate-spin" style="width:16px;height:16px;"></i-feather>
+            <i-feather name="loader" class="text-gray-300 dark:text-gray-600 animate-spin" style="width:16px;height:16px;"></i-feather>
         </div>
 
         <p *ngIf="!searchLoading && searchTerm.trim() && searchResults.length === 0" class="text-xs text-gray-400 dark:text-gray-500 py-2">
@@ -46,7 +46,7 @@
                 </a>
 
                 <ng-container [ngSwitch]="connectStatus(member)">
-                    <span *ngSwitchCase="'self'" class="text-[11px] text-gray-300 shrink-0">You</span>
+                    <span *ngSwitchCase="'self'" class="text-[11px] text-gray-300 dark:text-gray-600 shrink-0">You</span>
                     <span *ngSwitchCase="'connected'" class="text-[11px] font-semibold text-green-600 shrink-0 flex items-center gap-1">
                         <i-feather name="check" style="width:11px;height:11px;"></i-feather>
                         Connected
@@ -70,7 +70,7 @@
     </div>
 
     <div *ngIf="loading" class="flex items-center justify-center py-10">
-        <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
+        <i-feather name="loader" class="text-gray-300 dark:text-gray-600 animate-spin" style="width:18px;height:18px;"></i-feather>
     </div>
 
     <ng-container *ngIf="!loading">
