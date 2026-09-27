@@ -15,7 +15,7 @@
     </div>
 
     <div *ngIf="intakes.length > 0" class="flex flex-col gap-2">
-        <a *ngFor="let intake of intakes" [routerLink]="['/client-intake', intake.id]"
+        <a *ngFor="let intake of intakes" [routerLink]="['/dashboard/client-intake', intake.id]"
             class="p-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 flex items-center justify-between gap-3 hover:shadow-sm hover:-translate-y-0.5 transition">
             <div class="min-w-0">
                 <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{{ clientName(intake) }}</p>
