@@ -1,10 +1,10 @@
-<div class="bg-white font-sans rounded-xl border border-gray-200 p-4 flex flex-col gap-4 mt-4">
+<div class="bg-white dark:bg-gray-900 font-sans rounded-xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-4 mt-4">
 
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
-            <h2 class="text-sm font-bold text-gray-900">Likes</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Likes</h2>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                 {{ trainerLikes.length }} like{{ trainerLikes.length !== 1 ? 's' : '' }} total
             </p>
         </div>
@@ -12,16 +12,16 @@
         <!-- Search + Sort -->
         <div class="flex items-center gap-2">
             <div class="relative">
-                <i-feather name="search" class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
+                <i-feather name="search" class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
                     style="width:12px;height:12px;">
                 </i-feather>
-                <input type="text" [(ngModel)]="searchTerm" placeholder="Search likes" class="pl-7 pr-3 py-1.5 text-xs rounded-xl border border-gray-200 bg-gray-50
+                <input type="text" [(ngModel)]="searchTerm" placeholder="Search likes" class="pl-7 pr-3 py-1.5 text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800
                  focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent
-                 text-gray-700 placeholder:text-gray-400 w-36 transition" />
+                 text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500 w-36 transition" />
             </div>
 
-            <select [(ngModel)]="sortOrder" class="py-1.5 px-2 text-xs rounded-xl border border-gray-200 bg-gray-50
-               focus:outline-none focus:ring-2 focus:ring-red-400 text-gray-600 transition">
+            <select [(ngModel)]="sortOrder" class="py-1.5 px-2 text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800
+               focus:outline-none focus:ring-2 focus:ring-red-400 text-gray-600 dark:text-gray-400 transition">
                 <option value="asc">A → Z</option>
                 <option value="desc">Z → A</option>
                 <option value="newest">Newest</option>
@@ -30,11 +30,11 @@
         </div>
     </div>
 
-    <div class="border-t border-gray-100"></div>
+    <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
     <!-- Empty state -->
     <div *ngIf="filteredLikes().length === 0"
-        class="flex flex-col items-center justify-center py-10 gap-2 text-gray-400">
+        class="flex flex-col items-center justify-center py-10 gap-2 text-gray-400 dark:text-gray-500">
         <i-feather name="heart" style="width:28px;height:28px;"></i-feather>
         <p class="text-xs font-medium">No likes found.</p>
     </div>
@@ -45,7 +45,7 @@
             [title]="like.username">
 
             <div class="relative">
-                <img [src]="getProfilePhoto(like.userId)" onerror="this.src='assets/avatar.png';" class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200
+                <img [src]="getProfilePhoto(like.userId)" onerror="this.src='assets/avatar.png';" class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700
                  group-hover:border-red-400 transition-all duration-200
                  group-hover:scale-105 group-hover:shadow-md" />
                 <!-- Heart badge -->
@@ -55,16 +55,16 @@
                 </span>
             </div>
 
-            <p class="text-[10px] font-semibold text-gray-700 text-center leading-tight truncate w-full text-center">
+            <p class="text-[10px] font-semibold text-gray-700 dark:text-gray-300 text-center leading-tight truncate w-full text-center">
                 {{ like.username }}
             </p>
-            <p class="text-[9px] text-gray-400">{{ formatDate(like.date) }}</p>
+            <p class="text-[9px] text-gray-400 dark:text-gray-500">{{ formatDate(like.date) }}</p>
         </div>
     </div>
 
     <!-- See more / less -->
     <div *ngIf="filteredLikes().length > pageSize" class="flex justify-start">
-        <button (click)="toggleShowAll()" class="text-xs text-gray-500 bg-gray-100 hover:bg-gray-200 px-3 py-1.5
+        <button (click)="toggleShowAll()" class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-1.5
              rounded-xl font-semibold flex items-center gap-1.5 transition">
             <i-feather [name]="showAll ? 'chevron-up' : 'chevron-down'" style="width:11px;height:11px;"></i-feather>
             {{ showAll ? 'See less' : 'See all ' + filteredLikes().length + ' likes' }}

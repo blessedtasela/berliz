@@ -1,10 +1,10 @@
-<div class="bg-white font-sans rounded-xl border border-gray-200 p-4 flex flex-col gap-4 mt-4">
+<div class="bg-white dark:bg-gray-900 font-sans rounded-xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-4 mt-4">
 
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
-            <h2 class="text-sm font-bold text-gray-900">Testimonials</h2>
-            <p class="text-[11px] text-gray-400 mt-0.5">
+            <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Testimonials</h2>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                 {{ trainerTestimonials.length }} testimonial{{ trainerTestimonials.length !== 1 ? 's' : '' }} total
             </p>
         </div>
@@ -12,16 +12,16 @@
         <!-- Search + Sort -->
         <div class="flex items-center gap-2">
             <div class="relative">
-                <i-feather name="search" class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
+                <i-feather name="search" class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
                     style="width:12px;height:12px;">
                 </i-feather>
-                <input type="text" [(ngModel)]="searchTerm" placeholder="Search testimonials" class="pl-7 pr-3 py-1.5 text-xs rounded-xl border border-gray-200 bg-gray-50
+                <input type="text" [(ngModel)]="searchTerm" placeholder="Search testimonials" class="pl-7 pr-3 py-1.5 text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800
                  focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent
-                 text-gray-700 placeholder:text-gray-400 w-40 transition" (ngModelChange)="onSearchChange()" />
+                 text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500 w-40 transition" (ngModelChange)="onSearchChange()" />
             </div>
 
-            <select [(ngModel)]="sortOrder" (ngModelChange)="onSortChange()" class="py-1.5 px-2 text-xs rounded-xl border border-gray-200 bg-gray-50
-               focus:outline-none focus:ring-2 focus:ring-red-400 text-gray-600 transition">
+            <select [(ngModel)]="sortOrder" (ngModelChange)="onSortChange()" class="py-1.5 px-2 text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800
+               focus:outline-none focus:ring-2 focus:ring-red-400 text-gray-600 dark:text-gray-400 transition">
                 <option value="newest">Newest</option>
                 <option value="oldest">Oldest</option>
                 <option value="client">By Client</option>
@@ -29,42 +29,42 @@
         </div>
     </div>
 
-    <div class="border-t border-gray-100"></div>
+    <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
     <!-- Empty state -->
     <div *ngIf="filtered.length === 0"
-        class="flex flex-col items-center justify-center py-10 gap-2 text-gray-400">
+        class="flex flex-col items-center justify-center py-10 gap-2 text-gray-400 dark:text-gray-500">
         <i-feather name="message-square" style="width:28px;height:28px;"></i-feather>
         <p class="text-xs font-medium">No testimonials found.</p>
     </div>
 
     <!-- Cards -->
     <div *ngIf="filtered.length > 0" class="flex flex-col gap-3">
-        <div *ngFor="let testimonial of visible; trackBy: trackById" class="p-3 rounded-xl bg-gray-50 border border-gray-100
-             hover:border-red-200 hover:bg-red-50/20 transition-all duration-200 group">
+        <div *ngFor="let testimonial of visible; trackBy: trackById" class="p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700
+             hover:border-red-200 dark:hover:border-red-900 hover:bg-red-50/20 dark:hover:bg-red-950/10 transition-all duration-200 group">
 
             <!-- Top row: avatar + name + date -->
             <div class="flex items-center gap-3 mb-2">
                 <img [src]="getProfilePhoto(testimonial)"
-                    onerror="this.src='assets/avatar.png';" class="w-9 h-9 rounded-xl object-cover object-top border border-gray-200
-                 group-hover:border-red-300 transition shrink-0" />
+                    onerror="this.src='assets/avatar.png';" class="w-9 h-9 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700
+                 group-hover:border-red-300 dark:group-hover:border-red-800 transition shrink-0" />
 
                 <div class="flex-1 min-w-0">
-                    <p class="text-xs font-semibold text-gray-900 truncate">
+                    <p class="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate">
                         {{ testimonial.clientName }}
                     </p>
-                    <p class="text-[10px] text-gray-400">{{ formatDate(testimonial.date) }}</p>
+                    <p class="text-[10px] text-gray-400 dark:text-gray-500">{{ formatDate(testimonial.date) }}</p>
                 </div>
 
                 <!-- Last updated -->
-                <p class="text-[10px] text-gray-400 hidden sm:block shrink-0">
+                <p class="text-[10px] text-gray-400 dark:text-gray-500 hidden sm:block shrink-0">
                     Updated {{ formatDate(testimonial.lastUpdate) }}
                 </p>
             </div>
 
             <!-- Testimonial text -->
-            <div class="relative pl-3 border-l-2 border-red-200">
-                <p class="text-xs text-gray-700 leading-relaxed line-clamp-3"
+            <div class="relative pl-3 border-l-2 border-red-200 dark:border-red-900">
+                <p class="text-xs text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-3"
                     [class.line-clamp-none]="testimonial['expanded']">
                     {{ testimonial.testimonial }}
                 </p>
@@ -81,7 +81,7 @@
 
     <!-- See more / less -->
     <div *ngIf="filtered.length > pageSize" class="flex justify-start">
-        <button (click)="toggleShowAll()" class="text-xs text-gray-500 bg-gray-100 hover:bg-gray-200 px-3 py-1.5
+        <button (click)="toggleShowAll()" class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-1.5
              rounded-xl font-semibold flex items-center gap-1.5 transition">
             <i-feather [name]="showAll ? 'chevron-up' : 'chevron-down'" style="width:11px;height:11px;"></i-feather>
             {{ showAll ? 'See less' : 'See all ' + filtered.length + ' testimonials' }}

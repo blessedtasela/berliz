@@ -17,21 +17,21 @@
 <div *ngIf="cropStep === 'cropping'"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
 
-    <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden max-h-[92vh]"
+    <div class="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden max-h-[92vh]"
         (click)="$event.stopPropagation()">
 
         <!-- Header -->
-        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800 shrink-0">
             <div>
-                <h2 class="text-sm font-bold text-gray-900">
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">
                     Crop Photo {{ cropQueueIndex + 1 }}
                 </h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                     Adjust the crop area. You can skip if no crop is needed.
                 </p>
             </div>
             <button type="button" (click)="cancelCrop()"
-                class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 shrink-0">
+                class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition text-gray-400 dark:text-gray-500 shrink-0">
                 <i-feather name="x" style="width:14px;height:14px;"></i-feather>
             </button>
         </div>
@@ -41,19 +41,19 @@
 
             <!-- Ratio pills -->
             <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide mr-1">Ratio</span>
+                <span class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mr-1">Ratio</span>
                 <button *ngFor="let r of [{label:'1:1', val:1}, {label:'4:3', val:4/3},
                                    {label:'16:9', val:16/9}, {label:'3:4', val:3/4}]" type="button"
                     (click)="setCropRatio(r.val)"
                     class="text-[10px] font-semibold px-2.5 py-1 rounded-full border transition" [ngClass]="cropAspectRatio === r.val
             ? 'bg-red-600 text-white border-red-600'
-            : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'">
+            : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'">
                     {{ r.label }}
                 </button>
             </div>
 
             <!-- Cropper -->
-            <div class="rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
+            <div class="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                 <image-cropper [imageBase64]="cropImageBase64" [maintainAspectRatio]="true"
                     [aspectRatio]="cropAspectRatio" [resizeToWidth]="1200" format="jpeg"
                     (imageCropped)="onImageCropped($event)" (loadImageFailed)="onCropLoadFailed()">
@@ -61,9 +61,9 @@
             </div>
 
             <!-- Actions -->
-            <div class="flex justify-between items-center pt-1 border-t border-gray-100">
-                <button type="button" (click)="skipCrop()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200
-                 text-gray-500 hover:bg-gray-50 transition">
+            <div class="flex justify-between items-center pt-1 border-t border-gray-100 dark:border-gray-800">
+                <button type="button" (click)="skipCrop()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700
+                 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                     Skip crop
                 </button>
                 <button type="button" (click)="confirmCrop()" [disabled]="!croppedBlob" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
@@ -79,24 +79,24 @@
 </div>
 
 <!-- ═══════════════════ MAIN CARD ═══════════════════ -->
-<div class="bg-white font-sans rounded-xl border border-gray-200 p-4 flex flex-col gap-4 mt-4">
+<div class="bg-white dark:bg-gray-900 font-sans rounded-xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-4 mt-4">
 
     <form [formGroup]="updateTrainerPhotoAlbumForm" class="flex flex-col gap-4">
 
         <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                     Photo Album
-                    <span class="text-[10px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                    <span class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">
                         {{ photoCount }} / {{ MAX_PHOTOS }} selected
                     </span>
                     <span *ngIf="!trainerPhotoAlbum?.id"
-                        class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">
+                        class="text-[10px] font-semibold text-red-600 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 px-2 py-0.5 rounded-full">
                         Action required
                     </span>
                 </h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                     {{ trainerPhotoAlbum?.date
                     ? 'Registered on ' + formatDate(trainerPhotoAlbum?.date)
                     : 'No photos registered yet' }}
@@ -111,24 +111,24 @@
             </button>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <!-- Validation -->
         <div *ngIf="invalidForm" class="flex flex-col gap-1">
 
-            <p *ngIf="photoCount < MIN_PHOTOS" class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl
+            <p *ngIf="photoCount < MIN_PHOTOS" class="text-[11px] text-red-600 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 rounded-xl
                px-3 py-2 flex items-center gap-1.5">
                 <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
                 At least {{ MIN_PHOTOS }} photos required. You have {{ photoCount }}.
             </p>
 
-            <p *ngIf="photoCount >= MIN_PHOTOS && !allUploaded" class="text-[11px] text-orange-600 bg-orange-50 border border-orange-100 rounded-xl
+            <p *ngIf="photoCount >= MIN_PHOTOS && !allUploaded" class="text-[11px] text-orange-600 bg-orange-50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900 rounded-xl
                px-3 py-2 flex items-center gap-1.5">
                 <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
                 Please upload all photos to media server before saving.
             </p>
 
-            <p *ngIf="updateTrainerPhotoAlbumForm.get('comment')?.invalid" class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl
+            <p *ngIf="updateTrainerPhotoAlbumForm.get('comment')?.invalid" class="text-[11px] text-red-600 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 rounded-xl
                px-3 py-2 flex items-center gap-1.5">
                 <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
                 Please add a photo inspiration (min. 500 characters).
@@ -137,31 +137,31 @@
         </div>
 
         <!-- All uploaded success banner -->
-        <div *ngIf="validPhotos && photoCount  >= MIN_PHOTOS" class="flex items-center gap-2 text-[11px] text-green-700 bg-green-50
-             border border-green-100 rounded-xl px-3 py-2">
+        <div *ngIf="validPhotos && photoCount  >= MIN_PHOTOS" class="flex items-center gap-2 text-[11px] text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30
+             border border-green-100 dark:border-green-900 rounded-xl px-3 py-2">
             <i-feather name="check-circle" style="width:12px;height:12px;"></i-feather>
             All {{ photoCount }} photos uploaded — complete the inspiration text and save.
         </div>
 
         <!-- Photo counter bar -->
         <div class="flex items-center justify-between">
-            <p class="text-[11px] text-gray-500">
-                Min <span class="font-semibold text-gray-700">{{ MIN_PHOTOS }}</span> ·
-                Max <span class="font-semibold text-gray-700">{{ MAX_PHOTOS }}</span>
+            <p class="text-[11px] text-gray-500 dark:text-gray-400">
+                Min <span class="font-semibold text-gray-700 dark:text-gray-300">{{ MIN_PHOTOS }}</span> ·
+                Max <span class="font-semibold text-gray-700 dark:text-gray-300">{{ MAX_PHOTOS }}</span>
             </p>
             <span class="text-[11px] font-semibold"
-                [ngClass]="photoCount < MIN_PHOTOS ? 'text-red-500' : 'text-green-600'">
+                [ngClass]="photoCount < MIN_PHOTOS ? 'text-red-500' : 'text-green-600 dark:text-green-400'">
                 {{ photoCount }} / {{ MAX_PHOTOS }}
             </span>
         </div>
 
         <!-- Upload progress bar -->
         <div *ngIf="uploadingAll" class="flex flex-col gap-1">
-            <div class="flex justify-between text-[11px] text-gray-500">
+            <div class="flex justify-between text-[11px] text-gray-500 dark:text-gray-400">
                 <span>Uploading photos...</span>
-                <span class="font-semibold text-gray-700">{{ uploadProgress }}%</span>
+                <span class="font-semibold text-gray-700 dark:text-gray-300">{{ uploadProgress }}%</span>
             </div>
-            <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                 <div class="h-full bg-red-500 rounded-full transition-all duration-300"
                     [style.width.%]="uploadProgress">
                 </div>
@@ -176,9 +176,9 @@
                 <!-- Filled slot -->
                 <div *ngIf="slot.previewUrl"
                     class="relative group aspect-square rounded-xl overflow-hidden border-2 transition" [ngClass]="{
-            'border-green-300': slot.touched && !slot.uploaded,
-            'border-gray-200': slot.uploaded && !slot.uploading,
-            'border-blue-300 animate-pulse': slot.uploading
+            'border-green-300 dark:border-green-800': slot.touched && !slot.uploaded,
+            'border-gray-200 dark:border-gray-700': slot.uploaded && !slot.uploading,
+            'border-blue-300 dark:border-blue-800 animate-pulse': slot.uploading
           }">
 
                     <img [src]="slot.previewUrl" class="w-full h-full object-cover object-top"
@@ -232,11 +232,11 @@
                 <!-- Empty slot -->
                 <label *ngIf="!slot.previewUrl" class="relative aspect-square rounded-xl border-2 border-dashed cursor-pointer
                  flex flex-col items-center justify-center gap-1.5 transition-all
-                 hover:border-red-400 hover:bg-red-50/20 bg-gray-50/50 border-gray-200"
-                    [ngClass]="{ 'border-red-200': invalidForm && i < MIN_PHOTOS }">
+                 hover:border-red-400 hover:bg-red-50/20 dark:hover:bg-red-950/10 bg-gray-50/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700"
+                    [ngClass]="{ 'border-red-200 dark:border-red-900': invalidForm && i < MIN_PHOTOS }">
                     <input type="file" accept="image/*" multiple (change)="onImageSelected($event)" class="hidden" />
                     <i-feather name="plus" style="width:18px;height:18px;" class="text-gray-300"></i-feather>
-                    <span class="text-[9px] text-gray-400">Add photo</span>
+                    <span class="text-[9px] text-gray-400 dark:text-gray-500">Add photo</span>
                 </label>
 
             </ng-container>
@@ -266,18 +266,18 @@
 
         <!-- Photo inspiration (comment) -->
         <div class="flex flex-col gap-1.5">
-            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 Photo Inspiration
             </label>
             <textarea formControlName="comment" rows="9" maxlength="1200"
-                placeholder="Describe the inspiration behind these photos (min. 590 characters)." class="w-full px-3 py-2.5 bg-gray-50 border rounded-xl text-gray-900 text-sm
+                placeholder="Describe the inspiration behind these photos (min. 590 characters)." class="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border rounded-xl text-gray-900 dark:text-gray-100 text-sm
                focus:outline-none focus:ring-2 focus:border-transparent resize-none
-                            transition placeholder:text-gray-400" [ngClass]="{
-      'border-red-300 focus:ring-red-400':   updateTrainerPhotoAlbumForm.get('comment')?.invalid && invalidForm,
-      'border-green-400 focus:ring-green-400': updateTrainerPhotoAlbumForm.get('comment')?.valid && 
-      (updateTrainerPhotoAlbumForm.get('comment')?.value?.length || 0) >= 250 &&  
+                            transition placeholder:text-gray-400 dark:placeholder:text-gray-500" [ngClass]="{
+      'border-red-300 dark:border-red-800 focus:ring-red-400':   updateTrainerPhotoAlbumForm.get('comment')?.invalid && invalidForm,
+      'border-green-400 dark:border-green-700 focus:ring-green-400': updateTrainerPhotoAlbumForm.get('comment')?.valid &&
+      (updateTrainerPhotoAlbumForm.get('comment')?.value?.length || 0) >= 250 &&
       updateTrainerPhotoAlbumForm.get('comment')?.dirty,
-      'border-gray-200 focus:ring-red-500':  !invalidForm && !updateTrainerPhotoAlbumForm.get('comment')?.valid
+      'border-gray-200 dark:border-gray-700 focus:ring-red-500':  !invalidForm && !updateTrainerPhotoAlbumForm.get('comment')?.valid
     }">
       </textarea>
             <div class="flex justify-between items-center">
@@ -287,29 +287,29 @@
                     Minimum 900 characters required.
                 </p>
                 <p *ngIf="updateTrainerPhotoAlbumForm.get('comment')?.valid && updateTrainerPhotoAlbumForm.get('comment')?.dirty"
-                    class="text-[11px] text-green-600 flex items-center gap-1">
+                    class="text-[11px] text-green-600 dark:text-green-400 flex items-center gap-1">
                     <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
                     Looks good.
                 </p>
                 <span class="text-[10px] ml-auto font-semibold" [ngClass]="(updateTrainerPhotoAlbumForm.get('comment')?.value?.length || 0) < 900
-            ? 'text-red-500' : 'text-gray-600'">
+            ? 'text-red-500' : 'text-gray-600 dark:text-gray-400'">
                     {{ updateTrainerPhotoAlbumForm.get('comment')?.value?.length || 0 }} / 1200
                 </span>
             </div>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <!-- Footer -->
         <div class="flex items-center justify-between">
 
             <div class="flex flex-col gap-0.5">
-                <span *ngIf="canSaveAll" class="text-xs text-green-600 font-semibold flex items-center gap-1">
+                <span *ngIf="canSaveAll" class="text-xs text-green-600 dark:text-green-400 font-semibold flex items-center gap-1">
                     <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
                     Ready to save
                 </span>
                 <!-- No changes -->
-                <span *ngIf="formReady && !hasChanges()" class="text-xs text-gray-400">
+                <span *ngIf="formReady && !hasChanges()" class="text-xs text-gray-400 dark:text-gray-500">
                     No changes detected
                 </span>
                 <!-- Validation errors -->
@@ -317,7 +317,7 @@
                     class="text-xs text-red-500 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     Photo inspiration is required </span>
-                <span *ngIf="!formReady && photoCount < MIN_PHOTOS && hasChanges()" class="text-xs text-gray-400">
+                <span *ngIf="!formReady && photoCount < MIN_PHOTOS && hasChanges()" class="text-xs text-gray-400 dark:text-gray-500">
                     {{ MIN_PHOTOS - photoCount }} more photo{{ MIN_PHOTOS - photoCount !== 1 ? 's' : '' }} needed
                 </span>
             </div>
@@ -325,7 +325,7 @@
             <button type="button" (click)="updateTrainerPhotoAlbum()" [disabled]="!canSaveAll"
                 class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2" [ngClass]="{
                 'bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]': canSaveAll,
-                'bg-gray-100 text-gray-400 cursor-not-allowed': !canSaveAll
+                'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed': !canSaveAll
             }">
                 <i-feather name="save" style="width:13px;height:13px;">
                 </i-feather>
