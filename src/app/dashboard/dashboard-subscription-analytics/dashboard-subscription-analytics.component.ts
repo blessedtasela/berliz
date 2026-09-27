@@ -15,6 +15,7 @@ import { Subscription as RxSubscription, combineLatest, take } from 'rxjs';
 
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { AuthService } from 'src/app/services/auth.service';
+import { ThemeService } from 'src/app/services/theme.service';
 import { loadMySubscriptions, loadSubscriptions } from 'src/app/state/subscription/subscription.actions';
 import {
   selectMySubscriptions,
@@ -57,12 +58,17 @@ export class DashboardSubscriptionAnalyticsComponent implements OnInit, OnDestro
 
   constructor(
     private store: Store,
-    private auth: AuthService
+    private auth: AuthService,
+    private themeService: ThemeService
   ) { }
 
   ngOnInit() {
     this.isAdminView = this.auth.isAdmin();
     this.scopeLabel = this.isAdminView ? 'All users' : 'You';
+
+    this.subs.push(
+      this.themeService.isDark$.subscribe(() => this.applyChartColors())
+    );
 
     this.subs.push(
       combineLatest([this.subscriptions$(), this.store.select(selectSubscriptionLoading)])
@@ -121,6 +127,27 @@ export class DashboardSubscriptionAnalyticsComponent implements OnInit, OnDestro
     }).length;
   }
 
+  /** Muted tick/grid colors, tuned for whichever theme is currently active. */
+  private get tickColor(): string {
+    return this.themeService.isDark ? '#6b7280' : '#9ca3af';
+  }
+
+  private get gridColor(): string {
+    return this.themeService.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)';
+  }
+
+  /** Re-applies tick/grid colors to an already-rendered chart on theme toggle. */
+  private applyChartColors(): void {
+    if (!this.chart) return;
+    const scales = this.chart.options.scales;
+    if (scales?.['x']) (scales['x'] as any).ticks.color = this.tickColor;
+    if (scales?.['y']) {
+      (scales['y'] as any).ticks.color = this.tickColor;
+      (scales['y'] as any).grid.color = this.gridColor;
+    }
+    this.chart.update();
+  }
+
   private renderChart() {
     const labels = ['Active', 'Expiring soon', 'Expired'];
     const values = [this.active, this.expiringSoon, this.expired];
@@ -172,13 +199,13 @@ export class DashboardSubscriptionAnalyticsComponent implements OnInit, OnDestro
           x: {
             grid: { display: false },
             border: { display: false },
-            ticks: { font: { size: 11 }, color: '#9ca3af' }
+            ticks: { font: { size: 11 }, color: this.tickColor }
           },
           y: {
             beginAtZero: true,
             border: { display: false },
-            grid: { color: 'rgba(0,0,0,0.04)' },
-            ticks: { font: { size: 11 }, color: '#9ca3af', stepSize: 1 }
+            grid: { color: this.gridColor },
+            ticks: { font: { size: 11 }, color: this.tickColor, stepSize: 1 }
           }
         }
       }

@@ -15,6 +15,7 @@ import { Subscription, combineLatest, take } from 'rxjs';
 
 import { TodoList } from 'src/app/models/todoList.interface';
 import { AuthService } from 'src/app/services/auth.service';
+import { ThemeService } from 'src/app/services/theme.service';
 import { loadMyTodos, loadTodos } from 'src/app/state/todo/todo.actions';
 import { selectMyTodos, selectTodoLoading, selectTodos } from 'src/app/state/todo/todo.selectors';
 
@@ -50,12 +51,17 @@ export class DashboardActivityChartComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
-    private auth: AuthService
+    private auth: AuthService,
+    private themeService: ThemeService
   ) { }
 
   ngOnInit() {
     this.isAdminView = this.auth.isAdmin();
     this.scopeLabel = this.isAdminView ? 'All users' : 'You';
+
+    this.subscriptions.push(
+      this.themeService.isDark$.subscribe(() => this.applyChartColors())
+    );
 
     this.subscriptions.push(
       combineLatest([this.todos$(), this.store.select(selectTodoLoading)])
@@ -98,6 +104,27 @@ export class DashboardActivityChartComponent implements OnInit, OnDestroy {
   /** Local-time day key — avoids the UTC shift that toISOString() would introduce. */
   private dayKey(date: Date): string {
     return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+  }
+
+  /** Muted tick/grid colors, tuned for whichever theme is currently active. */
+  private get tickColor(): string {
+    return this.themeService.isDark ? '#6b7280' : '#9ca3af';
+  }
+
+  private get gridColor(): string {
+    return this.themeService.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)';
+  }
+
+  /** Re-applies tick/grid colors to an already-rendered chart on theme toggle. */
+  private applyChartColors(): void {
+    if (!this.chart) return;
+    const scales = this.chart.options.scales;
+    if (scales?.['x']) (scales['x'] as any).ticks.color = this.tickColor;
+    if (scales?.['y']) {
+      (scales['y'] as any).ticks.color = this.tickColor;
+      (scales['y'] as any).grid.color = this.gridColor;
+    }
+    this.chart.update();
   }
 
   private renderChart(todos: TodoList[]) {
@@ -167,13 +194,13 @@ export class DashboardActivityChartComponent implements OnInit, OnDestroy {
           x: {
             grid: { display: false },
             border: { display: false },
-            ticks: { font: { size: 11 }, color: '#9ca3af' }
+            ticks: { font: { size: 11 }, color: this.tickColor }
           },
           y: {
             beginAtZero: true,
             border: { display: false },
-            grid: { color: 'rgba(0,0,0,0.04)' },
-            ticks: { font: { size: 11 }, color: '#9ca3af', stepSize: 1 }
+            grid: { color: this.gridColor },
+            ticks: { font: { size: 11 }, color: this.tickColor, stepSize: 1 }
           }
         }
       }

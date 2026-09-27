@@ -1,6 +1,8 @@
-import { AfterViewInit, Component, ElementRef, HostListener, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Chart, registerables } from 'chart.js/auto';
+import { Subscription } from 'rxjs';
 import { TodoList } from 'src/app/models/todoList.interface';
+import { ThemeService } from 'src/app/services/theme.service';
 
 @Component({
   selector: 'app-my-todo-list-analytic-chart',
@@ -8,7 +10,7 @@ import { TodoList } from 'src/app/models/todoList.interface';
   styleUrls: ['./my-todo-list-analytic-chart.component.css']
 })
 
-export class MyTodoListAnalyticChartComponent implements AfterViewInit, OnDestroy, OnChanges {
+export class MyTodoListAnalyticChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
 
   @Input() todos: TodoList[] = [];
 
@@ -16,6 +18,13 @@ export class MyTodoListAnalyticChartComponent implements AfterViewInit, OnDestro
   todoChart!: ElementRef<HTMLCanvasElement>;
 
   private chart!: Chart<'bar', number[], string>;
+  private themeSubscription?: Subscription;
+
+  constructor(private themeService: ThemeService) { }
+
+  ngOnInit() {
+    this.themeSubscription = this.themeService.isDark$.subscribe(() => this.tryCreateChart());
+  }
 
   ngAfterViewInit() {
     this.tryCreateChart();
@@ -31,6 +40,15 @@ export class MyTodoListAnalyticChartComponent implements AfterViewInit, OnDestro
     if (this.chart) this.chart.destroy();
 
     this.createChart();
+  }
+
+  /** Muted tick/grid colors, tuned for whichever theme is currently active. */
+  private get tickColor(): string {
+    return this.themeService.isDark ? '#6b7280' : '#9ca3af';
+  }
+
+  private get gridColor(): string {
+    return this.themeService.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)';
   }
 
   private createChart() {
@@ -79,16 +97,16 @@ export class MyTodoListAnalyticChartComponent implements AfterViewInit, OnDestro
           x: {
             grid: { display: false },
             border: { display: false },
-            ticks: { font: { size: 11 }, color: '#9ca3af' }
+            ticks: { font: { size: 11 }, color: this.tickColor }
           },
           y: {
             beginAtZero: true,
             border: { display: false },
-            grid: { color: 'rgba(0,0,0,0.04)' },
+            grid: { color: this.gridColor },
             ticks: {
               stepSize: 1,
               font: { size: 11 },
-              color: '#9ca3af'
+              color: this.tickColor
             }
           }
         }
@@ -102,6 +120,7 @@ export class MyTodoListAnalyticChartComponent implements AfterViewInit, OnDestro
   }
 
   ngOnDestroy() {
+    this.themeSubscription?.unsubscribe();
     if (this.chart) this.chart.destroy();
   }
 }

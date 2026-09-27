@@ -13,6 +13,7 @@ import { Chart, registerables } from 'chart.js/auto';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+import { ThemeService } from 'src/app/services/theme.service';
 import { loadDashboard } from 'src/app/state/dashboard/dashboard.actions';
 import { selectDashboardData } from 'src/app/state/dashboard/dashboard.selectors';
 
@@ -33,10 +34,15 @@ export class DashboardAppAnalyticsComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
-    private ngxService: NgxUiLoaderService
+    private ngxService: NgxUiLoaderService,
+    private themeService: ThemeService
   ) { }
 
   ngOnInit() {
+    this.subscriptions.push(
+      this.themeService.isDark$.subscribe(() => this.applyChartColors())
+    );
+
     const sub = this.store.select(selectDashboardData).subscribe((cachedData) => {
       if (cachedData === null) {
         this.fetchDashboardData();
@@ -62,6 +68,27 @@ export class DashboardAppAnalyticsComponent implements OnInit, OnDestroy {
 
   private fetchDashboardData() {
     this.store.dispatch(loadDashboard());
+  }
+
+  /** Muted tick/grid colors, tuned for whichever theme is currently active. */
+  private get tickColor(): string {
+    return this.themeService.isDark ? '#6b7280' : '#9ca3af';
+  }
+
+  private get gridColor(): string {
+    return this.themeService.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)';
+  }
+
+  /** Re-applies tick/grid colors to an already-rendered chart on theme toggle. */
+  private applyChartColors(): void {
+    if (!this.chart) return;
+    const scales = this.chart.options.scales;
+    if (scales?.['x']) (scales['x'] as any).ticks.color = this.tickColor;
+    if (scales?.['y']) {
+      (scales['y'] as any).ticks.color = this.tickColor;
+      (scales['y'] as any).grid.color = this.gridColor;
+    }
+    this.chart.update();
   }
 
   private createAnalyticChart() {
@@ -107,13 +134,13 @@ export class DashboardAppAnalyticsComponent implements OnInit, OnDestroy {
           x: {
             grid: { display: false },
             border: { display: false },
-            ticks: { font: { size: 11 }, color: '#9ca3af' }
+            ticks: { font: { size: 11 }, color: this.tickColor }
           },
           y: {
             beginAtZero: true,
             border: { display: false },
-            grid: { color: 'rgba(0,0,0,0.04)' },
-            ticks: { font: { size: 11 }, color: '#9ca3af', stepSize: 1 }
+            grid: { color: this.gridColor },
+            ticks: { font: { size: 11 }, color: this.tickColor, stepSize: 1 }
           }
         }
       }

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 
@@ -18,9 +19,17 @@ const MODE_KEY = 'themeMode';
  * toggles a `dark` class on `<html>`, and every `dark:` utility already in
  * (or added to) a template does the rest — no separate CSS-variable system
  * to maintain.
+ *
+ * `isDark$` exists for the handful of consumers Tailwind's `dark:` classes
+ * can't reach — Chart.js canvases configured via JS options objects rather
+ * than CSS. Everything else should keep just reading `isDark` (or, more
+ * often, nothing at all — a `dark:` class already does the job).
  */
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
+
+  private readonly isDarkSubject = new BehaviorSubject<boolean>(this.computeIsDark());
+  readonly isDark$: Observable<boolean> = this.isDarkSubject.asObservable();
 
   get mode(): ThemeMode {
     try {
@@ -38,6 +47,10 @@ export class ThemeService {
 
   /** The actually-rendered mode, with 'system' already resolved against the device setting. */
   get isDark(): boolean {
+    return this.isDarkSubject.value;
+  }
+
+  private computeIsDark(): boolean {
     const mode = this.mode;
     return mode === 'dark' || (mode === 'system' && this.systemPrefersDark);
   }
@@ -55,8 +68,10 @@ export class ThemeService {
    * prerendered page renders light, same tradeoff AuthService already
    * accepts for "always renders logged out" during prerender). */
   apply(): void {
+    const isDark = this.computeIsDark();
+    this.isDarkSubject.next(isDark);
     try {
-      document.documentElement.classList.toggle('dark', this.isDark);
+      document.documentElement.classList.toggle('dark', isDark);
     } catch { /* no DOM (SSR) */ }
   }
 
