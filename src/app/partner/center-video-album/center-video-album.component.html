@@ -1,4 +1,4 @@
-<div class="bg-white font-sans rounded-xl border border-gray-200 p-4 flex flex-col gap-4 mt-4">
+<div class="bg-white dark:bg-gray-900 font-sans rounded-xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-4 mt-4">
 
     <form *ngIf="updateCenterVideoAlbumForm" [formGroup]="updateCenterVideoAlbumForm"
         (ngSubmit)="updateCenterVideoAlbum()" class="flex flex-col gap-4">
@@ -6,14 +6,14 @@
         <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                     Video album
                     <span *ngIf="!centerVideoAlbum?.id"
-                        class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">
+                        class="text-[10px] font-semibold text-red-600 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 px-2 py-0.5 rounded-full">
                         Action required
                     </span>
                 </h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                     {{ centerVideoAlbum?.date
                     ? 'Registered on ' + formatDate(centerVideoAlbum?.date)
                     : 'No video album registered yet' }}
@@ -21,17 +21,17 @@
             </div>
 
             <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [ngClass]="videoCount >= MIN_VIDEOS
-                    ? 'bg-green-50 text-green-700 border-green-100'
-                    : 'bg-gray-50 text-gray-500 border-gray-200'">
+                    ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-green-100 dark:border-green-900'
+                    : 'bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700'">
                 {{ videoCount }} / {{ MAX_VIDEOS }}
             </span>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <div *ngIf="invalidForm && (videoCount < MIN_VIDEOS || updateCenterVideoAlbumForm.invalid)">
             <p
-                class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
+                class="text-[11px] text-red-600 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 rounded-xl px-3 py-2 flex items-center gap-1.5">
                 <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
                 Add at least {{ MIN_VIDEOS }} videos and a comment of {{ MIN_COMMENT }}+ characters.
             </p>
@@ -39,29 +39,29 @@
 
         <!-- Upload -->
         <div class="flex flex-col gap-2">
-            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
-                Videos <span class="normal-case text-gray-400 font-normal">(max {{ MAX_FILE_MB }} MB each)</span>
+            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                Videos <span class="normal-case text-gray-400 dark:text-gray-500 font-normal">(max {{ MAX_FILE_MB }} MB each)</span>
             </label>
 
-            <input type="file" accept="video/*" multiple (change)="onVideosSelected($event)" class="block w-full text-xs text-gray-600 cursor-pointer
+            <input type="file" accept="video/*" multiple (change)="onVideosSelected($event)" class="block w-full text-xs text-gray-600 dark:text-gray-400 cursor-pointer
                        file:mr-3 file:py-1.5 file:px-3 file:rounded-full
                        file:border-0 file:text-xs file:font-semibold
                        file:bg-red-50 file:text-red-600 hover:file:bg-red-100
                        focus:outline-none transition" />
 
             <div *ngIf="uploadingAll" class="flex flex-col gap-1">
-                <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                     <div class="h-full bg-red-500 rounded-full transition-all duration-300"
                         [style.width.%]="uploadProgress"></div>
                 </div>
-                <p class="text-[10px] text-gray-400">Uploading… {{ uploadProgress }}%</p>
+                <p class="text-[10px] text-gray-400 dark:text-gray-500">Uploading… {{ uploadProgress }}%</p>
             </div>
         </div>
 
         <!-- Grid -->
         <div *ngIf="videoCount > 0" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
             <div *ngFor="let slot of filledSlots"
-                class="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-900 aspect-video">
+                class="relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-900 aspect-video">
 
                 <video [src]="slot.previewUrl" class="w-full h-full object-cover object-top" muted playsinline controls
                     (error)="onVideoError($event)"></video>
@@ -78,33 +78,33 @@
             </div>
         </div>
 
-        <div *ngIf="videoCount === 0" class="flex flex-col items-center justify-center py-8 gap-2 text-gray-400">
+        <div *ngIf="videoCount === 0" class="flex flex-col items-center justify-center py-8 gap-2 text-gray-400 dark:text-gray-500">
             <i-feather name="video" style="width:26px;height:26px;"></i-feather>
             <p class="text-xs italic">No videos added yet.</p>
         </div>
 
         <!-- Comment -->
         <div class="flex flex-col gap-1.5">
-            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Album comment</label>
+            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Album comment</label>
 
             <textarea formControlName="comment" rows="5" [maxlength]="MAX_COMMENT"
-                placeholder="Describe what these videos show — training sessions, tours, member stories." class="w-full px-3 py-2.5 bg-gray-50 border rounded-xl text-gray-900 text-sm resize-none
-                       focus:outline-none focus:ring-2 focus:border-transparent transition placeholder:text-gray-400"
+                placeholder="Describe what these videos show — training sessions, tours, member stories." class="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border rounded-xl text-gray-900 dark:text-gray-100 text-sm resize-none
+                       focus:outline-none focus:ring-2 focus:border-transparent transition placeholder:text-gray-400 dark:placeholder:text-gray-500"
                 [ngClass]="commentControl?.invalid && (invalidForm || commentControl?.dirty)
-                    ? 'border-red-300 focus:ring-red-400' : 'border-gray-200 focus:ring-red-500'"></textarea>
+                    ? 'border-red-300 dark:border-red-800 focus:ring-red-400' : 'border-gray-200 dark:border-gray-700 focus:ring-red-500'"></textarea>
 
             <span class="text-[10px] ml-auto font-semibold"
-                [ngClass]="commentLength < MIN_COMMENT ? 'text-red-500' : 'text-green-600'">
+                [ngClass]="commentLength < MIN_COMMENT ? 'text-red-500' : 'text-green-600 dark:text-green-400'">
                 {{ commentLength }} / {{ MAX_COMMENT }}
             </span>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <!-- Save -->
         <div class="flex items-center justify-between">
             <span *ngIf="hasChanges()" class="text-xs text-blue-600 font-semibold">Unsaved changes</span>
-            <span *ngIf="!hasChanges()" class="text-xs text-gray-400">No changes made</span>
+            <span *ngIf="!hasChanges()" class="text-xs text-gray-400 dark:text-gray-500">No changes made</span>
 
             <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-xl text-xs font-semibold
                        hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2" [disabled]="!canSave"

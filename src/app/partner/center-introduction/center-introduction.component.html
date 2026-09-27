@@ -1,4 +1,4 @@
-<div class="bg-white font-sans rounded-xl border border-gray-200 p-4 flex flex-col gap-4 mt-4">
+<div class="bg-white dark:bg-gray-900 font-sans rounded-xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-4 mt-4">
 
     <form *ngIf="updateCenterIntroductionForm" [formGroup]="updateCenterIntroductionForm"
         (ngSubmit)="updateCenterIntroduction()" class="flex flex-col gap-4">
@@ -6,14 +6,14 @@
         <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                     Center introduction
                     <span *ngIf="!centerIntroduction?.id"
-                        class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full">
+                        class="text-[10px] font-semibold text-red-600 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 px-2 py-0.5 rounded-full">
                         Action required
                     </span>
                 </h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                     {{ centerIntroduction?.date
                     ? 'Registered on ' + formatDate(centerIntroduction?.date)
                     : 'No introduction registered yet' }}
@@ -21,12 +21,12 @@
             </div>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <!-- Validation banners -->
         <div *ngIf="invalidForm && updateCenterIntroductionForm.invalid">
             <p
-                class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
+                class="text-[11px] text-red-600 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 rounded-xl px-3 py-2 flex items-center gap-1.5">
                 <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
                 Please complete all required fields.
             </p>
@@ -34,7 +34,7 @@
 
         <div *ngIf="!invalidForm && updateCenterIntroductionForm.valid && hasChanges()">
             <p
-                class="text-[11px] text-green-700 bg-green-50 border border-green-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
+                class="text-[11px] text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-100 dark:border-green-900 rounded-xl px-3 py-2 flex items-center gap-1.5">
                 <i-feather name="check-circle" style="width:12px;height:12px;"></i-feather>
                 Everything looks good.
             </p>
@@ -42,46 +42,46 @@
 
         <!-- Introduction -->
         <div class="flex flex-col gap-1.5">
-            <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 Introduction
             </label>
 
             <textarea formControlName="introduction" rows="10" [maxlength]="MAX_LENGTH"
                 placeholder="Introduce your center. Highlight your facilities, philosophy, programs and what makes you different."
-                class="w-full px-3 py-2.5 bg-gray-50 border rounded-xl text-gray-900 text-sm
+                class="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border rounded-xl text-gray-900 dark:text-gray-100 text-sm
                        focus:outline-none focus:ring-2 focus:border-transparent
-                       resize-none transition placeholder:text-gray-400" [ngClass]="{
-                    'border-red-300 focus:ring-red-400': introductionControl?.invalid && (invalidForm || introductionControl?.dirty),
-                    'border-green-400 focus:ring-green-400': introductionControl?.valid && introductionControl?.dirty,
-                    'border-gray-200 focus:ring-red-500': !introductionControl?.dirty && !invalidForm
+                       resize-none transition placeholder:text-gray-400 dark:placeholder:text-gray-500" [ngClass]="{
+                    'border-red-300 dark:border-red-800 focus:ring-red-400': introductionControl?.invalid && (invalidForm || introductionControl?.dirty),
+                    'border-green-400 dark:border-green-700 focus:ring-green-400': introductionControl?.valid && introductionControl?.dirty,
+                    'border-gray-200 dark:border-gray-700 focus:ring-red-500': !introductionControl?.dirty && !invalidForm
                   }"></textarea>
 
             <div class="flex justify-between items-center">
                 <p *ngIf="introductionControl?.invalid && (invalidForm || introductionControl?.dirty)"
-                    class="text-[11px] text-red-500 flex items-center gap-1">
+                    class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                     Minimum {{ MIN_LENGTH }} characters required.
                 </p>
 
                 <p *ngIf="introductionControl?.valid && introductionControl?.dirty"
-                    class="text-[11px] text-green-600 flex items-center gap-1">
+                    class="text-[11px] text-green-600 dark:text-green-400 flex items-center gap-1">
                     <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
                     Looks good.
                 </p>
 
                 <span class="text-[10px] ml-auto font-semibold" [ngClass]="introductionLength < MIN_LENGTH
-                        ? 'text-red-500' : 'text-green-600'">
+                        ? 'text-red-500' : 'text-green-600 dark:text-green-400'">
                     {{ introductionLength }} / {{ MAX_LENGTH }}
                 </span>
             </div>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <!-- Save -->
         <div class="flex items-center justify-between">
             <span *ngIf="hasChanges()" class="text-xs text-blue-600 font-semibold">Unsaved changes</span>
-            <span *ngIf="!hasChanges()" class="text-xs text-gray-400">No changes made</span>
+            <span *ngIf="!hasChanges()" class="text-xs text-gray-400 dark:text-gray-500">No changes made</span>
 
             <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-xl text-xs font-semibold
                        hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2"

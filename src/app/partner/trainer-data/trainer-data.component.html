@@ -1,13 +1,13 @@
-<div class="bg-white border border-gray-200 rounded-xl font-sans">
+<div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl font-sans">
 
     <form [formGroup]="updateTrainerForm">
 
         <!-- Header -->
-        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
             <div>
-                <h2 class="text-sm font-bold text-gray-900">Trainer profile</h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">
-                    Registered: <span class="text-gray-600 font-medium">{{ formatDate(trainer?.date) }}</span>
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Trainer profile</h2>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+                    Registered: <span class="text-gray-600 dark:text-gray-400 font-medium">{{ formatDate(trainer?.date) }}</span>
                 </p>
             </div>
         </div>
@@ -15,7 +15,7 @@
         <!-- Validation -->
         <div *ngIf="invalidForm" class="px-4 pt-3">
             <p *ngIf="updateTrainerForm.invalid"
-                class="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 flex items-center gap-1.5">
+                class="text-[11px] text-red-600 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 rounded-xl px-3 py-2 flex items-center gap-1.5">
                 <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
                 Please complete all required fields.
             </p>
@@ -25,43 +25,43 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 py-4">
 
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Display name</label>
-                <input formControlName="name" type="text" placeholder="Team Berliz" class="w-full px-3 py-2 rounded-xl bg-gray-50 border text-sm text-gray-900
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Display name</label>
+                <input formControlName="name" type="text" placeholder="Team Berliz" class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="updateTrainerForm.get('name')?.invalid && updateTrainerForm.get('name')?.dirty
-            ? 'border-red-300' : 'border-gray-200'" />
+            ? 'border-red-300 dark:border-red-800' : 'border-gray-200 dark:border-gray-700'" />
                 <p *ngIf="updateTrainerForm.get('name')?.invalid && updateTrainerForm.get('name')?.dirty"
-                    class="text-[11px] text-red-500 flex items-center gap-1">
+                    class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
                     Display name is required
                 </p>
             </div>
 
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Experience
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Experience
                     (years)</label>
-                <input formControlName="experience" type="number" placeholder="5" class="w-full px-3 py-2 rounded-xl bg-gray-50 border text-sm text-gray-900
+                <input formControlName="experience" type="number" placeholder="5" class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="updateTrainerForm.get('experience')?.invalid && updateTrainerForm.get('experience')?.dirty
-            ? 'border-red-300' : 'border-gray-200'" />
+            ? 'border-red-300 dark:border-red-800' : 'border-gray-200 dark:border-gray-700'" />
             </div>
 
             <div *ngIf="user?.role === 'admin'" class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Likes</label>
-                <input formControlName="likes" type="number" readonly class="w-full px-3 py-2 rounded-xl bg-gray-100 border border-gray-200 text-sm text-gray-500
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Likes</label>
+                <input formControlName="likes" type="number" readonly class="w-full px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-500 dark:text-gray-400
                  focus:outline-none cursor-not-allowed" />
             </div>
 
             <div class="md:col-span-2 flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Motto</label>
-                <textarea formControlName="motto" rows="4" placeholder="Write your discipline or motto" class="w-full px-3 py-2.5 rounded-xl bg-gray-50 border text-sm text-gray-900
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Motto</label>
+                <textarea formControlName="motto" rows="4" placeholder="Write your discipline or motto" class="w-full px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
-                 resize-none transition placeholder:text-gray-400" [ngClass]="updateTrainerForm.get('motto')?.invalid && updateTrainerForm.get('motto')?.dirty
-            ? 'border-red-300' : 'border-gray-200'">
+                 resize-none transition placeholder:text-gray-400 dark:placeholder:text-gray-500" [ngClass]="updateTrainerForm.get('motto')?.invalid && updateTrainerForm.get('motto')?.dirty
+            ? 'border-red-300 dark:border-red-800' : 'border-gray-200 dark:border-gray-700'">
         </textarea>
             </div>
 
             <!-- How you coach -->
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">How you coach</label>
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">How you coach</label>
                 <select formControlName="serviceMode" class="berliz-select">
                     <option value="IN_PERSON">In-person only</option>
                     <option value="HYBRID">Hybrid — in-person &amp; online</option>
@@ -72,20 +72,20 @@
             <!-- Available in (cities/countries) -->
             <div class="md:col-span-2 flex flex-col gap-2">
                 <div class="flex items-center justify-between">
-                    <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Available in</label>
+                    <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Available in</label>
                     <button type="button" (click)="addLocation()" class="text-[11px] font-semibold text-red-600 hover:text-red-700 flex items-center gap-1">
                         <i-feather name="plus" style="width:11px;height:11px;"></i-feather>
                         Add a city
                     </button>
                 </div>
 
-                <p *ngIf="locationsArray.length === 0" class="text-[11px] text-gray-400 italic">
+                <p *ngIf="locationsArray.length === 0" class="text-[11px] text-gray-400 dark:text-gray-500 italic">
                     No cities added yet — clients won't know where to find you in person.
                 </p>
 
                 <div formArrayName="locations" class="flex flex-col gap-2">
                     <div *ngFor="let loc of locationsArray.controls; let i = index" [formGroupName]="i"
-                        class="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr_auto] gap-2 items-start bg-gray-50 border border-gray-200 rounded-xl p-2.5">
+                        class="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr_auto] gap-2 items-start bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2.5">
 
                         <select formControlName="country" (change)="onLocationCountryChange(i)" class="berliz-select !py-1.5 !text-xs">
                             <option value="" disabled>Country</option>
@@ -107,7 +107,7 @@
                         </select>
 
                         <button type="button" (click)="removeLocation(i)"
-                            class="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition self-center">
+                            class="p-2 rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition self-center">
                             <i-feather name="x" style="width:14px;height:14px;"></i-feather>
                         </button>
                     </div>
@@ -116,13 +116,13 @@
 
             <!-- Categories -->
             <div class="md:col-span-2 flex flex-col gap-2">
-                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Categories</label>
+                <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Categories</label>
                 <div class="flex flex-wrap gap-2">
                     <label *ngFor="let cat of categories"
                         class="flex items-center gap-2 px-3 py-1.5 rounded-xl border cursor-pointer transition text-xs font-medium"
                         [ngClass]="selectedCategoriesId.includes(cat.id)
-              ? 'bg-red-50 border-red-200 text-red-700'
-              : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'">
+              ? 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-900 text-red-700 dark:text-red-400'
+              : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'">
                         <input formArrayName="categoryIds" type="checkbox"
                             [checked]="selectedCategoriesId.includes(cat.id)" [value]="cat.id"
                             (change)="onCheckboxChanged($event)" class="accent-red-600 w-3 h-3" />
@@ -130,7 +130,7 @@
                     </label>
                 </div>
                 <p *ngIf="updateTrainerForm.get('categoryIds')?.invalid && invalidForm"
-                    class="text-[11px] text-red-500 flex items-center gap-1">
+                    class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:10px;height:10px;"></i-feather>
                     Select at least one category
                 </p>
@@ -145,7 +145,7 @@
                     Unsaved changes
                 </span>
 
-                <span *ngIf="!hasChanges()" class="text-xs text-gray-400">
+                <span *ngIf="!hasChanges()" class="text-xs text-gray-400 dark:text-gray-500">
                     No changes made
                 </span>
             </div>
