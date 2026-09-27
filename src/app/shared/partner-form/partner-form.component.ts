@@ -125,25 +125,25 @@ export class PartnerFormComponent implements OnInit {
   charCountClass(field: string, min: number, max: number): string {
     const len = this.charCount(field);
     if (len < min) return 'text-red-500';
-    if (len <= max) return 'text-green-600';
+    if (len <= max) return 'text-green-600 dark:text-green-400';
     return 'text-orange-500';
   }
 
   /** Border/bg classes for the motivation textarea */
   motivationClasses(): Record<string, boolean> {
     return {
-      'border-red-300   focus:ring-red-400': this.isInvalid('motivation'),
-      'border-green-400 focus:ring-green-400': this.isValid('motivation'),
-      'border-gray-200  focus:ring-red-500': !this.isInvalid('motivation') && !this.isValid('motivation'),
+      'border-red-300 dark:border-red-800   focus:ring-red-400': this.isInvalid('motivation'),
+      'border-green-400 dark:border-green-700 focus:ring-green-400': this.isValid('motivation'),
+      'border-gray-200 dark:border-gray-700  focus:ring-red-500': !this.isInvalid('motivation') && !this.isValid('motivation'),
     };
   }
 
   /** Border colour for social link input wrappers */
   socialFieldClasses(field: string): Record<string, boolean> {
     return {
-      'border-red-300': this.isInvalid(field),
-      'border-green-400': this.isValid(field),
-      'border-gray-200': !this.isInvalid(field) && !this.isValid(field),
+      'border-red-300 dark:border-red-800': this.isInvalid(field),
+      'border-green-400 dark:border-green-700': this.isValid(field),
+      'border-gray-200 dark:border-gray-700': !this.isInvalid(field) && !this.isValid(field),
     };
   }
 

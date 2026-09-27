@@ -3,16 +3,16 @@
     <!-- Header -->
     <div class="flex items-start justify-between gap-3">
         <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+            <div class="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
                 <i-feather name="image" class="text-red-600" style="width:15px;height:15px;"></i-feather>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-gray-900">Update profile photo</h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">ID {{ trainer.id }}</p>
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Update profile photo</h2>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">ID {{ trainer.id }}</p>
             </div>
         </div>
         <button type="button" (click)="closeDialog()"
-            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600 shrink-0">
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 shrink-0">
             <i-feather name="x" style="width:14px;height:14px;"></i-feather>
         </button>
     </div>
@@ -21,18 +21,18 @@
 
         <!-- Photo -->
         <div class="flex flex-col gap-1.5">
-            <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Photo</label>
+            <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Photo</label>
             <div class="flex items-center gap-3">
-                <img class="h-16 w-16 object-cover object-top rounded-xl border border-gray-200 shrink-0"
+                <img class="h-16 w-16 object-cover object-top rounded-xl border border-gray-200 dark:border-gray-700 shrink-0"
                     [src]="currentPhotoSrc"
                     onerror="this.src='../../../assets/icons/user.png';" alt="Display photo" />
-                <input formControlName="photo" (change)="onImgSelected($event)" type="file" accept="image/*" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 cursor-pointer
+                <input formControlName="photo" (change)="onImgSelected($event)" type="file" accept="image/*" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 cursor-pointer
                            file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold
                            file:bg-white file:text-gray-600 file:border file:border-gray-200 file:cursor-pointer
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="{
-                            'border-red-400 bg-red-50': updateTrainerPhotoForm.get('photo')?.invalid && updateTrainerPhotoForm.get('photo')?.touched,
-                            'border-gray-200 bg-gray-50': !(updateTrainerPhotoForm.get('photo')?.invalid && updateTrainerPhotoForm.get('photo')?.touched)
+                            'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': updateTrainerPhotoForm.get('photo')?.invalid && updateTrainerPhotoForm.get('photo')?.touched,
+                            'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(updateTrainerPhotoForm.get('photo')?.invalid && updateTrainerPhotoForm.get('photo')?.touched)
                           }">
             </div>
             <p *ngIf="updateTrainerPhotoForm.get('photo')?.invalid && updateTrainerPhotoForm.get('photo')?.dirty && !updateTrainerPhotoForm.get('photo')?.errors?.['invalidSize']"
@@ -47,11 +47,11 @@
             </p>
         </div>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <div class="flex items-center justify-end gap-2">
-            <button type="button" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
-                       hover:bg-gray-50 active:scale-[0.98] transition">
+            <button type="button" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
+                       hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] transition">
                 Cancel
             </button>
             <button type="submit" (click)="submitForm()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white

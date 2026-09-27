@@ -3,30 +3,30 @@
     <!-- Icon + title -->
     <div class="flex items-start justify-between">
         <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+            <div class="w-9 h-9 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
                 <i-feather [name]="details.icon || 'alert-triangle'" class="text-red-600"
                     style="width:18px;height:18px;"></i-feather>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-gray-900">{{ details.title || (details.confirmation ? 'Are you sure?' : 'Heads up') }}</h2>
-                <p *ngIf="details.confirmation" class="text-[11px] text-gray-400 mt-0.5">This action may be irreversible</p>
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ details.title || (details.confirmation ? 'Are you sure?' : 'Heads up') }}</h2>
+                <p *ngIf="details.confirmation" class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">This action may be irreversible</p>
             </div>
         </div>
         <button (click)="closeDialog()"
-            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600">
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
             <i-feather name="x" style="width:14px;height:14px;"></i-feather>
         </button>
     </div>
 
     <!-- Message -->
-    <p class="text-sm text-gray-700 leading-relaxed bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+    <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl px-4 py-3">
         {{ details.message }}
     </p>
 
     <!-- Actions -->
     <div class="flex gap-2 justify-end">
-        <button *ngIf="details.confirmation" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
-             hover:bg-gray-50 transition">
+        <button *ngIf="details.confirmation" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
+             hover:bg-gray-50 dark:hover:bg-gray-800 transition">
             {{ details.cancelText || 'Cancel' }}
         </button>
         <button (click)="handleChangeAction()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
