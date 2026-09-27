@@ -3,22 +3,22 @@
     <!-- ── Header ─────────────────────────────────────────────────────── -->
     <div class="flex items-start justify-between gap-3">
         <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+            <div class="w-9 h-9 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
                 <i-feather [name]="isEdit ? 'edit-2' : 'plus'" class="text-red-600"
                     style="width:18px;height:18px;"></i-feather>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-gray-900">
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">
                     {{ isEdit ? 'Update equipment' : 'Add equipment' }}
                 </h2>
-                <p class="text-[11px] text-gray-400 mt-0.5">
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                     Shown on your center profile and the public equipment page
                 </p>
             </div>
         </div>
 
         <button type="button" (click)="closeDialog()"
-            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition text-gray-400 hover:text-gray-600">
+            class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
             <i-feather name="x" style="width:14px;height:14px;"></i-feather>
         </button>
     </div>
@@ -30,18 +30,18 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
 
             <div class="sm:col-span-2 flex flex-col gap-1">
-                <label class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">Name</label>
-                <input type="text" formControlName="name" placeholder="e.g. Olympic squat rack" class="px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+                <label class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Name</label>
+                <input type="text" formControlName="name" placeholder="e.g. Olympic squat rack" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                      focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
-                     transition placeholder:text-gray-400" />
+                     transition placeholder:text-gray-400 dark:placeholder:text-gray-500" />
                 <p *ngIf="invalidForm && form.get('name')?.invalid" class="text-[11px] text-red-600">
                     Name must be at least 2 characters
                 </p>
             </div>
 
             <div class="flex flex-col gap-1">
-                <label class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">Stock</label>
-                <input type="number" min="0" formControlName="stockNumber" class="px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+                <label class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Stock</label>
+                <input type="number" min="0" formControlName="stockNumber" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                      focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
                 <p *ngIf="invalidForm && form.get('stockNumber')?.invalid" class="text-[11px] text-red-600">
                     Enter a stock count
@@ -51,10 +51,10 @@
 
         <!-- Description -->
         <div class="flex flex-col gap-1">
-            <label class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">Description</label>
-            <textarea rows="3" formControlName="description" placeholder="What is it, and what is it used for?" class="px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+            <label class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Description</label>
+            <textarea rows="3" formControlName="description" placeholder="What is it, and what is it used for?" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                    focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
-                   transition placeholder:text-gray-400 resize-none"></textarea>
+                   transition placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none"></textarea>
             <p *ngIf="invalidForm && form.get('description')?.invalid" class="text-[11px] text-red-600">
                 Description must be at least 10 characters
             </p>
@@ -62,36 +62,36 @@
 
         <!-- Photo URLs -->
         <div class="flex flex-col gap-2">
-            <span class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">Photos</span>
+            <span class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Photos</span>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
                 <div class="flex flex-col gap-1">
-                    <label class="text-[11px] text-gray-500">Main image URL</label>
-                    <input type="text" formControlName="imageUrl" placeholder="https://…" class="px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+                    <label class="text-[11px] text-gray-500 dark:text-gray-400">Main image URL</label>
+                    <input type="text" formControlName="imageUrl" placeholder="https://…" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                          focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
-                         transition placeholder:text-gray-400" />
+                         transition placeholder:text-gray-400 dark:placeholder:text-gray-500" />
                 </div>
 
                 <div class="flex flex-col gap-1">
-                    <label class="text-[11px] text-gray-500">Front view URL</label>
-                    <input type="text" formControlName="frontViewUrl" placeholder="https://…" class="px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+                    <label class="text-[11px] text-gray-500 dark:text-gray-400">Front view URL</label>
+                    <input type="text" formControlName="frontViewUrl" placeholder="https://…" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                          focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
-                         transition placeholder:text-gray-400" />
+                         transition placeholder:text-gray-400 dark:placeholder:text-gray-500" />
                 </div>
 
                 <div class="flex flex-col gap-1">
-                    <label class="text-[11px] text-gray-500">Side view URL</label>
-                    <input type="text" formControlName="sideViewUrl" placeholder="https://…" class="px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+                    <label class="text-[11px] text-gray-500 dark:text-gray-400">Side view URL</label>
+                    <input type="text" formControlName="sideViewUrl" placeholder="https://…" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                          focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
-                         transition placeholder:text-gray-400" />
+                         transition placeholder:text-gray-400 dark:placeholder:text-gray-500" />
                 </div>
 
                 <div class="flex flex-col gap-1">
-                    <label class="text-[11px] text-gray-500">Rear view URL</label>
-                    <input type="text" formControlName="rearViewUrl" placeholder="https://…" class="px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+                    <label class="text-[11px] text-gray-500 dark:text-gray-400">Rear view URL</label>
+                    <input type="text" formControlName="rearViewUrl" placeholder="https://…" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                          focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
-                         transition placeholder:text-gray-400" />
+                         transition placeholder:text-gray-400 dark:placeholder:text-gray-500" />
                 </div>
             </div>
 
@@ -104,18 +104,18 @@
 
         <!-- Disciplines -->
         <div class="flex flex-col gap-1.5">
-            <span class="text-[11px] font-semibold uppercase tracking-wide text-gray-400">Discipline</span>
+            <span class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Discipline</span>
 
             <div *ngIf="categories.length > 0; else noCategories" class="flex flex-wrap gap-1.5">
                 <button *ngFor="let category of categories" type="button" (click)="toggleCategory(category.id)"
                     class="text-[11px] font-semibold px-3 py-1 rounded-full border transition" [ngClass]="isCategorySelected(category.id)
                         ? 'bg-red-600 border-red-600 text-white'
-                        : 'bg-white border-gray-200 text-gray-600 hover:border-red-200'">
+                        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-red-200 dark:hover:border-red-900'">
                     {{ category.name }}
                 </button>
             </div>
             <ng-template #noCategories>
-                <p class="text-[11px] text-gray-400">No disciplines available yet</p>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500">No disciplines available yet</p>
             </ng-template>
 
             <p *ngIf="invalidForm && selectedCategoryIds.length === 0" class="text-[11px] text-red-600">
@@ -126,8 +126,8 @@
 
     <!-- ── Actions ────────────────────────────────────────────────────── -->
     <div class="flex gap-2 justify-end">
-        <button type="button" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
-             hover:bg-gray-50 transition">
+        <button type="button" (click)="closeDialog()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
+             hover:bg-gray-50 dark:hover:bg-gray-800 transition">
             Cancel
         </button>
         <button type="button" (click)="save()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white
