@@ -139,6 +139,12 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
     return this.days.some(d => d.blocks.some(b => b.invalid || !b.startTime || !b.endTime || b.startTime >= b.endTime));
   }
 
+  /** Angular template expressions can't contain arrow functions -- this replaces
+   *  an inline `day.blocks.some(b => b.invalid)` in the template. */
+  dayHasInvalidBlock(day: DayRow): boolean {
+    return day.blocks.some(b => b.invalid);
+  }
+
   /** Turns a closed day into one default 9-5 block, or clears every block to close it. */
   toggleDay(day: DayRow): void {
     day.blocks = day.blocks.length > 0 ? [] : [this.newBlock(day)];
