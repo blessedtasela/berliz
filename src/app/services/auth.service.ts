@@ -99,11 +99,16 @@ export class AuthService {
     return this.getCurrentUserRole() === 'trainer';
   }
 
-  logout(): void {
+  /** Drops the stored tokens without navigating anywhere -- see AuthInterceptor.forceLogout for why a dead session shouldn't always yank the visitor to /login. */
+  clearTokens(): void {
     if (this.isBrowser) {
       localStorage.removeItem('token');
       localStorage.removeItem('refresh_token');
     }
+  }
+
+  logout(): void {
+    this.clearTokens();
     this.authRedirect.goToLogin();
   }
 }

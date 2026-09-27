@@ -13,6 +13,7 @@ import { catchError, filter, map, switchMap, take, timeout } from 'rxjs/operator
 import { Router } from '@angular/router';
 import { UserService } from './user.service';
 import { AuthService } from './auth.service';
+import { AuthRedirectService } from './auth-redirect.service';
 
 /**
  * Result of the single shared refresh attempt, as observed by the requests that
@@ -45,6 +46,7 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private userService: UserService,
     private authService: AuthService,
+    private authRedirect: AuthRedirectService,
     private router: Router
   ) { }
 
@@ -256,12 +258,21 @@ export class AuthInterceptor implements HttpInterceptor {
 
   /**
    * The one and only hard-logout path in the interceptor.
-   * `AuthService.logout()` clears the tokens and navigates to `/login`,
-   * carrying the page the user was on as returnUrl (via AuthRedirectService)
-   * so they land back here once they sign back in. Don't navigate again
-   * here -- a second bare `/login` would immediately overwrite that returnUrl.
+   * <p>
+   * Public pages (home, trainers, centers, services, ...) make plenty of API
+   * calls of their own, and a visitor with a stale/expired token still sitting
+   * in localStorage from a previous session will hit this path the moment any
+   * one of those calls 401s -- even though the page they're on never required
+   * being signed in. Previously this always bounced straight to /login,
+   * which made an ordinary public page LOOK like it demanded a login. Now it
+   * only redirects when the current route is actually gated (everything under
+   * /dashboard, per AuthGuard's usage); everywhere else it just drops the dead
+   * tokens and lets the public page keep rendering its public content.
    */
   private forceLogout(): void {
-    this.authService.logout();
+    this.authService.clearTokens();
+    if (this.router.url.startsWith('/dashboard')) {
+      this.authRedirect.goToLogin();
+    }
   }
 }

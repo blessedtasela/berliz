@@ -17,19 +17,27 @@ import { selectAvailabilityLoading, selectMyAvailability } from 'src/app/state/a
 
 import { genericError } from 'src/validators/form-validators.module';
 
-interface DayRow {
-  dayOfWeek: number;
-  name: string;
-  isActive: boolean;
+interface TimeBlock {
   startTime: string;
   endTime: string;
   invalid: boolean;
 }
 
+interface DayRow {
+  dayOfWeek: number;
+  name: string;
+  /** Empty = day off. Any number of non-overlapping blocks otherwise -- a split shift like 5-6am, 11am-3pm, 9pm-midnight is three blocks on the same day. */
+  blocks: TimeBlock[];
+}
+
 /**
- * Weekly schedule editor — 7 rows, one per day of week, each toggleable
- * active/inactive with a start/end time. "Save" always sends the whole week
- * at once (bulk replace-the-week, matching how the backend stores it).
+ * Weekly schedule editor — 7 rows, one per day of week. Each day can hold any
+ * number of independent time blocks (add/remove freely) rather than a single
+ * start/end pair, so a split shift doesn't need to be approximated as one
+ * contiguous window. "Save" always sends the whole week at once (bulk
+ * replace-the-week, matching how the backend stores it) -- one entry per
+ * block, so two blocks on the same day are just two entries with the same
+ * dayOfWeek.
  */
 @Component({
   selector: 'app-my-availability-editor',
@@ -80,13 +88,17 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
       .subscribe(rows => {
         if (!rows || rows.length === 0) return;
         this.days = this.buildDefaultDays().map(defaultDay => {
-          const match = rows.find(r => r.dayOfWeek === defaultDay.dayOfWeek);
-          if (!match) return defaultDay;
+          const matches = rows
+            .filter(r => r.dayOfWeek === defaultDay.dayOfWeek && r.isActive)
+            .sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
+          if (matches.length === 0) return defaultDay;
           return {
             ...defaultDay,
-            isActive: !!match.isActive,
-            startTime: (match.startTime || defaultDay.startTime).slice(0, 5),
-            endTime: (match.endTime || defaultDay.endTime).slice(0, 5),
+            blocks: matches.map(r => ({
+              startTime: (r.startTime || '09:00').slice(0, 5),
+              endTime: (r.endTime || '17:00').slice(0, 5),
+              invalid: false,
+            })),
           };
         });
       });
@@ -115,47 +127,84 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
     return DAY_NAMES_SHORT.map((name, dayOfWeek) => ({
       dayOfWeek,
       name,
-      isActive: false,
-      startTime: '09:00',
-      endTime: '17:00',
-      invalid: false,
+      blocks: [],
     }));
   }
 
-  toggleDay(day: DayRow): void {
-    day.isActive = !day.isActive;
-    day.invalid = false;
+  get activeCount(): number {
+    return this.days.filter(d => d.blocks.length > 0).length;
   }
 
   get hasErrors(): boolean {
-    return this.days.some(d => d.isActive && d.startTime >= d.endTime);
+    return this.days.some(d => d.blocks.some(b => b.invalid || !b.startTime || !b.endTime || b.startTime >= b.endTime));
   }
 
-  get activeCount(): number {
-    return this.days.filter(d => d.isActive).length;
+  /** Turns a closed day into one default 9-5 block, or clears every block to close it. */
+  toggleDay(day: DayRow): void {
+    day.blocks = day.blocks.length > 0 ? [] : [this.newBlock(day)];
+  }
+
+  /** Defaults the new block to start right where the day's last block ends (a one-hour block), so adding a second block for a split shift doesn't require retyping a start time that's obviously wrong. The very first block for a day defaults to a plain 9-5. */
+  private newBlock(day: DayRow): TimeBlock {
+    const last = day.blocks[day.blocks.length - 1];
+    if (!last) return { startTime: '09:00', endTime: '17:00', invalid: false };
+
+    const startHour = Math.min(23, parseInt(last.endTime.slice(0, 2), 10));
+    const endHour = Math.min(23, startHour + 1);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return { startTime: `${pad(startHour)}:00`, endTime: `${pad(endHour)}:00`, invalid: false };
+  }
+
+  addBlock(day: DayRow): void {
+    day.blocks.push(this.newBlock(day));
+  }
+
+  removeBlock(day: DayRow, index: number): void {
+    day.blocks.splice(index, 1);
+  }
+
+  clearBlockError(block: TimeBlock): void {
+    block.invalid = false;
+  }
+
+  /** Sorts a day's blocks by start time and flags any two that overlap (touching back-to-back, e.g. 9-12 then 12-15, is fine). */
+  private validateDay(day: DayRow): boolean {
+    let ok = true;
+    for (const b of day.blocks) {
+      b.invalid = !b.startTime || !b.endTime || b.startTime >= b.endTime;
+      if (b.invalid) ok = false;
+    }
+    const sorted = [...day.blocks].filter(b => !b.invalid).sort((a, b) => a.startTime.localeCompare(b.startTime));
+    for (let i = 1; i < sorted.length; i++) {
+      if (sorted[i].startTime < sorted[i - 1].endTime) {
+        sorted[i].invalid = true;
+        sorted[i - 1].invalid = true;
+        ok = false;
+      }
+    }
+    return ok;
   }
 
   save(): void {
     if (this.saving) return;
 
     let hasError = false;
-    for (const d of this.days) {
-      d.invalid = d.isActive && (!d.startTime || !d.endTime || d.startTime >= d.endTime);
-      if (d.invalid) hasError = true;
+    for (const day of this.days) {
+      if (!this.validateDay(day)) hasError = true;
     }
     if (hasError) {
-      this.snackBar.openSnackBar('Fix the highlighted days — start time must be before end time.', 'error');
+      this.snackBar.openSnackBar('Fix the highlighted time blocks — each needs a start before its end, and blocks on the same day can\'t overlap.', 'error');
       return;
     }
 
     this.saving = true;
     this.store.dispatch(setMyAvailability({
-      days: this.days.map(d => ({
-        dayOfWeek: d.dayOfWeek,
-        isActive: d.isActive,
-        startTime: d.startTime,
-        endTime: d.endTime,
-      }))
+      days: this.days.flatMap(day => day.blocks.map(b => ({
+        dayOfWeek: day.dayOfWeek,
+        isActive: true,
+        startTime: b.startTime,
+        endTime: b.endTime,
+      })))
     }));
   }
 
