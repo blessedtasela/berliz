@@ -1,14 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UserMainComponent } from './user-main/user-main.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { UserProfileSettingsComponent } from './user-profile-settings/user-profile-settings.component';
-import { UserSettingsComponent } from './user-settings/user-settings.component';
-import { UserSecurityComponent } from './user-security/user-security.component';
 import { UserProgressComponent } from './user-progress/user-progress.component';
-import { UserProfileCardComponent } from './user-profile-card/user-profile-card.component';
 import { UserAvatarComponent } from './user-avatar/user-avatar.component';
-import { UserInfoComponent } from './user-info/user-info.component';
 import { UserRouteComponent } from './user-route/user-route.component';
 import { RouterModule } from '@angular/router';
 import { UserProfilePhotoCropperComponent } from './user-profile-photo-cropper/user-profile-photo-cropper.component';
@@ -32,15 +27,10 @@ import { StoreModule } from '@ngrx/store';
 
 @NgModule({
   declarations: [
-    UserMainComponent,
     UserProfileComponent,
     UserProfileSettingsComponent,
-    UserSettingsComponent,
-    UserSecurityComponent,
     UserProgressComponent,
-    UserProfileCardComponent,
     UserAvatarComponent,
-    UserInfoComponent,
     UserRouteComponent,
     UserProfilePhotoCropperComponent,
     UserProfileBannerComponent,

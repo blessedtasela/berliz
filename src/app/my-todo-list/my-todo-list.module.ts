@@ -4,7 +4,6 @@ import { MyTodoListFormComponent } from './my-todo-list-form/my-todo-list-form.c
 import { MyTodoListsComponent } from './my-todo-lists/my-todo-lists.component';
 import { MyTodoListEmptyStateComponent } from './my-todo-list-empty-state/my-todo-list-empty-state.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SearchModule } from '../shared/search/search.module';
 import { IconsModule } from '../icons/icons.module';
 import { FeatherModule } from 'angular-feather';
 import { MyTodoListItemComponent } from './my-todo-list-item/my-todo-list-item.component';;
@@ -43,8 +42,7 @@ import { CommonModule } from '@angular/common';
     IconsModule,
     FeatherModule,
     FormsModule,
-    DialogModule,
-    SearchModule
+    DialogModule
   ]
 })
 export class MyTodoListModule { }

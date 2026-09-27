@@ -7,8 +7,6 @@ import { IconsModule } from '../icons/icons.module';
 import { PromptModalComponent } from './prompt-modal/prompt-modal.component';
 import { TrainerFormModalComponent } from './trainer-form-modal/trainer-form-modal.component';
 import { CenterFormModalComponent } from './center-form-modal/center-form-modal.component';
-import { DriverFormModalComponent } from './driver-form-modal/driver-form-modal.component';
-import { StoreFormModalComponent } from './store-form-modal/store-form-modal.component';
 import { ViewCvModalComponent } from './view-cv-modal/view-cv-modal.component';
 import { ViewCertificateModalComponent } from './view-certificate-modal/view-certificate-modal.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
@@ -23,10 +21,6 @@ import { TimeAgoPipe } from './pipes/time-ago.pipe';
 import { StrapiUrlPipe } from './pipes/strapi-url.pipe';
 import { TodoDetailsModalComponent } from './todo-details-modal/todo-details-modal.component';
 import { UpdateEmailModalComponent } from './update-email-modal/update-email-modal.component';
-import { UpdateUserModalComponent } from './update-user-modal/update-user-modal.component';
-import { ChangePasswordModalComponent } from './change-password-modal/change-password-modal.component';
-import { ResetPasswordModalComponent } from './reset-password-modal/reset-password-modal.component';
-import { ForgotPasswordModalComponent } from './forgot-password-modal/forgot-password-modal.component';
 import { RenewSubscriptionModalComponent } from './renew-subscription-modal/renew-subscription-modal.component';
 import { SearchPanelComponent } from './search-panel/search-panel.component';
 import { SkeletonLoaderComponent } from './skeleton-loader/skeleton-loader.component';
@@ -44,8 +38,6 @@ import { ClickablePhotoDirective } from './photo-lightbox/clickable-photo.direct
     PromptModalComponent,
     TrainerFormModalComponent,
     CenterFormModalComponent,
-    DriverFormModalComponent,
-    StoreFormModalComponent,
     ViewCvModalComponent,
     ViewCertificateModalComponent,
     UpdateTrainerPhotoModalComponent,
@@ -56,10 +48,6 @@ import { ClickablePhotoDirective } from './photo-lightbox/clickable-photo.direct
     TimeAgoPipe,
     TodoDetailsModalComponent,
     UpdateEmailModalComponent,
-    UpdateUserModalComponent,
-    ChangePasswordModalComponent,
-    ResetPasswordModalComponent,
-    ForgotPasswordModalComponent,
     RenewSubscriptionModalComponent,
     SearchPanelComponent,
     SkeletonLoaderComponent,

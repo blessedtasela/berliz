@@ -6,7 +6,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
 import { NavbarModule } from '../navbar/navbar.module';
-import { SearchModule } from '../shared/search/search.module';
 import { NotificationMainComponent } from './notification-main/notification-main.component';
 import { NotificationListComponent } from './notification-list/notification-list.component';
 import { NotificationEmptyStateComponent } from './notification-empty-state/notification-empty-state.component';
@@ -40,7 +39,6 @@ import { StoreModule } from '@ngrx/store';
     ReactiveFormsModule,
     SharedModule,
     FeatherModule,
-    SearchModule,
   ]
 })
 export class MyNotificationsModule { }
