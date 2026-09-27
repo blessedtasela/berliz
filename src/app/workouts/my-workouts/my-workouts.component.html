@@ -4,32 +4,32 @@
   <div class="flex items-center gap-2">
     <button type="button" (click)="setTab('mine')" class="rounded-xl px-4 py-2 text-xs font-semibold transition" [ngClass]="activeTab === 'mine'
         ? 'bg-red-600 text-white'
-        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+        : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'">
       My workouts
     </button>
 
     <button type="button" (click)="setTab('templates')" class="rounded-xl px-4 py-2 text-xs font-semibold transition"
       [ngClass]="activeTab === 'templates'
         ? 'bg-red-600 text-white'
-        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+        : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'">
       Templates
     </button>
   </div>
 
   <!-- ═══════════════════ HEADER ═══════════════════ -->
-  <div class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-4">
+  <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-4">
 
     <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
       <div class="min-w-0 w-full sm:w-auto">
-        <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2 flex-wrap">
+        <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2 flex-wrap">
           <i-feather [name]="activeTab === 'templates' ? 'layers' : 'zap'" style="width:14px;height:14px;"
             class="text-red-600 shrink-0"></i-feather>
           {{ activeTab === 'templates' ? 'Workout templates' : 'My workouts' }}
-          <span class="text-[10px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+          <span class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">
             {{ activeTab === 'templates' ? templates.length : myWorkouts.length }}
           </span>
         </h2>
-        <p class="text-[11px] text-gray-400 mt-0.5 break-words">
+        <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 break-words">
           {{ activeTab === 'templates'
             ? 'Ready-made workouts curated by Berliz. Add any of them to your own workouts.'
             : 'Workouts you\'ve built. Edit them, or assign them to be performed.' }}
@@ -39,16 +39,16 @@
       <div class="flex items-center gap-2 w-full sm:w-auto sm:shrink-0">
         <app-refresh-button [loading]="loading" (refresh)="refresh()"></app-refresh-button>
         <a routerLink="/dashboard/workouts/history"
-          class="relative flex-1 min-w-0 sm:flex-none sm:w-36 justify-center px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition flex items-center gap-2">
+          class="relative flex-1 min-w-0 sm:flex-none sm:w-36 justify-center px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition flex items-center gap-2">
           <i-feather name="trending-up" style="width:13px;height:13px;"></i-feather>
           History
           <span *ngIf="whatsNew.isNew('workout-history')"
-            class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white leading-none">
+            class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white dark:border-gray-900 leading-none">
             NEW
           </span>
         </a>
         <a routerLink="/dashboard/my-assigned-workouts"
-          class="flex-1 min-w-0 sm:flex-none sm:w-36 justify-center px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition flex items-center gap-2">
+          class="flex-1 min-w-0 sm:flex-none sm:w-36 justify-center px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition flex items-center gap-2">
           <i-feather name="inbox" style="width:13px;height:13px;"></i-feather>
           Assigned to me
         </a>
@@ -60,22 +60,22 @@
       </div>
     </div>
 
-    <div class="border-t border-gray-100"></div>
+    <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
     <!-- Search -->
     <div class="relative max-w-sm">
       <i-feather name="search" style="width:13px;height:13px;"
-        class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i-feather>
+        class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i-feather>
       <input type="text" [(ngModel)]="searchTerm"
-        [placeholder]="activeTab === 'templates' ? 'Search templates...' : 'Search your workouts...'" class="w-full pl-8 pr-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-900 text-xs
+        [placeholder]="activeTab === 'templates' ? 'Search templates...' : 'Search your workouts...'" class="w-full pl-8 pr-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
-               transition placeholder:text-gray-400" />
+               transition placeholder:text-gray-400 dark:placeholder:text-gray-500" />
     </div>
 
     <!-- Centers cannot assign yet -->
     <div *ngIf="isCenter && activeTab === 'mine'"
-      class="text-[11px] text-gray-500 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 flex items-center gap-1.5">
-      <i-feather name="info" style="width:12px;height:12px;" class="text-gray-400"></i-feather>
+      class="text-[11px] text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 flex items-center gap-1.5">
+      <i-feather name="info" style="width:12px;height:12px;" class="text-gray-400 dark:text-gray-500"></i-feather>
       Assigning workouts to center members isn't available yet.
     </div>
   </div>
@@ -87,28 +87,28 @@
   <div *ngIf="filteredWorkouts.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
 
     <div *ngFor="let workout of filteredWorkouts; trackBy: trackByWorkoutId"
-      class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-3 hover:border-red-200 transition">
+      class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-3 hover:border-red-200 dark:hover:border-red-900 transition">
 
       <!-- Card header -->
       <a [routerLink]="['/dashboard/workouts', workout.id]" class="flex items-start justify-between gap-2 hover:opacity-80 transition">
         <div class="min-w-0">
-          <h3 class="text-xs font-bold text-gray-900 truncate">{{ workout.name }}</h3>
-          <p class="text-[11px] text-gray-400 mt-0.5 line-clamp-2">
+          <h3 class="text-xs font-bold text-gray-900 dark:text-gray-100 truncate">{{ workout.name }}</h3>
+          <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 line-clamp-2">
             {{ workout.description || 'No description' }}
           </p>
         </div>
         <span
-          class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full shrink-0">
+          class="text-[10px] font-semibold text-red-600 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 px-2 py-0.5 rounded-full shrink-0">
           {{ exerciseCount(workout) }} ex
         </span>
       </a>
 
-      <div class="border-t border-gray-100"></div>
+      <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
       <!-- Exercises -->
       <div class="flex flex-col gap-1">
-        <span class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Exercises</span>
-        <p class="text-[11px] text-gray-600 leading-relaxed line-clamp-3">
+        <span class="text-[11px] uppercase tracking-wide text-gray-400 dark:text-gray-500 font-semibold">Exercises</span>
+        <p class="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-3">
           {{ exerciseNames(workout) || 'No exercises yet' }}
         </p>
       </div>
@@ -121,7 +121,7 @@
 
       <!-- Assignments this trainer made for this workout -->
       <div *ngIf="isTrainer && assignmentsFor(workout.id).length > 0" class="flex flex-col gap-1">
-        <span class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Assigned</span>
+        <span class="text-[11px] uppercase tracking-wide text-gray-400 dark:text-gray-500 font-semibold">Assigned</span>
         <div class="flex flex-wrap gap-1.5">
           <span *ngFor="let assignment of assignmentsFor(workout.id)"
             class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [ngClass]="statusClass(assignment.status)">
@@ -130,18 +130,18 @@
         </div>
       </div>
 
-      <div class="border-t border-gray-100 mt-auto"></div>
+      <div class="border-t border-gray-100 dark:border-gray-800 mt-auto"></div>
 
       <!-- Actions -->
       <div class="flex items-center justify-between gap-2">
-        <button type="button" (click)="editWorkout(workout)" class="px-3 py-1.5 rounded-xl text-[11px] font-semibold border border-gray-200
-                 text-gray-600 hover:bg-gray-50 transition flex items-center gap-1.5">
+        <button type="button" (click)="editWorkout(workout)" class="px-3 py-1.5 rounded-xl text-[11px] font-semibold border border-gray-200 dark:border-gray-700
+                 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition flex items-center gap-1.5">
           <i-feather name="edit-2" style="width:11px;height:11px;"></i-feather>
           Edit
         </button>
 
         <div class="flex items-center gap-2">
-          <button type="button" (click)="deleteWorkout(workout)" class="w-7 h-7 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50
+          <button type="button" (click)="deleteWorkout(workout)" class="w-7 h-7 rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20
                    flex items-center justify-center transition">
             <i-feather name="trash-2" style="width:12px;height:12px;"></i-feather>
           </button>
@@ -158,14 +158,14 @@
 
   <!-- ═══════════════════ EMPTY STATE ═══════════════════ -->
   <div *ngIf="filteredWorkouts.length === 0"
-    class="bg-white rounded-2xl border border-gray-200 p-10 flex flex-col items-center justify-center gap-3 text-center">
-    <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
-      <i-feather name="zap" style="width:22px;height:22px;" class="text-gray-400"></i-feather>
+    class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-10 flex flex-col items-center justify-center gap-3 text-center">
+    <div class="w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+      <i-feather name="zap" style="width:22px;height:22px;" class="text-gray-400 dark:text-gray-500"></i-feather>
     </div>
-    <p class="text-sm font-bold text-gray-900">
+    <p class="text-sm font-bold text-gray-900 dark:text-gray-100">
       {{ searchTerm ? 'No workouts match your search' : 'No workouts yet' }}
     </p>
-    <p class="text-[11px] text-gray-400 max-w-xs">
+    <p class="text-[11px] text-gray-400 dark:text-gray-500 max-w-xs">
       {{ searchTerm
         ? 'Try a different search term.'
         : 'Build your first workout by dragging exercises into a session.' }}
@@ -185,38 +185,38 @@
     <div *ngIf="filteredTemplates.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
 
       <div *ngFor="let template of filteredTemplates; trackBy: trackByWorkoutId"
-        class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-3 hover:border-red-200 transition">
+        class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-3 hover:border-red-200 dark:hover:border-red-900 transition">
 
         <!-- Card header -->
         <a [routerLink]="['/dashboard/workouts', template.id]" class="flex items-start justify-between gap-2 hover:opacity-80 transition">
           <div class="min-w-0">
-            <h3 class="text-xs font-bold text-gray-900 truncate">{{ template.name }}</h3>
-            <p class="text-[11px] text-gray-400 mt-0.5 line-clamp-2">
+            <h3 class="text-xs font-bold text-gray-900 dark:text-gray-100 truncate">{{ template.name }}</h3>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 line-clamp-2">
               {{ template.description || 'No description' }}
             </p>
           </div>
           <span
-            class="text-[10px] font-semibold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-full shrink-0">
+            class="text-[10px] font-semibold text-red-600 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 px-2 py-0.5 rounded-full shrink-0">
             {{ exerciseCount(template) }} ex
           </span>
         </a>
 
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
         <!-- Exercise chips -->
         <div class="flex flex-col gap-1.5">
-          <span class="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">Includes</span>
+          <span class="text-[11px] uppercase tracking-wide text-gray-400 dark:text-gray-500 font-semibold">Includes</span>
           <div *ngIf="exerciseChips(template).length > 0" class="flex flex-wrap gap-1.5">
             <span *ngFor="let name of exerciseChips(template)"
-              class="text-[10px] font-semibold text-gray-600 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded-full">
+              class="text-[10px] font-semibold text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-0.5 rounded-full">
               {{ name }}
             </span>
             <span *ngIf="extraExerciseCount(template) > 0"
-              class="text-[10px] font-semibold text-gray-400 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded-full">
+              class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-0.5 rounded-full">
               +{{ extraExerciseCount(template) }} more
             </span>
           </div>
-          <p *ngIf="exerciseChips(template).length === 0" class="text-[11px] text-gray-400">
+          <p *ngIf="exerciseChips(template).length === 0" class="text-[11px] text-gray-400 dark:text-gray-500">
             No exercises yet
           </p>
         </div>
@@ -227,11 +227,11 @@
           View step-by-step details
         </a>
 
-        <div class="border-t border-gray-100 mt-auto"></div>
+        <div class="border-t border-gray-100 dark:border-gray-800 mt-auto"></div>
 
         <!-- Actions -->
         <div class="flex items-center justify-between gap-2">
-          <span class="text-[10px] font-semibold text-gray-400 flex items-center gap-1.5">
+          <span class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 flex items-center gap-1.5">
             <i-feather name="globe" style="width:11px;height:11px;"></i-feather>
             Berliz template
           </span>
@@ -252,14 +252,14 @@
 
     <!-- ═══════════════════ EMPTY STATE ═══════════════════ -->
     <div *ngIf="filteredTemplates.length === 0"
-      class="bg-white rounded-2xl border border-gray-200 p-10 flex flex-col items-center justify-center gap-3 text-center">
-      <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
-        <i-feather name="layers" style="width:22px;height:22px;" class="text-gray-400"></i-feather>
+      class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-10 flex flex-col items-center justify-center gap-3 text-center">
+      <div class="w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+        <i-feather name="layers" style="width:22px;height:22px;" class="text-gray-400 dark:text-gray-500"></i-feather>
       </div>
-      <p class="text-sm font-bold text-gray-900">
+      <p class="text-sm font-bold text-gray-900 dark:text-gray-100">
         {{ searchTerm ? 'No templates match your search' : 'No templates yet' }}
       </p>
-      <p class="text-[11px] text-gray-400 max-w-xs">
+      <p class="text-[11px] text-gray-400 dark:text-gray-500 max-w-xs">
         {{ searchTerm
           ? 'Try a different search term.'
           : 'Check back soon — Berliz is putting together ready-made workouts you can add in one tap.' }}

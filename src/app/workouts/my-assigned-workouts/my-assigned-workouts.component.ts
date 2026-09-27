@@ -87,9 +87,9 @@ export class MyAssignedWorkoutsComponent implements OnInit, OnDestroy {
 
   statusClass(status: string): string {
     switch (this.normalized(status)) {
-      case 'COMPLETED': return 'bg-green-50 text-green-700 border-green-100';
-      case 'IN_PROGRESS': return 'bg-orange-50 text-orange-600 border-orange-100';
-      default: return 'bg-gray-50 text-gray-500 border-gray-200';
+      case 'COMPLETED': return 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-green-100 dark:border-green-900';
+      case 'IN_PROGRESS': return 'bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 border-orange-100 dark:border-orange-900';
+      default: return 'bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700';
     }
   }
 

@@ -112,10 +112,10 @@ export class ExerciseProgressModalComponent implements OnInit {
 
   deltaClass(point: ExerciseProgressPoint): string {
     const delta = this.weightDelta(point);
-    if (delta == null) return 'text-gray-400 bg-gray-50 border-gray-200';
-    if (delta > 0) return 'text-green-700 bg-green-50 border-green-100';
-    if (delta < 0) return 'text-amber-700 bg-amber-50 border-amber-100';
-    return 'text-gray-500 bg-gray-50 border-gray-200';
+    if (delta == null) return 'text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700';
+    if (delta > 0) return 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border-green-100 dark:border-green-900';
+    if (delta < 0) return 'text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900';
+    return 'text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700';
   }
 
   setsSummary(point: ExerciseProgressPoint): string {
