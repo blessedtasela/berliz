@@ -10,7 +10,6 @@ import { FeatherModule } from 'angular-feather';
 import { IconsModule } from '../icons/icons.module';
 import { FooterModule } from '../footer/footer.module';
 import { NavbarModule } from '../navbar/navbar.module';
-import { SearchModule } from '../shared/search/search.module';
 import { RouterModule } from '@angular/router';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
@@ -32,7 +31,6 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
     FooterModule,
     FormsModule,
     ReactiveFormsModule,
-    SearchModule,
     FeatherModule,
     RouterModule
   ]

@@ -72,7 +72,7 @@
                 Split shift — {{ day.blocks.length }} separate time blocks on {{ day.name }}.
             </p>
 
-            <p *ngIf="day.blocks.some(b => b.invalid)" class="text-red-500 text-[11px] flex items-center gap-1 mt-2 ml-12">
+            <p *ngIf="dayHasInvalidBlock(day)" class="text-red-500 text-[11px] flex items-center gap-1 mt-2 ml-12">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
                 Each block needs a start before its end, and blocks can't overlap
             </p>

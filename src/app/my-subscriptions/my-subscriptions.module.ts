@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MySubscriptionsComponent } from './my-subscriptions/my-subscriptions.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
@@ -27,7 +26,6 @@ import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
-    MySubscriptionsComponent,
     MySubscriptionDetailModalComponent,
     SubscriptionFormComponent,
     MySubscriptionsMainComponent,
