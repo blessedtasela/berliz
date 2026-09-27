@@ -15,6 +15,7 @@ import { Subscription, combineLatest, take } from 'rxjs';
 
 import { LoginHistoryEntry, LoginStats } from 'src/app/models/analytics.interface';
 import { AuthService } from 'src/app/services/auth.service';
+import { ThemeService } from 'src/app/services/theme.service';
 import { loadLoginStats, loadMyLoginHistory } from 'src/app/state/analytics/analytics.actions';
 import {
   selectAnalyticsLoading,
@@ -74,9 +75,11 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
 
   private static readonly DAYS = 30;
 
+  // Near-black rgba (17,24,39) reads fine on a light card but nearly
+  // disappears on a dark one -- a mid-gray works as a legend swatch either way.
   private static readonly DEVICE_META: { key: string; label: string; color: string }[] = [
     { key: 'desktop', label: 'Desktop', color: 'rgba(220,38,38,0.85)' },
-    { key: 'mobile', label: 'Mobile', color: 'rgba(17,24,39,0.75)' },
+    { key: 'mobile', label: 'Mobile', color: 'rgba(107,114,128,0.85)' },
     { key: 'tablet', label: 'Tablet', color: 'rgba(234,179,8,0.85)' },
     { key: 'unknown', label: 'Unknown', color: 'rgba(156,163,175,0.6)' }
   ];
@@ -88,19 +91,24 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
    */
   private static readonly PLATFORM_META: { key: string; label: string; color: string }[] = [
     { key: 'web', label: 'Web', color: 'rgba(220,38,38,0.85)' },
-    { key: 'ios', label: 'iOS', color: 'rgba(17,24,39,0.75)' },
+    { key: 'ios', label: 'iOS', color: 'rgba(107,114,128,0.85)' },
     { key: 'android', label: 'Android', color: 'rgba(34,197,94,0.8)' },
     { key: 'unknown', label: 'Unknown', color: 'rgba(156,163,175,0.6)' }
   ];
 
   constructor(
     private store: Store,
-    private auth: AuthService
+    private auth: AuthService,
+    private themeService: ThemeService
   ) { }
 
   ngOnInit() {
     this.isAdminView = this.auth.isAdmin();
     this.scopeLabel = this.isAdminView ? 'All users' : 'You';
+
+    this.subscriptions.push(
+      this.themeService.isDark$.subscribe(() => this.applyChartColors())
+    );
 
     this.subscriptions.push(
       combineLatest([
@@ -275,6 +283,28 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
       .toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   }
 
+  /** Muted tick/grid colors, tuned for whichever theme is currently active. */
+  private get tickColor(): string {
+    return this.themeService.isDark ? '#6b7280' : '#9ca3af';
+  }
+
+  private get gridColor(): string {
+    return this.themeService.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)';
+  }
+
+  /** Re-applies tick/grid colors to an already-rendered chart on theme toggle —
+   *  a plain options mutation + update(), no need to tear down and recreate. */
+  private applyChartColors(): void {
+    if (!this.chart) return;
+    const scales = this.chart.options.scales;
+    if (scales?.['x']) (scales['x'] as any).ticks.color = this.tickColor;
+    if (scales?.['y']) {
+      (scales['y'] as any).ticks.color = this.tickColor;
+      (scales['y'] as any).grid.color = this.gridColor;
+    }
+    this.chart.update();
+  }
+
   private renderChart(labels: string[], values: number[]) {
     if (this.chart) {
       this.chart.data.labels = labels;
@@ -322,7 +352,7 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
             border: { display: false },
             ticks: {
               font: { size: 11 },
-              color: '#9ca3af',
+              color: this.tickColor,
               maxRotation: 0,
               autoSkip: true,
               maxTicksLimit: 6
@@ -331,8 +361,8 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
           y: {
             beginAtZero: true,
             border: { display: false },
-            grid: { color: 'rgba(0,0,0,0.04)' },
-            ticks: { font: { size: 11 }, color: '#9ca3af', stepSize: 1, precision: 0 }
+            grid: { color: this.gridColor },
+            ticks: { font: { size: 11 }, color: this.tickColor, stepSize: 1, precision: 0 }
           }
         }
       }
