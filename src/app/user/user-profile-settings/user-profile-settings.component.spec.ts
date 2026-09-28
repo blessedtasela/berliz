@@ -15,7 +15,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 import { BlockService } from 'src/app/services/block.service';
 import { WebAuthnService } from 'src/app/services/webauthn.service';
-import { updateMessagePopupEnabled } from 'src/app/state/user-profile/user-profile.actions';
+import { updateMessagePopupEnabled, updateEmailNotificationPreferences } from 'src/app/state/user-profile/user-profile.actions';
 
 describe('UserProfileSettingsComponent', () => {
   let component: UserProfileSettingsComponent;
@@ -76,5 +76,41 @@ describe('UserProfileSettingsComponent', () => {
     expect(store.dispatch).toHaveBeenCalledWith(
       updateMessagePopupEnabled({ messagePopupEnabled: !component.messagePopupEnabled })
     );
+  });
+
+  it('emailNotifySocial defaults to off, unlike the other three email categories', () => {
+    expect(component.emailNotifySocial).toBeFalse();
+    expect(component.emailNotifyMessages).toBeTrue();
+    expect(component.emailNotifyBookings).toBeTrue();
+    expect(component.emailNotifyAccount).toBeTrue();
+  });
+
+  it('toggleEmailNotifySocial dispatches updateEmailNotificationPreferences with the flipped value', () => {
+    (store.dispatch as jasmine.Spy).calls.reset();
+
+    component.toggleEmailNotifySocial();
+
+    expect(store.dispatch).toHaveBeenCalledWith(
+      updateEmailNotificationPreferences({ preferences: { emailNotifySocial: true } })
+    );
+  });
+
+  it('allEmailNotificationsEnabled is false until social is also turned on', () => {
+    expect(component.allEmailNotificationsEnabled).toBeFalse();
+  });
+
+  it('setAllEmailNotifications(true) dispatches all four categories, including social', () => {
+    (store.dispatch as jasmine.Spy).calls.reset();
+
+    component.setAllEmailNotifications(true);
+
+    expect(store.dispatch).toHaveBeenCalledWith(updateEmailNotificationPreferences({
+      preferences: {
+        emailNotifyMessages: true,
+        emailNotifyBookings: true,
+        emailNotifyAccount: true,
+        emailNotifySocial: true,
+      }
+    }));
   });
 });

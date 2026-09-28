@@ -93,6 +93,7 @@ export interface EmailNotificationPreferences {
   emailNotifyMessages?: boolean;
   emailNotifyBookings?: boolean;
   emailNotifyAccount?: boolean;
+  emailNotifySocial?: boolean;
 }
 
 export const updateEmailNotificationPreferences = createAction(

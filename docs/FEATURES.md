@@ -112,6 +112,8 @@ that ships a feature — add the row under the right domain, and log it under
 | Notification bell + dropdown, DB-backed | ✅ | |
 | Live desktop push while tab open | ✅ | Per-user STOMP queue |
 | Categories — messages, comments, mentions, posts & feed activity | ✅ | |
+| Notification deep-linking | ✅ | Every notification carries an `entityType`/`entityId` pair; clicking it in the bell/My Notifications routes straight to the thing it's about (a conversation, a booking, a post's comment thread, ...) instead of just showing text — `notification-entity-link.util.ts` |
+| Email notifications, per-category opt-out/opt-in, with the same deep link | ✅ | Messages/bookings/account-&-partnership default ON; likes-&-comments on your own posts ("social") defaults OFF since it's by far the highest-frequency category — all four toggle independently in Settings ("Email notifications" card, with Allow-all/Stop-all shortcuts). One choke point, `NotificationListener`, decides per notification whether to also email it; the email's button reuses the exact same `entityType`/`entityId` deep link the in-app notification carries (`EmailDeepLinkUtil`, mirroring the frontend's own routing table) so it lands on the actual conversation/booking/post, not just the dashboard home. Likes on a post or comment didn't notify anyone at all before this — `PostServiceImplement`/`CommentServiceImplement` now publish a notification (in-app + push + email) the same way comments already did |
 | Newsletter subscribe / status | ✅ | |
 
 ## 8. Planned — competitive differentiators
@@ -177,6 +179,27 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Deep-linked notification emails, and a new like/comment email category
+
+- **Notification emails now deep-link.** `sendGenericNotificationMail`'s CTA button used to
+  always point at the bare dashboard home; it now reuses the same `entityType`/`entityId`
+  pair the in-app notification bell already carries to build a real link — a message email
+  opens that conversation, a booking email opens My Bookings, a testimonial email opens that
+  testimonial, etc. New `EmailDeepLinkUtil` (backend) mirrors the frontend's own
+  `notification-entity-link.util.ts` routing table so the two stay in step.
+- **New "Likes & comments" email category.** Reactions and comments on your own posts can now
+  also email you, same as messages/bookings/account changes already could — but this one
+  defaults OFF (opt-in), not on, since it's by far the highest-frequency category; toggle it
+  in Settings → Email notifications, including the existing Allow-all/Stop-all shortcuts.
+- **Likes now notify at all.** `PostServiceImplement.toggleLike` and
+  `CommentServiceImplement.toggleCommentLike` never published a notification of any kind
+  before this — the post/comment author found out about a like only by noticing the count
+  change. Both now publish the same `NotificationEvent` comments already do (in-app bell +
+  DB row + mobile push + the new opt-in email), skipping a self-like or a blocked
+  relationship.
+- Documented the notification bell's own entity-type deep-linking in §7 for the first time —
+  it shipped earlier this session but was never added to this file.
 
 ### Unreleased — Trainer/center subscription-tier perks (search boost, Featured badge, capacity)
 
