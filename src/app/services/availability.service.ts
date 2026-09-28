@@ -81,4 +81,16 @@ export class AvailabilityService {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     });
   }
+
+  /** The currently authenticated trainer/center's own slot-length override — null means "using the platform default". */
+  getMySlotDuration() {
+    return this.httpClient.get<ApiResponse<number | null>>(this.url + "/availability/slotDuration");
+  }
+
+  /** minutes null resets to the platform default. Returns the resolved EFFECTIVE value. */
+  setMySlotDuration(minutes: number | null) {
+    return this.httpClient.put<ApiResponse<number>>(this.url + "/availability/slotDuration", { slotDurationMinutes: minutes }, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
 }

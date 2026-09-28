@@ -10,6 +10,7 @@ import { SavedService } from 'src/app/services/saved.service';
 import { WorkoutService } from 'src/app/services/workout.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
+import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 /**
  * Bookmarked posts and workout templates — `/dashboard/saved`. Used to be a
@@ -28,6 +29,19 @@ export class SavedPageComponent implements OnInit {
   workouts: WorkoutResponse[] = [];
   loading = true;
   cloningId: number | null = null;
+
+  /**
+   * Profile photos are stored as bare base64, never as a Strapi media path --
+   * they must go through photoDataUri, not the strapiUrl pipe (see its own
+   * doc comment: "Does NOT apply to user profile photos"). Piping a bare
+   * base64 string through strapiUrl treated it as a relative Strapi path and
+   * produced a garbage 404 URL, so the <img> rendered but never showed
+   * anything. Matches the pattern dashboard-timeline already uses.
+   */
+  private readonly authorPhotoUri = memoizePhotoUriByKey();
+  authorPhotoSrc(post: PostResponse): string | null {
+    return this.authorPhotoUri(post.id, post.authorPhoto);
+  }
 
   constructor(
     private savedService: SavedService,

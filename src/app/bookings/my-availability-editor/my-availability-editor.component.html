@@ -135,6 +135,49 @@
             </div>
         </div>
 
+        <!-- ═══════════ SESSION LENGTH (slot duration) ═══════════
+             How long one bookable slot is -- per-provider override of the
+             platform default, see AvailabilityService.resolveSlotDurationMinutes. -->
+        <div class="rounded-xl border border-gray-200 bg-gray-50 p-3.5 flex flex-col gap-3 mt-1">
+            <div>
+                <h3 class="text-xs font-bold text-gray-900">Session length</h3>
+                <p class="text-[11px] text-gray-400 mt-0.5">
+                    How long each bookable slot on your calendar is. Clients pick from these slots directly —
+                    changing this reshapes your calendar going forward without touching bookings already made.
+                </p>
+            </div>
+
+            <div *ngIf="slotDurationLoading" class="flex items-center gap-2 text-gray-400 py-1">
+                <i-feather name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>
+                <span class="text-xs">Loading...</span>
+            </div>
+
+            <div *ngIf="!slotDurationLoading" class="flex items-center gap-2 flex-wrap">
+                <div class="flex items-center gap-1.5">
+                    <input type="number" min="5" max="480" step="5"
+                        [ngModel]="slotDurationMinutes"
+                        (ngModelChange)="slotDurationMinutes = $event === '' || $event === null ? null : +$event"
+                        [placeholder]="defaultSlotDurationMinutes + ' (default)'"
+                        class="w-28 px-2.5 py-1.5 rounded-lg border border-gray-200 bg-white text-xs text-gray-900
+                               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+                    <span class="text-xs text-gray-500">minutes</span>
+                </div>
+
+                <button type="button" (click)="saveSlotDuration()" [disabled]="slotDurationSaving"
+                    class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900 text-white hover:bg-gray-800
+                           active:scale-[0.98] transition flex items-center gap-1.5
+                           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100">
+                    <i-feather [name]="slotDurationSaving ? 'loader' : 'save'" [ngClass]="{'animate-spin': slotDurationSaving}" style="width:12px;height:12px;"></i-feather>
+                    Save
+                </button>
+
+                <button *ngIf="slotDurationMinutes != null" type="button" (click)="resetSlotDuration()" [disabled]="slotDurationSaving"
+                    class="text-[11px] font-semibold text-gray-500 hover:text-red-600 transition disabled:opacity-50">
+                    Use default ({{ defaultSlotDurationMinutes }} min)
+                </button>
+            </div>
+        </div>
+
     </div>
 
 </div>

@@ -37,8 +37,8 @@
             <span class="text-[11px] font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500">Posts ({{ posts.length }})</span>
             <div *ngFor="let p of posts" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-3">
                 <div class="flex items-start gap-3">
-                    <img *ngIf="p.authorPhoto" [src]="p.authorPhoto | strapiUrl" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-gray-700 shrink-0" />
-                    <div *ngIf="!p.authorPhoto" class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
+                    <img *ngIf="authorPhotoSrc(p) as photoSrc" [src]="photoSrc" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-gray-700 shrink-0" />
+                    <div *ngIf="!authorPhotoSrc(p)" class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
                         <i-feather name="user" class="text-red-600" style="width:14px;height:14px;"></i-feather>
                     </div>
                     <div class="min-w-0 flex-1">

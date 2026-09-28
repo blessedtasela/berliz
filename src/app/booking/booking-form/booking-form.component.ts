@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { Subject, takeUntil, take } from 'rxjs';
+import { Subject, takeUntil, take, interval } from 'rxjs';
 
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SessionCreditService } from 'src/app/services/session-credit.service';
@@ -79,9 +79,24 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   slotDurationMinutes = 60;
   slotsLoading = false;
 
-  /** The earliest a slot may start given the lead-time rule -- recomputed on read so it stays current as the dialog sits open. */
+  /**
+   * Wall-clock time when `slots` was last fetched. The lead-time cutoff below
+   * is pinned to THIS instant rather than to a fresh `Date.now()` on every
+   * read -- the backend already applied the identical cutoff, with its own
+   * clock, at that same fetch. Recomputing against the current time on every
+   * render only ever moves the cutoff later, so a slot the backend correctly
+   * approved could silently fall out of `visibleSlots` a few renders later
+   * with no way back, even though the backend's own answer never changed
+   * (this is exactly what caused "no slots today" for a slot that was, and
+   * still is, genuinely bookable). `refreshIfStale` below re-fetches
+   * periodically instead, which re-asks the backend for the CURRENT truth
+   * rather than degrading a cached list with local math.
+   */
+  private slotsFetchedAt = Date.now();
+
+  /** The earliest a slot may start given the lead-time rule, as of the last fetch. */
   private get earliestBookableTime(): number {
-    return Date.now() + this.minLeadTimeMinutes * 60_000;
+    return this.slotsFetchedAt + this.minLeadTimeMinutes * 60_000;
   }
 
   /** `slots` minus any that start inside the lead-time window (only ever trims today). */
@@ -166,10 +181,20 @@ export class BookingFormComponent implements OnInit, OnDestroy {
         this.slotDurationMinutes = response.slotDurationMinutes ?? 60;
         this.minLeadTimeMinutes = response.leadTimeMinutes ?? 60;
         this.slotsMessage = response.message ?? '';
+        this.slotsFetchedAt = Date.now();
         this.selectedSlot = null;
       });
 
     this.fetchSlotsForSelectedDate();
+
+    // Re-asks the backend for today's real availability every couple of
+    // minutes rather than letting the lead-time cutoff above degrade purely
+    // from wall-clock time passing while this dialog sits open.
+    interval(2 * 60_000).pipe(takeUntil(this.destroy$)).subscribe(() => {
+      if (this.selectedDate === this.formatDateLocal(new Date())) {
+        this.fetchSlotsForSelectedDate();
+      }
+    });
 
     this.actions$
       .pipe(ofType(createBookingSuccess), takeUntil(this.destroy$))

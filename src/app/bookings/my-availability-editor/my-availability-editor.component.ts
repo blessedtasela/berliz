@@ -66,6 +66,13 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
   leadTimeLoading = true;
   leadTimeSaving = false;
 
+  /** The platform default every provider starts on until they override it — mirrors the backend's own AvailabilityServiceImplement.DEFAULT_SLOT_MINUTES. */
+  readonly defaultSlotDurationMinutes = 60;
+  /** null = using the platform default; a number = this provider's own override. */
+  slotDurationMinutes: number | null = null;
+  slotDurationLoading = true;
+  slotDurationSaving = false;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -78,6 +85,7 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.store.dispatch(loadMyAvailability());
     this.loadLeadTime();
+    this.loadSlotDuration();
 
     this.store.select(selectAvailabilityLoading)
       .pipe(takeUntil(this.destroy$))
@@ -257,5 +265,49 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
   resetLeadTime(): void {
     this.leadTimeMinutes = null;
     this.saveLeadTime();
+  }
+
+  // ── Slot duration ───────────────────────────────────────────────────────
+  // Same plain-service-call pattern as lead time above.
+
+  private loadSlotDuration(): void {
+    this.slotDurationLoading = true;
+    this.availabilityService.getMySlotDuration()
+      .pipe(take(1))
+      .subscribe({
+        next: res => {
+          this.slotDurationMinutes = res?.data ?? null;
+          this.slotDurationLoading = false;
+        },
+        error: () => { this.slotDurationLoading = false; },
+      });
+  }
+
+  saveSlotDuration(): void {
+    if (this.slotDurationSaving) return;
+    if (this.slotDurationMinutes != null && (this.slotDurationMinutes < 5 || this.slotDurationMinutes > 480)) {
+      this.snackBar.openSnackBar('Session length must be between 5 and 480 minutes.', 'error');
+      return;
+    }
+
+    this.slotDurationSaving = true;
+    this.availabilityService.setMySlotDuration(this.slotDurationMinutes)
+      .pipe(take(1))
+      .subscribe({
+        next: res => {
+          this.slotDurationSaving = false;
+          this.snackBar.openSnackBar(res?.message || 'Session length updated.', '');
+        },
+        error: (err: any) => {
+          this.slotDurationSaving = false;
+          this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+        },
+      });
+  }
+
+  /** Clears the override so this provider goes back to the platform default. */
+  resetSlotDuration(): void {
+    this.slotDurationMinutes = null;
+    this.saveSlotDuration();
   }
 }

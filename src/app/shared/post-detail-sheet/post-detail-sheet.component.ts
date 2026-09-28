@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   HostListener,
@@ -62,6 +63,8 @@ export class PostDetailSheetComponent implements OnInit, OnDestroy {
   private velocity = 0;
   private closing = false;
 
+  constructor(private cdr: ChangeDetectorRef) {}
+
   get mediaUrl(): string | null {
     return this.post?.photoUrl ?? null;
   }
@@ -82,9 +85,14 @@ export class PostDetailSheetComponent implements OnInit, OnDestroy {
       this.snap = 'full';
       this.applySnap();
     } else {
+      // This mutation happens inside requestAnimationFrame, not a template
+      // event binding -- OnPush doesn't refresh the view for it on its own,
+      // so without markForCheck the sheet stays parked at its initial
+      // off-screen `translate` forever (only the backdrop is ever visible).
       requestAnimationFrame(() => {
         this.snap = 'half';
         this.applySnap();
+        this.cdr.markForCheck();
       });
     }
     document.body.style.overflow = 'hidden';
