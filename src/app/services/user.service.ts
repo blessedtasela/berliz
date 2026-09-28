@@ -276,6 +276,7 @@ export class UserService {
     if (preferences.emailNotifyMessages !== undefined) body['emailNotifyMessages'] = String(preferences.emailNotifyMessages);
     if (preferences.emailNotifyBookings !== undefined) body['emailNotifyBookings'] = String(preferences.emailNotifyBookings);
     if (preferences.emailNotifyAccount !== undefined) body['emailNotifyAccount'] = String(preferences.emailNotifyAccount);
+    if (preferences.emailNotifySocial !== undefined) body['emailNotifySocial'] = String(preferences.emailNotifySocial);
 
     return this.httpClient.put<ApiResponse<string>>(
       this.url + "/user/updateEmailNotificationPreferences",

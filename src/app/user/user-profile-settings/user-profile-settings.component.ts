@@ -86,10 +86,11 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   savingMessagePopupEnabled = false;
 
   // ── Email notification preferences ──────────────────────────────────────
-  /** Values on the user record from /user/getUser. On until proven otherwise. */
+  /** Values on the user record from /user/getUser. On until proven otherwise -- except social, which is opt-in and off until proven otherwise. */
   private serverEmailNotifyMessages = true;
   private serverEmailNotifyBookings = true;
   private serverEmailNotifyAccount = true;
+  private serverEmailNotifySocial = false;
   /** Keys the user has flipped in this session; take precedence per-key. */
   private localEmailNotificationPreferences: EmailNotificationPreferences = {};
   savingEmailNotificationPreferences = false;
@@ -149,6 +150,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
           this.serverEmailNotifyMessages = user.emailNotifyMessages !== false;
           this.serverEmailNotifyBookings = user.emailNotifyBookings !== false;
           this.serverEmailNotifyAccount = user.emailNotifyAccount !== false;
+          this.serverEmailNotifySocial = user.emailNotifySocial === true;
           // Only seed the draft the first time (or if the field was empty) --
           // don't clobber whatever the user is mid-typing on a later refreshUser().
           if (!this.usernameDraft) this.usernameDraft = user.username ?? '';
@@ -321,8 +323,12 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     return this.localEmailNotificationPreferences.emailNotifyAccount ?? this.serverEmailNotifyAccount;
   }
 
+  get emailNotifySocial(): boolean {
+    return this.localEmailNotificationPreferences.emailNotifySocial ?? this.serverEmailNotifySocial;
+  }
+
   get allEmailNotificationsEnabled(): boolean {
-    return this.emailNotifyMessages && this.emailNotifyBookings && this.emailNotifyAccount;
+    return this.emailNotifyMessages && this.emailNotifyBookings && this.emailNotifyAccount && this.emailNotifySocial;
   }
 
   toggleEmailNotifyMessages(): void {
@@ -340,11 +346,16 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     this.store.dispatch(updateEmailNotificationPreferences({ preferences: { emailNotifyAccount: !this.emailNotifyAccount } }));
   }
 
+  toggleEmailNotifySocial(): void {
+    if (this.savingEmailNotificationPreferences) return;
+    this.store.dispatch(updateEmailNotificationPreferences({ preferences: { emailNotifySocial: !this.emailNotifySocial } }));
+  }
+
   /** One-tap shortcut: turn every email notification category on, or off, at once. */
   setAllEmailNotifications(enabled: boolean): void {
     if (this.savingEmailNotificationPreferences) return;
     this.store.dispatch(updateEmailNotificationPreferences({
-      preferences: { emailNotifyMessages: enabled, emailNotifyBookings: enabled, emailNotifyAccount: enabled }
+      preferences: { emailNotifyMessages: enabled, emailNotifyBookings: enabled, emailNotifyAccount: enabled, emailNotifySocial: enabled }
     }));
   }
 

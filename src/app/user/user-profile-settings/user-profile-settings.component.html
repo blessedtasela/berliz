@@ -9,7 +9,7 @@
          Auto-assigned from your name when your account was created, so this
          is always set to something -- change it any time. Must be unique;
          3-30 characters, lowercase letters/numbers/underscores only. -->
-    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
             <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Username</h2>
@@ -48,7 +48,7 @@
          Blocking stops someone messaging you, mentioning you, or commenting
          on your posts. Managed from a profile's own Block button; this is
          just the review-and-undo list. -->
-    <div *ngIf="blockedUsers.length > 0" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div *ngIf="blockedUsers.length > 0" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
             <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Blocked users</h2>
@@ -83,7 +83,7 @@
     <!-- ═══════════ PUBLIC PROFILE VISIBILITY ═══════════
          Private by default. Name, photo, role and join date are always visible
          on /user/:id; this switch controls bio, location and created workouts. -->
-    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
             <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Profile visibility</h2>
@@ -145,7 +145,7 @@
          desktop-only: on mobile there's no useful difference between it and
          "hidden" (both are just tucked behind the menu button), so mobile
          only ever offers Collapsed / Hidden. -->
-    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
             <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Sidebar display</h2>
@@ -207,7 +207,7 @@
          On by default. Controls only the floating chat bubble that follows you
          around the app — the full messaging center at /dashboard/messages always
          works regardless of this setting. -->
-    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
             <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Message popup</h2>
@@ -260,14 +260,14 @@
          On by default per category. These are ADDITIONAL to the in-app
          notification bell -- turning one off just means that category no
          longer also lands in your inbox. -->
-    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div class="flex items-start justify-between gap-3">
             <div>
                 <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Email notifications</h2>
                 <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                     Get an email for messages, booking updates, and account/partnership changes,
-                    on top of the in-app notification.
+                    on top of the in-app notification. Every email links straight to what it's about.
                 </p>
             </div>
             <div class="flex items-center gap-1 shrink-0">
@@ -343,11 +343,32 @@
                     [ngClass]="emailNotifyAccount ? 'translate-x-5' : 'translate-x-0'"></span>
             </button>
         </div>
+
+        <!-- Likes & comments -- opt-in, unlike the three above, since this is by far
+             the highest-frequency category (off until you turn it on). -->
+        <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <i-feather name="heart" style="width:14px;height:14px;" class="text-gray-400 shrink-0"></i-feather>
+                <div class="flex flex-col leading-tight min-w-0">
+                    <p class="text-xs font-bold text-gray-900 dark:text-gray-100">Likes &amp; comments</p>
+                    <p class="text-[11px] text-gray-400">Reactions and comments on your posts. Off by default -- this can get chatty.</p>
+                </div>
+            </div>
+            <button type="button" role="switch" [attr.aria-checked]="emailNotifySocial"
+                aria-label="Email me about likes and comments on my posts" (click)="toggleEmailNotifySocial()"
+                [disabled]="savingEmailNotificationPreferences"
+                class="relative w-11 h-6 rounded-full transition shrink-0 disabled:opacity-60
+                       disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
+                [ngClass]="emailNotifySocial ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-700'">
+                <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
+                    [ngClass]="emailNotifySocial ? 'translate-x-5' : 'translate-x-0'"></span>
+            </button>
+        </div>
     </div>
 
     <!-- ═══════════ PASSKEYS ═══════════
          Face ID / Touch ID / Windows Hello sign-in — see WebAuthnService. -->
-    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div class="flex items-start justify-between gap-3">
             <div>
@@ -404,7 +425,7 @@
          chrome and pages converted to dark: variants so far respond to
          this; the public marketing site stays permanently dark by design
          regardless. -->
-    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
             <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide flex items-center gap-1.5">
@@ -454,7 +475,7 @@
     <!-- ═══════════ NAVBAR APPEARANCE ═══════════
          Per-device (localStorage) — see NavbarStyleService. Controls the top
          bar's background finish only (the dark sidebar is unaffected). -->
-    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
             <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Navbar appearance</h2>
@@ -490,7 +511,7 @@
          Per-device (localStorage) — see TodaysTodoPromptService. Controls the
          "what are you doing today" popup on the Dashboard home. Skipped
          automatically (any setting) if a task's already due today. -->
-    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
             <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Daily planning prompt</h2>
@@ -536,7 +557,7 @@
          Per-device (localStorage) — see NavControlsService. Controls
          NavHistoryControlsComponent, the floating back/forward control mounted
          once in AppComponent. -->
-    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
             <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide flex items-center gap-1.5">
@@ -626,7 +647,7 @@
          priority events (currently: messages) while this device has the app
          open, even in a background tab. Per-device, not synced across
          devices. Not push-when-the-browser-is-fully-closed. -->
-    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 font-sans flex flex-col gap-3">
 
         <div>
             <h2 class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Browser notifications</h2>
