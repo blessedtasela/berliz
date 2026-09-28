@@ -86,7 +86,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Categories & martial-arts classification | ✅ | |
 | Member directory | ✅ | `/dashboard/member-directory` |
 | "Find a Provider" flow | ✅ | |
-| Bookings | ✅ | `/dashboard/my-bookings` |
+| Bookings | ✅ | `/dashboard/my-bookings`; each provider can set their own booking notice (lead time) AND their own session length (slot duration, 5-480 min, default 60) in My Availability Editor — `/availability/leadTime` \| `/slotDuration` |
 | Client intake forms | ✅ | |
 | Testimonials & reviews (trainer/center) | ✅ | |
 | Trainer location + service mode (in-person / online / hybrid) | ✅ | |
@@ -179,6 +179,34 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Customizable slot length, a false "no slots today", and two post-viewing bugs
+
+- **Booking slot length is now per-provider, not a hardcoded 60 minutes.** Added
+  `slot_duration_minutes` to Trainer/Center (nullable, same override-or-platform-default
+  pattern as `lead_time_minutes`) with its own `resolveSlotDurationMinutes` source of truth,
+  `GET`/`PUT /availability/slotDuration`, and a "Session length" control in My Availability
+  Editor next to the existing "Booking notice" one. `getAvailableSlots` now slices each day
+  using the provider's own duration; a client's slot pick already flowed its duration straight
+  into booking creation, so no other frontend change was needed for it to take effect. `berliz`
+  / `com.berliz@fda3f5e` (migration renumbered to V55 after a concurrent V54 collision).
+- **Fixed a false "no slots today."** The slot picker re-derived its lead-time cutoff against a
+  fresh `Date.now()` on every render, on top of the backend's own identical cutoff computed
+  once at fetch time. Wall-clock time passing while the dialog sat open silently pushed the
+  frontend cutoff past slots the backend had already approved, until the day's last real slot
+  vanished and the picker showed a dead-end "no slots" message that didn't match what the
+  backend actually had. Now pins the cutoff to the fetch timestamp and periodically re-asks the
+  backend for today's real availability instead of degrading a cached list with local math.
+- **Fixed the post/image viewer showing only a dark overlay with nothing on it.**
+  `post-detail-sheet` opens via a `requestAnimationFrame` callback under `OnPush` change
+  detection with no `markForCheck()` — the sheet's view never picked up that mutation, so it
+  stayed parked off-screen at its initial closed position while only the backdrop ever
+  rendered. Added the missing `markForCheck()`.
+- **Fixed missing profile photos on the Saved page.** Author avatars were piped through
+  `strapiUrl`, whose own doc comment says it explicitly does not apply to profile photos (bare
+  base64, no data-URI prefix) — a bare base64 string resolved as a bogus relative Strapi path
+  that 404s. Switched to the same `photoDataUri`/`memoizePhotoUriByKey` helper
+  `dashboard-timeline` already uses for the identical field.
 
 ### Unreleased — Deep-linked notification emails, and a new like/comment email category
 
