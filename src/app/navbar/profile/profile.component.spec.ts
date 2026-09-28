@@ -78,6 +78,29 @@ describe('ProfileComponent', () => {
     expect(dialogSpy.open).toHaveBeenCalledWith(BerlizFeedbackModalComponent, jasmine.objectContaining({ width: '460px' }));
   });
 
+  it('cacheBustedUrl appends a query param so a reload can\'t be served from the browser\'s HTTP cache', () => {
+    const url = component.cacheBustedUrl('https://app.berliz.fitness/dashboard');
+    expect(url).toContain('https://app.berliz.fitness/dashboard');
+    expect(url).toContain('_refresh=');
+  });
+
+  it('cacheBustedUrl preserves the page\'s own existing query params', () => {
+    const url = component.cacheBustedUrl('https://app.berliz.fitness/dashboard?tab=bookings');
+    expect(url).toContain('tab=bookings');
+    expect(url).toContain('_refresh=');
+  });
+
+  it('reloadApp closes the dropdown and navigates to the cache-busted URL', () => {
+    component.profileOpen = true;
+    const navigateSpy = spyOn(component as any, 'navigateTo');
+
+    component.reloadApp();
+
+    expect(component.profileOpen).toBeFalse();
+    expect(navigateSpy).toHaveBeenCalledTimes(1);
+    expect(navigateSpy.calls.argsFor(0)[0]).toContain('_refresh=');
+  });
+
   it('only shows the Partnership link for a provider (trainer/center)', () => {
     component.userData = { firstname: 'A', lastname: 'B', role: 'trainer' } as any;
     component.profileOpen = true;

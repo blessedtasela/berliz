@@ -218,6 +218,33 @@ export class ProfileComponent {
     });
   }
 
+  /**
+   * A phone home-screen install (via the manifest's "Add to Home Screen")
+   * opens in its own standalone window with no browser chrome at all -- no
+   * address bar, no pull-to-refresh, no reload button -- so anyone using it
+   * that way has no way to pick up a new deployment once their tab is stale.
+   * A plain `location.reload()` can still be served from the browser's own
+   * HTTP cache, so this navigates to a cache-busted URL instead, forcing a
+   * genuinely fresh fetch of index.html (and whatever bundle it now points
+   * to) rather than whatever this instance had loaded.
+   */
+  reloadApp(): void {
+    this.closeDropdown();
+    this.navigateTo(this.cacheBustedUrl(window.location.href));
+  }
+
+  /** Pulled out of reloadApp() purely so the URL-building logic can be unit tested without having to mock window.location itself (not configurable in every test/browser environment). */
+  cacheBustedUrl(href: string): string {
+    const url = new URL(href);
+    url.searchParams.set('_refresh', Date.now().toString());
+    return url.toString();
+  }
+
+  /** Also pulled out of reloadApp() so tests can spy on the actual navigation and never trigger a real page reload mid-suite. */
+  private navigateTo(url: string): void {
+    window.location.href = url;
+  }
+
   /** Trainer/center only — a member/client has no partnership page to go to. */
   get isProvider(): boolean {
     const role = this.userData?.role?.toLowerCase();
