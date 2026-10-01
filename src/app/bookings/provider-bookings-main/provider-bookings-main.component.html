@@ -11,7 +11,14 @@
                 <p class="text-[11px] text-gray-400 dark:text-gray-500">Sessions clients have requested with you</p>
             </div>
         </div>
-        <app-refresh-button [loading]="loading" (refresh)="refresh()"></app-refresh-button>
+        <div class="flex items-center gap-2">
+            <button type="button" (click)="openBookForClient()"
+                class="px-3 py-2 rounded-xl text-xs font-semibold bg-gray-900 dark:bg-gray-800 text-white hover:bg-gray-800 dark:hover:bg-gray-700 transition flex items-center gap-1.5">
+                <i-feather name="plus" style="width:13px;height:13px;"></i-feather>
+                Book for a client
+            </button>
+            <app-refresh-button [loading]="loading" (refresh)="refresh()"></app-refresh-button>
+        </div>
     </div>
 
     <!-- Tabs -->
@@ -49,6 +56,7 @@
                 </span>
                 <app-booking-card *ngFor="let b of pending" mode="provider" [booking]="b"
                     (statusChangeRequested)="onStatusChangeRequested($event)"
+                    (rescheduleRequested)="onRescheduleRequested($event)"
                     (startIntakeRequested)="onStartIntakeRequested($event)"
                     (sendIntakeRequested)="onSendIntakeRequested($event)"></app-booking-card>
             </div>

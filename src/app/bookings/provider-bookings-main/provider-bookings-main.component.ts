@@ -1,11 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, take } from 'rxjs';
 
 import { Booking } from 'src/app/models/booking.model';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { BookingService } from 'src/app/services/booking.service';
+import { RescheduleRequest } from '../booking-card/booking-card.component';
+import { BookForClientModalComponent } from '../book-for-client-modal/book-for-client-modal.component';
 
 import {
   deleteBooking,
@@ -51,8 +55,10 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     private store: Store,
     private actions$: Actions,
     private snackBar: SnackBarService,
+    private bookingService: BookingService,
     private router: Router,
     private route: ActivatedRoute,
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -136,6 +142,23 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     this.store.dispatch(updateBookingStatus(event));
   }
 
+  /** Moves a pending (typically urgent) request to a new time and confirms it in one step. Plain service call, same as the lead-time/session-length settings elsewhere -- one lightweight action with no other state to coordinate with. */
+  onRescheduleRequested(event: RescheduleRequest): void {
+    this.bookingService.reschedule(event.id, {
+      localDate: event.localDate,
+      localTime: event.localTime,
+      durationMinutes: event.durationMinutes,
+    }).pipe(take(1)).subscribe({
+      next: (res) => {
+        this.snackBar.openSnackBar(res?.data?.message || res?.message || 'Booking rescheduled and confirmed', '');
+        this.refresh();
+      },
+      error: (err) => {
+        this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+      },
+    });
+  }
+
   onDeleteRequested(id: number): void {
     this.store.dispatch(deleteBooking({ id }));
   }
@@ -148,5 +171,15 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
 
   onSendIntakeRequested(event: { clientId: number; clientName: string }): void {
     this.store.dispatch(createClientIntake({ data: { clientId: event.clientId } }));
+  }
+
+  /** Create a new, already-confirmed booking directly for one of this provider's own clients. */
+  openBookForClient(): void {
+    this.dialog.open(BookForClientModalComponent, {
+      width: '400px',
+      maxWidth: '95vw',
+    }).afterClosed().subscribe((created: boolean | undefined) => {
+      if (created) this.refresh();
+    });
   }
 }

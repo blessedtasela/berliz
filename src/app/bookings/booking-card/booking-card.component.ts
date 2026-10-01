@@ -3,8 +3,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Booking } from 'src/app/models/booking.model';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
-import { ReviewBookingModalComponent } from '../review-booking-modal/review-booking-modal.component';
+import { ReviewBookingModalComponent, ReviewBookingModalResult } from '../review-booking-modal/review-booking-modal.component';
 import { BookingDetailsModalComponent } from '../booking-details-modal/booking-details-modal.component';
+
+export interface RescheduleRequest {
+  id: number;
+  localDate: string;
+  localTime: string;
+  durationMinutes: number;
+}
 
 @Component({
   selector: 'app-booking-card',
@@ -22,6 +29,7 @@ export class BookingCardComponent {
 
   @Output() cancelRequested = new EventEmitter<number>();
   @Output() statusChangeRequested = new EventEmitter<{ id: number; status: string }>();
+  @Output() rescheduleRequested = new EventEmitter<RescheduleRequest>();
   @Output() deleteRequested = new EventEmitter<number>();
   @Output() startIntakeRequested = new EventEmitter<{ clientId: number; clientName: string }>();
   @Output() sendIntakeRequested = new EventEmitter<{ clientId: number; clientName: string }>();
@@ -132,15 +140,24 @@ export class BookingCardComponent {
     });
   }
 
-  /** A pending request opens for review (who it's from, when, notes) before the provider decides. */
+  /** A pending request opens for review (who it's from, when, notes) before the provider decides -- "approve" or "reschedule" (pick a new time and confirm in one step). */
   private reviewAndConfirm(): void {
     this.dialog.open(ReviewBookingModalComponent, {
       width: '400px',
       maxWidth: '95vw',
       data: { booking: this.booking }
-    }).afterClosed().subscribe((decision: 'confirmed' | 'declined' | undefined) => {
-      if (decision === 'confirmed') this.statusChangeRequested.emit({ id: this.booking.id, status: 'confirmed' });
-      else if (decision === 'declined') this.statusChangeRequested.emit({ id: this.booking.id, status: 'cancelled' });
+    }).afterClosed().subscribe((result: ReviewBookingModalResult | undefined) => {
+      if (!result) return;
+      if (result.decision === 'confirmed') this.statusChangeRequested.emit({ id: this.booking.id, status: 'confirmed' });
+      else if (result.decision === 'declined') this.statusChangeRequested.emit({ id: this.booking.id, status: 'cancelled' });
+      else if (result.decision === 'rescheduled') {
+        this.rescheduleRequested.emit({
+          id: this.booking.id,
+          localDate: result.localDate,
+          localTime: result.localTime,
+          durationMinutes: result.durationMinutes,
+        });
+      }
     });
   }
 

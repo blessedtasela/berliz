@@ -8,6 +8,7 @@ import { Subject, takeUntil, take, interval } from 'rxjs';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SessionCreditService } from 'src/app/services/session-credit.service';
 import { PromotionService } from 'src/app/services/promotion.service';
+import { BookingService } from 'src/app/services/booking.service';
 import { DraftService } from 'src/app/services/draft.service';
 import { DraftEntry } from 'src/app/models/draft.model';
 import {
@@ -128,6 +129,16 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     return this.data.centerId != null ? 'center' : 'trainer';
   }
 
+  // ── Urgent request (no slot works -- ask for a time outside normal rules) ──
+  urgentMode = false;
+
+  toggleUrgentMode(): void {
+    this.urgentMode = !this.urgentMode;
+    if (this.urgentMode && !this.bookingForm.value.date) {
+      this.bookingForm.patchValue({ date: this.selectedDate });
+    }
+  }
+
   // ── Redemption enforcement: an available reward the client can attach ──
   availableCredits: SessionCredit[] = [];
   providerPromotions: PromoOffer[] = [];
@@ -149,6 +160,7 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     private snackBar: SnackBarService,
     private sessionCreditService: SessionCreditService,
     private promotionService: PromotionService,
+    private bookingService: BookingService,
     private draftService: DraftService,
     public dialogRef: MatDialogRef<BookingFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: BookingFormData
@@ -361,11 +373,69 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   submitForm(): void {
     if (this.submitting) return;
 
-    if (this.useManualEntry) {
+    if (this.urgentMode) {
+      this.submitUrgent();
+    } else if (this.useManualEntry) {
       this.submitManual();
     } else {
       this.submitFromSlot();
     }
+  }
+
+  /**
+   * Deliberately does NOT check earliestBookableTime -- the whole point of an
+   * urgent request is asking for a time the normal lead-time/availability
+   * rules would otherwise block. A past date/time is still rejected (that's
+   * never valid), and a note is required so the provider has context before
+   * deciding whether to accommodate it.
+   */
+  private submitUrgent(): void {
+    const value = this.bookingForm.value;
+    if (!value.date || !value.time) {
+      this.invalidForm = true;
+      this.bookingForm.markAllAsTouched();
+      this.snackBar.openSnackBar('Pick a date and time for your urgent request.', 'error');
+      return;
+    }
+    const note = (value.notes ?? '').trim();
+    if (!note) {
+      this.bookingForm.get('notes')?.markAsTouched();
+      this.snackBar.openSnackBar('Let the provider know why you need this time.', 'error');
+      return;
+    }
+
+    const scheduledAt = new Date(`${value.date}T${value.time}`);
+    if (isNaN(scheduledAt.getTime()) || scheduledAt.getTime() < Date.now()) {
+      this.pastDate = true;
+      return;
+    }
+    this.pastDate = false;
+
+    const payload = {
+      trainerId: this.data.trainerId ?? null,
+      centerId: this.data.centerId ?? null,
+      scheduledAt: scheduledAt.toISOString(),
+      localDate: value.date,
+      localTime: value.time,
+      durationMinutes: Number(value.durationMinutes),
+      notes: note,
+      urgent: true,
+      ...this.rewardPayload
+    };
+
+    this.submitting = true;
+    this.bookingService.createUrgentBooking(payload).pipe(take(1)).subscribe({
+      next: (res) => {
+        this.submitting = false;
+        this.draftService.discard('booking', this.draftId);
+        this.snackBar.openSnackBar(res?.data?.message || res?.message || 'Your urgent request has been sent.', '');
+        this.dialogRef.close(true);
+      },
+      error: (err) => {
+        this.submitting = false;
+        this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+      },
+    });
   }
 
   private submitFromSlot(): void {
