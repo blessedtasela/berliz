@@ -93,7 +93,7 @@
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Gender
                 </label>
-                <div class="flex gap-2 mt-1">
+                <div class="flex flex-wrap gap-2 mt-1">
                     <button *ngFor="let g of genders" type="button" (click)="onGenderSelect(g)"
                         class="px-3 py-1.5 rounded-full text-xs font-semibold border transition" [ngClass]="form.get('gender')?.value === g
                             ? 'bg-gray-900 dark:bg-gray-700 text-white border-gray-900 dark:border-gray-700'

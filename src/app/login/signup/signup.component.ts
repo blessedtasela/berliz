@@ -5,6 +5,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { LocationFormComponent } from 'src/app/shared/location-form/location-form.component';
+import { GENDER_OPTIONS } from 'src/app/shared/constants/gender-options';
 import {
   emailExtensionValidator,
   passwordMatchValidator,
@@ -23,6 +24,7 @@ export const MINIMUM_SIGNUP_AGE = 16;
 })
 export class SignupComponent {
   signupForm!: FormGroup;
+  genders = GENDER_OPTIONS;
   invalidForm = false;
   formIndex = 0;
   responseMessage: string = '';

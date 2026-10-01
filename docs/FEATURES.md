@@ -21,6 +21,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Public profile page (`/user/:username`) | ✅ | Visibility toggle: private vs public; admin can view-through with a banner |
 | Profile photo with in-app cropper | ✅ | |
 | Account settings (merged Profile + Settings) | ✅ | Includes "what's new" badges, passkey management, sidebar display prefs |
+| Gender field — inclusive options | ✅ | Male / Female / Non-binary / Prefer not to say, driven by one shared `GENDER_OPTIONS` constant across every picker (signup, signup modal, Settings, both admin edit-user modals) instead of each hardcoding its own binary radio pair. Backend stores `User.gender` as free text with no enum constraint, so this was purely a frontend change |
 | Value-first onboarding checklist | ✅ | Dismissible, role-aware first-run checklist at the top of the dashboard home (log a workout / connect / find a provider — or profile/post/connect for providers); progress is data-derived where possible, dismissal + click-steps persist in `localStorage`. No paywall in the path |
 | Block / unblock users | ✅ | Two-directional enforcement across messaging, mentions, comments |
 | Report content (posts, comments) | ✅ | Feeds admin content-report queue |
@@ -179,6 +180,20 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Gender-inclusive picker across every form
+
+Every gender picker in the app (signup, signup modal, My Profile settings, the admin
+and dashboard edit-user modals) was a hardcoded binary Male/Female radio pair,
+duplicated five times with slightly different markup each time. New shared
+`GENDER_OPTIONS` constant (`shared/constants/gender-options.ts`) adds Non-binary and
+Prefer not to say, and every picker now renders from that one list via `*ngFor` instead
+of its own hardcoded pair — so wording or adding an option only ever needs to change in
+one place going forward. Backend stores `User.gender` as unconstrained free text (and
+`ClientServiceImplement`'s body-fat formula already had a sensible non-binary fallback
+coefficient), so no backend change was needed. Also fixed a real overflow risk the new,
+longer "Prefer not to say" label would have hit in `user-profile-settings-form` — its
+pill row had no `flex-wrap`.
 
 ### Unreleased — Fix: Hub and Dashboard Overview going blank in production
 

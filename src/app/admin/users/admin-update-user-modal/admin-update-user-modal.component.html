@@ -104,20 +104,12 @@
                 <div class="flex flex-col gap-1 sm:col-span-2">
                     <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Gender</label>
                     <div class="flex flex-wrap gap-2">
-                        <label class="cursor-pointer">
-                            <input formControlName="gender" [value]="'Male'" type="radio" class="peer sr-only">
+                        <label *ngFor="let g of genders" class="cursor-pointer">
+                            <input formControlName="gender" [value]="g" type="radio" class="peer sr-only">
                             <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
                                        bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
                                        peer-checked:bg-red-50 dark:peer-checked:bg-red-950/20 peer-checked:border-red-200 dark:peer-checked:border-red-900 peer-checked:text-red-600 dark:peer-checked:text-red-400">
-                                Male
-                            </span>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input formControlName="gender" [value]="'Female'" type="radio" class="peer sr-only">
-                            <span class="inline-block rounded-full border px-3 py-1 text-xs font-medium transition
-                                       bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400
-                                       peer-checked:bg-red-50 dark:peer-checked:bg-red-950/20 peer-checked:border-red-200 dark:peer-checked:border-red-900 peer-checked:text-red-600 dark:peer-checked:text-red-400">
-                                Female
+                                {{ g }}
                             </span>
                         </label>
                     </div>
