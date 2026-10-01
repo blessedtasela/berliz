@@ -21,6 +21,9 @@ export interface Booking {
   status: string;
   notes: string;
 
+  /** True when the client explicitly requested a time outside the provider's normal lead-time/availability rules. */
+  isUrgent?: boolean;
+
   date: Date;
   lastUpdate: Date;
 
@@ -28,4 +31,15 @@ export interface Booking {
   appliedRewardLabel?: string | null;
 
   message?: string;
+}
+
+/** One entry in a provider's "my clients" list — GET /booking/myClients. Picker for "book on behalf of a client". */
+export interface MyClientSummary {
+  userId: number;
+  name: string;
+  email: string;
+  photo?: string;
+  status: string;
+  lastBookingAt: Date;
+  bookingCount: number;
 }

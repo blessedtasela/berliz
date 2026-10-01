@@ -86,7 +86,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Categories & martial-arts classification | ✅ | |
 | Member directory | ✅ | `/dashboard/member-directory` |
 | "Find a Provider" flow | ✅ | |
-| Bookings | ✅ | `/dashboard/my-bookings`; each provider can set their own booking notice (lead time) AND their own session length (slot duration, 5-480 min, default 60) in My Availability Editor — `/availability/leadTime` \| `/slotDuration` |
+| Bookings | ✅ | `/dashboard/my-bookings`; each provider can set their own booking notice (lead time) AND their own session length (slot duration, 5-480 min, default 60) in My Availability Editor — `/availability/leadTime` \| `/slotDuration`. A client can also send an "urgent request" outside normal hours (flagged on the provider's list); a provider can approve-and-reschedule a pending request to a new time in one step, or book+confirm directly for one of their own clients |
 | Client intake forms | ✅ | |
 | Testimonials & reviews (trainer/center) | ✅ | |
 | Trainer location + service mode (in-person / online / hybrid) | ✅ | |
@@ -179,6 +179,31 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Urgent booking requests, and providers booking/rescheduling directly
+
+- **Client-facing "urgent request."** When the calendar genuinely has no slot that works, a
+  "Need it sooner? Send an urgent request" link opens a small date/time/duration form with a
+  required note. `POST /booking/addUrgent` creates a `pending` booking flagged `isUrgent`,
+  deliberately skipping the normal lead-time/availability gate (that's the point) while still
+  rejecting a genuine double-booking conflict. Best-effort also starts/continues a direct
+  message to the provider with the same context (trainers only — center messaging isn't
+  supported yet by `MessageService`); a failure there never blocks the request itself.
+- **Provider "approve or reschedule with one click."** The existing pending-request review
+  modal gained a "Reschedule" option next to Confirm/Decline — picking a new date/time there
+  calls the new `PUT /booking/reschedule/{id}`, which moves the booking and confirms it in one
+  step (only checks for a conflict, not lead-time/availability — the provider is deliberately
+  choosing to accommodate it). An "Urgent" badge marks flagged requests on the booking list and
+  inside the review modal.
+- **"Book for a client" (provider-initiated, already confirmed).** A new button on the
+  Bookings page opens a client picker (`GET /booking/myClients`, the distinct clients from
+  booking history — mirrors the client-side `myTrainers` list from the other direction) +
+  date/time/duration/notes form. `POST /booking/addForClient` creates the booking straight to
+  `confirmed` — the provider creating it is itself the approval — again skipping
+  lead-time/availability but still rejecting a real conflict.
+- Backend: `berliz` / `com.berliz` (migration V56, `booking.is_urgent`). 9 new unit tests
+  covering the skipped-checks behavior, conflict rejection, reschedule's self-exclusion from
+  its own conflict check, and the client-aggregation query.
 
 ### Unreleased — Customizable slot length, a false "no slots today", and two post-viewing bugs
 

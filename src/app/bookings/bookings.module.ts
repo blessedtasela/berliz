@@ -8,6 +8,8 @@ import { IconsModule } from '../icons/icons.module';
 import { FooterModule } from '../footer/footer.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { SharedModule } from '../shared/shared.module';
+import { DateStripComponent } from '../shared/date-strip/date-strip.component';
+import { TimePickerComponent } from '../shared/time-picker/time-picker.component';
 
 import { BookingCardComponent } from './booking-card/booking-card.component';
 import { BookingsEmptyComponent } from './bookings-empty/bookings-empty.component';
@@ -18,6 +20,7 @@ import { EarningsViewComponent } from './earnings-view/earnings-view.component';
 import { ManageBookingsComponent } from './manage-bookings/manage-bookings.component';
 import { ReviewBookingModalComponent } from './review-booking-modal/review-booking-modal.component';
 import { BookingDetailsModalComponent } from './booking-details-modal/booking-details-modal.component';
+import { BookForClientModalComponent } from './book-for-client-modal/book-for-client-modal.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +32,8 @@ import { BookingDetailsModalComponent } from './booking-details-modal/booking-de
     EarningsViewComponent,
     ManageBookingsComponent,
     ReviewBookingModalComponent,
-    BookingDetailsModalComponent
+    BookingDetailsModalComponent,
+    BookForClientModalComponent
   ],
   imports: [
     CommonModule,
@@ -40,7 +44,9 @@ import { BookingDetailsModalComponent } from './booking-details-modal/booking-de
     FooterModule,
     NavbarModule,
     RouterModule,
-    SharedModule
+    SharedModule,
+    DateStripComponent,
+    TimePickerComponent
   ],
   exports: [
     MyBookingsMainComponent,
