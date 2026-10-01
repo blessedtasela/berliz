@@ -205,6 +205,17 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
   covering the skipped-checks behavior, conflict rejection, reschedule's self-exclusion from
   its own conflict check, and the client-aggregation query.
 
+### Unreleased — Fix: Hub and Dashboard Overview going blank in production
+
+`GET /dashboard/details` backs both the Berliz Hub and the Dashboard Overview widget
+from one shared NgRx slice — ran ~25 count queries in a single try/catch, so any one
+failing query (a stale index, an edge-case null, a newly-added counter) threw the whole
+method into a 500, blanking both surfaces for every user with no visible error (the
+frontend's `loadDashboard$` effect swallows the failure silently). A new `safeCount()`
+helper now isolates each count in its own try/catch — a bad one reads 0 for that one
+tile instead of taking down the whole response. Found by investigating a live user
+report of both surfaces appearing empty.
+
 ### Unreleased — Customizable slot length, a false "no slots today", and two post-viewing bugs
 
 - **Booking slot length is now per-provider, not a hardcoded 60 minutes.** Added
