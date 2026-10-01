@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { forkJoin, of } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
 
@@ -8,6 +9,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { AuthService } from 'src/app/services/auth.service';
 import { WorkoutService } from 'src/app/services/workout.service';
 import { ConnectionService } from 'src/app/services/connection.service';
+import { selectUser } from 'src/app/state/user/user.selector';
 
 interface OnboardingStep {
   key: string;
@@ -74,6 +76,7 @@ export class OnboardingChecklistComponent implements OnInit {
     private authService: AuthService,
     private workoutService: WorkoutService,
     private connectionService: ConnectionService,
+    private store: Store,
   ) {}
 
   ngOnInit(): void {
@@ -86,14 +89,20 @@ export class OnboardingChecklistComponent implements OnInit {
     forkJoin({
       workouts: this.workoutService.getMyWorkoutLogs().pipe(catchError(() => of(null))),
       connections: this.connectionService.getMyConnections().pipe(catchError(() => of(null))),
+      // Reuses the already-loaded user slice -- no extra request -- so "Complete your
+      // profile" can be a real, data-derived check instead of marking itself done the
+      // instant the trainer/center merely clicks through to the profile page.
+      user: this.store.select(selectUser).pipe(take(1), catchError(() => of(null))),
     })
       .pipe(take(1))
-      .subscribe(({ workouts, connections }) => {
+      .subscribe(({ workouts, connections, user }) => {
         const hasWorkout = !!(workouts?.data && workouts.data.length > 0);
         const hasConnection = !!(connections?.data && connections.data.length > 0);
+        const hasCompletedProfile = !!(user?.bio?.trim() && user?.profilePhoto);
         this.setDone('log-workout', hasWorkout);
         this.setDone('connect', hasConnection);
         this.setDone('post', hasWorkout); // trainers: a shared workout counts as a first post
+        this.setDone('profile', hasCompletedProfile);
         this.refreshVisibility();
       });
   }
@@ -103,7 +112,7 @@ export class OnboardingChecklistComponent implements OnInit {
 
     if (role === 'trainer' || role === 'center') {
       return [
-        { key: 'profile', label: 'Complete your profile', hint: 'Photo, bio and what you offer', icon: 'user', link: ['/dashboard/profile'], done: clicked('profile'), clickToComplete: true },
+        { key: 'profile', label: 'Complete your profile', hint: 'Photo, bio and what you offer', icon: 'user', link: ['/dashboard/profile'], done: false },
         { key: 'post', label: 'Share your first post', hint: 'Introduce yourself to the network', icon: 'edit-3', link: ['/dashboard/timeline'], done: false },
         { key: 'connect', label: 'Connect with a member', hint: 'Grow your network', icon: 'users', link: ['/dashboard/member-directory'], done: false },
       ];

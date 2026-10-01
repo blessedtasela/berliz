@@ -6,6 +6,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { CountryService } from 'src/app/services/country.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
+import { GENDER_OPTIONS } from 'src/app/shared/constants/gender-options';
 import { fileValidator, emailExtensionValidator, passwordMatchValidator, genericError, minimumAgeValidator } from 'src/validators/form-validators.module';
 
 /** Berliz requires signups to be 16 or older. */
@@ -19,6 +20,7 @@ export const MINIMUM_SIGNUP_AGE = 16;
 export class SignupModalComponent {
   onSignupEmit = new EventEmitter();
   signupForm!: FormGroup;
+  genders = GENDER_OPTIONS;
   invalidForm: boolean = false;
   formIndex: number = 0;
   countries: any[] = [];

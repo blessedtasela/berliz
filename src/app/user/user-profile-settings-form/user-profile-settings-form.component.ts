@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { City, Country, State } from 'src/app/models/Location.interface';
 import { Users } from 'src/app/models/users.interface';
+import { GENDER_OPTIONS } from 'src/app/shared/constants/gender-options';
 
 @Component({
   selector: 'app-user-profile-settings-form',
@@ -23,7 +24,7 @@ export class UserProfileSettingsFormComponent {
   @Output() countryChange = new EventEmitter<any>();
   @Output() stateChange = new EventEmitter<any>();
 
-  genders: string[] = ['Male', 'Female'];
+  genders: string[] = GENDER_OPTIONS;
 
   //-----------------------------------
   // FORM SUBMIT
