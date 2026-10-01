@@ -314,6 +314,17 @@ const dashboardRoutes: Routes = [
         }
       },
 
+      // Turns a referral SessionCredit into a real booked session with an opted-in trainer/center.
+      {
+        path: 'referral-claim/:sessionCreditId',
+        loadComponent: () => import('../referral-claim/referral-claim.component').then(m => m.ReferralClaimComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Claim referral session',
+          expectedRole: expectedRoleAll
+        }
+      },
+
       // "Deals" feed — every live promotion platform-wide. Signed-in only.
       {
         path: 'deals',

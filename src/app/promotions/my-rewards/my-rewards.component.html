@@ -77,7 +77,12 @@
                         <p class="text-[11px] text-gray-400 dark:text-gray-500 truncate">{{ c.note || (c.reason === 'referral' ? 'Referral reward' : 'Berliz promotion') }}</p>
                     </div>
                 </div>
-                <span class="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900 rounded-full px-2 py-1 shrink-0">
+                <a *ngIf="c.reason === 'referral'" [routerLink]="['/dashboard/referral-claim', c.id]"
+                    class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition flex items-center gap-1.5">
+                    <i-feather name="calendar" style="width:12px;height:12px;"></i-feather>
+                    Claim a session
+                </a>
+                <span *ngIf="c.reason !== 'referral'" class="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900 rounded-full px-2 py-1 shrink-0">
                     Show this to your trainer/center
                 </span>
             </div>

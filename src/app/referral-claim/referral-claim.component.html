@@ -1,0 +1,75 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center gap-3">
+        <a routerLink="/dashboard/my-rewards" class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition">
+            <i-feather name="arrow-left" class="text-gray-500" style="width:16px;height:16px;"></i-feather>
+        </a>
+        <div class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
+            <i-feather name="gift" class="text-emerald-600" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+            <h1 class="text-sm font-bold text-gray-900">Claim your referral session</h1>
+            <p class="text-[11px] text-gray-400">Pick an open slot with a trainer or center accepting referral clients.</p>
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="flex items-center justify-center py-16">
+        <i-feather name="loader" class="text-gray-300 animate-spin" style="width:20px;height:20px;"></i-feather>
+    </div>
+
+    <ng-container *ngIf="!loading">
+
+        <!-- Eligible providers -->
+        <div *ngIf="providers.length > 0" class="flex flex-col gap-3">
+            <div *ngFor="let provider of providers" class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                        <i-feather [name]="provider.centerId ? 'home' : 'user'" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm font-bold text-gray-900 truncate">{{ provider.name }}</p>
+                        <p *ngIf="provider.address" class="text-[11px] text-gray-400 truncate">{{ provider.address }}</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-1.5">
+                    <button *ngFor="let slot of provider.slots" type="button" (click)="claim(provider, slot)"
+                        [disabled]="claimingKey === slotKey(provider, slot)"
+                        class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border border-emerald-200 text-emerald-700
+                               hover:bg-emerald-50 transition disabled:opacity-50 flex items-center gap-1.5">
+                        <i-feather [name]="claimingKey === slotKey(provider, slot) ? 'loader' : 'calendar'"
+                            [class.animate-spin]="claimingKey === slotKey(provider, slot)" style="width:11px;height:11px;"></i-feather>
+                        {{ slot.date | date:'E, MMM d' }} &middot; {{ slot.startTime.slice(0,5) }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- No one open right now -->
+        <div *ngIf="providers.length === 0 && !waitlist" class="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col items-center text-center gap-3">
+            <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+                <i-feather name="clock" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
+            </div>
+            <div>
+                <p class="text-sm font-bold text-gray-900">No one has an open referral slot right now</p>
+                <p class="text-xs text-gray-400 mt-1">Join the waitlist and we'll notify you the moment a trainer or center opens one up.</p>
+            </div>
+            <button type="button" (click)="joinWaitlist()" [disabled]="joiningWaitlist"
+                class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700
+                       active:scale-[0.98] transition flex items-center gap-2 disabled:opacity-50">
+                <i-feather [name]="joiningWaitlist ? 'loader' : 'bell'" [class.animate-spin]="joiningWaitlist" style="width:13px;height:13px;"></i-feather>
+                {{ joiningWaitlist ? 'Joining…' : 'Join the waitlist' }}
+            </button>
+        </div>
+
+        <!-- On the waitlist -->
+        <div *ngIf="waitlist" class="bg-white rounded-2xl border border-emerald-200 bg-emerald-50/40 p-6 flex flex-col items-center text-center gap-2">
+            <i-feather name="check-circle" class="text-emerald-600" style="width:24px;height:24px;"></i-feather>
+            <p class="text-sm font-bold text-gray-900">You're on the waitlist</p>
+            <p class="text-xs text-gray-500">{{ waitlist.message || "We'll notify you the moment a referral slot opens up." }}</p>
+        </div>
+
+    </ng-container>
+
+</section>

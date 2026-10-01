@@ -15,7 +15,7 @@ const KNOWN_ENTITY_TYPES = new Set([
   'workout', 'run', 'task', 'faq', 'payment', 'subscription', 'payout',
   'partnership', 'centerProfile', 'trainerProfile', 'accountSettings',
   'memberProfile', 'accountabilityNudge', 'recap', 'clientIntake',
-  'testimonial', 'category',
+  'testimonial', 'category', 'referralSlot',
 ]);
 
 /** True when this notification's entityType is one navigateToNotificationEntity can actually route (and, for the types that need one, it has an entityId too). */
@@ -137,6 +137,12 @@ export function navigateToNotificationEntity(router: Router, notification: Notif
 
     case 'category':
       router.navigate(['/dashboard/hub/categories']);
+      return true;
+
+    // No entityId -- a waiter could have more than one referral credit, so
+    // this lands on the rewards list rather than guessing which one opened up.
+    case 'referralSlot':
+      router.navigate(['/dashboard/my-rewards']);
       return true;
 
     default:

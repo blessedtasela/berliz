@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { take } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
@@ -19,7 +20,7 @@ import { genericError } from 'src/validators/form-validators.module';
 @Component({
   selector: 'app-my-rewards',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconsModule],
+  imports: [CommonModule, FormsModule, RouterModule, IconsModule],
   templateUrl: './my-rewards.component.html',
   styleUrls: ['./my-rewards.component.css']
 })
