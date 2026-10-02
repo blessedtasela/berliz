@@ -181,6 +181,29 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Use-case audit: failed loads were silent; Hub now shows an error + Retry
+
+Audit finding, prompted by the Hub/Dashboard-Overview blank-page incident: the app has no
+global handler for failed data loads (`auth.interceptor` only special-cases 401/403 and
+otherwise just re-throws), so a failed NgRx load is only visible if the *component* reads its
+slice's error. 32 state slices expose an `error` selector but only 8 component files read any
+`select*Error` — and none of the four `/dashboard/details` consumers did, so a 500 there
+rendered as a blank, indistinguishable from "nothing to show". The Hub made it worse: its
+empty state ("No hub data available") also showed while the request was still loading, and
+on failure.
+
+Fixed for the Hub (the surface that actually failed in production): `HubMainComponent` now
+reads the slice's `loading`/`error`, shows a spinner while in flight, a "Couldn't load your
+Hub" error with a **Try again** button on failure, and only shows the plain empty state when
+there is genuinely nothing and no error. Also stopped its three store subscriptions leaking
+past destroy, and replaced its empty-`provideMockStore()` spec with proper state + 5 tests.
+
+**Not fixed — flagged for follow-up:** the same silent-failure pattern very likely exists in
+most of the other ~24 slices whose components never read the error (the Dashboard Overview
+widgets share the same slice and still don't surface it). The right durable fix is probably
+one shared pattern (an error-state component or a global load-failure toast) rather than
+patching each page by hand.
+
 ### Unreleased — Overflow/clipping pass: long unbroken user text
 
 Static audit of the whole frontend for the usual horizontal-overflow causes: raw `<table>`s
