@@ -37,7 +37,7 @@
 
         <!-- Post text + comments -->
         <div class="flex-1 min-h-0 overflow-y-auto px-4 py-3">
-            <p *ngIf="post.content" class="text-sm text-zinc-200 leading-relaxed whitespace-pre-line mb-3">{{ post.content }}</p>
+            <p *ngIf="post.content" class="text-sm text-zinc-200 leading-relaxed whitespace-pre-line break-words mb-3">{{ post.content }}</p>
             <app-post-comments [post]="post" [open]="true" [dark]="true" [profileRoutePrefix]="profileRoutePrefix"></app-post-comments>
         </div>
     </div>

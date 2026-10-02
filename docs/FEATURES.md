@@ -181,6 +181,21 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Overflow/clipping pass: long unbroken user text
+
+Static audit of the whole frontend for the usual horizontal-overflow causes: raw `<table>`s
+without a scroll wrapper, fixed-width `MatDialog`s/modals without a viewport cap,
+`w-screen`/`100vw` usage, and `flex-1` wrappers missing `min-w-0` around `truncate` text. All
+four were already clean (every dialog sets `maxWidth: 95vw`, every fixed-width modal body has
+`max-w-[95vw]`, every `flex-1` text wrapper has `min-w-0`). The one real gap: 14 templates
+rendering user-written text — timeline/saved/profile post content, bios, trainer/center
+introductions, album comments, FAQ/help answers, drafts, the admin content-report preview —
+used `whitespace-pre-line` (keeps the author's newlines) with no `break-words`, so a single
+long unbroken string (a pasted URL, a very long username) pushed past the card edge instead of
+wrapping. Added `break-words` to every one of them. Honest limit: this was a code audit, not a
+visual sweep across devices — that needs a signed-in browser session at several viewport
+widths, which wasn't available here.
+
 ### Unreleased — Gender-inclusive picker across every form
 
 Every gender picker in the app (signup, signup modal, My Profile settings, the admin

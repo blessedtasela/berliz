@@ -52,7 +52,7 @@
                 </div>
 
                 <a [routerLink]="['/dashboard/timeline']" [queryParams]="{ postId: p.id }" class="block">
-                    <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{{ p.content }}</p>
+                    <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line break-words">{{ p.content }}</p>
                     <img *ngIf="p.photoUrl" [src]="p.photoUrl | strapiUrl" alt=""
                         class="w-full max-h-96 object-cover rounded-xl border border-gray-100 dark:border-gray-800 mt-2" />
                 </a>

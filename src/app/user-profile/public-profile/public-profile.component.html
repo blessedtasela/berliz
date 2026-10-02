@@ -147,7 +147,7 @@
                 <!-- Bio -->
                 <div *ngIf="profile.bio" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-5 flex flex-col gap-2">
                     <span class="text-[11px] uppercase tracking-wide text-gray-400 dark:text-gray-500 font-semibold">About</span>
-                    <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{{ profile.bio }}</p>
+                    <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line break-words">{{ profile.bio }}</p>
                 </div>
 
                 <!-- Ranks -->
@@ -165,7 +165,7 @@
                         <div *ngFor="let post of posts; trackBy: trackByPostId"
                             class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-col gap-3">
 
-                            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{{ post.content }}</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line break-words">{{ post.content }}</p>
 
                             <button *ngIf="post.photoUrl | strapiUrl as src" type="button" (click)="openPostSheet(post)"
                                 class="relative w-full max-h-96 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 group">

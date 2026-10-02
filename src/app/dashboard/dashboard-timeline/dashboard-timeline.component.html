@@ -138,7 +138,7 @@
         </span>
 
         <div>
-            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line"
+            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line break-words"
                 [ngStyle]="!isExpanded(post) && isLongContent(post)
                     ? { display: '-webkit-box', '-webkit-line-clamp': '5', '-webkit-box-orient': 'vertical', overflow: 'hidden' }
                     : {}">{{ post.content }}</p>

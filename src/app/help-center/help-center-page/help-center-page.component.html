@@ -79,7 +79,7 @@
             </button>
 
             <div *ngIf="isExpanded(article.id)" class="px-5 pb-5 flex flex-col gap-3">
-              <p class="text-sm text-zinc-400 leading-relaxed whitespace-pre-line">{{ article.answer }}</p>
+              <p class="text-sm text-zinc-400 leading-relaxed whitespace-pre-line break-words">{{ article.answer }}</p>
               <a *ngIf="article.link" [routerLink]="article.link.route"
                 class="inline-flex items-center gap-1.5 text-xs font-semibold text-red-400 hover:text-red-300 transition-colors w-fit">
                 {{ article.link.label }}

@@ -115,7 +115,7 @@
     <!-- Introduction -->
     <div *ngIf="trainerIntroduction?.introduction" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex flex-col gap-3">
         <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Meet {{ trainer?.name }}</h2>
-        <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-line">{{ trainerIntroduction?.introduction }}</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-line break-words">{{ trainerIntroduction?.introduction }}</p>
     </div>
 
     <!-- Benefits -->
@@ -166,7 +166,7 @@
     <!-- Photo album -->
     <div *ngIf="(trainerPhotoAlbum?.photos?.length || 0) > 0" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex flex-col gap-3">
         <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Photos</h2>
-        <p *ngIf="trainerPhotoAlbum?.comment" class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-line">{{ trainerPhotoAlbum?.comment }}</p>
+        <p *ngIf="trainerPhotoAlbum?.comment" class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-line break-words">{{ trainerPhotoAlbum?.comment }}</p>
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
             <img *ngFor="let photo of trainerPhotoAlbum?.photos" [src]="resolveStrapiUrl(photo.photoUrl)" [alt]="photo.name"
                 class="w-full aspect-square object-cover object-top rounded-xl border border-gray-200 dark:border-gray-700" />
@@ -176,7 +176,7 @@
     <!-- Video album -->
     <div *ngIf="(trainerVideoAlbum?.videos?.length || 0) > 0" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex flex-col gap-3">
         <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Videos</h2>
-        <p *ngIf="trainerVideoAlbum?.comment" class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-line">{{ trainerVideoAlbum?.comment }}</p>
+        <p *ngIf="trainerVideoAlbum?.comment" class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-line break-words">{{ trainerVideoAlbum?.comment }}</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <video *ngFor="let video of trainerVideoAlbum?.videos" [src]="resolveStrapiUrl(video.videoUrl)" controls
                 class="w-full aspect-video rounded-xl border border-gray-200 dark:border-gray-700 bg-black object-cover"></video>
