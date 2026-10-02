@@ -15,7 +15,7 @@ import { selectUser } from 'src/app/state/user/user.selector';
 import { loadMyTodos } from 'src/app/state/todo/todo.actions';
 import { selectMyTodos } from 'src/app/state/todo/todo.selectors';
 import { loadDashboard } from 'src/app/state/dashboard/dashboard.actions';
-import { selectDashboardData } from 'src/app/state/dashboard/dashboard.selectors';
+import { selectDashboardData, selectDashboardError } from 'src/app/state/dashboard/dashboard.selectors';
 import { loadMySubscriptions } from 'src/app/state/subscription/subscription.actions';
 import { selectMySubscriptions } from 'src/app/state/subscription/subscription.selectors';
 import { selectTodoLoading } from 'src/app/state/todo/todo.selectors';
@@ -29,6 +29,8 @@ export class DashboardMainComponent {
 
   userData: Users | null = null;
   data: any;
+  /** Set when /dashboard/details failed -- every widget below that reads it would otherwise just render empty. */
+  dashboardError: string | null = null;
 
   /** Time-of-day greeting for the Overview hero -- purely cosmetic, no backend involved. */
   get greeting(): string {
@@ -66,6 +68,10 @@ export class DashboardMainComponent {
     this.handleTodaysTodoPopup();
   }
 
+  retryDashboard(): void {
+    this.store.dispatch(loadDashboard());
+  }
+
   private loadAllData() {
     this.subscriptions.push(
       this.store.select(selectUser).subscribe(user => {
@@ -74,6 +80,10 @@ export class DashboardMainComponent {
 
       this.store.select(selectDashboardData).subscribe(data => {
         this.data = data;
+      }),
+
+      this.store.select(selectDashboardError).subscribe(error => {
+        this.dashboardError = error;
       }),
 
       this.store.select(selectMyTodos).subscribe(myTodo => {

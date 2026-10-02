@@ -2,13 +2,16 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 import { DashboardMainComponent } from './dashboard-main.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StateService } from 'src/app/services/state.service';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import { loadDashboard } from 'src/app/state/dashboard/dashboard.actions';
+import { selectDashboardData, selectDashboardError } from 'src/app/state/dashboard/dashboard.selectors';
 
 describe('DashboardMainComponent', () => {
   let component: DashboardMainComponent;
@@ -23,6 +26,7 @@ describe('DashboardMainComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [DashboardMainComponent],
+      imports: [LoadErrorComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         provideMockStore(),
@@ -55,5 +59,47 @@ describe('DashboardMainComponent', () => {
     expect(component.greeting).toBe('Good evening');
 
     jasmine.clock().uninstall();
+  });
+
+  describe('when /dashboard/details fails', () => {
+    let store: MockStore;
+
+    beforeEach(() => {
+      // The outer fixture already ran ngOnInit against the empty mock store, where the
+      // real selectors throw and end their subscriptions -- so override first, then
+      // build a fresh component that subscribes to the overridden values.
+      fixture.destroy();
+      store = TestBed.inject(MockStore);
+      store.overrideSelector(selectDashboardData, null);
+      store.overrideSelector(selectDashboardError, 'Failed to load dashboard');
+      spyOn(store, 'dispatch').and.callThrough();
+      fixture = TestBed.createComponent(DashboardMainComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+
+    afterEach(() => fixture.destroy());
+
+    it('shows an error banner instead of leaving every widget silently empty', () => {
+      const banner = fixture.nativeElement.querySelector('app-load-error [role="alert"]');
+
+      expect(banner).not.toBeNull();
+      expect(banner.textContent).toContain("Couldn't load your overview");
+      expect(banner.textContent).toContain('Failed to load dashboard');
+    });
+
+    it('retry re-dispatches loadDashboard', () => {
+      component.retryDashboard();
+
+      expect(store.dispatch).toHaveBeenCalledWith(loadDashboard());
+    });
+
+    it('hides the banner once data is available, even if a stale error is still set', () => {
+      store.overrideSelector(selectDashboardData, { 'my-todos': 3 });
+      store.refreshState();
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('app-load-error')).toBeNull();
+    });
   });
 });

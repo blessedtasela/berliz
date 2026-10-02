@@ -12,17 +12,8 @@
     </div>
 
     <!-- Failed to load -- distinct from "nothing to show", so a broken request never looks like an empty Hub -->
-    <div *ngIf="!data && !loading && error" role="alert"
-        class="flex flex-col items-center py-16 gap-3 text-center">
-        <i-feather name="alert-circle" class="text-red-400" style="width:32px;height:32px;"></i-feather>
-        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Couldn't load your Hub</p>
-        <p class="text-xs text-gray-400 dark:text-gray-500 max-w-xs">{{ error }}</p>
-        <button type="button" (click)="retry()"
-            class="mt-1 px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-1.5">
-            <i-feather name="refresh-cw" style="width:12px;height:12px;"></i-feather>
-            Try again
-        </button>
-    </div>
+    <app-load-error *ngIf="!data && !loading && error" title="Couldn't load your Hub" [message]="error"
+        (retry)="retry()"></app-load-error>
 
     <!-- Empty -->
     <div *ngIf="!data && !loading && !error" class="flex flex-col items-center py-16 gap-2 text-center">

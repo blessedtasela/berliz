@@ -181,6 +181,22 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — One shared "failed to load" state (`app-load-error`), on the Hub and Overview
+
+Follow-up to the entry below. New standalone `LoadErrorComponent` (`shared/load-error`) is the
+single "this failed to load, here's why, try again" state — a centered block for a page's main
+area, or a slim `compact` banner above existing content — deliberately distinct from an empty
+state, always with a Retry. `HubMainComponent` now uses it instead of its own inline markup,
+and the Dashboard Overview (`dashboard-main`) now shows it as a banner when
+`/dashboard/details` fails: that single call feeds the Overview's action cards, analytics and
+login chart as well as the Hub, so before this a failure left a whole page of widgets
+silently empty. 4 component tests + 3 `dashboard-main` tests.
+
+Deliberately *not* done: a global toast on every `*Failure` action. Many components already
+toast their own failures, so it would double-notify, and background loads would spam. The
+remaining ~24 slices still need `app-load-error` wired into whichever page owns them — now
+a one-element change per page rather than bespoke markup.
+
 ### Unreleased — Use-case audit: failed loads were silent; Hub now shows an error + Retry
 
 Audit finding, prompted by the Hub/Dashboard-Overview blank-page incident: the app has no

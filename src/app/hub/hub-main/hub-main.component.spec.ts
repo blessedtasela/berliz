@@ -4,6 +4,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 import { HubMainComponent } from './hub-main.component';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { loadDashboard } from 'src/app/state/dashboard/dashboard.actions';
 import { dashboardFeatureKey } from 'src/app/state/dashboard/dashboard.reducer';
@@ -25,6 +26,7 @@ describe('HubMainComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [HubMainComponent],
+      imports: [LoadErrorComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         provideMockStore({ initialState: { [dashboardFeatureKey]: initialDashboardState } }),

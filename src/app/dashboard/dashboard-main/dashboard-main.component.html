@@ -39,6 +39,11 @@
     <!-- Year in Berliz recap -->
     <app-recap-card></app-recap-card>
 
+    <!-- The Overview widgets and the Hub all read /dashboard/details; if it failed they'd silently render empty -->
+    <app-load-error *ngIf="dashboardError && !data" [compact]="true"
+        title="Couldn't load your overview" [message]="dashboardError"
+        (retry)="retryDashboard()"></app-load-error>
+
     <!-- Action cards -->
     <app-dashboard-action [data]="data"></app-dashboard-action>
 

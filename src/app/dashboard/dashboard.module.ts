@@ -9,6 +9,7 @@ import { FooterModule } from '../footer/footer.module';
 import { DashboardTodoListComponent } from './dashboard-todo-list/dashboard-todo-list.component';
 import { DashboardLoginChartComponent } from './dashboard-login-chart/dashboard-login-chart.component';
 import { DashboardNotificationComponent } from './dashboard-notification/dashboard-notification.component';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { DashboardActionComponent } from './dashboard-action/dashboard-action.component';
 import { DashboardAppAnalyticsComponent } from './dashboard-app-analytics/dashboard-app-analytics.component';
 import { TodoListsModule } from './todo-lists/todo-lists.module';
@@ -86,7 +87,8 @@ import { OnboardingChecklistComponent } from '../shared/onboarding-checklist/onb
     AccountabilityCardComponent,
     ChallengesCardComponent,
     RecapCardComponent,
-    OnboardingChecklistComponent
+    OnboardingChecklistComponent,
+    LoadErrorComponent
   ]
 })
 export class DashboardModule { }

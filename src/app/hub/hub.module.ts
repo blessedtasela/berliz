@@ -12,6 +12,7 @@ import { FooterModule } from '../footer/footer.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { RouterModule } from '@angular/router';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 
 
 
@@ -25,6 +26,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
   ],
   imports: [
     ClickablePhotoDirective,
+    LoadErrorComponent,
     CommonModule,
     IconsModule,
     NavbarModule,
