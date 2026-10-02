@@ -38,9 +38,8 @@ export class PrivacyPageComponent {
       body: 'Berliz uses a small number of third-party services to run the platform: Strapi, our content management system, which stores media such as profile and center images; and an email service provider we use to send account and booking notifications. We only share the minimum data those services need to do their job.'
     },
     {
-      title: '4. Payments (Planned)',
-      body: 'Payment processing is not yet live on Berliz. Once integrated, payments will be handled through Stripe, and Berliz will not directly store your card number or other payment credentials — Stripe handles that data under its own security and privacy practices. This section is a placeholder and will be finalized, and re-reviewed, before payments go live.',
-      todo: true
+      title: '4. Payments',
+      body: 'Subscription and booking payments on Berliz are processed through Stripe. Berliz does not store your card number or other payment credentials directly — Stripe handles that data under its own security and privacy practices. Refunds, when issued, are also processed through Stripe. Payouts to trainers and centers are handled through Stripe Connect.'
     },
     {
       title: '5. Your Rights',

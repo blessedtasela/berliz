@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { UpdateCenterPricingsModalComponent } from './update-center-pricings-modal/update-center-pricings-modal.component';
 import { AddCenterPricingsModalComponent } from './add-center-pricings-modal/add-center-pricings-modal.component';
-import { CenterPricingsDetailsModalComponent } from './center-pricings-details-modal/center-pricings-details-modal.component';
 import { CenterPricingDetailPageComponent } from './center-pricing-detail-page/center-pricing-detail-page.component';
 import { CenterPricingsListComponent } from './center-pricings-list/center-pricings-list.component';
 import { CenterPricingsComponent } from './center-pricings/center-pricings.component';
@@ -21,7 +20,6 @@ import { RoleGuard } from 'src/app/services/role.guard';
   declarations: [
     UpdateCenterPricingsModalComponent,
     AddCenterPricingsModalComponent,
-    CenterPricingsDetailsModalComponent,
     CenterPricingDetailPageComponent,
     CenterPricingsListComponent,
     CenterPricingsComponent,

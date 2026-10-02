@@ -56,10 +56,14 @@ describe('PrivacyPageComponent', () => {
     expect(text.toLowerCase()).toContain('18');
   });
 
-  it('flags the Stripe/payments section as a TODO pending integration', () => {
+  it('describes payments as live, not a pending TODO -- Stripe Checkout/Connect shipped', () => {
+    const text = (fixture.nativeElement as HTMLElement).textContent || '';
+    expect(text.toLowerCase()).not.toContain('not yet live');
+    expect(text.toLowerCase()).not.toContain('placeholder');
+
     const todoBadges = fixture.debugElement.queryAll(By.css('span'))
       .filter(el => (el.nativeElement as HTMLElement).textContent?.trim() === 'TODO');
-    expect(todoBadges.length).withContext('a TODO badge should mark the Stripe section').toBeGreaterThan(0);
+    expect(todoBadges.length).withContext('no section should still be marked TODO').toBe(0);
   });
 
   it('links privacy questions to the Contact Us page', () => {
