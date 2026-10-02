@@ -13,7 +13,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule } from '@angular/material/dialog';
-import { ExamplePdfViewerComponent } from './example-pdf-viewer/example-pdf-viewer.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { SharedModule } from './shared/shared.module';
 import { FeatherModule } from 'angular-feather';
@@ -153,7 +152,6 @@ const dbConfig: DBConfig = {
   declarations: [
     AppComponent,
     PageNotFoundComponent,
-    ExamplePdfViewerComponent,
     RouterBreadcrumbComponent,
     UnderConstructionPageComponent,
   ],
