@@ -81,9 +81,9 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
     ],
   },
   { name: 'Promotions', icon: 'tag', route: '/dashboard/my-promotions', roles: ['trainer', 'center'] },
-  { name: 'Packages', icon: 'package', route: '/dashboard/my-packages', roles: ['trainer', 'center'] },
 
   { label: 'Training' },
+  { name: 'Workout Room', icon: 'zap', route: '/dashboard/workout-room' },
   { name: 'Tasks', icon: 'activity', route: '/dashboard/my-tasks' },
   { name: 'To-do list', icon: 'calendar', route: '/dashboard/my-todos' },
   { name: 'Workouts', icon: 'zap', route: '/dashboard/workouts' },
