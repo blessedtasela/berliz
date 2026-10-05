@@ -412,6 +412,19 @@ const dashboardRoutes: Routes = [
         }
       },
 
+      // One landing page aggregating every workout-adjacent tool (workouts,
+      // exercises, runs, progress, tasks, to-do, messages, client intake)
+      // instead of them only being reachable scattered across the sidebar.
+      {
+        path: 'workout-room',
+        loadComponent: () => import('../workout-room/workout-room.component').then(m => m.WorkoutRoomComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'Workout Room',
+          expectedRole: expectedRoleAll
+        }
+      },
+
       // Workouts — anyone can build a workout
       {
         path: 'workouts',

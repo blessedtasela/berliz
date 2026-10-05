@@ -1,0 +1,148 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Page header -->
+    <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center shrink-0">
+            <i-feather name="zap" class="text-orange-500" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+            <h1 class="text-sm font-bold text-gray-900">Workout Room</h1>
+            <p class="text-[11px] text-gray-400">Everything you need to train -- templates, logging, exercises, runs and more -- in one place.</p>
+        </div>
+    </div>
+
+    <!-- Quick actions -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+        <a routerLink="/dashboard/workouts" class="bg-white rounded-2xl border border-gray-200 p-3.5 flex flex-col gap-2 hover:shadow-sm hover:-translate-y-0.5 transition">
+            <div class="w-9 h-9 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center">
+                <i-feather name="zap" class="text-orange-500" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-900">Workouts</p>
+                <p class="text-[10px] text-gray-400">Templates &amp; logging</p>
+            </div>
+        </a>
+
+        <a routerLink="/dashboard/workouts/history" class="bg-white rounded-2xl border border-gray-200 p-3.5 flex flex-col gap-2 hover:shadow-sm hover:-translate-y-0.5 transition">
+            <div class="w-9 h-9 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center">
+                <i-feather name="list" class="text-blue-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-900">History</p>
+                <p class="text-[10px] text-gray-400">Every session you've logged</p>
+            </div>
+        </a>
+
+        <a routerLink="/dashboard/exercises" class="bg-white rounded-2xl border border-gray-200 p-3.5 flex flex-col gap-2 hover:shadow-sm hover:-translate-y-0.5 transition">
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
+                <i-feather name="activity" class="text-emerald-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-900">Exercise library</p>
+                <p class="text-[10px] text-gray-400">Browse by muscle group</p>
+            </div>
+        </a>
+
+        <a routerLink="/dashboard/runs" class="bg-white rounded-2xl border border-gray-200 p-3.5 flex flex-col gap-2 hover:shadow-sm hover:-translate-y-0.5 transition">
+            <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center">
+                <i-feather name="map" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-900">Runs</p>
+                <p class="text-[10px] text-gray-400">Solo, group &amp; leaderboard</p>
+            </div>
+        </a>
+
+        <a routerLink="/dashboard/my-progress" class="bg-white rounded-2xl border border-gray-200 p-3.5 flex flex-col gap-2 hover:shadow-sm hover:-translate-y-0.5 transition">
+            <div class="w-9 h-9 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center">
+                <i-feather name="trending-up" class="text-purple-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-900">Progress</p>
+                <p class="text-[10px] text-gray-400">Check-ins &amp; body stats</p>
+            </div>
+        </a>
+
+        <a routerLink="/dashboard/my-tasks" class="bg-white rounded-2xl border border-gray-200 p-3.5 flex flex-col gap-2 hover:shadow-sm hover:-translate-y-0.5 transition">
+            <div class="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center">
+                <i-feather name="check-square" class="text-amber-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-900">Tasks</p>
+                <p class="text-[10px] text-gray-400">Assigned workouts &amp; runs</p>
+            </div>
+        </a>
+
+        <a routerLink="/dashboard/my-todos" class="bg-white rounded-2xl border border-gray-200 p-3.5 flex flex-col gap-2 hover:shadow-sm hover:-translate-y-0.5 transition">
+            <div class="w-9 h-9 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center">
+                <i-feather name="list" class="text-gray-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-900">To-do list</p>
+                <p class="text-[10px] text-gray-400">Your own training notes</p>
+            </div>
+        </a>
+
+        <a routerLink="/dashboard/messages" class="bg-white rounded-2xl border border-gray-200 p-3.5 flex flex-col gap-2 hover:shadow-sm hover:-translate-y-0.5 transition">
+            <div class="w-9 h-9 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center">
+                <i-feather name="message-square" class="text-sky-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-900">Quick question</p>
+                <p class="text-[10px] text-gray-400">{{ isProvider ? 'Message a client' : 'Message your trainer' }}</p>
+            </div>
+        </a>
+
+        <a *ngIf="isProvider" routerLink="/dashboard/my-client-intakes" class="bg-white rounded-2xl border border-gray-200 p-3.5 flex flex-col gap-2 hover:shadow-sm hover:-translate-y-0.5 transition">
+            <div class="w-9 h-9 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center">
+                <i-feather name="file-text" class="text-rose-600" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-900">Client intake</p>
+                <p class="text-[10px] text-gray-400">Screening forms</p>
+            </div>
+        </a>
+    </div>
+
+    <div *ngIf="loading" class="flex items-center justify-center py-8">
+        <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>
+    </div>
+
+    <ng-container *ngIf="!loading">
+
+        <!-- Recent activity -->
+        <div class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+            <div class="flex items-center justify-between">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Recent activity</p>
+                <a routerLink="/dashboard/workouts/history" class="text-[11px] font-semibold text-red-600 hover:text-red-700 transition">See all</a>
+            </div>
+
+            <div *ngIf="recentLogs.length === 0" class="py-4 text-center">
+                <p class="text-xs text-gray-400">No workouts logged yet -- log one from the Workouts page to see it here.</p>
+            </div>
+
+            <div *ngFor="let log of recentLogs" class="flex items-center gap-3 py-1">
+                <div class="w-8 h-8 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center shrink-0">
+                    <i-feather name="zap" class="text-orange-500" style="width:13px;height:13px;"></i-feather>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="text-xs font-bold text-gray-900 truncate">{{ logLabel(log) }}</p>
+                    <p class="text-[11px] text-gray-400">{{ log.logDate | date:'mediumDate' }}{{ log.durationMinutes ? ' · ' + log.durationMinutes + ' min' : '' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Templates -->
+        <div *ngIf="templates.length > 0" class="bg-white rounded-2xl border border-gray-200 p-4 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-8 h-8 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center shrink-0">
+                    <i-feather name="zap" class="text-orange-500" style="width:13px;height:13px;"></i-feather>
+                </div>
+                <p class="text-xs font-bold text-gray-900">{{ templates.length }} workout template{{ templates.length === 1 ? '' : 's' }} available</p>
+            </div>
+            <a routerLink="/dashboard/workouts" class="shrink-0 text-[11px] font-semibold text-red-600 hover:text-red-700 transition">Browse</a>
+        </div>
+
+    </ng-container>
+
+</section>
