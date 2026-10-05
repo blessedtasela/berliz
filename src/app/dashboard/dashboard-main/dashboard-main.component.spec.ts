@@ -64,6 +64,12 @@ describe('DashboardMainComponent', () => {
   describe('when /dashboard/details fails', () => {
     let store: MockStore;
 
+    // overrideSelector() mutates the module-level memoized selectors, which outlive
+    // this TestBed. Left in place, selectDashboardData stays stubbed to { 'my-todos': 3 }
+    // and leaks into any later spec in Jasmine's random order -- HubMainComponent's
+    // specs saw "cached data" and never dispatched loadDashboard.
+    afterEach(() => store.resetSelectors());
+
     beforeEach(() => {
       // The outer fixture already ran ngOnInit against the empty mock store, where the
       // real selectors throw and end their subscriptions -- so override first, then

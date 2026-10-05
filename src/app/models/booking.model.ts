@@ -31,6 +31,11 @@ export interface Booking {
   /** True when the client supplied their own location rather than picking a listed one. */
   locationCustom?: boolean | null;
 
+  /** What the client owes for this session (price + location fee, less rewards); set when the provider confirms it. */
+  amountDue?: number | null;
+  /** null (never priced / provider has no rate) | NOT_REQUIRED | UNPAID | PAID | REFUNDED. */
+  paymentStatus?: 'NOT_REQUIRED' | 'UNPAID' | 'PAID' | 'REFUNDED' | null;
+
   date: Date;
   lastUpdate: Date;
 

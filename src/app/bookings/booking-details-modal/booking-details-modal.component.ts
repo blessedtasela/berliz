@@ -83,4 +83,26 @@ export class BookingDetailsModalComponent {
   close(): void {
     this.dialogRef.close();
   }
+
+  /** The client can pay right from the details; the card that opened this starts Stripe Checkout. */
+  get canClientPay(): boolean {
+    return this.mode === 'client'
+      && this.booking.paymentStatus === 'UNPAID'
+      && (this.booking.status === 'confirmed' || this.booking.status === 'completed')
+      && (this.booking.amountDue ?? 0) > 0;
+  }
+
+  /** What to say about payment, or null when there is nothing to say (never priced, nothing to pay, or still pending). */
+  get paymentLabel(): string | null {
+    switch (this.booking.paymentStatus) {
+      case 'PAID': return 'Paid';
+      case 'REFUNDED': return 'Refunded';
+      case 'UNPAID': return this.booking.status === 'pending' ? null : (this.mode === 'provider' ? 'Awaiting payment' : 'Payment due');
+      default: return null;
+    }
+  }
+
+  pay(): void {
+    this.dialogRef.close('pay');
+  }
 }

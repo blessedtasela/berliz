@@ -31,6 +31,8 @@ export class BookingCardComponent {
   @Output() statusChangeRequested = new EventEmitter<{ id: number; status: string }>();
   @Output() rescheduleRequested = new EventEmitter<RescheduleRequest>();
   @Output() deleteRequested = new EventEmitter<number>();
+  /** Client tapped "Pay" on a confirmed session; the parent starts Stripe Checkout. */
+  @Output() payRequested = new EventEmitter<number>();
   @Output() startIntakeRequested = new EventEmitter<{ clientId: number; clientName: string }>();
   @Output() sendIntakeRequested = new EventEmitter<{ clientId: number; clientName: string }>();
 
@@ -65,6 +67,34 @@ export class BookingCardComponent {
       case 'cancelled': return 'bg-gray-400';
       default: return 'bg-amber-500';
     }
+  }
+
+  /** The provider has confirmed and priced this session and the client hasn't paid yet. */
+  get canClientPay(): boolean {
+    return this.mode === 'client'
+      && this.booking.paymentStatus === 'UNPAID'
+      && (this.booking.status === 'confirmed' || this.booking.status === 'completed')
+      && (this.booking.amountDue ?? 0) > 0;
+  }
+
+  /** Payment pill shown to both sides; null when there's nothing worth saying (never priced, or nothing to pay). */
+  get paymentBadge(): { label: string; classes: string } | null {
+    if (this.booking.status === 'cancelled' && this.booking.paymentStatus !== 'REFUNDED') return null;
+    switch (this.booking.paymentStatus) {
+      case 'PAID':
+        return { label: 'Paid', classes: 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900' };
+      case 'REFUNDED':
+        return { label: 'Refunded', classes: 'text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700' };
+      case 'UNPAID':
+        return this.booking.status === 'pending' ? null
+          : { label: this.mode === 'provider' ? 'Awaiting payment' : 'Payment due', classes: 'text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900' };
+      default:
+        return null;
+    }
+  }
+
+  pay(): void {
+    this.payRequested.emit(this.booking.id);
   }
 
   get canClientCancel(): boolean {
@@ -130,7 +160,8 @@ export class BookingCardComponent {
       data: {
         confirmation: true,
         title: 'Cancel this session?',
-        message: `${this.counterpartyName} will be notified this session is no longer happening.`,
+        message: `${this.counterpartyName} will be notified this session is no longer happening.`
+          + (this.booking.paymentStatus === 'PAID' ? ' They have already paid, so their payment will be refunded in full.' : ''),
         confirmText: 'Cancel session',
         cancelText: 'Keep it',
         icon: 'x-circle'
@@ -239,6 +270,8 @@ export class BookingCardComponent {
       width: '400px',
       maxWidth: '95vw',
       data: { booking: this.booking, mode: this.mode },
+    }).afterClosed().subscribe(result => {
+      if (result === 'pay') this.pay();
     });
   }
 }

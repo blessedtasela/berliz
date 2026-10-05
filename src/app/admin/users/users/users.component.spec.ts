@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { provideMockStore } from '@ngrx/store/testing';
 import { NEVER, of } from 'rxjs';
@@ -15,6 +16,7 @@ describe('UsersComponent', () => {
     rxStompServiceSpy.watch.and.returnValue(NEVER);
 
     TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
       declarations: [UsersComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [

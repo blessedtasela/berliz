@@ -102,6 +102,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Stripe Checkout (one-time + recurring) | ✅ | Plan pick → hosted Stripe Checkout → `checkout.session.completed` webhook records the `Payment` + activates the sub, capturing the Stripe subscription/customer id |
 | Stripe recurring lifecycle | ✅ | Webhook handles `invoice.paid` (record renewal, extend `endDate`), `invoice.payment_failed` (→ PAST_DUE + grace), `customer.subscription.deleted` (→ CANCELLED); nightly sweep expires auto-renew-off past `endDate` and past-due beyond the 5-day grace |
 | Stripe refunds | ✅ | Admin "Refund via Stripe" on a payment row → `POST /payment/stripe/refund/{id}` reverses the charge and stamps the row |
+| Pay for a single booked session | ✅ | Provider confirms → booking priced (hourly rate × minutes, less promo/credit, plus location fee) → client taps **Pay $X** in My Bookings → hosted Stripe Checkout → webhook marks it Paid. Cancelling a paid session auto-refunds. Payout is only created for a paid session |
 | Bypass / promo codes | ✅ | |
 | Pre-renewal reminder + one-tap cancel | ✅ | Daily sweep emails + bells a member ~2 days before renewal (once/period); "Cancel auto-renew" / "Resume auto-renew" in the My Subscriptions menu — cancel keeps access until `endDate` and also sets Stripe `cancel_at_period_end`. `POST /subscription/cancel` \| `/resume` |
 | Stripe Connect payouts (to trainers/partners) | ✅ | Express onboarding link + `Transfer.create` to the provider's connected account |
@@ -181,6 +182,41 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Per-session checkout: clients pay for a confirmed booking through Stripe
+
+Until now only plans and packages went through Stripe; a single booked session was just a
+request. Now it is paid in-app, **after** the provider confirms (so nothing is charged for a
+request that gets declined).
+
+- **Pricing** (`BookingPricing`, backend): when a provider confirms (or books for a client, which
+  confirms immediately) the booking gets `amount_due` and `payment_status`. Amount = the provider's
+  `hourlyRate` × booked minutes ÷ 60, minus the provider's own promotion, minus a Berliz session
+  credit, **plus the location fee** (which is always payable). A package-redeemed session charges only
+  the location fee. A provider with no hourly rate is left unpriced and behaves as before. Amounts
+  under $0.50 count as nothing to pay (Stripe's minimum). The price is fixed at confirmation; the
+  client never sends an amount.
+- **Pay** (`POST /payment/stripe/booking-checkout/{id}`): only the booking's own client (or admin), only
+  while confirmed/completed and UNPAID. The webhook marks the booking PAID, links the `Payment` to it
+  (`payment.booking_fk`), and notifies both sides. A second checkout completing for an already-paid
+  booking is refunded automatically instead of kept.
+- **Cancel** a paid session (provider, or admin) → the payment is refunded in full automatically; if
+  Stripe fails the booking stays Paid and an admin can still use "Refund via Stripe". A refunded
+  booking shows Refunded. Declining/cancelling an unpaid one needs no refund.
+- **Payouts** (`PayoutServiceImplement`): no payout for a booking that is still UNPAID or REFUNDED
+  (Berliz holds no money for it). Gross now includes the location fee, and a provider's *own*
+  promotion reduces their gross, while a Berliz-funded session credit does not.
+- **UI**: My Bookings shows **Pay $X** on a confirmed unpaid session (card and details modal), plus
+  Paid / Payment due / Refunded pills, and the provider sees "Awaiting payment" / "Paid". The provider's
+  cancel confirmation warns that a paid client will be refunded. `/payment/success` and `/payment/cancel`
+  now cover bookings as well as subscriptions.
+- Migration V59 (`booking.amount_due`, `booking.payment_status`, `payment.booking_fk`).
+- Rescheduling-and-confirming also (re)prices the booking, so the new length is what gets charged
+  (an already-paid booking is never repriced, so extending a paid session doesn't bill the difference).
+- Not yet: nothing nudges a client who is confirmed but never pays (no reminder, no auto-cancel);
+  the booking form doesn't show an estimated price up front; there is no partial-refund or
+  no-show/late-cancel policy; centers are priced the same way but the "paid" notification only
+  reaches trainers.
 
 ### Unreleased — Training locations with fees, and client-chosen custom locations
 

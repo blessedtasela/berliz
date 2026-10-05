@@ -1,0 +1,52 @@
+name: Frontend CI
+
+# The frontend had no CI at all -- nothing built or tested the Angular app before
+# it reached Netlify, so a broken template or a failing spec only surfaced as a
+# failed deploy (or not at all). The job order is fastest-failure-first.
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      # tsc catches type errors in seconds, before the multi-minute builds below.
+      # Specs are type-checked separately because they use their own tsconfig.
+      - name: Type-check app
+        run: npx tsc --noEmit -p tsconfig.app.json
+
+      - name: Type-check specs
+        run: npx tsc --noEmit -p tsconfig.spec.json
+
+      # The exact command netlify.toml runs: the production browser build PLUS the
+      # server bundle and static prerender of the public routes. Running it here
+      # means a build-config or AOT template error fails the PR, not the deploy.
+      - name: Production build + prerender (same as Netlify)
+        run: npm run prerender
+
+      - name: Unit tests
+        run: npx ng test --watch=false --browsers=ChromeHeadlessCI --no-progress
