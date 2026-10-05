@@ -10,6 +10,7 @@ import { NavbarModule } from '../navbar/navbar.module';
 import { SharedModule } from '../shared/shared.module';
 import { DateStripComponent } from '../shared/date-strip/date-strip.component';
 import { TimePickerComponent } from '../shared/time-picker/time-picker.component';
+import { BookingLocationPickerComponent } from '../booking/booking-location-picker/booking-location-picker.component';
 
 import { BookingCardComponent } from './booking-card/booking-card.component';
 import { BookingsEmptyComponent } from './bookings-empty/bookings-empty.component';
@@ -46,7 +47,8 @@ import { BookForClientModalComponent } from './book-for-client-modal/book-for-cl
     RouterModule,
     SharedModule,
     DateStripComponent,
-    TimePickerComponent
+    TimePickerComponent,
+    BookingLocationPickerComponent
   ],
   exports: [
     MyBookingsMainComponent,

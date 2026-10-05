@@ -62,8 +62,10 @@ export class TrainersDetailsHeroComponent {
     return [loc.city, loc.stateProvince, loc.country].filter(Boolean).join(', ');
   }
 
-  mapsUrlFor(loc: { city: string; stateProvince?: string | null; country: string }): string {
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(this.fullLocationLabel(loc))}`;
+  /** Maps search includes the gym/address when the trainer gave one, so it lands on the exact place. */
+  mapsUrlFor(loc: { city: string; stateProvince?: string | null; country: string; venue?: string | null }): string {
+    const query = [loc.venue, this.fullLocationLabel(loc)].filter(Boolean).join(', ');
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
   }
 
   toggleLocations(): void {

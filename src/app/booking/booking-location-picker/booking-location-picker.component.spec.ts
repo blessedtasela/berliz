@@ -120,4 +120,32 @@ describe('BookingLocationPickerComponent', () => {
     fixture.detectChanges();
     expect(component.hasOptions).toBeFalse();
   });
+
+  it("restores a preselected listed location and emits it", () => {
+    component.preselect = { trainerLocationId: 41 };
+    render(trainer());
+    expect(component.selectedId).toBe(41);
+    expect(emitted.pop()).toEqual({ trainerLocationId: 41, customLocation: undefined, incomplete: false });
+  });
+
+  it("restores a preselected custom location when the trainer allows it", () => {
+    component.preselect = { customLocation: "12 Elm St" };
+    render(trainer());
+    expect(component.customSelected).toBeTrue();
+    expect(component.customText).toBe("12 Elm St");
+    expect(emitted.pop()).toEqual({ trainerLocationId: undefined, customLocation: "12 Elm St", incomplete: false });
+  });
+
+  it("ignores a preselect that no longer exists", () => {
+    component.preselect = { trainerLocationId: 999 };
+    render(trainer());
+    expect(component.selectedId).toBeNull();
+    expect(emitted.length).toBe(0);
+  });
+
+  it("ignores a preselected custom location when the trainer no longer allows it", () => {
+    component.preselect = { customLocation: "12 Elm St" };
+    render(trainer({ customLocationAllowed: false }));
+    expect(component.customSelected).toBeFalse();
+  });
 });

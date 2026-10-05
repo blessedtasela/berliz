@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { take } from 'rxjs/operators';
+import { catchError, take } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 import { BookingService } from 'src/app/services/booking.service';
+import { TrainerService } from 'src/app/services/trainer.service';
+import { Trainers } from 'src/app/models/trainers.interface';
+import { BookingLocationSelection } from 'src/app/booking/booking-location-picker/booking-location-picker.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { MyClientSummary } from 'src/app/models/booking.model';
 import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
@@ -33,15 +37,25 @@ export class BookForClientModalComponent implements OnInit {
   notes = '';
   submitting = false;
 
+  /** The signed-in provider's own trainer record when they are a trainer (centers have none) -- feeds the location picker. */
+  myTrainer: Trainers | null = null;
+  locationSelection: BookingLocationSelection | null = null;
+
   private readonly _photoUri = memoizePhotoUriByKey();
 
   constructor(
     public dialogRef: MatDialogRef<BookForClientModalComponent>,
     private bookingService: BookingService,
     private snackBar: SnackBarService,
+    private trainerService: TrainerService,
   ) { }
 
   ngOnInit(): void {
+    // Optional extra: if this fails (or the provider is a center) the picker just doesn't appear.
+    this.trainerService.getTrainer().pipe(take(1), catchError(() => of(null))).subscribe(res => {
+      this.myTrainer = res?.data ?? null;
+    });
+
     this.bookingService.getMyClients().pipe(take(1)).subscribe({
       next: (res) => {
         this.clients = res?.data ?? [];
@@ -66,7 +80,8 @@ export class BookForClientModalComponent implements OnInit {
   }
 
   get canSubmit(): boolean {
-    return !!this.selectedClientId && !!this.date && !!this.time && !this.submitting;
+    return !!this.selectedClientId && !!this.date && !!this.time && !this.submitting
+      && !this.locationSelection?.incomplete;
   }
 
   submit(): void {
@@ -79,6 +94,8 @@ export class BookForClientModalComponent implements OnInit {
       localTime: this.time,
       durationMinutes: this.durationMinutes,
       notes: this.notes.trim(),
+      trainerLocationId: this.locationSelection?.trainerLocationId,
+      customLocation: this.locationSelection?.customLocation,
     }).pipe(take(1)).subscribe({
       next: (res) => {
         this.submitting = false;
