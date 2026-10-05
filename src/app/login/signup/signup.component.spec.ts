@@ -103,7 +103,13 @@ describe('SignupComponent', () => {
     component.submitForm();
     expect(ngxUiLoaderServiceMock.start).toHaveBeenCalled();
     expect(userServiceMock.signup).toHaveBeenCalled();
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
+    // The account isn't active until the emailed code is entered, so this
+    // goes straight to activation (with the email pre-filled) instead of a
+    // bare /login the user has no way to act on yet.
+    expect(routerMock.navigate).toHaveBeenCalledWith(
+      ['/login/activate-account'],
+      { queryParams: { email: 'john.doe@example.com' } }
+    );
     expect(snackBarServiceMock.openSnackBar).toHaveBeenCalledWith('Signup successful', '');
   });
 
@@ -113,5 +119,43 @@ describe('SignupComponent', () => {
 
     component.submitForm();
     expect(snackBarServiceMock.openSnackBar).toHaveBeenCalledWith('Signup failed', 'error');
+  });
+
+  // Cutting the 13-required-field flow down to the essentials: a profile
+  // photo and full location (country/state/city/postal/address/phone) are
+  // no longer required to create an account -- they're deferred to the
+  // onboarding checklist's "complete your profile" step instead.
+  describe('optional fields (reduced-friction signup)', () => {
+    it('step 1 is valid with no profile photo', () => {
+      component.signupForm.patchValue({
+        firstname: 'John',
+        lastname: 'Doe',
+        gender: 'Male',
+        dob: '1990-01-01',
+        profilePhoto: '',
+      });
+
+      expect(component.isStepValid(0)).toBeTrue();
+    });
+
+    it('step 2 (location) is valid with every field left blank', () => {
+      expect(component.isStepValid(1)).toBeTrue();
+    });
+
+    it('still submits successfully with an empty photo and location', () => {
+      userServiceMock.signup.and.returnValue(of({
+        message: 'Signup successful', data: '', success: true, statusCode: 200
+      }));
+
+      component.signupForm.setValue({
+        ...validSignupFormValue,
+        profilePhoto: '',
+        location: { country: null, state: null, city: null, countryCode: null, postalCode: '', address: '', phone: '' },
+      });
+
+      component.submitForm();
+      expect(userServiceMock.signup).toHaveBeenCalled();
+      expect(snackBarServiceMock.openSnackBar).toHaveBeenCalledWith('Signup successful', '');
+    });
   });
 });

@@ -72,15 +72,18 @@ export class QuickSignupComponent implements AfterViewInit {
       const payload = this.referredBy
         ? { ...this.quickSignupForm.value, referredBy: this.referredBy }
         : this.quickSignupForm.value;
+      const email = this.quickSignupForm.value.email;
       this.userService.quickAdd(payload)
         .subscribe((response: any) => {
-          this.quickSignupForm.reset();
           this.invalidForm = false;
-          this.responseMessage = response?.message;
+          this.responseMessage = response?.message || 'Check your email for an activation code.';
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.ngxService.stop();
-          this.router.navigate(['/login']);
-          this.quickSignupForm.reset;
+          this.quickSignupForm.reset();
+          // Straight to activation with the email pre-filled -- the account
+          // isn't active until the emailed code is entered, so /login alone
+          // would just leave the user stuck not knowing what to do next.
+          this.router.navigate(['/login/activate-account'], { queryParams: { email } });
         },
           (error: any) => {
             this.ngxService.stop();
