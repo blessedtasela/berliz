@@ -211,10 +211,12 @@ request that gets declined).
   cancel confirmation warns that a paid client will be refunded. `/payment/success` and `/payment/cancel`
   now cover bookings as well as subscriptions.
 - Migration V59 (`booking.amount_due`, `booking.payment_status`, `payment.booking_fk`).
--
-  booking form doesn't show an estimated price up front; a rescheduled booking keeps its original
-  price; there is no partial-refund or no-show/late-cancel policy; centers are priced the same way
-  but the "paid" notification only reaches trainers.
+- Rescheduling-and-confirming also (re)prices the booking, so the new length is what gets charged
+  (an already-paid booking is never repriced, so extending a paid session doesn't bill the difference).
+- Not yet: nothing nudges a client who is confirmed but never pays (no reminder, no auto-cancel);
+  the booking form doesn't show an estimated price up front; there is no partial-refund or
+  no-show/late-cancel policy; centers are priced the same way but the "paid" notification only
+  reaches trainers.
 
 ### Unreleased — Training locations with fees, and client-chosen custom locations
 
