@@ -6,6 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { Booking } from 'src/app/models/booking.model';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { StripeService } from 'src/app/services/stripe.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 import {
@@ -32,6 +33,8 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
 
   bookings: Booking[] = [];
   loading = false;
+  /** The booking whose Stripe Checkout is being created, so its Pay button can't be double-tapped. */
+  payingBookingId: number | null = null;
 
   private destroy$ = new Subject<void>();
 
@@ -40,6 +43,7 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
     private actions$: Actions,
     private dialog: MatDialog,
     private snackBar: SnackBarService,
+    private stripeService: StripeService,
   ) { }
 
   ngOnInit(): void {
@@ -88,6 +92,32 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
 
   get cancelled(): Booking[] {
     return this.bookings.filter(b => b.status === 'cancelled');
+  }
+
+  /** Starts Stripe Checkout for a confirmed session; the amount is whatever the server priced the booking at. */
+  onPayRequested(id: number): void {
+    if (this.payingBookingId !== null) return;
+    this.payingBookingId = id;
+    this.stripeService.createBookingCheckout(id).subscribe({
+      next: (res) => {
+        const url = res?.data?.checkoutUrl;
+        if (!url) {
+          this.payingBookingId = null;
+          this.snackBar.openSnackBar(res?.message || genericError, 'error');
+          return;
+        }
+        this.redirect(url);
+      },
+      error: (err) => {
+        this.payingBookingId = null;
+        this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+      },
+    });
+  }
+
+  /** A real browser navigation (Stripe's page is off-site); its own method so tests can stub it. */
+  protected redirect(url: string): void {
+    window.location.href = url;
   }
 
   onCancelRequested(id: number): void {

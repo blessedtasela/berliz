@@ -9,6 +9,9 @@
                     <i-feather name="zap" style="width:9px;height:9px;"></i-feather>
                     Urgent
                 </span>
+                <span *ngIf="paymentBadge as pb" class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [ngClass]="pb.classes">
+                    {{ pb.label }}
+                </span>
                 <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full" [ngClass]="statusClasses">
                     {{ booking.status | titlecase }}
                 </span>
@@ -44,6 +47,11 @@
         </span>
 
         <div class="flex items-center gap-1.5 mt-2 flex-wrap" (click)="$event.stopPropagation()">
+            <button *ngIf="canClientPay" type="button" (click)="pay()"
+                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-1">
+                <i-feather name="credit-card" style="width:11px;height:11px;"></i-feather>
+                Pay ${{ booking.amountDue | number:'1.2-2' }}
+            </button>
             <button *ngIf="canClientCancel" type="button" (click)="cancel()"
                 class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
                 Cancel

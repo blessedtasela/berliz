@@ -8,14 +8,22 @@
         <div class="flex flex-col gap-2">
             <h1 class="text-lg font-bold text-gray-900 dark:text-gray-100">Checkout cancelled</h1>
             <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                No payment was made — nothing was charged. You can pick a plan and try again any time.
+                No payment was made — nothing was charged. You can pick a plan, or pay for a confirmed
+                session from your bookings, and try again any time.
             </p>
         </div>
 
-        <a routerLink="/dashboard/my-subscriptions"
-            class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
-                   hover:bg-red-700 active:scale-[0.98] transition">
-            Back to plans
-        </a>
+        <div class="flex flex-wrap items-center justify-center gap-2">
+            <a routerLink="/dashboard/my-tasks"
+                class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+                       hover:bg-red-700 active:scale-[0.98] transition">
+                Back to my bookings
+            </a>
+            <a routerLink="/dashboard/my-subscriptions"
+                class="px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-xs font-semibold
+                       hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] transition">
+                Back to plans
+            </a>
+        </div>
     </div>
 </section>

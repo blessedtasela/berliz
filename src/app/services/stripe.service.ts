@@ -22,6 +22,17 @@ export class StripeService {
     );
   }
 
+  /**
+   * "Pay now" for one confirmed session. The amount is the booking's own `amountDue` -- the server
+   * never takes a price from the client. Redirect the browser to the returned `checkoutUrl`.
+   */
+  createBookingCheckout(bookingId: number): Observable<ApiResponse<StripeCheckoutSessionResponse>> {
+    return this.httpClient.post<ApiResponse<StripeCheckoutSessionResponse>>(
+      this.url + `/payment/stripe/booking-checkout/${bookingId}`,
+      null
+    );
+  }
+
   /** Admin-only — full Stripe refund of a payment. */
   refundPayment(paymentId: number): Observable<ApiResponse<{ id?: number; message?: string }>> {
     return this.httpClient.post<ApiResponse<{ id?: number; message?: string }>>(

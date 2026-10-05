@@ -42,7 +42,7 @@
                 <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
                 Confirmed
             </span>
-            <app-booking-card *ngFor="let b of confirmed" mode="client" [booking]="b"
+            <app-booking-card *ngFor="let b of confirmed" mode="client" [booking]="b" (payRequested)="onPayRequested($event)"
                 (cancelRequested)="onCancelRequested($event)"></app-booking-card>
         </div>
 
@@ -52,7 +52,7 @@
                 <i-feather name="award" style="width:11px;height:11px;"></i-feather>
                 Completed
             </span>
-            <app-booking-card *ngFor="let b of completed" mode="client" [booking]="b"></app-booking-card>
+            <app-booking-card *ngFor="let b of completed" mode="client" [booking]="b" (payRequested)="onPayRequested($event)"></app-booking-card>
         </div>
 
         <!-- Cancelled -->
