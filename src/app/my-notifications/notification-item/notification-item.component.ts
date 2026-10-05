@@ -13,8 +13,9 @@ import { notificationHasDeepLink } from 'src/app/utils/notification-entity-link.
 import { escapeHtml } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'notification-item',
-  templateUrl: './notification-item.component.html'
+    selector: 'notification-item',
+    templateUrl: './notification-item.component.html',
+    standalone: false
 })
 export class NotificationItemComponent implements OnChanges {
 

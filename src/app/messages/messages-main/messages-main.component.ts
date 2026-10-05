@@ -48,9 +48,10 @@ interface StartableContact {
  * feature; Connections already work both directions today.
  */
 @Component({
-  selector: 'app-messages-main',
-  templateUrl: './messages-main.component.html',
-  styleUrls: ['./messages-main.component.css']
+    selector: 'app-messages-main',
+    templateUrl: './messages-main.component.html',
+    styleUrls: ['./messages-main.component.css'],
+    standalone: false
 })
 export class MessagesMainComponent implements OnInit, OnDestroy {
 

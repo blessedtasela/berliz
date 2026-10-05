@@ -24,20 +24,21 @@ import { Store } from '@ngrx/store';
 import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
 
 @Component({
-  selector: 'app-my-notifications',
-  templateUrl: './my-notifications.component.html',
-  styleUrls: ['./my-notifications.component.css'],
-  animations: [
-    trigger('fadeList', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(4px)' }),
-        animate('180ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ]),
-      transition(':leave', [
-        animate('120ms ease-in', style({ opacity: 0, transform: 'translateY(-4px)' }))
-      ])
-    ])
-  ],
+    selector: 'app-my-notifications',
+    templateUrl: './my-notifications.component.html',
+    styleUrls: ['./my-notifications.component.css'],
+    animations: [
+        trigger('fadeList', [
+            transition(':enter', [
+                style({ opacity: 0, transform: 'translateY(4px)' }),
+                animate('180ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+            ]),
+            transition(':leave', [
+                animate('120ms ease-in', style({ opacity: 0, transform: 'translateY(-4px)' }))
+            ])
+        ])
+    ],
+    standalone: false
 })
 export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
 

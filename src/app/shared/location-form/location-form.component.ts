@@ -8,16 +8,17 @@ import { LocationFormatterService } from 'src/app/services/location-formatter.se
 import { Country } from 'src/app/models/Location.interface';
 
 @Component({
-  selector: 'app-location-form',
-  templateUrl: './location-form.component.html',
-  styleUrls: ['./location-form.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => LocationFormComponent),
-      multi: true
-    }
-  ]
+    selector: 'app-location-form',
+    templateUrl: './location-form.component.html',
+    styleUrls: ['./location-form.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => LocationFormComponent),
+            multi: true
+        }
+    ],
+    standalone: false
 })
 export class LocationFormComponent implements OnInit, OnDestroy, ControlValueAccessor {
 

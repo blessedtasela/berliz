@@ -18,9 +18,10 @@ export interface CenterTrainerCard {
 }
 
 @Component({
-  selector: 'app-center-trainers',
-  templateUrl: './center-trainers.component.html',
-  styleUrls: ['./center-trainers.component.css']
+    selector: 'app-center-trainers',
+    templateUrl: './center-trainers.component.html',
+    styleUrls: ['./center-trainers.component.css'],
+    standalone: false
 })
 export class CenterTrainersComponent {
   @Input() centerTrainers: CenterTrainerCard[] = [];

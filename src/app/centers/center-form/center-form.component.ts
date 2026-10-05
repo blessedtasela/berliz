@@ -4,9 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 @Component({
-  selector: 'app-center-form',
-  templateUrl: './center-form.component.html',
-  styleUrls: ['./center-form.component.css']
+    selector: 'app-center-form',
+    templateUrl: './center-form.component.html',
+    styleUrls: ['./center-form.component.css'],
+    standalone: false
 })
 export class CenterFormComponent {
   centerForm: FormGroup;

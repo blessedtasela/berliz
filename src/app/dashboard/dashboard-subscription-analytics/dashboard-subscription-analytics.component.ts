@@ -32,9 +32,10 @@ import {
  * subscriptions for every other role. Bar chart type and styling preserved.
  */
 @Component({
-  selector: 'app-dashboard-subscription-analytics',
-  templateUrl: './dashboard-subscription-analytics.component.html',
-  styleUrls: ['./dashboard-subscription-analytics.component.css']
+    selector: 'app-dashboard-subscription-analytics',
+    templateUrl: './dashboard-subscription-analytics.component.html',
+    styleUrls: ['./dashboard-subscription-analytics.component.css'],
+    standalone: false
 })
 export class DashboardSubscriptionAnalyticsComponent implements OnInit, OnDestroy {
   /** Kept for template compatibility with dashboard-main; not the data source. */

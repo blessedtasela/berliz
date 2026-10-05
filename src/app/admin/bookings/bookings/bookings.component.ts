@@ -8,9 +8,10 @@ import { selectBookings } from 'src/app/state/booking/booking.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-bookings',
-  templateUrl: './bookings.component.html',
-  styleUrls: ['./bookings.component.css']
+    selector: 'app-bookings',
+    templateUrl: './bookings.component.html',
+    styleUrls: ['./bookings.component.css'],
+    standalone: false
 })
 export class BookingsComponent {
   bookingsData: Booking[] = [];

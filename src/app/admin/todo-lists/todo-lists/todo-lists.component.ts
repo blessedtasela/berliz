@@ -9,9 +9,10 @@ import { selectTodos } from 'src/app/state/todo/todo.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-todo-lists',
-  templateUrl: './todo-lists.component.html',
-  styleUrls: ['./todo-lists.component.css']
+    selector: 'app-todo-lists',
+    templateUrl: './todo-lists.component.html',
+    styleUrls: ['./todo-lists.component.css'],
+    standalone: false
 })
 export class TodoListsComponent {
   todoListData: TodoList[] = [];

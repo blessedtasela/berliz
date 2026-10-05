@@ -10,9 +10,10 @@ import { loadMySubscriptions } from 'src/app/state/subscription/subscription.act
 import { selectMySubscriptions, selectSubscriptionLoading } from 'src/app/state/subscription/subscription.selectors';
 
 @Component({
-  selector: 'app-my-subscriptions-main',
-  templateUrl: './my-subscriptions-main.component.html',
-  styleUrls: ['./my-subscriptions-main.component.css']
+    selector: 'app-my-subscriptions-main',
+    templateUrl: './my-subscriptions-main.component.html',
+    styleUrls: ['./my-subscriptions-main.component.css'],
+    standalone: false
 })
 export class MySubscriptionsMainComponent implements OnInit, OnDestroy {
   subscriptionsList: Subscriptions[] = [];

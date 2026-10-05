@@ -16,9 +16,10 @@ import { Store } from '@ngrx/store';
 import { selectTrainers } from 'src/app/state/trainer/trainer.selector';
 
 @Component({
-  selector: 'app-trainer-list',
-  templateUrl: './trainer-list.component.html',
-  styleUrls: ['./trainer-list.component.css']
+    selector: 'app-trainer-list',
+    templateUrl: './trainer-list.component.html',
+    styleUrls: ['./trainer-list.component.css'],
+    standalone: false
 })
 export class TrainerListComponent implements OnDestroy {
   @Input() trainersData: Trainers[] = [];

@@ -19,9 +19,10 @@ import { PhotoResponse } from 'src/app/models/Media.interface';
 import { MediaOwnerType } from 'src/app/models/Media.enum';
 
 @Component({
-  selector: 'app-update-center-modal',
-  templateUrl: './update-center-modal.component.html',
-  styleUrls: ['./update-center-modal.component.css']
+    selector: 'app-update-center-modal',
+    templateUrl: './update-center-modal.component.html',
+    styleUrls: ['./update-center-modal.component.css'],
+    standalone: false
 })
 export class UpdateCenterModalComponent {
   onUpdateCenterEmit = new EventEmitter();

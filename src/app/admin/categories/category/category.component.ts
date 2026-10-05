@@ -8,9 +8,10 @@ import { selectCategories } from 'src/app/state/category/category.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-category',
-  templateUrl: './category.component.html',
-  styleUrls: ['./category.component.css']
+    selector: 'app-category',
+    templateUrl: './category.component.html',
+    styleUrls: ['./category.component.css'],
+    standalone: false
 })
 export class CategoryComponent {
   categoriesData: Categories[] = [];

@@ -7,9 +7,10 @@ import { SubscriptionService } from 'src/app/services/subscription.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 @Component({
-  selector: 'app-my-subscriptions-bulk-action',
-  templateUrl: './my-subscriptions-bulk-action.component.html',
-  styleUrls: ['./my-subscriptions-bulk-action.component.css']
+    selector: 'app-my-subscriptions-bulk-action',
+    templateUrl: './my-subscriptions-bulk-action.component.html',
+    styleUrls: ['./my-subscriptions-bulk-action.component.css'],
+    standalone: false
 })
 export class MySubscriptionsBulkActionComponent {
  @Input() subscriptions: Subscriptions[] = [];

@@ -22,9 +22,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * as an error if the user doesn't qualify, rather than pre-checked here.
  */
 @Component({
-  selector: 'app-center-review-form',
-  templateUrl: './center-review-form.component.html',
-  styleUrls: ['./center-review-form.component.css']
+    selector: 'app-center-review-form',
+    templateUrl: './center-review-form.component.html',
+    styleUrls: ['./center-review-form.component.css'],
+    standalone: false
 })
 export class CenterReviewFormComponent implements OnInit, OnDestroy {
   @Input() centerId!: number;

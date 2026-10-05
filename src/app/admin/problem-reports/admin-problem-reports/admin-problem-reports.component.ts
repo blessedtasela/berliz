@@ -18,9 +18,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * ProblemReportServiceImplement on the backend for the valid category set).
  */
 @Component({
-  selector: 'app-admin-problem-reports',
-  templateUrl: './admin-problem-reports.component.html',
-  styleUrls: ['./admin-problem-reports.component.css']
+    selector: 'app-admin-problem-reports',
+    templateUrl: './admin-problem-reports.component.html',
+    styleUrls: ['./admin-problem-reports.component.css'],
+    standalone: false
 })
 export class AdminProblemReportsComponent implements OnInit {
 

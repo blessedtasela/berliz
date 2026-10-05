@@ -19,9 +19,10 @@ import { selectUsers } from 'src/app/state/user/user.selector';
 import { memoizePhotoUriByKey, photoDataUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
-  selector: 'app-user-list',
-  templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.css']
+    selector: 'app-user-list',
+    templateUrl: './user-list.component.html',
+    styleUrls: ['./user-list.component.css'],
+    standalone: false
 })
 export class UserListComponent implements OnChanges {
   @Input() usersData: Users[] = [];

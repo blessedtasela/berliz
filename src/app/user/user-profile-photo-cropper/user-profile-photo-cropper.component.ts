@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 
 @Component({
-  selector: 'app-user-profile-photo-cropper',
-  templateUrl: './user-profile-photo-cropper.component.html',
-  styleUrls: ['./user-profile-photo-cropper.component.css']
+    selector: 'app-user-profile-photo-cropper',
+    templateUrl: './user-profile-photo-cropper.component.html',
+    styleUrls: ['./user-profile-photo-cropper.component.css'],
+    standalone: false
 })
 export class UserProfilePhotoCropperComponent {
 

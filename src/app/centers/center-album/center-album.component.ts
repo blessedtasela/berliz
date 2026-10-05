@@ -3,9 +3,10 @@ import { CenterPhotoAlbum } from 'src/app/models/centers.interface';
 import { PhotoResponse } from 'src/app/models/Media.interface';
 
 @Component({
-  selector: 'app-center-album',
-  templateUrl: './center-album.component.html',
-  styleUrls: ['./center-album.component.css']
+    selector: 'app-center-album',
+    templateUrl: './center-album.component.html',
+    styleUrls: ['./center-album.component.css'],
+    standalone: false
 })
 export class CenterAlbumComponent implements OnChanges {
   /** Every photo album registered by this center. */

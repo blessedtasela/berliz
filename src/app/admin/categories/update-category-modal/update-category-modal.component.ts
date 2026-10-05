@@ -18,9 +18,10 @@ import { MediaOwnerType } from 'src/app/models/Media.enum';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 
 @Component({
-  selector: 'app-update-category-modal',
-  templateUrl: './update-category-modal.component.html',
-  styleUrls: ['./update-category-modal.component.css']
+    selector: 'app-update-category-modal',
+    templateUrl: './update-category-modal.component.html',
+    styleUrls: ['./update-category-modal.component.css'],
+    standalone: false
 })
 export class UpdateCategoryModalComponent {
   onUpdateCategoryEmit = new EventEmitter();

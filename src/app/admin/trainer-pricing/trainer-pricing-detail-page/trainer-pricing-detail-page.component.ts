@@ -17,9 +17,10 @@ import { selectTrainerPricing } from 'src/app/state/trainer/trainer.selector';
  * `loadTrainerPricing()` if empty (direct link / refresh).
  */
 @Component({
-  selector: 'app-trainer-pricing-detail-page',
-  templateUrl: './trainer-pricing-detail-page.component.html',
-  styleUrls: ['./trainer-pricing-detail-page.component.css']
+    selector: 'app-trainer-pricing-detail-page',
+    templateUrl: './trainer-pricing-detail-page.component.html',
+    styleUrls: ['./trainer-pricing-detail-page.component.css'],
+    standalone: false
 })
 export class TrainerPricingDetailPageComponent implements OnInit, OnDestroy {
   trainerPricingData: TrainerPricing | null = null;

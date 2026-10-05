@@ -12,9 +12,10 @@ import { selectMyCenterIntroductions } from 'src/app/state/center/center.selecto
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-center-introduction',
-  templateUrl: './center-introduction.component.html',
-  styleUrls: ['./center-introduction.component.css']
+    selector: 'app-center-introduction',
+    templateUrl: './center-introduction.component.html',
+    styleUrls: ['./center-introduction.component.css'],
+    standalone: false
 })
 export class CenterIntroductionComponent implements OnInit, OnChanges, OnDestroy {
 

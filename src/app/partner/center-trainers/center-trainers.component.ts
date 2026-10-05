@@ -12,9 +12,10 @@ import { selectMyCenterTrainers } from 'src/app/state/center/center.selectors';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-center-trainers',
-  templateUrl: './center-trainers.component.html',
-  styleUrls: ['./center-trainers.component.css']
+    selector: 'app-center-trainers',
+    templateUrl: './center-trainers.component.html',
+    styleUrls: ['./center-trainers.component.css'],
+    standalone: false
 })
 export class CenterTrainersComponent implements OnInit, OnChanges, OnDestroy {
 

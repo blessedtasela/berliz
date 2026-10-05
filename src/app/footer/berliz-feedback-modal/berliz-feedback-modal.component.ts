@@ -14,9 +14,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * same pattern as TrainerAddReviewComponent/CenterReviewFormComponent.
  */
 @Component({
-  selector: 'app-berliz-feedback-modal',
-  templateUrl: './berliz-feedback-modal.component.html',
-  styleUrls: ['./berliz-feedback-modal.component.css']
+    selector: 'app-berliz-feedback-modal',
+    templateUrl: './berliz-feedback-modal.component.html',
+    styleUrls: ['./berliz-feedback-modal.component.css'],
+    standalone: false
 })
 export class BerlizFeedbackModalComponent {
   feedbackForm: FormGroup;

@@ -10,9 +10,10 @@ import { loadNewsletters } from 'src/app/state/newsletter/newsletter.actions';
 import { selectNewsletters } from 'src/app/state/newsletter/newsletter.selectors';
 
 @Component({
-  selector: 'app-newsletter-header',
-  templateUrl: './newsletter-header.component.html',
-  styleUrls: ['./newsletter-header.component.css']
+    selector: 'app-newsletter-header',
+    templateUrl: './newsletter-header.component.html',
+    styleUrls: ['./newsletter-header.component.css'],
+    standalone: false
 })
 export class NewsletterHeaderComponent {
   selectedSortOption: string = 'date';

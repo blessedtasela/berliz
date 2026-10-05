@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { Notifications } from 'src/app/models/Notifications.interface';
 
 @Component({
-  selector: 'app-my-notification-metrics',
-  templateUrl: './my-notification-metrics.component.html',
-  styleUrls: ['./my-notification-metrics.component.css']
+    selector: 'app-my-notification-metrics',
+    templateUrl: './my-notification-metrics.component.html',
+    styleUrls: ['./my-notification-metrics.component.css'],
+    standalone: false
 })
 export class MyNotificationMetricsComponent {
   @Input() notifications: Notifications[] = [];

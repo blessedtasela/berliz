@@ -16,9 +16,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * a change takes effect.
  */
 @Component({
-  selector: 'app-update-sub-tasks-modal',
-  templateUrl: './update-sub-tasks-modal.component.html',
-  styleUrls: ['./update-sub-tasks-modal.component.css']
+    selector: 'app-update-sub-tasks-modal',
+    templateUrl: './update-sub-tasks-modal.component.html',
+    styleUrls: ['./update-sub-tasks-modal.component.css'],
+    standalone: false
 })
 export class UpdateSubTasksModalComponent implements OnInit {
   onUpdateSubTaskEmit = new EventEmitter();

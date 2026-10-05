@@ -8,9 +8,10 @@ import { UserService } from 'src/app/services/user.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-forgot-password-modal',
-  templateUrl: './forgot-password-modal.component.html',
-  styleUrls: ['./forgot-password-modal.component.css']
+    selector: 'app-forgot-password-modal',
+    templateUrl: './forgot-password-modal.component.html',
+    styleUrls: ['./forgot-password-modal.component.css'],
+    standalone: false
 })
 export class ForgotPasswordModalComponent {
   forgotPasswordForm!: FormGroup;

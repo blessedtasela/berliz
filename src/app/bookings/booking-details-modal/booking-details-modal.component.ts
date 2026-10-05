@@ -19,9 +19,10 @@ export interface BookingDetailsModalData {
  * from its own "Review request" button, not from clicking the card).
  */
 @Component({
-  selector: 'app-booking-details-modal',
-  templateUrl: './booking-details-modal.component.html',
-  styleUrls: ['./booking-details-modal.component.css']
+    selector: 'app-booking-details-modal',
+    templateUrl: './booking-details-modal.component.html',
+    styleUrls: ['./booking-details-modal.component.css'],
+    standalone: false
 })
 export class BookingDetailsModalComponent {
 

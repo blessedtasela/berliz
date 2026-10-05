@@ -4,9 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PromptData } from 'src/app/models/Prompt.interface';
 
 @Component({
-  selector: 'app-prompt-modal',
-  templateUrl: './prompt-modal.component.html',
-  styleUrls: ['./prompt-modal.component.css']
+    selector: 'app-prompt-modal',
+    templateUrl: './prompt-modal.component.html',
+    styleUrls: ['./prompt-modal.component.css'],
+    standalone: false
 })
 export class PromptModalComponent implements OnInit {
   onEmitStatusChange = new EventEmitter();

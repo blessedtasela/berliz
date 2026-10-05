@@ -11,9 +11,10 @@ import { selectContactUsList } from 'src/app/state/contact-us/contact-us.selecto
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-contact-us-header',
-  templateUrl: './contact-us-header.component.html',
-  styleUrls: ['./contact-us-header.component.css']
+    selector: 'app-contact-us-header',
+    templateUrl: './contact-us-header.component.html',
+    styleUrls: ['./contact-us-header.component.css'],
+    standalone: false
 })
 export class ContactUsHeaderComponent implements OnDestroy {
   selectedSortOption: string = 'date';

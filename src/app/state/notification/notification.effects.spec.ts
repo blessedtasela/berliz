@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 
 import { NotificationEffects } from './notification.effects';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('NotificationEffects', () => {
-  let actions$: Observable<any>;
+  let actions$: Observable<any> = EMPTY;
   let effects: NotificationEffects;
 
   beforeEach(() => {

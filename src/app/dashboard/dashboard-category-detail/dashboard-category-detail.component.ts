@@ -9,8 +9,9 @@ import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
  * dashboard shell.
  */
 @Component({
-  selector: 'app-dashboard-category-detail',
-  templateUrl: './dashboard-category-detail.component.html',
+    selector: 'app-dashboard-category-detail',
+    templateUrl: './dashboard-category-detail.component.html',
+    standalone: false
 })
 export class DashboardCategoryDetailComponent extends CategoryDetailsComponent {
 

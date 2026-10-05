@@ -22,10 +22,9 @@ import { SharedModule } from 'src/app/shared/shared.module';
  * a self-contained admin page with no other consumer of this data.
  */
 @Component({
-  selector: 'app-exercise-suggestions',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, SharedModule],
-  templateUrl: './exercise-suggestions.component.html',
+    selector: 'app-exercise-suggestions',
+    imports: [CommonModule, RouterModule, IconsModule, SharedModule],
+    templateUrl: './exercise-suggestions.component.html'
 })
 export class ExerciseSuggestionsComponent implements OnInit {
 

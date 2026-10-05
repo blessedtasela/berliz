@@ -9,9 +9,10 @@ import { loadCategories } from 'src/app/state/category/category.actions';
 import { selectCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
-  selector: 'app-categories-header',
-  templateUrl: './categories-header.component.html',
-  styleUrls: ['./categories-header.component.css']
+    selector: 'app-categories-header',
+    templateUrl: './categories-header.component.html',
+    styleUrls: ['./categories-header.component.css'],
+    standalone: false
 })
 export class CategoriesHeaderComponent {
   responseMessage: any;

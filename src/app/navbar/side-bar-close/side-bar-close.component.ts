@@ -10,9 +10,10 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
 import { filterSidebarNavItems, SidebarNavItem } from '../sidebar-nav-items';
 
 @Component({
-  selector: 'app-side-bar-close',
-  templateUrl: './side-bar-close.component.html',
-  styleUrls: ['./side-bar-close.component.css']
+    selector: 'app-side-bar-close',
+    templateUrl: './side-bar-close.component.html',
+    styleUrls: ['./side-bar-close.component.css'],
+    standalone: false
 })
 export class SideBarCloseComponent implements OnDestroy {
 

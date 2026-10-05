@@ -6,9 +6,10 @@ import { TrainerBenefits } from 'src/app/models/trainers.interface';
  * `TrainerBenefits.benefits` is a plain `string[]`.
  */
 @Component({
-  selector: 'app-trainer-benefits',
-  templateUrl: './trainer-benefits.component.html',
-  styleUrls: ['./trainer-benefits.component.css']
+    selector: 'app-trainer-benefits',
+    templateUrl: './trainer-benefits.component.html',
+    styleUrls: ['./trainer-benefits.component.css'],
+    standalone: false
 })
 export class TrainerBenefitsComponent {
 

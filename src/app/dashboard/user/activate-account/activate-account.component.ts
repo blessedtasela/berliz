@@ -8,9 +8,10 @@ import { UserService } from 'src/app/services/user.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-activate-account',
-  templateUrl: './activate-account.component.html',
-  styleUrls: ['./activate-account.component.css']
+    selector: 'app-activate-account',
+    templateUrl: './activate-account.component.html',
+    styleUrls: ['./activate-account.component.css'],
+    standalone: false
 })
 export class ActivateAccountComponent implements OnInit {
 

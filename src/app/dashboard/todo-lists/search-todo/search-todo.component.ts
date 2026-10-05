@@ -6,9 +6,10 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { selectMyTodos } from 'src/app/state/todo/todo.selectors';
 
 @Component({
-  selector: 'app-search-todo',
-  templateUrl: './search-todo.component.html',
-  styleUrls: ['./search-todo.component.css']
+    selector: 'app-search-todo',
+    templateUrl: './search-todo.component.html',
+    styleUrls: ['./search-todo.component.css'],
+    standalone: false
 })
 export class SearchTodoComponent {
   myTodos: TodoList[] = [];

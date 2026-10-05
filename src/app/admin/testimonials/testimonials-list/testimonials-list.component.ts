@@ -16,9 +16,10 @@ import { loadTestimonials } from 'src/app/state/testimonial/testimonial.actions'
 import { selectTestimonials } from 'src/app/state/testimonial/testimonial.selectors';
 
 @Component({
-  selector: 'app-testimonials-list',
-  templateUrl: './testimonials-list.component.html',
-  styleUrls: ['./testimonials-list.component.css']
+    selector: 'app-testimonials-list',
+    templateUrl: './testimonials-list.component.html',
+    styleUrls: ['./testimonials-list.component.css'],
+    standalone: false
 })
 export class TestimonialsListComponent implements OnDestroy {
   responseMessage: any;

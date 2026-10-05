@@ -17,10 +17,9 @@ import { genericError } from 'src/validators/form-validators.module';
  * ReferralWaitlistScheduler on the backend for how that gets resolved).
  */
 @Component({
-  selector: 'app-referral-claim',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
-  templateUrl: './referral-claim.component.html',
+    selector: 'app-referral-claim',
+    imports: [CommonModule, RouterModule, IconsModule],
+    templateUrl: './referral-claim.component.html'
 })
 export class ReferralClaimComponent implements OnInit {
 

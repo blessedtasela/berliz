@@ -13,9 +13,10 @@ import { loadContactUsMessages } from 'src/app/state/contact-us/contact-us.actio
 import { selectContactUsMessages } from 'src/app/state/contact-us/contact-us.selectors';
 
 @Component({
-  selector: 'app-contact-us-review-modal',
-  templateUrl: './contact-us-review-modal.component.html',
-  styleUrls: ['./contact-us-review-modal.component.css']
+    selector: 'app-contact-us-review-modal',
+    templateUrl: './contact-us-review-modal.component.html',
+    styleUrls: ['./contact-us-review-modal.component.css'],
+    standalone: false
 })
 export class ContactUsReviewModalComponent {
   onReviewContactUsEmit = new EventEmitter();

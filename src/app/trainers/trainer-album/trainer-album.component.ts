@@ -8,9 +8,10 @@ import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
  * `TrainerPhotoAlbum.photos` is a `PhotoResponse[]`.
  */
 @Component({
-  selector: 'app-trainer-album',
-  templateUrl: './trainer-album.component.html',
-  styleUrls: ['./trainer-album.component.css']
+    selector: 'app-trainer-album',
+    templateUrl: './trainer-album.component.html',
+    styleUrls: ['./trainer-album.component.css'],
+    standalone: false
 })
 export class TrainerAlbumComponent {
 

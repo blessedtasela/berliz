@@ -2,9 +2,10 @@ import { Component, EventEmitter, HostListener, Input, Output } from '@angular/c
 import { TodoList } from 'src/app/models/todoList.interface';
 
 @Component({
-  selector: 'app-my-todo-list-header',
-  templateUrl: './my-todo-list-header.component.html',
-  styleUrls: ['./my-todo-list-header.component.css']
+    selector: 'app-my-todo-list-header',
+    templateUrl: './my-todo-list-header.component.html',
+    styleUrls: ['./my-todo-list-header.component.css'],
+    standalone: false
 })
 export class MyTodoListHeaderComponent {
 

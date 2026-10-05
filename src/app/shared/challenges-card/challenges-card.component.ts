@@ -15,10 +15,9 @@ import { ChallengeDetailModalComponent } from './challenge-detail-modal.componen
  * open ones to join. "New" and each row's detail open modals.
  */
 @Component({
-  selector: 'app-challenges-card',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  templateUrl: './challenges-card.component.html',
+    selector: 'app-challenges-card',
+    imports: [CommonModule, IconsModule],
+    templateUrl: './challenges-card.component.html'
 })
 export class ChallengesCardComponent implements OnInit {
   challenges: ChallengeResponse[] = [];

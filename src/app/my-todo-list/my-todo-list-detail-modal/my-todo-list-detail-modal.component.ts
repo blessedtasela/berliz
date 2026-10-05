@@ -4,9 +4,10 @@ import { TodoList } from 'src/app/models/todoList.interface';
 import { TodoDetailsModalComponent } from 'src/app/shared/todo-details-modal/todo-details-modal.component';
 
 @Component({
-  selector: 'app-my-todo-list-detail-modal',
-  templateUrl: './my-todo-list-detail-modal.component.html',
-  styleUrls: ['./my-todo-list-detail-modal.component.css']
+    selector: 'app-my-todo-list-detail-modal',
+    templateUrl: './my-todo-list-detail-modal.component.html',
+    styleUrls: ['./my-todo-list-detail-modal.component.css'],
+    standalone: false
 })
 export class MyTodoListDetailModalComponent {
  constructor(

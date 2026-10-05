@@ -13,9 +13,10 @@ import { loadActiveUsers } from 'src/app/state/user/user.actions';
 
 
 @Component({
-  selector: 'app-update-partner-modal',
-  templateUrl: './update-partner-modal.component.html',
-  styleUrls: ['./update-partner-modal.component.css']
+    selector: 'app-update-partner-modal',
+    templateUrl: './update-partner-modal.component.html',
+    styleUrls: ['./update-partner-modal.component.css'],
+    standalone: false
 })
 export class UpdatePartnerModalComponent {
   onUpdatePartnerEmit = new EventEmitter()

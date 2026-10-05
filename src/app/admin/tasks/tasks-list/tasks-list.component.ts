@@ -17,9 +17,10 @@ import { loadTasks } from 'src/app/state/task/task.actions';
 import { selectTasks } from 'src/app/state/task/task.selectors';
 
 @Component({
-  selector: 'app-tasks-list',
-  templateUrl: './tasks-list.component.html',
-  styleUrls: ['./tasks-list.component.css']
+    selector: 'app-tasks-list',
+    templateUrl: './tasks-list.component.html',
+    styleUrls: ['./tasks-list.component.css'],
+    standalone: false
 })
 export class TasksListComponent implements OnDestroy {
   responseMessage: any;

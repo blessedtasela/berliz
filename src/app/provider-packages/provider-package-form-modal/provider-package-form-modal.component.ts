@@ -17,11 +17,10 @@ export interface ProviderPackageFormModalData {
 
 /** Create/edit form for a trainer/center's own sellable package. */
 @Component({
-  selector: 'app-provider-package-form-modal',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IconsModule],
-  templateUrl: './provider-package-form-modal.component.html',
-  styleUrls: ['./provider-package-form-modal.component.css']
+    selector: 'app-provider-package-form-modal',
+    imports: [CommonModule, ReactiveFormsModule, IconsModule],
+    templateUrl: './provider-package-form-modal.component.html',
+    styleUrls: ['./provider-package-form-modal.component.css']
 })
 export class ProviderPackageFormModalComponent {
 

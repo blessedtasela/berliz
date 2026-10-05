@@ -11,11 +11,10 @@ interface PrivacySection {
 
 // Standalone for the same reason as TermsPageComponent — see its comment.
 @Component({
-  selector: 'app-privacy-page',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
-  templateUrl: './privacy-page.component.html',
-  styleUrls: ['./privacy-page.component.css']
+    selector: 'app-privacy-page',
+    imports: [CommonModule, RouterModule, IconsModule],
+    templateUrl: './privacy-page.component.html',
+    styleUrls: ['./privacy-page.component.css']
 })
 export class PrivacyPageComponent {
 

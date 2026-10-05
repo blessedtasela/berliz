@@ -22,11 +22,10 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
  * for admins to manage the full catalog and assign equipment to an owner.
  */
 @Component({
-  selector: 'app-equipment-page',
-  standalone: true,
-  imports: [ClickablePhotoDirective, CommonModule, FormsModule, IconsModule, StrapiUrlPipe],
-  templateUrl: './equipment-page.component.html',
-  styleUrls: ['./equipment-page.component.css']
+    selector: 'app-equipment-page',
+    imports: [ClickablePhotoDirective, CommonModule, FormsModule, IconsModule, StrapiUrlPipe],
+    templateUrl: './equipment-page.component.html',
+    styleUrls: ['./equipment-page.component.css']
 })
 export class EquipmentPageComponent implements OnInit {
 

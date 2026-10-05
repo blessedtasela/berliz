@@ -3,9 +3,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Partner } from 'src/app/models/partners.interface';
 
 @Component({
-  selector: 'app-view-certificate-modal',
-  templateUrl: './view-certificate-modal.component.html',
-  styleUrls: ['./view-certificate-modal.component.css']
+    selector: 'app-view-certificate-modal',
+    templateUrl: './view-certificate-modal.component.html',
+    styleUrls: ['./view-certificate-modal.component.css'],
+    standalone: false
 })
 export class ViewCertificateModalComponent {
   certificate: any;

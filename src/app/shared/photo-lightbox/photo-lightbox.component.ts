@@ -11,10 +11,9 @@ import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
  * `PhotoLightboxService.open(src)` on click -- no per-page overlay markup.
  */
 @Component({
-  selector: 'app-photo-lightbox',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  template: `
+    selector: 'app-photo-lightbox',
+    imports: [CommonModule, IconsModule],
+    template: `
     <div *ngIf="src$ | async as src" (click)="lightbox.close()"
         class="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center p-4">
 

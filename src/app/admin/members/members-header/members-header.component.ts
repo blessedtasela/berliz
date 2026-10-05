@@ -9,9 +9,10 @@ import { selectMembers } from 'src/app/state/member/member.selectors';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-members-header',
-  templateUrl: './members-header.component.html',
-  styleUrls: ['./members-header.component.css']
+    selector: 'app-members-header',
+    templateUrl: './members-header.component.html',
+    styleUrls: ['./members-header.component.css'],
+    standalone: false
 })
 export class MembersHeaderComponent implements OnDestroy {
   responseMessage: any;

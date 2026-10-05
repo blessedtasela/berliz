@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { Booking } from 'src/app/models/booking.model';
 
 @Component({
-  selector: 'app-bookings-header',
-  templateUrl: './bookings-header.component.html',
-  styleUrls: ['./bookings-header.component.css']
+    selector: 'app-bookings-header',
+    templateUrl: './bookings-header.component.html',
+    styleUrls: ['./bookings-header.component.css'],
+    standalone: false
 })
 export class BookingsHeaderComponent {
   selectedSortOption: string = 'date';

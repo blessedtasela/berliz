@@ -10,9 +10,10 @@ import { selectExercises } from 'src/app/state/exercise/exercise.selectors';
 import { UpdateTrainerPhotoModalComponent } from 'src/app/shared/update-trainer-photo-modal/update-trainer-photo-modal.component';
 
 @Component({
-  selector: 'app-exercises-details-modal',
-  templateUrl: './exercises-details-modal.component.html',
-  styleUrls: ['./exercises-details-modal.component.css']
+    selector: 'app-exercises-details-modal',
+    templateUrl: './exercises-details-modal.component.html',
+    styleUrls: ['./exercises-details-modal.component.css'],
+    standalone: false
 })
 export class ExercisesDetailsModalComponent {
   onEmit = new EventEmitter();

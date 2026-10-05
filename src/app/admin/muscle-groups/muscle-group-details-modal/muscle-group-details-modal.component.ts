@@ -10,9 +10,10 @@ import { selectMuscleGroups } from 'src/app/state/muscle-group/muscle-group.sele
 import { UpdateTrainerPhotoModalComponent } from 'src/app/shared/update-trainer-photo-modal/update-trainer-photo-modal.component';
 
 @Component({
-  selector: 'app-muscle-group-details-modal',
-  templateUrl: './muscle-group-details-modal.component.html',
-  styleUrls: ['./muscle-group-details-modal.component.css']
+    selector: 'app-muscle-group-details-modal',
+    templateUrl: './muscle-group-details-modal.component.html',
+    styleUrls: ['./muscle-group-details-modal.component.css'],
+    standalone: false
 })
 export class MuscleGroupDetailsModalComponent {
   onEmit = new EventEmitter();

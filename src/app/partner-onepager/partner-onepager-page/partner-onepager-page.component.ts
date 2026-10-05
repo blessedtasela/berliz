@@ -10,9 +10,10 @@ import { Meta, Title } from '@angular/platform-browser';
  * listing the path there would defeat the point of it being unguessable.
  */
 @Component({
-  selector: 'app-partner-onepager-page',
-  templateUrl: './partner-onepager-page.component.html',
-  styleUrls: ['./partner-onepager-page.component.css']
+    selector: 'app-partner-onepager-page',
+    templateUrl: './partner-onepager-page.component.html',
+    styleUrls: ['./partner-onepager-page.component.css'],
+    standalone: false
 })
 export class PartnerOnepagerPageComponent implements OnInit {
 

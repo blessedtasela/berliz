@@ -17,9 +17,10 @@ import { selectNewsletters } from 'src/app/state/newsletter/newsletter.selectors
  * `loadNewsletters()` if it is empty (direct link / refresh).
  */
 @Component({
-  selector: 'app-newsletter-detail-page',
-  templateUrl: './newsletter-detail-page.component.html',
-  styleUrls: ['./newsletter-detail-page.component.css']
+    selector: 'app-newsletter-detail-page',
+    templateUrl: './newsletter-detail-page.component.html',
+    styleUrls: ['./newsletter-detail-page.component.css'],
+    standalone: false
 })
 export class NewsletterDetailPageComponent implements OnInit, OnDestroy {
   newsletterData: Newsletter | null = null;

@@ -9,9 +9,10 @@ interface Ember {
 }
 
 @Component({
-  selector: 'app-about-us-hero',
-  templateUrl: './about-us-hero.component.html',
-  styleUrls: ['./about-us-hero.component.css']
+    selector: 'app-about-us-hero',
+    templateUrl: './about-us-hero.component.html',
+    styleUrls: ['./about-us-hero.component.css'],
+    standalone: false
 })
 export class AboutUsHeroComponent {
   // Deterministic-looking but varied scatter of embers, computed once per

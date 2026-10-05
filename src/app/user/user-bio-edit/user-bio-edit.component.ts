@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 @Component({
-  selector: 'app-user-bio-edit',
-  templateUrl: './user-bio-edit.component.html',
-  styleUrls: ['./user-bio-edit.component.css']
+    selector: 'app-user-bio-edit',
+    templateUrl: './user-bio-edit.component.html',
+    styleUrls: ['./user-bio-edit.component.css'],
+    standalone: false
 })
 export class UserBioEditComponent {
 

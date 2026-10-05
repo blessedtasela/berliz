@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { CenterStatistics, CenterVideoAlbum } from 'src/app/models/centers.interface';
 
 @Component({
-  selector: 'app-center-hero-detail',
-  templateUrl: './center-hero-detail.component.html',
-  styleUrls: ['./center-hero-detail.component.css']
+    selector: 'app-center-hero-detail',
+    templateUrl: './center-hero-detail.component.html',
+    styleUrls: ['./center-hero-detail.component.css'],
+    standalone: false
 })
 export class CenterHeroDetailComponent {
   @Input() stats: CenterStatistics | undefined;

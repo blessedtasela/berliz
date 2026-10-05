@@ -8,9 +8,10 @@ import { selectContactUsList } from 'src/app/state/contact-us/contact-us.selecto
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-admin-contact-us',
-  templateUrl: './admin-contact-us.component.html',
-  styleUrls: ['./admin-contact-us.component.css']
+    selector: 'app-admin-contact-us',
+    templateUrl: './admin-contact-us.component.html',
+    styleUrls: ['./admin-contact-us.component.css'],
+    standalone: false
 })
 export class AdminContactUsComponent {
   contactUsData: ContactUs[] = [];

@@ -7,9 +7,10 @@ import { selectActiveFaqs, selectFaqLoading } from 'src/app/state/faq/faq.select
 import { FaqGroup, groupFaqsByCategory } from 'src/app/state/faq/faq.utils';
 
 @Component({
-  selector: 'app-faqs-page',
-  templateUrl: './faqs-page.component.html',
-  styleUrls: ['./faqs-page.component.css']
+    selector: 'app-faqs-page',
+    templateUrl: './faqs-page.component.html',
+    styleUrls: ['./faqs-page.component.css'],
+    standalone: false
 })
 export class FaqsPageComponent implements OnInit, OnDestroy {
   faqGroups: FaqGroup[] = [];

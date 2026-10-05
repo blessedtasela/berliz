@@ -21,10 +21,9 @@ import { selectMyConnections } from 'src/app/state/connection/connection.selecto
  * Sharing is restricted server-side to the owner's accepted connections.
  */
 @Component({
-  selector: 'app-share-workout-log-modal',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, IconsModule],
-  templateUrl: './share-workout-log-modal.component.html',
+    selector: 'app-share-workout-log-modal',
+    imports: [CommonModule, FormsModule, MatDialogModule, IconsModule],
+    templateUrl: './share-workout-log-modal.component.html'
 })
 export class ShareWorkoutLogModalComponent implements OnInit, OnDestroy {
 

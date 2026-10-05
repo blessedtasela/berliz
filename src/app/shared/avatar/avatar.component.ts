@@ -10,10 +10,9 @@ import { memoizePhotoUri } from '../photo-lightbox/photo-data-uri';
  * the dashboard both need this and neither is really "the" user card.
  */
 @Component({
-  selector: 'app-avatar',
-  standalone: true,
-  imports: [CommonModule],
-  template: `
+    selector: 'app-avatar',
+    imports: [CommonModule],
+    template: `
     <img *ngIf="photoSrc; else initialsFallback" [src]="photoSrc" alt=""
       (error)="photoFailed = true"
       class="rounded-full object-cover object-top border shrink-0"
@@ -27,7 +26,7 @@ import { memoizePhotoUri } from '../photo-lightbox/photo-data-uri';
         {{ initials }}
       </div>
     </ng-template>
-  `,
+  `
 })
 export class AvatarComponent implements OnChanges {
   /** Base64 photo payload (same encoding as User.profilePhoto elsewhere), or null/undefined for the initials fallback. */

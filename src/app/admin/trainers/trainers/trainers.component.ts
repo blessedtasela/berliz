@@ -7,9 +7,10 @@ import { selectTrainers } from 'src/app/state/trainer/trainer.selector';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-trainers',
-  templateUrl: './trainers.component.html',
-  styleUrls: ['./trainers.component.css']
+    selector: 'app-trainers',
+    templateUrl: './trainers.component.html',
+    styleUrls: ['./trainers.component.css'],
+    standalone: false
 })
 export class TrainersComponent {
   trainersData: Trainers[] = [];

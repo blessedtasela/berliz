@@ -37,9 +37,10 @@ import { selectUser } from 'src/app/state/user/user.selector';
  * global top-N.
  */
 @Component({
-  selector: 'app-dashboard-trending-exercises',
-  templateUrl: './dashboard-trending-exercises.component.html',
-  styleUrls: ['./dashboard-trending-exercises.component.css']
+    selector: 'app-dashboard-trending-exercises',
+    templateUrl: './dashboard-trending-exercises.component.html',
+    styleUrls: ['./dashboard-trending-exercises.component.css'],
+    standalone: false
 })
 export class DashboardTrendingExercisesComponent implements OnInit, OnDestroy {
 

@@ -13,10 +13,9 @@ import { AvatarComponent } from 'src/app/shared/avatar/avatar.component';
  * is typing.
  */
 @Component({
-  selector: 'app-chat-thread-header',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, AvatarComponent],
-  templateUrl: './chat-thread-header.component.html',
+    selector: 'app-chat-thread-header',
+    imports: [CommonModule, RouterModule, IconsModule, AvatarComponent],
+    templateUrl: './chat-thread-header.component.html'
 })
 export class ChatThreadHeaderComponent {
   @Input() userId!: number;

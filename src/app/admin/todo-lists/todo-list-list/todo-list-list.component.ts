@@ -17,9 +17,10 @@ import { loadTodos } from 'src/app/state/todo/todo.actions';
 import { selectTodos } from 'src/app/state/todo/todo.selectors';
 
 @Component({
-  selector: 'app-todo-list-list',
-  templateUrl: './todo-list-list.component.html',
-  styleUrls: ['./todo-list-list.component.css']
+    selector: 'app-todo-list-list',
+    templateUrl: './todo-list-list.component.html',
+    styleUrls: ['./todo-list-list.component.css'],
+    standalone: false
 })
 export class TodoListListComponent {
   responseMessage: any;

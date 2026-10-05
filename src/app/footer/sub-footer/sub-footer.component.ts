@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-sub-footer',
-  templateUrl: './sub-footer.component.html',
-  styleUrls: ['./sub-footer.component.css']
+    selector: 'app-sub-footer',
+    templateUrl: './sub-footer.component.html',
+    styleUrls: ['./sub-footer.component.css'],
+    standalone: false
 })
 export class SubFooterComponent {
   currentYear: number = new Date().getFullYear();

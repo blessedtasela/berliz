@@ -19,9 +19,10 @@ import { selectExercises, selectSelectedExercise } from 'src/app/state/exercise/
  * or refreshes.
  */
 @Component({
-  selector: 'app-exercise-detail-page',
-  templateUrl: './exercise-detail-page.component.html',
-  styleUrls: ['./exercise-detail-page.component.css']
+    selector: 'app-exercise-detail-page',
+    templateUrl: './exercise-detail-page.component.html',
+    styleUrls: ['./exercise-detail-page.component.css'],
+    standalone: false
 })
 export class ExerciseDetailPageComponent implements OnInit, OnDestroy {
   exerciseData: Exercises | null = null;

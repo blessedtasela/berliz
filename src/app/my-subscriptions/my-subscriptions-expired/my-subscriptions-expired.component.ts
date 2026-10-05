@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 
 @Component({
-  selector: 'app-my-subscriptions-expired',
-  templateUrl: './my-subscriptions-expired.component.html',
-  styleUrls: ['./my-subscriptions-expired.component.css']
+    selector: 'app-my-subscriptions-expired',
+    templateUrl: './my-subscriptions-expired.component.html',
+    styleUrls: ['./my-subscriptions-expired.component.css'],
+    standalone: false
 })
 export class MySubscriptionsExpiredComponent {
  @Input() subscription!: Subscriptions;

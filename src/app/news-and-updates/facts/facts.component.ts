@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Facts } from '../../models/facts.model';
 
 @Component({
-  selector: 'app-facts',
-  templateUrl: './facts.component.html',
-  styleUrls: ['./facts.component.css']
+    selector: 'app-facts',
+    templateUrl: './facts.component.html',
+    styleUrls: ['./facts.component.css'],
+    standalone: false
 })
 export class FactsComponent implements OnInit{
 fact: Facts[] = [];

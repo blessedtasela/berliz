@@ -10,9 +10,10 @@ import { TrainerService } from 'src/app/services/trainer.service';
 import { minArrayLength, genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-my-trainer-benefits',
-  templateUrl: './my-trainer-benefits.component.html',
-  styleUrls: ['./my-trainer-benefits.component.css']
+    selector: 'app-my-trainer-benefits',
+    templateUrl: './my-trainer-benefits.component.html',
+    styleUrls: ['./my-trainer-benefits.component.css'],
+    standalone: false
 })
 export class MyTrainerBenefitsComponent implements OnInit, OnChanges {
 

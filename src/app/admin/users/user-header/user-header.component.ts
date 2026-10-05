@@ -8,9 +8,10 @@ import { selectUsers } from 'src/app/state/user/user.selector';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-user-header',
-  templateUrl: './user-header.component.html',
-  styleUrls: ['./user-header.component.css']
+    selector: 'app-user-header',
+    templateUrl: './user-header.component.html',
+    styleUrls: ['./user-header.component.css'],
+    standalone: false
 })
 export class UserHeaderComponent implements OnDestroy {
   selectedSortOption: string = 'date';

@@ -23,9 +23,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * afterward from the separate Sub-tasks admin section, not nested here.
  */
 @Component({
-  selector: 'app-add-tasks-modal',
-  templateUrl: './add-tasks-modal.component.html',
-  styleUrls: ['./add-tasks-modal.component.css']
+    selector: 'app-add-tasks-modal',
+    templateUrl: './add-tasks-modal.component.html',
+    styleUrls: ['./add-tasks-modal.component.css'],
+    standalone: false
 })
 export class AddTasksModalComponent implements OnInit {
   onAddTaskEmit = new EventEmitter();

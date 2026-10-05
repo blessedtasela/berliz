@@ -50,10 +50,9 @@ type BookingOption =
  * than just book one ad-hoc single session.
  */
 @Component({
-  selector: 'app-booking-page',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, IconsModule, DateStripComponent, BookingLocationPickerComponent, BookingPriceEstimateComponent],
-  templateUrl: './booking-page.component.html',
+    selector: 'app-booking-page',
+    imports: [CommonModule, FormsModule, RouterModule, IconsModule, DateStripComponent, BookingLocationPickerComponent, BookingPriceEstimateComponent],
+    templateUrl: './booking-page.component.html'
 })
 export class BookingPageComponent implements OnInit, OnDestroy {
 

@@ -8,9 +8,10 @@ import { selectActiveFaqs, selectFaqLoading } from 'src/app/state/faq/faq.select
 import { FaqGroup, groupFaqsByCategory } from 'src/app/state/faq/faq.utils';
 
 @Component({
-  selector: 'app-my-faqs',
-  templateUrl: './my-faqs.component.html',
-  styleUrls: ['./my-faqs.component.css']
+    selector: 'app-my-faqs',
+    templateUrl: './my-faqs.component.html',
+    styleUrls: ['./my-faqs.component.css'],
+    standalone: false
 })
 export class MyFaqsComponent implements OnInit, OnDestroy {
   faqGroups: FaqGroup[] = [];

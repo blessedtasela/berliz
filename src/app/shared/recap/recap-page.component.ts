@@ -24,11 +24,10 @@ const PERIODS: { key: RecapPeriod; label: string }[] = [
  * window the same way the old modal's dialog data did.
  */
 @Component({
-  selector: 'app-recap-page',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
-  templateUrl: './recap-page.component.html',
-  styleUrls: ['./recap-page.component.css'],
+    selector: 'app-recap-page',
+    imports: [CommonModule, RouterModule, IconsModule],
+    templateUrl: './recap-page.component.html',
+    styleUrls: ['./recap-page.component.css']
 })
 export class RecapPageComponent implements OnInit {
   readonly periods = PERIODS;

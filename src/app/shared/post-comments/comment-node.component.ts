@@ -35,10 +35,9 @@ interface CommentPart {
  * the post's comment counter stay in sync.
  */
 @Component({
-  selector: 'app-comment-node',
-  standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule, MatDialogModule, MentionInputComponent, ReactionButtonComponent, CommentNodeComponent],
-  templateUrl: './comment-node.component.html',
+    selector: 'app-comment-node',
+    imports: [CommonModule, RouterModule, FormsModule, IconsModule, MatDialogModule, MentionInputComponent, ReactionButtonComponent, CommentNodeComponent],
+    templateUrl: './comment-node.component.html'
 })
 export class CommentNodeComponent {
   @Input() comment!: CommentResponse;

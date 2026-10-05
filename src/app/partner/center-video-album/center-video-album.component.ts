@@ -27,9 +27,10 @@ interface VideoSlot {
 }
 
 @Component({
-  selector: 'app-center-video-album',
-  templateUrl: './center-video-album.component.html',
-  styleUrls: ['./center-video-album.component.css']
+    selector: 'app-center-video-album',
+    templateUrl: './center-video-album.component.html',
+    styleUrls: ['./center-video-album.component.css'],
+    standalone: false
 })
 export class CenterVideoAlbumComponent implements OnInit, OnChanges, OnDestroy {
 

@@ -29,8 +29,9 @@ import {
 import { selectUser } from 'src/app/state/user/user.selector';
 
 @Component({
-  selector: 'app-workout-builder',
-  templateUrl: './workout-builder.component.html'
+    selector: 'app-workout-builder',
+    templateUrl: './workout-builder.component.html',
+    standalone: false
 })
 export class WorkoutBuilderComponent implements OnInit, OnDestroy {
 

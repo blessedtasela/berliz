@@ -29,9 +29,10 @@ const PROGRESS_STORAGE_KEY = 'berliz.task.subStepProgress';
 type WidgetTab = 'tasks' | 'workouts' | 'todos';
 
 @Component({
-  selector: 'app-dashboard-todo-list',
-  templateUrl: './dashboard-todo-list.component.html',
-  styleUrls: ['./dashboard-todo-list.component.css']
+    selector: 'app-dashboard-todo-list',
+    templateUrl: './dashboard-todo-list.component.html',
+    styleUrls: ['./dashboard-todo-list.component.css'],
+    standalone: false
 })
 export class DashboardTodoListComponent implements OnInit, OnDestroy {
 

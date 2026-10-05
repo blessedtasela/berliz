@@ -60,10 +60,9 @@ const BLOCKED_ATTACHMENT_EXTENSIONS = [
  * only ever touches the body.
  */
 @Component({
-  selector: 'app-message-composer',
-  standalone: true,
-  imports: [CommonModule, FormsModule, IconsModule],
-  templateUrl: './message-composer.component.html',
+    selector: 'app-message-composer',
+    imports: [CommonModule, FormsModule, IconsModule],
+    templateUrl: './message-composer.component.html'
 })
 export class MessageComposerComponent implements OnChanges, OnDestroy {
   @Input() placeholder = 'Type a message…';

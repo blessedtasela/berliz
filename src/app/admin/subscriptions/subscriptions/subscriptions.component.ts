@@ -7,9 +7,10 @@ import { selectSubscriptions } from 'src/app/state/subscription/subscription.sel
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-subscriptions',
-  templateUrl: './subscriptions.component.html',
-  styleUrls: ['./subscriptions.component.css']
+    selector: 'app-subscriptions',
+    templateUrl: './subscriptions.component.html',
+    styleUrls: ['./subscriptions.component.css'],
+    standalone: false
 })
 export class SubscriptionsComponent {
   subscriptionsData: Subscriptions[] = [];

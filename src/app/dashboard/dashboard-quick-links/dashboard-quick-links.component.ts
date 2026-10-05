@@ -24,9 +24,10 @@ interface QuickLink {
  * the same entity always reads the same way across the dashboard shell.
  */
 @Component({
-  selector: 'app-dashboard-quick-links',
-  templateUrl: './dashboard-quick-links.component.html',
-  styleUrls: ['./dashboard-quick-links.component.css']
+    selector: 'app-dashboard-quick-links',
+    templateUrl: './dashboard-quick-links.component.html',
+    styleUrls: ['./dashboard-quick-links.component.css'],
+    standalone: false
 })
 export class DashboardQuickLinksComponent implements OnInit, OnDestroy {
 

@@ -15,10 +15,9 @@ import { IconsModule } from 'src/app/icons/icons.module';
  * dashboard widget grid); the default is a centered block for a page's main area.
  */
 @Component({
-  selector: 'app-load-error',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  template: `
+    selector: 'app-load-error',
+    imports: [CommonModule, IconsModule],
+    template: `
     <div *ngIf="compact; else block" role="alert"
       class="flex items-center gap-3 px-4 py-3 rounded-xl border border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-950/20">
       <i-feather name="alert-circle" class="text-red-500 shrink-0" style="width:16px;height:16px;"></i-feather>
@@ -44,7 +43,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
         </button>
       </div>
     </ng-template>
-  `,
+  `
 })
 export class LoadErrorComponent {
   @Input() title = "Couldn't load this";

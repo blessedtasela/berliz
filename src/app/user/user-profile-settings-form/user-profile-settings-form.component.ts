@@ -5,9 +5,10 @@ import { Users } from 'src/app/models/users.interface';
 import { GENDER_OPTIONS } from 'src/app/shared/constants/gender-options';
 
 @Component({
-  selector: 'app-user-profile-settings-form',
-  templateUrl: './user-profile-settings-form.component.html',
-  styleUrls: ['./user-profile-settings-form.component.css']
+    selector: 'app-user-profile-settings-form',
+    templateUrl: './user-profile-settings-form.component.html',
+    styleUrls: ['./user-profile-settings-form.component.css'],
+    standalone: false
 })
 export class UserProfileSettingsFormComponent {
 

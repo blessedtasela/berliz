@@ -7,9 +7,10 @@ import { selectPartners } from 'src/app/state/partner/partner.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-partners',
-  templateUrl: './partners.component.html',
-  styleUrls: ['./partners.component.css']
+    selector: 'app-partners',
+    templateUrl: './partners.component.html',
+    styleUrls: ['./partners.component.css'],
+    standalone: false
 })
 export class PartnersComponent {
   partnersData: Partner[] = [];

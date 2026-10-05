@@ -53,10 +53,9 @@ import {
  *    it off outright. Tap the tab to bring the full pill back.
  */
 @Component({
-  selector: 'app-nav-history-controls',
-  standalone: true,
-  imports: [CommonModule, IconsModule, DragDropModule],
-  templateUrl: './nav-history-controls.component.html'
+    selector: 'app-nav-history-controls',
+    imports: [CommonModule, IconsModule, DragDropModule],
+    templateUrl: './nav-history-controls.component.html'
 })
 export class NavHistoryControlsComponent implements OnInit, OnDestroy {
 

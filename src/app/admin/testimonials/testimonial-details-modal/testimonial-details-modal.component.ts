@@ -4,9 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Testimonials } from 'src/app/models/testimonials.model';
 
 @Component({
-  selector: 'app-testimonial-details-modal',
-  templateUrl: './testimonial-details-modal.component.html',
-  styleUrls: ['./testimonial-details-modal.component.css']
+    selector: 'app-testimonial-details-modal',
+    templateUrl: './testimonial-details-modal.component.html',
+    styleUrls: ['./testimonial-details-modal.component.css'],
+    standalone: false
 })
 export class TestimonialDetailsModalComponent {
   testimonialData!: Testimonials;

@@ -19,10 +19,9 @@ import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-u
  * its own right rather than only reachable by clicking through the menu.
  */
 @Component({
-  selector: 'app-saved-page',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, StrapiUrlPipe],
-  templateUrl: './saved-page.component.html',
+    selector: 'app-saved-page',
+    imports: [CommonModule, RouterModule, IconsModule, StrapiUrlPipe],
+    templateUrl: './saved-page.component.html'
 })
 export class SavedPageComponent implements OnInit {
   posts: PostResponse[] = [];

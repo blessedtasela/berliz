@@ -4,9 +4,10 @@ import { BreadcrumbService } from 'xng-breadcrumb';
 
 
 @Component({
-  selector: 'app-navbar-breadcrumb',
-  templateUrl: './navbar-breadcrumb.component.html',
-  styleUrls: ['./navbar-breadcrumb.component.css']
+    selector: 'app-navbar-breadcrumb',
+    templateUrl: './navbar-breadcrumb.component.html',
+    styleUrls: ['./navbar-breadcrumb.component.css'],
+    standalone: false
 })
 export class NavbarBreadcrumbComponent {
   @Input() breadcrumbs: { label: string; url: string; }[] = [];;

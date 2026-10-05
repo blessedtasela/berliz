@@ -13,9 +13,10 @@ import { loadAllUsers } from 'src/app/state/user/user.actions';
 import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
-  selector: 'app-dashboard-top-users',
-  templateUrl: './dashboard-top-users.component.html',
-  styleUrls: ['./dashboard-top-users.component.css']
+    selector: 'app-dashboard-top-users',
+    templateUrl: './dashboard-top-users.component.html',
+    styleUrls: ['./dashboard-top-users.component.css'],
+    standalone: false
 })
 export class DashboardTopUsersComponent {
   users: Users[] = [];

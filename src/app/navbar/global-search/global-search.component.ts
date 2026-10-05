@@ -131,9 +131,10 @@ const truncate = (text: string, max = 80): string => {
 };
 
 @Component({
-  selector: 'app-global-search',
-  templateUrl: './global-search.component.html',
-  styleUrls: ['./global-search.component.css']
+    selector: 'app-global-search',
+    templateUrl: './global-search.component.html',
+    styleUrls: ['./global-search.component.css'],
+    standalone: false
 })
 export class GlobalSearchComponent implements OnInit, OnDestroy {
 

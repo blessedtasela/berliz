@@ -16,9 +16,10 @@ import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
-  selector: 'app-center-data',
-  templateUrl: './center-data.component.html',
-  styleUrls: ['./center-data.component.css']
+    selector: 'app-center-data',
+    templateUrl: './center-data.component.html',
+    styleUrls: ['./center-data.component.css'],
+    standalone: false
 })
 export class CenterDataComponent {
   @Output() emitEvent = new EventEmitter();

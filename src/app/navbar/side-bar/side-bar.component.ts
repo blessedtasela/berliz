@@ -24,9 +24,10 @@ import { loadConversations } from 'src/app/state/message/message.actions';
 const KNOWN_SIDEBAR_MODES: SidebarDisplay[] = ['expanded', 'collapsed', 'hidden'];
 
 @Component({
-  selector: 'app-side-bar',
-  templateUrl: './side-bar.component.html',
-  styleUrls: ['./side-bar.component.css']
+    selector: 'app-side-bar',
+    templateUrl: './side-bar.component.html',
+    styleUrls: ['./side-bar.component.css'],
+    standalone: false
 })
 export class SideBarComponent implements OnInit, OnDestroy {
   currentRoute: any;

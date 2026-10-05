@@ -49,9 +49,10 @@ import { WebAuthnCredentialResponse } from 'src/app/models/webauthn.interface';
 import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
-  selector: 'app-user-profile-settings',
-  templateUrl: './user-profile-settings.component.html',
-  styleUrls: ['./user-profile-settings.component.css']
+    selector: 'app-user-profile-settings',
+    templateUrl: './user-profile-settings.component.html',
+    styleUrls: ['./user-profile-settings.component.css'],
+    standalone: false
 })
 export class UserProfileSettingsComponent implements OnInit, OnDestroy {
 

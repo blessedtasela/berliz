@@ -16,10 +16,9 @@ import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-u
  * are configured.
  */
 @Component({
-  selector: 'app-accountability-card',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  templateUrl: './accountability-card.component.html',
+    selector: 'app-accountability-card',
+    imports: [CommonModule, IconsModule],
+    templateUrl: './accountability-card.component.html'
 })
 export class AccountabilityCardComponent implements OnInit {
   partners: PartnerStatusResponse[] = [];

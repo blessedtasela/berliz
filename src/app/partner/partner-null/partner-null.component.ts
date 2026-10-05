@@ -16,9 +16,10 @@ import { selectMyPartner } from 'src/app/state/partner/partner.selectors';
 import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
-  selector: 'app-partner-null',
-  templateUrl: './partner-null.component.html',
-  styleUrls: ['./partner-null.component.css']
+    selector: 'app-partner-null',
+    templateUrl: './partner-null.component.html',
+    styleUrls: ['./partner-null.component.css'],
+    standalone: false
 })
 export class PartnerNullComponent {
   @Input() user!: Users | null;

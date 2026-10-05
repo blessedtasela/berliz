@@ -8,9 +8,10 @@ import { UserService } from 'src/app/services/user.service';
 import { genericError, passwordMatchValidator } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-reset-password-modal',
-  templateUrl: './reset-password-modal.component.html',
-  styleUrls: ['./reset-password-modal.component.css']
+    selector: 'app-reset-password-modal',
+    templateUrl: './reset-password-modal.component.html',
+    styleUrls: ['./reset-password-modal.component.css'],
+    standalone: false
 })
 export class ResetPasswordModalComponent {
   resetPasswordForm!: FormGroup;

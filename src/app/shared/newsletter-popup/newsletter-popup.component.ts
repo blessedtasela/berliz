@@ -15,9 +15,10 @@ import { emailExtensionValidator, genericError } from 'src/validators/form-valid
 import { NewsletterTriggerService } from './newsletter-trigger.service';
 
 @Component({
-  selector: 'app-newsletter-popup',
-  templateUrl: './newsletter-popup.component.html',
-  styleUrls: ['./newsletter-popup.component.css']
+    selector: 'app-newsletter-popup',
+    templateUrl: './newsletter-popup.component.html',
+    styleUrls: ['./newsletter-popup.component.css'],
+    standalone: false
 })
 export class NewsletterPopupComponent implements OnInit, OnDestroy {
   /** Emitted once the subscription is confirmed by the backend. */

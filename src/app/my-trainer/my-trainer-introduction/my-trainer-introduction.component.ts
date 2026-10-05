@@ -15,9 +15,10 @@ import { TrainerService } from 'src/app/services/trainer.service';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 
 @Component({
-  selector: 'app-my-trainer-introduction',
-  templateUrl: './my-trainer-introduction.component.html',
-  styleUrls: ['./my-trainer-introduction.component.css']
+    selector: 'app-my-trainer-introduction',
+    templateUrl: './my-trainer-introduction.component.html',
+    styleUrls: ['./my-trainer-introduction.component.css'],
+    standalone: false
 })
 export class MyTrainerIntroductionComponent implements OnInit, OnChanges {
 

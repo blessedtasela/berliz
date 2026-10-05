@@ -7,9 +7,10 @@ import { loadAllCenterPricing } from 'src/app/state/center/center.actions';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-center-pricings',
-  templateUrl: './center-pricings.component.html',
-  styleUrls: ['./center-pricings.component.css']
+    selector: 'app-center-pricings',
+    templateUrl: './center-pricings.component.html',
+    styleUrls: ['./center-pricings.component.css'],
+    standalone: false
 })
 export class CenterPricingsComponent {
   centerPricingData: CenterPricing[] = [];

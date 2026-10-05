@@ -8,9 +8,10 @@ import { CenterService } from 'src/app/services/center.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-update-center-pricings-modal',
-  templateUrl: './update-center-pricings-modal.component.html',
-  styleUrls: ['./update-center-pricings-modal.component.css']
+    selector: 'app-update-center-pricings-modal',
+    templateUrl: './update-center-pricings-modal.component.html',
+    styleUrls: ['./update-center-pricings-modal.component.css'],
+    standalone: false
 })
 export class UpdateCenterPricingsModalComponent {
   onUpdateCenterPricingEmit = new EventEmitter();

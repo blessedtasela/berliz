@@ -8,9 +8,10 @@ import { loadTags } from 'src/app/state/tag/tag.actions';
 import { selectTags } from 'src/app/state/tag/tag.selectors';
 
 @Component({
-  selector: 'app-tag-header',
-  templateUrl: './tag-header.component.html',
-  styleUrls: ['./tag-header.component.css']
+    selector: 'app-tag-header',
+    templateUrl: './tag-header.component.html',
+    styleUrls: ['./tag-header.component.css'],
+    standalone: false
 })
 export class TagHeaderComponent {
   @Input() tagsData: Tags[] = [];

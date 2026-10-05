@@ -4,8 +4,9 @@ import { NotificationSection, Notifications } from 'src/app/models/Notifications
 
 
 @Component({
-  selector: 'notification-list',
-  templateUrl: './notification-list.component.html'
+    selector: 'notification-list',
+    templateUrl: './notification-list.component.html',
+    standalone: false
 })
 export class NotificationListComponent {
 

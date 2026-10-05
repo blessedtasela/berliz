@@ -17,9 +17,10 @@ import { UpdatePaymentsModalComponent } from '../update-payments-modal/update-pa
 import { PaymentDetailsModalComponent } from '../payment-details-modal/payment-details-modal.component';
 
 @Component({
-  selector: 'app-payments-list',
-  templateUrl: './payments-list.component.html',
-  styleUrls: ['./payments-list.component.css']
+    selector: 'app-payments-list',
+    templateUrl: './payments-list.component.html',
+    styleUrls: ['./payments-list.component.css'],
+    standalone: false
 })
 export class PaymentsListComponent {
   responseMessage: any;

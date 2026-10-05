@@ -8,9 +8,10 @@ import { selectActiveTestimonials } from 'src/app/state/testimonial/testimonial.
 import { TestimonialDialogService } from '../testimonial-dialog.service';
 
 @Component({
-  selector: 'app-testimonial-list',
-  templateUrl: './testimonial-list.component.html',
-  styleUrls: ['./testimonial-list.component.css']
+    selector: 'app-testimonial-list',
+    templateUrl: './testimonial-list.component.html',
+    styleUrls: ['./testimonial-list.component.css'],
+    standalone: false
 })
 export class TestimonialListComponent implements OnInit, OnDestroy {
   testimonials: Testimonials[] = [];

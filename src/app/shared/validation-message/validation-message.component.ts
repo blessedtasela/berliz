@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 
 @Component({
-  selector: 'app-validation-message',
-  templateUrl: './validation-message.component.html',
-  styleUrls: ['./validation-message.component.css']
+    selector: 'app-validation-message',
+    templateUrl: './validation-message.component.html',
+    styleUrls: ['./validation-message.component.css'],
+    standalone: false
 })
 export class ValidationMessageComponent {
   @Input() control: AbstractControl | null = null;

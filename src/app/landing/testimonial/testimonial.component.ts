@@ -7,9 +7,10 @@ import { loadActiveTestimonials } from 'src/app/state/testimonial/testimonial.ac
 import { selectActiveTestimonials } from 'src/app/state/testimonial/testimonial.selectors';
 
 @Component({
-  selector: 'app-testimonial',
-  templateUrl: './testimonial.component.html',
-  styleUrls: ['./testimonial.component.css']
+    selector: 'app-testimonial',
+    templateUrl: './testimonial.component.html',
+    styleUrls: ['./testimonial.component.css'],
+    standalone: false
 })
 export class TestimonialComponent implements OnInit, OnDestroy {
   testimonials: Testimonials[] = [];

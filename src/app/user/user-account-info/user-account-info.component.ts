@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-user-account-info',
-  templateUrl: './user-account-info.component.html',
-  styleUrls: ['./user-account-info.component.css']
+    selector: 'app-user-account-info',
+    templateUrl: './user-account-info.component.html',
+    styleUrls: ['./user-account-info.component.css'],
+    standalone: false
 })
 export class UserAccountInfoComponent {
   @Input() joined!: string | null;

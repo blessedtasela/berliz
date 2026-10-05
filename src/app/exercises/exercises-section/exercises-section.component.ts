@@ -31,8 +31,9 @@ import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-u
  * a login call-to-action instead of the show-more toggle.
  */
 @Component({
-  selector: 'app-exercises-section',
-  templateUrl: './exercises-section.component.html'
+    selector: 'app-exercises-section',
+    templateUrl: './exercises-section.component.html',
+    standalone: false
 })
 export class ExercisesSectionComponent implements OnInit, OnDestroy {
 

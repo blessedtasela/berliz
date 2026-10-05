@@ -8,8 +8,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
  * so the icon can spin while that's in flight.
  */
 @Component({
-  selector: 'app-refresh-button',
-  templateUrl: './refresh-button.component.html',
+    selector: 'app-refresh-button',
+    templateUrl: './refresh-button.component.html',
+    standalone: false
 })
 export class RefreshButtonComponent {
   @Input() loading = false;

@@ -52,9 +52,10 @@ interface StartableContact {
  * the same shared "active conversation" state (the full page clears it on destroy).
  */
 @Component({
-  selector: 'app-message-popup',
-  templateUrl: './message-popup.component.html',
-  styleUrls: ['./message-popup.component.css']
+    selector: 'app-message-popup',
+    templateUrl: './message-popup.component.html',
+    styleUrls: ['./message-popup.component.css'],
+    standalone: false
 })
 export class MessagePopupComponent implements OnInit, OnDestroy {
 

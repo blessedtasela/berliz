@@ -9,9 +9,10 @@ import { MySubscriptionDetailModalComponent } from '../my-subscription-detail-mo
 import { RenewSubscriptionModalComponent } from 'src/app/shared/renew-subscription-modal/renew-subscription-modal.component';
 
 @Component({
-  selector: 'app-my-subscriptions-action',
-  templateUrl: './my-subscriptions-action.component.html',
-  styleUrls: ['./my-subscriptions-action.component.css']
+    selector: 'app-my-subscriptions-action',
+    templateUrl: './my-subscriptions-action.component.html',
+    styleUrls: ['./my-subscriptions-action.component.css'],
+    standalone: false
 })
 export class MySubscriptionsActionComponent {
   @Input() subscription!: Subscriptions;

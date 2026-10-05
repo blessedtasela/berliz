@@ -14,9 +14,10 @@ import { selectMyPartner } from 'src/app/state/partner/partner.selectors';
 import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
-  selector: 'app-partner-application',
-  templateUrl: './partner-application.component.html',
-  styleUrls: ['./partner-application.component.css']
+    selector: 'app-partner-application',
+    templateUrl: './partner-application.component.html',
+    styleUrls: ['./partner-application.component.css'],
+    standalone: false
 })
 export class PartnerApplicationComponent {
   @Input() partnerData!: Partner;

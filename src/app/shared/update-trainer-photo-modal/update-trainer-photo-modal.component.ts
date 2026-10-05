@@ -9,9 +9,10 @@ import { imageValidator, genericError } from 'src/validators/form-validators.mod
 import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
-  selector: 'app-update-trainer-photo-modal',
-  templateUrl: './update-trainer-photo-modal.component.html',
-  styleUrls: ['./update-trainer-photo-modal.component.css']
+    selector: 'app-update-trainer-photo-modal',
+    templateUrl: './update-trainer-photo-modal.component.html',
+    styleUrls: ['./update-trainer-photo-modal.component.css'],
+    standalone: false
 })
 export class UpdateTrainerPhotoModalComponent {
   onUpdatePhotoEmit = new EventEmitter();

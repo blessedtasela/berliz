@@ -13,8 +13,9 @@ import { selectMyTodos } from 'src/app/state/todo/todo.selectors';
 import { filterTodos } from 'src/app/state/todo/todo.utils';
 
 @Component({
-  selector: 'app-my-todo-list-main',
-  templateUrl: './my-todo-list-main.component.html'
+    selector: 'app-my-todo-list-main',
+    templateUrl: './my-todo-list-main.component.html',
+    standalone: false
 })
 export class MyTodoListMainComponent implements OnInit, OnDestroy {
 

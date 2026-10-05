@@ -3,9 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TestimonialDialogService } from '../testimonial-dialog.service';
 
 @Component({
-  selector: 'app-testimonial-hero',
-  templateUrl: './testimonial-hero.component.html',
-  styleUrls: ['./testimonial-hero.component.css']
+    selector: 'app-testimonial-hero',
+    templateUrl: './testimonial-hero.component.html',
+    styleUrls: ['./testimonial-hero.component.css'],
+    standalone: false
 })
 export class TestimonialHeroComponent implements OnInit {
 

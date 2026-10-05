@@ -13,9 +13,10 @@ export interface PlanOption {
 }
 
 @Component({
-  selector: 'app-my-trainer-sub-modal',
-  templateUrl: './my-trainer-sub-modal.component.html',
-  styleUrls: ['./my-trainer-sub-modal.component.css']
+    selector: 'app-my-trainer-sub-modal',
+    templateUrl: './my-trainer-sub-modal.component.html',
+    styleUrls: ['./my-trainer-sub-modal.component.css'],
+    standalone: false
 })
 export class MyTrainerSubModalComponent implements OnInit {
 

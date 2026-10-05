@@ -20,9 +20,10 @@ import { loadMyPartner } from 'src/app/state/partner/partner.actions';
 import { selectMyPartner, selectPartnerLoading } from 'src/app/state/partner/partner.selectors';
 
 @Component({
-  selector: 'app-partner',
-  templateUrl: './partner.component.html',
-  styleUrls: ['./partner.component.css']
+    selector: 'app-partner',
+    templateUrl: './partner.component.html',
+    styleUrls: ['./partner.component.css'],
+    standalone: false
 })
 export class PartnerComponent implements OnInit, OnDestroy {
 

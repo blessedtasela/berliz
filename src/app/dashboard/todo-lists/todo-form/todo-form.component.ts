@@ -6,9 +6,10 @@ import { TodoService } from 'src/app/services/todo.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-todo-form',
-  templateUrl: './todo-form.component.html',
-  styleUrls: ['./todo-form.component.css']
+    selector: 'app-todo-form',
+    templateUrl: './todo-form.component.html',
+    styleUrls: ['./todo-form.component.css'],
+    standalone: false
 })
 export class TodoFormComponent {
   addTodoForm!: FormGroup;

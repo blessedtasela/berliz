@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 
 @Component({
-  selector: 'app-my-subscriptions-list',
-  templateUrl: './my-subscriptions-list.component.html',
-  styleUrls: ['./my-subscriptions-list.component.css']
+    selector: 'app-my-subscriptions-list',
+    templateUrl: './my-subscriptions-list.component.html',
+    styleUrls: ['./my-subscriptions-list.component.css'],
+    standalone: false
 })
 export class MySubscriptionsListComponent {
 

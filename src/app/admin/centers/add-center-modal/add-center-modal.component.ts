@@ -19,9 +19,10 @@ import { PhotoResponse } from 'src/app/models/Media.interface';
 import { MediaOwnerType } from 'src/app/models/Media.enum';
 
 @Component({
-  selector: 'app-add-center-modal',
-  templateUrl: './add-center-modal.component.html',
-  styleUrls: ['./add-center-modal.component.css']
+    selector: 'app-add-center-modal',
+    templateUrl: './add-center-modal.component.html',
+    styleUrls: ['./add-center-modal.component.css'],
+    standalone: false
 })
 export class AddCenterModalComponent {
   onAddCenterEmit = new EventEmitter();

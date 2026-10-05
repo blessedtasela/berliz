@@ -17,9 +17,10 @@ import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
-  selector: 'app-update-exercises-modal',
-  templateUrl: './update-exercises-modal.component.html',
-  styleUrls: ['./update-exercises-modal.component.css']
+    selector: 'app-update-exercises-modal',
+    templateUrl: './update-exercises-modal.component.html',
+    styleUrls: ['./update-exercises-modal.component.css'],
+    standalone: false
 })
 export class UpdateExercisesModalComponent {
   onUpdateExerciseEmit = new EventEmitter()

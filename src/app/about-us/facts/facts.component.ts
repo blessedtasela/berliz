@@ -5,9 +5,10 @@ import { DashboardService } from 'src/app/services/dashboard.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-facts',
-  templateUrl: './facts.component.html',
-  styleUrls: ['./facts.component.css']
+    selector: 'app-facts',
+    templateUrl: './facts.component.html',
+    styleUrls: ['./facts.component.css'],
+    standalone: false
 })
 export class FactsComponent {
   animationState = 'start';

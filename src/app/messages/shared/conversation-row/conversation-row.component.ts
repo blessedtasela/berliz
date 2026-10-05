@@ -13,10 +13,9 @@ export interface ConversationRowData {
 
 /** One row in the conversation list -- reused by the full-page inbox and the popup's list view. */
 @Component({
-  selector: 'app-conversation-row',
-  standalone: true,
-  imports: [CommonModule, AvatarComponent],
-  templateUrl: './conversation-row.component.html',
+    selector: 'app-conversation-row',
+    imports: [CommonModule, AvatarComponent],
+    templateUrl: './conversation-row.component.html'
 })
 export class ConversationRowComponent {
   @Input({ required: true }) row!: ConversationRowData;

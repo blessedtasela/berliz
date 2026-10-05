@@ -7,9 +7,10 @@ import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-u
  * `Exercise.categories`. There is no per-category exercise endpoint.
  */
 @Component({
-  selector: 'app-category-exercises',
-  templateUrl: './category-exercises.component.html',
-  styleUrls: ['./category-exercises.component.css']
+    selector: 'app-category-exercises',
+    templateUrl: './category-exercises.component.html',
+    styleUrls: ['./category-exercises.component.css'],
+    standalone: false
 })
 export class CategoryExercisesComponent {
   @Input() exercises: Exercises[] = [];

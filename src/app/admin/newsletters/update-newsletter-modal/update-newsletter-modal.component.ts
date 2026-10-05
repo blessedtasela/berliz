@@ -7,9 +7,10 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-update-newsletter-modal',
-  templateUrl: './update-newsletter-modal.component.html',
-  styleUrls: ['./update-newsletter-modal.component.css']
+    selector: 'app-update-newsletter-modal',
+    templateUrl: './update-newsletter-modal.component.html',
+    styleUrls: ['./update-newsletter-modal.component.css'],
+    standalone: false
 })
 export class UpdateNewsletterModalComponent {
   onUpdateNewsletter = new EventEmitter();

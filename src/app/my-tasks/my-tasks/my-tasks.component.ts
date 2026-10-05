@@ -30,9 +30,10 @@ import { AssignTaskModalComponent } from '../assign-task-modal/assign-task-modal
 const PROGRESS_STORAGE_KEY = 'berliz.task.subStepProgress';
 
 @Component({
-  selector: 'app-my-tasks',
-  templateUrl: './my-tasks.component.html',
-  styleUrls: ['./my-tasks.component.css']
+    selector: 'app-my-tasks',
+    templateUrl: './my-tasks.component.html',
+    styleUrls: ['./my-tasks.component.css'],
+    standalone: false
 })
 export class MyTasksComponent implements OnInit, OnDestroy {
 

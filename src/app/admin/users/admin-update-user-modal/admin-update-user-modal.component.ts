@@ -10,9 +10,10 @@ import { GENDER_OPTIONS } from 'src/app/shared/constants/gender-options';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-admin-update-user-modal',
-  templateUrl: './admin-update-user-modal.component.html',
-  styleUrls: ['./admin-update-user-modal.component.css']
+    selector: 'app-admin-update-user-modal',
+    templateUrl: './admin-update-user-modal.component.html',
+    styleUrls: ['./admin-update-user-modal.component.css'],
+    standalone: false
 })
 export class AdminUpdateUserModalComponent {
   onUpdateUserEmit = new EventEmitter();

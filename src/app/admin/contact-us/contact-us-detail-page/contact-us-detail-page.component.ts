@@ -17,9 +17,10 @@ import { selectContactUsList } from 'src/app/state/contact-us/contact-us.selecto
  * `contactUs` slice and dispatches `loadContactUs()` if empty.
  */
 @Component({
-  selector: 'app-contact-us-detail-page',
-  templateUrl: './contact-us-detail-page.component.html',
-  styleUrls: ['./contact-us-detail-page.component.css']
+    selector: 'app-contact-us-detail-page',
+    templateUrl: './contact-us-detail-page.component.html',
+    styleUrls: ['./contact-us-detail-page.component.css'],
+    standalone: false
 })
 export class ContactUsDetailPageComponent implements OnInit, OnDestroy {
   contactUs: ContactUs | null = null;

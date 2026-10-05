@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import { BreadcrumbManualService } from '../services/breadcrumb-manual.service';
 
 @Component({
-  selector: 'app-router-breadcrumb',
-  templateUrl: './router-breadcrumb.component.html',
-  styleUrls: ['./router-breadcrumb.component.css'],
-  host: {
-    '[class.app-router-breadcrumb]': 'true', // Add a host attribute to force a different ID
-  },
+    selector: 'app-router-breadcrumb',
+    templateUrl: './router-breadcrumb.component.html',
+    styleUrls: ['./router-breadcrumb.component.css'],
+    host: {
+        '[class.app-router-breadcrumb]': 'true', // Add a host attribute to force a different ID
+    },
+    standalone: false
 })
 export class RouterBreadcrumbComponent {
   breadcrumbs: { label: string; url: string }[] = [];

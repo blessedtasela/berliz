@@ -4,9 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SubTasks } from 'src/app/models/tasks.interface';
 
 @Component({
-  selector: 'app-sub-task-details-modal',
-  templateUrl: './sub-task-details-modal.component.html',
-  styleUrls: ['./sub-task-details-modal.component.css']
+    selector: 'app-sub-task-details-modal',
+    templateUrl: './sub-task-details-modal.component.html',
+    styleUrls: ['./sub-task-details-modal.component.css'],
+    standalone: false
 })
 export class SubTaskDetailsModalComponent {
   subTaskData!: SubTasks;

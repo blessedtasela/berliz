@@ -16,9 +16,10 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { TagDetailsModalComponent } from '../tag-details-modal/tag-details-modal.component';
 
 @Component({
-  selector: 'app-tag-list',
-  templateUrl: './tag-list.component.html',
-  styleUrls: ['./tag-list.component.css']
+    selector: 'app-tag-list',
+    templateUrl: './tag-list.component.html',
+    styleUrls: ['./tag-list.component.css'],
+    standalone: false
 })
 export class TagListComponent {
   responseMessage: any;

@@ -28,10 +28,9 @@ export interface BookingLocationSelection {
  * it up by `trainerId` from the public trainer list.
  */
 @Component({
-  selector: 'app-booking-location-picker',
-  standalone: true,
-  imports: [CommonModule, FormsModule, IconsModule],
-  template: `
+    selector: 'app-booking-location-picker',
+    imports: [CommonModule, FormsModule, IconsModule],
+    template: `
     <div *ngIf="hasOptions" class="flex flex-col gap-1.5">
       <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
         Where would you like to train? <span class="normal-case text-gray-300 dark:text-gray-600">(optional)</span>
@@ -80,7 +79,7 @@ export interface BookingLocationSelection {
         This location adds a &#36;{{ selectedFee | number:'1.2-2' }} fee on top of the session price.
       </p>
     </div>
-  `,
+  `
 })
 export class BookingLocationPickerComponent implements OnInit, OnChanges {
   @Input() trainerId: number | null | undefined = null;

@@ -27,9 +27,10 @@ import { selectMyTodos, selectTodoLoading, selectTodos } from 'src/app/state/tod
  * personal for every other role. Bar chart type preserved.
  */
 @Component({
-  selector: 'app-dashboard-activity-chart',
-  templateUrl: './dashboard-activity-chart.component.html',
-  styleUrls: ['./dashboard-activity-chart.component.css']
+    selector: 'app-dashboard-activity-chart',
+    templateUrl: './dashboard-activity-chart.component.html',
+    styleUrls: ['./dashboard-activity-chart.component.css'],
+    standalone: false
 })
 export class DashboardActivityChartComponent implements OnInit, OnDestroy {
   /** Kept for template compatibility with dashboard-main; not the data source. */

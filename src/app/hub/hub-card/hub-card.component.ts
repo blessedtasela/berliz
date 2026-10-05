@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'hub-card',
-  templateUrl: './hub-card.component.html',
-  styleUrls: ['./hub-card.component.css']
+    selector: 'hub-card',
+    templateUrl: './hub-card.component.html',
+    styleUrls: ['./hub-card.component.css'],
+    standalone: false
 })
 export class HubCardComponent {
   @Input() label!: string;

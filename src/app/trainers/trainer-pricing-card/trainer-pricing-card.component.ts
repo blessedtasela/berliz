@@ -18,9 +18,10 @@ interface DiscountTier {
  * (three delivery modes + long-commitment discounts).
  */
 @Component({
-  selector: 'app-trainer-pricing-card',
-  templateUrl: './trainer-pricing-card.component.html',
-  styleUrls: ['./trainer-pricing-card.component.css']
+    selector: 'app-trainer-pricing-card',
+    templateUrl: './trainer-pricing-card.component.html',
+    styleUrls: ['./trainer-pricing-card.component.css'],
+    standalone: false
 })
 export class TrainerPricingCardComponent {
 

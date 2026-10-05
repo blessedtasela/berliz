@@ -10,8 +10,9 @@ import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
  * in the middle of an otherwise white/gray-50 app.
  */
 @Component({
-  selector: 'app-dashboard-trainer-detail',
-  templateUrl: './dashboard-trainer-detail.component.html',
+    selector: 'app-dashboard-trainer-detail',
+    templateUrl: './dashboard-trainer-detail.component.html',
+    standalone: false
 })
 export class DashboardTrainerDetailComponent extends TrainersDetailsComponent {
 

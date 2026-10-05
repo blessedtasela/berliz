@@ -21,10 +21,9 @@ import { CommentNodeComponent } from './comment-node.component';
  * is swapped (feed refresh) while open.
  */
 @Component({
-  selector: 'app-post-comments',
-  standalone: true,
-  imports: [CommonModule, IconsModule, MentionInputComponent, CommentNodeComponent],
-  templateUrl: './post-comments.component.html'
+    selector: 'app-post-comments',
+    imports: [CommonModule, IconsModule, MentionInputComponent, CommentNodeComponent],
+    templateUrl: './post-comments.component.html'
 })
 export class PostCommentsComponent implements OnChanges {
   @Input() post!: PostResponse;

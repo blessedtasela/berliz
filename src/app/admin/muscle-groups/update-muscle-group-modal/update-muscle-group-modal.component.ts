@@ -11,9 +11,10 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-update-muscle-group-modal',
-  templateUrl: './update-muscle-group-modal.component.html',
-  styleUrls: ['./update-muscle-group-modal.component.css']
+    selector: 'app-update-muscle-group-modal',
+    templateUrl: './update-muscle-group-modal.component.html',
+    styleUrls: ['./update-muscle-group-modal.component.css'],
+    standalone: false
 })
 export class UpdateMuscleGroupModalComponent implements OnInit {
   onUpdateMuscleGroupEmit = new EventEmitter()

@@ -4,9 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Categories } from 'src/app/models/categories.interface';
 
 @Component({
-  selector: 'app-category-details-modal',
-  templateUrl: './category-details-modal.component.html',
-  styleUrls: ['./category-details-modal.component.css']
+    selector: 'app-category-details-modal',
+    templateUrl: './category-details-modal.component.html',
+    styleUrls: ['./category-details-modal.component.css'],
+    standalone: false
 })
 export class CategoryDetailsModalComponent {
   categoryData!: Categories;

@@ -17,9 +17,10 @@ import { Store } from '@ngrx/store';
 import { selectTrainerPricing } from 'src/app/state/trainer/trainer.selector';
 
 @Component({
-  selector: 'app-trainer-pricing-list',
-  templateUrl: './trainer-pricing-list.component.html',
-  styleUrls: ['./trainer-pricing-list.component.css']
+    selector: 'app-trainer-pricing-list',
+    templateUrl: './trainer-pricing-list.component.html',
+    styleUrls: ['./trainer-pricing-list.component.css'],
+    standalone: false
 })
 export class TrainerPricingListComponent implements OnDestroy {
   responseMessage: any;

@@ -18,9 +18,10 @@ import { selectUser } from 'src/app/state/user/user.selector';
 
 
 @Component({
-  selector: 'app-user-profile',
-  templateUrl: './user-profile.component.html',
-  styleUrls: ['./user-profile.component.css']
+    selector: 'app-user-profile',
+    templateUrl: './user-profile.component.html',
+    styleUrls: ['./user-profile.component.css'],
+    standalone: false
 })
 export class UserProfileComponent {
   @Input() user!: Users;

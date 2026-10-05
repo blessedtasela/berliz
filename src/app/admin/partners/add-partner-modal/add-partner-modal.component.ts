@@ -12,9 +12,10 @@ import { loadActiveUsers } from 'src/app/state/user/user.actions';
 import { emailExtensionValidator, fileValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-add-partner-modal',
-  templateUrl: './add-partner-modal.component.html',
-  styleUrls: ['./add-partner-modal.component.css'],
+    selector: 'app-add-partner-modal',
+    templateUrl: './add-partner-modal.component.html',
+    styleUrls: ['./add-partner-modal.component.css'],
+    standalone: false
 })
 export class AddPartnerModalComponent implements AfterViewInit {
   onAddPartnerEmit = new EventEmitter();

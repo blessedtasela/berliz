@@ -11,9 +11,10 @@ import { loadCenters } from 'src/app/state/center/center.actions';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-add-center-pricings-modal',
-  templateUrl: './add-center-pricings-modal.component.html',
-  styleUrls: ['./add-center-pricings-modal.component.css']
+    selector: 'app-add-center-pricings-modal',
+    templateUrl: './add-center-pricings-modal.component.html',
+    styleUrls: ['./add-center-pricings-modal.component.css'],
+    standalone: false
 })
 export class AddCenterPricingsModalComponent {
   onAddCenterPricingEmit = new EventEmitter();

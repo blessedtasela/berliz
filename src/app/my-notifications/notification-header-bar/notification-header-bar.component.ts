@@ -2,8 +2,9 @@
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 
 @Component({
-  selector: 'notification-header-bar',
-  templateUrl: './notification-header-bar.component.html'
+    selector: 'notification-header-bar',
+    templateUrl: './notification-header-bar.component.html',
+    standalone: false
 })
 export class NotificationHeaderBarComponent {
   @Input() startIndex = 0;

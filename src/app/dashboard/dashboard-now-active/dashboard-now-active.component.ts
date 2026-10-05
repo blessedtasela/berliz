@@ -12,9 +12,10 @@ import { selectUsers } from 'src/app/state/user/user.selector';
 import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
-  selector: 'app-dashboard-now-active',
-  templateUrl: './dashboard-now-active.component.html',
-  styleUrls: ['./dashboard-now-active.component.css']
+    selector: 'app-dashboard-now-active',
+    templateUrl: './dashboard-now-active.component.html',
+    styleUrls: ['./dashboard-now-active.component.css'],
+    standalone: false
 })
 export class DashboardNowActiveComponent {
   users: Users[] = [];

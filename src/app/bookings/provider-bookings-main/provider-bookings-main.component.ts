@@ -35,9 +35,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * actions. Backend resolves which (trainer vs center) from the JWT role.
  */
 @Component({
-  selector: 'app-provider-bookings-main',
-  templateUrl: './provider-bookings-main.component.html',
-  styleUrls: ['./provider-bookings-main.component.css']
+    selector: 'app-provider-bookings-main',
+    templateUrl: './provider-bookings-main.component.html',
+    styleUrls: ['./provider-bookings-main.component.css'],
+    standalone: false
 })
 export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
 

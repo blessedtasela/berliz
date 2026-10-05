@@ -9,9 +9,10 @@ import { loadClients } from 'src/app/state/client/client.actions';
 import { selectClients } from 'src/app/state/client/client.selectors';
 
 @Component({
-  selector: 'app-clients-header',
-  templateUrl: './clients-header.component.html',
-  styleUrls: ['./clients-header.component.css']
+    selector: 'app-clients-header',
+    templateUrl: './clients-header.component.html',
+    styleUrls: ['./clients-header.component.css'],
+    standalone: false
 })
 export class ClientsHeaderComponent {
   responseMessage: any;

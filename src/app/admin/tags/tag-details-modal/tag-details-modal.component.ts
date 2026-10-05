@@ -4,9 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Tags } from 'src/app/models/tags.interface';
 
 @Component({
-  selector: 'app-tag-details-modal',
-  templateUrl: './tag-details-modal.component.html',
-  styleUrls: ['./tag-details-modal.component.css']
+    selector: 'app-tag-details-modal',
+    templateUrl: './tag-details-modal.component.html',
+    styleUrls: ['./tag-details-modal.component.css'],
+    standalone: false
 })
 export class TagDetailsModalComponent {
   tagData!: Tags;

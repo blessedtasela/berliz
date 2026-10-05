@@ -11,9 +11,10 @@ import { loadMyTrainerReviews } from 'src/app/state/trainer/trainer.actions';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-my-trainer-review',
-  templateUrl: './my-trainer-review.component.html',
-  styleUrls: ['./my-trainer-review.component.css']
+    selector: 'app-my-trainer-review',
+    templateUrl: './my-trainer-review.component.html',
+    styleUrls: ['./my-trainer-review.component.css'],
+    standalone: false
 })
 export class MyTrainerReviewComponent {
 

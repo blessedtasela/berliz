@@ -7,9 +7,10 @@ import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
  * `Trainer.categories`. There is no per-category trainer endpoint.
  */
 @Component({
-  selector: 'app-category-trainers',
-  templateUrl: './category-trainers.component.html',
-  styleUrls: ['./category-trainers.component.css']
+    selector: 'app-category-trainers',
+    templateUrl: './category-trainers.component.html',
+    styleUrls: ['./category-trainers.component.css'],
+    standalone: false
 })
 export class CategoryTrainersComponent {
   @Input() trainers: Trainers[] = [];

@@ -10,9 +10,10 @@ import { AddTagModalComponent } from '../add-tag-modal/add-tag-modal.component';
 import { Tags } from 'src/app/models/tags.interface';
 
 @Component({
-  selector: 'app-update-tag-modal',
-  templateUrl: './update-tag-modal.component.html',
-  styleUrls: ['./update-tag-modal.component.css']
+    selector: 'app-update-tag-modal',
+    templateUrl: './update-tag-modal.component.html',
+    styleUrls: ['./update-tag-modal.component.css'],
+    standalone: false
 })
 export class UpdateTagModalComponent {
   onUpdateTagEmit = new EventEmitter();

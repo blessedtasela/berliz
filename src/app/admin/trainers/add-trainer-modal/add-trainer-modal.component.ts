@@ -19,9 +19,10 @@ import { PhotoResponse } from 'src/app/models/Media.interface';
 import { MediaOwnerType } from 'src/app/models/Media.enum';
 
 @Component({
-  selector: 'app-add-trainer-modal',
-  templateUrl: './add-trainer-modal.component.html',
-  styleUrls: ['./add-trainer-modal.component.css']
+    selector: 'app-add-trainer-modal',
+    templateUrl: './add-trainer-modal.component.html',
+    styleUrls: ['./add-trainer-modal.component.css'],
+    standalone: false
 })
 export class AddTrainerModalComponent {
   onAddTrainerEmit = new EventEmitter();

@@ -12,9 +12,10 @@ import { loadNewsletterMessages } from 'src/app/state/newsletter/newsletter.acti
 import { selectNewsletterMessages } from 'src/app/state/newsletter/newsletter.selectors';
 
 @Component({
-  selector: 'app-newsletter-message-modal',
-  templateUrl: './newsletter-message-modal.component.html',
-  styleUrls: ['./newsletter-message-modal.component.css']
+    selector: 'app-newsletter-message-modal',
+    templateUrl: './newsletter-message-modal.component.html',
+    styleUrls: ['./newsletter-message-modal.component.css'],
+    standalone: false
 })
 export class NewsletterMessageModalComponent {
   onSendMessage = new EventEmitter();

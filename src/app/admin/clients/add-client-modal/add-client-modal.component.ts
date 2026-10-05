@@ -16,9 +16,10 @@ import { selectActiveCategories } from 'src/app/state/category/category.selector
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-add-client-modal',
-  templateUrl: './add-client-modal.component.html',
-  styleUrls: ['./add-client-modal.component.css']
+    selector: 'app-add-client-modal',
+    templateUrl: './add-client-modal.component.html',
+    styleUrls: ['./add-client-modal.component.css'],
+    standalone: false
 })
 export class AddClientModalComponent {
   onAddClientEmit = new EventEmitter();

@@ -17,10 +17,9 @@ import { selectUser } from 'src/app/state/user/user.selector';
  * activity) rather than re-implementing any of them.
  */
 @Component({
-  selector: 'app-workout-room',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
-  templateUrl: './workout-room.component.html',
+    selector: 'app-workout-room',
+    imports: [CommonModule, RouterModule, IconsModule],
+    templateUrl: './workout-room.component.html'
 })
 export class WorkoutRoomComponent implements OnInit {
 

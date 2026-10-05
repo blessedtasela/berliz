@@ -15,10 +15,9 @@ export interface AwardRankData {
 
 /** Trainer / center: promote a member to a new rank in a discipline. */
 @Component({
-  selector: 'app-award-rank-modal',
-  standalone: true,
-  imports: [CommonModule, FormsModule, IconsModule],
-  template: `
+    selector: 'app-award-rank-modal',
+    imports: [CommonModule, FormsModule, IconsModule],
+    template: `
     <div class="bg-white rounded-2xl w-full max-w-sm shadow-xl flex flex-col">
       <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
         <h2 class="text-sm font-bold text-gray-900">Award a rank</h2>
@@ -53,7 +52,7 @@ export interface AwardRankData {
         </div>
       </div>
     </div>
-  `,
+  `
 })
 export class AwardRankModalComponent {
   discipline = '';

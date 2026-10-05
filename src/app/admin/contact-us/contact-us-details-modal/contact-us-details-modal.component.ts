@@ -4,9 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ContactUs } from 'src/app/models/contact-us.model';
 
 @Component({
-  selector: 'app-contact-us-details-modal',
-  templateUrl: './contact-us-details-modal.component.html',
-  styleUrls: ['./contact-us-details-modal.component.css']
+    selector: 'app-contact-us-details-modal',
+    templateUrl: './contact-us-details-modal.component.html',
+    styleUrls: ['./contact-us-details-modal.component.css'],
+    standalone: false
 })
 export class ContactUsDetailsModalComponent {
   contactUs!: ContactUs;

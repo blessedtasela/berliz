@@ -33,9 +33,10 @@ import { EquipmentDetailsModalComponent } from '../equipment-details-modal/equip
  * login call-to-action instead of the show-more toggle.
  */
 @Component({
-  selector: 'app-equipment-page',
-  templateUrl: './equipment-page.component.html',
-  styleUrls: ['./equipment-page.component.css']
+    selector: 'app-equipment-page',
+    templateUrl: './equipment-page.component.html',
+    styleUrls: ['./equipment-page.component.css'],
+    standalone: false
 })
 export class EquipmentPageComponent implements OnInit, OnDestroy {
 

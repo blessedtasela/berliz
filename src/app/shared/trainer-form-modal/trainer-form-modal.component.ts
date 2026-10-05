@@ -12,9 +12,10 @@ import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
-  selector: 'app-trainer-form-modal',
-  templateUrl: './trainer-form-modal.component.html',
-  styleUrls: ['./trainer-form-modal.component.css']
+    selector: 'app-trainer-form-modal',
+    templateUrl: './trainer-form-modal.component.html',
+    styleUrls: ['./trainer-form-modal.component.css'],
+    standalone: false
 })
 export class TrainerFormModalComponent {
   onAddTrainerEmit = new EventEmitter();

@@ -31,10 +31,9 @@ const METRICS: { key: RunLeaderboardMetric; label: string }[] = [
  * traces or segment matching — plain totals from logged runs.
  */
 @Component({
-  selector: 'app-run-leaderboard',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
-  templateUrl: './run-leaderboard.component.html',
+    selector: 'app-run-leaderboard',
+    imports: [CommonModule, RouterModule, IconsModule],
+    templateUrl: './run-leaderboard.component.html'
 })
 export class RunLeaderboardComponent implements OnInit {
   readonly periods = PERIODS;

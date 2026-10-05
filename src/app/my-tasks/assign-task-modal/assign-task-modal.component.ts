@@ -14,9 +14,10 @@ import { loadTrainerClients } from 'src/app/state/trainer/trainer.actions';
 import { selectTrainerClients } from 'src/app/state/trainer/trainer.selector';
 
 @Component({
-  selector: 'app-assign-task-modal',
-  templateUrl: './assign-task-modal.component.html',
-  styleUrls: ['./assign-task-modal.component.css']
+    selector: 'app-assign-task-modal',
+    templateUrl: './assign-task-modal.component.html',
+    styleUrls: ['./assign-task-modal.component.css'],
+    standalone: false
 })
 export class AssignTaskModalComponent implements OnInit, OnDestroy {
 

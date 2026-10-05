@@ -11,9 +11,10 @@ import { genericError } from 'src/validators/form-validators.module';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 
 @Component({
-  selector: 'app-add-muscle-group-modal',
-  templateUrl: './add-muscle-group-modal.component.html',
-  styleUrls: ['./add-muscle-group-modal.component.css']
+    selector: 'app-add-muscle-group-modal',
+    templateUrl: './add-muscle-group-modal.component.html',
+    styleUrls: ['./add-muscle-group-modal.component.css'],
+    standalone: false
 })
 export class AddMuscleGroupModalComponent {
   onAddMuscleGroupEmit = new EventEmitter()

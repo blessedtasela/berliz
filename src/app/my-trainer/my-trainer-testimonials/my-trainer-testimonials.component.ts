@@ -8,9 +8,10 @@ import { loadMyTrainerTestimonials } from 'src/app/state/trainer/trainer.actions
 import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
-  selector: 'app-my-trainer-testimonials',
-  templateUrl: './my-trainer-testimonials.component.html',
-  styleUrls: ['./my-trainer-testimonials.component.css']
+    selector: 'app-my-trainer-testimonials',
+    templateUrl: './my-trainer-testimonials.component.html',
+    styleUrls: ['./my-trainer-testimonials.component.css'],
+    standalone: false
 })
 export class MyTrainerTestimonialsComponent {
 

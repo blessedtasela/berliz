@@ -13,10 +13,9 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 /** Challenge detail + leaderboard. Returns true on close if membership changed. */
 @Component({
-  selector: 'app-challenge-detail-modal',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
-  template: `
+    selector: 'app-challenge-detail-modal',
+    imports: [CommonModule, RouterModule, IconsModule],
+    template: `
     <div class="bg-white rounded-2xl w-full max-w-md shadow-xl flex flex-col max-h-[80vh]">
       <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
         <h2 class="text-sm font-bold text-gray-900 truncate pr-2">{{ challenge?.title || 'Challenge' }}</h2>
@@ -64,7 +63,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
         </ng-container>
       </div>
     </div>
-  `,
+  `
 })
 export class ChallengeDetailModalComponent {
   challenge?: ChallengeResponse;

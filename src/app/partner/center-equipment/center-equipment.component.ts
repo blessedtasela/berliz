@@ -12,9 +12,10 @@ import { selectMyCenterEquipment } from 'src/app/state/center/center.selectors';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-center-equipment',
-  templateUrl: './center-equipment.component.html',
-  styleUrls: ['./center-equipment.component.css']
+    selector: 'app-center-equipment',
+    templateUrl: './center-equipment.component.html',
+    styleUrls: ['./center-equipment.component.css'],
+    standalone: false
 })
 export class CenterEquipmentComponent implements OnInit, OnChanges, OnDestroy {
 

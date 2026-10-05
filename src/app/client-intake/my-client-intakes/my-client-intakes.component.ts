@@ -13,9 +13,10 @@ import { selectMyClientIntakes } from 'src/app/state/client-intake/client-intake
  * client (see ClientIntakeServiceImplement's access-control note).
  */
 @Component({
-  selector: 'app-my-client-intakes',
-  templateUrl: './my-client-intakes.component.html',
-  styleUrls: ['./my-client-intakes.component.css']
+    selector: 'app-my-client-intakes',
+    templateUrl: './my-client-intakes.component.html',
+    styleUrls: ['./my-client-intakes.component.css'],
+    standalone: false
 })
 export class MyClientIntakesComponent implements OnInit, OnDestroy {
 

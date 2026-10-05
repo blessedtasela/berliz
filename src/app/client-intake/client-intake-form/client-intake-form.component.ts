@@ -38,9 +38,10 @@ import { genericError } from 'src/validators/form-validators.module';
  *  - edit:   /client-intake/:id            (client or the assigned trainer)
  */
 @Component({
-  selector: 'app-client-intake-form',
-  templateUrl: './client-intake-form.component.html',
-  styleUrls: ['./client-intake-form.component.css']
+    selector: 'app-client-intake-form',
+    templateUrl: './client-intake-form.component.html',
+    styleUrls: ['./client-intake-form.component.css'],
+    standalone: false
 })
 export class ClientIntakeFormComponent implements OnInit, OnDestroy {
 

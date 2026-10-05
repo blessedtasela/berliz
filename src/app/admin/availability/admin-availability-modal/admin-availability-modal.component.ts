@@ -23,9 +23,10 @@ interface DayRow {
  * keep in sync, this is a one-off admin action on someone else's schedule).
  */
 @Component({
-  selector: 'app-admin-availability-modal',
-  templateUrl: './admin-availability-modal.component.html',
-  styleUrls: ['./admin-availability-modal.component.css']
+    selector: 'app-admin-availability-modal',
+    templateUrl: './admin-availability-modal.component.html',
+    styleUrls: ['./admin-availability-modal.component.css'],
+    standalone: false
 })
 export class AdminAvailabilityModalComponent implements OnInit {
   onUpdateEmit = new EventEmitter();

@@ -7,9 +7,10 @@ import { selectTestimonials } from 'src/app/state/testimonial/testimonial.select
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-testimonials',
-  templateUrl: './testimonials.component.html',
-  styleUrls: ['./testimonials.component.css']
+    selector: 'app-testimonials',
+    templateUrl: './testimonials.component.html',
+    styleUrls: ['./testimonials.component.css'],
+    standalone: false
 })
 export class TestimonialsComponent {
   testimonialsData: Testimonials[] = [];

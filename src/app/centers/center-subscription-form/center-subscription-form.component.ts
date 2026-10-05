@@ -5,9 +5,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 @Component({
-  selector: 'app-center-subscription-form',
-  templateUrl: './center-subscription-form.component.html',
-  styleUrls: ['./center-subscription-form.component.css']
+    selector: 'app-center-subscription-form',
+    templateUrl: './center-subscription-form.component.html',
+    styleUrls: ['./center-subscription-form.component.css'],
+    standalone: false
 })
 export class CenterSubscriptionFormComponent {
 

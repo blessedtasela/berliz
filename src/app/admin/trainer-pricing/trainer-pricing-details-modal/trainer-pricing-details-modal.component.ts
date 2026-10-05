@@ -4,9 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TrainerPricing } from 'src/app/models/trainers.interface';
 
 @Component({
-  selector: 'app-trainer-pricing-details-modal',
-  templateUrl: './trainer-pricing-details-modal.component.html',
-  styleUrls: ['./trainer-pricing-details-modal.component.css']
+    selector: 'app-trainer-pricing-details-modal',
+    templateUrl: './trainer-pricing-details-modal.component.html',
+    styleUrls: ['./trainer-pricing-details-modal.component.css'],
+    standalone: false
 })
 export class TrainerPricingDetailsModalComponent {
   trainerPricingData!: TrainerPricing;

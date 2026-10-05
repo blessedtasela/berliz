@@ -7,9 +7,10 @@ import { loadCenterLikes } from 'src/app/state/center/center.actions';
 import { selectCenterLikes } from 'src/app/state/center/center.selectors';
 
 @Component({
-  selector: 'app-center-like',
-  templateUrl: './center-like.component.html',
-  styleUrls: ['./center-like.component.css']
+    selector: 'app-center-like',
+    templateUrl: './center-like.component.html',
+    styleUrls: ['./center-like.component.css'],
+    standalone: false
 })
 export class CenterLikeComponent implements OnInit, OnDestroy {
 

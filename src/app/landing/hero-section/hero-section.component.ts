@@ -6,9 +6,10 @@ import { DashboardService } from 'src/app/services/dashboard.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-hero-section',
-  templateUrl: './hero-section.component.html',
-  styleUrls: ['./hero-section.component.css'],
+    selector: 'app-hero-section',
+    templateUrl: './hero-section.component.html',
+    styleUrls: ['./hero-section.component.css'],
+    standalone: false
 })
 
 export class HeroSectionComponent implements OnInit {

@@ -14,9 +14,10 @@ import { selectLikedCategoryIds } from 'src/app/state/category/category.selector
 import { selectUser } from 'src/app/state/user/user.selector';
 
 @Component({
-  selector: 'app-categories-search-result',
-  templateUrl: './categories-search-result.component.html',
-  styleUrls: ['./categories-search-result.component.css']
+    selector: 'app-categories-search-result',
+    templateUrl: './categories-search-result.component.html',
+    styleUrls: ['./categories-search-result.component.css'],
+    standalone: false
 })
 export class CategoriesSearchResultComponent implements OnInit, OnDestroy {
   @Input() categoriesResult: Categories[] = [];

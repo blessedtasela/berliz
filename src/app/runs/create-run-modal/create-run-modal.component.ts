@@ -15,10 +15,9 @@ import { RunService } from 'src/app/services/run.service';
  * creator invites specific connections from the My Runs tab afterward).
  */
 @Component({
-  selector: 'app-create-run-modal',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, IconsModule],
-  templateUrl: './create-run-modal.component.html',
+    selector: 'app-create-run-modal',
+    imports: [CommonModule, FormsModule, MatDialogModule, IconsModule],
+    templateUrl: './create-run-modal.component.html'
 })
 export class CreateRunModalComponent implements OnInit {
 

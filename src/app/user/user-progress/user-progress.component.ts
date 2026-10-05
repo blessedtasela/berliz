@@ -26,9 +26,10 @@ const MAX_NEW_ENTRY_PHOTOS = 3;
  * via MyTrainerSharedProgressComponent.
  */
 @Component({
-  selector: 'app-user-progress',
-  templateUrl: './user-progress.component.html',
-  styleUrls: ['./user-progress.component.css']
+    selector: 'app-user-progress',
+    templateUrl: './user-progress.component.html',
+    styleUrls: ['./user-progress.component.css'],
+    standalone: false
 })
 export class UserProgressComponent implements OnInit, OnDestroy {
 

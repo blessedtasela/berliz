@@ -40,8 +40,9 @@ interface RoleOption {
  * than sending a signed-in user back out to a public page).
  */
 @Component({
-  selector: 'app-dashboard-members',
-  templateUrl: './dashboard-members.component.html',
+    selector: 'app-dashboard-members',
+    templateUrl: './dashboard-members.component.html',
+    standalone: false
 })
 export class DashboardMembersComponent implements OnInit, OnDestroy {
 

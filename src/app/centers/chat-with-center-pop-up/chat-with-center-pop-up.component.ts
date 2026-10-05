@@ -4,9 +4,10 @@ import { CenterSubscriptionForm } from 'src/app/models/centers.interface';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 @Component({
-  selector: 'app-chat-with-center-pop-up',
-  templateUrl: './chat-with-center-pop-up.component.html',
-  styleUrls: ['./chat-with-center-pop-up.component.css']
+    selector: 'app-chat-with-center-pop-up',
+    templateUrl: './chat-with-center-pop-up.component.html',
+    styleUrls: ['./chat-with-center-pop-up.component.css'],
+    standalone: false
 })
 export class ChatWithCenterPopUpComponent {
   showPopUp = false;

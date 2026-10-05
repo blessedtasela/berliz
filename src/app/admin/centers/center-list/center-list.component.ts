@@ -16,9 +16,10 @@ import { Store } from '@ngrx/store';
 import { selectCenters } from 'src/app/state/center/center.selectors';
 
 @Component({
-  selector: 'app-center-list',
-  templateUrl: './center-list.component.html',
-  styleUrls: ['./center-list.component.css']
+    selector: 'app-center-list',
+    templateUrl: './center-list.component.html',
+    styleUrls: ['./center-list.component.css'],
+    standalone: false
 })
 export class CenterListComponent {
   @Input() centerData: Centers[] = [];

@@ -6,8 +6,9 @@ import { Component } from '@angular/core';
  * child route definitions ('view' / 'edit') this toggle links between.
  */
 @Component({
-  selector: 'app-profile-settings-toggle',
-  templateUrl: './profile-settings-toggle.component.html',
-  styleUrls: ['./profile-settings-toggle.component.css']
+    selector: 'app-profile-settings-toggle',
+    templateUrl: './profile-settings-toggle.component.html',
+    styleUrls: ['./profile-settings-toggle.component.css'],
+    standalone: false
 })
 export class ProfileSettingsToggleComponent { }

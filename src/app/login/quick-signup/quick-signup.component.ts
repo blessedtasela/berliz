@@ -10,9 +10,10 @@ import { SocialAuthService } from 'src/app/services/social-auth.service';
 import { emailExtensionValidator, genericError, passwordMatchValidator } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-quick-signup',
-  templateUrl: './quick-signup.component.html',
-  styleUrls: ['./quick-signup.component.css']
+    selector: 'app-quick-signup',
+    templateUrl: './quick-signup.component.html',
+    styleUrls: ['./quick-signup.component.css'],
+    standalone: false
 })
 export class QuickSignupComponent implements AfterViewInit {
   quickSignupForm!: FormGroup;

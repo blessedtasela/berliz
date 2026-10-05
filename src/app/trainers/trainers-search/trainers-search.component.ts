@@ -7,9 +7,10 @@ import { selectActiveTrainers } from 'src/app/state/trainer/trainer.selector';
 import { loadActiveTrainers } from 'src/app/state/trainer/trainer.actions';
 
 @Component({
-  selector: 'app-trainers-search',
-  templateUrl: './trainers-search.component.html',
-  styleUrls: ['./trainers-search.component.css']
+    selector: 'app-trainers-search',
+    templateUrl: './trainers-search.component.html',
+    styleUrls: ['./trainers-search.component.css'],
+    standalone: false
 })
 export class TrainersSearchComponent implements OnInit, OnDestroy {
 

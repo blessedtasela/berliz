@@ -17,10 +17,9 @@ import { PrCelebrationService } from 'src/app/services/pr-celebration.service';
  * nobody thinks in raw seconds.
  */
 @Component({
-  selector: 'app-log-run-modal',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, IconsModule],
-  templateUrl: './log-run-modal.component.html',
+    selector: 'app-log-run-modal',
+    imports: [CommonModule, FormsModule, MatDialogModule, IconsModule],
+    templateUrl: './log-run-modal.component.html'
 })
 export class LogRunModalComponent implements OnInit {
 

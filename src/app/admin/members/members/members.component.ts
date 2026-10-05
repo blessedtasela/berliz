@@ -7,9 +7,10 @@ import { selectMembers } from 'src/app/state/member/member.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-members',
-  templateUrl: './members.component.html',
-  styleUrls: ['./members.component.css']
+    selector: 'app-members',
+    templateUrl: './members.component.html',
+    styleUrls: ['./members.component.css'],
+    standalone: false
 })
 export class MembersComponent {
   membersData: Members[] = [];

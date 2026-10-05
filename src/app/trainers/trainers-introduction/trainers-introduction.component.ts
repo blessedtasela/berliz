@@ -7,9 +7,10 @@ import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
  * `TrainerIntroduction` = free-text `introduction` + a single cover `photo`.
  */
 @Component({
-  selector: 'app-trainers-introduction',
-  templateUrl: './trainers-introduction.component.html',
-  styleUrls: ['./trainers-introduction.component.css']
+    selector: 'app-trainers-introduction',
+    templateUrl: './trainers-introduction.component.html',
+    styleUrls: ['./trainers-introduction.component.css'],
+    standalone: false
 })
 export class TrainersIntroductionComponent {
 

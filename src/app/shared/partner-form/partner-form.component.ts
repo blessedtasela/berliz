@@ -11,9 +11,10 @@ import { StrapiService } from 'src/app/services/strapi.service';
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-partner-form',
-  templateUrl: './partner-form.component.html',
-  styleUrls: ['./partner-form.component.css']
+    selector: 'app-partner-form',
+    templateUrl: './partner-form.component.html',
+    styleUrls: ['./partner-form.component.css'],
+    standalone: false
 })
 export class PartnerFormComponent implements OnInit {
 

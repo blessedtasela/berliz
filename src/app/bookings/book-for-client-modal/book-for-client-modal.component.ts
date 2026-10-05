@@ -20,9 +20,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * there's no way to silently create a booking for the wrong person.
  */
 @Component({
-  selector: 'app-book-for-client-modal',
-  templateUrl: './book-for-client-modal.component.html',
-  styleUrls: ['./book-for-client-modal.component.css']
+    selector: 'app-book-for-client-modal',
+    templateUrl: './book-for-client-modal.component.html',
+    styleUrls: ['./book-for-client-modal.component.css'],
+    standalone: false
 })
 export class BookForClientModalComponent implements OnInit {
 

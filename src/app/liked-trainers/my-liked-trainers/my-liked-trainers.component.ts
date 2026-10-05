@@ -19,12 +19,11 @@ import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
  * profile calls — liking again from there just adds the row back.
  */
 @Component({
-  selector: 'app-my-liked-trainers',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
-  providers: [DatePipe],
-  templateUrl: './my-liked-trainers.component.html',
-  styleUrls: ['./my-liked-trainers.component.css']
+    selector: 'app-my-liked-trainers',
+    imports: [CommonModule, RouterModule, IconsModule],
+    providers: [DatePipe],
+    templateUrl: './my-liked-trainers.component.html',
+    styleUrls: ['./my-liked-trainers.component.css']
 })
 export class MyLikedTrainersComponent implements OnInit {
 

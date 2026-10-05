@@ -17,10 +17,9 @@ const EDIT_WINDOW_MS = 60 * 60 * 1000;
  * your own most recent message.
  */
 @Component({
-  selector: 'app-message-bubble',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  templateUrl: './message-bubble.component.html',
+    selector: 'app-message-bubble',
+    imports: [CommonModule, IconsModule],
+    templateUrl: './message-bubble.component.html'
 })
 export class MessageBubbleComponent {
   @Input({ required: true }) message!: Message;

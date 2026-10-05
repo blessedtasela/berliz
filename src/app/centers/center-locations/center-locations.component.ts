@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { CenterLocations } from 'src/app/models/centers.interface';
 
 @Component({
-  selector: 'app-center-locations',
-  templateUrl: './center-locations.component.html',
-  styleUrls: ['./center-locations.component.css']
+    selector: 'app-center-locations',
+    templateUrl: './center-locations.component.html',
+    styleUrls: ['./center-locations.component.css'],
+    standalone: false
 })
 export class CenterLocationsComponent {
   @Input() centerLocations: CenterLocations[] = [];

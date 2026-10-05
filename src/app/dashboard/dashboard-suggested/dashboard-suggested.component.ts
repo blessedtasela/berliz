@@ -37,9 +37,10 @@ import { selectWorkoutTemplates } from 'src/app/state/workout/workout.selector';
  * same interaction, same success/failure feedback.
  */
 @Component({
-  selector: 'app-dashboard-suggested',
-  templateUrl: './dashboard-suggested.component.html',
-  styleUrls: ['./dashboard-suggested.component.css']
+    selector: 'app-dashboard-suggested',
+    templateUrl: './dashboard-suggested.component.html',
+    styleUrls: ['./dashboard-suggested.component.css'],
+    standalone: false
 })
 export class DashboardSuggestedComponent implements OnInit, OnDestroy {
 

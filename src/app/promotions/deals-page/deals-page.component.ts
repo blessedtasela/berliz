@@ -16,11 +16,10 @@ import { PromoOffer } from 'src/app/models/promo-offer.model';
  * logged-out visitor.
  */
 @Component({
-  selector: 'app-deals-page',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
-  templateUrl: './deals-page.component.html',
-  styleUrls: ['./deals-page.component.css']
+    selector: 'app-deals-page',
+    imports: [CommonModule, RouterModule, IconsModule],
+    templateUrl: './deals-page.component.html',
+    styleUrls: ['./deals-page.component.css']
 })
 export class DealsPageComponent implements OnInit {
 

@@ -23,9 +23,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * never accepted.
  */
 @Component({
-  selector: 'app-add-members-modal',
-  templateUrl: './add-members-modal.component.html',
-  styleUrls: ['./add-members-modal.component.css']
+    selector: 'app-add-members-modal',
+    templateUrl: './add-members-modal.component.html',
+    styleUrls: ['./add-members-modal.component.css'],
+    standalone: false
 })
 export class AddMembersModalComponent implements OnInit {
   onAddMemberEmit = new EventEmitter();

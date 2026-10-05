@@ -12,9 +12,10 @@ import { selectMyCenterAnnouncements } from 'src/app/state/center/center.selecto
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-center-announcements',
-  templateUrl: './center-announcements.component.html',
-  styleUrls: ['./center-announcements.component.css']
+    selector: 'app-center-announcements',
+    templateUrl: './center-announcements.component.html',
+    styleUrls: ['./center-announcements.component.css'],
+    standalone: false
 })
 export class CenterAnnouncementsComponent implements OnInit, OnChanges, OnDestroy {
 

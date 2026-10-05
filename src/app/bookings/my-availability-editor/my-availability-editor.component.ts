@@ -40,9 +40,10 @@ interface DayRow {
  * dayOfWeek.
  */
 @Component({
-  selector: 'app-my-availability-editor',
-  templateUrl: './my-availability-editor.component.html',
-  styleUrls: ['./my-availability-editor.component.css']
+    selector: 'app-my-availability-editor',
+    templateUrl: './my-availability-editor.component.html',
+    styleUrls: ['./my-availability-editor.component.css'],
+    standalone: false
 })
 export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
 

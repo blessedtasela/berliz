@@ -16,9 +16,10 @@ import { selectCenterEquipment, selectCurrentCenter } from 'src/app/state/center
 import { fileValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-center',
-  templateUrl: './center.component.html',
-  styleUrls: ['./center.component.css']
+    selector: 'app-center',
+    templateUrl: './center.component.html',
+    styleUrls: ['./center.component.css'],
+    standalone: false
 })
 export class CenterComponent {
   @Input() centerData!: Centers | null;

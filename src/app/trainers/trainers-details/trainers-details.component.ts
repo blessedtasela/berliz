@@ -49,9 +49,10 @@ import {
  * used as-is via the store.
  */
 @Component({
-  selector: 'app-trainers-details',
-  templateUrl: './trainers-details.component.html',
-  styleUrls: ['./trainers-details.component.css']
+    selector: 'app-trainers-details',
+    templateUrl: './trainers-details.component.html',
+    styleUrls: ['./trainers-details.component.css'],
+    standalone: false
 })
 export class TrainersDetailsComponent implements OnInit, OnDestroy {
 

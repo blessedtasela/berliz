@@ -8,9 +8,10 @@ import { genericError } from 'src/validators/form-validators.module';
 import { ResetPasswordModalComponent } from '../reset-password-modal/reset-password-modal.component';
 
 @Component({
-  selector: 'app-reset-password',
-  templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.css']
+    selector: 'app-reset-password',
+    templateUrl: './reset-password.component.html',
+    styleUrls: ['./reset-password.component.css'],
+    standalone: false
 })
 export class ResetPasswordComponent {
   forgotPasswordForm!: FormGroup;

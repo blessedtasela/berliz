@@ -11,9 +11,10 @@ import { selectMyTrainerPricing } from 'src/app/state/trainer/trainer.selector';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-my-trainer-pricing',
-  templateUrl: './my-trainer-pricing.component.html',
-  styleUrls: ['./my-trainer-pricing.component.css']
+    selector: 'app-my-trainer-pricing',
+    templateUrl: './my-trainer-pricing.component.html',
+    styleUrls: ['./my-trainer-pricing.component.css'],
+    standalone: false
 })
 export class MyTrainerPricingComponent implements OnInit, OnChanges {
 

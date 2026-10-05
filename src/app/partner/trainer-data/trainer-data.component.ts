@@ -20,9 +20,10 @@ import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
-  selector: 'app-trainer-data',
-  templateUrl: './trainer-data.component.html',
-  styleUrls: ['./trainer-data.component.css']
+    selector: 'app-trainer-data',
+    templateUrl: './trainer-data.component.html',
+    styleUrls: ['./trainer-data.component.css'],
+    standalone: false
 })
 export class TrainerDataComponent {
   @Output() emitEvent = new EventEmitter();

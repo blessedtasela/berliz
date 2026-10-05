@@ -3,9 +3,10 @@ import { TrainerPhotoAlbum, TrainerHeroAlbum, TrainerStatistics } from 'src/app/
 
 
 @Component({
-  selector: 'app-trainer-detail-hero',
-  templateUrl: './trainer-detail-hero.component.html',
-  styleUrls: ['./trainer-detail-hero.component.css']
+    selector: 'app-trainer-detail-hero',
+    templateUrl: './trainer-detail-hero.component.html',
+    styleUrls: ['./trainer-detail-hero.component.css'],
+    standalone: false
 })
 export class TrainerDetailHeroComponent implements OnInit {
   @Input() stats: TrainerStatistics | undefined;

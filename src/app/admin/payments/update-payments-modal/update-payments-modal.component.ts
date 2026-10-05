@@ -14,9 +14,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * guaranteed error.
  */
 @Component({
-  selector: 'app-update-payments-modal',
-  templateUrl: './update-payments-modal.component.html',
-  styleUrls: ['./update-payments-modal.component.css']
+    selector: 'app-update-payments-modal',
+    templateUrl: './update-payments-modal.component.html',
+    styleUrls: ['./update-payments-modal.component.css'],
+    standalone: false
 })
 export class UpdatePaymentsModalComponent implements OnInit {
   onUpdatePaymentEmit = new EventEmitter();

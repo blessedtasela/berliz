@@ -7,9 +7,10 @@ import { selectSubTasks } from 'src/app/state/task/task.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-sub-tasks',
-  templateUrl: './sub-tasks.component.html',
-  styleUrls: ['./sub-tasks.component.css']
+    selector: 'app-sub-tasks',
+    templateUrl: './sub-tasks.component.html',
+    styleUrls: ['./sub-tasks.component.css'],
+    standalone: false
 })
 export class SubTasksComponent {
   subTasksData: SubTasks[] = [];

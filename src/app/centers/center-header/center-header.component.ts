@@ -11,9 +11,10 @@ import { loadMyPartner } from 'src/app/state/partner/partner.actions';
 import { selectMyPartner } from 'src/app/state/partner/partner.selectors';
 
 @Component({
-  selector: 'app-center-header',
-  templateUrl: './center-header.component.html',
-  styleUrls: ['./center-header.component.css']
+    selector: 'app-center-header',
+    templateUrl: './center-header.component.html',
+    styleUrls: ['./center-header.component.css'],
+    standalone: false
 })
 export class CenterHeaderComponent {
   partner!: Partner;

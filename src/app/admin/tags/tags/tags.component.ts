@@ -8,9 +8,10 @@ import { selectTags } from 'src/app/state/tag/tag.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-tags',
-  templateUrl: './tags.component.html',
-  styleUrls: ['./tags.component.css']
+    selector: 'app-tags',
+    templateUrl: './tags.component.html',
+    styleUrls: ['./tags.component.css'],
+    standalone: false
 })
 export class TagsComponent {
   tagsData: Tags[] = [];

@@ -13,10 +13,9 @@ import { StreakService } from 'src/app/services/streak.service';
  * empty account -- a 0 streak still shows, that's the nudge).
  */
 @Component({
-  selector: 'app-consistency-ring',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  templateUrl: './consistency-ring.component.html',
+    selector: 'app-consistency-ring',
+    imports: [CommonModule, IconsModule],
+    templateUrl: './consistency-ring.component.html'
 })
 export class ConsistencyRingComponent implements OnInit {
   streak?: StreakResponse;

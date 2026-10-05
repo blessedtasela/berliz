@@ -27,9 +27,10 @@ import { selectPartners } from 'src/app/state/partner/partner.selectors';
  * only the top-level "view details" surface moved to a page.
  */
 @Component({
-  selector: 'app-partner-detail-page',
-  templateUrl: './partner-detail-page.component.html',
-  styleUrls: ['./partner-detail-page.component.css']
+    selector: 'app-partner-detail-page',
+    templateUrl: './partner-detail-page.component.html',
+    styleUrls: ['./partner-detail-page.component.css'],
+    standalone: false
 })
 export class PartnerDetailPageComponent implements OnInit, OnDestroy {
   partnerData: Partner | null = null;

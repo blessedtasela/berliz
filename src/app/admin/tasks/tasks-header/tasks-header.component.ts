@@ -9,9 +9,10 @@ import { loadTasks } from 'src/app/state/task/task.actions';
 import { selectTasks } from 'src/app/state/task/task.selectors';
 
 @Component({
-  selector: 'app-tasks-header',
-  templateUrl: './tasks-header.component.html',
-  styleUrls: ['./tasks-header.component.css']
+    selector: 'app-tasks-header',
+    templateUrl: './tasks-header.component.html',
+    styleUrls: ['./tasks-header.component.css'],
+    standalone: false
 })
 export class TasksHeaderComponent {
   responseMessage: any;

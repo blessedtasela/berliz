@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SearchSortOption, FilterState } from 'src/app/models/FilterState.interface';
 
 @Component({
-  selector: 'app-search-panel',
-  templateUrl: './search-panel.component.html',
-  styleUrls: ['./search-panel.component.css']
+    selector: 'app-search-panel',
+    templateUrl: './search-panel.component.html',
+    styleUrls: ['./search-panel.component.css'],
+    standalone: false
 })
 export class SearchPanelComponent {
 

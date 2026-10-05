@@ -15,9 +15,10 @@ import { loadUser } from 'src/app/state/user/user.actions';
 import { selectUser } from 'src/app/state/user/user.selector';
 
 @Component({
-  selector: 'app-trainer-partner-form',
-  templateUrl: './trainer-partner-form.component.html',
-  styleUrls: ['./trainer-partner-form.component.css']
+    selector: 'app-trainer-partner-form',
+    templateUrl: './trainer-partner-form.component.html',
+    styleUrls: ['./trainer-partner-form.component.css'],
+    standalone: false
 })
 export class TrainerPartnerFormComponent implements OnInit {
 

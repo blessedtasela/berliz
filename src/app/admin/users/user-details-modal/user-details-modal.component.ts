@@ -11,9 +11,10 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 
 @Component({
-  selector: 'app-user-details',
-  templateUrl: './user-details-modal.component.html',
-  styleUrls: ['./user-details-modal.component.css']
+    selector: 'app-user-details',
+    templateUrl: './user-details-modal.component.html',
+    styleUrls: ['./user-details-modal.component.css'],
+    standalone: false
 })
 export class UserDetailsModalComponent {
   userData!: Users;

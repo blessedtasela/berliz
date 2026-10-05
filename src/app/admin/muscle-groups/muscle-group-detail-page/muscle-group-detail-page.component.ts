@@ -18,9 +18,10 @@ import { selectMuscleGroups } from 'src/app/state/muscle-group/muscle-group.sele
  * `loadMuscleGroups()` if it is empty (direct link / refresh).
  */
 @Component({
-  selector: 'app-muscle-group-detail-page',
-  templateUrl: './muscle-group-detail-page.component.html',
-  styleUrls: ['./muscle-group-detail-page.component.css']
+    selector: 'app-muscle-group-detail-page',
+    templateUrl: './muscle-group-detail-page.component.html',
+    styleUrls: ['./muscle-group-detail-page.component.css'],
+    standalone: false
 })
 export class MuscleGroupDetailPageComponent implements OnInit, OnDestroy {
   muscleGroupData: MuscleGroups | null = null;

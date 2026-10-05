@@ -8,9 +8,10 @@ import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
  * `TrainerVideoAlbum.videos` is a `VideoResponse[]`.
  */
 @Component({
-  selector: 'app-trainer-video-album',
-  templateUrl: './trainer-video-album.component.html',
-  styleUrls: ['./trainer-video-album.component.css']
+    selector: 'app-trainer-video-album',
+    templateUrl: './trainer-video-album.component.html',
+    styleUrls: ['./trainer-video-album.component.css'],
+    standalone: false
 })
 export class TrainerVideoAlbumComponent {
 

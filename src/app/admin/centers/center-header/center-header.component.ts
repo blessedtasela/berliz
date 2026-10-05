@@ -8,9 +8,10 @@ import { selectCenters } from 'src/app/state/center/center.selectors';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-center-header',
-  templateUrl: './center-header.component.html',
-  styleUrls: ['./center-header.component.css']
+    selector: 'app-center-header',
+    templateUrl: './center-header.component.html',
+    styleUrls: ['./center-header.component.css'],
+    standalone: false
 })
 export class CenterHeaderComponent implements OnDestroy {
   responseMessage: any;

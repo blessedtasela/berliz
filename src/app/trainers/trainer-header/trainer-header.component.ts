@@ -13,9 +13,10 @@ import { loadMyPartner } from 'src/app/state/partner/partner.actions';
 import { selectMyPartner } from 'src/app/state/partner/partner.selectors';
 
 @Component({
-  selector: 'app-trainer-header',
-  templateUrl: './trainer-header.component.html',
-  styleUrls: ['./trainer-header.component.css']
+    selector: 'app-trainer-header',
+    templateUrl: './trainer-header.component.html',
+    styleUrls: ['./trainer-header.component.css'],
+    standalone: false
 })
 export class TrainerHeaderComponent {
   partner!: Partner;

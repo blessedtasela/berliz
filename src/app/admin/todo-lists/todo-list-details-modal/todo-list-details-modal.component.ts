@@ -4,9 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TodoList } from 'src/app/models/todoList.interface';
 
 @Component({
-  selector: 'app-todo-list-details-modal',
-  templateUrl: './todo-list-details-modal.component.html',
-  styleUrls: ['./todo-list-details-modal.component.css']
+    selector: 'app-todo-list-details-modal',
+    templateUrl: './todo-list-details-modal.component.html',
+    styleUrls: ['./todo-list-details-modal.component.css'],
+    standalone: false
 })
 export class TodoListDetailsModalComponent {
   todoData!: TodoList;

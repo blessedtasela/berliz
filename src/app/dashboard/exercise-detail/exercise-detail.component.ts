@@ -19,11 +19,10 @@ import { memoizeMediaUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
  * (unlike Workout, which has no NgRx slice).
  */
 @Component({
-  selector: 'app-exercise-detail',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, SharedModule],
-  templateUrl: './exercise-detail.component.html',
-  styleUrls: ['./exercise-detail.component.css']
+    selector: 'app-exercise-detail',
+    imports: [CommonModule, RouterModule, IconsModule, SharedModule],
+    templateUrl: './exercise-detail.component.html',
+    styleUrls: ['./exercise-detail.component.css']
 })
 export class ExerciseDetailComponent implements OnInit, OnDestroy {
   exercise: Exercises | null = null;

@@ -20,11 +20,10 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
  * equipment card minus the add/edit form.
  */
 @Component({
-  selector: 'app-my-equipment-page',
-  standalone: true,
-  imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, StrapiUrlPipe, SharedModule],
-  templateUrl: './my-equipment-page.component.html',
-  styleUrls: ['./my-equipment-page.component.css']
+    selector: 'app-my-equipment-page',
+    imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, StrapiUrlPipe, SharedModule],
+    templateUrl: './my-equipment-page.component.html',
+    styleUrls: ['./my-equipment-page.component.css']
 })
 export class MyEquipmentPageComponent implements OnInit {
 

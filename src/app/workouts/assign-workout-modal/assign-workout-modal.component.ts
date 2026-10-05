@@ -21,8 +21,9 @@ import {
 type AssignMode = 'trainer' | 'self' | 'blocked';
 
 @Component({
-  selector: 'app-assign-workout-modal',
-  templateUrl: './assign-workout-modal.component.html'
+    selector: 'app-assign-workout-modal',
+    templateUrl: './assign-workout-modal.component.html',
+    standalone: false
 })
 export class AssignWorkoutModalComponent implements OnInit, OnDestroy {
 

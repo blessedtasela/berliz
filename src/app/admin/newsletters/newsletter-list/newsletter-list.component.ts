@@ -19,9 +19,10 @@ import { NewsletterMessageModalComponent } from '../newsletter-message-modal/new
 import { NewsletterDetailsModalComponent } from '../newsletter-details-modal/newsletter-details-modal.component';
 
 @Component({
-  selector: 'app-newsletter-list',
-  templateUrl: './newsletter-list.component.html',
-  styleUrls: ['./newsletter-list.component.css']
+    selector: 'app-newsletter-list',
+    templateUrl: './newsletter-list.component.html',
+    styleUrls: ['./newsletter-list.component.css'],
+    standalone: false
 })
 export class NewsletterListComponent implements OnDestroy {
   responseMessage: any;
