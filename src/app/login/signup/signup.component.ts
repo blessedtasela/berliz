@@ -5,7 +5,6 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { LocationFormComponent } from 'src/app/shared/location-form/location-form.component';
-import { GENDER_OPTIONS } from 'src/app/shared/constants/gender-options';
 import {
   emailExtensionValidator,
   passwordMatchValidator,
@@ -24,7 +23,6 @@ export const MINIMUM_SIGNUP_AGE = 16;
 })
 export class SignupComponent {
   signupForm!: FormGroup;
-  genders = GENDER_OPTIONS;
   invalidForm = false;
   formIndex = 0;
   responseMessage: string = '';
@@ -55,16 +53,24 @@ export class SignupComponent {
         lastname: ['', [Validators.required, Validators.minLength(2)]],
         gender: ['', Validators.required],
         dob: ['', [Validators.required, minimumAgeValidator(MINIMUM_SIGNUP_AGE)]],
-        profilePhoto: ['', [Validators.required, imageValidator()]],
+        // Optional -- a photo-upload prompt blocking account creation was one
+        // of the biggest friction points in the old 13-required-field flow.
+        // Still validated if one IS provided; just no longer required.
+        profilePhoto: ['', [imageValidator()]],
 
+        // Optional -- deferred to post-signup profile completion (the
+        // onboarding checklist / "complete your profile" prompt) instead of
+        // blocking account creation on 7 more required fields. The backend
+        // already tolerates an incomplete profile (JWTFilter.isAccountIncomplete
+        // gates specific features on it rather than assuming it's always filled).
         location: this.fb.group({
-          country: [null, Validators.required],
-          state: [null, Validators.required],
-          city: [null, Validators.required],
-          countryCode: [null, Validators.required],
-          postalCode: ['', [Validators.required, Validators.minLength(5)]],
-          address: ['', [Validators.required, Validators.minLength(8)]],
-          phone: ['', [Validators.required, Validators.minLength(8)]]
+          country: [null],
+          state: [null],
+          city: [null],
+          countryCode: [null],
+          postalCode: [''],
+          address: [''],
+          phone: ['']
         }),
 
         email: [
@@ -192,10 +198,14 @@ export class SignupComponent {
       data.append('referredBy', this.referredBy);
     }
 
+    const email = this.f('email').value;
     this.userService.signup(data).subscribe(
       (resp: any) => {
-        this.snackBarService.openSnackBar(resp.message, '');
-        this.router.navigate(['/login']);
+        this.snackBarService.openSnackBar(resp.message || 'Check your email for an activation code.', '');
+        // Straight to activation with the email pre-filled, instead of a bare
+        // /login the user has no way to act on yet (the account isn't active
+        // until they enter the code Berliz just emailed them).
+        this.router.navigate(['/login/activate-account'], { queryParams: { email } });
         this.ngxService.stop();
       },
       err => {
