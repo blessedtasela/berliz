@@ -13,9 +13,10 @@ import { selectPlanLoading, selectPlans } from 'src/app/state/plan/plan.selector
 import { loadMySubscriptions, selectPlan, selectPlanFailure, selectPlanSuccess } from 'src/app/state/subscription/subscription.actions';
 
 @Component({
-  selector: 'app-my-subscriptions-plans',
-  templateUrl: './my-subscriptions-plans.component.html',
-  styleUrls: ['./my-subscriptions-plans.component.css']
+    selector: 'app-my-subscriptions-plans',
+    templateUrl: './my-subscriptions-plans.component.html',
+    styleUrls: ['./my-subscriptions-plans.component.css'],
+    standalone: false
 })
 export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
 

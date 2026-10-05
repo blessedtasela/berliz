@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Actions } from '@ngrx/effects';
@@ -11,6 +11,7 @@ import { PublicProfileComponent } from './public-profile.component';
 import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { loadPublicProfile, loadPublicProfileByUsername } from 'src/app/state/user-profile/user-profile.actions';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('PublicProfileComponent', () => {
   let component: PublicProfileComponent;
@@ -28,16 +29,18 @@ describe('PublicProfileComponent', () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [PublicProfileComponent, RouterTestingModule, HttpClientTestingModule],
-      schemas: [NO_ERRORS_SCHEMA],
-      providers: [
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [PublicProfileComponent, RouterTestingModule],
+    providers: [
         provideMockStore(),
         { provide: Actions, useValue: of() },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: AuthService, useValue: mockAuthService },
         { provide: SnackBarService, useValue: mockSnackBarService },
-      ]
-    });
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+    ]
+});
 
     fixture = TestBed.createComponent(PublicProfileComponent);
     component = fixture.componentInstance;
@@ -63,16 +66,18 @@ describe('PublicProfileComponent routing by numeric id vs username', () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [PublicProfileComponent, RouterTestingModule, HttpClientTestingModule],
-      schemas: [NO_ERRORS_SCHEMA],
-      providers: [
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [PublicProfileComponent, RouterTestingModule],
+    providers: [
         provideMockStore(),
         { provide: Actions, useValue: of() },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: AuthService, useValue: mockAuthService },
         { provide: SnackBarService, useValue: mockSnackBarService },
-      ]
-    });
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+    ]
+});
 
     store = TestBed.inject(MockStore);
     spyOn(store, 'dispatch').and.callThrough();

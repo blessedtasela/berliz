@@ -2,8 +2,9 @@ import { Component, Input } from '@angular/core';
 import { TodoList } from 'src/app/models/todoList.interface';
 
 @Component({
-  selector: 'app-my-todo-list-metrics',
-  templateUrl: './my-todo-list-metrics.component.html'
+    selector: 'app-my-todo-list-metrics',
+    templateUrl: './my-todo-list-metrics.component.html',
+    standalone: false
 })
 export class MyTodoListMetricsComponent {
 

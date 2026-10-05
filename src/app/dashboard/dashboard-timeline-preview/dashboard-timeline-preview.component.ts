@@ -13,10 +13,9 @@ import { PostService } from 'src/app/services/post.service';
  * to go see the rest, rather than duplicating the whole feed here.
  */
 @Component({
-  selector: 'app-dashboard-timeline-preview',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, AvatarComponent],
-  templateUrl: './dashboard-timeline-preview.component.html',
+    selector: 'app-dashboard-timeline-preview',
+    imports: [CommonModule, RouterModule, IconsModule, AvatarComponent],
+    templateUrl: './dashboard-timeline-preview.component.html'
 })
 export class DashboardTimelinePreviewComponent implements OnInit {
 

@@ -12,9 +12,10 @@ import { markAsRead } from 'src/app/state/notification/notification.actions';
 import { navigateToNotificationEntity } from 'src/app/utils/notification-entity-link.util';
 
 @Component({
-  selector: 'notification-dropdown-component',
-  templateUrl: './notification-dropdown.component.html',
-  styleUrls: ['./notification-dropdown.component.css']
+    selector: 'notification-dropdown-component',
+    templateUrl: './notification-dropdown.component.html',
+    styleUrls: ['./notification-dropdown.component.css'],
+    standalone: false
 })
 export class NotificationDropdownComponent implements OnInit, OnDestroy {
 

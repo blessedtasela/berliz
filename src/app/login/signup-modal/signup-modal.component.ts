@@ -13,9 +13,10 @@ import { fileValidator, emailExtensionValidator, passwordMatchValidator, generic
 export const MINIMUM_SIGNUP_AGE = 16;
 
 @Component({
-  selector: 'app-signup-modal',
-  templateUrl: './signup-modal.component.html',
-  styleUrls: ['./signup-modal.component.css']
+    selector: 'app-signup-modal',
+    templateUrl: './signup-modal.component.html',
+    styleUrls: ['./signup-modal.component.css'],
+    standalone: false
 })
 export class SignupModalComponent {
   onSignupEmit = new EventEmitter();

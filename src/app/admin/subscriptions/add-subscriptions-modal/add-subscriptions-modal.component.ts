@@ -22,9 +22,10 @@ import { loadActiveUsers } from 'src/app/state/user/user.actions';
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 
 @Component({
-  selector: 'app-add-subscriptions-modal',
-  templateUrl: './add-subscriptions-modal.component.html',
-  styleUrls: ['./add-subscriptions-modal.component.css']
+    selector: 'app-add-subscriptions-modal',
+    templateUrl: './add-subscriptions-modal.component.html',
+    styleUrls: ['./add-subscriptions-modal.component.css'],
+    standalone: false
 })
 export class AddSubscriptionsModalComponent {
   onAddSubscriptionEmit = new EventEmitter();

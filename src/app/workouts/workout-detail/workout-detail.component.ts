@@ -22,10 +22,9 @@ import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-u
  * DashboardUserProfileComponent earlier this session.
  */
 @Component({
-  selector: 'app-workout-detail',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, SharedModule],
-  templateUrl: './workout-detail.component.html'
+    selector: 'app-workout-detail',
+    imports: [CommonModule, RouterModule, IconsModule, SharedModule],
+    templateUrl: './workout-detail.component.html'
 })
 export class WorkoutDetailComponent implements OnInit {
 

@@ -11,9 +11,10 @@ import { GENDER_OPTIONS } from 'src/app/shared/constants/gender-options';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-update-user-modal',
-  templateUrl: './update-user-modal.component.html',
-  styleUrls: ['./update-user-modal.component.css']
+    selector: 'app-update-user-modal',
+    templateUrl: './update-user-modal.component.html',
+    styleUrls: ['./update-user-modal.component.css'],
+    standalone: false
 })
 export class UpdateUserModalComponent {
   onUpdateUser = new EventEmitter();

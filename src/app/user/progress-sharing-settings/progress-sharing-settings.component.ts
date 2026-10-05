@@ -24,9 +24,10 @@ import { selectMyGrants, selectProgressShareLoading } from 'src/app/state/progre
  * client explicitly flips a trainer's switch on.
  */
 @Component({
-  selector: 'app-progress-sharing-settings',
-  templateUrl: './progress-sharing-settings.component.html',
-  styleUrls: ['./progress-sharing-settings.component.css']
+    selector: 'app-progress-sharing-settings',
+    templateUrl: './progress-sharing-settings.component.html',
+    styleUrls: ['./progress-sharing-settings.component.css'],
+    standalone: false
 })
 export class ProgressSharingSettingsComponent implements OnInit, OnDestroy {
 

@@ -36,8 +36,9 @@ import {
 import { AssignWorkoutModalComponent } from '../assign-workout-modal/assign-workout-modal.component';
 
 @Component({
-  selector: 'app-my-workouts',
-  templateUrl: './my-workouts.component.html'
+    selector: 'app-my-workouts',
+    templateUrl: './my-workouts.component.html',
+    standalone: false
 })
 export class MyWorkoutsComponent implements OnInit, OnDestroy {
 

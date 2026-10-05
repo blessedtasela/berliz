@@ -17,9 +17,10 @@ import { loadSubTasks } from 'src/app/state/task/task.actions';
 import { selectSubTasks } from 'src/app/state/task/task.selectors';
 
 @Component({
-  selector: 'app-sub-tasks-list',
-  templateUrl: './sub-tasks-list.component.html',
-  styleUrls: ['./sub-tasks-list.component.css']
+    selector: 'app-sub-tasks-list',
+    templateUrl: './sub-tasks-list.component.html',
+    styleUrls: ['./sub-tasks-list.component.css'],
+    standalone: false
 })
 export class SubTasksListComponent implements OnDestroy {
   responseMessage: any;

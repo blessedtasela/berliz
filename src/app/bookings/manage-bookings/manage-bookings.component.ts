@@ -17,9 +17,10 @@ import { Users } from 'src/app/models/users.interface';
  * unanswered request is visible without switching tabs first.
  */
 @Component({
-  selector: 'app-manage-bookings',
-  templateUrl: './manage-bookings.component.html',
-  styleUrls: ['./manage-bookings.component.css']
+    selector: 'app-manage-bookings',
+    templateUrl: './manage-bookings.component.html',
+    styleUrls: ['./manage-bookings.component.css'],
+    standalone: false
 })
 export class ManageBookingsComponent implements OnInit, OnDestroy {
 

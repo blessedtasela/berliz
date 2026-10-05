@@ -21,9 +21,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * (e.g. "Manual"), not a live charge.
  */
 @Component({
-  selector: 'app-add-payments-modal',
-  templateUrl: './add-payments-modal.component.html',
-  styleUrls: ['./add-payments-modal.component.css']
+    selector: 'app-add-payments-modal',
+    templateUrl: './add-payments-modal.component.html',
+    styleUrls: ['./add-payments-modal.component.css'],
+    standalone: false
 })
 export class AddPaymentsModalComponent implements OnInit {
   onAddPaymentEmit = new EventEmitter();

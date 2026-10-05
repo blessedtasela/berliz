@@ -7,9 +7,10 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { NewsletterService } from 'src/app/services/newsletter.service';
 
 @Component({
-  selector: 'app-newsletter',
-  templateUrl: './newsletter.component.html',
-  styleUrls: ['./newsletter.component.css']
+    selector: 'app-newsletter',
+    templateUrl: './newsletter.component.html',
+    styleUrls: ['./newsletter.component.css'],
+    standalone: false
 })
 export class NewsletterComponent implements OnInit {
   newsletterForm!: FormGroup;

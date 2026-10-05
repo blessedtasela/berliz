@@ -14,9 +14,10 @@ import { TodoList } from 'src/app/models/todoList.interface';
 import { escapeHtml } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-my-todo-list-item',
-  templateUrl: './my-todo-list-item.component.html',
-  styleUrls: ['./my-todo-list-item.component.css']
+    selector: 'app-my-todo-list-item',
+    templateUrl: './my-todo-list-item.component.html',
+    styleUrls: ['./my-todo-list-item.component.css'],
+    standalone: false
 })
 export class MyTodoListItemComponent implements OnDestroy {
 

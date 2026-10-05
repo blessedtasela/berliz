@@ -13,10 +13,9 @@ import { RankService } from 'src/app/services/rank.service';
  * The parent can bump `refreshKey` to re-fetch after awarding a rank.
  */
 @Component({
-  selector: 'app-ranks-card',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  templateUrl: './ranks-card.component.html',
+    selector: 'app-ranks-card',
+    imports: [CommonModule, IconsModule],
+    templateUrl: './ranks-card.component.html'
 })
 export class RanksCardComponent implements OnChanges {
   @Input() userId!: number;

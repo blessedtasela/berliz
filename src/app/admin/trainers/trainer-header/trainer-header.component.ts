@@ -7,9 +7,10 @@ import { Store } from '@ngrx/store';
 import { selectTrainers } from 'src/app/state/trainer/trainer.selector';
 
 @Component({
-  selector: 'app-trainer-header',
-  templateUrl: './trainer-header.component.html',
-  styleUrls: ['./trainer-header.component.css']
+    selector: 'app-trainer-header',
+    templateUrl: './trainer-header.component.html',
+    styleUrls: ['./trainer-header.component.css'],
+    standalone: false
 })
 export class TrainerHeaderComponent {
   responseMessage: any;

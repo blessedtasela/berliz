@@ -11,9 +11,10 @@ import { selectUser } from 'src/app/state/user/user.selector';
 import { Store } from '@ngrx/store';
 
 @Component({
-  selector: 'app-partner-form-modal',
-  templateUrl: './partner-form-modal.component.html',
-  styleUrls: ['./partner-form-modal.component.css']
+    selector: 'app-partner-form-modal',
+    templateUrl: './partner-form-modal.component.html',
+    styleUrls: ['./partner-form-modal.component.css'],
+    standalone: false
 })
 export class PartnerFormModalComponent {
   onAddPartnerEmit = new EventEmitter();

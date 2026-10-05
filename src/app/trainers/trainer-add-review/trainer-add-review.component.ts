@@ -22,9 +22,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * as an error if the user doesn't qualify, rather than pre-checked here.
  */
 @Component({
-  selector: 'app-trainer-add-review',
-  templateUrl: './trainer-add-review.component.html',
-  styleUrls: ['./trainer-add-review.component.css']
+    selector: 'app-trainer-add-review',
+    templateUrl: './trainer-add-review.component.html',
+    styleUrls: ['./trainer-add-review.component.css'],
+    standalone: false
 })
 export class TrainerAddReviewComponent implements OnInit, OnDestroy {
   @Input() trainerId: number | undefined;

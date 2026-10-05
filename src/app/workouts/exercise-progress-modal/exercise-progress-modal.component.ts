@@ -13,10 +13,9 @@ import { WorkoutService } from 'src/app/services/workout.service';
  * session called out so progress (or a plateau) is obvious at a glance.
  */
 @Component({
-  selector: 'app-exercise-progress-modal',
-  standalone: true,
-  imports: [CommonModule, MatDialogModule, IconsModule],
-  templateUrl: './exercise-progress-modal.component.html',
+    selector: 'app-exercise-progress-modal',
+    imports: [CommonModule, MatDialogModule, IconsModule],
+    templateUrl: './exercise-progress-modal.component.html'
 })
 export class ExerciseProgressModalComponent implements OnInit {
 

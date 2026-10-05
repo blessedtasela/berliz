@@ -12,9 +12,10 @@ import { selectExercises } from 'src/app/state/exercise/exercise.selectors';
 import { WhatsNewService } from 'src/app/services/whats-new.service';
 
 @Component({
-  selector: 'app-exercises-header',
-  templateUrl: './exercises-header.component.html',
-  styleUrls: ['./exercises-header.component.css']
+    selector: 'app-exercises-header',
+    templateUrl: './exercises-header.component.html',
+    styleUrls: ['./exercises-header.component.css'],
+    standalone: false
 })
 export class ExercisesHeaderComponent {
   responseMessage: any;

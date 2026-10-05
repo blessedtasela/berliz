@@ -10,9 +10,8 @@ import { IconsModule } from 'src/app/icons/icons.module';
  * clean up here, they can just try again from My Subscriptions.
  */
 @Component({
-  selector: 'app-payment-cancel',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
-  templateUrl: './payment-cancel.component.html'
+    selector: 'app-payment-cancel',
+    imports: [CommonModule, RouterModule, IconsModule],
+    templateUrl: './payment-cancel.component.html'
 })
 export class PaymentCancelComponent { }

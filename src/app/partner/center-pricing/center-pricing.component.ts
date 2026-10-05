@@ -12,9 +12,10 @@ import { selectMyCenterPricing } from 'src/app/state/center/center.selectors';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-center-pricing',
-  templateUrl: './center-pricing.component.html',
-  styleUrls: ['./center-pricing.component.css']
+    selector: 'app-center-pricing',
+    templateUrl: './center-pricing.component.html',
+    styleUrls: ['./center-pricing.component.css'],
+    standalone: false
 })
 export class CenterPricingComponent implements OnInit, OnChanges, OnDestroy {
 

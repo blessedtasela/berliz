@@ -11,7 +11,7 @@ import { SideBarComponent } from './side-bar/side-bar.component';
 import { SideBarOpenComponent } from './side-bar-open/side-bar-open.component';
 import { SideBarCloseComponent } from './side-bar-close/side-bar-close.component';
 import { NavbarBreadcrumbComponent } from './navbar-breadcrumb/navbar-breadcrumb.component';
-import { BreadcrumbModule } from 'xng-breadcrumb';
+import { BreadcrumbComponent, BreadcrumbItemDirective } from 'xng-breadcrumb';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { NotificationDropdownComponent } from './notification-dropdown/notification-dropdown.component';
 import { GlobalSearchComponent } from './global-search/global-search.component';
@@ -42,7 +42,8 @@ import { MessageComposerComponent } from '../messages/shared/message-composer/me
     IconsModule,
     RouterModule,
     FormsModule,
-    BreadcrumbModule,
+    BreadcrumbComponent,
+    BreadcrumbItemDirective,
     MatIconModule,
     ImageCropperModule,
     ReactiveFormsModule,

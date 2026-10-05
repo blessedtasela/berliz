@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { TrainerCategory } from 'src/app/models/trainers.interface';
 
 @Component({
-  selector: 'app-trainer-category',
-  templateUrl: './trainer-category.component.html',
-  styleUrls: ['./trainer-category.component.css']
+    selector: 'app-trainer-category',
+    templateUrl: './trainer-category.component.html',
+    styleUrls: ['./trainer-category.component.css'],
+    standalone: false
 })
 export class TrainerCategoryComponent {
   @Input() category: TrainerCategory | undefined;

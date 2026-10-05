@@ -25,9 +25,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * never accepted.
  */
 @Component({
-  selector: 'app-add-testimonials-modal',
-  templateUrl: './add-testimonials-modal.component.html',
-  styleUrls: ['./add-testimonials-modal.component.css']
+    selector: 'app-add-testimonials-modal',
+    templateUrl: './add-testimonials-modal.component.html',
+    styleUrls: ['./add-testimonials-modal.component.css'],
+    standalone: false
 })
 export class AddTestimonialsModalComponent implements OnInit {
   onAddTestimonialEmit = new EventEmitter();

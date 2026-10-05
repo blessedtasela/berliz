@@ -21,9 +21,10 @@ import { ExercisesDetailsModalComponent } from '../exercises-details-modal/exerc
 import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
-  selector: 'app-exercises-list',
-  templateUrl: './exercises-list.component.html',
-  styleUrls: ['./exercises-list.component.css']
+    selector: 'app-exercises-list',
+    templateUrl: './exercises-list.component.html',
+    styleUrls: ['./exercises-list.component.css'],
+    standalone: false
 })
 export class ExercisesListComponent implements OnDestroy {
   responseMessage: any;

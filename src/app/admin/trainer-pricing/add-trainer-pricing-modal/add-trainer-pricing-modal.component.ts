@@ -11,9 +11,10 @@ import { loadTrainers } from 'src/app/state/trainer/trainer.actions';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-add-trainer-pricing-modal',
-  templateUrl: './add-trainer-pricing-modal.component.html',
-  styleUrls: ['./add-trainer-pricing-modal.component.css']
+    selector: 'app-add-trainer-pricing-modal',
+    templateUrl: './add-trainer-pricing-modal.component.html',
+    styleUrls: ['./add-trainer-pricing-modal.component.css'],
+    standalone: false
 })
 export class AddTrainerPricingModalComponent {
   onAddTrainerPricingEmit = new EventEmitter();

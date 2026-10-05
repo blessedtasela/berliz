@@ -12,9 +12,10 @@ import { genericError } from 'src/validators/form-validators.module';
 import { UpdatePartnerFileModalComponent } from '../../../shared/update-partner-file-modal/update-partner-file-modal.component';
 
 @Component({
-  selector: 'app-partner-details-modal',
-  templateUrl: './partner-details-modal.component.html',
-  styleUrls: ['./partner-details-modal.component.css']
+    selector: 'app-partner-details-modal',
+    templateUrl: './partner-details-modal.component.html',
+    styleUrls: ['./partner-details-modal.component.css'],
+    standalone: false
 })
 export class PartnerDetailsModalComponent {
   partnerData!: Partner;

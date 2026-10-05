@@ -7,9 +7,10 @@ import { navigateToNotificationEntity, notificationHasDeepLink } from 'src/app/u
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-notification-details',
-  templateUrl: './notification-details.component.html',
-  styleUrls: ['./notification-details.component.css']
+    selector: 'app-notification-details',
+    templateUrl: './notification-details.component.html',
+    styleUrls: ['./notification-details.component.css'],
+    standalone: false
 })
 export class NotificationDetailsComponent {
 

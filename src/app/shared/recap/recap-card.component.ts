@@ -15,10 +15,9 @@ import { RecapService } from 'src/app/services/recap.service';
  * notification can point straight at.
  */
 @Component({
-  selector: 'app-recap-card',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
-  template: `
+    selector: 'app-recap-card',
+    imports: [CommonModule, RouterModule, IconsModule],
+    template: `
     <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-950 via-gray-900 to-gray-900 p-5 flex flex-col gap-3">
       <div class="pointer-events-none absolute -top-12 -right-10 w-40 h-40 rounded-full bg-red-600/20 blur-3xl"></div>
       <div class="relative flex items-center gap-2">
@@ -44,7 +43,7 @@ import { RecapService } from 'src/app/services/recap.service';
         <i-feather name="arrow-right" style="width:12px;height:12px;"></i-feather>
       </a>
     </div>
-  `,
+  `
 })
 export class RecapCardComponent implements OnInit {
   recap?: RecapResponse;

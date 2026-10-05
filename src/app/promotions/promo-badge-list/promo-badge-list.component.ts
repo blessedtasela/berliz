@@ -13,11 +13,10 @@ import { PromoOffer } from 'src/app/models/promo-offer.model';
  * nothing when there's nothing live, so it's always safe to include.
  */
 @Component({
-  selector: 'app-promo-badge-list',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  templateUrl: './promo-badge-list.component.html',
-  styleUrls: ['./promo-badge-list.component.css']
+    selector: 'app-promo-badge-list',
+    imports: [CommonModule, IconsModule],
+    templateUrl: './promo-badge-list.component.html',
+    styleUrls: ['./promo-badge-list.component.css']
 })
 export class PromoBadgeListComponent implements OnChanges {
 

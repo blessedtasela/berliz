@@ -12,9 +12,10 @@ import { loadActiveUsers } from 'src/app/state/user/user.actions';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-add-todo-modal',
-  templateUrl: './add-todo-modal.component.html',
-  styleUrls: ['./add-todo-modal.component.css']
+    selector: 'app-add-todo-modal',
+    templateUrl: './add-todo-modal.component.html',
+    styleUrls: ['./add-todo-modal.component.css'],
+    standalone: false
 })
 export class AddTodoModalComponent {
   onAddTodoList = new EventEmitter()

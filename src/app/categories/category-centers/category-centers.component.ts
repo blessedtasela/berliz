@@ -6,9 +6,10 @@ import { Centers } from 'src/app/models/centers.interface';
  * `Center.categoryIds`. There is no per-category center endpoint.
  */
 @Component({
-  selector: 'app-category-centers',
-  templateUrl: './category-centers.component.html',
-  styleUrls: ['./category-centers.component.css']
+    selector: 'app-category-centers',
+    templateUrl: './category-centers.component.html',
+    styleUrls: ['./category-centers.component.css'],
+    standalone: false
 })
 export class CategoryCentersComponent {
   @Input() centers: Centers[] = [];

@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-trainers-header',
-  templateUrl: './trainers-header.component.html',
-  styleUrls: ['./trainers-header.component.css']
+    selector: 'app-trainers-header',
+    templateUrl: './trainers-header.component.html',
+    styleUrls: ['./trainers-header.component.css'],
+    standalone: false
 })
 export class TrainersHeaderComponent {
 

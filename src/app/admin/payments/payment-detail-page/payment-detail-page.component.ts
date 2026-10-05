@@ -16,9 +16,10 @@ import { selectPayments } from 'src/app/state/payment/payment.selectors';
  * if empty (direct link / refresh).
  */
 @Component({
-  selector: 'app-payment-detail-page',
-  templateUrl: './payment-detail-page.component.html',
-  styleUrls: ['./payment-detail-page.component.css']
+    selector: 'app-payment-detail-page',
+    templateUrl: './payment-detail-page.component.html',
+    styleUrls: ['./payment-detail-page.component.css'],
+    standalone: false
 })
 export class PaymentDetailPageComponent implements OnInit, OnDestroy {
   paymentData: Payments | null = null;

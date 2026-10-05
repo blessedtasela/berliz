@@ -31,9 +31,10 @@ export interface ProfileCompletion {
 }
 
 @Component({
-  selector: 'app-my-trainer-main',
-  templateUrl: './my-trainer-main.component.html',
-  styleUrls: ['./my-trainer-main.component.css']
+    selector: 'app-my-trainer-main',
+    templateUrl: './my-trainer-main.component.html',
+    styleUrls: ['./my-trainer-main.component.css'],
+    standalone: false
 })
 export class MyTrainerMainComponent implements OnInit, OnDestroy {
 

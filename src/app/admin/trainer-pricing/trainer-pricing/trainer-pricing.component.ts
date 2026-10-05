@@ -8,9 +8,10 @@ import { loadTrainerPricing } from 'src/app/state/trainer/trainer.actions';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-trainer-pricing',
-  templateUrl: './trainer-pricing.component.html',
-  styleUrls: ['./trainer-pricing.component.css']
+    selector: 'app-trainer-pricing',
+    templateUrl: './trainer-pricing.component.html',
+    styleUrls: ['./trainer-pricing.component.css'],
+    standalone: false
 })
 export class TrainerPricingComponent {
   trainerPricingData: TrainerPricing[] = [];

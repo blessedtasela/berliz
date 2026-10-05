@@ -22,10 +22,9 @@ const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'S
  * escape hatch for jumping straight to any future date.
  */
 @Component({
-  selector: 'app-date-strip',
-  standalone: true,
-  imports: [CommonModule, FormsModule, IconsModule],
-  templateUrl: './date-strip.component.html'
+    selector: 'app-date-strip',
+    imports: [CommonModule, FormsModule, IconsModule],
+    templateUrl: './date-strip.component.html'
 })
 export class DateStripComponent implements OnInit {
 

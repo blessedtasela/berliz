@@ -11,9 +11,10 @@ import { selectMyCenterReviews } from 'src/app/state/center/center.selectors';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-center-review',
-  templateUrl: './center-review.component.html',
-  styleUrls: ['./center-review.component.css']
+    selector: 'app-center-review',
+    templateUrl: './center-review.component.html',
+    styleUrls: ['./center-review.component.css'],
+    standalone: false
 })
 export class CenterReviewComponent implements OnInit, OnDestroy {
 

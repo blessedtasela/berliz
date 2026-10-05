@@ -21,11 +21,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * every new account activation.
  */
 @Component({
-  selector: 'app-admin-campaigns',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  templateUrl: './admin-campaigns.component.html',
-  styleUrls: ['./admin-campaigns.component.css']
+    selector: 'app-admin-campaigns',
+    imports: [CommonModule, IconsModule],
+    templateUrl: './admin-campaigns.component.html',
+    styleUrls: ['./admin-campaigns.component.css']
 })
 export class AdminCampaignsComponent implements OnInit {
 

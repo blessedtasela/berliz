@@ -22,9 +22,10 @@ import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 import { imageValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-trainer',
-  templateUrl: './trainer.component.html',
-  styleUrls: ['./trainer.component.css']
+    selector: 'app-trainer',
+    templateUrl: './trainer.component.html',
+    styleUrls: ['./trainer.component.css'],
+    standalone: false
 })
 export class TrainerComponent {
 

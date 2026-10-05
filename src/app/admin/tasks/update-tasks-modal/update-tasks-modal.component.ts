@@ -17,9 +17,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * around here; the isActive check below matches the backend's actual rule.
  */
 @Component({
-  selector: 'app-update-tasks-modal',
-  templateUrl: './update-tasks-modal.component.html',
-  styleUrls: ['./update-tasks-modal.component.css']
+    selector: 'app-update-tasks-modal',
+    templateUrl: './update-tasks-modal.component.html',
+    styleUrls: ['./update-tasks-modal.component.css'],
+    standalone: false
 })
 export class UpdateTasksModalComponent implements OnInit {
   onUpdateTaskEmit = new EventEmitter();

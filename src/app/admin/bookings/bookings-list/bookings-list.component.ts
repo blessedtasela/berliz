@@ -12,9 +12,10 @@ import { loadAllBookings } from 'src/app/state/booking/booking.actions';
 import { selectBookings } from 'src/app/state/booking/booking.selectors';
 
 @Component({
-  selector: 'app-bookings-list',
-  templateUrl: './bookings-list.component.html',
-  styleUrls: ['./bookings-list.component.css']
+    selector: 'app-bookings-list',
+    templateUrl: './bookings-list.component.html',
+    styleUrls: ['./bookings-list.component.css'],
+    standalone: false
 })
 export class BookingsListComponent {
   responseMessage: any;

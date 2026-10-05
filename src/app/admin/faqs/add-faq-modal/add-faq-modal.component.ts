@@ -10,9 +10,10 @@ import { genericError } from 'src/validators/form-validators.module';
 import { addFaq, addFaqFailure, addFaqSuccess } from 'src/app/state/faq/faq.actions';
 
 @Component({
-  selector: 'app-add-faq-modal',
-  templateUrl: './add-faq-modal.component.html',
-  styleUrls: ['./add-faq-modal.component.css']
+    selector: 'app-add-faq-modal',
+    templateUrl: './add-faq-modal.component.html',
+    styleUrls: ['./add-faq-modal.component.css'],
+    standalone: false
 })
 export class AddFaqModalComponent implements OnDestroy {
   onAddFaqEmit = new EventEmitter();

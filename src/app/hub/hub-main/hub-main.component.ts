@@ -8,9 +8,10 @@ import { loadDashboard } from 'src/app/state/dashboard/dashboard.actions';
 import { selectDashboardData, selectDashboardError, selectDashboardLoading } from 'src/app/state/dashboard/dashboard.selectors';
 
 @Component({
-  selector: 'app-hub-main',
-  templateUrl: './hub-main.component.html',
-  styleUrls: ['./hub-main.component.css']
+    selector: 'app-hub-main',
+    templateUrl: './hub-main.component.html',
+    styleUrls: ['./hub-main.component.css'],
+    standalone: false
 })
 export class HubMainComponent implements OnInit, OnDestroy {
 

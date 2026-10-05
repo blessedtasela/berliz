@@ -35,11 +35,10 @@ type SessionsTab = 'client' | 'personal' | 'collaborations';
  * requests are); everyone else defaults to Personal.
  */
 @Component({
-  selector: 'app-my-sessions',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, MyBookingsModule],
-  templateUrl: './my-sessions.component.html',
-  styleUrls: ['./my-sessions.component.css']
+    selector: 'app-my-sessions',
+    imports: [CommonModule, RouterModule, IconsModule, MyBookingsModule],
+    templateUrl: './my-sessions.component.html',
+    styleUrls: ['./my-sessions.component.css']
 })
 export class MySessionsComponent implements OnInit {
 

@@ -28,12 +28,11 @@ import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comment
  * full with no transitions.
  */
 @Component({
-  selector: 'app-post-detail-sheet',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, IconsModule, SharedModule, PostCommentsComponent],
-  templateUrl: './post-detail-sheet.component.html',
-  styleUrls: ['./post-detail-sheet.component.css'],
+    selector: 'app-post-detail-sheet',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [CommonModule, IconsModule, SharedModule, PostCommentsComponent],
+    templateUrl: './post-detail-sheet.component.html',
+    styleUrls: ['./post-detail-sheet.component.css']
 })
 export class PostDetailSheetComponent implements OnInit, OnDestroy {
   @Input({ required: true }) post!: PostResponse;

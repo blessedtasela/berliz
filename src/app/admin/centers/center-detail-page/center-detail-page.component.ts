@@ -20,9 +20,10 @@ import { AdminAvailabilityModalComponent } from 'src/app/admin/availability/admi
  * the store to populate.
  */
 @Component({
-  selector: 'app-center-detail-page',
-  templateUrl: './center-detail-page.component.html',
-  styleUrls: ['./center-detail-page.component.css']
+    selector: 'app-center-detail-page',
+    templateUrl: './center-detail-page.component.html',
+    styleUrls: ['./center-detail-page.component.css'],
+    standalone: false
 })
 export class CenterDetailPageComponent implements OnInit, OnDestroy {
   centerData: Centers | null = null;

@@ -10,10 +10,9 @@ import { ChallengeService } from 'src/app/services/challenge.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 @Component({
-  selector: 'app-create-challenge-modal',
-  standalone: true,
-  imports: [CommonModule, FormsModule, IconsModule],
-  template: `
+    selector: 'app-create-challenge-modal',
+    imports: [CommonModule, FormsModule, IconsModule],
+    template: `
     <div class="bg-white rounded-2xl w-full max-w-sm shadow-xl flex flex-col max-h-[85vh]">
       <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
         <h2 class="text-sm font-bold text-gray-900">New challenge</h2>
@@ -72,7 +71,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
         </button>
       </div>
     </div>
-  `,
+  `
 })
 export class CreateChallengeModalComponent {
   readonly metrics = CHALLENGE_METRICS;

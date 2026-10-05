@@ -18,9 +18,10 @@ import { AdminAvailabilityModalComponent } from 'src/app/admin/availability/admi
  * if empty (direct link / refresh).
  */
 @Component({
-  selector: 'app-trainer-detail-page',
-  templateUrl: './trainer-detail-page.component.html',
-  styleUrls: ['./trainer-detail-page.component.css']
+    selector: 'app-trainer-detail-page',
+    templateUrl: './trainer-detail-page.component.html',
+    styleUrls: ['./trainer-detail-page.component.css'],
+    standalone: false
 })
 export class TrainerDetailPageComponent implements OnInit, OnDestroy {
   trainerData: Trainers | null = null;

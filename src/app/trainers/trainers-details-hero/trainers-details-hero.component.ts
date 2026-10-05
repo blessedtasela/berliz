@@ -10,9 +10,10 @@ import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
  * motto / categories / experience / locations / serviceMode / likes).
  */
 @Component({
-  selector: 'app-trainers-details-hero',
-  templateUrl: './trainers-details-hero.component.html',
-  styleUrls: ['./trainers-details-hero.component.css']
+    selector: 'app-trainers-details-hero',
+    templateUrl: './trainers-details-hero.component.html',
+    styleUrls: ['./trainers-details-hero.component.css'],
+    standalone: false
 })
 export class TrainersDetailsHeroComponent {
 

@@ -9,9 +9,10 @@ import { UpdateTrainerPhotoModalComponent } from 'src/app/shared/update-trainer-
 import { selectTrainers } from 'src/app/state/trainer/trainer.selector';
 
 @Component({
-  selector: 'app-trainer-details-modal',
-  templateUrl: './trainer-details-modal.component.html',
-  styleUrls: ['./trainer-details-modal.component.css']
+    selector: 'app-trainer-details-modal',
+    templateUrl: './trainer-details-modal.component.html',
+    styleUrls: ['./trainer-details-modal.component.css'],
+    standalone: false
 })
 export class TrainerDetailsModalComponent {
   onEmit = new EventEmitter();

@@ -9,9 +9,10 @@ import { AddPaymentsModalComponent } from '../add-payments-modal/add-payments-mo
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-payments-header',
-  templateUrl: './payments-header.component.html',
-  styleUrls: ['./payments-header.component.css']
+    selector: 'app-payments-header',
+    templateUrl: './payments-header.component.html',
+    styleUrls: ['./payments-header.component.css'],
+    standalone: false
 })
 export class PaymentsHeaderComponent implements OnDestroy {
   responseMessage: any;

@@ -9,9 +9,10 @@ import { selectSubscriptions } from 'src/app/state/subscription/subscription.sel
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-subscriptions-header',
-  templateUrl: './subscriptions-header.component.html',
-  styleUrls: ['./subscriptions-header.component.css']
+    selector: 'app-subscriptions-header',
+    templateUrl: './subscriptions-header.component.html',
+    styleUrls: ['./subscriptions-header.component.css'],
+    standalone: false
 })
 export class SubscriptionsHeaderComponent implements OnDestroy {
   responseMessage: any;

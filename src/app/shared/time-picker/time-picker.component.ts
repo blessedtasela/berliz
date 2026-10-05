@@ -26,17 +26,16 @@ interface TimeOption {
  * dropdown list instead.
  */
 @Component({
-  selector: 'app-time-picker',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  templateUrl: './time-picker.component.html',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => TimePickerComponent),
-      multi: true
-    }
-  ]
+    selector: 'app-time-picker',
+    imports: [CommonModule, IconsModule],
+    templateUrl: './time-picker.component.html',
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => TimePickerComponent),
+            multi: true
+        }
+    ]
 })
 export class TimePickerComponent implements ControlValueAccessor, OnInit {
 

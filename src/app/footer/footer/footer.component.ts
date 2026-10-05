@@ -4,9 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { BerlizFeedbackModalComponent } from '../berliz-feedback-modal/berliz-feedback-modal.component';
 
 @Component({
-  selector: 'app-footer',
-  templateUrl: './footer.component.html',
-  styleUrls: ['./footer.component.css']
+    selector: 'app-footer',
+    templateUrl: './footer.component.html',
+    styleUrls: ['./footer.component.css'],
+    standalone: false
 })
 export class FooterComponent {
 

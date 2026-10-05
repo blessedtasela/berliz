@@ -17,9 +17,10 @@ import { UpdateSubscriptionsModalComponent } from '../update-subscriptions-modal
 import { SubscriptionDetailsModalComponent } from '../subscription-details-modal/subscription-details-modal.component';
 
 @Component({
-  selector: 'app-subscriptions-list',
-  templateUrl: './subscriptions-list.component.html',
-  styleUrls: ['./subscriptions-list.component.css']
+    selector: 'app-subscriptions-list',
+    templateUrl: './subscriptions-list.component.html',
+    styleUrls: ['./subscriptions-list.component.css'],
+    standalone: false
 })
 export class SubscriptionsListComponent implements OnDestroy {
   responseMessage: any;

@@ -8,9 +8,10 @@ import { selectNewsletters } from 'src/app/state/newsletter/newsletter.selectors
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-newsletters',
-  templateUrl: './newsletters.component.html',
-  styleUrls: ['./newsletters.component.css']
+    selector: 'app-newsletters',
+    templateUrl: './newsletters.component.html',
+    styleUrls: ['./newsletters.component.css'],
+    standalone: false
 })
 export class NewslettersComponent {
   newsletterData: Newsletter[] = [];

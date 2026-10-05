@@ -21,9 +21,10 @@ import { selectMySubscriptions } from 'src/app/state/subscription/subscription.s
 import { selectTodoLoading } from 'src/app/state/todo/todo.selectors';
 
 @Component({
-  selector: 'app-dashboard-main',
-  templateUrl: './dashboard-main.component.html',
-  styleUrls: ['./dashboard-main.component.css']
+    selector: 'app-dashboard-main',
+    templateUrl: './dashboard-main.component.html',
+    styleUrls: ['./dashboard-main.component.css'],
+    standalone: false
 })
 export class DashboardMainComponent {
 

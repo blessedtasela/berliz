@@ -8,9 +8,10 @@ import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
  * already scoped to a single trainer.
  */
 @Component({
-  selector: 'app-trainer-feature-video',
-  templateUrl: './trainer-feature-video.component.html',
-  styleUrls: ['./trainer-feature-video.component.css']
+    selector: 'app-trainer-feature-video',
+    templateUrl: './trainer-feature-video.component.html',
+    styleUrls: ['./trainer-feature-video.component.css'],
+    standalone: false
 })
 export class TrainerFeatureVideoComponent {
 

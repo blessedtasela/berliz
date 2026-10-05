@@ -27,10 +27,10 @@ import { NavbarStyleService } from 'src/app/services/navbar-style.service';
 import { photoDataUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
-  selector: 'app-top-bar',
-  templateUrl: './top-bar.component.html',
-  styleUrls: ['./top-bar.component.css']
-
+    selector: 'app-top-bar',
+    templateUrl: './top-bar.component.html',
+    styleUrls: ['./top-bar.component.css'],
+    standalone: false
 })
 export class TopBarComponent implements OnInit {
   openMenu = false;

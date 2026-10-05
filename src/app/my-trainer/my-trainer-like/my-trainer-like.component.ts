@@ -7,9 +7,10 @@ import { selectMyTrainerLikes } from 'src/app/state/trainer/trainer.selector';
 import { loadMyTrainerLikes } from 'src/app/state/trainer/trainer.actions';
 
 @Component({
-  selector: 'app-my-trainer-like',
-  templateUrl: './my-trainer-like.component.html',
-  styleUrls: ['./my-trainer-like.component.css']
+    selector: 'app-my-trainer-like',
+    templateUrl: './my-trainer-like.component.html',
+    styleUrls: ['./my-trainer-like.component.css'],
+    standalone: false
 })
 export class MyTrainerLikeComponent {
 

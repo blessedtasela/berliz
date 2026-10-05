@@ -27,9 +27,10 @@ interface PhotoSlot {
 }
 
 @Component({
-  selector: 'app-center-photo-album',
-  templateUrl: './center-photo-album.component.html',
-  styleUrls: ['./center-photo-album.component.css']
+    selector: 'app-center-photo-album',
+    templateUrl: './center-photo-album.component.html',
+    styleUrls: ['./center-photo-album.component.css'],
+    standalone: false
 })
 export class CenterPhotoAlbumComponent implements OnInit, OnChanges, OnDestroy {
 

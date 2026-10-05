@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { Categories } from 'src/app/models/categories.interface';
 
 @Component({
-  selector: 'app-center-categories',
-  templateUrl: './center-categories.component.html',
-  styleUrls: ['./center-categories.component.css']
+    selector: 'app-center-categories',
+    templateUrl: './center-categories.component.html',
+    styleUrls: ['./center-categories.component.css'],
+    standalone: false
 })
 export class CenterCategoriesComponent {
   /**

@@ -4,9 +4,10 @@ import { TrainerSubscriptionForm } from 'src/app/models/trainers.interface';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 @Component({
-  selector: 'app-chat-with-trainer',
-  templateUrl: './chat-with-trainer.component.html',
-  styleUrls: ['./chat-with-trainer.component.css']
+    selector: 'app-chat-with-trainer',
+    templateUrl: './chat-with-trainer.component.html',
+    styleUrls: ['./chat-with-trainer.component.css'],
+    standalone: false
 })
 export class ChatWithTrainerComponent {
   @Input() whatsappContact: TrainerSubscriptionForm | undefined;

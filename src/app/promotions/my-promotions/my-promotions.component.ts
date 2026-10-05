@@ -18,11 +18,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * page while live.
  */
 @Component({
-  selector: 'app-my-promotions',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  templateUrl: './my-promotions.component.html',
-  styleUrls: ['./my-promotions.component.css']
+    selector: 'app-my-promotions',
+    imports: [CommonModule, IconsModule],
+    templateUrl: './my-promotions.component.html',
+    styleUrls: ['./my-promotions.component.css']
 })
 export class MyPromotionsComponent implements OnInit {
 

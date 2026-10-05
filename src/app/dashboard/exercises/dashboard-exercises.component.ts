@@ -39,9 +39,10 @@ import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-u
  * center).
  */
 @Component({
-  selector: 'app-dashboard-exercises',
-  templateUrl: './dashboard-exercises.component.html',
-  styleUrls: ['./dashboard-exercises.component.css']
+    selector: 'app-dashboard-exercises',
+    templateUrl: './dashboard-exercises.component.html',
+    styleUrls: ['./dashboard-exercises.component.css'],
+    standalone: false
 })
 export class DashboardExercisesComponent implements OnInit, OnDestroy {
 

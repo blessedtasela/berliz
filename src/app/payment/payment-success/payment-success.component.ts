@@ -14,9 +14,8 @@ import { IconsModule } from 'src/app/icons/icons.module';
  * This is purely a "here's what just happened" confirmation.
  */
 @Component({
-  selector: 'app-payment-success',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
-  templateUrl: './payment-success.component.html'
+    selector: 'app-payment-success',
+    imports: [CommonModule, RouterModule, IconsModule],
+    templateUrl: './payment-success.component.html'
 })
 export class PaymentSuccessComponent { }

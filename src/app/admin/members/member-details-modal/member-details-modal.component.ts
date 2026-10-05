@@ -4,9 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Members } from 'src/app/models/members.interface';
 
 @Component({
-  selector: 'app-member-details-modal',
-  templateUrl: './member-details-modal.component.html',
-  styleUrls: ['./member-details-modal.component.css']
+    selector: 'app-member-details-modal',
+    templateUrl: './member-details-modal.component.html',
+    styleUrls: ['./member-details-modal.component.css'],
+    standalone: false
 })
 export class MemberDetailsModalComponent {
   memberData!: Members;

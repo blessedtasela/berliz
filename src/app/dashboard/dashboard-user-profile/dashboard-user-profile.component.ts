@@ -60,10 +60,9 @@ type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
  * link to instead of ever sending a signed-in user to `/user/:username`.
  */
 @Component({
-  selector: 'app-dashboard-user-profile',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, RanksCardComponent, VerifiedBadgeComponent, BookProviderButtonComponent],
-  templateUrl: './dashboard-user-profile.component.html'
+    selector: 'app-dashboard-user-profile',
+    imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, RanksCardComponent, VerifiedBadgeComponent, BookProviderButtonComponent],
+    templateUrl: './dashboard-user-profile.component.html'
 })
 export class DashboardUserProfileComponent implements OnInit, OnDestroy {
 

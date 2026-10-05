@@ -8,9 +8,10 @@ import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
  * (before / after transformation photos + the written review).
  */
 @Component({
-  selector: 'app-trainer-client-review',
-  templateUrl: './trainer-client-review.component.html',
-  styleUrls: ['./trainer-client-review.component.css']
+    selector: 'app-trainer-client-review',
+    templateUrl: './trainer-client-review.component.html',
+    styleUrls: ['./trainer-client-review.component.css'],
+    standalone: false
 })
 export class TrainerClientReviewComponent {
 

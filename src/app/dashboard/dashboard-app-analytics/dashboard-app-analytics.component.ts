@@ -18,9 +18,10 @@ import { loadDashboard } from 'src/app/state/dashboard/dashboard.actions';
 import { selectDashboardData } from 'src/app/state/dashboard/dashboard.selectors';
 
 @Component({
-  selector: 'app-dashboard-app-analytics',
-  templateUrl: './dashboard-app-analytics.component.html',
-  styleUrls: ['./dashboard-app-analytics.component.css']
+    selector: 'app-dashboard-app-analytics',
+    templateUrl: './dashboard-app-analytics.component.html',
+    styleUrls: ['./dashboard-app-analytics.component.css'],
+    standalone: false
 })
 export class DashboardAppAnalyticsComponent implements OnInit, OnDestroy {
   @Input() data: any;

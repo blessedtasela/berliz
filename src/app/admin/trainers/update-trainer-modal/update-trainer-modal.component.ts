@@ -19,9 +19,10 @@ import { PhotoResponse } from 'src/app/models/Media.interface';
 import { MediaOwnerType } from 'src/app/models/Media.enum';
 
 @Component({
-  selector: 'app-update-trainer-modal',
-  templateUrl: './update-trainer-modal.component.html',
-  styleUrls: ['./update-trainer-modal.component.css']
+    selector: 'app-update-trainer-modal',
+    templateUrl: './update-trainer-modal.component.html',
+    styleUrls: ['./update-trainer-modal.component.css'],
+    standalone: false
 })
 export class UpdateTrainerModalComponent {
   onUpdateTrainerEmit = new EventEmitter();

@@ -3,8 +3,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Notifications } from 'src/app/models/Notifications.interface';
 
 @Component({
-  selector: 'notification-section',
-  templateUrl: './notification-section.component.html'
+    selector: 'notification-section',
+    templateUrl: './notification-section.component.html',
+    standalone: false
 })
 export class NotificationSectionComponent {
   @Input() title = '';

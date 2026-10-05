@@ -21,9 +21,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * guaranteed error.
  */
 @Component({
-  selector: 'app-update-testimonials-modal',
-  templateUrl: './update-testimonials-modal.component.html',
-  styleUrls: ['./update-testimonials-modal.component.css']
+    selector: 'app-update-testimonials-modal',
+    templateUrl: './update-testimonials-modal.component.html',
+    styleUrls: ['./update-testimonials-modal.component.css'],
+    standalone: false
 })
 export class UpdateTestimonialsModalComponent implements OnInit {
   onUpdateTestimonialEmit = new EventEmitter();

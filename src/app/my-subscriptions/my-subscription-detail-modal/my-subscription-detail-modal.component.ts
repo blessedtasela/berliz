@@ -3,9 +3,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 
 @Component({
-  selector: 'app-my-subscription-detail-modal',
-  templateUrl: './my-subscription-detail-modal.component.html',
-  styleUrls: ['./my-subscription-detail-modal.component.css']
+    selector: 'app-my-subscription-detail-modal',
+    templateUrl: './my-subscription-detail-modal.component.html',
+    styleUrls: ['./my-subscription-detail-modal.component.css'],
+    standalone: false
 })
 export class MySubscriptionDetailModalComponent {
   emitEvent = new EventEmitter()

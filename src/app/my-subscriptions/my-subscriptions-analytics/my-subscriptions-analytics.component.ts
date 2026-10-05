@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 
 @Component({
-  selector: 'app-my-subscriptions-analytics',
-  templateUrl: './my-subscriptions-analytics.component.html',
-  styleUrls: ['./my-subscriptions-analytics.component.css']
+    selector: 'app-my-subscriptions-analytics',
+    templateUrl: './my-subscriptions-analytics.component.html',
+    styleUrls: ['./my-subscriptions-analytics.component.css'],
+    standalone: false
 })
 export class MySubscriptionsAnalyticsComponent {
   @Input() subscriptions: Subscriptions[] = [];

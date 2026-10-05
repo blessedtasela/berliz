@@ -25,9 +25,10 @@ export interface HelpCenterCategory {
  * describing it in prose only.
  */
 @Component({
-  selector: 'app-help-center-page',
-  templateUrl: './help-center-page.component.html',
-  styleUrls: ['./help-center-page.component.css']
+    selector: 'app-help-center-page',
+    templateUrl: './help-center-page.component.html',
+    styleUrls: ['./help-center-page.component.css'],
+    standalone: false
 })
 export class HelpCenterPageComponent {
 

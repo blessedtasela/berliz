@@ -10,9 +10,10 @@ import { selectTrainerPricing } from 'src/app/state/trainer/trainer.selector';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-trainer-pricing-header',
-  templateUrl: './trainer-pricing-header.component.html',
-  styleUrls: ['./trainer-pricing-header.component.css']
+    selector: 'app-trainer-pricing-header',
+    templateUrl: './trainer-pricing-header.component.html',
+    styleUrls: ['./trainer-pricing-header.component.css'],
+    standalone: false
 })
 export class TrainerPricingHeaderComponent implements OnDestroy {
   responseMessage: any;

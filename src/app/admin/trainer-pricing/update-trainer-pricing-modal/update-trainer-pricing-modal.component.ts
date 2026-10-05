@@ -8,9 +8,10 @@ import { TrainerService } from 'src/app/services/trainer.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-update-trainer-pricing-modal',
-  templateUrl: './update-trainer-pricing-modal.component.html',
-  styleUrls: ['./update-trainer-pricing-modal.component.css']
+    selector: 'app-update-trainer-pricing-modal',
+    templateUrl: './update-trainer-pricing-modal.component.html',
+    styleUrls: ['./update-trainer-pricing-modal.component.css'],
+    standalone: false
 })
 export class UpdateTrainerPricingModalComponent {
   onUpdateTrainerPricingEmit = new EventEmitter();

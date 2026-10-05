@@ -10,9 +10,10 @@ import { deleteFaq, updateFaqStatus } from 'src/app/state/faq/faq.actions';
 import { UpdateFaqModalComponent } from '../update-faq-modal/update-faq-modal.component';
 
 @Component({
-  selector: 'app-faqs-list',
-  templateUrl: './faqs-list.component.html',
-  styleUrls: ['./faqs-list.component.css']
+    selector: 'app-faqs-list',
+    templateUrl: './faqs-list.component.html',
+    styleUrls: ['./faqs-list.component.css'],
+    standalone: false
 })
 export class FaqsListComponent {
   responseMessage: any;

@@ -16,9 +16,10 @@ import { selectTodos } from 'src/app/state/todo/todo.selectors';
  * empty (direct link / refresh).
  */
 @Component({
-  selector: 'app-todo-list-detail-page',
-  templateUrl: './todo-list-detail-page.component.html',
-  styleUrls: ['./todo-list-detail-page.component.css']
+    selector: 'app-todo-list-detail-page',
+    templateUrl: './todo-list-detail-page.component.html',
+    styleUrls: ['./todo-list-detail-page.component.css'],
+    standalone: false
 })
 export class TodoListDetailPageComponent implements OnInit, OnDestroy {
   todoData: TodoList | null = null;

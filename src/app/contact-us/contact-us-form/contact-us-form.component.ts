@@ -6,9 +6,10 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { emailExtensionValidator, fullNameValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-contact-us-form',
-  templateUrl: './contact-us-form.component.html',
-  styleUrls: ['./contact-us-form.component.css']
+    selector: 'app-contact-us-form',
+    templateUrl: './contact-us-form.component.html',
+    styleUrls: ['./contact-us-form.component.css'],
+    standalone: false
 })
 export class ContactUsFormComponent implements OnInit {
   onAddContactUsEmit = new EventEmitter();

@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-product-hero',
-  templateUrl: './product-hero.component.html',
-  styleUrls: ['./product-hero.component.css']
+    selector: 'app-product-hero',
+    templateUrl: './product-hero.component.html',
+    styleUrls: ['./product-hero.component.css'],
+    standalone: false
 })
 export class ProductHeroComponent {
 

@@ -22,11 +22,10 @@ export interface ProposeSessionModalData {
  * peer-to-peer, not against a provider's schedule.
  */
 @Component({
-  selector: 'app-propose-session-modal',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IconsModule, DateStripComponent, TimePickerComponent],
-  templateUrl: './propose-session-modal.component.html',
-  styleUrls: ['./propose-session-modal.component.css']
+    selector: 'app-propose-session-modal',
+    imports: [CommonModule, ReactiveFormsModule, IconsModule, DateStripComponent, TimePickerComponent],
+    templateUrl: './propose-session-modal.component.html',
+    styleUrls: ['./propose-session-modal.component.css']
 })
 export class ProposeSessionModalComponent {
 

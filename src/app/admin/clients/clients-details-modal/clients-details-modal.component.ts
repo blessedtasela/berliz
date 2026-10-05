@@ -6,9 +6,10 @@ import { Clients } from 'src/app/models/clients.interface';
 import { CategoryDetailsModalComponent } from '../../categories/category-details-modal/category-details-modal.component';
 
 @Component({
-  selector: 'app-clients-details-modal',
-  templateUrl: './clients-details-modal.component.html',
-  styleUrls: ['./clients-details-modal.component.css']
+    selector: 'app-clients-details-modal',
+    templateUrl: './clients-details-modal.component.html',
+    styleUrls: ['./clients-details-modal.component.css'],
+    standalone: false
 })
 export class ClientsDetailsModalComponent {
   clientData!: Clients;

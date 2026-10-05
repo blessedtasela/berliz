@@ -11,10 +11,9 @@ import { DraftEntry } from 'src/app/models/draft.model';
  * abandon it) or silently losing it (the whole reason this exists).
  */
 @Component({
-  selector: 'app-draft-resume-banner',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  template: `
+    selector: 'app-draft-resume-banner',
+    imports: [CommonModule, IconsModule],
+    template: `
     <div *ngIf="draft" class="flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3">
       <i-feather name="clock" class="text-amber-600 shrink-0 mt-0.5" style="width:14px;height:14px;"></i-feather>
       <div class="min-w-0 flex-1">
@@ -34,7 +33,7 @@ import { DraftEntry } from 'src/app/models/draft.model';
         </div>
       </div>
     </div>
-  `,
+  `
 })
 export class DraftResumeBannerComponent {
   @Input() draft: DraftEntry | null = null;

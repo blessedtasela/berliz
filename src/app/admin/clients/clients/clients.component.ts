@@ -7,9 +7,10 @@ import { selectClients } from 'src/app/state/client/client.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-clients',
-  templateUrl: './clients.component.html',
-  styleUrls: ['./clients.component.css']
+    selector: 'app-clients',
+    templateUrl: './clients.component.html',
+    styleUrls: ['./clients.component.css'],
+    standalone: false
 })
 export class ClientsComponent {
   clientsData: Clients[] = [];

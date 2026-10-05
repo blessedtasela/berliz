@@ -9,9 +9,10 @@ import { selectPartners } from 'src/app/state/partner/partner.selectors';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-partner-header',
-  templateUrl: './partner-header.component.html',
-  styleUrls: ['./partner-header.component.css']
+    selector: 'app-partner-header',
+    templateUrl: './partner-header.component.html',
+    styleUrls: ['./partner-header.component.css'],
+    standalone: false
 })
 export class PartnerHeaderComponent implements OnDestroy {
   @Input() partnersData: Partner[] = [];

@@ -8,9 +8,10 @@ import { selectCenterPricing } from 'src/app/state/center/center.selectors';
 import { AddCenterPricingsModalComponent } from '../add-center-pricings-modal/add-center-pricings-modal.component';
 
 @Component({
-  selector: 'app-center-pricings-header',
-  templateUrl: './center-pricings-header.component.html',
-  styleUrls: ['./center-pricings-header.component.css']
+    selector: 'app-center-pricings-header',
+    templateUrl: './center-pricings-header.component.html',
+    styleUrls: ['./center-pricings-header.component.css'],
+    standalone: false
 })
 export class CenterPricingsHeaderComponent implements OnInit, OnDestroy {
   selectedSortOption: string = 'date';

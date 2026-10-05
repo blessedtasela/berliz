@@ -44,10 +44,9 @@ interface RunStats {
  * Standalone + direct service calls, same pattern as WorkoutHistoryComponent.
  */
 @Component({
-  selector: 'app-runs',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, IconsModule, SharedModule, VerifiedBadgeComponent, RunLeaderboardComponent],
-  templateUrl: './runs.component.html',
+    selector: 'app-runs',
+    imports: [CommonModule, FormsModule, MatDialogModule, IconsModule, SharedModule, VerifiedBadgeComponent, RunLeaderboardComponent],
+    templateUrl: './runs.component.html'
 })
 export class RunsComponent implements OnInit {
 

@@ -29,11 +29,10 @@ export type EquipmentImageField = typeof EQUIPMENT_IMAGE_FIELDS[number];
  * owner on update, matching how self-service editing already works.
  */
 @Component({
-  selector: 'app-equipment-modal',
-  standalone: true,
-  imports: [ClickablePhotoDirective, CommonModule, ReactiveFormsModule, IconsModule, StrapiUrlPipe],
-  templateUrl: './equipment-modal.component.html',
-  styleUrls: ['./equipment-modal.component.css']
+    selector: 'app-equipment-modal',
+    imports: [ClickablePhotoDirective, CommonModule, ReactiveFormsModule, IconsModule, StrapiUrlPipe],
+    templateUrl: './equipment-modal.component.html',
+    styleUrls: ['./equipment-modal.component.css']
 })
 export class EquipmentModalComponent implements OnInit {
 

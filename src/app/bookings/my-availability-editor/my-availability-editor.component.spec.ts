@@ -1,4 +1,4 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Actions } from '@ngrx/effects';
@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { MyAvailabilityEditorComponent } from './my-availability-editor.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { selectAvailabilityLoading, selectMyAvailability } from 'src/app/state/availability/availability.selectors';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('MyAvailabilityEditorComponent', () => {
   let component: MyAvailabilityEditorComponent;
@@ -17,20 +18,22 @@ describe('MyAvailabilityEditorComponent', () => {
     const snackBarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
 
     TestBed.configureTestingModule({
-      declarations: [MyAvailabilityEditorComponent],
-      imports: [HttpClientTestingModule],
-      schemas: [NO_ERRORS_SCHEMA],
-      providers: [
+    declarations: [MyAvailabilityEditorComponent],
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [],
+    providers: [
         provideMockStore({
-          selectors: [
-            { selector: selectAvailabilityLoading, value: false },
-            { selector: selectMyAvailability, value: [] }
-          ]
+            selectors: [
+                { selector: selectAvailabilityLoading, value: false },
+                { selector: selectMyAvailability, value: [] }
+            ]
         }),
         { provide: Actions, useValue: new Subject() },
-        { provide: SnackBarService, useValue: snackBarSpy }
-      ]
-    });
+        { provide: SnackBarService, useValue: snackBarSpy },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
 
     fixture = TestBed.createComponent(MyAvailabilityEditorComponent);
     component = fixture.componentInstance;

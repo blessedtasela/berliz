@@ -22,11 +22,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * pending (status "false") — once approved it's locked.
  */
 @Component({
-  selector: 'app-my-testimonials-page',
-  standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule],
-  templateUrl: './my-testimonials-page.component.html',
-  styleUrls: ['./my-testimonials-page.component.css']
+    selector: 'app-my-testimonials-page',
+    imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule],
+    templateUrl: './my-testimonials-page.component.html',
+    styleUrls: ['./my-testimonials-page.component.css']
 })
 export class MyTestimonialsPageComponent implements OnInit {
 

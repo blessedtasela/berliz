@@ -17,8 +17,9 @@ import { selectMyNotifications } from 'src/app/state/notification/notification.s
 const TRIM_THRESHOLD_CHARS = 150;
 
 @Component({
-  selector: 'notification-main',
-  templateUrl: './notification-main.component.html'
+    selector: 'notification-main',
+    templateUrl: './notification-main.component.html',
+    standalone: false
 })
 export class NotificationMainComponent implements OnInit, OnDestroy {
 

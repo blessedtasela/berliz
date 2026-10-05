@@ -18,11 +18,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * every role; a client and a trainer both refer friends the same way.
  */
 @Component({
-  selector: 'app-my-rewards',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, IconsModule],
-  templateUrl: './my-rewards.component.html',
-  styleUrls: ['./my-rewards.component.css']
+    selector: 'app-my-rewards',
+    imports: [CommonModule, FormsModule, RouterModule, IconsModule],
+    templateUrl: './my-rewards.component.html',
+    styleUrls: ['./my-rewards.component.css']
 })
 export class MyRewardsComponent implements OnInit {
 

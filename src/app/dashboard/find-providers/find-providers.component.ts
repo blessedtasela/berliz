@@ -28,9 +28,10 @@ type ProviderTab = 'trainers' | 'centers' | 'categories';
  * sidebar now that this page is the entry point.
  */
 @Component({
-  selector: 'app-find-providers',
-  templateUrl: './find-providers.component.html',
-  styleUrls: ['./find-providers.component.css']
+    selector: 'app-find-providers',
+    templateUrl: './find-providers.component.html',
+    styleUrls: ['./find-providers.component.css'],
+    standalone: false
 })
 export class FindProvidersComponent implements OnInit, OnDestroy {
 

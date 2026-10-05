@@ -46,9 +46,10 @@ interface DeviceBucket {
  * the stat row underneath, inside the same card, so the dashboard grid is unchanged.
  */
 @Component({
-  selector: 'app-dashboard-login-chart',
-  templateUrl: './dashboard-login-chart.component.html',
-  styleUrls: ['./dashboard-login-chart.component.css']
+    selector: 'app-dashboard-login-chart',
+    templateUrl: './dashboard-login-chart.component.html',
+    styleUrls: ['./dashboard-login-chart.component.css'],
+    standalone: false
 })
 export class DashboardLoginChartComponent implements OnInit, OnDestroy {
   /** Kept for template compatibility with dashboard-main; not the data source. */

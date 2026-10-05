@@ -14,9 +14,10 @@ import { selectUser } from 'src/app/state/user/user.selector';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-todays-todo-modal',
-  templateUrl: './todays-todo-modal.component.html',
-  styleUrls: ['./todays-todo-modal.component.css']
+    selector: 'app-todays-todo-modal',
+    templateUrl: './todays-todo-modal.component.html',
+    styleUrls: ['./todays-todo-modal.component.css'],
+    standalone: false
 })
 export class TodaysTodoModalComponent implements OnInit {
 

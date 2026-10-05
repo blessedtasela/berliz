@@ -16,9 +16,10 @@ import { selectSubTasks } from 'src/app/state/task/task.selectors';
  * if empty (direct link / refresh).
  */
 @Component({
-  selector: 'app-sub-task-detail-page',
-  templateUrl: './sub-task-detail-page.component.html',
-  styleUrls: ['./sub-task-detail-page.component.css']
+    selector: 'app-sub-task-detail-page',
+    templateUrl: './sub-task-detail-page.component.html',
+    styleUrls: ['./sub-task-detail-page.component.css'],
+    standalone: false
 })
 export class SubTaskDetailPageComponent implements OnInit, OnDestroy {
   subTaskData: SubTasks | null = null;

@@ -17,9 +17,10 @@ export interface HubGridGroup {
 }
 
 @Component({
-  selector: 'hub-grid',
-  templateUrl: './hub-grid.component.html',
-  styleUrls: ['./hub-grid.component.css']
+    selector: 'hub-grid',
+    templateUrl: './hub-grid.component.html',
+    styleUrls: ['./hub-grid.component.css'],
+    standalone: false
 })
 export class HubGridComponent implements OnChanges {
   @Input() items!: Record<string, string | number>;

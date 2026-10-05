@@ -25,11 +25,10 @@ export interface EquipmentFormData {
  * as a comma-separated string — same shape the admin center forms use.
  */
 @Component({
-  selector: 'app-equipment-form-modal',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IconsModule],
-  templateUrl: './equipment-form-modal.component.html',
-  styleUrls: ['./equipment-form-modal.component.css']
+    selector: 'app-equipment-form-modal',
+    imports: [CommonModule, ReactiveFormsModule, IconsModule],
+    templateUrl: './equipment-form-modal.component.html',
+    styleUrls: ['./equipment-form-modal.component.css']
 })
 export class EquipmentFormModalComponent implements OnInit {
 

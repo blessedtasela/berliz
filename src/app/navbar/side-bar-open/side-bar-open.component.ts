@@ -22,9 +22,10 @@ import { selectConversations } from 'src/app/state/message/message.selectors';
 import { filterSidebarNavItems, SidebarNavItem } from '../sidebar-nav-items';
 
 @Component({
-  selector: 'app-side-bar-open',
-  templateUrl: './side-bar-open.component.html',
-  styleUrls: ['./side-bar-open.component.css']
+    selector: 'app-side-bar-open',
+    templateUrl: './side-bar-open.component.html',
+    styleUrls: ['./side-bar-open.component.css'],
+    standalone: false
 })
 export class SideBarOpenComponent implements OnInit, OnDestroy {
 

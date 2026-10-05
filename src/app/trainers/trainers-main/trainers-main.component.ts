@@ -5,9 +5,10 @@ import { selectCurrentTrainer, selectActiveTrainers } from 'src/app/state/traine
 import { loadActiveTrainers } from 'src/app/state/trainer/trainer.actions';
 
 @Component({
-  selector: 'app-trainers-main',
-  templateUrl: './trainers-main.component.html',
-  styleUrls: ['./trainers-main.component.css']
+    selector: 'app-trainers-main',
+    templateUrl: './trainers-main.component.html',
+    styleUrls: ['./trainers-main.component.css'],
+    standalone: false
 })
 export class TrainersMainComponent {
   trainers: Trainers[] = [];

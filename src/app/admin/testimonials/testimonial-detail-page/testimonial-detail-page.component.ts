@@ -17,9 +17,10 @@ import { selectTestimonials } from 'src/app/state/testimonial/testimonial.select
  * `loadTestimonials()` if empty (direct link / refresh).
  */
 @Component({
-  selector: 'app-testimonial-detail-page',
-  templateUrl: './testimonial-detail-page.component.html',
-  styleUrls: ['./testimonial-detail-page.component.css']
+    selector: 'app-testimonial-detail-page',
+    templateUrl: './testimonial-detail-page.component.html',
+    styleUrls: ['./testimonial-detail-page.component.css'],
+    standalone: false
 })
 export class TestimonialDetailPageComponent implements OnInit, OnDestroy {
   testimonialData: Testimonials | null = null;

@@ -9,9 +9,10 @@ import { selectMyNotifications, selectMyNotificationsCount } from 'src/app/state
 import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
 
 @Component({
-  selector: 'app-my-notifications-page',
-  templateUrl: './my-notifications-page.component.html',
-  styleUrls: ['./my-notifications-page.component.css']
+    selector: 'app-my-notifications-page',
+    templateUrl: './my-notifications-page.component.html',
+    styleUrls: ['./my-notifications-page.component.css'],
+    standalone: false
 })
 export class MyNotificationsPageComponent implements OnInit, OnDestroy {
 

@@ -28,9 +28,10 @@ interface VideoSlotItem {
 type TrimStep = 'idle' | 'trimming' | 'previewing' | 'size-warning' | 'uploading-single';
 
 @Component({
-  selector: 'app-my-trainer-video-album',
-  templateUrl: './my-trainer-video-album.component.html',
-  styleUrls: ['./my-trainer-video-album.component.css']
+    selector: 'app-my-trainer-video-album',
+    templateUrl: './my-trainer-video-album.component.html',
+    styleUrls: ['./my-trainer-video-album.component.css'],
+    standalone: false
 })
 export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestroy {
 

@@ -15,10 +15,9 @@ import { Offer, PriceEstimate, estimateBookingPrice } from './booking-price.util
  * aren't priced in-app), or while the rate is still loading.
  */
 @Component({
-  selector: 'app-booking-price-estimate',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  template: `
+    selector: 'app-booking-price-estimate',
+    imports: [CommonModule, IconsModule],
+    template: `
     <div *ngIf="estimate as e" class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2.5 flex flex-col gap-1.5">
       <div class="flex items-center justify-between gap-3">
         <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Estimated total</span>
@@ -43,7 +42,7 @@ import { Offer, PriceEstimate, estimateBookingPrice } from './booking-price.util
         You pay only after {{ providerName || 'the provider' }} confirms — nothing is charged now.
       </p>
     </div>
-  `,
+  `
 })
 export class BookingPriceEstimateComponent implements OnInit, OnChanges {
   @Input() trainerId: number | null | undefined = null;

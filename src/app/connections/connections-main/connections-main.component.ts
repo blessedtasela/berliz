@@ -40,9 +40,10 @@ type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
  * dashboard for a signed-in user).
  */
 @Component({
-  selector: 'app-connections-main',
-  templateUrl: './connections-main.component.html',
-  styleUrls: ['./connections-main.component.css']
+    selector: 'app-connections-main',
+    templateUrl: './connections-main.component.html',
+    styleUrls: ['./connections-main.component.css'],
+    standalone: false
 })
 export class ConnectionsMainComponent implements OnInit, OnDestroy {
 

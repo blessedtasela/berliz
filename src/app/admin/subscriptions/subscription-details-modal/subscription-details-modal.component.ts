@@ -4,9 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 
 @Component({
-  selector: 'app-subscription-details-modal',
-  templateUrl: './subscription-details-modal.component.html',
-  styleUrls: ['./subscription-details-modal.component.css']
+    selector: 'app-subscription-details-modal',
+    templateUrl: './subscription-details-modal.component.html',
+    styleUrls: ['./subscription-details-modal.component.css'],
+    standalone: false
 })
 export class SubscriptionDetailsModalComponent {
   subscriptionData!: Subscriptions;

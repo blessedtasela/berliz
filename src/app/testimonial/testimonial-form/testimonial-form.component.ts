@@ -38,9 +38,10 @@ export interface TestimonialTargetOption {
 }
 
 @Component({
-  selector: 'app-testimonial-form',
-  templateUrl: './testimonial-form.component.html',
-  styleUrls: ['./testimonial-form.component.css']
+    selector: 'app-testimonial-form',
+    templateUrl: './testimonial-form.component.html',
+    styleUrls: ['./testimonial-form.component.css'],
+    standalone: false
 })
 export class TestimonialFormComponent implements OnInit, OnDestroy {
 

@@ -8,9 +8,10 @@ import { TagService } from 'src/app/services/tag.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-add-tag-modal',
-  templateUrl: './add-tag-modal.component.html',
-  styleUrls: ['./add-tag-modal.component.css']
+    selector: 'app-add-tag-modal',
+    templateUrl: './add-tag-modal.component.html',
+    styleUrls: ['./add-tag-modal.component.css'],
+    standalone: false
 })
 export class AddTagModalComponent {
   onAddTagEmit = new EventEmitter();

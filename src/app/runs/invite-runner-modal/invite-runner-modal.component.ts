@@ -15,10 +15,9 @@ import { selectMyConnections } from 'src/app/state/connection/connection.selecto
 /** Invite one of your connections to a group run — server-side restricted to
  *  accepted connections only, same rule as sharing a workout-history session. */
 @Component({
-  selector: 'app-invite-runner-modal',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, IconsModule],
-  templateUrl: './invite-runner-modal.component.html',
+    selector: 'app-invite-runner-modal',
+    imports: [CommonModule, FormsModule, MatDialogModule, IconsModule],
+    templateUrl: './invite-runner-modal.component.html'
 })
 export class InviteRunnerModalComponent implements OnInit, OnDestroy {
 

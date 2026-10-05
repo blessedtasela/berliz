@@ -17,9 +17,10 @@ import { loadMyPartner } from 'src/app/state/partner/partner.actions';
 import { selectMyPartner } from 'src/app/state/partner/partner.selectors';
 
 @Component({
-  selector: 'app-partner-data',
-  templateUrl: './partner-data.component.html',
-  styleUrls: ['./partner-data.component.css']
+    selector: 'app-partner-data',
+    templateUrl: './partner-data.component.html',
+    styleUrls: ['./partner-data.component.css'],
+    standalone: false
 })
 export class PartnerDataComponent {
   @Input() partnerData!: Partner;

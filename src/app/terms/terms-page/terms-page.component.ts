@@ -15,11 +15,10 @@ interface TermsSection {
 // page's i-feather/routerLink bindings. Standalone means the component owns
 // its own dependencies directly and can't be orphaned like that again.
 @Component({
-  selector: 'app-terms-page',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
-  templateUrl: './terms-page.component.html',
-  styleUrls: ['./terms-page.component.css']
+    selector: 'app-terms-page',
+    imports: [CommonModule, RouterModule, IconsModule],
+    templateUrl: './terms-page.component.html',
+    styleUrls: ['./terms-page.component.css']
 })
 export class TermsPageComponent {
 

@@ -13,9 +13,10 @@ import { selectMyNotifications } from 'src/app/state/notification/notification.s
 import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
 
 @Component({
-  selector: 'app-dashboard-notification',
-  templateUrl: './dashboard-notification.component.html',
-  styleUrls: ['./dashboard-notification.component.css']
+    selector: 'app-dashboard-notification',
+    templateUrl: './dashboard-notification.component.html',
+    styleUrls: ['./dashboard-notification.component.css'],
+    standalone: false
 })
 export class DashboardNotificationComponent implements OnInit, OnDestroy {
 

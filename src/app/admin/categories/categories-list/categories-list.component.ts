@@ -18,9 +18,10 @@ import { loadCategories } from 'src/app/state/category/category.actions';
 import { selectCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
-  selector: 'app-categories-list',
-  templateUrl: './categories-list.component.html',
-  styleUrls: ['./categories-list.component.css']
+    selector: 'app-categories-list',
+    templateUrl: './categories-list.component.html',
+    styleUrls: ['./categories-list.component.css'],
+    standalone: false
 })
 export class CategoriesListComponent implements OnInit {
   responseMessage: any;

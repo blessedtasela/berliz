@@ -17,9 +17,10 @@ export interface EquipmentDetailsData {
  * stock, four photos) that a modal keeps the browsing context intact.
  */
 @Component({
-  selector: 'app-equipment-details-modal',
-  templateUrl: './equipment-details-modal.component.html',
-  styleUrls: ['./equipment-details-modal.component.css']
+    selector: 'app-equipment-details-modal',
+    templateUrl: './equipment-details-modal.component.html',
+    styleUrls: ['./equipment-details-modal.component.css'],
+    standalone: false
 })
 export class EquipmentDetailsModalComponent {
 

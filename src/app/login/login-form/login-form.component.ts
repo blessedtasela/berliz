@@ -12,9 +12,10 @@ import { WebAuthnService } from 'src/app/services/webauthn.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-login-form',
-  templateUrl: './login-form.component.html',
-  styleUrls: ['./login-form.component.css']
+    selector: 'app-login-form',
+    templateUrl: './login-form.component.html',
+    styleUrls: ['./login-form.component.css'],
+    standalone: false
 })
 export class LoginFormComponent implements OnInit, AfterViewInit {
   loginForm!: FormGroup;

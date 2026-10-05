@@ -16,10 +16,9 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
  * whichever page it belongs to.
  */
 @Component({
-  selector: 'app-my-drafts',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
-  templateUrl: './my-drafts.component.html',
+    selector: 'app-my-drafts',
+    imports: [CommonModule, RouterModule, IconsModule],
+    templateUrl: './my-drafts.component.html'
 })
 export class MyDraftsComponent implements OnInit {
 

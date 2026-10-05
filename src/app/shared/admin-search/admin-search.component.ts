@@ -17,8 +17,9 @@ import { AdminSearchField } from './admin-search-field.interface';
  * finished at all).
  */
 @Component({
-  selector: 'app-admin-search',
-  templateUrl: './admin-search.component.html'
+    selector: 'app-admin-search',
+    templateUrl: './admin-search.component.html',
+    standalone: false
 })
 export class AdminSearchComponent<T = any> implements OnInit, OnDestroy {
   @Input() selector: any;

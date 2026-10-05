@@ -12,9 +12,10 @@ interface DayCell {
 }
 
 @Component({
-  selector: 'app-my-todo-list-heatmap',
-  templateUrl: './my-todo-list-heatmap.component.html',
-  styleUrls: ['./my-todo-list-heatmap.component.css']
+    selector: 'app-my-todo-list-heatmap',
+    templateUrl: './my-todo-list-heatmap.component.html',
+    styleUrls: ['./my-todo-list-heatmap.component.css'],
+    standalone: false
 })
 export class MyTodoListHeatmapComponent implements OnChanges {
 

@@ -20,9 +20,10 @@ const PLAN_LABELS: Record<string, string> = {
 };
 
 @Component({
-  selector: 'app-my-trainer-subscriptions',
-  templateUrl: './my-trainer-subscriptions.component.html',
-  styleUrls: ['./my-trainer-subscriptions.component.css']
+    selector: 'app-my-trainer-subscriptions',
+    templateUrl: './my-trainer-subscriptions.component.html',
+    styleUrls: ['./my-trainer-subscriptions.component.css'],
+    standalone: false
 })
 export class MyTrainerSubscriptionsComponent implements OnInit, OnDestroy {
 

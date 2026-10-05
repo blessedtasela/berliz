@@ -28,10 +28,9 @@ export interface LikersModalData {
  * profile (and closes the dialog).
  */
 @Component({
-  selector: 'app-likers-modal',
-  standalone: true,
-  imports: [CommonModule, RouterModule, IconsModule],
-  template: `
+    selector: 'app-likers-modal',
+    imports: [CommonModule, RouterModule, IconsModule],
+    template: `
     <div class="bg-white rounded-2xl w-full max-w-sm shadow-xl flex flex-col max-h-[70vh]">
       <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
         <h2 class="text-sm font-bold text-gray-900">{{ title }}</h2>
@@ -73,7 +72,7 @@ export interface LikersModalData {
         </a>
       </div>
     </div>
-  `,
+  `
 })
 export class LikersModalComponent {
   likers: LikerResponse[] = [];

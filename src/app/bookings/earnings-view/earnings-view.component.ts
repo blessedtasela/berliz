@@ -17,9 +17,10 @@ import {
  * still PENDING or has been PAID out via Stripe Connect.
  */
 @Component({
-  selector: 'app-earnings-view',
-  templateUrl: './earnings-view.component.html',
-  styleUrls: ['./earnings-view.component.css']
+    selector: 'app-earnings-view',
+    templateUrl: './earnings-view.component.html',
+    styleUrls: ['./earnings-view.component.css'],
+    standalone: false
 })
 export class EarningsViewComponent implements OnInit, OnDestroy {
 

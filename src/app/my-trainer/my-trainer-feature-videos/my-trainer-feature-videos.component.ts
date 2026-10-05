@@ -29,9 +29,10 @@ export interface VideoSlot {
 
 const TOTAL_SLOTS = 4;
 @Component({
-  selector: 'app-my-trainer-feature-videos',
-  templateUrl: './my-trainer-feature-videos.component.html',
-  styleUrls: ['./my-trainer-feature-videos.component.css']
+    selector: 'app-my-trainer-feature-videos',
+    templateUrl: './my-trainer-feature-videos.component.html',
+    styleUrls: ['./my-trainer-feature-videos.component.css'],
+    standalone: false
 })
 export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDestroy {
   @Input() trainerFeatureVideos: TrainerFeatureVideo[] = [];

@@ -6,9 +6,10 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SubscriptionService } from 'src/app/services/subscription.service';
 
 @Component({
-  selector: 'app-renew-subscription-modal',
-  templateUrl: './renew-subscription-modal.component.html',
-  styleUrls: ['./renew-subscription-modal.component.css']
+    selector: 'app-renew-subscription-modal',
+    templateUrl: './renew-subscription-modal.component.html',
+    styleUrls: ['./renew-subscription-modal.component.css'],
+    standalone: false
 })
 export class RenewSubscriptionModalComponent {
  durationMonths = 1;

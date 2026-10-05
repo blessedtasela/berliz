@@ -23,10 +23,9 @@ const MENTION_IN_PROGRESS = /(?:^|\s)@([a-zA-Z0-9_]{0,30})$/;
  * suggestion instead.
  */
 @Component({
-  selector: 'app-mention-input',
-  standalone: true,
-  imports: [CommonModule, FormsModule, IconsModule],
-  templateUrl: './mention-input.component.html',
+    selector: 'app-mention-input',
+    imports: [CommonModule, FormsModule, IconsModule],
+    templateUrl: './mention-input.component.html'
 })
 export class MentionInputComponent implements OnDestroy {
   @Input() value = '';

@@ -32,9 +32,10 @@ import { genericError } from 'src/validators/form-validators.module';
 import { PromptModalComponent } from '../prompt-modal/prompt-modal.component';
 
 @Component({
-  selector: 'app-todo-details-modal',
-  templateUrl: './todo-details-modal.component.html',
-  styleUrls: ['./todo-details-modal.component.css']
+    selector: 'app-todo-details-modal',
+    templateUrl: './todo-details-modal.component.html',
+    styleUrls: ['./todo-details-modal.component.css'],
+    standalone: false
 })
 export class TodoDetailsModalComponent implements OnInit {
 

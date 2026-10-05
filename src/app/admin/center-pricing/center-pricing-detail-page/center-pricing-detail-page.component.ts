@@ -17,9 +17,10 @@ import { selectCenterPricing } from 'src/app/state/center/center.selectors';
  * if empty (direct link / refresh).
  */
 @Component({
-  selector: 'app-center-pricing-detail-page',
-  templateUrl: './center-pricing-detail-page.component.html',
-  styleUrls: ['./center-pricing-detail-page.component.css']
+    selector: 'app-center-pricing-detail-page',
+    templateUrl: './center-pricing-detail-page.component.html',
+    styleUrls: ['./center-pricing-detail-page.component.css'],
+    standalone: false
 })
 export class CenterPricingDetailPageComponent implements OnInit, OnDestroy {
   centerPricingData: CenterPricing | null = null;

@@ -2,9 +2,10 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { TodoList } from 'src/app/models/todoList.interface';
 
 @Component({
-  selector: 'app-my-todo-list-section',
-  templateUrl: './my-todo-list-section.component.html',
-  styleUrls: ['./my-todo-list-section.component.css']
+    selector: 'app-my-todo-list-section',
+    templateUrl: './my-todo-list-section.component.html',
+    styleUrls: ['./my-todo-list-section.component.css'],
+    standalone: false
 })
 export class MyTodoListSectionComponent {
 

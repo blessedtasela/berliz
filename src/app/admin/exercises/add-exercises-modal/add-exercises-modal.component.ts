@@ -15,9 +15,10 @@ import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
-  selector: 'app-add-exercises-modal',
-  templateUrl: './add-exercises-modal.component.html',
-  styleUrls: ['./add-exercises-modal.component.css']
+    selector: 'app-add-exercises-modal',
+    templateUrl: './add-exercises-modal.component.html',
+    styleUrls: ['./add-exercises-modal.component.css'],
+    standalone: false
 })
 export class AddExercisesModalComponent implements OnInit{
   onAddExerciseEmit = new EventEmitter()

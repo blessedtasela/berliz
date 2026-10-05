@@ -18,9 +18,10 @@ export interface RescheduleRequest {
 }
 
 @Component({
-  selector: 'app-booking-card',
-  templateUrl: './booking-card.component.html',
-  styleUrls: ['./booking-card.component.css']
+    selector: 'app-booking-card',
+    templateUrl: './booking-card.component.html',
+    styleUrls: ['./booking-card.component.css'],
+    standalone: false
 })
 export class BookingCardComponent {
 

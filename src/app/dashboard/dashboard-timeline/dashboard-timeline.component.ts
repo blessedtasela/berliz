@@ -67,10 +67,9 @@ const ACTIVITY_OPTIONS: ActivityOption[] = [
 ];
 
 @Component({
-  selector: 'app-dashboard-timeline',
-  standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, BookProviderButtonComponent, DraftResumeBannerComponent],
-  templateUrl: './dashboard-timeline.component.html'
+    selector: 'app-dashboard-timeline',
+    imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, BookProviderButtonComponent, DraftResumeBannerComponent],
+    templateUrl: './dashboard-timeline.component.html'
 })
 export class DashboardTimelineComponent implements OnInit, OnDestroy {
 

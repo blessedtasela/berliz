@@ -17,9 +17,10 @@ import { selectSubscriptions } from 'src/app/state/subscription/subscription.sel
  * dispatches `loadSubscriptions()` if empty (direct link / refresh).
  */
 @Component({
-  selector: 'app-subscription-detail-page',
-  templateUrl: './subscription-detail-page.component.html',
-  styleUrls: ['./subscription-detail-page.component.css']
+    selector: 'app-subscription-detail-page',
+    templateUrl: './subscription-detail-page.component.html',
+    styleUrls: ['./subscription-detail-page.component.css'],
+    standalone: false
 })
 export class SubscriptionDetailPageComponent implements OnInit, OnDestroy {
   subscriptionData: Subscriptions | null = null;

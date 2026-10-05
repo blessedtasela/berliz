@@ -18,11 +18,10 @@ import { REACTIONS, ReactionType, reactionEmoji } from 'src/app/models/post.inte
  * stay identical on the feed, both profile pages, and comment threads.
  */
 @Component({
-  selector: 'app-reaction-button',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  templateUrl: './reaction-button.component.html',
-  styleUrls: ['./reaction-button.component.css'],
+    selector: 'app-reaction-button',
+    imports: [CommonModule, IconsModule],
+    templateUrl: './reaction-button.component.html',
+    styleUrls: ['./reaction-button.component.css']
 })
 export class ReactionButtonComponent {
   /** The viewer's current reaction name, or null. */

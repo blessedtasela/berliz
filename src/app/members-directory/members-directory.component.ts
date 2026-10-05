@@ -49,10 +49,9 @@ interface RoleOption {
  * stays a simple filtered list rather than a full pagination UI.
  */
 @Component({
-  selector: 'app-members-directory',
-  standalone: true,
-  imports: [ClickablePhotoDirective, CommonModule, RouterModule, FormsModule, IconsModule],
-  templateUrl: './members-directory.component.html'
+    selector: 'app-members-directory',
+    imports: [ClickablePhotoDirective, CommonModule, RouterModule, FormsModule, IconsModule],
+    templateUrl: './members-directory.component.html'
 })
 export class MembersDirectoryComponent implements OnInit, OnDestroy {
 

@@ -11,9 +11,10 @@ import { loadUser } from 'src/app/state/user/user.actions';
 import { selectUser } from 'src/app/state/user/user.selector';
 
 @Component({
-  selector: 'app-center-partner-form',
-  templateUrl: './center-partner-form.component.html',
-  styleUrls: ['./center-partner-form.component.css']
+    selector: 'app-center-partner-form',
+    templateUrl: './center-partner-form.component.html',
+    styleUrls: ['./center-partner-form.component.css'],
+    standalone: false
 })
 export class CenterPartnerFormComponent implements OnInit {
 

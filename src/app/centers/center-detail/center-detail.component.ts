@@ -55,9 +55,10 @@ import * as TestimonialSelectors from 'src/app/state/testimonial/testimonial.sel
  * are used as-is via the store.
  */
 @Component({
-  selector: 'app-center-detail',
-  templateUrl: './center-detail.component.html',
-  styleUrls: ['./center-detail.component.css']
+    selector: 'app-center-detail',
+    templateUrl: './center-detail.component.html',
+    styleUrls: ['./center-detail.component.css'],
+    standalone: false
 })
 export class CenterDetailComponent implements OnInit, OnDestroy {
 

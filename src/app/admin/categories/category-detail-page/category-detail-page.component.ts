@@ -20,9 +20,10 @@ import { selectCategories } from 'src/app/state/category/category.selectors';
  * direct links / refreshes.
  */
 @Component({
-  selector: 'app-category-detail-page',
-  templateUrl: './category-detail-page.component.html',
-  styleUrls: ['./category-detail-page.component.css']
+    selector: 'app-category-detail-page',
+    templateUrl: './category-detail-page.component.html',
+    styleUrls: ['./category-detail-page.component.css'],
+    standalone: false
 })
 export class CategoryDetailPageComponent implements OnInit, OnDestroy {
   categoryData: Categories | null = null;

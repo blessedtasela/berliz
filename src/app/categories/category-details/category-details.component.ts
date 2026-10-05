@@ -34,9 +34,10 @@ import {
 import { selectWorkoutTemplates } from 'src/app/state/workout/workout.selector';
 
 @Component({
-  selector: 'app-category-details',
-  templateUrl: './category-details.component.html',
-  styleUrls: ['./category-details.component.css']
+    selector: 'app-category-details',
+    templateUrl: './category-details.component.html',
+    styleUrls: ['./category-details.component.css'],
+    standalone: false
 })
 export class CategoryDetailsComponent implements OnInit, OnDestroy {
 

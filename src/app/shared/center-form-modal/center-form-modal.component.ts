@@ -13,9 +13,10 @@ import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
-  selector: 'app-center-form-modal',
-  templateUrl: './center-form-modal.component.html',
-  styleUrls: ['./center-form-modal.component.css']
+    selector: 'app-center-form-modal',
+    templateUrl: './center-form-modal.component.html',
+    styleUrls: ['./center-form-modal.component.css'],
+    standalone: false
 })
 export class CenterFormModalComponent {
 onAddCenterEmit = new EventEmitter();

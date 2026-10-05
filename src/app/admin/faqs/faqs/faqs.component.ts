@@ -8,9 +8,10 @@ import { selectFaqs } from 'src/app/state/faq/faq.selectors';
 import { AddFaqModalComponent } from '../add-faq-modal/add-faq-modal.component';
 
 @Component({
-  selector: 'app-faqs',
-  templateUrl: './faqs.component.html',
-  styleUrls: ['./faqs.component.css']
+    selector: 'app-faqs',
+    templateUrl: './faqs.component.html',
+    styleUrls: ['./faqs.component.css'],
+    standalone: false
 })
 export class FaqsComponent implements OnInit, OnDestroy {
   faqsData: Faq[] = [];

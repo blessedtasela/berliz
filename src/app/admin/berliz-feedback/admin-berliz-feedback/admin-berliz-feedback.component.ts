@@ -12,9 +12,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * Read-only for now — there's no update/delete endpoint on the backend yet.
  */
 @Component({
-  selector: 'app-admin-berliz-feedback',
-  templateUrl: './admin-berliz-feedback.component.html',
-  styleUrls: ['./admin-berliz-feedback.component.css']
+    selector: 'app-admin-berliz-feedback',
+    templateUrl: './admin-berliz-feedback.component.html',
+    styleUrls: ['./admin-berliz-feedback.component.css'],
+    standalone: false
 })
 export class AdminBerlizFeedbackComponent implements OnInit {
 

@@ -29,9 +29,10 @@ interface PhotoSlot {
 type CropStep = 'idle' | 'cropping' | 'uploading-all';
 
 @Component({
-  selector: 'app-my-trainer-photo-album',
-  templateUrl: './my-trainer-photo-album.component.html',
-  styleUrls: ['./my-trainer-photo-album.component.css']
+    selector: 'app-my-trainer-photo-album',
+    templateUrl: './my-trainer-photo-album.component.html',
+    styleUrls: ['./my-trainer-photo-album.component.css'],
+    standalone: false
 })
 
 export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestroy {

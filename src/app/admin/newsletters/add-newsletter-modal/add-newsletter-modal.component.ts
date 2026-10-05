@@ -8,9 +8,10 @@ import { StateService } from 'src/app/services/state.service';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-add-newsletter-modal',
-  templateUrl: './add-newsletter-modal.component.html',
-  styleUrls: ['./add-newsletter-modal.component.css']
+    selector: 'app-add-newsletter-modal',
+    templateUrl: './add-newsletter-modal.component.html',
+    styleUrls: ['./add-newsletter-modal.component.css'],
+    standalone: false
 })
 export class AddNewsletterModalComponent {
   onAddNewsletter = new EventEmitter()

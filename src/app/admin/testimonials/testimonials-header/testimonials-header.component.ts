@@ -10,9 +10,10 @@ import { selectTestimonials } from 'src/app/state/testimonial/testimonial.select
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-testimonials-header',
-  templateUrl: './testimonials-header.component.html',
-  styleUrls: ['./testimonials-header.component.css']
+    selector: 'app-testimonials-header',
+    templateUrl: './testimonials-header.component.html',
+    styleUrls: ['./testimonials-header.component.css'],
+    standalone: false
 })
 export class TestimonialsHeaderComponent implements OnDestroy {
   responseMessage: any;

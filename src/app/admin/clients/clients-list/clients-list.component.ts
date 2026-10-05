@@ -17,9 +17,10 @@ import { ClientsDetailsModalComponent } from '../clients-details-modal/clients-d
 import { Subscription, take } from 'rxjs';
 
 @Component({
-  selector: 'app-clients-list',
-  templateUrl: './clients-list.component.html',
-  styleUrls: ['./clients-list.component.css']
+    selector: 'app-clients-list',
+    templateUrl: './clients-list.component.html',
+    styleUrls: ['./clients-list.component.css'],
+    standalone: false
 })
 export class ClientsListComponent implements OnDestroy {
   responseMessage: any;

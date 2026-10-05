@@ -19,9 +19,10 @@ import { loadActiveTrainers, loadTrainerPricing } from 'src/app/state/trainer/tr
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 
 @Component({
-  selector: 'app-update-subscriptions-modal',
-  templateUrl: './update-subscriptions-modal.component.html',
-  styleUrls: ['./update-subscriptions-modal.component.css']
+    selector: 'app-update-subscriptions-modal',
+    templateUrl: './update-subscriptions-modal.component.html',
+    styleUrls: ['./update-subscriptions-modal.component.css'],
+    standalone: false
 })
 export class UpdateSubscriptionsModalComponent {
   onUpdateSubscriptionEmit = new EventEmitter();

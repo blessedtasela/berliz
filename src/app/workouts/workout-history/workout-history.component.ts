@@ -42,10 +42,9 @@ const KG_TO_LBS = 2.20462;
  * a self-contained page with no other consumer of this data.
  */
 @Component({
-  selector: 'app-workout-history',
-  standalone: true,
-  imports: [CommonModule, RouterModule, MatDialogModule, IconsModule, SharedModule, VerifiedBadgeComponent],
-  templateUrl: './workout-history.component.html',
+    selector: 'app-workout-history',
+    imports: [CommonModule, RouterModule, MatDialogModule, IconsModule, SharedModule, VerifiedBadgeComponent],
+    templateUrl: './workout-history.component.html'
 })
 export class WorkoutHistoryComponent implements OnInit {
 

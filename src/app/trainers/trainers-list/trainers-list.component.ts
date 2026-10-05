@@ -8,9 +8,10 @@ import { TrainerService } from 'src/app/services/trainer.service';
 import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
-  selector: 'app-trainers-list',
-  templateUrl: './trainers-list.component.html',
-  styleUrls: ['./trainers-list.component.css']
+    selector: 'app-trainers-list',
+    templateUrl: './trainers-list.component.html',
+    styleUrls: ['./trainers-list.component.css'],
+    standalone: false
 })
 export class TrainersListComponent {
   @Input() trainersResult: Trainers[] = [];

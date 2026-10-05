@@ -8,10 +8,9 @@ import { IconsModule } from 'src/app/icons/icons.module';
  * trainer or center has confirmed. Two sizes; `by` fills the tooltip.
  */
 @Component({
-  selector: 'app-verified-badge',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  template: `
+    selector: 'app-verified-badge',
+    imports: [CommonModule, IconsModule],
+    template: `
     <span
       class="inline-flex items-center gap-1 rounded-full font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100"
       [ngClass]="size === 'sm' ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-0.5 text-[11px]'"
@@ -19,7 +18,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
       <i-feather name="check-circle" [style.width.px]="size === 'sm' ? 11 : 13" [style.height.px]="size === 'sm' ? 11 : 13"></i-feather>
       <span>Verified</span>
     </span>
-  `,
+  `
 })
 export class VerifiedBadgeComponent {
   @Input() by: string | null | undefined = null;

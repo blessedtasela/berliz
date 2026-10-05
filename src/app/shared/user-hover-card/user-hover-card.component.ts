@@ -20,10 +20,9 @@ import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
  * pulling in all of SharedModule's declarations just for this one card.
  */
 @Component({
-  selector: 'app-user-hover-card',
-  standalone: true,
-  imports: [ClickablePhotoDirective, CommonModule, IconsModule],
-  templateUrl: './user-hover-card.component.html'
+    selector: 'app-user-hover-card',
+    imports: [ClickablePhotoDirective, CommonModule, IconsModule],
+    templateUrl: './user-hover-card.component.html'
 })
 export class UserHoverCardComponent {
 

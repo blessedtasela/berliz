@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CenterPromotions } from 'src/app/models/centers.interface';
 
 @Component({
-  selector: 'app-center-promotions',
-  templateUrl: './center-promotions.component.html',
-  styleUrls: ['./center-promotions.component.css']
+    selector: 'app-center-promotions',
+    templateUrl: './center-promotions.component.html',
+    styleUrls: ['./center-promotions.component.css'],
+    standalone: false
 })
 export class CenterPromotionsComponent {
 @Input() centerPromotions: CenterPromotions | undefined;

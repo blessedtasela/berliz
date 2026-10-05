@@ -14,10 +14,9 @@ const MAX = 3;
 
 /** Pick up to 3 accepted connections as accountability partners. */
 @Component({
-  selector: 'app-manage-partners-modal',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  template: `
+    selector: 'app-manage-partners-modal',
+    imports: [CommonModule, IconsModule],
+    template: `
     <div class="bg-white rounded-2xl w-full max-w-sm shadow-xl flex flex-col max-h-[75vh]">
       <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
         <h2 class="text-sm font-bold text-gray-900">Accountability partners</h2>
@@ -60,7 +59,7 @@ const MAX = 3;
         </button>
       </div>
     </div>
-  `,
+  `
 })
 export class ManagePartnersModalComponent {
   connections: Connection[] = [];

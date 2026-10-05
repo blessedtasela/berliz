@@ -21,10 +21,9 @@ export interface PrCelebrationData {
  * pre-filled and editable first.
  */
 @Component({
-  selector: 'app-pr-celebration-modal',
-  standalone: true,
-  imports: [CommonModule, FormsModule, IconsModule],
-  template: `
+    selector: 'app-pr-celebration-modal',
+    imports: [CommonModule, FormsModule, IconsModule],
+    template: `
     <div class="bg-white rounded-2xl w-full max-w-sm shadow-xl flex flex-col overflow-hidden">
       <div class="bg-gradient-to-br from-amber-400 to-orange-500 px-5 py-4 text-white">
         <div class="text-3xl">🏆</div>
@@ -56,7 +55,7 @@ export interface PrCelebrationData {
         </div>
       </div>
     </div>
-  `,
+  `
 })
 export class PrCelebrationModalComponent {
   draft: string;

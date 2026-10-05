@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-trainers-benefits',
-  templateUrl: './trainers-benefits.component.html',
-  styleUrls: ['./trainers-benefits.component.css']
+    selector: 'app-trainers-benefits',
+    templateUrl: './trainers-benefits.component.html',
+    styleUrls: ['./trainers-benefits.component.css'],
+    standalone: false
 })
 export class TrainersBenefitsComponent {
 

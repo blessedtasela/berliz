@@ -53,10 +53,9 @@ import {
  * pattern the dashboard equipment form modal uses.
  */
 @Component({
-  selector: 'app-public-profile',
-  standalone: true,
-  imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, MatDialogModule, StrapiUrlPipe, PostCommentsComponent, PostDetailSheetComponent, RanksCardComponent, BookProviderButtonComponent],
-  templateUrl: './public-profile.component.html'
+    selector: 'app-public-profile',
+    imports: [ClickablePhotoDirective, CommonModule, RouterModule, IconsModule, MatDialogModule, StrapiUrlPipe, PostCommentsComponent, PostDetailSheetComponent, RanksCardComponent, BookProviderButtonComponent],
+    templateUrl: './public-profile.component.html'
 })
 export class PublicProfileComponent implements OnInit, OnDestroy {
 

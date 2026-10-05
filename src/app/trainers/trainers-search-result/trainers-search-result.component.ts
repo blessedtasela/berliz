@@ -18,9 +18,10 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
 
 
 @Component({
-  selector: 'app-trainers-search-result',
-  templateUrl: './trainers-search-result.component.html',
-  styleUrls: ['./trainers-search-result.component.css']
+    selector: 'app-trainers-search-result',
+    templateUrl: './trainers-search-result.component.html',
+    styleUrls: ['./trainers-search-result.component.css'],
+    standalone: false
 })
 export class TrainersSearchResultComponent implements OnInit, OnDestroy {
 

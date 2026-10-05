@@ -11,10 +11,9 @@ import { BookingDialogService } from 'src/app/booking/booking-dialog.service';
  * id is present.
  */
 @Component({
-  selector: 'app-book-provider-button',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  template: `
+    selector: 'app-book-provider-button',
+    imports: [CommonModule, IconsModule],
+    template: `
     <button *ngIf="canBook" type="button" (click)="book()"
       class="inline-flex items-center gap-1.5 font-semibold rounded-lg transition"
       [ngClass]="{
@@ -27,7 +26,7 @@ import { BookingDialogService } from 'src/app/booking/booking-dialog.service';
       <i-feather name="calendar" [style.width.px]="size === 'sm' ? 12 : 14" [style.height.px]="size === 'sm' ? 12 : 14"></i-feather>
       {{ label }}
     </button>
-  `,
+  `
 })
 export class BookProviderButtonComponent {
   @Input() role: string | null | undefined = null;

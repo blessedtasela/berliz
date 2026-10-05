@@ -9,9 +9,10 @@ import { loadMuscleGroups } from 'src/app/state/muscle-group/muscle-group.action
 import { selectMuscleGroups } from 'src/app/state/muscle-group/muscle-group.selectors';
 
 @Component({
-  selector: 'app-muscle-groups-header',
-  templateUrl: './muscle-groups-header.component.html',
-  styleUrls: ['./muscle-groups-header.component.css']
+    selector: 'app-muscle-groups-header',
+    templateUrl: './muscle-groups-header.component.html',
+    styleUrls: ['./muscle-groups-header.component.css'],
+    standalone: false
 })
 export class MuscleGroupsHeaderComponent {
   responseMessage: any;

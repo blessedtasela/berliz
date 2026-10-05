@@ -7,9 +7,10 @@ import { loadTrainerCenterTrainers } from 'src/app/state/trainer/trainer.actions
 import { selectTrainerCenterTrainers } from 'src/app/state/trainer/trainer.selector';
 
 @Component({
-  selector: 'app-my-trainer-centers',
-  templateUrl: './my-trainer-centers.component.html',
-  styleUrls: ['./my-trainer-centers.component.css']
+    selector: 'app-my-trainer-centers',
+    templateUrl: './my-trainer-centers.component.html',
+    styleUrls: ['./my-trainer-centers.component.css'],
+    standalone: false
 })
 export class MyTrainerCentersComponent implements OnInit, OnDestroy {
 

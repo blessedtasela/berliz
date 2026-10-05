@@ -9,9 +9,10 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
-  selector: 'app-categories-search',
-  templateUrl: './categories-search.component.html',
-  styleUrls: ['./categories-search.component.css']
+    selector: 'app-categories-search',
+    templateUrl: './categories-search.component.html',
+    styleUrls: ['./categories-search.component.css'],
+    standalone: false
 })
 export class CategoriesSearchComponent {
   @Input() categories: Categories[] = [];

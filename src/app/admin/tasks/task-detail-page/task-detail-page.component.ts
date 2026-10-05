@@ -16,9 +16,10 @@ import { selectTasks } from 'src/app/state/task/task.selectors';
  * (direct link / refresh).
  */
 @Component({
-  selector: 'app-task-detail-page',
-  templateUrl: './task-detail-page.component.html',
-  styleUrls: ['./task-detail-page.component.css']
+    selector: 'app-task-detail-page',
+    templateUrl: './task-detail-page.component.html',
+    styleUrls: ['./task-detail-page.component.css'],
+    standalone: false
 })
 export class TaskDetailPageComponent implements OnInit, OnDestroy {
   taskData: Tasks | null = null;

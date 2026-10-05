@@ -7,9 +7,10 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { selectActiveCenters } from 'src/app/state/center/center.selectors';
 
 @Component({
-  selector: 'app-center-search',
-  templateUrl: './center-search.component.html',
-  styleUrls: ['./center-search.component.css']
+    selector: 'app-center-search',
+    templateUrl: './center-search.component.html',
+    styleUrls: ['./center-search.component.css'],
+    standalone: false
 })
 export class CenterSearchComponent {
   @Input() centers: Centers[] = [];

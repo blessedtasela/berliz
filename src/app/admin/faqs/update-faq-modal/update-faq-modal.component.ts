@@ -11,9 +11,10 @@ import { genericError } from 'src/validators/form-validators.module';
 import { updateFaq, updateFaqFailure, updateFaqSuccess } from 'src/app/state/faq/faq.actions';
 
 @Component({
-  selector: 'app-update-faq-modal',
-  templateUrl: './update-faq-modal.component.html',
-  styleUrls: ['./update-faq-modal.component.css']
+    selector: 'app-update-faq-modal',
+    templateUrl: './update-faq-modal.component.html',
+    styleUrls: ['./update-faq-modal.component.css'],
+    standalone: false
 })
 export class UpdateFaqModalComponent implements OnInit, OnDestroy {
   onUpdateFaqEmit = new EventEmitter();

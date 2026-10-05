@@ -23,9 +23,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * Mirrors the my-subscriptions grouping (active / due / expired) pattern.
  */
 @Component({
-  selector: 'app-my-bookings-main',
-  templateUrl: './my-bookings-main.component.html',
-  styleUrls: ['./my-bookings-main.component.css']
+    selector: 'app-my-bookings-main',
+    templateUrl: './my-bookings-main.component.html',
+    styleUrls: ['./my-bookings-main.component.css'],
+    standalone: false
 })
 export class MyBookingsMainComponent implements OnInit, OnDestroy {
 

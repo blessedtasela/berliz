@@ -15,9 +15,10 @@ import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectUser } from 'src/app/state/user/user.selector';
 
 @Component({
-  selector: 'app-center-search-result',
-  templateUrl: './center-search-result.component.html',
-  styleUrls: ['./center-search-result.component.css']
+    selector: 'app-center-search-result',
+    templateUrl: './center-search-result.component.html',
+    styleUrls: ['./center-search-result.component.css'],
+    standalone: false
 })
 export class CenterSearchResultComponent implements OnInit, OnDestroy {
 

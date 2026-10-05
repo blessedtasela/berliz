@@ -16,9 +16,10 @@ import { selectMembers } from 'src/app/state/member/member.selectors';
  * it is empty (direct link / refresh).
  */
 @Component({
-  selector: 'app-member-detail-page',
-  templateUrl: './member-detail-page.component.html',
-  styleUrls: ['./member-detail-page.component.css']
+    selector: 'app-member-detail-page',
+    templateUrl: './member-detail-page.component.html',
+    styleUrls: ['./member-detail-page.component.css'],
+    standalone: false
 })
 export class MemberDetailPageComponent implements OnInit, OnDestroy {
   memberData: Members | null = null;

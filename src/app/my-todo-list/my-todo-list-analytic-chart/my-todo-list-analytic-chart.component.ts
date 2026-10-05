@@ -5,9 +5,10 @@ import { TodoList } from 'src/app/models/todoList.interface';
 import { ThemeService } from 'src/app/services/theme.service';
 
 @Component({
-  selector: 'app-my-todo-list-analytic-chart',
-  templateUrl: './my-todo-list-analytic-chart.component.html',
-  styleUrls: ['./my-todo-list-analytic-chart.component.css']
+    selector: 'app-my-todo-list-analytic-chart',
+    templateUrl: './my-todo-list-analytic-chart.component.html',
+    styleUrls: ['./my-todo-list-analytic-chart.component.css'],
+    standalone: false
 })
 
 export class MyTodoListAnalyticChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {

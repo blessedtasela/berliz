@@ -19,11 +19,10 @@ import { genericError } from 'src/validators/form-validators.module';
  * manage what they'd sell.
  */
 @Component({
-  selector: 'app-my-provider-packages',
-  standalone: true,
-  imports: [CommonModule, IconsModule],
-  templateUrl: './my-provider-packages.component.html',
-  styleUrls: ['./my-provider-packages.component.css']
+    selector: 'app-my-provider-packages',
+    imports: [CommonModule, IconsModule],
+    templateUrl: './my-provider-packages.component.html',
+    styleUrls: ['./my-provider-packages.component.css']
 })
 export class MyProviderPackagesComponent implements OnInit {
 

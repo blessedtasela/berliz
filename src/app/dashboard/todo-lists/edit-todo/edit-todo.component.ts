@@ -8,9 +8,10 @@ import { TodoService } from 'src/app/services/todo.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-edit-todo',
-  templateUrl: './edit-todo.component.html',
-  styleUrls: ['./edit-todo.component.css']
+    selector: 'app-edit-todo',
+    templateUrl: './edit-todo.component.html',
+    styleUrls: ['./edit-todo.component.css'],
+    standalone: false
 })
 export class EditTodoComponent {
   onUpdateTodo = new EventEmitter()

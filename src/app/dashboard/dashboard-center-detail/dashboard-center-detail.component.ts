@@ -8,8 +8,9 @@ import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
  * data/state, supplies a different (light) template only.
  */
 @Component({
-  selector: 'app-dashboard-center-detail',
-  templateUrl: './dashboard-center-detail.component.html',
+    selector: 'app-dashboard-center-detail',
+    templateUrl: './dashboard-center-detail.component.html',
+    standalone: false
 })
 export class DashboardCenterDetailComponent extends CenterDetailComponent {
 

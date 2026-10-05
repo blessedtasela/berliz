@@ -5,9 +5,10 @@ import { Payments } from 'src/app/models/payment.interface';
 import { Users } from 'src/app/models/users.interface';
 
 @Component({
-  selector: 'app-payment-details-modal',
-  templateUrl: './payment-details-modal.component.html',
-  styleUrls: ['./payment-details-modal.component.css']
+    selector: 'app-payment-details-modal',
+    templateUrl: './payment-details-modal.component.html',
+    styleUrls: ['./payment-details-modal.component.css'],
+    standalone: false
 })
 export class PaymentDetailsModalComponent {
   paymentData!: Payments;

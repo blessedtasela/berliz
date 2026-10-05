@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-trainers-album',
-  templateUrl: './trainers-album.component.html',
-  styleUrls: ['./trainers-album.component.css']
+    selector: 'app-trainers-album',
+    templateUrl: './trainers-album.component.html',
+    styleUrls: ['./trainers-album.component.css'],
+    standalone: false
 })
 export class TrainersAlbumComponent {
 

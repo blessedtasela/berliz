@@ -8,9 +8,10 @@ import { genericError } from 'src/validators/form-validators.module';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
-  selector: 'app-update-user-role-modal',
-  templateUrl: './admin-update-user-role-modal.component.html',
-  styleUrls: ['./admin-update-user-role-modal.component.css']
+    selector: 'app-update-user-role-modal',
+    templateUrl: './admin-update-user-role-modal.component.html',
+    styleUrls: ['./admin-update-user-role-modal.component.css'],
+    standalone: false
 })
 export class AdminUpdateUserRoleModalComponent {
   onUpdateUserRole = new EventEmitter();

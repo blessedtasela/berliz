@@ -6,9 +6,10 @@ import { loadDashboard } from 'src/app/state/dashboard/dashboard.actions';
 import { selectDashboardData } from 'src/app/state/dashboard/dashboard.selectors';
 
 @Component({
-  selector: 'app-dashboard-action',
-  templateUrl: './dashboard-action.component.html',
-  styleUrls: ['./dashboard-action.component.css']
+    selector: 'app-dashboard-action',
+    templateUrl: './dashboard-action.component.html',
+    styleUrls: ['./dashboard-action.component.css'],
+    standalone: false
 })
 export class DashboardActionComponent {
   @Input() data: any;

@@ -22,11 +22,10 @@ export interface PromotionFormModalData {
  * calling it, not from anything this form sends).
  */
 @Component({
-  selector: 'app-promotion-form-modal',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IconsModule],
-  templateUrl: './promotion-form-modal.component.html',
-  styleUrls: ['./promotion-form-modal.component.css']
+    selector: 'app-promotion-form-modal',
+    imports: [CommonModule, ReactiveFormsModule, IconsModule],
+    templateUrl: './promotion-form-modal.component.html',
+    styleUrls: ['./promotion-form-modal.component.css']
 })
 export class PromotionFormModalComponent {
 

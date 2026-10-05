@@ -1,4 +1,4 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
@@ -13,6 +13,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SessionCreditService } from 'src/app/services/session-credit.service';
 import { PromotionService } from 'src/app/services/promotion.service';
 import { selectAvailabilityLoading, selectAvailableSlots } from 'src/app/state/availability/availability.selectors';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('BookingFormComponent', () => {
   let component: BookingFormComponent;
@@ -31,25 +32,27 @@ describe('BookingFormComponent', () => {
     promotionServiceSpy.getPublicForCenter.and.returnValue(of({ data: [] }));
 
     TestBed.configureTestingModule({
-      declarations: [BookingFormComponent],
-      imports: [HttpClientTestingModule],
-      schemas: [NO_ERRORS_SCHEMA],
-      providers: [
+    declarations: [BookingFormComponent],
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [],
+    providers: [
         FormBuilder,
         provideMockStore({
-          selectors: [
-            { selector: selectAvailabilityLoading, value: false },
-            { selector: selectAvailableSlots, value: null }
-          ]
+            selectors: [
+                { selector: selectAvailabilityLoading, value: false },
+                { selector: selectAvailableSlots, value: null }
+            ]
         }),
         { provide: Actions, useValue: new Subject() },
         { provide: SnackBarService, useValue: snackBarSpy },
         { provide: SessionCreditService, useValue: sessionCreditServiceSpy },
         { provide: PromotionService, useValue: promotionServiceSpy },
         { provide: MatDialogRef, useValue: dialogRefSpy },
-        { provide: MAT_DIALOG_DATA, useValue: dialogData }
-      ]
-    });
+        { provide: MAT_DIALOG_DATA, useValue: dialogData },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
 
     fixture = TestBed.createComponent(BookingFormComponent);
     component = fixture.componentInstance;

@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-user-profile-identity',
-  templateUrl: './user-profile-identity.component.html',
-  styleUrls: ['./user-profile-identity.component.css']
+    selector: 'app-user-profile-identity',
+    templateUrl: './user-profile-identity.component.html',
+    styleUrls: ['./user-profile-identity.component.css'],
+    standalone: false
 })
 export class UserProfileIdentityComponent {
 

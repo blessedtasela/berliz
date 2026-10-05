@@ -21,8 +21,9 @@ import {
 } from 'src/app/state/workout/workout.selector';
 
 @Component({
-  selector: 'app-my-assigned-workouts',
-  templateUrl: './my-assigned-workouts.component.html'
+    selector: 'app-my-assigned-workouts',
+    templateUrl: './my-assigned-workouts.component.html',
+    standalone: false
 })
 export class MyAssignedWorkoutsComponent implements OnInit, OnDestroy {
 

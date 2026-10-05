@@ -8,9 +8,10 @@ import { selectActiveCenters } from 'src/app/state/center/center.selectors';
 import { loadActiveCenters } from 'src/app/state/center/center.actions';
 
 @Component({
-  selector: 'app-center-page',
-  templateUrl: './center-page.component.html',
-  styleUrls: ['./center-page.component.css']
+    selector: 'app-center-page',
+    templateUrl: './center-page.component.html',
+    styleUrls: ['./center-page.component.css'],
+    standalone: false
 })
 
 export class CenterPageComponent implements OnInit {

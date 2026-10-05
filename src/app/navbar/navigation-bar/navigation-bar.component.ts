@@ -4,9 +4,10 @@ import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
-  selector: 'app-navigation-bar',
-  templateUrl: './navigation-bar.component.html',
-  styleUrls: ['./navigation-bar.component.css']
+    selector: 'app-navigation-bar',
+    templateUrl: './navigation-bar.component.html',
+    styleUrls: ['./navigation-bar.component.css'],
+    standalone: false
 })
 
 export class NavigationBarComponent implements OnInit {

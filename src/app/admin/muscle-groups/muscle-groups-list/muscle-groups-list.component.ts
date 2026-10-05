@@ -18,9 +18,10 @@ import { MuscleGroupDetailsModalComponent } from '../muscle-group-details-modal/
 import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
-  selector: 'app-muscle-groups-list',
-  templateUrl: './muscle-groups-list.component.html',
-  styleUrls: ['./muscle-groups-list.component.css']
+    selector: 'app-muscle-groups-list',
+    templateUrl: './muscle-groups-list.component.html',
+    styleUrls: ['./muscle-groups-list.component.css'],
+    standalone: false
 })
 export class MuscleGroupsListComponent implements OnDestroy {
   responseMessage: any;

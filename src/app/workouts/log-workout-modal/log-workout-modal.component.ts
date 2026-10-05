@@ -53,10 +53,9 @@ export const SET_TYPES: { value: SetType; label: string }[] = [
  * forms would add ceremony without buying validation we actually need.
  */
 @Component({
-  selector: 'app-log-workout-modal',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, IconsModule],
-  templateUrl: './log-workout-modal.component.html',
+    selector: 'app-log-workout-modal',
+    imports: [CommonModule, FormsModule, MatDialogModule, IconsModule],
+    templateUrl: './log-workout-modal.component.html'
 })
 export class LogWorkoutModalComponent implements OnInit, OnDestroy {
 

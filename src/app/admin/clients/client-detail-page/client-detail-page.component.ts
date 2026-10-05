@@ -18,9 +18,10 @@ import { selectClients } from 'src/app/state/client/client.selectors';
  * it is empty (direct link / refresh).
  */
 @Component({
-  selector: 'app-client-detail-page',
-  templateUrl: './client-detail-page.component.html',
-  styleUrls: ['./client-detail-page.component.css']
+    selector: 'app-client-detail-page',
+    templateUrl: './client-detail-page.component.html',
+    styleUrls: ['./client-detail-page.component.css'],
+    standalone: false
 })
 export class ClientDetailPageComponent implements OnInit, OnDestroy {
   clientData: Clients | null = null;

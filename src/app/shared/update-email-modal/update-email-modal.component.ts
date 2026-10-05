@@ -11,8 +11,9 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
-  selector: 'app-update-email-modal',
-  templateUrl: './update-email-modal.component.html'
+    selector: 'app-update-email-modal',
+    templateUrl: './update-email-modal.component.html',
+    standalone: false
 })
 export class UpdateEmailModalComponent implements OnInit, OnDestroy {
   updateEmailForm!: FormGroup;

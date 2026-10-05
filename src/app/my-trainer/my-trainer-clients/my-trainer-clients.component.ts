@@ -7,9 +7,10 @@ import { loadTrainerClients } from 'src/app/state/trainer/trainer.actions';
 import { photoDataUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
-  selector: 'app-my-trainer-clients',
-  templateUrl: './my-trainer-clients.component.html',
-  styleUrls: ['./my-trainer-clients.component.css']
+    selector: 'app-my-trainer-clients',
+    templateUrl: './my-trainer-clients.component.html',
+    styleUrls: ['./my-trainer-clients.component.css'],
+    standalone: false
 })
 export class MyTrainerClientsComponent {
 

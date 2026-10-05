@@ -8,9 +8,10 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { typedFileValidator, genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-update-partner-file-modal',
-  templateUrl: './update-partner-file-modal.component.html',
-  styleUrls: ['./update-partner-file-modal.component.css']
+    selector: 'app-update-partner-file-modal',
+    templateUrl: './update-partner-file-modal.component.html',
+    styleUrls: ['./update-partner-file-modal.component.css'],
+    standalone: false
 })
 export class UpdatePartnerFileModalComponent implements OnInit {
 

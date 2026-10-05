@@ -18,9 +18,10 @@ import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { ContactUsDetailsModalComponent } from '../contact-us-details-modal/contact-us-details-modal.component';
 
 @Component({
-  selector: 'app-contact-us-list',
-  templateUrl: './contact-us-list.component.html',
-  styleUrls: ['./contact-us-list.component.css']
+    selector: 'app-contact-us-list',
+    templateUrl: './contact-us-list.component.html',
+    styleUrls: ['./contact-us-list.component.css'],
+    standalone: false
 })
 export class ContactUsListComponent implements OnDestroy {
   responseMessage: any;

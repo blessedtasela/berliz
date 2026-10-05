@@ -24,9 +24,10 @@ export type ReviewBookingModalResult =
  * dismissed without deciding.
  */
 @Component({
-  selector: 'app-review-booking-modal',
-  templateUrl: './review-booking-modal.component.html',
-  styleUrls: ['./review-booking-modal.component.css']
+    selector: 'app-review-booking-modal',
+    templateUrl: './review-booking-modal.component.html',
+    styleUrls: ['./review-booking-modal.component.css'],
+    standalone: false
 })
 export class ReviewBookingModalComponent {
 

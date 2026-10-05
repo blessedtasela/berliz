@@ -17,9 +17,10 @@ export interface ProblemCategoryOption {
 }
 
 @Component({
-  selector: 'app-report-problem-page',
-  templateUrl: './report-problem-page.component.html',
-  styleUrls: ['./report-problem-page.component.css']
+    selector: 'app-report-problem-page',
+    templateUrl: './report-problem-page.component.html',
+    styleUrls: ['./report-problem-page.component.css'],
+    standalone: false
 })
 export class ReportProblemPageComponent implements OnInit, OnDestroy {
 

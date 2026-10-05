@@ -4,9 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Tasks } from 'src/app/models/tasks.interface';
 
 @Component({
-  selector: 'app-task-details-modal',
-  templateUrl: './task-details-modal.component.html',
-  styleUrls: ['./task-details-modal.component.css']
+    selector: 'app-task-details-modal',
+    templateUrl: './task-details-modal.component.html',
+    styleUrls: ['./task-details-modal.component.css'],
+    standalone: false
 })
 export class TaskDetailsModalComponent {
   taskData!: Tasks;

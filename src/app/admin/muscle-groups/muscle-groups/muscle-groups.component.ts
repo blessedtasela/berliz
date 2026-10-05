@@ -7,9 +7,10 @@ import { selectMuscleGroups } from 'src/app/state/muscle-group/muscle-group.sele
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-muscle-groups',
-  templateUrl: './muscle-groups.component.html',
-  styleUrls: ['./muscle-groups.component.css']
+    selector: 'app-muscle-groups',
+    templateUrl: './muscle-groups.component.html',
+    styleUrls: ['./muscle-groups.component.css'],
+    standalone: false
 })
 export class MuscleGroupsComponent {
   muscleGroupsData: MuscleGroups[] = [];

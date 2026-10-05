@@ -9,9 +9,10 @@ import { passwordMatchValidator, genericError } from 'src/validators/form-valida
 import { ResetPasswordModalComponent } from '../reset-password-modal/reset-password-modal.component';
 
 @Component({
-  selector: 'app-change-password-modal',
-  templateUrl: './change-password-modal.component.html',
-  styleUrls: ['./change-password-modal.component.css']
+    selector: 'app-change-password-modal',
+    templateUrl: './change-password-modal.component.html',
+    styleUrls: ['./change-password-modal.component.css'],
+    standalone: false
 })
 export class ChangePasswordModalComponent {
   onChangePassword = new EventEmitter();

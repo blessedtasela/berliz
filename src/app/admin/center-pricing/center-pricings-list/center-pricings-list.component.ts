@@ -16,9 +16,10 @@ import { loadAllCenterPricing } from 'src/app/state/center/center.actions';
 import { UpdateCenterPricingsModalComponent } from '../update-center-pricings-modal/update-center-pricings-modal.component';
 
 @Component({
-  selector: 'app-center-pricings-list',
-  templateUrl: './center-pricings-list.component.html',
-  styleUrls: ['./center-pricings-list.component.css']
+    selector: 'app-center-pricings-list',
+    templateUrl: './center-pricings-list.component.html',
+    styleUrls: ['./center-pricings-list.component.css'],
+    standalone: false
 })
 export class CenterPricingsListComponent implements OnInit, OnDestroy {
   responseMessage: any;

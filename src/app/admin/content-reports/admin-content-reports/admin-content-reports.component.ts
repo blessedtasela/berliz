@@ -15,9 +15,10 @@ type StatusFilter = 'pending' | 'resolved' | 'dismissed';
  * queue; resolved/dismissed are there for the audit trail.
  */
 @Component({
-  selector: 'app-admin-content-reports',
-  templateUrl: './admin-content-reports.component.html',
-  styleUrls: ['./admin-content-reports.component.css']
+    selector: 'app-admin-content-reports',
+    templateUrl: './admin-content-reports.component.html',
+    styleUrls: ['./admin-content-reports.component.css'],
+    standalone: false
 })
 export class AdminContentReportsComponent implements OnInit {
 

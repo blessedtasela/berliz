@@ -5,9 +5,10 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 const MAX_AVATAR_MB = 5;
 
 @Component({
-  selector: 'app-user-avatar',
-  templateUrl: './user-avatar.component.html',
-  styleUrls: ['./user-avatar.component.css']
+    selector: 'app-user-avatar',
+    templateUrl: './user-avatar.component.html',
+    styleUrls: ['./user-avatar.component.css'],
+    standalone: false
 })
 export class UserAvatarComponent {
 

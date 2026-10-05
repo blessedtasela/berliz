@@ -16,9 +16,10 @@ import { selectTags } from 'src/app/state/tag/tag.selectors';
  * (direct link / refresh).
  */
 @Component({
-  selector: 'app-tag-detail-page',
-  templateUrl: './tag-detail-page.component.html',
-  styleUrls: ['./tag-detail-page.component.css']
+    selector: 'app-tag-detail-page',
+    templateUrl: './tag-detail-page.component.html',
+    styleUrls: ['./tag-detail-page.component.css'],
+    standalone: false
 })
 export class TagDetailPageComponent implements OnInit, OnDestroy {
   tagData: Tags | null = null;

@@ -7,9 +7,10 @@ import { selectPayments } from 'src/app/state/payment/payment.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
-  selector: 'app-payments',
-  templateUrl: './payments.component.html',
-  styleUrls: ['./payments.component.css']
+    selector: 'app-payments',
+    templateUrl: './payments.component.html',
+    styleUrls: ['./payments.component.css'],
+    standalone: false
 })
 export class PaymentsComponent {
   paymentsData: Payments[] = [];

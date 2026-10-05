@@ -3,9 +3,10 @@ import { CenterVideoAlbum } from 'src/app/models/centers.interface';
 import { VideoResponse } from 'src/app/models/Media.interface';
 
 @Component({
-  selector: 'app-center-video-gallery',
-  templateUrl: './center-video-gallery.component.html',
-  styleUrls: ['./center-video-gallery.component.css']
+    selector: 'app-center-video-gallery',
+    templateUrl: './center-video-gallery.component.html',
+    styleUrls: ['./center-video-gallery.component.css'],
+    standalone: false
 })
 export class CenterVideoGalleryComponent implements OnChanges {
   /** Every video album registered by this center. */

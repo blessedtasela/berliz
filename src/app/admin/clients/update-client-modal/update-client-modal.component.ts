@@ -15,9 +15,10 @@ import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
 @Component({
-  selector: 'app-update-client-modal',
-  templateUrl: './update-client-modal.component.html',
-  styleUrls: ['./update-client-modal.component.css']
+    selector: 'app-update-client-modal',
+    templateUrl: './update-client-modal.component.html',
+    styleUrls: ['./update-client-modal.component.css'],
+    standalone: false
 })
 export class UpdateClientModalComponent {
   onUpdateClientEmit = new EventEmitter()

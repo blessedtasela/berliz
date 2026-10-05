@@ -9,9 +9,10 @@ import { TodoService } from 'src/app/services/todo.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 @Component({
-  selector: 'app-update-todo-modal',
-  templateUrl: './update-todo-modal.component.html',
-  styleUrls: ['./update-todo-modal.component.css']
+    selector: 'app-update-todo-modal',
+    templateUrl: './update-todo-modal.component.html',
+    styleUrls: ['./update-todo-modal.component.css'],
+    standalone: false
 })
 export class UpdateTodoModalComponent {
   onUpdateTodoList = new EventEmitter();

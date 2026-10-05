@@ -4,9 +4,10 @@ import { SignupModalComponent } from 'src/app/login/signup-modal/signup-modal.co
 import { Promotions } from 'src/app/models/promotion.model';
 
 @Component({
-  selector: 'app-promotions',
-  templateUrl: './promotions.component.html',
-  styleUrls: ['./promotions.component.css']
+    selector: 'app-promotions',
+    templateUrl: './promotions.component.html',
+    styleUrls: ['./promotions.component.css'],
+    standalone: false
 })
 export class PromotionsComponent {
   @Input() promotions!: Promotions;

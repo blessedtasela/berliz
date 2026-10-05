@@ -18,9 +18,10 @@ import {
  * gates access itself.
  */
 @Component({
-  selector: 'app-my-trainer-shared-progress',
-  templateUrl: './my-trainer-shared-progress.component.html',
-  styleUrls: ['./my-trainer-shared-progress.component.css']
+    selector: 'app-my-trainer-shared-progress',
+    templateUrl: './my-trainer-shared-progress.component.html',
+    styleUrls: ['./my-trainer-shared-progress.component.css'],
+    standalone: false
 })
 export class MyTrainerSharedProgressComponent implements OnInit, OnDestroy {
 

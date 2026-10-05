@@ -17,9 +17,10 @@ import { loadMembers } from 'src/app/state/member/member.actions';
 import { selectMembers } from 'src/app/state/member/member.selectors';
 
 @Component({
-  selector: 'app-members-list',
-  templateUrl: './members-list.component.html',
-  styleUrls: ['./members-list.component.css']
+    selector: 'app-members-list',
+    templateUrl: './members-list.component.html',
+    styleUrls: ['./members-list.component.css'],
+    standalone: false
 })
 export class MembersListComponent implements OnDestroy {
   responseMessage: any;
