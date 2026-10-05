@@ -31,6 +31,10 @@ export interface Trainers {
   serviceMode?: 'IN_PERSON' | 'HYBRID' | 'ONLINE';
   /** Cities/countries this trainer is available in. Public-facing replacement for `address`. */
   locations?: TrainerLocation[];
+  /** Whether a client may name their own training location when booking. */
+  customLocationAllowed?: boolean;
+  /** Surcharge for a client-chosen custom location; null/0 means none. */
+  customLocationFee?: number | null;
   /** True when this trainer currently holds the platform's top paid subscription tier -- a "Featured" badge perk. */
   featured?: boolean;
   message?: string;
@@ -41,6 +45,10 @@ export interface TrainerLocation {
   country: string;
   stateProvince?: string | null;
   city: string;
+  /** Optional specific place within the city, e.g. a gym name or address. */
+  venue?: string | null;
+  /** Optional surcharge for training here; null/0 means none. */
+  fee?: number | null;
 }
 
 export interface UpdateTrainerPhotoRequest {

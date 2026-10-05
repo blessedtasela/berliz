@@ -91,6 +91,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Client intake forms | ✅ | |
 | Testimonials & reviews (trainer/center) | ✅ | |
 | Trainer location + service mode (in-person / online / hybrid) | ✅ | |
+| Choose where to train: trainer's listed locations (+ optional per-location fee) and optional client-chosen custom location (+ fee) | ✅ | Trainers only; client picks at booking and sees the fee before sending. Location text + fee are snapshotted on the booking |
 | Transparent pricing + Book CTA everywhere | ✅ | Provider pages state "full price — no 'from', no hidden fees"; a "Book a session" action appears on a trainer's/center's feed posts and on their profile header (`BookProviderButtonComponent`), not just the dedicated provider page |
 
 ## 6. Payments & subscriptions
@@ -180,6 +181,33 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Training locations with fees, and client-chosen custom locations
+
+A trainer can now list several places they train, put an optional fee on each, and let clients
+name their own location (with its own optional fee). Clients choose at booking time.
+
+- **Trainer side** (`partner/trainer-data`): each "Available in" row gets an optional venue
+  (gym/address) and an optional extra fee; a new "Let clients choose their own location" toggle
+  with its own fee. Blank/zero fee = none; negative is rejected (form + backend).
+- **Client side**: new shared `app-booking-location-picker` in the booking dialog and the
+  `/trainers/:name/book` page. Lists each location with its fee ("No extra fee" when none), plus
+  "Somewhere else — my own location" when allowed. Optional; a trainer offering no choice shows
+  nothing. A picked-but-empty custom address blocks submit with a message.
+- **Booking**: the location label + fee are *snapshotted* on the booking (`location_label`,
+  `location_fee`, `location_custom`) rather than referenced, because a trainer's location rows
+  are recreated on every profile save and a past booking's price mustn't move if fees change
+  later. Shown on the booking card, details modal and the trainer's review modal.
+- **Backend** (migration V58): `trainer_location.venue/fee`, `trainer.custom_location_allowed/
+  custom_location_fee`, `booking.location_*`. `BookingServiceImplement.applyLocation` is used by
+  create, urgent and provider-books-for-client; rejects a custom location when not allowed, a stale
+  location id, both at once, and any location on a center booking. Existing clients that send no
+  location are unaffected.
+- Not yet: the fee is displayed, not charged (client payment checkout is still unwired); the
+  provider "book for a client" modal and the public profile's "Available in" dropdown don't show
+  or pick locations yet; the in-progress booking draft doesn't remember the location choice.
+- Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
+  providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 
 ### Unreleased — One shared "failed to load" state (`app-load-error`), on the Hub and Overview
 
