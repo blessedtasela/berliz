@@ -171,6 +171,10 @@
             </select>
         </div>
 
+        <!-- ── Where to train (trainers only; hidden when the trainer offers no locations) ── -->
+        <app-booking-location-picker *ngIf="availabilityConfigured !== null && data.trainerId"
+            [trainerId]="data.trainerId" (selectionChange)="onLocationChange($event)"></app-booking-location-picker>
+
         <!-- ── Notes ─────────────────────────────────────────────────────── -->
         <div *ngIf="availabilityConfigured !== null" class="flex flex-col gap-1">
             <div class="flex items-center justify-between">

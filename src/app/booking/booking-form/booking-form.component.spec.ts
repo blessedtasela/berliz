@@ -1,10 +1,11 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Actions } from '@ngrx/effects';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Subject } from 'rxjs';
 
 import { of } from 'rxjs';
@@ -33,6 +34,7 @@ describe('BookingFormComponent', () => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       declarations: [BookingFormComponent],
+      imports: [HttpClientTestingModule],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         FormBuilder,
@@ -58,5 +60,36 @@ describe('BookingFormComponent', () => {
   it('should create', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
+  });
+
+  it('blocks submit with a message when "my own location" is picked but left empty', () => {
+    fixture.detectChanges();
+    const store = TestBed.inject(MockStore);
+    spyOn(store, 'dispatch');
+
+    component.onLocationChange({ customLocation: undefined, incomplete: true });
+    component.submitForm();
+
+    expect(TestBed.inject(SnackBarService).openSnackBar).toHaveBeenCalled();
+    expect(store.dispatch).not.toHaveBeenCalled();
+    expect(component.submitting).toBeFalse();
+  });
+
+  it('sends the chosen location with a manual-entry booking', () => {
+    fixture.detectChanges();
+    const store = TestBed.inject(MockStore);
+    spyOn(store, 'dispatch');
+    component.availabilityConfigured = false;
+    component.bookingForm.patchValue({
+      date: '2099-01-01', time: '09:00', durationMinutes: 60,
+    });
+
+    component.onLocationChange({ trainerLocationId: 41, customLocation: undefined, incomplete: false });
+    component.submitForm();
+
+    const action: any = (store.dispatch as jasmine.Spy).calls.mostRecent().args[0];
+    expect(action.data.trainerLocationId).toBe(41);
+    expect(action.data.customLocation).toBeUndefined();
+    expect(action.data.trainerId).toBe(1);
   });
 });

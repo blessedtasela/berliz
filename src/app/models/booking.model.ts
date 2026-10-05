@@ -24,6 +24,13 @@ export interface Booking {
   /** True when the client explicitly requested a time outside the provider's normal lead-time/availability rules. */
   isUrgent?: boolean;
 
+  /** Where the session happens (a listed location, or the client's own address); null when none was chosen. Snapshotted at booking time. */
+  locationLabel?: string | null;
+  /** Surcharge that applied to that location when the booking was made; null/0 means none. */
+  locationFee?: number | null;
+  /** True when the client supplied their own location rather than picking a listed one. */
+  locationCustom?: boolean | null;
+
   date: Date;
   lastUpdate: Date;
 

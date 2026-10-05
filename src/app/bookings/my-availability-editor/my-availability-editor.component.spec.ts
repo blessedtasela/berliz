@@ -1,3 +1,4 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -19,6 +20,7 @@ describe('MyAvailabilityEditorComponent', () => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       declarations: [MyAvailabilityEditorComponent],
+      imports: [HttpClientTestingModule],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         provideMockStore({

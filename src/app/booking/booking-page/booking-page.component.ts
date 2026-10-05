@@ -8,6 +8,7 @@ import { Observable, Subject, catchError, of, take, takeUntil } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { DateStripComponent } from 'src/app/shared/date-strip/date-strip.component';
+import { BookingLocationPickerComponent, BookingLocationSelection } from '../booking-location-picker/booking-location-picker.component';
 
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { TrainerService } from 'src/app/services/trainer.service';
@@ -50,7 +51,7 @@ type BookingOption =
 @Component({
   selector: 'app-booking-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, IconsModule, DateStripComponent],
+  imports: [CommonModule, FormsModule, RouterModule, IconsModule, DateStripComponent, BookingLocationPickerComponent],
   templateUrl: './booking-page.component.html',
 })
 export class BookingPageComponent implements OnInit, OnDestroy {
@@ -83,6 +84,9 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   slotsMessage = '';
 
   notes = '';
+
+  /** Where to train -- trainers only; set by the location picker, which hides itself when the trainer offers no choice. */
+  locationSelection: BookingLocationSelection | null = null;
   readonly maxNotesLength = 500;
 
   submitting = false;
@@ -383,6 +387,11 @@ export class BookingPageComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (this.locationSelection?.incomplete) {
+      this.snackBar.openSnackBar('Enter the address or place you want to train at, or pick one of the listed locations.', 'error');
+      return;
+    }
+
     const scheduledAt = new Date(`${this.selectedDate}T${this.selectedSlot.startTime}`);
     if (isNaN(scheduledAt.getTime()) || scheduledAt.getTime() < this.earliestBookableTime) {
       this.snackBar.openSnackBar(
@@ -404,6 +413,11 @@ export class BookingPageComponent implements OnInit, OnDestroy {
       durationMinutes: this.slotDurationMinutes,
       notes: (this.notes ?? '').trim(),
     };
+
+    if (this.kind === 'trainer' && this.locationSelection) {
+      payload.trainerLocationId = this.locationSelection.trainerLocationId;
+      payload.customLocation = this.locationSelection.customLocation;
+    }
 
     if (this.selectedOption.kind === 'ownedPackage') {
       payload.packageSubscriptionId = this.selectedOption.subscription.id;

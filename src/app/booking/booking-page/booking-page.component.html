@@ -140,6 +140,10 @@
       This {{ kind }} hasn't set their availability yet. Please check back later or contact them directly.
     </p>
 
+    <!-- ── Where to train (trainers only; hidden when the trainer offers no locations) ── -->
+    <app-booking-location-picker *ngIf="availabilityConfigured === true && kind === 'trainer' && providerId"
+      [trainerId]="providerId" (selectionChange)="locationSelection = $event"></app-booking-location-picker>
+
     <!-- ── Notes ─────────────────────────────────────────────────────── -->
     <div *ngIf="availabilityConfigured === true" class="flex flex-col gap-1">
       <div class="flex items-center justify-between">

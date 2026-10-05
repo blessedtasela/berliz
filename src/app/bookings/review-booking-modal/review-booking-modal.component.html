@@ -36,6 +36,13 @@
             <i-feather name="clock" style="width:12px;height:12px;" class="text-gray-400 dark:text-gray-500"></i-feather>
             {{ booking.scheduledAt | date:'shortTime' }} &middot; {{ booking.durationMinutes }} minutes
         </div>
+        <div *ngIf="booking.locationLabel" class="flex items-start gap-1.5">
+            <i-feather name="map-pin" style="width:12px;height:12px;" class="text-gray-400 dark:text-gray-500 mt-0.5 shrink-0"></i-feather>
+            <span class="break-words min-w-0">
+                {{ booking.locationLabel }}<span *ngIf="booking.locationCustom" class="text-gray-400 dark:text-gray-500"> (client's own location)</span>
+                <span *ngIf="booking.locationFee" class="font-semibold text-amber-700 dark:text-amber-400"> &middot; +${{ booking.locationFee | number:'1.2-2' }} location fee</span>
+            </span>
+        </div>
         <div *ngIf="booking.notes" class="flex items-start gap-1.5">
             <i-feather name="file-text" style="width:12px;height:12px;" class="text-gray-400 dark:text-gray-500 mt-0.5"></i-feather>
             <span class="italic">"{{ booking.notes }}"</span>

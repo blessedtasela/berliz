@@ -24,6 +24,7 @@ import { selectAvailabilityLoading, selectAvailableSlots } from 'src/app/state/a
 import { AvailableSlot } from 'src/app/models/availability.model';
 import { SessionCredit, PromoOffer } from 'src/app/models/promo-offer.model';
 
+import { BookingLocationSelection } from '../booking-location-picker/booking-location-picker.component';
 import { genericError } from 'src/validators/form-validators.module';
 
 /** Exactly one of trainerId / centerId is set — a booking is with one or the other. */
@@ -137,6 +138,19 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     if (this.urgentMode && !this.bookingForm.value.date) {
       this.bookingForm.patchValue({ date: this.selectedDate });
     }
+  }
+
+  // ── Where to train (trainer bookings only; the picker hides itself when the trainer offers no choice) ──
+  locationSelection: BookingLocationSelection | null = null;
+
+  onLocationChange(selection: BookingLocationSelection): void {
+    this.locationSelection = selection;
+  }
+
+  private get locationPayload(): { trainerLocationId?: number; customLocation?: string } {
+    const s = this.locationSelection;
+    if (!s || this.data.trainerId == null) return {};
+    return { trainerLocationId: s.trainerLocationId, customLocation: s.customLocation };
   }
 
   // ── Redemption enforcement: an available reward the client can attach ──
@@ -373,6 +387,11 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   submitForm(): void {
     if (this.submitting) return;
 
+    if (this.locationSelection?.incomplete) {
+      this.snackBar.openSnackBar('Enter the address or place you want to train at, or pick one of the listed locations.', 'error');
+      return;
+    }
+
     if (this.urgentMode) {
       this.submitUrgent();
     } else if (this.useManualEntry) {
@@ -420,7 +439,8 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       durationMinutes: Number(value.durationMinutes),
       notes: note,
       urgent: true,
-      ...this.rewardPayload
+      ...this.rewardPayload,
+      ...this.locationPayload
     };
 
     this.submitting = true;
@@ -469,7 +489,8 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       localTime: this.selectedSlot.startTime,
       durationMinutes: this.slotDurationMinutes,
       notes: (this.bookingForm.value.notes ?? '').trim(),
-      ...this.rewardPayload
+      ...this.rewardPayload,
+      ...this.locationPayload
     };
 
     this.submitting = true;
@@ -499,7 +520,8 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       scheduledAt: scheduledAt.toISOString(),
       durationMinutes: Number(value.durationMinutes),
       notes: (value.notes ?? '').trim(),
-      ...this.rewardPayload
+      ...this.rewardPayload,
+      ...this.locationPayload
     };
 
     this.invalidForm = false;

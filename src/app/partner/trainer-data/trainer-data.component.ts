@@ -68,6 +68,8 @@ export class TrainerDataComponent {
       'categoryIds': this.formBuilder.array(this.selectedCategoriesId, this.validateCheckbox()),
       'serviceMode': [this.trainer?.serviceMode ?? 'IN_PERSON'],
       'locations': this.formBuilder.array([]),
+      'customLocationAllowed': [!!this.trainer?.customLocationAllowed],
+      'customLocationFee': [this.trainer?.customLocationFee ?? null, Validators.min(0)],
     });
 
     (this.trainer?.locations ?? []).forEach(loc => this.addLocation(loc));
@@ -89,6 +91,8 @@ export class TrainerDataComponent {
       country: [existing?.country ?? '', Validators.required],
       stateProvince: [existing?.stateProvince ?? ''],
       city: [existing?.city ?? '', Validators.required],
+      venue: [existing?.venue ?? ''],
+      fee: [existing?.fee ?? null, Validators.min(0)],
     }));
     this.locationStates.push([]);
     this.locationCities.push([]);
@@ -200,10 +204,18 @@ export class TrainerDataComponent {
       experience: trainer.experience,
       categoryIds: trainer.categories.map(category => category.id),
       serviceMode: trainer.serviceMode ?? 'IN_PERSON',
+      customLocationAllowed: !!trainer.customLocationAllowed,
+      customLocationFee: trainer.customLocationFee ?? null,
     });
 
     while (this.locationsArray.length) this.removeLocation(0);
     (trainer.locations ?? []).forEach(loc => this.addLocation(loc));
+  }
+
+  /** Empty/zero/invalid input means "no fee" (null); otherwise the amount. */
+  private toFee(value: unknown): number | null {
+    const n = value === '' || value == null ? NaN : Number(value);
+    return Number.isFinite(n) && n > 0 ? n : null;
   }
 
   validateCheckbox(): ValidatorFn {
@@ -250,7 +262,16 @@ export class TrainerDataComponent {
       categoryIds: formValue.categoryIds,
       photoRequest: this.trainer?.photoResponse,
       serviceMode: formValue.serviceMode,
-      locations: formValue.locations,
+      locations: (formValue.locations ?? []).map((l: any) => ({
+        country: l.country,
+        stateProvince: l.stateProvince,
+        city: l.city,
+        venue: (l.venue ?? '').trim() || null,
+        fee: this.toFee(l.fee),
+      })),
+      customLocationAllowed: !!formValue.customLocationAllowed,
+      // The backend treats a null fee as "leave untouched", so a cleared field is sent as 0 (= no surcharge).
+      customLocationFee: this.toFee(formValue.customLocationFee) ?? 0,
     };
 
     this.ngxService.start();
