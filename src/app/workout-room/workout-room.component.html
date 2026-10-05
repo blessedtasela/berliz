@@ -1,13 +1,21 @@
 <section class="font-sans flex flex-col gap-4 mt-4">
 
     <!-- Page header -->
-    <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center shrink-0">
-            <i-feather name="zap" class="text-orange-500" style="width:16px;height:16px;"></i-feather>
+    <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center shrink-0">
+                <i-feather name="zap" class="text-orange-500" style="width:16px;height:16px;"></i-feather>
+            </div>
+            <div>
+                <h1 class="text-sm font-bold text-gray-900">Workout Room</h1>
+                <p class="text-[11px] text-gray-400">Everything you need to train -- templates, logging, exercises, runs and more -- in one place.</p>
+            </div>
         </div>
-        <div>
-            <h1 class="text-sm font-bold text-gray-900">Workout Room</h1>
-            <p class="text-[11px] text-gray-400">Everything you need to train -- templates, logging, exercises, runs and more -- in one place.</p>
+
+        <div *ngIf="!loading && currentStreak > 0" title="Consecutive days with a logged session"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-50 border border-orange-200 shrink-0">
+            <span class="text-base leading-none">🔥</span>
+            <span class="text-xs font-bold text-orange-700">{{ currentStreak }} day{{ currentStreak === 1 ? '' : 's' }} streak</span>
         </div>
     </div>
 
@@ -116,6 +124,10 @@
                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Recent activity</p>
                 <a routerLink="/dashboard/workouts/history" class="text-[11px] font-semibold text-red-600 hover:text-red-700 transition">See all</a>
             </div>
+
+            <p *ngIf="longestStreak > 1" class="text-[11px] text-gray-400 -mt-2">
+                Longest streak: <span class="font-semibold text-gray-600">{{ longestStreak }} days</span>
+            </p>
 
             <div *ngIf="recentLogs.length === 0" class="py-4 text-center">
                 <p class="text-xs text-gray-400">No workouts logged yet -- log one from the Workouts page to see it here.</p>
