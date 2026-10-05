@@ -203,9 +203,14 @@ name their own location (with its own optional fee). Clients choose at booking t
   create, urgent and provider-books-for-client; rejects a custom location when not allowed, a stale
   location id, both at once, and any location on a center booking. Existing clients that send no
   location are unaffected.
-- Not yet: the fee is displayed, not charged (client payment checkout is still unwired); the
-  provider "book for a client" modal and the public profile's "Available in" dropdown don't show
-  or pick locations yet; the in-progress booking draft doesn't remember the location choice.
+- **Trainer profile "Available in"** (`trainers-details-hero`): the tile now reads "Surrey +2 more —
+  Tap to see all 3 locations"; the dropdown is wider, wraps long text, scrolls if long, shows each
+  location's gym/address and fee, a "place of your choice" row when allowed, and the Maps link now
+  includes the venue. On phones the tile spans the full row so the list has room.
+- **Provider "book for a client"**: a trainer now picks the session's location there too (their own
+  `getTrainer()` record feeds the picker; centers see no picker).
+- **Booking drafts** remember the location choice and restore it on resume.
+- Not yet: the fee is displayed, not charged (client payment checkout is still unwired).
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 

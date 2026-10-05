@@ -83,7 +83,11 @@ export interface BookingLocationSelection {
 export class BookingLocationPickerComponent implements OnInit, OnChanges {
   @Input() trainerId: number | null | undefined = null;
   @Input() trainer: Trainers | null | undefined = null;
+  /** Restores an earlier choice (e.g. from a saved booking draft) once the trainer's options are known. */
+  @Input() preselect: { trainerLocationId?: number | null; customLocation?: string | null } | null | undefined = null;
   @Output() selectionChange = new EventEmitter<BookingLocationSelection>();
+
+  private loadedTrainer: Trainers | null = null;
 
   locations: TrainerLocation[] = [];
   customAllowed = false;
@@ -99,6 +103,7 @@ export class BookingLocationPickerComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['trainer'] || changes['trainerId']) this.resolve();
+    else if (changes['preselect'] && !changes['preselect'].firstChange) this.apply(this.loadedTrainer, true);
   }
 
   get hasOptions(): boolean { return this.locations.length > 0 || this.customAllowed; }
@@ -145,12 +150,31 @@ export class BookingLocationPickerComponent implements OnInit, OnChanges {
     });
   }
 
-  private apply(trainer: Trainers | null): void {
+  private apply(trainer: Trainers | null, preselectChanged = false): void {
+    this.loadedTrainer = trainer;
     this.locations = trainer?.locations ?? [];
     this.customAllowed = !!trainer?.customLocationAllowed;
     this.customFee = trainer?.customLocationFee ?? null;
+
+    let changed = false;
+    const p = this.preselect;
+    // Restore only on first load or when the caller hands us a new preselect, never over the user's own pick.
+    if (p && (preselectChanged || (this.selectedId == null && !this.customSelected && !this.customText))) {
+      if (p.trainerLocationId != null && this.locations.some(l => l.id === p.trainerLocationId)) {
+        this.selectedId = p.trainerLocationId;
+        this.customSelected = false;
+        changed = true;
+      } else if (p.customLocation && this.customAllowed) {
+        this.customSelected = true;
+        this.customText = p.customLocation;
+        this.selectedId = null;
+        changed = true;
+      }
+    }
+
     // A trainer edit between loads can orphan the selection.
-    if (this.selectedId != null && !this.locations.some(l => l.id === this.selectedId)) this.selectedId = null;
-    if (!this.customAllowed) this.customSelected = false;
+    if (this.selectedId != null && !this.locations.some(l => l.id === this.selectedId)) { this.selectedId = null; changed = true; }
+    if (!this.customAllowed && this.customSelected) { this.customSelected = false; changed = true; }
+    if (changed) this.emit();
   }
 }

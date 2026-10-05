@@ -55,6 +55,8 @@
             <option *ngFor="let d of durationOptions" [ngValue]="d">{{ d }} minutes</option>
         </select>
     </div>
+    <app-booking-location-picker *ngIf="myTrainer" [trainer]="myTrainer"
+        (selectionChange)="locationSelection = $event"></app-booking-location-picker>
     <div class="flex flex-col gap-1">
         <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Notes <span class="normal-case text-gray-300">(optional)</span></label>
         <textarea [(ngModel)]="notes" rows="2" placeholder="Anything worth noting about this session."

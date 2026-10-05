@@ -43,6 +43,9 @@ interface BookingDraftData {
   durationMinutes: number;
   notes: string;
   reward: string;
+  /** Where-to-train choice (trainer bookings); absent on drafts saved before this existed. */
+  locationId?: number | null;
+  customLocation?: string | null;
 }
 
 @Component({
@@ -143,8 +146,12 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   // ── Where to train (trainer bookings only; the picker hides itself when the trainer offers no choice) ──
   locationSelection: BookingLocationSelection | null = null;
 
+  /** Handed to the picker when a draft is resumed so it can restore the saved choice. */
+  locationPreselect: { trainerLocationId?: number | null; customLocation?: string | null } | null = null;
+
   onLocationChange(selection: BookingLocationSelection): void {
     this.locationSelection = selection;
+    this.saveDraft();
   }
 
   private get locationPayload(): { trainerLocationId?: number; customLocation?: string } {
@@ -336,6 +343,9 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       notes: d.notes,
       reward: d.reward,
     });
+    if (d.locationId != null || d.customLocation) {
+      this.locationPreselect = { trainerLocationId: d.locationId, customLocation: d.customLocation };
+    }
     this.fetchSlotsForSelectedDate();
     this.pendingDraft = null;
   }
@@ -349,7 +359,8 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   /** Called on every meaningful edit (date/slot picks directly, everything else via bookingForm.valueChanges). */
   private saveDraft(): void {
     const value = this.bookingForm?.value ?? {};
-    const hasContent = !!this.selectedSlot || !!value.date || !!value.time || !!(value.notes ?? '').trim() || !!value.reward;
+    const hasContent = !!this.selectedSlot || !!value.date || !!value.time || !!(value.notes ?? '').trim() || !!value.reward
+      || this.locationSelection?.trainerLocationId != null || !!this.locationSelection?.customLocation;
     if (!hasContent) {
       this.draftService.discard('booking', this.draftId);
       return;
@@ -362,6 +373,8 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       durationMinutes: value.durationMinutes ?? 60,
       notes: value.notes ?? '',
       reward: value.reward ?? '',
+      locationId: this.locationSelection?.trainerLocationId ?? null,
+      customLocation: this.locationSelection?.customLocation ?? null,
     }, {
       id: this.draftId,
       label: `Booking with ${this.data.providerName}`,

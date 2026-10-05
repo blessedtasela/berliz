@@ -102,8 +102,8 @@
                 </span>
             </div>
 
-            <div class="relative">
-                <button type="button" (click)="toggleLocations()"
+            <div class="relative col-span-2 sm:col-span-1">
+                <button type="button" (click)="toggleLocations()" [attr.aria-expanded]="locationsOpen" aria-haspopup="true"
                     class="w-full h-full text-left bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1 transition"
                     [ngClass]="hasLocations ? 'hover:border-red-600/40 cursor-pointer' : 'cursor-default'">
                     <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold flex items-center justify-between">
@@ -114,20 +114,33 @@
                     <span class="text-sm font-bold text-white flex items-center gap-1.5 truncate">
                         <i-feather name="map-pin" class="text-red-500 shrink-0" style="width:13px;height:13px;"></i-feather>
                         <span class="truncate">{{ primaryLocationLabel }}</span>
-                        <span *ngIf="extraLocationCount > 0" class="text-zinc-500 font-medium shrink-0">+{{ extraLocationCount }}</span>
+                        <span *ngIf="extraLocationCount > 0" class="text-red-400 font-semibold shrink-0">+{{ extraLocationCount }} more</span>
                     </span>
+                    <span *ngIf="extraLocationCount > 0" class="text-[10px] text-zinc-500">Tap to see all {{ trainer?.locations?.length }} locations</span>
                 </button>
 
                 <!-- Dropdown: every location, each linking out to Maps -->
-                <div *ngIf="locationsOpen" class="absolute left-0 right-0 top-full mt-2 z-20 bg-zinc-900 border border-zinc-700
-                            rounded-xl shadow-[0_12px_32px_rgba(0,0,0,0.5)] overflow-hidden">
+                <div *ngIf="locationsOpen" class="absolute left-0 top-full mt-2 z-20 w-full sm:w-80 max-w-[calc(100vw-2rem)] max-h-80 overflow-y-auto
+                            bg-zinc-900 border border-zinc-700 rounded-xl shadow-[0_12px_32px_rgba(0,0,0,0.5)]">
                     <a *ngFor="let loc of trainer?.locations" [href]="mapsUrlFor(loc)" target="_blank" rel="noopener"
-                        class="flex items-center gap-2 px-4 py-2.5 text-xs text-zinc-200 hover:bg-zinc-800 hover:text-red-400
+                        class="flex items-start gap-2 px-4 py-2.5 text-xs text-zinc-200 hover:bg-zinc-800 hover:text-red-400
                                border-b border-zinc-800 last:border-b-0 transition">
-                        <i-feather name="map-pin" class="text-red-500 shrink-0" style="width:12px;height:12px;"></i-feather>
-                        <span class="truncate">{{ fullLocationLabel(loc) }}</span>
-                        <i-feather name="link" class="text-zinc-600 shrink-0 ml-auto" style="width:11px;height:11px;"></i-feather>
+                        <i-feather name="map-pin" class="text-red-500 shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
+                        <span class="flex flex-col min-w-0 flex-1">
+                            <span *ngIf="loc.venue" class="font-semibold break-words">{{ loc.venue }}</span>
+                            <span class="break-words" [ngClass]="loc.venue ? 'text-zinc-400' : ''">{{ fullLocationLabel(loc) }}</span>
+                        </span>
+                        <span class="shrink-0 text-[11px] font-semibold" [ngClass]="loc.fee ? 'text-amber-400' : 'text-zinc-500'">
+                            {{ loc.fee ? '+$' + (loc.fee | number:'1.2-2') : 'No extra fee' }}
+                        </span>
                     </a>
+                    <div *ngIf="trainer?.customLocationAllowed" class="flex items-start gap-2 px-4 py-2.5 text-xs text-zinc-300 border-t border-zinc-800 bg-zinc-950/40">
+                        <i-feather name="navigation" class="text-red-500 shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
+                        <span class="flex-1 min-w-0">Or train at a place of your choice</span>
+                        <span class="shrink-0 text-[11px] font-semibold" [ngClass]="trainer?.customLocationFee ? 'text-amber-400' : 'text-zinc-500'">
+                            {{ trainer?.customLocationFee ? '+$' + (trainer?.customLocationFee | number:'1.2-2') : 'No extra fee' }}
+                        </span>
+                    </div>
                 </div>
             </div>
 
