@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { Booking } from 'src/app/models/booking.model';
 import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
+import { amountToPay, canClientPay, payByNote, payLabel, paymentBadge, statusLabel } from '../booking-payment.util';
 
 export interface BookingDetailsModalData {
   booking: Booking;
@@ -68,6 +69,7 @@ export class BookingDetailsModalComponent {
       case 'confirmed': return 'bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-900';
       case 'completed': return 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-100 dark:border-green-900';
       case 'cancelled': return 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-gray-600';
+      case 'no_show': return 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-900';
       default: return 'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-900'; // pending
     }
   }
@@ -84,22 +86,33 @@ export class BookingDetailsModalComponent {
     this.dialogRef.close();
   }
 
+  get statusLabel(): string {
+    return statusLabel(this.booking.status);
+  }
+
   /** The client can pay right from the details; the card that opened this starts Stripe Checkout. */
   get canClientPay(): boolean {
-    return this.mode === 'client'
-      && this.booking.paymentStatus === 'UNPAID'
-      && (this.booking.status === 'confirmed' || this.booking.status === 'completed')
-      && (this.booking.amountDue ?? 0) > 0;
+    return canClientPay(this.booking, this.mode);
+  }
+
+  /** "Pay $115.00", or "Pay extra $50.00" when a paid session was extended. */
+  get payButtonLabel(): string {
+    return payLabel(this.booking);
   }
 
   /** What to say about payment, or null when there is nothing to say (never priced, nothing to pay, or still pending). */
   get paymentLabel(): string | null {
-    switch (this.booking.paymentStatus) {
-      case 'PAID': return 'Paid';
-      case 'REFUNDED': return 'Refunded';
-      case 'UNPAID': return this.booking.status === 'pending' ? null : (this.mode === 'provider' ? 'Awaiting payment' : 'Payment due');
-      default: return null;
-    }
+    return paymentBadge(this.booking, this.mode)?.label ?? null;
+  }
+
+  /** The amount that goes with {@link paymentLabel}: what is still owed while unpaid, otherwise what was paid / agreed. */
+  get paymentAmount(): number | null {
+    if (this.booking.paymentStatus === 'UNPAID') return amountToPay(this.booking) || null;
+    return this.booking.amountPaid ?? this.booking.amountDue ?? null;
+  }
+
+  get payByText(): string | null {
+    return payByNote(this.booking);
   }
 
   pay(): void {

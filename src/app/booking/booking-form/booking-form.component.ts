@@ -25,6 +25,7 @@ import { AvailableSlot } from 'src/app/models/availability.model';
 import { SessionCredit, PromoOffer } from 'src/app/models/promo-offer.model';
 
 import { BookingLocationSelection } from '../booking-location-picker/booking-location-picker.component';
+import { Offer } from '../booking-price-estimate/booking-price.util';
 import { genericError } from 'src/validators/form-validators.module';
 
 /** Exactly one of trainerId / centerId is set — a booking is with one or the other. */
@@ -163,6 +164,33 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   // ── Redemption enforcement: an available reward the client can attach ──
   availableCredits: SessionCredit[] = [];
   providerPromotions: PromoOffer[] = [];
+
+  // ── Inputs for the "Estimated total" shown before sending ──
+
+  /** The session length the estimate is for: the picked slot's length, or the length chosen when entering a time by hand. */
+  get estimateMinutes(): number {
+    return (this.urgentMode || this.useManualEntry)
+      ? Number(this.bookingForm?.value?.durationMinutes) || 60
+      : this.slotDurationMinutes;
+  }
+
+  get estimateLocationFee(): number | null {
+    return this.locationSelection?.fee ?? null;
+  }
+
+  /** The provider's own offer, if that is what is selected in the reward picker. */
+  get estimatePromotion(): Offer | null {
+    const [kind, id] = String(this.bookingForm?.value?.reward ?? '').split(':');
+    const promo = kind === 'promo' ? this.providerPromotions.find(p => p.id === Number(id)) : undefined;
+    return promo ? { type: promo.type, value: promo.value } : null;
+  }
+
+  /** A Berliz session credit, if that is what is selected in the reward picker. */
+  get estimateCredit(): Offer | null {
+    const [kind, id] = String(this.bookingForm?.value?.reward ?? '').split(':');
+    const credit = kind === 'credit' ? this.availableCredits.find(c => c.id === Number(id)) : undefined;
+    return credit ? { type: credit.type, value: credit.value } : null;
+  }
 
   /** One booking draft per provider -- a client could plausibly be mid-booking with one provider while browsing another. */
   private get draftId(): string {

@@ -183,6 +183,43 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Booking payment policy: unpaid reminders + auto-cancel, late-cancel and no-show rules, extensions, price estimate
+
+Closes the gaps left by per-session checkout. The numbers below are constants in one place each
+(`BookingPricing`, `CancellationPolicy`) so they are easy to change.
+
+- **Unpaid sessions are chased, then freed.** A confirmed session with nothing paid gets a pay-by
+  deadline: 24h after confirmation, but never later than 2h before it starts and never sooner than
+  2h after confirming. One reminder (bell + email) goes out 6h before the deadline (or halfway through
+  a shorter window); after the deadline the session is **auto-cancelled**, rewards are given back, and
+  both client and provider are told. A 15-minute scheduler (`BookingPaymentScheduler`) does both. The
+  card shows "Pay by … or it's cancelled". Sessions already waiting when this shipped get a fresh 24h.
+  A session that already has money in (an unpaid extension balance) is reminded but never auto-cancelled.
+- **Late-cancel policy.** A client can now cancel a *confirmed* session (before, only pending). 24h+ ahead:
+  full refund. Inside 24h: half is refunded and the other half is kept and paid to the provider (minus
+  Berliz's 15%). Once it has started: nothing refunded. A provider or admin cancelling always refunds in
+  full. The cancel prompt spells out the exact refund before the client confirms. An unpaid session that is
+  cancelled late costs nothing — we never charge beyond what was paid.
+- **No-show.** New `no_show` status. The provider can mark a confirmed session once its start time has
+  passed (a "No-show" button on the card, with a confirm); the client's payment is kept and the provider is
+  paid. Shown in its own "No-show" group for both sides.
+- **Extending / shortening a paid session.** Rescheduling a paid session to a longer length flips it back to
+  unpaid for *only the difference* ("Pay extra $50.00", "Balance due"); shortening refunds the difference
+  automatically. `booking.amount_paid` tracks the net paid; `payment.refunded_amount` makes partial refunds
+  exact (a full refund is still issued without an amount so Stripe reverses it exactly).
+- **Estimated total while booking.** New `app-booking-price-estimate` in the booking dialog and booking page:
+  session price (rate × minutes), the chosen location's fee, and the effect of a selected reward or owned
+  package, with "You pay only after the provider confirms". Same arithmetic as the server; hidden for a
+  provider with no rate set.
+- **Smaller fixes.** The "client paid" notification now reaches centers, not just trainers. A payment that
+  lands after the session was cancelled is refunded automatically instead of kept. A cancelled session whose
+  money went back can't be reopened (client books again). The client cancel no longer asks twice. The
+  `navigation` icon used by the location picker and trainer dropdown wasn't registered — now it is.
+- Migration V60.
+- Not yet: the late-cancel window and the 50% are fixed constants, not per-trainer settings; no automatic
+  "complete" or no-show detection; the extension balance has no deadline of its own; amounts show with "$"
+  whatever the Stripe currency is.
+
 ### Unreleased — Per-session checkout: clients pay for a confirmed booking through Stripe
 
 Until now only plans and packages went through Stripe; a single booked session was just a
@@ -211,12 +248,9 @@ request that gets declined).
   cancel confirmation warns that a paid client will be refunded. `/payment/success` and `/payment/cancel`
   now cover bookings as well as subscriptions.
 - Migration V59 (`booking.amount_due`, `booking.payment_status`, `payment.booking_fk`).
-- Rescheduling-and-confirming also (re)prices the booking, so the new length is what gets charged
-  (an already-paid booking is never repriced, so extending a paid session doesn't bill the difference).
-- Not yet: nothing nudges a client who is confirmed but never pays (no reminder, no auto-cancel);
-  the booking form doesn't show an estimated price up front; there is no partial-refund or
-  no-show/late-cancel policy; centers are priced the same way but the "paid" notification only
-  reaches trainers.
+- Rescheduling-and-confirming also (re)prices the booking, so the new length is what gets charged.
+- The gaps this entry first listed (no reminder/auto-cancel, no up-front estimate, no late-cancel or
+  no-show policy, extending a paid session, centers not told) are closed by the entry above it.
 
 ### Unreleased — Training locations with fees, and client-chosen custom locations
 

@@ -5,6 +5,10 @@ import { Booking } from 'src/app/models/booking.model';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { ReviewBookingModalComponent, ReviewBookingModalResult } from '../review-booking-modal/review-booking-modal.component';
 import { BookingDetailsModalComponent } from '../booking-details-modal/booking-details-modal.component';
+import {
+  PaymentBadge, canClientPay, canMarkNoShow, clientCancelNote, isRefundedCancellation,
+  payByNote, payLabel, paymentBadge, statusLabel
+} from '../booking-payment.util';
 
 export interface RescheduleRequest {
   id: number;
@@ -56,6 +60,7 @@ export class BookingCardComponent {
       case 'confirmed': return 'bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-900';
       case 'completed': return 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-100 dark:border-green-900';
       case 'cancelled': return 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-gray-600';
+      case 'no_show': return 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-900';
       default: return 'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-900'; // pending
     }
   }
@@ -65,40 +70,47 @@ export class BookingCardComponent {
       case 'confirmed': return 'bg-blue-500';
       case 'completed': return 'bg-green-500';
       case 'cancelled': return 'bg-gray-400';
+      case 'no_show': return 'bg-red-500';
       default: return 'bg-amber-500';
     }
   }
 
-  /** The provider has confirmed and priced this session and the client hasn't paid yet. */
+  get statusLabel(): string {
+    return statusLabel(this.booking.status);
+  }
+
+  /** The provider has confirmed and priced this session and the client hasn't paid (all of) it yet. */
   get canClientPay(): boolean {
-    return this.mode === 'client'
-      && this.booking.paymentStatus === 'UNPAID'
-      && (this.booking.status === 'confirmed' || this.booking.status === 'completed')
-      && (this.booking.amountDue ?? 0) > 0;
+    return canClientPay(this.booking, this.mode);
+  }
+
+  /** "Pay $115.00", or "Pay extra $50.00" when a paid session was extended. */
+  get payButtonLabel(): string {
+    return payLabel(this.booking);
+  }
+
+  /** "Pay by Tue, Oct 6, 3:00 PM or it's cancelled" while a confirmed session is waiting on payment. */
+  get payByText(): string | null {
+    return payByNote(this.booking);
   }
 
   /** Payment pill shown to both sides; null when there's nothing worth saying (never priced, or nothing to pay). */
-  get paymentBadge(): { label: string; classes: string } | null {
-    if (this.booking.status === 'cancelled' && this.booking.paymentStatus !== 'REFUNDED') return null;
-    switch (this.booking.paymentStatus) {
-      case 'PAID':
-        return { label: 'Paid', classes: 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900' };
-      case 'REFUNDED':
-        return { label: 'Refunded', classes: 'text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700' };
-      case 'UNPAID':
-        return this.booking.status === 'pending' ? null
-          : { label: this.mode === 'provider' ? 'Awaiting payment' : 'Payment due', classes: 'text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900' };
-      default:
-        return null;
-    }
+  get paymentBadge(): PaymentBadge | null {
+    return paymentBadge(this.booking, this.mode);
   }
 
   pay(): void {
     this.payRequested.emit(this.booking.id);
   }
 
+  /** A client can withdraw a pending request, or cancel a confirmed session (the refund depends on how late -- see clientCancelNote). */
   get canClientCancel(): boolean {
-    return this.mode === 'client' && this.booking.status === 'pending';
+    return this.mode === 'client' && (this.booking.status === 'pending' || this.booking.status === 'confirmed');
+  }
+
+  /** Confirmed, and the start time has passed: the provider can record that the client never came. */
+  get canProviderNoShow(): boolean {
+    return this.mode === 'provider' && canMarkNoShow(this.booking);
   }
 
   get canProviderConfirm(): boolean {
@@ -121,7 +133,8 @@ export class BookingCardComponent {
   /** A cancel could've been an accidental tap (or a change of mind) -- a cancelled
    *  request isn't a dead end, the provider can bring it back for review. */
   get canProviderReopen(): boolean {
-    return this.mode === 'provider' && this.booking.status === 'cancelled';
+    // Not once the client's money has gone back -- the server refuses it too.
+    return this.mode === 'provider' && this.booking.status === 'cancelled' && !isRefundedCancellation(this.booking);
   }
 
   get canProviderDelete(): boolean {
@@ -134,15 +147,37 @@ export class BookingCardComponent {
     return this.mode === 'provider' && this.booking.status === 'cancelled' && !!this.booking.clientId;
   }
 
-  /** Client cancelling their own pending request -- a confirm step guards against an accidental tap. */
+  /** Provider recording that the client never came -- confirmed first, since it keeps their payment. */
+  private confirmNoShow(): void {
+    this.dialog.open(PromptModalComponent, {
+      width: '360px',
+      maxWidth: '95vw',
+      data: {
+        confirmation: true,
+        title: 'Mark as a no-show?',
+        message: `${this.counterpartyName} didn't attend.`
+          + (this.booking.paymentStatus === 'PAID' ? ' Their payment is kept and you are paid for the session.' : ' They had not paid, so nothing is charged.'),
+        confirmText: 'Mark no-show',
+        cancelText: 'Cancel',
+        icon: 'user-x'
+      }
+    }).afterClosed().subscribe(confirmed => {
+      if (confirmed) this.statusChangeRequested.emit({ id: this.booking.id, status: 'no_show' });
+    });
+  }
+
+  /** Client cancelling their own pending request or confirmed session -- a confirm step guards against an accidental tap, and spells out the refund when money is at stake. */
   cancel(): void {
+    const policyNote = clientCancelNote(this.booking);
     this.dialog.open(PromptModalComponent, {
       width: '360px',
       maxWidth: '95vw',
       data: {
         confirmation: true,
         title: 'Cancel this booking?',
-        message: 'This request will be withdrawn. You can always send a new one.',
+        message: this.booking.status === 'confirmed'
+          ? `This session will be cancelled.${policyNote ? ' ' + policyNote : ''}`
+          : 'This request will be withdrawn. You can always send a new one.',
         confirmText: 'Cancel booking',
         cancelText: 'Keep it',
         icon: 'x-circle'
@@ -195,6 +230,10 @@ export class BookingCardComponent {
   setStatus(status: string): void {
     if (this.mode === 'provider' && status === 'cancelled') {
       this.confirmProviderCancel();
+      return;
+    }
+    if (this.mode === 'provider' && status === 'no_show') {
+      this.confirmNoShow();
       return;
     }
     if (this.mode === 'provider' && status === 'confirmed') {

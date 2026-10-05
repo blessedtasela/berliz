@@ -144,6 +144,13 @@
     <app-booking-location-picker *ngIf="availabilityConfigured === true && kind === 'trainer' && providerId"
       [trainerId]="providerId" (selectionChange)="locationSelection = $event"></app-booking-location-picker>
 
+    <!-- ── Estimated total (hidden when the provider has no rate set, and while buying a package) ── -->
+    <app-booking-price-estimate *ngIf="availabilityConfigured === true && selectedOption.kind !== 'buyPackage' && providerId"
+      [trainerId]="kind === 'trainer' ? providerId : null" [centerId]="kind === 'center' ? providerId : null"
+      [providerName]="providerName" [minutes]="slotDurationMinutes"
+      [locationFee]="locationSelection?.fee ?? null"
+      [usesPackage]="selectedOption.kind === 'ownedPackage'"></app-booking-price-estimate>
+
     <!-- ── Notes ─────────────────────────────────────────────────────── -->
     <div *ngIf="availabilityConfigured === true" class="flex flex-col gap-1">
       <div class="flex items-center justify-between">

@@ -49,6 +49,101 @@ describe('BookingCardComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  describe('cancel, no-show and reopen', () => {
+    const lastDialogMessage = (): string => (dialogSpy.open.calls.mostRecent().args[1] as any).data.message;
+
+    it('lets a client cancel a confirmed session as well as a pending one', () => {
+      component.mode = 'client';
+      component.booking.status = 'confirmed';
+      expect(component.canClientCancel).toBeTrue();
+      component.booking.status = 'pending';
+      expect(component.canClientCancel).toBeTrue();
+      component.booking.status = 'completed';
+      expect(component.canClientCancel).toBeFalse();
+    });
+
+    it('spells out the refund before a client cancels a paid, confirmed session', () => {
+      component.mode = 'client';
+      component.booking.status = 'confirmed';
+      component.booking.paymentStatus = 'PAID';
+      component.booking.amountPaid = 100;
+      component.booking.scheduledAt = new Date(Date.now() + 5 * 3600_000);
+
+      component.cancel();
+
+      expect(lastDialogMessage()).toContain('only half');
+    });
+
+    it('keeps the plain withdraw message for a pending request', () => {
+      component.mode = 'client';
+      component.booking.status = 'pending';
+
+      component.cancel();
+
+      expect(lastDialogMessage()).toContain('withdrawn');
+    });
+
+    it('offers No-show to the provider only once a confirmed session has started', () => {
+      component.mode = 'provider';
+      component.booking.status = 'confirmed';
+      component.booking.scheduledAt = new Date(Date.now() - 3600_000);
+      expect(component.canProviderNoShow).toBeTrue();
+      component.booking.scheduledAt = new Date(Date.now() + 3600_000);
+      expect(component.canProviderNoShow).toBeFalse();
+    });
+
+    it('asks before marking a no-show, then emits the no_show status', () => {
+      dialogSpy.open.and.returnValue({ afterClosed: () => of(true) } as any);
+      const emitted: { id: number; status: string }[] = [];
+      component.statusChangeRequested.subscribe(e => emitted.push(e));
+      component.mode = 'provider';
+
+      component.setStatus('no_show');
+
+      expect(emitted).toEqual([{ id: 1, status: 'no_show' }]);
+    });
+
+    it('does not mark a no-show if the provider backs out', () => {
+      dialogSpy.open.and.returnValue({ afterClosed: () => of(false) } as any);
+      const emitted: unknown[] = [];
+      component.statusChangeRequested.subscribe(e => emitted.push(e));
+      component.mode = 'provider';
+
+      component.setStatus('no_show');
+
+      expect(emitted).toEqual([]);
+    });
+
+    it('will not offer to reopen a cancelled session whose money went back', () => {
+      component.mode = 'provider';
+      component.booking.status = 'cancelled';
+      component.booking.paymentStatus = 'REFUNDED';
+      expect(component.canProviderReopen).toBeFalse();
+      component.booking.paymentStatus = 'PARTIALLY_REFUNDED';
+      expect(component.canProviderReopen).toBeFalse();
+      component.booking.paymentStatus = 'UNPAID';
+      expect(component.canProviderReopen).toBeTrue();
+    });
+
+    it('labels the no_show status readably', () => {
+      component.booking.status = 'no_show';
+      expect(component.statusLabel).toBe('No-show');
+    });
+
+    it('shows the pay-by deadline and an extra-balance button label', () => {
+      component.mode = 'client';
+      component.booking.status = 'confirmed';
+      component.booking.paymentStatus = 'UNPAID';
+      component.booking.amountDue = 150;
+      component.booking.amountPaid = 100;
+      component.booking.balanceDue = 50;
+      component.booking.paymentDueAt = new Date(Date.now() + 5 * 3600_000);
+
+      expect(component.payButtonLabel).toBe('Pay extra $50.00');
+      expect(component.payByText).toContain('Pay by');
+    });
+  });
+
   describe('payment', () => {
     beforeEach(() => {
       component.booking.status = 'confirmed';
