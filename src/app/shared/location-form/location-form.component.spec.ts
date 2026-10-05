@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { LocationFormComponent } from './location-form.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('LocationFormComponent', () => {
   let component: LocationFormComponent;
@@ -13,13 +14,15 @@ describe('LocationFormComponent', () => {
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
 
     TestBed.configureTestingModule({
-      declarations: [LocationFormComponent],
-      imports: [HttpClientTestingModule],
-      schemas: [NO_ERRORS_SCHEMA],
-      providers: [
-        { provide: SnackBarService, useValue: snackbarSpy }
-      ]
-    });
+    declarations: [LocationFormComponent],
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [],
+    providers: [
+        { provide: SnackBarService, useValue: snackbarSpy },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
     fixture = TestBed.createComponent(LocationFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

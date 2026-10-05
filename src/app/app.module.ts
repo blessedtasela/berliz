@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { PhotoLightboxComponent } from './shared/photo-lightbox/photo-lightbox.component';
 import { NavHistoryControlsComponent } from './nav-history-controls/nav-history-controls.component';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ScrollModule } from './scroll/scroll.module';
@@ -148,126 +148,116 @@ const dbConfig: DBConfig = {
 };
 
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    PageNotFoundComponent,
-    RouterBreadcrumbComponent,
-    UnderConstructionPageComponent,
-  ],
-  imports: [
-    BrowserModule,
-    PhotoLightboxComponent,
-    NavHistoryControlsComponent,
-    BrowserAnimationsModule,
-    ScrollModule,
-    HttpClientModule,
-    NgxUiLoaderModule.forRoot(ngxUiLoaderConfig),
-    MatSnackBarModule,
-    FormsModule,
-    ProductsModule,
-    MatDialogModule,
-    NgxExtendedPdfViewerModule,
-    SharedModule,
-    FeatherModule,
-    RouterModule,
-    AppRoutingModule,
-    TestimonialModule,
-    BookingModule,
-    NavbarModule,
-    FooterModule,
-    BreadcrumbComponent,
-    BreadcrumbItemDirective,
-    NgxIndexedDBModule.forRoot(dbConfig),
-    NgxFileDropModule,
-    ReactiveFormsModule,
-    CommonModule,
-    BrowserAnimationsModule,
-    NoopAnimationsModule,
-
-    // Store and Effects Modules for NgRx
-    StoreModule.forRoot({}),
-    EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects, WorkoutEffects, AnalyticsEffects, UserProfileEffects, FaqEffects, BookingEffects, AvailabilityEffects, PlanEffects, ProgressShareEffects, ProgressEntryEffects, MessageEffects, PayoutEffects, ClientIntakeEffects, ConnectionEffects, PostActivityEffects]),
-    StoreDevtoolsModule.instrument({
-      maxAge: 25,
-      logOnly: !isDevMode(),
-    }),
-    StoreModule.forFeature(userFeatureKey, userReducer),
-    StoreModule.forFeature(categoryFeatureKey, categoryReducer),
-    StoreModule.forFeature(trainerFeatureKey, trainerReducer),
-    StoreModule.forFeature(centerFeatureKey, centerReducer),
-    StoreModule.forFeature(notificationFeatureKey, notificationReducer),
-    StoreModule.forFeature(partnerFeatureKey, partnerReducer),
-    StoreModule.forFeature(subscriptionFeatureKey, subscriptionReducer),
-    StoreModule.forFeature(taskFeatureKey, taskReducer),
-    StoreModule.forFeature(todoFeatureKey, todoReducer),
-    StoreModule.forFeature(exerciseFeatureKey, exerciseReducer),
-    StoreModule.forFeature(muscleGroupFeatureKey, muscleGroupReducer),
-    StoreModule.forFeature(newsletterFeatureKey, newsletterReducer),
-    StoreModule.forFeature(tagFeatureKey, tagReducer),
-    StoreModule.forFeature(contactUsFeatureKey, contactUsReducer),
-    StoreModule.forFeature(clientFeatureKey, clientReducer),
-    StoreModule.forFeature(dashboardFeatureKey, dashboardReducer),
-    StoreModule.forFeature(testimonialFeatureKey, testimonialReducer),
-    StoreModule.forFeature(bookingFeatureKey, bookingReducer),
-    StoreModule.forFeature(availabilityFeatureKey, availabilityReducer),
-    StoreModule.forFeature(faqFeatureKey, faqReducer),
-    StoreModule.forFeature(planFeatureKey, planReducer),
-    StoreModule.forFeature(paymentFeatureKey, paymentReducer),
-    StoreModule.forFeature(memberFeatureKey, memberReducer),
-    StoreModule.forFeature(workoutFeatureKey, workoutReducer),
-    StoreModule.forFeature(userProfileFeatureKey, userProfileReducer),
-    StoreModule.forFeature(analyticsFeatureKey, analyticsReducer),
-    StoreModule.forFeature(progressShareFeatureKey, progressShareReducer),
-    StoreModule.forFeature(progressEntryFeatureKey, progressEntryReducer),
-    StoreModule.forFeature(messageFeatureKey, messageReducer),
-    StoreModule.forFeature(payoutFeatureKey, payoutReducer),
-    StoreModule.forFeature(clientIntakeFeatureKey, clientIntakeReducer),
-    StoreModule.forFeature(connectionFeatureKey, connectionReducer),
-
-  ],
-  exports: [],
-
-  providers: [
-    // App-wide default: every MatDialog closes only via its own Cancel/X/Done
-    // button, never by clicking the backdrop or pressing Escape -- a modal
-    // holding partly-filled form data (which is most of them here) shouldn't
-    // vanish from a stray click outside it. Set once here rather than on each
-    // of the ~100 individual `dialog.open(...)` call sites; an individual
-    // call can still override this by passing its own `disableClose` if a
-    // specific dialog genuinely needs the old behavior.
-    {
-      provide: MAT_DIALOG_DEFAULT_OPTIONS,
-      useValue: { disableClose: true, hasBackdrop: true }
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: ClientMetaInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true
-    },
-    {
-      provide: RxStompService,
-      useFactory: rxStompServiceFactory,
-      deps: [PLATFORM_ID],
-    },
-    {
-      provide: UrlSerializer,
-      useClass: UrlLowerCaseSerializer
-    },
-    {
-      provide: ErrorHandler,
-      useClass: GlobalErrorHandlerService
-    },
-    BreadcrumbService,
-    DatePipe,
-    WebSocketService,
-  ],
-
-  bootstrap: [AppComponent],
-})
+@NgModule({ declarations: [
+        AppComponent,
+        PageNotFoundComponent,
+        RouterBreadcrumbComponent,
+        UnderConstructionPageComponent,
+    ],
+    exports: [],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        PhotoLightboxComponent,
+        NavHistoryControlsComponent,
+        BrowserAnimationsModule,
+        ScrollModule,
+        NgxUiLoaderModule.forRoot(ngxUiLoaderConfig),
+        MatSnackBarModule,
+        FormsModule,
+        ProductsModule,
+        MatDialogModule,
+        NgxExtendedPdfViewerModule,
+        SharedModule,
+        FeatherModule,
+        RouterModule,
+        AppRoutingModule,
+        TestimonialModule,
+        BookingModule,
+        NavbarModule,
+        FooterModule,
+        BreadcrumbComponent,
+        BreadcrumbItemDirective,
+        NgxIndexedDBModule.forRoot(dbConfig),
+        NgxFileDropModule,
+        ReactiveFormsModule,
+        CommonModule,
+        BrowserAnimationsModule,
+        NoopAnimationsModule,
+        // Store and Effects Modules for NgRx
+        StoreModule.forRoot({}),
+        EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects, WorkoutEffects, AnalyticsEffects, UserProfileEffects, FaqEffects, BookingEffects, AvailabilityEffects, PlanEffects, ProgressShareEffects, ProgressEntryEffects, MessageEffects, PayoutEffects, ClientIntakeEffects, ConnectionEffects, PostActivityEffects]),
+        StoreDevtoolsModule.instrument({
+            maxAge: 25,
+            logOnly: !isDevMode(),
+        }),
+        StoreModule.forFeature(userFeatureKey, userReducer),
+        StoreModule.forFeature(categoryFeatureKey, categoryReducer),
+        StoreModule.forFeature(trainerFeatureKey, trainerReducer),
+        StoreModule.forFeature(centerFeatureKey, centerReducer),
+        StoreModule.forFeature(notificationFeatureKey, notificationReducer),
+        StoreModule.forFeature(partnerFeatureKey, partnerReducer),
+        StoreModule.forFeature(subscriptionFeatureKey, subscriptionReducer),
+        StoreModule.forFeature(taskFeatureKey, taskReducer),
+        StoreModule.forFeature(todoFeatureKey, todoReducer),
+        StoreModule.forFeature(exerciseFeatureKey, exerciseReducer),
+        StoreModule.forFeature(muscleGroupFeatureKey, muscleGroupReducer),
+        StoreModule.forFeature(newsletterFeatureKey, newsletterReducer),
+        StoreModule.forFeature(tagFeatureKey, tagReducer),
+        StoreModule.forFeature(contactUsFeatureKey, contactUsReducer),
+        StoreModule.forFeature(clientFeatureKey, clientReducer),
+        StoreModule.forFeature(dashboardFeatureKey, dashboardReducer),
+        StoreModule.forFeature(testimonialFeatureKey, testimonialReducer),
+        StoreModule.forFeature(bookingFeatureKey, bookingReducer),
+        StoreModule.forFeature(availabilityFeatureKey, availabilityReducer),
+        StoreModule.forFeature(faqFeatureKey, faqReducer),
+        StoreModule.forFeature(planFeatureKey, planReducer),
+        StoreModule.forFeature(paymentFeatureKey, paymentReducer),
+        StoreModule.forFeature(memberFeatureKey, memberReducer),
+        StoreModule.forFeature(workoutFeatureKey, workoutReducer),
+        StoreModule.forFeature(userProfileFeatureKey, userProfileReducer),
+        StoreModule.forFeature(analyticsFeatureKey, analyticsReducer),
+        StoreModule.forFeature(progressShareFeatureKey, progressShareReducer),
+        StoreModule.forFeature(progressEntryFeatureKey, progressEntryReducer),
+        StoreModule.forFeature(messageFeatureKey, messageReducer),
+        StoreModule.forFeature(payoutFeatureKey, payoutReducer),
+        StoreModule.forFeature(clientIntakeFeatureKey, clientIntakeReducer),
+        StoreModule.forFeature(connectionFeatureKey, connectionReducer)], providers: [
+        // App-wide default: every MatDialog closes only via its own Cancel/X/Done
+        // button, never by clicking the backdrop or pressing Escape -- a modal
+        // holding partly-filled form data (which is most of them here) shouldn't
+        // vanish from a stray click outside it. Set once here rather than on each
+        // of the ~100 individual `dialog.open(...)` call sites; an individual
+        // call can still override this by passing its own `disableClose` if a
+        // specific dialog genuinely needs the old behavior.
+        {
+            provide: MAT_DIALOG_DEFAULT_OPTIONS,
+            useValue: { disableClose: true, hasBackdrop: true }
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: ClientMetaInterceptor,
+            multi: true
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthInterceptor,
+            multi: true
+        },
+        {
+            provide: RxStompService,
+            useFactory: rxStompServiceFactory,
+            deps: [PLATFORM_ID],
+        },
+        {
+            provide: UrlSerializer,
+            useClass: UrlLowerCaseSerializer
+        },
+        {
+            provide: ErrorHandler,
+            useClass: GlobalErrorHandlerService
+        },
+        BreadcrumbService,
+        DatePipe,
+        WebSocketService,
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class AppModule { }

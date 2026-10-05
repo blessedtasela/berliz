@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -12,6 +12,7 @@ import { ExercisesListComponent } from './exercises-list.component';
 import { ExerciseService } from 'src/app/services/exercise.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('ExercisesListComponent', () => {
   let component: ExercisesListComponent;
@@ -27,10 +28,10 @@ describe('ExercisesListComponent', () => {
     rxStompServiceSpy.watch.and.returnValue(NEVER);
 
     TestBed.configureTestingModule({
-      declarations: [ExercisesListComponent],
-      imports: [HttpClientTestingModule],
-      schemas: [NO_ERRORS_SCHEMA],
-      providers: [
+    declarations: [ExercisesListComponent],
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [],
+    providers: [
         DatePipe,
         provideMockStore(),
         { provide: ExerciseService, useValue: exerciseServiceSpy },
@@ -38,9 +39,11 @@ describe('ExercisesListComponent', () => {
         { provide: SnackBarService, useValue: snackbarServiceSpy },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: Router, useValue: routerSpy },
-        { provide: RxStompService, useValue: rxStompServiceSpy }
-      ]
-    });
+        { provide: RxStompService, useValue: rxStompServiceSpy },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
     fixture = TestBed.createComponent(ExercisesListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClient, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
@@ -9,11 +9,13 @@ import { AuthService } from './auth.service';
 
 describe('TokenInterceptorInterceptor', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    imports: [HttpClientTestingModule, RouterTestingModule],
+    imports: [RouterTestingModule],
     providers: [
-      AuthInterceptor
+        AuthInterceptor,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
     ]
-  }));
+}));
 
   it('should be created', () => {
     const interceptor: AuthInterceptor = TestBed.inject(AuthInterceptor);
@@ -40,11 +42,13 @@ describe('AuthInterceptor forceLogout routing', () => {
     localStorage.removeItem('refresh_token'); // no refresh token -> forceLogout fires immediately on a 401
 
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule],
-      providers: [
+    imports: [RouterTestingModule],
+    providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-      ],
-    });
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+    ]
+});
 
     httpMock = TestBed.inject(HttpTestingController);
     http = TestBed.inject(HttpClient);

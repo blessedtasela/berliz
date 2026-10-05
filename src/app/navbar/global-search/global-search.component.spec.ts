@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ElementRef, NO_ERRORS_SCHEMA } from '@angular/core';
 import { provideMockStore } from '@ngrx/store/testing';
 
 import { GlobalSearchComponent, matchesCategory } from './global-search.component';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('GlobalSearchComponent', () => {
   let component: GlobalSearchComponent;
@@ -11,14 +12,16 @@ describe('GlobalSearchComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      declarations: [GlobalSearchComponent],
-      schemas: [NO_ERRORS_SCHEMA],
-      providers: [
+    declarations: [GlobalSearchComponent],
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [],
+    providers: [
         provideMockStore(),
         { provide: ElementRef, useValue: new ElementRef(document.createElement('div')) },
-      ]
-    });
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+    ]
+});
 
     fixture = TestBed.createComponent(GlobalSearchComponent);
     component = fixture.componentInstance;

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Actions } from '@ngrx/effects';
@@ -15,6 +15,7 @@ import { Plan } from 'src/app/models/plan.model';
 import { loadPlans } from 'src/app/state/plan/plan.actions';
 import { selectPlanLoading, selectPlans } from 'src/app/state/plan/plan.selectors';
 import { selectPlan, selectPlanFailure, selectPlanSuccess } from 'src/app/state/subscription/subscription.actions';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('MySubscriptionsPlansComponent', () => {
   let component: MySubscriptionsPlansComponent;
@@ -43,20 +44,22 @@ describe('MySubscriptionsPlansComponent', () => {
     const bypassCodeServiceSpy = jasmine.createSpyObj('BypassCodeService', ['redeem']);
 
     TestBed.configureTestingModule({
-      declarations: [MySubscriptionsPlansComponent],
-      imports: [CommonModule, FormsModule, IconsModule, HttpClientTestingModule],
-      providers: [
+    declarations: [MySubscriptionsPlansComponent],
+    imports: [CommonModule, FormsModule, IconsModule],
+    providers: [
         provideMockStore({
-          selectors: [
-            { selector: selectPlans, value: plans },
-            { selector: selectPlanLoading, value: false },
-          ]
+            selectors: [
+                { selector: selectPlans, value: plans },
+                { selector: selectPlanLoading, value: false },
+            ]
         }),
         { provide: Actions, useValue: actions$ },
         { provide: SnackBarService, useValue: snackBarSpy },
-        { provide: BypassCodeService, useValue: bypassCodeServiceSpy }
-      ]
-    });
+        { provide: BypassCodeService, useValue: bypassCodeServiceSpy },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
 
     store = TestBed.inject(MockStore);
     spyOn(store, 'dispatch').and.callThrough();

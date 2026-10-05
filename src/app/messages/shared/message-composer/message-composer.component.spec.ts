@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComposerSendPayload, MessageComposerComponent } from './message-composer.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('MessageComposerComponent', () => {
   let component: MessageComposerComponent;
@@ -9,11 +10,13 @@ describe('MessageComposerComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MessageComposerComponent, HttpClientTestingModule],
-      providers: [
+    imports: [MessageComposerComponent],
+    providers: [
         { provide: SnackBarService, useValue: jasmine.createSpyObj('SnackBarService', ['openSnackBar']) },
-      ],
-    });
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+    ]
+});
     fixture = TestBed.createComponent(MessageComposerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

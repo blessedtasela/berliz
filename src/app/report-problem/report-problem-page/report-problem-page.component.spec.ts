@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -9,6 +9,7 @@ import { NgxUiLoaderModule, NgxUiLoaderService } from 'ngx-ui-loader';
 import { ReportProblemPageComponent } from './report-problem-page.component';
 import { AuthService } from 'src/app/services/auth.service';
 import { environment } from 'src/environments/environment';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('ReportProblemPageComponent', () => {
   let component: ReportProblemPageComponent;
@@ -23,20 +24,19 @@ describe('ReportProblemPageComponent', () => {
     authServiceSpy.isAuthenticated.and.returnValue(false);
 
     TestBed.configureTestingModule({
-      declarations: [ReportProblemPageComponent],
-      schemas: [NO_ERRORS_SCHEMA],
-      imports: [
-        HttpClientTestingModule,
-        ReactiveFormsModule,
+    declarations: [ReportProblemPageComponent],
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [ReactiveFormsModule,
         RouterTestingModule,
-        NgxUiLoaderModule
-      ],
-      providers: [
+        NgxUiLoaderModule],
+    providers: [
         provideMockStore({ initialState: {} }),
         NgxUiLoaderService,
-        { provide: AuthService, useValue: authServiceSpy }
-      ]
-    });
+        { provide: AuthService, useValue: authServiceSpy },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
     fixture = TestBed.createComponent(ReportProblemPageComponent);
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
