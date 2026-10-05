@@ -11,11 +11,10 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/berliz/browser",
+            "outputPath": "dist/berliz",
             "index": "src/index.html",
-            "main": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -34,13 +33,21 @@
                 "glob": "**/*",
                 "input": "src/.well-known",
                 "output": "/.well-known/",
-                "ignore": ["**/.gitkeep"]
+                "ignore": [
+                  "**/.gitkeep"
+                ]
               }
             ],
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "browser": "src/main.ts",
+            "server": "src/main.server.ts",
+            "prerender": {
+              "routesFile": "prerender-routes.txt",
+              "discoverRoutes": false
+            }
           },
           "configurations": {
             "production": {
@@ -79,10 +86,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "berliz:build:production"
+              "buildTarget": "berliz:build:production"
             },
             "development": {
-              "browserTarget": "berliz:build:development"
+              "buildTarget": "berliz:build:development"
             }
           },
           "defaultConfiguration": "development",
@@ -93,7 +100,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "berliz:build"
+            "buildTarget": "berliz:build"
           }
         },
         "test": {
@@ -114,64 +121,6 @@
             "scripts": [],
             "karmaConfig": "karma.conf.js"
           }
-        },
-        "server": {
-          "builder": "@angular-devkit/build-angular:server",
-          "options": {
-            "outputPath": "dist/berliz/server",
-            "main": "src/main.server.ts",
-            "tsConfig": "tsconfig.server.json"
-          },
-          "configurations": {
-            "production": {
-              "outputHashing": "media",
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ]
-            },
-            "development": {
-              "buildOptimizer": false,
-              "optimization": false,
-              "sourceMap": true,
-              "extractLicenses": false,
-              "vendorChunk": true
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "serve-ssr": {
-          "builder": "@nguniversal/builders:ssr-dev-server",
-          "configurations": {
-            "development": {
-              "browserTarget": "berliz:build:development",
-              "serverTarget": "berliz:server:development"
-            },
-            "production": {
-              "browserTarget": "berliz:build:production",
-              "serverTarget": "berliz:server:production"
-            }
-          },
-          "defaultConfiguration": "development"
-        },
-        "prerender": {
-          "builder": "@nguniversal/builders:prerender",
-          "options": {
-            "routesFile": "prerender-routes.txt"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "berliz:build:production",
-              "serverTarget": "berliz:server:production"
-            },
-            "development": {
-              "browserTarget": "berliz:build:development",
-              "serverTarget": "berliz:server:development"
-            }
-          },
-          "defaultConfiguration": "production"
         }
       }
     }

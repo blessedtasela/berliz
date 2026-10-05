@@ -27,7 +27,7 @@ import { NgxIndexedDBModule } from 'ngx-indexed-db';
 import { NavbarModule } from './navbar/navbar.module';
 import { FooterModule } from './footer/footer.module';
 import { RouterBreadcrumbComponent } from './router-breadcrumb/router-breadcrumb.component';
-import { BreadcrumbModule, BreadcrumbService } from 'xng-breadcrumb';
+import { BreadcrumbComponent, BreadcrumbItemDirective, BreadcrumbService } from 'xng-breadcrumb';
 import { UrlLowerCaseSerializer } from 'url-lower-case-serializer';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { UnderConstructionPageComponent } from './under-construction-page/under-construction-page.component';
@@ -176,7 +176,8 @@ const dbConfig: DBConfig = {
     BookingModule,
     NavbarModule,
     FooterModule,
-    BreadcrumbModule,
+    BreadcrumbComponent,
+    BreadcrumbItemDirective,
     NgxIndexedDBModule.forRoot(dbConfig),
     NgxFileDropModule,
     ReactiveFormsModule,

@@ -10,34 +10,42 @@
 - CDN caches assets
 
 ## Build & prerendering
-Netlify's build command is `npm run prerender` (see `netlify.toml`), not a
-plain `ng build`. It runs the normal production browser build first, then
-uses Angular Universal's prerender builder (`@nguniversal/builders`, a dev
-dependency) to statically render the 10 public marketing routes listed in
-`prerender-routes.txt` (`/`, `/about`, `/services` + its 3 children,
-`/contact`, `/trainers`, `/centers`, `/members`) into their own
-`<route>/index.html`, so a crawler that doesn't run JS still sees the real
-title/meta/OG/canonical/JSON-LD tags `SeoService` sets. Every other route —
-the whole `/dashboard` subtree, `/login`, dynamic routes like
-`/trainers/:id`, etc. — is deliberately left out of that list and still
-serves the plain client-rendered shell.
+Netlify's build command is `npm run prerender` (see `netlify.toml`), which runs
+**two** Angular builds and a verification step:
 
-Netlify's publish directory is `dist/berliz/browser` (Universal's scaffold
-splits output into `browser/` and `server/`; only `browser/` is deployed —
-the `server/` bundle, built from `src/main.server.ts` (which just exports
-`AppServerModule`), exists only to support the prerender step and is never run
-as a live Node server). There is deliberately no Express app, `server.ts` or
-`@nguniversal/express-engine`: nothing serves requests at runtime, so the
-request-time SSR advisories against `@nguniversal/*` don't apply, and keeping
-those packages out of `dependencies` keeps them out of `npm audit --omit=dev`.
-Netlify's static file server already prefers an exact file/folder match over
-the `/* -> /index.html` SPA redirect in `netlify.toml`, so the 10 prerendered routes
-serve their static HTML while everything else keeps falling through to the
-CSR shell unchanged — no redirect-rule changes were needed for this.
+1. `ng build --prerender=false --output-path=dist/csr-shell` — a plain client-side
+   build whose `index.html` has an empty `<app-root>`.
+2. `ng build` — the production build with Angular's built-in prerendering (the
+   `application` builder's `prerender` option in `angular.json`, replacing the retired
+   `@nguniversal/builders`). It statically renders the 10 public marketing routes in
+   `prerender-routes.txt` (`/`, `/about`, `/services` + its 3 children, `/contact`,
+   `/trainers`, `/centers`, `/members`) into their own `<route>/index.html`, so a crawler
+   that doesn't run JS still sees the real title/meta/OG/canonical/JSON-LD tags
+   `SeoService` sets. `discoverRoutes` is off, so only the listed routes are rendered.
+3. `node scripts/finalize-prerender.mjs` — copies build 1's `index.html` to
+   `dist/berliz/browser/index.csr.html` and **fails the build** if that shell references
+   any asset that isn't in the final output (the two builds are expected to produce
+   identical hashed bundle names).
 
-To prerender locally: `npm run prerender`, then check
-`dist/berliz/browser/<route>/index.html` (raw file, not DevTools) for the
-baked-in tags.
+Why the second build: this builder has no separate client-side shell —
+`dist/berliz/browser/index.html` *is* the prerendered landing page. Netlify's catch-all
+(`/* -> /index.csr.html` in `netlify.toml`) must serve a generic shell for every route
+that is NOT prerendered (the whole `/dashboard` subtree, `/login`, dynamic routes like
+`/trainers/:id`); falling back to `index.html` would give those URLs the landing page's
+raw title/canonical/JSON-LD.
+
+Netlify's publish directory is `dist/berliz/browser`. The server bundle exists only during
+the build and is never run as a live Node server — there is no Express app,
+`server.ts` or `@nguniversal/*` runtime, so request-time SSR advisories don't apply.
+`src/main.server.ts` (the server entry) must **default-export** `AppServerModule`, and it
+turns `setInterval` into a no-op: a periodic timer is never "done", so one left running
+(the STOMP websocket heartbeat, counter animations, hero slideshows) makes Angular's
+render wait for stability forever and the build hangs. That only affects the build-time
+snapshot — the browser bundle never loads that file.
+
+To prerender locally: `npm run prerender` (~3.5 min), then check
+`dist/berliz/browser/<route>/index.html` (raw file, not DevTools) for the baked-in tags,
+and that `index.csr.html` has an empty `<app-root></app-root>`.
 
 ## Domain
 https://berliz.fitness
