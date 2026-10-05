@@ -69,10 +69,10 @@ describe('BookingLocationPickerComponent', () => {
   it('emits the chosen listed location and clears it when tapped again', () => {
     render(trainer());
     component.selectListed(component.locations[0]);
-    expect(emitted.pop()).toEqual({ trainerLocationId: 41, customLocation: undefined, incomplete: false });
+    expect(emitted.pop()).toEqual({ trainerLocationId: 41, customLocation: undefined, incomplete: false, fee: 15 });
 
     component.selectListed(component.locations[0]);
-    expect(emitted.pop()).toEqual({ trainerLocationId: undefined, customLocation: undefined, incomplete: false });
+    expect(emitted.pop()).toEqual({ trainerLocationId: undefined, customLocation: undefined, incomplete: false, fee: null });
   });
 
   it('shows the fee warning for a priced location but not a free one', () => {
@@ -89,11 +89,11 @@ describe('BookingLocationPickerComponent', () => {
   it('flags a custom location as incomplete until an address is typed', () => {
     render(trainer());
     component.selectCustom();
-    expect(emitted.pop()).toEqual({ trainerLocationId: undefined, customLocation: undefined, incomplete: true });
+    expect(emitted.pop()).toEqual({ trainerLocationId: undefined, customLocation: undefined, incomplete: true, fee: 25 });
 
     component.customText = '  12 Elm St ';
     component.emit();
-    expect(emitted.pop()).toEqual({ trainerLocationId: undefined, customLocation: '12 Elm St', incomplete: false });
+    expect(emitted.pop()).toEqual({ trainerLocationId: undefined, customLocation: '12 Elm St', incomplete: false, fee: 25 });
   });
 
   it('picking a listed location drops a custom one and vice versa', () => {
@@ -125,7 +125,7 @@ describe('BookingLocationPickerComponent', () => {
     component.preselect = { trainerLocationId: 41 };
     render(trainer());
     expect(component.selectedId).toBe(41);
-    expect(emitted.pop()).toEqual({ trainerLocationId: 41, customLocation: undefined, incomplete: false });
+    expect(emitted.pop()).toEqual({ trainerLocationId: 41, customLocation: undefined, incomplete: false, fee: 15 });
   });
 
   it("restores a preselected custom location when the trainer allows it", () => {
@@ -133,7 +133,7 @@ describe('BookingLocationPickerComponent', () => {
     render(trainer());
     expect(component.customSelected).toBeTrue();
     expect(component.customText).toBe("12 Elm St");
-    expect(emitted.pop()).toEqual({ trainerLocationId: undefined, customLocation: "12 Elm St", incomplete: false });
+    expect(emitted.pop()).toEqual({ trainerLocationId: undefined, customLocation: "12 Elm St", incomplete: false, fee: 25 });
   });
 
   it("ignores a preselect that no longer exists", () => {

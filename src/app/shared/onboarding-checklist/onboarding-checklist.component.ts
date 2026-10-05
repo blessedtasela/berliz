@@ -119,6 +119,11 @@ export class OnboardingChecklistComponent implements OnInit {
     }
 
     return [
+      // Location/phone/photo are optional at signup now (cut from 13 required
+      // fields down to the essentials), so this is the first time most regular
+      // users are prompted for them -- genuinely useful for "find a provider
+      // near you" below, not just busywork.
+      { key: 'profile', label: 'Complete your profile', hint: 'Add your photo and location', icon: 'user', link: ['/dashboard/profile/edit'], done: clicked('profile'), clickToComplete: true },
       { key: 'log-workout', label: 'Log your first workout', hint: 'Track a session, run or lift', icon: 'activity', link: ['/dashboard/workouts'], done: false },
       { key: 'connect', label: 'Connect with someone', hint: 'Find people to train with', icon: 'users', link: ['/dashboard/member-directory'], done: false },
       { key: 'find-provider', label: 'Find a trainer or gym', hint: 'Browse providers near you', icon: 'search', link: ['/dashboard/find-providers'], done: clicked('find-provider'), clickToComplete: true },

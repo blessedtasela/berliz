@@ -93,6 +93,29 @@ describe('QuickSignupComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
   }));
 
+  describe('quickSignup (plain email + password)', () => {
+    it('goes to activate-account with the email pre-filled, not a bare /login', () => {
+      userService.quickAdd.and.returnValue(of({
+        message: 'Check your email', success: true, statusCode: 200, data: '',
+      }) as any);
+      fixture.detectChanges();
+
+      component.quickSignupForm.setValue({
+        email: 'new.user@example.com',
+        password: 'password123',
+        confirmPassword: 'password123',
+      });
+
+      component.quickSignup();
+
+      expect(userService.quickAdd).toHaveBeenCalled();
+      expect(router.navigate).toHaveBeenCalledWith(
+        ['/login/activate-account'],
+        { queryParams: { email: 'new.user@example.com' } }
+      );
+    });
+  });
+
   describe('loginWithFacebook', () => {
     it('signs the user up on a successful Facebook popup + backend verification', fakeAsync(() => {
       socialAuthService.loginWithFacebook.and.returnValue(Promise.resolve('fb-access-token'));

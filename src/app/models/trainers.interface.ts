@@ -14,6 +14,8 @@ export interface Trainers {
   /** @deprecated Internal-use free text only — the public profile shows `locations` instead. */
   address: string;
   experience: string;
+  /** The trainer's own per-hour session rate; null/absent when they haven't set one (then sessions aren't priced in-app). */
+  hourlyRate?: number | null;
   activationUniqueId: string;
   activatedUniqueIdUsed: boolean;
   likes: number;

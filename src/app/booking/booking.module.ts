@@ -9,6 +9,7 @@ import { DateStripComponent } from 'src/app/shared/date-strip/date-strip.compone
 import { TimePickerComponent } from 'src/app/shared/time-picker/time-picker.component';
 import { DraftResumeBannerComponent } from 'src/app/shared/draft-resume-banner/draft-resume-banner.component';
 import { BookingLocationPickerComponent } from './booking-location-picker/booking-location-picker.component';
+import { BookingPriceEstimateComponent } from './booking-price-estimate/booking-price-estimate.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { BookingLocationPickerComponent } from './booking-location-picker/bookin
     DateStripComponent,
     TimePickerComponent,
     DraftResumeBannerComponent,
-    BookingLocationPickerComponent
+    BookingLocationPickerComponent,
+    BookingPriceEstimateComponent
   ]
 })
 export class BookingModule { }

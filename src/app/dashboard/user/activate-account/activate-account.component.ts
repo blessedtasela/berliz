@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { take } from 'rxjs';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -22,8 +22,12 @@ export class ActivateAccountComponent implements OnInit {
   /** True after a successful resend, so the UI can confirm without a toast that scrolls away. */
   resent = false;
 
+  /** Set when arriving straight from signup (?email=...) so the page can greet the user by name instead of showing a bare, context-free code field. */
+  knownEmail: string | null = null;
+
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private userService: UserService,
     private ngxService: NgxUiLoaderService,
     private snackBarService: SnackBarService,
@@ -34,8 +38,10 @@ export class ActivateAccountComponent implements OnInit {
     this.activateAccountForm = this.fb.group({
       token: ['', [Validators.required, Validators.minLength(8)]],
     });
+
+    this.knownEmail = this.route.snapshot.queryParamMap.get('email');
     this.resendForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: [this.knownEmail || '', [Validators.required, Validators.email]],
     });
   }
 

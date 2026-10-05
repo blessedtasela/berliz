@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
@@ -7,7 +6,6 @@ import { Subject, takeUntil } from 'rxjs';
 import { Booking } from 'src/app/models/booking.model';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StripeService } from 'src/app/services/stripe.service';
-import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 import {
   cancelBooking,
@@ -41,7 +39,6 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     private actions$: Actions,
-    private dialog: MatDialog,
     private snackBar: SnackBarService,
     private stripeService: StripeService,
   ) { }
@@ -94,6 +91,10 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
     return this.bookings.filter(b => b.status === 'cancelled');
   }
 
+  get noShow(): Booking[] {
+    return this.bookings.filter(b => b.status === 'no_show');
+  }
+
   /** Starts Stripe Checkout for a confirmed session; the amount is whatever the server priced the booking at. */
   onPayRequested(id: number): void {
     if (this.payingBookingId !== null) return;
@@ -120,17 +121,8 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
     window.location.href = url;
   }
 
+  /** The card has already asked "Cancel this booking?" -- including the refund the client will get for a paid session -- so this goes straight to the server rather than asking a second, less informed time. */
   onCancelRequested(id: number): void {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.data = {
-      message: 'cancel this booking?',
-      confirmation: true,
-      disableClose: true,
-    };
-    const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
-    dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
-      this.store.dispatch(cancelBooking({ id }));
-      dialogRef.close();
-    });
+    this.store.dispatch(cancelBooking({ id }));
   }
 }

@@ -17,7 +17,7 @@ export interface Booking {
   scheduledAt: Date;
   durationMinutes: number;
 
-  /** pending | confirmed | cancelled | completed */
+  /** pending | confirmed | cancelled | completed | no_show */
   status: string;
   notes: string;
 
@@ -33,8 +33,14 @@ export interface Booking {
 
   /** What the client owes for this session (price + location fee, less rewards); set when the provider confirms it. */
   amountDue?: number | null;
-  /** null (never priced / provider has no rate) | NOT_REQUIRED | UNPAID | PAID | REFUNDED. */
-  paymentStatus?: 'NOT_REQUIRED' | 'UNPAID' | 'PAID' | 'REFUNDED' | null;
+  /** null (never priced / provider has no rate) | NOT_REQUIRED | UNPAID | PAID | REFUNDED | PARTIALLY_REFUNDED. */
+  paymentStatus?: 'NOT_REQUIRED' | 'UNPAID' | 'PAID' | 'REFUNDED' | 'PARTIALLY_REFUNDED' | null;
+  /** Net amount paid so far, after refunds. */
+  amountPaid?: number | null;
+  /** What still has to be paid right now: all of it, or only the difference after a paid session was extended. 0 when nothing is owed. */
+  balanceDue?: number | null;
+  /** While confirmed and unpaid: the moment it is cancelled automatically for non-payment. */
+  paymentDueAt?: Date | null;
 
   date: Date;
   lastUpdate: Date;

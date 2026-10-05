@@ -65,7 +65,7 @@ describe('BookingFormComponent', () => {
     const store = TestBed.inject(MockStore);
     spyOn(store, 'dispatch');
 
-    component.onLocationChange({ customLocation: undefined, incomplete: true });
+    component.onLocationChange({ customLocation: undefined, incomplete: true, fee: null });
     component.submitForm();
 
     expect(TestBed.inject(SnackBarService).openSnackBar).toHaveBeenCalled();
@@ -82,7 +82,7 @@ describe('BookingFormComponent', () => {
       date: '2099-01-01', time: '09:00', durationMinutes: 60,
     });
 
-    component.onLocationChange({ trainerLocationId: 41, customLocation: undefined, incomplete: false });
+    component.onLocationChange({ trainerLocationId: 41, customLocation: undefined, incomplete: false, fee: 15 });
     component.submitForm();
 
     const action: any = (store.dispatch as jasmine.Spy).calls.mostRecent().args[0];

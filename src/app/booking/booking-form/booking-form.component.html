@@ -175,6 +175,12 @@
         <app-booking-location-picker *ngIf="availabilityConfigured !== null && data.trainerId"
             [trainerId]="data.trainerId" [preselect]="locationPreselect" (selectionChange)="onLocationChange($event)"></app-booking-location-picker>
 
+        <!-- ── Estimated total (hidden when the provider has no rate set) ── -->
+        <app-booking-price-estimate *ngIf="availabilityConfigured !== null"
+            [trainerId]="data.trainerId" [centerId]="data.centerId" [providerName]="data.providerName"
+            [minutes]="estimateMinutes" [locationFee]="estimateLocationFee"
+            [promotion]="estimatePromotion" [credit]="estimateCredit"></app-booking-price-estimate>
+
         <!-- ── Notes ─────────────────────────────────────────────────────── -->
         <div *ngIf="availabilityConfigured !== null" class="flex flex-col gap-1">
             <div class="flex items-center justify-between">

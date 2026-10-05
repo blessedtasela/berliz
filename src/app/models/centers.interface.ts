@@ -6,6 +6,8 @@ export interface Centers {
   motto: string;
   address: string;
   experience: string;
+  /** The center's own per-hour session rate; null/absent when it hasn't set one (then sessions aren't priced in-app). */
+  hourlyRate?: number | null;
   location: string;
   /** Same nested shape Trainers.photoResponse already uses -- was a flat `photoUrl` that the API never actually sent, so every center image silently fell back to a placeholder. */
   photoResponse: PhotoResponse;

@@ -134,6 +134,10 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     return this.bookings.filter(b => b.status === 'cancelled');
   }
 
+  get noShow(): Booking[] {
+    return this.bookings.filter(b => b.status === 'no_show');
+  }
+
   refresh(): void {
     this.store.dispatch(loadMyProviderBookings());
   }

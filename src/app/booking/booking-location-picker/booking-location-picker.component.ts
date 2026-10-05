@@ -13,6 +13,8 @@ export interface BookingLocationSelection {
   customLocation?: string;
   /** True when "my own location" is picked but nothing is typed yet -- the parent should block submit. */
   incomplete: boolean;
+  /** The fee that comes with this choice (null when none), so the booking form can include it in the estimated total. */
+  fee: number | null;
 }
 
 /**
@@ -136,6 +138,7 @@ export class BookingLocationPickerComponent implements OnInit, OnChanges {
       trainerLocationId: this.selectedId ?? undefined,
       customLocation: this.customSelected && custom ? custom : undefined,
       incomplete: this.customSelected && !custom,
+      fee: this.selectedFee,
     });
   }
 

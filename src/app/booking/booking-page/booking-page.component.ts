@@ -9,6 +9,7 @@ import { Observable, Subject, catchError, of, take, takeUntil } from 'rxjs';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { DateStripComponent } from 'src/app/shared/date-strip/date-strip.component';
 import { BookingLocationPickerComponent, BookingLocationSelection } from '../booking-location-picker/booking-location-picker.component';
+import { BookingPriceEstimateComponent } from '../booking-price-estimate/booking-price-estimate.component';
 
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { TrainerService } from 'src/app/services/trainer.service';
@@ -51,7 +52,7 @@ type BookingOption =
 @Component({
   selector: 'app-booking-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, IconsModule, DateStripComponent, BookingLocationPickerComponent],
+  imports: [CommonModule, FormsModule, RouterModule, IconsModule, DateStripComponent, BookingLocationPickerComponent, BookingPriceEstimateComponent],
   templateUrl: './booking-page.component.html',
 })
 export class BookingPageComponent implements OnInit, OnDestroy {

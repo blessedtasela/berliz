@@ -18,9 +18,12 @@
           <i-feather name="mail" class="text-red-600" style="width:20px;height:20px;"></i-feather>
         </div>
         <div>
-          <h1 class="text-lg font-bold text-gray-900">Activate your account</h1>
+          <h1 class="text-lg font-bold text-gray-900">{{ knownEmail ? "You're almost in" : 'Activate your account' }}</h1>
           <p class="text-xs text-gray-500 mt-1">
-            Enter the activation code we emailed you when you signed up.
+            <ng-container *ngIf="knownEmail; else genericCopy">
+              We've sent a code to <span class="font-semibold text-gray-700">{{ knownEmail }}</span> — enter it below to activate your account.
+            </ng-container>
+            <ng-template #genericCopy>Enter the activation code we emailed you when you signed up.</ng-template>
           </p>
         </div>
       </header>

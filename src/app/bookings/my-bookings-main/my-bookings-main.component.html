@@ -55,6 +55,15 @@
             <app-booking-card *ngFor="let b of completed" mode="client" [booking]="b" (payRequested)="onPayRequested($event)"></app-booking-card>
         </div>
 
+        <!-- No-show -->
+        <div *ngIf="noShow.length > 0" class="flex flex-col gap-2">
+            <span class="text-[11px] font-semibold text-red-500 uppercase tracking-wide flex items-center gap-1">
+                <i-feather name="user-x" style="width:11px;height:11px;"></i-feather>
+                No-show
+            </span>
+            <app-booking-card *ngFor="let b of noShow" mode="client" [booking]="b"></app-booking-card>
+        </div>
+
         <!-- Cancelled -->
         <div *ngIf="cancelled.length > 0" class="flex flex-col gap-2">
             <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide flex items-center gap-1">
