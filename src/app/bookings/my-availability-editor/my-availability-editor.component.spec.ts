@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Actions } from '@ngrx/effects';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -16,6 +17,7 @@ describe('MyAvailabilityEditorComponent', () => {
     const snackBarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
 
     TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
       declarations: [MyAvailabilityEditorComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -30,6 +31,7 @@ describe('BookingFormComponent', () => {
     promotionServiceSpy.getPublicForCenter.and.returnValue(of({ data: [] }));
 
     TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
       declarations: [BookingFormComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [

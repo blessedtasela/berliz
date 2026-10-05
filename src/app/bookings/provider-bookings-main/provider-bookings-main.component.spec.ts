@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { MatDialogModule } from '@angular/material/dialog';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Actions } from '@ngrx/effects';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -15,6 +18,7 @@ describe('ProviderBookingsMainComponent', () => {
     const mockSnackBarService = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
 
     TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule, RouterTestingModule, MatDialogModule],
       declarations: [ProviderBookingsMainComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
