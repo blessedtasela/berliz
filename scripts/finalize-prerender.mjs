@@ -22,6 +22,20 @@ const fail = (msg) => { console.error('finalize-prerender: ' + msg); process.exi
 if (!existsSync(join(shellDir, 'index.html'))) fail(`${shellDir}/index.html missing -- did the no-prerender build run?`);
 if (!existsSync(join(outDir, 'index.html'))) fail(`${outDir}/index.html missing -- did the prerender build run?`);
 
+// Angular 20+ prerenders a router redirect as a meta-refresh stub instead of rendering the target in place
+// (17-19 emitted the landing page's HTML at "/"). The app redirects "" -> "home", so "/" would become a
+// "Redirecting..." page: crawlers get no landing content and every visitor pays an extra page load. Put the
+// prerendered /home HTML back at "/" -- the same document 17-19 produced (its canonical already points at /home).
+const rootPath = join(outDir, 'index.html');
+if (/http-equiv="refresh"/i.test(readFileSync(rootPath, 'utf8'))) {
+  const homePath = join(outDir, 'home', 'index.html');
+  if (!existsSync(homePath)) fail('"/" is a redirect stub but /home was not prerendered (is /home in prerender-routes.txt?)');
+  const home = readFileSync(homePath, 'utf8');
+  if (!/ng-server-context/.test(home)) fail('/home exists but is not a prerendered page');
+  cpSync(homePath, rootPath);
+  console.log('finalize-prerender: replaced the "/" redirect stub with the prerendered /home page');
+}
+
 const shell = readFileSync(join(shellDir, 'index.html'), 'utf8');
 
 if (/ng-server-context|<app-root[^>]*>\s*<[a-z]/i.test(shell)) fail('the shell already contains server-rendered content; expected an empty <app-root>');

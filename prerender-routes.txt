@@ -1,4 +1,5 @@
 /
+/home
 /about
 /services
 /services/faqs

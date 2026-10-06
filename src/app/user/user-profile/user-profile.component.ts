@@ -124,6 +124,9 @@ export class UserProfileComponent {
   // UTILS
   // ---------------------------
   formatDate(dateString: any): string | null {
-    return this.datePipe.transform(new Date(dateString), 'dd/MM/yyyy');
+    const date = new Date(dateString);
+    // Angular 20's DatePipe throws on an Invalid Date (earlier versions rendered it quietly), which would take
+    // the whole profile template down for a user record with a missing/malformed `date`. Same as an empty value.
+    return isNaN(date.getTime()) ? null : this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 }

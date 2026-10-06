@@ -16,6 +16,10 @@ export interface Trainers {
   experience: string;
   /** The trainer's own per-hour session rate; null/absent when they haven't set one (then sessions aren't priced in-app). */
   hourlyRate?: number | null;
+  /** Free-cancellation window in hours (a client cancelling at least this far ahead is refunded in full); null = platform default (24). */
+  freeCancelHours?: number | null;
+  /** Share (0-100) refunded when a client cancels inside that window; null = platform default (50). */
+  lateCancelRefundPercent?: number | null;
   activationUniqueId: string;
   activatedUniqueIdUsed: boolean;
   likes: number;

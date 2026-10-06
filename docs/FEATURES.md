@@ -184,6 +184,29 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Trainers and centers set their own rate and cancellation policy; payouts for sessions paid late
+
+Found while checking the booking-payment work: **nothing in the app let a trainer or center set an hourly
+rate**, so in-app payment only worked for providers whose rate had been entered by hand in the database.
+Fixed, and the cancellation numbers are now each provider's own choice instead of fixed constants.
+
+- **Rate + cancellation policy in the trainer and center editors** (new shared `app-provider-pricing-fields`):
+  session rate per hour (blank/0 = not priced in the app), free-cancellation window (none / 6 / 12 / 24 / 48 / 72 h),
+  and the refund share when a client cancels later (full / 75 / 50 / 25 / none). A plain-English summary under the
+  fields shows exactly what a client will be told. The server validates: rate 0-10,000 (0 clears it), window 0-168 h,
+  share 0-100%.
+- **Pinned per booking.** The provider's policy is copied onto the booking when it is first confirmed, so editing
+  your policy never changes the terms of a session someone already booked. Unset = the platform default (24 h, 50%).
+  A 0-hour window means no free cancellation: everything before the start is a late cancel.
+- **Clients see the terms up front and at cancel time.** The estimated-total box on the booking form now ends with
+  the provider's cancellation policy, and the cancel prompt quotes the exact window and percentage from the booking.
+- **Finished-but-unpaid sessions.** Completing (or no-showing) a session the client never paid for tells them to pay
+  straight away and reminds them once, a day later. They are never auto-cancelled (the session already happened).
+- **Fixed: a late payment left the provider unpaid.** The payout was only ever created at completion, so a client
+  paying *after* completion (or after a no-show) was recorded as paid but no payout was created. Paying now creates it.
+- Migration V61. Not yet: a provider can't set different policies for different services; the policy isn't shown on the
+  public profile, only while booking.
+
 ### Unreleased — Angular 16 → 19 upgrade, and a much shorter signup
 
 - **Angular 16 → 19** (hops 17, 18, 19; the remaining high-severity npm advisories were all Angular 16
@@ -239,7 +262,7 @@ Closes the gaps left by per-session checkout. The numbers below are constants in
   money went back can't be reopened (client books again). The client cancel no longer asks twice. The
   `navigation` icon used by the location picker and trainer dropdown wasn't registered — now it is.
 - Migration V60.
-- Not yet: the late-cancel window and the 50% are fixed constants, not per-trainer settings; no automatic
+- Not yet (the fixed 24h/50% became per-provider settings in the entry above): no automatic
   "complete" or no-show detection; the extension balance has no deadline of its own; amounts show with "$"
   whatever the Stripe currency is.
 
