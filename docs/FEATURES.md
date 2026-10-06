@@ -221,9 +221,6 @@ Backend-only (`com.berliz`); no UI changes. Follows a full audit of the Spring B
   `RunDetails`, `ScheduleRun`, `Social`) that nothing referenced.
 - **Config, not code**: `BERLIZ_SUPER_ADMIN_EMAIL` (default unchanged) and `BILL_OUTPUT_DIR` (default
   `bills/order-bill`) replace constants that were hardcoded in source.
-- **Known issue (not from this change):** origin has two Flyway `V54__*` migrations (`add_email_notify_social` and
-  `referral_program`); Flyway refuses to start with a duplicate version, so one needs renumbering — check which is
-  already applied before renaming.
 
 ### Unreleased — Trainers and centers set their own rate and cancellation policy; payouts for sessions paid late
 
