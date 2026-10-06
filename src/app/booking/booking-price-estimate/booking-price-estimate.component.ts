@@ -6,6 +6,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { CenterService } from 'src/app/services/center.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { Offer, PriceEstimate, estimateBookingPrice } from './booking-price.util';
+import { DEFAULT_FREE_CANCEL_HOURS, DEFAULT_LATE_CANCEL_REFUND_PERCENT } from 'src/app/bookings/booking-payment.util';
 
 /**
  * "Estimated total" for a session, shown while booking so the price is never a surprise. Pulls the
@@ -41,6 +42,10 @@ import { Offer, PriceEstimate, estimateBookingPrice } from './booking-price.util
         <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
         You pay only after {{ providerName || 'the provider' }} confirms — nothing is charged now.
       </p>
+      <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
+        <i-feather name="calendar" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+        {{ cancellationPolicyText }}
+      </p>
     </div>
   `
 })
@@ -55,6 +60,9 @@ export class BookingPriceEstimateComponent implements OnInit, OnChanges {
   @Input() usesPackage = false;
 
   hourlyRate: number | null = null;
+  /** The provider's own cancellation policy (null = platform default). */
+  private freeCancelHours: number | null = null;
+  private lateCancelRefundPercent: number | null = null;
 
   constructor(private trainerService: TrainerService, private centerService: CenterService) {}
 
@@ -75,17 +83,35 @@ export class BookingPriceEstimateComponent implements OnInit, OnChanges {
     });
   }
 
+  /** What the client is agreeing to if they later cancel, in the provider's own terms. */
+  get cancellationPolicyText(): string {
+    const hours = this.freeCancelHours ?? DEFAULT_FREE_CANCEL_HOURS;
+    const percent = this.lateCancelRefundPercent ?? DEFAULT_LATE_CANCEL_REFUND_PERCENT;
+    const late = percent >= 100 ? 'refunded in full' : percent <= 0 ? 'not refunded' : `${percent}% refunded`;
+    return hours > 0
+      ? `Free cancellation until ${hours} hours before; after that it's ${late}.`
+      : `No free cancellation: a cancellation before the start is ${late}.`;
+  }
+
   private loadRate(): void {
     this.hourlyRate = null;
+    this.freeCancelHours = null;
+    this.lateCancelRefundPercent = null;
     if (this.trainerId) {
       const id = this.trainerId;
       this.trainerService.getActiveTrainers().pipe(take(1), catchError(() => of(null))).subscribe(res => {
-        this.hourlyRate = (res?.data ?? []).find(t => t.id === id)?.hourlyRate ?? null;
+        const t = (res?.data ?? []).find(x => x.id === id);
+        this.hourlyRate = t?.hourlyRate ?? null;
+        this.freeCancelHours = t?.freeCancelHours ?? null;
+        this.lateCancelRefundPercent = t?.lateCancelRefundPercent ?? null;
       });
     } else if (this.centerId) {
       const id = this.centerId;
       this.centerService.getActiveCenters().pipe(take(1), catchError(() => of(null))).subscribe(res => {
-        this.hourlyRate = (res?.data ?? []).find(c => c.id === id)?.hourlyRate ?? null;
+        const c = (res?.data ?? []).find(x => x.id === id);
+        this.hourlyRate = c?.hourlyRate ?? null;
+        this.freeCancelHours = c?.freeCancelHours ?? null;
+        this.lateCancelRefundPercent = c?.lateCancelRefundPercent ?? null;
       });
     }
   }

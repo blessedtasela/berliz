@@ -6,9 +6,24 @@ import { Booking } from 'src/app/models/booking.model';
  * CancellationPolicy): the server is the authority, this only decides what to show.
  */
 
-/** Cancelling at least this long before the start refunds everything; inside it, half; once started, nothing. */
-export const FULL_REFUND_WINDOW_HOURS = 24;
-export const LATE_CANCEL_REFUND_FRACTION = 0.5;
+/**
+ * Platform defaults, used when a booking carries no policy of its own: cancelling at least 24h before
+ * the start refunds everything; inside that, half; once started, nothing. A provider can choose
+ * different numbers, which the server pins on the booking when it is confirmed (freeCancelHours /
+ * lateCancelRefundPercent) -- always prefer those.
+ */
+export const DEFAULT_FREE_CANCEL_HOURS = 24;
+export const DEFAULT_LATE_CANCEL_REFUND_PERCENT = 50;
+
+/** The free-cancellation window that applies to this booking, in hours. */
+export function freeCancelHours(b: Booking): number {
+  return b.freeCancelHours ?? DEFAULT_FREE_CANCEL_HOURS;
+}
+
+/** The share (0-100) refunded when the client cancels inside that window. */
+export function lateRefundPercent(b: Booking): number {
+  return b.lateCancelRefundPercent ?? DEFAULT_LATE_CANCEL_REFUND_PERCENT;
+}
 
 const HOUR_MS = 60 * 60 * 1000;
 
@@ -80,8 +95,10 @@ export function payByNote(b: Booking, locale = 'en-US'): string | null {
 /** The fraction of what was paid that a client gets back if they cancel at {@code now}. */
 export function clientRefundFraction(b: Booking, now: Date = new Date()): number {
   const untilStart = new Date(b.scheduledAt).getTime() - now.getTime();
-  if (untilStart >= FULL_REFUND_WINDOW_HOURS * HOUR_MS) return 1;
-  if (untilStart > 0) return LATE_CANCEL_REFUND_FRACTION;
+  const windowHours = freeCancelHours(b);
+  // A window of 0 hours means no free cancellation: anything before the start is a late cancel.
+  if (windowHours > 0 && untilStart >= windowHours * HOUR_MS) return 1;
+  if (untilStart > 0) return lateRefundPercent(b) / 100;
   return 0;
 }
 
@@ -94,11 +111,14 @@ export function clientCancelNote(b: Booking, now: Date = new Date()): string | n
   if (b.status !== 'confirmed' || paid <= 0) return null;
 
   const fraction = clientRefundFraction(b, now);
+  const hours = freeCancelHours(b);
   if (fraction >= 1) return `You'll get your full payment of $${money(paid)} back.`;
+  if (new Date(b.scheduledAt).getTime() <= now.getTime()) return 'The session has already started, so your payment is not refunded.';
+  const why = hours > 0 ? `This is less than ${hours} hours before the session` : 'This provider doesn\x27t offer free cancellation';
   if (fraction > 0) {
-    return `This is less than ${FULL_REFUND_WINDOW_HOURS} hours before the session, so only half is refunded ($${money(paid * fraction)} of $${money(paid)}) and the rest goes to the provider.`;
+    return `${why}, so only ${Math.round(fraction * 100)}% is refunded ($${money(paid * fraction)} of $${money(paid)}) and the rest goes to the provider.`;
   }
-  return 'The session has already started, so your payment is not refunded.';
+  return `${why}, so your payment is not refunded.`;
 }
 
 /** The provider can mark a confirmed session as a no-show once its start time has passed. */

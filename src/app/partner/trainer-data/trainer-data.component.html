@@ -44,6 +44,8 @@
             ? 'border-red-300 dark:border-red-800' : 'border-gray-200 dark:border-gray-700'" />
             </div>
 
+            <app-provider-pricing-fields [form]="updateTrainerForm"></app-provider-pricing-fields>
+
             <div *ngIf="user?.role === 'admin'" class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Likes</label>
                 <input formControlName="likes" type="number" readonly class="w-full px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-500 dark:text-gray-400

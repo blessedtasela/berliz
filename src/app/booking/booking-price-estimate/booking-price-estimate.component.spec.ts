@@ -16,7 +16,7 @@ describe('BookingPriceEstimateComponent', () => {
   beforeEach(() => {
     trainerService = jasmine.createSpyObj('TrainerService', ['getActiveTrainers']);
     centerService = jasmine.createSpyObj('CenterService', ['getActiveCenters']);
-    trainerService.getActiveTrainers.and.returnValue(of({ data: [{ id: 9, hourlyRate: 100 }, { id: 10 }] } as any));
+    trainerService.getActiveTrainers.and.returnValue(of({ data: [{ id: 9, hourlyRate: 100 }, { id: 10 }, { id: 11, hourlyRate: 50, freeCancelHours: 48, lateCancelRefundPercent: 0 }] } as any));
     centerService.getActiveCenters.and.returnValue(of({ data: [{ id: 3, hourlyRate: 80 }] } as any));
 
     TestBed.configureTestingModule({
@@ -65,6 +65,16 @@ describe('BookingPriceEstimateComponent', () => {
     component.minutes = 30;
     fixture.detectChanges();
     expect(text()).toContain('$50.00');
+  });
+
+  it('states the platform default cancellation policy when the provider has not chosen one', () => {
+    show({ trainerId: 9, minutes: 60 });
+    expect(text()).toContain('Free cancellation until 24 hours before; after that it\x27s 50% refunded.');
+  });
+
+  it("states the provider's own cancellation policy", () => {
+    show({ trainerId: 11, minutes: 60 });
+    expect(text()).toContain("Free cancellation until 48 hours before; after that it's not refunded.");
   });
 
   it('renders nothing for a provider with no rate set', () => {

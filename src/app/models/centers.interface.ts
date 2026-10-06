@@ -8,6 +8,10 @@ export interface Centers {
   experience: string;
   /** The center's own per-hour session rate; null/absent when it hasn't set one (then sessions aren't priced in-app). */
   hourlyRate?: number | null;
+  /** Free-cancellation window in hours; null = platform default (24). */
+  freeCancelHours?: number | null;
+  /** Share (0-100) refunded when a client cancels inside that window; null = platform default (50). */
+  lateCancelRefundPercent?: number | null;
   location: string;
   /** Same nested shape Trainers.photoResponse already uses -- was a flat `photoUrl` that the API never actually sent, so every center image silently fell back to a placeholder. */
   photoResponse: PhotoResponse;

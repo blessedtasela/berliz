@@ -26,6 +26,7 @@ import { CenterTrainersComponent } from './center-trainers/center-trainers.compo
 import { CenterReviewComponent } from './center-review/center-review.component';
 import { CenterLikeComponent } from './center-like/center-like.component';
 import { MyBookingsModule } from '../bookings/bookings.module';
+import { ProviderPricingFieldsComponent } from './provider-pricing-fields/provider-pricing-fields.component';
 
 
 
@@ -61,6 +62,7 @@ import { MyBookingsModule } from '../bookings/bookings.module';
     RouterModule,
     SharedModule,
     MyBookingsModule,
+    ProviderPricingFieldsComponent,
   ]
 })
 export class PartnerModule { }

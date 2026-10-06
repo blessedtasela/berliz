@@ -14,7 +14,7 @@ that ships a feature — add the row under the right domain, and log it under
 
 | Feature | Status | Notes |
 |---|---|---|
-| Email/password signup, activation email, password reset | ✅ | |
+| Email/password signup, activation email, password reset | ✅ | Signup asks only for the essentials (name, DOB, gender, email, password) — profile photo and the location/phone block are optional and deferred to the onboarding checklist's "Complete your profile" step. After signup (form or quick-signup) the user lands on `/login/activate-account` with their email pre-filled and a "we've sent a code to …" message, not a bare login page |
 | Social login — Google, Facebook | ✅ | `/auth/google`, `/auth/facebook` |
 | Passkey / WebAuthn login | ✅ | Passwordless; passkeys managed in Settings |
 | Roles — client, trainer, center/partner, member, admin | ✅ | Drives dashboard, discovery, permissions |
@@ -22,7 +22,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Profile photo with in-app cropper | ✅ | |
 | Account settings (merged Profile + Settings) | ✅ | Includes "what's new" badges, passkey management, sidebar display prefs |
 | Gender field — inclusive options | ✅ | Male / Female / Non-binary / Prefer not to say, driven by one shared `GENDER_OPTIONS` constant across every picker (signup, signup modal, Settings, both admin edit-user modals) instead of each hardcoding its own binary radio pair. Backend stores `User.gender` as free text with no enum constraint, so this was purely a frontend change |
-| Value-first onboarding checklist | ✅ | Dismissible, role-aware first-run checklist at the top of the dashboard home (log a workout / connect / find a provider — or profile/post/connect for providers); progress is data-derived where possible, dismissal + click-steps persist in `localStorage`. No paywall in the path |
+| Value-first onboarding checklist | ✅ | Dismissible, role-aware first-run checklist at the top of the dashboard home (complete your profile / log a workout / connect / find a provider — or profile/post/connect for providers; "Complete your profile" is how regular users add the photo and location that signup no longer requires); progress is data-derived where possible, dismissal + click-steps persist in `localStorage`. No paywall in the path |
 | Block / unblock users | ✅ | Two-directional enforcement across messaging, mentions, comments |
 | Report content (posts, comments) | ✅ | Feeds admin content-report queue |
 
@@ -153,7 +153,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | Hub, News & updates | ✅ | |
 | Global search (multi-entity) | ✅ | Top-bar. Public: trainers, centers, services, exercises, testimonials, equipment, workout templates, FAQs, members, posts (own + connections' feed). Admin-only: users, tasks, payments, subscriptions, partners, contact-us, newsletters, tags, muscle groups. Client-side filtering over data each entity's own NgRx slice (or, for posts, a locally-cached one-time fetch — the only entity with no store slice) already loads; deep-links to the specific item where a route/anchor exists (exercises, workout templates, FAQs, members, posts, testimonials), otherwise to that entity's list page |
 | Partner one-pager, brand assets | ✅ | |
-| Build-time prerendering of public marketing routes (SEO) | ✅ | `/`, `/about`, `/services` + its 3 children, `/contact`, `/trainers`, `/centers`, `/members` are statically rendered at build time (Angular Universal) so crawlers that don't run JS see real title/meta/OG/canonical/JSON-LD instead of an empty shell. Dashboard and every other route stay client-rendered only — see `docs/DEPLOYMENT.md` |
+| Build-time prerendering of public marketing routes (SEO) | ✅ | `/`, `/about`, `/services` + its 3 children, `/contact`, `/trainers`, `/centers`, `/members` are statically rendered at build time (Angular's `application` builder `prerender` option, which replaced the retired `@nguniversal/builders`; `index.html` is the prerendered landing page and the SPA fallback is `index.csr.html`) so crawlers that don't run JS see real title/meta/OG/canonical/JSON-LD instead of an empty shell. Dashboard and every other route stay client-rendered only — see `docs/DEPLOYMENT.md` |
 
 ## 10. Growth & marketing
 
@@ -182,6 +182,51 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Trainers and centers set their own rate and cancellation policy; payouts for sessions paid late
+
+Found while checking the booking-payment work: **nothing in the app let a trainer or center set an hourly
+rate**, so in-app payment only worked for providers whose rate had been entered by hand in the database.
+Fixed, and the cancellation numbers are now each provider's own choice instead of fixed constants.
+
+- **Rate + cancellation policy in the trainer and center editors** (new shared `app-provider-pricing-fields`):
+  session rate per hour (blank/0 = not priced in the app), free-cancellation window (none / 6 / 12 / 24 / 48 / 72 h),
+  and the refund share when a client cancels later (full / 75 / 50 / 25 / none). A plain-English summary under the
+  fields shows exactly what a client will be told. The server validates: rate 0-10,000 (0 clears it), window 0-168 h,
+  share 0-100%.
+- **Pinned per booking.** The provider's policy is copied onto the booking when it is first confirmed, so editing
+  your policy never changes the terms of a session someone already booked. Unset = the platform default (24 h, 50%).
+  A 0-hour window means no free cancellation: everything before the start is a late cancel.
+- **Clients see the terms up front and at cancel time.** The estimated-total box on the booking form now ends with
+  the provider's cancellation policy, and the cancel prompt quotes the exact window and percentage from the booking.
+- **Finished-but-unpaid sessions.** Completing (or no-showing) a session the client never paid for tells them to pay
+  straight away and reminds them once, a day later. They are never auto-cancelled (the session already happened).
+- **Fixed: a late payment left the provider unpaid.** The payout was only ever created at completion, so a client
+  paying *after* completion (or after a no-show) was recorded as paid but no payout was created. Paying now creates it.
+- Migration V61. Not yet: a provider can't set different policies for different services; the policy isn't shown on the
+  public profile, only while booking.
+
+### Unreleased — Angular 16 → 19 upgrade, and a much shorter signup
+
+- **Angular 16 → 19** (hops 17, 18, 19; the remaining high-severity npm advisories were all Angular 16
+  itself, and the updater can't skip a major). NgRx 17, ng-select 12, ngx-mask 17, TypeScript 5.4;
+  `ngx-extended-pdf-viewer` moved to 25.6.4 so its peer range covers the remaining hops to 21;
+  `ngx-image-cropper` deliberately stays on 7.2.1 so photo-cropping behaviour doesn't change. No
+  user-visible feature change.
+- **Prerender moved off `@nguniversal`.** `@nguniversal/builders` has no Angular 17+ release, so the
+  browser/server/prerender targets became the `application` builder with its native `prerender` option
+  (same 10 public routes). `npm run prerender` also builds a no-prerender shell that
+  `scripts/finalize-prerender.mjs` publishes as `index.csr.html`, which `netlify.toml` now serves for
+  every non-prerendered route — otherwise dashboard URLs would get the home page's title/canonical/JSON-LD.
+  See `docs/DEPLOYMENT.md`.
+- **Signup cut from 13 required fields to the essentials.** A user reported feeling overwhelmed. Photo and
+  the location sub-form (country/state/city/postal/address/phone) are now optional and are asked for later
+  by the onboarding checklist's new "Complete your profile" step (now shown to regular users, not only
+  trainers/centers).
+- **Post-signup landing fixed.** Accounts need email activation before login works, but signup and
+  quick-signup dropped the user on a bare `/login` with a toast that scrolled away, which looked broken.
+  Both now go to `/login/activate-account` with the email pre-filled and a "we've sent a code to …" line.
+- Fixed a production-build break: `SignupComponent` referenced `genders` without defining it.
 
 ### Unreleased — Booking payment policy: unpaid reminders + auto-cancel, late-cancel and no-show rules, extensions, price estimate
 
@@ -216,7 +261,7 @@ Closes the gaps left by per-session checkout. The numbers below are constants in
   money went back can't be reopened (client books again). The client cancel no longer asks twice. The
   `navigation` icon used by the location picker and trainer dropdown wasn't registered — now it is.
 - Migration V60.
-- Not yet: the late-cancel window and the 50% are fixed constants, not per-trainer settings; no automatic
+- Not yet (the fixed 24h/50% became per-provider settings in the entry above): no automatic
   "complete" or no-show detection; the extension balance has no deadline of its own; amounts show with "$"
   whatever the Stripe currency is.
 

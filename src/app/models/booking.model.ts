@@ -35,6 +35,9 @@ export interface Booking {
   amountDue?: number | null;
   /** null (never priced / provider has no rate) | NOT_REQUIRED | UNPAID | PAID | REFUNDED | PARTIALLY_REFUNDED. */
   paymentStatus?: 'NOT_REQUIRED' | 'UNPAID' | 'PAID' | 'REFUNDED' | 'PARTIALLY_REFUNDED' | null;
+  /** The cancellation policy that applies to this session (the provider's, pinned at confirmation, or the platform default). */
+  freeCancelHours?: number | null;
+  lateCancelRefundPercent?: number | null;
   /** Net amount paid so far, after refunds. */
   amountPaid?: number | null;
   /** What still has to be paid right now: all of it, or only the difference after a paid session was extended. 0 when nothing is owed. */

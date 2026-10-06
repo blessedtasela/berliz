@@ -6,6 +6,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { Trainers, TrainerLocation } from 'src/app/models/trainers.interface';
+import { providerPricingControls, providerPricingControlValues, providerPricingPayload } from '../provider-pricing-fields/provider-pricing-fields.component';
 import { Users } from 'src/app/models/users.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -68,6 +69,7 @@ export class TrainerDataComponent {
       'likes': [this.trainer?.likes ?? '', Validators.compose([Validators.required, Validators.minLength(1)])],
       'categoryIds': this.formBuilder.array(this.selectedCategoriesId, this.validateCheckbox()),
       'serviceMode': [this.trainer?.serviceMode ?? 'IN_PERSON'],
+      ...providerPricingControls(this.trainer),
       'locations': this.formBuilder.array([]),
       'customLocationAllowed': [!!this.trainer?.customLocationAllowed],
       'customLocationFee': [this.trainer?.customLocationFee ?? null, Validators.min(0)],
@@ -205,6 +207,7 @@ export class TrainerDataComponent {
       experience: trainer.experience,
       categoryIds: trainer.categories.map(category => category.id),
       serviceMode: trainer.serviceMode ?? 'IN_PERSON',
+      ...providerPricingControlValues(trainer),
       customLocationAllowed: !!trainer.customLocationAllowed,
       customLocationFee: trainer.customLocationFee ?? null,
     });
@@ -270,6 +273,7 @@ export class TrainerDataComponent {
         venue: (l.venue ?? '').trim() || null,
         fee: this.toFee(l.fee),
       })),
+      ...providerPricingPayload(formValue),
       customLocationAllowed: !!formValue.customLocationAllowed,
       // The backend treats a null fee as "leave untouched", so a cleared field is sent as 0 (= no surcharge).
       customLocationFee: this.toFee(formValue.customLocationFee) ?? 0,

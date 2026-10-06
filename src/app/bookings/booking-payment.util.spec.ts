@@ -95,7 +95,8 @@ describe('booking-payment.util', () => {
       const paid = { paymentStatus: 'PAID' as const, amountPaid: 100, amountDue: 100 };
       expect(clientCancelNote(booking({ ...paid, scheduledAt: inHours(48) }), NOW)).toContain('full payment of $100.00');
       const late = clientCancelNote(booking({ ...paid, scheduledAt: inHours(5) }), NOW);
-      expect(late).toContain('only half');
+      expect(late).toContain('only 50%');
+      expect(late).toContain('less than 24 hours');
       expect(late).toContain('$50.00 of $100.00');
       expect(clientCancelNote(booking({ ...paid, scheduledAt: inHours(-1) }), NOW)).toContain('not refunded');
     });
@@ -103,6 +104,46 @@ describe('booking-payment.util', () => {
     it('says nothing when nothing is at stake', () => {
       expect(clientCancelNote(booking(), NOW)).toBeNull();                                  // unpaid
       expect(clientCancelNote(booking({ status: 'pending', paymentStatus: 'PAID', amountPaid: 100 }), NOW)).toBeNull();
+    });
+  });
+
+  describe("a provider's own cancellation policy", () => {
+    const paid = { paymentStatus: 'PAID' as const, amountPaid: 100, amountDue: 100 };
+
+    it('uses the window and refund share pinned on the booking', () => {
+      const b = booking({ ...paid, scheduledAt: inHours(30), freeCancelHours: 48, lateCancelRefundPercent: 25 });
+      expect(clientRefundFraction(b, NOW)).toBe(0.25);
+      const note = clientCancelNote(b, NOW)!;
+      expect(note).toContain('less than 48 hours');
+      expect(note).toContain('only 25%');
+      expect(note).toContain('$25.00 of $100.00');
+    });
+
+    it('a shorter window keeps a closer cancellation free', () => {
+      const b = booking({ ...paid, scheduledAt: inHours(13), freeCancelHours: 12 });
+      expect(clientRefundFraction(b, NOW)).toBe(1);
+    });
+
+    it('a zero-hour window means every cancellation before the start is late', () => {
+      const b = booking({ ...paid, scheduledAt: inHours(200), freeCancelHours: 0, lateCancelRefundPercent: 50 });
+      expect(clientRefundFraction(b, NOW)).toBe(0.5);
+      expect(clientCancelNote(b, NOW)).toContain("doesn't offer free cancellation");
+    });
+
+    it('says plainly when a late cancel refunds nothing', () => {
+      const b = booking({ ...paid, scheduledAt: inHours(5), lateCancelRefundPercent: 0 });
+      expect(clientRefundFraction(b, NOW)).toBe(0);
+      expect(clientCancelNote(b, NOW)).toContain('not refunded');
+    });
+
+    it('a 100% late refund means a late cancel is still free', () => {
+      const b = booking({ ...paid, scheduledAt: inHours(5), lateCancelRefundPercent: 100 });
+      expect(clientRefundFraction(b, NOW)).toBe(1);
+      expect(clientCancelNote(b, NOW)).toContain('full payment');
+    });
+
+    it('falls back to the platform default when the booking carries none', () => {
+      expect(clientRefundFraction(booking({ ...paid, scheduledAt: inHours(5) }), NOW)).toBe(0.5);
     });
   });
 
