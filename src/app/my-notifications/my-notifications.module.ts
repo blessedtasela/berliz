@@ -18,6 +18,7 @@ import { MyNotificationMetricsComponent } from './my-notification-metrics/my-not
 import { notificationFeatureKey, notificationReducer } from '../state/notification/notification.reducer';
 import { StoreModule } from '@ngrx/store';
 
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 @NgModule({
   declarations: [
     MyNotificationsComponent,
@@ -31,6 +32,7 @@ import { StoreModule } from '@ngrx/store';
     MyNotificationMetricsComponent
   ],
   imports: [
+    LoadErrorComponent,
     CommonModule,
     IconsModule,
     NavbarModule,

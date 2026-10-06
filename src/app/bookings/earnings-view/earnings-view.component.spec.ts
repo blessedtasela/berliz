@@ -1,9 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { Actions } from '@ngrx/effects';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { Subject } from 'rxjs';
 
 import { EarningsViewComponent } from './earnings-view.component';
-import { loadMyPayouts } from 'src/app/state/payout/payout.actions';
+import { loadMyPayouts, loadMyPayoutsFailure, loadMyPayoutsSuccess } from 'src/app/state/payout/payout.actions';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import {
   selectMyPayouts,
   selectMyPaidTotal,
@@ -16,6 +19,7 @@ describe('EarningsViewComponent', () => {
   let component: EarningsViewComponent;
   let fixture: ComponentFixture<EarningsViewComponent>;
   let store: MockStore;
+  let actions$: Subject<any>;
 
   const pendingPayout: Payout = {
     id: 1,
@@ -45,10 +49,13 @@ describe('EarningsViewComponent', () => {
   };
 
   beforeEach(() => {
+    actions$ = new Subject<any>();
     TestBed.configureTestingModule({
       declarations: [EarningsViewComponent],
+      imports: [LoadErrorComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
+        { provide: Actions, useValue: actions$ },
         provideMockStore({
           selectors: [
             { selector: selectMyPayouts, value: [pendingPayout, paidPayout] },
@@ -98,5 +105,43 @@ describe('EarningsViewComponent', () => {
     component.ngOnDestroy();
     expect(nextSpy).toHaveBeenCalled();
     expect(completeSpy).toHaveBeenCalled();
+  });
+
+  describe('when the payouts cannot be loaded', () => {
+    const el = () => fixture.nativeElement as HTMLElement;
+
+    beforeEach(() => {
+      store.overrideSelector(selectMyPayouts, []);
+      store.refreshState();
+      fixture.detectChanges();
+    });
+
+    it('shows a retryable error instead of "no payouts yet"', () => {
+      actions$.next(loadMyPayoutsFailure({ error: 'Server exploded' }));
+      fixture.detectChanges();
+
+      expect(el().textContent).toContain("Couldn't load your earnings");
+      expect(el().textContent).toContain('Server exploded');
+      expect(el().textContent).not.toContain('No completed sessions with a payout yet');
+    });
+
+    it('retrying loads the payouts again, and a success clears the error', () => {
+      actions$.next(loadMyPayoutsFailure({ error: 'Server exploded' }));
+      fixture.detectChanges();
+      const dispatch = spyOn(store, 'dispatch');
+
+      (el().querySelector('app-load-error button') as HTMLButtonElement).click();
+      expect(dispatch).toHaveBeenCalledWith(loadMyPayouts());
+
+      actions$.next(loadMyPayoutsSuccess({ response: [] } as any));
+      fixture.detectChanges();
+      expect(el().querySelector('app-load-error')).toBeNull();
+      expect(el().textContent).toContain('No completed sessions with a payout yet');
+    });
+
+    it('shows the genuine empty state when nothing failed', () => {
+      expect(el().textContent).toContain('No completed sessions with a payout yet');
+      expect(el().querySelector('app-load-error')).toBeNull();
+    });
   });
 });

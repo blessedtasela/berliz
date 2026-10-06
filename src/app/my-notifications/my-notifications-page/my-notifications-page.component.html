@@ -3,7 +3,10 @@
    <app-search-panel [sortOptions]="sortOptions" (stateChange)="onFilterStateChange($event)">
    </app-search-panel>
 
-   <app-my-notifications [notificationData]="notificationData" [totalNotifications]="totalNotifications"
+   <app-load-error *ngIf="loadError && rawNotifications.length === 0" title="Couldn't load your notifications"
+      [message]="loadError" (retry)="retryLoad()"></app-load-error>
+
+   <app-my-notifications *ngIf="!(loadError && rawNotifications.length === 0)" [notificationData]="notificationData" [totalNotifications]="totalNotifications"
       [refreshing]="refreshing" (refresh)="onRefresh()">
    </app-my-notifications>
 

@@ -9,7 +9,8 @@ import { BypassCodeService } from 'src/app/services/bypass-code.service';
 import { DiscountCodeService, DiscountPreview } from 'src/app/services/discount-code.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StripeService } from 'src/app/services/stripe.service';
-import { loadPlans } from 'src/app/state/plan/plan.actions';
+import { loadPlans, loadPlansFailure, loadPlansSuccess } from 'src/app/state/plan/plan.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectPlanLoading, selectPlans } from 'src/app/state/plan/plan.selectors';
 import { loadMySubscriptions, selectPlan, selectPlanFailure, selectPlanSuccess } from 'src/app/state/subscription/subscription.actions';
 
@@ -23,6 +24,8 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
 
   plans: Plan[] = [];
   loading = false;
+  /** Why the plans couldn't be loaded -- so a failed load never reads as "no plans available". */
+  loadError: string | null = null;
 
   /** The plan currently being submitted, so only that card shows a busy state. */
   selectingPlanId: number | null = null;
@@ -101,6 +104,7 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    watchLoadError(this.actions$, loadPlansFailure, [loadPlans, loadPlansSuccess], this.destroy$, m => this.loadError = m);
     this.store.dispatch(loadPlans());
 
     this.store.select(selectPlans)
@@ -150,6 +154,10 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  retryLoad(): void {
+    this.store.dispatch(loadPlans());
   }
 
   choosePlan(plan: Plan): void {
