@@ -140,7 +140,7 @@ describe('BookingCardComponent', () => {
       component.booking.paymentDueAt = new Date(Date.now() + 5 * 3600_000);
 
       expect(component.payButtonLabel).toBe('Pay extra $50.00');
-      expect(component.payByText).toContain('Pay by');
+      expect(component.payByText).toContain('Pay the extra by');
     });
   });
 

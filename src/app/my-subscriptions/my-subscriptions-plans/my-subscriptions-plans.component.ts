@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { Subject, take, takeUntil } from 'rxjs';
+import { Subject, catchError, forkJoin, map, of, take, takeUntil } from 'rxjs';
 
 import { Plan } from 'src/app/models/plan.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { BypassCodeService } from 'src/app/services/bypass-code.service';
+import { DiscountCodeService, DiscountPreview } from 'src/app/services/discount-code.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StripeService } from 'src/app/services/stripe.service';
 import { loadPlans } from 'src/app/state/plan/plan.actions';
@@ -26,7 +27,16 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
   /** The plan currently being submitted, so only that card shows a busy state. */
   selectingPlanId: number | null = null;
 
-  // ── Redeem a code ────────────────────────────────────────────────────────
+  // ── Promo code (a discount on the first payment) ─────────────────────────
+  promoCode = '';
+  promoApplying = false;
+  /** The code that was applied, once at least one plan accepted it. */
+  appliedPromo: string | null = null;
+  /** What the applied code does to each plan it fits, keyed by plan id. */
+  promoPreviews: Record<number, DiscountPreview> = {};
+  promoError: string | null = null;
+
+  // ── Redeem a code (free access, no payment) ──────────────────────────────
   redeemCode = '';
   redeeming = false;
 
@@ -40,6 +50,7 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
     private actions$: Actions,
     private authService: AuthService,
     private bypassCodeService: BypassCodeService,
+    private discountCodeService: DiscountCodeService,
     private snackBar: SnackBarService,
     private stripeService: StripeService,
   ) { }
@@ -150,10 +161,14 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
   /** selectPlan() only ever gets the subscription to PENDING_PAYMENT (see PlanSubscriptionResponse) -- this is what actually collects payment, redirecting to Stripe's hosted Checkout page. The webhook (StripePaymentServiceImplement.handleCheckoutSessionCompleted) flips the subscription active once Stripe confirms. */
   private goToCheckout(subscriptionId: number, amount: number, planName: string): void {
     this.redirectingToCheckout = true;
+    // Only send the code if it was accepted for the plan being bought; the server validates it again.
+    const planId = this.selectingPlanId;
+    const discountCode = planId != null && this.promoPreviews[planId] ? this.appliedPromo ?? undefined : undefined;
     this.stripeService.createCheckoutSession({
       subscriptionId,
       amount,
       productName: planName,
+      ...(discountCode ? { discountCode } : {}),
     }).subscribe({
       next: res => {
         const checkoutUrl = res.data?.checkoutUrl;
@@ -173,6 +188,49 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
         this.snackBar.openSnackBar(err.error?.message || 'Could not start checkout — try again', 'error');
       },
     });
+  }
+
+  /** A paid plan the promo code can be tried on (a free plan has nothing to discount). */
+  private get promoCandidates(): Plan[] {
+    return this.visiblePlans.filter(p => (p.price ?? 0) > 0);
+  }
+
+  /** The price to show for a plan: the promo-reduced price when the applied code fits it, otherwise null. */
+  discountedPrice(plan: Plan): number | null {
+    return this.promoPreviews[plan.id]?.finalPrice ?? null;
+  }
+
+  /** Checks the code against every paid plan on the page and shows what it does to each one it fits. */
+  applyPromo(): void {
+    const code = this.promoCode.trim();
+    if (!code || this.promoApplying) return;
+    const plans = this.promoCandidates;
+    if (plans.length === 0) return;
+
+    this.promoApplying = true;
+    this.promoError = null;
+    forkJoin(plans.map(plan => this.discountCodeService.preview(code, plan.id).pipe(
+      map(res => ({ plan, preview: res.data as DiscountPreview, error: null as string | null })),
+      catchError(err => of({ plan, preview: null as DiscountPreview | null, error: (err?.error?.message as string) || 'Could not check that code.' })),
+    ))).pipe(take(1)).subscribe(results => {
+      this.promoApplying = false;
+      const accepted = results.filter(r => r.preview);
+      if (accepted.length === 0) {
+        this.clearPromo(false);
+        this.promoError = results[0]?.error ?? 'That code can\x27t be used.';
+        return;
+      }
+      this.promoPreviews = Object.fromEntries(accepted.map(r => [r.plan.id, r.preview!]));
+      this.appliedPromo = code;
+      this.snackBar.openSnackBar(accepted[0].preview!.message || 'Promo code applied', '');
+    });
+  }
+
+  clearPromo(clearInput = true): void {
+    this.appliedPromo = null;
+    this.promoPreviews = {};
+    this.promoError = null;
+    if (clearInput) this.promoCode = '';
   }
 
   redeem(): void {
