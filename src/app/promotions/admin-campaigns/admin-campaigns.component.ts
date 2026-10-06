@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { take } from 'rxjs';
 
@@ -22,7 +23,7 @@ import { genericError } from 'src/validators/form-validators.module';
  */
 @Component({
     selector: 'app-admin-campaigns',
-    imports: [CommonModule, IconsModule],
+    imports: [CommonModule, RouterModule, IconsModule],
     templateUrl: './admin-campaigns.component.html',
     styleUrls: ['./admin-campaigns.component.css']
 })

@@ -8,6 +8,38 @@
     </p>
   </div>
 
+  <!-- Promo code: a discount on the first payment (not the same as the free-access code further down) -->
+  <div *ngIf="visiblePlans.length > 0" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3 flex flex-col gap-2">
+    <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+      <div class="sm:flex-1">
+        <h3 class="text-xs font-bold text-gray-900 dark:text-gray-100">Have a promo code?</h3>
+        <p class="text-[11px] text-gray-400 dark:text-gray-500">Take money off your first payment. The new price shows on each plan it applies to.</p>
+      </div>
+      <div class="flex items-center gap-2 sm:w-80">
+        <input type="text" [(ngModel)]="promoCode" placeholder="Promo code" [disabled]="!!appliedPromo"
+          class="flex-1 min-w-0 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100 uppercase
+                 placeholder:normal-case placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition disabled:opacity-60"
+          (keyup.enter)="applyPromo()" />
+        <button *ngIf="!appliedPromo" type="button" (click)="applyPromo()" [disabled]="!promoCode.trim() || promoApplying"
+          class="px-3 py-2 rounded-xl text-xs font-semibold bg-gray-900 dark:bg-gray-700 text-white hover:bg-gray-800 transition disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+          {{ promoApplying ? 'Checking…' : 'Apply' }}
+        </button>
+        <button *ngIf="appliedPromo" type="button" (click)="clearPromo()"
+          class="px-3 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition shrink-0">
+          Remove
+        </button>
+      </div>
+    </div>
+    <p *ngIf="appliedPromo" class="text-[11px] text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
+      <i-feather name="check-circle" style="width:12px;height:12px;"></i-feather>
+      {{ appliedPromo | uppercase }} applied — see the reduced price on your plan below.
+    </p>
+    <p *ngIf="promoError" role="alert" class="text-[11px] text-red-600 dark:text-red-400 flex items-center gap-1">
+      <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
+      {{ promoError }}
+    </p>
+  </div>
+
   <!-- Loading skeleton -->
   <div *ngIf="loading && plans.length === 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     <div *ngFor="let i of [1,2,3]" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 h-48 animate-pulse"></div>
@@ -39,9 +71,16 @@
       <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
       <!-- Price -->
-      <div class="flex items-baseline gap-1">
-        <span class="text-lg font-bold text-red-600">{{ plan.price | currency }}</span>
-        <span class="text-[11px] text-gray-400 dark:text-gray-500">/ {{ plan.billingInterval || 'month' }}</span>
+      <div class="flex items-baseline gap-1 flex-wrap">
+        <ng-container *ngIf="discountedPrice(plan) as discounted; else fullPrice">
+          <span class="text-lg font-bold text-red-600">{{ discounted | currency }}</span>
+          <span class="text-xs text-gray-400 dark:text-gray-500 line-through">{{ plan.price | currency }}</span>
+          <span class="text-[11px] text-gray-400 dark:text-gray-500">first payment, then {{ plan.price | currency }} / {{ plan.billingInterval || 'month' }}</span>
+        </ng-container>
+        <ng-template #fullPrice>
+          <span class="text-lg font-bold text-red-600">{{ plan.price | currency }}</span>
+          <span class="text-[11px] text-gray-400 dark:text-gray-500">/ {{ plan.billingInterval || 'month' }}</span>
+        </ng-template>
       </div>
 
       <!-- Access scope -->
