@@ -89,7 +89,10 @@ export function payByNote(b: Booking, locale = 'en-US'): string | null {
   const due = new Date(b.paymentDueAt);
   if (isNaN(due.getTime())) return null;
   const when = due.toLocaleString(locale, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-  return `Pay by ${when} or it's cancelled`;
+  // Money already in means this is the extra for a longer session: at the deadline the extension is undone, the session stands.
+  return (b.amountPaid ?? 0) > 0
+    ? `Pay the extra by ${when} or the longer session is undone`
+    : `Pay by ${when} or it's cancelled`;
 }
 
 /** The fraction of what was paid that a client gets back if they cancel at {@code now}. */

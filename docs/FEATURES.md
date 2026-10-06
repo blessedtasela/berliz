@@ -76,6 +76,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Fitness achievements | ✅ | `FitnessAchievement` |
 | Peer sessions (propose / schedule training with a connection) | ✅ | "My Sessions" |
 | "Your time in Berliz" recap | ✅ | Real deep-linkable route (`/dashboard/recap?period=`, replacing the old dialog-only entry point) — 30d / 90d / year / all-time, active days, sessions, km, best streak, PRs, rank moves, top partners; one-tap "Share as post" (now surfaces the actual backend rejection reason instead of a generic "could not share" on failure). Always free. `GET /recap/me` |
+| Workout Room hub (`/dashboard/workout-room`) | ✅ | One landing page, "Workout Room" in the sidebar, that links out to every training tool (Workouts, workout history, Exercises, Runs, My Progress, Tasks, To-do, Messages, and — providers only — Client Intakes) plus a glance at your 4 most recent logged sessions and a "Browse templates" prompt. Pure aggregation over the existing `WorkoutService` endpoints, no backend. Header shows a **workout streak** badge (consecutive days with a logged session; today *or* yesterday counts as current so it isn't shown broken before you've logged today) and a longest-streak line. Streak is computed client-side from the user's own logs — separate from the dashboard's server-side consistency ring (D1), so the two numbers can differ |
 | Verified activity | ✅ | A connected trainer/center confirms a logged workout/run; a "Verified" tick shows on the history list. `POST/DELETE /workoutLog/{id}/verify`, `/run/log/{id}/verify` |
 
 ## 5. Discovery & marketplace
@@ -149,6 +150,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | Full admin suite | ✅ | Users, trainers, centers, categories, tags, equipment, FAQs, testimonials, newsletters, bookings, payments, subscriptions, tasks, to-do lists, partners, muscle-groups, exercises, problem reports, content reports |
 | Analytics dashboard | ✅ | `Analytics` |
 | Berliz feedback + problem reports | ✅ | |
+| Server-side role & ownership authorization | ✅ | Every admin-only backend operation and every "only the owner (or an admin)" operation is now enforced twice: by the existing in-method check *and* by Spring method security (`@PreAuthorize`) before the method runs. Roles now map to real authorities (`ROLE_ADMIN`, `ROLE_TRAINER`, …) — previously every signed-in user carried an empty authority list, so declarative checks could never pass. Ownership rules (who may edit a booking, task, review, post, comment, message, …) live in one small bean per domain under `com.berliz.security`. No user-visible change in what is allowed; it stops a future endpoint from forgetting its guard |
 | Help center / FAQs | ✅ | Public + per-user. Deep-linkable to a specific FAQ (`/dashboard/my-faqs?faqId=`) — expands and scrolls to it, used by global search and the notification entity-link resolver |
 | Hub, News & updates | ✅ | |
 | Global search (multi-entity) | ✅ | Top-bar. Public: trainers, centers, services, exercises, testimonials, equipment, workout templates, FAQs, members, posts (own + connections' feed). Admin-only: users, tasks, payments, subscriptions, partners, contact-us, newsletters, tags, muscle groups. Client-side filtering over data each entity's own NgRx slice (or, for posts, a locally-cached one-time fetch — the only entity with no store slice) already loads; deep-links to the specific item where a route/anchor exists (exercises, workout templates, FAQs, members, posts, testimonials), otherwise to that entity's list page |
@@ -182,6 +184,43 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Backend authorization layer, Order/Bill/Tag/Dashboard cleanup, config out of code
+
+Backend-only (`com.berliz`); no UI changes. Follows a full audit of the Spring Boot services.
+
+- **Declarative authorization (`@PreAuthorize`)** on ~150 service methods, as a second layer on top of the existing
+  manual guards (none removed). Admin-only methods use `hasRole('ADMIN')`; owner-or-admin methods call a per-domain
+  bean (`taskAuthz`, `bookingAuthz`, `centerAuthz`, `orderAuthz`, …, 19 in all) that re-fetches the entity and mirrors
+  the exact rule — including the odd ones (comments/posts are author-only with *no* admin override; a review is owned by
+  the reviewer, not the center/trainer; deleting a comment is allowed for the comment's author *or* the post's author).
+  Missing/unknown ids are allowed through so the method's own 400/404 still fires. **Root cause fixed along the way:**
+  `ClientUserDetailsService` returned an empty authority list for every user, which made method security unusable.
+- **Left on manual guards only** (not an oversight): super-admin-email deletes (`deleteCenter`, `deleteTrainer`,
+  `deletePartner`, `deleteCenterPricing`), review status/disable/delete (checked by email, not id), run-event creator
+  checks, and `requireAccess` on workout logs (owner/admin/collaborator semantics).
+- **Orders & bills** moved to typed DTOs + typed exceptions like every other domain. Fixed while rebuilding:
+  creating/editing an order **overwrote the catalog Product's price and quantity** while computing the line subtotal;
+  `GET /order/getByUser/{id}` had **no ownership check** (any signed-in user could read anyone's orders); non-admin
+  `getAllOrders` looked an order up by user id; `updateOrder` reset the order's created-date on every edit. New
+  `GET /order/getMyOrders`. Two half-broken PDF-bill flows are now one: `GET /order/generateBill/{orderId}` creates (or
+  regenerates) the bill, and `/bill/*` is an admin-only read/delete surface. Bills write to a configurable directory and
+  load the logo from the classpath instead of a hardcoded Windows path.
+- **Tags**: `/tag/*` and `/category/tag/*` now share one implementation (the category copy created tags with no
+  status/date). Both stay live — different clients call each.
+- **Dashboard**: `/dashboard/*` rebuilt on typed DTOs; dead driver/store fields removed; hardcoded CORS dropped; per-tile
+  failure isolation (from the live Hub-blank fix) kept and extended to `/dashboard/berliz`. `/dashboard/berliz` now also
+  counts center/trainer reviews, bookings, exercises, muscle groups and posts.
+- **Wire formats the clients depend on are pinned.** Two of these rewrites briefly changed response shapes the web and
+  mobile apps read directly — the dashboard endpoints (bare object, kebab-case keys, only the tiles a role has) and
+  `GET /tag/get` / `/tag/getActiveTags` (bare array). Both were caught within the same day and restored;
+  `DashboardResponseWireFormatTest` now locks the dashboard contract. Rule of thumb: check how the frontend's service
+  reads a response before wrapping or re-keying it.
+- **Removed**: the unused `PUT /notification/read/{id}` (the app only calls `markAsRead`) and nine dead stub
+  entities/repos/services (`Delivery`, `FitnessAchievement`, `Forest`, `NotificationAdmin`, `Review`, `Run`,
+  `RunDetails`, `ScheduleRun`, `Social`) that nothing referenced.
+- **Config, not code**: `BERLIZ_SUPER_ADMIN_EMAIL` (default unchanged) and `BILL_OUTPUT_DIR` (default
+  `bills/order-bill`) replace constants that were hardcoded in source.
 
 ### Unreleased — Trainers and centers set their own rate and cancellation policy; payouts for sessions paid late
 

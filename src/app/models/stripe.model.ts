@@ -12,6 +12,8 @@ export interface StripeCheckoutSessionRequest {
   recurring?: boolean;
   successUrl?: string;
   cancelUrl?: string;
+  /** A promo code to take off the first charge of the plan this subscription is for; validated again server-side. */
+  discountCode?: string;
 }
 
 /** Mirrors the backend `StripeCheckoutSessionResponse`. */

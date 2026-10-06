@@ -76,6 +76,13 @@ describe('booking-payment.util', () => {
       expect(note).toContain('cancelled');
     });
 
+    it('says an unpaid extension is undone, not the session cancelled', () => {
+      const note = payByNote(booking({ paymentDueAt: inHours(20), amountPaid: 100, amountDue: 150, balanceDue: 50 }))!;
+      expect(note).toContain('Pay the extra by');
+      expect(note).toContain('longer session is undone');
+      expect(note).not.toContain('cancelled');
+    });
+
     it('is absent once paid, when not confirmed, or without a deadline', () => {
       expect(payByNote(booking({ paymentDueAt: inHours(20), paymentStatus: 'PAID' }))).toBeNull();
       expect(payByNote(booking({ paymentDueAt: inHours(20), status: 'completed' }))).toBeNull();

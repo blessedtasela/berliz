@@ -215,4 +215,116 @@ describe('MySubscriptionsPlansComponent', () => {
       'Guaranteed placement at the top of the public Deals feed',
     ]);
   });
+
+  describe('promo code', () => {
+    const previewUrl = (r: any) => r.url.endsWith('/discountCode/preview');
+    const ok = (planId: number, original: number, off: number) => ({
+      message: 'applied', success: true, statusCode: 200,
+      data: { code: 'SPRING20', originalPrice: original, amountOff: off, finalPrice: original - off, message: `Promo code applied: ${off} off your first payment.` },
+    });
+
+    beforeEach(() => fixture.detectChanges());
+
+    it('checks the code against every paid plan and shows the reduced price on the ones it fits', () => {
+      component.promoCode = ' spring20 ';
+      component.applyPromo();
+
+      const reqs = httpMock.match(previewUrl);
+      expect(reqs.map(r => r.request.body)).toEqual([
+        { code: 'spring20', planId: 1 }, { code: 'spring20', planId: 3 },
+      ]);
+      reqs[0].flush(ok(1, 17, 3.4));
+      reqs[1].flush({ message: 'That promo code does not apply to this plan.' }, { status: 400, statusText: 'Bad Request' });
+
+      expect(component.appliedPromo).toBe('spring20');
+      expect(component.discountedPrice(plans[0])).toBeCloseTo(13.6);
+      expect(component.discountedPrice(plans[1])).toBeNull();
+      expect(component.promoError).toBeNull();
+      expect(component.promoApplying).toBeFalse();
+    });
+
+    it('shows the reason, and applies nothing, when no plan accepts the code', () => {
+      component.promoCode = 'NOPE';
+      component.applyPromo();
+      for (const r of httpMock.match(previewUrl))
+        r.flush({ message: 'That promo code is not valid.' }, { status: 400, statusText: 'Bad Request' });
+
+      expect(component.appliedPromo).toBeNull();
+      expect(component.promoError).toBe('That promo code is not valid.');
+      expect(component.discountedPrice(plans[0])).toBeNull();
+    });
+
+    it('ignores a blank code and a second tap while one is being checked', () => {
+      component.promoCode = '   ';
+      component.applyPromo();
+      httpMock.expectNone(previewUrl);
+
+      component.promoCode = 'SPRING20';
+      component.applyPromo();
+      component.applyPromo();
+      expect(httpMock.match(previewUrl).length).toBe(2); // one round (two plans), not two
+    });
+
+    it('sends the code to checkout only for a plan that accepted it', () => {
+      component.promoCode = 'SPRING20';
+      component.applyPromo();
+      const reqs = httpMock.match(previewUrl);
+      reqs[0].flush(ok(1, 17, 3.4));
+      reqs[1].flush({ message: 'nope' }, { status: 400, statusText: 'Bad Request' });
+
+      component.choosePlan(plans[0]);
+      actions$.next(selectPlanSuccess({ response: { message: 'ok', success: true, statusCode: 200,
+        data: { subscriptionId: 10, planId: 1, planName: 'Basic', planPrice: 17, status: 'PENDING_PAYMENT' } } } as any));
+
+      const checkout = httpMock.expectOne(r => r.url.endsWith('/payment/stripe/create-checkout-session'));
+      expect(checkout.request.body).toEqual({ subscriptionId: 10, amount: 17, productName: 'Basic', discountCode: 'SPRING20' });
+      checkout.flush({ message: 'no url', data: { sessionId: 's', checkoutUrl: '' }, success: true, statusCode: 200 });
+    });
+
+    it('does not send a code for a plan it did not apply to', () => {
+      component.promoCode = 'SPRING20';
+      component.applyPromo();
+      const reqs = httpMock.match(previewUrl);
+      reqs[0].flush(ok(1, 17, 3.4));
+      reqs[1].flush({ message: 'nope' }, { status: 400, statusText: 'Bad Request' });
+
+      component.choosePlan(plans[1]);
+      actions$.next(selectPlanSuccess({ response: { message: 'ok', success: true, statusCode: 200,
+        data: { subscriptionId: 11, planId: 3, planName: 'Exclusive', planPrice: 69, status: 'PENDING_PAYMENT' } } } as any));
+
+      const checkout = httpMock.expectOne(r => r.url.endsWith('/payment/stripe/create-checkout-session'));
+      expect(checkout.request.body).toEqual({ subscriptionId: 11, amount: 69, productName: 'Exclusive' });
+      checkout.flush({ message: 'no url', data: { sessionId: 's', checkoutUrl: '' }, success: true, statusCode: 200 });
+    });
+
+    it('removing the code clears every reduced price', () => {
+      component.promoCode = 'SPRING20';
+      component.applyPromo();
+      const reqs = httpMock.match(previewUrl);
+      reqs[0].flush(ok(1, 17, 3.4));
+      reqs[1].flush(ok(3, 69, 13.8));
+
+      component.clearPromo();
+
+      expect(component.appliedPromo).toBeNull();
+      expect(component.promoCode).toBe('');
+      expect(component.discountedPrice(plans[0])).toBeNull();
+    });
+
+    it('renders the promo box, the struck-through price and the code message', () => {
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.textContent).toContain('Have a promo code?');
+
+      component.promoCode = 'SPRING20';
+      component.applyPromo();
+      const reqs = httpMock.match(previewUrl);
+      reqs[0].flush(ok(1, 17, 3.4));
+      reqs[1].flush({ message: 'nope' }, { status: 400, statusText: 'Bad Request' });
+      fixture.detectChanges();
+
+      expect(el.textContent).toContain('$13.60');
+      expect(el.textContent).toContain('first payment, then $17.00');
+      expect(el.textContent).toContain('SPRING20 applied');
+    });
+  });
 });
