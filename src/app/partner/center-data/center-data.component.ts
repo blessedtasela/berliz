@@ -15,6 +15,8 @@ import { genericError } from 'src/validators/form-validators.module';
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 
+import { providerPricingControls, providerPricingPayload } from '../provider-pricing-fields/provider-pricing-fields.component';
+
 @Component({
     selector: 'app-center-data',
     templateUrl: './center-data.component.html',
@@ -52,6 +54,7 @@ export class CenterDataComponent {
       'location': new FormControl(this.center?.address, Validators.compose([Validators.required, Validators.minLength(10)])),
       'experience': new FormControl(this.center?.experience, Validators.compose([Validators.required, Validators.minLength(1)])),
       'categoryIds': this.formBuilder.array(this.selectedCategoriesId, this.validateCheckbox()),
+      ...providerPricingControls(this.center),
     });
   }
 
@@ -111,6 +114,7 @@ export class CenterDataComponent {
     const categoryToStrings = selectedCategoryIds.join(',');
     const formData = {
       ...this.updateCenterForm.value,
+      ...providerPricingPayload(this.updateCenterForm.value),
       categoryIds: categoryToStrings
     };
 

@@ -71,7 +71,7 @@ describe('BookingCardComponent', () => {
 
       component.cancel();
 
-      expect(lastDialogMessage()).toContain('only half');
+      expect(lastDialogMessage()).toContain('only 50%');
     });
 
     it('keeps the plain withdraw message for a pending request', () => {
