@@ -416,6 +416,15 @@ const dashboardRoutes: Routes = [
       // exercises, runs, progress, tasks, to-do, messages, client intake)
       // instead of them only being reachable scattered across the sidebar.
       {
+        path: 'achievements',
+        loadComponent: () => import('../achievements/my-achievements/my-achievements.component').then(m => m.MyAchievementsComponent),
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: 'My Achievements',
+          expectedRole: expectedRoleAll
+        }
+      },
+      {
         path: 'workout-room',
         loadComponent: () => import('../workout-room/workout-room.component').then(m => m.WorkoutRoomComponent),
         canActivate: [AuthGuard],

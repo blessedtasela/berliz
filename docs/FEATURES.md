@@ -73,7 +73,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Exercise library + gear/equipment ("Exercises & Gear") | ✅ | Videos, detail fields, trending |
 | Exercise suggestions (user-submitted → admin review) | ✅ | |
 | Muscle-group taxonomy | ✅ | |
-| Fitness achievements | ✅ | `FitnessAchievement` |
+| Fitness achievements | ✅ | `/dashboard/achievements` (sidebar: "Achievements") — a private list of your medals, certifications and milestones: name, date, optional details, optional certificate file (uploaded like any other media). Add, edit, delete (with an inline confirm). Strictly per-user: the API (`/achievement/add|update|delete|mine`) reads someone else's id as not found. Not shown on public profiles (no visibility rule decided yet). **Previously listed ✅ but nothing existed** — only an entity with an empty repository/service/REST interface. |
 | Peer sessions (propose / schedule training with a connection) | ✅ | "My Sessions" |
 | "Your time in Berliz" recap | ✅ | Real deep-linkable route (`/dashboard/recap?period=`, replacing the old dialog-only entry point) — 30d / 90d / year / all-time, active days, sessions, km, best streak, PRs, rank moves, top partners; one-tap "Share as post" (now surfaces the actual backend rejection reason instead of a generic "could not share" on failure). Always free. `GET /recap/me` |
 | Workout Room hub (`/dashboard/workout-room`) | ✅ | One landing page, "Workout Room" in the sidebar, that links out to every training tool (Workouts, workout history, Exercises, Runs, My Progress, Tasks, To-do, Messages, and — providers only — Client Intakes) plus a glance at your 4 most recent logged sessions and a "Browse templates" prompt. Pure aggregation over the existing `WorkoutService` endpoints, no backend. Header shows a **workout streak** badge (consecutive days with a logged session; today *or* yesterday counts as current so it isn't shown broken before you've logged today) and a longest-streak line. Streak is computed client-side from the user's own logs — separate from the dashboard's server-side consistency ring (D1), so the two numbers can differ |
@@ -184,6 +184,10 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Fitness achievements, for real
+
+§4 listed "Fitness achievements ✅", but the backend had only the `FitnessAchievement` entity — its repository, service and REST interface were empty stubs — and no screen existed on either platform. Built end to end: backend `/achievement` API (validated, per-user; the table already existed so no migration; `FitnessAchievementServiceImplementUnitTest`), a web **My Achievements** page, and the mobile screen. Deliberately not done: showing achievements on public profiles, which needs a visibility decision (the Settings profile-visibility toggle is the obvious home).
 
 ### Unreleased — Fix: trainer Feature Videos could not be saved
 

@@ -84,6 +84,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
 
   { label: 'Training' },
   { name: 'Workout Room', icon: 'zap', route: '/dashboard/workout-room' },
+  { name: 'Achievements', icon: 'award', route: '/dashboard/achievements' },
   { name: 'Tasks', icon: 'activity', route: '/dashboard/my-tasks' },
   { name: 'To-do list', icon: 'calendar', route: '/dashboard/my-todos' },
   { name: 'Workouts', icon: 'zap', route: '/dashboard/workouts' },
