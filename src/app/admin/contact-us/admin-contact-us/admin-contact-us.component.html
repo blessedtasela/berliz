@@ -1,5 +1,8 @@
 <app-admin-search [selector]="selectContactUsList" [fields]="contactUsSearchFields"
     placeholder="Search submissions..." (results)="handleSearchResults($event)"></app-admin-search>
+<app-load-error *ngIf="loadError && contactUsData.length === 0" title="Couldn't load contact submissions" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<ng-container *ngIf="!(loadError && contactUsData.length === 0)">
 <app-contact-us-header [contactUsData]="contactUsData" [totalContactUs]="totalContactUs"
     [contactUsLength]="contactUsLength"></app-contact-us-header>
 <app-contact-us-list [contactUsData]="contactUsData" [totalContactUs]="totalContactUs"></app-contact-us-list>
+</ng-container>

@@ -19,6 +19,7 @@ import { DashboardActivityChartComponent } from './dashboard-activity-chart/dash
 import { TodaysTodoModalComponent } from './todays-todo-modal/todays-todo-modal.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
+import { LocationsMenuComponent } from '../shared/locations-menu/locations-menu.component';
 import { DashboardMainComponent } from './dashboard-main/dashboard-main.component';
 import { DashboardRouteComponent } from './dashboard-route/dashboard-route.component';
 import { DashboardSubscriptionAnalyticsComponent } from './dashboard-subscription-analytics/dashboard-subscription-analytics.component';
@@ -81,6 +82,7 @@ import { OnboardingChecklistComponent } from '../shared/onboarding-checklist/onb
     PromoBadgeListComponent,
     ReactiveFormsModule,
     SharedModule,
+    LocationsMenuComponent,
     UserHoverCardComponent,
     DashboardTimelinePreviewComponent,
     ConsistencyRingComponent,

@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { FilterState, SearchSortOption } from 'src/app/models/FilterState.interface';
@@ -6,7 +7,8 @@ import { Notifications } from 'src/app/models/Notifications.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { selectMyNotifications, selectMyNotificationsCount } from 'src/app/state/notification/notification.selector';
-import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
+import { loadMyNotifications, loadMyNotificationsFailure, loadMyNotificationsSuccess } from 'src/app/state/notification/notification.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 
 @Component({
     selector: 'app-my-notifications-page',
@@ -23,6 +25,8 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
   isSearch = false;
   isAdmin = false;
   refreshing = false;
+  /** Why the notifications couldn't be loaded -- so a failed load never reads as "No notifications yet". */
+  loadError: string | null = null;
 
   // Was never bound to app-search-panel's [sortOptions] at all -- the input
   // defaulted to [], so the panel's whole filter-chip row rendered empty.
@@ -41,9 +45,14 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
+    private actions$: Actions,
     private authService: AuthService,
     private rxStompService: RxStompService
   ) { }
+
+  retryLoad(): void {
+    this.loadNotifications();
+  }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -53,6 +62,7 @@ export class MyNotificationsPageComponent implements OnInit, OnDestroy {
     // of the five websocket topics below called loadNotifications() again on
     // every message -- stacking a brand-new, never-unsubscribed subscription
     // on top of the last one for as long as this page stayed mounted.
+    this.subscriptions.push(watchLoadError(this.actions$, loadMyNotificationsFailure, [loadMyNotifications, loadMyNotificationsSuccess], null, m => this.loadError = m));
     this.watchStoreState();
 
     // Initial load

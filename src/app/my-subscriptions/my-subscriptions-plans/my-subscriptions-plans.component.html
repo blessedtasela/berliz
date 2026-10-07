@@ -45,8 +45,11 @@
     <div *ngFor="let i of [1,2,3]" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 h-48 animate-pulse"></div>
   </div>
 
+  <app-load-error *ngIf="loadError && !loading && visiblePlans.length === 0" [compact]="true" title="Couldn't load the plans"
+    [message]="loadError" (retry)="retryLoad()"></app-load-error>
+
   <!-- Empty state -->
-  <div *ngIf="!loading && visiblePlans.length === 0"
+  <div *ngIf="!loading && !loadError && visiblePlans.length === 0"
     class="rounded-xl border border-dashed border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 text-center">
     <p class="text-xs text-gray-400 dark:text-gray-500">No plans are available right now. Please check back later.</p>
   </div>

@@ -44,7 +44,10 @@
     </div>
 
     <ng-container *ngIf="activeTab === 'bookings'">
-        <app-bookings-empty *ngIf="bookings.length === 0" message="No one has booked a session with you yet."></app-bookings-empty>
+        <app-load-error *ngIf="loadError && bookings.length === 0" title="Couldn't load your bookings"
+            [message]="loadError" (retry)="refresh()"></app-load-error>
+
+        <app-bookings-empty *ngIf="bookings.length === 0 && !loadError && !loading" message="No one has booked a session with you yet."></app-bookings-empty>
 
         <div *ngIf="bookings.length > 0" class="flex flex-col gap-4">
 
@@ -116,7 +119,7 @@
     </div>
 
     <div *ngIf="activeTab === 'earnings'" class="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 sm:p-5">
-        <app-earnings-view [deepLinkPayoutId]="deepLinkPayoutId"></app-earnings-view>
+        <app-earnings-view [deepLinkPayoutId]="deepLinkPayoutId" [payoutSetupReturn]="payoutSetupReturn"></app-earnings-view>
     </div>
 
 </section>

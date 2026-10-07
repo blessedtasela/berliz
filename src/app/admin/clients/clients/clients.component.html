@@ -1,5 +1,8 @@
 <app-admin-search [selector]="selectClients" [fields]="clientSearchFields"
     placeholder="Search clients..." (results)="handleSearchResults($event)"></app-admin-search>
+<app-load-error *ngIf="loadError && clientsData.length === 0" title="Couldn't load clients" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<ng-container *ngIf="!(loadError && clientsData.length === 0)">
 <app-clients-header [clientsData]="clientsData" [totalClients]="totalClients"
     [clientsLength]="clientsLength"></app-clients-header>
 <app-clients-list [clientsData]="clientsData" [totalClients]="totalClients"></app-clients-list>
+</ng-container>

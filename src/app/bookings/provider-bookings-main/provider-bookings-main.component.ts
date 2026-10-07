@@ -20,7 +20,7 @@ import {
   updateBookingStatusFailure,
   updateBookingStatusSuccess
 } from 'src/app/state/booking/booking.actions';
-import { selectBookingLoading, selectProviderBookings } from 'src/app/state/booking/booking.selectors';
+import { selectBookingError, selectBookingLoading, selectProviderBookings } from 'src/app/state/booking/booking.selectors';
 import {
   createClientIntake,
   createClientIntakeFailure,
@@ -46,9 +46,14 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
 
   bookings: Booking[] = [];
   loading = false;
+  /** Why loading the list failed, while there is nothing to show -- so a failed load is never mistaken for "no bookings yet". */
+  loadError: string | null = null;
 
   /** ?payoutId=<id> from a notification deep link -- passed through to EarningsViewComponent, which scrolls to and highlights that row. */
   deepLinkPayoutId: number | null = null;
+
+  /** ?payoutSetup=return|refresh — where Stripe sent the provider back to after payout onboarding. */
+  payoutSetupReturn: 'return' | 'refresh' | null = null;
 
   private destroy$ = new Subject<void>();
 
@@ -63,6 +68,12 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    const rawSetup = this.route.snapshot.queryParamMap.get('payoutSetup');
+    if (rawSetup === 'return' || rawSetup === 'refresh') {
+      this.payoutSetupReturn = rawSetup;
+      this.activeTab = 'earnings';
+    }
+
     const rawPayoutId = this.route.snapshot.queryParamMap.get('payoutId');
     if (rawPayoutId) {
       this.deepLinkPayoutId = Number(rawPayoutId);
@@ -76,6 +87,10 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     this.store.select(selectBookingLoading)
       .pipe(takeUntil(this.destroy$))
       .subscribe(loading => this.loading = loading);
+
+    this.store.select(selectBookingError)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(e => this.loadError = e ?? null);
 
     this.actions$
       .pipe(ofType(updateBookingStatusSuccess), takeUntil(this.destroy$))

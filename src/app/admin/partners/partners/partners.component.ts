@@ -1,8 +1,10 @@
+import { Actions } from '@ngrx/effects';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Partner } from 'src/app/models/partners.interface';
-import { loadPartners } from 'src/app/state/partner/partner.actions';
+import { loadPartners, loadPartnersFailure, loadPartnersSuccess } from 'src/app/state/partner/partner.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectPartners } from 'src/app/state/partner/partner.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
@@ -19,6 +21,8 @@ export class PartnersComponent {
   searchComponent: string = 'partner'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+  /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
+  loadError: string | null = null;
 
   readonly selectPartners = selectPartners;
   readonly partnerSearchFields: AdminSearchField<Partner>[] = [
@@ -29,7 +33,7 @@ export class PartnersComponent {
     { value: 'status', label: 'Status', accessor: p => p.status },
   ];
 
-  constructor(private store: Store) {
+  constructor(private store: Store, private actions$: Actions) {
   }
 
   ngOnInit(): void {
@@ -41,6 +45,7 @@ export class PartnersComponent {
   }
 
   handleEmitEvent() {
+    this.subscriptions.push(watchLoadError(this.actions$, loadPartnersFailure, [loadPartners, loadPartnersSuccess], null, m => this.loadError = m));
     this.store.dispatch(loadPartners());
     this.subscriptions.push(
       this.store.select(selectPartners).subscribe((allPartners) => {
@@ -56,4 +61,8 @@ export class PartnersComponent {
     this.totalPartners = results.length;
   }
 
+
+  retryLoad(): void {
+    this.store.dispatch(loadPartners());
+  }
 }

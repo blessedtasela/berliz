@@ -75,13 +75,8 @@
                 {{ centerTrainer.length }}
             </span>
         </div>
-        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 flex flex-col gap-1">
-            <span class="text-[10px] uppercase tracking-wide text-gray-400 dark:text-gray-500 font-semibold">Address</span>
-            <span class="text-xs font-bold text-gray-900 dark:text-gray-100 flex items-center gap-1.5 truncate">
-                <i-feather name="map-pin" class="text-red-600 shrink-0" style="width:12px;height:12px;"></i-feather>
-                <span class="truncate">{{ center?.address || '—' }}</span>
-            </span>
-        </div>
+        <app-locations-menu [label]="locationMenuItems.length > 1 ? 'Locations' : 'Address'" [summary]="primaryLocationLabel" [items]="locationMenuItems"
+            class="block"></app-locations-menu>
     </div>
 
     <app-promo-badge-list ownerType="center" [ownerId]="centerId"></app-promo-badge-list>

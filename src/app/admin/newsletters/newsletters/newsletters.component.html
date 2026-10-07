@@ -1,5 +1,8 @@
 <app-admin-search [selector]="selectNewsletters" [fields]="newsletterSearchFields"
     placeholder="Search newsletters..." (results)="handleSearchResults($event)"></app-admin-search>
+<app-load-error *ngIf="loadError && newsletterData.length === 0" title="Couldn't load newsletters" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<ng-container *ngIf="!(loadError && newsletterData.length === 0)">
 <app-newsletter-header [newsletterData]="newsletterData" [totalNewsletters]="totalNewsletters"
     [newsletterLength]="newsletterLength"></app-newsletter-header>
 <app-newsletter-list [newsletterData]="newsletterData" [totalNewsletters]="totalNewsletters"></app-newsletter-list>
+</ng-container>

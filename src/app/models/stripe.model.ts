@@ -23,3 +23,35 @@ export interface StripeCheckoutSessionResponse {
   checkoutUrl: string;
   message?: string;
 }
+
+/** Mirrors the backend `StripeConnectOnboardingRequest` — all optional. */
+export interface StripeConnectOnboardingRequest {
+  /** Two-letter country of the connected account; the server defaults to US. Only used when the account is first created. */
+  country?: string;
+  /** Where Stripe sends the provider if their onboarding link expires. */
+  refreshUrl?: string;
+  /** Where Stripe sends the provider when they finish (or leave) onboarding. */
+  returnUrl?: string;
+}
+
+/** Mirrors the backend `StripeConnectOnboardingResponse`. */
+export interface StripeConnectOnboardingResponse {
+  accountId: string;
+  /** A one-time Stripe link: onboarding while setup is unfinished, the Express dashboard once it is complete. Redirect the browser. */
+  onboardingUrl: string;
+  message?: string;
+}
+
+/** Mirrors the backend `StripeConnectStatusResponse`. */
+export interface StripeConnectStatus {
+  /** False when Stripe isn't configured on the server at all — show nothing. */
+  configured: boolean;
+  connected: boolean;
+  accountId?: string | null;
+  detailsSubmitted: boolean;
+  chargesEnabled: boolean;
+  payoutsEnabled: boolean;
+  /** Details submitted and payouts enabled: transfers to this provider will go through. */
+  ready: boolean;
+  message?: string;
+}

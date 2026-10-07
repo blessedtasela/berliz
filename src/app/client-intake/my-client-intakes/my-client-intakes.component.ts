@@ -1,9 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 
 import { ClientIntake } from 'src/app/models/client-intake.model';
-import { loadMyClientIntakes } from 'src/app/state/client-intake/client-intake.actions';
+import { loadMyClientIntakes, loadMyClientIntakesFailure, loadMyClientIntakesSuccess } from 'src/app/state/client-intake/client-intake.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectMyClientIntakes } from 'src/app/state/client-intake/client-intake.selectors';
 
 /**
@@ -21,12 +23,19 @@ import { selectMyClientIntakes } from 'src/app/state/client-intake/client-intake
 export class MyClientIntakesComponent implements OnInit, OnDestroy {
 
   intakes: ClientIntake[] = [];
+  /** Why the intakes couldn't be loaded -- so a failed load never reads as "you haven't started any". */
+  loadError: string | null = null;
 
   private destroy$ = new Subject<void>();
 
-  constructor(private store: Store) { }
+  constructor(private store: Store, private actions$: Actions) { }
+
+  retryLoad(): void {
+    this.store.dispatch(loadMyClientIntakes());
+  }
 
   ngOnInit(): void {
+    watchLoadError(this.actions$, loadMyClientIntakesFailure, [loadMyClientIntakes, loadMyClientIntakesSuccess], this.destroy$, m => this.loadError = m);
     this.store.dispatch(loadMyClientIntakes());
     this.store.select(selectMyClientIntakes)
       .pipe(takeUntil(this.destroy$))

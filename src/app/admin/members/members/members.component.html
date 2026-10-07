@@ -1,5 +1,8 @@
 <app-admin-search [selector]="selectMembers" [fields]="memberSearchFields"
     placeholder="Search members..." (results)="handleSearchResults($event)"></app-admin-search>
+<app-load-error *ngIf="loadError && membersData.length === 0" title="Couldn't load members" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<ng-container *ngIf="!(loadError && membersData.length === 0)">
 <app-members-header [membersData]="membersData" [totalMembers]="totalMembers"
     [membersLength]="membersLength"></app-members-header>
 <app-members-list [membersData]="membersData" [totalMembers]="totalMembers"></app-members-list>
+</ng-container>

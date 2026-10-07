@@ -8,6 +8,7 @@ import { IconsModule } from '../icons/icons.module';
 import { FooterModule } from '../footer/footer.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { SharedModule } from '../shared/shared.module';
+import { LoadErrorComponent } from '../shared/load-error/load-error.component';
 import { DateStripComponent } from '../shared/date-strip/date-strip.component';
 import { TimePickerComponent } from '../shared/time-picker/time-picker.component';
 import { BookingLocationPickerComponent } from '../booking/booking-location-picker/booking-location-picker.component';
@@ -46,6 +47,7 @@ import { BookForClientModalComponent } from './book-for-client-modal/book-for-cl
     NavbarModule,
     RouterModule,
     SharedModule,
+    LoadErrorComponent,
     DateStripComponent,
     TimePickerComponent,
     BookingLocationPickerComponent

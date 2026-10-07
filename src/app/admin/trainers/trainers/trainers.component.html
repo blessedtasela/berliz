@@ -1,5 +1,8 @@
 <app-admin-search [selector]="selectTrainers" [fields]="trainerSearchFields"
     placeholder="Search trainers..." (results)="handleSearchResults($event)"></app-admin-search>
+<app-load-error *ngIf="loadError && trainersData.length === 0" title="Couldn't load trainers" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<ng-container *ngIf="!(loadError && trainersData.length === 0)">
 <app-trainer-header [trainersData]="trainersData" [totalTrainers]="totalTrainers"
     [trainersLength]="trainersLength"></app-trainer-header>
 <app-trainer-list [trainersData]="trainersData" [totalTrainers]="totalTrainers"></app-trainer-list>
+</ng-container>

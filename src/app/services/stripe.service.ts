@@ -3,7 +3,10 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../models/Api.interface';
-import { StripeCheckoutSessionRequest, StripeCheckoutSessionResponse } from '../models/stripe.model';
+import {
+  StripeCheckoutSessionRequest, StripeCheckoutSessionResponse,
+  StripeConnectOnboardingRequest, StripeConnectOnboardingResponse, StripeConnectStatus
+} from '../models/stripe.model';
 
 /** Stripe Checkout — mirrors `StripePaymentRest` on the backend. */
 @Injectable({
@@ -31,6 +34,19 @@ export class StripeService {
       this.url + `/payment/stripe/booking-checkout/${bookingId}`,
       null
     );
+  }
+
+  /** Whether the signed-in trainer/center has finished setting up payouts. Safe to call on every page load. */
+  getConnectStatus(): Observable<ApiResponse<StripeConnectStatus>> {
+    return this.httpClient.get<ApiResponse<StripeConnectStatus>>(this.url + '/payment/stripe/connect/status');
+  }
+
+  /**
+   * A Stripe link to set up (or, once done, manage) payouts. The server keeps ONE Connect account per
+   * provider and reuses it, so calling this again is safe. Redirect the browser to `onboardingUrl`.
+   */
+  createConnectOnboardingLink(request: StripeConnectOnboardingRequest = {}): Observable<ApiResponse<StripeConnectOnboardingResponse>> {
+    return this.httpClient.post<ApiResponse<StripeConnectOnboardingResponse>>(this.url + '/payment/stripe/connect/onboarding-link', request);
   }
 
   /** Admin-only — full Stripe refund of a payment. */

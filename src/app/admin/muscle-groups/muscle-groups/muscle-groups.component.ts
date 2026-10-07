@@ -1,8 +1,10 @@
+import { Actions } from '@ngrx/effects';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
-import { loadMuscleGroups } from 'src/app/state/muscle-group/muscle-group.actions';
+import { loadMuscleGroups, loadMuscleGroupsFailure, loadMuscleGroupsSuccess } from 'src/app/state/muscle-group/muscle-group.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectMuscleGroups } from 'src/app/state/muscle-group/muscle-group.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
@@ -19,6 +21,8 @@ export class MuscleGroupsComponent {
   searchComponent: string = 'muscleGroup'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+  /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
+  loadError: string | null = null;
 
   readonly selectMuscleGroups = selectMuscleGroups;
   readonly muscleGroupSearchFields: AdminSearchField<MuscleGroups>[] = [
@@ -29,7 +33,7 @@ export class MuscleGroupsComponent {
     { value: 'status', label: 'Status', accessor: m => m.status },
   ];
 
-  constructor(private store: Store) {
+  constructor(private store: Store, private actions$: Actions) {
   }
 
   ngOnInit(): void {
@@ -41,6 +45,7 @@ export class MuscleGroupsComponent {
   }
 
   handleEmitEvent() {
+    this.subscriptions.push(watchLoadError(this.actions$, loadMuscleGroupsFailure, [loadMuscleGroups, loadMuscleGroupsSuccess], null, m => this.loadError = m));
     this.store.dispatch(loadMuscleGroups());
     this.subscriptions.push(
       this.store.select(selectMuscleGroups).subscribe((allMuscleGroups) => {
@@ -56,4 +61,8 @@ export class MuscleGroupsComponent {
     this.totalMuscleGroups = results.length;
   }
 
+
+  retryLoad(): void {
+    this.store.dispatch(loadMuscleGroups());
+  }
 }

@@ -8,7 +8,10 @@ import { Subject, of, throwError } from 'rxjs';
 import { MyBookingsMainComponent } from './my-bookings-main.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StripeService } from 'src/app/services/stripe.service';
-import { selectMyBookings } from 'src/app/state/booking/booking.selectors';
+import { selectBookingError, selectBookingLoading, selectMyBookings } from 'src/app/state/booking/booking.selectors';
+import { loadMyBookings } from 'src/app/state/booking/booking.actions';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import { MockStore } from '@ngrx/store/testing';
 
 describe('MyBookingsMainComponent', () => {
   let component: MyBookingsMainComponent;
@@ -25,8 +28,13 @@ describe('MyBookingsMainComponent', () => {
     TestBed.configureTestingModule({
       declarations: [MyBookingsMainComponent],
       schemas: [NO_ERRORS_SCHEMA],
+      imports: [LoadErrorComponent],
       providers: [
-        provideMockStore({ selectors: [{ selector: selectMyBookings, value: [] }] }),
+        provideMockStore({ selectors: [
+          { selector: selectMyBookings, value: [] },
+          { selector: selectBookingLoading, value: false },
+          { selector: selectBookingError, value: null },
+        ] }),
         { provide: Actions, useValue: new Subject() },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: SnackBarService, useValue: snackBarSpy },
@@ -41,6 +49,49 @@ describe('MyBookingsMainComponent', () => {
   it('should create', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
+  });
+
+  describe('when the list cannot be loaded', () => {
+    const el = () => fixture.nativeElement as HTMLElement;
+
+    it('shows a retryable error instead of the empty state', () => {
+      const store = TestBed.inject(MockStore);
+      store.overrideSelector(selectBookingError, 'Server exploded');
+      store.refreshState();
+      fixture.detectChanges();
+
+      expect(el().textContent).toContain("Couldn't load your bookings");
+      expect(el().textContent).toContain('Server exploded');
+      expect(el().querySelector('app-bookings-empty')).toBeNull();
+    });
+
+    it('retrying asks for the bookings again', () => {
+      const store = TestBed.inject(MockStore);
+      store.overrideSelector(selectBookingError, 'Server exploded');
+      store.refreshState();
+      fixture.detectChanges();
+      const dispatch = spyOn(store, 'dispatch');
+
+      (el().querySelector('app-load-error button') as HTMLButtonElement).click();
+
+      expect(dispatch).toHaveBeenCalledWith(loadMyBookings());
+    });
+
+    it('shows the genuine empty state when there is no error', () => {
+      fixture.detectChanges();
+      component.loading = false; // the (mocked) store never finishes the load the component starts
+      fixture.detectChanges();
+      expect(el().querySelector('app-bookings-empty')).not.toBeNull();
+      expect(el().querySelector('app-load-error')).toBeNull();
+    });
+
+    it('does not flash the empty state while the first load is still running', () => {
+      const store = TestBed.inject(MockStore);
+      store.overrideSelector(selectBookingLoading, true);
+      store.refreshState();
+      fixture.detectChanges();
+      expect(el().querySelector('app-bookings-empty')).toBeNull();
+    });
   });
 
   describe('paying for a confirmed session', () => {

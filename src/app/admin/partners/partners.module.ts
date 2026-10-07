@@ -18,6 +18,7 @@ import { AuthGuard } from 'src/app/services/auth.guard';
 import { RoleGuard } from 'src/app/services/role.guard';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 @NgModule({
   declarations: [
     AddPartnerModalComponent,
@@ -30,6 +31,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
   ],
 
   imports: [
+    LoadErrorComponent,
     ClickablePhotoDirective,
     CommonModule,
     IconsModule,

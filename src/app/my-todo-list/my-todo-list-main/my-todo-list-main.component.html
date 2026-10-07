@@ -8,8 +8,11 @@
     <app-refresh-button [loading]="refreshing" (refresh)="refreshTodos()"></app-refresh-button>
   </div>
 
+  <app-load-error *ngIf="loadError && allTodos.length === 0" title="Couldn't load your to-dos"
+    [message]="loadError" (retry)="refreshTodos()"></app-load-error>
+
   <!-- DASHBOARD (only when NOT filtering) -->
-  <ng-container *ngIf="!isFiltering">
+  <ng-container *ngIf="!isFiltering && !(loadError && allTodos.length === 0)">
 
     <!-- Metrics -->
     <app-my-todo-list-metrics [todos]="allTodos"></app-my-todo-list-metrics>

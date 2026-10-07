@@ -1,5 +1,8 @@
 <app-admin-search [selector]="selectPayments" [fields]="paymentSearchFields"
     placeholder="Search payments..." (results)="handleSearchResults($event)"></app-admin-search>
+<app-load-error *ngIf="loadError && paymentsData.length === 0" title="Couldn't load payments" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<ng-container *ngIf="!(loadError && paymentsData.length === 0)">
 <app-payments-header [paymentsData]="paymentsData" [totalPayments]="totalPayments"
     [paymentsLength]="paymentsLength"></app-payments-header>
 <app-payments-list [paymentsData]="paymentsData" [totalPayments]="totalPayments"></app-payments-list>
+</ng-container>

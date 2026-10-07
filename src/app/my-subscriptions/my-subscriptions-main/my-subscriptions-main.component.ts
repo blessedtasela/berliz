@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subject, filter, takeUntil } from 'rxjs';
@@ -6,7 +7,8 @@ import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { selectUser } from 'src/app/state/user/user.selector';
-import { loadMySubscriptions } from 'src/app/state/subscription/subscription.actions';
+import { loadMySubscriptions, loadMySubscriptionsFailure, loadMySubscriptionsSuccess } from 'src/app/state/subscription/subscription.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectMySubscriptions, selectSubscriptionLoading } from 'src/app/state/subscription/subscription.selectors';
 
 @Component({
@@ -19,11 +21,14 @@ export class MySubscriptionsMainComponent implements OnInit, OnDestroy {
   subscriptionsList: Subscriptions[] = [];
   isAdmin = false;
   loading = false;
+  /** Why the subscriptions couldn't be loaded -- so a failed load never reads as "you have no subscriptions". */
+  loadError: string | null = null;
 
   private destroy$ = new Subject<void>();
 
   constructor(
     private store: Store,
+    private actions$: Actions,
     private rxStomp: RxStompService,
     private loader: NgxUiLoaderService,
     private authService: AuthService
@@ -32,6 +37,7 @@ export class MySubscriptionsMainComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.isAdmin = this.authService.isAdmin();
+    watchLoadError(this.actions$, loadMySubscriptionsFailure, [loadMySubscriptions, loadMySubscriptionsSuccess], this.destroy$, m => this.loadError = m);
 
     this.store.select(selectMySubscriptions)
       .pipe(takeUntil(this.destroy$))
