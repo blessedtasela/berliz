@@ -89,8 +89,8 @@
                     <div class="flex items-center justify-between gap-2 mt-auto pt-1">
                         <span class="text-[11px] text-gray-400 dark:text-gray-500 flex items-center gap-1 truncate">
                             <i-feather name="map-pin" style="width:10px;height:10px;"></i-feather>
-                            {{ primaryLocationLabel(trainer) }}
-                            <span *ngIf="extraLocationCount(trainer) > 0">+{{ extraLocationCount(trainer) }}</span>
+                            <span class="truncate">{{ primaryLocationLabel(trainer) }}</span>
+                            <span *ngIf="extraLocationCount(trainer) > 0" class="shrink-0 font-semibold text-red-600">+{{ extraLocationCount(trainer) }} more</span>
                         </span>
                         <span class="text-[10px] font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full shrink-0">
                             {{ serviceModeLabel(trainer) }}

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { TrainersDetailsComponent } from 'src/app/trainers/trainers-details/trainers-details.component';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
+import { LocationMenuFooter, LocationMenuItem } from 'src/app/shared/locations-menu/locations-menu.component';
 
 /**
  * Light-themed, dashboard-native trainer profile — same route param, same
@@ -39,6 +40,31 @@ export class DashboardTrainerDetailComponent extends TrainersDetailsComponent {
 
   get extraLocationCount(): number {
     return Math.max(0, (this.trainer?.locations?.length ?? 0) - 1);
+  }
+
+  /** Every place this trainer works from, for the "Available in" dropdown. */
+  get locationMenuItems(): LocationMenuItem[] {
+    return (this.trainer?.locations ?? []).map(loc => {
+      const place = [loc.city, loc.stateProvince, loc.country].filter(Boolean).join(', ');
+      const query = [loc.venue, place].filter(Boolean).join(', ');
+      return {
+        title: loc.venue || place,
+        subtitle: loc.venue ? place : null,
+        href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
+        note: loc.fee ? `+${Number(loc.fee).toFixed(2)}` : 'No extra fee',
+        noteHighlight: !!loc.fee
+      };
+    });
+  }
+
+  get locationMenuFooter(): LocationMenuFooter | null {
+    if (!this.trainer?.customLocationAllowed) return null;
+    const fee = this.trainer.customLocationFee;
+    return {
+      text: 'Or train at a place of your choice',
+      note: fee ? `+${Number(fee).toFixed(2)}` : 'No extra fee',
+      noteHighlight: !!fee
+    };
   }
 
   get serviceModeLabel(): string {

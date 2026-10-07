@@ -1,0 +1,53 @@
+<div class="relative h-full">
+    <button type="button" (click)="toggle()" [attr.aria-expanded]="openable ? open : null" [attr.aria-haspopup]="openable ? 'true' : null"
+        class="w-full h-full text-left bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 flex flex-col gap-1 transition"
+        [ngClass]="openable ? 'hover:border-red-300 dark:hover:border-red-800 cursor-pointer' : 'cursor-default'">
+        <span class="text-[10px] uppercase tracking-wide text-gray-400 dark:text-gray-500 font-semibold flex items-center justify-between">
+            {{ label }}
+            <i-feather *ngIf="openable" [name]="open ? 'chevron-up' : 'chevron-down'" style="width:12px;height:12px;"></i-feather>
+        </span>
+        <span class="text-sm font-bold text-gray-900 dark:text-gray-100 flex items-center gap-1.5 truncate">
+            <i-feather name="map-pin" class="text-red-600 shrink-0" style="width:13px;height:13px;"></i-feather>
+            <span class="truncate">{{ summary || '—' }}</span>
+            <span *ngIf="hasMany" class="text-red-600 font-semibold shrink-0">+{{ count - 1 }} more</span>
+        </span>
+        <span *ngIf="count > 0" class="text-[10px] text-gray-400 dark:text-gray-500">
+            {{ countLabel }}<ng-container *ngIf="openable"> · tap for details</ng-container>
+        </span>
+    </button>
+
+    <div *ngIf="open" role="menu"
+        class="absolute left-0 top-full mt-2 z-20 w-full sm:w-80 max-w-[calc(100vw-2rem)] max-h-80 overflow-y-auto
+               bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg">
+        <ng-container *ngFor="let item of items">
+            <a *ngIf="item.href; else plainRow" [href]="item.href" target="_blank" rel="noopener" role="menuitem"
+                class="flex items-start gap-2 px-4 py-2.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800
+                       hover:text-red-600 border-b border-gray-100 dark:border-gray-800 last:border-b-0 transition">
+                <i-feather name="map-pin" class="text-red-600 shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
+                <span class="flex flex-col min-w-0 flex-1">
+                    <span class="font-semibold break-words">{{ item.title }}</span>
+                    <span *ngIf="item.subtitle" class="break-words text-gray-400 dark:text-gray-500">{{ item.subtitle }}</span>
+                </span>
+                <span *ngIf="item.note" class="shrink-0 text-[11px] font-semibold"
+                    [ngClass]="item.noteHighlight ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400 dark:text-gray-500'">{{ item.note }}</span>
+            </a>
+            <ng-template #plainRow>
+                <div class="flex items-start gap-2 px-4 py-2.5 text-xs text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-800 last:border-b-0">
+                    <i-feather name="map-pin" class="text-red-600 shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
+                    <span class="flex flex-col min-w-0 flex-1">
+                        <span class="font-semibold break-words">{{ item.title }}</span>
+                        <span *ngIf="item.subtitle" class="break-words text-gray-400 dark:text-gray-500">{{ item.subtitle }}</span>
+                    </span>
+                    <span *ngIf="item.note" class="shrink-0 text-[11px] font-semibold"
+                        [ngClass]="item.noteHighlight ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400 dark:text-gray-500'">{{ item.note }}</span>
+                </div>
+            </ng-template>
+        </ng-container>
+        <div *ngIf="footer" class="flex items-start gap-2 px-4 py-2.5 text-xs text-gray-600 dark:text-gray-400 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-950/40">
+            <i-feather name="navigation" class="text-red-600 shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
+            <span class="flex-1 min-w-0">{{ footer.text }}</span>
+            <span *ngIf="footer.note" class="shrink-0 text-[11px] font-semibold"
+                [ngClass]="footer.noteHighlight ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400 dark:text-gray-500'">{{ footer.note }}</span>
+        </div>
+    </div>
+</div>

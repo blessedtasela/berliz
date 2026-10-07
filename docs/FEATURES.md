@@ -185,6 +185,17 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Locations dropdown on the signed-in provider profiles
+
+The "Available in" dropdown from the training-locations work only existed on the *public* trainer page;
+the dashboard-native profiles (`/dashboard/find-trainers/:name`, `/dashboard/find-centers/:id/:name`)
+still showed a bare "+2" with nothing to open. New shared `app-locations-menu` (light/dark dashboard
+theme) used by both: the tile always says "N locations" and "+N more"; clicking lists every place with
+venue, address, per-location fee and a Maps link (trainers also get the "place of your choice" row);
+a single location opens too (its venue/fee aren't on the tile). Centers' "Address" tile becomes a
+"Locations" tile listing every branch. Find a Provider trainer cards now read "+N more". Closes on
+outside click / Escape.
+
 ### Unreleased — Backend authorization layer, Order/Bill/Tag/Dashboard cleanup, config out of code
 
 Backend-only (`com.berliz`); no UI changes. Follows a full audit of the Spring Boot services.
