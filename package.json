@@ -10,6 +10,9 @@
     "prerender": "ng build --prerender=false --output-path=dist/csr-shell && ng build && node scripts/finalize-prerender.mjs"
   },
   "private": true,
+  "engines": {
+    "node": ">=22.22.0 <23 || >=24.13.0"
+  },
   "dependencies": {
     "@angular/animations": "^20.3.33",
     "@angular/cdk": "^20.2.14",
