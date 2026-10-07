@@ -1,9 +1,11 @@
+import { Actions } from '@ngrx/effects';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Tags } from 'src/app/models/tags.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { loadTags } from 'src/app/state/tag/tag.actions';
+import { loadTags, loadTagsFailure, loadTagsSuccess } from 'src/app/state/tag/tag.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectTags } from 'src/app/state/tag/tag.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
@@ -20,6 +22,8 @@ export class TagsComponent {
   searchComponent: string = 'tag'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+  /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
+  loadError: string | null = null;
 
   readonly selectTags = selectTags;
   readonly tagSearchFields: AdminSearchField<Tags>[] = [
@@ -30,7 +34,7 @@ export class TagsComponent {
   ];
 
   constructor(private store: Store,
-    private rxStompService: RxStompService) {
+    private rxStompService: RxStompService, private actions$: Actions) {
   }
 
   ngOnInit(): void {
@@ -46,6 +50,7 @@ export class TagsComponent {
   }
 
   handleEmitEvent() {
+    this.subscriptions.push(watchLoadError(this.actions$, loadTagsFailure, [loadTags, loadTagsSuccess], null, m => this.loadError = m));
     this.store.dispatch(loadTags());
     this.subscriptions.push(
       this.store.select(selectTags).subscribe((allTags) => {
@@ -85,5 +90,9 @@ export class TagsComponent {
       const receivedNewsletter: Tags = JSON.parse(message.body);
       this.handleEmitEvent()
     });
+  }
+
+  retryLoad(): void {
+    this.store.dispatch(loadTags());
   }
 }

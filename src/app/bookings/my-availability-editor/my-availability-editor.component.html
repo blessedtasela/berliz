@@ -14,12 +14,16 @@
         </span>
     </div>
 
+    <app-load-error *ngIf="loadError && !loading" title="Couldn't load your availability"
+        message="Your saved hours couldn't be loaded, so editing is switched off to avoid overwriting them."
+        (retry)="retryLoad()"></app-load-error>
+
     <div *ngIf="loading" class="flex items-center justify-center py-10 gap-2 text-gray-400">
         <i-feather name="loader" class="animate-spin" style="width:16px;height:16px;"></i-feather>
         <span class="text-xs">Loading your availability...</span>
     </div>
 
-    <div *ngIf="!loading" class="flex flex-col gap-2">
+    <div *ngIf="!loading && !loadError" class="flex flex-col gap-2">
 
         <div *ngFor="let day of days" class="rounded-xl border p-3 sm:p-3.5 transition"
             [ngClass]="day.blocks.length > 0 ? 'border-red-100 bg-red-50/40' : 'border-gray-200 bg-gray-50'">

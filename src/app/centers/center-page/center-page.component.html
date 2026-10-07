@@ -1,4 +1,9 @@
 <app-center-hero></app-center-hero>
 <app-center-search (allCenters)="handleSearchResults($event)" [centers]="centers"></app-center-search>
-<app-center-search-result [centersResult]="centers" [totalCenters]="countResult"></app-center-search-result>
+<div *ngIf="loadError && centers.length === 0" class="w-full bg-zinc-950 px-4 py-10 font-sans">
+    <div class="max-w-3xl mx-auto">
+        <app-load-error [compact]="true" title="Couldn't load centers" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+    </div>
+</div>
+<app-center-search-result *ngIf="!(loadError && centers.length === 0)" [centersResult]="centers" [totalCenters]="countResult"></app-center-search-result>
 <app-center-partner-form></app-center-partner-form>

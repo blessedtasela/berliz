@@ -4,13 +4,16 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Subject, takeUntil } from 'rxjs';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { MyTrainerSummary } from 'src/app/models/progress-share.model';
-import { loadMyTrainers } from 'src/app/state/booking/booking.actions';
+import { loadMyTrainers, loadMyTrainersFailure, loadMyTrainersSuccess } from 'src/app/state/booking/booking.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectMyTrainersLoading, selectMyTrainersOnly } from 'src/app/state/booking/booking.selectors';
 import {
   grantProgressShare,
   grantProgressShareFailure,
   grantProgressShareSuccess,
   loadMyGrants,
+  loadMyGrantsFailure,
+  loadMyGrantsSuccess,
   revokeProgressShare,
   revokeProgressShareFailure,
   revokeProgressShareSuccess,
@@ -44,13 +47,23 @@ export class ProgressSharingSettingsComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
+  /** Why the trainers or the sharing settings couldn't be loaded. The toggles are hidden while it is set: with the grants unknown they would all read "not shared", which may be false. */
+  loadError: string | null = null;
+
   constructor(
     private store: Store,
     private actions$: Actions,
     private snackBarService: SnackBarService,
   ) { }
 
+  retryLoad(): void {
+    this.store.dispatch(loadMyTrainers());
+    this.store.dispatch(loadMyGrants());
+  }
+
   ngOnInit(): void {
+    watchLoadError(this.actions$, loadMyTrainersFailure, [loadMyTrainers, loadMyTrainersSuccess], this.destroy$, m => this.loadError = m);
+    watchLoadError(this.actions$, loadMyGrantsFailure, [loadMyGrants, loadMyGrantsSuccess], this.destroy$, m => this.loadError = m);
     this.store.dispatch(loadMyTrainers());
     this.store.dispatch(loadMyGrants());
 

@@ -16,15 +16,18 @@
         <span class="text-[11px]">Loading your trainers...</span>
     </div>
 
+    <app-load-error *ngIf="loadError && !loadingTrainers" [compact]="true" title="Couldn't load your sharing settings"
+        [message]="loadError" (retry)="retryLoad()"></app-load-error>
+
     <!-- Empty state -->
-    <div *ngIf="!loadingTrainers && trainers.length === 0"
+    <div *ngIf="!loadingTrainers && !loadError && trainers.length === 0"
         class="flex flex-col items-center justify-center py-8 gap-2 text-gray-400 dark:text-gray-500">
         <i-feather name="users" style="width:24px;height:24px;"></i-feather>
         <p class="text-xs font-medium">You haven't booked with a trainer yet.</p>
     </div>
 
     <!-- Trainer rows -->
-    <div *ngIf="!loadingTrainers && trainers.length > 0" class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
+    <div *ngIf="!loadingTrainers && !loadError && trainers.length > 0" class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
         <div *ngFor="let trainer of trainers" class="flex items-center justify-between gap-4 py-2.5">
 
             <div class="flex items-start gap-2.5 min-w-0">

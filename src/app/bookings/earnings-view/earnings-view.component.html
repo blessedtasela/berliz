@@ -50,8 +50,11 @@
         Berliz keeps a 15% marketplace commission on each completed, paid session — you keep the remaining 85%.
     </p>
 
+    <app-load-error *ngIf="loadError && !loading && payouts.length === 0" title="Couldn't load your earnings"
+        [message]="loadError" (retry)="retryLoad()"></app-load-error>
+
     <!-- Empty state -->
-    <div *ngIf="!loading && payouts.length === 0" class="rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 p-6 text-center">
+    <div *ngIf="!loading && !loadError && payouts.length === 0" class="rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 p-6 text-center">
         <i-feather name="dollar-sign" class="text-gray-300 dark:text-gray-600 mx-auto" style="width:24px;height:24px;"></i-feather>
         <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">No completed sessions with a payout yet.</p>
     </div>

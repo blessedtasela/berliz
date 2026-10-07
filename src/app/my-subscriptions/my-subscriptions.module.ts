@@ -24,6 +24,7 @@ import { SharedModule } from '../shared/shared.module';
 
 
 
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 @NgModule({
   declarations: [
     MySubscriptionDetailModalComponent,
@@ -42,6 +43,7 @@ import { SharedModule } from '../shared/shared.module';
     MySubscriptionsAnalyticsComponent
   ],
   imports: [
+    LoadErrorComponent,
     ClickablePhotoDirective,
     CommonModule,
     IconsModule,

@@ -1,4 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -8,7 +9,8 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
 import { TodoList } from 'src/app/models/todoList.interface';
 import { FilterState, SearchSortOption } from 'src/app/models/FilterState.interface';
 import { TodoDetailsModalComponent } from 'src/app/shared/todo-details-modal/todo-details-modal.component';
-import { loadMyTodos } from 'src/app/state/todo/todo.actions';
+import { loadMyTodos, loadMyTodosFailure, loadMyTodosSuccess } from 'src/app/state/todo/todo.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectMyTodos } from 'src/app/state/todo/todo.selectors';
 import { filterTodos } from 'src/app/state/todo/todo.utils';
 
@@ -34,6 +36,8 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
     { key: 'exact-date', label: 'Exact Date', priority: false }
   ];
   allTodos: TodoList[] = [];
+  /** Why the to-dos couldn't be loaded -- so a failed load never reads as an empty list with zeroed metrics. */
+  loadError: string | null = null;
   filteredTodos: TodoList[] = [];
   pagedTodos: TodoList[] = [];
   sections: any[] = [];
@@ -57,12 +61,14 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
+    private actions$: Actions,
     private todoService: TodoService,
     private snackbar: SnackBarService,
     private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
+    this.subs.push(watchLoadError(this.actions$, loadMyTodosFailure, [loadMyTodos, loadMyTodosSuccess], null, m => this.loadError = m));
     const sub = this.store.select(selectMyTodos).subscribe(data => {
       this.allTodos = data;
       this.filteredTodos = [...data];

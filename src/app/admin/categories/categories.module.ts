@@ -20,6 +20,7 @@ import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 @NgModule({
   declarations: [
     AddCategoryModalComponent,
@@ -32,6 +33,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
   ],
 
   imports: [
+    LoadErrorComponent,
     ClickablePhotoDirective,
     CommonModule,
     IconsModule,

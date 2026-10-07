@@ -1,9 +1,11 @@
+import { Actions } from '@ngrx/effects';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { loadCategories } from 'src/app/state/category/category.actions';
+import { loadCategories, loadCategoriesFailure, loadCategoriesSuccess } from 'src/app/state/category/category.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectCategories } from 'src/app/state/category/category.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
@@ -20,6 +22,8 @@ export class CategoryComponent {
   searchComponent: string = ''
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+  /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
+  loadError: string | null = null;
 
   readonly selectCategories = selectCategories;
   readonly categorySearchFields: AdminSearchField<Categories>[] = [
@@ -31,7 +35,7 @@ export class CategoryComponent {
   ];
 
   constructor(public store: Store,
-    private rxStompService: RxStompService) {
+    private rxStompService: RxStompService, private actions$: Actions) {
   }
 
   ngOnInit(): void {
@@ -48,6 +52,7 @@ export class CategoryComponent {
     this.watchUpdateStatus()
     this.watchDeleteCategory()
     this.watchGetCategoryFromMap()
+    this.subscriptions.push(watchLoadError(this.actions$, loadCategoriesFailure, [loadCategories, loadCategoriesSuccess], null, m => this.loadError = m));
     this.store.dispatch(loadCategories());
     this.subscriptions.push(
       this.store.select(selectCategories).subscribe((allCategories) => {
@@ -94,4 +99,8 @@ export class CategoryComponent {
     });
   }
   
+
+  retryLoad(): void {
+    this.store.dispatch(loadCategories());
+  }
 }

@@ -9,12 +9,15 @@ import { AvailabilityService } from 'src/app/services/availability.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import {
   loadMyAvailability,
+  loadMyAvailabilityFailure,
+  loadMyAvailabilitySuccess,
   setMyAvailability,
   setMyAvailabilityFailure,
   setMyAvailabilitySuccess
 } from 'src/app/state/availability/availability.actions';
 import { selectAvailabilityLoading, selectMyAvailability } from 'src/app/state/availability/availability.selectors';
 
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { genericError } from 'src/validators/form-validators.module';
 
 interface TimeBlock {
@@ -49,6 +52,8 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
 
   days: DayRow[] = this.buildDefaultDays();
   loading = false;
+  /** Why the saved hours couldn't be loaded. The editor is hidden while this is set: saving the default hours it would otherwise show would overwrite the real ones. */
+  loadError: string | null = null;
   saving = false;
 
   /** Shown so a trainer/center understands their hours are zone-aware -- see AvailabilityService.setMyAvailability's own doc comment for the bug this closes. */
@@ -83,7 +88,12 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
     private snackBar: SnackBarService,
   ) { }
 
+  retryLoad(): void {
+    this.store.dispatch(loadMyAvailability());
+  }
+
   ngOnInit(): void {
+    watchLoadError(this.actions$, loadMyAvailabilityFailure, [loadMyAvailability, loadMyAvailabilitySuccess], this.destroy$, m => this.loadError = m);
     this.store.dispatch(loadMyAvailability());
     this.loadLeadTime();
     this.loadSlotDuration();

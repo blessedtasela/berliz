@@ -9,6 +9,9 @@
 -->
 <app-admin-search [selector]="selectCategories" [fields]="categorySearchFields"
   placeholder="Search categories..." (results)="handleSearchResults($event)"></app-admin-search>
+<app-load-error *ngIf="loadError && categoriesData.length === 0" title="Couldn't load categories" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<ng-container *ngIf="!(loadError && categoriesData.length === 0)">
 <app-categories-header [categoriesData]="categoriesData" [totalCategories]="totalCategories"
     [categoriesLength]="categoriesLength"></app-categories-header>
 <app-categories-list [categoriesData]="categoriesData" [totalCategories]="totalCategories"></app-categories-list>
+</ng-container>

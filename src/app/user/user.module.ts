@@ -25,6 +25,7 @@ import { userFeatureKey, userReducer } from '../state/user/user.reducer';
 import { StoreModule } from '@ngrx/store';
 
 
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 @NgModule({
   declarations: [
     UserProfileComponent,
@@ -43,6 +44,7 @@ import { StoreModule } from '@ngrx/store';
     ProgressSharingSettingsComponent
   ],
   imports: [
+    LoadErrorComponent,
     CommonModule,
     RouterModule,
     ImageCropperModule,

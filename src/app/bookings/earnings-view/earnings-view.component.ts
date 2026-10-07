@@ -1,4 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Subject, take, takeUntil } from 'rxjs';
 
@@ -8,7 +9,8 @@ import { StripeService } from 'src/app/services/stripe.service';
 import { genericError } from 'src/validators/form-validators.module';
 
 import { Payout } from 'src/app/models/payout.model';
-import { loadMyPayouts } from 'src/app/state/payout/payout.actions';
+import { loadMyPayouts, loadMyPayoutsFailure, loadMyPayoutsSuccess } from 'src/app/state/payout/payout.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import {
   selectMyPayouts,
   selectMyPaidTotal,
@@ -48,13 +50,22 @@ export class EarningsViewComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
+  /** Why the payouts couldn't be loaded -- so a failed load never reads as "no payouts yet". */
+  loadError: string | null = null;
+
   constructor(
     private store: Store,
+    private actions$: Actions,
     private stripeService: StripeService,
     private snackBar: SnackBarService,
   ) { }
 
+  retryLoad(): void {
+    this.store.dispatch(loadMyPayouts());
+  }
+
   ngOnInit(): void {
+    watchLoadError(this.actions$, loadMyPayoutsFailure, [loadMyPayouts, loadMyPayoutsSuccess], this.destroy$, m => this.loadError = m);
     this.store.dispatch(loadMyPayouts());
     this.loadConnectStatus();
 

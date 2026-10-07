@@ -9,12 +9,14 @@ import { ClientIntakeFormComponent } from './client-intake-form/client-intake-fo
 import { MyClientIntakesComponent } from './my-client-intakes/my-client-intakes.component';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 @NgModule({
   declarations: [
     ClientIntakeFormComponent,
     MyClientIntakesComponent
   ],
   imports: [
+    LoadErrorComponent,
     ClickablePhotoDirective,
     CommonModule,
     FormsModule,
