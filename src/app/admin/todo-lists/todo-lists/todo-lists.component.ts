@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { TodoList } from 'src/app/models/todoList.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { loadTodos } from 'src/app/state/todo/todo.actions';
+import { loadTodos, loadTodosFailure, loadTodosSuccess } from 'src/app/state/todo/todo.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectTodos } from 'src/app/state/todo/todo.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
@@ -21,6 +23,9 @@ export class TodoListsComponent {
   searchComponent: string = 'todoList'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+  /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
+  loadError: string | null = null;
+  private loadWatched = false;
 
   readonly selectTodos = selectTodos;
   readonly todoSearchFields: AdminSearchField<TodoList>[] = [
@@ -33,6 +38,7 @@ export class TodoListsComponent {
 
   constructor(private store: Store,
     private dialog: MatDialog,
+    private actions$: Actions,
     private rxStompService: RxStompService) {
   }
 
@@ -50,6 +56,10 @@ export class TodoListsComponent {
   }
 
   handleEmitEvent() {
+    if (!this.loadWatched) {
+      this.loadWatched = true;
+      this.subscriptions.push(watchLoadError(this.actions$, loadTodosFailure, [loadTodos, loadTodosSuccess], null, m => this.loadError = m));
+    }
     this.store.dispatch(loadTodos());
     this.subscriptions.push(
       this.store.select(selectTodos).subscribe((todo) => {
@@ -58,6 +68,10 @@ export class TodoListsComponent {
         this.todoListLength = todo.length;
       })
     );
+  }
+
+  retryLoad(): void {
+    this.store.dispatch(loadTodos());
   }
 
   handleSearchResults(results: TodoList[]): void {

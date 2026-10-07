@@ -409,7 +409,7 @@ name their own location (with its own optional fee). Clients choose at booking t
   shared progress, progress-sharing settings, testimonials, trainers search, centers, and the admin
   lists for users, partners, clients, members, categories, tags, exercises, muscle groups,
   newsletters, contact-us, payments, trainers, centers, tasks, subscriptions, testimonials. Each has
-  tests for error, retry and recovery. Not yet covered: admin FAQs, admin to-do lists.
+  tests for error, retry and recovery. Also covered: admin FAQs, admin to-do lists, and the dashboard login-activity chart (a failed load no longer reads as "No logins recorded").
 
 ### Unreleased — One shared "failed to load" state (`app-load-error`), on the Hub and Overview
 

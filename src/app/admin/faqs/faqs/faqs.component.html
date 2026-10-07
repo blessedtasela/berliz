@@ -1,3 +1,5 @@
+<app-load-error *ngIf="loadError && faqsData.length === 0" title="Couldn't load FAQs" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<ng-container *ngIf="!(loadError && faqsData.length === 0)">
 <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
     <div class="text-xs font-semibold text-gray-500 dark:text-gray-400">
         Showing <span class="text-gray-900 dark:text-gray-100">{{ totalFaqs }}</span> FAQs
@@ -24,3 +26,4 @@
 </div>
 
 <app-faqs-list [faqsData]="faqsData" [totalFaqs]="totalFaqs"></app-faqs-list>
+</ng-container>

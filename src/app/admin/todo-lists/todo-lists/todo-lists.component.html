@@ -1,5 +1,8 @@
+<app-load-error *ngIf="loadError && todoListData.length === 0" title="Couldn't load to-do lists" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<ng-container *ngIf="!(loadError && todoListData.length === 0)">
 <app-admin-search [selector]="selectTodos" [fields]="todoSearchFields"
     placeholder="Search todo lists..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-todo-list-header [todoListData]="todoListData" [totalTodoList]="totalTodoList"
     [todoListLength]="todoListLength"></app-todo-list-header>
 <app-todo-list-list [todoListData]="todoListData" [totalTodoList]="totalTodoList"></app-todo-list-list>
+</ng-container>

@@ -1,9 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Faq } from 'src/app/models/faq.model';
-import { loadFaqs } from 'src/app/state/faq/faq.actions';
+import { loadFaqs, loadFaqsFailure, loadFaqsSuccess } from 'src/app/state/faq/faq.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectFaqs } from 'src/app/state/faq/faq.selectors';
 import { AddFaqModalComponent } from '../add-faq-modal/add-faq-modal.component';
 
@@ -18,10 +20,13 @@ export class FaqsComponent implements OnInit, OnDestroy {
   totalFaqs: number = 0;
   selectedSortOption: string = 'category';
   subscriptions: Subscription[] = [];
+  /** Why the list couldn't be loaded -- so a failed load never reads as an empty list. */
+  loadError: string | null = null;
 
   constructor(
     private dialog: MatDialog,
-    private store: Store) { }
+    private store: Store,
+    private actions$: Actions) { }
 
   ngOnInit(): void {
     this.handleEmitEvent();
@@ -32,6 +37,7 @@ export class FaqsComponent implements OnInit, OnDestroy {
   }
 
   handleEmitEvent() {
+    this.subscriptions.push(watchLoadError(this.actions$, loadFaqsFailure, [loadFaqs, loadFaqsSuccess], null, m => this.loadError = m));
     this.store.dispatch(loadFaqs());
     this.subscriptions.push(
       this.store.select(selectFaqs).subscribe((allFaqs) => {
@@ -42,6 +48,10 @@ export class FaqsComponent implements OnInit, OnDestroy {
         this.totalFaqs = allFaqs.length;
       })
     );
+  }
+
+  retryLoad(): void {
+    this.store.dispatch(loadFaqs());
   }
 
   onSortOptionChange(event: any) {

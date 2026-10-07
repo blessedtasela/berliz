@@ -10,13 +10,22 @@ import {
 
 import { Chart, registerables } from 'chart.js/auto';
 
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Subscription, combineLatest, take } from 'rxjs';
 
 import { LoginHistoryEntry, LoginStats } from 'src/app/models/analytics.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { ThemeService } from 'src/app/services/theme.service';
-import { loadLoginStats, loadMyLoginHistory } from 'src/app/state/analytics/analytics.actions';
+import {
+  loadLoginStats,
+  loadLoginStatsFailure,
+  loadLoginStatsSuccess,
+  loadMyLoginHistory,
+  loadMyLoginHistoryFailure,
+  loadMyLoginHistorySuccess
+} from 'src/app/state/analytics/analytics.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import {
   selectAnalyticsLoading,
   selectLoginStats,
@@ -59,6 +68,8 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
   loginCanvas!: ElementRef<HTMLCanvasElement>;
 
   ready = false;
+  /** Why the stats couldn't be loaded, if they couldn't. */
+  loadError: string | null = null;
   scopeLabel = 'You';
 
   /** Headline numbers rendered above / below the chart. */
@@ -99,6 +110,7 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
+    private actions$: Actions,
     private auth: AuthService,
     private themeService: ThemeService
   ) { }
@@ -106,6 +118,11 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isAdminView = this.auth.isAdmin();
     this.scopeLabel = this.isAdminView ? 'All users' : 'You';
+
+    // A failed load must not read as "No logins recorded".
+    this.subscriptions.push(this.isAdminView
+      ? watchLoadError(this.actions$, loadLoginStatsFailure, [loadLoginStats, loadLoginStatsSuccess], null, m => this.loadError = m)
+      : watchLoadError(this.actions$, loadMyLoginHistoryFailure, [loadMyLoginHistory, loadMyLoginHistorySuccess], null, m => this.loadError = m));
 
     this.subscriptions.push(
       this.themeService.isDark$.subscribe(() => this.applyChartColors())
@@ -142,6 +159,10 @@ export class DashboardLoginChartComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subscriptions.forEach(s => s.unsubscribe());
     if (this.chart) this.chart.destroy();
+  }
+
+  retryLoad(): void {
+    this.store.dispatch(this.isAdminView ? loadLoginStats() : loadMyLoginHistory());
   }
 
   /** Only hit the API when the slice is empty and no request is already running. */

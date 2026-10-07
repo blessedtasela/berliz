@@ -1,6 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { Actions } from '@ngrx/effects';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { Subject } from 'rxjs';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import {
+  loadLoginStats,
+  loadLoginStatsFailure,
+  loadMyLoginHistory,
+  loadMyLoginHistoryFailure
+} from 'src/app/state/analytics/analytics.actions';
 
 import { DashboardLoginChartComponent } from './dashboard-login-chart.component';
 import { AuthService } from 'src/app/services/auth.service';
@@ -15,6 +24,7 @@ describe('DashboardLoginChartComponent', () => {
   let component: DashboardLoginChartComponent;
   let fixture: ComponentFixture<DashboardLoginChartComponent>;
   let store: MockStore;
+  let actions$: Subject<any>;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
 
   const baseStats: LoginStats = {
@@ -38,11 +48,13 @@ describe('DashboardLoginChartComponent', () => {
   }
 
   beforeEach(() => {
+    actions$ = new Subject<any>();
     authServiceSpy = jasmine.createSpyObj('AuthService', ['isAdmin']);
     authServiceSpy.isAdmin.and.returnValue(false);
 
     TestBed.configureTestingModule({
       declarations: [DashboardLoginChartComponent],
+      imports: [LoadErrorComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         provideMockStore({
@@ -52,6 +64,7 @@ describe('DashboardLoginChartComponent', () => {
             { selector: selectAnalyticsLoading, value: false }
           ]
         }),
+        { provide: Actions, useValue: actions$ },
         { provide: AuthService, useValue: authServiceSpy }
       ]
     });
@@ -95,5 +108,33 @@ describe('DashboardLoginChartComponent', () => {
     const byKey = new Map(component.platforms.map(p => [p.key, p.count]));
     expect(byKey.get('ios')).toBe(1);
     expect(byKey.get('web')).toBe(1);
+  });
+
+  describe('when the login activity cannot be loaded', () => {
+    const el = () => fixture.nativeElement as HTMLElement;
+
+    it('personal scope: shows a retryable error rather than "No logins recorded"', () => {
+      setUp();
+      actions$.next(loadMyLoginHistoryFailure({ error: 'Server exploded' }));
+      fixture.detectChanges();
+
+      expect(el().textContent).toContain("Couldn't load login activity");
+      expect(el().textContent).not.toContain('No logins recorded');
+
+      const dispatch = spyOn(store, 'dispatch');
+      (el().querySelector('app-load-error button') as HTMLButtonElement).click();
+      expect(dispatch).toHaveBeenCalledWith(loadMyLoginHistory());
+    });
+
+    it('admin scope: watches the stats load and retries it', () => {
+      authServiceSpy.isAdmin.and.returnValue(true);
+      setUp();
+      actions$.next(loadLoginStatsFailure({ error: 'Server exploded' }));
+      fixture.detectChanges();
+
+      const dispatch = spyOn(store, 'dispatch');
+      (el().querySelector('app-load-error button') as HTMLButtonElement).click();
+      expect(dispatch).toHaveBeenCalledWith(loadLoginStats());
+    });
   });
 });
