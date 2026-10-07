@@ -22,7 +22,10 @@
         </div>
     </div>
 
-    <app-bookings-empty *ngIf="bookings.length === 0" message="You haven't booked any sessions yet." [showFindProviderCta]="true"></app-bookings-empty>
+    <app-load-error *ngIf="loadError && bookings.length === 0" title="Couldn't load your bookings"
+        [message]="loadError" (retry)="loadBookings()"></app-load-error>
+
+    <app-bookings-empty *ngIf="bookings.length === 0 && !loadError && !loading" message="You haven't booked any sessions yet." [showFindProviderCta]="true"></app-bookings-empty>
 
     <div *ngIf="bookings.length > 0" class="flex flex-col gap-4">
 

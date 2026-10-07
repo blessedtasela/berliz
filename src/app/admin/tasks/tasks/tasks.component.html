@@ -1,4 +1,7 @@
 <app-admin-search [selector]="selectTasks" [fields]="taskSearchFields"
     placeholder="Search tasks..." (results)="handleSearchResults($event)"></app-admin-search>
+<app-load-error *ngIf="loadError && tasksData.length === 0" title="Couldn't load tasks" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<ng-container *ngIf="!(loadError && tasksData.length === 0)">
 <app-tasks-header [tasksData]="tasksData" [totalTasks]="totalTasks" [tasksLength]="tasksLength"></app-tasks-header>
 <app-tasks-list [tasksData]="tasksData" [totalTasks]="totalTasks"></app-tasks-list>
+</ng-container>

@@ -23,6 +23,7 @@ import { AdminAvailabilityModule } from 'src/app/admin/availability/admin-availa
 
 
 
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 @NgModule({
   declarations:
     [
@@ -36,6 +37,7 @@ import { AdminAvailabilityModule } from 'src/app/admin/availability/admin-availa
     ],
 
   imports: [
+    LoadErrorComponent,
     ClickablePhotoDirective,
     CommonModule,
     IconsModule,

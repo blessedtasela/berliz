@@ -19,8 +19,11 @@
         <span class="text-[11px]">Loading...</span>
     </div>
 
+    <app-load-error *ngIf="loadError && !loading && sharedClients.length === 0" [compact]="true" title="Couldn't load your clients' progress"
+        [message]="loadError" (retry)="retryLoad()"></app-load-error>
+
     <!-- Empty state -->
-    <div *ngIf="!loading && sharedClients.length === 0"
+    <div *ngIf="!loading && !loadError && sharedClients.length === 0"
         class="flex flex-col items-center justify-center py-10 gap-2 text-gray-400 dark:text-gray-500">
         <i-feather name="eye-off" style="width:28px;height:28px;"></i-feather>
         <p class="text-xs font-medium">No clients have shared their progress with you yet.</p>

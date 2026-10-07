@@ -1,8 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 import { ClientProgress, ProgressShare } from 'src/app/models/progress-share.model';
-import { loadClientProgress, loadSharedWithMe, clearSelectedClientProgress } from 'src/app/state/progress-share/progress-share.actions';
+import { loadClientProgress, loadSharedWithMe, loadSharedWithMeFailure, loadSharedWithMeSuccess, clearSelectedClientProgress } from 'src/app/state/progress-share/progress-share.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import {
   selectLoadingClientProgress,
   selectProgressShareLoading,
@@ -34,9 +36,17 @@ export class MyTrainerSharedProgressComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private store: Store) { }
+  /** Why the shared-client list couldn't be loaded -- so a failed load never reads as "no clients have shared". */
+  loadError: string | null = null;
+
+  constructor(private store: Store, private actions$: Actions) { }
+
+  retryLoad(): void {
+    this.store.dispatch(loadSharedWithMe());
+  }
 
   ngOnInit(): void {
+    watchLoadError(this.actions$, loadSharedWithMeFailure, [loadSharedWithMe, loadSharedWithMeSuccess], this.destroy$, m => this.loadError = m);
     this.store.dispatch(loadSharedWithMe());
 
     this.store.select(selectSharedWithMe)

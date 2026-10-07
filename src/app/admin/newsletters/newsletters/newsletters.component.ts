@@ -1,9 +1,11 @@
+import { Actions } from '@ngrx/effects';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Newsletter } from 'src/app/models/newsletter.model';
-import { loadNewsletters } from 'src/app/state/newsletter/newsletter.actions';
+import { loadNewsletters, loadNewslettersFailure, loadNewslettersSuccess } from 'src/app/state/newsletter/newsletter.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectNewsletters } from 'src/app/state/newsletter/newsletter.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
@@ -20,6 +22,8 @@ export class NewslettersComponent {
   searchComponent: string = 'newsletter'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+  /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
+  loadError: string | null = null;
 
   readonly selectNewsletters = selectNewsletters;
   readonly newsletterSearchFields: AdminSearchField<Newsletter>[] = [
@@ -29,7 +33,7 @@ export class NewslettersComponent {
   ];
 
   constructor(private store: Store,
-    private dialog: MatDialog,) {
+    private dialog: MatDialog, private actions$: Actions) {
   }
 
   ngOnInit(): void {
@@ -41,6 +45,7 @@ export class NewslettersComponent {
   }
 
   handleEmitEvent() {
+    this.subscriptions.push(watchLoadError(this.actions$, loadNewslettersFailure, [loadNewsletters, loadNewslettersSuccess], null, m => this.loadError = m));
     this.store.dispatch(loadNewsletters());
     this.subscriptions.push(
       this.store.select(selectNewsletters).subscribe((newsletter) => {
@@ -57,4 +62,8 @@ export class NewslettersComponent {
   }
 
 
+
+  retryLoad(): void {
+    this.store.dispatch(loadNewsletters());
+  }
 }

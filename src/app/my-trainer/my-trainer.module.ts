@@ -31,6 +31,7 @@ import { MyBookingsModule } from '../bookings/bookings.module';
 
 
 
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 @NgModule({
   declarations: [
     MyTrainerMainComponent,
@@ -50,6 +51,7 @@ import { MyBookingsModule } from '../bookings/bookings.module';
     MyTrainerSharedProgressComponent
   ],
   imports: [
+    LoadErrorComponent,
     ClickablePhotoDirective,
     CommonModule,
     NavbarModule,

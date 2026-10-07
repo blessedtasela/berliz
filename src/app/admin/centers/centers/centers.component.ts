@@ -1,8 +1,10 @@
+import { Actions } from '@ngrx/effects';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Centers } from 'src/app/models/centers.interface';
-import { loadCenters } from 'src/app/state/center/center.actions';
+import { loadCenters, loadCentersFailure, loadCentersSuccess } from 'src/app/state/center/center.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectCenters } from 'src/app/state/center/center.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
@@ -19,6 +21,8 @@ export class CentersComponent {
   searchComponent: string = 'center';
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+  /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
+  loadError: string | null = null;
 
   readonly selectCenters = selectCenters;
   readonly centerSearchFields: AdminSearchField<Centers>[] = [
@@ -29,7 +33,7 @@ export class CentersComponent {
     { value: 'partnerId', label: 'Partner id', accessor: c => c.partnerId?.toString() },
   ];
 
-  constructor(public store: Store) {
+  constructor(public store: Store, private actions$: Actions) {
   }
 
   ngOnInit(): void {
@@ -41,6 +45,7 @@ export class CentersComponent {
   }
 
   handleEmitEvent() {
+    this.subscriptions.push(watchLoadError(this.actions$, loadCentersFailure, [loadCenters, loadCentersSuccess], null, m => this.loadError = m));
     this.store.dispatch(loadCenters());
     this.subscriptions.push(
       this.store.select(selectCenters).subscribe((allCenters) => {
@@ -58,5 +63,9 @@ export class CentersComponent {
 
   emitData() {
     this.handleEmitEvent();
+  }
+
+  retryLoad(): void {
+    this.store.dispatch(loadCenters());
   }
 }

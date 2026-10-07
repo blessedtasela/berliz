@@ -1,8 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { selectCurrentTrainer, selectActiveTrainers } from 'src/app/state/trainer/trainer.selector';
-import { loadActiveTrainers } from 'src/app/state/trainer/trainer.actions';
+import { loadActiveTrainers, loadActiveTrainersFailure, loadActiveTrainersSuccess } from 'src/app/state/trainer/trainer.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 
 @Component({
     selector: 'app-trainers-main',
@@ -10,15 +13,28 @@ import { loadActiveTrainers } from 'src/app/state/trainer/trainer.actions';
     styleUrls: ['./trainers-main.component.css'],
     standalone: false
 })
-export class TrainersMainComponent {
+export class TrainersMainComponent implements OnDestroy {
   trainers: Trainers[] = [];
   countResult: number = 0;
   allTrainers: Trainers[] = [];
   showPartnerForm = false;
 
-  constructor(private store: Store) { }
+  /** Why the trainers couldn't be loaded -- so a failed load never reads as "no trainers found". */
+  loadError: string | null = null;
+  private loadErrorSub?: Subscription;
+
+  constructor(private store: Store, private actions$: Actions) { }
+
+  retryLoad(): void {
+    this.store.dispatch(loadActiveTrainers());
+  }
+
+  ngOnDestroy(): void {
+    this.loadErrorSub?.unsubscribe();
+  }
 
   ngOnInit(): void {
+    this.loadErrorSub = watchLoadError(this.actions$, loadActiveTrainersFailure, [loadActiveTrainers, loadActiveTrainersSuccess], null, m => this.loadError = m);
     this.store.dispatch(loadActiveTrainers());
     this.store.select(selectActiveTrainers).subscribe((cachedData) => {
       if (!cachedData) {

@@ -14,7 +14,10 @@
         <app-refresh-button [loading]="loading" (refresh)="handleRefresh()"></app-refresh-button>
     </div>
 
-    <app-my-subscriptions-empty *ngIf="subscriptionsList.length === 0"></app-my-subscriptions-empty>
+    <app-load-error *ngIf="loadError && subscriptionsList.length === 0" title="Couldn't load your subscriptions"
+        [message]="loadError" (retry)="handleRefresh()"></app-load-error>
+
+    <app-my-subscriptions-empty *ngIf="subscriptionsList.length === 0 && !loadError"></app-my-subscriptions-empty>
 
     <app-my-subscriptions-analytics *ngIf="subscriptionsList.length > 0" [subscriptions]="subscriptionsList">
     </app-my-subscriptions-analytics>

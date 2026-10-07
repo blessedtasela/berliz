@@ -13,7 +13,7 @@ import {
   cancelBookingSuccess,
   loadMyBookings
 } from 'src/app/state/booking/booking.actions';
-import { selectMyBookings } from 'src/app/state/booking/booking.selectors';
+import { selectBookingError, selectBookingLoading, selectMyBookings } from 'src/app/state/booking/booking.selectors';
 
 import { genericError } from 'src/validators/form-validators.module';
 
@@ -32,6 +32,8 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
 
   bookings: Booking[] = [];
   loading = false;
+  /** Why loading the list failed, while there is nothing to show -- so a failed load is never mistaken for "no bookings yet". */
+  loadError: string | null = null;
   /** The booking whose Stripe Checkout is being created, so its Pay button can't be double-tapped. */
   payingBookingId: number | null = null;
 
@@ -51,6 +53,8 @@ export class MyBookingsMainComponent implements OnInit, OnDestroy {
         this.bookings = bookings ?? [];
         this.loading = false;
       });
+    this.store.select(selectBookingLoading).pipe(takeUntil(this.destroy$)).subscribe(l => this.loading = l);
+    this.store.select(selectBookingError).pipe(takeUntil(this.destroy$)).subscribe(e => this.loadError = e ?? null);
     this.loadBookings();
 
     this.actions$

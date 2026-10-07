@@ -19,6 +19,7 @@ import { SharedModule } from '../shared/shared.module';
 import { CommonModule } from '@angular/common';
 
 
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 @NgModule({
   declarations: [
     MyTodoListMainComponent,
@@ -35,6 +36,7 @@ import { CommonModule } from '@angular/common';
     MyTodoListMetricsComponent
   ],
   imports: [
+    LoadErrorComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,

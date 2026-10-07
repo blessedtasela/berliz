@@ -1,9 +1,16 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
+
+import { StripeConnectStatus } from 'src/app/models/stripe.model';
+import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { StripeService } from 'src/app/services/stripe.service';
+import { genericError } from 'src/validators/form-validators.module';
 
 import { Payout } from 'src/app/models/payout.model';
-import { loadMyPayouts } from 'src/app/state/payout/payout.actions';
+import { loadMyPayouts, loadMyPayoutsFailure, loadMyPayoutsSuccess } from 'src/app/state/payout/payout.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import {
   selectMyPayouts,
   selectMyPaidTotal,
@@ -34,12 +41,33 @@ export class EarningsViewComponent implements OnInit, OnDestroy {
   highlightedPayoutId: number | null = null;
   private deepLinkHandled = false;
 
+  /** ?payoutSetup=return|refresh — Stripe sent the provider back here after (or midway through) payout onboarding. */
+  @Input() payoutSetupReturn: 'return' | 'refresh' | null = null;
+
+  /** Whether payouts are set up; null until the first answer (and when Stripe isn't configured, the banner stays hidden). */
+  connect: StripeConnectStatus | null = null;
+  settingUp = false;
+
   private destroy$ = new Subject<void>();
 
-  constructor(private store: Store) { }
+  /** Why the payouts couldn't be loaded -- so a failed load never reads as "no payouts yet". */
+  loadError: string | null = null;
+
+  constructor(
+    private store: Store,
+    private actions$: Actions,
+    private stripeService: StripeService,
+    private snackBar: SnackBarService,
+  ) { }
+
+  retryLoad(): void {
+    this.store.dispatch(loadMyPayouts());
+  }
 
   ngOnInit(): void {
+    watchLoadError(this.actions$, loadMyPayoutsFailure, [loadMyPayouts, loadMyPayoutsSuccess], this.destroy$, m => this.loadError = m);
     this.store.dispatch(loadMyPayouts());
+    this.loadConnectStatus();
 
     this.store.select(selectMyPayouts)
       .pipe(takeUntil(this.destroy$))
@@ -59,6 +87,48 @@ export class EarningsViewComponent implements OnInit, OnDestroy {
     this.store.select(selectMyPaidTotal)
       .pipe(takeUntil(this.destroy$))
       .subscribe(total => this.paidTotal = total);
+  }
+
+  private loadConnectStatus(): void {
+    this.stripeService.getConnectStatus().pipe(take(1)).subscribe({
+      next: res => {
+        this.connect = res?.data ?? null;
+        // Stripe says the onboarding link expired: hand out a fresh one for the SAME account (the server reuses it).
+        if (this.payoutSetupReturn === 'refresh' && this.connect?.configured && !this.connect.ready) this.startPayoutSetup();
+      },
+      // Failing to read status just hides the banner; earnings themselves are unaffected.
+      error: () => { this.connect = null; },
+    });
+  }
+
+  /** Sends the provider to Stripe to set up payouts — or, once done, to their Express dashboard. */
+  startPayoutSetup(): void {
+    if (this.settingUp) return;
+    this.settingUp = true;
+    const back = `${window.location.origin}/dashboard/my-bookings`;
+    this.stripeService.createConnectOnboardingLink({
+      returnUrl: `${back}?payoutSetup=return`,
+      refreshUrl: `${back}?payoutSetup=refresh`,
+    }).pipe(take(1)).subscribe({
+      next: res => {
+        const url = res?.data?.onboardingUrl;
+        if (!url) {
+          this.settingUp = false;
+          this.snackBar.openSnackBar(res?.message || genericError, 'error');
+          return;
+        }
+        this.redirectTo(url);
+      },
+      error: (err: any) => {
+        this.settingUp = false;
+        this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+      },
+    });
+  }
+
+  /** Pulled out so tests can spy on it and never trigger a real navigation. */
+  protected redirectTo(url: string): void {
+    window.location.href = url;
   }
 
   ngOnDestroy(): void {

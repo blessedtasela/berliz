@@ -1,8 +1,10 @@
+import { Actions } from '@ngrx/effects';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Testimonials } from 'src/app/models/testimonials.model';
-import { loadTestimonials } from 'src/app/state/testimonial/testimonial.actions';
+import { loadTestimonials, loadTestimonialsFailure, loadTestimonialsSuccess } from 'src/app/state/testimonial/testimonial.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectTestimonials } from 'src/app/state/testimonial/testimonial.selectors';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
@@ -19,6 +21,8 @@ export class TestimonialsComponent {
   searchComponent: string = 'testimonial'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+  /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
+  loadError: string | null = null;
 
   readonly selectTestimonials = selectTestimonials;
   readonly testimonialSearchFields: AdminSearchField<Testimonials>[] = [
@@ -31,7 +35,7 @@ export class TestimonialsComponent {
     { value: 'id', label: 'Testimonial id', accessor: t => t.id?.toString() },
   ];
 
-  constructor(private store: Store) {
+  constructor(private store: Store, private actions$: Actions) {
   }
 
   ngOnInit(): void {
@@ -43,6 +47,7 @@ export class TestimonialsComponent {
   }
 
   handleEmitEvent() {
+    this.subscriptions.push(watchLoadError(this.actions$, loadTestimonialsFailure, [loadTestimonials, loadTestimonialsSuccess], null, m => this.loadError = m));
     this.store.dispatch(loadTestimonials());
     this.subscriptions.push(
       this.store.select(selectTestimonials).subscribe((allTestimonials) => {
@@ -58,4 +63,8 @@ export class TestimonialsComponent {
     this.totalTestimonials = results.length;
   }
 
+
+  retryLoad(): void {
+    this.store.dispatch(loadTestimonials());
+  }
 }
