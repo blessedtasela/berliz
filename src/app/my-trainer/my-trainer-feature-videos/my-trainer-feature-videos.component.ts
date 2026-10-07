@@ -578,7 +578,9 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
       trainerId: this.trainerFeatureVideos?.[0]?.trainerId,
       motivation,
       position: i,
-      videoRequest: slot.video
+      // The backend (TrainerFeatureVideoRequest) reads the uploaded file under `video`; any other key is silently ignored
+      // and the save is rejected as invalid data.
+      video: slot.video
     };
 
     this.loader.start();

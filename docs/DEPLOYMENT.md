@@ -43,6 +43,15 @@ turns `setInterval` into a no-op: a periodic timer is never "done", so one left 
 render wait for stability forever and the build hangs. That only affects the build-time
 snapshot — the browser bundle never loads that file.
 
+Two Angular 21 specifics that silently empty the prerender if lost (the build still passes):
+- **Zone.js must be opted into.** Angular 21 made zoneless change detection the default; this app
+  mutates plain fields from async callbacks, so `AppModule` provides `provideZoneChangeDetection()`.
+  Without it nothing re-renders after an HTTP response — in the prerender *and* the browser.
+- **The server uses the fetch HTTP backend.** `AppServerModule` calls `provideHttpClient(withFetch(), ...)`
+  because platform-server no longer ships an `XMLHttpRequest`. The browser keeps XHR.
+Check `dist/berliz/browser/centers/index.html` contains the center cards (not "More centers coming
+soon") after upgrading Angular.
+
 To prerender locally: `npm run prerender` (~3.5 min), then check
 `dist/berliz/browser/<route>/index.html` (raw file, not DevTools) for the baked-in tags,
 and that `index.csr.html` has an empty `<app-root></app-root>`.

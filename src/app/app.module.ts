@@ -1,4 +1,4 @@
-import { ErrorHandler, NgModule, PLATFORM_ID, isDevMode } from '@angular/core';
+import { ErrorHandler, NgModule, PLATFORM_ID, isDevMode, provideZoneChangeDetection } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -221,6 +221,11 @@ const dbConfig: DBConfig = {
         StoreModule.forFeature(payoutFeatureKey, payoutReducer),
         StoreModule.forFeature(clientIntakeFeatureKey, clientIntakeReducer),
         StoreModule.forFeature(connectionFeatureKey, connectionReducer)], providers: [
+        // Angular 21 made zoneless change detection the default. This app is built
+        // on zone.js (components mutate plain fields from async callbacks), so opt
+        // back in explicitly -- the browser *and* the prerender need it, otherwise
+        // nothing re-renders after an HTTP response arrives.
+        provideZoneChangeDetection(),
         // App-wide default: every MatDialog closes only via its own Cancel/X/Done
         // button, never by clicking the backdrop or pressing Escape -- a modal
         // holding partly-filled form data (which is most of them here) shouldn't
