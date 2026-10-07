@@ -55,6 +55,8 @@
                     <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line break-words">{{ p.content }}</p>
                     <img *ngIf="p.photoUrl" [src]="p.photoUrl | strapiUrl" alt=""
                         class="w-full max-h-96 object-cover rounded-xl border border-gray-100 dark:border-gray-800 mt-2" />
+                    <video *ngIf="p.videoUrl" [src]="p.videoUrl | strapiUrl" controls preload="metadata" playsinline
+                        class="w-full max-h-96 rounded-xl border border-gray-100 dark:border-gray-800 bg-black mt-2"></video>
                 </a>
 
                 <div *ngIf="p.workoutId" class="flex items-center gap-2.5 rounded-xl border border-orange-100 dark:border-orange-900 bg-orange-50/60 dark:bg-orange-950/10 px-3 py-2">

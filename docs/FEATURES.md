@@ -32,7 +32,7 @@ that ships a feature — add the row under the right domain, and log it under
 |---|---|---|
 | Connections (request / accept / remove) | ✅ | Gates the feed audience |
 | Timeline / feed of connections' posts | ✅ | `dashboard-timeline` |
-| Create post — text, image/video, activity type badge | ✅ | Types: GENERAL, WORKOUT, SESSION, TESTIMONIAL, REVIEW, PROGRESS, MILESTONE |
+| Create post — text, photo or video, activity type badge | ✅ | Types: GENERAL, WORKOUT, SESSION, TESTIMONIAL, REVIEW, PROGRESS, MILESTONE. **A post carries one photo OR one video** (MP4 / WebM / MOV, up to 50MB, uploaded like any other media); the composer disables the other picker once one is attached, and the server rejects both together and clears the old media when an edit swaps it. Videos play inline in the feed, on both profile pages and on the Saved page, and in the media + comments sheet. *This row used to say image/video, but posts were photo-only on every layer until now.* |
 | Post like + like count | ✅ | Toggle like; denormalized counter |
 | See who liked a post | ✅ | Tap the "N likes" text → block-filtered liker list (`GET /post/{id}/likes`) |
 | Comments on posts | ✅ | Lazy-loaded thread, paginated "load earlier" |
@@ -184,6 +184,10 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Video posts
+
+Posts could only ever carry a photo (the §2 row claimed image/video, but neither the backend nor any client supported video). Now: `post.video_url` / `video_strapi_id` (migration V64), `PostRequest.video`, `PostResponse.videoUrl`, with the one-media-per-post rule enforced server-side (`PostVideoUnitTest`). Web: an "Add video" picker in the composer (type + 50MB check before uploading, draft restore), inline `<video>` playback on the feed, both profile pages and the Saved page, and the existing media sheet now opens on `videoUrl`. Mobile has the same (see the mobile changelog).
 
 ### Unreleased — Fitness achievements, for real
 

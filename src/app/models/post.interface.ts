@@ -39,6 +39,8 @@ export interface PostResponse {
   authorCenterId?: number | null;
   content: string;
   photoUrl?: string | null;
+  /** Set when the post carries a video instead of a photo. */
+  videoUrl?: string | null;
   /** Always set by the server — `"GENERAL"` for a plain post. */
   activityType?: PostActivityType;
   /** Optional — a linked workout template the reader can clone into their own workouts. */
@@ -68,5 +70,11 @@ export interface PostRequest {
   photo?: {
     photoUrl: string;
     strapiId: number;
+  } | null;
+  /** One uploaded video instead of a photo; the server rejects both together. */
+  video?: {
+    videoUrl: string;
+    strapiId: number;
+    mimeType?: string;
   } | null;
 }

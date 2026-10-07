@@ -21,10 +21,11 @@ describe('DashboardTimelineComponent', () => {
   let postServiceSpy: jasmine.SpyObj<PostService>;
   let snackBarSpy: jasmine.SpyObj<SnackBarService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let strapiSpy: jasmine.SpyObj<StrapiService>;
   let queryParamMap: Record<string, string>;
 
   beforeEach(() => {
-    postServiceSpy = jasmine.createSpyObj('PostService', ['getFeed', 'getMyTimeline', 'getPostById']);
+    postServiceSpy = jasmine.createSpyObj('PostService', ['getFeed', 'getMyTimeline', 'getPostById', 'addPost']);
     postServiceSpy.getFeed.and.returnValue(of({ message: '', data: [], success: true, statusCode: 200 }));
     postServiceSpy.getMyTimeline.and.returnValue(of({ message: '', data: [], success: true, statusCode: 200 }));
 
@@ -40,7 +41,8 @@ describe('DashboardTimelineComponent', () => {
     workoutServiceSpy.getTemplates.and.returnValue(of({ message: '', data: [], success: true, statusCode: 200 }));
     const savedServiceSpy = jasmine.createSpyObj('SavedService', ['refresh']);
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
-    const strapiServiceSpy = jasmine.createSpyObj('StrapiService', ['uploadFile']);
+    const strapiServiceSpy = jasmine.createSpyObj('StrapiService', ['uploadFile', 'uploadToStrapi']);
+    strapiSpy = strapiServiceSpy;
 
     TestBed.configureTestingModule({
       imports: [DashboardTimelineComponent],
@@ -98,5 +100,65 @@ describe('DashboardTimelineComponent', () => {
     expect(component.sheetPost).toBeNull();
     expect(snackBarSpy.openSnackBar).toHaveBeenCalledWith('That post is no longer available', 'error');
     expect(routerSpy.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: {} }));
+  });
+
+  describe('video posts', () => {
+    const fileList = (file: File) => ({ target: { files: [file], value: '' } } as unknown as Event);
+    const mp4 = () => new File([new Uint8Array(10)], 'squat.mp4', { type: 'video/mp4' });
+
+    it('uploads a chosen video and keeps it on the composer', () => {
+      fixture.detectChanges();
+      strapiSpy.uploadToStrapi.and.returnValue(of([{ id: 9, name: 'squat.mp4', url: '/uploads/squat.mp4', fullUrl: 'x', mime: 'video/mp4', size: 10 }]));
+
+      component.onVideoSelected(fileList(mp4()));
+
+      expect(strapiSpy.uploadToStrapi).toHaveBeenCalledTimes(1);
+      expect(component.uploadedVideo).toEqual({ strapiId: 9, videoUrl: '/uploads/squat.mp4', mimeType: 'video/mp4' });
+      expect(component.uploadError).toBeNull();
+    });
+
+    it('refuses a file that is not a video, without uploading it', () => {
+      fixture.detectChanges();
+
+      component.onVideoSelected(fileList(new File([new Uint8Array(10)], 'notes.pdf', { type: 'application/pdf' })));
+
+      expect(strapiSpy.uploadToStrapi).not.toHaveBeenCalled();
+      expect(component.uploadedVideo).toBeNull();
+      expect(component.uploadError).toContain('MP4');
+    });
+
+    it('shows the upload failure and keeps no video', () => {
+      fixture.detectChanges();
+      strapiSpy.uploadToStrapi.and.returnValue(throwError(() => ({ error: { detail: 'Strapi is down' } })));
+
+      component.onVideoSelected(fileList(mp4()));
+
+      expect(component.uploadedVideo).toBeNull();
+      expect(component.uploadError).toContain('Strapi is down');
+      expect(component.uploading).toBeFalse();
+    });
+
+    it('sends the video (and no photo) when posting', () => {
+      fixture.detectChanges();
+      postServiceSpy.addPost.and.returnValue(of({ message: '', data: { id: 1 } as PostResponse, success: true, statusCode: 200 }));
+      component.draftContent = 'Leg day';
+      component.uploadedVideo = { strapiId: 9, videoUrl: '/uploads/squat.mp4', mimeType: 'video/mp4' };
+
+      component.submitPost();
+
+      const req = postServiceSpy.addPost.calls.mostRecent().args[0];
+      expect(req.video).toEqual({ videoUrl: '/uploads/squat.mp4', strapiId: 9, mimeType: 'video/mp4' });
+      expect(req.photo).toBeNull();
+      expect(component.uploadedVideo).toBeNull();
+    });
+
+    it('removeVideo clears the attachment so a photo can be chosen instead', () => {
+      fixture.detectChanges();
+      component.uploadedVideo = { strapiId: 9, videoUrl: '/uploads/squat.mp4', mimeType: 'video/mp4' };
+
+      component.removeVideo();
+
+      expect(component.uploadedVideo).toBeNull();
+    });
   });
 });

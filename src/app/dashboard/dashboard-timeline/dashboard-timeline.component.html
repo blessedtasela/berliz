@@ -63,6 +63,15 @@
             </button>
         </div>
 
+        <div *ngIf="uploadedVideo" class="relative w-fit">
+            <video [src]="uploadedVideo.videoUrl | strapiUrl" controls preload="metadata" playsinline class="max-h-40 rounded-xl border border-gray-200 dark:border-gray-700 bg-black"></video>
+            <button type="button" (click)="removeVideo()" aria-label="Remove video"
+                class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 flex items-center justify-center
+                       hover:bg-black dark:hover:bg-white transition">
+                <i-feather name="x" style="width:12px;height:12px;"></i-feather>
+            </button>
+        </div>
+
         <p *ngIf="uploadError" class="text-[11px] text-red-600 dark:text-red-400">{{ uploadError }}</p>
 
         <div class="flex items-center justify-between gap-2 pt-1 border-t border-gray-100 dark:border-gray-800">
@@ -72,7 +81,15 @@
                 <i-feather *ngIf="uploading" name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>
                 {{ uploading ? 'Uploading…' : 'Add photo' }}
                 <input type="file" accept="image/jpeg,image/png,image/webp" class="hidden"
-                    [disabled]="uploading || !!uploadedPhoto" (change)="onFileSelected($event)" />
+                    [disabled]="uploading || !!uploadedPhoto || !!uploadedVideo" (change)="onFileSelected($event)" />
+            </label>
+
+            <label class="flex items-center gap-1.5 text-[11px] font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100
+                          cursor-pointer transition px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
+                <i-feather name="film" style="width:14px;height:14px;"></i-feather>
+                Add video
+                <input type="file" accept="video/mp4,video/webm,video/quicktime" class="hidden"
+                    [disabled]="uploading || !!uploadedPhoto || !!uploadedVideo" (change)="onVideoSelected($event)" />
             </label>
 
             <button type="button" (click)="submitPost()" [disabled]="!canPost"
@@ -156,6 +173,9 @@
                 <span class="text-[11px] font-bold text-white bg-black/50 px-2.5 py-1 rounded-full">View</span>
             </span>
         </button>
+
+        <video *ngIf="post.videoUrl" [src]="post.videoUrl | strapiUrl" controls preload="metadata" playsinline
+            class="w-full max-h-96 rounded-xl border border-gray-100 dark:border-gray-800 bg-black"></video>
 
         <!-- Linked workout template -->
         <div *ngIf="post.workoutId" class="flex items-center gap-2.5 rounded-xl border border-orange-100 dark:border-orange-900 bg-orange-50/60 dark:bg-orange-950/30 px-3 py-2">

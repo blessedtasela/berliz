@@ -28,6 +28,7 @@ import { DraftService } from 'src/app/services/draft.service';
 import { DraftEntry } from 'src/app/models/draft.model';
 import { DraftResumeBannerComponent } from 'src/app/shared/draft-resume-banner/draft-resume-banner.component';
 import { imageValidator } from 'src/validators/form-validators.module';
+import { validatePostVideo } from 'src/app/utils/post-media.util';
 
 /** Everything DraftService needs to fully restore the composer — see PostDraftData below. */
 interface PostDraftData {
@@ -35,6 +36,8 @@ interface PostDraftData {
   activityType: PostActivityType;
   workoutId: number | null;
   uploadedPhoto: { strapiId: number; photoUrl: string } | null;
+  /** Absent in drafts saved before video posts existed. */
+  uploadedVideo?: { strapiId: number; videoUrl: string; mimeType: string } | null;
 }
 
 type TimelineTab = 'feed' | 'mine';
@@ -95,6 +98,8 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   cloningWorkoutPostId: number | null = null;
   posting = false;
   uploadedPhoto: { strapiId: number; photoUrl: string } | null = null;
+  /** A post carries a photo OR a video; the composer disables whichever picker the other one is using. */
+  uploadedVideo: { strapiId: number; videoUrl: string; mimeType: string } | null = null;
   uploading = false;
   uploadError: string | null = null;
 
@@ -188,6 +193,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     this.draftActivityType = d.activityType;
     this.draftWorkoutId = d.workoutId;
     this.uploadedPhoto = d.uploadedPhoto;
+    this.uploadedVideo = d.uploadedVideo ?? null;
     this.pendingDraft = null;
   }
 
@@ -199,7 +205,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
 
   /** Called on every composer edit. Autosaves a non-empty draft; clears any saved draft once the composer is genuinely empty again. */
   saveDraft(): void {
-    const hasContent = this.draftContent.trim().length > 0 || !!this.uploadedPhoto || this.draftActivityType !== 'GENERAL';
+    const hasContent = this.draftContent.trim().length > 0 || !!this.uploadedPhoto || !!this.uploadedVideo || this.draftActivityType !== 'GENERAL';
     if (!hasContent) {
       this.draftService.discard('post');
       return;
@@ -209,6 +215,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
       activityType: this.draftActivityType,
       workoutId: this.draftWorkoutId,
       uploadedPhoto: this.uploadedPhoto,
+      uploadedVideo: this.uploadedVideo,
     }, {
       label: 'Post',
       preview: this.draftContent.trim().slice(0, 120) || undefined,
@@ -256,6 +263,46 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     });
   }
 
+  onVideoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    input.value = '';
+    if (!file) return;
+
+    const problem = validatePostVideo(file);
+    if (problem) {
+      this.uploadError = problem;
+      return;
+    }
+
+    this.uploadError = null;
+    this.uploading = true;
+
+    this.strapiService.uploadToStrapi(file).subscribe({
+      next: res => {
+        this.uploading = false;
+        const uploaded = res?.[0];
+        if (!uploaded?.url) {
+          this.uploadError = 'Upload failed — no file returned';
+          return;
+        }
+        this.uploadedVideo = { strapiId: uploaded.id, videoUrl: uploaded.url, mimeType: uploaded.mime || file.type };
+        this.saveDraft();
+      },
+      error: (err) => {
+        this.uploading = false;
+        const detail = err?.error?.detail;
+        this.uploadError = detail ? `Upload failed: ${detail}` : 'Upload failed — try again';
+      }
+    });
+  }
+
+  removeVideo(): void {
+    this.uploadedVideo = null;
+    this.uploadError = null;
+    this.saveDraft();
+  }
+
   removePhoto(): void {
     this.uploadedPhoto = null;
     this.uploadError = null;
@@ -280,6 +327,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
       content: this.draftContent.trim(),
       activityType: this.draftActivityType === 'GENERAL' ? undefined : this.draftActivityType,
       photo: this.uploadedPhoto ? { photoUrl: this.uploadedPhoto.photoUrl, strapiId: this.uploadedPhoto.strapiId } : null,
+      video: this.uploadedVideo ? { videoUrl: this.uploadedVideo.videoUrl, strapiId: this.uploadedVideo.strapiId, mimeType: this.uploadedVideo.mimeType } : null,
       workoutId: this.draftActivityType === 'WORKOUT' && this.draftWorkoutId ? this.draftWorkoutId : undefined,
     }).subscribe({
       next: res => {
@@ -293,6 +341,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
         this.draftActivityType = 'GENERAL';
         this.draftWorkoutId = null;
         this.uploadedPhoto = null;
+        this.uploadedVideo = null;
         this.draftService.discard('post');
         this.snackBarService.openSnackBar('Posted', '');
       },

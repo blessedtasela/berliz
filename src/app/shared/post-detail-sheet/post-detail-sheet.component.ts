@@ -65,10 +65,11 @@ export class PostDetailSheetComponent implements OnInit, OnDestroy {
   constructor(private cdr: ChangeDetectorRef) {}
 
   get mediaUrl(): string | null {
-    return this.post?.photoUrl ?? null;
+    return this.post?.videoUrl ?? this.post?.photoUrl ?? null;
   }
 
   get isVideo(): boolean {
+    if (this.post?.videoUrl) return true;
     return /\.(mp4|webm|ogg|mov|m4v)(\?|$)/i.test(this.mediaUrl ?? '');
   }
 
