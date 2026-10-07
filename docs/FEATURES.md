@@ -185,6 +185,10 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Fix: trainer Feature Videos could not be saved
+
+The Feature Videos editor sent the uploaded file under `videoRequest`, but `TrainerFeatureVideoRequest` reads it from `video`; the unknown key is ignored, so the backend saw no video and rejected every save as invalid data. The component now sends `video`. A spec asserts the payload shape. (Found while porting the screen to mobile, where it is built against the backend's field name.)
+
 ### Unreleased — Locations dropdown on the signed-in provider profiles
 
 The "Available in" dropdown from the training-locations work only existed on the *public* trainer page;
