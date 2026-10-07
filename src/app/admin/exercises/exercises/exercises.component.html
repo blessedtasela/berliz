@@ -1,5 +1,8 @@
 <app-admin-search [selector]="selectExercises" [fields]="exerciseSearchFields"
     placeholder="Search exercises..." (results)="handleSearchResults($event)"></app-admin-search>
+<app-load-error *ngIf="loadError && exercisesData.length === 0" title="Couldn't load exercises" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<ng-container *ngIf="!(loadError && exercisesData.length === 0)">
 <app-exercises-header [exercisesData]="exercisesData" [totalExercises]="totalExercises"
     [exercisesLength]="exercisesLength"></app-exercises-header>
 <app-exercises-list [exercisesData]="exercisesData" [totalExercises]="totalExercises"></app-exercises-list>
+</ng-container>

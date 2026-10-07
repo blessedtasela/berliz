@@ -1,6 +1,9 @@
 <app-admin-search [selector]="selectTestimonials" [fields]="testimonialSearchFields"
     placeholder="Search testimonials..." (results)="handleSearchResults($event)"></app-admin-search>
+<app-load-error *ngIf="loadError && testimonialsData.length === 0" title="Couldn't load testimonials" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<ng-container *ngIf="!(loadError && testimonialsData.length === 0)">
 <app-testimonials-header [testimonialsData]="testimonialsData" [totalTestimonials]="totalTestimonials"
     [testimonialsLength]="testimonialsLength"></app-testimonials-header>
 <app-testimonials-list [testimonialsData]="testimonialsData"
     [totalTestimonials]="totalTestimonials"></app-testimonials-list>
+</ng-container>

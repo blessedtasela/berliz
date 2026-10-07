@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { Users } from 'src/app/models/users.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { selectUsers } from 'src/app/state/user/user.selector';
-import { loadAllUsers } from 'src/app/state/user/user.actions';
+import { loadAllUsers, loadUsersFailure, loadUsersSuccess } from 'src/app/state/user/user.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
 @Component({
@@ -13,12 +16,15 @@ import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field
     styleUrls: ['./users.component.css'],
     standalone: false
 })
-export class UsersComponent {
+export class UsersComponent implements OnDestroy {
   usersData: Users[] = [];
   totalUsers: number = 0;
   usersLength: number = 0;
   searchComponent: string = 'user'
   isSearch: boolean = true;
+  /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
+  loadError: string | null = null;
+  private loadErrorSub?: Subscription;
 
   /** ?userId=<id> from search -- passed through to UserListComponent, which opens that user's details modal once it has loaded. */
   deepLinkUserId: number | null = null;
@@ -34,13 +40,23 @@ export class UsersComponent {
 
   constructor(private store: Store,
     private route: ActivatedRoute,
+    private actions$: Actions,
     private rxStompService: RxStompService) {
+  }
+
+  retryLoad(): void {
+    this.store.dispatch(loadAllUsers());
+  }
+
+  ngOnDestroy(): void {
+    this.loadErrorSub?.unsubscribe();
   }
 
   ngOnInit(): void {
     const raw = this.route.snapshot.queryParamMap.get('userId');
     this.deepLinkUserId = raw ? Number(raw) : null;
 
+    this.loadErrorSub = watchLoadError(this.actions$, loadUsersFailure, [loadAllUsers, loadUsersSuccess], null, m => this.loadError = m);
     this.store.dispatch(loadAllUsers());
     this.handleEmitEvent()
     // this.userStateService.allUsersData$.subscribe((cachedData) => {

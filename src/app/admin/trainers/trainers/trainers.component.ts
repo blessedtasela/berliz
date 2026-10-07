@@ -1,8 +1,10 @@
+import { Actions } from '@ngrx/effects';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Trainers } from 'src/app/models/trainers.interface';
-import { loadTrainers } from 'src/app/state/trainer/trainer.actions';
+import { loadTrainers, loadTrainersFailure, loadTrainersSuccess } from 'src/app/state/trainer/trainer.actions';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectTrainers } from 'src/app/state/trainer/trainer.selector';
 import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field.interface';
 
@@ -19,6 +21,8 @@ export class TrainersComponent {
   searchComponent: string = 'trainer'
   isSearch: boolean = true;
   subscriptions: Subscription[] = [];
+  /** Why the list couldn't be loaded -- so a failed load never reads as an empty table. */
+  loadError: string | null = null;
 
   readonly selectTrainers = selectTrainers;
   readonly trainerSearchFields: AdminSearchField<Trainers>[] = [
@@ -30,7 +34,7 @@ export class TrainersComponent {
     { value: 'status', label: 'Status', accessor: t => t.status },
   ];
 
-  constructor(public store: Store,) {
+  constructor(public store: Store, private actions$: Actions) {
   }
 
   ngOnInit(): void {
@@ -42,6 +46,7 @@ export class TrainersComponent {
   }
 
   handleEmitEvent() {
+    this.subscriptions.push(watchLoadError(this.actions$, loadTrainersFailure, [loadTrainers, loadTrainersSuccess], null, m => this.loadError = m));
     this.store.dispatch(loadTrainers());
     this.subscriptions.push(
       this.store.select(selectTrainers).subscribe((allTrainers) => {
@@ -57,6 +62,8 @@ export class TrainersComponent {
     this.totalTrainers = results.length;
   }
 
+
+  retryLoad(): void {
+    this.store.dispatch(loadTrainers());
+  }
 }
-
-

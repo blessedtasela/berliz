@@ -6,5 +6,8 @@
 -->
 <app-admin-search [selector]="selectTags" [fields]="tagSearchFields"
   placeholder="Search tags..." (results)="handleSearchResults($event)"></app-admin-search>
+<app-load-error *ngIf="loadError && tagsData.length === 0" title="Couldn't load tags" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+<ng-container *ngIf="!(loadError && tagsData.length === 0)">
 <app-tag-header [tagsData]="tagsData" [totalTags]="totalTags" [tagsLength]="tagsLength"></app-tag-header>
 <app-tag-list [tagsData]="tagsData"></app-tag-list>
+</ng-container>
