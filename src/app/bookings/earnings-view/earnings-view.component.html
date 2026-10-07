@@ -1,5 +1,33 @@
 <div class="flex flex-col gap-4">
 
+    <!-- Payout setup: a provider can't be paid until they have a Stripe account and finish onboarding it -->
+    <div *ngIf="connect?.configured" class="rounded-xl border p-3 flex items-center justify-between gap-3"
+        [ngClass]="connect!.ready
+            ? 'border-green-100 dark:border-green-900 bg-green-50 dark:bg-green-950/20'
+            : 'border-amber-100 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/20'">
+        <div class="flex items-start gap-2.5 min-w-0">
+            <i-feather [name]="connect!.ready ? 'check-circle' : 'alert-circle'" class="shrink-0 mt-0.5"
+                [ngClass]="connect!.ready ? 'text-green-600' : 'text-amber-600'" style="width:15px;height:15px;"></i-feather>
+            <div class="min-w-0">
+                <p class="text-xs font-bold" [ngClass]="connect!.ready ? 'text-green-800 dark:text-green-300' : 'text-amber-800 dark:text-amber-300'">
+                    {{ connect!.ready ? 'Payouts are ready' : (connect!.connected ? 'Finish setting up payouts' : 'Set up payouts to get paid') }}
+                </p>
+                <p class="text-[11px] text-gray-500 dark:text-gray-400">
+                    {{ connect!.ready
+                        ? 'Your 85% share of each completed, paid session is sent to your bank through Stripe.'
+                        : 'Berliz pays you through Stripe. Until you finish setup, your earnings stay pending.' }}
+                </p>
+            </div>
+        </div>
+        <button type="button" (click)="startPayoutSetup()" [disabled]="settingUp"
+            class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition disabled:opacity-60"
+            [ngClass]="connect!.ready
+                ? 'border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-950/40'
+                : 'bg-red-600 text-white hover:bg-red-700'">
+            {{ settingUp ? 'Opening…' : (connect!.ready ? 'Stripe dashboard' : (connect!.connected ? 'Continue setup' : 'Set up payouts')) }}
+        </button>
+    </div>
+
     <!-- Summary tiles -->
     <div class="grid grid-cols-2 gap-3">
         <div class="rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 p-3">

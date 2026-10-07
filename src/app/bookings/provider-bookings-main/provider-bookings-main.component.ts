@@ -50,6 +50,9 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
   /** ?payoutId=<id> from a notification deep link -- passed through to EarningsViewComponent, which scrolls to and highlights that row. */
   deepLinkPayoutId: number | null = null;
 
+  /** ?payoutSetup=return|refresh — where Stripe sent the provider back to after payout onboarding. */
+  payoutSetupReturn: 'return' | 'refresh' | null = null;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -63,6 +66,12 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    const rawSetup = this.route.snapshot.queryParamMap.get('payoutSetup');
+    if (rawSetup === 'return' || rawSetup === 'refresh') {
+      this.payoutSetupReturn = rawSetup;
+      this.activeTab = 'earnings';
+    }
+
     const rawPayoutId = this.route.snapshot.queryParamMap.get('payoutId');
     if (rawPayoutId) {
       this.deepLinkPayoutId = Number(rawPayoutId);

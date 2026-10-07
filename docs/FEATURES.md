@@ -106,7 +106,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Pay for a single booked session | ✅ | Provider confirms → booking priced (hourly rate × minutes, less promo/credit, plus location fee) → client taps **Pay $X** in My Bookings → hosted Stripe Checkout → webhook marks it Paid. Cancelling a paid session auto-refunds. Payout is only created for a paid session |
 | Bypass / promo codes | ✅ | |
 | Pre-renewal reminder + one-tap cancel | ✅ | Daily sweep emails + bells a member ~2 days before renewal (once/period); "Cancel auto-renew" / "Resume auto-renew" in the My Subscriptions menu — cancel keeps access until `endDate` and also sets Stripe `cancel_at_period_end`. `POST /subscription/cancel` \| `/resume` |
-| Stripe Connect payouts (to trainers/partners) | ✅ | Express onboarding link + `Transfer.create` to the provider's connected account |
+| Stripe Connect payouts (to trainers/partners) | ✅ | One Express account per provider, reused on every later call. The Earnings tab shows a "Set up payouts" / "Finish setting up payouts" / "Payouts ready" banner from `GET /payment/stripe/connect/status`; its button opens a Stripe link from `POST /payment/stripe/connect/onboarding-link` (setup while unfinished, the Express dashboard once done). Stripe sends the provider back to `/dashboard/my-bookings?payoutSetup=return` (or `=refresh` if the link expired, which opens a fresh one for the same account). `Transfer.create` pays out to that account |
 | Bills / orders / store / products | ✅ | Commerce primitives present |
 
 ## 7. Notifications
@@ -184,6 +184,14 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Providers can finally set up payouts (Stripe Connect)
+
+The backend had a Connect onboarding endpoint but **no client ever called it**, so nobody could actually get paid — and calling it twice would have been worse than never: every call created a *new* Stripe account and overwrote the stored id, orphaning the first.
+
+- **Backend:** `createConnectOnboardingLink` now keeps one account per provider and reuses it (fresh onboarding link while unfinished, Express dashboard once complete); it only replaces an account Stripe says no longer exists, and refuses a user with no partner record. New `GET /payment/stripe/connect/status` returns `configured / connected / ready`. `StripeConnectOnboardingTest` covers all of it (Stripe SDK mocked).
+- **Web:** the provider Earnings tab gets the setup banner and button described in §6. The return/refresh URLs are passed explicitly because the backend's defaults (`/payment/connect/return|refresh`) are not routes in this app.
+- **Mobile:** the same banner on the Earnings screen.
 
 ### Unreleased — Backend authorization layer, Order/Bill/Tag/Dashboard cleanup, config out of code
 
