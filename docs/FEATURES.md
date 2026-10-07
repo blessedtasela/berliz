@@ -104,7 +104,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Stripe recurring lifecycle | ✅ | Webhook handles `invoice.paid` (record renewal, extend `endDate`), `invoice.payment_failed` (→ PAST_DUE + grace), `customer.subscription.deleted` (→ CANCELLED); nightly sweep expires auto-renew-off past `endDate` and past-due beyond the 5-day grace |
 | Stripe refunds | ✅ | Admin "Refund via Stripe" on a payment row → `POST /payment/stripe/refund/{id}` reverses the charge and stamps the row |
 | Pay for a single booked session | ✅ | Provider confirms → booking priced (hourly rate × minutes, less promo/credit, plus location fee) → client taps **Pay $X** in My Bookings → hosted Stripe Checkout → webhook marks it Paid. Cancelling a paid session auto-refunds. Payout is only created for a paid session |
-| Bypass / promo codes | ✅ | |
+| Bypass / promo codes | ✅ | Admin creates discount codes at `/dashboard/hub/promo-codes` (percent or fixed amount; scope = everyone / one role / one plan; expiry, redemption cap, once per user; pause/resume). On **My Subscriptions → Plans** a user enters a code, sees the discounted price per plan, and checkout sends `discountCode`; the backend re-validates it and applies a one-time Stripe `Coupon` (never discounts below the minimum charge). Redemption is recorded when the Stripe webhook confirms payment. Backend: `DiscountCode`/`DiscountCodeRedemption` (V63), `DiscountCodeService`, `/discountCode/*`. Codes that grant free access (no Stripe) are still the older redeem-a-code box |
 | Pre-renewal reminder + one-tap cancel | ✅ | Daily sweep emails + bells a member ~2 days before renewal (once/period); "Cancel auto-renew" / "Resume auto-renew" in the My Subscriptions menu — cancel keeps access until `endDate` and also sets Stripe `cancel_at_period_end`. `POST /subscription/cancel` \| `/resume` |
 | Stripe Connect payouts (to trainers/partners) | ✅ | Express onboarding link + `Transfer.create` to the provider's connected account |
 | Bills / orders / store / products | ✅ | Commerce primitives present |
@@ -367,6 +367,30 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Not yet: the fee is displayed, not charged (client payment checkout is still unwired).
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
+
+### Unreleased — Promo codes in Stripe checkout, undone extensions, "failed to load" on ~45 more pages
+
+- **Promo codes inside Stripe checkout.** See the "Bypass / promo codes" row in §6. Preview endpoint
+  (`POST /discountCode/preview`) lets the plans page show the discounted price before paying;
+  `DiscountPricing.amountOff` caps the discount so Stripe's minimum charge is always left.
+  `StripeLiveSmokeTest` includes a real test-mode coupon round trip.
+- **Extension balance now has a deadline.** An extended session's extra balance gets its own pay-by
+  time (`BookingPricing`); if it lapses, `cancelUnpaidBookings` *reverts the extension* instead of
+  cancelling the whole session: duration goes back to the paid length (`paid_duration_minutes`, V62),
+  amount due = amount paid, status Paid, and client + provider are notified. The booking card says
+  "Pay the extra by …".
+- **Live Stripe check.** `StripeLiveSmokeTest` (opt-in: set `STRIPE_TEST_KEY=sk_test_…`, then
+  `.\mvnw.cmd -o test -Dtest=StripeLiveSmokeTest`) runs 6 tests against the real Stripe test API:
+  checkout session creation, full and partial refunds in cents, late-cancel 50%, extension balance,
+  promo coupon. It does not cover typing a card into hosted checkout or live webhook delivery.
+- **`app-load-error` rolled out.** New `watchLoadError` helper (`shared/load-error/load-error-tracker`)
+  tracks a slice's *failure action* (not the shared `error` field) so a failed load shows a
+  retryable error instead of an empty list. Now on: My Bookings, provider bookings, availability
+  editor, earnings, My Subscriptions (main + plans), client intakes, notifications page, To-do list,
+  shared progress, progress-sharing settings, testimonials, trainers search, centers, and the admin
+  lists for users, partners, clients, members, categories, tags, exercises, muscle groups,
+  newsletters, contact-us, payments, trainers, centers, tasks, subscriptions, testimonials. Each has
+  tests for error, retry and recovery. Not yet covered: admin FAQs, admin to-do lists.
 
 ### Unreleased — One shared "failed to load" state (`app-load-error`), on the Hub and Overview
 
