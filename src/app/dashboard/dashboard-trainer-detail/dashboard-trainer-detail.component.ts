@@ -19,6 +19,11 @@ export class DashboardTrainerDetailComponent extends TrainersDetailsComponent {
 
   resolveStrapiUrl = resolveStrapiUrl;
 
+  private menuItemsFor: unknown;
+  private menuItemsCache: LocationMenuItem[] | null = null;
+  private menuFooterFor: unknown;
+  private menuFooterCache: LocationMenuFooter | null = null;
+
   protected override get likersRoutePrefix(): string {
     return '/dashboard/user';
   }
@@ -44,7 +49,13 @@ export class DashboardTrainerDetailComponent extends TrainersDetailsComponent {
 
   /** Every place this trainer works from, for the "Available in" dropdown. */
   get locationMenuItems(): LocationMenuItem[] {
-    return (this.trainer?.locations ?? []).map(loc => {
+    // Cached per trainer: this getter is bound straight to the menu's `items`
+    // input, so building a fresh array each change-detection pass made the
+    // menu tear down and re-create its rows (and its open state's anchors)
+    // on every tick.
+    if (this.menuItemsFor === this.trainer && this.menuItemsCache) return this.menuItemsCache;
+    this.menuItemsFor = this.trainer;
+    return this.menuItemsCache = (this.trainer?.locations ?? []).map(loc => {
       const place = [loc.city, loc.stateProvince, loc.country].filter(Boolean).join(', ');
       const query = [loc.venue, place].filter(Boolean).join(', ');
       return {
@@ -59,8 +70,10 @@ export class DashboardTrainerDetailComponent extends TrainersDetailsComponent {
 
   get locationMenuFooter(): LocationMenuFooter | null {
     if (!this.trainer?.customLocationAllowed) return null;
+    if (this.menuFooterFor === this.trainer && this.menuFooterCache) return this.menuFooterCache;
+    this.menuFooterFor = this.trainer;
     const fee = this.trainer.customLocationFee;
-    return {
+    return this.menuFooterCache = {
       text: 'Or train at a place of your choice',
       note: fee ? `+${Number(fee).toFixed(2)}` : 'No extra fee',
       noteHighlight: !!fee

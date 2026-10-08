@@ -19,7 +19,7 @@
     <div *ngIf="open" role="menu"
         class="absolute left-0 top-full mt-2 z-20 w-full sm:w-80 max-w-[calc(100vw-2rem)] max-h-80 overflow-y-auto
                bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg">
-        <ng-container *ngFor="let item of items">
+        <ng-container *ngFor="let item of items; trackBy: trackByIndex">
             <a *ngIf="item.href; else plainRow" [href]="item.href" target="_blank" rel="noopener" role="menuitem"
                 class="flex items-start gap-2 px-4 py-2.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800
                        hover:text-red-600 border-b border-gray-100 dark:border-gray-800 last:border-b-0 transition">

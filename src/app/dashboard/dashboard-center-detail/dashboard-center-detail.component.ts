@@ -17,6 +17,10 @@ export class DashboardCenterDetailComponent extends CenterDetailComponent {
 
   resolveStrapiUrl = resolveStrapiUrl;
 
+  private menuItemsCenter: unknown;
+  private menuItemsBranches: unknown;
+  private menuItemsCache: LocationMenuItem[] | null = null;
+
   protected override get likersRoutePrefix(): string {
     return '/dashboard/user';
   }
@@ -34,6 +38,17 @@ export class DashboardCenterDetailComponent extends CenterDetailComponent {
    * address, so the tile never goes empty when there is somewhere to point to.
    */
   get locationMenuItems(): LocationMenuItem[] {
+    // Cached until the center or its branches change -- see the trainer page:
+    // a fresh array per change-detection pass rebuilt the menu on every tick.
+    if (this.menuItemsCache && this.menuItemsCenter === this.center && this.menuItemsBranches === this.centerLocation) {
+      return this.menuItemsCache;
+    }
+    this.menuItemsCenter = this.center;
+    this.menuItemsBranches = this.centerLocation;
+    return this.menuItemsCache = this.buildLocationMenuItems();
+  }
+
+  private buildLocationMenuItems(): LocationMenuItem[] {
     if (this.centerLocation.length > 0) {
       return this.centerLocation.map(loc => ({
         title: loc.subName || loc.address,

@@ -399,6 +399,17 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 
+### Unreleased — Fix: trainer/center locations dropdown wouldn't close
+
+On the signed-in trainer and center profiles the "Available in" menu (`app-locations-menu`)
+could stay open, or close the instant it opened. Two causes: the profile pages built the
+menu's `items`/`footer` from getters returning a brand-new array on every change-detection
+pass, so the rows were torn down and re-created each tick; and the click-outside check used
+`target.contains`, which is false once the chevron icon under the tap has been swapped. Items
+are now cached per trainer/center, rows use `trackBy`, and "inside" is decided from the
+event's composed path. Regression tests in `locations-menu.component.spec.ts` (chevron tap,
+second tap closes, getter-built host).
+
 ### Unreleased — Promo codes in Stripe checkout, undone extensions, "failed to load" on ~45 more pages
 
 - **Promo codes inside Stripe checkout.** See the "Bypass / promo codes" row in §6. Preview endpoint
