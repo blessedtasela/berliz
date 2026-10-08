@@ -13,6 +13,7 @@ import { ReactionButtonComponent } from 'src/app/shared/reaction-button/reaction
 import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-detail-sheet.component';
 import { SavedService } from 'src/app/services/saved.service';
 import { RanksCardComponent } from 'src/app/shared/ranks-card/ranks-card.component';
+import { ProfileAchievementsComponent } from 'src/app/shared/profile-achievements/profile-achievements.component';
 import { AwardRankModalComponent } from 'src/app/shared/ranks-card/award-rank-modal.component';
 import { VerifiedBadgeComponent } from 'src/app/shared/verified-badge/verified-badge.component';
 import { BookProviderButtonComponent } from 'src/app/shared/book-provider-button/book-provider-button.component';
@@ -61,7 +62,7 @@ type ConnectStatus = 'self' | 'none' | 'incoming' | 'outgoing' | 'connected';
  */
 @Component({
     selector: 'app-dashboard-user-profile',
-    imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, RanksCardComponent, VerifiedBadgeComponent, BookProviderButtonComponent],
+    imports: [CommonModule, RouterModule, IconsModule, SharedModule, MatDialogModule, PostCommentsComponent, PostDetailSheetComponent, ReactionButtonComponent, RanksCardComponent, ProfileAchievementsComponent, VerifiedBadgeComponent, BookProviderButtonComponent],
     templateUrl: './dashboard-user-profile.component.html'
 })
 export class DashboardUserProfileComponent implements OnInit, OnDestroy {

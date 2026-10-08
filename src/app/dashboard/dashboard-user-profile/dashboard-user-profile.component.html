@@ -148,6 +148,9 @@
                 </button>
             </div>
 
+            <!-- Achievements -->
+            <app-profile-achievements [achievements]="profile.achievements"></app-profile-achievements>
+
             <!-- D9 — verify client activity (trainer / center viewing a connected member) -->
             <div *ngIf="canVerifyActivity && (clientActivityLoading || hasClientActivity)"
                 class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex flex-col gap-3">

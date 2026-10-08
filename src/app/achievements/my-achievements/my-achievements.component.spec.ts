@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import {
@@ -80,6 +81,7 @@ describe('MyAchievementsComponent', () => {
     TestBed.configureTestingModule({
       imports: [MyAchievementsComponent],
       providers: [
+        provideRouter([]),
         { provide: AchievementService, useValue: service },
         { provide: SnackBarService, useValue: snackBar },
         { provide: StrapiService, useValue: jasmine.createSpyObj('StrapiService', ['uploadToStrapi']) },
@@ -171,5 +173,13 @@ describe('MyAchievementsComponent', () => {
     expect(service.delete).toHaveBeenCalledWith(3);
     expect(component.achievements).toEqual([]);
     expect(component.confirmingDeleteId).toBeNull();
+  });
+
+  it('tells the user who can see their achievements and links to the visibility setting', () => {
+    fixture.detectChanges();
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('profile is public');
+    expect(text).toContain('Certificate on file');
+    expect(fixture.nativeElement.querySelector('a[href="/dashboard/settings"]')).not.toBeNull();
   });
 });

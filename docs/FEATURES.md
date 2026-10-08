@@ -73,7 +73,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Exercise library + gear/equipment ("Exercises & Gear") | ✅ | Videos, detail fields, trending |
 | Exercise suggestions (user-submitted → admin review) | ✅ | |
 | Muscle-group taxonomy | ✅ | |
-| Fitness achievements | ✅ | `/dashboard/achievements` (sidebar: "Achievements") — a private list of your medals, certifications and milestones: name, date, optional details, optional certificate file (uploaded like any other media). Add, edit, delete (with an inline confirm). Strictly per-user: the API (`/achievement/add|update|delete|mine`) reads someone else's id as not found. Not shown on public profiles (no visibility rule decided yet). **Previously listed ✅ but nothing existed** — only an entity with an empty repository/service/REST interface. |
+| Fitness achievements | ✅ | `/dashboard/achievements` (sidebar: "Achievements") — your medals, certifications and milestones: name, date, optional details, optional certificate file. Add, edit, delete (inline confirm). **Shown on your profile when it is public**, under the same single profile-visibility switch as your bio and posts (`/user/:username` and the dashboard profile view); a private profile shows none, and the super admin's view-through banner includes them. Other people see name, date and details, plus "Certificate on file" when one is attached — **the file itself is never exposed**. API: `/achievement/add|update|delete|mine` (strictly per-user; another user's id reads as not found) and `achievements` on `GET /user/getPublicProfile/*`. |
 | Peer sessions (propose / schedule training with a connection) | ✅ | "My Sessions" |
 | "Your time in Berliz" recap | ✅ | Real deep-linkable route (`/dashboard/recap?period=`, replacing the old dialog-only entry point) — 30d / 90d / year / all-time, active days, sessions, km, best streak, PRs, rank moves, top partners; one-tap "Share as post" (now surfaces the actual backend rejection reason instead of a generic "could not share" on failure). Always free. `GET /recap/me` |
 | Workout Room hub (`/dashboard/workout-room`) | ✅ | One landing page, "Workout Room" in the sidebar, that links out to every training tool (Workouts, workout history, Exercises, Runs, My Progress, Tasks, To-do, Messages, and — providers only — Client Intakes) plus a glance at your 4 most recent logged sessions and a "Browse templates" prompt. Pure aggregation over the existing `WorkoutService` endpoints, no backend. Header shows a **workout streak** badge (consecutive days with a logged session; today *or* yesterday counts as current so it isn't shown broken before you've logged today) and a longest-streak line. Streak is computed client-side from the user's own logs — separate from the dashboard's server-side consistency ring (D1), so the two numbers can differ |
@@ -184,6 +184,10 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Achievements on public profiles
+
+Achievements were private-only. They now appear on a public profile (web public + dashboard profile pages, and mobile), gated by the owner's existing profile-visibility toggle rather than a new setting. A deliberate privacy line: the attached certificate is the owner's own document (it can carry a full name or licence number), so the public API (`PublicAchievementResponse`) has no certificate field at all — only `hasCertificate`. My Achievements now says who can see them. Tests: `PublicProfileAchievementsTest` (public shows, private is null not empty, admin override sees), `FitnessAchievementServiceImplementUnitTest` (no certificate path in the DTO), `ProfileAchievementsComponent` spec.
 
 ### Unreleased — Video posts
 

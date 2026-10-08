@@ -25,3 +25,13 @@ export interface FitnessAchievementRequest {
 export const ACHIEVEMENT_NAME_MIN = 2;
 export const ACHIEVEMENT_NAME_MAX = 100;
 export const ACHIEVEMENT_DESCRIPTION_MAX = 1000;
+
+/** Mirrors the backend `PublicAchievementResponse`: what another person sees on a public profile. No certificate file, ever. */
+export interface PublicAchievement {
+  id: number;
+  name: string;
+  description?: string | null;
+  date: string;
+  /** The owner attached a certificate; the file itself is never exposed. */
+  hasCertificate: boolean;
+}
