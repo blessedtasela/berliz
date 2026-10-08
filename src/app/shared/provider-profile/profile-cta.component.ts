@@ -62,8 +62,8 @@ export class ProfileCtaComponent {
 export class StickyBookBarComponent {
   @Input() name = '';
   @Input() caption = 'Free cancellation before the cutoff';
-  /** Scroll depth (px) after which the bar appears. */
-  @Input() showAfter = 420;
+  /** Scroll depth (px) after which the bar appears: past the hero's own Book button on a phone, so two Book buttons are never on screen together. */
+  @Input() showAfter = 900;
   @Output() book = new EventEmitter<void>();
 
   visible = false;
