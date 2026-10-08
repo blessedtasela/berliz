@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { take } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
@@ -61,11 +62,11 @@ export function toRequest(form: AchievementForm, id?: number): FitnessAchievemen
 
 /**
  * "My Achievements" — a personal list of medals, certifications and milestones, each with an optional
- * certificate file. Private to the signed-in user.
+ * certificate file. Listed on the owner's public profile only while that profile is public.
  */
 @Component({
     selector: 'app-my-achievements',
-    imports: [CommonModule, FormsModule, IconsModule],
+    imports: [CommonModule, FormsModule, RouterModule, IconsModule],
     templateUrl: './my-achievements.component.html'
 })
 export class MyAchievementsComponent implements OnInit {

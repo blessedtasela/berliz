@@ -71,11 +71,22 @@ export class LocationsMenuComponent {
 
   // Same click-outside pattern as the other dropdowns in the app: there is no
   // backdrop, so without this the list would stay open once opened.
+  //
+  // "Inside" is decided from the event's composed path, not `target.contains`:
+  // the tile's chevron is swapped while the click is still bubbling, so by the
+  // time it reaches `document` the clicked <svg> is detached and `contains`
+  // says false -- the menu closed the instant it opened whenever the chevron
+  // (or a row's icon) took the tap.
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
-    if (this.open && !this.elementRef.nativeElement.contains(event.target as Node)) {
-      this.open = false;
-    }
+    if (!this.open) return;
+    const host = this.elementRef.nativeElement;
+    const inside = event.composedPath().includes(host) || host.contains(event.target as Node);
+    if (!inside) this.open = false;
+  }
+
+  trackByIndex(index: number): number {
+    return index;
   }
 
   @HostListener('document:keydown.escape')

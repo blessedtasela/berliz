@@ -3,6 +3,7 @@ import { AuthResponse } from "./Auth.interface";
 import { Testimonials } from "./testimonials.model";
 import { WorkoutResponse } from "./workout.interface";
 import { PostResponse } from "./post.interface";
+import { PublicAchievement } from "./fitness-achievement.model";
 
 export interface Users {
     id: number;
@@ -96,6 +97,9 @@ export interface PublicUserProfile {
 
     /** This user's own timeline posts, newest first. Absent when private. */
     posts?: PostResponse[];
+
+    /** Their achievements, newest first. Absent when private (the same visibility switch as everything else here). */
+    achievements?: PublicAchievement[];
 
     /** Trainer-only: this trainer's active testimonials. Absent for every other role. */
     testimonials?: Testimonials[];

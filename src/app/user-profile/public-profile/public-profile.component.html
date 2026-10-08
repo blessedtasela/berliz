@@ -153,6 +153,9 @@
                 <!-- Ranks -->
                 <app-ranks-card *ngIf="profile.id" [userId]="profile.id"></app-ranks-card>
 
+                <!-- Achievements -->
+                <app-profile-achievements [achievements]="profile.achievements"></app-profile-achievements>
+
                 <!-- Timeline -->
                 <div *ngIf="posts.length > 0" class="flex flex-col gap-3">
 

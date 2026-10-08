@@ -73,7 +73,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Exercise library + gear/equipment ("Exercises & Gear") | ✅ | Videos, detail fields, trending |
 | Exercise suggestions (user-submitted → admin review) | ✅ | |
 | Muscle-group taxonomy | ✅ | |
-| Fitness achievements | ✅ | `/dashboard/achievements` (sidebar: "Achievements") — a private list of your medals, certifications and milestones: name, date, optional details, optional certificate file (uploaded like any other media). Add, edit, delete (with an inline confirm). Strictly per-user: the API (`/achievement/add|update|delete|mine`) reads someone else's id as not found. Not shown on public profiles (no visibility rule decided yet). **Previously listed ✅ but nothing existed** — only an entity with an empty repository/service/REST interface. |
+| Fitness achievements | ✅ | `/dashboard/achievements` (sidebar: "Achievements") — your medals, certifications and milestones: name, date, optional details, optional certificate file. Add, edit, delete (inline confirm). **Shown on your profile when it is public**, under the same single profile-visibility switch as your bio and posts (`/user/:username` and the dashboard profile view); a private profile shows none, and the super admin's view-through banner includes them. Other people see name, date and details, plus "Certificate on file" when one is attached — **the file itself is never exposed**. API: `/achievement/add|update|delete|mine` (strictly per-user; another user's id reads as not found) and `achievements` on `GET /user/getPublicProfile/*`. |
 | Peer sessions (propose / schedule training with a connection) | ✅ | "My Sessions" |
 | "Your time in Berliz" recap | ✅ | Real deep-linkable route (`/dashboard/recap?period=`, replacing the old dialog-only entry point) — 30d / 90d / year / all-time, active days, sessions, km, best streak, PRs, rank moves, top partners; one-tap "Share as post" (now surfaces the actual backend rejection reason instead of a generic "could not share" on failure). Always free. `GET /recap/me` |
 | Workout Room hub (`/dashboard/workout-room`) | ✅ | One landing page, "Workout Room" in the sidebar, that links out to every training tool (Workouts, workout history, Exercises, Runs, My Progress, Tasks, To-do, Messages, and — providers only — Client Intakes) plus a glance at your 4 most recent logged sessions and a "Browse templates" prompt. Pure aggregation over the existing `WorkoutService` endpoints, no backend. Header shows a **workout streak** badge (consecutive days with a logged session; today *or* yesterday counts as current so it isn't shown broken before you've logged today) and a longest-streak line. Streak is computed client-side from the user's own logs — separate from the dashboard's server-side consistency ring (D1), so the two numbers can differ |
@@ -209,6 +209,10 @@ The same trainer or center now has two deliberately different profile pages.
   fetch their own data from the existing public endpoints, so no backend change.
 - Mobile: the app's trainer/center profile screens do not have the packages / hours / terms cards yet —
   tracked in the mobile README parity table.
+
+### Unreleased — Achievements on public profiles
+
+Achievements were private-only. They now appear on a public profile (web public + dashboard profile pages, and mobile), gated by the owner's existing profile-visibility toggle rather than a new setting. A deliberate privacy line: the attached certificate is the owner's own document (it can carry a full name or licence number), so the public API (`PublicAchievementResponse`) has no certificate field at all — only `hasCertificate`. My Achievements now says who can see them. Tests: `PublicProfileAchievementsTest` (public shows, private is null not empty, admin override sees), `FitnessAchievementServiceImplementUnitTest` (no certificate path in the DTO), `ProfileAchievementsComponent` spec.
 
 ### Unreleased — Video posts
 
@@ -423,6 +427,17 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Not yet: the fee is displayed, not charged (client payment checkout is still unwired).
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
+
+### Unreleased — Fix: trainer/center locations dropdown wouldn't close
+
+On the signed-in trainer and center profiles the "Available in" menu (`app-locations-menu`)
+could stay open, or close the instant it opened. Two causes: the profile pages built the
+menu's `items`/`footer` from getters returning a brand-new array on every change-detection
+pass, so the rows were torn down and re-created each tick; and the click-outside check used
+`target.contains`, which is false once the chevron icon under the tap has been swapped. Items
+are now cached per trainer/center, rows use `trackBy`, and "inside" is decided from the
+event's composed path. Regression tests in `locations-menu.component.spec.ts` (chevron tap,
+second tap closes, getter-built host).
 
 ### Unreleased — Promo codes in Stripe checkout, undone extensions, "failed to load" on ~45 more pages
 
