@@ -13,16 +13,16 @@
                 <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate">updated {{ formatDate(tag.lastUpdate) }}</p>
             </div>
             <div class="flex items-center gap-0.5 shrink-0">
-                <button class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
+                <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="openUpdateTag(tag.id)" title="Edit">
                     <i-feather name="edit-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
-                <button class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
+                <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="updateTagStatus(tag.id)"
                     [title]="tag.status === 'false' ? 'Activate' : 'Deactivate'">
                     <i-feather [name]="tag.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
-                <button class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"
+                <button type="button" class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"
                     (click)="deleteTag(tag.id)" title="Delete">
                     <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
@@ -58,20 +58,20 @@
                     <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ formatDate(tag.lastUpdate) }}</td>
                     <td class="px-4 py-3">
                         <div class="flex items-center justify-end gap-1">
-                            <button class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition"
+                            <button type="button" class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition"
                                 (click)="openTagDetails(tag.id)" title="View">
                                 <i-feather name="eye" class="text-gray-500 dark:text-gray-400" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
+                            <button type="button" class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
                                 (click)="openUpdateTag(tag.id)" title="Edit">
                                 <i-feather name="edit-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition"
+                            <button type="button" class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition"
                                 [ngClass]="tag.status === 'true' ? 'bg-gray-800 dark:bg-gray-700 text-white hover:bg-gray-700 dark:hover:bg-gray-600' : 'bg-red-600 text-white hover:bg-red-700'"
                                 (click)="updateTagStatus(tag.id)">
                                 {{ tag.status === 'false' ? 'Activate' : 'Deactivate' }}
                             </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
+                            <button type="button" class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
                                 (click)="deleteTag(tag.id)" title="Delete">
                                 <i-feather name="trash-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
                             </button>

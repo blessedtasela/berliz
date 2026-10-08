@@ -20,7 +20,7 @@
         {{ triggerLabel }}
     </button>
 
-    <button *ngIf="count > 0" type="button" (click)="openList.emit()"
+    <button type="button" *ngIf="count > 0" type="button" (click)="openList.emit()"
         class="font-semibold transition"
         [ngClass]="{
             'text-xs': size === 'md',

@@ -232,7 +232,6 @@ export class TrainerDataComponent {
   }
 
   onCheckboxChanged(event: any) {
-    console.log('Checkbox changed:', event.target.checked, event.target.value);
     const categories = this.updateTrainerForm.get('categoryIds') as FormArray;
 
     if (event.target.checked) {

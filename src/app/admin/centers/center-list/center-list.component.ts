@@ -83,9 +83,7 @@ export class CenterListComponent {
         });
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            console.log(`Dialog result: ${result}`);
           } else {
-            console.log('Dialog closed without adding a category');
           }
         });
       } else {
@@ -101,12 +99,10 @@ export class CenterListComponent {
   }
 
   updateCenterStatus(id: number) {
-    console.log('inside updateCenterStatus');
     const dialogConfig = new MatDialogConfig();
     const center = this.centerData.find((c) => c.id === id);
 
     if (center) {
-      console.log('inside center: ', center);
       const message =
         center?.status === 'false'
           ? 'activate this center\'s account?'
@@ -130,9 +126,7 @@ export class CenterListComponent {
             dialogRef.close('Center status updated successfully');
             dialogRef.afterClosed().subscribe((result) => {
               if (result) {
-                console.log(`Dialog result: ${result}`);
               } else {
-                console.log('Dialog closed without updating center status');
               }
             });
           },
@@ -150,7 +144,6 @@ export class CenterListComponent {
           });
       });
     } else {
-      console.log('Center id not found');
     }
   }
 
@@ -176,9 +169,7 @@ export class CenterListComponent {
           dialogRef.close('Center deleted successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without deleting center');
             }
           });
         }, (error) => {

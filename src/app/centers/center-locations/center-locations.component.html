@@ -8,7 +8,7 @@
                 {{ centerLocations.length === 1 ? 'branch' : 'branches' }} you can train at
             </p>
         </div>
-        <button *ngIf="centerLocations.length > 4" type="button" (click)="allLocations()"
+        <button type="button" *ngIf="centerLocations.length > 4" type="button" (click)="allLocations()"
             class="text-[11px] font-semibold text-red-400 hover:text-red-300 transition shrink-0">
             {{ !showAllLocations ? 'See all' : 'See less' }}
         </button>

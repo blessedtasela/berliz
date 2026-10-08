@@ -82,9 +82,7 @@ export class PartnerListComponent implements OnDestroy {
         });
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            console.log(`Dialog result: ${result}`);
           } else {
-            console.log('Dialog closed without adding a category');
           }
         });
       } else {
@@ -179,9 +177,7 @@ export class PartnerListComponent implements OnDestroy {
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          console.log(`Dialog result: ${result}`);
         } else {
-          console.log('Dialog closed without any action');
         }
       });
     }
@@ -200,9 +196,7 @@ export class PartnerListComponent implements OnDestroy {
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          console.log(`Dialog result: ${result}`);
         } else {
-          console.log('Dialog closed without any action');
         }
       });
     }

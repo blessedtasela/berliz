@@ -283,7 +283,6 @@ export class MyTrainerIntroductionComponent implements OnInit, OnChanges {
       photo: this.photo
     };
 
-    console.log('FINAL PAYLOAD SENT:', payload);
 
     const request$ = payload.id
       ? this.trainerService.updateTrainerIntroduction(payload)

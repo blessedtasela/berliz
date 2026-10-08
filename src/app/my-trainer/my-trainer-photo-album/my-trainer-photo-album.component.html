@@ -3,11 +3,11 @@
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
     (click)="showPreviewModal = false; previewModalUrl = ''">
     <div class="relative" (click)="$event.stopPropagation()">
-        <img [src]="previewModalUrl"
+        <img alt="" [src]="previewModalUrl"
             class="max-h-[85vh] max-w-[85vw] rounded-2xl object-contain border border-white/20 shadow-2xl"
             onerror="this.src='assets/avatar.png'" />
         <button (click)="showPreviewModal = false; previewModalUrl = ''" class="absolute -top-3 -right-3 w-7 h-7 rounded-full bg-gray-900 border-2 border-white
-             flex items-center justify-center text-white hover:bg-red-600 transition">
+             flex items-center justify-center text-white hover:bg-red-600 transition" aria-label="Close">
             <i-feather name="x" style="width:12px;height:12px;"></i-feather>
         </button>
     </div>
@@ -31,7 +31,7 @@
                 </p>
             </div>
             <button type="button" (click)="cancelCrop()"
-                class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition text-gray-400 dark:text-gray-500 shrink-0">
+                class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition text-gray-400 dark:text-gray-500 shrink-0" aria-label="Close">
                 <i-feather name="x" style="width:14px;height:14px;"></i-feather>
             </button>
         </div>
@@ -181,7 +181,7 @@
             'border-blue-300 dark:border-blue-800 animate-pulse': slot.uploading
           }">
 
-                    <img [src]="slot.previewUrl" class="w-full h-full object-cover object-top"
+                    <img alt="" [src]="slot.previewUrl" class="w-full h-full object-cover object-top"
                         onerror="this.src='assets/avatar.png'" />
 
                     <!-- Upload spinner overlay -->
@@ -197,7 +197,7 @@
 
                         <!-- Preview -->
                         <button type="button" (click)="openPreview(slot.previewUrl)" class="w-7 h-7 rounded-full bg-white/90 flex items-center justify-center
-                     text-gray-700 hover:bg-white transition shadow">
+                     text-gray-700 hover:bg-white transition shadow" aria-label="View details">
                             <i-feather name="eye" style="width:12px;height:12px;"></i-feather>
                         </button>
 
@@ -209,7 +209,7 @@
 
                         <!-- Remove -->
                         <button type="button" (click)="removeSlot(i)" class="w-7 h-7 rounded-full bg-white/90 flex items-center justify-center
-                     text-red-600 hover:bg-red-50 transition shadow">
+                     text-red-600 hover:bg-red-50 transition shadow" aria-label="Close">
                             <i-feather name="x" style="width:12px;height:12px;"></i-feather>
                         </button>
 

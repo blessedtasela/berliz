@@ -45,7 +45,7 @@
 
                 <span *ngIf="day.blocks.length === 0" class="flex-1 text-xs text-gray-400 italic">Closed</span>
 
-                <button *ngIf="day.blocks.length > 0" type="button" (click)="addBlock(day)"
+                <button type="button" *ngIf="day.blocks.length > 0" type="button" (click)="addBlock(day)"
                     class="ml-auto shrink-0 text-[11px] font-semibold text-red-600 hover:text-red-700 transition flex items-center gap-1">
                     <i-feather name="plus" style="width:11px;height:11px;"></i-feather>
                     Add time block

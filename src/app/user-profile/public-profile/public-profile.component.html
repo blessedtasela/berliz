@@ -195,7 +195,7 @@
                                     {{ post.commentCount || 0 }}
                                 </button>
                                 <button type="button" (click)="saved.toggle('POST', post.id)" class="transition hover:text-amber-500"
-                                    [class.text-amber-500]="saved.isSaved('POST', post.id)">
+                                    [class.text-amber-500]="saved.isSaved('POST', post.id)" aria-label="Save">
                                     <i-feather name="bookmark" style="width:11px;height:11px;"
                                         [attr.fill]="saved.isSaved('POST', post.id) ? 'currentColor' : 'none'"></i-feather>
                                 </button>

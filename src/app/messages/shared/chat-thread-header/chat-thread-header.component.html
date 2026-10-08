@@ -2,7 +2,7 @@
      own `flex justify-between` div, but that only lays out ITS direct children, and
      this component's host element (with no display:flex of its own) is just ONE of
      those children. Without this wrapper, the two halves below (a <div> and a
-     <button>, siblings at the template root) fell back to default block/inline flow
+     <button type="button">, siblings at the template root) fell back to default block/inline flow
      and stacked in a column instead of sitting on opposite ends. -->
 <div class="flex items-center justify-between gap-2.5 w-full">
     <div class="flex items-center gap-2.5 min-w-0 flex-1">

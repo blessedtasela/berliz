@@ -170,7 +170,6 @@ export class UpdateCenterModalComponent {
   }
 
   onCheckboxChanged(event: any) {
-    console.log('Checkbox changed:', event.target.checked, event.target.value);
     const categories = this.updateCenterForm.get('categoryIds') as FormArray;
 
     if (event.target.checked) {

@@ -8,7 +8,7 @@
                 {{ centerCategories.length === 1 ? 'discipline' : 'disciplines' }} offered here
             </p>
         </div>
-        <button *ngIf="centerCategories.length > 6" type="button" (click)="allCategories()"
+        <button type="button" *ngIf="centerCategories.length > 6" type="button" (click)="allCategories()"
             class="text-[11px] font-semibold text-red-400 hover:text-red-300 transition shrink-0">
             {{ !showAllCategories ? 'See all' : 'See less' }}
         </button>

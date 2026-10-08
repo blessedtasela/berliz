@@ -54,7 +54,6 @@ export class AddTodoModalComponent {
   }
 
   handleEmitEvent() {
-    console.log("isCached false");
     this.subscription.add(
       this.store.select(selectUsers).subscribe((users) => {
         this.users = users;

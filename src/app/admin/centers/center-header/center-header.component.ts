@@ -119,9 +119,7 @@ export class CenterHeaderComponent implements OnDestroy {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log(`Dialog result: ${result}`);
       } else {
-        console.log('Dialog closed without performing any action');
       }
     });
   }

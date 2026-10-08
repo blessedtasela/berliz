@@ -82,9 +82,7 @@ export class TrainerListComponent implements OnDestroy {
         });
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            console.log(`Dialog result: ${result}`);
           } else {
-            console.log('Dialog closed without adding a category');
           }
         });
       } else {
@@ -123,9 +121,7 @@ export class TrainerListComponent implements OnDestroy {
           dialogRef.close('Trainer status updated successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without updating trainer status');
             }
           });
         }, (error) => {
@@ -162,9 +158,7 @@ export class TrainerListComponent implements OnDestroy {
           dialogRef.close('Trainer deleted successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without deleting trainer');
             }
           });
         }, (error) => {

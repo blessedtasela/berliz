@@ -2,6 +2,8 @@ import { ProviderTermsComponent } from '../shared/provider-profile/provider-term
 import { ProviderPackagesComponent } from '../shared/provider-profile/provider-packages.component';
 import { ProviderAvailabilityComponent } from '../shared/provider-profile/provider-availability.component';
 import { HowItWorksComponent } from '../shared/provider-profile/how-it-works.component';
+import { ProviderFilterBarComponent } from '../shared/provider-profile/provider-filter-bar.component';
+import { ProviderCardMetaComponent } from '../shared/provider-profile/provider-card-meta.component';
 import { ProfileCtaComponent, StickyBookBarComponent } from '../shared/provider-profile/profile-cta.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -88,6 +90,8 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     ProviderPackagesComponent,
     ProviderAvailabilityComponent,
     HowItWorksComponent,
+    ProviderFilterBarComponent,
+    ProviderCardMetaComponent,
     ProfileCtaComponent,
     StickyBookBarComponent,
     FormsModule,

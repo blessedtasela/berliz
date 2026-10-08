@@ -3,11 +3,11 @@
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
     (click)="showPreviewModal = false">
     <div class="relative" (click)="$event.stopPropagation()">
-        <img [src]="previewUrl"
+        <img alt="" [src]="previewUrl"
             class="max-w-[280px] max-h-[280px] rounded-2xl object-cover object-top shadow-2xl border border-white/20"
             onerror="this.src='assets/avatar.png';" />
         <button (click)="showPreviewModal = false" class="absolute -top-2.5 -right-2.5 w-7 h-7 rounded-full bg-gray-900 border-2 border-white
-             flex items-center justify-center text-white hover:bg-red-600 transition">
+             flex items-center justify-center text-white hover:bg-red-600 transition" aria-label="Close">
             <i-feather name="x" style="width:12px;height:12px;"></i-feather>
         </button>
     </div>
@@ -21,7 +21,7 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Crop cover photo</h2>
                 <button (click)="cancelUpload()"
-                    class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
+                    class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300" aria-label="Close">
                     <i-feather name="x" style="width:14px;height:14px;"></i-feather>
                 </button>
             </div>
@@ -150,11 +150,11 @@
 
                 <!-- Preview -->
                 <div class="relative shrink-0">
-                    <img [src]="previewUrl" class="w-14 h-14 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700"
+                    <img alt="" [src]="previewUrl" class="w-14 h-14 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700"
                         onerror="this.src='assets/avatar.png';" />
 
                     <button type="button" (click)="showPreviewModal = true" class="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full bg-gray-900 border-2 border-white dark:border-gray-900
-           flex items-center justify-center shadow transition hover:bg-red-600">
+           flex items-center justify-center shadow transition hover:bg-red-600" aria-label="View details">
                         <i-feather name="eye" style="width:9px;height:9px;" class="text-white"></i-feather>
                     </button>
                 </div>

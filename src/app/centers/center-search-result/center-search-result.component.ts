@@ -14,6 +14,8 @@ import { selectActiveCategories } from 'src/app/state/category/category.selector
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectUser } from 'src/app/state/user/user.selector';
 
+import { DEFAULT_PROVIDER_CRITERIA, ProviderFilterCriteria, applyProviderFilters } from 'src/app/shared/provider-profile/provider-filters';
+
 @Component({
     selector: 'app-center-search-result',
     templateUrl: './center-search-result.component.html',
@@ -22,7 +24,32 @@ import { selectUser } from 'src/app/state/user/user.selector';
 })
 export class CenterSearchResultComponent implements OnInit, OnDestroy {
 
-  @Input() centersResult: Centers[] = [];
+  private _centersResult: Centers[] = [];
+
+  /** The list after the page's text search; filters and sorting are applied on top of it here. */
+  @Input() set centersResult(value: Centers[]) {
+    this._centersResult = value ?? [];
+    this.recompute();
+  }
+  get centersResult(): Centers[] { return this._centersResult; }
+
+  criteria: ProviderFilterCriteria = { ...DEFAULT_PROVIDER_CRITERIA };
+  /** centersResult with the filters and sort applied -- what the grid shows. */
+  shown: Centers[] = [];
+
+  private recompute(): void {
+    this.shown = applyProviderFilters(this._centersResult, this.criteria);
+  }
+
+  onCriteria(criteria: ProviderFilterCriteria): void {
+    this.criteria = criteria;
+    this.showAll = false;
+    this.recompute();
+  }
+
+  resetCriteria(): void {
+    this.onCriteria({ ...DEFAULT_PROVIDER_CRITERIA });
+  }
   @Input() totalCenters: number = 0;
 
   readonly PAGE_SIZE = 12;
@@ -30,8 +57,8 @@ export class CenterSearchResultComponent implements OnInit, OnDestroy {
   showAll = false;
   get visibleCount() {
     return this.showAll
-      ? this.centersResult.length
-      : Math.min(this.PAGE_SIZE, this.centersResult.length);
+      ? this.shown.length
+      : Math.min(this.PAGE_SIZE, this.shown.length);
   }
 
   user!: Users | null;

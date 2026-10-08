@@ -15,7 +15,7 @@
                     {{ album?.comment }}
                 </p>
                 <div class="flex justify-center mt-5">
-                    <button class="m-4 text-sm md:text-xl bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 
+                    <button type="button" class="m-4 text-sm md:text-xl bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 
                     hero-button font-sans rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
                         <a [routerLink]="['/community']">
                             Subscribe Now
@@ -29,7 +29,7 @@
                                 Members
                             </div>
                             <div class="flex justify-center gap-3">
-                                <img class="w-12 text-gray-200" src="../../../assets/icons/group.png">
+                                <img alt="" class="w-12 text-gray-200" src="../../../assets/icons/group.png">
                                 <div class="text-right text-sm md:text-md font-bold text-gray-100 mt-5">
                                     +{{ stats?.membersCounter }}
                                 </div>
@@ -41,7 +41,7 @@
                                 Experience
                             </div>
                             <div class="flex justify-center gap-3">
-                                <img class="w-12 text-gray-200" src="../../../assets/icons/networking.png">
+                                <img alt="" class="w-12 text-gray-200" src="../../../assets/icons/networking.png">
                                 <div class="text-right text-sm md:text-md font-bold text-gray-100 mt-5">
                                     +{{ stats?.experienceCounter }}
                                 </div>
@@ -53,7 +53,7 @@
                                 Ratings
                             </div>
                             <div class="flex justify-center gap-3">
-                                <img class="w-12 text-gray-200" src="../../../assets/icons/rating.png">
+                                <img alt="" class="w-12 text-gray-200" src="../../../assets/icons/rating.png">
                                 <div class="text-right text-sm md:text-md font-bold text-gray-100 mt-5">
                                     +{{ stats?.ratingsCounter }}
                                 </div>

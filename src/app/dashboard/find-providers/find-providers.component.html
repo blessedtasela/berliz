@@ -48,6 +48,11 @@
     </div>
 
     <!-- ── TRAINERS ─────────────────────────────────────────── -->
+    <app-provider-filter-bar *ngIf="tab !== 'categories'" theme="light" [noun]="tab === 'centers' ? 'centers' : 'trainers'"
+        [showMode]="tab === 'trainers'" [criteria]="criteria"
+        [shown]="tab === 'centers' ? filteredCenters.length : filteredTrainers.length" [total]="unfilteredTotal"
+        (criteriaChange)="onCriteria($event)"></app-provider-filter-bar>
+
     <ng-container *ngIf="tab === 'trainers'">
 
         <div *ngIf="filteredTrainers.length === 0"
@@ -85,6 +90,8 @@
                         <span *ngFor="let cat of trainer.categories?.slice(0, 3)" class="text-[10px] font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800
                                      px-2 py-0.5 rounded-full">{{ cat.name }}</span>
                     </div>
+
+                    <app-provider-card-meta theme="light" [rate]="trainer.hourlyRate" [reviewCount]="trainer.reviewCount"></app-provider-card-meta>
 
                     <div class="flex items-center justify-between gap-2 mt-auto pt-1">
                         <span class="text-[11px] text-gray-400 dark:text-gray-500 flex items-center gap-1 truncate">
@@ -131,6 +138,7 @@
                 <div class="flex flex-col gap-2 p-4 flex-1">
                     <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100 truncate">{{ center.name }}</h3>
                     <p class="text-xs text-gray-400 dark:text-gray-500 italic leading-relaxed line-clamp-2">"{{ center.motto }}"</p>
+                    <app-provider-card-meta theme="light" [rate]="center.hourlyRate" [reviewCount]="center.reviewCount"></app-provider-card-meta>
 
                     <div class="flex items-center justify-between gap-2 mt-auto pt-1">
                         <span class="text-[11px] text-gray-400 dark:text-gray-500 flex items-center gap-1 truncate">

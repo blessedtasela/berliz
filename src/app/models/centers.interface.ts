@@ -16,6 +16,8 @@ export interface Centers {
   /** Same nested shape Trainers.photoResponse already uses -- was a flat `photoUrl` that the API never actually sent, so every center image silently fell back to a placeholder. */
   photoResponse: PhotoResponse;
   likes: number;
+  /** Approved public reviews (filled on the public list). */
+  reviewCount?: number;
   status: string;
   userId: number;
   partnerId: number;

@@ -11,7 +11,7 @@
                 {{ centerAnnouncements.length === 1 ? 'update' : 'updates' }} from this center
             </p>
         </div>
-        <button *ngIf="centerAnnouncements.length > 5" type="button" (click)="allAnnouncements()"
+        <button type="button" *ngIf="centerAnnouncements.length > 5" type="button" (click)="allAnnouncements()"
             class="text-[11px] font-semibold text-red-400 hover:text-red-300 transition shrink-0">
             {{ !showAllAnnouncements ? 'See all' : 'See less' }}
         </button>

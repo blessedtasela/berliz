@@ -58,7 +58,7 @@
             <img [src]="uploadedPhoto.photoUrl | strapiUrl" alt="" class="max-h-40 rounded-xl border border-gray-200 dark:border-gray-700" />
             <button type="button" (click)="removePhoto()"
                 class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 flex items-center justify-center
-                       hover:bg-black dark:hover:bg-white transition">
+                       hover:bg-black dark:hover:bg-white transition" aria-label="Close">
                 <i-feather name="x" style="width:12px;height:12px;"></i-feather>
             </button>
         </div>
@@ -138,7 +138,7 @@
             </a>
 
             <button *ngIf="isMine(post)" type="button" (click)="deletePost(post)"
-                class="text-gray-300 dark:text-gray-600 hover:text-red-600 dark:hover:text-red-500 transition p-1">
+                class="text-gray-300 dark:text-gray-600 hover:text-red-600 dark:hover:text-red-500 transition p-1" aria-label="Delete">
                 <i-feather name="trash-2" style="width:14px;height:14px;"></i-feather>
             </button>
             <button *ngIf="!isMine(post)" type="button" (click)="reportPost(post)" title="Report"

@@ -28,8 +28,8 @@
             </button>
 
             <a [routerLink]="['/dashboard']" class="flex items-center">
-                <img src="../../../assets/berliz-files/SVG/logo.svg" class="w-7 h-7 object-contain block md:hidden" />
-                <img src="../../../assets/berliz-files/SVG/standard.svg" class="h-7 w-auto object-contain hidden md:block" />
+                <img alt="Berliz" src="../../../assets/berliz-files/SVG/logo.svg" class="w-7 h-7 object-contain block md:hidden" />
+                <img alt="Berliz" src="../../../assets/berliz-files/SVG/standard.svg" class="h-7 w-auto object-contain hidden md:block" />
             </a>
 
             <!--
@@ -46,7 +46,7 @@
 
             <!-- Bell -->
             <div class="relative">
-                <button (click)="toggleNotificationDropdown()" class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
+                <button type="button" (click)="toggleNotificationDropdown()" class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
                  flex items-center justify-center transition relative">
                     <i-feather name="bell" class="text-gray-700 dark:text-gray-300" style="width:16px;height:16px;"></i-feather>
                     <span *ngIf="notificationLength > 0" class="absolute -top-1 -right-1 bg-red-600 text-white text-[8px]
@@ -95,7 +95,7 @@
 
         <!-- RIGHT: Home + Profile -->
         <div class="items-center gap-3 shrink-0" [ngClass]="isMobileSearchOpen ? 'hidden md:flex' : 'flex'">
-            <button [routerLink]="['/dashboard']" title="Dashboard" class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
+            <button type="button" [routerLink]="['/dashboard']" title="Dashboard" class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
                flex items-center justify-center transition">
                 <feather-icon name="home" class="text-gray-700 dark:text-gray-300"
                     style="width:16px;height:16px;width:16px;"></feather-icon>

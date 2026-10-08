@@ -78,9 +78,7 @@ export class MembersListComponent implements OnDestroy {
           this.handleEmitEvent()
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without adding a member');
             }
           });
         });
@@ -120,9 +118,7 @@ export class MembersListComponent implements OnDestroy {
           dialogRef.close('member status updated successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without updating member status');
             }
           })
         })
@@ -159,9 +155,7 @@ export class MembersListComponent implements OnDestroy {
           dialogRef.close('member deleted successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without deleting member');
             }
           })
         })

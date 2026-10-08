@@ -44,7 +44,7 @@
             class="flex flex-col items-center gap-1.5 group cursor-pointer">
 
             <div class="relative">
-                <img [src]="getProfilePhoto('client-photo-here')" onerror="this.src='assets/avatar.png';"
+                <img alt="" [src]="getProfilePhoto('client-photo-here')" onerror="this.src='assets/avatar.png';"
                     class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700
                  group-hover:border-red-400 transition-all duration-200
                  group-hover:scale-105 group-hover:shadow-md" />
@@ -58,7 +58,7 @@
 
     <!-- See more / less -->
     <div *ngIf="filteredClients().length > pageSize" class="flex justify-start">
-        <button (click)="toggleShowAll()" class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-1.5
+        <button type="button" (click)="toggleShowAll()" class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-1.5
              rounded-xl font-semibold flex items-center gap-1.5 transition">
             <i-feather [name]="showAll ? 'chevron-up' : 'chevron-down'" style="width:11px;height:11px;"></i-feather>
             {{ showAll ? 'See less' : 'See all ' + filteredClients().length + ' clients' }}

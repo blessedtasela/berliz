@@ -77,9 +77,7 @@ export class NewsletterListComponent implements OnDestroy {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log(`Dialog result: ${result}`);
       } else {
-        console.log('Dialog closed without adding a newsletter');
       }
     });
   }
@@ -106,9 +104,7 @@ export class NewsletterListComponent implements OnDestroy {
         });
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            console.log(`Dialog result: ${result}`);
           } else {
-            console.log('Dialog closed without updating newsletter');
           }
         });
       } else {
@@ -204,9 +200,7 @@ export class NewsletterListComponent implements OnDestroy {
         });
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            console.log(`Dialog result: ${result}`);
           } else {
-            console.log('Dialog closed without sending newsletter message');
           }
         });
       } else {

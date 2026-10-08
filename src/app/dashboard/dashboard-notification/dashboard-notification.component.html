@@ -64,7 +64,7 @@
           {{ n.notification }}
         </p>
 
-        <button *ngIf="n.notification.length > 100"
+        <button type="button" *ngIf="n.notification.length > 100"
           class="text-red-600 text-[10px] font-semibold mt-0.5 hover:underline"
           (click)="openNotificationModal(n); $event.stopPropagation()">
           Read more →

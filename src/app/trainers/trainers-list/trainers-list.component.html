@@ -5,7 +5,7 @@
             *ngFor="let trainer of trainersResult; let i = index" [ngClass]="{ 'hidden' : i >= 12 && !showFullData }">
             <div class="w-full bg-gray-100 rounded-md aspect-square m-5 md:min-h-[750px]">
                 <div class="flex flex-col justify-center items-center">
-                    <img class="rounded-md object-cover object-top" [src]="photoSrc(trainer)"
+                    <img alt="" class="rounded-md object-cover object-top" [src]="photoSrc(trainer)"
                         onerror="this.src='../../../assets/icons/user.png';">
                     <div class="p-2">
                         <p
@@ -33,7 +33,7 @@
                             {{ trainer.likes }} people like this trainer.
                         </p>
                     </div>
-                    <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
+                    <button type="button" class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
                 rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
                         <a [routerLink]="['/trainers', trainer.id, formatStringtoUrl(trainer.name)]">
                             Know more
@@ -44,7 +44,7 @@
         </section>
     </div>
     <div class="p-3" [ngClass]="{ 'hidden': trainersResult.length <= 12 }">
-        <button
+        <button type="button"
             class="p-1 px-2 bg-gray-100 text-red-600 font-sans font-bold rounded-md mx-auto flex justify-center mt-2">
             {{ !showFullData ? 'See more' : 'See less' }}
         </button>

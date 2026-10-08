@@ -9,7 +9,7 @@
         </a>
 
         <!-- MOBILE: hamburger -->
-        <button (click)="navMenu(menuStatus ? 'x' : 'align-justify')" class="lg:hidden w-9 h-9 rounded-xl border border-gray-700 flex items-center justify-center
+        <button type="button" (click)="navMenu(menuStatus ? 'x' : 'align-justify')" class="lg:hidden w-9 h-9 rounded-xl border border-gray-700 flex items-center justify-center
              text-white hover:bg-red-600 hover:border-red-600 transition">
             <i-feather [name]="menuStatus ? 'x' : 'align-justify'" style="width:16px;height:16px;">
             </i-feather>

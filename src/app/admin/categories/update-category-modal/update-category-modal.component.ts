@@ -135,7 +135,6 @@ export class UpdateCategoryModalComponent {
   }
 
   onCheckboxChanged(event: any) {
-    console.log('Checkbox changed:', event.target.checked, event.target.value);
     const tags = this.updateCategoryForm.get('tagIds') as FormArray;
 
     if (event.target.checked) {

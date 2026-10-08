@@ -31,10 +31,8 @@ export class ResetPasswordComponent {
          this.responseMessage = params?.messagge;
          this.snackBarService.openSnackBar(this.responseMessage, '');
          this.openPasswordResetModal();
-          console.log('Password reset token:', token);
           // Call your API to reset the password with the token
         },(error: any) => {
-          console.log('No valid password reset token found.');
           if (error.error?.message) {
             this.responseMessage = error.error?.message;
           } else {

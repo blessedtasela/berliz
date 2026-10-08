@@ -41,7 +41,6 @@ export class ChatWithCenterPopUpComponent {
         + `I want to know more about the training plans and programs in your gym club.\n`
         + `My name is `;
 
-      console.log(whatsappMessage);
 
       // Replace the phone number below with the actual WhatsApp phone number you want to contact
       const phoneNumber = this.whatsappContact?.whatsapp;

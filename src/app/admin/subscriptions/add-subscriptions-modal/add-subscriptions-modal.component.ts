@@ -102,7 +102,6 @@ export class AddSubscriptionsModalComponent {
   }
 
   handleEmitEvent() {
-    console.log("isCached false");
     this.subscriptions.push(
       this.store.select(selectUsers).subscribe((users) => {
         this.users = users;
@@ -159,7 +158,6 @@ export class AddSubscriptionsModalComponent {
 
   calculateTotalAmount(): void {
     if (!this.selectedTrainer || !this.selectedCenter) {
-      console.log('Trainer or center is null');
       return;
     }
 
@@ -172,7 +170,6 @@ export class AddSubscriptionsModalComponent {
     );
 
     if (!selectedTrainerPricing || !selectedCenterPricing) {
-      console.log('Trainer or center pricing not found');
       return;
     }
 
@@ -229,7 +226,6 @@ export class AddSubscriptionsModalComponent {
       );
     }
 
-    console.log('Trainer Price after discount:', trainerDiscount);
 
     interface GetCenterPrice {
       price: number;
@@ -257,11 +253,9 @@ export class AddSubscriptionsModalComponent {
       );
     }
 
-    console.log('Center Price after discount:', centerDiscount);
 
     this.totalAmount = trainerDiscount + centerDiscount;
 
-    console.log('Total Amount after discount for center and trainer:', this.totalAmount);
   }
 
 

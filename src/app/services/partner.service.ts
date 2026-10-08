@@ -82,6 +82,5 @@ export class PartnerService {
   setPartnerFormIndex(index: number) {
     this.partnerFormIndex = index;
     localStorage.setItem("partnerFormIndex", index.toString());
-    console.log('current index:', this.partnerFormIndex);
   }
 }

@@ -90,9 +90,7 @@ export class ContactUsListComponent implements OnDestroy {
         });
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            console.log(`Dialog result: ${result}`);
           } else {
-            console.log('Dialog closed without updating contact-us entity');
           }
         });
       } else {
@@ -150,9 +148,7 @@ export class ContactUsListComponent implements OnDestroy {
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          console.log(`Dialog result: ${result}`);
         } else {
-          console.log('Dialog closed without reviewing message');
         }
       });
     }

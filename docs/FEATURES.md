@@ -185,6 +185,34 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Audit follow-up: trust, funnel and accessibility
+
+From [`APP-AUDIT-2026-10.md`](./APP-AUDIT-2026-10.md).
+
+- **Public list privacy (backend):** `GET /trainer/getActiveTrainers` needs no login but used to return every trainer's
+  account email, activation code and internal (often home) street address. It now returns none of those; `address` is
+  the city-level place from their public locations. Both public lists also carry `reviewCount`.
+- **Cards show what a session costs and the proof:** trainer and center cards (public and signed-in) now show the full
+  hourly rate ("Rate on request" when none — never a "from" price) and the review count. This makes the
+  "Transparent pricing" row in §5 true on the cards too. Reviews are written testimonials, not stars, so the count is
+  the proof; a star score would be a separate change.
+- **Filters and sort** on the trainers and centers lists (public and Find a Provider): sort (recommended / price both ways /
+  most reviewed / most liked / name), coaching mode (a hybrid coach stays in both in-person and online), rate ceiling,
+  "has reviews", with "N of M" feedback, a reset, and a no-match state. Location search now matches every listed location.
+- **Honest failures (backend):** 153 write methods across 36 services caught every exception and returned a blank
+  response, so a failed booking/review/payment reached clients as a normal 200. They now fail with a real 500.
+- **Bookings:** reminders to both sides ~a day ahead and again shortly before a confirmed, paid session; a request nobody
+  answers nudges the provider after 12 h and is withdrawn after 48 h (or once its time passes), with the client told they
+  were not charged. One review per completed session (a single booking used to allow unlimited reviews).
+- **Stripe:** refunds made in the Stripe dashboard are recorded; disputes alert admins; a lost dispute is booked as a
+  refund. The webhook endpoint must have `charge.refunded`, `charge.dispute.created` and `charge.dispute.closed` enabled.
+- **Monitoring:** backend health endpoints (`/actuator/health/liveness` and `/readiness`, readiness includes the database)
+  for Railway's healthcheck; Sentry on backend and web, inert until a DSN is set (`SENTRY_DSN` on the backend,
+  `sentryDsn` in the web environment files).
+- **Accessibility and hygiene:** 91 images got `alt` text, 290 buttons outside forms got `type="button"`, 181 icon-only
+  buttons got an accessible name, 207 stray debug `console.log` calls were removed, and three sidebar icons that were
+  each shared by two entries are now unique.
+
 ### Unreleased — Trainer & center profiles: a marketing page for visitors, a business page for signed-in users
 
 The same trainer or center now has two deliberately different profile pages.

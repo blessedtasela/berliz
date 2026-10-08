@@ -35,7 +35,6 @@ export class ChatWithTrainerComponent {
         + `I want to know more about your training programs.\n`
         + `My name is `;
 
-      console.log(whatsappMessage);
 
       // Replace the phone number below with the actual WhatsApp phone number you want to contact
       const phoneNumber = this.whatsappContact?.whatsapp;

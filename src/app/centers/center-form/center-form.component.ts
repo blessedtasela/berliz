@@ -25,7 +25,6 @@ export class CenterFormComponent {
 
   submitForm(): boolean{
     if (this.centerForm.invalid) {
-      console.log('Invalid form');
       this.invalidForm = true;
       return false;
     }
@@ -55,7 +54,6 @@ export class CenterFormComponent {
           + `Twitter: ${formValue.twitterUrl}\n`
           + `Motivation: ${formValue.motivation}`;
 
-        console.log(whatsappMessage);
 
         // Replace the phone number below with the actual WhatsApp phone number you want to contact
         const phoneNumber = '+212610310304';

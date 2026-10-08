@@ -79,9 +79,7 @@ export class SubTasksListComponent implements OnDestroy {
           this.handleEmitEvent()
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without adding a subTask');
             }
           });
         });
@@ -118,9 +116,7 @@ export class SubTasksListComponent implements OnDestroy {
           dialogRef.close('subTask deleted successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without deleting subTask');
             }
           })
         })

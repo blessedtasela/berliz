@@ -77,9 +77,7 @@ export class TrainerPricingListComponent implements OnDestroy {
           this.handleEmitEvent()
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without adding a trainerPricing');
             }
           });
         });
@@ -116,9 +114,7 @@ export class TrainerPricingListComponent implements OnDestroy {
           dialogRef.close('trainerPricing deleted successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without deleting trainerPricing');
             }
           })
         }, (error) => {

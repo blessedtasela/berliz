@@ -8,10 +8,10 @@
         </image-cropper>
 
         <div class="mt-4 flex justify-center gap-2 text-sm">
-            <button
+            <button type="button"
                 class="px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition"
                 (click)="updatePhoto()">Upload</button>
-            <button
+            <button type="button"
                 class="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-[0.98] transition"
                 (click)="cancelUpload()">Cancel</button>
         </div>
@@ -24,7 +24,7 @@
         <div *ngFor="let user of usersData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 dark:active:bg-gray-800 transition-colors">
             <div class="relative shrink-0">
                 <button type="button" (click)="goToProfile(user.id)" title="View profile">
-                    <img [src]="photoSrc(user)"
+                    <img alt="" [src]="photoSrc(user)"
                         onerror="this.src='../../../assets/icons/user.png';"
                         class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700">
                 </button>
@@ -47,16 +47,16 @@
             </div>
 
             <div class="flex items-center gap-0.5 shrink-0">
-                <button class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
+                <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="openUpdateUser(user.id)" title="Edit">
                     <i-feather name="edit-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
-                <button class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
+                <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="updateUserStatus(user.id)"
                     [title]="user.status === 'false' ? 'Activate' : 'Deactivate'">
                     <i-feather [name]="user.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
-                <button class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"
+                <button type="button" class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"
                     (click)="deleteUser(user.id)" title="Delete">
                     <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
@@ -88,7 +88,7 @@
                                 <button type="button" (click)="goToProfile(user.id)"
                                     (mouseenter)="onPhotoEnter($event, user.id)" (mouseleave)="onPhotoLeave()"
                                     title="View profile">
-                                    <img [src]="photoSrc(user)"
+                                    <img alt="" [src]="photoSrc(user)"
                                         onerror="this.src='../../../assets/icons/user.png';"
                                         class="w-10 h-10 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700 hover:opacity-80 transition">
                                 </button>
@@ -98,7 +98,7 @@
                                     (mouseleave)="onPhotoLeave()" (click)="goToProfile(user.id)"
                                     class="fixed z-50 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2 shadow-2xl cursor-pointer"
                                     [style.top.px]="photoPreviewTop" [style.left.px]="photoPreviewLeft">
-                                    <img [src]="photoSrc(user)"
+                                    <img alt="" [src]="photoSrc(user)"
                                         onerror="this.src='../../../assets/icons/user.png';"
                                         class="w-56 h-56 rounded-xl object-cover object-top">
                                 </div>
@@ -126,7 +126,7 @@
                                 class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
                                 {{ user.role }}
                             </span>
-                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
+                            <button type="button" class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
                                 (click)="openUpdateUserRole(user.id)" title="Edit role">
                                 <i-feather name="edit-2" class="text-red-600"
                                     style="width:15px;height:15px;"></i-feather>
@@ -135,21 +135,21 @@
                     </td>
                     <td class="px-4 py-3">
                         <div class="flex items-center justify-end gap-1">
-                            <button class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition"
+                            <button type="button" class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition"
                                 (click)="openUserDetails(user.id)" title="View">
                                 <i-feather name="eye" class="text-gray-500 dark:text-gray-400" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
+                            <button type="button" class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
                                 (click)="openUpdateUser(user.id)" title="Edit">
                                 <i-feather name="edit-2" class="text-red-600"
                                     style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition"
+                            <button type="button" class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition"
                                 [ngClass]="user.status === 'true' ? 'bg-gray-800 dark:bg-gray-700 text-white hover:bg-gray-700 dark:hover:bg-gray-600' : 'bg-red-600 text-white hover:bg-red-700'"
                                 (click)="updateUserStatus(user.id)">
                                 {{ user.status === 'false' ? 'Activate' : 'Deactivate' }}
                             </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
+                            <button type="button" class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
                                 (click)="deleteUser(user.id)" title="Delete">
                                 <i-feather name="trash-2" class="text-red-600"
                                     style="width:15px;height:15px;"></i-feather>

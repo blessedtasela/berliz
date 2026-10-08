@@ -65,7 +65,6 @@ export class AdminUpdateUserModalComponent {
       this.updateUserForm.get('gender')?.invalid
     ) {
       this.invalidForm = true;
-      console.log("Can't validate");
     } else {
       this.formIndex += n;
     }

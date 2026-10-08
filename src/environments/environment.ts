@@ -5,6 +5,9 @@ export const environment = {
     // Sent as X-Client-Version on every request (ClientMetaInterceptor) so the
     // admin login analytics can break down usage by app build, same as the
     // mobile app's Constants.expoConfig.version. Bump alongside package.json.
+    // Sentry error reporting. Empty = off (nothing is loaded or sent). Paste the project DSN here to turn it
+    // on -- a DSN is a public identifier, not a secret. See services/error-reporting.ts.
+    sentryDsn: '',
     appVersion: '0.1',
     // api: 'https://berliz-server-fd9efef771e8.herokuapp.com',
         // Railway backend

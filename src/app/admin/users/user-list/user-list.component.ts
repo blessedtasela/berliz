@@ -119,9 +119,7 @@ export class UserListComponent implements OnChanges {
         });
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            console.log(`Dialog result: ${result}`);
           } else {
-            console.log('Dialog closed without adding a category');
           }
         });
       } else {
@@ -150,9 +148,7 @@ export class UserListComponent implements OnChanges {
         });
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            console.log(`Dialog result: ${result}`);
           } else {
-            console.log('Dialog closed without updatig user\'s role');
           }
         });
       } else {
@@ -304,9 +300,7 @@ export class UserListComponent implements OnChanges {
     const childComponentInstance = dialogRef.componentInstance as UserDetailsModalComponent;
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log(`Dialog result: ${result}`);
       } else {
-        console.log('Dialog closed without any action');
       }
     });
   }
@@ -359,9 +353,7 @@ export class UserListComponent implements OnChanges {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log(`Dialog result: ${result}`);
       } else {
-        console.log('Dialog closed without adding a category');
       }
     });
   }

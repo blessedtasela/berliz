@@ -8,7 +8,7 @@
                 {{ centerReviews.length === 1 ? 'review' : 'reviews' }} from people who train here
             </p>
         </div>
-        <button *ngIf="centerReviews.length > 4" type="button" (click)="allReviews()"
+        <button type="button" *ngIf="centerReviews.length > 4" type="button" (click)="allReviews()"
             class="text-[11px] font-semibold text-red-400 hover:text-red-300 transition shrink-0">
             {{ !showAllReviews ? 'See all' : 'See less' }}
         </button>

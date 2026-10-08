@@ -49,7 +49,7 @@
         <!-- Mobile: card rows -->
         <div class="sm:hidden divide-y divide-gray-100 dark:divide-gray-800">
             <div *ngFor="let item of filtered" class="flex items-center gap-3 px-4 py-3">
-                <img [src]="item.imageUrl | strapiUrl" onerror="this.src='assets/icons/user.png';"
+                <img alt="" [src]="item.imageUrl | strapiUrl" onerror="this.src='assets/icons/user.png';"
                     class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700 shrink-0 bg-gray-50 dark:bg-gray-800" />
 
                 <div class="min-w-0 flex-1">
@@ -63,13 +63,13 @@
                 </div>
 
                 <div class="flex items-center gap-0.5 shrink-0">
-                    <button class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center" (click)="toggleFeatured(item)" title="Toggle featured">
+                    <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center" (click)="toggleFeatured(item)" title="Toggle featured">
                         <i-feather name="star" [class]="item.featured ? 'text-amber-500' : 'text-gray-400 dark:text-gray-500'" style="width:16px;height:16px;"></i-feather>
                     </button>
-                    <button class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center" (click)="openEdit(item)" title="Edit">
+                    <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center" (click)="openEdit(item)" title="Edit">
                         <i-feather name="edit-2" class="text-blue-600" style="width:16px;height:16px;"></i-feather>
                     </button>
-                    <button class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center" (click)="deleteEquipment(item)" title="Delete">
+                    <button type="button" class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center" (click)="deleteEquipment(item)" title="Delete">
                         <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                     </button>
                 </div>
@@ -94,7 +94,7 @@
                     <tr *ngFor="let item of filtered" class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                         [class.opacity-50]="togglingId === item.id">
                         <td class="px-4 py-3">
-                            <img [src]="item.imageUrl | strapiUrl" onerror="this.src='assets/icons/user.png';"
+                            <img alt="" [src]="item.imageUrl | strapiUrl" onerror="this.src='assets/icons/user.png';"
                                 class="w-10 h-10 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                         </td>
                         <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{{ item.name }}</td>
@@ -121,10 +121,10 @@
                         <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ item.lastUpdate | date:'mediumDate' }}</td>
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-end gap-1">
-                                <button class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center" (click)="openEdit(item)" title="Edit">
+                                <button type="button" class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center" (click)="openEdit(item)" title="Edit">
                                     <i-feather name="edit-2" class="text-blue-600" style="width:14px;height:14px;"></i-feather>
                                 </button>
-                                <button class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center" (click)="deleteEquipment(item)" title="Delete">
+                                <button type="button" class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center" (click)="deleteEquipment(item)" title="Delete">
                                     <i-feather name="trash-2" class="text-red-600" style="width:14px;height:14px;"></i-feather>
                                 </button>
                             </div>

@@ -9,7 +9,7 @@
             <p class="text-sm w-full text-center font-sans" *ngFor="let c of album?.photos; let i = index" [class.hidden]=" i !== albumIndex">
                {{ c.comment }}
             </p>
-            <button class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
+            <button type="button" class="m-4 text-sm  bg-red-600 text-gray-200 py-1 px-3 mt-3 hover:bg-red-700 hero-button font-sans
                 rounded-md transition-all duration-300 transform hover:scale-105 focus:scale-105">
                 <a [routerLink]="['/community']">
                     Subscribe Now
@@ -22,7 +22,7 @@
                     Happy Clients
                 </div>
                 <div class="flex justify-center gap-3">
-                    <img class="w-8 text-gray-950" src="../../../assets/icons/networking.png">
+                    <img alt="" class="w-8 text-gray-950" src="../../../assets/icons/networking.png">
                     <div class="text-right text-sm font-bold mt-2">
                         + {{ stats?.clientCounter }}
                     </div>
@@ -34,7 +34,7 @@
                 Experience
             </div>
             <div class="flex justify-center gap-3">
-                <img class="w-8 text-gray-950" src="../../../assets/icons/rating.png">
+                <img alt="" class="w-8 text-gray-950" src="../../../assets/icons/rating.png">
                 <div class="text-right text-sm font-bold mt-2">
                     + {{ stats?.experienceCounter }}
                 </div>

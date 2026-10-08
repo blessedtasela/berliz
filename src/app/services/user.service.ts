@@ -328,13 +328,11 @@ export class UserService {
   setSignupFormIndex(index: number) {
     this.signUpFormIndex = index;
     localStorage.setItem("signUpFormIndex", index.toString());
-    console.log('current index:', this.signUpFormIndex);
   }
 
   removeSignupFormIndex(index: number) {
     this.signUpFormIndex = index;
     localStorage.removeItem("signUpFormIndex");
-    console.log('current index:', this.signUpFormIndex);
   }
 
 
@@ -352,7 +350,6 @@ export class UserService {
   setPartnerFormIndex(index: number) {
     this.partnerFormIndex = index;
     localStorage.setItem("partnerFormIndex", index.toString());
-    console.log('current index:', this.signUpFormIndex);
   }
 
   startRefreshTokenTimer() {

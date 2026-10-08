@@ -95,9 +95,7 @@ export class NewsletterHeaderComponent {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log(`Dialog result: ${result}`);
       } else {
-        console.log('Dialog closed without adding a newsletter');
       }
     });
   }
@@ -115,9 +113,7 @@ export class NewsletterHeaderComponent {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log(`Dialog result: ${result}`);
       } else {
-        console.log('Dialog closed without sending newsletter bulk messages');
       }
     });
   }

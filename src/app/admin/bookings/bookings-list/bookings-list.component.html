@@ -24,17 +24,17 @@
                 <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">{{ formatDate(booking.scheduledAt) }} &middot; {{ booking.durationMinutes }}m</p>
             </div>
             <div class="flex items-center gap-0.5 shrink-0">
-                <button *ngIf="booking.status === 'pending'"
+                <button type="button" *ngIf="booking.status === 'pending'"
                     class="w-9 h-9 rounded-lg active:bg-blue-50 dark:active:bg-blue-950/20 flex items-center justify-center"
                     (click)="updateStatus(booking.id, 'confirmed')" title="Confirm">
                     <i-feather name="check" class="text-blue-600" style="width:16px;height:16px;"></i-feather>
                 </button>
-                <button *ngIf="booking.status === 'confirmed'"
+                <button type="button" *ngIf="booking.status === 'confirmed'"
                     class="w-9 h-9 rounded-lg active:bg-green-50 dark:active:bg-green-950/20 flex items-center justify-center"
                     (click)="updateStatus(booking.id, 'completed')" title="Mark completed">
                     <i-feather name="award" class="text-green-600" style="width:16px;height:16px;"></i-feather>
                 </button>
-                <button *ngIf="booking.status === 'pending' || booking.status === 'confirmed'"
+                <button type="button" *ngIf="booking.status === 'pending' || booking.status === 'confirmed'"
                     class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"
                     (click)="updateStatus(booking.id, 'cancelled')" title="Cancel">
                     <i-feather name="x" class="text-red-600" style="width:16px;height:16px;"></i-feather>
@@ -86,17 +86,17 @@
                     <td class="px-4 py-3 text-gray-500 dark:text-gray-400 tabular-nums">{{ booking.id }}</td>
                     <td class="px-4 py-3">
                         <div class="flex items-center justify-end gap-1">
-                            <button *ngIf="booking.status === 'pending'"
+                            <button type="button" *ngIf="booking.status === 'pending'"
                                 class="w-8 h-8 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/20 flex items-center justify-center transition"
                                 (click)="updateStatus(booking.id, 'confirmed')" title="Confirm">
                                 <i-feather name="check" class="text-blue-600" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button *ngIf="booking.status === 'confirmed'"
+                            <button type="button" *ngIf="booking.status === 'confirmed'"
                                 class="w-8 h-8 rounded-lg hover:bg-green-50 dark:hover:bg-green-950/20 flex items-center justify-center transition"
                                 (click)="updateStatus(booking.id, 'completed')" title="Mark completed">
                                 <i-feather name="award" class="text-green-600" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button *ngIf="booking.status === 'pending' || booking.status === 'confirmed'"
+                            <button type="button" *ngIf="booking.status === 'pending' || booking.status === 'confirmed'"
                                 class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
                                 (click)="updateStatus(booking.id, 'cancelled')" title="Cancel">
                                 <i-feather name="x" class="text-red-600" style="width:15px;height:15px;"></i-feather>

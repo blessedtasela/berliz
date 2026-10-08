@@ -39,7 +39,7 @@
             </button>
         </div>
 
-        <img [src]="centerData.photoResponse?.photoUrl | strapiUrl" class="w-full h-40 object-contain bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700"
+        <img alt="" [src]="centerData.photoResponse?.photoUrl | strapiUrl" class="w-full h-40 object-contain bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700"
             onerror="this.src='../../../assets/icons/user.png';" />
 
         <span class="w-fit px-2.5 py-1 rounded-full text-[11px] font-semibold" [ngClass]="centerData.status === 'true'

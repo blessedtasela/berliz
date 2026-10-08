@@ -65,7 +65,6 @@ export class UpdateUserModalComponent {
       this.updateUserForm.get('gender')?.invalid
     ) {
       this.invalidForm = true;
-      console.log("Can't validate");
     } else {
       this.formIndex += n;
       this.userService.setSignupFormIndex(this.formIndex);
@@ -76,7 +75,6 @@ export class UpdateUserModalComponent {
   getIndex() {
     const storedIndex = localStorage.getItem("updateUserFormIndex");
     const index = storedIndex ? parseInt(storedIndex, 10) : 0;
-    console.log('Current form Index: ', index);
     return index;
   }
 

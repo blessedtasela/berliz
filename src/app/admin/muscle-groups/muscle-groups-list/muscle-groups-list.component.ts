@@ -84,9 +84,7 @@ export class MuscleGroupsListComponent implements OnDestroy {
           this.handleEmitEvent()
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without adding a muscleGroup');
             }
           });
         });
@@ -126,9 +124,7 @@ export class MuscleGroupsListComponent implements OnDestroy {
           dialogRef.close('muscleGroup status updated successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without updating muscleGroup status');
             }
           });
         }, (error) => {
@@ -165,9 +161,7 @@ export class MuscleGroupsListComponent implements OnDestroy {
           dialogRef.close('muscleGroup deleted successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without deleting muscleGroup');
             }
           });
         }, (error) => {

@@ -114,9 +114,7 @@ export class TasksHeaderComponent {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log(`Dialog result: ${result}`);
       } else {
-        console.log('Dialog closed without adding a category');
       }
     });
   }

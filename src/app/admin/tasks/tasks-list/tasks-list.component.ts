@@ -76,9 +76,7 @@ export class TasksListComponent implements OnDestroy {
           this.handleEmitEvent()
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without adding a task');
             }
           });
         });
@@ -118,9 +116,7 @@ export class TasksListComponent implements OnDestroy {
           dialogRef.close('task status updated successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without updating task status');
             }
           })
         })
@@ -157,9 +153,7 @@ export class TasksListComponent implements OnDestroy {
           dialogRef.close('task deleted successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without deleting task');
             }
           })
         })

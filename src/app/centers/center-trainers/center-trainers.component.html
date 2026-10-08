@@ -8,7 +8,7 @@
                 {{ centerTrainers.length === 1 ? 'coach' : 'coaches' }} affiliated with this center
             </p>
         </div>
-        <button *ngIf="centerTrainers.length > 6" type="button" (click)="allTrainers()"
+        <button type="button" *ngIf="centerTrainers.length > 6" type="button" (click)="allTrainers()"
             class="text-[11px] font-semibold text-red-400 hover:text-red-300 transition shrink-0">
             {{ !showAllTrainers ? 'See all' : 'See less' }}
         </button>

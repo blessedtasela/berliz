@@ -22,7 +22,6 @@ export class PromotionsComponent {
       disableClose: true
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
     });
   }
 

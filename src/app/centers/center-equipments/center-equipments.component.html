@@ -8,7 +8,7 @@
                 {{ centerEquipments.length === 1 ? 'machine' : 'machines' }} available on the floor
             </p>
         </div>
-        <button *ngIf="centerEquipments.length > 6" type="button" (click)="allEquipments()"
+        <button type="button" *ngIf="centerEquipments.length > 6" type="button" (click)="allEquipments()"
             class="text-[11px] font-semibold text-red-400 hover:text-red-300 transition shrink-0">
             {{ !showAllEquipments ? 'See all' : 'See less' }}
         </button>

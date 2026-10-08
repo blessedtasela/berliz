@@ -74,9 +74,7 @@ export class CategoriesListComponent implements OnInit {
           this.handleEmitEvent()
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without adding a category');
             }
           });
         });
@@ -116,9 +114,7 @@ export class CategoriesListComponent implements OnInit {
           dialogRef.close('Category status updated successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without updating category status');
             }
           })
         }, (error) => {
@@ -155,9 +151,7 @@ export class CategoriesListComponent implements OnInit {
           dialogRef.close('Category deleted successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without deleting category');
             }
           });
         }, (error) => {

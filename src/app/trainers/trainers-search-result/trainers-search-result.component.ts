@@ -15,6 +15,7 @@ import { selectCurrentTrainer, selectTrainerLikes } from 'src/app/state/trainer/
 import { loadTrainerLikes } from 'src/app/state/trainer/trainer.actions';
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { DEFAULT_PROVIDER_CRITERIA, ProviderFilterCriteria, applyProviderFilters } from 'src/app/shared/provider-profile/provider-filters';
 
 
 @Component({
@@ -25,7 +26,32 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
 })
 export class TrainersSearchResultComponent implements OnInit, OnDestroy {
 
-  @Input() trainersResult: Trainers[] = [];
+  private _trainersResult: Trainers[] = [];
+
+  /** The list after the page's text search; filters and sorting are applied on top of it here. */
+  @Input() set trainersResult(value: Trainers[]) {
+    this._trainersResult = value ?? [];
+    this.recompute();
+  }
+  get trainersResult(): Trainers[] { return this._trainersResult; }
+
+  criteria: ProviderFilterCriteria = { ...DEFAULT_PROVIDER_CRITERIA };
+  /** trainersResult with the filters and sort applied -- what the grid shows. */
+  shown: Trainers[] = [];
+
+  private recompute(): void {
+    this.shown = applyProviderFilters(this._trainersResult, this.criteria);
+  }
+
+  onCriteria(criteria: ProviderFilterCriteria): void {
+    this.criteria = criteria;
+    this.showAll = false;
+    this.recompute();
+  }
+
+  resetCriteria(): void {
+    this.onCriteria({ ...DEFAULT_PROVIDER_CRITERIA });
+  }
 
   readonly PAGE_SIZE = 12;
 
@@ -37,8 +63,8 @@ export class TrainersSearchResultComponent implements OnInit, OnDestroy {
 
   get visibleCount() {
     return this.showAll
-      ? this.trainersResult.length
-      : Math.min(this.PAGE_SIZE, this.trainersResult.length);
+      ? this.shown.length
+      : Math.min(this.PAGE_SIZE, this.shown.length);
   }
 
   user!: Users | null;

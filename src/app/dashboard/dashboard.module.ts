@@ -2,6 +2,8 @@ import { ProviderTermsComponent } from '../shared/provider-profile/provider-term
 import { ProviderPackagesComponent } from '../shared/provider-profile/provider-packages.component';
 import { ProviderAvailabilityComponent } from '../shared/provider-profile/provider-availability.component';
 import { HowItWorksComponent } from '../shared/provider-profile/how-it-works.component';
+import { ProviderFilterBarComponent } from '../shared/provider-profile/provider-filter-bar.component';
+import { ProviderCardMetaComponent } from '../shared/provider-profile/provider-card-meta.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserModule } from './user/user.module';
@@ -91,6 +93,8 @@ import { OnboardingChecklistComponent } from '../shared/onboarding-checklist/onb
     ProviderPackagesComponent,
     ProviderAvailabilityComponent,
     HowItWorksComponent,
+    ProviderFilterBarComponent,
+    ProviderCardMetaComponent,
     UserHoverCardComponent,
     DashboardTimelinePreviewComponent,
     ConsistencyRingComponent,

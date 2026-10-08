@@ -41,6 +41,8 @@ export interface Trainers {
   customLocationAllowed?: boolean;
   /** Surcharge for a client-chosen custom location; null/0 means none. */
   customLocationFee?: number | null;
+  /** Approved public reviews (filled on the public list). */
+  reviewCount?: number;
   /** True when this trainer currently holds the platform's top paid subscription tier -- a "Featured" badge perk. */
   featured?: boolean;
   message?: string;

@@ -17,16 +17,16 @@
                 <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate">{{ subscription.months }} months &middot; updated {{ formatDate(subscription.lastUpdate) }}</p>
             </div>
             <div class="flex items-center gap-0.5 shrink-0">
-                <button class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
+                <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="openUpdateSubscription(subscription.id)" title="Edit">
                     <i-feather name="edit-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
-                <button class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
+                <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="updateSubscriptionStatus(subscription.id)"
                     [title]="subscription.status === 'false' ? 'Activate' : 'Deactivate'">
                     <i-feather [name]="subscription.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
-                <button class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"
+                <button type="button" class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"
                     (click)="deleteSubscription(subscription.id)" title="Delete">
                     <i-feather name="trash-2" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
@@ -70,20 +70,20 @@
                     <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ formatDate(subscription.lastUpdate) }}</td>
                     <td class="px-4 py-3">
                         <div class="flex items-center justify-end gap-1">
-                            <button class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition"
+                            <button type="button" class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition"
                                 (click)="openSubscriptionDetails(subscription.id)" title="View">
                                 <i-feather name="eye" class="text-gray-500 dark:text-gray-400" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
+                            <button type="button" class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
                                 (click)="openUpdateSubscription(subscription.id)" title="Edit">
                                 <i-feather name="edit-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <button class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition"
+                            <button type="button" class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition"
                                 [ngClass]="subscription.status === 'true' ? 'bg-gray-800 dark:bg-gray-700 text-white hover:bg-gray-700 dark:hover:bg-gray-600' : 'bg-red-600 text-white hover:bg-red-700'"
                                 (click)="updateSubscriptionStatus(subscription.id)">
                                 {{ subscription.status === 'false' ? 'Activate' : 'Deactivate' }}
                             </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
+                            <button type="button" class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
                                 (click)="deleteSubscription(subscription.id)" title="Delete">
                                 <i-feather name="trash-2" class="text-red-600" style="width:15px;height:15px;"></i-feather>
                             </button>

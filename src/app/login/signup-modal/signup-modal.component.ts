@@ -87,7 +87,6 @@ export class SignupModalComponent {
       this.signupForm.get('country')?.invalid
     ) {
       this.invalidForm = true;
-      console.log("Can't validate");
     } else {
       this.formIndex += n;
       this.userService.setSignupFormIndex(this.formIndex);
@@ -130,7 +129,6 @@ export class SignupModalComponent {
   getIndex() {
     const storedIndex = localStorage.getItem("signUpFormIndex");
     const index = storedIndex ? parseInt(storedIndex, 10) : 0;
-    console.log('Current form Index: ', index);
     return index;
   }
 

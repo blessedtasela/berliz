@@ -1,5 +1,6 @@
 import { ErrorHandler, Injectable, NgZone } from '@angular/core';
 import { SnackBarService } from './snack-bar.service';
+import { reportError } from './error-reporting';
 
 /**
  * A lazy chunk / dynamically-imported module failing to load is almost never
@@ -55,7 +56,8 @@ export class GlobalErrorHandlerService implements ErrorHandler {
     // Always dismiss any stuck loading snackbar on an unhandled error.
     this.zone.run(() => this.snackbar.dismiss());
 
-    // Keep Angular's normal error logging working.
+    // Tell Sentry (a no-op unless a DSN is configured), then keep Angular's normal error logging working.
+    reportError(error);
     console.error('Unhandled error:', error);
   }
 

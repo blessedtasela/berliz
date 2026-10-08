@@ -20,7 +20,7 @@
                     <div class="flex items-center gap-2 shrink-0">
                         <button *ngIf="comment.canEdit" type="button" (click)="startEdit()"
                             class="hover:text-sky-500 transition p-0.5"
-                            [class.text-gray-300]="!dark" [class.dark:text-gray-600]="!dark" [class.text-zinc-600]="dark">
+                            [class.text-gray-300]="!dark" [class.dark:text-gray-600]="!dark" [class.text-zinc-600]="dark" aria-label="Edit">
                             <i-feather name="edit-2" style="width:11px;height:11px;"></i-feather>
                         </button>
                         <button *ngIf="!comment.canEdit" type="button" (click)="startReport()" title="Report"
@@ -30,7 +30,7 @@
                         </button>
                         <button *ngIf="comment.canDelete" type="button" (click)="remove()"
                             class="hover:text-red-500 transition p-0.5"
-                            [class.text-gray-300]="!dark" [class.dark:text-gray-600]="!dark" [class.text-zinc-600]="dark">
+                            [class.text-gray-300]="!dark" [class.dark:text-gray-600]="!dark" [class.text-zinc-600]="dark" aria-label="Delete">
                             <i-feather name="trash-2" style="width:11px;height:11px;"></i-feather>
                         </button>
                     </div>
@@ -120,7 +120,7 @@
         </div>
 
         <!-- REPLIES -->
-        <button *ngIf="!repliesOpen && comment.replyCount > 0" type="button" (click)="openReplies()"
+        <button type="button" *ngIf="!repliesOpen && comment.replyCount > 0" type="button" (click)="openReplies()"
             class="text-[10px] font-semibold mt-1.5 px-1 flex items-center gap-1 transition"
             [class.text-sky-600]="!dark" [class.hover:text-sky-700]="!dark" [class.dark:text-sky-500]="!dark" [class.dark:hover:text-sky-400]="!dark"
             [class.text-sky-500]="dark" [class.hover:text-sky-400]="dark">

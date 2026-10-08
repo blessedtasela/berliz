@@ -62,7 +62,7 @@
             <p class="text-xs font-bold text-gray-800 dark:text-gray-200">
                 Progress <span *ngIf="selectedProgress">— {{ selectedProgress.clientFirstname }} {{ selectedProgress.clientLastname }}</span>
             </p>
-            <button type="button" (click)="closeProgress()" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
+            <button type="button" (click)="closeProgress()" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300" aria-label="Close">
                 <i-feather name="x" style="width:14px;height:14px;"></i-feather>
             </button>
         </div>

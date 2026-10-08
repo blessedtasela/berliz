@@ -45,7 +45,7 @@
 
             <!-- Top row: avatar + name + date -->
             <div class="flex items-center gap-3 mb-2">
-                <img [src]="getProfilePhoto(testimonial)"
+                <img alt="" [src]="getProfilePhoto(testimonial)"
                     onerror="this.src='assets/avatar.png';" class="w-9 h-9 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700
                  group-hover:border-red-300 dark:group-hover:border-red-800 transition shrink-0" />
 
@@ -69,7 +69,7 @@
                     {{ testimonial.testimonial }}
                 </p>
 
-                <button *ngIf="(testimonial.testimonial.length) > 180"
+                <button type="button" *ngIf="(testimonial.testimonial.length) > 180"
                     (click)="testimonial['expanded'] = !testimonial['expanded']"
                     class="mt-1 text-[10px] text-red-600 font-semibold hover:underline transition">
                     {{ testimonial['expanded'] ? 'Show less' : 'Read more' }}
@@ -81,7 +81,7 @@
 
     <!-- See more / less -->
     <div *ngIf="filtered.length > pageSize" class="flex justify-start">
-        <button (click)="toggleShowAll()" class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-1.5
+        <button type="button" (click)="toggleShowAll()" class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-1.5
              rounded-xl font-semibold flex items-center gap-1.5 transition">
             <i-feather [name]="showAll ? 'chevron-up' : 'chevron-down'" style="width:11px;height:11px;"></i-feather>
             {{ showAll ? 'See less' : 'See all ' + filtered.length + ' testimonials' }}

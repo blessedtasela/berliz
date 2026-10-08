@@ -78,9 +78,7 @@ export class ClientsListComponent implements OnDestroy {
           this.handleEmitEvent()
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without adding a client');
             }
           });
         });
@@ -120,9 +118,7 @@ export class ClientsListComponent implements OnDestroy {
           dialogRef.close('client status updated successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without updating client status');
             }
           })
         }, (error: any) => {
@@ -159,9 +155,7 @@ export class ClientsListComponent implements OnDestroy {
           dialogRef.close('client deleted successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without deleting client');
             }
           })
         }, (error) => {

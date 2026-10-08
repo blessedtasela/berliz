@@ -2,11 +2,11 @@
 <div *ngIf="showPreviewModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
     (click)="showPreviewModal = false">
     <div class="relative" (click)="$event.stopPropagation()">
-        <img [src]="previewModalUrl"
+        <img alt="" [src]="previewModalUrl"
             class="max-w-[320px] max-h-[320px] rounded-2xl object-cover object-top shadow-2xl border border-white/20"
             onerror="this.src='assets/avatar.png';" />
         <button type="button" (click)="showPreviewModal = false" class="absolute -top-2.5 -right-2.5 w-7 h-7 rounded-full bg-gray-900 border-2 border-white
-                   flex items-center justify-center text-white hover:bg-red-600 transition">
+                   flex items-center justify-center text-white hover:bg-red-600 transition" aria-label="Close">
             <i-feather name="x" style="width:12px;height:12px;"></i-feather>
         </button>
     </div>
@@ -76,7 +76,7 @@
             <div *ngFor="let slot of filledSlots; let i = index"
                 class="relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 aspect-square">
 
-                <img [src]="slot.previewUrl" class="w-full h-full object-cover object-top"
+                <img alt="" [src]="slot.previewUrl" class="w-full h-full object-cover object-top"
                     onerror="this.src='assets/avatar.png';" />
 
                 <div *ngIf="slot.uploading" class="absolute inset-0 bg-black/40 flex items-center justify-center">
@@ -85,12 +85,12 @@
                 </div>
 
                 <button type="button" (click)="openPreview(slot.previewUrl)" class="absolute bottom-1 left-1 w-5 h-5 rounded-full bg-gray-900/80 border border-white/30
-                           flex items-center justify-center text-white hover:bg-red-600 transition">
+                           flex items-center justify-center text-white hover:bg-red-600 transition" aria-label="View details">
                     <i-feather name="eye" style="width:9px;height:9px;"></i-feather>
                 </button>
 
                 <button type="button" (click)="removeSlot(slots.indexOf(slot))" class="absolute top-1 right-1 w-5 h-5 rounded-full bg-gray-900/80 border border-white/30
-                           flex items-center justify-center text-white hover:bg-red-600 transition">
+                           flex items-center justify-center text-white hover:bg-red-600 transition" aria-label="Close">
                     <i-feather name="x" style="width:9px;height:9px;"></i-feather>
                 </button>
             </div>

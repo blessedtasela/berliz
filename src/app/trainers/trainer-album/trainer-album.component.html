@@ -30,10 +30,10 @@
 <div *ngIf="lightboxUrl" (click)="close()"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
     <div class="relative" (click)="$event.stopPropagation()">
-        <img [src]="lightboxUrl" class="max-h-[85vh] max-w-[85vw] rounded-2xl object-contain border border-zinc-700"
+        <img alt="" [src]="lightboxUrl" class="max-h-[85vh] max-w-[85vw] rounded-2xl object-contain border border-zinc-700"
             (error)="onImageError($event)" />
         <button type="button" (click)="close()" class="absolute -top-3 -right-3 w-7 h-7 rounded-full bg-zinc-900 border-2 border-white
-                   flex items-center justify-center text-white hover:bg-red-600 transition">
+                   flex items-center justify-center text-white hover:bg-red-600 transition" aria-label="Close">
             <i-feather name="x" style="width:12px;height:12px;"></i-feather>
         </button>
     </div>

@@ -5,8 +5,8 @@
     <!-- Header -->
     <div class="flex justify-between items-center mb-4 shrink-0">
 
-        <button (click)="prevMonth()"
-            class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center justify-center transition">
+        <button type="button" (click)="prevMonth()"
+            class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center justify-center transition" aria-label="Previous">
             <i-feather name="chevron-left" style="width:14px;height:14px;" class="text-gray-600 dark:text-gray-400"></i-feather>
         </button>
 
@@ -17,8 +17,8 @@
             <span class="text-[10px] text-gray-400 dark:text-gray-500">{{ todos.length }} tasks this month</span>
         </div>
 
-        <button (click)="nextMonth()"
-            class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center justify-center transition">
+        <button type="button" (click)="nextMonth()"
+            class="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center justify-center transition" aria-label="Next">
             <i-feather name="chevron-right" style="width:14px;height:14px;" class="text-gray-600 dark:text-gray-400"></i-feather>
         </button>
 

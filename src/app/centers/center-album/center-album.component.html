@@ -7,7 +7,7 @@
                 {{ photos.length }} {{ photos.length === 1 ? 'photo' : 'photos' }} from inside the center
             </p>
         </div>
-        <button *ngIf="photos.length > 6" type="button" (click)="allPhotos()"
+        <button type="button" *ngIf="photos.length > 6" type="button" (click)="allPhotos()"
             class="text-[11px] font-semibold text-red-400 hover:text-red-300 transition shrink-0">
             {{ !showAllPhotos ? 'See all' : 'See less' }}
         </button>

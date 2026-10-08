@@ -75,9 +75,7 @@ export class TestimonialsListComponent implements OnDestroy {
           this.handleEmitEvent()
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without adding a testimonial');
             }
           });
         });
@@ -117,9 +115,7 @@ export class TestimonialsListComponent implements OnDestroy {
           dialogRef.close('testimonial status updated successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without updating testimonial status');
             }
           });
         }, (error) => {
@@ -195,9 +191,7 @@ export class TestimonialsListComponent implements OnDestroy {
           dialogRef.close('testimonial deleted successfully')
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              console.log(`Dialog result: ${result}`);
             } else {
-              console.log('Dialog closed without deleting testimonial');
             }
           });
         }, (error) => {

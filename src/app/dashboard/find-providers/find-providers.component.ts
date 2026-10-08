@@ -12,6 +12,7 @@ import { selectActiveCenters } from 'src/app/state/center/center.selectors';
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
+import { DEFAULT_PROVIDER_CRITERIA, ProviderFilterCriteria, applyProviderFilters, searchableLocation } from 'src/app/shared/provider-profile/provider-filters';
 
 type ProviderTab = 'trainers' | 'centers' | 'categories';
 
@@ -37,6 +38,8 @@ export class FindProvidersComponent implements OnInit, OnDestroy {
 
   tab: ProviderTab = 'trainers';
   searchQuery = '';
+  /** Filters + sort applied after the text search, separately per tab (trainers/centers). */
+  criteria: ProviderFilterCriteria = { ...DEFAULT_PROVIDER_CRITERIA };
 
   trainers: Trainers[] = [];
   centers: Centers[] = [];
@@ -78,26 +81,27 @@ export class FindProvidersComponent implements OnInit, OnDestroy {
   setTab(tab: ProviderTab): void {
     this.tab = tab;
     this.searchQuery = '';
+    this.criteria = { ...DEFAULT_PROVIDER_CRITERIA };
   }
 
   get filteredTrainers(): Trainers[] {
     const q = this.searchQuery.trim().toLowerCase();
-    if (!q) return this.trainers;
-    return this.trainers.filter(t =>
+    const matched = !q ? this.trainers : this.trainers.filter(t =>
       t.name?.toLowerCase().includes(q) ||
       t.categories?.some(c => c.name?.toLowerCase().includes(q)) ||
-      t.locations?.some(l => l.city?.toLowerCase().includes(q) || l.country?.toLowerCase().includes(q))
+      searchableLocation(t).includes(q)
     );
+    return applyProviderFilters(matched, this.criteria);
   }
 
   get filteredCenters(): Centers[] {
     const q = this.searchQuery.trim().toLowerCase();
-    if (!q) return this.centers;
-    return this.centers.filter(c =>
+    const matched = !q ? this.centers : this.centers.filter(c =>
       c.name?.toLowerCase().includes(q) ||
       c.address?.toLowerCase().includes(q) ||
       c.location?.toLowerCase().includes(q)
     );
+    return applyProviderFilters(matched, this.criteria);
   }
 
   trainerPhotoUrl(trainer: Trainers): string {
@@ -123,6 +127,15 @@ export class FindProvidersComponent implements OnInit, OnDestroy {
 
   onImageError(event: any): void {
     event.target.src = 'assets/avatar.png';
+  }
+
+  onCriteria(criteria: ProviderFilterCriteria): void {
+    this.criteria = criteria;
+  }
+
+  /** Everything the text search alone would show -- the denominator for "N of M". */
+  get unfilteredTotal(): number {
+    return this.tab === 'centers' ? this.centers.length : this.trainers.length;
   }
 
   formatUrl(name: string): string {

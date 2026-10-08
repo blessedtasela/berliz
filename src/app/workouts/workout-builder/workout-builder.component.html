@@ -110,7 +110,7 @@
                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
                  transition placeholder:text-gray-400 dark:placeholder:text-gray-500" />
         <button *ngIf="searchTerm" type="button" (click)="clearSearch()"
-          class="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-lg text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition">
+          class="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-lg text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition" aria-label="Close">
           <i-feather name="x" style="width:11px;height:11px;"></i-feather>
         </button>
       </div>
@@ -134,7 +134,7 @@
           </div>
 
           <button type="button" (click)="addExercise(exercise)" class="w-6 h-6 rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20
-                   flex items-center justify-center transition shrink-0">
+                   flex items-center justify-center transition shrink-0" aria-label="Add">
             <i-feather name="plus" style="width:12px;height:12px;"></i-feather>
           </button>
 
@@ -204,15 +204,15 @@
             <p class="text-xs font-bold text-gray-800 dark:text-gray-200 truncate flex-1">{{ rowName(i) }}</p>
 
             <button type="button" (click)="moveUp(i)" [disabled]="i === 0" class="w-6 h-6 rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800
-                     flex items-center justify-center transition disabled:opacity-30 disabled:cursor-not-allowed">
+                     flex items-center justify-center transition disabled:opacity-30 disabled:cursor-not-allowed" aria-label="Collapse">
               <i-feather name="chevron-up" style="width:12px;height:12px;"></i-feather>
             </button>
             <button type="button" (click)="moveDown(i)" [disabled]="i === exercisesArray.length - 1" class="w-6 h-6 rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800
-                     flex items-center justify-center transition disabled:opacity-30 disabled:cursor-not-allowed">
+                     flex items-center justify-center transition disabled:opacity-30 disabled:cursor-not-allowed" aria-label="Expand">
               <i-feather name="chevron-down" style="width:12px;height:12px;"></i-feather>
             </button>
             <button type="button" (click)="removeExercise(i)" class="w-6 h-6 rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20
-                     flex items-center justify-center transition">
+                     flex items-center justify-center transition" aria-label="Delete">
               <i-feather name="trash-2" style="width:12px;height:12px;"></i-feather>
             </button>
           </div>

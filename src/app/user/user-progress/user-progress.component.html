@@ -58,7 +58,7 @@
                     <div *ngIf="slot.uploaded" class="w-full h-full relative">
                         <img [src]="slot.uploaded.photoUrl" class="w-full h-full object-cover object-top" alt="Progress photo" />
                         <button type="button" (click)="removeNewEntryPhotoSlot(i)"
-                            class="absolute top-0.5 right-0.5 bg-white/90 rounded-full p-0.5">
+                            class="absolute top-0.5 right-0.5 bg-white/90 rounded-full p-0.5" aria-label="Close">
                             <i-feather name="x" style="width:12px;height:12px;"></i-feather>
                         </button>
                     </div>
@@ -117,7 +117,7 @@
                     <div *ngFor="let photo of entry.photos" class="w-16 h-16 rounded-lg overflow-hidden relative shrink-0 border border-gray-100 dark:border-gray-700">
                         <img [src]="photo.photoUrl" class="w-full h-full object-cover object-top" alt="Progress photo" />
                         <button type="button" (click)="removePhoto(entry, photo.id)"
-                            class="absolute top-0.5 right-0.5 bg-white/90 rounded-full p-0.5">
+                            class="absolute top-0.5 right-0.5 bg-white/90 rounded-full p-0.5" aria-label="Close">
                             <i-feather name="x" style="width:10px;height:10px;"></i-feather>
                         </button>
                     </div>
