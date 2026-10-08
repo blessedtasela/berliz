@@ -1,3 +1,7 @@
+import { ProviderTermsComponent } from '../shared/provider-profile/provider-terms.component';
+import { ProviderPackagesComponent } from '../shared/provider-profile/provider-packages.component';
+import { ProviderAvailabilityComponent } from '../shared/provider-profile/provider-availability.component';
+import { HowItWorksComponent } from '../shared/provider-profile/how-it-works.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserModule } from './user/user.module';
@@ -83,6 +87,10 @@ import { OnboardingChecklistComponent } from '../shared/onboarding-checklist/onb
     ReactiveFormsModule,
     SharedModule,
     LocationsMenuComponent,
+    ProviderTermsComponent,
+    ProviderPackagesComponent,
+    ProviderAvailabilityComponent,
+    HowItWorksComponent,
     UserHoverCardComponent,
     DashboardTimelinePreviewComponent,
     ConsistencyRingComponent,

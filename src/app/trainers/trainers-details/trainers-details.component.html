@@ -36,40 +36,22 @@
 </section>
 
 <!-- ── PROFILE ───────────────────────────────────────────────────────── -->
+<!--
+     Marketing order, deliberately: pitch (hero) -> who they are -> why it works ->
+     what it costs (plans) -> how booking works -> proof from real clients ->
+     when/terms (reassurance) -> media -> one last call to action. The signed-in
+     dashboard profile (dashboard-trainer-detail) is the opposite: business details first.
+-->
 <ng-container *ngIf="resolved && !notFound">
 
-    <app-trainers-details-hero [trainer]="trainer" [reviewCount]="trainerReviews.length">
+    <app-trainers-details-hero [trainer]="trainer" [reviewCount]="trainerReviews.length"
+        (book)="bookSession()" (seePackages)="scrollToPlans()">
     </app-trainers-details-hero>
 
-    <div class="w-full bg-zinc-950 font-sans px-4 pb-20">
+    <div class="w-full bg-zinc-950 font-sans px-4 pb-28 sm:pb-20">
         <div class="max-w-5xl mx-auto flex flex-col gap-6">
 
             <app-promo-badge-list ownerType="trainer" [ownerId]="trainerId"></app-promo-badge-list>
-
-            <!-- ── BOOK A SESSION ─────────────────────────────────────────── -->
-            <section class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 font-sans
-                             flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-red-600/10 border border-red-600/20 flex items-center justify-center shrink-0">
-                        <i-feather name="calendar" class="text-red-500" style="width:16px;height:16px;"></i-feather>
-                    </div>
-                    <div>
-                        <h2 class="text-sm font-bold text-white">Ready to train?</h2>
-                        <p class="text-xs text-zinc-500">Book a session with {{ trainer?.name }} — pick a date and time that works for you.</p>
-                    </div>
-                </div>
-                <div class="flex flex-col items-stretch sm:items-end gap-1.5 shrink-0 w-full sm:w-auto">
-                    <button type="button" (click)="bookSession()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
-                                   hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2 w-full sm:w-auto justify-center">
-                        <i-feather name="calendar" style="width:13px;height:13px;"></i-feather>
-                        Book a session
-                    </button>
-                    <a *ngIf="trainer" [routerLink]="['/trainers', trainer.name.split(' ').join('-'), 'book']"
-                        class="text-[11px] text-zinc-500 hover:text-red-500 transition text-center sm:text-right">
-                        Open packages &amp; a shareable booking page
-                    </a>
-                </div>
-            </section>
 
             <app-trainers-introduction [trainerIntroduction]="trainerIntroduction">
             </app-trainers-introduction>
@@ -80,19 +62,21 @@
             <app-trainer-feature-video [trainerVideos]="trainerFeatureVideos">
             </app-trainer-feature-video>
 
-            <app-trainer-pricing-card [trainerPricing]="trainerPricing">
-            </app-trainer-pricing-card>
+            <!-- ── PLANS & PRICING ───────────────────────────────────────── -->
+            <div id="plans" class="scroll-mt-24 flex flex-col gap-6">
+                <app-provider-packages theme="dark" eyebrow="Choose how you train" [highlightFirst]="true"
+                    [trainerId]="trainer?.id" [bookLink]="trainer ? ['/trainers', trainer.name.split(' ').join('-'), 'book'] : null">
+                </app-provider-packages>
 
-            <app-trainer-album [trainerPhotoAlbum]="trainerPhotoAlbum">
-            </app-trainer-album>
+                <app-trainer-pricing-card [trainerPricing]="trainerPricing">
+                </app-trainer-pricing-card>
+            </div>
 
-            <app-trainer-video-album [trainerVideoAlbum]="trainerVideoAlbum">
-            </app-trainer-video-album>
+            <app-how-it-works providerLabel="this trainer"></app-how-it-works>
 
+            <!-- ── PROOF ─────────────────────────────────────────────────── -->
             <app-trainer-client-review [trainerReview]="trainerReviews">
             </app-trainer-client-review>
-
-            <app-trainer-add-review [trainerId]="trainer?.id"></app-trainer-add-review>
 
             <!-- ── WHAT PEOPLE SAY ───────────────────────────────────────── -->
             <section class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 font-sans">
@@ -139,7 +123,28 @@
 
             </section>
 
+            <app-trainer-add-review [trainerId]="trainer?.id"></app-trainer-add-review>
+
+            <!-- ── REASSURANCE ───────────────────────────────────────────── -->
+            <app-provider-availability theme="dark" [trainerId]="trainer?.id"></app-provider-availability>
+
+            <app-provider-terms theme="dark" providerLabel="this trainer" [hourlyRate]="trainer?.hourlyRate"
+                [freeCancelHours]="trainer?.freeCancelHours" [lateCancelRefundPercent]="trainer?.lateCancelRefundPercent">
+            </app-provider-terms>
+
+            <app-trainer-album [trainerPhotoAlbum]="trainerPhotoAlbum">
+            </app-trainer-album>
+
+            <app-trainer-video-album [trainerVideoAlbum]="trainerVideoAlbum">
+            </app-trainer-video-album>
+
+            <app-profile-cta [name]="trainer?.name || ''" providerLabel="this trainer" (book)="bookSession()"
+                [bookLink]="trainer ? ['/trainers', trainer.name.split(' ').join('-'), 'book'] : null">
+            </app-profile-cta>
+
         </div>
     </div>
+
+    <app-sticky-book-bar [name]="trainer?.name || ''" (book)="bookSession()"></app-sticky-book-bar>
 
 </ng-container>

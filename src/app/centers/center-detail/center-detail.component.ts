@@ -396,6 +396,11 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  /** Hero's "See plans & pricing": glide to the packages section. */
+  scrollToPlans(): void {
+    document.getElementById('plans')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   testimonialAuthor(testimonial: Testimonials): string {
     return testimonial.clientName
       || `${testimonial.userFirstname ?? ''} ${testimonial.userLastname ?? ''}`.trim()

@@ -1,3 +1,8 @@
+import { ProviderTermsComponent } from '../shared/provider-profile/provider-terms.component';
+import { ProviderPackagesComponent } from '../shared/provider-profile/provider-packages.component';
+import { ProviderAvailabilityComponent } from '../shared/provider-profile/provider-availability.component';
+import { HowItWorksComponent } from '../shared/provider-profile/how-it-works.component';
+import { ProfileCtaComponent, StickyBookBarComponent } from '../shared/provider-profile/profile-cta.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TrainersDetailsComponent } from './trainers-details/trainers-details.component';
@@ -79,6 +84,12 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     RouterModule,
     IconsModule,
     PromoBadgeListComponent,
+    ProviderTermsComponent,
+    ProviderPackagesComponent,
+    ProviderAvailabilityComponent,
+    HowItWorksComponent,
+    ProfileCtaComponent,
+    StickyBookBarComponent,
     FormsModule,
     MatDialogModule
   ]

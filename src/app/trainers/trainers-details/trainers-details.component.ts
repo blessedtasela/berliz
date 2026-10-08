@@ -199,6 +199,11 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
     this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
   }
 
+  /** Hero's "See plans & pricing": glide to the packages section. */
+  scrollToPlans(): void {
+    document.getElementById('plans')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   /** Back to the trainers directory from the not-found state. */
   backToTrainers(): void {
     this.router.navigate(['/trainers']);

@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
@@ -19,6 +19,10 @@ export class TrainersDetailsHeroComponent {
 
   @Input() trainer: Trainers | null = null;
   @Input() reviewCount = 0;
+  /** The hero's primary call to action; the page owns what booking means. */
+  @Output() book = new EventEmitter<void>();
+  /** "See plans & pricing": the page scrolls to its packages section. */
+  @Output() seePackages = new EventEmitter<void>();
 
   /** Whether the "Available in" tile's location list dropdown is open. */
   locationsOpen = false;

@@ -106,6 +106,12 @@
         </button>
     </div>
 
+    <!-- Business details: what a provider charges, how cancelling works, what they sell, when they work -->
+    <app-provider-terms theme="light" providerLabel="this trainer" [hourlyRate]="trainer?.hourlyRate"
+        [freeCancelHours]="trainer?.freeCancelHours" [lateCancelRefundPercent]="trainer?.lateCancelRefundPercent"></app-provider-terms>
+    <app-provider-packages theme="light" [trainerId]="trainer?.id" [showEmpty]="true" [selectable]="true" (choose)="bookSession()"></app-provider-packages>
+    <app-provider-availability theme="light" [trainerId]="trainer?.id" [showEmpty]="true"></app-provider-availability>
+
     <!-- Introduction -->
     <div *ngIf="trainerIntroduction?.introduction" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex flex-col gap-3">
         <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Meet {{ trainer?.name }}</h2>

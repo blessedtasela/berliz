@@ -185,6 +185,31 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Trainer & center profiles: a marketing page for visitors, a business page for signed-in users
+
+The same trainer or center now has two deliberately different profile pages.
+
+- **Public `/trainers/:name` and `/centers/:name` (marketing):** the hero leads with the pitch (large
+  name, motto as the headline, specialties) and two calls to action — **Book a session** and **See plans &
+  pricing** (scrolls to the plans). Experience, reviews and likes are a one-line proof strip instead of
+  admin-style stat tiles. The page then follows a selling order: who they are → why it works (benefits,
+  videos) → **plans** (new package cards, first plan flagged "Popular", plus the existing monthly rates /
+  membership pricing) → **How it works** (pick a time → get confirmed → pay & train) → proof (reviews,
+  testimonials) → **weekly hours** and **booking terms** as reassurance → photo/video albums → a closing
+  **"Ready to start with …?"** band. On phones a sticky **Book now** bar appears once the hero's buttons
+  scroll away. The "Available in" locations dropdown is unchanged.
+- **Signed-in `/dashboard/find-trainers/:name` and `/dashboard/find-centers/:id/:name` (business):** keep
+  the compact profile and add the details someone deciding (or a provider checking how they appear) needs,
+  right under the booking card: **Booking terms** (session rate, free-cancellation window and late-cancel
+  refund — the provider's own values or the 24h / 50% platform defaults — and pay-after-confirm), the
+  provider's **Packages & memberships** (shows "none published yet" instead of hiding), and **Weekly hours**.
+- New shared standalone components in `shared/provider-profile/`: `app-provider-terms`,
+  `app-provider-packages`, `app-provider-availability` (all themeable: dark public / light dashboard via
+  `profile-theme.ts`), `app-how-it-works`, `app-profile-cta`, `app-sticky-book-bar`. Packages and hours
+  fetch their own data from the existing public endpoints, so no backend change.
+- Mobile: the app's trainer/center profile screens do not have the packages / hours / terms cards yet —
+  tracked in the mobile README parity table.
+
 ### Unreleased — Video posts
 
 Posts could only ever carry a photo (the §2 row claimed image/video, but neither the backend nor any client supported video). Now: `post.video_url` / `video_strapi_id` (migration V64), `PostRequest.video`, `PostResponse.videoUrl`, with the one-media-per-post rule enforced server-side (`PostVideoUnitTest`). Web: an "Add video" picker in the composer (type + 50MB check before uploading, draft restore), inline `<video>` playback on the feed, both profile pages and the Saved page, and the existing media sheet now opens on `videoUrl`. Mobile has the same (see the mobile changelog).

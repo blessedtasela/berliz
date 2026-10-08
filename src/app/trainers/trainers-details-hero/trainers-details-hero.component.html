@@ -28,22 +28,23 @@
             All trainers
         </a>
 
-        <div class="flex flex-col sm:flex-row gap-6 sm:gap-8 sm:items-end">
+        <div class="flex flex-col sm:flex-row gap-6 sm:gap-10 sm:items-center">
 
             <!-- Portrait -->
             <div class="shrink-0 mx-auto sm:mx-0">
-                <div class="w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden
-                            border border-zinc-800 bg-zinc-900 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+                <div class="w-44 h-44 sm:w-56 sm:h-56 rounded-3xl overflow-hidden ring-1 ring-red-600/30
+                            border border-zinc-800 bg-zinc-900 shadow-[0_12px_48px_rgba(220,38,38,0.18)]">
                     <img [src]="photoUrl" [alt]="trainer?.name" class="w-full h-full object-cover object-top"
                         (error)="onImageError($event)" />
                 </div>
             </div>
 
-            <!-- Identity -->
-            <div class="flex-1 flex flex-col gap-3 text-center sm:text-left">
+            <!-- Pitch -->
+            <div class="flex-1 flex flex-col gap-4 text-center sm:text-left">
 
                 <div class="flex items-center gap-2 justify-center sm:justify-start">
-                    <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+                    <span class="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">
+                        <i-feather name="check-circle" style="width:13px;height:13px;"></i-feather>
                         Berliz Certified Trainer
                     </span>
                     <!-- Featured badge -- top paid subscription tier perk -->
@@ -54,97 +55,105 @@
                     </span>
                 </div>
 
-                <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight uppercase">
+                <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.05] uppercase">
                     {{ trainer?.name }}
                 </h1>
 
-                <p *ngIf="trainer?.motto" class="text-sm text-zinc-400 italic leading-relaxed max-w-xl">
-                    "{{ trainer?.motto }}"
+                <p *ngIf="trainer?.motto" class="text-base sm:text-lg text-zinc-300 leading-relaxed max-w-xl mx-auto sm:mx-0">
+                    {{ trainer?.motto }}
                 </p>
 
-                <!-- Categories -->
+                <!-- Specialties -->
                 <div class="flex flex-wrap gap-1.5 justify-center sm:justify-start"
                     *ngIf="(trainer?.categories?.length || 0) > 0">
-                    <span *ngFor="let cat of trainer?.categories" class="text-[10px] font-semibold text-zinc-300 bg-zinc-800 border border-zinc-700
-                                 px-2.5 py-1 rounded-full">
+                    <span *ngFor="let cat of trainer?.categories" class="text-[11px] font-semibold text-zinc-200 bg-zinc-800/80 border border-zinc-700
+                                 px-3 py-1 rounded-full">
                         {{ cat.name }}
                     </span>
+                </div>
+
+                <!-- Calls to action -->
+                <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-center sm:justify-start pt-1">
+                    <button type="button" (click)="book.emit()"
+                        class="px-7 py-3 rounded-xl bg-red-600 text-white text-sm font-bold shadow-[0_8px_24px_rgba(220,38,38,0.35)]
+                               hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2 justify-center">
+                        <i-feather name="calendar" style="width:15px;height:15px;"></i-feather>
+                        Book a session
+                    </button>
+                    <button type="button" (click)="seePackages.emit()"
+                        class="px-6 py-3 rounded-xl border border-zinc-700 text-zinc-200 text-sm font-semibold
+                               hover:border-red-600 hover:text-white transition flex items-center gap-2 justify-center">
+                        See plans &amp; pricing
+                        <i-feather name="arrow-down" style="width:14px;height:14px;"></i-feather>
+                    </button>
+                </div>
+
+                <!-- Proof, at a glance -->
+                <div class="flex flex-wrap gap-x-5 gap-y-2 justify-center sm:justify-start text-xs text-zinc-400 pt-1">
+                    <span *ngIf="trainer?.experience" class="flex items-center gap-1.5">
+                        <i-feather name="award" class="text-red-500" style="width:14px;height:14px;"></i-feather>
+                        <strong class="text-white">{{ trainer?.experience }}+</strong> years coaching
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <i-feather name="star" class="text-red-500" style="width:14px;height:14px;"></i-feather>
+                        <strong class="text-white">{{ reviewCount }}</strong> review{{ reviewCount === 1 ? '' : 's' }}
+                    </span>
+                    <button type="button" (click)="viewLikers()" [disabled]="!trainer?.likes"
+                        class="flex items-center gap-1.5 enabled:hover:text-red-400 enabled:cursor-pointer disabled:cursor-default transition">
+                        <i-feather name="heart" class="text-red-500" style="width:14px;height:14px;"></i-feather>
+                        <strong class="text-white">{{ trainer?.likes || 0 }}</strong> like{{ trainer?.likes === 1 ? '' : 's' }}
+                    </button>
                 </div>
 
             </div>
         </div>
 
-        <!-- Stat strip -->
-        <div class="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <!-- Where and how -->
+        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
 
-            <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1">
-                <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold">Experience</span>
-                <span class="text-sm font-bold text-white flex items-center gap-1.5">
-                    <i-feather name="award" class="text-red-500" style="width:13px;height:13px;"></i-feather>
-                    {{ trainer?.experience || '—' }}<span *ngIf="trainer?.experience">&nbsp;yrs</span>
-                </span>
-            </div>
-
-            <button type="button" (click)="viewLikers()" [disabled]="!trainer?.likes"
-                class="text-left bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1 transition enabled:hover:border-red-800 enabled:cursor-pointer disabled:cursor-default">
-                <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold">Likes</span>
-                <span class="text-sm font-bold text-white flex items-center gap-1.5">
-                    <i-feather name="heart" class="text-red-500" style="width:13px;height:13px;"></i-feather>
-                    {{ trainer?.likes || 0 }}
-                </span>
-            </button>
-
-            <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1">
-                <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold">Reviews</span>
-                <span class="text-sm font-bold text-white flex items-center gap-1.5">
-                    <i-feather name="star" class="text-red-500" style="width:13px;height:13px;"></i-feather>
-                    {{ reviewCount }}
-                </span>
-            </div>
-
-            <div class="relative col-span-2 sm:col-span-1">
-                <button type="button" (click)="toggleLocations()" [attr.aria-expanded]="locationsOpen" aria-haspopup="true"
-                    class="w-full h-full text-left bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1 transition"
-                    [ngClass]="hasLocations ? 'hover:border-red-600/40 cursor-pointer' : 'cursor-default'">
-                    <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold flex items-center justify-between">
-                        Available in
-                        <i-feather *ngIf="hasLocations" name="chevron-down" class="text-zinc-600 transition-transform"
-                            [ngClass]="{ 'rotate-180': locationsOpen }" style="width:11px;height:11px;"></i-feather>
-                    </span>
-                    <span class="text-sm font-bold text-white flex items-center gap-1.5 truncate">
-                        <i-feather name="map-pin" class="text-red-500 shrink-0" style="width:13px;height:13px;"></i-feather>
-                        <span class="truncate">{{ primaryLocationLabel }}</span>
-                        <span *ngIf="extraLocationCount > 0" class="text-red-400 font-semibold shrink-0">+{{ extraLocationCount }} more</span>
-                    </span>
-                    <span *ngIf="extraLocationCount > 0" class="text-[10px] text-zinc-500">Tap to see all {{ trainer?.locations?.length }} locations</span>
-                </button>
-
-                <!-- Dropdown: every location, each linking out to Maps -->
-                <div *ngIf="locationsOpen" class="absolute left-0 top-full mt-2 z-20 w-full sm:w-80 max-w-[calc(100vw-2rem)] max-h-80 overflow-y-auto
-                            bg-zinc-900 border border-zinc-700 rounded-xl shadow-[0_12px_32px_rgba(0,0,0,0.5)]">
-                    <a *ngFor="let loc of trainer?.locations" [href]="mapsUrlFor(loc)" target="_blank" rel="noopener"
-                        class="flex items-start gap-2 px-4 py-2.5 text-xs text-zinc-200 hover:bg-zinc-800 hover:text-red-400
-                               border-b border-zinc-800 last:border-b-0 transition">
-                        <i-feather name="map-pin" class="text-red-500 shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
-                        <span class="flex flex-col min-w-0 flex-1">
-                            <span *ngIf="loc.venue" class="font-semibold break-words">{{ loc.venue }}</span>
-                            <span class="break-words" [ngClass]="loc.venue ? 'text-zinc-400' : ''">{{ fullLocationLabel(loc) }}</span>
+                <div class="relative">
+                    <button type="button" (click)="toggleLocations()" [attr.aria-expanded]="locationsOpen" aria-haspopup="true"
+                        class="w-full h-full text-left bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1 transition"
+                        [ngClass]="hasLocations ? 'hover:border-red-600/40 cursor-pointer' : 'cursor-default'">
+                        <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold flex items-center justify-between">
+                            Available in
+                            <i-feather *ngIf="hasLocations" name="chevron-down" class="text-zinc-600 transition-transform"
+                                [ngClass]="{ 'rotate-180': locationsOpen }" style="width:11px;height:11px;"></i-feather>
                         </span>
-                        <span class="shrink-0 text-[11px] font-semibold" [ngClass]="loc.fee ? 'text-amber-400' : 'text-zinc-500'">
-                            {{ loc.fee ? '+$' + (loc.fee | number:'1.2-2') : 'No extra fee' }}
+                        <span class="text-sm font-bold text-white flex items-center gap-1.5 truncate">
+                            <i-feather name="map-pin" class="text-red-500 shrink-0" style="width:13px;height:13px;"></i-feather>
+                            <span class="truncate">{{ primaryLocationLabel }}</span>
+                            <span *ngIf="extraLocationCount > 0" class="text-red-400 font-semibold shrink-0">+{{ extraLocationCount }} more</span>
                         </span>
-                    </a>
-                    <div *ngIf="trainer?.customLocationAllowed" class="flex items-start gap-2 px-4 py-2.5 text-xs text-zinc-300 border-t border-zinc-800 bg-zinc-950/40">
-                        <i-feather name="navigation" class="text-red-500 shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
-                        <span class="flex-1 min-w-0">Or train at a place of your choice</span>
-                        <span class="shrink-0 text-[11px] font-semibold" [ngClass]="trainer?.customLocationFee ? 'text-amber-400' : 'text-zinc-500'">
-                            {{ trainer?.customLocationFee ? '+$' + (trainer?.customLocationFee | number:'1.2-2') : 'No extra fee' }}
-                        </span>
+                        <span *ngIf="extraLocationCount > 0" class="text-[10px] text-zinc-500">Tap to see all {{ trainer?.locations?.length }} locations</span>
+                    </button>
+
+                    <!-- Dropdown: every location, each linking out to Maps -->
+                    <div *ngIf="locationsOpen" class="absolute left-0 top-full mt-2 z-20 w-full sm:w-80 max-w-[calc(100vw-2rem)] max-h-80 overflow-y-auto
+                                bg-zinc-900 border border-zinc-700 rounded-xl shadow-[0_12px_32px_rgba(0,0,0,0.5)]">
+                        <a *ngFor="let loc of trainer?.locations" [href]="mapsUrlFor(loc)" target="_blank" rel="noopener"
+                            class="flex items-start gap-2 px-4 py-2.5 text-xs text-zinc-200 hover:bg-zinc-800 hover:text-red-400
+                                   border-b border-zinc-800 last:border-b-0 transition">
+                            <i-feather name="map-pin" class="text-red-500 shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
+                            <span class="flex flex-col min-w-0 flex-1">
+                                <span *ngIf="loc.venue" class="font-semibold break-words">{{ loc.venue }}</span>
+                                <span class="break-words" [ngClass]="loc.venue ? 'text-zinc-400' : ''">{{ fullLocationLabel(loc) }}</span>
+                            </span>
+                            <span class="shrink-0 text-[11px] font-semibold" [ngClass]="loc.fee ? 'text-amber-400' : 'text-zinc-500'">
+                                {{ loc.fee ? '+$' + (loc.fee | number:'1.2-2') : 'No extra fee' }}
+                            </span>
+                        </a>
+                        <div *ngIf="trainer?.customLocationAllowed" class="flex items-start gap-2 px-4 py-2.5 text-xs text-zinc-300 border-t border-zinc-800 bg-zinc-950/40">
+                            <i-feather name="navigation" class="text-red-500 shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
+                            <span class="flex-1 min-w-0">Or train at a place of your choice</span>
+                            <span class="shrink-0 text-[11px] font-semibold" [ngClass]="trainer?.customLocationFee ? 'text-amber-400' : 'text-zinc-500'">
+                                {{ trainer?.customLocationFee ? '+$' + (trainer?.customLocationFee | number:'1.2-2') : 'No extra fee' }}
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-span-2 sm:col-span-1 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex flex-col gap-1">
                 <span class="text-[10px] uppercase tracking-wide text-zinc-500 font-semibold">Coaching style</span>
                 <span class="text-sm font-bold text-white flex items-center gap-1.5">
                     <i-feather name="video" class="text-red-500" style="width:13px;height:13px;"></i-feather>
