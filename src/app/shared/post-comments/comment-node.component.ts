@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { take } from 'rxjs/operators';
 
 import { IconsModule } from 'src/app/icons/icons.module';
@@ -311,13 +312,23 @@ export class CommentNodeComponent {
   // ── Delete ───────────────────────────────────────────────────────────────
 
   remove(): void {
-    if (!confirm(this.comment.replyCount > 0
-      ? 'Delete this comment and all its replies?'
-      : 'Delete this comment?')) return;
-
-    this.commentService.deleteComment(this.comment.id).subscribe({
-      next: () => this.removed.emit(this.comment),
-      error: () => this.snackBar.openSnackBar('Could not delete comment', 'error'),
+    this.dialog.open(PromptModalComponent, {
+      width: '400px',
+      maxWidth: '95vw',
+      data: {
+        confirmation: true,
+        title: 'Delete this comment?',
+        message: this.comment.replyCount > 0 ? 'This also deletes all of its replies.' : 'This permanently removes the comment.',
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
+        icon: 'trash-2'
+      }
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.commentService.deleteComment(this.comment.id).subscribe({
+        next: () => this.removed.emit(this.comment),
+        error: () => this.snackBar.openSnackBar('Could not delete comment', 'error'),
+      });
     });
   }
 }

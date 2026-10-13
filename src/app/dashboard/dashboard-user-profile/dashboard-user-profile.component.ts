@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { Store } from '@ngrx/store';
 import { forkJoin, Subject, takeUntil } from 'rxjs';
 
@@ -386,26 +387,34 @@ export class DashboardUserProfileComponent implements OnInit, OnDestroy {
   toggleBlock(): void {
     if (!this.userId) return;
 
-    if (this.isBlocked) {
-      if (!confirm(`Unblock ${this.fullName}?`)) return;
-      const id = this.userId;
-      this.blockService.unblockUser(id).subscribe({
-        next: () => {
-          this.blockedUsers = this.blockedUsers.filter(b => b.blockedUserId !== id);
-          this.snackBarService.openSnackBar('Unblocked', '');
-        },
-        error: () => this.snackBarService.openSnackBar('Could not unblock', 'error'),
-      });
-    } else {
-      if (!confirm(`Block ${this.fullName}? They won't be able to message you, mention you, or comment on your posts.`)) return;
-      this.blockService.blockUser(this.userId).subscribe({
-        next: res => {
-          if (res.data) this.blockedUsers = [...this.blockedUsers, res.data];
-          this.snackBarService.openSnackBar(res.data?.message || 'Blocked', '');
-        },
-        error: err => this.snackBarService.openSnackBar(err.error?.message || 'Could not block', 'error'),
-      });
-    }
+    const id = this.userId;
+    const unblocking = this.isBlocked;
+    this.dialog.open(PromptModalComponent, {
+      width: '400px',
+      maxWidth: '95vw',
+      data: unblocking
+        ? { confirmation: true, title: `Unblock ${this.fullName}?`, message: 'They will be able to message you, mention you and comment on your posts again.', confirmText: 'Unblock', cancelText: 'Cancel', icon: 'user-check' }
+        : { confirmation: true, title: `Block ${this.fullName}?`, message: "They won't be able to message you, mention you, or comment on your posts.", confirmText: 'Block', cancelText: 'Cancel', icon: 'user-x' }
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      if (unblocking) {
+        this.blockService.unblockUser(id).subscribe({
+          next: () => {
+            this.blockedUsers = this.blockedUsers.filter(b => b.blockedUserId !== id);
+            this.snackBarService.openSnackBar('Unblocked', '');
+          },
+          error: () => this.snackBarService.openSnackBar('Could not unblock', 'error'),
+        });
+      } else {
+        this.blockService.blockUser(id).subscribe({
+          next: res => {
+            if (res.data) this.blockedUsers = [...this.blockedUsers, res.data];
+            this.snackBarService.openSnackBar(res.data?.message || 'Blocked', '');
+          },
+          error: err => this.snackBarService.openSnackBar(err.error?.message || 'Could not block', 'error'),
+        });
+      }
+    });
   }
 
   // -------------------------

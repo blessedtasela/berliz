@@ -3,7 +3,7 @@
  * rules are testable without a component. The list is already loaded in the browser, so this runs
  * client-side; "recommended" keeps the server's order (featured, then live-promotion providers first).
  */
-export type ProviderSort = 'recommended' | 'price-asc' | 'price-desc' | 'reviews' | 'likes' | 'name';
+export type ProviderSort = 'recommended' | 'price-asc' | 'price-desc' | 'rating' | 'reviews' | 'likes' | 'name';
 export type ProviderMode = 'ALL' | 'IN_PERSON' | 'HYBRID' | 'ONLINE';
 
 export interface ProviderFilterCriteria {
@@ -26,6 +26,7 @@ export interface ProviderListing {
   name?: string | null;
   hourlyRate?: number | string | null;
   reviewCount?: number | null;
+  averageRating?: number | null;
   likes?: number | null;
   serviceMode?: string | null;
 }
@@ -36,6 +37,7 @@ export const SORT_OPTIONS: { value: ProviderSort; label: string }[] = [
   { value: 'recommended', label: 'Recommended' },
   { value: 'price-asc', label: 'Price: low to high' },
   { value: 'price-desc', label: 'Price: high to low' },
+  { value: 'rating', label: 'Highest rated' },
   { value: 'reviews', label: 'Most reviewed' },
   { value: 'likes', label: 'Most liked' },
   { value: 'name', label: 'Name A–Z' },
@@ -87,6 +89,9 @@ export function applyProviderFilters<T extends ProviderListing>(items: T[], c: P
     case 'price-desc':
       // unpriced providers stay last in both directions
       return out.sort((a, b) => (rateOf(b) ?? -Infinity) - (rateOf(a) ?? -Infinity));
+    case 'rating':
+      // best average first; ties go to whoever has more reviews behind the number, unrated providers last
+      return out.sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0) || (b.reviewCount ?? 0) - (a.reviewCount ?? 0));
     case 'reviews':
       return out.sort((a, b) => (b.reviewCount ?? 0) - (a.reviewCount ?? 0));
     case 'likes':

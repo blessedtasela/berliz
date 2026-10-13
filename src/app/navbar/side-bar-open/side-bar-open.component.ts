@@ -19,7 +19,7 @@ import { loadPendingRequests } from 'src/app/state/connection/connection.actions
 import { selectIncomingRequestCount } from 'src/app/state/connection/connection.selectors';
 import { loadConversations } from 'src/app/state/message/message.actions';
 import { selectConversations } from 'src/app/state/message/message.selectors';
-import { filterSidebarNavItems, SidebarNavItem } from '../sidebar-nav-items';
+import { filterSidebarNavItems, SidebarNavItem, sidebarGroupIsActive } from '../sidebar-nav-items';
 
 @Component({
     selector: 'app-side-bar-open',
@@ -175,6 +175,41 @@ export class SideBarOpenComponent implements OnInit, OnDestroy {
   isChildActive(child: { route: string; fragment?: string }): boolean {
     const target = child.fragment ? `${child.route}#${child.fragment}` : child.route;
     return this.currentRoute === target;
+  }
+
+
+  // -----------------------------
+  // GROUPS (Train, Find & Book, Community, Me)
+  // -----------------------------
+  /** Per-group explicit open/closed choice; absent = follow the route (open while one of its pages is showing). */
+  private groupOverride: Record<string, boolean> = {};
+
+  isGroupActive(group: SidebarNavItem): boolean {
+    return sidebarGroupIsActive(group, this.currentRoute);
+  }
+
+  isGroupOpen(group: SidebarNavItem): boolean {
+    const override = this.groupOverride[group.name ?? ''];
+    return override !== undefined ? override : this.isGroupActive(group);
+  }
+
+  toggleGroup(group: SidebarNavItem): void {
+    this.groupOverride = { ...this.groupOverride, [group.name ?? '']: !this.isGroupOpen(group) };
+  }
+
+  /** The number to badge a destination with (0 = none). */
+  badgeCount(name: string | undefined): number {
+    switch (name) {
+      case 'Notifications': return this.notificationLength;
+      case 'Connections': return this.incomingRequestCount;
+      case 'Messages': return this.unreadMessageCount;
+      default: return 0;
+    }
+  }
+
+  /** What a collapsed group shows so a pending request inside it is not hidden. */
+  groupBadge(group: SidebarNavItem): number {
+    return (group.items ?? []).reduce((sum, i) => sum + this.badgeCount(i.name), 0);
   }
 
   setRouterName(routeName: string): void {

@@ -2,16 +2,17 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 import { IconsModule } from 'src/app/icons/icons.module';
+import { StarRatingComponent } from '../star-rating/star-rating.component';
 import { ProfileTheme } from './profile-theme';
 
 /**
  * The line every trainer/center card needs before anyone opens the profile: what a session costs and
- * how much social proof there is. A full price, never "from" -- or an honest "Rate on request".
- * (Reviews here are written testimonials, not a star score, so the count is the proof.)
+ * how much social proof there is. A full price, never "from" -- or an honest "Rate on request". Social proof is
+ * the star average and count once anyone has rated, and just the review count before that.
  */
 @Component({
   selector: 'app-provider-card-meta',
-  imports: [CommonModule, IconsModule],
+  imports: [CommonModule, IconsModule, StarRatingComponent],
   template: `
     <div class="flex items-center justify-between gap-3 text-[11px] font-sans">
       <span *ngIf="rateNumber" [ngClass]="strong" class="font-bold">
@@ -19,16 +20,21 @@ import { ProfileTheme } from './profile-theme';
       </span>
       <span *ngIf="!rateNumber" [ngClass]="muted">Rate on request</span>
 
-      <span [ngClass]="muted" class="flex items-center gap-1" [attr.aria-label]="reviewLabel">
-        <i-feather name="message-square" style="width:11px;height:11px;"></i-feather>
-        {{ reviewLabel }}
-      </span>
+      <app-star-rating *ngIf="averageRating; else countOnly" [value]="averageRating" [count]="reviewCount ?? 0" [size]="11"
+        [textClass]="strong"></app-star-rating>
+      <ng-template #countOnly>
+        <span [ngClass]="muted" class="flex items-center gap-1" [attr.aria-label]="reviewLabel">
+          <i-feather name="message-square" style="width:11px;height:11px;"></i-feather>
+          {{ reviewLabel }}
+        </span>
+      </ng-template>
     </div>
   `
 })
 export class ProviderCardMetaComponent {
   @Input() rate: number | string | null | undefined = null;
   @Input() reviewCount: number | null | undefined = 0;
+  @Input() averageRating: number | null | undefined = null;
   @Input() theme: ProfileTheme = 'dark';
 
   get rateNumber(): number | null {

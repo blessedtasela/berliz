@@ -18,6 +18,8 @@ import { BookingsEmptyComponent } from './bookings-empty/bookings-empty.componen
 import { MyBookingsMainComponent } from './my-bookings-main/my-bookings-main.component';
 import { ProviderBookingsMainComponent } from './provider-bookings-main/provider-bookings-main.component';
 import { MyAvailabilityEditorComponent } from './my-availability-editor/my-availability-editor.component';
+import { ProviderInsightsComponent } from './provider-insights/provider-insights.component';
+import { CalendarFeedCardComponent } from '../shared/calendar-feed-card/calendar-feed-card.component';
 import { EarningsViewComponent } from './earnings-view/earnings-view.component';
 import { ManageBookingsComponent } from './manage-bookings/manage-bookings.component';
 import { ReviewBookingModalComponent } from './review-booking-modal/review-booking-modal.component';
@@ -48,6 +50,8 @@ import { BookForClientModalComponent } from './book-for-client-modal/book-for-cl
     RouterModule,
     SharedModule,
     LoadErrorComponent,
+    ProviderInsightsComponent,
+    CalendarFeedCardComponent,
     DateStripComponent,
     TimePickerComponent,
     BookingLocationPickerComponent

@@ -24,8 +24,10 @@ writes no longer return a blank 200 (153 methods), session reminders, request nu
 session, Stripe refund/dispute events, public-list privacy (email, activation code, street address), price + review count
 on cards, filters + sort (web and mobile), web accessibility sweep (alt text, button types, icon-button names), mobile
 accessibility roles/labels and an error boundary, demo workspaces and a short tour, and a cross-user access-token bug.
-**Still open:** guest-first booking, sidebar consolidation (needs a design decision), calendar sync, provider
-analytics, waitlist, star ratings, replacing the last native confirm/alert dialogs, mobile profile cards and tests.
+Then on web + backend: guest-first booking, sidebar consolidation (4 groups), calendar feed, provider insights, waitlist,
+star ratings and no native dialogs.
+**Still open:** the same guest-first / waitlist / rating / calendar / insights screens and profile cards on mobile,
+and screen-reader testing on a physical iPhone and Android phone (cannot be done from a development machine).
 
 ## 1. Verdict in one page
 

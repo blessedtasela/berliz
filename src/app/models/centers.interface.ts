@@ -18,6 +18,8 @@ export interface Centers {
   likes: number;
   /** Approved public reviews (filled on the public list). */
   reviewCount?: number;
+  /** Mean of the 1-5 star ratings on approved reviews, one decimal; absent until someone has rated. */
+  averageRating?: number | null;
   status: string;
   userId: number;
   partnerId: number;
@@ -188,6 +190,8 @@ export interface CenterReviews {
   memberId: number;
   memberName: string;
   comment: string;
+  /** 1-5 stars; absent on reviews written before ratings existed. */
+  rating?: number | null;
   likes: number;
   status: string;
   date: Date;

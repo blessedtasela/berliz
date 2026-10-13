@@ -11,6 +11,9 @@
     </div>
 
     <form *ngIf="user" [formGroup]="reviewForm" (ngSubmit)="submit()" class="flex flex-col gap-3">
+        <div class="flex items-center gap-2">
+            <app-star-rating [interactive]="true" [size]="22" label="Your rating for this center" formControlName="rating"></app-star-rating>
+        </div>
         <textarea formControlName="comment" rows="3" placeholder="Share what your experience with this center was like..."
             class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400
                    focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition resize-none"></textarea>

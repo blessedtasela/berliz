@@ -185,6 +185,16 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Guest-first booking, star ratings, waitlist, calendar link and provider insights
+
+- **Book before you sign up.** The public booking page (`/trainers/:name/book`, `/centers/:name/book`) no longer redirects visitors to the login page. A visitor picks a day and time, and is asked to log in or create an account only when they press *Continue*. Their day, time and notes are kept in `sessionStorage` for up to two hours and put back when they return signed in (login falls back to the booking page when sign-up and email activation dropped the `returnUrl`). The "Book" button on provider profiles sends guests to this page instead of showing a "Login required" prompt.
+- **Waitlist.** When a day has no open times the page offers *Tell me if a time opens up*; a cancellation frees the slot and the client is emailed (backend: `/waitlist`).
+- **Star ratings.** Reviews of trainers and centers now carry a required 1-5 rating (accessible radio-group input). Cards show the star average plus review count (falling back to the count alone for unrated providers), review lists show each review's stars, and the filter bar can sort by *Highest rated*.
+- **Calendar link.** My bookings and the provider *My Availability* tab show a private calendar subscription link (Google / Apple / Outlook): copy it, open it in the calendar app, or replace it (the old one stops working).
+- **Provider insights.** New *Insights* tab on the provider bookings screen: profile views, requests, bookings, acceptance and request rates, money paid, and a views-per-day chart for 7 / 30 / 90 days. Public trainer and center pages report one anonymous view per visit.
+- **Shorter sidebar.** The ~25 flat entries are now Dashboard, Messages, Notifications, Bookings (plus *My Profile* and *Promotions* for providers) and four groups that open on demand and open themselves on their own pages: *Train*, *Find & Book*, *Community*, *Me*. The icon rail shows one icon per group (opening its first page); a collapsed group still shows its unread badges.
+- **No more native dialogs.** Delete-comment, block/unblock and report-post use the app's own modals (`PromptModalComponent`, new `ReasonDialogComponent`) instead of `confirm()` / `window.prompt()`.
+
 ### Unreleased — Demo workspaces ("Explore as…") and a short guided tour
 
 Try a populated app before creating an account.

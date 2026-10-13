@@ -19,6 +19,8 @@ import { SubscriptionService } from 'src/app/services/subscription.service';
 import { StripeService } from 'src/app/services/stripe.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SeoService } from 'src/app/services/seo.service';
+import { WaitlistService } from 'src/app/services/waitlist.service';
+import { clearGuestDraft, loadGuestDraft, saveGuestDraft } from '../guest-booking-draft';
 import { environment } from 'src/environments/environment';
 
 import { loadUser } from 'src/app/state/user/user.actions';
@@ -91,6 +93,15 @@ export class BookingPageComponent implements OnInit, OnDestroy {
 
   submitting = false;
 
+  /** A visitor who is not signed in asked to send the request: show the log in / create account choice. */
+  showAuthPrompt = false;
+
+  /** Days (yyyy-MM-dd) this client has asked to be told about this session. */
+  waitlistedDates = new Set<string>();
+  waitlistBusy = false;
+  /** Slot to re-select once the restored day's times arrive (set when a saved guest draft is applied). */
+  private pendingSlotStart: string | null = null;
+
   private user: Users | null = null;
   private destroy$ = new Subject<void>();
 
@@ -107,6 +118,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     private authRedirect: AuthRedirectService,
     private snackBar: SnackBarService,
     private seoService: SeoService,
+    private waitlistService: WaitlistService,
   ) { }
 
   private get earliestBookableTime(): number {
@@ -150,7 +162,13 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     this.kind = (this.route.snapshot.data['kind'] as ProviderKind) ?? 'trainer';
 
     this.store.dispatch(loadUser());
-    this.store.select(selectUser).pipe(takeUntil(this.destroy$)).subscribe(user => this.user = user);
+    this.store.select(selectUser).pipe(takeUntil(this.destroy$)).subscribe(user => {
+      this.user = user;
+      // The profile can arrive after the provider does (back from sign-in): pick the saved choice up then.
+      if (user?.email && this.providerId && this.restoreGuestDraft()) {
+        this.fetchSlotsForSelectedDate();
+      }
+    });
 
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
       this.resolveProvider(params.get('name'));
@@ -169,7 +187,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
         this.slotDurationMinutes = response.slotDurationMinutes ?? 60;
         this.minLeadTimeMinutes = response.leadTimeMinutes ?? 60;
         this.slotsMessage = response.message ?? '';
-        this.selectedSlot = null;
+        this.selectedSlot = this.takePendingSlot();
       });
 
     this.actions$.pipe(ofType(createBookingSuccess), takeUntil(this.destroy$)).subscribe(({ response }) => {
@@ -223,15 +241,32 @@ export class BookingPageComponent implements OnInit, OnDestroy {
 
       this.updateSeoTags();
       this.fetchPackages();
+      this.restoreGuestDraft();
       this.fetchSlotsForSelectedDate();
-
-      if (!this.user?.email) {
-        // A shared link should still resolve and show the provider/page shell
-        // (so it's clear what they're being asked to log in for) before
-        // sending them on -- not bounce them to /login with zero context.
-        this.authRedirect.goToLogin();
-      }
     });
+  }
+
+  /**
+   * Back from sign-in / sign-up: put the day, time and notes the visitor had picked back, so the last step is
+   * one tap. Only restored for a signed-in user (a guest reloading keeps their own tab state anyway).
+   */
+  private restoreGuestDraft(): boolean {
+    if (!this.user?.email) return false;
+    const draft = loadGuestDraft(this.kind, this.providerId);
+    if (!draft) return false;
+    clearGuestDraft();
+    if (new Date(`${draft.date}T23:59:59`).getTime() < Date.now()) return false; // that day has passed
+    this.selectedDate = draft.date;
+    this.notes = draft.notes;
+    this.pendingSlotStart = draft.slotStart;
+    return true;
+  }
+
+  private takePendingSlot(): AvailableSlot | null {
+    const wanted = this.pendingSlotStart;
+    this.pendingSlotStart = null;
+    if (!wanted) return null;
+    return this.slots.find(s => s.startTime === wanted) ?? null;
   }
 
   private updateSeoTags(): void {
@@ -288,7 +323,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   buyPackage(pkg: ProviderPackage): void {
     if (this.buyingPackageId != null) return;
     if (!this.user?.email) {
-      this.authRedirect.goToLogin();
+      this.promptToSignIn();
       return;
     }
 
@@ -372,18 +407,87 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     return `${y}-${m}-${day}`;
   }
 
+  // ── Waitlist ─────────────────────────────────────────────────────────────
+
+  get onWaitlistForSelectedDate(): boolean {
+    return this.waitlistedDates.has(this.selectedDate);
+  }
+
+  /** "Tell me if a time opens up on this day" -- the provider's cancellations free slots; the client is emailed. */
+  joinWaitlist(): void {
+    if (this.waitlistBusy || this.onWaitlistForSelectedDate) return;
+    if (this.isGuest) {
+      this.promptToSignIn();
+      return;
+    }
+    const date = this.selectedDate;
+    this.waitlistBusy = true;
+    this.waitlistService.join(
+      this.kind === 'trainer' ? { trainerId: this.providerId } : { centerId: this.providerId },
+      date,
+    ).subscribe({
+      next: res => {
+        this.waitlistBusy = false;
+        this.waitlistedDates.add(date);
+        this.snackBar.openSnackBar(res?.data?.message || res?.message || "You're on the list. We'll let you know if a time opens up.", '');
+      },
+      error: err => {
+        this.waitlistBusy = false;
+        this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+      }
+    });
+  }
+
+  // ── Guest hand-off ───────────────────────────────────────────────────────
+
+  get isGuest(): boolean {
+    return !this.user?.email;
+  }
+
+  /** Remember the pick, then let the visitor choose between logging in and creating an account. */
+  promptToSignIn(): void {
+    this.saveDraft();
+    this.showAuthPrompt = true;
+  }
+
+  dismissAuthPrompt(): void {
+    this.showAuthPrompt = false;
+  }
+
+  goToLogin(): void {
+    this.saveDraft();
+    this.authRedirect.goToLogin();
+  }
+
+  goToSignUp(): void {
+    this.saveDraft();
+    this.router.navigate(['/sign-up']);
+  }
+
+  private saveDraft(): void {
+    const slug = this.providerName.replace(/ /g, '-');
+    saveGuestDraft({
+      kind: this.kind,
+      providerId: this.providerId,
+      date: this.selectedDate,
+      slotStart: this.selectedSlot?.startTime ?? null,
+      notes: (this.notes ?? '').slice(0, this.maxNotesLength),
+      path: this.kind === 'trainer' ? `/trainers/${slug}/book` : `/centers/${slug}/book`,
+    });
+  }
+
   // ── Submit ───────────────────────────────────────────────────────────────
 
   submit(): void {
     if (this.submitting) return;
 
-    if (!this.user?.email) {
-      this.authRedirect.goToLogin();
+    if (!this.selectedSlot) {
+      this.snackBar.openSnackBar('Pick a date and an available time.', 'error');
       return;
     }
 
-    if (!this.selectedSlot) {
-      this.snackBar.openSnackBar('Pick a date and an available time.', 'error');
+    if (!this.user?.email) {
+      this.promptToSignIn();
       return;
     }
 

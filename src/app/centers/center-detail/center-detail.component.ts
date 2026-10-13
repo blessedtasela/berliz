@@ -20,6 +20,7 @@ import {
 } from 'src/app/models/centers.interface';
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { Trainers } from 'src/app/models/trainers.interface';
+import { ProviderAnalyticsService } from 'src/app/services/provider-analytics.service';
 import { CenterService } from 'src/app/services/center.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { environment } from 'src/environments/environment';
@@ -90,6 +91,7 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private store: Store,
     private centerService: CenterService,
+    private providerAnalytics: ProviderAnalyticsService,
     private seoService: SeoService,
     private testimonialDialog: TestimonialDialogService,
     private bookingDialog: BookingDialogService,
@@ -184,6 +186,7 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
         // Only fire the id-scoped fetches once, the first time this center resolves.
         if (this.centerId !== match.id) {
           this.centerId = match.id;
+          this.providerAnalytics.recordProfileView({ centerId: match.id });
           this.loadCenterDetails();
           this.resumePendingAction();
         }

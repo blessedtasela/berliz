@@ -22,6 +22,8 @@
         </div>
     </div>
 
+    <app-calendar-feed-card *ngIf="bookings.length > 0"></app-calendar-feed-card>
+
     <app-load-error *ngIf="loadError && bookings.length === 0" title="Couldn't load your bookings"
         [message]="loadError" (retry)="loadBookings()"></app-load-error>
 

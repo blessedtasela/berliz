@@ -31,6 +31,7 @@
                 </div>
             </div>
 
+            <app-star-rating *ngIf="review.rating" [value]="review.rating" [size]="13" textClass="text-zinc-300"></app-star-rating>
             <p class="text-[11px] text-zinc-400 leading-relaxed">{{ review.comment }}</p>
 
             <div class="flex items-center gap-1.5 pt-2 border-t border-zinc-800">

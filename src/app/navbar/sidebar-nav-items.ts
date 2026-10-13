@@ -19,6 +19,12 @@ export interface SidebarNavItem {
    *  a specific part of the parent's page via router fragment, not a
    *  separate route of its own. */
   children?: SidebarNavChildItem[];
+  /**
+   * Makes this entry a collapsible GROUP of destinations (Train, Find & book, Community, Me) instead of a link
+   * of its own: the open sidebar shows just its name and chevron, and opens to these items; the icon rail shows
+   * one icon for the whole group. A group never has its own `route`.
+   */
+  items?: SidebarNavItem[];
 }
 
 export interface SidebarNavChildItem {
@@ -28,27 +34,24 @@ export interface SidebarNavChildItem {
 }
 
 /**
- * Single source of truth for the dashboard sidebar's nav list — used by both
+ * Single source of truth for the dashboard sidebar's nav list -- used by both
  * the expanded (side-bar-open) and collapsed (side-bar-close) variants.
- * Previously each had its own hand-copied array, which drifted out of sync
- * (the collapsed one was missing several routes and still had 'Settings' as
- * its own entry after Profile/Settings were merged).
  *
- * Grouped into sections rather than one flat list — a flat 15+ item list is
- * what made the sidebar overflow the viewport in the first place.
+ * Shaped around what people do rather than around every page that exists: the
+ * handful of things used daily are always visible, and the rest sit in four
+ * named groups that open on demand (and open by themselves while one of their
+ * pages is showing). A flat list of 25+ entries is what made the sidebar hard
+ * to scan and overflow the viewport; every route is still reachable, one tap
+ * further in.
  */
 export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
-  { label: 'Overview' },
   { name: 'Dashboard', icon: 'package', route: '/dashboard', exact: true },
-  { name: 'Notifications', icon: 'inbox', route: '/dashboard/my-notifications' },
   { name: 'Messages', icon: 'message-circle', route: '/dashboard/messages' },
-  { name: 'Timeline', icon: 'file-text', route: '/dashboard/timeline' },
-  { name: 'Connections', icon: 'users', route: '/dashboard/connections' },
-  { name: 'Sessions', icon: 'user-check', route: '/dashboard/my-sessions' },
-  { name: 'Members', icon: 'grid', route: '/dashboard/member-directory' },
+  { name: 'Notifications', icon: 'inbox', route: '/dashboard/my-notifications' },
+  { name: 'Bookings', icon: 'clock', route: '/dashboard/my-bookings' },
 
   // A trainer/center is a partner first-class citizen, not just "a user with
-  // extra pages" — same reasoning as the mobile app's TRAINER_SECTION /
+  // extra pages" -- same reasoning as the mobile app's TRAINER_SECTION /
   // CENTER_SECTION drawer sections (roleSections.ts): a dedicated, named
   // section so their profile (bio/pricing/benefits/photo+video album/
   // availability, plus clients/reviews/shared-progress for a trainer) is one
@@ -82,30 +85,58 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   },
   { name: 'Promotions', icon: 'tag', route: '/dashboard/my-promotions', roles: ['trainer', 'center'] },
 
-  { label: 'Training' },
-  { name: 'Workout Room', icon: 'zap', route: '/dashboard/workout-room' },
-  { name: 'Achievements', icon: 'award', route: '/dashboard/achievements' },
-  { name: 'Tasks', icon: 'activity', route: '/dashboard/my-tasks' },
-  { name: 'To-do list', icon: 'calendar', route: '/dashboard/my-todos' },
-  { name: 'Workouts', icon: 'play-circle', route: '/dashboard/workouts' },
-  { name: 'Runs', icon: 'wind', route: '/dashboard/runs' },
-  { name: 'My Progress', icon: 'trending-up', route: '/dashboard/my-progress' },
-  { name: 'Recap', icon: 'bar-chart-2', route: '/dashboard/recap' },
-  { name: 'Exercises & Gear', icon: 'layers', route: '/dashboard/exercises' },
-  { name: 'Find a Provider', icon: 'search', route: '/dashboard/find-providers' },
-  { name: 'Deals', icon: 'percent', route: '/dashboard/deals' },
-  { name: 'Bookings', icon: 'clock', route: '/dashboard/my-bookings' },
-
-  { label: 'Account' },
-  { name: 'Profile', icon: 'user', route: '/dashboard/profile/view' },
-  { name: 'Settings', icon: 'settings', route: '/dashboard/profile/edit' },
-  { name: 'Saved', icon: 'bookmark', route: '/dashboard/saved' },
-  { name: 'My Drafts', icon: 'edit-3', route: '/dashboard/my-drafts' },
-  { name: 'Rewards', icon: 'gift', route: '/dashboard/my-rewards' },
-  { name: 'Subscriptions', icon: 'airplay', route: '/dashboard/my-subscriptions' },
-  { name: 'Hub', icon: 'globe', route: '/dashboard/hub' },
-  { name: 'FAQs', icon: 'message-square', route: '/dashboard/my-faqs' },
+  { label: 'Explore' },
+  {
+    name: 'Train', icon: 'activity', items: [
+      { name: 'Workout Room', icon: 'zap', route: '/dashboard/workout-room' },
+      { name: 'Workouts', icon: 'play-circle', route: '/dashboard/workouts' },
+      { name: 'Runs', icon: 'wind', route: '/dashboard/runs' },
+      { name: 'Tasks', icon: 'activity', route: '/dashboard/my-tasks' },
+      { name: 'To-do list', icon: 'calendar', route: '/dashboard/my-todos' },
+      { name: 'My Progress', icon: 'trending-up', route: '/dashboard/my-progress' },
+      { name: 'Recap', icon: 'bar-chart-2', route: '/dashboard/recap' },
+      { name: 'Achievements', icon: 'award', route: '/dashboard/achievements' },
+      { name: 'Exercises & Gear', icon: 'layers', route: '/dashboard/exercises' },
+    ],
+  },
+  {
+    name: 'Find & Book', icon: 'search', items: [
+      { name: 'Find a Provider', icon: 'search', route: '/dashboard/find-providers' },
+      { name: 'Deals', icon: 'percent', route: '/dashboard/deals' },
+      { name: 'Sessions', icon: 'user-check', route: '/dashboard/my-sessions' },
+    ],
+  },
+  {
+    name: 'Community', icon: 'users', items: [
+      { name: 'Timeline', icon: 'file-text', route: '/dashboard/timeline' },
+      { name: 'Connections', icon: 'users', route: '/dashboard/connections' },
+      { name: 'Members', icon: 'grid', route: '/dashboard/member-directory' },
+      { name: 'Hub', icon: 'globe', route: '/dashboard/hub' },
+    ],
+  },
+  {
+    name: 'Me', icon: 'user', items: [
+      { name: 'Profile', icon: 'user', route: '/dashboard/profile/view' },
+      { name: 'Settings', icon: 'settings', route: '/dashboard/profile/edit' },
+      { name: 'Saved', icon: 'bookmark', route: '/dashboard/saved' },
+      { name: 'My Drafts', icon: 'edit-3', route: '/dashboard/my-drafts' },
+      { name: 'Rewards', icon: 'gift', route: '/dashboard/my-rewards' },
+      { name: 'Subscriptions', icon: 'airplay', route: '/dashboard/my-subscriptions' },
+      { name: 'FAQs', icon: 'message-square', route: '/dashboard/my-faqs' },
+    ],
+  },
 ];
+
+/** Where the icon rail sends you for a group: its first destination (the full list is one tap away in the open sidebar). */
+export function sidebarGroupRoute(group: SidebarNavItem): string {
+  return group.items?.[0]?.route ?? '/dashboard';
+}
+
+/** True when `url` is on any page of the group (so the group header highlights and opens by itself). */
+export function sidebarGroupIsActive(group: SidebarNavItem, url: string | null | undefined): boolean {
+  if (!url) return false;
+  return (group.items ?? []).some(i => !!i.route && (i.exact ? url === i.route : url.startsWith(i.route)));
+}
 
 /**
  * `SIDEBAR_NAV_ITEMS` filtered for one viewer's role: drops any item whose
@@ -120,7 +151,7 @@ export function filterSidebarNavItems(role: string | null | undefined): SidebarN
   let pendingLabel: SidebarNavItem | null = null;
   let pendingLabelHasItems = false;
 
-  for (const item of SIDEBAR_NAV_ITEMS) {
+  for (let item of SIDEBAR_NAV_ITEMS) {
     if (item.label !== undefined) {
       // Flush the previous section only if it ended up with something in it.
       if (pendingLabel && pendingLabelHasItems) result.push(pendingLabel);
@@ -130,6 +161,12 @@ export function filterSidebarNavItems(role: string | null | undefined): SidebarN
     }
 
     if (!visible(item)) continue;
+
+    if (item.items) {
+      const kept = item.items.filter(visible);
+      if (!kept.length) continue;
+      item = { ...item, items: kept };
+    }
 
     if (pendingLabel) {
       result.push(pendingLabel);

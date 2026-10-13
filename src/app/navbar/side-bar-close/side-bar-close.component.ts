@@ -7,7 +7,7 @@ import { Users } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
-import { filterSidebarNavItems, SidebarNavItem } from '../sidebar-nav-items';
+import { filterSidebarNavItems, SidebarNavItem, sidebarGroupIsActive, sidebarGroupRoute } from '../sidebar-nav-items';
 
 @Component({
     selector: 'app-side-bar-close',
@@ -84,6 +84,27 @@ export class SideBarCloseComponent implements OnDestroy {
 
   isPath(path: string): boolean {
     return this.currentRoute === '/' + path;
+  }
+
+  isGroupActive(group: SidebarNavItem): boolean {
+    return sidebarGroupIsActive(group, this.currentRoute);
+  }
+
+  groupRoute(group: SidebarNavItem): string {
+    return sidebarGroupRoute(group);
+  }
+
+  groupBadge(group: SidebarNavItem): number {
+    return (group.items ?? []).reduce((sum, i) => sum + this.badgeCount(i.name), 0);
+  }
+
+  badgeCount(name: string | undefined): number {
+    switch (name) {
+      case 'Notifications': return this.notificationLength;
+      case 'Connections': return this.incomingRequestCount;
+      case 'Messages': return this.unreadMessageCount;
+      default: return 0;
+    }
   }
 
   setRouterName(routeName: string) {
