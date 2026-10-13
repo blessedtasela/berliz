@@ -10,6 +10,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { WorkoutService } from 'src/app/services/workout.service';
 import { ConnectionService } from 'src/app/services/connection.service';
 import { selectUser } from 'src/app/state/user/user.selector';
+import { TourService } from 'src/app/shared/demo/tour.service';
 
 interface OnboardingStep {
   key: string;
@@ -39,6 +40,7 @@ const DISMISS_KEY = 'berliz.onboarding.v1.dismissed';
         <div class="flex flex-col gap-0.5">
           <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Get started on Berliz</h2>
           <p class="text-[11px] text-gray-400 dark:text-gray-500">{{ doneCount }} of {{ steps.length }} done — no subscription needed for any of this.</p>
+          <button type="button" (click)="tour.start()" class="text-[11px] font-semibold text-red-600 hover:text-red-700 w-fit mt-0.5">Take a 30-second tour</button>
         </div>
         <button type="button" (click)="dismiss()" title="Dismiss"
           class="text-gray-300 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-300 transition p-1 shrink-0">
@@ -76,6 +78,7 @@ export class OnboardingChecklistComponent implements OnInit {
     private workoutService: WorkoutService,
     private connectionService: ConnectionService,
     private store: Store,
+    public tour: TourService,
   ) {}
 
   ngOnInit(): void {

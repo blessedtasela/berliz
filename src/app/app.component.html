@@ -48,6 +48,7 @@
                     'md:pl-0': sidebarMode === 'hidden'
                 }">
                 <div class="p-4 min-w-0">
+                    <app-demo-banner></app-demo-banner>
                     <router-outlet></router-outlet>
                     <app-footer></app-footer>
                 </div>
@@ -63,3 +64,6 @@
 
 <!-- Mounted once, app-wide -- every page opens it by calling PhotoLightboxService.open(src). -->
 <app-photo-lightbox></app-photo-lightbox>
+
+<!-- Mounted once, app-wide -- TourService.start() opens it (demo banner, onboarding checklist). -->
+<app-product-tour></app-product-tour>

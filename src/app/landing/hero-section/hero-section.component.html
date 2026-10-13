@@ -62,6 +62,9 @@
                 </a>
             </div>
 
+            <!-- Try before signing up: only renders when the backend has demos switched on -->
+            <app-demo-entry theme="dark" [compact]="true"></app-demo-entry>
+
             <!-- Stats -->
             <div class="flex flex-wrap gap-3 justify-center lg:justify-start pt-4">
                 <div *ngFor="let s of stats" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl

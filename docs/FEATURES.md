@@ -185,6 +185,27 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Demo workspaces ("Explore as…") and a short guided tour
+
+Try a populated app before creating an account.
+
+- **Explore as a client / trainer / center:** the landing hero (a quiet "or look around first" line) and the login page (a
+  card) offer it. One click signs the visitor into a shared, throwaway account that already has a trainer and center
+  profile, packages, weekly hours and bookings in every state (finished, awaiting payment, awaiting the trainer, a center
+  session). It resets every night. **Off by default**: the buttons only appear when the backend has `DEMO_ENABLED=true`.
+- **Safe by construction:** demo accounts live on the reserved `demo.berliz.fitness` domain, and everything keys off that:
+  no real email is ever sent to them, they cannot pay, connect Stripe, change the password/email or deactivate, only
+  demo visitors can see "Demo Coach" / "Demo Fitness Center" in the directories, and they are left out of the public
+  platform counts. `POST /demo/session` is rate limited (30/h per IP).
+- **Demo banner:** inside a demo account every dashboard page opens with "You're exploring a demo — nothing here is real,
+  it resets every night", a **Take a 30-second tour** button and **Create your free account**.
+- **30-second tour:** three short cards per role (client / trainer or center), each with a "take me there" link. Started
+  by the user only (from the demo banner or the onboarding checklist), never automatically — one-to-three-step,
+  user-started tours are the ones that get finished.
+- **Also fixed on the way (security):** access tokens were minted from a user held in one field shared by every request
+  thread, so two simultaneous logins could cross identities and passkey login got whoever last authenticated. The user
+  is now passed explicitly (`JWTUtility.generateAccessToken(refreshToken, user)`) with a regression test.
+
 ### Unreleased — Audit follow-up: trust, funnel and accessibility
 
 From [`APP-AUDIT-2026-10.md`](./APP-AUDIT-2026-10.md).

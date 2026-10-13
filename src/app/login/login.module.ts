@@ -1,3 +1,4 @@
+import { DemoEntryComponent } from '../shared/demo/demo-entry.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoginComponent } from './login/login.component';
@@ -33,7 +34,8 @@ import { FooterModule } from "src/app/footer/footer.module";
     RouterModule,
     NavbarModule,
     SharedModule,
-    FooterModule
+    FooterModule,
+    DemoEntryComponent
 ]
 })
 export class LoginModule { }

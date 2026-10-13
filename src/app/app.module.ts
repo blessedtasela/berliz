@@ -1,4 +1,6 @@
 import { ErrorHandler, NgModule, PLATFORM_ID, isDevMode, provideZoneChangeDetection } from '@angular/core';
+import { DemoBannerComponent } from './shared/demo/demo-banner.component';
+import { ProductTourComponent } from './shared/demo/product-tour.component';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -156,6 +158,8 @@ const dbConfig: DBConfig = {
     ],
     exports: [],
     bootstrap: [AppComponent], imports: [BrowserModule,
+        DemoBannerComponent,
+        ProductTourComponent,
         PhotoLightboxComponent,
         NavHistoryControlsComponent,
         BrowserAnimationsModule,

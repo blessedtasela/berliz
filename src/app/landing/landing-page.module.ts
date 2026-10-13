@@ -1,3 +1,4 @@
+import { DemoEntryComponent } from '../shared/demo/demo-entry.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconsModule } from '../icons/icons.module';
@@ -36,6 +37,7 @@ import { SharedModule } from '../shared/shared.module';
     IconsModule,
     NewsAndUpdatesModule,
     RouterModule,
+    DemoEntryComponent,
 
   ],
   exports: [

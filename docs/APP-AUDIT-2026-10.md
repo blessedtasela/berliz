@@ -17,6 +17,16 @@ the existing ones work)._
 
 ---
 
+## Status (updated Oct 2026)
+
+Done since this audit: monitoring (health endpoints; Sentry on backend, web and mobile, inert until a DSN is set), failed
+writes no longer return a blank 200 (153 methods), session reminders, request nudge/withdraw, one review per completed
+session, Stripe refund/dispute events, public-list privacy (email, activation code, street address), price + review count
+on cards, filters + sort (web and mobile), web accessibility sweep (alt text, button types, icon-button names), mobile
+accessibility roles/labels and an error boundary, demo workspaces and a short tour, and a cross-user access-token bug.
+**Still open:** guest-first booking, sidebar consolidation (needs a design decision), calendar sync, provider
+analytics, waitlist, star ratings, replacing the last native confirm/alert dialogs, mobile profile cards and tests.
+
 ## 1. Verdict in one page
 
 Berliz is **feature-rich and unusually well tested** (web 1,201 specs, backend 592 tests, CI on both,
