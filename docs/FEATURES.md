@@ -518,6 +518,10 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Password and email fields have `autocomplete` hints; ~50 icon-only buttons have labels; clickable `div`/`span`s are keyboard-reachable;
   33 components that subscribed to the store/socket without cleanup now unsubscribe on destroy; search highlighting no
   longer corrupts text containing entities (`utils/highlight.util.ts`).
+- 376 form fields that had a visible label but no accessible name now have one (`aria-label` from the label text).
+- Global interaction polish in `styles.css`: visible keyboard focus ring, touched-and-invalid fields turn red on their own,
+  press feedback and no 300 ms tap delay on buttons, smooth scroll, a short page fade on navigation, and `prefers-reduced-motion` respected.
+- Checked the public pages (home, login, contact, about, trainers, centers, services, terms, privacy, help, members) at 360 and 768 px: no horizontal overflow.
 
 ### Unreleased — Fix: trainer/center locations dropdown wouldn't close
 

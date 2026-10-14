@@ -32,7 +32,7 @@
       <form [formGroup]="activateAccountForm" (ngSubmit)="submitForm()" class="flex flex-col gap-4">
         <div class="flex flex-col gap-1">
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Activation code</label>
-          <input formControlName="token" type="text" inputmode="text" autocomplete="one-time-code"
+          <input aria-label="Activation code" formControlName="token" type="text" inputmode="text" autocomplete="one-time-code"
             placeholder="Paste your code" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400 tracking-wide
                    focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
             [ngClass]="tokenControl?.invalid && tokenControl?.touched

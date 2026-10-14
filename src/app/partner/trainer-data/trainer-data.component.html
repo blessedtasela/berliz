@@ -26,7 +26,7 @@
 
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Display name</label>
-                <input formControlName="name" type="text" placeholder="Team Berliz" class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
+                <input aria-label="Display name" formControlName="name" type="text" placeholder="Team Berliz" class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="updateTrainerForm.get('name')?.invalid && updateTrainerForm.get('name')?.dirty
             ? 'border-red-300 dark:border-red-800' : 'border-gray-200 dark:border-gray-700'" />
                 <p *ngIf="updateTrainerForm.get('name')?.invalid && updateTrainerForm.get('name')?.dirty"
@@ -39,7 +39,7 @@
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Experience
                     (years)</label>
-                <input formControlName="experience" type="number" placeholder="5" class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
+                <input aria-label="Experience (years)" formControlName="experience" type="number" placeholder="5" class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="updateTrainerForm.get('experience')?.invalid && updateTrainerForm.get('experience')?.dirty
             ? 'border-red-300 dark:border-red-800' : 'border-gray-200 dark:border-gray-700'" />
             </div>
@@ -48,13 +48,13 @@
 
             <div *ngIf="user?.role === 'admin'" class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Likes</label>
-                <input formControlName="likes" type="number" readonly class="w-full px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-500 dark:text-gray-400
+                <input aria-label="Likes" formControlName="likes" type="number" readonly class="w-full px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-500 dark:text-gray-400
                  focus:outline-none cursor-not-allowed" />
             </div>
 
             <div class="md:col-span-2 flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Motto</label>
-                <textarea formControlName="motto" rows="4" placeholder="Write your discipline or motto" class="w-full px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
+                <textarea aria-label="Motto" formControlName="motto" rows="4" placeholder="Write your discipline or motto" class="w-full px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
                  resize-none transition placeholder:text-gray-400 dark:placeholder:text-gray-500" [ngClass]="updateTrainerForm.get('motto')?.invalid && updateTrainerForm.get('motto')?.dirty
             ? 'border-red-300 dark:border-red-800' : 'border-gray-200 dark:border-gray-700'">
@@ -64,7 +64,7 @@
             <!-- How you coach -->
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">How you coach</label>
-                <select formControlName="serviceMode" class="berliz-select">
+                <select aria-label="How you coach" formControlName="serviceMode" class="berliz-select">
                     <option value="IN_PERSON">In-person only</option>
                     <option value="HYBRID">Hybrid — in-person &amp; online</option>
                     <option value="ONLINE">Online only</option>

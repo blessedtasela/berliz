@@ -27,7 +27,7 @@
 
                 <div class="flex flex-col gap-1">
                     <label class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Gym club name</label>
-                    <input formControlName="name" type="text" placeholder="Gym club name e.g. M-Fitness" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                    <input aria-label="Gym club name" formControlName="name" type="text" placeholder="Gym club name e.g. M-Fitness" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="addCenterForm.get('name')?.invalid && addCenterForm.get('name')?.dirty
                     ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'" />
                     <p *ngIf="addCenterForm.get('name')?.invalid && addCenterForm.get('name')?.dirty"
@@ -40,7 +40,7 @@
                 <div class="flex flex-col gap-1">
                     <label class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Experience
                         (years)</label>
-                    <input formControlName="experience" type="number" placeholder="Years in service" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                    <input aria-label="Experience (years)" formControlName="experience" type="number" placeholder="Years in service" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="addCenterForm.get('experience')?.invalid && addCenterForm.get('experience')?.dirty
                     ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'" />
                     <p *ngIf="addCenterForm.get('experience')?.invalid && addCenterForm.get('experience')?.dirty"
@@ -54,7 +54,7 @@
 
             <div class="flex flex-col gap-1">
                 <label class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Motto</label>
-                <textarea formControlName="motto" rows="3" placeholder="Motivate your subscribers" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                <textarea aria-label="Motto" formControlName="motto" rows="3" placeholder="Motivate your subscribers" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                    focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition resize-none" [ngClass]="addCenterForm.get('motto')?.invalid && addCenterForm.get('motto')?.dirty
                 ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'"></textarea>
                 <p *ngIf="addCenterForm.get('motto')?.invalid && addCenterForm.get('motto')?.dirty"
@@ -66,7 +66,7 @@
 
             <div class="flex flex-col gap-1">
                 <label class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Location URL</label>
-                <input formControlName="location" type="text" placeholder="Enter location url" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                <input aria-label="Location URL" formControlName="location" type="text" placeholder="Enter location url" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                    focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="addCenterForm.get('location')?.invalid && addCenterForm.get('location')?.dirty
                 ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'" />
                 <p *ngIf="addCenterForm.get('location')?.invalid && addCenterForm.get('location')?.dirty"
@@ -78,7 +78,7 @@
 
             <div class="flex flex-col gap-1">
                 <label class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Address</label>
-                <textarea formControlName="address" rows="3" placeholder="Write your gym club address" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                <textarea aria-label="Address" formControlName="address" rows="3" placeholder="Write your gym club address" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                    focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition resize-none" [ngClass]="addCenterForm.get('address')?.invalid && addCenterForm.get('address')?.dirty
                 ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'"></textarea>
                 <p *ngIf="addCenterForm.get('address')?.invalid && addCenterForm.get('address')?.dirty"

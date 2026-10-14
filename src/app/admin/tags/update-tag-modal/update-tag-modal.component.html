@@ -22,7 +22,7 @@
         <!-- Tag name -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Tag name</label>
-            <input formControlName="name" type="text" placeholder="e.g. Strength" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+            <input aria-label="Tag name" formControlName="name" type="text" placeholder="e.g. Strength" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="{
                         'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': updateTagForm.get('name')?.invalid && updateTagForm.get('name')?.touched,
                         'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800': !(updateTagForm.get('name')?.invalid && updateTagForm.get('name')?.touched)
@@ -37,7 +37,7 @@
         <!-- Description -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Description</label>
-            <textarea formControlName="description" rows="4" placeholder="Describe what this tag is used for" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+            <textarea aria-label="Description" formControlName="description" rows="4" placeholder="Describe what this tag is used for" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition resize-none"
                 [ngClass]="{
                         'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': updateTagForm.get('description')?.invalid && updateTagForm.get('description')?.touched,

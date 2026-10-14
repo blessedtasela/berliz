@@ -107,7 +107,7 @@
     <!-- ── SCHEDULED DATE (assignable roles only) ──────────────────────── -->
     <div *ngIf="!isBlocked" class="flex flex-col gap-1" [formGroup]="assignForm">
       <label class="text-[11px] uppercase tracking-wide text-gray-400 dark:text-gray-500 font-semibold">Scheduled date (optional)</label>
-      <input type="date" formControlName="scheduledDate" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
+      <input aria-label="Scheduled date (optional)" type="date" formControlName="scheduledDate" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
     </div>
 

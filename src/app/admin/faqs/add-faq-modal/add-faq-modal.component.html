@@ -27,7 +27,7 @@
         <!-- Category -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Category</label>
-            <input formControlName="category" type="text" placeholder="e.g. General, Billing, Trainers, Centers"
+            <input aria-label="Category" formControlName="category" type="text" placeholder="e.g. General, Billing, Trainers, Centers"
                 class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
@@ -44,7 +44,7 @@
         <!-- Question -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Question</label>
-            <input formControlName="question" type="text" placeholder="Question"
+            <input aria-label="Question" formControlName="question" type="text" placeholder="Question"
                 class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
@@ -61,7 +61,7 @@
         <!-- Answer -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Answer</label>
-            <textarea formControlName="answer" rows="4" placeholder="Answer"
+            <textarea aria-label="Answer" formControlName="answer" rows="4" placeholder="Answer"
                 class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
@@ -78,7 +78,7 @@
         <!-- Display order -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Display order</label>
-            <input formControlName="displayOrder" type="number" min="0" placeholder="0"
+            <input aria-label="Display order" formControlName="displayOrder" type="number" min="0" placeholder="0"
                 class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
             <p class="text-[11px] text-gray-400 dark:text-gray-500">Lower numbers appear first within the category.</p>
