@@ -113,7 +113,7 @@
             </div>
             <button type="button" (click)="submitReply()" [disabled]="!replyDraft || !replyDraft.trim() || postingReply"
                 class="w-8 h-8 rounded-lg bg-sky-600 hover:bg-sky-700 text-white flex items-center justify-center
-                       shrink-0 transition disabled:opacity-40 disabled:cursor-not-allowed">
+                       shrink-0 transition disabled:opacity-40 disabled:cursor-not-allowed" aria-label="Send">
                 <i-feather *ngIf="!postingReply" name="send" style="width:13px;height:13px;"></i-feather>
                 <i-feather *ngIf="postingReply" name="loader" class="animate-spin" style="width:13px;height:13px;"></i-feather>
             </button>

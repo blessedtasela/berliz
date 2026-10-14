@@ -1,5 +1,6 @@
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, DestroyRef, inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -23,6 +24,7 @@ import { selectTodos } from 'src/app/state/todo/todo.selectors';
     standalone: false
 })
 export class TodoListListComponent {
+  private destroyRef = inject(DestroyRef);
   responseMessage: any;
   @Input() todoListData: TodoList[] = [];
   showFullData: boolean = false;
@@ -44,7 +46,7 @@ export class TodoListListComponent {
 
   handleEmitEvent() {
     this.store.dispatch(loadTodos());
-    this.store.select(selectTodos).subscribe((todoList) => {
+    this.store.select(selectTodos).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((todoList) => {
       this.todoListData = todoList;
       this.totalTodoList = this.todoListData.length
     });

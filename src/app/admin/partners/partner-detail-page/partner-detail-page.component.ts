@@ -91,7 +91,7 @@ export class PartnerDetailPageComponent implements OnInit, OnDestroy {
   }
 
   openUrl(url: any) {
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   rejectApplication(id: number) {

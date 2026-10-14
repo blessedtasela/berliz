@@ -22,7 +22,7 @@
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="updateFaqStatus(faq.id)"
-                    [title]="faq.status === 'false' ? 'Activate' : 'Deactivate'">
+                    [title]="faq.status === 'false' ? 'Activate' : 'Deactivate'" [attr.aria-label]="faq.status === 'false' ? 'Activate' : 'Deactivate'">
                     <i-feather [name]="faq.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"

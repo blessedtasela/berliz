@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -14,6 +15,7 @@ import { ResetPasswordModalComponent } from '../reset-password-modal/reset-passw
     standalone: false
 })
 export class ResetPasswordComponent {
+  private destroyRef = inject(DestroyRef);
   forgotPasswordForm!: FormGroup;
   token: any;
   responseMessage: any;
@@ -25,7 +27,7 @@ export class ResetPasswordComponent {
     }
 
   ngOnInit(): void {
-      this.route.queryParams.subscribe((params: any) => {
+      this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params: any) => {
         const token = params.token;
          this.token = token;
          this.responseMessage = params?.messagge;

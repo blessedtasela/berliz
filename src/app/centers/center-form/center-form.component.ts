@@ -64,7 +64,6 @@ export class CenterFormComponent {
         // Redirect the user to the WhatsApp URL
         window.location.href = whatsappURL;
       }
-      console.log('You submitted: ', this.centerForm.value)
       this.centerForm.reset();
       this.invalidForm = false;
     });

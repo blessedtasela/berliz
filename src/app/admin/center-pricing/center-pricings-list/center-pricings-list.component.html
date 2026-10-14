@@ -2,7 +2,7 @@
     <!-- Mobile: card rows (matches admin/categories pattern) -->
     <div class="sm:hidden divide-y divide-gray-100 dark:divide-gray-800">
         <div *ngFor="let centerPricing of centerPricingData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 dark:active:bg-gray-800 transition-colors">
-            <div class="min-w-0 flex-1" (click)="openCenterPricingDetails(centerPricing.id)">
+            <div class="min-w-0 flex-1" (click)="openCenterPricingDetails(centerPricing.id)" role="button" tabindex="0" (keydown.enter)="openCenterPricingDetails(centerPricing.id)">
                 <p class="font-semibold text-gray-900 dark:text-gray-100 truncate">{{ centerPricing.centerName }}</p>
                 <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate">{{ centerPricing.price }} usd</p>
                 <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">{{ formatDate(centerPricing.date) }}</p>

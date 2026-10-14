@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, EventEmitter, Input, Output, DestroyRef, inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
@@ -24,6 +25,7 @@ import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 })
 
 export class ProfileComponent {
+  private destroyRef = inject(DestroyRef);
   @Output() isMenuOpen = new EventEmitter<boolean>();
   @Input() userData!: Users | null;
   profileOpen: boolean = false;
@@ -56,7 +58,7 @@ export class ProfileComponent {
 
   handleEmitEvent(): void {
 
-    this.store.select(selectUser).subscribe(user => {
+    this.store.select(selectUser).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(user => {
       this.userData = user;
     });
 
@@ -253,7 +255,6 @@ export class ProfileComponent {
   }
 
   logout() {
-    console.log('logging out')
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
       message: 'Are you sure you want to logout?',

@@ -11,7 +11,7 @@ export class SubFooterComponent {
 
   constructor() { }
   openBlessedTasela() {
-    window.open('https://blessed-tasela.netlify.app/', '_blank');
+    window.open('https://blessed-tasela.netlify.app/', '_blank', 'noopener,noreferrer');
 
   }
 }

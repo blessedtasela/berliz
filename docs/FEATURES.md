@@ -477,6 +477,38 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 
+### Unreleased — QA pass: security hardening, media upload, instant list updates, accessibility
+
+**Security (backend + web)**
+- The login/signup/reset rate limits keyed on the *first* `X-Forwarded-For` entry, which the caller controls, so a
+  rotating fake header skipped every limit. They now key on the entry the trusted proxy appended
+  (`app.trusted-proxy-hops`, default 1 — set `TRUSTED_PROXY_HOPS` if more than one proxy sits in front).
+  New limits on `quickAdd`, newsletter/contact/problem-report submissions, activation emails, social and passkey login.
+- `LoginAttemptTracker`: 8 failed sign-ins for an email in 15 minutes locks that account's login for the window
+  (unknown emails too, so the lock leaks nothing). Login, forgot-password and send-activation now answer the same
+  whether or not an account exists.
+- `/stomp` accepts only `cors.allowed-origins`; Swagger/`/api-docs` are off unless `SWAGGER_ENABLED=true`.
+- Uploads: video/PDF/WebP/Office/audio are verified by magic bytes, not just the declared type.
+- 40 `window.open(_, '_blank')` calls now pass `noopener,noreferrer`; stray `console.log`s (one printed a contact form) removed.
+
+**Media upload**
+- `/strapi/upload` now also takes Word/Excel/PowerPoint, text/CSV and MP3/M4A/WAV — chat attachments are meant to
+  take any document, but the server only allowed images/video/PDF, so those uploads failed.
+- `StrapiService` checks type and size *before* sending (`utils/media-upload.util.ts`, mirrors the server rules), infers a
+  type for files the browser leaves untyped, reports upload progress (`uploadWithProgress`), and turns every failure
+  into a readable message (too big / wrong type / offline / media server down). Post composer shows a progress bar.
+- The auth interceptor used to abort every upload after a flat 90 s; it now only gives up when an upload goes silent for 2 minutes.
+
+**Forms update immediately**
+- Seven slices (tags, todos, exercises, muscle groups, newsletters, subscriptions, clients, contact-us…) returned only a
+  `message` on success, so their lists refreshed only if a WebSocket broadcast happened to arrive. A new
+  `RefreshAfterMutationEffects` re-fetches the right list(s) straight after each successful create/update/delete.
+
+**Accessibility / robustness**
+- Password and email fields have `autocomplete` hints; ~50 icon-only buttons have labels; clickable `div`/`span`s are keyboard-reachable;
+  33 components that subscribed to the store/socket without cleanup now unsubscribe on destroy; search highlighting no
+  longer corrupts text containing entities (`utils/highlight.util.ts`).
+
 ### Unreleased — Fix: trainer/center locations dropdown wouldn't close
 
 On the signed-in trainer and center profiles the "Available in" menu (`app-locations-menu`)

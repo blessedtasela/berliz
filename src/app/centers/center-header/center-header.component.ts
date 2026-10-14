@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Partner } from 'src/app/models/partners.interface';
 import { Users } from 'src/app/models/users.interface';
@@ -17,6 +18,7 @@ import { selectMyPartner } from 'src/app/state/partner/partner.selectors';
     standalone: false
 })
 export class CenterHeaderComponent {
+  private destroyRef = inject(DestroyRef);
   partner!: Partner;
   user!: Users | null;
 
@@ -25,14 +27,14 @@ export class CenterHeaderComponent {
     private authRedirect: AuthRedirectService) { }
 
   ngOnInit() {
-    this.store.select(selectUser).subscribe((user) => {
+    this.store.select(selectUser).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((user) => {
       this.user = user;
     })
   }
 
   handleEmitEvent() {
     this.store.dispatch(loadMyPartner());
-    this.store.select(selectMyPartner).subscribe((partnerData) => {
+    this.store.select(selectMyPartner).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((partnerData) => {
       if (partnerData) this.partner = partnerData;
     });
   }

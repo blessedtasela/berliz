@@ -1,5 +1,6 @@
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, Inject } from '@angular/core';
+import { Component, EventEmitter, Inject, DestroyRef, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -15,6 +16,7 @@ import { selectTrainers } from 'src/app/state/trainer/trainer.selector';
     standalone: false
 })
 export class TrainerDetailsModalComponent {
+  private destroyRef = inject(DestroyRef);
   onEmit = new EventEmitter();
   trainerData!: Trainers;
   responseMessage: any;
@@ -35,7 +37,7 @@ export class TrainerDetailsModalComponent {
   }
 
   handleEmit() {
-    this.store.select(selectTrainers).subscribe((trainers) => {
+    this.store.select(selectTrainers).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((trainers) => {
       const trainer = trainers.find(trainer => trainer.id == this.trainerData.id);
       if (trainer)
         this.trainerData = trainer
@@ -43,7 +45,7 @@ export class TrainerDetailsModalComponent {
   }
 
   openUrl(url: any) {
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   closeDialog() {

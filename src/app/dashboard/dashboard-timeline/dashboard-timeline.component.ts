@@ -101,6 +101,8 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   /** A post carries a photo OR a video; the composer disables whichever picker the other one is using. */
   uploadedVideo: { strapiId: number; videoUrl: string; mimeType: string } | null = null;
   uploading = false;
+  /** 0-100 while a photo/video is going up. */
+  uploadPercent = 0;
   uploadError: string | null = null;
 
   /** Set on init when a previous session left the composer mid-draft — shows the resume banner rather than silently restoring or losing it. */
@@ -237,28 +239,39 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.uploadMedia(file, uploaded => {
+      this.uploadedPhoto = { strapiId: uploaded.id, photoUrl: uploaded.url };
+    });
+  }
+
+  /**
+   * Uploads a post's photo/video with a live percentage. StrapiService turns every failure
+   * (too big, wrong type, offline, media server down) into a readable `error.message`, so
+   * that is what the user sees rather than a generic "try again".
+   */
+  private uploadMedia(file: File, onUploaded: (uploaded: { id: number; url: string; mime: string }) => void): void {
     this.uploadError = null;
     this.uploading = true;
+    this.uploadPercent = 0;
 
-    this.strapiService.uploadToStrapi(file).subscribe({
-      next: res => {
+    this.strapiService.uploadWithProgress(file).subscribe({
+      next: step => {
+        if (!step.done) {
+          this.uploadPercent = step.percent;
+          return;
+        }
         this.uploading = false;
-        const uploaded = res?.[0];
+        const uploaded = step.result?.[0];
         if (!uploaded?.url) {
           this.uploadError = 'Upload failed — no file returned';
           return;
         }
-        this.uploadedPhoto = { strapiId: uploaded.id, photoUrl: uploaded.url };
+        onUploaded(uploaded);
         this.saveDraft();
       },
       error: (err) => {
         this.uploading = false;
-        // The backend surfaces the actual root cause (e.g. Strapi rejected
-        // the request, or strapi.base-url/strapi.api-token aren't configured
-        // on this environment) in err.error.detail — showing only a generic
-        // message here made this failure mode undiagnosable from the UI.
-        const detail = err?.error?.detail;
-        this.uploadError = detail ? `Upload failed: ${detail}` : 'Upload failed — try again';
+        this.uploadError = err?.error?.message || 'Upload failed — try again';
       }
     });
   }
@@ -275,25 +288,8 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.uploadError = null;
-    this.uploading = true;
-
-    this.strapiService.uploadToStrapi(file).subscribe({
-      next: res => {
-        this.uploading = false;
-        const uploaded = res?.[0];
-        if (!uploaded?.url) {
-          this.uploadError = 'Upload failed — no file returned';
-          return;
-        }
-        this.uploadedVideo = { strapiId: uploaded.id, videoUrl: uploaded.url, mimeType: uploaded.mime || file.type };
-        this.saveDraft();
-      },
-      error: (err) => {
-        this.uploading = false;
-        const detail = err?.error?.detail;
-        this.uploadError = detail ? `Upload failed: ${detail}` : 'Upload failed — try again';
-      }
+    this.uploadMedia(file, uploaded => {
+      this.uploadedVideo = { strapiId: uploaded.id, videoUrl: uploaded.url, mimeType: uploaded.mime || file.type };
     });
   }
 

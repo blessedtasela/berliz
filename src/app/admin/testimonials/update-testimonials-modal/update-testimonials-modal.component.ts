@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, EventEmitter, Inject, OnInit, DestroyRef, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -27,6 +28,7 @@ import { genericError } from 'src/validators/form-validators.module';
     standalone: false
 })
 export class UpdateTestimonialsModalComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   onUpdateTestimonialEmit = new EventEmitter();
   updateTestimonialForm!: FormGroup;
   invalidForm = false;
@@ -67,8 +69,8 @@ export class UpdateTestimonialsModalComponent implements OnInit {
 
     this.store.dispatch(loadCenters());
     this.store.dispatch(loadTrainers());
-    this.store.select(selectCenters).subscribe(centers => this.centers = centers);
-    this.store.select(selectTrainers).subscribe(trainers => this.trainers = trainers);
+    this.store.select(selectCenters).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(centers => this.centers = centers);
+    this.store.select(selectTrainers).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(trainers => this.trainers = trainers);
   }
 
   updateTestimonial(): void {

@@ -1,4 +1,5 @@
-import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, ElementRef, EventEmitter, Output, DestroyRef, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { fromEvent, debounceTime, map, tap, switchMap, Observable, of } from 'rxjs';
 import { TodoList } from 'src/app/models/todoList.interface';
@@ -12,6 +13,7 @@ import { selectMyTodos } from 'src/app/state/todo/todo.selectors';
     standalone: false
 })
 export class SearchTodoComponent {
+  private destroyRef = inject(DestroyRef);
   myTodos: TodoList[] = [];
   searchQuery: string = '';
   selectedSearchCriteria: any = 'task';
@@ -58,7 +60,7 @@ export class SearchTodoComponent {
   }
 
   search(query: string): Observable<TodoList[]> {
-    this.store.select(selectMyTodos).subscribe((cachedData) => {
+    this.store.select(selectMyTodos).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((cachedData) => {
       this.myTodos = cachedData;
     })
     query = query.toLowerCase();

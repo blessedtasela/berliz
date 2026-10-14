@@ -52,7 +52,6 @@ export class CenterPageComponent implements OnInit {
   handleEmitEvent() {
     this.subscription.add(
       this.store.select(selectActiveCenters).subscribe((activeCenters) => {
-        console.log('isCachedData false')
         this.centers = activeCenters;
       })
     );

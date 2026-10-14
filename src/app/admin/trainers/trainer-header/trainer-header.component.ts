@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, Input, DestroyRef, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Trainers } from 'src/app/models/trainers.interface';
@@ -13,6 +14,7 @@ import { selectTrainers } from 'src/app/state/trainer/trainer.selector';
     standalone: false
 })
 export class TrainerHeaderComponent {
+  private destroyRef = inject(DestroyRef);
   responseMessage: any;
   showFullData: boolean = false;
   selectedSortOption: string = 'date';
@@ -30,7 +32,7 @@ export class TrainerHeaderComponent {
   }
 
   handleEmitEvent() {
-    this.store.select(selectTrainers).subscribe((allTrainers) => {
+    this.store.select(selectTrainers).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((allTrainers) => {
       this.trainersData = allTrainers;
       this.totalTrainers = this.trainersData.length
       this.trainersLength = this.trainersData.length

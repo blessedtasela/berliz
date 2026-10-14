@@ -1,5 +1,6 @@
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, DestroyRef, inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Booking } from 'src/app/models/booking.model';
@@ -18,6 +19,7 @@ import { selectBookings } from 'src/app/state/booking/booking.selectors';
     standalone: false
 })
 export class BookingsListComponent {
+  private destroyRef = inject(DestroyRef);
   responseMessage: any;
   @Input() bookingsData: Booking[] = [];
   @Input() totalBookings: number = 0;
@@ -33,7 +35,7 @@ export class BookingsListComponent {
   handleEmitEvent() {
     this.ngxService.start()
     this.store.dispatch(loadAllBookings());
-    this.store.select(selectBookings).subscribe((allBookings) => {
+    this.store.select(selectBookings).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((allBookings) => {
       this.bookingsData = allBookings;
       this.totalBookings = this.bookingsData.length
       this.ngxService.stop()

@@ -13,6 +13,5 @@ export class CenterPromotionsComponent {
 
 scrollToForm(){
 this.scrollToSubscriptionForm.emit(true);
-console.log('scroll to form clicked')
 }
 }

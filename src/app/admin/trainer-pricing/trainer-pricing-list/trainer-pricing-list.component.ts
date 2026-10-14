@@ -157,7 +157,6 @@ export class TrainerPricingListComponent implements OnDestroy {
 
     // Subscribe to individual admin topics
     const currentUserEmail = this.authService.getCurrentUserEmail();
-    console.log("current email", currentUserEmail)
     this.subscriptions.push(
       this.rxStompService.watch(`/user/${currentUserEmail}/deleteTrainerPricing`).subscribe((message) => {
         const receivedCategories: TrainerPricing = JSON.parse(message.body);

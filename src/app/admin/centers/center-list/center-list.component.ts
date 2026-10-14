@@ -192,7 +192,6 @@ export class CenterListComponent {
 
   onImgSelected(event: any, id: number): void {
     const selectedImage = event.target.files[0];
-    console.log("onSelectedImage", this.selectedImage)
     this.selectedImage = selectedImage
     this.updatePhoto(id);
   }
@@ -223,7 +222,7 @@ export class CenterListComponent {
   }
 
   openUrl(url: any) {
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   watchLikeCenter() {

@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Inject, DestroyRef, inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -19,6 +20,7 @@ import { loadActiveUsers } from 'src/app/state/user/user.actions';
     standalone: false
 })
 export class UpdatePartnerModalComponent {
+  private destroyRef = inject(DestroyRef);
   onUpdatePartnerEmit = new EventEmitter()
   updatePartnerForm!: FormGroup;
   invalidForm: boolean = false;
@@ -59,7 +61,7 @@ export class UpdatePartnerModalComponent {
 
   ngOnInit(): void {
     this.store.dispatch(loadActiveUsers());
-    this.store.select(selectUsers).subscribe((users) => {
+    this.store.select(selectUsers).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((users) => {
       this.users = users;
     })
     this.updatePartnerForm = this.formBuilder.group({
@@ -78,7 +80,6 @@ export class UpdatePartnerModalComponent {
   }
 
   toggleIndex(index: number) {
-    console.log('index: ', index)
     if (this.updatePartnerForm.get('email')?.invalid ||
       this.updatePartnerForm.get('motivation')?.invalid) {
       this.invalidForm = true;

@@ -1,4 +1,5 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, NgZone } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, NgZone, DestroyRef, inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -18,6 +19,7 @@ import { emailExtensionValidator, fileValidator, genericError } from 'src/valida
     standalone: false
 })
 export class AddPartnerModalComponent implements AfterViewInit {
+  private destroyRef = inject(DestroyRef);
   onAddPartnerEmit = new EventEmitter();
   addPartnerForm!: FormGroup;
   invalidForm: boolean = false;
@@ -68,10 +70,10 @@ export class AddPartnerModalComponent implements AfterViewInit {
       'role': ['', [Validators.required, Validators.minLength(3)]],
     });
 
-    this.store.select(selectUsers).subscribe((cachedData) => {
+    this.store.select(selectUsers).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((cachedData) => {
       if (!cachedData?.length) {
         this.store.dispatch(loadActiveUsers());
-        this.store.select(selectUsers).subscribe((user) => {
+        this.store.select(selectUsers).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((user) => {
           this.users = user;
         });
       } else {
@@ -85,7 +87,6 @@ export class AddPartnerModalComponent implements AfterViewInit {
   }
 
   toggleIndex(index: number) {
-    console.log('index: ', index)
     if (this.addPartnerForm.get('email')?.invalid ||
       this.addPartnerForm.get('certificate')?.invalid ||
       this.addPartnerForm.get('motivation')?.invalid ||
