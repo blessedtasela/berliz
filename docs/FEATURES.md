@@ -491,6 +491,13 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 
+### Unreleased — Dark mode for native controls, brand accent
+
+`color-scheme` now follows the app theme (`html.dark`), so date/time pickers, `<select>` pop-ups, autofill and scrollbars are
+dark in dark mode instead of white pop-ups on a near-black page. Checkboxes/radios/range sliders use the brand red
+(`accent-color`), text selection is brand-tinted, and scrollbars are slim. (Mobile: another user's map-link URL is only
+opened when it is a plain http(s) link.)
+
 ### Unreleased — Typography: Inter, self-hosted
 
 The body asked for Roboto / 'Inter' but no font was ever loaded, so each device fell back to its own system font and the

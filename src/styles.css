@@ -577,3 +577,26 @@ router-outlet + * {
     animation-iteration-count: infinite !important;
   }
 }
+
+
+/* ─── Native-control theming ───────────────────────────────────────────────
+   Without color-scheme the browser draws its own controls (date/time pickers, <select> popups, scrollbars,
+   autofill) in light colours even when the app is in dark mode -- white pop-ups on a near-black page. */
+:root {
+  color-scheme: light;
+  accent-color: #ef4444;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+::selection {
+  background: rgba(239, 68, 68, 0.28);
+}
+
+/* Slim, quiet scrollbars (Firefox + Chromium); the default chunky grey bars clash with the dark surfaces. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.45) transparent;
+}
