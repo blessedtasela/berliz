@@ -2,14 +2,14 @@
 
     <!-- Page header -->
     <div class="flex items-center gap-3">
-        <a routerLink="/dashboard/my-rewards" class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition">
-            <i-feather name="arrow-left" class="text-gray-500" style="width:16px;height:16px;"></i-feather>
+        <a routerLink="/dashboard/my-rewards" class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition">
+            <i-feather name="arrow-left" class="text-gray-500 dark:text-gray-400" style="width:16px;height:16px;"></i-feather>
         </a>
         <div class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
             <i-feather name="gift" class="text-emerald-600" style="width:16px;height:16px;"></i-feather>
         </div>
         <div>
-            <h1 class="text-sm font-bold text-gray-900">Claim your referral session</h1>
+            <h1 class="text-sm font-bold text-gray-900 dark:text-gray-100">Claim your referral session</h1>
             <p class="text-[11px] text-gray-400">Pick an open slot with a trainer or center accepting referral clients.</p>
         </div>
     </div>
@@ -22,13 +22,13 @@
 
         <!-- Eligible providers -->
         <div *ngIf="providers.length > 0" class="flex flex-col gap-3">
-            <div *ngFor="let provider of providers" class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col gap-3">
+            <div *ngFor="let provider of providers" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 flex flex-col gap-3">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                    <div class="w-9 h-9 rounded-full bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/50 flex items-center justify-center shrink-0">
                         <i-feather [name]="provider.centerId ? 'home' : 'user'" class="text-red-600" style="width:15px;height:15px;"></i-feather>
                     </div>
                     <div class="min-w-0">
-                        <p class="text-sm font-bold text-gray-900 truncate">{{ provider.name }}</p>
+                        <p class="text-sm font-bold text-gray-900 dark:text-gray-100 truncate">{{ provider.name }}</p>
                         <p *ngIf="provider.address" class="text-[11px] text-gray-400 truncate">{{ provider.address }}</p>
                     </div>
                 </div>
@@ -47,12 +47,12 @@
         </div>
 
         <!-- No one open right now -->
-        <div *ngIf="providers.length === 0 && !waitlist" class="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col items-center text-center gap-3">
-            <div class="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
+        <div *ngIf="providers.length === 0 && !waitlist" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 flex flex-col items-center text-center gap-3">
+            <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
                 <i-feather name="clock" class="text-gray-300" style="width:22px;height:22px;"></i-feather>
             </div>
             <div>
-                <p class="text-sm font-bold text-gray-900">No one has an open referral slot right now</p>
+                <p class="text-sm font-bold text-gray-900 dark:text-gray-100">No one has an open referral slot right now</p>
                 <p class="text-xs text-gray-400 mt-1">Join the waitlist and we'll notify you the moment a trainer or center opens one up.</p>
             </div>
             <button type="button" (click)="joinWaitlist()" [disabled]="joiningWaitlist"
@@ -64,10 +64,10 @@
         </div>
 
         <!-- On the waitlist -->
-        <div *ngIf="waitlist" class="bg-white rounded-2xl border border-emerald-200 bg-emerald-50/40 p-6 flex flex-col items-center text-center gap-2">
+        <div *ngIf="waitlist" class="bg-white dark:bg-gray-900 rounded-2xl border border-emerald-200 bg-emerald-50/40 p-6 flex flex-col items-center text-center gap-2">
             <i-feather name="check-circle" class="text-emerald-600" style="width:24px;height:24px;"></i-feather>
-            <p class="text-sm font-bold text-gray-900">You're on the waitlist</p>
-            <p class="text-xs text-gray-500">{{ waitlist.message || "We'll notify you the moment a referral slot opens up." }}</p>
+            <p class="text-sm font-bold text-gray-900 dark:text-gray-100">You're on the waitlist</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">{{ waitlist.message || "We'll notify you the moment a referral slot opens up." }}</p>
         </div>
 
     </ng-container>

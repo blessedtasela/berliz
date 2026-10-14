@@ -491,6 +491,20 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 
+### Unreleased — All-screens accessibility audit: contrast, unnamed button, dialogs invisible in dark mode
+
+Ran axe-core over every static route (16 public + 68 dashboard, light and dark, desktop and 390 px phone = 332 page loads) against the
+production build with a local mock API: no hangs, no horizontal overflow, no broken images, no uncaught JS errors. Findings fixed:
+- **Colour contrast:** 3,345 text nodes failed WCAG AA, nearly all from the same few utilities for secondary text
+  (`text-gray-400` on white 2.5:1, `dark:text-gray-500` on dark 3.0-3.7:1, `text-red-600` on dark 3.7:1, small sky/zinc links).
+  Corrected centrally in `styles.css` ("Contrast corrections") plus the status pills (green/yellow/blue badges) in their templates.
+  Re-measured: 26 left (3,345 before).
+- The notification bell in the top bar had no accessible name (every dashboard route); it now announces the unread count.
+- Six dialogs/pages had no dark styling at all, so in dark mode they showed dark text on the dark dialog surface: update-profile,
+  change-password, forgot/reset-password, the weekly-availability editor, the referral-claim page, edit-to-do, and the 404 page.
+- Lesson for local checks: do not run a build while the local test server or headless Chrome has the output folder open —
+  the build then "completes" without rewriting files (Windows file lock), and you end up verifying the old bundle.
+
 ### Unreleased — Dark mode for native controls, brand accent
 
 `color-scheme` now follows the app theme (`html.dark`), so date/time pickers, `<select>` pop-ups, autofill and scrollbars are
