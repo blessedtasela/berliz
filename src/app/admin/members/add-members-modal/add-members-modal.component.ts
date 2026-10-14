@@ -1,4 +1,5 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, EventEmitter, OnInit, DestroyRef, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -29,6 +30,7 @@ import { genericError } from 'src/validators/form-validators.module';
     standalone: false
 })
 export class AddMembersModalComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   onAddMemberEmit = new EventEmitter();
   addMemberForm!: FormGroup;
   invalidForm = false;
@@ -60,8 +62,8 @@ export class AddMembersModalComponent implements OnInit {
 
     this.store.dispatch(loadActiveUsers());
     this.store.dispatch(loadActiveCategories());
-    this.store.select(selectUsers).subscribe(users => this.users = users);
-    this.store.select(selectActiveCategories).subscribe(categories => this.categories = categories);
+    this.store.select(selectUsers).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(users => this.users = users);
+    this.store.select(selectActiveCategories).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(categories => this.categories = categories);
   }
 
   onCategoryToggle(categoryId: number, event: any): void {

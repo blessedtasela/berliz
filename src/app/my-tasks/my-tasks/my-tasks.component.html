@@ -225,7 +225,7 @@
                             'border-red-500 bg-red-600': isStepDone(sub),
                             'border-gray-300 dark:border-gray-600 hover:border-red-400': !isStepDone(sub),
                             'cursor-default opacity-60': isTrainer
-                        }">
+                        }" aria-label="Confirm">
                         <i-feather *ngIf="isStepDone(sub)" name="check" class="text-white"
                             style="width:10px;height:10px;"></i-feather>
                     </button>

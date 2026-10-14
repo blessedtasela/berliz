@@ -55,7 +55,7 @@
 
                 <!-- Select All -->
                 <button type="button" (click)="toggleSelectAll($event)" class="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 hover:border-red-400 dark:hover:border-red-500
-                       flex items-center justify-center bg-white dark:bg-gray-900 transition shrink-0">
+                       flex items-center justify-center bg-white dark:bg-gray-900 transition shrink-0" aria-label="Select">
                     <div *ngIf="isSelectAllChecked()" class="w-2 h-2 rounded-full bg-red-600 dark:bg-red-500"></div>
                 </button>
 
@@ -129,7 +129,7 @@
                         <span class="w-2 h-2 rounded-full mt-1.5 shrink-0" [ngClass]="n.read ? 'bg-gray-300 dark:bg-gray-600' : 'bg-red-600 dark:bg-red-500'"></span>
 
                         <!-- Text -->
-                        <div class="flex flex-col flex-1 min-w-0 cursor-pointer" (click)="readNotification(n.id)">
+                        <div class="flex flex-col flex-1 min-w-0 cursor-pointer" (click)="readNotification(n.id)" role="button" tabindex="0" (keydown.enter)="readNotification(n.id)">
                             <div class="flex items-center justify-between gap-2">
                                 <span class="text-xs leading-snug break-words" [ngClass]="{
                                       'font-semibold text-gray-900 dark:text-gray-100': !n.read,
@@ -163,7 +163,7 @@
 
                             <!-- Checkbox -->
                             <button type="button" (click)="onToggleSelect($event, n)" class="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 hover:border-red-400 dark:hover:border-red-500
-                                   flex items-center justify-center bg-white dark:bg-gray-900 transition">
+                                   flex items-center justify-center bg-white dark:bg-gray-900 transition" aria-label="Select">
                                 <div *ngIf="n.checked" class="w-2 h-2 rounded-full bg-red-600 dark:bg-red-500"></div>
                             </button>
 

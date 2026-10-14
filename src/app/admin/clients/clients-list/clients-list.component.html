@@ -2,7 +2,7 @@
     <!-- Mobile: card rows (matches admin/categories pattern) -->
     <div class="sm:hidden divide-y divide-gray-100 dark:divide-gray-800">
         <div *ngFor="let client of clientsData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 dark:active:bg-gray-800 transition-colors">
-            <div class="min-w-0 flex-1" (click)="openClientDetailsModal(client.id)">
+            <div class="min-w-0 flex-1" (click)="openClientDetailsModal(client.id)" role="button" tabindex="0" (keydown.enter)="openClientDetailsModal(client.id)">
                 <div class="flex items-center gap-2 flex-wrap">
                     <app-user-hover-card [userId]="client.user.id" [firstname]="client.user.firstname"
                         [lastname]="client.user.lastname" [photo]="client.user.profilePhoto"
@@ -23,7 +23,7 @@
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="updateClientStatus(client.id)"
-                    [title]="client.status === 'false' ? 'Activate' : 'Deactivate'">
+                    [title]="client.status === 'false' ? 'Activate' : 'Deactivate'" [attr.aria-label]="client.status === 'false' ? 'Activate' : 'Deactivate'">
                     <i-feather [name]="client.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"

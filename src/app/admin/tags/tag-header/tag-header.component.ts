@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, Input, DestroyRef, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Tags } from 'src/app/models/tags.interface';
 import { AddTagModalComponent } from '../add-tag-modal/add-tag-modal.component';
@@ -14,6 +15,7 @@ import { selectTags } from 'src/app/state/tag/tag.selectors';
     standalone: false
 })
 export class TagHeaderComponent {
+  private destroyRef = inject(DestroyRef);
   @Input() tagsData: Tags[] = [];
   selectedSortOption: string = 'date';
   @Input() tagsLength: number = 0;
@@ -27,7 +29,7 @@ export class TagHeaderComponent {
 
   handleEmitEvent() {
     this.store.dispatch(loadTags());
-    this.store.select(selectTags).subscribe((tagsData) => {
+    this.store.select(selectTags).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((tagsData) => {
       this.tagsData = tagsData
       this.tagsLength = this.tagsData.length
       this.totalTags = this.tagsData.length;

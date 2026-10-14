@@ -51,7 +51,7 @@
       <!-- Medical conditions -->
       <div class="flex flex-col gap-1.5">
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Medical conditions</label>
-        <textarea formControlName="medicalConditions" rows="3" data-testid="medical-conditions"
+        <textarea aria-label="Medical conditions" formControlName="medicalConditions" rows="3" data-testid="medical-conditions"
           placeholder="e.g. asthma, high blood pressure, diabetes..."
           class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"></textarea>
       </div>
@@ -59,7 +59,7 @@
       <!-- Medications -->
       <div class="flex flex-col gap-1.5">
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Current medications</label>
-        <textarea formControlName="medications" rows="2" data-testid="medications"
+        <textarea aria-label="Current medications" formControlName="medications" rows="2" data-testid="medications"
           placeholder="List any medications currently being taken..."
           class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"></textarea>
       </div>
@@ -67,7 +67,7 @@
       <!-- Injuries / limitations -->
       <div class="flex flex-col gap-1.5">
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Injuries or physical limitations</label>
-        <textarea formControlName="injuriesOrLimitations" rows="3" data-testid="injuries-or-limitations"
+        <textarea aria-label="Injuries or physical limitations" formControlName="injuriesOrLimitations" rows="3" data-testid="injuries-or-limitations"
           placeholder="e.g. previous knee surgery, lower back pain..."
           class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"></textarea>
       </div>
@@ -75,7 +75,7 @@
       <!-- Training history -->
       <div class="flex flex-col gap-1.5">
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Training history</label>
-        <textarea formControlName="trainingHistory" rows="3" data-testid="training-history"
+        <textarea aria-label="Training history" formControlName="trainingHistory" rows="3" data-testid="training-history"
           placeholder="Previous training experience, activity level, goals..."
           class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm"></textarea>
       </div>
@@ -86,14 +86,14 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Name</label>
-            <input formControlName="emergencyContactName" type="text" data-testid="emergency-contact-name"
+            <input aria-label="Name" formControlName="emergencyContactName" type="text" data-testid="emergency-contact-name"
               class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm" />
             <span *ngIf="(f['emergencyContactName'].dirty || f['emergencyContactName'].touched) && f['emergencyContactName'].invalid"
               class="text-[11px] text-red-600 dark:text-red-400">Emergency contact name is required.</span>
           </div>
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Phone</label>
-            <input formControlName="emergencyContactPhone" type="tel" data-testid="emergency-contact-phone"
+            <input aria-label="Phone" formControlName="emergencyContactPhone" type="tel" data-testid="emergency-contact-phone"
               class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm" />
             <span *ngIf="(f['emergencyContactPhone'].dirty || f['emergencyContactPhone'].touched) && f['emergencyContactPhone'].invalid"
               class="text-[11px] text-red-600 dark:text-red-400">Emergency contact phone is required.</span>

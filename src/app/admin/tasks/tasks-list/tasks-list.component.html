@@ -2,7 +2,7 @@
     <!-- Mobile: card rows (matches admin/categories pattern) -->
     <div class="sm:hidden divide-y divide-gray-100 dark:divide-gray-800">
         <div *ngFor="let task of tasksData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 dark:active:bg-gray-800 transition-colors">
-            <div class="min-w-0 flex-1" (click)="openTaskDetails(task.id)">
+            <div class="min-w-0 flex-1" (click)="openTaskDetails(task.id)" role="button" tabindex="0" (keydown.enter)="openTaskDetails(task.id)">
                 <div class="flex items-center gap-2 flex-wrap">
                     <app-user-hover-card [userId]="task.userId" [firstname]="task.userFirstname"
                         [lastname]="task.userLastname" [email]="task.userEmail" [label]="task.userEmail">
@@ -29,7 +29,7 @@
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="updateTaskStatus(task.id)"
-                    [title]="task.status === 'false' ? 'Activate' : 'Deactivate'">
+                    [title]="task.status === 'false' ? 'Activate' : 'Deactivate'" [attr.aria-label]="task.status === 'false' ? 'Activate' : 'Deactivate'">
                     <i-feather [name]="task.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"

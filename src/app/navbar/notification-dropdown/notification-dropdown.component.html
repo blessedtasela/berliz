@@ -25,7 +25,7 @@
         <div *ngFor="let n of notifications | slice:0:visibleCount" (click)="openNotification(n)"
             class="flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition" [ngClass]="n.read
         ? 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-        : 'bg-red-50 dark:bg-red-950/20 border-red-100 dark:border-red-900 hover:border-red-200 dark:hover:border-red-800'">
+        : 'bg-red-50 dark:bg-red-950/20 border-red-100 dark:border-red-900 hover:border-red-200 dark:hover:border-red-800'" role="button" tabindex="0" (keydown.enter)="openNotification(n)">
 
             <span class="w-2 h-2 rounded-full mt-1.5 shrink-0" [ngClass]="n.read ? 'bg-gray-300 dark:bg-gray-600' : 'bg-red-600'">
             </span>

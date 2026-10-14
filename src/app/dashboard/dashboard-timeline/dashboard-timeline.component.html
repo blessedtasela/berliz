@@ -72,14 +72,19 @@
             </button>
         </div>
 
-        <p *ngIf="uploadError" class="text-[11px] text-red-600 dark:text-red-400">{{ uploadError }}</p>
+        <div *ngIf="uploading" class="h-1.5 w-full rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden"
+            role="progressbar" aria-label="Upload progress" [attr.aria-valuenow]="uploadPercent" aria-valuemin="0" aria-valuemax="100">
+            <div class="h-full rounded-full bg-red-600 transition-all duration-300 ease-out" [style.width.%]="uploadPercent"></div>
+        </div>
+
+        <p *ngIf="uploadError" role="alert" class="text-[11px] text-red-600 dark:text-red-400">{{ uploadError }}</p>
 
         <div class="flex items-center justify-between gap-2 pt-1 border-t border-gray-100 dark:border-gray-800">
             <label class="flex items-center gap-1.5 text-[11px] font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100
                           cursor-pointer transition px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
                 <i-feather *ngIf="!uploading" name="image" style="width:14px;height:14px;"></i-feather>
                 <i-feather *ngIf="uploading" name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>
-                {{ uploading ? 'Uploading…' : 'Add photo' }}
+                {{ uploading ? 'Uploading… ' + uploadPercent + '%' : 'Add photo' }}
                 <input type="file" accept="image/jpeg,image/png,image/webp" class="hidden"
                     [disabled]="uploading || !!uploadedPhoto || !!uploadedVideo" (change)="onFileSelected($event)" />
             </label>

@@ -42,7 +42,7 @@
         <div *ngIf="photos.length > 1" class="flex flex-wrap gap-2">
             <button *ngFor="let photo of photos" type="button" (click)="setActivePhoto(photo)"
                 class="w-16 h-16 rounded-lg border overflow-hidden bg-gray-50 dark:bg-gray-800 transition"
-                [ngClass]="activePhoto === photo ? 'border-red-600 ring-1 ring-red-600/30' : 'border-gray-200 dark:border-gray-700 hover:border-red-200'">
+                [ngClass]="activePhoto === photo ? 'border-red-600 ring-1 ring-red-600/30' : 'border-gray-200 dark:border-gray-700 hover:border-red-200'" aria-label="View photo">
                 <img [src]="photo | strapiUrl" [alt]="equipment.name" class="w-full h-full object-contain p-1" />
             </button>
         </div>

@@ -109,7 +109,7 @@
 
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">New password</label>
-            <input formControlName="password" id="password" type="password" placeholder="Enter a new password" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+            <input aria-label="New password" autocomplete="current-password" formControlName="password" id="password" type="password" placeholder="Enter a new password" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
                         'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': passwordForceChnageForm.get('password')?.invalid && passwordForceChnageForm.get('password')?.touched,
@@ -124,7 +124,7 @@
 
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Confirm password</label>
-            <input formControlName="confirmPassword" id="confirmPassword" type="password" placeholder="Re-type password"
+            <input aria-label="Confirm password" autocomplete="new-password" formControlName="confirmPassword" id="confirmPassword" type="password" placeholder="Re-type password"
                 class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{

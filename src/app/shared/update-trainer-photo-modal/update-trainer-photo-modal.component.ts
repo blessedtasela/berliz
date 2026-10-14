@@ -40,7 +40,6 @@ export class UpdateTrainerPhotoModalComponent {
 
   onImgSelected(event: any): void {
     this.selectedImage = event.target.files[0];
-    console.log("onSelectedImage", this.selectedImage)
   }
 
 

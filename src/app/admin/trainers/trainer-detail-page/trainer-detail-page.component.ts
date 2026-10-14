@@ -78,7 +78,7 @@ export class TrainerDetailPageComponent implements OnInit, OnDestroy {
   }
 
   openUrl(url: any) {
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   openAvailability(): void {

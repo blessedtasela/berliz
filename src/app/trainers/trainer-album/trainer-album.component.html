@@ -17,7 +17,7 @@
 
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <button *ngFor="let photo of photos" type="button" (click)="open(photo)" class="group relative rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950
-                   hover:border-red-600/40 transition">
+                   hover:border-red-600/40 transition" aria-label="View photo">
             <img [src]="photoUrl(photo)" [alt]="photo.name"
                 class="w-full aspect-square object-cover object-top group-hover:scale-105 transition duration-300"
                 (error)="onImageError($event)" />

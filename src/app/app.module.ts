@@ -38,6 +38,7 @@ import { AuthInterceptor } from './services/auth.interceptor';
 import { ClientMetaInterceptor } from './services/client-meta.interceptor';
 import { GlobalErrorHandlerService } from './services/global-error-handler.service';
 import { StoreModule } from '@ngrx/store';
+import { RefreshAfterMutationEffects } from './state/refresh-after-mutation.effects';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { WebSocketService } from './services/web-socket.service';
@@ -188,7 +189,7 @@ const dbConfig: DBConfig = {
         NoopAnimationsModule,
         // Store and Effects Modules for NgRx
         StoreModule.forRoot({}),
-        EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects, WorkoutEffects, AnalyticsEffects, UserProfileEffects, FaqEffects, BookingEffects, AvailabilityEffects, PlanEffects, ProgressShareEffects, ProgressEntryEffects, MessageEffects, PayoutEffects, ClientIntakeEffects, ConnectionEffects, PostActivityEffects]),
+        EffectsModule.forRoot([UserEffects, CategoryEffects, TrainerEffects, CenterEffects, NotificationEffects, PartnerEffects, SubscriptionEffects, TaskEffects, TodoEffects, ExerciseEffects, MuscleGroupEffects, NewsletterEffects, TagEffects, ContactUsEffects, ClientEffects, DashboardEffects, TestimonialEffects, PaymentEffects, MemberEffects, WorkoutEffects, AnalyticsEffects, UserProfileEffects, FaqEffects, BookingEffects, AvailabilityEffects, PlanEffects, ProgressShareEffects, ProgressEntryEffects, MessageEffects, PayoutEffects, ClientIntakeEffects, ConnectionEffects, PostActivityEffects, RefreshAfterMutationEffects]),
         StoreDevtoolsModule.instrument({
             maxAge: 25,
             logOnly: !isDevMode(),

@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, Input, DestroyRef, inject } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import jwt_decode from "jwt-decode";
 import { Store } from '@ngrx/store';
@@ -12,6 +13,7 @@ import { selectDashboardData } from 'src/app/state/dashboard/dashboard.selectors
     standalone: false
 })
 export class DashboardActionComponent {
+  private destroyRef = inject(DestroyRef);
   @Input() data: any;
   responseMessage: any;
   showAllData: boolean = false;
@@ -27,7 +29,7 @@ export class DashboardActionComponent {
   }
 
   ngOnInit(): void {
-    this.store.select(selectDashboardData).subscribe((data) => {
+    this.store.select(selectDashboardData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data) => {
       if (!data) {
         this.handleEmitEvent()
       } else {

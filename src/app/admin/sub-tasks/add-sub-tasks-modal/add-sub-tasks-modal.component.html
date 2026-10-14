@@ -28,7 +28,7 @@
         <!-- Task -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Task</label>
-            <select formControlName="taskId" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
+            <select aria-label="Task" formControlName="taskId" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="addSubTaskForm.get('taskId')?.invalid && invalidForm ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'">
                 <option value="" selected hidden>Select a task</option>
@@ -44,7 +44,7 @@
         <!-- Name -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Step name</label>
-            <input formControlName="name" type="text" placeholder="e.g. 3x12 Bench Press" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+            <input aria-label="Step name" formControlName="name" type="text" placeholder="e.g. 3x12 Bench Press" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="addSubTaskForm.get('name')?.invalid && invalidForm ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'">
             <p *ngIf="addSubTaskForm.get('name')?.invalid && invalidForm"
@@ -57,7 +57,7 @@
         <!-- Exercise -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Exercise</label>
-            <select formControlName="exerciseId" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
+            <select aria-label="Exercise" formControlName="exerciseId" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="addSubTaskForm.get('exerciseId')?.invalid && invalidForm ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'">
                 <option value="" selected hidden>Select an exercise</option>

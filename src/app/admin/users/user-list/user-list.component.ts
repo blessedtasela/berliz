@@ -1,4 +1,5 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, Input, OnChanges, DestroyRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -25,6 +26,7 @@ import { memoizePhotoUriByKey, photoDataUri } from 'src/app/shared/photo-lightbo
     standalone: false
 })
 export class UserListComponent implements OnChanges {
+  private destroyRef = inject(DestroyRef);
   @Input() usersData: Users[] = [];
   @Input() deepLinkUserId: number | null = null;
   private deepLinkHandled = false;
@@ -91,7 +93,7 @@ export class UserListComponent implements OnChanges {
   }
 
   handleEmitEvent() {
-    this.store.select(selectUsers).subscribe((users) => {
+    this.store.select(selectUsers).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((users) => {
       this.usersData = users;
     });
   }

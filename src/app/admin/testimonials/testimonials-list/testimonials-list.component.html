@@ -2,7 +2,7 @@
     <!-- Mobile: card rows (matches admin/categories pattern) -->
     <div class="sm:hidden divide-y divide-gray-100 dark:divide-gray-800">
         <div *ngFor="let category of testimonialsData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 dark:active:bg-gray-800 transition-colors">
-            <div class="min-w-0 flex-1" (click)="openTestimonialDetails(category.id)">
+            <div class="min-w-0 flex-1" (click)="openTestimonialDetails(category.id)" role="button" tabindex="0" (keydown.enter)="openTestimonialDetails(category.id)">
                 <div class="flex items-center gap-2 flex-wrap">
                     <app-user-hover-card [userId]="category.userId" [firstname]="category.userFirstname"
                         [lastname]="category.userLastname" [email]="category.userEmail"
@@ -18,7 +18,7 @@
             <div class="flex items-center gap-0.5 shrink-0">
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="toggleFeatured(category.id)"
-                    [title]="category.featured ? 'Remove from public page' : 'Feature on public page'">
+                    [title]="category.featured ? 'Remove from public page' : 'Feature on public page'" aria-label="Toggle featured">
                     <i-feather name="star" [ngClass]="category.featured ? 'text-amber-500 fill-current' : 'text-gray-400 dark:text-gray-500'"
                         style="width:16px;height:16px;"></i-feather>
                 </button>
@@ -28,7 +28,7 @@
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="updateTestimonialStatus(category.id)"
-                    [title]="category.status === 'false' ? 'Activate' : 'Deactivate'">
+                    [title]="category.status === 'false' ? 'Activate' : 'Deactivate'" [attr.aria-label]="category.status === 'false' ? 'Activate' : 'Deactivate'">
                     <i-feather [name]="category.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"
@@ -84,7 +84,7 @@
                             </button>
                             <button type="button" class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition"
                                 (click)="toggleFeatured(category.id)"
-                                [title]="category.featured ? 'Remove from public page' : 'Feature on public page'">
+                                [title]="category.featured ? 'Remove from public page' : 'Feature on public page'" aria-label="Toggle featured">
                                 <i-feather name="star" [ngClass]="category.featured ? 'text-amber-500 fill-current' : 'text-gray-400 dark:text-gray-500'"
                                     style="width:15px;height:15px;"></i-feather>
                             </button>

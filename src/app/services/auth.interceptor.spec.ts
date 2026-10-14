@@ -1,5 +1,5 @@
-import { TestBed } from '@angular/core/testing';
-import { HttpClient, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { TestBed, fakeAsync, flush, tick } from '@angular/core/testing';
+import { HttpClient, HttpEventType, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -83,4 +83,69 @@ describe('AuthInterceptor forceLogout routing', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/login'], jasmine.any(Object));
     request$.unsubscribe();
   });
+});
+
+/**
+ * Uploads used to be cut off after a flat 90 s however much had gone up, so a healthy 50 MB video on a
+ * slow mobile connection failed. Now only silence (no progress, no response) ends one.
+ */
+describe('AuthInterceptor upload timeouts', () => {
+  let httpMock: HttpTestingController;
+  let http: HttpClient;
+
+  beforeEach(() => {
+    localStorage.removeItem('token');
+    TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
+      providers: [
+        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+      ]
+    });
+    httpMock = TestBed.inject(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+  });
+
+  afterEach(() => httpMock.verify());
+
+  it('keeps a slow upload alive for longer than the old 90 s cap as long as bytes keep going up', fakeAsync(() => {
+    let finished = false;
+    let failed: any;
+    const form = new FormData();
+    form.append('files', new Blob(['x']), 'a.mp4');
+    http.post('/api/strapi/upload', form, { reportProgress: true, observe: 'events' })
+      .subscribe({ next: e => { if (e.type === HttpEventType.Response) finished = true; }, error: e => (failed = e) });
+    const req = httpMock.expectOne('/api/strapi/upload');
+
+    for (let i = 1; i <= 8; i++) {
+      tick(60_000); // 8 minutes in total, a progress event every minute
+      req.event({ type: HttpEventType.UploadProgress, loaded: i * 10, total: 100 });
+    }
+    expect(failed).toBeUndefined();
+    req.flush([]);
+    expect(finished).toBeTrue();
+  }));
+
+  it('gives up on an upload that goes silent', fakeAsync(() => {
+    let failed: any;
+    const form = new FormData();
+    form.append('files', new Blob(['x']), 'a.mp4');
+    http.post('/api/strapi/upload', form, { reportProgress: true, observe: 'events' }).subscribe({ error: e => (failed = e) });
+    httpMock.expectOne('/api/strapi/upload');
+
+    tick(121_000);
+    expect(failed?.error?.message).toContain('taking too long');
+    flush();
+  }));
+
+  it('still times ordinary requests out after 20 s', fakeAsync(() => {
+    let failed: any;
+    http.get('/api/trainer/getActiveTrainers').subscribe({ error: e => (failed = e) });
+    httpMock.expectOne('/api/trainer/getActiveTrainers');
+
+    tick(21_000);
+    expect(failed?.error?.message).toContain('taking too long');
+    flush();
+  }));
 });

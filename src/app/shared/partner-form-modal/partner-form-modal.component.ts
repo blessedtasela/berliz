@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectorRef, Component, EventEmitter, DestroyRef, inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader'; import { AddPartnerModalComponent } from 'src/app/admin/partners/add-partner-modal/add-partner-modal.component';
@@ -17,6 +18,7 @@ import { Store } from '@ngrx/store';
     standalone: false
 })
 export class PartnerFormModalComponent {
+  private destroyRef = inject(DestroyRef);
   onAddPartnerEmit = new EventEmitter();
   addPartnerForm!: FormGroup;
   formIndex: number = 0;
@@ -54,7 +56,7 @@ export class PartnerFormModalComponent {
       'role': ['', [Validators.required, Validators.minLength(3)]],
     });
 
-    this.store.select(selectUser).subscribe(user => {
+    this.store.select(selectUser).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(user => {
       this.user = user
     });
   }
@@ -77,7 +79,6 @@ export class PartnerFormModalComponent {
   }
 
   toggleIndex(index: number) {
-    console.log('index: ', index)
     if (
       this.addPartnerForm.get('certificate')?.invalid ||
       this.addPartnerForm.get('motivation')?.invalid ||

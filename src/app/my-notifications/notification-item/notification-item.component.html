@@ -5,14 +5,14 @@
     'z-50': menuOpen,
     'z-0': !menuOpen
   }" style="overflow: visible;" (click)="onItemClick($event)" (mousedown)="startPress($event)"
-    (mouseup)="cancelPress()" (mouseleave)="cancelPress()">
+    (mouseup)="cancelPress()" (mouseleave)="cancelPress()" role="button" tabindex="0" (keydown.enter)="onItemClick($any($event))">
 
     <!-- Unread accent -->
     <div *ngIf="!item.read" class="absolute left-0 top-0 h-full w-1 bg-red-600 dark:bg-red-500 rounded-l-xl"></div>
 
     <!-- Checkbox -->
     <button type="button" (click)="onToggleClick($event)" class="mt-0.5 w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 hover:border-red-400 dark:hover:border-red-500
-           flex items-center justify-center shrink-0 transition">
+           flex items-center justify-center shrink-0 transition" aria-label="Select">
         <div *ngIf="item.checked" class="w-2 h-2 bg-red-600 dark:bg-red-500 rounded-full"></div>
     </button>
 

@@ -33,7 +33,7 @@
 
     <div class="flex flex-col gap-1">
       <label class="text-[11px] uppercase tracking-wide text-gray-400 dark:text-gray-500 font-semibold">Title (optional)</label>
-      <input type="text" [(ngModel)]="title" placeholder="e.g. Saturday morning 5k" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
+      <input aria-label="Title (optional)" type="text" [(ngModel)]="title" placeholder="e.g. Saturday morning 5k" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400 dark:placeholder:text-gray-500" />
     </div>
 
@@ -48,7 +48,7 @@
     </div>
     <div *ngIf="!solo" class="flex flex-col gap-1">
       <label class="text-[11px] uppercase tracking-wide text-gray-400 dark:text-gray-500 font-semibold">City</label>
-      <input type="text" [(ngModel)]="city" placeholder="e.g. Vancouver" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
+      <input aria-label="City" type="text" [(ngModel)]="city" placeholder="e.g. Vancouver" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400 dark:placeholder:text-gray-500" />
     </div>
 
@@ -63,14 +63,14 @@
 
       <div class="flex flex-col gap-1">
         <label class="text-[11px] uppercase tracking-wide text-gray-400 dark:text-gray-500 font-semibold">Max runners (optional)</label>
-        <input type="number" min="1" [(ngModel)]="maxParticipants" placeholder="No limit" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
+        <input aria-label="Max runners (optional)" type="number" min="1" [(ngModel)]="maxParticipants" placeholder="No limit" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400 dark:placeholder:text-gray-500" />
       </div>
     </ng-container>
 
     <div class="flex flex-col gap-1">
       <label class="text-[11px] uppercase tracking-wide text-gray-400 dark:text-gray-500 font-semibold">Notes (optional)</label>
-      <textarea [(ngModel)]="notes" rows="2" placeholder="Meeting point, pace, anything else to know" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs resize-none
+      <textarea aria-label="Notes (optional)" [(ngModel)]="notes" rows="2" placeholder="Meeting point, pace, anything else to know" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs resize-none
                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition placeholder:text-gray-400 dark:placeholder:text-gray-500"></textarea>
     </div>
 

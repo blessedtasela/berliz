@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectorRef, Component, EventEmitter, DestroyRef, inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -17,6 +18,7 @@ import { genericError } from 'src/validators/form-validators.module';
     standalone: false
 })
 export class AddTrainerPricingModalComponent {
+  private destroyRef = inject(DestroyRef);
   onAddTrainerPricingEmit = new EventEmitter();
   addTrainerPricingForm!: FormGroup;
   invalidForm: boolean = false;
@@ -50,13 +52,13 @@ export class AddTrainerPricingModalComponent {
 
   onEmit(): void {
     this.store.dispatch(loadTrainers());
-    this.store.select(selectTrainers).subscribe((trainers) => {
+    this.store.select(selectTrainers).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((trainers) => {
       this.trainers = trainers;
     });
   }
 
   handleEmitEvent() {
-   this.store.select(selectActiveTrainers).subscribe((trainers) => {
+   this.store.select(selectActiveTrainers).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((trainers) => {
       this.trainers = trainers;
     });
   }

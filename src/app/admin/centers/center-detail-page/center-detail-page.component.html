@@ -65,7 +65,7 @@
                 <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right flex items-center gap-1.5 justify-end">
                     {{ centerData.address }}
                     <button type="button" (click)="openUrl(centerData.location)"
-                        class="text-red-600 hover:text-red-700 transition shrink-0">
+                        class="text-red-600 hover:text-red-700 transition shrink-0" aria-label="Open location in maps">
                         <i-feather name="map-pin" style="width:13px;height:13px;"></i-feather>
                     </button>
                 </span>

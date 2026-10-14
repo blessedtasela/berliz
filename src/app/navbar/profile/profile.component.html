@@ -28,7 +28,7 @@
 <!-- Profile trigger -->
 <div *ngIf="userData" class="relative font-sans">
 
-    <div class="flex items-center gap-2 cursor-pointer" (click)="toggleProfile()" (click)="stopPropagation($event)">
+    <div class="flex items-center gap-2 cursor-pointer" (click)="toggleProfile()" (click)="stopPropagation($event)" role="button" tabindex="0" (keydown.enter)="toggleProfile()">
 
         <!-- noZoom: this avatar's job is to open the account menu (parent click), not a photo lightbox. -->
         <img alt="" [src]="photoSrc || '../../../assets/icons/user.png'" noZoom

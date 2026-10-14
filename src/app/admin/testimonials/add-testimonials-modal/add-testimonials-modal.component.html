@@ -28,7 +28,7 @@
         <!-- Client -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Client</label>
-            <select formControlName="clientId" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
+            <select aria-label="Client" formControlName="clientId" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="addTestimonialForm.get('clientId')?.invalid && invalidForm ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'">
                 <option value="" selected hidden>Select a client</option>
@@ -77,7 +77,7 @@
         <!-- Center picker -->
         <div class="flex flex-col gap-1" *ngIf="addTestimonialForm.get('target')?.value === 'center'">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Center</label>
-            <select formControlName="centerId" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
+            <select aria-label="Center" formControlName="centerId" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
                 <option value="" selected hidden>Select a center</option>
                 <option *ngFor="let center of centers" [value]="center.id">{{ center.name }}</option>
@@ -87,7 +87,7 @@
         <!-- Trainer picker -->
         <div class="flex flex-col gap-1" *ngIf="addTestimonialForm.get('target')?.value === 'trainer'">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Trainer</label>
-            <select formControlName="trainerId" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
+            <select aria-label="Trainer" formControlName="trainerId" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
                 <option value="" selected hidden>Select a trainer</option>
                 <option *ngFor="let trainer of trainers" [value]="trainer.id">{{ trainer.name }}</option>
@@ -97,7 +97,7 @@
         <!-- Testimonial text -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Testimonial</label>
-            <textarea formControlName="testimonial" rows="4" placeholder="What did they say?" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+            <textarea aria-label="Testimonial" formControlName="testimonial" rows="4" placeholder="What did they say?" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="addTestimonialForm.get('testimonial')?.invalid && invalidForm ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'"></textarea>
             <p *ngIf="addTestimonialForm.get('testimonial')?.invalid && invalidForm"

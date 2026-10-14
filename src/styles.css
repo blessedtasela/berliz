@@ -477,3 +477,87 @@ ngx-ui-loader .logo-container img {
   border-radius: 10px !important;
   opacity: 0.90 !important;
 }
+
+/* ─── Interaction polish (app-wide, additive) ──────────────────────────────
+   Small global rules so every screen feels the same without per-template edits. */
+
+/* Keyboard users could not see where they were on buttons/links/switches/custom
+   controls (text inputs keep their own focus ring). */
+:where(a, button, summary, [role="button"], [role="switch"], [role="tab"], [tabindex="0"]):focus-visible {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* A field the user has touched and left invalid turns red on its own -- previously each
+   form had to remember to wire this up, and many didn't, so a bad value looked fine. */
+input.ng-invalid.ng-touched:not(:focus):not([type="checkbox"]):not([type="radio"]),
+textarea.ng-invalid.ng-touched:not(:focus),
+select.ng-invalid.ng-touched:not(:focus) {
+  border-color: #ef4444 !important;
+  background-color: rgba(239, 68, 68, 0.04);
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled,
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* Taps respond at once (no 300ms double-tap-zoom wait, no grey flash) and buttons give
+   a small press cue. `scale` is its own property, so it can't clobber Tailwind's
+   translate/rotate utilities the way `transform` would. */
+button,
+[role="button"],
+a {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled):not([role="switch"]):active,
+[role="button"]:active {
+  scale: 0.98;
+}
+
+button,
+[role="button"] {
+  transition-property: color, background-color, border-color, opacity, box-shadow, scale;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
+}
+
+/* Pages ease in on navigation instead of popping. Opacity only: a transform here would
+   become the containing block for position:fixed modals inside the page. */
+router-outlet + * {
+  animation: berlizPageIn 0.22s ease-out both;
+}
+
+@keyframes berlizPageIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Honour "reduce motion": no smooth scroll, no page fade, near-instant transitions.
+   Spinners keep turning -- they signal that something is loading. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .animate-spin {
+    animation-duration: 1s !important;
+    animation-iteration-count: infinite !important;
+  }
+}

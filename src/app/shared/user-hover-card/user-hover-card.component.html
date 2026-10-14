@@ -22,7 +22,7 @@
 <div *ngIf="open && isLinked" (mouseenter)="onEnter()" (mouseleave)="onLeave()" (click)="navigate()"
     class="fixed z-50 w-60 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg p-3
             flex items-start gap-3 cursor-pointer hover:border-red-200 dark:hover:border-red-900 transition"
-    [style.top.px]="cardTop" [style.left.px]="cardLeft">
+    [style.top.px]="cardTop" [style.left.px]="cardLeft" role="button" tabindex="0" (keydown.enter)="navigate()">
 
     <img [src]="photoSrc" [alt]="fullName"
         class="w-10 h-10 rounded-full object-cover object-top bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shrink-0" />

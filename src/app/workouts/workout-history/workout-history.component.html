@@ -138,7 +138,7 @@
         <div class="flex items-center gap-1 shrink-0">
           <button type="button" (click)="shareLog(log)"
             class="w-7 h-7 rounded-lg flex items-center justify-center transition"
-            [ngClass]="log.collaborators.length ? 'text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950/20' : 'text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'">
+            [ngClass]="log.collaborators.length ? 'text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950/20' : 'text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'" aria-label="Share with collaborators">
             <i-feather name="users" style="width:12px;height:12px;"></i-feather>
           </button>
           <button type="button" (click)="editLog(log)"

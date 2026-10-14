@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { Notifications } from 'src/app/models/Notifications.interface';
 import { notificationHasDeepLink } from 'src/app/utils/notification-entity-link.util';
-import { escapeHtml } from 'src/validators/form-validators.module';
+import { highlightHtml } from 'src/app/utils/highlight.util';
 
 @Component({
     selector: 'notification-item',
@@ -189,18 +189,6 @@ export class NotificationItemComponent implements OnChanges {
   // highlight as real markup, so `text` must be HTML-escaped first or it
   // becomes a stored-XSS vector.
   highlight(text: string, query: string): string {
-    const escaped = escapeHtml(text);
-    if (!query) return escaped;
-
-    const words = query
-      .split(/\s+/)
-      .filter(w => w.trim().length > 0)
-      .map(w => escapeHtml(w).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-
-    const regex = new RegExp(words.join('|'), 'gi');
-
-    return escaped.replace(regex, match =>
-      `<span class="text-red-600 font-semibold">${match}</span>`
-    );
+    return highlightHtml(text, query, 'text-red-600 font-semibold');
   }
 }

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 
 import { DashboardTimelineComponent } from './dashboard-timeline.component';
 import { PostService } from 'src/app/services/post.service';
@@ -41,7 +41,7 @@ describe('DashboardTimelineComponent', () => {
     workoutServiceSpy.getTemplates.and.returnValue(of({ message: '', data: [], success: true, statusCode: 200 }));
     const savedServiceSpy = jasmine.createSpyObj('SavedService', ['refresh']);
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
-    const strapiServiceSpy = jasmine.createSpyObj('StrapiService', ['uploadFile', 'uploadToStrapi']);
+    const strapiServiceSpy = jasmine.createSpyObj('StrapiService', ['uploadFile', 'uploadToStrapi', 'uploadWithProgress']);
     strapiSpy = strapiServiceSpy;
 
     TestBed.configureTestingModule({
@@ -108,13 +108,26 @@ describe('DashboardTimelineComponent', () => {
 
     it('uploads a chosen video and keeps it on the composer', () => {
       fixture.detectChanges();
-      strapiSpy.uploadToStrapi.and.returnValue(of([{ id: 9, name: 'squat.mp4', url: '/uploads/squat.mp4', fullUrl: 'x', mime: 'video/mp4', size: 10 }]));
+      strapiSpy.uploadWithProgress.and.returnValue(of({ percent: 100, done: true, result: [{ id: 9, name: 'squat.mp4', url: '/uploads/squat.mp4', fullUrl: 'x', mime: 'video/mp4', size: 10 }] }));
 
       component.onVideoSelected(fileList(mp4()));
 
-      expect(strapiSpy.uploadToStrapi).toHaveBeenCalledTimes(1);
+      expect(strapiSpy.uploadWithProgress).toHaveBeenCalledTimes(1);
       expect(component.uploadedVideo).toEqual({ strapiId: 9, videoUrl: '/uploads/squat.mp4', mimeType: 'video/mp4' });
       expect(component.uploadError).toBeNull();
+    });
+
+    it('shows the upload percentage while the video is going up', () => {
+      fixture.detectChanges();
+      const steps = new Subject<any>();
+      strapiSpy.uploadWithProgress.and.returnValue(steps.asObservable());
+
+      component.onVideoSelected(fileList(mp4()));
+      steps.next({ percent: 40, done: false });
+      fixture.detectChanges();
+
+      expect(component.uploading).toBeTrue();
+      expect(component.uploadPercent).toBe(40);
     });
 
     it('refuses a file that is not a video, without uploading it', () => {
@@ -122,14 +135,14 @@ describe('DashboardTimelineComponent', () => {
 
       component.onVideoSelected(fileList(new File([new Uint8Array(10)], 'notes.pdf', { type: 'application/pdf' })));
 
-      expect(strapiSpy.uploadToStrapi).not.toHaveBeenCalled();
+      expect(strapiSpy.uploadWithProgress).not.toHaveBeenCalled();
       expect(component.uploadedVideo).toBeNull();
       expect(component.uploadError).toContain('MP4');
     });
 
     it('shows the upload failure and keeps no video', () => {
       fixture.detectChanges();
-      strapiSpy.uploadToStrapi.and.returnValue(throwError(() => ({ error: { detail: 'Strapi is down' } })));
+      strapiSpy.uploadWithProgress.and.returnValue(throwError(() => ({ error: { message: 'Strapi is down' } })));
 
       component.onVideoSelected(fileList(mp4()));
 

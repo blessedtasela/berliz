@@ -73,7 +73,7 @@
         <!-- Muscle group name -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Muscle group name</label>
-            <input formControlName="name" type="text" placeholder="Muscle group name" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+            <input aria-label="Muscle group name" formControlName="name" type="text" placeholder="Muscle group name" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
                         'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': (addMuscleGroupForm.get('name')?.invalid && addMuscleGroupForm.get('name')?.touched) || (addMuscleGroupForm.get('name')?.invalid && invalidForm),
@@ -89,7 +89,7 @@
         <!-- Body part -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Body part</label>
-            <select formControlName="bodyPart" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
+            <select aria-label="Body part" formControlName="bodyPart" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
                         'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': (addMuscleGroupForm.get('bodyPart')?.invalid && addMuscleGroupForm.get('bodyPart')?.touched) || (addMuscleGroupForm.get('bodyPart')?.invalid && invalidForm),
@@ -108,7 +108,7 @@
         <!-- Description -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Description</label>
-            <textarea formControlName="description" rows="4" placeholder="Description" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+            <textarea aria-label="Description" formControlName="description" rows="4" placeholder="Description" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
                         'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': (addMuscleGroupForm.get('description')?.invalid && addMuscleGroupForm.get('description')?.touched) || (addMuscleGroupForm.get('description')?.invalid && invalidForm),

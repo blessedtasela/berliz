@@ -45,7 +45,7 @@
                    hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition disabled:opacity-40">
             <i-feather [name]="uploadingAttachment ? 'loader' : 'paperclip'" style="width:16px;height:16px;"></i-feather>
         </button>
-        <input #fileInput type="file" class="hidden" (change)="onFileSelected($event)" />
+        <input #fileInput type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.mp4,.mov,.webm,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.mp3,.m4a,.wav" class="hidden" (change)="onFileSelected($event)" />
 
         <input type="text" [(ngModel)]="body" (ngModelChange)="onInput()" (keydown.enter)="submit()"
             [placeholder]="isEditing ? 'Edit your message…' : placeholder" class="flex-1 min-w-0 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2.5
