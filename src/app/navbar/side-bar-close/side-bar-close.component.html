@@ -8,7 +8,20 @@
     <!-- Separator -->
     <div *ngIf="item.separator" class="w-6 border-t border-gray-800 my-1"></div>
 
-    <a *ngIf="!item.separator && !item.label" [routerLink]="item.route || ''" class="relative group w-10 h-10 rounded-xl flex items-center justify-center transition"
+    <!-- Group: one icon for the whole group (its first page); the open sidebar lists the rest -->
+    <a *ngIf="item.items" [routerLink]="groupRoute(item)" class="relative group w-10 h-10 rounded-xl flex items-center justify-center transition"
+      [attr.aria-label]="item.name"
+      [ngClass]="isGroupActive(item) ? 'bg-red-600/20 border border-red-600/30' : 'hover:bg-gray-800'">
+      <feather-icon [name]="item.icon || ''" style="width:18px;height:18px;" class="shrink-0 flex items-center justify-center"
+        [ngClass]="isGroupActive(item) ? 'text-red-400' : 'text-white'"></feather-icon>
+      <span *ngIf="groupBadge(item) > 0" class="absolute -top-1 -right-1 bg-red-600 text-white text-[8px]
+               px-1.5 py-px rounded-full font-bold leading-none badge-pulse">{{ groupBadge(item) }}</span>
+      <span class="absolute left-full ml-2 px-2 py-1 rounded-lg bg-white text-gray-950 font-bold shadow-lg text-xs
+                   font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 border border-gray-200
+                   pointer-events-none transition-opacity duration-150 z-50">{{ item.name }}</span>
+    </a>
+
+    <a *ngIf="!item.separator && !item.label && !item.items" [routerLink]="item.route || ''" class="relative group w-10 h-10 rounded-xl flex items-center justify-center transition"
       [ngClass]="isActive(item.route || '', item.exact)
         ? 'bg-red-600/20 border border-red-600/30'
         : 'hover:bg-gray-800'">

@@ -45,6 +45,7 @@ export class CenterReviewFormComponent implements OnInit, OnDestroy {
   ) {
     this.reviewForm = this.fb.group({
       comment: ['', [Validators.required, Validators.minLength(10)]],
+      rating: [null as number | null, [Validators.required, Validators.min(1), Validators.max(5)]],
     });
   }
 
@@ -88,6 +89,7 @@ export class CenterReviewFormComponent implements OnInit, OnDestroy {
       data: {
         centerId: String(this.centerId),
         comment: this.reviewForm.value.comment,
+        rating: String(this.reviewForm.value.rating),
       }
     }));
   }

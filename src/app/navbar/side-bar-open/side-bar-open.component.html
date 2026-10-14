@@ -1,48 +1,32 @@
 <nav class="flex flex-col gap-1 px-3 font-sans">
 
-  <ng-container *ngFor="let item of navItems; let first = first">
-
-    <!-- Section label -->
-    <div *ngIf="item.label" class="px-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider" [ngClass]="first ? 'mb-1' : 'mt-3 mb-1'">
-      {{ item.label }}
-    </div>
-
-    <!-- Separator -->
-    <div *ngIf="item.separator" class="border-t border-gray-800 my-1 mx-1"></div>
-
-    <!-- Nav item -->
-    <a *ngIf="!item.separator && !item.label" [routerLink]="item.route"  (click)="closeMobileSidebar()"
-      class="flex items-center gap-2.5 px-3 h-10 rounded-lg text-[12.5px] font-medium transition"
-      [ngClass]="isActive(item.route || '', item.exact)
-        ? 'bg-red-600/20 border border-red-600/30 text-red-400'
-        : 'text-white hover:bg-gray-800 hover:text-white'">
+  <!-- One destination row. Reused for top-level items and for the items inside a group (indented). -->
+  <ng-template #navLink let-item let-inGroup="inGroup">
+    <a [routerLink]="item.route" (click)="closeMobileSidebar()"
+      class="flex items-center gap-2.5 px-3 rounded-lg font-medium transition"
+      [ngClass]="[
+        inGroup ? 'h-9 text-[12px]' : 'h-10 text-[12.5px]',
+        isActive(item.route || '', item.exact)
+          ? 'bg-red-600/20 border border-red-600/30 text-red-400'
+          : (inGroup ? 'text-gray-300 hover:bg-gray-800 hover:text-white' : 'text-white hover:bg-gray-800 hover:text-white')]">
 
       <feather-icon [name]="item.icon || ''" style="width:15px;height:15px;" class="shrink-0 flex items-center justify-center"
-        [ngClass]="isActive(item.route || '', item.exact) ? 'text-red-400' : 'text-white'">
+        [ngClass]="isActive(item.route || '', item.exact) ? 'text-red-400' : (inGroup ? 'text-gray-400' : 'text-white')">
       </feather-icon>
 
       <span class="flex-1 leading-none">{{ item.name }}</span>
 
-      <span *ngIf="item.name === 'Notifications' && notificationLength > 0"
+      <span *ngIf="badgeCount(item.name) > 0"
         class="bg-red-600 text-white text-[9px] px-1.5 py-px rounded-full font-bold badge-pulse">
-        {{ notificationLength }}
-      </span>
-
-      <span *ngIf="item.name === 'Connections' && incomingRequestCount > 0"
-        class="bg-red-600 text-white text-[9px] px-1.5 py-px rounded-full font-bold badge-pulse">
-        {{ incomingRequestCount }}
-      </span>
-
-      <span *ngIf="item.name === 'Messages' && unreadMessageCount > 0"
-        class="bg-red-600 text-white text-[9px] px-1.5 py-px rounded-full font-bold badge-pulse">
-        {{ unreadMessageCount }}
+        {{ badgeCount(item.name) }}
       </span>
 
       <!-- Chevron toggles the child list open/closed without navigating --
            stopPropagation on the button keeps the parent <a>'s own click
            (navigate) from also firing. -->
       <button *ngIf="item.children?.length" type="button" (click)="toggleChildren(item, $event)"
-        class="w-5 h-5 -mr-1 rounded flex items-center justify-center hover:bg-white/10 transition shrink-0" aria-label="Show or hide sub-items">
+        [attr.aria-expanded]="isChildrenVisible(item)" [attr.aria-label]="(isChildrenVisible(item) ? 'Hide ' : 'Show ') + item.name + ' sections'"
+        class="w-5 h-5 -mr-1 rounded flex items-center justify-center hover:bg-white/10 transition shrink-0">
         <i-feather [name]="isChildrenVisible(item) ? 'chevron-up' : 'chevron-down'" style="width:13px;height:13px;"></i-feather>
       </button>
 
@@ -60,6 +44,46 @@
         {{ child.name }}
       </a>
     </div>
+  </ng-template>
+
+  <ng-container *ngFor="let item of navItems; let first = first">
+
+    <!-- Section label -->
+    <div *ngIf="item.label" class="px-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider" [ngClass]="first ? 'mb-1' : 'mt-3 mb-1'">
+      {{ item.label }}
+    </div>
+
+    <!-- Separator -->
+    <div *ngIf="item.separator" class="border-t border-gray-800 my-1 mx-1"></div>
+
+    <!-- Group: a named, collapsible list of destinations -->
+    <ng-container *ngIf="item.items">
+      <button type="button" (click)="toggleGroup(item)" [attr.aria-expanded]="isGroupOpen(item)"
+        class="flex items-center gap-2.5 px-3 h-10 rounded-lg text-[12.5px] font-medium transition w-full text-left"
+        [ngClass]="isGroupActive(item) && !isGroupOpen(item)
+          ? 'bg-red-600/20 border border-red-600/30 text-red-400'
+          : 'text-white hover:bg-gray-800 hover:text-white'">
+        <feather-icon [name]="item.icon || ''" style="width:15px;height:15px;" class="shrink-0 flex items-center justify-center"
+          [ngClass]="isGroupActive(item) ? 'text-red-400' : 'text-white'"></feather-icon>
+        <span class="flex-1 leading-none">{{ item.name }}</span>
+        <span *ngIf="!isGroupOpen(item) && groupBadge(item) > 0"
+          class="bg-red-600 text-white text-[9px] px-1.5 py-px rounded-full font-bold badge-pulse">
+          {{ groupBadge(item) }}
+        </span>
+        <i-feather [name]="isGroupOpen(item) ? 'chevron-up' : 'chevron-down'" style="width:13px;height:13px;" class="shrink-0"></i-feather>
+      </button>
+
+      <div *ngIf="isGroupOpen(item)" class="flex flex-col gap-0.5 ml-4 mb-1 border-l border-gray-800 pl-2">
+        <ng-container *ngFor="let child of item.items">
+          <ng-container *ngTemplateOutlet="navLink; context: { $implicit: child, inGroup: true }"></ng-container>
+        </ng-container>
+      </div>
+    </ng-container>
+
+    <!-- Plain nav item -->
+    <ng-container *ngIf="!item.separator && !item.label && !item.items">
+      <ng-container *ngTemplateOutlet="navLink; context: { $implicit: item, inGroup: false }"></ng-container>
+    </ng-container>
 
   </ng-container>
 

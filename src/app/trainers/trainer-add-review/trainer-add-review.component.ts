@@ -45,6 +45,7 @@ export class TrainerAddReviewComponent implements OnInit, OnDestroy {
   ) {
     this.reviewForm = this.fb.group({
       review: ['', [Validators.required, Validators.minLength(10)]],
+      rating: [null as number | null, [Validators.required, Validators.min(1), Validators.max(5)]],
     });
   }
 
@@ -87,6 +88,7 @@ export class TrainerAddReviewComponent implements OnInit, OnDestroy {
       data: {
         trainerId: this.trainerId,
         review: this.reviewForm.value.review,
+        rating: this.reviewForm.value.rating,
       }
     }));
   }

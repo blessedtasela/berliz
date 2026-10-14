@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PostCommentsComponent } from 'src/app/shared/post-comments/post-comments.component';
+import { ReasonDialogComponent } from 'src/app/shared/reason-dialog/reason-dialog.component';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { PostDetailSheetComponent } from 'src/app/shared/post-detail-sheet/post-detail-sheet.component';
@@ -423,14 +424,19 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
     });
   }
 
-  /** Native prompt for the optional reason -- matches this component's existing use of confirm() for delete; a less-frequent secondary action than commenting, so it doesn't need PostCommentsComponent's inline report form treatment. */
+  /** Asks for the optional reason in a modal -- a less-frequent secondary action than commenting, so it doesn't need PostCommentsComponent's inline report form treatment. */
   reportPost(post: PostResponse): void {
-    const reason = window.prompt('Why are you reporting this post? (optional)');
-    if (reason === null) return; // cancelled
+    this.dialog.open(ReasonDialogComponent, {
+      width: '400px',
+      maxWidth: '95vw',
+      data: { title: 'Report this post', message: 'Tell us what is wrong. This is optional.', placeholder: 'Why are you reporting this post?', confirmText: 'Report' },
+    }).afterClosed().subscribe((reason: string | undefined) => {
+      if (reason === undefined) return; // dismissed
 
-    this.contentReportService.addReport({ targetType: 'post', targetId: post.id, reason: reason.trim() || undefined }).subscribe({
-      next: res => this.snackBarService.openSnackBar(res.data?.message || 'Report submitted', ''),
-      error: err => this.snackBarService.openSnackBar(err.error?.message || 'Could not submit report', 'error'),
+      this.contentReportService.addReport({ targetType: 'post', targetId: post.id, reason: reason || undefined }).subscribe({
+        next: res => this.snackBarService.openSnackBar(res.data?.message || 'Report submitted', ''),
+        error: err => this.snackBarService.openSnackBar(err.error?.message || 'Could not submit report', 'error'),
+      });
     });
   }
 

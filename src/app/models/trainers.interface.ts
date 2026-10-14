@@ -43,6 +43,8 @@ export interface Trainers {
   customLocationFee?: number | null;
   /** Approved public reviews (filled on the public list). */
   reviewCount?: number;
+  /** Mean of the 1-5 star ratings on approved reviews, one decimal; absent until someone has rated. */
+  averageRating?: number | null;
   /** True when this trainer currently holds the platform's top paid subscription tier -- a "Featured" badge perk. */
   featured?: boolean;
   message?: string;
@@ -148,6 +150,8 @@ export interface TrainerReview {
   clientId: number;
   clientName: string;
   review: string;
+  /** 1-5 stars; absent on reviews written before ratings existed. */
+  rating?: number | null;
   likes: number;
   status: string;
   photoFrontBefore: PhotoResponse;

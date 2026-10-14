@@ -41,6 +41,12 @@
             <i-feather name="dollar-sign" style="width:13px;height:13px;"></i-feather>
             Earnings
         </button>
+        <button type="button" (click)="activeTab = 'insights'"
+            class="px-3.5 py-2 text-xs font-semibold border-b-2 -mb-px transition flex items-center gap-1.5"
+            [ngClass]="activeTab === 'insights' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'">
+            <i-feather name="bar-chart-2" style="width:13px;height:13px;"></i-feather>
+            Insights
+        </button>
     </div>
 
     <ng-container *ngIf="activeTab === 'bookings'">
@@ -116,6 +122,12 @@
 
     <div *ngIf="activeTab === 'availability'" class="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 sm:p-5">
         <app-my-availability-editor></app-my-availability-editor>
+    </div>
+
+    <app-calendar-feed-card *ngIf="activeTab === 'availability'"></app-calendar-feed-card>
+
+    <div *ngIf="activeTab === 'insights'" class="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 sm:p-5">
+        <app-provider-insights></app-provider-insights>
     </div>
 
     <div *ngIf="activeTab === 'earnings'" class="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 sm:p-5">

@@ -16,6 +16,7 @@ import {
   Trainers
 } from 'src/app/models/trainers.interface';
 import { Testimonials } from 'src/app/models/testimonials.model';
+import { ProviderAnalyticsService } from 'src/app/services/provider-analytics.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { environment } from 'src/environments/environment';
@@ -80,6 +81,7 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
     private router: Router,
     private store: Store,
     private trainerService: TrainerService,
+    private providerAnalytics: ProviderAnalyticsService,
     private seoService: SeoService,
     private testimonialDialog: TestimonialDialogService,
     private bookingDialog: BookingDialogService,
@@ -149,6 +151,7 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
         this.trainer = match;
         this.trainerId = match.id;
         this.updateSeoTags(match);
+        this.providerAnalytics.recordProfileView({ trainerId: match.id });
         this.loadPublicProfile();
         this.resumePendingAction();
       });

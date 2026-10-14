@@ -38,6 +38,7 @@ import { CenterPartnerFormComponent } from './center-partner-form/center-partner
 import { CenterFormComponent } from './center-form/center-form.component';
 import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { StarRatingComponent } from 'src/app/shared/star-rating/star-rating.component';
 
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 @NgModule({
@@ -67,6 +68,7 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     CenterFormComponent
   ],
   imports: [
+    StarRatingComponent,
     LoadErrorComponent,
     ClickablePhotoDirective,
     CommonModule,

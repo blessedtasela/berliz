@@ -1,3 +1,4 @@
+import { pendingGuestBookingPath } from 'src/app/booking/guest-booking-draft';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -65,7 +66,9 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
    */
   private get returnUrl(): string {
     const url = this.route.snapshot.queryParamMap.get('returnUrl');
-    return url && url.startsWith('/') && !url.startsWith('//') ? url : '/dashboard';
+    if (url && url.startsWith('/') && !url.startsWith('//')) return url;
+    // Came from a guest booking (sign-up and email activation drop the returnUrl): go back to finish it.
+    return pendingGuestBookingPath() ?? '/dashboard';
   }
 
   /** From a shared referral link (?ref=<userId>) -- only meaningful if signing in here creates a brand-new account. */

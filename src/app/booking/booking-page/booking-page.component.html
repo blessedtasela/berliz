@@ -118,6 +118,12 @@
               ? 'No more slots today — bookings need at least ' + minLeadTimeMinutes + ' minutes\' notice. Try tomorrow.'
               : (slotsMessage || 'No open slots on this day.') }}
           </p>
+          <button *ngIf="!allSlotsWithinLeadTime" type="button" (click)="joinWaitlist()" [disabled]="waitlistBusy || onWaitlistForSelectedDate"
+            class="mt-1 px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400
+                   hover:bg-red-50 dark:hover:bg-red-950/30 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-1">
+            <i-feather [name]="onWaitlistForSelectedDate ? 'check' : (waitlistBusy ? 'loader' : 'bell')" [ngClass]="{'animate-spin': waitlistBusy}" style="width:11px;height:11px;"></i-feather>
+            {{ onWaitlistForSelectedDate ? "You'll be told if one opens up" : 'Tell me if a time opens up' }}
+          </button>
         </div>
 
         <div *ngIf="!slotsLoading && visibleSlots.length > 0" class="flex flex-wrap gap-2">
@@ -170,13 +176,36 @@
     <p *ngIf="availabilityConfigured === true" class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
       <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
       Your booking starts as pending until {{ providerName }} confirms it.
+      <span *ngIf="isGuest"> You only need an account to send it, and your choices here are saved.</span>
     </p>
+
+    <!-- ── Guest: choose how to continue (shown when they press the button) ── -->
+    <div *ngIf="showAuthPrompt && isGuest" role="region" aria-label="Log in or create an account to send your request"
+      class="rounded-2xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 p-4 flex flex-col gap-3">
+      <div>
+        <p class="text-sm font-bold text-gray-900 dark:text-gray-100">Last step: sign in to send it</p>
+        <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+          Your day, time and notes are saved. You'll come straight back here afterwards.
+        </p>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-2">
+        <button type="button" (click)="goToSignUp()"
+          class="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 transition">
+          Create a free account
+        </button>
+        <button type="button" (click)="goToLogin()"
+          class="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-900 transition">
+          I already have an account
+        </button>
+      </div>
+      <button type="button" (click)="dismissAuthPrompt()" class="self-start text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-600 transition">Not now</button>
+    </div>
 
     <button type="button" (click)="submit()" [disabled]="submitting || availabilityConfigured !== true"
       class="w-full px-4 py-3 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition
              flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100">
       <i-feather [name]="submitting ? 'loader' : 'send'" [ngClass]="{'animate-spin': submitting}" style="width:14px;height:14px;"></i-feather>
-      {{ submitting ? 'Sending…' : 'Request booking' }}
+      {{ submitting ? 'Sending…' : (isGuest ? 'Continue' : 'Request booking') }}
     </button>
 
   </div>

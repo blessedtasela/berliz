@@ -43,6 +43,7 @@ import { TrainerVideoAlbumComponent } from './trainer-video-album/trainer-video-
 import { TrainerPricingCardComponent } from './trainer-pricing-card/trainer-pricing-card.component';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 import { TrainerAddReviewComponent } from './trainer-add-review/trainer-add-review.component';
+import { StarRatingComponent } from 'src/app/shared/star-rating/star-rating.component';
 
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 @NgModule({
@@ -77,6 +78,7 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     TrainerAddReviewComponent
   ],
   imports: [
+    StarRatingComponent,
     LoadErrorComponent,
     ClickablePhotoDirective,
     CommonModule,
