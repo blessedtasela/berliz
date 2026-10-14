@@ -19,7 +19,7 @@
               What are you working on today?
             </h2>
             <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
-              Welcome back, <span class="text-red-600 font-semibold">{{ user.firstname }}</span>
+              Welcome back<ng-container *ngIf="user.firstname">, <span class="text-red-600 font-semibold">{{ user.firstname }}</span></ng-container>
               — discipline builds power.
             </p>
           </div>
