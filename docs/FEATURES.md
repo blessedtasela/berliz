@@ -185,6 +185,10 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Fix: trainers could only pick :00 / :30 times
+
+- The shared time picker (`app-time-picker`) defaulted to 30-minute steps, so a trainer booking for a client, rescheduling a request, or proposing a peer session saw only two start minutes per hour. It now defaults to 15-minute steps: every hour from 12 AM to 11 PM at :00, :15, :30 and :45 (96 options). The weekly availability editor already accepts any time, and the mobile app already uses native time pickers, so neither changed.
+
 ### Unreleased — Guest-first booking, star ratings, waitlist, calendar link and provider insights
 
 - **Book before you sign up.** The public booking page (`/trainers/:name/book`, `/centers/:name/book`) no longer redirects visitors to the login page. A visitor picks a day and time, and is asked to log in or create an account only when they press *Continue*. Their day, time and notes are kept in `sessionStorage` for up to two hours and put back when they return signed in (login falls back to the booking page when sign-up and email activation dropped the `returnUrl`). The "Book" button on provider profiles sends guests to this page instead of showing a "Login required" prompt.
