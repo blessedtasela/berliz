@@ -5,7 +5,7 @@
     <div class="relative" (click)="$event.stopPropagation()">
         <img alt="" [src]="previewModalUrl"
             class="max-h-[85vh] max-w-[85vw] rounded-2xl object-contain border border-white/20 shadow-2xl"
-            onerror="this.src='assets/avatar.png'" />
+            data-fallback-src="assets/avatar.png" />
         <button (click)="showPreviewModal = false; previewModalUrl = ''" class="absolute -top-3 -right-3 w-7 h-7 rounded-full bg-gray-900 border-2 border-white
              flex items-center justify-center text-white hover:bg-red-600 transition" aria-label="Close">
             <i-feather name="x" style="width:12px;height:12px;"></i-feather>
@@ -182,7 +182,7 @@
           }">
 
                     <img alt="" [src]="slot.previewUrl" class="w-full h-full object-cover object-top"
-                        onerror="this.src='assets/avatar.png'" />
+                        data-fallback-src="assets/avatar.png" />
 
                     <!-- Upload spinner overlay -->
                     <div *ngIf="slot.uploading"

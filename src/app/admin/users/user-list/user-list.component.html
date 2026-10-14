@@ -25,7 +25,7 @@
             <div class="relative shrink-0">
                 <button type="button" (click)="goToProfile(user.id)" title="View profile">
                     <img alt="" [src]="photoSrc(user)"
-                        onerror="this.src='../../../assets/icons/user.png';"
+                        data-fallback-src="../../../assets/icons/user.png"
                         class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700">
                 </button>
                 <label [attr.for]="'fileInput-m-' + user.id" title="Change photo"
@@ -89,7 +89,7 @@
                                     (mouseenter)="onPhotoEnter($event, user.id)" (mouseleave)="onPhotoLeave()"
                                     title="View profile">
                                     <img alt="" [src]="photoSrc(user)"
-                                        onerror="this.src='../../../assets/icons/user.png';"
+                                        data-fallback-src="../../../assets/icons/user.png"
                                         class="w-10 h-10 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700 hover:opacity-80 transition">
                                 </button>
                                 <!-- Preview, positioned above the thumbnail rather than screen-center so the
@@ -99,7 +99,7 @@
                                     class="fixed z-50 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2 shadow-2xl cursor-pointer"
                                     [style.top.px]="photoPreviewTop" [style.left.px]="photoPreviewLeft" role="button" tabindex="0" (keydown.enter)="goToProfile(user.id)">
                                     <img alt="" [src]="photoSrc(user)"
-                                        onerror="this.src='../../../assets/icons/user.png';"
+                                        data-fallback-src="../../../assets/icons/user.png"
                                         class="w-56 h-56 rounded-xl object-cover object-top">
                                 </div>
                             </div>

@@ -41,7 +41,7 @@
 
         <img alt="" [src]="(trainerData.photoResponse.photoUrl | strapiUrl) || '../../../assets/icons/user.png'"
             class="w-full h-40 object-contain bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700"
-            onerror="this.src='../../../assets/icons/user.png';" />
+            data-fallback-src="../../../assets/icons/user.png" />
 
         <span class="w-fit px-2.5 py-1 rounded-full text-[11px] font-semibold" [ngClass]="trainerData.status === 'true'
                 ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900'

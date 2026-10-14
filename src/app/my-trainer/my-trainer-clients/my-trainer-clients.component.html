@@ -44,7 +44,7 @@
             class="flex flex-col items-center gap-1.5 group cursor-pointer">
 
             <div class="relative">
-                <img alt="" [src]="getProfilePhoto('client-photo-here')" onerror="this.src='assets/avatar.png';"
+                <img alt="" [src]="getProfilePhoto('client-photo-here')" data-fallback-src="assets/avatar.png"
                     class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700
                  group-hover:border-red-400 transition-all duration-200
                  group-hover:scale-105 group-hover:shadow-md" />

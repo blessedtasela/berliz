@@ -11,6 +11,7 @@ import { SeoService } from './services/seo.service';
 import { ScrollRestorationService } from './services/scroll-restoration.service';
 import { AuthService } from './services/auth.service';
 import { ThemeService } from './services/theme.service';
+import { installImageFallback } from './utils/image-fallback';
 
 @Component({
     selector: 'app-root',
@@ -48,6 +49,9 @@ export class AppComponent implements OnInit {
     // one this affects) ever paints.
     this.themeService.apply();
     this.themeService.watchSystemChanges();
+
+    // <img data-fallback-src="..."> placeholders: the CSP forbids the inline onerror handlers these replaced.
+    if (isPlatformBrowser(this.platformId)) installImageFallback(document);
 
     this.sidebarState.mode$.subscribe(mode => {
       this.sidebarMode = mode;

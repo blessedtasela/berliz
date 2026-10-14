@@ -14,7 +14,7 @@
     </div>
 
     <div class="flex items-center gap-3">
-        <img [src]="clientPhotoSrc" onerror="this.src='../../../assets/icons/user.png';"
+        <img [src]="clientPhotoSrc" data-fallback-src="../../../assets/icons/user.png"
             class="w-14 h-14 rounded-full object-cover object-top border border-gray-200 dark:border-gray-700 shrink-0" alt="Client photo" />
         <div class="min-w-0">
             <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{{ clientName }}</p>

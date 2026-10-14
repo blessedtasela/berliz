@@ -491,6 +491,27 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 
+### Unreleased — Fix: dashboard froze after login; Content-Security-Policy now enforced
+
+- **Dashboard froze right after login.** Both sidebars read `navItems` from a getter bound to `*ngFor`, and
+  `filterSidebarNavItems` built a fresh array (and fresh group copies) on every call, so Angular rebuilt the whole
+  sidebar on every change-detection pass; `RouterLinkActive` marking the view dirty as each link was created
+  triggered the next pass — an endless render loop. The result is now cached per role. Found by driving headless
+  Chrome through the login flow against a local mock API and pausing the debugger while the page was stuck;
+  responsive 3/3 afterwards (3/3 frozen before).
+- **CSP is enforced** (`netlify.toml`, was Report-Only). Scripts: self + Google Identity + Facebook SDK + Cloudflare
+  beacon + `wasm-unsafe-eval`; no inline script, no eval. Styles keep `'unsafe-inline'` (Angular injects component
+  styles at runtime; a static host can't issue nonces). Images/media allow any https (Strapi, Google/Facebook avatars,
+  user links) plus `data:`/`blob:`. `connect-src` lists the Railway API + WebSocket, Strapi, Google/Facebook, restcountries,
+  Cloudflare and Sentry. Because the policy blocks inline event handlers, the 74 `onerror="this.src=…"` image fallbacks
+  became `data-fallback-src` handled by one listener (`utils/image-fallback.ts`), the two `href="javascript:void(0)"`
+  links became real links, and `angular.json` turns off critical-CSS inlining (it swaps the stylesheet in with an inline
+  `onload`, which the policy would block, leaving pages unstyled).
+  Checked against the production build with the real header: 16 public routes and 68 dashboard routes as a signed-in test
+  user against a local mock API — 0 violations. Not exercised: real Strapi media/PDF viewer, uploads, Stripe redirect,
+  Google/Facebook sign-in popups completing. If a new third-party origin is added, add it to `netlify.toml`; the browser
+  console names the blocked directive.
+
 ### Unreleased — QA pass: security hardening, media upload, instant list updates, accessibility
 
 **Security (backend + web)**
@@ -1497,7 +1518,7 @@ _Branch: `feat/security-hardening`_
   had no ceiling. All three now cap length client-side (server-side columns are unbounded
   TEXT with no `@Size` validation — flagged, not a frontend fix).
 - **Added security headers** (`netlify.toml`): `X-Content-Type-Options`, `Referrer-Policy`,
-  `Strict-Transport-Security`, `Permissions-Policy`, and a `Content-Security-Policy-Report-Only`
+  `Strict-Transport-Security`, `Permissions-Policy`, and a `Content-Security-Policy` (shipped Report-Only, enforced since 2026-10-14)
   built from the live site's actual script/frame/connect origins (Google/Facebook SDKs,
   Cloudflare Insights, the Railway API + WSS, Strapi media) rather than guessed — ships
   Report-Only first since a wrong enforcing CSP could silently break OAuth login.

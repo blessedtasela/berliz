@@ -46,7 +46,7 @@
             <!-- Top row: avatar + name + date -->
             <div class="flex items-center gap-3 mb-2">
                 <img alt="" [src]="getProfilePhoto(testimonial)"
-                    onerror="this.src='assets/avatar.png';" class="w-9 h-9 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700
+                    data-fallback-src="assets/avatar.png" class="w-9 h-9 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700
                  group-hover:border-red-300 dark:group-hover:border-red-800 transition shrink-0" />
 
                 <div class="flex-1 min-w-0">

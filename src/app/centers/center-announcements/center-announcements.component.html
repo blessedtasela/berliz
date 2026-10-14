@@ -26,7 +26,7 @@
 
             <img [src]="centerAnnouncement.iconUrl" alt=""
                 class="w-9 h-9 rounded-xl object-cover object-top border border-zinc-800 shrink-0"
-                onerror="this.src='assets/avatar.png';" />
+                data-fallback-src="assets/avatar.png" />
 
             <div class="min-w-0 flex-1">
                 <p class="text-xs text-white leading-relaxed">{{ centerAnnouncement.announcement }}</p>
