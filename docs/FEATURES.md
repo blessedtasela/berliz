@@ -185,6 +185,10 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Delete your account from the web
+
+- Settings → Danger zone now has **Delete account** next to *Deactivate account*, matching the mobile app. It asks for your password (blank for Google / Facebook / Apple sign-ins) and for the word `DELETE`, then calls `POST /account/delete` and signs you out. The server answers 200 even when it refuses (wrong password, upcoming bookings, a renewing subscription), so the reason is shown inside the dialog and the account is only treated as deleted when the server says so. Deactivate stays for people who just want a break.
+
 ### Unreleased — Fix: trainers could only pick :00 / :30 times
 
 - The shared time picker (`app-time-picker`) defaulted to 30-minute steps, so a trainer booking for a client, rescheduling a request, or proposing a peer session saw only two start minutes per hour. It now defaults to 15-minute steps: every hour from 12 AM to 11 PM at :00, :15, :30 and :45 (96 options). The weekly availability editor already accepts any time, and the mobile app already uses native time pickers, so neither changed.
