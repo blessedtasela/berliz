@@ -22,6 +22,12 @@ export interface Subscriptions {
   lastUpdate: Date;
   status: string;
   checked?: boolean;
+  /**
+   * "app_store" / "play_store" when the App Store or Google Play bills this subscription (bought in the mobile
+   * app through In-App Purchase); null/absent for Stripe-billed and admin-comped ones. Only the store can
+   * cancel it -- see utils/subscription-billing.ts.
+   */
+  store?: string | null;
   /** D11 — false once the member cancels; access still runs to endDate. */
   autoRenew?: boolean;
   cancelledAt?: Date | null;

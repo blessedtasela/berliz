@@ -9,9 +9,15 @@ import { Component, EventEmitter, Output } from '@angular/core';
 export class UserProfileSettingsDangerzoneComponent {
   @Output() deactivate = new EventEmitter<void>();
   @Output() updateEmail = new EventEmitter<void>();
+  /** Permanently delete the account -- distinct from `deactivate`, which only stops sign-in. */
+  @Output() deleteAccount = new EventEmitter<void>();
 
   onDeactivate() {
     this.deactivate.emit();
+  }
+
+  onDeleteAccount() {
+    this.deleteAccount.emit();
   }
 
   onUpdateEmail() {

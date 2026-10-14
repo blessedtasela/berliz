@@ -12,6 +12,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { UpdateEmailModalComponent } from 'src/app/shared/update-email-modal/update-email-modal.component';
+import { DeleteAccountModalComponent } from 'src/app/shared/delete-account-modal/delete-account-modal.component';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
 
 import { Store } from '@ngrx/store';
@@ -734,6 +735,18 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
           }
         });
       });
+  }
+
+  // -------------------------
+  // DELETE ACCOUNT
+  // -------------------------
+  /** Opens the delete-account dialog. Everything after that (the call, the refusal reasons, signing out) lives in the dialog. */
+  openDeleteAccount() {
+    this.dialog.open(DeleteAccountModalComponent, {
+      width: '460px',
+      maxWidth: '95vw',
+      disableClose: true
+    });
   }
 
   // -------------------------

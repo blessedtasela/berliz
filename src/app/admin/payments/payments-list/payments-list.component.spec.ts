@@ -45,4 +45,14 @@ describe('PaymentsListComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('offers a Stripe refund only for a Stripe payment -- never for an App Store / Google Play purchase', () => {
+    expect(component.canRefund({ paymentMethod: 'stripe' } as any)).toBeTrue();
+    expect(component.canRefund({ paymentMethod: 'apple_iap' } as any)).toBeFalse();
+    expect(component.canRefund({ paymentMethod: 'google_play' } as any)).toBeFalse();
+  });
+
+  it('does not offer to refund a Stripe payment that is already refunded', () => {
+    expect(component.canRefund({ paymentMethod: 'stripe', stripeRefundId: 're_1' } as any)).toBeFalse();
+  });
 });

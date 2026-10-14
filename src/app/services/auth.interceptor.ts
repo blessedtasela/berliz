@@ -89,6 +89,17 @@ export class AuthInterceptor implements HttpInterceptor {
   private readonly UPLOAD_IDLE_MS = 120000;
   private readonly UPLOAD_MAX_MS = 15 * 60000;
 
+  /**
+   * Account deletion makes the server contact Apple (revoking Sign in with Apple) and Stripe (deleting the
+   * customer) before it answers, so 20 s is too tight: a timeout would show "failed" for an account that was
+   * in fact deleted. A fixed, longer cap -- not an upload, so not the idle-based one.
+   */
+  private readonly SLOW_CALL_MS = 60000;
+
+  private isSlowCall(request: HttpRequest<any>): boolean {
+    return request.url.includes('/account/delete');
+  }
+
   private isUpload(request: HttpRequest<any>): boolean {
     return request.url.includes('/strapi/upload') || (typeof FormData !== 'undefined' && request.body instanceof FormData);
   }
@@ -105,7 +116,7 @@ export class AuthInterceptor implements HttpInterceptor {
     return source.pipe(
       this.isUpload(request)
         ? timeout({ first: this.UPLOAD_MAX_MS, each: this.UPLOAD_IDLE_MS })
-        : timeout(this.DEFAULT_TIMEOUT_MS),
+        : timeout(this.isSlowCall(request) ? this.SLOW_CALL_MS : this.DEFAULT_TIMEOUT_MS),
       catchError(err => {
         if (err instanceof TimeoutError) {
           return throwError(() => ({

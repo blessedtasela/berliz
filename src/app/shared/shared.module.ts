@@ -21,6 +21,7 @@ import { TimeAgoPipe } from './pipes/time-ago.pipe';
 import { StrapiUrlPipe } from './pipes/strapi-url.pipe';
 import { TodoDetailsModalComponent } from './todo-details-modal/todo-details-modal.component';
 import { UpdateEmailModalComponent } from './update-email-modal/update-email-modal.component';
+import { DeleteAccountModalComponent } from './delete-account-modal/delete-account-modal.component';
 import { RenewSubscriptionModalComponent } from './renew-subscription-modal/renew-subscription-modal.component';
 import { SearchPanelComponent } from './search-panel/search-panel.component';
 import { SkeletonLoaderComponent } from './skeleton-loader/skeleton-loader.component';
@@ -48,6 +49,7 @@ import { ClickablePhotoDirective } from './photo-lightbox/clickable-photo.direct
     TimeAgoPipe,
     TodoDetailsModalComponent,
     UpdateEmailModalComponent,
+    DeleteAccountModalComponent,
     RenewSubscriptionModalComponent,
     SearchPanelComponent,
     SkeletonLoaderComponent,

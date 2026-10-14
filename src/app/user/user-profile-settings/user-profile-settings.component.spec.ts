@@ -15,6 +15,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SidebarStateService } from 'src/app/services/sidebar-state.service';
 import { BlockService } from 'src/app/services/block.service';
 import { WebAuthnService } from 'src/app/services/webauthn.service';
+import { DeleteAccountModalComponent } from 'src/app/shared/delete-account-modal/delete-account-modal.component';
 import { updateMessagePopupEnabled, updateEmailNotificationPreferences } from 'src/app/state/user-profile/user-profile.actions';
 
 describe('UserProfileSettingsComponent', () => {
@@ -97,6 +98,18 @@ describe('UserProfileSettingsComponent', () => {
 
   it('allEmailNotificationsEnabled is false until social is also turned on', () => {
     expect(component.allEmailNotificationsEnabled).toBeFalse();
+  });
+
+  it('openDeleteAccount opens the delete-account dialog, which cannot be dismissed by a stray click', () => {
+    const dialog = TestBed.inject(MatDialog) as jasmine.SpyObj<MatDialog>;
+    dialog.open.calls.reset();
+
+    component.openDeleteAccount();
+
+    expect(dialog.open).toHaveBeenCalledWith(
+      DeleteAccountModalComponent,
+      jasmine.objectContaining({ disableClose: true })
+    );
   });
 
   it('setAllEmailNotifications(true) dispatches all four categories, including social', () => {
