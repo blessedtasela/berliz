@@ -144,7 +144,26 @@ export function sidebarGroupIsActive(group: SidebarNavItem, url: string | null |
  * under it (up to the next label) got dropped — a section heading with
  * nothing under it is worse than no heading at all, not a harmless no-op.
  */
+/**
+ * The result is cached per role and the SAME array comes back on every call. Both sidebars read it from a
+ * getter bound to *ngFor, so a fresh array (with fresh `{...item, items}` copies) on every change-detection
+ * pass made Angular tear down and rebuild the whole sidebar each pass; RouterLinkActive marks the view dirty
+ * as each link is created, which triggers the next pass -- a render loop that froze the dashboard the moment
+ * the sidebar mounted after login. SIDEBAR_NAV_ITEMS is constant, so caching by role is always valid.
+ */
+const filteredByRole = new Map<string, SidebarNavItem[]>();
+
 export function filterSidebarNavItems(role: string | null | undefined): SidebarNavItem[] {
+  const key = role ?? '';
+  let cached = filteredByRole.get(key);
+  if (!cached) {
+    cached = buildSidebarNavItems(role);
+    filteredByRole.set(key, cached);
+  }
+  return cached;
+}
+
+function buildSidebarNavItems(role: string | null | undefined): SidebarNavItem[] {
   const visible = (item: SidebarNavItem): boolean => !item.roles || (!!role && item.roles.includes(role));
 
   const result: SidebarNavItem[] = [];
