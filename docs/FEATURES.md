@@ -491,6 +491,14 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 
+### Unreleased — Typography: Inter, self-hosted
+
+The body asked for Roboto / 'Inter' but no font was ever loaded, so each device fell back to its own system font and the
+app looked different on every phone and laptop. Inter (variable, weight axis, via `@fontsource-variable/inter`) is now bundled
+and listed first in both the CSS body stack and Tailwind's `font-sans`; it ships from our own origin so the CSP's
+`font-src 'self'` covers it, with only the script subsets a page needs downloaded (unicode-range). Also: font smoothing,
+balanced heading wrapping and orphan-free paragraphs (`text-wrap`). Checked 68 dashboard routes at 360 px: no horizontal overflow.
+
 ### Unreleased — Fix: dashboard froze after login; Content-Security-Policy now enforced
 
 - **Dashboard froze right after login.** Both sidebars read `navItems` from a getter bound to `*ngFor`, and

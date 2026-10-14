@@ -5,6 +5,9 @@
 
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 @import "~@ng-select/ng-select/themes/default.theme.css";
+/* Inter is self-hosted: its stylesheet is added in angular.json "styles" (an @import here would sit after
+   Tailwind's expanded rules and be ignored). Until now the body asked for Roboto/'Inter' but nothing ever loaded
+   either, so every device fell back to its own system font and the app looked different on each one. */
 
 .ng-select.ng-select-focused .ng-placeholder,
 .ng-select.ng-select-opened .ng-placeholder {
@@ -195,7 +198,20 @@ body {
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: 'Inter Variable', Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-feature-settings: 'cv11', 'ss03';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Headings wrap into even lines instead of leaving a one-word last line; paragraphs avoid orphans. */
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 @media (max-width: 640px) {
@@ -242,7 +258,7 @@ body {
 }
 
 .berliz-snackbar .mdc-snackbar__label {
-  font-family: 'Inter', Roboto, sans-serif !important;
+  font-family: 'Inter Variable', Inter, Roboto, sans-serif !important;
   font-size: 13px !important;
   font-weight: 600 !important;
   padding: 0 !important;
@@ -448,7 +464,7 @@ ngx-ui-loader .ball-spin-fade>div {
 
 /* ── Text label ─────────────────────────────────────────────────────────── */
 .ngx-ui-loader-text {
-  font-family: 'Inter', Roboto, sans-serif !important;
+  font-family: 'Inter Variable', Inter, Roboto, sans-serif !important;
   font-size: 11px !important;
   font-weight: 600 !important;
   letter-spacing: 0.08em !important;
