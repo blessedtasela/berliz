@@ -194,6 +194,15 @@ export class UserService {
     );
   }
 
+  /** Permanently deletes the signed-in user's account. A refusal (wrong password, upcoming bookings, renewing
+   * subscription) comes back as a normal 200 with `data.deleted === false` and the reason in `data.message`. */
+  deleteMyAccount(password?: string): Observable<ApiResponse<{ deleted: boolean; message: string }>> {
+    return this.httpClient.post<ApiResponse<{ deleted: boolean; message: string }>>(
+      this.url + "/account/delete",
+      { password: password || undefined }
+    );
+  }
+
   updateStatus(id: number): Observable<ApiResponse<string>> {
     return this.httpClient.put<ApiResponse<string>>(
       this.url + `/user/updateUserStatus/${id}`,

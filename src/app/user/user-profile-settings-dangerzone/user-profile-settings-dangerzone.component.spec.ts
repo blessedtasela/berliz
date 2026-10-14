@@ -20,4 +20,14 @@ describe('UserProfileSettingsDangerzoneComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('emits deleteAccount when the Delete account button is clicked', () => {
+    let emitted = 0;
+    component.deleteAccount.subscribe(() => emitted++);
+
+    const buttons: HTMLButtonElement[] = Array.from(fixture.nativeElement.querySelectorAll('button'));
+    buttons.find(b => b.textContent?.includes('Delete account'))!.click();
+
+    expect(emitted).toBe(1);
+  });
 });
