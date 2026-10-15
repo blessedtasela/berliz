@@ -3,8 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
-@import '@angular/material/prebuilt-themes/indigo-pink.css';
-@import "~@ng-select/ng-select/themes/default.theme.css";
+/* The Angular Material (indigo-pink) and ng-select default themes used to be @imported here. Both imports sat after
+   Tailwind's expanded rules, which makes them invalid CSS, so the build has always dropped them (and warned). The app
+   only uses Material for dialogs and snack bars, both styled in this file, and ng-select through .berliz-select below,
+   so nothing was lost; the dead lines are removed so the warnings stop hiding real ones. */
+
 /* Inter is self-hosted: its stylesheet is added in angular.json "styles" (an @import here would sit after
    Tailwind's expanded rules and be ignored). Until now the body asked for Roboto/'Inter' but nothing ever loaded
    either, so every device fell back to its own system font and the app looked different on each one. */
