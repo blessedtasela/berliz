@@ -148,4 +148,29 @@ describe('AuthInterceptor upload timeouts', () => {
     expect(failed?.error?.message).toContain('taking too long');
     flush();
   }));
+
+  // Deleting an account makes the server contact Apple and Stripe before it answers, so a 20 s cut-off would
+  // report "failed" for an account that was in fact deleted.
+  it('gives account deletion longer than 20 s to answer, but not forever', fakeAsync(() => {
+    let failed: any;
+    let answered = false;
+    http.post('/api/account/delete', {}).subscribe({ next: () => (answered = true), error: e => (failed = e) });
+    const req = httpMock.expectOne('/api/account/delete');
+
+    tick(45_000);
+    expect(failed).withContext('still waiting at 45 s').toBeUndefined();
+
+    req.flush({ message: '', data: { deleted: true, message: '' }, success: true, statusCode: 200 });
+    expect(answered).toBeTrue();
+  }));
+
+  it('does give up on account deletion after a minute of silence', fakeAsync(() => {
+    let failed: any;
+    http.post('/api/account/delete', {}).subscribe({ error: e => (failed = e) });
+    httpMock.expectOne('/api/account/delete');
+
+    tick(61_000);
+    expect(failed?.error?.message).toContain('taking too long');
+    flush();
+  }));
 });

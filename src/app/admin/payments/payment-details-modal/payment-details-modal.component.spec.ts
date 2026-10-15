@@ -29,4 +29,20 @@ describe('PaymentDetailsModalComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  const currency = () => fixture.nativeElement.querySelector('[data-testid="payment-currency"]') as HTMLElement | null;
+
+  it('shows the currency next to the amount for a store purchase, which is in the buyer\'s own currency', () => {
+    component.paymentData = { ...component.paymentData, amount: 9.99, currency: 'GBP', paymentMethod: 'apple_iap' } as any;
+    fixture.detectChanges();
+
+    expect(currency()?.textContent?.trim()).toBe('GBP');
+  });
+
+  it('shows no currency for a Stripe payment, which is in the platform currency', () => {
+    component.paymentData = { ...component.paymentData, amount: 115, currency: null, paymentMethod: 'stripe' } as any;
+    fixture.detectChanges();
+
+    expect(currency()).toBeNull();
+  });
 });

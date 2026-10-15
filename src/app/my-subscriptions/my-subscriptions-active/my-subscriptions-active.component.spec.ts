@@ -21,4 +21,25 @@ describe('MySubscriptionsActiveComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  const badge = () => fixture.nativeElement.querySelector('[data-testid="store-badge"]') as HTMLElement | null;
+
+  it('shows no store badge for a Stripe-billed subscription', () => {
+    expect(badge()).toBeNull();
+    expect(component.storeLabel).toBe('');
+  });
+
+  it('says "Billed by the App Store" for a subscription bought in the iOS app', () => {
+    component.subscription = { id: 1, store: 'app_store', mode: 'APP_STORE' } as any;
+    fixture.detectChanges();
+
+    expect(badge()?.textContent?.trim()).toBe('Billed by the App Store');
+  });
+
+  it('says "Billed by the Google Play" for one bought in the Android app', () => {
+    component.subscription = { id: 1, mode: 'PLAY_STORE' } as any;
+    fixture.detectChanges();
+
+    expect(badge()?.textContent?.trim()).toBe('Billed by the Google Play');
+  });
 });

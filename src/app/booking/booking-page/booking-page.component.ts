@@ -269,10 +269,30 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     return this.slots.find(s => s.startTime === wanted) ?? null;
   }
 
-  private updateSeoTags(): void {
+  private get shareUrl(): string {
     const slug = this.providerName.replace(/ /g, '-');
     const path = this.kind === 'trainer' ? `/trainers/${slug}/book` : `/centers/${slug}/book`;
-    const url = `${environment.baseUrl}${path}`;
+    return `${environment.baseUrl}${path}`;
+  }
+
+  /** Native share sheet where the browser has one (phones), otherwise copy the link. */
+  async share(): Promise<void> {
+    const url = this.shareUrl;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: `Book ${this.providerName} | Berliz`, url });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      this.snackBar.openSnackBar('Booking link copied', '');
+    } catch (err) {
+      if ((err as DOMException)?.name === 'AbortError') return;
+      this.snackBar.openSnackBar('Could not share the link', 'error');
+    }
+  }
+
+  private updateSeoTags(): void {
+    const url = this.shareUrl;
     this.seoService.updatePageData({
       title: `Book ${this.providerName} | Berliz`,
       description: `Book a session with ${this.providerName} on Berliz.`,
