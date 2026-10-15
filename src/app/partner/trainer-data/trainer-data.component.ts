@@ -6,6 +6,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
 import { Trainers, TrainerLocation } from 'src/app/models/trainers.interface';
+import { ApiResponse } from 'src/app/models/Api.interface';
 import { providerPricingControls, providerPricingControlValues, providerPricingPayload } from '../provider-pricing-fields/provider-pricing-fields.component';
 import { Users } from 'src/app/models/users.interface';
 import { AuthService } from 'src/app/services/auth.service';
@@ -205,7 +206,7 @@ export class TrainerDataComponent {
       motto: trainer.motto,
       likes: trainer.likes,
       experience: trainer.experience,
-      categoryIds: trainer.categories.map(category => category.id),
+      categoryIds: (trainer.categories ?? []).map(category => category.id),
       serviceMode: trainer.serviceMode ?? 'IN_PERSON',
       ...providerPricingControlValues(trainer),
       customLocationAllowed: !!trainer.customLocationAllowed,
@@ -280,14 +281,24 @@ export class TrainerDataComponent {
 
     this.ngxService.start();
     this.trainerService.updateTrainer(payload).subscribe({
-      next: (response: any) => {
-        this.responseMessage = response?.message;
-        this.snackBarService.openSnackBar(this.responseMessage, "");
-        this.updateFormValues(response);
-        this.originalValue = this.updateTrainerForm.getRawValue();
-        this.trainer = response;
-        this.emitEvent.emit();
-        this.ngxService.stop();
+      next: (response: ApiResponse<Trainers>) => {
+        // The loader is stopped in `finally`: anything below throwing used to leave it spinning forever.
+        try {
+          this.responseMessage = response?.message;
+          this.snackBarService.openSnackBar(this.responseMessage, "");
+          // The saved trainer is `response.data` -- the endpoint answers with an ApiResponse wrapper.
+          // This used to read the wrapper itself as a Trainers, so `categories.map` threw on undefined
+          // and the "Loading" overlay never went away after a successful save.
+          const saved = response?.data;
+          if (saved) {
+            this.updateFormValues(saved);
+            this.trainer = saved;
+          }
+          this.originalValue = this.updateTrainerForm.getRawValue();
+          this.emitEvent.emit();
+        } finally {
+          this.ngxService.stop();
+        }
       },
 
       error: (error: any) => {
