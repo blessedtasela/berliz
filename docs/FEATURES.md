@@ -186,12 +186,16 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
-### Unreleased — Web: delete my account, "billed by the App Store" subscriptions, store purchases in Payments
+### Unreleased — Web: "billed by the App Store" subscriptions, store purchases in Payments
 
-- **Delete account (web).** New dialog behind Settings > Danger zone > Delete account, calling `POST /account/delete`. Type DELETE to unlock the button; the password field is optional for Google/Facebook/Apple accounts. The server answers HTTP 200 even for a refusal (`success: false`), so the reason (upcoming bookings, a subscription that still renews, a wrong password) is shown inline instead of in a vanishing toast. On success the session is dropped and the visitor lands on the home page. The interceptor allows this one call 60 s, because the server contacts Apple and Stripe before it answers.
+- **Account deletion gets more time.** `POST /account/delete` (the Delete account dialog, below) is allowed 60 s instead of the interceptor's usual 20 s, because the server contacts Apple (revoking Sign in with Apple) and Stripe (deleting the customer) before it answers; a timeout would otherwise report "failed" for an account that was in fact deleted.
 - **Subscriptions bought in the mobile app.** A subscription billed by the App Store or Google Play (backend `Subscription.store` / `mode` = `APP_STORE` / `PLAY_STORE`) now shows a "Billed by the App Store" badge, and its menu offers **Manage in App Store / Google Play** (a link to the store's subscription settings) instead of Renew, Cancel auto-renew and Resume auto-renew, which only work for Stripe-billed ones. The backend refuses them too (`/subscription/cancel`), so the two stay in step.
 - **Payments (admin).** Store purchases are mirrored into the payments list in the buyer's own currency, so the amount is shown with its currency code (e.g. `9.99 GBP`) on the payment detail page and modal; Stripe payments, in the platform currency, show none. A refund made in the store shows the "Refunded" badge, and the Refund button stays Stripe-only.
 - Backend (same change set, migration V70): saved cards in the mobile payment sheet (off until `STRIPE_SAVED_CARDS=true`), revoking Sign in with Apple tokens on account deletion, and mirroring App Store / Google Play charges into Payments.
+
+### Unreleased — Delete your account from the web
+
+- Settings → Danger zone now has **Delete account** next to *Deactivate account*, matching the mobile app. It asks for your password (blank for Google / Facebook / Apple sign-ins) and for the word `DELETE`, then calls `POST /account/delete` and signs you out. The server answers 200 even when it refuses (wrong password, upcoming bookings, a renewing subscription), so the reason is shown inside the dialog and the account is only treated as deleted when the server says so. Deactivate stays for people who just want a break.
 
 ### Unreleased — Fix: trainers could only pick :00 / :30 times
 

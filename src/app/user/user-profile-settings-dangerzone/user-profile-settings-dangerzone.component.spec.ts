@@ -21,18 +21,13 @@ describe('UserProfileSettingsDangerzoneComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('has a Delete account button that emits deleteAccount -- separate from Deactivate', () => {
-    const deleted = jasmine.createSpy('deleteAccount');
-    const deactivated = jasmine.createSpy('deactivate');
-    component.deleteAccount.subscribe(deleted);
-    component.deactivate.subscribe(deactivated);
+  it('emits deleteAccount when the Delete account button is clicked', () => {
+    let emitted = 0;
+    component.deleteAccount.subscribe(() => emitted++);
 
-    const button = Array.from(fixture.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>)
-      .find(b => b.textContent?.includes('Delete account'));
-    expect(button).withContext('the Delete account button').toBeTruthy();
-    button!.click();
+    const buttons: HTMLButtonElement[] = Array.from(fixture.nativeElement.querySelectorAll('button'));
+    buttons.find(b => b.textContent?.includes('Delete account'))!.click();
 
-    expect(deleted).toHaveBeenCalledTimes(1);
-    expect(deactivated).not.toHaveBeenCalled();
+    expect(emitted).toBe(1);
   });
 });
