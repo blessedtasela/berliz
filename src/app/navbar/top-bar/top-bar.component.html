@@ -46,7 +46,7 @@
 
             <!-- Bell -->
             <div class="relative">
-                <button type="button" (click)="toggleNotificationDropdown()" class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
+                <button type="button" (click)="toggleNotificationDropdown()" [attr.aria-label]="notificationLength > 0 ? 'Notifications, ' + notificationLength + ' unread' : 'Notifications'" class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
                  flex items-center justify-center transition relative">
                     <i-feather name="bell" class="text-gray-700 dark:text-gray-300" style="width:16px;height:16px;"></i-feather>
                     <span *ngIf="notificationLength > 0" class="absolute -top-1 -right-1 bg-red-600 text-white text-[8px]

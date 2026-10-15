@@ -204,6 +204,7 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 ### Unreleased — Guest-first booking, star ratings, waitlist, calendar link and provider insights
 
 - **Book before you sign up.** The public booking page (`/trainers/:name/book`, `/centers/:name/book`) no longer redirects visitors to the login page. A visitor picks a day and time, and is asked to log in or create an account only when they press *Continue*. Their day, time and notes are kept in `sessionStorage` for up to two hours and put back when they return signed in (login falls back to the booking page when sign-up and email activation dropped the `returnUrl`). The "Book" button on provider profiles sends guests to this page instead of showing a "Login required" prompt.
+- **Share a booking link.** The booking page header has a share button: the native share sheet on phones, otherwise it copies the page URL (the same canonical `/trainers/:name/book` or `/centers/:name/book` the page puts in its SEO tags). The app-link file `src/.well-known/apple-app-site-association` now lists `/trainers/*` and `/centers/*` (profiles and `/book`), not just the two list pages, so once the mobile app is registered those links open in it. **Still needed before app links work:** the real Apple Team ID in that file and the real signing-cert SHA-256 in `assetlinks.json` (both still placeholders), plus matching `associatedDomains` / `intentFilters` in the mobile app config.
 - **Waitlist.** When a day has no open times the page offers *Tell me if a time opens up*; a cancellation frees the slot and the client is emailed (backend: `/waitlist`).
 - **Star ratings.** Reviews of trainers and centers now carry a required 1-5 rating (accessible radio-group input). Cards show the star average plus review count (falling back to the count alone for unrated providers), review lists show each review's stars, and the filter bar can sort by *Highest rated*.
 - **Calendar link.** My bookings and the provider *My Availability* tab show a private calendar subscription link (Google / Apple / Outlook): copy it, open it in the calendar app, or replace it (the old one stops working).
@@ -502,6 +503,20 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Not yet: the fee is displayed, not charged (client payment checkout is still unwired).
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
+
+### Unreleased — All-screens accessibility audit: contrast, unnamed button, dialogs invisible in dark mode
+
+Ran axe-core over every static route (16 public + 68 dashboard, light and dark, desktop and 390 px phone = 332 page loads) against the
+production build with a local mock API: no hangs, no horizontal overflow, no broken images, no uncaught JS errors. Findings fixed:
+- **Colour contrast:** 3,345 text nodes failed WCAG AA, nearly all from the same few utilities for secondary text
+  (`text-gray-400` on white 2.5:1, `dark:text-gray-500` on dark 3.0-3.7:1, `text-red-600` on dark 3.7:1, small sky/zinc links).
+  Corrected centrally in `styles.css` ("Contrast corrections") plus the status pills (green/yellow/blue badges) in their templates.
+  Re-measured: 26 left (3,345 before).
+- The notification bell in the top bar had no accessible name (every dashboard route); it now announces the unread count.
+- Six dialogs/pages had no dark styling at all, so in dark mode they showed dark text on the dark dialog surface: update-profile,
+  change-password, forgot/reset-password, the weekly-availability editor, the referral-claim page, edit-to-do, and the 404 page.
+- Lesson for local checks: do not run a build while the local test server or headless Chrome has the output folder open —
+  the build then "completes" without rewriting files (Windows file lock), and you end up verifying the old bundle.
 
 ### Unreleased — Dark mode for native controls, brand accent
 

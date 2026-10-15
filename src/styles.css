@@ -600,3 +600,40 @@ html.dark {
   scrollbar-width: thin;
   scrollbar-color: rgba(156, 163, 175, 0.45) transparent;
 }
+
+
+/* ─── Contrast corrections ─────────────────────────────────────────────────
+   An axe-core sweep of every route found ~1,400 small texts below the WCAG AA ratio (4.5:1), almost all of them the
+   same few colour utilities used for secondary text. Fixing the utilities here corrects them everywhere at once. */
+
+/* Secondary text: gray-400 on white is 2.5:1 and gray-500 on the dark surfaces is 3.0-3.7:1. */
+html:not(.dark) .text-gray-400 {
+  color: #6b7280;
+}
+
+html.dark .dark\:text-gray-500 {
+  color: #9ca3af;
+}
+
+/* Brand red as TEXT on dark surfaces (permanently-dark marketing pages, black footer, and dark mode). */
+:is(.dark, .bg-black, .bg-gray-950, .bg-zinc-950, .bg-gray-900, .bg-zinc-900) .text-red-600:not([class*="bg-red-"]):not([class*="bg-white"]) {
+  color: #f87171;
+}
+
+/* On light surfaces plain text-red-600 is 4.4-4.5:1 on the tinted red backgrounds; a touch deeper clears AA. */
+html:not(.dark) .text-red-600 {
+  color: #c81e1e;
+}
+
+/* Links in sky blue on white / on dark. */
+html:not(.dark) .text-sky-600 {
+  color: #0369a1;
+}
+
+.dark .text-sky-600 {
+  color: #38bdf8;
+}
+
+.text-zinc-500 {
+  color: #a1a1aa;
+}
