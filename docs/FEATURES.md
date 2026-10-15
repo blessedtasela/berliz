@@ -495,6 +495,19 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 
+### Unreleased — Follow-ups from the all-screens audit
+
+- **Every dialog was a white panel in dark mode.** The dark-mode rules for dialogs targeted Angular Material's old class
+  (`.mat-dialog-container`); since the move to the MDC components the panel is `.mat-mdc-dialog-container`, so nothing matched
+  and dialogs whose content is styled with `dark:` variants showed light text on a white panel (headings unreadable).
+  Rules updated to the current class names and Material's own colour variables; verified in dark and light.
+- **"NaN sessions" on the dashboard** (recap card) when the recap response left out a count: counts now default to 0 (+ spec).
+- **Duplicate heading on Bookings:** the page title/subtitle appeared again inside the list below it. The list components take
+  `[embedded]` and keep only their action buttons when shown inside the Bookings page (standalone routes unchanged).
+- Left alone on purpose: the Material prebuilt theme and ng-select theme `@import`s in `styles.css` are dropped at build time (they
+  sit after Tailwind's expanded rules). The app has always rendered without them; loading them now would restyle every Material
+  surface, so it needs its own visual pass.
+
 ### Unreleased — All-screens accessibility audit: contrast, unnamed button, dialogs invisible in dark mode
 
 Ran axe-core over every static route (16 public + 68 dashboard, light and dark, desktop and 390 px phone = 332 page loads) against the

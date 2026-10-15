@@ -30,8 +30,8 @@ import { RecapService } from 'src/app/services/recap.service';
       </p>
 
       <div *ngIf="!loading && recap" class="relative flex gap-4 text-zinc-300">
-        <span class="text-[11px]"><span class="font-extrabold text-white">{{ recap.activeDays }}</span> active days</span>
-        <span class="text-[11px]"><span class="font-extrabold text-white">{{ recap.workoutCount + recap.runCount }}</span> sessions</span>
+        <span class="text-[11px]"><span class="font-extrabold text-white">{{ recap.activeDays || 0 }}</span> active days</span>
+        <span class="text-[11px]"><span class="font-extrabold text-white">{{ (recap.workoutCount || 0) + (recap.runCount || 0) }}</span> sessions</span>
         <span *ngIf="recap.longestStreakDays > 1" class="text-[11px]">
           <span class="font-extrabold text-white">{{ recap.longestStreakDays }}</span>-day streak
         </span>

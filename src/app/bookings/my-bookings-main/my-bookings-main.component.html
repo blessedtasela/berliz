@@ -1,8 +1,8 @@
 <section class="font-sans flex flex-col gap-4 mt-4">
 
     <!-- Page header -->
-    <div class="flex items-center justify-between gap-3 flex-wrap">
-        <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 flex-wrap" [ngClass]="embedded ? 'justify-end' : 'justify-between'">
+        <div *ngIf="!embedded" class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
                 <i-feather name="calendar" class="text-red-600" style="width:16px;height:16px;"></i-feather>
             </div>

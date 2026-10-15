@@ -414,6 +414,30 @@ html.dark .mat-dialog-container {
   color: #f3f4f6; /* gray-100 */
 }
 
+/* The two rules above target Angular Material's OLD dialog class (.mat-dialog-container). Since the move to the MDC
+   components the panel is .mat-mdc-dialog-container / .mdc-dialog__surface, so neither rule matched any more: every
+   dialog stayed a white panel in dark mode while its content (styled with Tailwind dark: variants) turned light-on-light --
+   headings and labels became unreadable. Same intent, current class names; the CSS variables are what MDC reads. */
+.berliz-modal .mat-mdc-dialog-surface {
+  border-radius: 12px;
+}
+
+html.dark .mat-mdc-dialog-container {
+  --mdc-dialog-container-color: #111827;
+  --mdc-dialog-subhead-color: #f3f4f6;
+  --mdc-dialog-supporting-text-color: #d1d5db;
+  --mat-dialog-container-color: #111827;
+  --mat-dialog-subhead-color: #f3f4f6;
+  --mat-dialog-supporting-text-color: #d1d5db;
+  color: #f3f4f6;
+}
+
+html.dark .mat-mdc-dialog-container .mdc-dialog__surface,
+html.dark .mat-mdc-dialog-surface {
+  background-color: #111827;
+  color: #f3f4f6;
+}
+
 .badge-pulse {
   animation: badgePulse 1.4s ease-out infinite;
 }
