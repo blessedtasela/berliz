@@ -93,7 +93,8 @@ that ships a feature — add the row under the right domain, and log it under
 | Client intake forms | ✅ | |
 | Testimonials & reviews (trainer/center) | ✅ | |
 | Trainer location + service mode (in-person / online / hybrid) | ✅ | |
-| Choose where to train: trainer's listed locations (+ optional per-location fee) and optional client-chosen custom location (+ fee) | ✅ | Trainers only; client picks at booking and sees the fee before sending. Location text + fee are snapshotted on the booking |
+| Choose where to train: trainer's listed spots (+ optional per-spot fee) and optional client's-own-place (+ fee by where it is) | ✅ | Trainers only; client picks at booking and sees the fee before sending. The trainer lists **cities, each with any number of spots** (a gym, a park, a studio — name optional, exact address or just a general area, optional fee) and sets the client's-own-place fee per city, for anywhere outside their cities, or off entirely. The client's place is entered as country / state / city + address and the server prices it (inside a listed city → that city's fee, else the usual fee; outside → the outside fee; refused where the trainer won't go). Location text + fee are snapshotted on the booking |
+| Searchable dropdowns in forms (`app-select`) | ✅ | One shared searchable select (type to filter, keyboard friendly, roomy touch target, dark mode) replaces the bare `<select>` on long lists; the open list attaches to `<body>` so a modal can't clip it, and a saved value missing from the list still shows. Used first by the location pickers (signup, profile, trainer "Available in") — add it to other long lists as pages are touched |
 | Transparent pricing + Book CTA everywhere | ✅ | Provider pages state "full price — no 'from', no hidden fees"; a "Book a session" action appears on a trainer's/center's feed posts and on their profile header (`BookProviderButtonComponent`), not just the dedicated provider page |
 
 ## 6. Payments & subscriptions
@@ -185,6 +186,15 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Trainer locations: several spots per city, per-place client fees, searchable dropdowns
+
+- **Searchable dropdowns.** New shared `app-select` (ng-select under the hood, `.berliz-select` styling) — type to search, proper padding and caret, the list opens over modals, selected values never go blank. The country / state / city / dial-code pickers on signup, the profile form and the trainer profile use it; the booking picker uses it for the client's place.
+- **Trainer "Available in" editor.** Pick a country and state once, then tick as many cities as you cover — one "Add 3 cities" press. Each city is a card: add any number of **spots** inside it (gym / park / studio name optional; an exact address *or* a general-area description; an optional extra fee per spot), or leave it with no spot ("I cover Vancouver"). Each city also has its own **"I come to clients' own places here"** switch and fee (blank = the usual fee, 0 = free), and one global card holds the usual fee plus "I also travel outside the cities I listed" with its own fee.
+- **Booking.** The location picker groups spots under their city, shows addresses (and "approximate area" where the trainer only gave an area). "Somewhere else — my own place" now asks for country / state / city (one tap fills it from one of the trainer's cities) and the address, shows the fee that applies *there*, and explains when the trainer doesn't go to that city or outside their cities. The booking price estimate follows it. Booking forms, the booking page and "book for a client" all send the place; the server recomputes the fee and snapshots it.
+- **Trainer pages.** The public page and the signed-in provider page show each spot's address, mark approximate areas, link the exact address to Maps, and show the client's-own-place fee as a range ("+$10.00 – $40.00" / "up to +$40.00") when it differs by city.
+- **Fixes.** Saving the trainer details no longer leaves the loading overlay on forever (the API wrapper's `data` was read as the trainer; the overlay now also stops if applying the result throws). People's profile photos now show on booking cards and details, trainer likes, clients, center reviews/trainers, shared progress and similar lists instead of the default icon.
+- Backend (migration V71): `trainer_location` gains address / precision / per-city client-place columns, `trainer` gains the outside-cities rule, `ClientLocationRules` prices it, and `Booking` snapshots the fee. Mobile parity: the mobile booking picker still sends a plain own-place address (priced at the trainer-wide fee) — port the city-aware picker when mobile next touches booking.
 
 ### Unreleased — Web: "billed by the App Store" subscriptions, store purchases in Payments
 

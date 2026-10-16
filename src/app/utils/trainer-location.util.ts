@@ -190,3 +190,40 @@ export function quoteClientLocation(
   if (trainer.customLocationOutsideAllowed === false) return { ok: false, reason: 'OUTSIDE_NOT_ALLOWED' };
   return { ok: true, fee: trainer.customLocationOutsideFee ?? base, insideListedCity: false };
 }
+
+/**
+ * What a trainer charges to come to a client's own place, across every place they'd go (the cities they come to
+ * and, unless they only work inside those, anywhere else): "No extra fee", "+$20.00", "+$10.00 – $40.00" or
+ * "up to +$40.00". Null when they don't offer it anywhere.
+ */
+export function clientPlaceFeeLabel(
+  trainer: Pick<Trainers, 'customLocationAllowed' | 'customLocationFee' | 'customLocationOutsideAllowed' | 'customLocationOutsideFee' | 'locations'> | null | undefined,
+): string | null {
+  if (!trainer?.customLocationAllowed) return null;
+  const base = trainer.customLocationFee ?? 0;
+  const fees = groupLocations(trainer.locations).filter(a => a.clientAllowed).map(a => a.clientFee ?? base);
+  if (trainer.customLocationOutsideAllowed !== false) fees.push(trainer.customLocationOutsideFee ?? base);
+  if (fees.length === 0) return null;
+
+  const low = Math.min(...fees);
+  const high = Math.max(...fees);
+  const money = (n: number) => n.toFixed(2);
+  if (high <= 0) return 'No extra fee';
+  if (low === high) return `+$${money(high)}`;
+  return low === 0 ? `up to +$${money(high)}` : `+$${money(low)} – $${money(high)}`;
+}
+
+/** The heading of a spot: its name, else its address. Empty for a bare city (the city itself is the heading then). */
+export function spotHeading(loc: { venue?: string | null; address?: string | null }): string {
+  return loc.venue?.trim() || loc.address?.trim() || '';
+}
+
+/** The street address (or general area) under a named spot; empty when the address is already the heading. */
+export function spotAddress(loc: { venue?: string | null; address?: string | null }): string {
+  return loc.venue?.trim() ? (loc.address?.trim() ?? '') : '';
+}
+
+/** A general-area location rather than an exact address (only meaningful when there is an address). */
+export function isApproximateSpot(loc: { locationPrecision?: string | null; address?: string | null }): boolean {
+  return loc.locationPrecision === 'AREA' && !!loc.address?.trim();
+}

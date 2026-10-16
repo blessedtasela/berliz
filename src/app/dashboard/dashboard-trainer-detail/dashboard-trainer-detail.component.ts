@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TrainersDetailsComponent } from 'src/app/trainers/trainers-details/trainers-details.component';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 import { LocationMenuFooter, LocationMenuItem } from 'src/app/shared/locations-menu/locations-menu.component';
+import { clientPlaceFeeLabel, isApproximateSpot, spotAddress, spotHeading } from 'src/app/utils/trainer-location.util';
 
 /**
  * Light-themed, dashboard-native trainer profile — same route param, same
@@ -57,10 +58,12 @@ export class DashboardTrainerDetailComponent extends TrainersDetailsComponent {
     this.menuItemsFor = this.trainer;
     return this.menuItemsCache = (this.trainer?.locations ?? []).map(loc => {
       const place = [loc.city, loc.stateProvince, loc.country].filter(Boolean).join(', ');
-      const query = [loc.venue, place].filter(Boolean).join(', ');
+      const query = [loc.venue, loc.address, place].filter(Boolean).join(', ');
+      const heading = spotHeading(loc);
+      const detail = [spotAddress(loc), isApproximateSpot(loc) ? 'approximate area' : '', heading ? place : ''].filter(Boolean).join(' · ');
       return {
-        title: loc.venue || place,
-        subtitle: loc.venue ? place : null,
+        title: heading || place,
+        subtitle: detail || null,
         href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
         note: loc.fee ? `+${Number(loc.fee).toFixed(2)}` : 'No extra fee',
         noteHighlight: !!loc.fee
@@ -72,11 +75,12 @@ export class DashboardTrainerDetailComponent extends TrainersDetailsComponent {
     if (!this.trainer?.customLocationAllowed) return null;
     if (this.menuFooterFor === this.trainer && this.menuFooterCache) return this.menuFooterCache;
     this.menuFooterFor = this.trainer;
-    const fee = this.trainer.customLocationFee;
+    const label = clientPlaceFeeLabel(this.trainer);
+    if (label === null) return this.menuFooterCache = null;
     return this.menuFooterCache = {
       text: 'Or train at a place of your choice',
-      note: fee ? `+${Number(fee).toFixed(2)}` : 'No extra fee',
-      noteHighlight: !!fee
+      note: label,
+      noteHighlight: label !== 'No extra fee'
     };
   }
 

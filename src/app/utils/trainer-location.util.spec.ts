@@ -1,6 +1,6 @@
 import { TrainerLocation } from 'src/app/models/trainers.interface';
 import {
-  flattenAreas, groupLocations, normPlace, placeLabel, quoteClientLocation, sameCity, TrainerArea,
+  clientPlaceFeeLabel, flattenAreas, groupLocations, isApproximateSpot, normPlace, placeLabel, quoteClientLocation, sameCity, spotAddress, spotHeading, TrainerArea,
 } from './trainer-location.util';
 
 const row = (over: Partial<TrainerLocation>): TrainerLocation => ({
@@ -211,6 +211,53 @@ describe('trainer-location util', () => {
         .toEqual({ ok: true, fee: 12, insideListedCity: true });
       expect(quoteClientLocation(t, { country: 'United States', stateProvince: 'Washington', city: 'Montréal' }))
         .toEqual({ ok: true, fee: 60, insideListedCity: false });
+    });
+  });
+
+  describe('how a spot reads', () => {
+    it('heads a spot with its name, else its address, and shows the address under a name', () => {
+      expect(spotHeading({ venue: 'Gym', address: 'A St' })).toBe('Gym');
+      expect(spotAddress({ venue: 'Gym', address: 'A St' })).toBe('A St');
+      expect(spotHeading({ venue: '', address: 'near the beach' })).toBe('near the beach');
+      expect(spotAddress({ venue: '', address: 'near the beach' })).toBe('');
+      expect(spotHeading({})).toBe('');
+    });
+
+    it('is approximate only for a general area that has an address', () => {
+      expect(isApproximateSpot({ locationPrecision: 'AREA', address: 'near the beach' })).toBeTrue();
+      expect(isApproximateSpot({ locationPrecision: 'AREA', address: '' })).toBeFalse();
+      expect(isApproximateSpot({ locationPrecision: 'EXACT', address: 'A St' })).toBeFalse();
+    });
+  });
+
+  describe("the fee range for training at the client's place", () => {
+    const t = (over: any = {}) => ({ customLocationAllowed: true, customLocationFee: 25, locations: [], ...over });
+
+    it('is one fee when it is the same everywhere, or none', () => {
+      expect(clientPlaceFeeLabel(t())).toBe('+$25.00');
+      expect(clientPlaceFeeLabel(t({ customLocationFee: null }))).toBe('No extra fee');
+    });
+
+    it('is a range when a city or the outside costs differently', () => {
+      expect(clientPlaceFeeLabel(t({ locations: [row({ clientLocationFee: 10 })], customLocationOutsideFee: 40 }))).toBe('+$10.00 – $40.00');
+    });
+
+    it('says "up to" when some places are free', () => {
+      expect(clientPlaceFeeLabel(t({ locations: [row({ clientLocationFee: 0 })], customLocationOutsideFee: 40 }))).toBe('up to +$40.00');
+    });
+
+    it('leaves out the outside when they only work inside their cities, and a city switched off', () => {
+      const label = clientPlaceFeeLabel(t({
+        customLocationOutsideAllowed: false,
+        locations: [row({ clientLocationFee: 10 }), row({ city: 'Burnaby', clientLocationAllowed: false, clientLocationFee: 99 })],
+      }));
+      expect(label).toBe('+$10.00');
+    });
+
+    it('is null when it is not offered anywhere', () => {
+      expect(clientPlaceFeeLabel(t({ customLocationAllowed: false }))).toBeNull();
+      expect(clientPlaceFeeLabel(t({ customLocationOutsideAllowed: false, locations: [row({ clientLocationAllowed: false })] }))).toBeNull();
+      expect(clientPlaceFeeLabel(null)).toBeNull();
     });
   });
 });
