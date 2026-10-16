@@ -1,3 +1,4 @@
+import { userOptionLabel } from 'src/app/utils/option-labels';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Component, EventEmitter, OnInit, DestroyRef, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -48,6 +49,8 @@ export class AddMembersModalComponent implements OnInit {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
   ) { }
+
+  readonly userLabel = userOptionLabel;
 
   ngOnInit(): void {
     this.addMemberForm = this.formBuilder.group({

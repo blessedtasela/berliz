@@ -1,3 +1,4 @@
+import { SelectComponent } from 'src/app/shared/select/select.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -31,6 +32,7 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     MemberDetailPageComponent
   ],
   imports: [
+    SelectComponent,
     LoadErrorComponent,
     ClickablePhotoDirective,
     CommonModule,

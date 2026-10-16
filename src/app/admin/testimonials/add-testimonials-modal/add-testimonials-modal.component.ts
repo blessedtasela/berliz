@@ -1,3 +1,4 @@
+import { clientOptionLabel } from 'src/app/utils/option-labels';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Component, EventEmitter, OnInit, DestroyRef, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -51,6 +52,8 @@ export class AddTestimonialsModalComponent implements OnInit {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
   ) { }
+
+  readonly clientLabel = clientOptionLabel;
 
   ngOnInit(): void {
     this.addTestimonialForm = this.formBuilder.group({

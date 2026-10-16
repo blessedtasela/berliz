@@ -99,6 +99,9 @@ export class AssignTaskModalComponent implements OnInit, OnDestroy {
     return !!control && control.invalid && (control.dirty || control.touched || this.invalidForm);
   }
 
+  /** For the searchable client picker, which takes a plain function. */
+  readonly clientLabelFn = (client: TrainerClients) => this.clientLabel(client);
+
   clientLabel(client: TrainerClients): string {
     const name = `${client.firstname ?? ''} ${client.lastname ?? ''}`.trim();
     return name || client.email || `Client #${client.id}`;

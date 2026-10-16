@@ -30,7 +30,8 @@ import { SharedModule } from '../shared/shared.module';
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
-    WorkoutsModule
+    WorkoutsModule,
+    SharedModule
   ]
 })
 export class MyTasksModule { }

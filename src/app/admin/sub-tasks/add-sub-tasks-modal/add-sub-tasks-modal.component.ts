@@ -1,3 +1,4 @@
+import { taskOptionLabel } from 'src/app/utils/option-labels';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Component, EventEmitter, OnInit, DestroyRef, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -46,6 +47,8 @@ export class AddSubTasksModalComponent implements OnInit {
     private ngxService: NgxUiLoaderService,
     private snackbarService: SnackBarService,
   ) { }
+
+  readonly taskLabel = taskOptionLabel;
 
   ngOnInit(): void {
     this.addSubTaskForm = this.formBuilder.group({

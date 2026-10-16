@@ -1,3 +1,4 @@
+import { SelectComponent } from 'src/app/shared/select/select.component';
 import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -30,7 +31,7 @@ export type EquipmentImageField = typeof EQUIPMENT_IMAGE_FIELDS[number];
  */
 @Component({
     selector: 'app-equipment-modal',
-    imports: [ClickablePhotoDirective, CommonModule, ReactiveFormsModule, IconsModule, StrapiUrlPipe],
+    imports: [ClickablePhotoDirective, CommonModule, ReactiveFormsModule, IconsModule, StrapiUrlPipe, SelectComponent],
     templateUrl: './equipment-modal.component.html',
     styleUrls: ['./equipment-modal.component.css']
 })

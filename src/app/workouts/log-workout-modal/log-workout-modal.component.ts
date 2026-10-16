@@ -6,6 +6,7 @@ import { Store } from '@ngrx/store';
 import { Subscription, take } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
+import { SelectComponent } from 'src/app/shared/select/select.component';
 import { Exercises } from 'src/app/models/exercise.interface';
 import {
   SetType,
@@ -54,7 +55,7 @@ export const SET_TYPES: { value: SetType; label: string }[] = [
  */
 @Component({
     selector: 'app-log-workout-modal',
-    imports: [CommonModule, FormsModule, MatDialogModule, IconsModule],
+    imports: [CommonModule, FormsModule, MatDialogModule, IconsModule, SelectComponent],
     templateUrl: './log-workout-modal.component.html'
 })
 export class LogWorkoutModalComponent implements OnInit, OnDestroy {

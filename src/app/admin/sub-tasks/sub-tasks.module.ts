@@ -1,3 +1,4 @@
+import { SelectComponent } from 'src/app/shared/select/select.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -30,6 +31,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
     SubTaskDetailPageComponent
   ],
   imports: [
+    SelectComponent,
     ClickablePhotoDirective,
     CommonModule,
     FooterModule,

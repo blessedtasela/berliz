@@ -28,12 +28,8 @@
         <!-- User -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">User</label>
-            <select aria-label="User" formControlName="email" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
-                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-                [ngClass]="addPaymentForm.get('email')?.invalid && invalidForm ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'">
-                <option value="" selected hidden>Select a user</option>
-                <option *ngFor="let user of users" [value]="user.email">{{ user.firstname }} {{ user.lastname }} — {{ user.email }}</option>
-            </select>
+            <app-select formControlName="email" [items]="users" bindValue="email" [labelFn]="userLabel" placeholder="Select a user" ariaLabel="User"
+                [invalid]="!!(addPaymentForm.get('email')?.invalid && invalidForm)"></app-select>
             <p *ngIf="addPaymentForm.get('email')?.invalid && invalidForm"
                 class="text-red-500 dark:text-red-400 text-[11px] flex items-center gap-1">
                 <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
