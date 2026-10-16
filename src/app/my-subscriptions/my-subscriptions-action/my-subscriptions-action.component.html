@@ -5,8 +5,8 @@
         <i-feather name="more-horizontal" style="width:14px;height:14px;" class="text-gray-500 dark:text-gray-400"></i-feather>
     </button>
 
-    <div *ngIf="open" (click)="$event.stopPropagation()"
-        class="absolute right-0 top-full mt-1.5 w-44 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-[100] text-sm py-1">
+    <div *ngIf="open" (click)="$event.stopPropagation()" [ngClass]="store ? 'w-56' : 'w-44'"
+        class="absolute right-0 top-full mt-1.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-[100] text-sm py-1">
 
         <button type="button"
             class="w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 transition"
@@ -15,21 +15,34 @@
             View details
         </button>
 
-        <button type="button"
+        <!-- Bought in the iOS / Android app: only the store can renew, cancel or change it. -->
+        <ng-container *ngIf="store">
+            <a [href]="manageUrl" target="_blank" rel="noopener noreferrer" data-testid="manage-in-store"
+                class="w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 transition"
+                (click)="open = false">
+                <i-feather name="external-link" style="width:13px;height:13px;" class="text-gray-400 dark:text-gray-500"></i-feather>
+                Manage in {{ storeLabel }}
+            </a>
+            <p data-testid="billed-by-store" class="px-4 pb-2 text-[10px] leading-snug text-gray-400 dark:text-gray-500">
+                Billed by the {{ storeLabel }}. Cancel or change it there.
+            </p>
+        </ng-container>
+
+        <button type="button" *ngIf="!store"
             class="w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 transition"
             (click)="renew()">
             <i-feather name="refresh-cw" style="width:13px;height:13px;" class="text-gray-400 dark:text-gray-500"></i-feather>
             Renew
         </button>
 
-        <button type="button" *ngIf="!autoRenewOff"
+        <button type="button" *ngIf="!store && !autoRenewOff"
             class="w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 transition"
             (click)="cancelAutoRenew()">
             <i-feather name="x-circle" style="width:13px;height:13px;" class="text-gray-400 dark:text-gray-500"></i-feather>
             Cancel auto-renew
         </button>
 
-        <button type="button" *ngIf="autoRenewOff"
+        <button type="button" *ngIf="!store && autoRenewOff"
             class="w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 transition"
             (click)="resumeAutoRenew()">
             <i-feather name="rotate-ccw" style="width:13px;height:13px;" class="text-gray-400 dark:text-gray-500"></i-feather>

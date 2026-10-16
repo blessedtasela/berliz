@@ -24,6 +24,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Gender field — inclusive options | ✅ | Male / Female / Non-binary / Prefer not to say, driven by one shared `GENDER_OPTIONS` constant across every picker (signup, signup modal, Settings, both admin edit-user modals) instead of each hardcoding its own binary radio pair. Backend stores `User.gender` as free text with no enum constraint, so this was purely a frontend change |
 | Value-first onboarding checklist | ✅ | Dismissible, role-aware first-run checklist at the top of the dashboard home (complete your profile / log a workout / connect / find a provider — or profile/post/connect for providers; "Complete your profile" is how regular users add the photo and location that signup no longer requires); progress is data-derived where possible, dismissal + click-steps persist in `localStorage`. No paywall in the path |
 | Block / unblock users | ✅ | Two-directional enforcement across messaging, mentions, comments |
+| Delete my account | ✅ | Settings > Danger zone > Delete account (an App Store requirement on mobile, the same right on the web). Type DELETE to confirm; the password is asked for only on password accounts. The server scrubs every personal field and deactivates the account, keeping bookings and payments for the other party and the books, revokes the Sign in with Apple tokens and deletes the Stripe customer. It refuses while there are upcoming bookings or a subscription that still renews, and the reason is shown in the dialog |
 | Report content (posts, comments) | ✅ | Feeds admin content-report queue |
 
 ## 2. Social — feed, posts, connections
@@ -185,6 +186,13 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Web: "billed by the App Store" subscriptions, store purchases in Payments
+
+- **Account deletion gets more time.** `POST /account/delete` (the Delete account dialog, below) is allowed 60 s instead of the interceptor's usual 20 s, because the server contacts Apple (revoking Sign in with Apple) and Stripe (deleting the customer) before it answers; a timeout would otherwise report "failed" for an account that was in fact deleted.
+- **Subscriptions bought in the mobile app.** A subscription billed by the App Store or Google Play (backend `Subscription.store` / `mode` = `APP_STORE` / `PLAY_STORE`) now shows a "Billed by the App Store" badge, and its menu offers **Manage in App Store / Google Play** (a link to the store's subscription settings) instead of Renew, Cancel auto-renew and Resume auto-renew, which only work for Stripe-billed ones. The backend refuses them too (`/subscription/cancel`), so the two stay in step.
+- **Payments (admin).** Store purchases are mirrored into the payments list in the buyer's own currency, so the amount is shown with its currency code (e.g. `9.99 GBP`) on the payment detail page and modal; Stripe payments, in the platform currency, show none. A refund made in the store shows the "Refunded" badge, and the Refund button stays Stripe-only.
+- Backend (same change set, migration V70): saved cards in the mobile payment sheet (off until `STRIPE_SAVED_CARDS=true`), revoking Sign in with Apple tokens on account deletion, and mirroring App Store / Google Play charges into Payments.
+
 ### Unreleased — Faster first load, media on the dashboard timeline, bookable times only, quarter-hour availability
 
 - **Faster first load.** The 9 MB fire background video on the landing page no longer downloads with the page: it starts after the page has loaded, only on desktop, and never for data-saver, slow-connection or reduced-motion visitors (they keep the poster image). The PDF viewer library (~660 KB, only used by the admin CV / certificate modals) is now loaded when one of those modals is opened instead of being part of every visitor's first download. Not done: the video file itself is still 9 MB and the `.webm` is a copy of the `.mp4`; re-encoding it to about 1 MB needs ffmpeg.
@@ -203,6 +211,7 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 ### Unreleased — Guest-first booking, star ratings, waitlist, calendar link and provider insights
 
 - **Book before you sign up.** The public booking page (`/trainers/:name/book`, `/centers/:name/book`) no longer redirects visitors to the login page. A visitor picks a day and time, and is asked to log in or create an account only when they press *Continue*. Their day, time and notes are kept in `sessionStorage` for up to two hours and put back when they return signed in (login falls back to the booking page when sign-up and email activation dropped the `returnUrl`). The "Book" button on provider profiles sends guests to this page instead of showing a "Login required" prompt.
+- **Share a booking link.** The booking page header has a share button: the native share sheet on phones, otherwise it copies the page URL (the same canonical `/trainers/:name/book` or `/centers/:name/book` the page puts in its SEO tags). The app-link file `src/.well-known/apple-app-site-association` now lists `/trainers/*` and `/centers/*` (profiles and `/book`), not just the two list pages, so once the mobile app is registered those links open in it. **Still needed before app links work:** the real Apple Team ID in that file and the real signing-cert SHA-256 in `assetlinks.json` (both still placeholders), plus matching `associatedDomains` / `intentFilters` in the mobile app config.
 - **Waitlist.** When a day has no open times the page offers *Tell me if a time opens up*; a cancellation frees the slot and the client is emailed (backend: `/waitlist`).
 - **Star ratings.** Reviews of trainers and centers now carry a required 1-5 rating (accessible radio-group input). Cards show the star average plus review count (falling back to the count alone for unrated providers), review lists show each review's stars, and the filter bar can sort by *Highest rated*.
 - **Calendar link.** My bookings and the provider *My Availability* tab show a private calendar subscription link (Google / Apple / Outlook): copy it, open it in the calendar app, or replace it (the old one stops working).
@@ -501,6 +510,33 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Not yet: the fee is displayed, not charged (client payment checkout is still unwired).
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
+
+### Unreleased — Follow-ups from the all-screens audit
+
+- **Every dialog was a white panel in dark mode.** The dark-mode rules for dialogs targeted Angular Material's old class
+  (`.mat-dialog-container`); since the move to the MDC components the panel is `.mat-mdc-dialog-container`, so nothing matched
+  and dialogs whose content is styled with `dark:` variants showed light text on a white panel (headings unreadable).
+  Rules updated to the current class names and Material's own colour variables; verified in dark and light.
+- **"NaN sessions" on the dashboard** (recap card) when the recap response left out a count: counts now default to 0 (+ spec).
+- **Duplicate heading on Bookings:** the page title/subtitle appeared again inside the list below it. The list components take
+  `[embedded]` and keep only their action buttons when shown inside the Bookings page (standalone routes unchanged).
+- Left alone on purpose: the Material prebuilt theme and ng-select theme `@import`s in `styles.css` are dropped at build time (they
+  sit after Tailwind's expanded rules). The app has always rendered without them; loading them now would restyle every Material
+  surface, so it needs its own visual pass.
+
+### Unreleased — All-screens accessibility audit: contrast, unnamed button, dialogs invisible in dark mode
+
+Ran axe-core over every static route (16 public + 68 dashboard, light and dark, desktop and 390 px phone = 332 page loads) against the
+production build with a local mock API: no hangs, no horizontal overflow, no broken images, no uncaught JS errors. Findings fixed:
+- **Colour contrast:** 3,345 text nodes failed WCAG AA, nearly all from the same few utilities for secondary text
+  (`text-gray-400` on white 2.5:1, `dark:text-gray-500` on dark 3.0-3.7:1, `text-red-600` on dark 3.7:1, small sky/zinc links).
+  Corrected centrally in `styles.css` ("Contrast corrections") plus the status pills (green/yellow/blue badges) in their templates.
+  Re-measured: 26 left (3,345 before).
+- The notification bell in the top bar had no accessible name (every dashboard route); it now announces the unread count.
+- Six dialogs/pages had no dark styling at all, so in dark mode they showed dark text on the dark dialog surface: update-profile,
+  change-password, forgot/reset-password, the weekly-availability editor, the referral-claim page, edit-to-do, and the 404 page.
+- Lesson for local checks: do not run a build while the local test server or headless Chrome has the output folder open —
+  the build then "completes" without rewriting files (Windows file lock), and you end up verifying the old bundle.
 
 ### Unreleased — Dark mode for native controls, brand accent
 

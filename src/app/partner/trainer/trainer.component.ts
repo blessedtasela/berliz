@@ -176,7 +176,9 @@ export class TrainerComponent {
         next: (res: any) => {
           this.ngxService.stop();
           this.snackBarService.openSnackBar(res?.message, '');
-          this.trainerData.photoResponse = res?.photoResponse;
+          // res is the ApiResponse wrapper; the new photo is res.data.photoResponse (reading res.photoResponse
+          // blanked the photo until the next page load).
+          this.trainerData.photoResponse = res?.data?.photoResponse ?? this.trainerData.photoResponse;
           this.showCropper = false;
           this.onEmit.emit();
         },

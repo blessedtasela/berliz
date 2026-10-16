@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
@@ -29,6 +29,12 @@ import { genericError } from 'src/validators/form-validators.module';
     standalone: false
 })
 export class MyBookingsMainComponent implements OnInit, OnDestroy {
+  /**
+   * True when this sits inside the Bookings page (manage-bookings), which already shows the page title and
+   * subtitle -- the second heading/subtitle used to repeat it. Only the action buttons are kept then.
+   */
+  @Input() embedded = false;
+
 
   bookings: Booking[] = [];
   loading = false;

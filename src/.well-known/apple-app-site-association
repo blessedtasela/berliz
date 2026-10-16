@@ -4,7 +4,7 @@
     "details": [
       {
         "appID": "REPLACE_WITH_APPLE_TEAM_ID.com.berliz.mobile",
-        "paths": ["/dashboard/*", "/trainers", "/centers", "/about", "/contact", "/terms", "/privacy", "/help-center", "/report-problem"]
+        "paths": ["/dashboard/*", "/trainers", "/trainers/*", "/centers", "/centers/*", "/about", "/contact", "/terms", "/privacy", "/help-center", "/report-problem"]
       }
     ]
   }

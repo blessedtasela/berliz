@@ -3,8 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
-@import '@angular/material/prebuilt-themes/indigo-pink.css';
-@import "~@ng-select/ng-select/themes/default.theme.css";
+/* The Angular Material (indigo-pink) and ng-select default themes used to be @imported here. Both imports sat after
+   Tailwind's expanded rules, which makes them invalid CSS, so the build has always dropped them (and warned). The app
+   only uses Material for dialogs and snack bars, both styled in this file, and ng-select through .berliz-select below,
+   so nothing was lost; the dead lines are removed so the warnings stop hiding real ones. */
+
 /* Inter is self-hosted: its stylesheet is added in angular.json "styles" (an @import here would sit after
    Tailwind's expanded rules and be ignored). Until now the body asked for Roboto/'Inter' but nothing ever loaded
    either, so every device fell back to its own system font and the app looked different on each one. */
@@ -414,6 +417,30 @@ html.dark .mat-dialog-container {
   color: #f3f4f6; /* gray-100 */
 }
 
+/* The two rules above target Angular Material's OLD dialog class (.mat-dialog-container). Since the move to the MDC
+   components the panel is .mat-mdc-dialog-container / .mdc-dialog__surface, so neither rule matched any more: every
+   dialog stayed a white panel in dark mode while its content (styled with Tailwind dark: variants) turned light-on-light --
+   headings and labels became unreadable. Same intent, current class names; the CSS variables are what MDC reads. */
+.berliz-modal .mat-mdc-dialog-surface {
+  border-radius: 12px;
+}
+
+html.dark .mat-mdc-dialog-container {
+  --mdc-dialog-container-color: #111827;
+  --mdc-dialog-subhead-color: #f3f4f6;
+  --mdc-dialog-supporting-text-color: #d1d5db;
+  --mat-dialog-container-color: #111827;
+  --mat-dialog-subhead-color: #f3f4f6;
+  --mat-dialog-supporting-text-color: #d1d5db;
+  color: #f3f4f6;
+}
+
+html.dark .mat-mdc-dialog-container .mdc-dialog__surface,
+html.dark .mat-mdc-dialog-surface {
+  background-color: #111827;
+  color: #f3f4f6;
+}
+
 .badge-pulse {
   animation: badgePulse 1.4s ease-out infinite;
 }
@@ -599,4 +626,41 @@ html.dark {
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(156, 163, 175, 0.45) transparent;
+}
+
+
+/* ─── Contrast corrections ─────────────────────────────────────────────────
+   An axe-core sweep of every route found ~1,400 small texts below the WCAG AA ratio (4.5:1), almost all of them the
+   same few colour utilities used for secondary text. Fixing the utilities here corrects them everywhere at once. */
+
+/* Secondary text: gray-400 on white is 2.5:1 and gray-500 on the dark surfaces is 3.0-3.7:1. */
+html:not(.dark) .text-gray-400 {
+  color: #6b7280;
+}
+
+html.dark .dark\:text-gray-500 {
+  color: #9ca3af;
+}
+
+/* Brand red as TEXT on dark surfaces (permanently-dark marketing pages, black footer, and dark mode). */
+:is(.dark, .bg-black, .bg-gray-950, .bg-zinc-950, .bg-gray-900, .bg-zinc-900) .text-red-600:not([class*="bg-red-"]):not([class*="bg-white"]) {
+  color: #f87171;
+}
+
+/* On light surfaces plain text-red-600 is 4.4-4.5:1 on the tinted red backgrounds; a touch deeper clears AA. */
+html:not(.dark) .text-red-600 {
+  color: #c81e1e;
+}
+
+/* Links in sky blue on white / on dark. */
+html:not(.dark) .text-sky-600 {
+  color: #0369a1;
+}
+
+.dark .text-sky-600 {
+  color: #38bdf8;
+}
+
+.text-zinc-500 {
+  color: #a1a1aa;
 }
