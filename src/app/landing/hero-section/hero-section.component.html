@@ -5,12 +5,10 @@
 
     <!-- Cinematic fire background -->
     <div class="absolute inset-0 z-0">
-        <video autoplay muted loop playsinline
-            class="w-full h-full object-cover object-top opacity-20 mix-blend-screen pointer-events-none">
-            <source src="assets/fire-loop.webm" type="video/webm" />
-            <source src="assets/fire-loop.mp4" type="video/mp4" />
-            <img src="assets/fire-fallback.jpg" alt="Cinematic fire background" class="w-full h-full object-cover object-top" />
-        </video>
+        <!-- The 9 MB loop is attached after the page has loaded (see startBackgroundVideo); until then, and for
+             visitors on mobile / slow / data-saver connections, only the poster is shown. -->
+        <video #heroVideo muted loop playsinline preload="none" poster="assets/fire-fallback.jpg" aria-hidden="true"
+            class="w-full h-full object-cover object-top opacity-20 mix-blend-screen pointer-events-none"></video>
     </div>
 
     <!-- Dark gradient overlay -->

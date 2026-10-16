@@ -10,8 +10,7 @@ import { genericError } from 'src/validators/form-validators.module';
 import { UpdatePartnerModalComponent } from '../update-partner-modal/update-partner-modal.component';
 import { DatePipe } from '@angular/common';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
-import { ViewCertificateModalComponent } from 'src/app/shared/view-certificate-modal/view-certificate-modal.component';
-import { ViewCvModalComponent } from 'src/app/shared/view-cv-modal/view-cv-modal.component';
+import { openCvModal, openCertificateModal } from 'src/app/shared/pdf-modals';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { PartnerDetailsModalComponent } from '../partner-details-modal/partner-details-modal.component';
 import { Store } from '@ngrx/store';
@@ -167,18 +166,13 @@ export class PartnerListComponent implements OnDestroy {
   openViewCertificate(id: number) {
     const partner = this.partnersData.find(partner => partner.id === id);
     if (partner) {
-      const dialogRef = this.dialog.open(ViewCertificateModalComponent, {
+      openCertificateModal(this.dialog, {
         width: '720px',
         maxWidth: '95vw',
         data: {
           partnerData: partner,
         },
         panelClass: 'mat-dialog-height',
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-        } else {
-        }
       });
     }
   }
@@ -186,18 +180,13 @@ export class PartnerListComponent implements OnDestroy {
   openViewCV(id: number) {
     const partner = this.partnersData.find(partner => partner.id === id);
     if (partner) {
-      const dialogRef = this.dialog.open(ViewCvModalComponent, {
+      openCvModal(this.dialog, {
         width: '720px',
         maxWidth: '95vw',
         data: {
           partnerData: partner,
         },
         panelClass: 'mat-dialog-height',
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-        } else {
-        }
       });
     }
   }

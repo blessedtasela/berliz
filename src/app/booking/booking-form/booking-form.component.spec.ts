@@ -12,6 +12,7 @@ import { BookingFormComponent, BookingFormData } from './booking-form.component'
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SessionCreditService } from 'src/app/services/session-credit.service';
 import { PromotionService } from 'src/app/services/promotion.service';
+import { BookingService } from 'src/app/services/booking.service';
 import { selectAvailabilityLoading, selectAvailableSlots } from 'src/app/state/availability/availability.selectors';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
@@ -76,7 +77,9 @@ describe('BookingFormComponent', () => {
     expect(component.submitting).toBeFalse();
   });
 
-  it('sends the chosen location with a manual-entry booking', () => {
+  // Regression: a provider with no availability used to get a free date/time picker, so clients could request
+  // times the provider never offered.
+  it('does not let anyone book a provider who has set no available times', () => {
     fixture.detectChanges();
     const store = TestBed.inject(MockStore);
     spyOn(store, 'dispatch');
@@ -85,12 +88,29 @@ describe('BookingFormComponent', () => {
       date: '2099-01-01', time: '09:00', durationMinutes: 60,
     });
 
+    component.submitForm();
+
+    expect(store.dispatch).not.toHaveBeenCalled();
+    expect(component.submitting).toBeFalse();
+  });
+
+  it('sends the chosen location with an urgent booking', () => {
+    fixture.detectChanges();
+    const bookingService = TestBed.inject(BookingService);
+    const createUrgent = spyOn(bookingService, 'createUrgentBooking').and.returnValue(of({ message: 'ok', data: {} } as any));
+    component.availabilityConfigured = true;
+    component.urgentMode = true;
+    component.bookingForm.patchValue({
+      date: '2099-01-01', time: '09:00', durationMinutes: 60, notes: 'Competition next week',
+    });
+
     component.onLocationChange({ trainerLocationId: 41, customLocation: undefined, incomplete: false, fee: 15 });
     component.submitForm();
 
-    const action: any = (store.dispatch as jasmine.Spy).calls.mostRecent().args[0];
-    expect(action.data.trainerLocationId).toBe(41);
-    expect(action.data.customLocation).toBeUndefined();
-    expect(action.data.trainerId).toBe(1);
+    const payload: any = createUrgent.calls.mostRecent().args[0];
+    expect(payload.trainerLocationId).toBe(41);
+    expect(payload.customLocation).toBeUndefined();
+    expect(payload.trainerId).toBe(1);
+    expect(payload.urgent).toBeTrue();
   });
 });

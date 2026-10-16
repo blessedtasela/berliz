@@ -12,7 +12,7 @@ describe('ViewCertificateModalComponent', () => {
     const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
 
     TestBed.configureTestingModule({
-      declarations: [ViewCertificateModalComponent],
+      imports: [ViewCertificateModalComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefSpy },

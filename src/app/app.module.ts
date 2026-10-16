@@ -15,7 +15,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule } from '@angular/material/dialog';
-import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { SharedModule } from './shared/shared.module';
 import { FeatherModule } from 'angular-feather';
 import { RouterModule, UrlSerializer } from '@angular/router';
@@ -170,7 +169,6 @@ const dbConfig: DBConfig = {
         FormsModule,
         ProductsModule,
         MatDialogModule,
-        NgxExtendedPdfViewerModule,
         SharedModule,
         FeatherModule,
         RouterModule,

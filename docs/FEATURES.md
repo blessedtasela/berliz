@@ -185,6 +185,13 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Faster first load, media on the dashboard timeline, bookable times only, quarter-hour availability
+
+- **Faster first load.** The 9 MB fire background video on the landing page no longer downloads with the page: it starts after the page has loaded, only on desktop, and never for data-saver, slow-connection or reduced-motion visitors (they keep the poster image). The PDF viewer library (~660 KB, only used by the admin CV / certificate modals) is now loaded when one of those modals is opened instead of being part of every visitor's first download. Not done: the video file itself is still 9 MB and the `.webm` is a copy of the `.mp4`; re-encoding it to about 1 MB needs ffmpeg.
+- **Dashboard timeline shows media.** The "See what others are doing" cards on the Overview page now show the post's photo, or a still frame with a play icon for a video, instead of text only.
+- **Only the provider's own times can be booked.** The booking dialog no longer offers a free date/time picker when a trainer or center hasn't set their availability; it says they haven't set their available times yet (as the booking page already did) and the request button is disabled. The urgent-request path for a provider who *has* availability is unchanged.
+- **Quarter-hour availability.** My Availability (and the admin availability editor) use the shared time picker instead of the browser's native time input, so every hour offers :00 / :15 / :30 / :45.
+
 ### Unreleased — Delete your account from the web
 
 - Settings → Danger zone now has **Delete account** next to *Deactivate account*, matching the mobile app. It asks for your password (blank for Google / Facebook / Apple sign-ins) and for the word `DELETE`, then calls `POST /account/delete` and signs you out. The server answers 200 even when it refuses (wrong password, upcoming bookings, a renewing subscription), so the reason is shown inside the dialog and the account is only treated as deleted when the server says so. Deactivate stays for people who just want a break.

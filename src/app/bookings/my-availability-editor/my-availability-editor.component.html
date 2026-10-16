@@ -55,15 +55,11 @@
             <div *ngIf="day.blocks.length > 0" class="flex flex-col gap-1.5 mt-2.5 ml-12">
                 <div *ngFor="let block of day.blocks; let i = index" class="flex items-center gap-2">
                     <div class="flex items-center gap-2 flex-1 min-w-[220px]">
-                        <input type="time" [(ngModel)]="block.startTime" (ngModelChange)="clearBlockError(block)"
-                            class="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg border text-xs text-gray-900 bg-white
-                                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-                            [ngClass]="block.invalid ? 'border-red-400' : 'border-gray-200'" />
+                        <app-time-picker class="flex-1 min-w-0" [(ngModel)]="block.startTime" (ngModelChange)="clearBlockError(block)"
+                            placeholder="Start time" [invalid]="block.invalid"></app-time-picker>
                         <span class="text-gray-400 text-xs shrink-0">to</span>
-                        <input type="time" [(ngModel)]="block.endTime" (ngModelChange)="clearBlockError(block)"
-                            class="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg border text-xs text-gray-900 bg-white
-                                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-                            [ngClass]="block.invalid ? 'border-red-400' : 'border-gray-200'" />
+                        <app-time-picker class="flex-1 min-w-0" [(ngModel)]="block.endTime" (ngModelChange)="clearBlockError(block)"
+                            placeholder="End time" [invalid]="block.invalid"></app-time-picker>
                     </div>
                     <button type="button" (click)="removeBlock(day, i)" title="Remove this time block"
                         class="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 transition">
