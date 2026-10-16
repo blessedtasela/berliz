@@ -36,6 +36,7 @@ import { UnderConstructionPageComponent } from './under-construction-page/under-
 import { TimeAgoPipe } from './shared/pipes/time-ago.pipe';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { ClientMetaInterceptor } from './services/client-meta.interceptor';
+import { RequestActivityInterceptor } from './services/request-activity.service';
 import { GlobalErrorHandlerService } from './services/global-error-handler.service';
 import { StoreModule } from '@ngrx/store';
 import { RefreshAfterMutationEffects } from './state/refresh-after-mutation.effects';
@@ -245,6 +246,11 @@ const dbConfig: DBConfig = {
         {
             provide: HTTP_INTERCEPTORS,
             useClass: ClientMetaInterceptor,
+            multi: true
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: RequestActivityInterceptor,
             multi: true
         },
         {

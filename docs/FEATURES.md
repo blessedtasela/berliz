@@ -504,6 +504,19 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 
+### Unreleased — Double-submit guard, skeleton shimmer, populated-data audit, mobile labels
+
+- **A form can't be submitted twice while its first submit is in flight.** `RequestActivityService` + interceptor count in-flight
+  create/update/delete requests; `installDoubleSubmitGuard` (capture-phase `submit` listener) swallows a second submit of the same form until
+  the request settles and dims its submit buttons (`form[data-submitting]`). A submit that fails validation starts no request, so a form is never
+  locked. Stops double-click duplicates (two bookings/posts/payments) across every form without touching each component. 10 tests.
+- **Skeleton bars now shimmer** (a light sweep across `animate-pulse` blocks that carry their own grey background) instead of only fading.
+- **Populated-data audit** (166 page loads with realistic records incl. long unbroken text, phone + desktop): no overflow, no errors. Found and fixed:
+  zinc-600 text on the public dark pages (2.6:1), and 6 rows that had gained `role="button"` in the earlier keyboard pass while containing
+  their own buttons/links (nested-interactive) — the role is removed there; those rows stay click-only as before.
+- **Mobile:** scanned all 827 Pressables; 30 icon-only ones (menu, home, photo thumbnails, lightbox close, attach, send, step/to-do toggles…)
+  had no accessible name and now do.
+
 ### Unreleased — Follow-ups from the all-screens audit
 
 - **Every dialog was a white panel in dark mode.** The dark-mode rules for dialogs targeted Angular Material's old class

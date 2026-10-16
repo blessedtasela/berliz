@@ -5,7 +5,7 @@
     'z-50': menuOpen,
     'z-0': !menuOpen
   }" style="overflow: visible;" (click)="onItemClick($event)" (mousedown)="startPress($event)"
-    (mouseup)="cancelPress()" (mouseleave)="cancelPress()" role="button" tabindex="0" (keydown.enter)="onItemClick($any($event))">
+    (mouseup)="cancelPress()" (mouseleave)="cancelPress()">
 
     <!-- Unread accent -->
     <div *ngIf="!item.read" class="absolute left-0 top-0 h-full w-1 bg-red-600 dark:bg-red-500 rounded-l-xl"></div>
