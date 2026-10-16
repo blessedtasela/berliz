@@ -30,8 +30,10 @@ export interface SelectOption {
   imports: [CommonModule, FormsModule, NgSelectModule],
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => SelectComponent), multi: true }],
   template: `
+    <!-- ng-select copies its own ngClass INPUT (not the static class) onto the body-attached panel, so the
+         base class has to be in this object for the open list to be styled at all. -->
     <ng-select class="berliz-select"
-      [ngClass]="{ 'berliz-select--error': invalid, 'berliz-select--compact': compact }"
+      [ngClass]="{ 'berliz-select': true, 'berliz-select--error': invalid, 'berliz-select--compact': compact }"
       [items]="options" bindLabel="label" bindValue="value"
       [multiple]="multiple" [placeholder]="placeholder" [clearable]="clearable"
       [searchable]="true" [closeOnSelect]="!multiple" [clearSearchOnAdd]="true"

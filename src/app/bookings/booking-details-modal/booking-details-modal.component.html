@@ -44,6 +44,10 @@
             <i-feather name="file-text" style="width:12px;height:12px;" class="text-gray-400 dark:text-gray-500 mt-0.5"></i-feather>
             <span class="italic">"{{ booking.notes }}"</span>
         </div>
+        <div *ngIf="booking.packageSubscriptionId" class="flex items-center gap-1.5" data-testid="pack-line">
+            <i-feather name="package" style="width:12px;height:12px;" class="text-red-500"></i-feather>
+            <span class="text-gray-700 dark:text-gray-300">Booked from {{ booking.packageName ? 'your ' + booking.packageName : 'your pack' }} — no extra charge for the session</span>
+        </div>
         <div *ngIf="booking.appliedRewardLabel" class="flex items-center gap-1.5">
             <i-feather name="gift" style="width:12px;height:12px;" class="text-emerald-500"></i-feather>
             <span class="text-emerald-700 dark:text-emerald-400 font-medium">{{ booking.appliedRewardLabel }}</span>

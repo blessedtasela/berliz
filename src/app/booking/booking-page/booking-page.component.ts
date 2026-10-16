@@ -35,6 +35,7 @@ import { ProviderPackage } from 'src/app/models/provider-package.model';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { Users } from 'src/app/models/users.interface';
 import { genericError } from 'src/validators/form-validators.module';
+import { PLAN_KIND_LABEL, planActionLabel, planCheckoutNote, planIncludes, planKind, planPriceNote } from 'src/app/utils/provider-package.util';
 
 type ProviderKind = 'trainer' | 'center';
 
@@ -50,6 +51,13 @@ type BookingOption =
  * modal: a real URL a provider or client can share/deep-link directly to,
  * and the only place a client can buy or redeem a ProviderPackage rather
  * than just book one ad-hoc single session.
+ *
+ * Three different things can be done here and the page keeps them apart:
+ *  - single session: pick a time, send a request, the provider confirms, then you pay (Bookings)
+ *  - buy a plan (subscription / session pack / membership): no time to pick -- you pay now and it
+ *    lands in My Subscriptions
+ *  - use a plan you own: pick a time and book a session out of it (Bookings, tagged as from the pack)
+ * `?plan=<id>` opens the page on that plan (the plan cards link here).
  */
 @Component({
     selector: 'app-booking-page',
@@ -74,6 +82,14 @@ export class BookingPageComponent implements OnInit, OnDestroy {
 
   selectedOption: BookingOption = { kind: 'single' };
   buyingPackageId: number | null = null;
+  /** The plan the link asked for (`?plan=`); used once the provider's plans have loaded. */
+  private pendingPlanId: number | null = null;
+
+  readonly kindLabel = (pkg: ProviderPackage) => PLAN_KIND_LABEL[planKind(pkg)];
+  readonly actionLabel = planActionLabel;
+  readonly priceNote = planPriceNote;
+  readonly includes = planIncludes;
+  readonly checkoutNote = planCheckoutNote;
 
   // ── Slot picker — same shape/behavior as BookingFormComponent's ──────────
   selectedDate: string = this.formatDateLocal(new Date());
@@ -158,7 +174,51 @@ export class BookingPageComponent implements OnInit, OnDestroy {
       || (this.selectedOption.kind === 'buyPackage' && this.selectedOption.pkg.id === pkg.id);
   }
 
+  /** The plan being bought, when that's what is selected. */
+  get planToBuy(): ProviderPackage | null {
+    return this.selectedOption.kind === 'buyPackage' ? this.selectedOption.pkg : null;
+  }
+
+  /** The owned plan a session would be booked out of, when that's what is selected. */
+  get ownedPlan(): Subscriptions | null {
+    return this.selectedOption.kind === 'ownedPackage' ? this.selectedOption.subscription : null;
+  }
+
+  /** The main button says what it will do: request a session, book from your pack, or pay for a plan. */
+  get primaryLabel(): string {
+    if (this.submitting) return 'Sending…';
+    const plan = this.planToBuy;
+    if (plan) {
+      if (this.buyingPackageId === plan.id) return 'Starting checkout…';
+      return `${planActionLabel(plan)} · $${plan.price}${planKind(plan) === 'subscription' ? ' / month' : ''}`;
+    }
+    if (this.ownedPlan) return this.isGuest ? 'Continue' : 'Book with your pack';
+    return this.isGuest ? 'Continue' : 'Request booking';
+  }
+
+  get primaryIcon(): string {
+    if (this.submitting || (this.planToBuy && this.buyingPackageId === this.planToBuy.id)) return 'loader';
+    return this.planToBuy ? 'credit-card' : 'send';
+  }
+
+  get primaryBusy(): boolean {
+    return this.submitting || this.buyingPackageId != null;
+  }
+
+  get primaryDisabled(): boolean {
+    if (this.planToBuy) return this.buyingPackageId != null;
+    return this.submitting || this.availabilityConfigured !== true;
+  }
+
+  onPrimaryAction(): void {
+    const plan = this.planToBuy;
+    if (plan) this.buyPackage(plan);
+    else this.submit();
+  }
+
   ngOnInit(): void {
+    const planParam = Number(this.route.snapshot.queryParamMap.get('plan'));
+    this.pendingPlanId = Number.isFinite(planParam) && planParam > 0 ? planParam : null;
     this.kind = (this.route.snapshot.data['kind'] as ProviderKind) ?? 'trainer';
 
     this.store.dispatch(loadUser());
@@ -308,6 +368,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
 
     pkgs$.pipe(take(1), catchError(() => of(null))).subscribe(res => {
       this.packages = (res?.data ?? []).filter(p => p.isActive);
+      if (!this.user?.email) this.preselectPlan();
     });
 
     if (!this.user?.email) return;
@@ -323,7 +384,18 @@ export class BookingPageComponent implements OnInit, OnDestroy {
         if (sameProvider) owned.set(pkgId, sub);
       }
       this.ownedByPackageId = owned;
+      this.preselectPlan();
     });
+  }
+
+  /** Opens on the plan the link named, if it's one of this provider's active plans (once, so a later pick sticks). */
+  private preselectPlan(): void {
+    const id = this.pendingPlanId;
+    if (id == null || this.packages.length === 0) return;
+    const pkg = this.packages.find(p => p.id === id);
+    if (!pkg) return;
+    this.pendingPlanId = null;
+    this.choosePackage(pkg);
   }
 
   // ── Option selection ─────────────────────────────────────────────────────
@@ -361,6 +433,8 @@ export class BookingPageComponent implements OnInit, OnDestroy {
           amount: purchase.price,
           currency: purchase.currency,
           productName: purchase.packageName,
+          // A subscription is charged again every month; a pack or membership is paid once.
+          recurring: planKind(pkg) === 'subscription',
         }).subscribe({
           next: checkoutRes => {
             const checkoutUrl = checkoutRes.data?.checkoutUrl;
@@ -492,7 +566,8 @@ export class BookingPageComponent implements OnInit, OnDestroy {
       date: this.selectedDate,
       slotStart: this.selectedSlot?.startTime ?? null,
       notes: (this.notes ?? '').slice(0, this.maxNotesLength),
-      path: this.kind === 'trainer' ? `/trainers/${slug}/book` : `/centers/${slug}/book`,
+      path: (this.kind === 'trainer' ? `/trainers/${slug}/book` : `/centers/${slug}/book`)
+        + (this.planToBuy ? `?plan=${this.planToBuy.id}` : ''),
     });
   }
 

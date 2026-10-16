@@ -187,6 +187,34 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Plans, packs and single sessions are three different things
+
+Before, every plan card said "Choose this plan" and led to a page whose only button was **Request booking** — so buying the
+"5 session starter" or a monthly plan looked like asking for a one-off session. Now each use case has its own words, button
+and home:
+
+| | What it is | Button | Charged | Where it lives |
+|---|---|---|---|---|
+| **Single session** | One session, no commitment | Request booking | After the provider confirms it | **Bookings** |
+| **Session pack** | N sessions, paid once, booked later | **Buy pack · $X** | Now, once | **My Subscriptions** (sessions left), then each session is a booking tagged "From {pack}" |
+| **Subscription** | Billed every month until cancelled | **Subscribe · $X / month** | Now, then monthly (Stripe subscription) | **My Subscriptions** (cancel any time; access runs to the paid period) |
+| **Membership** | Unlimited sessions for a period, paid once | **Get membership · $X** | Now, once | **My Subscriptions** |
+
+- **Plan cards** (public and signed-in trainer/center pages) show a kind chip ("Session pack", "Subscription", "Membership"), "/ month" only
+  for subscriptions, and a button named for what it does; it opens the booking page already on that plan (`?plan=<id>`).
+  Signed-in pages used to open the single-session form for every plan; they now open the plan.
+- **Booking page.** Pick *what you want* first — Single session or one of the provider's plans. Buying a plan hides the time picker, location, notes and
+  estimate (nothing to schedule), shows what's included and what happens after paying, and the main button pays. A guest who picks a plan
+  signs in and comes back to the same plan. A plan you already own says "You have this" and the page books a session *out of it* ("Book with your pack",
+  nothing more to pay). Subscriptions start a recurring Stripe checkout (previously every plan was charged once).
+- **My Subscriptions** rows for a trainer/center plan show its kind, who it's with, "3 of 5 sessions left" with a bar (or "Unlimited"), and a
+  **Book a session** shortcut while sessions remain. Ended rows say what they were without offering to book.
+- **Bookings** made from a pack carry "From {pack}" on the card and "Booked from your {pack} — no extra charge" in the details (the booking response now
+  includes `packageSubscriptionId` / `packageName`).
+- Not verified on real Stripe: the monthly subscription path charges in Stripe test mode like every other payment. A subscription that also sets a
+  session count would not refill its sessions each month (the renewal only extends access) — give subscriptions "unlimited" for now.
+- Mobile parity: the mobile app's package screens still use the old wording/one-off checkout — port the kind labels and `recurring` flag when mobile next touches them.
+
 ### Unreleased — Trainer locations: several spots per city, per-place client fees, searchable dropdowns
 
 - **Searchable dropdowns.** New shared `app-select` (ng-select under the hood, `.berliz-select` styling) — type to search, proper padding and caret, the list opens over modals, selected values never go blank. The country / state / city / dial-code pickers on signup, the profile form and the trainer profile use it; the booking picker uses it for the client's place.

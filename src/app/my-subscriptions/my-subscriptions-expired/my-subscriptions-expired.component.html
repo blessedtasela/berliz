@@ -10,6 +10,7 @@
             class="mt-1.5 inline-flex text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-gray-300 dark:border-gray-600">
             Expired
         </span>
+        <app-subscription-pack-info [subscription]="subscription" [bookable]="false"></app-subscription-pack-info>
     </div>
     <app-my-subscriptions-action [subscription]="subscription" (refresh)="refresh.emit()">
     </app-my-subscriptions-action>

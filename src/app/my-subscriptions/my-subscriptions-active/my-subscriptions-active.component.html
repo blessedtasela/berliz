@@ -20,6 +20,7 @@
                 Won't renew · access until {{ subscription.endDate | date:'mediumDate' }}
             </span>
         </div>
+        <app-subscription-pack-info [subscription]="subscription"></app-subscription-pack-info>
     </div>
     <app-my-subscriptions-action [subscription]="subscription" (refresh)="refresh.emit()">
     </app-my-subscriptions-action>

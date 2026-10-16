@@ -6,12 +6,15 @@ import { catchError, of } from 'rxjs';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { ProviderPackage } from 'src/app/models/provider-package.model';
 import { ProviderPackageService } from 'src/app/services/provider-package.service';
+import { PLAN_KIND_LABEL, planActionLabel, planKind, planPriceNote } from 'src/app/utils/provider-package.util';
 import { ProfileTheme, ProfileThemeClasses, profileTheme } from './profile-theme';
 
 /**
  * A provider's active packages and memberships as plan cards. Fetches its own
- * data from the public endpoint. With `bookLink` the cards link to the booking
- * page; with `selectable` they emit `choose` instead.
+ * data from the public endpoint. Each card says what it is (subscription, session
+ * pack or membership) and its button says what it does ("Subscribe", "Buy pack").
+ * With `bookLink` the button opens the booking page on that plan; with `selectable`
+ * it emits `choose` instead.
  */
 @Component({
   selector: 'app-provider-packages',
@@ -33,13 +36,14 @@ import { ProfileTheme, ProfileThemeClasses, profileTheme } from './profile-theme
                 class="absolute -top-2 left-4 text-[10px] font-bold uppercase tracking-wide bg-red-600 text-white px-2 py-0.5 rounded-full">Popular</span>
 
           <div class="flex flex-col gap-0.5">
+            <span class="self-start text-[10px] font-bold uppercase tracking-wide" [ngClass]="t.accent">{{ kindLabel(p) }}</span>
             <h3 class="text-sm font-bold" [ngClass]="t.heading">{{ p.name }}</h3>
             <p *ngIf="p.description" class="text-[11px] leading-snug line-clamp-3" [ngClass]="t.muted">{{ p.description }}</p>
           </div>
 
           <div class="flex items-baseline gap-1">
             <span class="text-2xl font-extrabold" [ngClass]="t.heading">{{ p.price | currency:p.currency:'symbol':'1.0-2' }}</span>
-            <span class="text-[11px]" [ngClass]="t.muted">{{ p.billingType === 'RECURRING' ? '/ billing cycle' : 'one-time' }}</span>
+            <span class="text-[11px]" [ngClass]="t.muted">{{ priceNote(p) }}</span>
           </div>
 
           <ul class="flex flex-col gap-1.5 text-[11px]" [ngClass]="t.body">
@@ -60,10 +64,10 @@ import { ProfileTheme, ProfileThemeClasses, profileTheme } from './profile-theme
             </li>
           </ul>
 
-          <a *ngIf="bookLink" [routerLink]="bookLink"
-             class="mt-auto text-center px-3 py-2 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition">Choose this plan</a>
+          <a *ngIf="bookLink" [routerLink]="bookLink" [queryParams]="{ plan: p.id }"
+             class="mt-auto text-center px-3 py-2 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition">{{ actionLabel(p) }}</a>
           <button *ngIf="!bookLink && selectable" type="button" (click)="choose.emit(p)"
-             class="mt-auto px-3 py-2 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition">Choose this plan</button>
+             class="mt-auto px-3 py-2 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition">{{ actionLabel(p) }}</button>
         </div>
       </div>
     </section>
@@ -92,6 +96,10 @@ export class ProviderPackagesComponent implements OnChanges {
   isPopular(first: boolean): boolean {
     return this.highlightFirst && first && this.packages.length > 1;
   }
+
+  kindLabel = (p: ProviderPackage) => PLAN_KIND_LABEL[planKind(p)];
+  actionLabel = planActionLabel;
+  priceNote = planPriceNote;
 
   perSession(p: ProviderPackage): number {
     return p.sessionCount ? p.price / p.sessionCount : p.price;

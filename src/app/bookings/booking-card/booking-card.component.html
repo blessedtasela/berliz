@@ -44,6 +44,12 @@
             "{{ booking.notes }}"
         </p>
 
+        <span *ngIf="booking.packageSubscriptionId" data-testid="pack-tag"
+            class="inline-flex items-center gap-1 text-[10px] font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 rounded-full px-2 py-0.5 mt-1.5 mr-1">
+            <i-feather name="package" style="width:10px;height:10px;"></i-feather>
+            {{ booking.packageName ? 'From ' + booking.packageName : 'From your pack' }}
+        </span>
+
         <span *ngIf="booking.appliedRewardLabel" class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900 rounded-full px-2 py-0.5 mt-1.5">
             <i-feather name="gift" style="width:10px;height:10px;"></i-feather>
             {{ booking.appliedRewardLabel }}

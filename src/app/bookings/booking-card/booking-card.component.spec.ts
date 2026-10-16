@@ -81,6 +81,32 @@ describe('BookingCardComponent', () => {
     });
   });
 
+  describe('a session booked from a pack', () => {
+    const tag = () => (fixture.nativeElement as HTMLElement).querySelector('[data-testid="pack-tag"]');
+
+    it('says which pack it came from, so it is not mistaken for a single session', () => {
+      component.booking.packageSubscriptionId = 12;
+      component.booking.packageName = '5 session starter';
+      fixture.detectChanges();
+
+      expect(tag()?.textContent).toContain('From 5 session starter');
+    });
+
+    it('still says it came from a pack when the name is missing', () => {
+      component.booking.packageSubscriptionId = 12;
+      component.booking.packageName = null;
+      fixture.detectChanges();
+
+      expect(tag()?.textContent).toContain('From your pack');
+    });
+
+    it('shows no tag on a plain single session', () => {
+      fixture.detectChanges();
+
+      expect(tag()).toBeNull();
+    });
+  });
+
   describe('cancel, no-show and reopen', () => {
     const lastDialogMessage = (): string => (dialogSpy.open.calls.mostRecent().args[1] as any).data.message;
 
