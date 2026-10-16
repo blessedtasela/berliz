@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
+import { groupLocations } from 'src/app/utils/trainer-location.util';
 
 /**
  * Public hero header for a single trainer profile.
@@ -68,9 +69,52 @@ export class TrainersDetailsHeroComponent {
   }
 
   /** Maps search includes the gym/address when the trainer gave one, so it lands on the exact place. */
-  mapsUrlFor(loc: { city: string; stateProvince?: string | null; country: string; venue?: string | null }): string {
-    const query = [loc.venue, this.fullLocationLabel(loc)].filter(Boolean).join(', ');
+  mapsUrlFor(loc: { city: string; stateProvince?: string | null; country: string; venue?: string | null; address?: string | null }): string {
+    const query = [loc.venue, loc.address, this.fullLocationLabel(loc)].filter(Boolean).join(', ');
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  }
+
+  /** The street address (or general area) shown under a named spot; empty when the address is the name itself. */
+  spotAddress(loc: { venue?: string | null; address?: string | null }): string {
+    return loc.venue?.trim() ? (loc.address?.trim() ?? '') : '';
+  }
+
+  /** A spot with no name shows its address as the heading instead of repeating the city. */
+  spotHeading(loc: { venue?: string | null; address?: string | null }): string {
+    return loc.venue?.trim() || loc.address?.trim() || '';
+  }
+
+  isApproximate(loc: { locationPrecision?: string | null; address?: string | null }): boolean {
+    return loc.locationPrecision === 'AREA' && !!loc.address?.trim();
+  }
+
+  /**
+   * What the trainer charges to come to a client's own place, across every place they'd go: the cities they
+   * come to and, unless they only work inside those, anywhere else. Null when they don't offer it anywhere.
+   */
+  private clientPlaceFees(): number[] | null {
+    const t = this.trainer;
+    if (!t?.customLocationAllowed) return null;
+    const base = t.customLocationFee ?? 0;
+    const fees = groupLocations(t.locations).filter(a => a.clientAllowed).map(a => a.clientFee ?? base);
+    if (t.customLocationOutsideAllowed !== false) fees.push(t.customLocationOutsideFee ?? base);
+    return fees.length > 0 ? fees : null;
+  }
+
+  get offersClientPlace(): boolean {
+    return this.clientPlaceFees() !== null;
+  }
+
+  /** "No extra fee", "+$20.00" or "+$10.00 – $40.00" when it depends on where the client is. */
+  get clientPlaceFeeLabel(): string {
+    const fees = this.clientPlaceFees();
+    if (!fees) return '';
+    const low = Math.min(...fees);
+    const high = Math.max(...fees);
+    if (high <= 0) return 'No extra fee';
+    const money = (n: number) => n.toFixed(2);
+    if (low === high) return `+$${money(high)}`;
+    return low === 0 ? `up to +$${money(high)}` : `+$${money(low)} – $${money(high)}`;
   }
 
   toggleLocations(): void {

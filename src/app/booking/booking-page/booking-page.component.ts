@@ -8,7 +8,7 @@ import { Observable, Subject, catchError, of, take, takeUntil } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { DateStripComponent } from 'src/app/shared/date-strip/date-strip.component';
-import { BookingLocationPickerComponent, BookingLocationSelection } from '../booking-location-picker/booking-location-picker.component';
+import { BookingLocationPickerComponent, BookingLocationSelection, locationPayload } from '../booking-location-picker/booking-location-picker.component';
 import { BookingPriceEstimateComponent } from '../booking-price-estimate/booking-price-estimate.component';
 
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
@@ -539,8 +539,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     };
 
     if (this.kind === 'trainer' && this.locationSelection) {
-      payload.trainerLocationId = this.locationSelection.trainerLocationId;
-      payload.customLocation = this.locationSelection.customLocation;
+      Object.assign(payload, locationPayload(this.locationSelection));
     }
 
     if (this.selectedOption.kind === 'ownedPackage') {

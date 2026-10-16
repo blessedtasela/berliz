@@ -136,18 +136,20 @@
                                    border-b border-zinc-800 last:border-b-0 transition">
                             <i-feather name="map-pin" class="text-red-500 shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
                             <span class="flex flex-col min-w-0 flex-1">
-                                <span *ngIf="loc.venue" class="font-semibold break-words">{{ loc.venue }}</span>
-                                <span class="break-words" [ngClass]="loc.venue ? 'text-zinc-400' : ''">{{ fullLocationLabel(loc) }}</span>
+                                <span *ngIf="spotHeading(loc)" class="font-semibold break-words">{{ spotHeading(loc) }}</span>
+                                <span *ngIf="spotAddress(loc)" class="break-words text-zinc-300">{{ spotAddress(loc) }}</span>
+                                <span *ngIf="isApproximate(loc)" class="text-[10px] text-zinc-500">Approximate area</span>
+                                <span class="break-words" [ngClass]="spotHeading(loc) ? 'text-zinc-400' : ''">{{ fullLocationLabel(loc) }}</span>
                             </span>
                             <span class="shrink-0 text-[11px] font-semibold" [ngClass]="loc.fee ? 'text-amber-400' : 'text-zinc-500'">
                                 {{ loc.fee ? '+$' + (loc.fee | number:'1.2-2') : 'No extra fee' }}
                             </span>
                         </a>
-                        <div *ngIf="trainer?.customLocationAllowed" class="flex items-start gap-2 px-4 py-2.5 text-xs text-zinc-300 border-t border-zinc-800 bg-zinc-950/40">
+                        <div *ngIf="offersClientPlace" class="flex items-start gap-2 px-4 py-2.5 text-xs text-zinc-300 border-t border-zinc-800 bg-zinc-950/40">
                             <i-feather name="navigation" class="text-red-500 shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
                             <span class="flex-1 min-w-0">Or train at a place of your choice</span>
-                            <span class="shrink-0 text-[11px] font-semibold" [ngClass]="trainer?.customLocationFee ? 'text-amber-400' : 'text-zinc-500'">
-                                {{ trainer?.customLocationFee ? '+$' + (trainer?.customLocationFee | number:'1.2-2') : 'No extra fee' }}
+                            <span class="shrink-0 text-[11px] font-semibold" [ngClass]="clientPlaceFeeLabel === 'No extra fee' ? 'text-zinc-500' : 'text-amber-400'">
+                                {{ clientPlaceFeeLabel }}
                             </span>
                         </div>
                     </div>

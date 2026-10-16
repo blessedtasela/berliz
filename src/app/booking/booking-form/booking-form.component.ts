@@ -24,7 +24,7 @@ import { selectAvailabilityLoading, selectAvailableSlots } from 'src/app/state/a
 import { AvailableSlot } from 'src/app/models/availability.model';
 import { SessionCredit, PromoOffer } from 'src/app/models/promo-offer.model';
 
-import { BookingLocationSelection } from '../booking-location-picker/booking-location-picker.component';
+import { BookingLocationSelection, LocationPreselect, locationPayload } from '../booking-location-picker/booking-location-picker.component';
 import { Offer } from '../booking-price-estimate/booking-price.util';
 import { genericError } from 'src/validators/form-validators.module';
 
@@ -47,6 +47,9 @@ interface BookingDraftData {
   /** Where-to-train choice (trainer bookings); absent on drafts saved before this existed. */
   locationId?: number | null;
   customLocation?: string | null;
+  customLocationCountry?: string | null;
+  customLocationState?: string | null;
+  customLocationCity?: string | null;
 }
 
 @Component({
@@ -149,17 +152,15 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   locationSelection: BookingLocationSelection | null = null;
 
   /** Handed to the picker when a draft is resumed so it can restore the saved choice. */
-  locationPreselect: { trainerLocationId?: number | null; customLocation?: string | null } | null = null;
+  locationPreselect: LocationPreselect | null = null;
 
   onLocationChange(selection: BookingLocationSelection): void {
     this.locationSelection = selection;
     this.saveDraft();
   }
 
-  private get locationPayload(): { trainerLocationId?: number; customLocation?: string } {
-    const s = this.locationSelection;
-    if (!s || this.data.trainerId == null) return {};
-    return { trainerLocationId: s.trainerLocationId, customLocation: s.customLocation };
+  private get locationPayload() {
+    return this.data.trainerId == null ? {} : locationPayload(this.locationSelection);
   }
 
   // ── Redemption enforcement: an available reward the client can attach ──
@@ -373,7 +374,10 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       reward: d.reward,
     });
     if (d.locationId != null || d.customLocation) {
-      this.locationPreselect = { trainerLocationId: d.locationId, customLocation: d.customLocation };
+      this.locationPreselect = {
+        trainerLocationId: d.locationId, customLocation: d.customLocation,
+        customLocationCountry: d.customLocationCountry, customLocationState: d.customLocationState, customLocationCity: d.customLocationCity,
+      };
     }
     this.fetchSlotsForSelectedDate();
     this.pendingDraft = null;
@@ -404,6 +408,9 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       reward: value.reward ?? '',
       locationId: this.locationSelection?.trainerLocationId ?? null,
       customLocation: this.locationSelection?.customLocation ?? null,
+      customLocationCountry: this.locationSelection?.customLocationCountry ?? null,
+      customLocationState: this.locationSelection?.customLocationState ?? null,
+      customLocationCity: this.locationSelection?.customLocationCity ?? null,
     }, {
       id: this.draftId,
       label: `Booking with ${this.data.providerName}`,
