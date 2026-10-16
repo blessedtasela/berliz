@@ -15,6 +15,7 @@ import { NewsletterPopupComponent } from './newsletter-popup/newsletter-popup.co
 import { ValidationMessageComponent } from './validation-message/validation-message.component';
 import { LocationFormComponent } from './location-form/location-form.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { SelectComponent } from './select/select.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { NotificationDetailsComponent } from './notification-details/notification-details.component';
 import { TimeAgoPipe } from './pipes/time-ago.pipe';
@@ -62,6 +63,7 @@ import { ClickablePhotoDirective } from './photo-lightbox/clickable-photo.direct
     IconsModule,
     NgxExtendedPdfViewerModule,
     NgSelectModule,
+    SelectComponent,
     NgxMaskDirective,
     NgxMaskPipe,
     FormsModule,
@@ -79,6 +81,7 @@ import { ClickablePhotoDirective } from './photo-lightbox/clickable-photo.direct
     ValidationMessageComponent,
     LocationFormComponent,
     NgSelectModule,
+    SelectComponent,
     NgxMaskDirective,
     NgxMaskPipe,
     TimeAgoPipe,

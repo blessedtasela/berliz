@@ -3,6 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { LocationFormComponent } from './location-form.component';
+import { SelectComponent } from '../select/select.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
@@ -16,7 +17,7 @@ describe('LocationFormComponent', () => {
     TestBed.configureTestingModule({
     declarations: [LocationFormComponent],
     schemas: [NO_ERRORS_SCHEMA],
-    imports: [],
+    imports: [SelectComponent],
     providers: [
         { provide: SnackBarService, useValue: snackbarSpy },
         provideHttpClient(withInterceptorsFromDi()),
@@ -53,7 +54,7 @@ describe('LocationFormComponent', () => {
     fixture.detectChanges();
 
     for (const name of ['country', 'state', 'city', 'countryCode']) {
-      const el = fixture.nativeElement.querySelector(`ng-select[formcontrolname="${name}"]`);
+      const el = fixture.nativeElement.querySelector(`app-select[formcontrolname="${name}"] ng-select`);
       expect(el?.classList.contains('berliz-select--error')).withContext(name).toBeTrue();
     }
   });
@@ -63,7 +64,7 @@ describe('LocationFormComponent', () => {
     component.form.get('country')?.markAsTouched();
     fixture.detectChanges();
 
-    const el = fixture.nativeElement.querySelector('ng-select[formcontrolname="country"]');
+    const el = fixture.nativeElement.querySelector('app-select[formcontrolname="country"] ng-select');
     expect(el?.classList.contains('berliz-select--error')).toBeFalse();
   });
 });

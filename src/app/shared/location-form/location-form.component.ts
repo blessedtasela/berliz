@@ -30,6 +30,9 @@ export class LocationFormComponent implements OnInit, OnDestroy, ControlValueAcc
 
   examplePhone = '';
 
+  readonly countryLabel = (c: Country) => `${c.emoji ?? ''} ${c.name}`.trim();
+  readonly dialCodeLabel = (c: Country) => `${c.emoji ?? ''} (${c.name}) ${c.dialCode}`.trim();
+
   private subscriptions = new Subscription();
   private countryMap = new Map<string, Country>();
   private stateMap = new Map<string, number>();
@@ -164,10 +167,6 @@ export class LocationFormComponent implements OnInit, OnDestroy, ControlValueAcc
       })
     );
   }
-
-  /** ================== ADD NEW ITEM FUNCTIONS ================== */
-  addState = (name: string) => { if (!this.states.includes(name)) this.states.push(name); return name; }
-  addCity = (name: string) => { if (!this.cities.includes(name)) this.cities.push(name); return name; }
 
   /** ================== UX FEEDBACK ================== */
   onStateClick(): void {
