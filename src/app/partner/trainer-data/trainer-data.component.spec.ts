@@ -98,4 +98,80 @@ describe('TrainerDataComponent', () => {
       expect(snackbar.openSnackBar).toHaveBeenCalledWith('Nope', 'error');
     });
   });
+
+  describe('where the trainer works', () => {
+    const sentPayload = () => trainerService.updateTrainer.calls.mostRecent().args[0] as any;
+    const area = (over: any = {}) => ({ country: 'Canada', stateProvince: 'British Columbia', city: 'Vancouver', clientAllowed: true, clientFee: null, spots: [], ...over });
+
+    beforeEach(() => {
+      trainerService.updateTrainer.and.returnValue(of({ message: 'ok', data: component.trainer as any, success: true, statusCode: 200 }));
+    });
+
+    it('adds several cities in one go and skips ones already listed', () => {
+      component.addArea(area());
+      component.quickAdd = { country: 'Canada', state: 'British Columbia', cities: ['Vancouver', 'Burnaby', 'Richmond'] };
+
+      component.addQuickCities();
+
+      expect(component.areasArray.controls.map(c => c.value.city)).toEqual(['Vancouver', 'Burnaby', 'Richmond']);
+      expect(component.quickAdd.cities).toEqual([]);
+      expect(component.quickAdd.state).toBe('British Columbia', 'the state stays for the next batch');
+    });
+
+    it('lets one city hold several spots, and sends one row per spot', () => {
+      component.addArea(area());
+      component.addSpot(0);
+      component.addSpot(0);
+      component.spotsArray(0).at(0).patchValue({ venue: "Gold's Gym", address: '1234 W Broadway', fee: 5 });
+      component.spotsArray(0).at(1).patchValue({ venue: 'Kits Beach', address: 'near Kitsilano', precision: 'AREA' });
+
+      component.updateTrainer();
+
+      const rows = sentPayload().locations;
+      expect(rows.length).toBe(2);
+      expect(rows[0]).toEqual(jasmine.objectContaining({ city: 'Vancouver', venue: "Gold's Gym", locationPrecision: 'EXACT', fee: 5 }));
+      expect(rows[1]).toEqual(jasmine.objectContaining({ venue: 'Kits Beach', locationPrecision: 'AREA' }));
+    });
+
+    it('writes the per-city client-place rule onto each row of that city', () => {
+      component.addArea(area({ clientFee: 10 }));
+      component.addSpot(0);
+      component.spotsArray(0).at(0).patchValue({ venue: 'Gym' });
+      component.addArea(area({ city: 'Burnaby', clientAllowed: false }));
+
+      component.updateTrainer();
+
+      const rows = sentPayload().locations;
+      expect(rows.find((r: any) => r.city === 'Vancouver').clientLocationFee).toBe(10);
+      expect(rows.find((r: any) => r.city === 'Burnaby').clientLocationAllowed).toBeFalse();
+    });
+
+    it('sends the outside-cities rule: blank fee = same as default, zero = free', () => {
+      component.updateTrainerForm.patchValue({ customLocationAllowed: true, customLocationFee: 20, customLocationOutsideFee: '' });
+      component.updateTrainer();
+      expect(sentPayload().customLocationOutsideAllowed).toBeTrue();
+      expect(sentPayload().customLocationOutsideFee).toBeNull();
+
+      component.updateTrainerForm.patchValue({ customLocationOutsideFee: 0 });
+      component.updateTrainer();
+      expect(sentPayload().customLocationOutsideFee).toBe(0);
+
+      component.updateTrainerForm.patchValue({ customLocationOutsideAllowed: false });
+      component.updateTrainer();
+      expect(sentPayload().customLocationOutsideAllowed).toBeFalse();
+    });
+
+    it('rebuilds the cities and spots from the saved trainer', () => {
+      component.updateFormValues({
+        ...component.trainer, serviceMode: 'IN_PERSON',
+        locations: [
+          { country: 'Canada', stateProvince: 'British Columbia', city: 'Vancouver', venue: 'Gym', address: 'A St', locationPrecision: 'EXACT' },
+          { country: 'Canada', stateProvince: 'British Columbia', city: 'Vancouver', venue: 'Park', locationPrecision: null },
+        ],
+      } as any);
+
+      expect(component.areasArray.length).toBe(1);
+      expect(component.spotsArray(0).length).toBe(2);
+    });
+  });
 });

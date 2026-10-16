@@ -71,82 +71,181 @@
                 </select>
             </div>
 
-            <!-- Available in (cities/countries) -->
-            <div class="md:col-span-2 flex flex-col gap-2">
+            <!-- Available in: cities, each with the spots (gyms, parks, studios) the trainer works from -->
+            <div class="md:col-span-2 flex flex-col gap-3">
                 <div class="flex items-center justify-between">
                     <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Available in</label>
-                    <button type="button" (click)="addLocation()" class="text-[11px] font-semibold text-red-600 hover:text-red-700 flex items-center gap-1">
-                        <i-feather name="plus" style="width:11px;height:11px;"></i-feather>
-                        Add a city
-                    </button>
+                    <span *ngIf="totalPlaces > 0" class="text-[11px] text-gray-400 dark:text-gray-500">{{ totalPlaces }} {{ totalPlaces === 1 ? 'city' : 'cities' }}</span>
                 </div>
 
-                <p *ngIf="locationsArray.length === 0" class="text-[11px] text-gray-400 dark:text-gray-500 italic">
+                <!-- Quick add: pick the country and state once, then as many cities as you want. -->
+                <div class="flex flex-col gap-2.5 bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 rounded-xl p-3">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-800 dark:text-gray-100">Add the cities you train in</p>
+                        <p class="text-[11px] text-gray-400 dark:text-gray-500">Choose a country and state once, then pick every city you cover in it. Type to search, or type a name that isn't listed.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <app-select [items]="countries" bindLabel="name" bindValue="name" placeholder="Country" ariaLabel="Country"
+                            [clearable]="false" [(ngModel)]="quickAdd.country" [ngModelOptions]="{ standalone: true }"
+                            (ngModelChange)="onQuickCountryChange()"></app-select>
+                        <app-select [items]="quickStates" placeholder="State / province" ariaLabel="State or province"
+                            [allowCustom]="true" [clearable]="false" [loading]="quickLoading === 'states'"
+                            [disabled]="!quickAdd.country" [(ngModel)]="quickAdd.state" [ngModelOptions]="{ standalone: true }"
+                            (ngModelChange)="onQuickStateChange()"></app-select>
+                    </div>
+
+                    <app-select [items]="quickCities" [multiple]="true" [allowCustom]="true" placeholder="Pick one or more cities"
+                        ariaLabel="Cities" [loading]="quickLoading === 'cities'" [disabled]="!quickAdd.country"
+                        [(ngModel)]="quickAdd.cities" [ngModelOptions]="{ standalone: true }"></app-select>
+
+                    <div class="flex items-center justify-end gap-2">
+                        <button type="button" (click)="addQuickCities()" [disabled]="!canQuickAdd"
+                            class="text-xs font-semibold text-white bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg px-3.5 py-2 transition flex items-center gap-1.5">
+                            <i-feather name="plus" style="width:13px;height:13px;"></i-feather>
+                            {{ quickAdd.cities.length > 1 ? 'Add ' + quickAdd.cities.length + ' cities' : 'Add city' }}
+                        </button>
+                    </div>
+                </div>
+
+                <p *ngIf="totalPlaces === 0" class="text-[11px] text-gray-400 dark:text-gray-500 italic">
                     No cities added yet — clients won't know where to find you in person.
                 </p>
 
-                <div formArrayName="locations" class="flex flex-col gap-2">
-                    <div *ngFor="let loc of locationsArray.controls; let i = index" [formGroupName]="i"
-                        class="flex flex-col gap-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2.5">
-                      <div class="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr_auto] gap-2 items-start">
+                <!-- One card per city. Inside it: the exact spots, and whether/for how much you come to the client. -->
+                <div formArrayName="areas" class="flex flex-col gap-2.5">
+                    <div *ngFor="let area of areasArray.controls; let i = index; trackBy: trackByIndex" [formGroupName]="i"
+                        class="flex flex-col gap-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-3">
 
-                        <select formControlName="country" (change)="onLocationCountryChange(i)" class="berliz-select !py-1.5 !text-xs">
-                            <option value="" disabled>Country</option>
-                            <option *ngFor="let c of countries" [value]="c.name">{{ c.name }}</option>
-                        </select>
-
-                        <select formControlName="stateProvince" (change)="onLocationStateChange(i)"
-                            [disabled]="!loc.get('country')?.value" class="berliz-select !py-1.5 !text-xs">
-                            <option value="" disabled>State / Province</option>
-                            <option *ngFor="let s of locationStates[i]" [value]="s">{{ s }}</option>
-                        </select>
-
-                        <select formControlName="city" [disabled]="!loc.get('country')?.value" class="berliz-select !py-1.5 !text-xs">
-                            <option value="" disabled>City</option>
-                            <option *ngFor="let c of locationCities[i]" [value]="c">{{ c }}</option>
-                            <!-- Keep an already-saved city selectable even if the cascading city list hasn't loaded it yet -->
-                            <option *ngIf="loc.get('city')?.value && !locationCities[i]?.includes(loc.get('city')?.value)"
-                                [value]="loc.get('city')?.value">{{ loc.get('city')?.value }}</option>
-                        </select>
-
-                        <button type="button" (click)="removeLocation(i)"
-                            class="p-2 rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition self-center" aria-label="Close">
-                            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
-                        </button>
-                      </div>
-
-                      <!-- Where exactly + what it costs to train here -->
-                      <div class="grid grid-cols-1 sm:grid-cols-[1fr_9rem] gap-2">
-                        <input type="text" formControlName="venue" maxlength="200"
-                            placeholder="Gym or address (optional)" class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-xs text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
-                        <div class="relative">
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">$</span>
-                            <input type="number" formControlName="fee" min="0" step="0.01"
-                                placeholder="Extra fee" class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-xs text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition pl-6" />
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="flex items-center gap-1.5 min-w-0 text-xs font-semibold text-gray-800 dark:text-gray-100">
+                                <i-feather name="map-pin" class="shrink-0 text-red-500" style="width:13px;height:13px;"></i-feather>
+                                <span class="truncate">{{ areaLabel(i) }}</span>
+                            </span>
+                            <button type="button" (click)="removeArea(i)"
+                                class="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition shrink-0"
+                                [attr.aria-label]="'Remove ' + areaLabel(i)">
+                                <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+                            </button>
                         </div>
-                      </div>
-                      <p *ngIf="loc.get('fee')?.invalid" class="text-red-500 text-[11px]">A fee can't be negative.</p>
+
+                        <!-- Spots -->
+                        <div class="flex flex-col gap-2">
+                            <p *ngIf="spotsArray(i).length === 0" class="text-[11px] text-gray-400 dark:text-gray-500">
+                                No particular spot — clients just see that you cover {{ areaCity(i) }}. Add the gym, park or studio you train at if you want them to know.
+                            </p>
+
+                            <div formArrayName="spots" class="flex flex-col gap-2">
+                                <div *ngFor="let spot of spotsArray(i).controls; let j = index; trackBy: trackByIndex" [formGroupName]="j"
+                                    class="flex flex-col gap-2 bg-gray-50 dark:bg-gray-800/60 border border-gray-100 dark:border-gray-700 rounded-lg p-2">
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-[1fr_9rem_auto] gap-2 items-center">
+                                        <input type="text" formControlName="venue" maxlength="200" aria-label="Gym or place name"
+                                            placeholder="Gym or place name (optional)" class="berliz-input w-full text-xs" />
+                                        <div class="relative">
+                                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">$</span>
+                                            <input type="number" formControlName="fee" min="0" step="0.01" aria-label="Extra fee at this spot"
+                                                placeholder="Extra fee" class="berliz-input w-full text-xs pl-6" />
+                                        </div>
+                                        <button type="button" (click)="removeSpot(i, j)"
+                                            class="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition justify-self-end"
+                                            aria-label="Remove this spot">
+                                            <i-feather name="trash-2" style="width:14px;height:14px;"></i-feather>
+                                        </button>
+                                    </div>
+
+                                    <input type="text" formControlName="address" maxlength="300"
+                                        [attr.aria-label]="spot.get('precision')?.value === 'AREA' ? 'General area' : 'Street address'"
+                                        [placeholder]="spot.get('precision')?.value === 'AREA' ? 'General area, e.g. near Kitsilano Beach (optional)' : 'Street address (optional)'" class="berliz-input w-full text-xs" />
+
+                                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                                        <div class="inline-flex rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden text-[11px] font-semibold" role="radiogroup" aria-label="How exact is this location">
+                                            <label class="px-2.5 py-1 cursor-pointer transition"
+                                                [ngClass]="spot.get('precision')?.value !== 'AREA' ? 'bg-red-600 text-white' : 'bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400'">
+                                                <input type="radio" formControlName="precision" value="EXACT" class="sr-only" />Exact address
+                                            </label>
+                                            <label class="px-2.5 py-1 cursor-pointer transition border-l border-gray-200 dark:border-gray-700"
+                                                [ngClass]="spot.get('precision')?.value === 'AREA' ? 'bg-red-600 text-white' : 'bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400'">
+                                                <input type="radio" formControlName="precision" value="AREA" class="sr-only" />General area
+                                            </label>
+                                        </div>
+                                        <span class="text-[11px] text-gray-400 dark:text-gray-500">
+                                            {{ spot.get('precision')?.value === 'AREA' ? 'Clients see this as an approximate area.' : 'Clients see this as the exact place.' }}
+                                        </span>
+                                    </div>
+                                    <p *ngIf="spot.get('fee')?.invalid" class="text-red-500 text-[11px]">A fee can't be negative.</p>
+                                </div>
+                            </div>
+
+                            <button type="button" (click)="addSpot(i)"
+                                class="self-start text-xs font-semibold text-red-600 hover:text-red-700 flex items-center gap-1 px-1 py-0.5 rounded transition">
+                                <i-feather name="plus" style="width:12px;height:12px;"></i-feather>
+                                Add a spot in {{ areaCity(i) }}
+                            </button>
+                        </div>
+
+                        <!-- Coming to the client's own place, in this city -->
+                        <div *ngIf="clientPlacesOn" class="flex flex-col sm:flex-row sm:items-center gap-2 border-t border-gray-100 dark:border-gray-800 pt-2.5">
+                            <label class="flex items-center gap-2 cursor-pointer flex-1 min-w-0">
+                                <input type="checkbox" formControlName="clientAllowed" class="accent-red-600" />
+                                <span class="text-xs text-gray-700 dark:text-gray-200">I come to clients' own places in {{ areaCity(i) }}</span>
+                            </label>
+                            <div *ngIf="area.get('clientAllowed')?.value" class="relative sm:w-48">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">$</span>
+                                <input type="number" formControlName="clientFee" min="0" step="0.01" [attr.aria-label]="'Fee to travel within ' + areaCity(i)"
+                                    [placeholder]="updateTrainerForm.get('customLocationFee')?.value ? 'Default $' + updateTrainerForm.get('customLocationFee')?.value : 'No fee'"
+                                    class="berliz-input w-full text-xs pl-6" />
+                            </div>
+                            <p *ngIf="area.get('clientFee')?.invalid" class="text-red-500 text-[11px]">A fee can't be negative.</p>
+                        </div>
                     </div>
                 </div>
-                <p *ngIf="locationsArray.length > 0" class="text-[11px] text-gray-400 dark:text-gray-500">
-                    Clients pick one of these when they book. Add a fee to any location that costs you extra (travel, gym entry); leave it blank for none.
+                <p *ngIf="totalPlaces > 0" class="text-[11px] text-gray-400 dark:text-gray-500">
+                    Clients pick one of your spots when they book. Add an extra fee to any spot that costs you more (gym entry, parking); leave it blank for none.
                 </p>
 
-                <!-- Let clients name their own location -->
-                <div class="flex flex-col gap-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2.5">
+                <!-- Coming to the client's own place -->
+                <div class="flex flex-col gap-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3">
                     <label class="flex items-start gap-2 cursor-pointer">
                         <input type="checkbox" formControlName="customLocationAllowed" class="mt-0.5 accent-red-600" />
                         <span class="flex flex-col">
-                            <span class="text-xs font-semibold text-gray-800 dark:text-gray-100">Let clients choose their own location</span>
-                            <span class="text-[11px] text-gray-400 dark:text-gray-500">Clients can type an address or place of their own when booking, e.g. their home or a park.</span>
+                            <span class="text-xs font-semibold text-gray-800 dark:text-gray-100">I can train clients at their own place</span>
+                            <span class="text-[11px] text-gray-400 dark:text-gray-500">Clients enter their country, city and address when booking, e.g. their home or a park.</span>
                         </span>
                     </label>
-                    <div *ngIf="updateTrainerForm.get('customLocationAllowed')?.value" class="relative sm:w-56">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">$</span>
-                        <input type="number" formControlName="customLocationFee" min="0" step="0.01"
-                            placeholder="Extra fee for their location" class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-xs text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition pl-6" />
-                    </div>
-                    <p *ngIf="updateTrainerForm.get('customLocationFee')?.invalid" class="text-red-500 text-[11px]">A fee can't be negative.</p>
+
+                    <ng-container *ngIf="clientPlacesOn">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">Usual fee for a client's place</label>
+                            <div class="relative sm:w-56">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">$</span>
+                                <input type="number" formControlName="customLocationFee" min="0" step="0.01" aria-label="Usual fee for a client's place"
+                                    placeholder="No fee" class="berliz-input w-full text-xs pl-6" />
+                            </div>
+                            <p class="text-[11px] text-gray-400 dark:text-gray-500">Applies in every city above unless you set a different fee for that city.</p>
+                            <p *ngIf="updateTrainerForm.get('customLocationFee')?.invalid" class="text-red-500 text-[11px]">A fee can't be negative.</p>
+                        </div>
+
+                        <div class="flex flex-col gap-2 border-t border-gray-200 dark:border-gray-700 pt-2.5">
+                            <label class="flex items-start gap-2 cursor-pointer">
+                                <input type="checkbox" formControlName="customLocationOutsideAllowed" class="mt-0.5 accent-red-600" />
+                                <span class="flex flex-col">
+                                    <span class="text-xs font-semibold text-gray-800 dark:text-gray-100">I also travel outside the cities I listed</span>
+                                    <span class="text-[11px] text-gray-400 dark:text-gray-500">Turn this off if you only work inside the cities above — clients elsewhere can't book your travel.</span>
+                                </span>
+                            </label>
+                            <div *ngIf="updateTrainerForm.get('customLocationOutsideAllowed')?.value" class="flex flex-col gap-1">
+                                <div class="relative sm:w-56">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">$</span>
+                                    <input type="number" formControlName="customLocationOutsideFee" min="0" step="0.01" aria-label="Fee outside my cities"
+                                        [placeholder]="updateTrainerForm.get('customLocationFee')?.value ? 'Same as above ($' + updateTrainerForm.get('customLocationFee')?.value + ')' : 'Same as above'"
+                                        class="berliz-input w-full text-xs pl-6" />
+                                </div>
+                                <p class="text-[11px] text-gray-400 dark:text-gray-500">Fee for a client's place outside your cities. Leave blank to charge the usual fee; enter 0 for free.</p>
+                                <p *ngIf="updateTrainerForm.get('customLocationOutsideFee')?.invalid" class="text-red-500 text-[11px]">A fee can't be negative.</p>
+                            </div>
+                        </div>
+                    </ng-container>
                 </div>
             </div>
 

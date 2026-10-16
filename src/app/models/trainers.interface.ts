@@ -41,6 +41,10 @@ export interface Trainers {
   customLocationAllowed?: boolean;
   /** Surcharge for a client-chosen custom location; null/0 means none. */
   customLocationFee?: number | null;
+  /** Does the trainer go to a client's own place outside every city they list? Absent reads as yes. */
+  customLocationOutsideAllowed?: boolean;
+  /** Fee for that; null = the same as customLocationFee. */
+  customLocationOutsideFee?: number | null;
   /** Approved public reviews (filled on the public list). */
   reviewCount?: number;
   /** Mean of the 1-5 star ratings on approved reviews, one decimal; absent until someone has rated. */
@@ -57,8 +61,16 @@ export interface TrainerLocation {
   city: string;
   /** Optional specific place within the city, e.g. a gym name or address. */
   venue?: string | null;
+  /** Street address, or a description of the area, for this spot. */
+  address?: string | null;
+  /** How precise `address` is: EXACT (a real address) or AREA (only a general area). Null reads as EXACT. */
+  locationPrecision?: 'EXACT' | 'AREA' | null;
   /** Optional surcharge for training here; null/0 means none. */
   fee?: number | null;
+  /** Per city: does the trainer come to a client's own place here? Null reads as yes. */
+  clientLocationAllowed?: boolean | null;
+  /** Per city fee for that; null = use the trainer-wide fee, 0 = free. */
+  clientLocationFee?: number | null;
 }
 
 export interface UpdateTrainerPhotoRequest {
