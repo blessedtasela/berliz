@@ -7,9 +7,6 @@ import { IconsModule } from '../icons/icons.module';
 import { PromptModalComponent } from './prompt-modal/prompt-modal.component';
 import { TrainerFormModalComponent } from './trainer-form-modal/trainer-form-modal.component';
 import { CenterFormModalComponent } from './center-form-modal/center-form-modal.component';
-import { ViewCvModalComponent } from './view-cv-modal/view-cv-modal.component';
-import { ViewCertificateModalComponent } from './view-certificate-modal/view-certificate-modal.component';
-import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { UpdateTrainerPhotoModalComponent } from './update-trainer-photo-modal/update-trainer-photo-modal.component';
 import { NewsletterPopupComponent } from './newsletter-popup/newsletter-popup.component';
 import { ValidationMessageComponent } from './validation-message/validation-message.component';
@@ -39,8 +36,6 @@ import { ClickablePhotoDirective } from './photo-lightbox/clickable-photo.direct
     PromptModalComponent,
     TrainerFormModalComponent,
     CenterFormModalComponent,
-    ViewCvModalComponent,
-    ViewCertificateModalComponent,
     UpdateTrainerPhotoModalComponent,
     NewsletterPopupComponent,
     ValidationMessageComponent,
@@ -61,7 +56,6 @@ import { ClickablePhotoDirective } from './photo-lightbox/clickable-photo.direct
     ReactiveFormsModule,
     FeatherModule,
     IconsModule,
-    NgxExtendedPdfViewerModule,
     NgSelectModule,
     SelectComponent,
     NgxMaskDirective,

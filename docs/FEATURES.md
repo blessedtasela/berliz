@@ -203,6 +203,13 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 - **Payments (admin).** Store purchases are mirrored into the payments list in the buyer's own currency, so the amount is shown with its currency code (e.g. `9.99 GBP`) on the payment detail page and modal; Stripe payments, in the platform currency, show none. A refund made in the store shows the "Refunded" badge, and the Refund button stays Stripe-only.
 - Backend (same change set, migration V70): saved cards in the mobile payment sheet (off until `STRIPE_SAVED_CARDS=true`), revoking Sign in with Apple tokens on account deletion, and mirroring App Store / Google Play charges into Payments.
 
+### Unreleased — Faster first load, media on the dashboard timeline, bookable times only, quarter-hour availability
+
+- **Faster first load.** The 9 MB fire background video on the landing page no longer downloads with the page: it starts after the page has loaded, only on desktop, and never for data-saver, slow-connection or reduced-motion visitors (they keep the poster image). The PDF viewer library (~660 KB, only used by the admin CV / certificate modals) is now loaded when one of those modals is opened instead of being part of every visitor's first download. Not done: the video file itself is still 9 MB and the `.webm` is a copy of the `.mp4`; re-encoding it to about 1 MB needs ffmpeg.
+- **Dashboard timeline shows media.** The "See what others are doing" cards on the Overview page now show the post's photo, or a still frame with a play icon for a video, instead of text only.
+- **Only the provider's own times can be booked.** The booking dialog no longer offers a free date/time picker when a trainer or center hasn't set their availability; it says they haven't set their available times yet (as the booking page already did) and the request button is disabled. The urgent-request path for a provider who *has* availability is unchanged.
+- **Quarter-hour availability.** My Availability (and the admin availability editor) use the shared time picker instead of the browser's native time input, so every hour offers :00 / :15 / :30 / :45.
+
 ### Unreleased — Delete your account from the web
 
 - Settings → Danger zone now has **Delete account** next to *Deactivate account*, matching the mobile app. It asks for your password (blank for Google / Facebook / Apple sign-ins) and for the word `DELETE`, then calls `POST /account/delete` and signs you out. The server answers 200 even when it refuses (wrong password, upcoming bookings, a renewing subscription), so the reason is shown inside the dialog and the account is only treated as deleted when the server says so. Deactivate stays for people who just want a break.
@@ -513,6 +520,19 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Not yet: the fee is displayed, not charged (client payment checkout is still unwired).
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
+
+### Unreleased — Double-submit guard, skeleton shimmer, populated-data audit, mobile labels
+
+- **A form can't be submitted twice while its first submit is in flight.** `RequestActivityService` + interceptor count in-flight
+  create/update/delete requests; `installDoubleSubmitGuard` (capture-phase `submit` listener) swallows a second submit of the same form until
+  the request settles and dims its submit buttons (`form[data-submitting]`). A submit that fails validation starts no request, so a form is never
+  locked. Stops double-click duplicates (two bookings/posts/payments) across every form without touching each component. 10 tests.
+- **Skeleton bars now shimmer** (a light sweep across `animate-pulse` blocks that carry their own grey background) instead of only fading.
+- **Populated-data audit** (166 page loads with realistic records incl. long unbroken text, phone + desktop): no overflow, no errors. Found and fixed:
+  zinc-600 text on the public dark pages (2.6:1), and 6 rows that had gained `role="button"` in the earlier keyboard pass while containing
+  their own buttons/links (nested-interactive) — the role is removed there; those rows stay click-only as before.
+- **Mobile:** scanned all 827 Pressables; 30 icon-only ones (menu, home, photo thumbnails, lightbox close, attach, send, step/to-do toggles…)
+  had no accessible name and now do.
 
 ### Unreleased — Follow-ups from the all-screens audit
 

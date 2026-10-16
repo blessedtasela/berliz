@@ -81,7 +81,7 @@
                     <div *ngFor="let task of displayedTasks; trackBy: trackByTaskId"
                         (click)="toggleTaskExpanded(task)"
                         class="p-3 bg-white dark:bg-gray-900 border rounded-xl cursor-pointer hover:shadow-sm transition flex flex-col gap-1.5"
-                        [ngClass]="isTaskComplete(task) ? 'border-green-200 dark:border-green-900 bg-green-50/40 dark:bg-green-950/10' : 'border-gray-200 dark:border-gray-700'" role="button" tabindex="0" (keydown.enter)="toggleTaskExpanded(task)">
+                        [ngClass]="isTaskComplete(task) ? 'border-green-200 dark:border-green-900 bg-green-50/40 dark:bg-green-950/10' : 'border-gray-200 dark:border-gray-700'">
 
                         <div class="flex justify-between items-start gap-2">
                             <span class="text-gray-900 dark:text-gray-100 text-sm font-semibold leading-snug flex-1 break-words">

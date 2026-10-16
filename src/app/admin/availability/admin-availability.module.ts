@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { IconsModule } from 'src/app/icons/icons.module';
+import { TimePickerComponent } from 'src/app/shared/time-picker/time-picker.component';
 import { AdminAvailabilityModalComponent } from './admin-availability-modal/admin-availability-modal.component';
 
 /**
@@ -19,6 +20,7 @@ import { AdminAvailabilityModalComponent } from './admin-availability-modal/admi
     FormsModule,
     MatDialogModule,
     IconsModule,
+    TimePickerComponent,
   ],
   exports: [
     AdminAvailabilityModalComponent,

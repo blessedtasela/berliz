@@ -6,7 +6,7 @@
     'z-50': menuOpen,
     'z-0': !menuOpen
   }" (click)="onItemClick($event)" (mousedown)="startPress($event)" (mouseup)="cancelPress()"
-  (mouseleave)="cancelPress()" role="button" tabindex="0" (keydown.enter)="onItemClick($any($event))">
+  (mouseleave)="cancelPress()">
 
   <!-- Selection indicator -->
   <div *ngIf="todo.checked"
