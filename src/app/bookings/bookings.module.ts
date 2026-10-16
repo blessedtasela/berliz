@@ -5,6 +5,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 
 import { IconsModule } from '../icons/icons.module';
+import { AvatarComponent } from '../shared/avatar/avatar.component';
 import { FooterModule } from '../footer/footer.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { SharedModule } from '../shared/shared.module';
@@ -45,6 +46,7 @@ import { BookForClientModalComponent } from './book-for-client-modal/book-for-cl
     ReactiveFormsModule,
     MatDialogModule,
     IconsModule,
+    AvatarComponent,
     FooterModule,
     NavbarModule,
     RouterModule,

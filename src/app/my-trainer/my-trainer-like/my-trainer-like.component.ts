@@ -79,12 +79,6 @@ export class MyTrainerLikeComponent {
     this.showAll = !this.showAll;
   }
 
-  // Likes don't expose a profile photo URL from the mapper;
-  // fallback to avatar. Override if your backend adds photoUrl later.
-  getProfilePhoto(userId: number): string {
-    return 'assets/avatar.png';
-  }
-
   formatDate(date: any): string {
     return this.datePipe.transform(new Date(date), 'dd/MM/yyyy') ?? '';
   }

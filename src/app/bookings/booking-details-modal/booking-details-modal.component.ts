@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
 import { Booking } from 'src/app/models/booking.model';
-import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 import { amountToPay, canClientPay, payByNote, payLabel, paymentBadge, statusLabel } from '../booking-payment.util';
 
 export interface BookingDetailsModalData {
@@ -28,7 +28,6 @@ export class BookingDetailsModalComponent {
 
   booking: Booking;
   mode: 'client' | 'provider';
-  private readonly _uri = memoizePhotoUri();
 
   constructor(
     public dialogRef: MatDialogRef<BookingDetailsModalComponent>,
@@ -54,8 +53,11 @@ export class BookingDetailsModalComponent {
     return this.booking.clientEmail || '';
   }
 
-  get counterpartyPhotoSrc(): string | null {
-    return this.mode === 'provider' ? this._uri(this.booking.clientPhoto) : null;
+  /** The client's photo for a provider; the trainer's or center's public photo for a client. Null shows initials. */
+  get counterpartyPhoto(): string | null {
+    if (this.mode === 'provider') return this.booking.clientPhoto ?? null;
+    const url = this.booking.trainerPhotoUrl || this.booking.centerPhotoUrl;
+    return url ? resolveStrapiUrl(url) : null;
   }
 
   /** Only the client side has a profile link today -- BookingCardComponent's

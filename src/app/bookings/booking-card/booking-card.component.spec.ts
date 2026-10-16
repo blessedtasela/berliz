@@ -49,6 +49,38 @@ describe('BookingCardComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  describe('who the session is with', () => {
+    it("shows the trainer's own photo to the client, not a generic icon", () => {
+      component.mode = 'client';
+      component.booking.trainerPhotoUrl = 'https://cdn.example/jane.jpg';
+
+      expect(component.counterpartyPhoto).toContain('jane.jpg');
+    });
+
+    it("falls back to the center's photo when the booking is with a center", () => {
+      component.mode = 'client';
+      component.booking.trainerPhotoUrl = null;
+      component.booking.centerPhotoUrl = 'https://cdn.example/iron.jpg';
+
+      expect(component.counterpartyPhoto).toContain('iron.jpg');
+    });
+
+    it("shows the client's own photo to the provider", () => {
+      component.mode = 'provider';
+      component.booking.clientPhoto = 'QUJD';
+      component.booking.trainerPhotoUrl = 'https://cdn.example/jane.jpg';
+
+      expect(component.counterpartyPhoto).toBe('QUJD');
+    });
+
+    it('has no photo (so the avatar shows initials) when none was sent', () => {
+      component.mode = 'client';
+      expect(component.counterpartyPhoto).toBeNull();
+      component.mode = 'provider';
+      expect(component.counterpartyPhoto).toBeNull();
+    });
+  });
+
   describe('cancel, no-show and reopen', () => {
     const lastDialogMessage = (): string => (dialogSpy.open.calls.mostRecent().args[1] as any).data.message;
 
