@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Booking } from 'src/app/models/booking.model';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { ReviewBookingModalComponent, ReviewBookingModalResult } from '../review-booking-modal/review-booking-modal.component';
 import { BookingDetailsModalComponent } from '../booking-details-modal/booking-details-modal.component';
@@ -47,6 +48,16 @@ export class BookingCardComponent {
     }
     return `${this.booking.clientFirstname ?? ''} ${this.booking.clientLastname ?? ''}`.trim()
       || this.booking.clientEmail || 'Client';
+  }
+
+  /**
+   * Who the session is with, as a photo: the client's own photo for a provider looking at a request,
+   * the trainer's or center's public photo URL for a client. Null falls back to initials in the avatar.
+   */
+  get counterpartyPhoto(): string | null {
+    if (this.mode === 'provider') return this.booking.clientPhoto ?? null;
+    const url = this.booking.trainerPhotoUrl || this.booking.centerPhotoUrl;
+    return url ? resolveStrapiUrl(url) : null;
   }
 
   get counterpartySubtitle(): string {

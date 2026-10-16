@@ -179,6 +179,8 @@ export interface TrainerLikes {
   userId: number;
   username: string;
   userEmail: string;
+  /** The person's profile photo (base64), when they have one. */
+  userPhoto?: string | null;
   date: Date;
 }
 
@@ -251,6 +253,8 @@ export interface TrainerClients {
   firstname: string;
   lastname: string;
   email: string;
+  /** The client's profile photo (base64), when they have one. */
+  userPhoto?: string | null;
   height: number;
   weight: number;
   bodyFat: number;
