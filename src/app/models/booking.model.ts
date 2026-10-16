@@ -10,9 +10,12 @@ export interface Booking {
 
   trainerId: number | null;
   trainerName: string | null;
+  /** The trainer's public photo URL, so a client's own bookings can show who it's with. */
+  trainerPhotoUrl?: string | null;
 
   centerId: number | null;
   centerName: string | null;
+  centerPhotoUrl?: string | null;
 
   scheduledAt: Date;
   durationMinutes: number;

@@ -1,6 +1,9 @@
 <div (click)="showDetails()" class="relative p-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 flex items-start justify-between gap-3 hover:shadow-sm hover:-translate-y-0.5 transition cursor-pointer">
     <div class="w-2 h-2 rounded-full mt-1.5 shrink-0" [ngClass]="dotClasses"></div>
 
+    <app-avatar [photo]="counterpartyPhoto" [name]="counterpartyName" [size]="40"
+        borderClass="border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400"></app-avatar>
+
     <div class="flex-1 min-w-0">
         <div class="flex items-center justify-between gap-2">
             <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{{ counterpartyName }}</p>

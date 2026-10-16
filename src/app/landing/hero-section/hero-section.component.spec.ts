@@ -28,4 +28,29 @@ describe('HeroSectionComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  // Regression: the 9 MB background loop used to download for every visitor the moment the landing page opened.
+  it('ships the background video without a source, so it is not fetched with the page', () => {
+    const video: HTMLVideoElement = fixture.nativeElement.querySelector('video');
+    expect(video.querySelector('source')).toBeNull();
+    expect(video.hasAttribute('autoplay')).toBeFalse();
+    expect(video.preload).toBe('none');
+    expect(video.getAttribute('poster')).toContain('fire-fallback');
+  });
+
+  it('skips the video for data-saver and slow connections', () => {
+    const original = Object.getOwnPropertyDescriptor(navigator, 'connection');
+    const setConnection = (value: unknown) =>
+      Object.defineProperty(navigator, 'connection', { value, configurable: true });
+    try {
+      setConnection({ saveData: true, effectiveType: '4g' });
+      expect(component.shouldPlayBackgroundVideo()).toBeFalse();
+
+      setConnection({ saveData: false, effectiveType: '3g' });
+      expect(component.shouldPlayBackgroundVideo()).toBeFalse();
+    } finally {
+      if (original) Object.defineProperty(navigator, 'connection', original);
+      else delete (navigator as any).connection;
+    }
+  });
 });

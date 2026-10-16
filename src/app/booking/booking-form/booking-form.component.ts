@@ -124,8 +124,7 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   availabilityConfigured: boolean | null = null;
   slotsMessage = '';
 
-  /** True once we know this provider has no availability configured — falls
-   *  back to the old manual date/time entry rather than a broken calendar. */
+  /** True once we know this provider has set no available times -- nothing can be booked until they do. */
   get useManualEntry(): boolean {
     return this.availabilityConfigured === false;
   }
@@ -168,9 +167,9 @@ export class BookingFormComponent implements OnInit, OnDestroy {
 
   // ── Inputs for the "Estimated total" shown before sending ──
 
-  /** The session length the estimate is for: the picked slot's length, or the length chosen when entering a time by hand. */
+  /** The session length the estimate is for: the picked slot's length, or the length chosen for an urgent request. */
   get estimateMinutes(): number {
-    return (this.urgentMode || this.useManualEntry)
+    return this.urgentMode
       ? Number(this.bookingForm?.value?.durationMinutes) || 60
       : this.slotDurationMinutes;
   }
@@ -434,10 +433,11 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Nothing is bookable until the provider sets their available times.
+    if (this.useManualEntry) return;
+
     if (this.urgentMode) {
       this.submitUrgent();
-    } else if (this.useManualEntry) {
-      this.submitManual();
     } else {
       this.submitFromSlot();
     }
@@ -535,38 +535,6 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       ...this.locationPayload
     };
 
-    this.submitting = true;
-    this.store.dispatch(createBooking({ data: payload }));
-  }
-
-  private submitManual(): void {
-    if (this.bookingForm.invalid) {
-      this.invalidForm = true;
-      this.bookingForm.markAllAsTouched();
-      return;
-    }
-
-    const value = this.bookingForm.value;
-    const scheduledAt = new Date(`${value.date}T${value.time}`);
-
-    if (isNaN(scheduledAt.getTime()) || scheduledAt.getTime() < this.earliestBookableTime) {
-      this.pastDate = true;
-      return;
-    }
-    this.pastDate = false;
-
-    const payload = {
-      id: null,
-      trainerId: this.data.trainerId ?? null,
-      centerId: this.data.centerId ?? null,
-      scheduledAt: scheduledAt.toISOString(),
-      durationMinutes: Number(value.durationMinutes),
-      notes: (value.notes ?? '').trim(),
-      ...this.rewardPayload,
-      ...this.locationPayload
-    };
-
-    this.invalidForm = false;
     this.submitting = true;
     this.store.dispatch(createBooking({ data: payload }));
   }

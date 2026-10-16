@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, Input, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { statistics, hero } from '../../models/landing.model';
@@ -12,7 +12,9 @@ import { genericError } from 'src/validators/form-validators.module';
     standalone: false
 })
 
-export class HeroSectionComponent implements OnInit {
+export class HeroSectionComponent implements OnInit, AfterViewInit {
+  @ViewChild('heroVideo') heroVideo?: ElementRef<HTMLVideoElement>;
+
   animationState = 'start';
   stats: statistics[] = [];
   heroes: hero[] = [];
@@ -27,6 +29,34 @@ export class HeroSectionComponent implements OnInit {
     @Inject(PLATFORM_ID) private platformId: Object,
   ) {
 
+  }
+
+  ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    // Keep the 9 MB background loop off the critical path: it only starts once everything else has loaded.
+    if (document.readyState === 'complete') {
+      setTimeout(() => this.startBackgroundVideo(), 0);
+    } else {
+      window.addEventListener('load', () => setTimeout(() => this.startBackgroundVideo(), 500), { once: true });
+    }
+  }
+
+  /** Mobile, reduced-motion, data-saver and non-4g visitors keep the poster image and never download the video. */
+  shouldPlayBackgroundVideo(): boolean {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return false;
+    if (window.matchMedia?.('(max-width: 767px)').matches) return false;
+    const connection = (navigator as any).connection;
+    if (connection?.saveData) return false;
+    if (connection?.effectiveType && connection.effectiveType !== '4g') return false;
+    return true;
+  }
+
+  private startBackgroundVideo(): void {
+    const video = this.heroVideo?.nativeElement;
+    if (!video || !this.shouldPlayBackgroundVideo()) return;
+    video.muted = true;
+    video.src = 'assets/fire-loop.mp4';
+    video.play().catch(() => { /* autoplay refused: the poster stays */ });
   }
 
   ngOnInit() {

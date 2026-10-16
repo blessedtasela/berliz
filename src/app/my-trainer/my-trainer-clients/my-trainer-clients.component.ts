@@ -4,7 +4,6 @@ import { Subscription } from 'rxjs';
 import { TrainerClients } from 'src/app/models/trainers.interface';
 import { selectTrainerClients } from 'src/app/state/trainer/trainer.selector';
 import { loadTrainerClients } from 'src/app/state/trainer/trainer.actions';
-import { photoDataUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 @Component({
     selector: 'app-my-trainer-clients',
@@ -44,21 +43,15 @@ export class MyTrainerClientsComponent {
   filteredClients(): TrainerClients[] {
     let result = [...this.trainerClients];
 
-    // if (this.searchTerm.trim()) {
-    //   const term = this.searchTerm.toLowerCase();
-    //   result = result.filter(c => {
-    //     const name = `${c.clients?[0].user?.firstname ?? ''} ${c.client?.user?.lastname ?? ''}`.toLowerCase();
-    //     return name.includes(term);
-    //   });
-    // }
+    const term = this.searchTerm.trim().toLowerCase();
+    if (term) {
+      result = result.filter(c => `${this.clientName(c)} ${c.email ?? ''}`.toLowerCase().includes(term));
+    }
 
-    // result.sort((a, b) => {
-    //   const nameA = `${a.client?.user?.firstname ?? ''} ${a.client?.user?.lastname ?? ''}`.toLowerCase();
-    //   const nameB = `${b.client?.user?.firstname ?? ''} ${b.client?.user?.lastname ?? ''}`.toLowerCase();
-    //   return this.sortOrder === 'asc'
-    //     ? nameA.localeCompare(nameB)
-    //     : nameB.localeCompare(nameA);
-    // });
+    result.sort((a, b) => {
+      const byName = this.clientName(a).localeCompare(this.clientName(b), undefined, { sensitivity: 'base' });
+      return this.sortOrder === 'asc' ? byName : -byName;
+    });
 
     return result;
   }
@@ -72,14 +65,9 @@ export class MyTrainerClientsComponent {
     this.showAll = !this.showAll;
   }
 
-  /**
-   * NOTE: this grid still renders placeholder markup ("client name here",
-   * a hardcoded 'client-photo-here' photo arg) rather than real per-client
-   * data -- that's a separate, unfinished feature, not a data-URI bug. This
-   * just fixes the same invalid-`image/*`-MIME issue every other photo
-   * helper had, for whenever it's wired up for real.
-   */
-  getProfilePhoto(photo: string): string {
-    return photoDataUri(photo) ?? 'assets/avatar.png';
+  clientName(client: TrainerClients): string {
+    return `${client.firstname ?? ''} ${client.lastname ?? ''}`.trim() || client.email || 'Client';
   }
+
+  trackByClient = (_: number, client: TrainerClients) => client.id;
 }
