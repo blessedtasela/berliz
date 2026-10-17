@@ -90,20 +90,16 @@ describe('ClientIntakeFormComponent', () => {
     expect(store.dispatch).toHaveBeenCalledWith(loadClientIntake({ id: 5 }));
   });
 
-  // ── DISCLOSURE BANNER — same non-dismissible pattern as terms-page ──
-  it('renders a non-dismissible draft/legal-review disclosure banner', () => {
+  // The intake form is just information gathered for liability purposes; it must not tell clients it is
+  // "not reviewed" by a professional (that banner was removed on purpose).
+  it('does not show a legal/medical review warning banner', () => {
     setup();
     fixture.detectChanges();
 
-    const banner = fixture.debugElement.query(By.css('[data-testid="legal-disclaimer-banner"]'));
-    expect(banner).withContext('disclaimer banner should be present').toBeTruthy();
-
-    const bannerText = ((banner.nativeElement as HTMLElement).textContent || '').replace(/\s+/g, ' ').trim();
-    expect(bannerText.toLowerCase()).toContain('has not been reviewed by a licensed');
-    expect(bannerText.toLowerCase()).toContain('legal review is required');
-
-    const dismissControl = banner.query(By.css('button, [aria-label*="close" i], [aria-label*="dismiss" i]'));
-    expect(dismissControl).withContext('banner must not have a close/dismiss control').toBeFalsy();
+    expect(fixture.debugElement.query(By.css('[data-testid="legal-disclaimer-banner"]'))).toBeNull();
+    const text = ((fixture.nativeElement as HTMLElement).textContent || '').toLowerCase();
+    expect(text).not.toContain('has not been reviewed');
+    expect(text).not.toContain('legal review is required');
   });
 
   // ── FORM VALIDATION ──

@@ -549,6 +549,12 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 
+### Unreleased — Client intake: removed the "not reviewed by a licensed professional" banner
+
+The amber banner at the top of the client intake form (web and mobile) told clients the form had not been reviewed for legal/medical-liability
+compliance. The form only collects information the trainer needs for liability purposes, so that message was never meant to be shown and is
+gone. (The Terms and Privacy pages keep their own draft notices.) The spec now asserts the banner is absent.
+
 ### Unreleased — Double-submit guard, skeleton shimmer, populated-data audit, mobile labels
 
 - **A form can't be submitted twice while its first submit is in flight.** `RequestActivityService` + interceptor count in-flight
