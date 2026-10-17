@@ -187,6 +187,11 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Fix: links lost their query parameters (login return, notification deep links)
+
+- The URL serializer lowercased the *whole* URL, query string included, so `?returnUrl=`, `?postId=`, `?userId=`, `?logId=`, `?faqId=`, `?payoutId=` and others arrived as `returnurl`, `postid`… and the code reading the camelCase names never saw them. Visitors sent to log in were not returned to the page they wanted, and notification deep links that carry an id (a post's comments, a message thread, a logged workout or run) opened the page without the item. Only the path is lowercased now; query keys, values and the fragment keep their case.
+- `ng serve` no longer server-renders every route. SSR/prerender stay on for production builds, but in development they made guarded pages such as `/dashboard` answer with a redirect to login before the app could read the signed-in token, so signed-in screens could not be developed or checked locally.
+
 ### Unreleased — Plans, packs and single sessions are three different things
 
 Before, every plan card said "Choose this plan" and led to a page whose only button was **Request booking** — so buying the

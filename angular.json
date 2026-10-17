@@ -82,7 +82,9 @@
             },
             "development": {
               "optimization": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "server": false,
+              "prerender": false
             }
           },
           "defaultConfiguration": "production"
