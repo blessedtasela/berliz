@@ -27,6 +27,11 @@ export interface Payments {
   /** Set once this Stripe payment has been refunded. */
   stripeRefundId?: string | null;
   refundedAt?: Date | null;
+  /** Total handed back so far (partial refunds add up) and what can still be refunded. */
+  refundedAmount?: number | null;
+  refundableAmount?: number | null;
+  /** The booking this payment paid for, when it was a session payment. */
+  bookingId?: number | null;
 
   message?: string;
 }

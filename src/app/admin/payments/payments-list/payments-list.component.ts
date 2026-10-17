@@ -14,6 +14,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
 import { UpdatePaymentsModalComponent } from '../update-payments-modal/update-payments-modal.component';
+import { RefundDialogComponent, RefundDialogData, RefundDialogResult } from '../refund-dialog/refund-dialog.component';
 import { PaymentDetailsModalComponent } from '../payment-details-modal/payment-details-modal.component';
 
 @Component({
@@ -172,28 +173,34 @@ export class PaymentsListComponent {
     });
   }
 
-  /** Admin-only full Stripe refund. Only offered for a Stripe payment that isn't already refunded. */
+  /** Admin-only Stripe refund, full or partial. Offered while anything on a Stripe payment is still refundable. */
   canRefund(payment: Payments): boolean {
-    return payment?.paymentMethod === 'stripe' && !payment?.stripeRefundId;
+    if (payment?.paymentMethod !== 'stripe') return false;
+    if (typeof payment.refundableAmount === 'number') return payment.refundableAmount > 0;
+    return !payment.stripeRefundId;
   }
 
   refundPayment(payment: Payments) {
     if (!this.canRefund(payment)) return;
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.data = {
-      message: `Refund ${payment.amount} to ${payment.userEmail || 'this customer'} via Stripe? This reverses the charge.`,
-      confirmation: true,
-      disableClose: true,
-    };
-    const dialogRef = this.dialog.open(PromptModalComponent, dialogConfig);
-    dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
+    const refundable = typeof payment.refundableAmount === 'number' ? payment.refundableAmount : Number(payment.amount);
+    const dialogRef = this.dialog.open<RefundDialogComponent, RefundDialogData, RefundDialogResult>(RefundDialogComponent, {
+      maxWidth: '95vw',
+      data: {
+        who: payment.userEmail || 'this customer',
+        refundable,
+        alreadyRefunded: Number(payment.refundedAmount ?? 0),
+        currency: payment.currency,
+      },
+    });
+    dialogRef.afterClosed().subscribe(amount => {
+      // undefined = cancelled; null = refund everything that is left; a number = that part.
+      if (amount === undefined) return;
       this.ngxService.start();
-      this.stripeService.refundPayment(payment.id).subscribe({
+      this.stripeService.refundPayment(payment.id, amount ?? undefined).subscribe({
         next: (response: any) => {
           this.ngxService.stop();
           this.snackbarService.openSnackBar(response?.message || 'Refund issued', '');
           this.handleEmitEvent();
-          dialogRef.close('refunded');
         },
         error: (error: any) => {
           this.ngxService.stop();
