@@ -553,7 +553,7 @@ name their own location (with its own optional fee). Clients choose at booking t
 
 The amber banner at the top of the client intake form (web and mobile) told clients the form had not been reviewed for legal/medical-liability
 compliance. The form only collects information the trainer needs for liability purposes, so that message was never meant to be shown and is
-gone. (The Terms and Privacy pages keep their own draft notices.) The spec now asserts the banner is absent.
+gone, and so are the draft/legal-review notices at the top of the Terms and Privacy pages (web and mobile). Specs assert they are absent.
 
 ### Unreleased — Double-submit guard, skeleton shimmer, populated-data audit, mobile labels
 
