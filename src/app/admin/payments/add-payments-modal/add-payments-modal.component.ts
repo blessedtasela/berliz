@@ -32,6 +32,7 @@ export class AddPaymentsModalComponent implements OnInit {
   invalidForm = false;
   submitting = false;
   responseMessage: any;
+  submitError: string | null = null;
 
   users: Users[] = [];
 
@@ -62,6 +63,7 @@ export class AddPaymentsModalComponent implements OnInit {
     }
 
     this.submitting = true;
+    this.submitError = null;
     this.ngxService.start();
     this.paymentService.addPayment({
       ...this.addPaymentForm.value,
@@ -78,8 +80,7 @@ export class AddPaymentsModalComponent implements OnInit {
       error: (error: any) => {
         this.ngxService.stop();
         this.submitting = false;
-        this.responseMessage = error.error?.message || genericError;
-        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        this.submitError = error?.error?.message || genericError;
       }
     });
   }

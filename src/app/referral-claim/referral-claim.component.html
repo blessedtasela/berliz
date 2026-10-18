@@ -18,7 +18,12 @@
         <i-feather name="loader" class="text-gray-300 animate-spin" style="width:20px;height:20px;"></i-feather>
     </div>
 
-    <ng-container *ngIf="!loading">
+    <app-load-error *ngIf="loadError && !loading" title="Couldn't load available sessions"
+        [message]="loadError" (retry)="loadEligibleProviders()"></app-load-error>
+
+    <ng-container *ngIf="!loading && !loadError">
+
+        <app-inline-alert [message]="claimError" (dismissed)="claimError = null"></app-inline-alert>
 
         <!-- Eligible providers -->
         <div *ngIf="providers.length > 0" class="flex flex-col gap-3">

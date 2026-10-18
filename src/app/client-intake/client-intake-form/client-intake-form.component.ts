@@ -55,6 +55,10 @@ export class ClientIntakeFormComponent implements OnInit, OnDestroy {
   loading = false;
   accessDenied = false;
   notFound = false;
+  /** The intake could not be loaded for a reason other than denied/not-found; shown inline with a Retry. */
+  loadError: string | null = null;
+  /** Inline message above the submit button: validation problems and failed saves. */
+  submitError: string | null = null;
 
   private destroy$ = new Subject<void>();
 
@@ -110,7 +114,8 @@ export class ClientIntakeFormComponent implements OnInit, OnDestroy {
     this.actions$
       .pipe(ofType(createClientIntakeSuccess, updateClientIntakeSuccess), takeUntil(this.destroy$))
       .subscribe(({ response }) => {
-        this.snackBar.openSnackBar(response?.message || 'Intake saved', '');
+        this.submitError = null;
+        this.snackBar.openSnackBar(response?.message || 'Client intake saved', '');
         if (response?.data?.id) {
           this.router.navigate(['/client-intake', response.data.id]);
         }
@@ -130,9 +135,17 @@ export class ClientIntakeFormComponent implements OnInit, OnDestroy {
     return this.form.controls;
   }
 
+  retryLoad(): void {
+    if (this.intakeId == null) return;
+    this.loadError = null;
+    this.store.dispatch(loadClientIntake({ id: this.intakeId }));
+  }
+
   submit(): void {
+    this.submitError = null;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.submitError = 'Fill in the emergency contact name and phone, and confirm the information is accurate, before submitting.';
       return;
     }
 
@@ -173,7 +186,7 @@ export class ClientIntakeFormComponent implements OnInit, OnDestroy {
     } else if (msg.includes('not found')) {
       this.notFound = true;
     } else {
-      this.snackBar.openSnackBar(error || genericError, 'error');
+      this.loadError = error || genericError;
     }
   }
 
@@ -183,14 +196,14 @@ export class ClientIntakeFormComponent implements OnInit, OnDestroy {
    * could mean something else entirely in the payload (e.g. "Client not found"),
    * and the user is actively filling out a visible form, not loading an existing
    * record — flipping to an empty "not found" state would hide their input behind
-   * the wrong UI. Always surface it as an error toast instead.
+   * the wrong UI. Always surface it inline, above the submit button, instead.
    */
   private handleSaveError(error: string): void {
     const msg = (error || '').toLowerCase();
     if (msg.includes('not authorized') || msg.includes('unauthorized')) {
       this.accessDenied = true;
     } else {
-      this.snackBar.openSnackBar(error || genericError, 'error');
+      this.submitError = error || genericError;
     }
   }
 }

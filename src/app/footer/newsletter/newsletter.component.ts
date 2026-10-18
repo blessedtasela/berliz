@@ -17,6 +17,7 @@ export class NewsletterComponent implements OnInit {
   onAddNewsletterEmit = new EventEmitter();
   invalidForm: boolean = false;
   responseMessage: any;
+  submitError: string | null = null;
 
 
   constructor(private formBuilder: FormBuilder,
@@ -34,17 +35,20 @@ export class NewsletterComponent implements OnInit {
 
 
   addNewsletter(): void {
+    this.submitError = null;
     this.ngxService.start();
     if (this.newsletterForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
+      this.newsletterForm.markAllAsTouched();
+      this.submitError = 'Enter a valid email address to join the newsletter.';
       this.ngxService.stop();
     } else {
       this.newsletterService.addNewsletter(this.newsletterForm.value)
         .subscribe((response: any) => {
           this.newsletterForm.reset();
           this.invalidForm = false;
-          this.responseMessage = response?.message;
+          this.responseMessage = response?.message || 'You are subscribed to the Berliz newsletter';
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.onAddNewsletterEmit.emit();
           this.ngxService.stop();
@@ -57,11 +61,10 @@ export class NewsletterComponent implements OnInit {
           } else {
             this.responseMessage = genericError;
           }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = this.responseMessage;
         });
     }
     this.ngxService.stop();
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
 
 }

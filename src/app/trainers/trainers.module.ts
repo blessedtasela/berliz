@@ -23,6 +23,7 @@ import { TrainerBenefitsComponent } from './trainer-benefits/trainer-benefits.co
 import { TrainerFeatureVideoComponent } from './trainer-feature-video/trainer-feature-video.component';
 import { TrainerClientReviewComponent } from './trainer-client-review/trainer-client-review.component';
 import { IconsModule } from '../icons/icons.module';
+import { SharedModule } from '../shared/shared.module';
 import { TrainerAlbumComponent } from './trainer-album/trainer-album.component';
 import { ChatWithTrainerComponent } from './chat-with-trainer/chat-with-trainer.component';
 import { ChatWithTrainerPopUpComponent } from './chat-with-trainer-pop-up/chat-with-trainer-pop-up.component';
@@ -87,6 +88,7 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     ReactiveFormsModule,
     RouterModule,
     IconsModule,
+    SharedModule,
     PromoBadgeListComponent,
     ProviderTermsComponent,
     ProviderPackagesComponent,

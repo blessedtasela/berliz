@@ -36,6 +36,7 @@
                     Please select a due date
                 </div>
             </div>
+            <app-inline-alert [message]="submitError" [kind]="'error'" [dismissible]="true" (dismissed)="submitError = null"></app-inline-alert>
             <div class="flex p-2">
                 <div class="bg-red-600 rounded-md mx-auto m-2 cursor-pointer" (click)="addTodo()">
                     <button type="submit"

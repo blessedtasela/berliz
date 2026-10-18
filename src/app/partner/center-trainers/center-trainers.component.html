@@ -39,6 +39,8 @@
                     ? 'border-red-300 dark:border-red-800' : 'border-gray-200 dark:border-gray-700'" />
         </div>
 
+        <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
+
         <div class="border-t border-gray-200 dark:border-gray-700 pt-3 flex items-center justify-between">
             <span *ngIf="hasChanges()" class="text-xs text-blue-600 font-semibold">Unsaved changes</span>
             <span *ngIf="!hasChanges()" class="text-xs text-gray-400 dark:text-gray-500">No changes made</span>

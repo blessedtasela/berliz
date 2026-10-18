@@ -10,6 +10,8 @@ import { SavedService } from 'src/app/services/saved.service';
 import { WorkoutService } from 'src/app/services/workout.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import { genericError } from 'src/validators/form-validators.module';
 import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 /**
@@ -20,13 +22,15 @@ import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-u
  */
 @Component({
     selector: 'app-saved-page',
-    imports: [CommonModule, RouterModule, IconsModule, StrapiUrlPipe],
+    imports: [CommonModule, RouterModule, IconsModule, StrapiUrlPipe, LoadErrorComponent],
     templateUrl: './saved-page.component.html'
 })
 export class SavedPageComponent implements OnInit {
   posts: PostResponse[] = [];
   workouts: WorkoutResponse[] = [];
   loading = true;
+  /** Set when the saved list failed to load; shown inline with a retry instead of the empty state. */
+  loadError: string | null = null;
   cloningId: number | null = null;
 
   /**
@@ -54,13 +58,14 @@ export class SavedPageComponent implements OnInit {
 
   refresh(): void {
     this.loading = true;
+    this.loadError = null;
     this.savedService.list().pipe(take(1)).subscribe({
       next: res => {
         this.loading = false;
         this.posts = res.data?.posts ?? [];
         this.workouts = res.data?.workouts ?? [];
       },
-      error: () => { this.loading = false; },
+      error: (err: any) => { this.loading = false; this.loadError = err?.error?.message || genericError; },
     });
   }
 

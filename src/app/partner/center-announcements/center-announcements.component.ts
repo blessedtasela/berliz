@@ -28,6 +28,7 @@ export class CenterAnnouncementsComponent implements OnInit, OnChanges, OnDestro
   showEditor = false;
   editingId: number | null = null;
   invalidForm = false;
+  submitError: string | null = null;
   originalValue: any;
 
   showAll = false;
@@ -103,6 +104,7 @@ export class CenterAnnouncementsComponent implements OnInit, OnChanges, OnDestro
   openAdd(): void {
     this.editingId = null;
     this.invalidForm = false;
+    this.submitError = null;
     this.initForm(null);
     this.showEditor = true;
   }
@@ -110,6 +112,7 @@ export class CenterAnnouncementsComponent implements OnInit, OnChanges, OnDestro
   openEdit(announcement: CenterAnnouncements): void {
     this.editingId = announcement.id;
     this.invalidForm = false;
+    this.submitError = null;
     this.initForm(announcement);
     this.showEditor = true;
   }
@@ -118,14 +121,16 @@ export class CenterAnnouncementsComponent implements OnInit, OnChanges, OnDestro
     this.showEditor = false;
     this.editingId = null;
     this.invalidForm = false;
+    this.submitError = null;
     this.initForm(null);
   }
 
   saveAnnouncement(): void {
+    this.submitError = null;
     if (this.announcementForm.invalid) {
       this.invalidForm = true;
       this.announcementForm.markAllAsTouched();
-      this.snackbar.openSnackBar('Invalid form. Please complete all sections', 'error');
+      // The editor already shows an inline "complete all required fields" notice while invalidForm is set.
       return;
     }
 
@@ -139,14 +144,14 @@ export class CenterAnnouncementsComponent implements OnInit, OnChanges, OnDestro
 
     request$.pipe(take(1)).subscribe({
       next: (response: any) => {
-        this.snackbar.openSnackBar(response?.message || 'Saved successfully', '');
+        this.snackbar.openSnackBar(response?.message || 'Your announcement has been saved', '');
         this.store.dispatch(loadMyCenterAnnouncements());
         this.emitEvent.emit();
         this.closeEditor();
         this.loader.stop();
       },
       error: (err: any) => {
-        this.snackbar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.submitError = err?.error?.message || genericError;
         this.loader.stop();
       }
     });

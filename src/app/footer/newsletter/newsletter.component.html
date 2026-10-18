@@ -25,5 +25,6 @@
             Sign up
         </button>
     </div>
+    <app-inline-alert [message]="submitError" [kind]="'error'" [dismissible]="true" (dismissed)="submitError = null"></app-inline-alert>
 </div>
 </form>

@@ -40,6 +40,10 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
 
   featureVideosForm!: FormGroup;
   invalidForm = false;
+  /** Save/validation problems for the video slots, shown above the footer buttons. */
+  submitError: string | null = null;
+  /** Trim / optimise / upload problems, shown inside the video editor modal. */
+  editorError: string | null = null;
   slots: VideoSlot[] = [];
 
   readonly defaultVideo = 'assets/videos/demo_ok.mp4';
@@ -253,6 +257,7 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
   }
 
   cancelEditor(): void {
+    this.editorError = null;
     this.activeSlot = null;
     this.editorStep = 'idle';
     this.rawFile = null;
@@ -270,6 +275,7 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
 
     // Mark this slot as touched as soon as a file is chosen
     this.slots[slotIndex].touched = true;
+    this.editorError = null;
 
     this.activeSlot = slotIndex;
     this.revokeBlobUrl(this.editorPreviewUrl);
@@ -317,8 +323,9 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
   async processAndPreview(): Promise<void> {
     if (!this.rawFile || !this.trimValid) return;
 
+    this.editorError = null;
     const videoEl = document.getElementById('editorVideoPreview') as HTMLVideoElement | null;
-    if (!videoEl) { this.snackbar.openSnackBar('Video element not ready.', 'error'); return; }
+    if (!videoEl) { this.editorError = 'The video preview is not ready yet. Please try again.'; return; }
 
     const canCapture = 'captureStream' in videoEl || 'mozCaptureStream' in videoEl;
     if (!canCapture) {
@@ -381,7 +388,7 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
       const outputMB = blob.size / 1024 / 1024;
 
       if (blob.size < 5000) {
-        this.snackbar.openSnackBar('Trimmed video too small. Try again.', 'error');
+        this.editorError = 'The trimmed video is too small. Please adjust the trim and try again.';
         this.editorStep = 'trimming';
         return;
       }
@@ -410,6 +417,7 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
   }
 
   backToTrim(): void {
+    this.editorError = null;
     this.editorStep = 'trimming';
     this.processedFile = null;
     this.cdr.detectChanges();
@@ -419,6 +427,7 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
 
   async optimizeVideo(): Promise<void> {
     if (!this.processedFile) return;
+    this.editorError = null;
     this.optimizing = true;
     this.cdr.detectChanges();
 
@@ -430,7 +439,7 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
       await new Promise<void>(res => { videoEl.onloadedmetadata = () => res(); });
 
       const canCapture = 'captureStream' in videoEl || 'mozCaptureStream' in videoEl;
-      if (!canCapture) { this.snackbar.openSnackBar('Optimization not supported.', 'error'); return; }
+      if (!canCapture) { this.editorError = 'Video optimization is not supported in this browser. Upload a smaller video instead.'; return; }
 
       videoEl.currentTime = 0;
       await new Promise<void>(res => { videoEl.onseeked = () => res(); });
@@ -461,7 +470,7 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
       const newMB = blob.size / 1024 / 1024;
       if (newMB > this.MAX_FILE_MB) {
         this.overSizeMB = newMB;
-        this.snackbar.openSnackBar(`Still too large (${newMB.toFixed(1)} MB). Upload a new video.`, 'error');
+        this.editorError = `Still too large (${newMB.toFixed(1)} MB). Upload a new video.`;
         return;
       }
 
@@ -472,7 +481,7 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
       this.editorStep = 'previewing';
       this.snackbar.openSnackBar(`Optimized to ${newMB.toFixed(1)} MB ✓`, '');
 
-    } catch { this.snackbar.openSnackBar('Optimization failed.', 'error'); }
+    } catch { this.editorError = 'Optimization failed. Please try again or upload a smaller video.'; }
     finally { this.optimizing = false; this.cdr.detectChanges(); }
   }
 
@@ -497,6 +506,7 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
       return;
     }
 
+    this.editorError = null;
     this.editorStep = 'uploading';
     this.loader.start();
     this.cdr.detectChanges();
@@ -507,7 +517,7 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
         next: (res: any[]) => {
           const uploaded = res?.[0];
           if (!uploaded?.url) {
-            this.snackbar.openSnackBar('Strapi returned no file URL.', 'error');
+            this.editorError = 'The upload finished but the media server returned no file URL. Please try again.';
             this.editorStep = 'previewing';
             this.loader.stop();
             this.cdr.detectChanges();
@@ -546,7 +556,7 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
           this.cdr.detectChanges();
         },
         error: (err: any) => {
-          this.snackbar.openSnackBar(err?.error?.message || 'Upload failed.', 'error');
+          this.editorError = err?.error?.message || 'Upload failed. Please try again.';
           this.editorStep = 'previewing';
           this.loader.stop();
           this.cdr.detectChanges();
@@ -556,20 +566,22 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
 
   // ── Per-slot save ─────────────────────────────────────────────────────────
 
-  saveSlot(i: number): void {
+  saveSlot(i: number, keepErrors = false): void {
     const slot = this.slots[i];
     const motivation = this.getMotivationControl(i)?.value ?? '';
+    // saveAll() saves several slots in a row and must not wipe an earlier slot's error.
+    if (!keepErrors) this.submitError = null;
 
     // Both must be present for a touched slot
     if (!this.slotHasVideo(i)) {
-      this.snackbar.openSnackBar(`Video ${i + 1}: please upload a video first.`, 'error');
+      this.addSubmitError(`Video ${i + 1}: please upload a video first.`);
       return;
     }
 
     const motCtrl = this.getMotivationControl(i);
     if (motCtrl?.invalid) {
       motCtrl.markAsDirty();
-      this.snackbar.openSnackBar(`Video ${i + 1}: motivation must be 300–500 characters.`, 'error');
+      this.addSubmitError(`Video ${i + 1}: motivation must be 300–500 characters.`);
       return;
     }
 
@@ -591,31 +603,38 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
 
     request$.pipe(take(1)).subscribe({
       next: (res: any) => {
-        this.slots[i].savedId = res?.id ?? slot.savedId;
+        // The service returns the ApiResponse wrapper; the saved video is under `data`.
+        this.slots[i].savedId = res?.data?.id ?? slot.savedId;
         this.slots[i].uploaded = false;
         this.slots[i].originalMotivation = motivation;
         this.slots[i].touched = false;   // reset after successful save
-        this.snackbar.openSnackBar(res?.message || `Video ${i + 1} saved`, '');
+        this.snackbar.openSnackBar(res?.message || `Feature video ${i + 1} saved`, '');
         this.emitEvent.emit();
         this.loader.stop();
         this.cdr.detectChanges();
       },
       error: (err: any) => {
-        this.snackbar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.addSubmitError(err?.error?.message || genericError);
         this.loader.stop();
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  /** Appends a save problem so that several failing slots are all reported. */
+  private addSubmitError(message: string): void {
+    this.submitError = this.submitError ? `${this.submitError} ${message}` : message;
   }
 
   // ── Save all ──────────────────────────────────────────────────────────────
 
   saveAll(): void {
     this.invalidForm = false;
+    this.submitError = null;
 
-    // Check global minimum
+    // Check global minimum (the "upload at least 2 feature videos" notice is shown inline while invalidForm is set)
     if (this.uploadedCount < 2) {
       this.invalidForm = true;
-      this.snackbar.openSnackBar('Please upload at least 2 feature videos.', 'error');
       return;
     }
 
@@ -637,14 +656,14 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
         return `Video ${i + 1}: motivation must be 300–500 characters`;
       });
 
-      this.snackbar.openSnackBar(missing[0], 'error');
+      this.submitError = missing.join('. ') + '.';
       return;
     }
 
     // All valid — save slots with changes
     this.slots.forEach((slot, i) => {
       if (this.slotHasChanges(i) && (slot.uploaded || slot.savedId)) {
-        this.saveSlot(i);
+        this.saveSlot(i, true);
       }
     });
   }

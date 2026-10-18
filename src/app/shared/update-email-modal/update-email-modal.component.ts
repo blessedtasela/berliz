@@ -20,6 +20,7 @@ export class UpdateEmailModalComponent implements OnInit, OnDestroy {
   invalidForm = false;
   inputToken = false;
   responseMessage: string = '';
+  submitError: string | null = null;
   userData!: Users;
 
   onUpdateEMail = new EventEmitter<void>();
@@ -69,9 +70,11 @@ export class UpdateEmailModalComponent implements OnInit, OnDestroy {
   }
 
   validateEmail(): void {
+    this.submitError = null;
     if (this.updateEmailForm.get('email')?.invalid) {
       this.invalidForm = true;
-      this.snackbar.openSnackBar('Invalid email format', 'error');
+      this.updateEmailForm.get('email')?.markAsTouched();
+      this.submitError = 'Please enter a valid email address (.com or .org).';
       return;
     }
 
@@ -83,20 +86,22 @@ export class UpdateEmailModalComponent implements OnInit, OnDestroy {
           this.inputToken = true;
           this.invalidForm = false;
           this.ngx.stop();
-          this.snackbar.openSnackBar(res?.message, '');
+          this.snackbar.openSnackBar(res?.message || 'A verification code has been sent to your new email address', '');
         },
         error: (err: any) => {
           this.ngx.stop();
           this.responseMessage = err.error?.message || genericError;
-          this.snackbar.openSnackBar(this.responseMessage, 'error');
+          this.submitError = this.responseMessage;
         }
       });
   }
 
   updateEmail(): void {
+    this.submitError = null;
     if (this.updateEmailForm.invalid) {
       this.invalidForm = true;
-      this.snackbar.openSnackBar('Invalid form', 'error');
+      this.updateEmailForm.markAllAsTouched();
+      this.submitError = 'Please enter the new email, the verification code and your current password.';
       return;
     }
 
@@ -109,7 +114,7 @@ export class UpdateEmailModalComponent implements OnInit, OnDestroy {
           this.inputToken = false;
           this.ngx.stop();
 
-          this.snackbar.openSnackBar(res?.message, '');
+          this.snackbar.openSnackBar(res?.message || 'Your email address has been updated. Please log in again', '');
           this.onUpdateEMail.emit();
           this.userService.logout();
 
@@ -118,7 +123,7 @@ export class UpdateEmailModalComponent implements OnInit, OnDestroy {
         error: (err: any) => {
           this.ngx.stop();
           this.responseMessage = err.error?.message || genericError;
-          this.snackbar.openSnackBar(this.responseMessage, 'error');
+          this.submitError = this.responseMessage;
         }
       });
   }

@@ -28,6 +28,8 @@ export class ProfileComponent {
   @Input() userData!: Users | null;
   profileOpen: boolean = false;
   responseMessage: any;
+  /** Inline error shown inside the photo cropper when saving the new profile photo fails. */
+  photoError: string | null = null;
   @Input() search: boolean = false;
   imageChangedEvent: any = '';
   croppedImage: any = '';
@@ -127,16 +129,18 @@ export class ProfileComponent {
   }
 
   cancelUpload() {
+    this.photoError = null;
     this.showCropper = false;
   }
 
   updatePhoto(): void {
+    this.photoError = null;
     this.ngxService.start();
     const id = this.userData?.id;
     if (id === undefined || id === null) {
       this.ngxService.stop();
       this.responseMessage = 'User ID is not available.';
-      this.snackbarService.openSnackBar(this.responseMessage, 'error');
+      this.photoError = this.responseMessage;
       return;
     }
     const photo = this.croppedImage;
@@ -146,7 +150,7 @@ export class ProfileComponent {
     this.userService.updateProfilePhoto(requestData)
       .subscribe((response: any) => {
         this.ngxService.stop();
-        this.responseMessage = response?.message;
+        this.responseMessage = response?.message || 'Profile photo updated';
         this.snackbarService.openSnackBar(this.responseMessage, "");
         this.showCropper = false;
         this.handleEmitEvent()
@@ -158,7 +162,7 @@ export class ProfileComponent {
         } else {
           this.responseMessage = genericError;
         }
-        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        this.photoError = this.responseMessage;
       });
   }
 
@@ -184,7 +188,7 @@ export class ProfileComponent {
         .subscribe(
           (response: any) => {
             this.ngxService.stop();
-            this.responseMessage = response?.message;
+            this.responseMessage = response?.message || 'Profile photo removed';
             this.snackbarService.openSnackBar(this.responseMessage, "");
             dialogRef.close('Profile photo removed succesfully')
             this.handleEmitEvent()

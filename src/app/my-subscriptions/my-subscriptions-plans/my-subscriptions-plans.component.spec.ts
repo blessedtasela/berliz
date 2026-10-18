@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { InlineAlertComponent } from '../../shared/inline-alert/inline-alert.component';
 import { Actions } from '@ngrx/effects';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Subject } from 'rxjs';
@@ -44,7 +45,7 @@ describe('MySubscriptionsPlansComponent', () => {
     const bypassCodeServiceSpy = jasmine.createSpyObj('BypassCodeService', ['redeem']);
 
     TestBed.configureTestingModule({
-    declarations: [MySubscriptionsPlansComponent],
+    declarations: [MySubscriptionsPlansComponent, InlineAlertComponent],
     imports: [CommonModule, FormsModule, IconsModule],
     providers: [
         provideMockStore({

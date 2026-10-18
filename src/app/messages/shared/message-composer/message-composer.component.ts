@@ -6,6 +6,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { Message } from 'src/app/models/message.model';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 export interface ComposerSendPayload {
   body: string;
@@ -61,7 +62,7 @@ const BLOCKED_ATTACHMENT_EXTENSIONS = [
  */
 @Component({
     selector: 'app-message-composer',
-    imports: [CommonModule, FormsModule, IconsModule],
+    imports: [CommonModule, FormsModule, IconsModule, SharedModule],
     templateUrl: './message-composer.component.html'
 })
 export class MessageComposerComponent implements OnChanges, OnDestroy {
@@ -78,6 +79,8 @@ export class MessageComposerComponent implements OnChanges, OnDestroy {
   body = '';
   pendingAttachment: PendingAttachment | null = null;
   uploadingAttachment = false;
+  /** Inline reason the picked file was rejected or failed to upload; shown above the input row. */
+  attachmentError: string | null = null;
 
   private isTyping = false;
   private stopTypingTimer: ReturnType<typeof setTimeout> | null = null;
@@ -101,13 +104,14 @@ export class MessageComposerComponent implements OnChanges, OnDestroy {
     input.value = ''; // allow picking the exact same file again later
 
     if (!file) return;
+    this.attachmentError = null;
     if (file.size > MAX_ATTACHMENT_BYTES) {
-      this.snackBar.openSnackBar('That file is too large to attach (max 25MB).', 'error');
+      this.attachmentError = `"${file.name}" is too large to attach (max 25MB).`;
       return;
     }
     const ext = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
     if (BLOCKED_ATTACHMENT_EXTENSIONS.includes(ext)) {
-      this.snackBar.openSnackBar('That file type can\'t be attached.', 'error');
+      this.attachmentError = `"${file.name}" can't be attached: ${ext} files aren't allowed.`;
       return;
     }
 
@@ -121,7 +125,7 @@ export class MessageComposerComponent implements OnChanges, OnDestroy {
       },
       error: () => {
         this.uploadingAttachment = false;
-        this.snackBar.openSnackBar('Could not upload that file. Try again.', 'error');
+        this.attachmentError = `"${file.name}" could not be uploaded. Try attaching it again.`;
       },
     });
   }

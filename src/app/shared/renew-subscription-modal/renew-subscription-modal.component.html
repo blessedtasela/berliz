@@ -44,6 +44,8 @@
 
     <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
+    <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
+
     <!-- Actions -->
     <div class="flex items-center justify-end gap-2">
         <button type="button" (click)="close()"

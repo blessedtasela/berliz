@@ -23,6 +23,8 @@ export class AssignTaskModalComponent implements OnInit, OnDestroy {
 
   assignTaskForm!: FormGroup;
   invalidForm = false;
+  /** Inline validation message shown above the Assign button. */
+  submitError: string | null = null;
 
   /** Trainer picks from their OWN clients, not the admin's full user list. */
   clients: TrainerClients[] = [];
@@ -109,9 +111,10 @@ export class AssignTaskModalComponent implements OnInit, OnDestroy {
     if (this.assignTaskForm.invalid) {
       this.invalidForm = true;
       this.assignTaskForm.markAllAsTouched();
-      this.snackbar.openSnackBar('Please complete every field before assigning', '');
+      this.submitError = 'Pick a client, describe the task, set its dates, and give every step a name and an exercise before assigning.';
       return;
     }
+    this.submitError = null;
 
     const value = this.assignTaskForm.value;
 
@@ -132,7 +135,7 @@ export class AssignTaskModalComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(addTask({ data: payload }));
 
-    this.snackbar.openSnackBar('Task assigned', '');
+    this.snackbar.openSnackBar(`Task assigned to ${value.email}`, '');
     this.dialogRef.close('assigned');
   }
 
@@ -141,6 +144,7 @@ export class AssignTaskModalComponent implements OnInit, OnDestroy {
     this.subTasks.clear();
     this.addStep();
     this.invalidForm = false;
+    this.submitError = null;
   }
 
   closeDialog(): void {

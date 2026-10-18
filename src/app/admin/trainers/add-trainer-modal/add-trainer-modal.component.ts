@@ -30,6 +30,7 @@ export class AddTrainerModalComponent {
   invalidForm: boolean = false;
   categories: Categories[] = [];
   responseMessage: any;
+  submitError: string | null = null;
   selectedPhoto: any;
   activePartners: Partner[] = [];
   displayPhoto: any = "../../../assets/icons/user.png";
@@ -97,7 +98,7 @@ export class AddTrainerModalComponent {
   }
 
   loadImageFailed(): void {
-    this.snackBarService.openSnackBar('Failed to load image', 'error');
+    this.submitError = 'Failed to load image';
     this.showCropper = false;
     this.imageChangedEvent = null;
   }
@@ -122,6 +123,7 @@ export class AddTrainerModalComponent {
       type: this.croppedImageBlob.type || 'image/jpeg'
     });
 
+    this.submitError = null;
     this.selectedPhoto = file;
     this.displayPhoto = URL.createObjectURL(file);
 
@@ -150,7 +152,7 @@ export class AddTrainerModalComponent {
         lastUpdate: new Date(),
       };
     } catch (err: any) {
-      this.snackBarService.openSnackBar(err?.error?.message || err?.message || 'Photo upload failed', 'error');
+      this.submitError = err?.error?.message || err?.message || 'Photo upload failed';
     } finally {
       this.uploadingPhoto = false;
     }
@@ -183,11 +185,12 @@ export class AddTrainerModalComponent {
     // comma-separated string (that's the Center convention, not Trainer's).
     const selectedCategoryIds = this.addTrainerForm.value.categoryIds.map((categories: any) => categories.categoryIds);
 
+    this.submitError = null;
     if (this.addTrainerForm.invalid || !this.photoRequest) {
       this.ngxService.start();
       this.invalidForm = true;
-      this.responseMessage = this.photoRequest ? "Invalid form. Please complete all sections" : "Please select a photo";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      this.addTrainerForm.markAllAsTouched();
+      this.submitError = this.photoRequest ? "Please fill in the highlighted fields and complete all sections" : "Please select a photo";
       this.ngxService.stop();
     } else {
       this.ngxService.start();
@@ -212,12 +215,7 @@ export class AddTrainerModalComponent {
         }, (error: any) => {
           this.ngxService.start();
           console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = error?.error?.message || genericError;
           this.ngxService.stop();
         })
     }

@@ -18,6 +18,7 @@ export class UpdateTrainerPhotoModalComponent {
   onUpdatePhotoEmit = new EventEmitter();
   updateTrainerPhotoForm!: FormGroup;
   responseMessage: any;
+  submitError: string | null = null;
   invalidForm: boolean = false;
   selectedImage: any;
   trainer: Trainers;
@@ -52,6 +53,7 @@ export class UpdateTrainerPhotoModalComponent {
   }
 
   submitForm(): void {
+    this.submitError = null;
     this.ngxService.start();
     const requestData = new FormData();
     requestData.append('id', this.updateTrainerPhotoForm.get('id')?.value);
@@ -59,8 +61,9 @@ export class UpdateTrainerPhotoModalComponent {
 
     if (this.updateTrainerPhotoForm.invalid) {
       this.invalidForm = true
+      this.updateTrainerPhotoForm.markAllAsTouched();
       this.responseMessage = 'Invalid form';
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      this.submitError = 'Please choose a photo (an image under 10MB) before saving.';
       this.ngxService.stop();
 
     } else {
@@ -72,7 +75,7 @@ export class UpdateTrainerPhotoModalComponent {
             this.invalidForm = false;
             this.ngxService.stop();
             this.responseMessage = response?.message;
-            this.snackBarService.openSnackBar(this.responseMessage, "");
+            this.snackBarService.openSnackBar(this.responseMessage || 'Your trainer photo has been updated', "");
             this.onUpdatePhotoEmit.emit();
           }, (error: any) => {
             this.ngxService.stop();
@@ -82,7 +85,7 @@ export class UpdateTrainerPhotoModalComponent {
             } else {
               this.responseMessage = genericError;
             }
-            this.snackBarService.openSnackBar(this.responseMessage, 'error');
+            this.submitError = this.responseMessage;
           });
     }
   }

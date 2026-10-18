@@ -16,6 +16,7 @@ import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.modu
 import { AuthGuard } from 'src/app/services/auth.guard';
 import { RoleGuard } from 'src/app/services/role.guard';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 
@@ -31,6 +32,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
   ],
   imports: [
     ClickablePhotoDirective,
+    SharedModule,
     CommonModule,
     FooterModule,
     NavbarModule,

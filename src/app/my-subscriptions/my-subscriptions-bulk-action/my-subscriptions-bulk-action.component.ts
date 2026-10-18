@@ -63,18 +63,19 @@ export class MySubscriptionsBulkActionComponent {
         action,
         ids: this.selectedIds.join(',')
       };
+      const count = this.selectedIds.length;
 
       this.subscriptionService.bulkAction(payload).subscribe({
         next: (res: any) => {
           this.loader.stop();
-          this.snackbar.openSnackBar(res?.message || 'Action completed', '');
+          this.snackbar.openSnackBar(res?.message || `Applied "${action}" to ${count} ${count === 1 ? 'subscription' : 'subscriptions'}`, '');
           this.bulkMode = false;
           this.selectedIds = [];
           this.refresh.emit();
         },
         error: (err: any) => {
           this.loader.stop();
-          this.snackbar.openSnackBar(err.error?.message || 'Error', 'error');
+          this.snackbar.openSnackBar(err.error?.message || 'Could not apply that action to the selected subscriptions', 'error');
         }
       });
     });

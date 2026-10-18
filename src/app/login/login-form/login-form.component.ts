@@ -26,6 +26,10 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
   username: string = '';
   password: string = '';
   responseMessage: any;
+  /** Inline error shown above the Login button (wrong password, unverified email, social/passkey failure, ...). */
+  submitError: string | null = null;
+  /** Inline error shown under the "resend activation email" field. */
+  activationError: string | null = null;
   /** True once the official "Sign in with Google" button has actually rendered. */
   googleReady = false;
   /** True once we've confirmed this device actually has Face ID/Touch ID/Windows Hello available. */
@@ -119,6 +123,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
   }
 
   loginWithPasskey(): void {
+    this.submitError = null;
     this.passkeyLoading = true;
     this.webAuthnService.loginWithPasskey()
       .then(response => {
@@ -129,7 +134,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
         this.passkeyLoading = false;
         // A user-cancelled prompt isn't a real error -- don't scare them with a red toast for it.
         if (err?.name === 'NotAllowedError') return;
-        this.snackBarService.openSnackBar(err?.message || 'Passkey login failed.', 'error');
+        this.submitError = err?.message || 'Passkey login failed.';
       });
   }
 
@@ -148,8 +153,9 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
   sendActivationMail(data: HTMLInputElement) {
     const email = data.value;
     const validEmail = [email, Validators.compose([Validators.email, emailExtensionValidator(['com', 'org'])])];
+    this.activationError = null;
     if (!validEmail || email == '') {
-      this.snackBarService.openSnackBar("Please enter a valid email", "error");
+      this.activationError = 'Enter the email address you signed up with so we can resend the activation email.';
       return;
     }
     this.userService.sendActivationToken(email)
@@ -167,15 +173,18 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
           } else {
             this.responseMessage = genericError;
           }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
+          this.activationError = this.responseMessage;
         });
   }
 
 
   login(): void {
+    this.submitError = null;
     if (this.loginForm.invalid) {
       this.invalidForm = true;
       this.responseMessage = 'Invalid form';
+      this.loginForm.markAllAsTouched();
+      this.submitError = 'Enter a valid email address and a password of at least 8 characters.';
       return;
     }
 
@@ -189,7 +198,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
             // (e.g. wrong password, unactivated account) — don't navigate.
             this.ngxService.stop();
             this.responseMessage = response?.message || genericError;
-            this.snackBarService.openSnackBar(this.responseMessage, "error");
+            this.submitError = this.responseMessage;
             return;
           }
 
@@ -210,14 +219,14 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
           } else {
             this.responseMessage = genericError;
           }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = this.responseMessage;
         }
       });
   }
 
   /** Fallback click handler shown only while Google Sign-In isn't configured yet. */
   loginWithGoogleFallback(): void {
-    this.snackBarService.openSnackBar('Google login is not configured yet. Please try again later.', 'error');
+    this.submitError = 'Google login is not configured yet. Please try again later.';
   }
 
   private handleGoogleCredential(idToken: string): void {
@@ -229,6 +238,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
   }
 
   loginWithFacebook(): void {
+    this.submitError = null;
     this.socialAuthService.loginWithFacebook()
       .then((accessToken) => {
         this.ngxService.start();
@@ -238,7 +248,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
         });
       })
       .catch((err: any) => {
-        this.snackBarService.openSnackBar(err?.message || 'Facebook login is not configured yet.', 'error');
+        this.submitError = err?.message || 'Facebook login is not configured yet.';
       });
   }
 
@@ -247,7 +257,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
     const auth = response?.data;
     if (!auth?.accessToken) {
       this.responseMessage = response?.message || genericError;
-      this.snackBarService.openSnackBar(this.responseMessage, 'error');
+      this.submitError = this.responseMessage;
       return;
     }
 
@@ -310,10 +320,11 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
   private handleSocialAuthError(error: any): void {
     this.ngxService.stop();
     this.responseMessage = error.error?.message || genericError;
-    this.snackBarService.openSnackBar(this.responseMessage, 'error');
+    this.submitError = this.responseMessage;
   }
 
   clear() {
+    this.submitError = null;
     this.loginForm.reset();
     this.invalidForm = false;
     this.invalidLogin = '';

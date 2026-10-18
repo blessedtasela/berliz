@@ -9,6 +9,7 @@ import { PeerSessionService } from 'src/app/services/peer-session.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { DateStripComponent } from 'src/app/shared/date-strip/date-strip.component';
 import { TimePickerComponent } from 'src/app/shared/time-picker/time-picker.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { genericError } from 'src/validators/form-validators.module';
 
 export interface ProposeSessionModalData {
@@ -23,7 +24,7 @@ export interface ProposeSessionModalData {
  */
 @Component({
     selector: 'app-propose-session-modal',
-    imports: [CommonModule, ReactiveFormsModule, IconsModule, DateStripComponent, TimePickerComponent],
+    imports: [CommonModule, ReactiveFormsModule, IconsModule, SharedModule, DateStripComponent, TimePickerComponent],
     templateUrl: './propose-session-modal.component.html',
     styleUrls: ['./propose-session-modal.component.css']
 })
@@ -32,6 +33,8 @@ export class ProposeSessionModalComponent {
   form: FormGroup;
   invalidForm = false;
   saving = false;
+  /** Inline message above the submit button: validation problems and failed proposals. */
+  submitError: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -54,17 +57,19 @@ export class ProposeSessionModalComponent {
 
   submit(): void {
     if (this.saving) return;
+    this.submitError = null;
 
     if (this.form.invalid) {
       this.invalidForm = true;
       this.form.markAllAsTouched();
+      this.submitError = 'Pick a date, a time and a duration before proposing the session.';
       return;
     }
 
     const value = this.form.value;
     const scheduledAt = new Date(`${value.date}T${value.time}`);
     if (isNaN(scheduledAt.getTime()) || scheduledAt.getTime() < Date.now()) {
-      this.snackBar.openSnackBar('Pick a date and time in the future.', 'error');
+      this.submitError = 'Pick a date and time in the future.';
       return;
     }
 
@@ -79,12 +84,12 @@ export class ProposeSessionModalComponent {
     }).pipe(take(1)).subscribe({
       next: (res: any) => {
         this.saving = false;
-        this.snackBar.openSnackBar(res?.message || 'Session proposed', '');
+        this.snackBar.openSnackBar(res?.message || `Session proposed to ${this.data.participantName}`, '');
         this.dialogRef.close(true);
       },
       error: (err: any) => {
         this.saving = false;
-        this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.submitError = err?.error?.message || genericError;
       }
     });
   }

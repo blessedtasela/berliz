@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
 import { Subject, takeUntil } from 'rxjs';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { genericError } from 'src/validators/form-validators.module';
 import { MyTrainerSummary } from 'src/app/models/progress-share.model';
 import { loadMyTrainers, loadMyTrainersFailure, loadMyTrainersSuccess } from 'src/app/state/booking/booking.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
@@ -50,6 +51,9 @@ export class ProgressSharingSettingsComponent implements OnInit, OnDestroy {
   /** Why the trainers or the sharing settings couldn't be loaded. The toggles are hidden while it is set: with the grants unknown they would all read "not shared", which may be false. */
   loadError: string | null = null;
 
+  /** Why the last share/revoke toggle failed; stays above the trainer list until dismissed or the next attempt. */
+  shareError: string | null = null;
+
   constructor(
     private store: Store,
     private actions$: Actions,
@@ -94,7 +98,7 @@ export class ProgressSharingSettingsComponent implements OnInit, OnDestroy {
     this.actions$.pipe(ofType(grantProgressShareFailure), takeUntil(this.destroy$))
       .subscribe(({ error }) => {
         this.savingTrainerId = null;
-        this.snackBarService.openSnackBar(error, 'error');
+        this.shareError = error || genericError;
       });
 
     this.actions$.pipe(ofType(revokeProgressShareSuccess), takeUntil(this.destroy$))
@@ -106,7 +110,7 @@ export class ProgressSharingSettingsComponent implements OnInit, OnDestroy {
     this.actions$.pipe(ofType(revokeProgressShareFailure), takeUntil(this.destroy$))
       .subscribe(({ error }) => {
         this.savingTrainerId = null;
-        this.snackBarService.openSnackBar(error, 'error');
+        this.shareError = error || genericError;
       });
   }
 
@@ -126,6 +130,7 @@ export class ProgressSharingSettingsComponent implements OnInit, OnDestroy {
   toggleSharing(trainer: MyTrainerSummary): void {
     if (this.savingTrainerId !== null) return;
 
+    this.shareError = null;
     this.savingTrainerId = trainer.id;
     if (this.isShared(trainer.id)) {
       this.store.dispatch(revokeProgressShare({ trainerId: trainer.id }));

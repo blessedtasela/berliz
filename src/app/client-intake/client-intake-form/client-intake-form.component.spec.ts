@@ -175,13 +175,14 @@ describe('ClientIntakeFormComponent', () => {
   });
 
   // ── SUBMIT / LOAD ERROR HANDLING ──
-  it('shows an error snackbar on a generic createClientIntakeFailure', () => {
+  it('shows an inline error (not a snackbar) on a generic createClientIntakeFailure', () => {
     setup({ clientId: '10' });
     fixture.detectChanges();
 
     actions$.next(createClientIntakeFailure({ error: 'Client not found' }));
 
-    expect(snackBarSpy.openSnackBar).toHaveBeenCalledWith('Client not found', 'error');
+    expect(component.submitError).toBe('Client not found');
+    expect(snackBarSpy.openSnackBar).not.toHaveBeenCalled();
     expect(component.accessDenied).toBeFalse();
   });
 

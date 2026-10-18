@@ -29,7 +29,9 @@ export class ResetPasswordComponent {
         const token = params.token;
          this.token = token;
          this.responseMessage = params?.messagge;
-         this.snackBarService.openSnackBar(this.responseMessage, '');
+         if (this.responseMessage) {
+           this.snackBarService.openSnackBar(this.responseMessage, '');
+         }
          this.openPasswordResetModal();
           // Call your API to reset the password with the token
         },(error: any) => {
@@ -40,8 +42,6 @@ export class ResetPasswordComponent {
           }
           this.snackBarService.openSnackBar(this.responseMessage, 'error');
         });
-  this.snackBarService.openSnackBar(this.responseMessage, 'error');
-
 }
 
   openPasswordResetModal(): void {

@@ -25,6 +25,7 @@ export class UpdatePaymentsModalComponent implements OnInit {
   invalidForm = false;
   submitting = false;
   responseMessage: any;
+  submitError: string | null = null;
 
   paymentData: Payments;
 
@@ -59,6 +60,7 @@ export class UpdatePaymentsModalComponent implements OnInit {
     }
 
     this.submitting = true;
+    this.submitError = null;
     this.ngxService.start();
     this.paymentService.updatePayment({
       id: this.paymentData.id,
@@ -76,8 +78,7 @@ export class UpdatePaymentsModalComponent implements OnInit {
       error: (error: any) => {
         this.ngxService.stop();
         this.submitting = false;
-        this.responseMessage = error.error?.message || genericError;
-        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        this.submitError = error?.error?.message || genericError;
       }
     });
   }

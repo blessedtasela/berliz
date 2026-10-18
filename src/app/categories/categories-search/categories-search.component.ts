@@ -19,6 +19,8 @@ export class CategoriesSearchComponent {
   selectedSortOption: string = 'name';
   filteredCategories: Categories[] = [];
   searchQuery: string = '';
+  /** Inline message under the search bar (empty query / failed search). */
+  searchError: string | null = null;
   selectedSearchCriteria: any = 'name';
   @Output() results: EventEmitter<Categories[]> = new EventEmitter<Categories[]>()
   subscriptions: Subscription[] = [];
@@ -52,10 +54,11 @@ export class CategoriesSearchComponent {
       )
       .subscribe(
         (results: Categories[]) => {
+          this.searchError = null;
           this.results.emit(results);
         },
         (error: any) => {
-          this.snackbarService.openSnackBar(error, 'error');
+          this.searchError = (typeof error === 'string' && error) || 'Search failed. Try again or change your search term.';
         }
       );
   }
@@ -136,17 +139,17 @@ export class CategoriesSearchComponent {
     const query = this.searchQuery?.trim();
 
     if (!query) {
-      this.snackbarService.openSnackBar('Please enter a search term.', 'error');
+      this.searchError = 'Enter a name, tag or description to search for.';
       return;
     }
-
+    this.searchError = null;
 
     this.search(query).subscribe(
       (results) => {
         this.results.emit(results);
       },
       (error) => {
-        this.snackbarService.openSnackBar('Search failed.', 'error');
+        this.searchError = 'Search failed. Try again or change your search term.';
       }
     );
   }

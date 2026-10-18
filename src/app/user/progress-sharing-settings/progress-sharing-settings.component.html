@@ -10,6 +10,8 @@
 
     <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
+    <app-inline-alert [message]="shareError" [kind]="'error'" [dismissible]="true" (dismissed)="shareError = null"></app-inline-alert>
+
     <!-- Loading -->
     <div *ngIf="loadingTrainers" class="flex items-center justify-center py-6 gap-2 text-gray-400 dark:text-gray-500">
         <i-feather name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>

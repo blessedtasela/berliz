@@ -22,6 +22,7 @@ export class UserDetailsModalComponent {
   /** Stable data-URI for the user's base64 profile photo. */
   get photoSrc(): string | null { return this._photoUri(this.userData?.profilePhoto); }
   responseMessage: any;
+  submitError: string | null = null;
   profilePhoto: any;
   passwordForceChnageForm!: FormGroup;
   invalidForm: boolean = false;
@@ -57,10 +58,11 @@ export class UserDetailsModalComponent {
   }
 
   forcePasswordChnage(): void {
+    this.submitError = null;
     if (this.passwordForceChnageForm.invalid) {
       this.invalidForm = true;
-      this.responseMessage = 'Invalid form';
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      this.passwordForceChnageForm.markAllAsTouched();
+      this.submitError = 'Please fill in the highlighted fields';
     } else {
       this.userService.forcePasswordChange(this.userData.id, this.passwordForceChnageForm.get('password')?.value)
         .subscribe((response: any) => {
@@ -75,12 +77,7 @@ export class UserDetailsModalComponent {
         },
           (error: any) => {
             console.error("error");
-            if (error.error?.message) {
-              this.responseMessage = error.error?.message;
-            } else {
-              this.responseMessage = genericError;
-            }
-            this.snackBarService.openSnackBar(this.responseMessage, "error");
+            this.submitError = error?.error?.message || genericError;
           });
     }
   }

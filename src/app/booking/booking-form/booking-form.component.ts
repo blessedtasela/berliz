@@ -60,6 +60,8 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   bookingForm!: FormGroup;
   invalidForm = false;
   submitting = false;
+  /** Inline message above the submit button: validation problems and failed submits (e.g. slot taken) -- stays until fixed/dismissed so the client can pick another time. */
+  submitError: string | null = null;
   pastDate = false;
 
   readonly maxNotesLength = 500;
@@ -262,6 +264,7 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       .pipe(ofType(createBookingSuccess), takeUntil(this.destroy$))
       .subscribe(({ response }) => {
         this.submitting = false;
+        this.submitError = null;
         this.draftService.discard('booking', this.draftId);
         this.snackBar.openSnackBar(
           response?.data?.message || response?.message || 'Your booking request has been sent.',
@@ -274,7 +277,7 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       .pipe(ofType(createBookingFailure), takeUntil(this.destroy$))
       .subscribe(({ error }) => {
         this.submitting = false;
-        this.snackBar.openSnackBar(error || genericError, 'error');
+        this.submitError = error || genericError;
       });
   }
 
@@ -340,6 +343,7 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     if (this.selectedDate === dateValue) return;
     this.selectedDate = dateValue;
     this.selectedSlot = null;
+    this.submitError = null;
     this.fetchSlotsForSelectedDate();
     this.saveDraft();
   }
@@ -354,6 +358,7 @@ export class BookingFormComponent implements OnInit, OnDestroy {
 
   selectSlot(slot: AvailableSlot): void {
     this.selectedSlot = slot;
+    this.submitError = null;
     this.saveDraft();
   }
 
@@ -428,9 +433,10 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   // ── Submit ───────────────────────────────────────────────────────────
   submitForm(): void {
     if (this.submitting) return;
+    this.submitError = null;
 
     if (this.locationSelection?.incomplete) {
-      this.snackBar.openSnackBar('Enter the address or place you want to train at, or pick one of the listed locations.', 'error');
+      this.submitError = 'Enter the address or place you want to train at, or pick one of the listed locations.';
       return;
     }
 
@@ -455,13 +461,13 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     if (!value.date || !value.time) {
       this.invalidForm = true;
       this.bookingForm.markAllAsTouched();
-      this.snackBar.openSnackBar('Pick a date and time for your urgent request.', 'error');
+      this.submitError = 'Pick a date and time for your urgent request.';
       return;
     }
     const note = (value.notes ?? '').trim();
     if (!note) {
       this.bookingForm.get('notes')?.markAsTouched();
-      this.snackBar.openSnackBar('Let the provider know why you need this time.', 'error');
+      this.submitError = 'Let the provider know why you need this time.';
       return;
     }
 
@@ -495,25 +501,22 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.submitting = false;
-        this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.submitError = err?.error?.message || genericError;
       },
     });
   }
 
   private submitFromSlot(): void {
     if (!this.selectedSlot) {
-      this.snackBar.openSnackBar('Pick a date and an available time.', 'error');
+      this.submitError = 'Pick a date and an available time.';
       return;
     }
 
     const scheduledAt = new Date(`${this.selectedDate}T${this.selectedSlot.startTime}`);
     if (isNaN(scheduledAt.getTime()) || scheduledAt.getTime() < this.earliestBookableTime) {
-      this.snackBar.openSnackBar(
-        `Pick a slot at least ${this.minLeadTimeMinutes} minutes out — the provider needs time to confirm.`,
-        'error'
-      );
       this.selectedSlot = null;
       this.fetchSlotsForSelectedDate();
+      this.submitError = `Pick a slot at least ${this.minLeadTimeMinutes} minutes out — the provider needs time to confirm.`;
       return;
     }
 
@@ -543,6 +546,7 @@ export class BookingFormComponent implements OnInit, OnDestroy {
     if (this.bookingForm.invalid) {
       this.invalidForm = true;
       this.bookingForm.markAllAsTouched();
+      this.submitError = 'Choose a date and time, and keep your notes within the length limit.';
       return;
     }
 

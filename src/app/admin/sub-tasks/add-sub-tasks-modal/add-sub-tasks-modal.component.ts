@@ -32,6 +32,7 @@ export class AddSubTasksModalComponent implements OnInit {
   invalidForm = false;
   submitting = false;
   responseMessage: any;
+  submitError: string | null = null;
 
   tasks: Tasks[] = [];
   exercises: Exercises[] = [];
@@ -65,6 +66,7 @@ export class AddSubTasksModalComponent implements OnInit {
     }
 
     this.submitting = true;
+    this.submitError = null;
     this.ngxService.start();
     this.taskService.addSubTask({
       taskId: Number(this.addSubTaskForm.value.taskId),
@@ -82,8 +84,7 @@ export class AddSubTasksModalComponent implements OnInit {
       error: (error: any) => {
         this.ngxService.stop();
         this.submitting = false;
-        this.responseMessage = error.error?.message || genericError;
-        this.snackbarService.openSnackBar(this.responseMessage, 'error');
+        this.submitError = error?.error?.message || genericError;
       }
     });
   }

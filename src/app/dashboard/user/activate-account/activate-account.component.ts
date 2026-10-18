@@ -22,6 +22,10 @@ export class ActivateAccountComponent implements OnInit {
   resending = false;
   /** True after a successful resend, so the UI can confirm without a toast that scrolls away. */
   resent = false;
+  /** Inline error for the activation code form (wrong/expired code, etc.). */
+  submitError: string | null = null;
+  /** Inline error for the "resend code" form. */
+  resendError: string | null = null;
 
   /** Set when arriving straight from signup (?email=...) so the page can greet the user by name instead of showing a bare, context-free code field. */
   knownEmail: string | null = null;
@@ -51,6 +55,7 @@ export class ActivateAccountComponent implements OnInit {
   }
 
   submitForm(): void {
+    this.submitError = null;
     if (this.activateAccountForm.invalid) {
       this.activateAccountForm.markAllAsTouched();
       return;
@@ -72,12 +77,13 @@ export class ActivateAccountComponent implements OnInit {
         error: (error: any) => {
           this.submitting = false;
           this.ngxService.stop();
-          this.snackBarService.openSnackBar(error?.error?.message || genericError, 'error');
+          this.submitError = error?.error?.message || genericError;
         },
       });
   }
 
   resend(): void {
+    this.resendError = null;
     if (this.resendForm.invalid) {
       this.resendForm.markAllAsTouched();
       return;
@@ -95,7 +101,7 @@ export class ActivateAccountComponent implements OnInit {
         },
         error: (error: any) => {
           this.resending = false;
-          this.snackBarService.openSnackBar(error?.error?.message || genericError, 'error');
+          this.resendError = error?.error?.message || genericError;
         },
       });
   }

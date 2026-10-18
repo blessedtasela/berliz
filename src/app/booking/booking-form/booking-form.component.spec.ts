@@ -71,7 +71,8 @@ describe('BookingFormComponent', () => {
     component.onLocationChange({ customLocation: undefined, incomplete: true, fee: null });
     component.submitForm();
 
-    expect(TestBed.inject(SnackBarService).openSnackBar).toHaveBeenCalled();
+    expect(component.submitError).toContain('Enter the address');
+    expect(TestBed.inject(SnackBarService).openSnackBar).not.toHaveBeenCalled();
     expect(store.dispatch).not.toHaveBeenCalled();
     expect(component.submitting).toBeFalse();
   });

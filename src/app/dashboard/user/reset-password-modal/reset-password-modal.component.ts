@@ -18,6 +18,7 @@ export class ResetPasswordModalComponent {
   invalidForm: boolean = false;
   responseMessage: any;
   dataPassword: any;
+  submitError: string | null = null;
 
   constructor(private fb: FormBuilder,
     private userService: UserService,
@@ -42,10 +43,14 @@ export class ResetPasswordModalComponent {
   }
 
   submitForm(): void {
+    this.submitError = null;
     this.ngxService.start();
     if (this.resetPasswordForm.invalid) {
       this.invalidForm = true
       this.responseMessage = 'Invalid form';
+      this.resetPasswordForm.markAllAsTouched();
+      this.submitError = 'Enter a new password of at least 8 characters and type it again to confirm.';
+      this.ngxService.stop();
     } else {
       this.userService.resetPassword(this.resetPasswordForm.value)
         .subscribe(
@@ -54,7 +59,7 @@ export class ResetPasswordModalComponent {
           this.dialogRef.close();
           this.invalidForm = false;
           this.ngxService.stop();
-          this.responseMessage = response?.message;
+          this.responseMessage = response?.message || 'Password reset. Log in with your new password.';
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.router.navigate(['/login']);
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -67,10 +72,9 @@ export class ResetPasswordModalComponent {
           } else {
             this.responseMessage = genericError;
           }
-          this.snackBarService.openSnackBar(this.responseMessage, 'error');
+          this.submitError = this.responseMessage;
         });
     }
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
   
 }

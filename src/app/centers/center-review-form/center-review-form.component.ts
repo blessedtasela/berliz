@@ -33,6 +33,8 @@ export class CenterReviewFormComponent implements OnInit, OnDestroy {
   user: Users | null = null;
   reviewForm: FormGroup;
   submitting = false;
+  /** Inline message above the Submit button when the review could not be submitted. */
+  submitError: string | null = null;
 
   private destroy$ = new Subject<void>();
 
@@ -59,6 +61,7 @@ export class CenterReviewFormComponent implements OnInit, OnDestroy {
       .pipe(ofType(addCenterReviewSuccess), takeUntil(this.destroy$))
       .subscribe(() => {
         this.submitting = false;
+        this.submitError = null;
         this.reviewForm.reset();
         this.snackBar.openSnackBar('Your review has been submitted for approval.', '');
       });
@@ -67,7 +70,7 @@ export class CenterReviewFormComponent implements OnInit, OnDestroy {
       .pipe(ofType(addCenterReviewFailure), takeUntil(this.destroy$))
       .subscribe(({ error }) => {
         this.submitting = false;
-        this.snackBar.openSnackBar(error || genericError, 'error');
+        this.submitError = error || genericError;
       });
   }
 
@@ -84,6 +87,7 @@ export class CenterReviewFormComponent implements OnInit, OnDestroy {
     if (this.reviewForm.invalid || this.submitting || !this.centerId) return;
 
     this.submitting = true;
+    this.submitError = null;
     // Backend expects Map<String, String> — centerId must be sent as a string.
     this.store.dispatch(addCenterReview({
       data: {

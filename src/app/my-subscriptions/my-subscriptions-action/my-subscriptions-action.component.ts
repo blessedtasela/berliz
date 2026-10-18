@@ -64,12 +64,12 @@ export class MySubscriptionsActionComponent {
       this.subscriptionService.deleteSubscription(this.subscription.id).subscribe({
         next: (res: any) => {
           this.loader.stop();
-          this.snackbar.openSnackBar(res?.message || 'Deleted', '');
+          this.snackbar.openSnackBar(res?.message || 'Subscription deleted', '');
           this.refresh.emit();
         },
         error: (err: any) => {
           this.loader.stop();
-          this.snackbar.openSnackBar(err.error?.message || 'Error', 'error');
+          this.snackbar.openSnackBar(err.error?.message || 'Could not delete the subscription', 'error');
         }
       });
     });

@@ -32,6 +32,7 @@ export class TrainerDataComponent {
   invalidForm: boolean = false;
   categories: Categories[] = [];
   responseMessage: any;
+  submitError: string | null = null;
   selectedPhoto: any;
   @Input() trainer!: Trainers | null;
   selectedCategoriesId: any;
@@ -244,10 +245,12 @@ export class TrainerDataComponent {
   }
 
   updateTrainer(): void {
+    this.submitError = null;
     if (this.updateTrainerForm.invalid) {
       this.invalidForm = true;
+      this.updateTrainerForm.markAllAsTouched();
       this.responseMessage = "Invalid form. Please complete all sections";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      // The form shows an inline "complete all required fields" notice while invalidForm is set.
       return;
     }
 
@@ -282,17 +285,21 @@ export class TrainerDataComponent {
     this.trainerService.updateTrainer(payload).subscribe({
       next: (response: any) => {
         this.responseMessage = response?.message;
-        this.snackBarService.openSnackBar(this.responseMessage, "");
-        this.updateFormValues(response);
+        this.snackBarService.openSnackBar(this.responseMessage || 'Your trainer profile has been updated', "");
+        // updateTrainer returns the ApiResponse wrapper; the trainer payload is under `data`.
+        const updated: Trainers | undefined = response?.data;
+        if (updated) {
+          this.updateFormValues(updated);
+          this.trainer = updated;
+        }
         this.originalValue = this.updateTrainerForm.getRawValue();
-        this.trainer = response;
         this.emitEvent.emit();
         this.ngxService.stop();
       },
 
       error: (error: any) => {
         this.responseMessage = error.error?.message || genericError;
-        this.snackBarService.openSnackBar(this.responseMessage, "error");
+        this.submitError = this.responseMessage;
         this.ngxService.stop();
       }
     });

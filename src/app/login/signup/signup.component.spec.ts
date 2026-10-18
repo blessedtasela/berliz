@@ -118,7 +118,7 @@ describe('SignupComponent', () => {
     component.signupForm.setValue(validSignupFormValue);
 
     component.submitForm();
-    expect(snackBarServiceMock.openSnackBar).toHaveBeenCalledWith('Signup failed', 'error');
+    expect(component.submitError).toBe('Signup failed');
   });
 
   // Cutting the 13-required-field flow down to the essentials: a profile

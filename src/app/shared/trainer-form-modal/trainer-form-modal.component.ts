@@ -24,6 +24,7 @@ export class TrainerFormModalComponent {
   partner!: Partner;
   categories: Categories[] = [];
   responseMessage: any;
+  submitError: string | null = null;
   selectedPhoto: any;
 
   constructor(private formBuilder: FormBuilder,
@@ -101,10 +102,12 @@ export class TrainerFormModalComponent {
     requestData.append('experience', this.addTrainerForm.get('experience')?.value);
     requestData.append('photo', this.selectedPhoto);
     requestData.append('categoryIds', categoryToStrings);
+    this.submitError = null;
     if (this.addTrainerForm.invalid) {
       this.invalidForm = true;
+      this.addTrainerForm.markAllAsTouched();
       this.responseMessage = "Invalid form. Please complete all sections";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      // The form already shows an inline "Please complete all sections" notice while invalidForm is set.
     } else {
       this.ngxService.start();
       this.trainerService.addTrainer(requestData)
@@ -113,7 +116,7 @@ export class TrainerFormModalComponent {
           this.invalidForm = false;
           this.dialogRef.close('Trainer account added successfully');
           this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
+          this.snackBarService.openSnackBar(this.responseMessage || 'Your trainer account has been added', "");
           this.ngxService.stop();
           this.onAddTrainerEmit.emit();
         }, (error: any) => {
@@ -124,7 +127,7 @@ export class TrainerFormModalComponent {
           } else {
             this.responseMessage = genericError;
           }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = this.responseMessage;
           this.ngxService.stop();
         })
     }

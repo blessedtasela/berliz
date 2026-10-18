@@ -24,6 +24,7 @@ export class AddPartnerModalComponent implements AfterViewInit {
   formIndex: number = 0;
   users: Users[] = [];
   responseMessage: any;
+  submitError: string | null = null;
   selectedCV: any;
   selectedCertificate: any;
   roles: Role[] = [{
@@ -117,14 +118,16 @@ export class AddPartnerModalComponent implements AfterViewInit {
     requestData.append('youtubeUrl', this.addPartnerForm.get('youtubeUrl')?.value);
     requestData.append('role', this.addPartnerForm.get('role')?.value);
 
+    this.submitError = null;
     if (this.addPartnerForm.invalid) {
       this.invalidForm = true
-      this.responseMessage = "Invalid form"
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      this.addPartnerForm.markAllAsTouched();
+      this.submitError = 'Please fill in the highlighted fields';
     } else {
       this.partnerService.addPartner(requestData)
         .subscribe((response: any) => {
           this.ngxService.start()
+          this.submitError = null;
           this.addPartnerForm.reset();
           this.partnerService.setPartnerFormIndex(0);
           this.invalidForm = false;
@@ -137,12 +140,7 @@ export class AddPartnerModalComponent implements AfterViewInit {
           , (error: any) => {
             this.ngxService.stop();
             console.error("error");
-            if (error.error?.message) {
-              this.responseMessage = error.error?.message;
-            } else {
-              this.responseMessage = genericError;
-            }
-            this.snackBarService.openSnackBar(this.responseMessage, "error");
+            this.submitError = error?.error?.message || genericError;
           });
     }
     this.ngxService.stop();

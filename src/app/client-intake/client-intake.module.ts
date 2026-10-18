@@ -10,6 +10,7 @@ import { MyClientIntakesComponent } from './my-client-intakes/my-client-intakes.
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import { SharedModule } from '../shared/shared.module';
 @NgModule({
   declarations: [
     ClientIntakeFormComponent,
@@ -22,7 +23,8 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    IconsModule
+    IconsModule,
+    SharedModule
   ],
   exports: [
     ClientIntakeFormComponent,

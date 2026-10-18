@@ -61,6 +61,14 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   responseMessage: any;
   invalidForm = false;
   originalValue: any;
+  /** Inline save failure for the main profile form (shown just above its Save button). */
+  submitError: string | null = null;
+  /** Inline save failures for the individual preference cards. */
+  visibilityError: string | null = null;
+  sidebarError: string | null = null;
+  messagePopupError: string | null = null;
+  emailPreferencesError: string | null = null;
+  passkeyError: string | null = null;
 
   countries: Country[] = [];
   states: State[] = [];
@@ -173,6 +181,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
       .pipe(ofType(updateProfileVisibilitySuccess), takeUntil(this.destroy$))
       .subscribe(({ response, profileVisibility }) => {
         this.localVisibility = profileVisibility;
+        this.visibilityError = null;
         this.snackBarService.openSnackBar(
           response?.message || (profileVisibility === 'public'
             ? 'Your profile is now public'
@@ -185,7 +194,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
 
     this.actions$
       .pipe(ofType(updateProfileVisibilityFailure), takeUntil(this.destroy$))
-      .subscribe(({ error }) => this.snackBarService.openSnackBar(error, 'error'));
+      .subscribe(({ error }) => this.visibilityError = error || genericError);
 
     // Sidebar display — in-flight flag plus success/failure feedback.
     this.store.select(selectSavingSidebarDisplay)
@@ -195,6 +204,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
     this.actions$
       .pipe(ofType(updateSidebarDisplaySuccess), takeUntil(this.destroy$))
       .subscribe(({ response, sidebarDisplay }) => {
+        this.sidebarError = null;
         this.snackBarService.openSnackBar(
           response?.message || `Sidebar display set to ${sidebarDisplay}`,
           ''
@@ -205,7 +215,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
 
     this.actions$
       .pipe(ofType(updateSidebarDisplayFailure), takeUntil(this.destroy$))
-      .subscribe(({ error }) => this.snackBarService.openSnackBar(error, 'error'));
+      .subscribe(({ error }) => this.sidebarError = error || genericError);
 
     // Message popup — in-flight flag plus success/failure feedback.
     this.store.select(selectSavingMessagePopupEnabled)
@@ -216,6 +226,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
       .pipe(ofType(updateMessagePopupEnabledSuccess), takeUntil(this.destroy$))
       .subscribe(({ response, messagePopupEnabled }) => {
         this.localMessagePopupEnabled = messagePopupEnabled;
+        this.messagePopupError = null;
         this.snackBarService.openSnackBar(
           response?.message || (messagePopupEnabled
             ? 'Message popup turned on'
@@ -228,7 +239,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
 
     this.actions$
       .pipe(ofType(updateMessagePopupEnabledFailure), takeUntil(this.destroy$))
-      .subscribe(({ error }) => this.snackBarService.openSnackBar(error, 'error'));
+      .subscribe(({ error }) => this.messagePopupError = error || genericError);
 
     // Email notification preferences — in-flight flag plus success/failure feedback.
     this.store.select(selectSavingEmailNotificationPreferences)
@@ -239,6 +250,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
       .pipe(ofType(updateEmailNotificationPreferencesSuccess), takeUntil(this.destroy$))
       .subscribe(({ response, preferences }) => {
         this.localEmailNotificationPreferences = { ...this.localEmailNotificationPreferences, ...preferences };
+        this.emailPreferencesError = null;
         this.snackBarService.openSnackBar(response?.message || 'Email notification preferences updated', '');
         // Keep /user/getUser in sync so a reload doesn't show the old value.
         this.store.dispatch(refreshUser());
@@ -246,7 +258,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
 
     this.actions$
       .pipe(ofType(updateEmailNotificationPreferencesFailure), takeUntil(this.destroy$))
-      .subscribe(({ error }) => this.snackBarService.openSnackBar(error, 'error'));
+      .subscribe(({ error }) => this.emailPreferencesError = error || genericError);
   }
 
   // -------------------------
@@ -391,7 +403,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
         next: res => {
           this.savingUsername = false;
           this.user = { ...this.user, username: candidate };
-          this.snackBarService.openSnackBar(res.data || 'Username updated', '');
+          this.snackBarService.openSnackBar(res.data || `Username changed to @${candidate}`, '');
           this.store.dispatch(refreshUser());
         },
         error: err => {
@@ -428,7 +440,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
           this.blockedUsers = this.blockedUsers.filter(b => b.blockedUserId !== user.blockedUserId);
           this.snackBarService.openSnackBar(`Unblocked ${user.blockedUserName}`, '');
         },
-        error: () => this.snackBarService.openSnackBar('Could not unblock', 'error'),
+        error: () => this.snackBarService.openSnackBar(`Could not unblock ${user.blockedUserName}`, 'error'),
       });
   }
 
@@ -471,6 +483,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   }
 
   addPasskey(): void {
+    this.passkeyError = null;
     this.addingPasskey = true;
     const label = this.guessDeviceLabel();
     this.webAuthnService.registerPasskey(label)
@@ -482,12 +495,13 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
       .catch(err => {
         this.addingPasskey = false;
         if (err?.name === 'NotAllowedError') return; // user cancelled — not an error worth a toast
-        this.snackBarService.openSnackBar(err?.message || 'Could not add this passkey.', 'error');
+        this.passkeyError = err?.message || 'Could not add this passkey.';
       });
   }
 
   removePasskey(credential: WebAuthnCredentialResponse): void {
     if (this.removingPasskeyId) return;
+    this.passkeyError = null;
     this.removingPasskeyId = credential.id;
     this.webAuthnService.deleteCredential(credential.id)
       .pipe(takeUntil(this.destroy$))
@@ -499,7 +513,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.removingPasskeyId = null;
-          this.snackBarService.openSnackBar(err?.error?.message || 'Could not remove this passkey.', 'error');
+          this.passkeyError = err?.error?.message || 'Could not remove this passkey.';
         },
       });
   }
@@ -682,11 +696,13 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   // UPDATE USER
   // -------------------------
   onSubmitForm() {
+    this.submitError = null;
     this.ngxService.start();
 
     if (this.updateUserForm.invalid) {
       this.invalidForm = true;
-      this.snackBarService.openSnackBar('Invalid form', 'error');
+      this.updateUserForm.markAllAsTouched();
+      this.submitError = 'Some profile fields are missing or invalid. Fix the highlighted fields and save again.';
       this.ngxService.stop();
       return;
     }
@@ -695,7 +711,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.snackBarService.openSnackBar(response.message, '');
+          this.snackBarService.openSnackBar(response?.message || 'Profile details saved', '');
           this.store.dispatch(refreshUser());
           this.updateUserForm.markAsPristine();
           this.updateUserForm.markAsUntouched();
@@ -703,7 +719,7 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
           this.ngxService.stop();
         },
         error: (error) => {
-          this.snackBarService.openSnackBar(error.error?.message || genericError, 'error');
+          this.submitError = error.error?.message || genericError;
           this.ngxService.stop();
         }
       });

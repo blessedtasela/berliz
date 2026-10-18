@@ -218,7 +218,7 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
       if (!result) return;
 
       this.refreshTodos();
-      this.snackbar.openSnackBar('Todo updated', 'success');
+      this.snackbar.openSnackBar('Task changes saved', 'success');
     });
   }
 
@@ -249,11 +249,13 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
       action,
       ids: this.selectedTodoIds.join(',')
     };
+    const count = this.selectedTodoIds.length;
 
 
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
       this.todoService.bulkAction(payload).subscribe((res: any) => {
-        this.snackbar.openSnackBar(res.message || 'Action completed', '');
+        this.snackbar.openSnackBar(
+          res.message || `Applied "${formattedAction}" to ${count} ${count === 1 ? 'task' : 'tasks'}`, '');
         this.refreshTodos();
         dialogRef.close();
       });
@@ -280,7 +282,7 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
 
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
       this.todoService.quickAction(apiPayload).subscribe((res: any) => {
-        this.snackbar.openSnackBar(res.message || 'Action completed', '');
+        this.snackbar.openSnackBar(res.message || `Applied "${formattedAction}" to the task`, '');
         this.refreshTodos();
         dialogRef.close();
       });
@@ -301,7 +303,7 @@ export class MyTodoListMainComponent implements OnInit, OnDestroy {
 
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
       this.todoService.deleteTodo(todo.id).subscribe((res: any) => {
-        this.snackbar.openSnackBar(res.message || 'Task deleted', '');
+        this.snackbar.openSnackBar(res.message || `"${todo.task}" deleted`, '');
         this.refreshTodos();
         dialogRef.close();
       });

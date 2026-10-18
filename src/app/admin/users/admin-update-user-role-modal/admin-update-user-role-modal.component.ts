@@ -19,6 +19,7 @@ export class AdminUpdateUserRoleModalComponent {
   updateUserRoleForm!: FormGroup;
   userData: Users;
   responseMessage: any;
+  submitError: string | null = null;
   roles: Role[] = [{
     id: 1, role: 'admin'
   }, {
@@ -56,11 +57,12 @@ export class AdminUpdateUserRoleModalComponent {
 
   updateUserRole(): void {
     this.ngxService.start();
+    this.submitError = null;
     if (this.updateUserRoleForm.invalid) {
       this.invalidForm = true
-      this.responseMessage = "Invalid form"
+      this.updateUserRoleForm.markAllAsTouched();
+      this.submitError = 'Please fill in the highlighted fields';
       this.ngxService.stop();
-      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       this.userService.updateUserRole(this.updateUserRoleForm.value)
         .subscribe((response: any) => {
@@ -76,12 +78,7 @@ export class AdminUpdateUserRoleModalComponent {
           , (error: any) => {
             this.ngxService.stop();
             console.error("error");
-            if (error.error?.message) {
-              this.responseMessage = error.error?.message;
-            } else {
-              this.responseMessage = genericError;
-            }
-            this.snackbarService.openSnackBar(this.responseMessage, "error");
+            this.submitError = error?.error?.message || genericError;
           });
     }
     this.ngxService.stop();

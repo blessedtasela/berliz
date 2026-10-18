@@ -46,6 +46,7 @@ export class TodoDetailsModalComponent implements OnInit {
 
   invalidForm = false;
   responseMessage: any;
+  submitError: string | null = null;
 
   originalValue: any;
 
@@ -320,22 +321,19 @@ export class TodoDetailsModalComponent implements OnInit {
 
   updateTodo(): void {
 
+    this.submitError = null;
+
     if (this.isReadonlyTask()) {
 
-      this.snackbar.openSnackBar(
-        'Completed or cancelled tasks must be restarted before editing.',
-        'error'
-      );
+      this.submitError =
+        'Completed or cancelled tasks must be restarted before editing.';
 
       return;
     }
 
     if (!this.hasChanges()) {
 
-      this.snackbar.openSnackBar(
-        'No changes detected.',
-        'error'
-      );
+      this.submitError = 'No changes detected.';
 
       return;
     }
@@ -346,10 +344,7 @@ export class TodoDetailsModalComponent implements OnInit {
 
       this.updateTodoForm.markAllAsTouched();
 
-      this.snackbar.openSnackBar(
-        'Invalid form. Please complete all sections.',
-        'error'
-      );
+      this.submitError = 'Please complete all required fields before saving.';
 
       return;
     }
@@ -396,7 +391,7 @@ export class TodoDetailsModalComponent implements OnInit {
           this.onUpdateTodo.emit();
 
           this.snackbar.openSnackBar(
-            this.responseMessage,
+            this.responseMessage || 'Your task has been updated',
             ''
           );
 
@@ -411,10 +406,7 @@ export class TodoDetailsModalComponent implements OnInit {
             error.error?.message ||
             genericError;
 
-          this.snackbar.openSnackBar(
-            this.responseMessage,
-            'error'
-          );
+          this.submitError = this.responseMessage;
         }
       });
   }
@@ -444,6 +436,7 @@ export class TodoDetailsModalComponent implements OnInit {
 
       if (result !== true) return; // STRICT CHECK
 
+      this.submitError = null;
       this.ngxService.start();
 
       const payload = {
@@ -476,9 +469,9 @@ export class TodoDetailsModalComponent implements OnInit {
           this.ngxService.stop();
         },
 
-        error: () => {
+        error: (error: any) => {
           this.ngxService.stop();
-          this.snackbar.openSnackBar('Failed to restart task', 'error');
+          this.submitError = error?.error?.message || 'Failed to complete the task. Please try again.';
         }
       });
     });
@@ -505,6 +498,7 @@ export class TodoDetailsModalComponent implements OnInit {
 
       if (result !== true) return; // STRICT CHECK
 
+      this.submitError = null;
       this.ngxService.start();
 
       const formValue = this.updateTodoForm.getRawValue();
@@ -542,9 +536,9 @@ export class TodoDetailsModalComponent implements OnInit {
           this.ngxService.stop();
         },
 
-        error: () => {
+        error: (error: any) => {
           this.ngxService.stop();
-          this.snackbar.openSnackBar('Failed to restart task', 'error');
+          this.submitError = error?.error?.message || 'Failed to restart the task. Please try again.';
         }
       });
     });

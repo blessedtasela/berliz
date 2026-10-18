@@ -43,16 +43,24 @@ import { genericError } from 'src/validators/form-validators.module';
             class="px-3 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700 transition flex items-center gap-1.5">
             <i-feather name="copy" style="width:12px;height:12px;"></i-feather> Copy link
           </button>
+          <a [href]="googleUrl" target="_blank" rel="noopener noreferrer"
+            class="px-3 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition flex items-center gap-1.5">
+            <i-feather name="external-link" style="width:12px;height:12px;"></i-feather> Google Calendar
+          </a>
+          <a [href]="outlookUrl" target="_blank" rel="noopener noreferrer"
+            class="px-3 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition flex items-center gap-1.5">
+            <i-feather name="external-link" style="width:12px;height:12px;"></i-feather> Outlook
+          </a>
           <a [href]="webcalUrl"
             class="px-3 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition flex items-center gap-1.5">
-            <i-feather name="external-link" style="width:12px;height:12px;"></i-feather> Open in calendar app
+            <i-feather name="external-link" style="width:12px;height:12px;"></i-feather> Apple Calendar
           </a>
           <button type="button" (click)="confirmRotate()" [disabled]="rotating"
             class="px-3 py-2 rounded-xl text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-red-600 transition flex items-center gap-1.5 disabled:opacity-50">
             <i-feather name="refresh-cw" [ngClass]="{'animate-spin': rotating}" style="width:12px;height:12px;"></i-feather> Make a new link
           </button>
         </div>
-        <p class="text-[11px] text-gray-400 dark:text-gray-500">Anyone with this link can see your session times, so don't share it. In Google Calendar choose "Other calendars", then "From URL".</p>
+        <p class="text-[11px] text-gray-400 dark:text-gray-500">Anyone with this link can see your session times, so don't share it. The link above always starts with https://. "Apple Calendar" hands the same link to your calendar app as webcal:// (a different prefix for the same address — Apple and some other apps only subscribe to it that way), so your calendar app may show it that way. For any other calendar, use "Copy link" and add it as a calendar from URL.</p>
       </ng-container>
     </section>
   `
@@ -78,9 +86,22 @@ export class CalendarFeedCardComponent implements OnInit {
     return this.feed ? this.calendarFeed.fullUrl(this.feed) : '';
   }
 
-  /** webcal:// opens the user's default calendar app and subscribes in one tap. */
+  /**
+   * webcal:// is the same address with the scheme calendar apps recognise for "subscribe". Apple Calendar (and
+   * most desktop calendar apps) only take a subscription link in this form, which is why the prefix differs
+   * from the https:// link shown in the box. Google and Outlook on the web don't handle webcal:// directly, so
+   * they get their own add-by-URL links below instead.
+   */
   get webcalUrl(): string {
     return this.url.replace(/^https?:\/\//, 'webcal://');
+  }
+
+  get googleUrl(): string {
+    return `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(this.webcalUrl)}`;
+  }
+
+  get outlookUrl(): string {
+    return `https://outlook.live.com/calendar/0/addfromweb?url=${encodeURIComponent(this.url)}&name=${encodeURIComponent('Berliz sessions')}`;
   }
 
   load(): void {

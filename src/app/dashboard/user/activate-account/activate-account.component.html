@@ -44,6 +44,8 @@
           </p>
         </div>
 
+        <app-inline-alert [message]="submitError" [kind]="'error'" [dismissible]="true" (dismissed)="submitError = null"></app-inline-alert>
+
         <button type="submit" [disabled]="activateAccountForm.invalid || submitting"
           class="w-full py-2.5 rounded-xl bg-red-600 text-white text-sm font-semibold
                  hover:bg-red-700 active:scale-[0.98] transition flex items-center justify-center gap-2
@@ -74,6 +76,7 @@
             {{ resending ? 'Sending…' : 'Resend' }}
           </button>
         </form>
+        <app-inline-alert [message]="resendError" [kind]="'error'" [dismissible]="true" (dismissed)="resendError = null"></app-inline-alert>
       </div>
 
       <!-- Back to login -->

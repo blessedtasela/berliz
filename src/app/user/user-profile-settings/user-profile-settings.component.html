@@ -1,6 +1,7 @@
 <div class="max-w-4xl mx-auto space-y-6">
     <app-user-profile-settings-form *ngIf="user && updateUserForm" [user]="user" [form]="updateUserForm"
         [countries]="countries" [invalidForm]="invalidForm" (submitForm)="onSubmitForm()" [originalValue]="originalValue"
+        [submitError]="submitError" (submitErrorDismissed)="submitError = null"
         (genderChange)="onGenderChange($event)" (countryChange)="onCountryChange($event)"
         (stateChange)="onStateChange($event)" [states]="states" [cities]="cities">
     </app-user-profile-settings-form>
@@ -95,6 +96,8 @@
 
         <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
+        <app-inline-alert [message]="visibilityError" [kind]="'error'" [dismissible]="true" (dismissed)="visibilityError = null"></app-inline-alert>
+
         <div class="flex items-start justify-between gap-4">
 
             <div class="flex items-start gap-2.5 min-w-0">
@@ -163,6 +166,8 @@
 
         <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
+        <app-inline-alert [message]="sidebarError" [kind]="'error'" [dismissible]="true" (dismissed)="sidebarError = null"></app-inline-alert>
+
         <div class="grid gap-2" role="radiogroup" aria-label="Sidebar display"
             [ngClass]="(sidebarState.isMobile$ | async) ? 'grid-cols-2' : 'grid-cols-3'">
 
@@ -219,9 +224,11 @@
 
         <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
+        <app-inline-alert [message]="messagePopupError" [kind]="'error'" [dismissible]="true" (dismissed)="messagePopupError = null"></app-inline-alert>
+
         <div class="flex items-start justify-between gap-4">
 
-            <div class="flex items-start gap-2.5 min-w-0">
+    <div class="flex items-start gap-2.5 min-w-0">
 
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
                     [ngClass]="messagePopupEnabled ? 'bg-green-50 border border-green-200' : 'bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700'">
@@ -283,6 +290,8 @@
         </div>
 
         <div class="border-t border-gray-100 dark:border-gray-800"></div>
+
+        <app-inline-alert [message]="emailPreferencesError" [kind]="'error'" [dismissible]="true" (dismissed)="emailPreferencesError = null"></app-inline-alert>
 
         <!-- Messages -->
         <div class="flex items-center justify-between gap-4">
@@ -387,6 +396,8 @@
         </div>
 
         <div class="border-t border-gray-100 dark:border-gray-800"></div>
+
+        <app-inline-alert [message]="passkeyError" [kind]="'error'" [dismissible]="true" (dismissed)="passkeyError = null"></app-inline-alert>
 
         <p *ngIf="!webAuthnService.isSupported" class="text-[11px] text-gray-400 italic">
             Your browser doesn't support passkeys.

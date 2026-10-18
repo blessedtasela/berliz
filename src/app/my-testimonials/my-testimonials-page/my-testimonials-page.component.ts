@@ -10,6 +10,7 @@ import { TestimonialDialogService } from 'src/app/testimonial/testimonial-dialog
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { Testimonials } from 'src/app/models/testimonials.model';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { genericError } from 'src/validators/form-validators.module';
 
 /**
@@ -23,7 +24,7 @@ import { genericError } from 'src/validators/form-validators.module';
  */
 @Component({
     selector: 'app-my-testimonials-page',
-    imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule],
+    imports: [CommonModule, RouterModule, FormsModule, IconsModule, SharedModule, LoadErrorComponent],
     templateUrl: './my-testimonials-page.component.html',
     styleUrls: ['./my-testimonials-page.component.css']
 })
@@ -31,6 +32,10 @@ export class MyTestimonialsPageComponent implements OnInit {
 
   testimonials: Testimonials[] = [];
   loading = true;
+  /** Set when the testimonials list failed to load; shown inline with a Retry. */
+  loadError: string | null = null;
+  /** Why saving the inline edit failed; shown inside the edit box. */
+  editError: string | null = null;
 
   /** id of the testimonial currently open for inline editing, if any. */
   editingId: number | null = null;
@@ -47,8 +52,9 @@ export class MyTestimonialsPageComponent implements OnInit {
     this.load();
   }
 
-  private load(): void {
+  load(): void {
     this.loading = true;
+    this.loadError = null;
     this.testimonialService.getMyTestimonials()
       .pipe(take(1))
       .subscribe({
@@ -56,9 +62,9 @@ export class MyTestimonialsPageComponent implements OnInit {
           this.testimonials = res?.data ?? [];
           this.loading = false;
         },
-        error: () => {
+        error: (err: any) => {
           this.loading = false;
-          this.snackBar.openSnackBar(genericError, 'error');
+          this.loadError = err?.error?.message || genericError;
         }
       });
   }
@@ -83,11 +89,13 @@ export class MyTestimonialsPageComponent implements OnInit {
 
   startEdit(t: Testimonials): void {
     this.editingId = t.id;
+    this.editError = null;
     this.editText = t.testimonial;
   }
 
   cancelEdit(): void {
     this.editingId = null;
+    this.editError = null;
     this.editText = '';
   }
 
@@ -95,6 +103,7 @@ export class MyTestimonialsPageComponent implements OnInit {
     const text = this.editText.trim();
     if (!text || this.saving) return;
 
+    this.editError = null;
     this.saving = true;
     this.testimonialService.updateTestimonial({ id: t.id, testimonial: text })
       .pipe(take(1))
@@ -106,7 +115,7 @@ export class MyTestimonialsPageComponent implements OnInit {
         },
         error: (err: any) => {
           this.saving = false;
-          this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+          this.editError = err?.error?.message || genericError;
         }
       });
   }

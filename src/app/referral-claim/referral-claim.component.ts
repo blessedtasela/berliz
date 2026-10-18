@@ -7,6 +7,8 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { ReferralEligibleProvider, ReferralSlotOption, ReferralWaitlistStatus } from 'src/app/models/referral-claim.model';
 import { ReferralClaimService } from 'src/app/services/referral-claim.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { genericError } from 'src/validators/form-validators.module';
 
 /**
@@ -18,7 +20,7 @@ import { genericError } from 'src/validators/form-validators.module';
  */
 @Component({
     selector: 'app-referral-claim',
-    imports: [CommonModule, RouterModule, IconsModule],
+    imports: [CommonModule, RouterModule, IconsModule, SharedModule, LoadErrorComponent],
     templateUrl: './referral-claim.component.html'
 })
 export class ReferralClaimComponent implements OnInit {
@@ -26,6 +28,10 @@ export class ReferralClaimComponent implements OnInit {
   sessionCreditId!: number;
   providers: ReferralEligibleProvider[] = [];
   loading = true;
+  /** The eligible-providers list failed to load; shown inline with a Retry. */
+  loadError: string | null = null;
+  /** Why claiming a slot failed (e.g. just taken) -- stays above the refreshed list so another slot can be picked. */
+  claimError: string | null = null;
   claimingKey: string | null = null;
 
   waitlist: ReferralWaitlistStatus | null = null;
@@ -45,13 +51,14 @@ export class ReferralClaimComponent implements OnInit {
 
   loadEligibleProviders(): void {
     this.loading = true;
+    this.loadError = null;
     this.referralClaimService.getEligibleProviders(this.sessionCreditId)
       .pipe(take(1))
       .subscribe({
         next: res => { this.providers = res?.data ?? []; this.loading = false; },
         error: err => {
           this.loading = false;
-          this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+          this.loadError = err?.error?.message || genericError;
         },
       });
   }
@@ -62,6 +69,7 @@ export class ReferralClaimComponent implements OnInit {
 
   claim(provider: ReferralEligibleProvider, slot: ReferralSlotOption): void {
     if (this.claimingKey) return;
+    this.claimError = null;
     this.claimingKey = this.slotKey(provider, slot);
 
     this.referralClaimService.claimSlot({
@@ -73,12 +81,12 @@ export class ReferralClaimComponent implements OnInit {
     }).pipe(take(1)).subscribe({
       next: res => {
         this.claimingKey = null;
-        this.snackBar.openSnackBar(res?.data?.message || res?.message || 'Session booked -- the provider will confirm shortly.', '');
+        this.snackBar.openSnackBar(res?.data?.message || res?.message || `Session booked with ${provider.name} -- they will confirm shortly.`, '');
         this.router.navigate(['/dashboard/my-bookings']);
       },
       error: err => {
         this.claimingKey = null;
-        this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.claimError = err?.error?.message || genericError;
         // The slot was likely just taken by someone else -- refresh the list.
         this.loadEligibleProviders();
       },
@@ -95,7 +103,7 @@ export class ReferralClaimComponent implements OnInit {
         next: res => {
           this.joiningWaitlist = false;
           this.waitlist = res?.data ?? null;
-          this.snackBar.openSnackBar(res?.data?.message || 'Added to the waitlist', '');
+          this.snackBar.openSnackBar(res?.data?.message || res?.message || 'You have been added to the waitlist', '');
         },
         error: err => {
           this.joiningWaitlist = false;

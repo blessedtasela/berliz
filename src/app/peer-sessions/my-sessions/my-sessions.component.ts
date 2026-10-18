@@ -10,6 +10,7 @@ import { RunService } from 'src/app/services/run.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { MyBookingsModule } from 'src/app/bookings/bookings.module';
 import { PeerSession } from 'src/app/models/peer-session.model';
 import { RunEventResponse } from 'src/app/models/run.interface';
@@ -36,7 +37,7 @@ type SessionsTab = 'client' | 'personal' | 'collaborations';
  */
 @Component({
     selector: 'app-my-sessions',
-    imports: [CommonModule, RouterModule, IconsModule, MyBookingsModule],
+    imports: [CommonModule, RouterModule, IconsModule, MyBookingsModule, LoadErrorComponent],
     templateUrl: './my-sessions.component.html',
     styleUrls: ['./my-sessions.component.css']
 })
@@ -48,6 +49,8 @@ export class MySessionsComponent implements OnInit {
   // ── Personal sessions (user-to-user) ────────────────────────────────────
   sessions: PeerSession[] = [];
   loading = true;
+  /** Set when the personal-sessions list failed to load; shown inline with a Retry. */
+  loadError: string | null = null;
 
   // ── Collaborations (group runs) ─────────────────────────────────────────
   runs: RunEventResponse[] = [];
@@ -80,8 +83,9 @@ export class MySessionsComponent implements OnInit {
 
   // ── Personal sessions ────────────────────────────────────────────────────
 
-  private load(): void {
+  load(): void {
     this.loading = true;
+    this.loadError = null;
     this.peerSessionService.getMySessions()
       .pipe(take(1))
       .subscribe({
@@ -89,9 +93,9 @@ export class MySessionsComponent implements OnInit {
           this.sessions = res?.data ?? [];
           this.loading = false;
         },
-        error: () => {
+        error: (err: any) => {
           this.loading = false;
-          this.snackBar.openSnackBar(genericError, 'error');
+          this.loadError = err?.error?.message || genericError;
         }
       });
   }
@@ -113,7 +117,7 @@ export class MySessionsComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (res: any) => {
-          this.snackBar.openSnackBar(res?.message || 'Updated', '');
+          this.snackBar.openSnackBar(res?.message || (status === 'confirmed' ? 'Session confirmed' : 'Session declined'), '');
           this.load();
         },
         error: (err: any) => this.snackBar.openSnackBar(err?.error?.message || genericError, 'error')
@@ -205,7 +209,7 @@ export class MySessionsComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.busyRunId = null;
-          this.snackBar.openSnackBar(res?.message || (accept ? "You're in" : 'Declined'), '');
+          this.snackBar.openSnackBar(res?.message || (accept ? `You've joined "${event.title || 'the run'}"` : 'Invitation declined'), '');
           this.loadRuns();
         },
         error: (err) => {

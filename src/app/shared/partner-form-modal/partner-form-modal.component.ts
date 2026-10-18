@@ -23,6 +23,7 @@ export class PartnerFormModalComponent {
   invalidForm: boolean = false;
   user!: Users | null;
   responseMessage: any;
+  submitError: string | null = null;
   selectedCV: any;
   selectedCertificate: any;
   roles: Role[] = [{
@@ -99,12 +100,12 @@ export class PartnerFormModalComponent {
     requestData.append('youtubeUrl', this.addPartnerForm.get('youtubeUrl')?.value);
     requestData.append('role', this.addPartnerForm.get('role')?.value);
 
+    this.submitError = null;
     if (this.addPartnerForm.invalid) {
-      this.ngxService.start();
       this.invalidForm = true;
+      this.addPartnerForm.markAllAsTouched();
       this.responseMessage = "Invalid form. Please complete all sections";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
-      this.ngxService.stop();
+      this.submitError = "Please complete every required field in both steps before submitting.";
     } else {
       this.ngxService.start();
       this.partnerService.addPartner(requestData)
@@ -114,7 +115,7 @@ export class PartnerFormModalComponent {
           this.invalidForm = false;
           this.dialogRef.close('Partner account added successfully');
           this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
+          this.snackBarService.openSnackBar(this.responseMessage || 'Your partner application has been submitted', "");
           this.ngxService.stop();
           this.onAddPartnerEmit.emit();
         }, (error: any) => {
@@ -125,7 +126,7 @@ export class PartnerFormModalComponent {
           } else {
             this.responseMessage = genericError;
           }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = this.responseMessage;
           this.ngxService.stop();
         })
     }

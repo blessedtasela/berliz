@@ -112,6 +112,8 @@
 
   </form>
 
+  <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
+
   <!-- Footer Actions -->
   <div class="flex gap-2 justify-end">
 

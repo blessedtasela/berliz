@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { take } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ProviderPackageService } from 'src/app/services/provider-package.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { ProviderPackage } from 'src/app/models/provider-package.model';
@@ -18,7 +19,7 @@ export interface ProviderPackageFormModalData {
 /** Create/edit form for a trainer/center's own sellable package. */
 @Component({
     selector: 'app-provider-package-form-modal',
-    imports: [CommonModule, ReactiveFormsModule, IconsModule],
+    imports: [CommonModule, ReactiveFormsModule, IconsModule, SharedModule],
     templateUrl: './provider-package-form-modal.component.html',
     styleUrls: ['./provider-package-form-modal.component.css']
 })
@@ -27,6 +28,8 @@ export class ProviderPackageFormModalComponent {
   form: FormGroup;
   invalidForm = false;
   saving = false;
+  /** Inline message above the Save button: validation problems and failed saves. */
+  submitError: string | null = null;
   isEdit: boolean;
 
   constructor(
@@ -63,10 +66,12 @@ export class ProviderPackageFormModalComponent {
 
   submit(): void {
     if (this.saving) return;
+    this.submitError = null;
 
     if (this.form.invalid) {
       this.invalidForm = true;
       this.form.markAllAsTouched();
+      this.submitError = 'Fix the highlighted fields (name, price and group size are required) before saving the package.';
       return;
     }
 
@@ -92,12 +97,12 @@ export class ProviderPackageFormModalComponent {
     request$.pipe(take(1)).subscribe({
       next: (res: any) => {
         this.saving = false;
-        this.snackBar.openSnackBar(res?.message || (this.isEdit ? 'Package updated' : 'Package created'), '');
+        this.snackBar.openSnackBar(res?.message || (this.isEdit ? `Package "${payload.name}" updated` : `Package "${payload.name}" created`), '');
         this.dialogRef.close(true);
       },
       error: (err: any) => {
         this.saving = false;
-        this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.submitError = err?.error?.message || genericError;
       }
     });
   }

@@ -93,6 +93,8 @@
           </p>
         </div>
 
+        <app-inline-alert [message]="submitError" [kind]="'error'" [dismissible]="true" (dismissed)="submitError = null"></app-inline-alert>
+
         <!-- Actions -->
         <div class="flex justify-end gap-3 pt-2">
           <button type="button" (click)="clear()" class="px-5 py-2.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-semibold

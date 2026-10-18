@@ -36,6 +36,10 @@ export class MyTrainerIntroductionComponent implements OnInit, OnChanges {
 
   showCropper = false;
   invalidForm = false;
+  /** Save/upload problems, shown above the Save button. */
+  submitError: string | null = null;
+  /** Problems inside the crop dialog (image failed to load, nothing cropped yet). */
+  cropperError: string | null = null;
   isChecked = false;
   showPreviewModal = false;
   originalValue: any;
@@ -113,6 +117,7 @@ export class MyTrainerIntroductionComponent implements OnInit, OnChanges {
 
     if (!file) return;
 
+    this.cropperError = null;
     this.imageChangedEvent = event;
     this.showCropper = true;
   }
@@ -122,10 +127,11 @@ export class MyTrainerIntroductionComponent implements OnInit, OnChanges {
   }
 
   loadImageFailed(): void {
-    this.snackbar.openSnackBar('Failed to load image', 'error');
+    this.cropperError = 'Failed to load the image. Please choose a different photo.';
   }
 
   cancelUpload(): void {
+    this.cropperError = null;
     this.showCropper = false;
     this.imageChangedEvent = null;
     this.croppedImageBlob = null;
@@ -133,8 +139,10 @@ export class MyTrainerIntroductionComponent implements OnInit, OnChanges {
 
   submitCropToUpload(): void {
 
+    this.cropperError = null;
+
     if (!this.croppedImageBlob) {
-      this.snackbar.openSnackBar('Please crop image first', 'error');
+      this.cropperError = 'Please crop the image first.';
       return;
     }
 
@@ -203,14 +211,13 @@ export class MyTrainerIntroductionComponent implements OnInit, OnChanges {
 
   updateTrainerIntroduction(): void {
 
+    this.submitError = null;
+
     if (this.updateTrainerIntroductionForm.invalid) {
 
       this.invalidForm = true;
-
-      this.snackbar.openSnackBar(
-        'Please complete all required fields',
-        'error'
-      );
+      this.updateTrainerIntroductionForm.markAllAsTouched();
+      // The form shows an inline "complete all required fields" banner while invalidForm is set.
 
       return;
     }
@@ -265,10 +272,7 @@ export class MyTrainerIntroductionComponent implements OnInit, OnChanges {
 
       this.loader.stop();
 
-      this.snackbar.openSnackBar(
-        err?.error?.message || err?.message || 'Strapi upload failed',
-        'error'
-      );
+      this.submitError = err?.error?.message || err?.message || 'Strapi upload failed';
     }
   }
 
@@ -294,18 +298,19 @@ export class MyTrainerIntroductionComponent implements OnInit, OnChanges {
 
         next: (res: any) => {
 
-          this.snackbar.openSnackBar(res?.message, '');
+          this.submitError = null;
+          this.snackbar.openSnackBar(res?.message || 'Your trainer introduction has been saved', '');
           this.emitEvent.emit();
           this.loader.stop();
-          this.clear(res);
+          // The service returns the ApiResponse wrapper; the saved introduction is under `data`.
+          if (res?.data) {
+            this.clear(res.data);
+          }
         },
 
         error: (err: any) => {
           this.loader.stop();
-          this.snackbar.openSnackBar(
-            err?.error?.message || 'Backend save failed',
-            'error'
-          );
+          this.submitError = err?.error?.message || 'Backend save failed';
         }
       });
   }

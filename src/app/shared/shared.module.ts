@@ -13,6 +13,7 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { UpdateTrainerPhotoModalComponent } from './update-trainer-photo-modal/update-trainer-photo-modal.component';
 import { NewsletterPopupComponent } from './newsletter-popup/newsletter-popup.component';
 import { ValidationMessageComponent } from './validation-message/validation-message.component';
+import { InlineAlertComponent } from './inline-alert/inline-alert.component';
 import { LocationFormComponent } from './location-form/location-form.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
@@ -43,6 +44,7 @@ import { ClickablePhotoDirective } from './photo-lightbox/clickable-photo.direct
     UpdateTrainerPhotoModalComponent,
     NewsletterPopupComponent,
     ValidationMessageComponent,
+    InlineAlertComponent,
     LocationFormComponent,
     NotificationDetailsComponent,
     TimeAgoPipe,
@@ -77,6 +79,7 @@ import { ClickablePhotoDirective } from './photo-lightbox/clickable-photo.direct
     FeatherModule,
     NewsletterPopupComponent,
     ValidationMessageComponent,
+    InlineAlertComponent,
     LocationFormComponent,
     NgSelectModule,
     NgxMaskDirective,

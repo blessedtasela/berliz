@@ -8,6 +8,7 @@ import { Observable, Subject, catchError, of, take, takeUntil } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { DateStripComponent } from 'src/app/shared/date-strip/date-strip.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { BookingLocationPickerComponent, BookingLocationSelection } from '../booking-location-picker/booking-location-picker.component';
 import { BookingPriceEstimateComponent } from '../booking-price-estimate/booking-price-estimate.component';
 
@@ -53,7 +54,7 @@ type BookingOption =
  */
 @Component({
     selector: 'app-booking-page',
-    imports: [CommonModule, FormsModule, RouterModule, IconsModule, DateStripComponent, BookingLocationPickerComponent, BookingPriceEstimateComponent],
+    imports: [CommonModule, FormsModule, RouterModule, IconsModule, SharedModule, DateStripComponent, BookingLocationPickerComponent, BookingPriceEstimateComponent],
     templateUrl: './booking-page.component.html'
 })
 export class BookingPageComponent implements OnInit, OnDestroy {
@@ -92,6 +93,8 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   readonly maxNotesLength = 500;
 
   submitting = false;
+  /** Inline message above the submit button: validation problems and failed submits (e.g. slot taken) -- stays until fixed/dismissed so the client can pick another time. */
+  submitError: string | null = null;
 
   /** A visitor who is not signed in asked to send the request: show the log in / create account choice. */
   showAuthPrompt = false;
@@ -192,13 +195,14 @@ export class BookingPageComponent implements OnInit, OnDestroy {
 
     this.actions$.pipe(ofType(createBookingSuccess), takeUntil(this.destroy$)).subscribe(({ response }) => {
       this.submitting = false;
+      this.submitError = null;
       this.snackBar.openSnackBar(response?.data?.message || response?.message || 'Your booking request has been sent.', '');
       this.router.navigate(['/dashboard/my-tasks']);
     });
 
     this.actions$.pipe(ofType(createBookingFailure), takeUntil(this.destroy$)).subscribe(({ error }) => {
       this.submitting = false;
-      this.snackBar.openSnackBar(error || genericError, 'error');
+      this.submitError = error || genericError;
     });
   }
 
@@ -370,6 +374,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     if (this.selectedDate === dateValue) return;
     this.selectedDate = dateValue;
     this.selectedSlot = null;
+    this.submitError = null;
     this.fetchSlotsForSelectedDate();
   }
 
@@ -384,6 +389,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
 
   selectSlot(slot: AvailableSlot): void {
     this.selectedSlot = slot;
+    this.submitError = null;
   }
 
   slotLabel(slot: AvailableSlot): string {
@@ -480,9 +486,10 @@ export class BookingPageComponent implements OnInit, OnDestroy {
 
   submit(): void {
     if (this.submitting) return;
+    this.submitError = null;
 
     if (!this.selectedSlot) {
-      this.snackBar.openSnackBar('Pick a date and an available time.', 'error');
+      this.submitError = 'Pick a date and an available time.';
       return;
     }
 
@@ -492,18 +499,15 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     }
 
     if (this.locationSelection?.incomplete) {
-      this.snackBar.openSnackBar('Enter the address or place you want to train at, or pick one of the listed locations.', 'error');
+      this.submitError = 'Enter the address or place you want to train at, or pick one of the listed locations.';
       return;
     }
 
     const scheduledAt = new Date(`${this.selectedDate}T${this.selectedSlot.startTime}`);
     if (isNaN(scheduledAt.getTime()) || scheduledAt.getTime() < this.earliestBookableTime) {
-      this.snackBar.openSnackBar(
-        `Pick a slot at least ${this.minLeadTimeMinutes} minutes out — the provider needs time to confirm.`,
-        'error'
-      );
       this.selectedSlot = null;
       this.fetchSlotsForSelectedDate();
+      this.submitError = `Pick a slot at least ${this.minLeadTimeMinutes} minutes out — the provider needs time to confirm.`;
       return;
     }
 

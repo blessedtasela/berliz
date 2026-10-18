@@ -48,6 +48,8 @@ export class TestimonialFormComponent implements OnInit, OnDestroy {
   testimonialForm!: FormGroup;
   invalidForm = false;
   submitting = false;
+  /** Inline message above the Submit button: validation problems and failed submits. */
+  submitError: string | null = null;
 
   centers: Centers[] = [];
   trainers: Trainers[] = [];
@@ -123,7 +125,7 @@ export class TestimonialFormComponent implements OnInit, OnDestroy {
       .pipe(ofType(addTestimonialFailure), takeUntil(this.destroy$))
       .subscribe(({ error }) => {
         this.submitting = false;
-        this.snackBar.openSnackBar(error || genericError, 'error');
+        this.submitError = error || genericError;
       });
   }
 
@@ -223,18 +225,17 @@ export class TestimonialFormComponent implements OnInit, OnDestroy {
 
   submitForm(): void {
     if (this.submitting) return;
+    this.submitError = null;
 
     if (this.testimonialForm.invalid) {
       this.invalidForm = true;
       this.testimonialForm.markAllAsTouched();
+      this.submitError = 'Choose who the testimonial is about and write your testimonial before submitting.';
       return;
     }
 
     if (!this.myClient?.id) {
-      this.snackBar.openSnackBar(
-        'We could not find your client profile. Complete your client profile before leaving a testimonial.',
-        'error'
-      );
+      this.submitError = 'We could not find your client profile. Complete your client profile before leaving a testimonial.';
       return;
     }
 

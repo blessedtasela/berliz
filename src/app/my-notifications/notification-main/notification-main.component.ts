@@ -332,7 +332,7 @@ export class NotificationMainComponent implements OnInit, OnDestroy {
 
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
       this.notificationService.bulkAction(payload).subscribe((res: any) => {
-        this.snackbar.openSnackBar(res.message || 'Action completed', '');
+        this.snackbar.openSnackBar(res.message || `${payload.ids.split(',').length} notification(s): ${action} done`, '');
         this.refreshNotifications();
         dialogRef.close();
       });

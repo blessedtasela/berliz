@@ -50,6 +50,8 @@
 
         <div class="border-t border-gray-100"></div>
 
+        <app-inline-alert [message]="submitError" [kind]="'error'" [dismissible]="true" (dismissed)="submitError = null"></app-inline-alert>
+
         <!-- Actions -->
         <div class="flex items-center justify-end gap-2">
             <button type="button" (click)="closeDialog()"
