@@ -1,0 +1,68 @@
+<app-load-error *ngIf="loadError && !loading" title="Couldn't load the billing summary" [message]="loadError" (retry)="load()"></app-load-error>
+
+<div *ngIf="!loadError || loading" class="flex flex-col gap-4">
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+
+    <div class="rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
+      <p class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide flex items-center gap-1">
+        <i-feather name="dollar-sign" style="width:11px;height:11px;"></i-feather>
+        Gross volume this month
+      </p>
+      <p class="text-xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+        {{ loading ? '—' : (summary?.grossPaymentVolumeThisMonth ?? 0 | currency) }}
+      </p>
+      <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">Successful payments since the 1st</p>
+    </div>
+
+    <div class="rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
+      <p class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide flex items-center gap-1">
+        <i-feather name="refresh-cw" style="width:11px;height:11px;"></i-feather>
+        Active recurring revenue
+      </p>
+      <p class="text-xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+        {{ loading ? '—' : (summary?.activeRecurringRevenue ?? 0 | currency) }}
+      </p>
+      <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+        {{ loading ? 'Loading…' : (summary?.activeSubscriptionCount ?? 0) + ' active subscriptions' }} &middot; not Stripe's MRR
+      </p>
+    </div>
+
+    <div class="rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
+      <p class="text-[10px] font-semibold text-amber-600 uppercase tracking-wide flex items-center gap-1">
+        <i-feather name="clock" style="width:11px;height:11px;"></i-feather>
+        Payouts pending
+      </p>
+      <p class="text-xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+        {{ loading ? '—' : (summary?.payoutsPendingTotal ?? 0 | currency) }}
+      </p>
+      <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">Owed to trainers &amp; centers, not yet sent</p>
+    </div>
+
+    <div class="rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
+      <p class="text-[10px] font-semibold text-green-600 uppercase tracking-wide flex items-center gap-1">
+        <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
+        Payouts paid out
+      </p>
+      <p class="text-xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+        {{ loading ? '—' : (summary?.payoutsPaidTotal ?? 0 | currency) }}
+      </p>
+      <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">Sent via Stripe Connect, lifetime</p>
+    </div>
+
+    <div class="rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
+      <p class="text-[10px] font-semibold text-red-600 uppercase tracking-wide flex items-center gap-1">
+        <i-feather name="rotate-ccw" style="width:11px;height:11px;"></i-feather>
+        Refunds this month
+      </p>
+      <p class="text-xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+        {{ loading ? '—' : (summary?.refundsThisMonthTotal ?? 0 | currency) }}
+      </p>
+      <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+        {{ loading ? 'Loading…' : (summary?.refundsThisMonthCount ?? 0) + ' refund(s) since the 1st' }}
+      </p>
+    </div>
+
+  </div>
+
+</div>

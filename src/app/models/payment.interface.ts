@@ -27,6 +27,14 @@ export interface Payments {
   /** Set once this Stripe payment has been refunded. */
   stripeRefundId?: string | null;
   refundedAt?: Date | null;
+  /** Total handed back so far (partial refunds add up), and what can still be refunded. */
+  refundedAmount?: number | null;
+  refundableAmount?: number | null;
+
+  /** Set for recurring-renewal payments (invoice.paid), null for one-time Checkout/booking payments. */
+  stripeInvoiceId?: string | null;
+  /** App Store / Google Play purchase id (via RevenueCat), when this payment came from a store instead of Stripe. */
+  storeTransactionId?: string | null;
 
   message?: string;
 }

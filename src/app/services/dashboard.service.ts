@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { PartnerDetails } from '../models/dashboard.interface';
+import { BillingSummary } from '../models/billing-summary.model';
 
 @Injectable({
   providedIn: 'root'
@@ -27,5 +28,10 @@ getPartnerDetails() {
 
 getProfileData() {
   return this.httpClient.get<Record<string, any>>(this.url + "/dashboard/getProfileData")
+}
+
+/** Admin only — the billing overview numbers (gross volume, active recurring revenue, payouts, refunds). */
+getBillingSummary() {
+  return this.httpClient.get<BillingSummary>(this.url + "/dashboard/billing-summary")
 }
 }
