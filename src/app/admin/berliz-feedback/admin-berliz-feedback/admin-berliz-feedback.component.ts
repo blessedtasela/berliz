@@ -47,7 +47,10 @@ export class AdminBerlizFeedbackComponent implements OnInit {
   }
 
   formatDate(dateString: any): any {
-    return this.datePipe.transform(new Date(dateString), 'dd/MM/yyyy');
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
+    return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
   trackByFeedback(_: number, feedback: BerlizFeedback): number {

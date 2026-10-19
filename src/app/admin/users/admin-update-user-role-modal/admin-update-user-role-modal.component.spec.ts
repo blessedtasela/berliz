@@ -38,4 +38,53 @@ describe('AdminUpdateUserRoleModalComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  describe('who may assign the admin role', () => {
+    const tokenFor = (claims: object) => {
+      const b64 = (o: object) => btoa(JSON.stringify(o)).replace(/=+$/, '');
+      return b64({ alg: 'HS256' }) + '.' + b64(claims) + '.sig';
+    };
+
+    function create(token: string | null, userData: any) {
+      TestBed.resetTestingModule();
+      const dialogData = { userData };
+      if (token) localStorage.setItem('token', token); else localStorage.removeItem('token');
+      TestBed.configureTestingModule({
+        declarations: [AdminUpdateUserRoleModalComponent],
+        schemas: [NO_ERRORS_SCHEMA],
+        providers: [
+          FormBuilder,
+          { provide: UserService, useValue: jasmine.createSpyObj('UserService', ['updateUserRole']) },
+          { provide: NgxUiLoaderService, useValue: jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']) },
+          { provide: SnackBarService, useValue: jasmine.createSpyObj('SnackBarService', ['openSnackBar']) },
+          { provide: MatDialogRef, useValue: jasmine.createSpyObj('MatDialogRef', ['close']) },
+          { provide: MAT_DIALOG_DATA, useValue: dialogData },
+        ],
+      });
+      const f2 = TestBed.createComponent(AdminUpdateUserRoleModalComponent);
+      f2.detectChanges();
+      return f2.componentInstance;
+    }
+
+    afterEach(() => localStorage.removeItem('token'));
+
+    it('offers "admin" only to the super admin', () => {
+      expect(create(tokenFor({ role: 'admin', superAdmin: true }), { role: 'client' }).roles.map(r => r.role)).toContain('admin');
+      expect(create(tokenFor({ role: 'admin' }), { role: 'client' }).roles.map(r => r.role)).not.toContain('admin');
+      expect(create(null, { role: 'client' }).roles.map(r => r.role)).not.toContain('admin');
+    });
+
+    it('locks the role of an admin account for an admin who is not the super admin', () => {
+      const plain = create(tokenFor({ role: 'admin' }), { role: 'admin' });
+      expect(plain.locked).toBeTrue();
+      const service = TestBed.inject(UserService) as jasmine.SpyObj<UserService>;
+      plain.updateUserRole();
+      expect(service.updateUserRole).not.toHaveBeenCalled();
+      expect(create(tokenFor({ role: 'admin', superAdmin: true }), { role: 'admin' }).locked).toBeFalse();
+    });
+
+    it('does not lock ordinary accounts', () => {
+      expect(create(tokenFor({ role: 'admin' }), { role: 'trainer' }).locked).toBeFalse();
+    });
+  });
 });
