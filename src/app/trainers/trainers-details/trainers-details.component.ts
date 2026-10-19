@@ -22,7 +22,7 @@ import { TrainerService } from 'src/app/services/trainer.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { environment } from 'src/environments/environment';
 import { TestimonialDialogService } from 'src/app/testimonial/testimonial-dialog.service';
-import { BookingDialogService } from 'src/app/booking/booking-dialog.service';
+import { BookingLauncherService } from 'src/app/booking/booking-launcher.service';
 import { loadTestimonialsByTrainer } from 'src/app/state/testimonial/testimonial.actions';
 import { selectTestimonialsByTrainer } from 'src/app/state/testimonial/testimonial.selectors';
 import {
@@ -85,7 +85,7 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
     private providerAnalytics: ProviderAnalyticsService,
     private seoService: SeoService,
     private testimonialDialog: TestimonialDialogService,
-    private bookingDialog: BookingDialogService,
+    private bookingLauncher: BookingLauncherService,
     private dialog: MatDialog
   ) { }
 
@@ -188,7 +188,7 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * A login gate (BookingDialogService/TestimonialDialogService) sent the
+   * A login gate (TestimonialDialogService) sent the
    * user here with ?action=book|testimonial after signing in -- finish what
    * they were trying to do instead of leaving them to find the button again.
    * Fires once and strips the query param so a manual refresh doesn't reopen it.
@@ -299,19 +299,31 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
     this.testimonialDialog.openTestimonialForm();
   }
 
-  /** Opens the "Book a session" form for this trainer. */
+  /** Opens this trainer's booking page, to request a single session. */
   bookSession(): void {
     if (!this.trainer) return;
-    this.bookingDialog.openBookingForm({
+    this.bookingLauncher.startBooking({
       trainerId: this.trainerId,
       providerName: this.trainer.name || 'this trainer'
     });
   }
 
-  /** A plan card was chosen: the booking page opens on that plan, ready to subscribe or buy it. */
+  /** Opens this trainer's Level Up page, to subscribe, buy a session pack or get a membership. */
+  levelUp(): void {
+    if (!this.trainer) return;
+    this.bookingLauncher.startLevelUp({
+      trainerId: this.trainerId,
+      providerName: this.trainer.name || 'this trainer'
+    });
+  }
+
+  /** A plan card was chosen: the Level Up page opens on that plan. */
   openPlan(plan: ProviderPackage): void {
     if (!this.trainer) return;
-    this.router.navigate(['/trainers', this.trainer.name.split(' ').join('-'), 'book'], { queryParams: { plan: plan.id } });
+    this.bookingLauncher.startLevelUp({
+      trainerId: this.trainerId,
+      providerName: this.trainer.name
+    }, plan.id);
   }
 
   testimonialAuthor(testimonial: Testimonials): string {

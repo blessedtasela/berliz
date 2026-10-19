@@ -37,8 +37,8 @@
       </button>
     </div>
 
-    <!-- Packages & plans: three different things, kept apart -->
-    <div *ngIf="packages.length > 0" class="flex flex-col gap-2">
+    <!-- Plans you already own: book this session out of one, or as a single session -->
+    <div *ngIf="ownedPlans.length > 0" class="flex flex-col gap-2">
       <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">What would you like?</label>
 
       <button type="button" (click)="chooseSingle()"
@@ -53,58 +53,23 @@
         <i-feather *ngIf="isSingleSelected" name="check-circle" class="text-red-600 dark:text-red-400 shrink-0" style="width:16px;height:16px;"></i-feather>
       </button>
 
-      <button type="button" *ngFor="let pkg of packages" (click)="choosePackage(pkg)"
+      <button type="button" *ngFor="let owned of ownedPlans" (click)="chooseOwnedPlan(owned)"
         class="w-full text-left px-4 py-3 rounded-xl border transition flex items-center justify-between gap-3"
-        [ngClass]="isPackageSelected(pkg)
+        [ngClass]="isPackageSelected(owned)
           ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800'
           : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'">
         <span class="min-w-0">
           <span class="flex items-center gap-1.5">
-            <span class="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">{{ kindLabel(pkg) }}</span>
-            <span *ngIf="isPackageOwned(pkg)" class="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400">
-              You have this
-            </span>
+            <span *ngIf="owned.providerPackage" class="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">{{ kindLabel(owned.providerPackage) }}</span>
+            <span class="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400">You have this</span>
           </span>
-          <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100 truncate mt-1">{{ pkg.name }}</span>
+          <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100 truncate mt-1">{{ owned.providerPackage?.name }}</span>
           <span class="block text-[11px] text-gray-400 dark:text-gray-500 truncate">
-            {{ includes(pkg) }}
-            <span *ngIf="isPackageOwned(pkg)">
-              · {{ ownedByPackageId.get(pkg.id)?.sessionsRemaining ?? 'Unlimited' }}{{ ownedByPackageId.get(pkg.id)?.sessionsRemaining != null ? ' left' : '' }}
-            </span>
+            {{ owned.sessionsRemaining ?? 'Unlimited' }}{{ owned.sessionsRemaining != null ? ' sessions left' : ' sessions' }}
           </span>
         </span>
-        <span class="shrink-0 flex items-center gap-2">
-          <span *ngIf="!isPackageOwned(pkg)" class="text-right">
-            <span class="block text-xs font-bold text-gray-900 dark:text-gray-100">${{ pkg.price }}</span>
-            <span class="block text-[10px] text-gray-400 dark:text-gray-500">{{ priceNote(pkg) }}</span>
-          </span>
-          <i-feather *ngIf="isPackageSelected(pkg)" name="check-circle" class="text-red-600 dark:text-red-400" style="width:16px;height:16px;"></i-feather>
-        </span>
+        <i-feather *ngIf="isPackageSelected(owned)" name="check-circle" class="text-red-600 dark:text-red-400 shrink-0" style="width:16px;height:16px;"></i-feather>
       </button>
-    </div>
-
-    <!-- Buying a plan: nothing to schedule, so say what you get and what happens next -->
-    <div *ngIf="planToBuy as plan" class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-2.5">
-      <div class="flex items-start justify-between gap-3">
-        <div class="min-w-0">
-          <span class="text-[10px] font-bold uppercase tracking-wide text-red-600 dark:text-red-400">{{ kindLabel(plan) }}</span>
-          <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ plan.name }}</h2>
-        </div>
-        <div class="text-right shrink-0">
-          <span class="block text-lg font-extrabold text-gray-900 dark:text-gray-100">${{ plan.price }}</span>
-          <span class="block text-[11px] text-gray-400 dark:text-gray-500">{{ priceNote(plan) }}</span>
-        </div>
-      </div>
-      <p *ngIf="plan.description" class="text-[11px] text-gray-500 dark:text-gray-400">{{ plan.description }}</p>
-      <p class="text-xs text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
-        <i-feather name="check" class="text-red-600 dark:text-red-400" style="width:12px;height:12px;"></i-feather>
-        {{ includes(plan) }}
-      </p>
-      <p class="text-[11px] text-gray-500 dark:text-gray-400 flex items-start gap-1.5">
-        <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
-        {{ checkoutNote(plan) }}
-      </p>
-      <p class="text-[11px] text-gray-400 dark:text-gray-500">You'll find it under My Subscriptions, separate from your bookings.</p>
     </div>
 
     <!-- Using a plan you own -->
@@ -113,8 +78,21 @@
       This session comes out of your {{ owned.providerPackage?.name }}{{ owned.sessionsRemaining != null ? ' (' + owned.sessionsRemaining + ' left)' : '' }} — nothing more to pay for it.
     </p>
 
-    <!-- ── Everything below is for booking a session, so it's hidden while buying a plan ── -->
-    <ng-container *ngIf="!planToBuy">
+    <!-- Booking more than once? Plans are bought on their own page -->
+    <a *ngIf="packages.length > 0" [routerLink]="levelUpPath" data-testid="level-up-link"
+      class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 flex items-center justify-between gap-3
+             hover:border-gray-300 dark:hover:border-gray-700 transition">
+      <span class="flex items-center gap-3 min-w-0">
+        <span class="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
+          <i-feather name="zap" class="text-red-600" style="width:14px;height:14px;"></i-feather>
+        </span>
+        <span class="min-w-0">
+          <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100">Training with {{ providerName }} regularly?</span>
+          <span class="block text-[11px] text-gray-400 dark:text-gray-500">Level up: subscribe, buy a session pack or get a membership.</span>
+        </span>
+      </span>
+      <i-feather name="arrow-right" class="shrink-0 text-gray-400" style="width:14px;height:14px;"></i-feather>
+    </a>
 
     <!-- ── Initial probe loading ─────────────────────────────────────── -->
     <div *ngIf="availabilityConfigured === null" class="flex items-center justify-center py-8 gap-2 text-gray-400 dark:text-gray-500">
@@ -178,8 +156,8 @@
     <app-booking-location-picker *ngIf="availabilityConfigured === true && kind === 'trainer' && providerId"
       [trainerId]="providerId" (selectionChange)="locationSelection = $event"></app-booking-location-picker>
 
-    <!-- ── Estimated total (hidden when the provider has no rate set, and while buying a package) ── -->
-    <app-booking-price-estimate *ngIf="availabilityConfigured === true && selectedOption.kind !== 'buyPackage' && providerId"
+    <!-- ── Estimated total (hidden when the provider has no rate set) ── -->
+    <app-booking-price-estimate *ngIf="availabilityConfigured === true && providerId"
       [trainerId]="kind === 'trainer' ? providerId : null" [centerId]="kind === 'center' ? providerId : null"
       [providerName]="providerName" [minutes]="slotDurationMinutes"
       [locationFee]="locationSelection?.fee ?? null"
@@ -207,7 +185,6 @@
       <span *ngIf="isGuest"> You only need an account to send it, and your choices here are saved.</span>
     </p>
 
-    </ng-container>
 
     <!-- ── Guest: choose how to continue (shown when they press the button) ── -->
     <div *ngIf="showAuthPrompt && isGuest" role="region" aria-label="Log in or create an account to send your request"
@@ -231,7 +208,7 @@
       <button type="button" (click)="dismissAuthPrompt()" class="self-start text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-600 transition">Not now</button>
     </div>
 
-    <button type="button" (click)="onPrimaryAction()" [disabled]="primaryDisabled"
+    <button type="button" (click)="submit()" [disabled]="primaryDisabled"
       class="w-full px-4 py-3 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition
              flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100">
       <i-feather [name]="primaryIcon" [ngClass]="{'animate-spin': primaryIcon === 'loader'}" style="width:14px;height:14px;"></i-feather>

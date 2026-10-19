@@ -15,6 +15,12 @@ const routes: Routes = [
     canActivate: [CenterGuard],
     data: { kind: 'center', breadcrumb: 'Book' }
   },
+  {
+    path: ':name/level-up',
+    loadComponent: () => import('../booking/level-up-page/level-up-page.component').then(m => m.LevelUpPageComponent),
+    canActivate: [CenterGuard],
+    data: { kind: 'center', breadcrumb: 'Level up' }
+  },
   { path: ':name', component: CenterDetailComponent, canActivate: [CenterGuard], data: { breadcrumb: { alias: 'centerName' } } },
 ];
 

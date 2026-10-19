@@ -1,4 +1,3 @@
-import { of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ProviderPackage } from 'src/app/models/provider-package.model';
 import { BookingPageComponent } from './booking-page.component';
@@ -84,7 +83,7 @@ describe('BookingPageComponent share', () => {
 describe('BookingPageComponent plans', () => {
 
   let page: any;
-  let snackBar: { openSnackBar: jasmine.Spy };
+  let navigate: jasmine.Spy;
 
   const plan = (over: Partial<ProviderPackage> = {}): ProviderPackage => ({
     id: 7, name: '5 session starter', price: 200, currency: 'USD', sessionCount: 5, billingType: 'ONE_TIME',
@@ -92,15 +91,18 @@ describe('BookingPageComponent plans', () => {
   } as ProviderPackage);
 
   beforeEach(() => {
-    snackBar = { openSnackBar: jasmine.createSpy('openSnackBar') };
-    // Only the plan logic is under test, so skip the 13-service constructor.
+    navigate = jasmine.createSpy('navigate');
+    // Only the plan logic is under test, so skip the many-service constructor.
     page = Object.create(BookingPageComponent.prototype);
-    page.snackBar = snackBar;
+    page.router = { navigate };
+    page.kind = 'trainer';
+    page.providerName = 'Jo Smith';
     page.selectedOption = { kind: 'single' };
-    page.buyingPackageId = null;
     page.submitting = false;
     page.availabilityConfigured = true;
     page.packages = [];
+    page.packagesLoaded = true;
+    page.ownedLoaded = true;
     page.ownedByPackageId = new Map();
     page.pendingPlanId = null;
     page.user = { email: 'a@b.c' };
@@ -124,57 +126,18 @@ describe('BookingPageComponent plans', () => {
       expect(page.primaryLabel).toBe('Book with your pack');
     });
 
-    it('buys a session pack, with its price, rather than requesting a booking', () => {
-      page.selectedOption = { kind: 'buyPackage', pkg: plan() };
-      expect(page.primaryLabel).toBe('Buy pack · $200');
-      expect(page.primaryIcon).toBe('credit-card');
-    });
-
-    it('subscribes to a monthly plan and says it is per month', () => {
-      page.selectedOption = { kind: 'buyPackage', pkg: plan({ billingType: 'RECURRING', sessionCount: null, price: 99 }) };
-      expect(page.primaryLabel).toBe('Subscribe · $99 / month');
-    });
-
-    it('does not need availability to buy a plan, but does to book a session', () => {
+    it('is disabled until the provider has availability, and while sending', () => {
       page.availabilityConfigured = false;
       expect(page.primaryDisabled).toBeTrue();
-      page.selectedOption = { kind: 'buyPackage', pkg: plan() };
-      expect(page.primaryDisabled).toBeFalse();
-    });
-
-    it('is disabled and shows progress while checkout starts', () => {
-      page.selectedOption = { kind: 'buyPackage', pkg: plan() };
-      page.buyingPackageId = 7;
-      expect(page.primaryLabel).toBe('Starting checkout…');
+      page.availabilityConfigured = true;
+      page.submitting = true;
       expect(page.primaryDisabled).toBeTrue();
       expect(page.primaryIcon).toBe('loader');
-    });
-
-    it('buys the plan when a plan is selected, and submits a booking otherwise', () => {
-      const buy = spyOn(page, 'buyPackage');
-      const submit = spyOn(page, 'submit');
-
-      page.onPrimaryAction();
-      expect(submit).toHaveBeenCalled();
-
-      page.selectedOption = { kind: 'buyPackage', pkg: plan() };
-      page.onPrimaryAction();
-      expect(buy).toHaveBeenCalledWith(page.planToBuy);
     });
   });
 
   describe('opening on a plan from a link', () => {
-    it('selects a plan to buy when you do not own it', () => {
-      page.packages = [plan({ id: 3 }), plan({ id: 7 })];
-      page.pendingPlanId = 7;
-
-      page.preselectPlan();
-
-      expect(page.selectedOption).toEqual({ kind: 'buyPackage', pkg: page.packages[1] });
-      expect(page.pendingPlanId).toBeNull('used once, so a later pick sticks');
-    });
-
-    it('selects the owned plan instead when you already have it', () => {
+    it('selects the owned plan, so the session comes out of it', () => {
       const sub = { id: 99, providerPackage: plan({ id: 7 }) };
       page.packages = [plan({ id: 7 })];
       page.ownedByPackageId = new Map([[7, sub]]);
@@ -183,43 +146,68 @@ describe('BookingPageComponent plans', () => {
       page.preselectPlan();
 
       expect(page.selectedOption).toEqual({ kind: 'ownedPackage', subscription: sub });
+      expect(page.pendingPlanId).toBeNull('used once, so a later pick sticks');
+      expect(navigate).not.toHaveBeenCalled();
     });
 
-    it('ignores a plan from another provider, and waits until the plans have loaded', () => {
+    it('sends a plan you do not own to the Level Up page, replacing this URL', () => {
+      page.packages = [plan({ id: 3 }), plan({ id: 7 })];
       page.pendingPlanId = 7;
-      page.preselectPlan();
-      expect(page.selectedOption).toEqual({ kind: 'single' });
-      expect(page.pendingPlanId).toBe(7, 'kept for when the plans arrive');
 
+      page.preselectPlan();
+
+      expect(navigate).toHaveBeenCalledWith(['/trainers', 'Jo-Smith', 'level-up'], { queryParams: { plan: 7 }, replaceUrl: true });
+      expect(page.selectedOption).toEqual({ kind: 'single' });
+    });
+
+    it('uses /centers for a center', () => {
+      page.kind = 'center';
+      page.providerName = 'Iron Works Gym';
+      page.packages = [plan({ id: 7 })];
+      page.pendingPlanId = 7;
+
+      page.preselectPlan();
+
+      expect(navigate.calls.mostRecent().args[0]).toEqual(['/centers', 'Iron-Works-Gym', 'level-up']);
+    });
+
+    it('ignores a plan from another provider', () => {
       page.packages = [plan({ id: 3 })];
+      page.pendingPlanId = 7;
+
       page.preselectPlan();
+
+      expect(navigate).not.toHaveBeenCalled();
       expect(page.selectedOption).toEqual({ kind: 'single' });
     });
-  });
 
-  describe('starting checkout', () => {
-    let createCheckoutSession: jasmine.Spy;
+    it('waits until the plans, and what the client owns, have loaded', () => {
+      page.packages = [plan({ id: 7 })];
+      page.pendingPlanId = 7;
 
-    beforeEach(() => {
-      createCheckoutSession = jasmine.createSpy('createCheckoutSession').and.returnValue(of({ data: {} }));
-      page.subscriptionService = {
-        purchasePackage: jasmine.createSpy('purchasePackage').and.returnValue(of({
-          data: { subscriptionId: 55, packageId: 7, packageName: 'Plan', price: 99, currency: 'USD', status: 'PENDING_PAYMENT' },
-        })),
-      };
-      page.stripeService = { createCheckoutSession };
+      page.packagesLoaded = false;
+      page.preselectPlan();
+      page.packagesLoaded = true;
+      page.ownedLoaded = false;
+      page.preselectPlan();
+
+      expect(navigate).not.toHaveBeenCalled();
+      expect(page.pendingPlanId).toBe(7, 'kept for when everything has arrived');
+
+      page.ownedLoaded = true;
+      page.preselectPlan();
+      expect(navigate).toHaveBeenCalled();
     });
 
-    it('charges a subscription every month', () => {
-      page.buyPackage(plan({ billingType: 'RECURRING', sessionCount: null }));
+    it('does not wait on ownership for a guest, who owns nothing', () => {
+      page.user = null;
+      page.ownedLoaded = false;
+      page.packages = [plan({ id: 7 })];
+      page.pendingPlanId = 7;
 
-      expect(createCheckoutSession.calls.mostRecent().args[0]).toEqual(jasmine.objectContaining({ subscriptionId: 55, recurring: true }));
-    });
+      page.preselectPlan();
 
-    it('charges a session pack or membership once', () => {
-      page.buyPackage(plan());
-
-      expect(createCheckoutSession.calls.mostRecent().args[0].recurring).toBeFalse();
+      expect(navigate).toHaveBeenCalled();
     });
   });
 });

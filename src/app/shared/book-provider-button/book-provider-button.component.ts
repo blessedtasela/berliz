@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 import { IconsModule } from 'src/app/icons/icons.module';
-import { BookingDialogService } from 'src/app/booking/booking-dialog.service';
+import { BookingLauncherService } from 'src/app/booking/booking-launcher.service';
 
 /**
  * D10 — a login-gated "Book a session" action for a trainer or center, usable
@@ -39,7 +39,7 @@ export class BookProviderButtonComponent {
   @Input() subtle = false;
   @Input() label = 'Book a session';
 
-  constructor(private bookingDialog: BookingDialogService) {}
+  constructor(private bookingLauncher: BookingLauncherService) {}
 
   get canBook(): boolean {
     const r = (this.role || '').toLowerCase();
@@ -49,9 +49,9 @@ export class BookProviderButtonComponent {
   book(): void {
     const r = (this.role || '').toLowerCase();
     if (r === 'trainer' && this.trainerId) {
-      this.bookingDialog.openBookingForm({ trainerId: this.trainerId, providerName: this.providerName });
+      this.bookingLauncher.startBooking({ trainerId: this.trainerId, providerName: this.providerName });
     } else if (r === 'center' && this.centerId) {
-      this.bookingDialog.openBookingForm({ centerId: this.centerId, providerName: this.providerName });
+      this.bookingLauncher.startBooking({ centerId: this.centerId, providerName: this.providerName });
     }
   }
 }

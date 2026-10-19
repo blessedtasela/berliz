@@ -187,6 +187,20 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Booking is always a page; plans get their own "Level Up" page
+
+- **Book a session is a page, never a pop-up.** Every "Book a session" button (public and signed-in trainer/center pages, the book button on feed posts
+  and cards) opens `/trainers/:name/book` or `/centers/:name/book`, signed in or not. The booking pop-up (`BookingFormComponent`) and
+  `BookingModule` are gone, and so is the "resume your booking" draft banner that only that pop-up had; the page keeps a guest's pick across sign-in as
+  before. `BookingDialogService` is now `BookingLauncherService` (`startBooking`, `startLevelUp`).
+- **Level Up** — `/trainers/:name/level-up`, `/centers/:name/level-up`. The page for committing to a provider for more than one session: plans grouped
+  as Subscriptions, Session packs and Memberships, a "You have this · 3 left" mark on ones you own, what you get and what happens after paying, and
+  the pay button ("Subscribe · $X / month", "Buy pack · $X", "Get membership · $X"). A guest signs in and comes back to the same plan; a plan you own
+  links to booking a session from it. Plan cards and the **Level up** button on signed-in provider pages open it (`?plan=<id>` preselects).
+- **The booking page no longer sells plans.** It books a single session, or a session out of a plan you already own (shown only if you own one), and
+  links to Level Up for the rest. An old `/book?plan=<id>` link for a plan you don't own is forwarded to Level Up on that plan.
+- Mobile (the separate `mobile` app) is unchanged: its booking sheet is a native sheet and has no Level Up screen yet; see its parity tracker.
+
 ### Unreleased — Plans, packs and single sessions are three different things
 
 Before, every plan card said "Choose this plan" and led to a page whose only button was **Request booking** — so buying the

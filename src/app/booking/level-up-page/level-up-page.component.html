@@ -1,0 +1,193 @@
+<div class="min-h-screen bg-gray-50 dark:bg-gray-950 font-sans">
+
+  <!-- Resolving -->
+  <div *ngIf="resolving" class="flex items-center justify-center py-24 gap-2 text-gray-400 dark:text-gray-500">
+    <i-feather name="loader" class="animate-spin" style="width:18px;height:18px;"></i-feather>
+    <span class="text-sm">Loading...</span>
+  </div>
+
+  <!-- Not found -->
+  <div *ngIf="!resolving && notFound" class="flex flex-col items-center justify-center py-24 gap-3 px-4 text-center">
+    <i-feather name="alert-circle" class="text-gray-300 dark:text-gray-700" style="width:32px;height:32px;"></i-feather>
+    <p class="text-sm text-gray-500 dark:text-gray-400">We couldn't find that {{ kind }}.</p>
+    <a [routerLink]="kind === 'trainer' ? '/trainers' : '/centers'"
+      class="text-xs font-semibold text-red-600 hover:text-red-700">
+      Back to {{ kind === 'trainer' ? 'trainers' : 'centers' }}
+    </a>
+  </div>
+
+  <div *ngIf="!resolving && !notFound" class="max-w-3xl mx-auto px-4 py-8 flex flex-col gap-6">
+
+    <!-- Provider header -->
+    <div class="flex items-center gap-3">
+      <img alt="" [src]="providerPhotoUrl || '../../../assets/icons/user.png'"
+        class="w-12 h-12 rounded-full object-cover object-top border border-gray-200 dark:border-gray-700"
+        data-fallback-src="../../../assets/icons/user.png" />
+      <div class="flex-1 min-w-0">
+        <span class="text-[10px] font-bold uppercase tracking-wide text-red-600 dark:text-red-400 flex items-center gap-1">
+          <i-feather name="zap" style="width:10px;height:10px;"></i-feather> Level up
+        </span>
+        <h1 class="text-base font-bold text-gray-900 dark:text-gray-100">Train with {{ providerName }}, your way</h1>
+        <a [routerLink]="profilePath"
+          class="text-[11px] text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition">
+          View full profile
+        </a>
+      </div>
+      <button type="button" (click)="share()" aria-label="Share this page"
+        class="shrink-0 w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex items-center justify-center
+               text-gray-600 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 transition">
+        <i-feather name="share-2" style="width:15px;height:15px;"></i-feather>
+      </button>
+    </div>
+
+    <p class="text-xs text-gray-500 dark:text-gray-400 -mt-2">
+      Commit to more than one session: subscribe, buy a session pack or get a membership. Pay now, then book your sessions whenever suits you.
+    </p>
+
+    <!-- Loading plans -->
+    <div *ngIf="!plansLoaded" class="flex items-center justify-center py-10 gap-2 text-gray-400 dark:text-gray-500">
+      <i-feather name="loader" class="animate-spin" style="width:16px;height:16px;"></i-feather>
+      <span class="text-xs">Loading plans...</span>
+    </div>
+
+    <!-- Nothing for sale -->
+    <div *ngIf="plansLoaded && plans.length === 0"
+      class="flex flex-col items-center gap-2 py-10 px-4 text-center rounded-2xl border border-dashed border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+      <i-feather name="package" class="text-gray-300 dark:text-gray-700" style="width:24px;height:24px;"></i-feather>
+      <p class="text-sm font-semibold text-gray-700 dark:text-gray-200">{{ providerName }} hasn't published any plans yet.</p>
+      <p class="text-xs text-gray-400 dark:text-gray-500">You can still book a single session with them.</p>
+      <a [routerLink]="bookPath"
+        class="mt-1 px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700 transition">Book a session</a>
+    </div>
+
+    <!-- Plans, grouped by what they are -->
+    <section *ngFor="let group of groups" class="flex flex-col gap-3">
+      <div>
+        <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ kindTitle(group.kind) }}s</h2>
+        <p class="text-[11px] text-gray-400 dark:text-gray-500">{{ kindBlurb(group.kind) }}</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <button type="button" *ngFor="let plan of group.plans" (click)="choose(plan)"
+          [attr.aria-pressed]="selectedPlan?.id === plan.id" [attr.data-testid]="'plan-' + plan.id"
+          class="text-left p-4 rounded-2xl border transition flex flex-col gap-2.5"
+          [ngClass]="selectedPlan?.id === plan.id
+            ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800 ring-1 ring-red-300 dark:ring-red-800'
+            : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'">
+          <span class="flex items-start justify-between gap-2">
+            <span class="min-w-0">
+              <span class="flex items-center gap-1.5">
+                <span class="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">{{ kindLabel(plan) }}</span>
+                <span *ngIf="isOwned(plan)" class="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400">
+                  You have this
+                </span>
+              </span>
+              <span class="block text-sm font-bold text-gray-900 dark:text-gray-100 mt-1.5">{{ plan.name }}</span>
+            </span>
+            <i-feather *ngIf="selectedPlan?.id === plan.id" name="check-circle" class="shrink-0 text-red-600 dark:text-red-400" style="width:16px;height:16px;"></i-feather>
+          </span>
+
+          <span *ngIf="plan.description" class="text-[11px] leading-snug text-gray-500 dark:text-gray-400 line-clamp-3">{{ plan.description }}</span>
+
+          <span class="flex items-baseline gap-1">
+            <span class="text-2xl font-extrabold text-gray-900 dark:text-gray-100">{{ plan.price | currency:plan.currency:'symbol':'1.0-2' }}</span>
+            <span class="text-[11px] text-gray-400 dark:text-gray-500">{{ priceNote(plan) }}</span>
+          </span>
+
+          <span class="flex flex-col gap-1 text-[11px] text-gray-600 dark:text-gray-300">
+            <span class="flex items-center gap-1.5">
+              <i-feather name="check" class="text-red-600 dark:text-red-400" style="width:12px;height:12px;"></i-feather>
+              {{ includes(plan) }}<span *ngIf="isOwned(plan)" class="text-emerald-700 dark:text-emerald-400"> · {{ sessionsLeft(plan) }}</span>
+            </span>
+            <span *ngIf="plan.durationDays" class="flex items-center gap-1.5">
+              <i-feather name="check" class="text-red-600 dark:text-red-400" style="width:12px;height:12px;"></i-feather>
+              Valid for {{ plan.durationDays }} days
+            </span>
+          </span>
+        </button>
+      </div>
+    </section>
+
+    <!-- What you picked: what you get, what happens next, and the button that pays -->
+    <div *ngIf="selectedPlan as plan" id="level-up-checkout" aria-live="polite"
+      class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-3">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <span class="text-[10px] font-bold uppercase tracking-wide text-red-600 dark:text-red-400">{{ kindLabel(plan) }}</span>
+          <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ plan.name }}</h2>
+        </div>
+        <div class="text-right shrink-0">
+          <span class="block text-lg font-extrabold text-gray-900 dark:text-gray-100">{{ plan.price | currency:plan.currency:'symbol':'1.0-2' }}</span>
+          <span class="block text-[11px] text-gray-400 dark:text-gray-500">{{ priceNote(plan) }}</span>
+        </div>
+      </div>
+
+      <!-- Already yours: nothing to buy, go book -->
+      <ng-container *ngIf="isOwned(plan); else notOwned">
+        <p class="text-[11px] text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900 rounded-xl px-3 py-2.5 flex items-start gap-1.5">
+          <i-feather name="info" class="shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
+          You already have this ({{ sessionsLeft(plan) }}). Book your next session out of it.
+        </p>
+        <a [routerLink]="bookPath" [queryParams]="{ plan: plan.id }"
+          class="w-full px-4 py-3 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center justify-center gap-2">
+          <i-feather name="calendar" style="width:14px;height:14px;"></i-feather>
+          Book a session
+        </a>
+      </ng-container>
+
+      <ng-template #notOwned>
+        <p class="text-xs text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+          <i-feather name="check" class="text-red-600 dark:text-red-400" style="width:12px;height:12px;"></i-feather>
+          {{ includes(plan) }}
+        </p>
+        <p class="text-[11px] text-gray-500 dark:text-gray-400 flex items-start gap-1.5">
+          <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+          {{ checkoutNote(plan) }}
+        </p>
+        <p class="text-[11px] text-gray-400 dark:text-gray-500">You'll find it under My Subscriptions, separate from your bookings.</p>
+
+        <!-- Guest: choose how to continue (shown when they press the button) -->
+        <div *ngIf="showAuthPrompt && isGuest" role="region" aria-label="Log in or create an account to continue"
+          class="rounded-2xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 p-4 flex flex-col gap-3">
+          <div>
+            <p class="text-sm font-bold text-gray-900 dark:text-gray-100">Last step: sign in to continue</p>
+            <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">Your pick is saved. You'll come straight back here afterwards.</p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <button type="button" (click)="goToSignUp()"
+              class="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 transition">
+              Create a free account
+            </button>
+            <button type="button" (click)="goToLogin()"
+              class="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-900 transition">
+              I already have an account
+            </button>
+          </div>
+          <button type="button" (click)="dismissAuthPrompt()" class="self-start text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-600 transition">Not now</button>
+        </div>
+
+        <button type="button" (click)="buy()" [disabled]="buyBusy" data-testid="buy-plan"
+          class="w-full px-4 py-3 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition
+                 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100">
+          <i-feather [name]="buyBusy ? 'loader' : 'credit-card'" [ngClass]="{'animate-spin': buyBusy}" style="width:14px;height:14px;"></i-feather>
+          {{ buyLabel }}
+        </button>
+      </ng-template>
+    </div>
+
+    <!-- The no-commitment option lives on the booking page -->
+    <a [routerLink]="bookPath" *ngIf="plansLoaded && plans.length > 0"
+      class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 flex items-center justify-between gap-3
+             hover:border-gray-300 dark:hover:border-gray-700 transition">
+      <span>
+        <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100">Just want one session?</span>
+        <span class="block text-[11px] text-gray-400 dark:text-gray-500">No commitment. Pick a time and {{ providerName }} confirms it.</span>
+      </span>
+      <span class="shrink-0 text-xs font-semibold text-red-600 dark:text-red-400 flex items-center gap-1">
+        Book a session <i-feather name="arrow-right" style="width:12px;height:12px;"></i-feather>
+      </span>
+    </a>
+
+  </div>
+
+</div>
