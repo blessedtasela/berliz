@@ -8,6 +8,7 @@ import { MyTrainerPhotoAlbumComponent } from './my-trainer-photo-album/my-traine
 import { MyTrainerVideoAlbumComponent } from './my-trainer-video-album/my-trainer-video-album.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconsModule } from '../icons/icons.module';
+import { AvatarComponent } from '../shared/avatar/avatar.component';
 import { FeatherModule } from 'angular-feather';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { MyTrainerFeatureVideosComponent } from './my-trainer-feature-videos/my-trainer-feature-videos.component';
@@ -59,6 +60,7 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     ReactiveFormsModule,
     RouterModule,
     IconsModule,
+    AvatarComponent,
     FormsModule,
     ImageCropperModule,
     NgxFileDropModule,

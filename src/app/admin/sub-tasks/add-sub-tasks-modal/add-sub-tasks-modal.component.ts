@@ -1,4 +1,6 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { taskOptionLabel } from 'src/app/utils/option-labels';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, EventEmitter, OnInit, DestroyRef, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -27,6 +29,7 @@ import { genericError } from 'src/validators/form-validators.module';
     standalone: false
 })
 export class AddSubTasksModalComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   onAddSubTaskEmit = new EventEmitter();
   addSubTaskForm!: FormGroup;
   invalidForm = false;
@@ -46,6 +49,8 @@ export class AddSubTasksModalComponent implements OnInit {
     private snackbarService: SnackBarService,
   ) { }
 
+  readonly taskLabel = taskOptionLabel;
+
   ngOnInit(): void {
     this.addSubTaskForm = this.formBuilder.group({
       taskId: ['', Validators.required],
@@ -55,8 +60,8 @@ export class AddSubTasksModalComponent implements OnInit {
 
     this.store.dispatch(loadActiveTasks());
     this.store.dispatch(loadActiveExercises());
-    this.store.select(selectActiveTasks).subscribe(tasks => this.tasks = tasks);
-    this.store.select(selectActiveExercises).subscribe(exercises => this.exercises = exercises);
+    this.store.select(selectActiveTasks).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(tasks => this.tasks = tasks);
+    this.store.select(selectActiveExercises).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(exercises => this.exercises = exercises);
   }
 
   addSubTask(): void {

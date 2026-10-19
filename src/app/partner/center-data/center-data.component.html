@@ -26,7 +26,7 @@
 
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Display name</label>
-                <input formControlName="name" type="text" placeholder="Team Berliz" class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
+                <input aria-label="Display name" formControlName="name" type="text" placeholder="Team Berliz" class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="updateCenterForm.get('name')?.invalid && updateCenterForm.get('name')?.dirty
             ? 'border-red-300 dark:border-red-800' : 'border-gray-200 dark:border-gray-700'" />
                 <p *ngIf="updateCenterForm.get('name')?.invalid && updateCenterForm.get('name')?.dirty"
@@ -39,7 +39,7 @@
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Experience
                     (years)</label>
-                <input formControlName="experience" type="number" placeholder="5" class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
+                <input aria-label="Experience (years)" formControlName="experience" type="number" placeholder="5" class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="updateCenterForm.get('experience')?.invalid && updateCenterForm.get('experience')?.dirty
             ? 'border-red-300 dark:border-red-800' : 'border-gray-200 dark:border-gray-700'" />
             </div>
@@ -48,14 +48,14 @@
 
             <div class="md:col-span-2 flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Location URL</label>
-                <input formControlName="location" type="text" placeholder="Enter Google Maps URL" class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
+                <input aria-label="Location URL" formControlName="location" type="text" placeholder="Enter Google Maps URL" class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" [ngClass]="updateCenterForm.get('location')?.invalid && updateCenterForm.get('location')?.dirty
             ? 'border-red-300 dark:border-red-800' : 'border-gray-200 dark:border-gray-700'" />
             </div>
 
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Motto</label>
-                <textarea formControlName="motto" rows="4" placeholder="Write your discipline or motto" class="w-full px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
+                <textarea aria-label="Motto" formControlName="motto" rows="4" placeholder="Write your discipline or motto" class="w-full px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
                  resize-none transition placeholder:text-gray-400 dark:placeholder:text-gray-500" [ngClass]="updateCenterForm.get('motto')?.invalid && updateCenterForm.get('motto')?.dirty
             ? 'border-red-300 dark:border-red-800' : 'border-gray-200 dark:border-gray-700'">
@@ -69,7 +69,7 @@
 
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Address</label>
-                <textarea formControlName="address" rows="4" placeholder="Street address or location" class="w-full px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
+                <textarea aria-label="Address" formControlName="address" rows="4" placeholder="Street address or location" class="w-full px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
                  resize-none transition placeholder:text-gray-400 dark:placeholder:text-gray-500" [ngClass]="updateCenterForm.get('address')?.invalid && updateCenterForm.get('address')?.dirty
             ? 'border-red-300 dark:border-red-800' : 'border-gray-200 dark:border-gray-700'">

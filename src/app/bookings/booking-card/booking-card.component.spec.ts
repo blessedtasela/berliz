@@ -49,6 +49,64 @@ describe('BookingCardComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  describe('who the session is with', () => {
+    it("shows the trainer's own photo to the client, not a generic icon", () => {
+      component.mode = 'client';
+      component.booking.trainerPhotoUrl = 'https://cdn.example/jane.jpg';
+
+      expect(component.counterpartyPhoto).toContain('jane.jpg');
+    });
+
+    it("falls back to the center's photo when the booking is with a center", () => {
+      component.mode = 'client';
+      component.booking.trainerPhotoUrl = null;
+      component.booking.centerPhotoUrl = 'https://cdn.example/iron.jpg';
+
+      expect(component.counterpartyPhoto).toContain('iron.jpg');
+    });
+
+    it("shows the client's own photo to the provider", () => {
+      component.mode = 'provider';
+      component.booking.clientPhoto = 'QUJD';
+      component.booking.trainerPhotoUrl = 'https://cdn.example/jane.jpg';
+
+      expect(component.counterpartyPhoto).toBe('QUJD');
+    });
+
+    it('has no photo (so the avatar shows initials) when none was sent', () => {
+      component.mode = 'client';
+      expect(component.counterpartyPhoto).toBeNull();
+      component.mode = 'provider';
+      expect(component.counterpartyPhoto).toBeNull();
+    });
+  });
+
+  describe('a session booked from a pack', () => {
+    const tag = () => (fixture.nativeElement as HTMLElement).querySelector('[data-testid="pack-tag"]');
+
+    it('says which pack it came from, so it is not mistaken for a single session', () => {
+      component.booking.packageSubscriptionId = 12;
+      component.booking.packageName = '5 session starter';
+      fixture.detectChanges();
+
+      expect(tag()?.textContent).toContain('From 5 session starter');
+    });
+
+    it('still says it came from a pack when the name is missing', () => {
+      component.booking.packageSubscriptionId = 12;
+      component.booking.packageName = null;
+      fixture.detectChanges();
+
+      expect(tag()?.textContent).toContain('From your pack');
+    });
+
+    it('shows no tag on a plain single session', () => {
+      fixture.detectChanges();
+
+      expect(tag()).toBeNull();
+    });
+  });
+
   describe('cancel, no-show and reopen', () => {
     const lastDialogMessage = (): string => (dialogSpy.open.calls.mostRecent().args[1] as any).data.message;
 

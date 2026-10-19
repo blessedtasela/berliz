@@ -31,19 +31,11 @@
                 </button>
             </div>
 
-            <select *ngIf="form.value.ownerType === 'center'" formControlName="centerId"
-                class="w-full px-3 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100
-                       focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
-                <option [ngValue]="null" disabled>Select a center…</option>
-                <option *ngFor="let c of centers" [ngValue]="c.id">{{ c.name }}</option>
-            </select>
+            <app-select *ngIf="form.value.ownerType === 'center'" formControlName="centerId" [items]="centers" bindLabel="name" bindValue="id"
+                placeholder="Select a center…" ariaLabel="Center"></app-select>
 
-            <select *ngIf="form.value.ownerType === 'trainer'" formControlName="trainerId"
-                class="w-full px-3 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100
-                       focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition">
-                <option [ngValue]="null" disabled>Select a trainer…</option>
-                <option *ngFor="let t of trainers" [ngValue]="t.id">{{ t.name }}</option>
-            </select>
+            <app-select *ngIf="form.value.ownerType === 'trainer'" formControlName="trainerId" [items]="trainers" bindLabel="name" bindValue="id"
+                placeholder="Select a trainer…" ariaLabel="Trainer"></app-select>
         </div>
 
         <div *ngIf="isEdit" class="text-[11px] text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl px-3 py-2">
@@ -54,7 +46,7 @@
 
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Name</label>
-                <input type="text" formControlName="name" placeholder="Leg press machine"
+                <input aria-label="Name" type="text" formControlName="name" placeholder="Leg press machine"
                     class="w-full px-3 py-2 rounded-xl bg-white dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition
                            placeholder:text-gray-400 dark:placeholder:text-gray-500"
@@ -63,7 +55,7 @@
 
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Stock number</label>
-                <input type="number" formControlName="stockNumber" placeholder="4"
+                <input aria-label="Stock number" type="number" formControlName="stockNumber" placeholder="4"
                     class="w-full px-3 py-2 rounded-xl bg-white dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition
                            placeholder:text-gray-400 dark:placeholder:text-gray-500"
@@ -72,7 +64,7 @@
 
             <div class="flex flex-col gap-1 md:col-span-2">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Description</label>
-                <textarea formControlName="description" rows="3" placeholder="What this equipment is used for, and who it suits."
+                <textarea aria-label="Description" formControlName="description" rows="3" placeholder="What this equipment is used for, and who it suits."
                     class="w-full px-3 py-2 rounded-xl bg-white dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100 resize-none
                            focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition
                            placeholder:text-gray-400 dark:placeholder:text-gray-500"

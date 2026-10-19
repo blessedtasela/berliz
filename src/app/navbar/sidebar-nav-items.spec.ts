@@ -68,4 +68,21 @@ describe('sidebar-nav-items groups', () => {
     expect(sidebarGroupIsActive(train, null)).toBeFalse();
     expect(sidebarGroupRoute(train)).toBe('/dashboard/workout-room');
   });
+
+  // Both sidebars bind this to *ngFor through a getter, so it runs on every change-detection pass. A fresh array
+  // (and fresh group copies) each time rebuilt the whole sidebar every pass, and RouterLinkActive marking the
+  // view dirty as links were created kicked off the next pass: an endless render loop that froze the dashboard
+  // right after login.
+  it('returns the SAME array (and the same group objects) for the same role on every call', () => {
+    for (const role of ['user', 'trainer', 'center', 'admin', undefined, null]) {
+      const first = filterSidebarNavItems(role as any);
+      const second = filterSidebarNavItems(role as any);
+      expect(second).toBe(first);
+      first.forEach((item, i) => expect(second[i]).toBe(item));
+    }
+  });
+
+  it('keeps separate results per role', () => {
+    expect(filterSidebarNavItems('user')).not.toBe(filterSidebarNavItems('trainer'));
+  });
 });

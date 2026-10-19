@@ -7,6 +7,7 @@ import { Message } from 'src/app/models/message.model';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { validateUpload } from 'src/app/utils/media-upload.util';
 
 export interface ComposerSendPayload {
   body: string;
@@ -24,22 +25,13 @@ interface PendingAttachment {
   size: number;
 }
 
-/** Matches nothing this app already enforces elsewhere -- a plain sanity cap so one
- *  giant file can't hang the upload or blow past Strapi's own server-side limit. */
-const MAX_ATTACHMENT_BYTES = 25 * 1024 * 1024;
-
 /**
- * Attachments here are intentionally open to any document/image/video type
- * (see FEATURES.md), so an allowlist would break legitimate use -- this is a
- * blocklist of executable/script extensions instead, the realistic risk for
- * a "share any file" feature. Client-side only, like everything in this
- * component; the server must independently re-validate.
+ * A plain sanity cap so one giant file can't hang a chat upload (the server's own limit is higher).
+ * What may be attached follows the server's allow-list (images, video, PDF, Word/Excel/PowerPoint,
+ * text/CSV, audio) -- see validateUpload; anything else would only be refused by the server, so it is
+ * turned away here with the reason instead of failing after the upload.
  */
-const BLOCKED_ATTACHMENT_EXTENSIONS = [
-  '.exe', '.bat', '.cmd', '.com', '.pif', '.scr', '.msi', '.msp',
-  '.vbs', '.vbe', '.js', '.jse', '.wsf', '.wsh', '.ps1', '.psm1',
-  '.jar', '.app', '.apk', '.dmg', '.sh', '.bin', '.cpl', '.gadget',
-];
+const MAX_ATTACHMENT_MB = 25;
 
 /**
  * Compose bar -- input + send, plus reply-with-quote and edit-in-place.
@@ -105,13 +97,9 @@ export class MessageComposerComponent implements OnChanges, OnDestroy {
 
     if (!file) return;
     this.attachmentError = null;
-    if (file.size > MAX_ATTACHMENT_BYTES) {
-      this.attachmentError = `"${file.name}" is too large to attach (max 25MB).`;
-      return;
-    }
-    const ext = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
-    if (BLOCKED_ATTACHMENT_EXTENSIONS.includes(ext)) {
-      this.attachmentError = `"${file.name}" can't be attached: ${ext} files aren't allowed.`;
+    const problem = validateUpload(file, { maxMb: MAX_ATTACHMENT_MB });
+    if (problem) {
+      this.attachmentError = problem;
       return;
     }
 
@@ -123,9 +111,9 @@ export class MessageComposerComponent implements OnChanges, OnDestroy {
         if (!first) return;
         this.pendingAttachment = { url: first.fullUrl, name: file.name, mime: file.type, size: file.size };
       },
-      error: () => {
+      error: (err) => {
         this.uploadingAttachment = false;
-        this.attachmentError = `"${file.name}" could not be uploaded. Try attaching it again.`;
+        this.attachmentError = err?.error?.message || `"${file.name}" could not be uploaded. Try attaching it again.`;
       },
     });
   }

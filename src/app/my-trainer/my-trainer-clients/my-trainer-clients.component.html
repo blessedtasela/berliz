@@ -40,18 +40,16 @@
     <!-- Grid -->
     <div *ngIf="filteredClients().length > 0"
         class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-        <div *ngFor="let client of visibleClients(); let i = index"
-            class="flex flex-col items-center gap-1.5 group cursor-pointer">
+        <div *ngFor="let client of visibleClients(); trackBy: trackByClient"
+            class="flex flex-col items-center gap-1.5 group" [title]="clientName(client) + (client.email ? ' · ' + client.email : '')">
 
             <div class="relative">
-                <img alt="" [src]="getProfilePhoto('client-photo-here')" onerror="this.src='assets/avatar.png';"
-                    class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700
-                 group-hover:border-red-400 transition-all duration-200
-                 group-hover:scale-105 group-hover:shadow-md" />
+                <app-avatar [photo]="client.userPhoto" [name]="clientName(client)" [size]="48"
+                    borderClass="border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 group-hover:border-red-400 transition-all duration-200 group-hover:scale-105 group-hover:shadow-md"></app-avatar>
             </div>
 
-            <p class="text-[10px] font-semibold text-gray-700 dark:text-gray-300 text-center leading-tight truncate w-full text-center">
-                client name here
+            <p class="text-[10px] font-semibold text-gray-700 dark:text-gray-300 text-center leading-tight truncate w-full">
+                {{ clientName(client) }}
             </p>
         </div>
     </div>

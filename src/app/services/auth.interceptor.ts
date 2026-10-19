@@ -79,10 +79,29 @@ export class AuthInterceptor implements HttpInterceptor {
    * legitimately needs longer to push a large file, not because the server's down.
    */
   private readonly DEFAULT_TIMEOUT_MS = 20000;
-  private readonly UPLOAD_TIMEOUT_MS = 90000;
+  /**
+   * Uploads: a hard total cap would kill a perfectly healthy 50 MB video on a slow mobile
+   * connection (it used to give up after 90 s no matter how much had already gone up). Instead
+   * give up only when nothing happens for UPLOAD_IDLE_MS -- no progress event, and no response
+   * after the last byte (the server then forwards the file to the media store) -- with a
+   * generous ceiling for callers that don't report progress.
+   */
+  private readonly UPLOAD_IDLE_MS = 120000;
+  private readonly UPLOAD_MAX_MS = 15 * 60000;
 
-  private timeoutFor(url: string): number {
-    return url.includes('/strapi/upload') ? this.UPLOAD_TIMEOUT_MS : this.DEFAULT_TIMEOUT_MS;
+  /**
+   * Account deletion makes the server contact Apple (revoking Sign in with Apple) and Stripe (deleting the
+   * customer) before it answers, so 20 s is too tight: a timeout would show "failed" for an account that was
+   * in fact deleted. A fixed, longer cap -- not an upload, so not the idle-based one.
+   */
+  private readonly SLOW_CALL_MS = 60000;
+
+  private isSlowCall(request: HttpRequest<any>): boolean {
+    return request.url.includes('/account/delete');
+  }
+
+  private isUpload(request: HttpRequest<any>): boolean {
+    return request.url.includes('/strapi/upload') || (typeof FormData !== 'undefined' && request.body instanceof FormData);
   }
 
   /** Reshapes a timeout into the same {error: {message}} shape backend error
@@ -90,12 +109,14 @@ export class AuthInterceptor implements HttpInterceptor {
    * components show this instead of silently falling through to a generic
    * message with no explanation. Not applied to the WebSocket/STOMP handshake —
    * that connection is meant to stay open, not resolve quickly. */
-  private withTimeout<T>(source: Observable<T>, url: string): Observable<T> {
-    if (url.includes('/stomp')) {
+  private withTimeout<T>(source: Observable<T>, request: HttpRequest<any>): Observable<T> {
+    if (request.url.includes('/stomp')) {
       return source;
     }
     return source.pipe(
-      timeout(this.timeoutFor(url)),
+      this.isUpload(request)
+        ? timeout({ first: this.UPLOAD_MAX_MS, each: this.UPLOAD_IDLE_MS })
+        : timeout(this.isSlowCall(request) ? this.SLOW_CALL_MS : this.DEFAULT_TIMEOUT_MS),
       catchError(err => {
         if (err instanceof TimeoutError) {
           return throwError(() => ({
@@ -113,10 +134,10 @@ export class AuthInterceptor implements HttpInterceptor {
     const token = this.authService.getToken();
 
     if (this.isPublicRequest(request.url) || !token) {
-      return this.withTimeout(next.handle(request), request.url);
+      return this.withTimeout(next.handle(request), request);
     }
 
-    return this.withTimeout(next.handle(this.withToken(request, token)), request.url).pipe(
+    return this.withTimeout(next.handle(this.withToken(request, token)), request).pipe(
       catchError((error: HttpErrorResponse) => {
 
         // 401 handling -- a request that carried a bearer token (we already know one was

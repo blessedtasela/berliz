@@ -9,7 +9,7 @@
                     style="width:18px;height:18px;"></i-feather>
             </div>
 
-            <div class="min-w-0 flex-1" (click)="openExerciseDetails(exercise.id)">
+            <div class="min-w-0 flex-1" (click)="openExerciseDetails(exercise.id)" role="button" tabindex="0" (keydown.enter)="openExerciseDetails(exercise.id)">
                 <div class="flex items-center gap-2">
                     <p class="font-semibold text-gray-900 dark:text-gray-100 truncate">{{ exercise.name }}</p>
                     <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"

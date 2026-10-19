@@ -71,7 +71,7 @@
                 </div>
 
                 <div class="flex items-center gap-1 shrink-0">
-                    <button type="button" (click)="toggle(p)" class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center" [title]="p.active ? 'Pause' : 'Resume'">
+                    <button type="button" (click)="toggle(p)" class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center" [title]="p.active ? 'Pause' : 'Resume'" [attr.aria-label]="p.active ? 'Pause' : 'Resume'">
                         <i-feather [name]="p.active ? 'pause' : 'play'" class="text-gray-500 dark:text-gray-400" style="width:14px;height:14px;"></i-feather>
                     </button>
                     <button type="button" (click)="openEdit(p)" class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center" title="Edit">

@@ -2,7 +2,7 @@
     <!-- Mobile: card rows (matches admin/categories pattern) -->
     <div class="sm:hidden divide-y divide-gray-100 dark:divide-gray-800">
         <div *ngFor="let subscription of subscriptionsData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 dark:active:bg-gray-800 transition-colors">
-            <div class="min-w-0 flex-1" (click)="openSubscriptionDetails(subscription.id)">
+            <div class="min-w-0 flex-1" (click)="openSubscriptionDetails(subscription.id)" role="button" tabindex="0" (keydown.enter)="openSubscriptionDetails(subscription.id)">
                 <div class="flex items-center gap-2 flex-wrap">
                     <app-user-hover-card [userId]="subscription.user.id" [firstname]="subscription.user.firstname"
                         [lastname]="subscription.user.lastname" [photo]="subscription.user.profilePhoto"
@@ -23,7 +23,7 @@
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="updateSubscriptionStatus(subscription.id)"
-                    [title]="subscription.status === 'false' ? 'Activate' : 'Deactivate'">
+                    [title]="subscription.status === 'false' ? 'Activate' : 'Deactivate'" [attr.aria-label]="subscription.status === 'false' ? 'Activate' : 'Deactivate'">
                     <i-feather [name]="subscription.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"

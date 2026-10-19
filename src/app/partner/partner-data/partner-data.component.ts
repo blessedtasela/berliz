@@ -10,7 +10,7 @@ import { Trainers } from 'src/app/models/trainers.interface';
 import { Role } from 'src/app/models/users.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
-import { ViewCvModalComponent } from 'src/app/shared/view-cv-modal/view-cv-modal.component';
+import { openCvModal } from 'src/app/shared/pdf-modals';
 import { genericError } from 'src/validators/form-validators.module';
 import { Store } from '@ngrx/store';
 import { loadMyPartner } from 'src/app/state/partner/partner.actions';
@@ -86,38 +86,28 @@ export class PartnerDataComponent {
     });
   }
   openUrl(url: any) {
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   openViewResume() {
-    const dialogRef = this.dialog.open(ViewCvModalComponent, {
+    openCvModal(this.dialog, {
       width: '720px',
       maxWidth: '95vw',
       data: {
         partnerData: this.partnerData,
       },
       panelClass: 'mat-dialog-height',
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-      } else {
-      }
     });
   }
 
   openViewCertification() {
-    const dialogRef = this.dialog.open(ViewCvModalComponent, {
+    openCvModal(this.dialog, {
       width: '720px',
       maxWidth: '95vw',
       data: {
         partnerData: this.partnerData,
       },
       panelClass: 'mat-dialog-height',
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-      } else {
-      }
     });
   }
 

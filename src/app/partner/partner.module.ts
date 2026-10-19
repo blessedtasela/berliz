@@ -10,6 +10,7 @@ import { TrainerComponent } from './trainer/trainer.component';
 import { TrainerDataComponent } from './trainer-data/trainer-data.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconsModule } from '../icons/icons.module';
+import { AvatarComponent } from '../shared/avatar/avatar.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { RouterModule } from '@angular/router';
 import { PartnerRouteComponent } from './partner-route/partner-route.component';
@@ -58,6 +59,7 @@ import { ProviderPricingFieldsComponent } from './provider-pricing-fields/provid
     FormsModule,
     ReactiveFormsModule,
     IconsModule,
+    AvatarComponent,
     ImageCropperModule,
     RouterModule,
     SharedModule,

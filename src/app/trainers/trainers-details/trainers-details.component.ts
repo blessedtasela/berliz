@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ProviderPackage } from 'src/app/models/provider-package.model';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
@@ -305,6 +306,12 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
       trainerId: this.trainerId,
       providerName: this.trainer.name || 'this trainer'
     });
+  }
+
+  /** A plan card was chosen: the booking page opens on that plan, ready to subscribe or buy it. */
+  openPlan(plan: ProviderPackage): void {
+    if (!this.trainer) return;
+    this.router.navigate(['/trainers', this.trainer.name.split(' ').join('-'), 'book'], { queryParams: { plan: plan.id } });
   }
 
   testimonialAuthor(testimonial: Testimonials): string {

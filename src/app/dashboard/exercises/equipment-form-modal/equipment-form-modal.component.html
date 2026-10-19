@@ -31,7 +31,7 @@
 
             <div class="sm:col-span-2 flex flex-col gap-1">
                 <label class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Name</label>
-                <input type="text" formControlName="name" placeholder="e.g. Olympic squat rack" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
+                <input aria-label="Name" type="text" formControlName="name" placeholder="e.g. Olympic squat rack" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                      focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
                      transition placeholder:text-gray-400 dark:placeholder:text-gray-500" />
                 <p *ngIf="invalidForm && form.get('name')?.invalid" class="text-[11px] text-red-600">
@@ -41,7 +41,7 @@
 
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Stock</label>
-                <input type="number" min="0" formControlName="stockNumber" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
+                <input aria-label="Stock" type="number" min="0" formControlName="stockNumber" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                      focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
                 <p *ngIf="invalidForm && form.get('stockNumber')?.invalid" class="text-[11px] text-red-600">
                     Enter a stock count
@@ -52,7 +52,7 @@
         <!-- Description -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Description</label>
-            <textarea rows="3" formControlName="description" placeholder="What is it, and what is it used for?" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
+            <textarea aria-label="Description" rows="3" formControlName="description" placeholder="What is it, and what is it used for?" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                    focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
                    transition placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none"></textarea>
             <p *ngIf="invalidForm && form.get('description')?.invalid" class="text-[11px] text-red-600">
@@ -68,28 +68,28 @@
 
                 <div class="flex flex-col gap-1">
                     <label class="text-[11px] text-gray-500 dark:text-gray-400">Main image URL</label>
-                    <input type="text" formControlName="imageUrl" placeholder="https://…" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
+                    <input aria-label="Main image URL" type="text" formControlName="imageUrl" placeholder="https://…" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                          focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
                          transition placeholder:text-gray-400 dark:placeholder:text-gray-500" />
                 </div>
 
                 <div class="flex flex-col gap-1">
                     <label class="text-[11px] text-gray-500 dark:text-gray-400">Front view URL</label>
-                    <input type="text" formControlName="frontViewUrl" placeholder="https://…" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
+                    <input aria-label="Front view URL" type="text" formControlName="frontViewUrl" placeholder="https://…" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                          focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
                          transition placeholder:text-gray-400 dark:placeholder:text-gray-500" />
                 </div>
 
                 <div class="flex flex-col gap-1">
                     <label class="text-[11px] text-gray-500 dark:text-gray-400">Side view URL</label>
-                    <input type="text" formControlName="sideViewUrl" placeholder="https://…" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
+                    <input aria-label="Side view URL" type="text" formControlName="sideViewUrl" placeholder="https://…" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                          focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
                          transition placeholder:text-gray-400 dark:placeholder:text-gray-500" />
                 </div>
 
                 <div class="flex flex-col gap-1">
                     <label class="text-[11px] text-gray-500 dark:text-gray-400">Rear view URL</label>
-                    <input type="text" formControlName="rearViewUrl" placeholder="https://…" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
+                    <input aria-label="Rear view URL" type="text" formControlName="rearViewUrl" placeholder="https://…" class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 text-xs
                          focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
                          transition placeholder:text-gray-400 dark:placeholder:text-gray-500" />
                 </div>

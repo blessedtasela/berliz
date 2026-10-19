@@ -23,13 +23,13 @@
 
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Email</label>
-            <input [value]="userData.email" readonly type="text"
+            <input aria-label="Email" [value]="userData.email" readonly type="text"
                 class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-500 dark:text-gray-400 focus:outline-none transition">
         </div>
 
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Role</label>
-            <select formControlName="role" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
+            <select aria-label="Role" formControlName="role" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
                         'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': updateUserRoleForm.get('role')?.invalid && updateUserRoleForm.get('role')?.touched,

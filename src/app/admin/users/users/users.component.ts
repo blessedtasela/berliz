@@ -83,7 +83,6 @@ export class UsersComponent implements OnDestroy {
 
   handleEmitEvent() {
     this.store.select(selectUsers).subscribe((allUsers) => {
-      console.log('isCachedData false')
       this.usersData = allUsers;
       this.totalUsers = allUsers.length
       this.usersLength = allUsers.length

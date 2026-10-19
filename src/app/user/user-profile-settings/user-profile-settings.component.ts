@@ -10,6 +10,7 @@ import { CountryService } from 'src/app/services/country.service';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
+import { DeleteAccountDialogComponent } from 'src/app/shared/delete-account-dialog/delete-account-dialog.component';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { UpdateEmailModalComponent } from 'src/app/shared/update-email-modal/update-email-modal.component';
 import { emailExtensionValidator, genericError } from 'src/validators/form-validators.module';
@@ -749,6 +750,21 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
             this.snackBarService.openSnackBar(error.error?.message || genericError, 'error');
           }
         });
+      });
+  }
+
+  // -------------------------
+  // DELETE ACCOUNT (permanent)
+  // -------------------------
+  openDeleteAccount() {
+    const dialogRef = this.dialog.open(DeleteAccountDialogComponent, { width: '420px', maxWidth: '95vw' });
+
+    dialogRef.afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(deleted => {
+        if (!deleted) return;
+        this.snackBarService.openSnackBar('Your account has been deleted.', '');
+        this.userService.logout();
       });
   }
 

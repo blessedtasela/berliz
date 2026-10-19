@@ -49,7 +49,7 @@
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Photo</label>
             <img alt="" [src]="(previewUrl | strapiUrl) || '../../../assets/icons/user.png'"
                 class="w-full h-40 object-cover object-top rounded-xl border border-gray-200 dark:border-gray-700"
-                onerror="this.src='../../../assets/icons/user.png';" />
+                data-fallback-src="../../../assets/icons/user.png" />
             <input (change)="onPhotoSelected($event)" type="file" accept="image/*" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
                        file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold
                        file:bg-white dark:file:bg-gray-800 file:text-gray-600 dark:file:text-gray-300 file:border file:border-gray-200 dark:file:border-gray-600
@@ -82,7 +82,7 @@
         <!-- Display name -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Display name</label>
-            <input formControlName="name" [value]="trainer.name" type="text" placeholder="Display name e.g. Team Berliz"
+            <input aria-label="Display name" formControlName="name" [value]="trainer.name" type="text" placeholder="Display name e.g. Team Berliz"
                 class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
@@ -99,7 +99,7 @@
         <!-- Experience -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Experience</label>
-            <input formControlName="experience" [value]="trainer.experience" type="number" placeholder="Experience"
+            <input aria-label="Experience" formControlName="experience" [value]="trainer.experience" type="number" placeholder="Experience"
                 class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
@@ -116,7 +116,7 @@
         <!-- Likes -->
         <div class="flex flex-col gap-1" *ngIf="user?.role === 'admin'">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Likes</label>
-            <input formControlName="likes" [value]="trainer.likes" type="number" placeholder="Likes" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+            <input aria-label="Likes" formControlName="likes" [value]="trainer.likes" type="number" placeholder="Likes" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
                         'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': updateTrainerForm.get('likes')?.invalid && updateTrainerForm.get('likes')?.dirty,
@@ -132,7 +132,7 @@
         <!-- Motto -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Motto</label>
-            <textarea formControlName="motto" [value]="trainer.motto" rows="3"
+            <textarea aria-label="Motto" formControlName="motto" [value]="trainer.motto" rows="3"
                 placeholder="Write a short bio about discipline or motto" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
@@ -149,7 +149,7 @@
         <!-- Address -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Address</label>
-            <textarea formControlName="address" [value]="trainer.address" rows="3"
+            <textarea aria-label="Address" formControlName="address" [value]="trainer.address" rows="3"
                 placeholder="Write your street address or location here" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{

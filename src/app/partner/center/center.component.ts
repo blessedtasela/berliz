@@ -66,7 +66,6 @@ export class CenterComponent {
 
   emitData(): void {
     this.handleEmitEvent()
-    console.log('data emitted: ')
   }
 
   ngOnDestroy() {
@@ -132,7 +131,7 @@ export class CenterComponent {
   }
 
   openUrl(url: any) {
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   imageCropped(event: ImageCroppedEvent) {

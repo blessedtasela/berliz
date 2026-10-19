@@ -47,6 +47,36 @@ describe('DashboardTimelinePreviewComponent', () => {
     expect(component.posts.map(p => p.id)).toEqual([1, 2, 3]);
   });
 
+  // Regression: the teaser used to render only the post text, so photo and video posts looked like empty text.
+  it('shows the photo of a photo post and a still-frame video tile for a video post', () => {
+    setup();
+    const media: PostResponse[] = [
+      { ...posts[0], photoUrl: '/uploads/leg-day.jpg' },
+      { ...posts[1], videoUrl: '/uploads/pb.mp4' },
+      posts[2],
+    ];
+    postServiceSpy.getFeed.and.returnValue(of({ data: media, message: '', success: true, statusCode: 200 }));
+    fixture.detectChanges();
+
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.querySelectorAll('img[alt^="Photo from"]').length).toBe(1);
+    expect(el.querySelector('img[alt^="Photo from"]')!.getAttribute('src')).toContain('leg-day.jpg');
+    expect(el.querySelectorAll('video').length).toBe(1);
+    expect(el.querySelector('video')!.getAttribute('src')).toContain('pb.mp4');
+  });
+
+  it('shows a media-only post without an empty text paragraph', () => {
+    setup();
+    postServiceSpy.getFeed.and.returnValue(of({
+      data: [{ ...posts[0], content: '', photoUrl: '/uploads/only.jpg' }], message: '', success: true, statusCode: 200,
+    }));
+    fixture.detectChanges();
+
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.querySelector('img[alt^="Photo from"]')).not.toBeNull();
+    expect(el.querySelector('p.line-clamp-3')).toBeNull();
+  });
+
   it('stops loading even if the feed request fails', () => {
     setup();
     postServiceSpy.getFeed.and.returnValue(throwError(() => new Error('network error')));

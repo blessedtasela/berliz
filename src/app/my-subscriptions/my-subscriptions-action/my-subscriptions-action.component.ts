@@ -2,6 +2,12 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
+import {
+  BILLING_STORE_LABEL,
+  BILLING_STORE_MANAGE_URL,
+  BillingStore,
+  billingStoreOf
+} from 'src/app/utils/subscription-billing';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SubscriptionService } from 'src/app/services/subscription.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
@@ -23,6 +29,23 @@ export class MySubscriptionsActionComponent {
   /** D11 — the member has turned auto-renew off; access still runs to endDate. */
   get autoRenewOff(): boolean {
     return this.subscription?.autoRenew === false;
+  }
+
+  /**
+   * The store billing this subscription when it was bought in the iOS / Android app, else null. Such a
+   * subscription renews, cancels and changes plan only in that store, so the Stripe actions (renew, cancel and
+   * resume auto-renew) are replaced by a link there.
+   */
+  get store(): BillingStore | null {
+    return billingStoreOf(this.subscription);
+  }
+
+  get storeLabel(): string {
+    return this.store ? BILLING_STORE_LABEL[this.store] : '';
+  }
+
+  get manageUrl(): string {
+    return this.store ? BILLING_STORE_MANAGE_URL[this.store] : '';
   }
 
   constructor(

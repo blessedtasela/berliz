@@ -1,10 +1,5 @@
-import {
-  Component,
-  Inject,
-  OnInit,
-  EventEmitter,
-  Output
-} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, Inject, OnInit, EventEmitter, Output, DestroyRef, inject } from '@angular/core';
 
 import {
   MAT_DIALOG_DATA,
@@ -38,6 +33,7 @@ import { PromptModalComponent } from '../prompt-modal/prompt-modal.component';
     standalone: false
 })
 export class TodoDetailsModalComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
 
   @Output() emitEvent = new EventEmitter();
   @Output() onUpdateTodo = new EventEmitter();
@@ -116,7 +112,7 @@ export class TodoDetailsModalComponent implements OnInit {
   }
 
   private setupStatusRules(): void {
-    this.updateTodoForm.get('status')?.valueChanges.subscribe(status => {
+    this.updateTodoForm.get('status')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(status => {
       this.applyReadonlyRules(status);
     });
 
@@ -144,7 +140,7 @@ export class TodoDetailsModalComponent implements OnInit {
 
     this.updateTodoForm
       .get('status')
-      ?.valueChanges.subscribe(status => {
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(status => {
 
         const dueDateControl =
           this.updateTodoForm.get('dueDate');

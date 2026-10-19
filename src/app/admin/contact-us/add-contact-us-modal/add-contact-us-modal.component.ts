@@ -35,7 +35,6 @@ export class AddContactUsModalComponent {
 
   submitForm() {
     this.ngxService.start()
-    console.log("form value: ", this.contactUsForm.value)
     this.ngxService.start();
     if (this.contactUsForm.invalid) {
       this.invalidForm = true

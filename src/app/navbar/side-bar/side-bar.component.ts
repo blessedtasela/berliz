@@ -230,7 +230,6 @@ export class SideBarComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    console.log('logging out')
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
       message: 'Logout',

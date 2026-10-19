@@ -21,6 +21,7 @@ import { MySubscriptionsTimelineComponent } from './my-subscriptions-timeline/my
 import { MySubscriptionsAnalyticsComponent } from './my-subscriptions-analytics/my-subscriptions-analytics.component';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 import { SharedModule } from '../shared/shared.module';
+import { SubscriptionPackInfoComponent } from './subscription-pack-info/subscription-pack-info.component';
 
 
 
@@ -44,6 +45,7 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
   ],
   imports: [
     LoadErrorComponent,
+    SubscriptionPackInfoComponent,
     ClickablePhotoDirective,
     CommonModule,
     IconsModule,

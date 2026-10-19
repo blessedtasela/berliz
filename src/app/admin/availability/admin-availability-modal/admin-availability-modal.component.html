@@ -34,7 +34,7 @@
 
                 <div class="flex items-center gap-3 flex-wrap">
 
-                    <button type="button" (click)="toggleDay(day)"
+                    <button type="button" (click)="toggleDay(day)" [attr.aria-label]="'Available on ' + day.name"
                         class="shrink-0 w-9 h-5 rounded-full relative transition-colors"
                         [ngClass]="day.isActive ? 'bg-red-600' : 'bg-gray-300 dark:bg-gray-600'"
                         [attr.aria-pressed]="day.isActive">
@@ -48,15 +48,11 @@
 
                     <ng-container *ngIf="day.isActive; else dayOff">
                         <div class="flex items-center gap-2 flex-1 min-w-[220px]">
-                            <input type="time" [(ngModel)]="day.startTime" (ngModelChange)="day.invalid = false"
-                                class="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg border text-xs text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900
-                                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-                                [ngClass]="day.invalid ? 'border-red-400 dark:border-red-700' : 'border-gray-200 dark:border-gray-700'" />
+                            <app-time-picker class="flex-1 min-w-0" [(ngModel)]="day.startTime" (ngModelChange)="day.invalid = false"
+                                placeholder="Start time" [invalid]="day.invalid"></app-time-picker>
                             <span class="text-gray-400 dark:text-gray-500 text-xs shrink-0">to</span>
-                            <input type="time" [(ngModel)]="day.endTime" (ngModelChange)="day.invalid = false"
-                                class="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg border text-xs text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900
-                                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-                                [ngClass]="day.invalid ? 'border-red-400 dark:border-red-700' : 'border-gray-200 dark:border-gray-700'" />
+                            <app-time-picker class="flex-1 min-w-0" [(ngModel)]="day.endTime" (ngModelChange)="day.invalid = false"
+                                placeholder="End time" [invalid]="day.invalid"></app-time-picker>
                         </div>
                     </ng-container>
                     <ng-template #dayOff>

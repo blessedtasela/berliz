@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, EventEmitter } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectorRef, Component, EventEmitter, DestroyRef, inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -17,6 +18,7 @@ import { genericError } from 'src/validators/form-validators.module';
     standalone: false
 })
 export class AddCenterPricingsModalComponent {
+  private destroyRef = inject(DestroyRef);
   onAddCenterPricingEmit = new EventEmitter();
   addCenterPricingForm!: FormGroup;
   invalidForm: boolean = false;
@@ -47,7 +49,7 @@ export class AddCenterPricingsModalComponent {
 
   onEmit(): void {
     this.store.dispatch(loadCenters());
-    this.store.select(selectCenters).subscribe((centers) => {
+    this.store.select(selectCenters).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((centers) => {
       this.centers = centers;
     });
   }

@@ -25,7 +25,7 @@
             <div class="relative shrink-0">
                 <button type="button" (click)="goToProfile(user.id)" title="View profile">
                     <img alt="" [src]="photoSrc(user)"
-                        onerror="this.src='../../../assets/icons/user.png';"
+                        data-fallback-src="../../../assets/icons/user.png"
                         class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700">
                 </button>
                 <label [attr.for]="'fileInput-m-' + user.id" title="Change photo"
@@ -36,7 +36,7 @@
                     (change)="onImgSelected($event, user.id)">
             </div>
 
-            <div class="min-w-0 flex-1" (click)="openUserDetails(user.id)">
+            <div class="min-w-0 flex-1" (click)="openUserDetails(user.id)" role="button" tabindex="0" (keydown.enter)="openUserDetails(user.id)">
                 <div class="flex items-center gap-2">
                     <p class="font-semibold text-gray-900 dark:text-gray-100 truncate">{{ user.firstname }} {{ user.lastname }}</p>
                     <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
@@ -53,7 +53,7 @@
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="updateUserStatus(user.id)"
-                    [title]="user.status === 'false' ? 'Activate' : 'Deactivate'">
+                    [title]="user.status === 'false' ? 'Activate' : 'Deactivate'" [attr.aria-label]="user.status === 'false' ? 'Activate' : 'Deactivate'">
                     <i-feather [name]="user.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"
@@ -89,7 +89,7 @@
                                     (mouseenter)="onPhotoEnter($event, user.id)" (mouseleave)="onPhotoLeave()"
                                     title="View profile">
                                     <img alt="" [src]="photoSrc(user)"
-                                        onerror="this.src='../../../assets/icons/user.png';"
+                                        data-fallback-src="../../../assets/icons/user.png"
                                         class="w-10 h-10 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700 hover:opacity-80 transition">
                                 </button>
                                 <!-- Preview, positioned above the thumbnail rather than screen-center so the
@@ -97,9 +97,9 @@
                                 <div *ngIf="hoveredPhotoUserId === user.id" (mouseenter)="onPhotoEnter($event, user.id)"
                                     (mouseleave)="onPhotoLeave()" (click)="goToProfile(user.id)"
                                     class="fixed z-50 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2 shadow-2xl cursor-pointer"
-                                    [style.top.px]="photoPreviewTop" [style.left.px]="photoPreviewLeft">
+                                    [style.top.px]="photoPreviewTop" [style.left.px]="photoPreviewLeft" role="button" tabindex="0" (keydown.enter)="goToProfile(user.id)">
                                     <img alt="" [src]="photoSrc(user)"
-                                        onerror="this.src='../../../assets/icons/user.png';"
+                                        data-fallback-src="../../../assets/icons/user.png"
                                         class="w-56 h-56 rounded-xl object-cover object-top">
                                 </div>
                             </div>

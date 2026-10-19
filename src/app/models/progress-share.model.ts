@@ -11,6 +11,8 @@ export interface ProgressShare {
   clientFirstname: string;
   clientLastname: string;
   clientEmail: string;
+  /** The client's profile photo (base64), when they have one. */
+  clientPhoto?: string | null;
 
   trainerId: number;
   trainerName: string;

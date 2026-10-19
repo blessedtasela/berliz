@@ -37,6 +37,9 @@ export interface CenterLikes {
   centerName: string;
   userId: number;
   userEmail: string;
+  username?: string;
+  /** The person's profile photo (base64), when they have one. */
+  userPhoto?: string | null;
   date: Date;
 }
 
@@ -118,6 +121,8 @@ export interface CenterTrainers {
   photoResponse?: PhotoResponse;
   trainerId: number;
   trainerName: string;
+  /** The trainer's own photo (photoResponse above is the center's). */
+  trainerPhoto?: PhotoResponse | null;
   status: string;
   date: Date;
   lastUpdate: Date;
@@ -189,6 +194,8 @@ export interface CenterReviews {
   centerName: string;
   memberId: number;
   memberName: string;
+  /** The reviewer's profile photo (base64) -- only present when their profile is public. */
+  memberPhoto?: string | null;
   comment: string;
   /** 1-5 stars; absent on reviews written before ratings existed. */
   rating?: number | null;

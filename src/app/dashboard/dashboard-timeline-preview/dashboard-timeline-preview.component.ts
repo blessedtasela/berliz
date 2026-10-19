@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IconsModule } from 'src/app/icons/icons.module';
 import { AvatarComponent } from 'src/app/shared/avatar/avatar.component';
+import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 import { PostResponse } from 'src/app/models/post.interface';
 import { PostService } from 'src/app/services/post.service';
 
@@ -14,7 +15,7 @@ import { PostService } from 'src/app/services/post.service';
  */
 @Component({
     selector: 'app-dashboard-timeline-preview',
-    imports: [CommonModule, RouterModule, IconsModule, AvatarComponent],
+    imports: [CommonModule, RouterModule, IconsModule, AvatarComponent, StrapiUrlPipe],
     templateUrl: './dashboard-timeline-preview.component.html'
 })
 export class DashboardTimelinePreviewComponent implements OnInit {

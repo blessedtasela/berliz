@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import { BookingService } from 'src/app/services/booking.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { Trainers } from 'src/app/models/trainers.interface';
-import { BookingLocationSelection } from 'src/app/booking/booking-location-picker/booking-location-picker.component';
+import { BookingLocationSelection, locationPayload } from 'src/app/booking/booking-location-picker/booking-location-picker.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { MyClientSummary } from 'src/app/models/booking.model';
 import { memoizePhotoUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
@@ -98,8 +98,7 @@ export class BookForClientModalComponent implements OnInit {
       localTime: this.time,
       durationMinutes: this.durationMinutes,
       notes: this.notes.trim(),
-      trainerLocationId: this.locationSelection?.trainerLocationId,
-      customLocation: this.locationSelection?.customLocation,
+      ...locationPayload(this.locationSelection),
     }).pipe(take(1)).subscribe({
       next: (res) => {
         this.submitting = false;

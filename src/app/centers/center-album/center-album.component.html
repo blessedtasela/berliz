@@ -19,7 +19,7 @@
         <div *ngFor="let photo of photos; let i = index" [ngClass]="{ 'hidden': i >= 6 && !showAllPhotos }"
             class="rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950">
             <img [src]="photo.photoUrl | strapiUrl" [alt]="photo.name" class="w-full aspect-square object-cover object-top"
-                onerror="this.src='assets/landing/hero-gym-centers.jpg';" />
+                data-fallback-src="assets/landing/hero-gym-centers.jpg" />
         </div>
     </div>
 

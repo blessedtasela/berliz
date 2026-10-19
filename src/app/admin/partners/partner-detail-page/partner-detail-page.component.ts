@@ -9,8 +9,7 @@ import { Partner } from 'src/app/models/partners.interface';
 import { PartnerService } from 'src/app/services/partner.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
-import { ViewCertificateModalComponent } from 'src/app/shared/view-certificate-modal/view-certificate-modal.component';
-import { ViewCvModalComponent } from 'src/app/shared/view-cv-modal/view-cv-modal.component';
+import { openCvModal, openCertificateModal } from 'src/app/shared/pdf-modals';
 import { UpdatePartnerFileModalComponent } from 'src/app/shared/update-partner-file-modal/update-partner-file-modal.component';
 import { genericError } from 'src/validators/form-validators.module';
 import { loadPartners } from 'src/app/state/partner/partner.actions';
@@ -91,7 +90,7 @@ export class PartnerDetailPageComponent implements OnInit, OnDestroy {
   }
 
   openUrl(url: any) {
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   rejectApplication(id: number) {
@@ -148,7 +147,7 @@ export class PartnerDetailPageComponent implements OnInit, OnDestroy {
   openViewCertificate() {
     const partner = this.partnerData;
     if (partner) {
-      this.dialog.open(ViewCertificateModalComponent, {
+      openCertificateModal(this.dialog, {
         width: '720px',
         maxWidth: '95vw',
         data: {
@@ -162,7 +161,7 @@ export class PartnerDetailPageComponent implements OnInit, OnDestroy {
   openViewCV() {
     const partner = this.partnerData;
     if (partner) {
-      this.dialog.open(ViewCvModalComponent, {
+      openCvModal(this.dialog, {
         width: '720px',
         maxWidth: '95vw',
         data: {

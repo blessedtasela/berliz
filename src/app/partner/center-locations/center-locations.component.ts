@@ -169,7 +169,7 @@ export class CenterLocationsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   openUrl(url: string): void {
-    if (url) window.open(url, '_blank');
+    if (url) window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   formatDate(date: any): string {

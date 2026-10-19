@@ -24,7 +24,7 @@ import { selectAvailabilityLoading, selectAvailableSlots } from 'src/app/state/a
 import { AvailableSlot } from 'src/app/models/availability.model';
 import { SessionCredit, PromoOffer } from 'src/app/models/promo-offer.model';
 
-import { BookingLocationSelection } from '../booking-location-picker/booking-location-picker.component';
+import { BookingLocationSelection, LocationPreselect, locationPayload } from '../booking-location-picker/booking-location-picker.component';
 import { Offer } from '../booking-price-estimate/booking-price.util';
 import { genericError } from 'src/validators/form-validators.module';
 
@@ -47,6 +47,9 @@ interface BookingDraftData {
   /** Where-to-train choice (trainer bookings); absent on drafts saved before this existed. */
   locationId?: number | null;
   customLocation?: string | null;
+  customLocationCountry?: string | null;
+  customLocationState?: string | null;
+  customLocationCity?: string | null;
 }
 
 @Component({
@@ -126,8 +129,7 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   availabilityConfigured: boolean | null = null;
   slotsMessage = '';
 
-  /** True once we know this provider has no availability configured — falls
-   *  back to the old manual date/time entry rather than a broken calendar. */
+  /** True once we know this provider has set no available times -- nothing can be booked until they do. */
   get useManualEntry(): boolean {
     return this.availabilityConfigured === false;
   }
@@ -151,17 +153,15 @@ export class BookingFormComponent implements OnInit, OnDestroy {
   locationSelection: BookingLocationSelection | null = null;
 
   /** Handed to the picker when a draft is resumed so it can restore the saved choice. */
-  locationPreselect: { trainerLocationId?: number | null; customLocation?: string | null } | null = null;
+  locationPreselect: LocationPreselect | null = null;
 
   onLocationChange(selection: BookingLocationSelection): void {
     this.locationSelection = selection;
     this.saveDraft();
   }
 
-  private get locationPayload(): { trainerLocationId?: number; customLocation?: string } {
-    const s = this.locationSelection;
-    if (!s || this.data.trainerId == null) return {};
-    return { trainerLocationId: s.trainerLocationId, customLocation: s.customLocation };
+  private get locationPayload() {
+    return this.data.trainerId == null ? {} : locationPayload(this.locationSelection);
   }
 
   // ── Redemption enforcement: an available reward the client can attach ──
@@ -170,9 +170,9 @@ export class BookingFormComponent implements OnInit, OnDestroy {
 
   // ── Inputs for the "Estimated total" shown before sending ──
 
-  /** The session length the estimate is for: the picked slot's length, or the length chosen when entering a time by hand. */
+  /** The session length the estimate is for: the picked slot's length, or the length chosen for an urgent request. */
   get estimateMinutes(): number {
-    return (this.urgentMode || this.useManualEntry)
+    return this.urgentMode
       ? Number(this.bookingForm?.value?.durationMinutes) || 60
       : this.slotDurationMinutes;
   }
@@ -378,7 +378,10 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       reward: d.reward,
     });
     if (d.locationId != null || d.customLocation) {
-      this.locationPreselect = { trainerLocationId: d.locationId, customLocation: d.customLocation };
+      this.locationPreselect = {
+        trainerLocationId: d.locationId, customLocation: d.customLocation,
+        customLocationCountry: d.customLocationCountry, customLocationState: d.customLocationState, customLocationCity: d.customLocationCity,
+      };
     }
     this.fetchSlotsForSelectedDate();
     this.pendingDraft = null;
@@ -409,6 +412,9 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       reward: value.reward ?? '',
       locationId: this.locationSelection?.trainerLocationId ?? null,
       customLocation: this.locationSelection?.customLocation ?? null,
+      customLocationCountry: this.locationSelection?.customLocationCountry ?? null,
+      customLocationState: this.locationSelection?.customLocationState ?? null,
+      customLocationCity: this.locationSelection?.customLocationCity ?? null,
     }, {
       id: this.draftId,
       label: `Booking with ${this.data.providerName}`,
@@ -440,10 +446,11 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Nothing is bookable until the provider sets their available times.
+    if (this.useManualEntry) return;
+
     if (this.urgentMode) {
       this.submitUrgent();
-    } else if (this.useManualEntry) {
-      this.submitManual();
     } else {
       this.submitFromSlot();
     }
@@ -538,39 +545,6 @@ export class BookingFormComponent implements OnInit, OnDestroy {
       ...this.locationPayload
     };
 
-    this.submitting = true;
-    this.store.dispatch(createBooking({ data: payload }));
-  }
-
-  private submitManual(): void {
-    if (this.bookingForm.invalid) {
-      this.invalidForm = true;
-      this.bookingForm.markAllAsTouched();
-      this.submitError = 'Choose a date and time, and keep your notes within the length limit.';
-      return;
-    }
-
-    const value = this.bookingForm.value;
-    const scheduledAt = new Date(`${value.date}T${value.time}`);
-
-    if (isNaN(scheduledAt.getTime()) || scheduledAt.getTime() < this.earliestBookableTime) {
-      this.pastDate = true;
-      return;
-    }
-    this.pastDate = false;
-
-    const payload = {
-      id: null,
-      trainerId: this.data.trainerId ?? null,
-      centerId: this.data.centerId ?? null,
-      scheduledAt: scheduledAt.toISOString(),
-      durationMinutes: Number(value.durationMinutes),
-      notes: (value.notes ?? '').trim(),
-      ...this.rewardPayload,
-      ...this.locationPayload
-    };
-
-    this.invalidForm = false;
     this.submitting = true;
     this.store.dispatch(createBooking({ data: payload }));
   }

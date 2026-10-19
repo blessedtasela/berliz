@@ -1,4 +1,6 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { userOptionLabel } from 'src/app/utils/option-labels';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, EventEmitter, OnInit, DestroyRef, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -27,6 +29,7 @@ import { genericError } from 'src/validators/form-validators.module';
     standalone: false
 })
 export class AddPaymentsModalComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   onAddPaymentEmit = new EventEmitter();
   addPaymentForm!: FormGroup;
   invalidForm = false;
@@ -45,6 +48,8 @@ export class AddPaymentsModalComponent implements OnInit {
     private snackbarService: SnackBarService,
   ) { }
 
+  readonly userLabel = userOptionLabel;
+
   ngOnInit(): void {
     this.addPaymentForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -53,7 +58,7 @@ export class AddPaymentsModalComponent implements OnInit {
     });
 
     this.store.dispatch(loadActiveUsers());
-    this.store.select(selectUsers).subscribe(users => this.users = users);
+    this.store.select(selectUsers).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(users => this.users = users);
   }
 
   addPayment(): void {

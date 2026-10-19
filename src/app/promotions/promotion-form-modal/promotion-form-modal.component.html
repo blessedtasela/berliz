@@ -11,7 +11,7 @@
 
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">Title</label>
-            <input type="text" formControlName="title" placeholder="e.g. New member special"
+            <input aria-label="Title" type="text" formControlName="title" placeholder="e.g. New member special"
                 class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-1 focus:ring-red-400 focus:bg-white dark:focus:bg-gray-900 transition" />
             <p *ngIf="invalidForm && form.get('title')?.invalid" class="text-[11px] text-red-600 dark:text-red-400">A title is required.</p>
@@ -19,7 +19,7 @@
 
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">Description (optional)</label>
-            <textarea formControlName="description" rows="2" placeholder="What's the offer?"
+            <textarea aria-label="Description (optional)" formControlName="description" rows="2" placeholder="What's the offer?"
                 class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100 resize-none
                        focus:outline-none focus:ring-1 focus:ring-red-400 focus:bg-white dark:focus:bg-gray-900 transition"></textarea>
         </div>
@@ -27,7 +27,7 @@
         <div class="grid grid-cols-2 gap-3">
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">Offer type</label>
-                <select formControlName="type"
+                <select aria-label="Offer type" formControlName="type"
                     class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-1 focus:ring-red-400 focus:bg-white dark:focus:bg-gray-900 transition">
                     <option value="percentage">% off</option>
@@ -47,7 +47,7 @@
 
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">Audience</label>
-            <select formControlName="audience"
+            <select aria-label="Audience" formControlName="audience"
                 class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-1 focus:ring-red-400 focus:bg-white dark:focus:bg-gray-900 transition">
                 <option value="everyone">Everyone</option>
@@ -58,13 +58,13 @@
         <div class="grid grid-cols-2 gap-3">
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">Starts (optional)</label>
-                <input type="date" formControlName="startDate"
+                <input aria-label="Starts (optional)" type="date" formControlName="startDate"
                     class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-1 focus:ring-red-400 focus:bg-white dark:focus:bg-gray-900 transition" />
             </div>
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">Ends (optional)</label>
-                <input type="date" formControlName="endDate"
+                <input aria-label="Ends (optional)" type="date" formControlName="endDate"
                     class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-1 focus:ring-red-400 focus:bg-white dark:focus:bg-gray-900 transition" />
             </div>
@@ -72,14 +72,14 @@
 
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">Limit to first N redemptions (optional)</label>
-            <input type="number" min="1" formControlName="usageLimit" placeholder="Unlimited"
+            <input aria-label="Limit to first N redemptions (optional)" type="number" min="1" formControlName="usageLimit" placeholder="Unlimited"
                 class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-1 focus:ring-red-400 focus:bg-white dark:focus:bg-gray-900 transition" />
         </div>
 
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">Private code (optional)</label>
-            <input type="text" formControlName="code" placeholder="e.g. ACMECO20"
+            <input aria-label="Private code (optional)" type="text" formControlName="code" placeholder="e.g. ACMECO20"
                 class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100 uppercase
                        focus:outline-none focus:ring-1 focus:ring-red-400 focus:bg-white dark:focus:bg-gray-900 transition" />
             <p class="text-[11px] text-gray-400 dark:text-gray-500">Share this privately -- e.g. with a corporate or gym partner. A coded offer never shows on your public profile or the Deals feed; only someone with the code can redeem it.</p>

@@ -1,4 +1,4 @@
-<div class="max-w-2xl w-full p-6 mx-auto flex flex-col gap-5 font-sans">
+<div class="max-w-2xl w-full p-6 mx-auto flex flex-col gap-5 font-sans bg-white dark:bg-gray-900">
 
     <!-- Header -->
     <div class="flex items-start justify-between gap-3">
@@ -20,7 +20,7 @@
 
     <img alt="" [src]="photoSrc"
         class="w-full h-32 object-cover object-top rounded-xl border border-gray-200 dark:border-gray-700"
-        onerror="this.src='../../../assets/icons/user.png';" />
+        data-fallback-src="../../../assets/icons/user.png" />
 
     <form [formGroup]="updateUserForm" class="flex flex-col gap-4">
 
@@ -43,7 +43,7 @@
 
                 <div class="flex flex-col gap-1">
                     <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">First name</label>
-                    <input formControlName="firstname" type="text" placeholder="First name" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                    <input aria-label="First name" formControlName="firstname" type="text" placeholder="First name" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                         [ngClass]="{
                                 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': updateUserForm.get('firstname')?.invalid && updateUserForm.get('firstname')?.touched,
@@ -58,7 +58,7 @@
 
                 <div class="flex flex-col gap-1">
                     <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Last name</label>
-                    <input formControlName="lastname" type="text" placeholder="Last name" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                    <input aria-label="Last name" formControlName="lastname" type="text" placeholder="Last name" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                         [ngClass]="{
                                 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': updateUserForm.get('lastname')?.invalid && updateUserForm.get('lastname')?.touched,
@@ -73,7 +73,7 @@
 
                 <div class="flex flex-col gap-1">
                     <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Phone</label>
-                    <input formControlName="phone" type="tel" placeholder="+123 000 000 000" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                    <input aria-label="Phone" formControlName="phone" type="tel" placeholder="+123 000 000 000" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                         [ngClass]="{
                                 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': updateUserForm.get('phone')?.invalid && updateUserForm.get('phone')?.touched,
@@ -88,7 +88,7 @@
 
                 <div class="flex flex-col gap-1">
                     <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Date of birth</label>
-                    <input formControlName="dob" type="date" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                    <input aria-label="Date of birth" formControlName="dob" type="date" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                         [ngClass]="{
                                 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': updateUserForm.get('dob')?.invalid && updateUserForm.get('dob')?.touched,
@@ -155,7 +155,7 @@
 
                 <div class="flex flex-col gap-1">
                     <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Country</label>
-                    <select formControlName="country" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
+                    <select aria-label="Country" formControlName="country" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                         [ngClass]="{
                                 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': updateUserForm.get('country')?.invalid && updateUserForm.get('country')?.touched,
@@ -173,7 +173,7 @@
 
                 <div class="flex flex-col gap-1">
                     <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">State</label>
-                    <input formControlName="state" type="text" placeholder="State" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                    <input aria-label="State" formControlName="state" type="text" placeholder="State" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                         [ngClass]="{
                                 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': updateUserForm.get('state')?.invalid && updateUserForm.get('state')?.touched,
@@ -188,7 +188,7 @@
 
                 <div class="flex flex-col gap-1">
                     <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">City</label>
-                    <input formControlName="city" type="text" placeholder="City" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                    <input aria-label="City" formControlName="city" type="text" placeholder="City" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                         [ngClass]="{
                                 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': updateUserForm.get('city')?.invalid && updateUserForm.get('city')?.touched,
@@ -203,7 +203,7 @@
 
                 <div class="flex flex-col gap-1">
                     <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Postal code</label>
-                    <input formControlName="postalCode" type="number" placeholder="Postal code" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                    <input aria-label="Postal code" formControlName="postalCode" type="number" placeholder="Postal code" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                         [ngClass]="{
                                 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': updateUserForm.get('postalCode')?.invalid && updateUserForm.get('postalCode')?.touched,
@@ -218,7 +218,7 @@
 
                 <div class="flex flex-col gap-1 sm:col-span-2">
                     <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Address</label>
-                    <textarea formControlName="address" rows="3" placeholder="Write the address here" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                    <textarea aria-label="Address" formControlName="address" rows="3" placeholder="Write the address here" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                                focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                         [ngClass]="{
                                 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': updateUserForm.get('address')?.invalid && updateUserForm.get('address')?.touched,

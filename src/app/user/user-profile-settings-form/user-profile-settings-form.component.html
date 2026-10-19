@@ -28,7 +28,7 @@
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     First name
                 </label>
-                <input formControlName="firstname" type="text" placeholder="First name" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
+                <input aria-label="First name" formControlName="firstname" type="text" placeholder="First name" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="fieldBorder('firstname')" />
                 <p *ngIf="showError('firstname')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
@@ -42,7 +42,7 @@
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Last name
                 </label>
-                <input formControlName="lastname" type="text" placeholder="Last name" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
+                <input aria-label="Last name" formControlName="lastname" type="text" placeholder="Last name" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="fieldBorder('lastname')" />
                 <p *ngIf="showError('lastname')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
@@ -56,7 +56,7 @@
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Email
                 </label>
-                <input formControlName="email" type="text" placeholder="Email" readonly class="w-full h-10 px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm
+                <input aria-label="Email" formControlName="email" type="text" placeholder="Email" readonly class="w-full h-10 px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm
                            text-gray-400 dark:text-gray-500 focus:outline-none cursor-not-allowed" />
             </div>
 
@@ -65,7 +65,7 @@
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Phone
                 </label>
-                <input formControlName="phone" type="tel" placeholder="+1 000 000 000" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
+                <input aria-label="Phone" formControlName="phone" type="tel" placeholder="+1 000 000 000" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="fieldBorder('phone')" />
                 <p *ngIf="showError('phone')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
@@ -79,7 +79,7 @@
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Date of birth
                 </label>
-                <input formControlName="dob" type="date" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
+                <input aria-label="Date of birth" formControlName="dob" type="date" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="fieldBorder('dob')" />
                 <p *ngIf="showError('dob')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
@@ -108,7 +108,7 @@
             </div>
 
             <!-- Country -->
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-1 mb-8">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Country
                 </label>
@@ -139,7 +139,7 @@
             </div>
 
             <!-- State -->
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-1 mb-8">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     State / Province
                 </label>
@@ -170,7 +170,7 @@
             </div>
 
             <!-- City -->
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-1 mb-8">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     City
                 </label>
@@ -204,7 +204,7 @@
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Postal code
                 </label>
-                <input formControlName="postalCode" type="text" placeholder="A1A 1A1" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
+                <input aria-label="Postal code" formControlName="postalCode" type="text" placeholder="A1A 1A1" class="w-full h-10 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="fieldBorder('postalCode')" />
                 <p *ngIf="showError('postalCode')" class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
@@ -218,7 +218,7 @@
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Address
                 </label>
-                <textarea formControlName="address" rows="3" placeholder="Write your full address..." class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
+                <textarea aria-label="Address" formControlName="address" rows="3" placeholder="Write your full address..." class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
                            resize-none transition placeholder:text-gray-400 dark:placeholder:text-gray-500" [ngClass]="fieldBorder('address')">
                 </textarea>
@@ -233,7 +233,7 @@
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Bio
                 </label>
-                <textarea formControlName="bio" rows="4" placeholder="Tell us about yourself..." class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
+                <textarea aria-label="Bio" formControlName="bio" rows="4" placeholder="Tell us about yourself..." class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border text-sm text-gray-900 dark:text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent
                            resize-none transition placeholder:text-gray-400 dark:placeholder:text-gray-500" [ngClass]="fieldBorder('bio')">
                 </textarea>

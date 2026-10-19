@@ -20,7 +20,7 @@
 
     <img alt="" [src]="photoSrc"
         class="w-full h-32 object-cover object-top rounded-xl border border-gray-200 dark:border-gray-700"
-        onerror="this.src='../../../../assets/icons/customer.png';" />
+        data-fallback-src="../../../../assets/icons/customer.png" />
 
     <form [formGroup]="updateClientForm" class="flex flex-col gap-4">
 
@@ -95,7 +95,7 @@
 
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Height (cm)</label>
-                <input formControlName="height" type="number" min="0" placeholder="e.g. 180" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                <input aria-label="Height (cm)" formControlName="height" type="number" min="0" placeholder="e.g. 180" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="{
                             'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': (updateClientForm.get('height')?.invalid && updateClientForm.get('height')?.touched) || (updateClientForm.get('height')?.invalid && invalidForm),
@@ -110,7 +110,7 @@
 
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Weight (kg)</label>
-                <input formControlName="weight" type="number" min="0" placeholder="e.g. 75" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                <input aria-label="Weight (kg)" formControlName="weight" type="number" min="0" placeholder="e.g. 75" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="{
                             'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': (updateClientForm.get('weight')?.invalid && updateClientForm.get('weight')?.touched) || (updateClientForm.get('weight')?.invalid && invalidForm),
@@ -126,7 +126,7 @@
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Target weight
                     (kg)</label>
-                <input formControlName="targetWeight" type="number" min="0" placeholder="e.g. 80" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                <input aria-label="Target weight (kg)" formControlName="targetWeight" type="number" min="0" placeholder="e.g. 80" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="{
                             'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': (updateClientForm.get('targetWeight')?.invalid && updateClientForm.get('targetWeight')?.touched) || (updateClientForm.get('targetWeight')?.invalid && invalidForm),
@@ -141,7 +141,7 @@
 
             <div class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Calorie intake</label>
-                <input formControlName="caloriesIntake" type="number" min="0" placeholder="e.g. 2200" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+                <input aria-label="Calorie intake" formControlName="caloriesIntake" type="number" min="0" placeholder="e.g. 2200" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                     [ngClass]="{
                             'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': (updateClientForm.get('caloriesIntake')?.invalid && updateClientForm.get('caloriesIntake')?.touched) || (updateClientForm.get('caloriesIntake')?.invalid && invalidForm),
@@ -158,7 +158,7 @@
 
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Motivation</label>
-            <textarea formControlName="motivation" rows="3"
+            <textarea aria-label="Motivation" formControlName="motivation" rows="3"
                 placeholder="Why does the client want to subscribe to the service?" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
@@ -174,7 +174,7 @@
 
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Medical conditions</label>
-            <textarea formControlName="medicalConditions" rows="3"
+            <textarea aria-label="Medical conditions" formControlName="medicalConditions" rows="3"
                 placeholder="Any medical conditions the client might have. If none, write none." class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
@@ -190,7 +190,7 @@
 
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Dietary preferences</label>
-            <textarea formControlName="dietaryPreferences" rows="3"
+            <textarea aria-label="Dietary preferences" formControlName="dietaryPreferences" rows="3"
                 placeholder="Any dietary preferences the client might have. If none, write none." class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
@@ -206,7 +206,7 @@
 
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Dietary restrictions</label>
-            <textarea formControlName="dietaryRestrictions" rows="3"
+            <textarea aria-label="Dietary restrictions" formControlName="dietaryRestrictions" rows="3"
                 placeholder="Any dietary restrictions the client might have. If none, write none." class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{

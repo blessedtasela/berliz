@@ -2,7 +2,7 @@
     <!-- Mobile: card rows (matches admin/categories pattern) -->
     <div class="sm:hidden divide-y divide-gray-100 dark:divide-gray-800">
         <div *ngFor="let payment of paymentsData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 dark:active:bg-gray-800 transition-colors">
-            <div class="min-w-0 flex-1" (click)="openPaymentDetails(payment.id)">
+            <div class="min-w-0 flex-1" (click)="openPaymentDetails(payment.id)" role="button" tabindex="0" (keydown.enter)="openPaymentDetails(payment.id)">
                 <div class="flex items-center gap-2">
                     <p class="font-semibold text-gray-900 dark:text-gray-100 truncate">{{ payment.userEmail }}</p>
                     <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
@@ -19,7 +19,7 @@
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="updatePaymentStatus(payment.id)"
-                    [title]="payment.status === 'false' ? 'Activate' : 'Deactivate'">
+                    [title]="payment.status === 'false' ? 'Activate' : 'Deactivate'" [attr.aria-label]="payment.status === 'false' ? 'Activate' : 'Deactivate'">
                     <i-feather [name]="payment.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
                 <button type="button" *ngIf="canRefund(payment)" class="w-9 h-9 rounded-lg active:bg-amber-50 dark:active:bg-amber-950/20 flex items-center justify-center"
@@ -82,7 +82,7 @@
                                 (click)="refundPayment(payment)" title="Refund via Stripe">
                                 <i-feather name="rotate-ccw" class="text-amber-600" style="width:15px;height:15px;"></i-feather>
                             </button>
-                            <span *ngIf="payment.stripeRefundId" title="Refunded"
+                            <span *ngIf="payment.stripeRefundId || payment.refundedAt" title="Refunded"
                                 class="text-[10px] font-semibold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900 px-1.5 py-0.5 rounded-full">
                                 Refunded
                             </span>

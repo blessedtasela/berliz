@@ -1,4 +1,6 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { clientOptionLabel } from 'src/app/utils/option-labels';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, EventEmitter, OnInit, DestroyRef, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -31,6 +33,7 @@ import { genericError } from 'src/validators/form-validators.module';
     standalone: false
 })
 export class AddTestimonialsModalComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   onAddTestimonialEmit = new EventEmitter();
   addTestimonialForm!: FormGroup;
   invalidForm = false;
@@ -50,6 +53,8 @@ export class AddTestimonialsModalComponent implements OnInit {
     private snackbarService: SnackBarService,
   ) { }
 
+  readonly clientLabel = clientOptionLabel;
+
   ngOnInit(): void {
     this.addTestimonialForm = this.formBuilder.group({
       clientId: ['', Validators.required],
@@ -62,9 +67,9 @@ export class AddTestimonialsModalComponent implements OnInit {
     this.store.dispatch(loadClients());
     this.store.dispatch(loadCenters());
     this.store.dispatch(loadTrainers());
-    this.store.select(selectClients).subscribe(clients => this.clients = clients);
-    this.store.select(selectCenters).subscribe(centers => this.centers = centers);
-    this.store.select(selectTrainers).subscribe(trainers => this.trainers = trainers);
+    this.store.select(selectClients).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(clients => this.clients = clients);
+    this.store.select(selectCenters).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(centers => this.centers = centers);
+    this.store.select(selectTrainers).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(trainers => this.trainers = trainers);
   }
 
   addTestimonial(): void {

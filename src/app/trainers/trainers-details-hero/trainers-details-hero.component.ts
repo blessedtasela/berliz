@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
+import { clientPlaceFeeLabel, isApproximateSpot, spotAddress, spotHeading } from 'src/app/utils/trainer-location.util';
 
 /**
  * Public hero header for a single trainer profile.
@@ -68,9 +69,22 @@ export class TrainersDetailsHeroComponent {
   }
 
   /** Maps search includes the gym/address when the trainer gave one, so it lands on the exact place. */
-  mapsUrlFor(loc: { city: string; stateProvince?: string | null; country: string; venue?: string | null }): string {
-    const query = [loc.venue, this.fullLocationLabel(loc)].filter(Boolean).join(', ');
+  mapsUrlFor(loc: { city: string; stateProvince?: string | null; country: string; venue?: string | null; address?: string | null }): string {
+    const query = [loc.venue, loc.address, this.fullLocationLabel(loc)].filter(Boolean).join(', ');
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  }
+
+  spotHeading = spotHeading;
+  spotAddress = spotAddress;
+  isApproximate = isApproximateSpot;
+
+  get offersClientPlace(): boolean {
+    return clientPlaceFeeLabel(this.trainer) !== null;
+  }
+
+  /** "No extra fee", "+$20.00" or "+$10.00 – $40.00" when it depends on where the client is. */
+  get clientPlaceFeeLabel(): string {
+    return clientPlaceFeeLabel(this.trainer) ?? '';
   }
 
   toggleLocations(): void {

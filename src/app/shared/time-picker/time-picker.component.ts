@@ -41,8 +41,8 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit {
 
   @Input() placeholder = 'Select time';
   @Input() invalid = false;
-  /** Step between options, in minutes. */
-  @Input() stepMinutes = 30;
+  /** Step between options, in minutes. 15 gives every hour at :00 / :15 / :30 / :45. */
+  @Input() stepMinutes = 15;
   @Output() timeChange = new EventEmitter<string>();
 
   options: TimeOption[] = [];

@@ -47,7 +47,7 @@
         <!-- Partner -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Partner</label>
-            <select formControlName="id" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
+            <select aria-label="Partner" formControlName="id" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
                         'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addTrainerForm.get('id')?.invalid && addTrainerForm.get('id')?.dirty,
@@ -66,7 +66,7 @@
         <!-- Display name -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Display name</label>
-            <input formControlName="name" type="text" placeholder="Display name e.g. Team Berliz" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+            <input aria-label="Display name" formControlName="name" type="text" placeholder="Display name e.g. Team Berliz" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
                         'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addTrainerForm.get('name')?.invalid && addTrainerForm.get('name')?.dirty,
@@ -82,7 +82,7 @@
         <!-- Experience -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Experience</label>
-            <input formControlName="experience" type="number" min="0" placeholder="Experience" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+            <input aria-label="Experience" formControlName="experience" type="number" min="0" placeholder="Experience" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
                         'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addTrainerForm.get('experience')?.invalid && addTrainerForm.get('experience')?.dirty,
@@ -98,7 +98,7 @@
         <!-- Motto -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Motto</label>
-            <textarea formControlName="motto" rows="3" placeholder="Write a short bio about discipline or motto" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+            <textarea aria-label="Motto" formControlName="motto" rows="3" placeholder="Write a short bio about discipline or motto" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
                         'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addTrainerForm.get('motto')?.invalid && addTrainerForm.get('motto')?.dirty,
@@ -114,7 +114,7 @@
         <!-- Address -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Address</label>
-            <textarea formControlName="address" rows="3" placeholder="Write your street address or location here" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+            <textarea aria-label="Address" formControlName="address" rows="3" placeholder="Write your street address or location here" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
                         'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': addTrainerForm.get('address')?.invalid && addTrainerForm.get('address')?.dirty,

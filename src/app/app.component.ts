@@ -11,6 +11,9 @@ import { SeoService } from './services/seo.service';
 import { ScrollRestorationService } from './services/scroll-restoration.service';
 import { AuthService } from './services/auth.service';
 import { ThemeService } from './services/theme.service';
+import { installImageFallback } from './utils/image-fallback';
+import { installDoubleSubmitGuard } from './utils/double-submit-guard';
+import { RequestActivityService } from './services/request-activity.service';
 
 @Component({
     selector: 'app-root',
@@ -42,12 +45,20 @@ export class AppComponent implements OnInit {
     private authService: AuthService,
     private themeService: ThemeService,
     @Inject(PLATFORM_ID) private platformId: Object,
+    private requestActivity: RequestActivityService,
   ) {
     // Applied once, up front, same as every other per-device display
     // preference in this constructor — before the sidebar layout (the only
     // one this affects) ever paints.
     this.themeService.apply();
     this.themeService.watchSystemChanges();
+
+    // <img data-fallback-src="..."> placeholders: the CSP forbids the inline onerror handlers these replaced.
+    if (isPlatformBrowser(this.platformId)) {
+      installImageFallback(document);
+      // A form can't be submitted a second time while its first submit is still in flight (double-click -> duplicates).
+      installDoubleSubmitGuard(document, this.requestActivity);
+    }
 
     this.sidebarState.mode$.subscribe(mode => {
       this.sidebarMode = mode;

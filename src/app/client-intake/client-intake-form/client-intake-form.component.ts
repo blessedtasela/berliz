@@ -27,11 +27,8 @@ import { genericError } from 'src/validators/form-validators.module';
  * (PAR-Q-style: medical history, medications, injuries/limitations, training
  * history, emergency contact, consent).
  *
- * IMPORTANT — see the non-dismissible disclosure banner at the top of the
- * template (same pattern as terms-page.component.html): the consent
- * language here has NOT been reviewed by a licensed attorney or medical
- * professional. This is real functionality, not a placeholder — but it must
- * not be treated as a legally binding waiver until that review happens.
+ * The form only gathers information the trainer needs for liability purposes. It deliberately shows no
+ * "not reviewed by a professional" warning banner to clients (removed on request).
  *
  * Two entry modes, driven by route params:
  *  - create: /client-intake/new/:clientId  (trainer starting a new intake)

@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, EventEmitter, Inject, OnInit, Output, DestroyRef, inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -20,6 +21,7 @@ import { genericError } from 'src/validators/form-validators.module';
     standalone: false
 })
 export class TodaysTodoModalComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
 
   invalidForm = false;
   responseMessage: any;
@@ -51,7 +53,7 @@ export class TodaysTodoModalComponent implements OnInit {
       dueDate: ['', Validators.required],
       priority: ['NORMAL', Validators.required],
     });
-    this.store.select(selectUser).subscribe(user => {
+    this.store.select(selectUser).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(user => {
       this.user = user
     });
   }

@@ -5,7 +5,9 @@ import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Categories } from 'src/app/models/categories.interface';
-import { Trainers, TrainerLocation } from 'src/app/models/trainers.interface';
+import { Trainers } from 'src/app/models/trainers.interface';
+import { cleanFeeKeepZero, flattenAreas, groupLocations, normPlace, placeLabel, sameCity, TrainerArea } from 'src/app/utils/trainer-location.util';
+import { ApiResponse } from 'src/app/models/Api.interface';
 import { providerPricingControls, providerPricingControlValues, providerPricingPayload } from '../provider-pricing-fields/provider-pricing-fields.component';
 import { Users } from 'src/app/models/users.interface';
 import { AuthService } from 'src/app/services/auth.service';
@@ -43,11 +45,15 @@ export class TrainerDataComponent {
 
   countries: Country[] = [];
   private countryMap = new Map<string, Country>();
-  /** Available states/cities per location row, indexed the same as the `locations` FormArray. */
-  locationStates: string[][] = [];
-  locationCities: string[][] = [];
-  /** Name → id lookups for the currently-loaded states per row, so a city fetch (by state id) can follow a name-bound select. */
-  private stateMaps: Map<string, number>[] = [];
+  /**
+   * The "Add the places you train" panel. Country and state are picked once and stay put, so adding the
+   * next batch of cities in the same state is just: pick cities, press Add.
+   */
+  quickAdd: { country: string | null; state: string | null; cities: string[] } = { country: null, state: null, cities: [] };
+  quickStates: string[] = [];
+  quickCities: string[] = [];
+  quickLoading: 'states' | 'cities' | null = null;
+  private quickStateIds = new Map<string, number>();
 
   constructor(private formBuilder: FormBuilder,
     private ngxService: NgxUiLoaderService,
@@ -71,12 +77,15 @@ export class TrainerDataComponent {
       'categoryIds': this.formBuilder.array(this.selectedCategoriesId, this.validateCheckbox()),
       'serviceMode': [this.trainer?.serviceMode ?? 'IN_PERSON'],
       ...providerPricingControls(this.trainer),
-      'locations': this.formBuilder.array([]),
+      'areas': this.formBuilder.array([]),
       'customLocationAllowed': [!!this.trainer?.customLocationAllowed],
       'customLocationFee': [this.trainer?.customLocationFee ?? null, Validators.min(0)],
+      // Whether (and for what) the trainer also goes to a client's own place outside every city listed.
+      'customLocationOutsideAllowed': [this.trainer?.customLocationOutsideAllowed !== false],
+      'customLocationOutsideFee': [this.trainer?.customLocationOutsideFee ?? null, Validators.min(0)],
     });
 
-    (this.trainer?.locations ?? []).forEach(loc => this.addLocation(loc));
+    groupLocations(this.trainer?.locations).forEach(area => this.addArea(area));
 
     this.locationService.countries$.subscribe(countries => {
       this.countries = countries;
@@ -86,72 +95,126 @@ export class TrainerDataComponent {
     this.originalValue = this.updateTrainerForm.getRawValue();
   }
 
-  get locationsArray(): FormArray {
-    return this.updateTrainerForm.get('locations') as FormArray;
+  // ── Where the trainer works: cities, each with any number of spots ─────────────
+
+  get areasArray(): FormArray {
+    return this.updateTrainerForm.get('areas') as FormArray;
   }
 
-  addLocation(existing?: TrainerLocation): void {
-    this.locationsArray.push(this.formBuilder.group({
-      country: [existing?.country ?? '', Validators.required],
-      stateProvince: [existing?.stateProvince ?? ''],
-      city: [existing?.city ?? '', Validators.required],
-      venue: [existing?.venue ?? ''],
-      fee: [existing?.fee ?? null, Validators.min(0)],
+  spotsArray(areaIndex: number): FormArray {
+    return this.areasArray.at(areaIndex).get('spots') as FormArray;
+  }
+
+  private newSpot(spot?: Partial<TrainerArea['spots'][number]>): FormGroup {
+    return this.formBuilder.group({
+      venue: [spot?.venue ?? '', Validators.maxLength(200)],
+      address: [spot?.address ?? '', Validators.maxLength(300)],
+      precision: [spot?.precision ?? 'EXACT'],
+      fee: [spot?.fee ?? null, Validators.min(0)],
+    });
+  }
+
+  addArea(area: TrainerArea): void {
+    this.areasArray.push(this.formBuilder.group({
+      country: [area.country, Validators.required],
+      stateProvince: [area.stateProvince ?? ''],
+      city: [area.city, Validators.required],
+      clientAllowed: [area.clientAllowed],
+      clientFee: [area.clientFee, Validators.min(0)],
+      spots: this.formBuilder.array((area.spots ?? []).map(spot => this.newSpot(spot))),
     }));
-    this.locationStates.push([]);
-    this.locationCities.push([]);
-    this.stateMaps.push(new Map());
-
-    if (existing?.country) {
-      const i = this.locationsArray.length - 1;
-      const countryId = this.countryMap.get(existing.country)?.id;
-      if (countryId) {
-        this.locationService.getStates(countryId).subscribe(states => {
-          this.stateMaps[i] = new Map(states.map(s => [s.name, s.id]));
-          this.locationStates[i] = states.map(s => s.name);
-
-          const stateId = existing.stateProvince ? this.stateMaps[i].get(existing.stateProvince) : undefined;
-          if (stateId) {
-            this.locationService.getCities(stateId).subscribe(cities => this.locationCities[i] = cities.map(c => c.name));
-          }
-        });
-      }
-    }
   }
 
-  removeLocation(index: number): void {
-    this.locationsArray.removeAt(index);
-    this.locationStates.splice(index, 1);
-    this.locationCities.splice(index, 1);
-    this.stateMaps.splice(index, 1);
+  removeArea(index: number): void {
+    this.areasArray.removeAt(index);
   }
 
-  onLocationCountryChange(index: number): void {
-    const group = this.locationsArray.at(index);
-    const country = group.get('country')?.value;
-    group.get('stateProvince')?.setValue('');
-    group.get('city')?.setValue('');
-    this.locationCities[index] = [];
-    this.locationStates[index] = [];
-    this.stateMaps[index] = new Map();
-    const countryId = this.countryMap.get(country)?.id;
-    if (countryId) {
-      this.locationService.getStates(countryId).subscribe(states => {
-        this.stateMaps[index] = new Map(states.map(s => [s.name, s.id]));
-        this.locationStates[index] = states.map(s => s.name);
-      });
-    }
+  addSpot(areaIndex: number): void {
+    this.spotsArray(areaIndex).push(this.newSpot());
   }
 
-  onLocationStateChange(index: number): void {
-    const group = this.locationsArray.at(index);
-    const state = group.get('stateProvince')?.value;
-    group.get('city')?.setValue('');
-    this.locationCities[index] = [];
-    const stateId = this.stateMaps[index]?.get(state);
-    if (stateId) {
-      this.locationService.getCities(stateId).subscribe(cities => this.locationCities[index] = cities.map(c => c.name));
+  removeSpot(areaIndex: number, spotIndex: number): void {
+    this.spotsArray(areaIndex).removeAt(spotIndex);
+  }
+
+  areaLabel(areaIndex: number): string {
+    return placeLabel(this.areasArray.at(areaIndex).value);
+  }
+
+  /** Just the city and state, for headings inside a city's card ("Where in Vancouver?"). */
+  areaCity(areaIndex: number): string {
+    return this.areasArray.at(areaIndex).get('city')?.value ?? '';
+  }
+
+  trackByIndex = (index: number) => index;
+
+  get totalPlaces(): number {
+    return this.areasArray.length;
+  }
+
+  /** The "client's own place" fee fields only matter once the trainer lets clients choose their own location. */
+  get clientPlacesOn(): boolean {
+    return !!this.updateTrainerForm.get('customLocationAllowed')?.value;
+  }
+
+  // ── The "Add the places you train" panel ─────────────────────────────────────
+  // Country and state are picked once and stay put, so the next batch of cities in the same state is just:
+  // pick the cities, press Add.
+
+  get canQuickAdd(): boolean {
+    return !!this.quickAdd.country && this.quickAdd.cities.length > 0;
+  }
+
+  onQuickCountryChange(): void {
+    this.quickAdd.state = null;
+    this.quickAdd.cities = [];
+    this.quickStates = [];
+    this.quickCities = [];
+    this.quickStateIds = new Map();
+    const countryId = this.quickAdd.country ? this.countryMap.get(this.quickAdd.country)?.id : undefined;
+    if (!countryId) return;
+    this.quickLoading = 'states';
+    this.locationService.getStates(countryId).subscribe(states => {
+      this.quickStateIds = new Map(states.map(s => [s.name, s.id]));
+      this.quickStates = states.map(s => s.name);
+      this.quickLoading = null;
+    });
+  }
+
+  onQuickStateChange(): void {
+    this.quickAdd.cities = [];
+    this.quickCities = [];
+    const stateId = this.quickAdd.state ? this.quickStateIds.get(this.quickAdd.state) : undefined;
+    if (!stateId) return;
+    this.quickLoading = 'cities';
+    this.locationService.getCities(stateId).subscribe(cities => {
+      this.quickCities = cities.map(c => c.name);
+      this.quickLoading = null;
+    });
+  }
+
+  /** Adds one city per picked name, skipping any already listed, then clears the cities but keeps the country and state. */
+  addQuickCities(): void {
+    if (!this.canQuickAdd) return;
+    const country = this.quickAdd.country!;
+    const state = (this.quickAdd.state ?? '').trim();
+
+    let added = 0;
+    for (const raw of this.quickAdd.cities) {
+      const city = raw.trim();
+      const place = { country, stateProvince: state, city };
+      if (!city || this.areasArray.controls.some(g => sameCity(g.value, place))) continue;
+      this.addArea({ ...place, clientAllowed: true, clientFee: null, spots: [] });
+      added++;
     }
+
+    const skipped = this.quickAdd.cities.length - added;
+    this.quickAdd.cities = [];
+    this.snackBarService.openSnackBar(
+      added === 0 ? 'Those places are already on your list'
+        : `Added ${added} ${added === 1 ? 'place' : 'places'}${skipped ? ` (${skipped} already listed)` : ''}`,
+      added === 0 ? 'info' : '');
+    this.updateTrainerForm.markAsDirty();
   }
 
   ngAfterViewInit() {
@@ -206,15 +269,17 @@ export class TrainerDataComponent {
       motto: trainer.motto,
       likes: trainer.likes,
       experience: trainer.experience,
-      categoryIds: trainer.categories.map(category => category.id),
+      categoryIds: (trainer.categories ?? []).map(category => category.id),
       serviceMode: trainer.serviceMode ?? 'IN_PERSON',
       ...providerPricingControlValues(trainer),
       customLocationAllowed: !!trainer.customLocationAllowed,
       customLocationFee: trainer.customLocationFee ?? null,
+      customLocationOutsideAllowed: trainer.customLocationOutsideAllowed !== false,
+      customLocationOutsideFee: trainer.customLocationOutsideFee ?? null,
     });
 
-    while (this.locationsArray.length) this.removeLocation(0);
-    (trainer.locations ?? []).forEach(loc => this.addLocation(loc));
+    this.areasArray.clear();
+    groupLocations(trainer.locations).forEach(area => this.addArea(area));
   }
 
   /** Empty/zero/invalid input means "no fee" (null); otherwise the amount. */
@@ -268,33 +333,34 @@ export class TrainerDataComponent {
       categoryIds: formValue.categoryIds,
       photoRequest: this.trainer?.photoResponse,
       serviceMode: formValue.serviceMode,
-      locations: (formValue.locations ?? []).map((l: any) => ({
-        country: l.country,
-        stateProvince: l.stateProvince,
-        city: l.city,
-        venue: (l.venue ?? '').trim() || null,
-        fee: this.toFee(l.fee),
-      })),
+      locations: flattenAreas(formValue.areas),
       ...providerPricingPayload(formValue),
       customLocationAllowed: !!formValue.customLocationAllowed,
       // The backend treats a null fee as "leave untouched", so a cleared field is sent as 0 (= no surcharge).
       customLocationFee: this.toFee(formValue.customLocationFee) ?? 0,
+      // Sent together: the flag saves both, and a blank fee here means "same as the fee above" (0 means free).
+      customLocationOutsideAllowed: formValue.customLocationOutsideAllowed !== false,
+      customLocationOutsideFee: cleanFeeKeepZero(formValue.customLocationOutsideFee),
     };
 
     this.ngxService.start();
     this.trainerService.updateTrainer(payload).subscribe({
-      next: (response: any) => {
-        this.responseMessage = response?.message;
-        this.snackBarService.openSnackBar(this.responseMessage || 'Your trainer profile has been updated', "");
-        // updateTrainer returns the ApiResponse wrapper; the trainer payload is under `data`.
-        const updated: Trainers | undefined = response?.data;
-        if (updated) {
-          this.updateFormValues(updated);
-          this.trainer = updated;
+      next: (response: ApiResponse<Trainers>) => {
+        // The loader is stopped in `finally`: anything below throwing used to leave it spinning forever.
+        try {
+          this.responseMessage = response?.message;
+          this.snackBarService.openSnackBar(this.responseMessage || 'Your trainer profile has been updated', "");
+          // The saved trainer is `response.data` -- the endpoint answers with an ApiResponse wrapper.
+          const saved = response?.data;
+          if (saved) {
+            this.updateFormValues(saved);
+            this.trainer = saved;
+          }
+          this.originalValue = this.updateTrainerForm.getRawValue();
+          this.emitEvent.emit();
+        } finally {
+          this.ngxService.stop();
         }
-        this.originalValue = this.updateTrainerForm.getRawValue();
-        this.emitEvent.emit();
-        this.ngxService.stop();
       },
 
       error: (error: any) => {

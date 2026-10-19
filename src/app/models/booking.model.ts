@@ -10,9 +10,12 @@ export interface Booking {
 
   trainerId: number | null;
   trainerName: string | null;
+  /** The trainer's public photo URL, so a client's own bookings can show who it's with. */
+  trainerPhotoUrl?: string | null;
 
   centerId: number | null;
   centerName: string | null;
+  centerPhotoUrl?: string | null;
 
   scheduledAt: Date;
   durationMinutes: number;
@@ -50,6 +53,11 @@ export interface Booking {
 
   /** Present only when a reward was redeemed against this booking, e.g. "Free session (redeemed reward)" or "20% off -- New member special". */
   appliedRewardLabel?: string | null;
+
+  /** Set when this session was booked out of a plan or pack the client owns (it's then not a plain single session). */
+  packageSubscriptionId?: number | null;
+  /** The name of that plan or pack, e.g. "5 session starter". */
+  packageName?: string | null;
 
   message?: string;
 }

@@ -1,5 +1,6 @@
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, DestroyRef, inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -22,6 +23,7 @@ import { TagDetailsModalComponent } from '../tag-details-modal/tag-details-modal
     standalone: false
 })
 export class TagListComponent {
+  private destroyRef = inject(DestroyRef);
   responseMessage: any;
   @Input() tagsData: Tags[] = [];
   showFullData: boolean = false;
@@ -38,7 +40,7 @@ export class TagListComponent {
 
   handleEmitEvent() {
     this.store.dispatch(loadTags());
-    this.store.select(selectTags).subscribe((tagsData) => {
+    this.store.select(selectTags).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((tagsData) => {
       this.tagsData = tagsData
     });
   }

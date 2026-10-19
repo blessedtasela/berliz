@@ -24,6 +24,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Gender field — inclusive options | ✅ | Male / Female / Non-binary / Prefer not to say, driven by one shared `GENDER_OPTIONS` constant across every picker (signup, signup modal, Settings, both admin edit-user modals) instead of each hardcoding its own binary radio pair. Backend stores `User.gender` as free text with no enum constraint, so this was purely a frontend change |
 | Value-first onboarding checklist | ✅ | Dismissible, role-aware first-run checklist at the top of the dashboard home (complete your profile / log a workout / connect / find a provider — or profile/post/connect for providers; "Complete your profile" is how regular users add the photo and location that signup no longer requires); progress is data-derived where possible, dismissal + click-steps persist in `localStorage`. No paywall in the path |
 | Block / unblock users | ✅ | Two-directional enforcement across messaging, mentions, comments |
+| Delete my account | ✅ | Settings > Danger zone > Delete account (an App Store requirement on mobile, the same right on the web). Type DELETE to confirm; the password is asked for only on password accounts. The server scrubs every personal field and deactivates the account, keeping bookings and payments for the other party and the books, revokes the Sign in with Apple tokens and deletes the Stripe customer. It refuses while there are upcoming bookings or a subscription that still renews, and the reason is shown in the dialog |
 | Report content (posts, comments) | ✅ | Feeds admin content-report queue |
 
 ## 2. Social — feed, posts, connections
@@ -92,7 +93,8 @@ that ships a feature — add the row under the right domain, and log it under
 | Client intake forms | ✅ | |
 | Testimonials & reviews (trainer/center) | ✅ | |
 | Trainer location + service mode (in-person / online / hybrid) | ✅ | |
-| Choose where to train: trainer's listed locations (+ optional per-location fee) and optional client-chosen custom location (+ fee) | ✅ | Trainers only; client picks at booking and sees the fee before sending. Location text + fee are snapshotted on the booking |
+| Choose where to train: trainer's listed spots (+ optional per-spot fee) and optional client's-own-place (+ fee by where it is) | ✅ | Trainers only; client picks at booking and sees the fee before sending. The trainer lists **cities, each with any number of spots** (a gym, a park, a studio — name optional, exact address or just a general area, optional fee) and sets the client's-own-place fee per city, for anywhere outside their cities, or off entirely. The client's place is entered as country / state / city + address and the server prices it (inside a listed city → that city's fee, else the usual fee; outside → the outside fee; refused where the trainer won't go). Location text + fee are snapshotted on the booking |
+| Searchable dropdowns in forms (`app-select`) | ✅ | One shared searchable select (type to filter, keyboard friendly, roomy touch target, dark mode) replaces the bare `<select>` on long lists; the open list attaches to `<body>` so a modal can't clip it, and a saved value missing from the list still shows. Used by the location pickers (signup, profile, trainer "Available in", the booking picker's own-place), assigning a task (client, exercise), logging a workout (exercise) and the admin pickers that list every user / client / trainer / center / task / exercise (members, payments, tasks, sub-tasks, testimonials, equipment). Short fixed lists (status, duration, sort) stay native `<select>`s; `add-center-pricings-modal` still uses one because it reads the change event. Prefer `app-select` for any new long list |
 | Transparent pricing + Book CTA everywhere | ✅ | Provider pages state "full price — no 'from', no hidden fees"; a "Book a session" action appears on a trainer's/center's feed posts and on their profile header (`BookProviderButtonComponent`), not just the dedicated provider page |
 
 ## 6. Payments & subscriptions
@@ -185,9 +187,74 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Fix: links lost their query parameters (login return, notification deep links)
+
+- The URL serializer lowercased the *whole* URL, query string included, so `?returnUrl=`, `?postId=`, `?userId=`, `?logId=`, `?faqId=`, `?payoutId=` and others arrived as `returnurl`, `postid`… and the code reading the camelCase names never saw them. Visitors sent to log in were not returned to the page they wanted, and notification deep links that carry an id (a post's comments, a message thread, a logged workout or run) opened the page without the item. Only the path is lowercased now; query keys, values and the fragment keep their case.
+- `ng serve` no longer server-renders every route. SSR/prerender stay on for production builds, but in development they made guarded pages such as `/dashboard` answer with a redirect to login before the app could read the signed-in token, so signed-in screens could not be developed or checked locally.
+
+### Unreleased — Plans, packs and single sessions are three different things
+
+Before, every plan card said "Choose this plan" and led to a page whose only button was **Request booking** — so buying the
+"5 session starter" or a monthly plan looked like asking for a one-off session. Now each use case has its own words, button
+and home:
+
+| | What it is | Button | Charged | Where it lives |
+|---|---|---|---|---|
+| **Single session** | One session, no commitment | Request booking | After the provider confirms it | **Bookings** |
+| **Session pack** | N sessions, paid once, booked later | **Buy pack · $X** | Now, once | **My Subscriptions** (sessions left), then each session is a booking tagged "From {pack}" |
+| **Subscription** | Billed every month until cancelled | **Subscribe · $X / month** | Now, then monthly (Stripe subscription) | **My Subscriptions** (cancel any time; access runs to the paid period) |
+| **Membership** | Unlimited sessions for a period, paid once | **Get membership · $X** | Now, once | **My Subscriptions** |
+
+- **Plan cards** (public and signed-in trainer/center pages) show a kind chip ("Session pack", "Subscription", "Membership"), "/ month" only
+  for subscriptions, and a button named for what it does; it opens the booking page already on that plan (`?plan=<id>`).
+  Signed-in pages used to open the single-session form for every plan; they now open the plan.
+- **Booking page.** Pick *what you want* first — Single session or one of the provider's plans. Buying a plan hides the time picker, location, notes and
+  estimate (nothing to schedule), shows what's included and what happens after paying, and the main button pays. A guest who picks a plan
+  signs in and comes back to the same plan. A plan you already own says "You have this" and the page books a session *out of it* ("Book with your pack",
+  nothing more to pay). Subscriptions start a recurring Stripe checkout (previously every plan was charged once).
+- **My Subscriptions** rows for a trainer/center plan show its kind, who it's with, "3 of 5 sessions left" with a bar (or "Unlimited"), and a
+  **Book a session** shortcut while sessions remain. Ended rows say what they were without offering to book.
+- **Bookings** made from a pack carry "From {pack}" on the card and "Booked from your {pack} — no extra charge" in the details (the booking response now
+  includes `packageSubscriptionId` / `packageName`).
+- Not verified on real Stripe: the monthly subscription path charges in Stripe test mode like every other payment. A subscription that also sets a
+  session count would not refill its sessions each month (the renewal only extends access) — give subscriptions "unlimited" for now.
+- Mobile parity: the mobile app's package screens still use the old wording/one-off checkout — port the kind labels and `recurring` flag when mobile next touches them.
+
+### Unreleased — Trainer locations: several spots per city, per-place client fees, searchable dropdowns
+
+- **Searchable dropdowns.** New shared `app-select` (ng-select under the hood, `.berliz-select` styling) — type to search, proper padding and caret, the list opens over modals, selected values never go blank. The country / state / city / dial-code pickers on signup, the profile form and the trainer profile use it; the booking picker uses it for the client's place.
+- **Trainer "Available in" editor.** Pick a country and state once, then tick as many cities as you cover — one "Add 3 cities" press. Each city is a card: add any number of **spots** inside it (gym / park / studio name optional; an exact address *or* a general-area description; an optional extra fee per spot), or leave it with no spot ("I cover Vancouver"). Each city also has its own **"I come to clients' own places here"** switch and fee (blank = the usual fee, 0 = free), and one global card holds the usual fee plus "I also travel outside the cities I listed" with its own fee.
+- **Booking.** The location picker groups spots under their city, shows addresses (and "approximate area" where the trainer only gave an area). "Somewhere else — my own place" now asks for country / state / city (one tap fills it from one of the trainer's cities) and the address, shows the fee that applies *there*, and explains when the trainer doesn't go to that city or outside their cities. The booking price estimate follows it. Booking forms, the booking page and "book for a client" all send the place; the server recomputes the fee and snapshots it.
+- **Trainer pages.** The public page and the signed-in provider page show each spot's address, mark approximate areas, link the exact address to Maps, and show the client's-own-place fee as a range ("+$10.00 – $40.00" / "up to +$40.00") when it differs by city.
+- **Fixes.** Saving the trainer details no longer leaves the loading overlay on forever (the API wrapper's `data` was read as the trainer; the overlay now also stops if applying the result throws). People's profile photos now show on booking cards and details, trainer likes, clients, center reviews/trainers, shared progress and similar lists instead of the default icon.
+- Backend (migration V71): `trainer_location` gains address / precision / per-city client-place columns, `trainer` gains the outside-cities rule, `ClientLocationRules` prices it, and `Booking` snapshots the fee. Mobile parity: the mobile booking picker still sends a plain own-place address (priced at the trainer-wide fee) — port the city-aware picker when mobile next touches booking.
+
+### Unreleased — Web: "billed by the App Store" subscriptions, store purchases in Payments
+
+- **Account deletion gets more time.** `POST /account/delete` (the Delete account dialog, below) is allowed 60 s instead of the interceptor's usual 20 s, because the server contacts Apple (revoking Sign in with Apple) and Stripe (deleting the customer) before it answers; a timeout would otherwise report "failed" for an account that was in fact deleted.
+- **Subscriptions bought in the mobile app.** A subscription billed by the App Store or Google Play (backend `Subscription.store` / `mode` = `APP_STORE` / `PLAY_STORE`) now shows a "Billed by the App Store" badge, and its menu offers **Manage in App Store / Google Play** (a link to the store's subscription settings) instead of Renew, Cancel auto-renew and Resume auto-renew, which only work for Stripe-billed ones. The backend refuses them too (`/subscription/cancel`), so the two stay in step.
+- **Payments (admin).** Store purchases are mirrored into the payments list in the buyer's own currency, so the amount is shown with its currency code (e.g. `9.99 GBP`) on the payment detail page and modal; Stripe payments, in the platform currency, show none. A refund made in the store shows the "Refunded" badge, and the Refund button stays Stripe-only.
+- Backend (same change set, migration V70): saved cards in the mobile payment sheet (off until `STRIPE_SAVED_CARDS=true`), revoking Sign in with Apple tokens on account deletion, and mirroring App Store / Google Play charges into Payments.
+
+### Unreleased — Faster first load, media on the dashboard timeline, bookable times only, quarter-hour availability
+
+- **Faster first load.** The 9 MB fire background video on the landing page no longer downloads with the page: it starts after the page has loaded, only on desktop, and never for data-saver, slow-connection or reduced-motion visitors (they keep the poster image). The PDF viewer library (~660 KB, only used by the admin CV / certificate modals) is now loaded when one of those modals is opened instead of being part of every visitor's first download. Not done: the video file itself is still 9 MB and the `.webm` is a copy of the `.mp4`; re-encoding it to about 1 MB needs ffmpeg.
+- **Dashboard timeline shows media.** The "See what others are doing" cards on the Overview page now show the post's photo, or a still frame with a play icon for a video, instead of text only.
+- **Only the provider's own times can be booked.** The booking dialog no longer offers a free date/time picker when a trainer or center hasn't set their availability; it says they haven't set their available times yet (as the booking page already did) and the request button is disabled. The urgent-request path for a provider who *has* availability is unchanged.
+- **Quarter-hour availability.** My Availability (and the admin availability editor) use the shared time picker instead of the browser's native time input, so every hour offers :00 / :15 / :30 / :45.
+
+### Unreleased — Delete your account from the web
+
+- Settings → Danger zone now has **Delete account** next to *Deactivate account*, matching the mobile app. It asks for your password (blank for Google / Facebook / Apple sign-ins) and for the word `DELETE`, then calls `POST /account/delete` and signs you out. The server answers 200 even when it refuses (wrong password, upcoming bookings, a renewing subscription), so the reason is shown inside the dialog and the account is only treated as deleted when the server says so. Deactivate stays for people who just want a break.
+
+### Unreleased — Fix: trainers could only pick :00 / :30 times
+
+- The shared time picker (`app-time-picker`) defaulted to 30-minute steps, so a trainer booking for a client, rescheduling a request, or proposing a peer session saw only two start minutes per hour. It now defaults to 15-minute steps: every hour from 12 AM to 11 PM at :00, :15, :30 and :45 (96 options). The weekly availability editor already accepts any time, and the mobile app already uses native time pickers, so neither changed.
+
 ### Unreleased — Guest-first booking, star ratings, waitlist, calendar link and provider insights
 
 - **Book before you sign up.** The public booking page (`/trainers/:name/book`, `/centers/:name/book`) no longer redirects visitors to the login page. A visitor picks a day and time, and is asked to log in or create an account only when they press *Continue*. Their day, time and notes are kept in `sessionStorage` for up to two hours and put back when they return signed in (login falls back to the booking page when sign-up and email activation dropped the `returnUrl`). The "Book" button on provider profiles sends guests to this page instead of showing a "Login required" prompt.
+- **Share a booking link.** The booking page header has a share button: the native share sheet on phones, otherwise it copies the page URL (the same canonical `/trainers/:name/book` or `/centers/:name/book` the page puts in its SEO tags). The app-link file `src/.well-known/apple-app-site-association` now lists `/trainers/*` and `/centers/*` (profiles and `/book`), not just the two list pages, so once the mobile app is registered those links open in it. **Still needed before app links work:** the real Apple Team ID in that file and the real signing-cert SHA-256 in `assetlinks.json` (both still placeholders), plus matching `associatedDomains` / `intentFilters` in the mobile app config.
 - **Waitlist.** When a day has no open times the page offers *Tell me if a time opens up*; a cancellation frees the slot and the client is emailed (backend: `/waitlist`).
 - **Star ratings.** Reviews of trainers and centers now carry a required 1-5 rating (accessible radio-group input). Cards show the star average plus review count (falling back to the count alone for unrated providers), review lists show each review's stars, and the filter bar can sort by *Highest rated*.
 - **Calendar link.** My bookings and the provider *My Availability* tab show a private calendar subscription link (Google / Apple / Outlook): copy it, open it in the calendar app, or replace it (the old one stops working).
@@ -486,6 +553,124 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Not yet: the fee is displayed, not charged (client payment checkout is still unwired).
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
+
+### Unreleased — Client intake: removed the "not reviewed by a licensed professional" banner
+
+The amber banner at the top of the client intake form (web and mobile) told clients the form had not been reviewed for legal/medical-liability
+compliance. The form only collects information the trainer needs for liability purposes, so that message was never meant to be shown and is
+gone, and so are the draft/legal-review notices at the top of the Terms and Privacy pages (web and mobile). Specs assert they are absent.
+
+### Unreleased — Double-submit guard, skeleton shimmer, populated-data audit, mobile labels
+
+- **A form can't be submitted twice while its first submit is in flight.** `RequestActivityService` + interceptor count in-flight
+  create/update/delete requests; `installDoubleSubmitGuard` (capture-phase `submit` listener) swallows a second submit of the same form until
+  the request settles and dims its submit buttons (`form[data-submitting]`). A submit that fails validation starts no request, so a form is never
+  locked. Stops double-click duplicates (two bookings/posts/payments) across every form without touching each component. 10 tests.
+- **Skeleton bars now shimmer** (a light sweep across `animate-pulse` blocks that carry their own grey background) instead of only fading.
+- **Populated-data audit** (166 page loads with realistic records incl. long unbroken text, phone + desktop): no overflow, no errors. Found and fixed:
+  zinc-600 text on the public dark pages (2.6:1), and 6 rows that had gained `role="button"` in the earlier keyboard pass while containing
+  their own buttons/links (nested-interactive) — the role is removed there; those rows stay click-only as before.
+- **Mobile:** scanned all 827 Pressables; 30 icon-only ones (menu, home, photo thumbnails, lightbox close, attach, send, step/to-do toggles…)
+  had no accessible name and now do.
+
+### Unreleased — Follow-ups from the all-screens audit
+
+- **Every dialog was a white panel in dark mode.** The dark-mode rules for dialogs targeted Angular Material's old class
+  (`.mat-dialog-container`); since the move to the MDC components the panel is `.mat-mdc-dialog-container`, so nothing matched
+  and dialogs whose content is styled with `dark:` variants showed light text on a white panel (headings unreadable).
+  Rules updated to the current class names and Material's own colour variables; verified in dark and light.
+- **"NaN sessions" on the dashboard** (recap card) when the recap response left out a count: counts now default to 0 (+ spec).
+- **Duplicate heading on Bookings:** the page title/subtitle appeared again inside the list below it. The list components take
+  `[embedded]` and keep only their action buttons when shown inside the Bookings page (standalone routes unchanged).
+- Left alone on purpose: the Material prebuilt theme and ng-select theme `@import`s in `styles.css` are dropped at build time (they
+  sit after Tailwind's expanded rules). The app has always rendered without them; loading them now would restyle every Material
+  surface, so it needs its own visual pass.
+
+### Unreleased — All-screens accessibility audit: contrast, unnamed button, dialogs invisible in dark mode
+
+Ran axe-core over every static route (16 public + 68 dashboard, light and dark, desktop and 390 px phone = 332 page loads) against the
+production build with a local mock API: no hangs, no horizontal overflow, no broken images, no uncaught JS errors. Findings fixed:
+- **Colour contrast:** 3,345 text nodes failed WCAG AA, nearly all from the same few utilities for secondary text
+  (`text-gray-400` on white 2.5:1, `dark:text-gray-500` on dark 3.0-3.7:1, `text-red-600` on dark 3.7:1, small sky/zinc links).
+  Corrected centrally in `styles.css` ("Contrast corrections") plus the status pills (green/yellow/blue badges) in their templates.
+  Re-measured: 26 left (3,345 before).
+- The notification bell in the top bar had no accessible name (every dashboard route); it now announces the unread count.
+- Six dialogs/pages had no dark styling at all, so in dark mode they showed dark text on the dark dialog surface: update-profile,
+  change-password, forgot/reset-password, the weekly-availability editor, the referral-claim page, edit-to-do, and the 404 page.
+- Lesson for local checks: do not run a build while the local test server or headless Chrome has the output folder open —
+  the build then "completes" without rewriting files (Windows file lock), and you end up verifying the old bundle.
+
+### Unreleased — Dark mode for native controls, brand accent
+
+`color-scheme` now follows the app theme (`html.dark`), so date/time pickers, `<select>` pop-ups, autofill and scrollbars are
+dark in dark mode instead of white pop-ups on a near-black page. Checkboxes/radios/range sliders use the brand red
+(`accent-color`), text selection is brand-tinted, and scrollbars are slim. (Mobile: another user's map-link URL is only
+opened when it is a plain http(s) link.)
+
+### Unreleased — Typography: Inter, self-hosted
+
+The body asked for Roboto / 'Inter' but no font was ever loaded, so each device fell back to its own system font and the
+app looked different on every phone and laptop. Inter (variable, weight axis, via `@fontsource-variable/inter`) is now bundled
+and listed first in both the CSS body stack and Tailwind's `font-sans`; it ships from our own origin so the CSP's
+`font-src 'self'` covers it, with only the script subsets a page needs downloaded (unicode-range). Also: font smoothing,
+balanced heading wrapping and orphan-free paragraphs (`text-wrap`). Checked 68 dashboard routes at 360 px: no horizontal overflow.
+
+### Unreleased — Fix: dashboard froze after login; Content-Security-Policy now enforced
+
+- **Dashboard froze right after login.** Both sidebars read `navItems` from a getter bound to `*ngFor`, and
+  `filterSidebarNavItems` built a fresh array (and fresh group copies) on every call, so Angular rebuilt the whole
+  sidebar on every change-detection pass; `RouterLinkActive` marking the view dirty as each link was created
+  triggered the next pass — an endless render loop. The result is now cached per role. Found by driving headless
+  Chrome through the login flow against a local mock API and pausing the debugger while the page was stuck;
+  responsive 3/3 afterwards (3/3 frozen before).
+- **CSP is enforced** (`netlify.toml`, was Report-Only). Scripts: self + Google Identity + Facebook SDK + Cloudflare
+  beacon + `wasm-unsafe-eval`; no inline script, no eval. Styles keep `'unsafe-inline'` (Angular injects component
+  styles at runtime; a static host can't issue nonces). Images/media allow any https (Strapi, Google/Facebook avatars,
+  user links) plus `data:`/`blob:`. `connect-src` lists the Railway API + WebSocket, Strapi, Google/Facebook, restcountries,
+  Cloudflare and Sentry. Because the policy blocks inline event handlers, the 74 `onerror="this.src=…"` image fallbacks
+  became `data-fallback-src` handled by one listener (`utils/image-fallback.ts`), the two `href="javascript:void(0)"`
+  links became real links, and `angular.json` turns off critical-CSS inlining (it swaps the stylesheet in with an inline
+  `onload`, which the policy would block, leaving pages unstyled).
+  Checked against the production build with the real header: 16 public routes and 68 dashboard routes as a signed-in test
+  user against a local mock API — 0 violations. Not exercised: real Strapi media/PDF viewer, uploads, Stripe redirect,
+  Google/Facebook sign-in popups completing. If a new third-party origin is added, add it to `netlify.toml`; the browser
+  console names the blocked directive.
+
+### Unreleased — QA pass: security hardening, media upload, instant list updates, accessibility
+
+**Security (backend + web)**
+- The login/signup/reset rate limits keyed on the *first* `X-Forwarded-For` entry, which the caller controls, so a
+  rotating fake header skipped every limit. They now key on the entry the trusted proxy appended
+  (`app.trusted-proxy-hops`, default 1 — set `TRUSTED_PROXY_HOPS` if more than one proxy sits in front).
+  New limits on `quickAdd`, newsletter/contact/problem-report submissions, activation emails, social and passkey login.
+- `LoginAttemptTracker`: 8 failed sign-ins for an email in 15 minutes locks that account's login for the window
+  (unknown emails too, so the lock leaks nothing). Login, forgot-password and send-activation now answer the same
+  whether or not an account exists.
+- `/stomp` accepts only `cors.allowed-origins`; Swagger/`/api-docs` are off unless `SWAGGER_ENABLED=true`.
+- Uploads: video/PDF/WebP/Office/audio are verified by magic bytes, not just the declared type.
+- 40 `window.open(_, '_blank')` calls now pass `noopener,noreferrer`; stray `console.log`s (one printed a contact form) removed.
+
+**Media upload**
+- `/strapi/upload` now also takes Word/Excel/PowerPoint, text/CSV and MP3/M4A/WAV — chat attachments are meant to
+  take any document, but the server only allowed images/video/PDF, so those uploads failed.
+- `StrapiService` checks type and size *before* sending (`utils/media-upload.util.ts`, mirrors the server rules), infers a
+  type for files the browser leaves untyped, reports upload progress (`uploadWithProgress`), and turns every failure
+  into a readable message (too big / wrong type / offline / media server down). Post composer shows a progress bar.
+- The auth interceptor used to abort every upload after a flat 90 s; it now only gives up when an upload goes silent for 2 minutes.
+
+**Forms update immediately**
+- Seven slices (tags, todos, exercises, muscle groups, newsletters, subscriptions, clients, contact-us…) returned only a
+  `message` on success, so their lists refreshed only if a WebSocket broadcast happened to arrive. A new
+  `RefreshAfterMutationEffects` re-fetches the right list(s) straight after each successful create/update/delete.
+
+**Accessibility / robustness**
+- Password and email fields have `autocomplete` hints; ~50 icon-only buttons have labels; clickable `div`/`span`s are keyboard-reachable;
+  33 components that subscribed to the store/socket without cleanup now unsubscribe on destroy; search highlighting no
+  longer corrupts text containing entities (`utils/highlight.util.ts`).
+- 376 form fields that had a visible label but no accessible name now have one (`aria-label` from the label text).
+- Global interaction polish in `styles.css`: visible keyboard focus ring, touched-and-invalid fields turn red on their own,
+  press feedback and no 300 ms tap delay on buttons, smooth scroll, a short page fade on navigation, and `prefers-reduced-motion` respected.
+- Checked the public pages (home, login, contact, about, trainers, centers, services, terms, privacy, help, members) at 360 and 768 px: no horizontal overflow.
 
 ### Unreleased — Fix: trainer/center locations dropdown wouldn't close
 
@@ -1457,7 +1642,7 @@ _Branch: `feat/security-hardening`_
   had no ceiling. All three now cap length client-side (server-side columns are unbounded
   TEXT with no `@Size` validation — flagged, not a frontend fix).
 - **Added security headers** (`netlify.toml`): `X-Content-Type-Options`, `Referrer-Policy`,
-  `Strict-Transport-Security`, `Permissions-Policy`, and a `Content-Security-Policy-Report-Only`
+  `Strict-Transport-Security`, `Permissions-Policy`, and a `Content-Security-Policy` (shipped Report-Only, enforced since 2026-10-14)
   built from the live site's actual script/frame/connect origins (Google/Facebook SDKs,
   Cloudflare Insights, the Railway API + WSS, Strapi media) rather than guessed — ships
   Report-Only first since a wrong enforcing CSP could silently break OAuth login.

@@ -18,7 +18,7 @@
     </div>
 
     <div *ngIf="certificate" class="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <ngx-extended-pdf-viewer [src]="certificate" onerror="this.src='../../../assets/icons/file.png';"
+        <ngx-extended-pdf-viewer [src]="certificate" data-fallback-src="../../../assets/icons/file.png"
             [textLayer]="true">
         </ngx-extended-pdf-viewer>
     </div>

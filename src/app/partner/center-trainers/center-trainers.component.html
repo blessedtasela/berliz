@@ -32,7 +32,7 @@
 
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Trainer id</label>
-            <input type="number" formControlName="trainerId" placeholder="42" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-gray-900 border text-sm text-gray-900 dark:text-gray-100
+            <input aria-label="Trainer id" type="number" formControlName="trainerId" placeholder="42" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-gray-900 border text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition
                        placeholder:text-gray-400 dark:placeholder:text-gray-500" [ngClass]="addTrainerForm.get('trainerId')?.invalid &&
                          (invalidForm || addTrainerForm.get('trainerId')?.dirty)
@@ -69,9 +69,8 @@
         <div *ngFor="let trainer of visibleTrainers"
             class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 flex items-center gap-3">
 
-            <div class="w-10 h-10 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 flex items-center justify-center shrink-0">
-                <i-feather name="user" style="width:16px;height:16px;" class="text-gray-400"></i-feather>
-            </div>
+            <app-avatar [photo]="trainer.trainerPhoto?.photoUrl | strapiUrl" [name]="trainer.trainerName" [size]="40"
+                borderClass="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400"></app-avatar>
 
             <div class="flex-1 min-w-0 flex flex-col gap-0.5">
                 <p class="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate">{{ trainer.trainerName }}</p>

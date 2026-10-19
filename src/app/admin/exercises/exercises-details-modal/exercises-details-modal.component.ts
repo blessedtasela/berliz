@@ -52,7 +52,7 @@ export class ExercisesDetailsModalComponent {
   }
 
   openUrl(url: any) {
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   closeDialog() {

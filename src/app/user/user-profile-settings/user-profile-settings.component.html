@@ -127,7 +127,7 @@
             </div>
 
             <!-- Switch -->
-            <button type="button" role="switch" [attr.aria-checked]="isProfilePublic"
+            <button type="button" role="switch" [attr.aria-checked]="isProfilePublic" aria-label="Public profile"
                 [attr.aria-label]="isProfilePublic ? 'Make my profile private' : 'Make my profile public'"
                 (click)="toggleProfileVisibility()"
                 [disabled]="savingVisibility"
@@ -250,7 +250,7 @@
             </div>
 
             <!-- Switch -->
-            <button type="button" role="switch" [attr.aria-checked]="messagePopupEnabled"
+            <button type="button" role="switch" [attr.aria-checked]="messagePopupEnabled" aria-label="Message pop-ups"
                 aria-label="Show message popup everywhere" (click)="toggleMessagePopupEnabled()"
                 [disabled]="savingMessagePopupEnabled"
                 class="relative w-11 h-6 rounded-full transition shrink-0 disabled:opacity-60
@@ -302,7 +302,7 @@
                     <p class="text-[11px] text-gray-400">New direct messages you've received.</p>
                 </div>
             </div>
-            <button type="button" role="switch" [attr.aria-checked]="emailNotifyMessages"
+            <button type="button" role="switch" [attr.aria-checked]="emailNotifyMessages" aria-label="Email me about new messages"
                 aria-label="Email me about new messages" (click)="toggleEmailNotifyMessages()"
                 [disabled]="savingEmailNotificationPreferences"
                 class="relative w-11 h-6 rounded-full transition shrink-0 disabled:opacity-60
@@ -322,7 +322,7 @@
                     <p class="text-[11px] text-gray-400">Session requests, confirmations, cancellations, and intake forms.</p>
                 </div>
             </div>
-            <button type="button" role="switch" [attr.aria-checked]="emailNotifyBookings"
+            <button type="button" role="switch" [attr.aria-checked]="emailNotifyBookings" aria-label="Email me about bookings"
                 aria-label="Email me about booking updates" (click)="toggleEmailNotifyBookings()"
                 [disabled]="savingEmailNotificationPreferences"
                 class="relative w-11 h-6 rounded-full transition shrink-0 disabled:opacity-60
@@ -342,7 +342,7 @@
                     <p class="text-[11px] text-gray-400">Subscription, payment, and partnership status updates.</p>
                 </div>
             </div>
-            <button type="button" role="switch" [attr.aria-checked]="emailNotifyAccount"
+            <button type="button" role="switch" [attr.aria-checked]="emailNotifyAccount" aria-label="Email me about account and partnership changes"
                 aria-label="Email me about account and partnership changes" (click)="toggleEmailNotifyAccount()"
                 [disabled]="savingEmailNotificationPreferences"
                 class="relative w-11 h-6 rounded-full transition shrink-0 disabled:opacity-60
@@ -363,7 +363,7 @@
                     <p class="text-[11px] text-gray-400">Reactions and comments on your posts. Off by default -- this can get chatty.</p>
                 </div>
             </div>
-            <button type="button" role="switch" [attr.aria-checked]="emailNotifySocial"
+            <button type="button" role="switch" [attr.aria-checked]="emailNotifySocial" aria-label="Email me about likes and comments"
                 aria-label="Email me about likes and comments on my posts" (click)="toggleEmailNotifySocial()"
                 [disabled]="savingEmailNotificationPreferences"
                 class="relative w-11 h-6 rounded-full transition shrink-0 disabled:opacity-60
@@ -423,7 +423,7 @@
                     </div>
                 </div>
                 <button type="button" (click)="removePasskey(credential)" [disabled]="removingPasskeyId === credential.id"
-                    class="shrink-0 w-7 h-7 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition disabled:opacity-50">
+                    class="shrink-0 w-7 h-7 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition disabled:opacity-50" aria-label="Remove passkey">
                     <i-feather *ngIf="removingPasskeyId !== credential.id" name="trash-2" style="width:12px;height:12px;"></i-feather>
                     <i-feather *ngIf="removingPasskeyId === credential.id" name="loader" style="width:12px;height:12px;" class="animate-spin"></i-feather>
                 </button>
@@ -700,7 +700,7 @@
                     </div>
                 </div>
 
-                <button type="button" role="switch" [attr.aria-checked]="browserNotificationsEnabled"
+                <button type="button" role="switch" [attr.aria-checked]="browserNotificationsEnabled" aria-label="Browser notifications"
                     aria-label="Enable browser notifications" (click)="toggleBrowserNotifications()"
                     class="relative w-11 h-6 rounded-full transition shrink-0
                            focus:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
@@ -718,7 +718,7 @@
                         <i-feather name="message-circle" style="width:13px;height:13px;" class="text-gray-400 shrink-0"></i-feather>
                         <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Messages</span>
                     </div>
-                    <button type="button" role="switch" [attr.aria-checked]="isNotificationCategoryEnabled('message')"
+                    <button type="button" role="switch" [attr.aria-checked]="isNotificationCategoryEnabled('message')" [attr.aria-label]="'Notify me about message activity'"
                         (click)="toggleNotificationCategory('message')"
                         class="relative w-9 h-5 rounded-full transition shrink-0"
                         [ngClass]="isNotificationCategoryEnabled('message') ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-700'">
@@ -732,7 +732,7 @@
                         <i-feather name="user-plus" style="width:13px;height:13px;" class="text-gray-400 shrink-0"></i-feather>
                         <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Connection requests</span>
                     </div>
-                    <button type="button" role="switch" [attr.aria-checked]="isNotificationCategoryEnabled('connection')"
+                    <button type="button" role="switch" [attr.aria-checked]="isNotificationCategoryEnabled('connection')" [attr.aria-label]="'Notify me about connection activity'"
                         (click)="toggleNotificationCategory('connection')"
                         class="relative w-9 h-5 rounded-full transition shrink-0"
                         [ngClass]="isNotificationCategoryEnabled('connection') ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-700'">
@@ -746,7 +746,7 @@
                         <i-feather name="activity" style="width:13px;height:13px;" class="text-gray-400 shrink-0"></i-feather>
                         <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Posts &amp; feed activity</span>
                     </div>
-                    <button type="button" role="switch" [attr.aria-checked]="isNotificationCategoryEnabled('post')"
+                    <button type="button" role="switch" [attr.aria-checked]="isNotificationCategoryEnabled('post')" [attr.aria-label]="'Notify me about post activity'"
                         (click)="toggleNotificationCategory('post')"
                         class="relative w-9 h-5 rounded-full transition shrink-0"
                         [ngClass]="isNotificationCategoryEnabled('post') ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-700'">
@@ -766,6 +766,6 @@
          Nothing is shared with any trainer until the client turns them on here. -->
     <app-progress-sharing-settings></app-progress-sharing-settings>
 
-    <app-user-profile-settings-dangerzone (deactivate)="deactivateAccount()" (updateEmail)="openUpdateEmail()">
+    <app-user-profile-settings-dangerzone (deactivate)="deactivateAccount()" (updateEmail)="openUpdateEmail()" (deleteAccount)="openDeleteAccount()">
     </app-user-profile-settings-dangerzone>
 </div>

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
@@ -14,6 +15,7 @@ import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field
     standalone: false
 })
 export class TrainerPricingComponent {
+  private destroyRef = inject(DestroyRef);
   trainerPricingData: TrainerPricing[] = [];
   totalTrainerPricing: number = 0;
   trainerPricingLength: number = 0;
@@ -32,7 +34,7 @@ export class TrainerPricingComponent {
 
   ngOnInit(): void {
     this.store.dispatch(loadTrainerPricing());
-    this.store.select(selectTrainerPricing).subscribe((cachedData) => {
+    this.store.select(selectTrainerPricing).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((cachedData) => {
       this.trainerPricingData = cachedData;
       this.totalTrainerPricing = cachedData.length
       this.trainerPricingLength = cachedData.length
@@ -42,7 +44,7 @@ export class TrainerPricingComponent {
 
 
   handleEmitEvent() {
-    this.store.select(selectTrainerPricing).subscribe((trainerPricing) => {
+    this.store.select(selectTrainerPricing).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((trainerPricing) => {
       this.trainerPricingData = trainerPricing;
       this.totalTrainerPricing = trainerPricing.length
       this.trainerPricingLength = trainerPricing.length

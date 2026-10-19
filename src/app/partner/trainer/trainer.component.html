@@ -40,7 +40,7 @@
 
             <!-- Avatar + camera -->
             <div class="relative">
-                <img alt="" [src]="previewUrl" (click)="openImagePreview()" onerror="this.src='assets/avatar.png';"
+                <img alt="" [src]="previewUrl" (click)="openImagePreview()" data-fallback-src="assets/avatar.png"
                     class="w-20 h-20 rounded-full object-cover object-top border-4 border-white dark:border-gray-900 shadow-md cursor-pointer" />
 
                 <label for="trainerFileInput" class="absolute bottom-0 right-0 w-7 h-7 bg-red-600 rounded-full flex items-center justify-center

@@ -132,7 +132,6 @@ export class AddSubscriptionsModalComponent {
   }
 
   onTrainerSelected(event: any): void {
-    console.log("onTrainerSelected called")
     const id = +event.target.value;
     const selectedTrainer = this.trainers.find(trainer => trainer.id === id);
     if (selectedTrainer) {
@@ -140,12 +139,10 @@ export class AddSubscriptionsModalComponent {
       this.calculateTotalAmount();
     }
     else {
-      console.log('trainer not found')
     }
   }
 
   onCenterSelected(event: any): void {
-    console.log("onCenterSelected called")
     const id = +event.target.value;
     const selectedCenter = this.centers.find(center => center.id === id);
     if (selectedCenter) {
@@ -153,7 +150,6 @@ export class AddSubscriptionsModalComponent {
       this.calculateTotalAmount();
     }
     else {
-      console.log('center not found')
     }
   }
 

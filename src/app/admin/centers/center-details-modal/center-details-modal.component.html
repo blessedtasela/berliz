@@ -19,7 +19,7 @@
     </div>
 
     <img alt="" [src]="centerData.photoResponse?.photoUrl | strapiUrl" class="w-full h-40 object-cover object-top rounded-xl border border-gray-200 dark:border-gray-700"
-        onerror="this.src='../../../assets/icons/user.png';" />
+        data-fallback-src="../../../assets/icons/user.png" />
 
     <span class="w-fit px-2.5 py-1 rounded-full text-[11px] font-semibold" [ngClass]="centerData.status === 'true'
             ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900'
@@ -44,7 +44,7 @@
             <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right flex items-center gap-1.5 justify-end">
                 {{ centerData.address }}
                 <button type="button" (click)="openUrl(centerData.location)"
-                    class="text-red-600 hover:text-red-700 transition shrink-0">
+                    class="text-red-600 hover:text-red-700 transition shrink-0" aria-label="Open location in maps">
                     <i-feather name="map-pin" style="width:13px;height:13px;"></i-feather>
                 </button>
             </span>

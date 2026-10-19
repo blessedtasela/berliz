@@ -24,7 +24,7 @@
 
             <div class="h-32 w-full bg-zinc-900 border-b border-zinc-800">
                 <img [src]="centerEquipment.imageUrl | strapiUrl" [alt]="centerEquipment.name" class="w-full h-full object-contain"
-                    onerror="this.src='assets/avatar.png';" />
+                    data-fallback-src="assets/avatar.png" />
             </div>
 
             <div class="p-3 flex flex-col gap-2 flex-1">

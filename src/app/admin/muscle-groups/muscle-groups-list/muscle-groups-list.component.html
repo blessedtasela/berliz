@@ -4,7 +4,7 @@
         <div *ngFor="let muscleGroup of muscleGroupsData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 dark:active:bg-gray-800 transition-colors">
             <div class="relative shrink-0">
                 <img alt="" [src]="imageSrc(muscleGroup)"
-                    onerror="this.src='../../../assets/icons/user.png';"
+                    data-fallback-src="../../../assets/icons/user.png"
                     (click)="openCategoryDetails(muscleGroup.id)"
                     class="w-12 h-12 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700 cursor-pointer">
                 <label [attr.for]="'fileInput-m-' + muscleGroup.id" title="Change image"
@@ -15,7 +15,7 @@
                     (change)="onImgSelected($event, muscleGroup.id)">
             </div>
 
-            <div class="min-w-0 flex-1" (click)="openCategoryDetails(muscleGroup.id)">
+            <div class="min-w-0 flex-1" (click)="openCategoryDetails(muscleGroup.id)" role="button" tabindex="0" (keydown.enter)="openCategoryDetails(muscleGroup.id)">
                 <div class="flex items-center gap-2">
                     <p class="font-semibold text-gray-900 dark:text-gray-100 truncate">{{ muscleGroup.name }}</p>
                     <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
@@ -33,7 +33,7 @@
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="updateCategoryStatus(muscleGroup.id)"
-                    [title]="muscleGroup.status === 'false' ? 'Activate' : 'Deactivate'">
+                    [title]="muscleGroup.status === 'false' ? 'Activate' : 'Deactivate'" [attr.aria-label]="muscleGroup.status === 'false' ? 'Activate' : 'Deactivate'">
                     <i-feather [name]="muscleGroup.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"
@@ -67,13 +67,13 @@
                         <div class="flex items-center gap-2">
                             <div class="group relative">
                                 <img alt="" [src]="imageSrc(muscleGroup)"
-                                    onerror="this.src='../../../assets/icons/user.png';"
+                                    data-fallback-src="../../../assets/icons/user.png"
                                     (click)="openCategoryDetails(muscleGroup.id)"
                                     class="w-10 h-10 rounded-xl object-cover object-top border border-gray-200 dark:border-gray-700 cursor-pointer">
                                 <div class="hidden group-hover:block fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2
                                     -translate-y-1/2 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2 shadow-2xl">
                                     <img alt="" [src]="imageSrc(muscleGroup)"
-                                        onerror="this.src='../../../assets/icons/user.png';"
+                                        data-fallback-src="../../../assets/icons/user.png"
                                         class="w-96 h-96 rounded-xl object-cover object-top">
                                 </div>
                             </div>

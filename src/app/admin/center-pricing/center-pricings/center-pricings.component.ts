@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { CenterPricing } from 'src/app/models/centers.interface';
@@ -13,6 +14,7 @@ import { AdminSearchField } from 'src/app/shared/admin-search/admin-search-field
     standalone: false
 })
 export class CenterPricingsComponent {
+  private destroyRef = inject(DestroyRef);
   centerPricingData: CenterPricing[] = [];
   totalCenterPricing: number = 0;
   centerPricingLength: number = 0;
@@ -29,7 +31,7 @@ export class CenterPricingsComponent {
 
   ngOnInit(): void {
     this.store.dispatch(loadAllCenterPricing());
-    this.store.select(selectCenterPricing).subscribe((cachedData) => {
+    this.store.select(selectCenterPricing).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((cachedData) => {
       this.centerPricingData = cachedData;
       this.totalCenterPricing = cachedData.length;
       this.centerPricingLength = cachedData.length;
@@ -37,7 +39,7 @@ export class CenterPricingsComponent {
   }
 
   handleEmitEvent() {
-    this.store.select(selectCenterPricing).subscribe((centerPricing) => {
+    this.store.select(selectCenterPricing).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((centerPricing) => {
       this.centerPricingData = centerPricing;
       this.totalCenterPricing = centerPricing.length;
       this.centerPricingLength = centerPricing.length;

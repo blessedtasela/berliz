@@ -44,7 +44,7 @@
             <section class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
                 <div class="h-44 sm:h-60 w-full bg-zinc-950">
                     <img [src]="center.photoResponse?.photoUrl | strapiUrl" [alt]="center.name" class="w-full h-full object-cover object-top"
-                        onerror="this.src='assets/landing/hero-gym-centers.jpg';" />
+                        data-fallback-src="assets/landing/hero-gym-centers.jpg" />
                 </div>
 
                 <div class="p-5 flex flex-col gap-4">

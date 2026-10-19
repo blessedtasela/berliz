@@ -75,7 +75,7 @@ export class FactsComponent {
 
         this.animateCounter();
       }, (error) => {
-        console.log(error)
+        console.error(error)
         if (error.error?.message) {
           this.responseMessage = error.error?.message;
         } else {

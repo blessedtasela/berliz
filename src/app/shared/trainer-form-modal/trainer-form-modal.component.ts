@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, EventEmitter, Inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, DestroyRef, inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, FormArray } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -18,6 +19,7 @@ import { selectActiveCategories } from 'src/app/state/category/category.selector
     standalone: false
 })
 export class TrainerFormModalComponent {
+  private destroyRef = inject(DestroyRef);
   onAddTrainerEmit = new EventEmitter();
   addTrainerForm!: FormGroup;
   invalidForm: boolean = false;
@@ -54,7 +56,7 @@ export class TrainerFormModalComponent {
 
   handleEmitEvent() {
     this.store.dispatch(loadActiveCategories());
-    this.store.select(selectActiveCategories).subscribe((activeCategories) => {
+    this.store.select(selectActiveCategories).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((activeCategories) => {
       this.categories = activeCategories;
       this.cdr.detectChanges();
     });

@@ -2,7 +2,7 @@
     <!-- Mobile: card rows (matches admin/categories pattern) -->
     <div class="sm:hidden divide-y divide-gray-100 dark:divide-gray-800">
         <div *ngFor="let tag of tagsData" class="flex items-center gap-3 px-4 py-3 active:bg-gray-50 dark:active:bg-gray-800 transition-colors">
-            <div class="min-w-0 flex-1" (click)="openTagDetails(tag.id)">
+            <div class="min-w-0 flex-1" (click)="openTagDetails(tag.id)" role="button" tabindex="0" (keydown.enter)="openTagDetails(tag.id)">
                 <div class="flex items-center gap-2">
                     <p class="font-semibold text-gray-900 dark:text-gray-100 truncate">{{ tag.name }}</p>
                     <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
@@ -19,7 +19,7 @@
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center"
                     (click)="updateTagStatus(tag.id)"
-                    [title]="tag.status === 'false' ? 'Activate' : 'Deactivate'">
+                    [title]="tag.status === 'false' ? 'Activate' : 'Deactivate'" [attr.aria-label]="tag.status === 'false' ? 'Activate' : 'Deactivate'">
                     <i-feather [name]="tag.status === 'false' ? 'check-circle' : 'x-circle'" class="text-red-600" style="width:16px;height:16px;"></i-feather>
                 </button>
                 <button type="button" class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"

@@ -56,7 +56,7 @@
         <!-- Saved subject -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Saved subject</label>
-            <select formControlName="savedSubject" [(ngModel)]="selectedSubject" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
+            <select aria-label="Saved subject" formControlName="savedSubject" [(ngModel)]="selectedSubject" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
                 <option selected hidden>You can select a message subject</option>
                 <option *ngFor="let message of savedMessages">{{ message.subject }}</option>
@@ -66,7 +66,7 @@
         <!-- Subject -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Subject</label>
-            <input formControlName="subject" [(ngModel)]="selectedSubject" placeholder="Email subject" type="text" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+            <input aria-label="Subject" formControlName="subject" [(ngModel)]="selectedSubject" placeholder="Email subject" type="text" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
                 [ngClass]="{
                     'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20': reviewContactUsForm.get('subject')?.invalid && reviewContactUsForm.get('subject')?.touched,
@@ -82,7 +82,7 @@
         <!-- Saved body -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Saved reply</label>
-            <select formControlName="savedBody" [(ngModel)]="selectedMessage" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
+            <select aria-label="Saved reply" formControlName="savedBody" [(ngModel)]="selectedMessage" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
                 <option selected hidden>You can select a saved message</option>
                 <option *ngFor="let message of savedMessages">{{ message.message }}</option>
@@ -92,7 +92,7 @@
         <!-- Body -->
         <div class="flex flex-col gap-1">
             <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Reply</label>
-            <textarea formControlName="body" [(ngModel)]="selectedMessage"
+            <textarea aria-label="Reply" formControlName="body" [(ngModel)]="selectedMessage"
                 placeholder="Greetings and headers are added for you — go straight to composing the reply" rows="6"
                 class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"

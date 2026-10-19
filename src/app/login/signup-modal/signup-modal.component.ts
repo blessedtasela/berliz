@@ -104,7 +104,6 @@ export class SignupModalComponent {
       this.signupForm.get('profilePhoto')?.invalid
     ) {
       this.invalidForm = true
-      console.log("can't validate");
     } else
       this.formIndex += n;
     this.userService.setSignupFormIndex(this.formIndex);
@@ -117,7 +116,6 @@ export class SignupModalComponent {
       this.signupForm.get('confirmPassword')?.invalid
     ) {
       this.invalidForm = true
-      console.log("can't validate");
     } else
       this.formIndex += n;
     this.userService.setSignupFormIndex(this.formIndex);

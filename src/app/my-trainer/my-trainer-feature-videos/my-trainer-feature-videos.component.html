@@ -351,7 +351,7 @@
                         <label class="text-[10px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                             Motivation
                         </label>
-                        <textarea [formControlName]="'motivation_' + i" rows="8"
+                        <textarea aria-label="Motivation" [formControlName]="'motivation_' + i" rows="8"
                             [placeholder]="motivationPlaceholders[i]" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border rounded-xl text-gray-900 dark:text-gray-100 text-xs
                                    focus:outline-none focus:ring-2 focus:border-transparent resize-none
                                    transition placeholder:text-gray-400 dark:placeholder:text-gray-500" [ngClass]="{

@@ -18,11 +18,7 @@ interface PrivacySection {
 })
 export class PrivacyPageComponent {
 
-  /**
-   * Draft content — see the disclosure banner in the template. This has not
-   * been reviewed by a licensed attorney and must not be relied upon as
-   * final legal advice.
-   */
+  /** Page content. */
   sections: PrivacySection[] = [
     {
       title: '1. Information We Collect',

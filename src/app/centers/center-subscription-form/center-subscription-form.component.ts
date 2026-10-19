@@ -71,7 +71,6 @@ export class CenterSubscriptionFormComponent {
   submitForm(): void {
     if (this.centerSubscriptionForm.invalid) {
       this.invalidForm = true
-      console.log('please complete all fields');
       return;
     }
 

@@ -3,29 +3,60 @@
 @tailwind components;
 @tailwind utilities;
 
-@import '@angular/material/prebuilt-themes/indigo-pink.css';
-@import "~@ng-select/ng-select/themes/default.theme.css";
+/* The Angular Material (indigo-pink) and ng-select default themes used to be @imported here. Both imports sat after
+   Tailwind's expanded rules, which makes them invalid CSS, so the build has always dropped them (and warned). The app
+   only uses Material for dialogs and snack bars, both styled in this file, and ng-select through .berliz-select below,
+   so nothing was lost; the dead lines are removed so the warnings stop hiding real ones. */
+
+/* Inter is self-hosted: its stylesheet is added in angular.json "styles" (an @import here would sit after
+   Tailwind's expanded rules and be ignored). Until now the body asked for Roboto/'Inter' but nothing ever loaded
+   either, so every device fell back to its own system font and the app looked different on each one. */
 
 .ng-select.ng-select-focused .ng-placeholder,
 .ng-select.ng-select-opened .ng-placeholder {
   opacity: 0;
 }
 
-/* ─── Berliz-styled ng-select (country/state/city pickers etc.) ────────────
-   .berliz-select is referenced on several ng-select fields but had no rules
-   of its own, so those fields silently rendered in ng-select's plain default
-   theme — a totally different look (blue focus, square corners, denser text)
-   from every hand-styled text input around them. This brings it in line:
-   same rounded-xl / gray-50 / red-focus-ring language as the rest of the form. */
+/* A plain text input that matches the dropdowns (<app-select>) in height, radius and focus ring, so a form
+   mixing the two doesn't look like two different design systems. */
+@layer components {
+  .berliz-input {
+    @apply w-full h-11 px-3.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400
+      transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent focus:bg-white;
+  }
+  .dark .berliz-input {
+    @apply border-gray-700 bg-gray-800 text-gray-100 placeholder-gray-500 focus:bg-gray-900;
+  }
+}
+
+/* ─── Berliz-styled ng-select (the shared <app-select>, plus the country/state/city pickers) ───
+   ng-select's own colour/layout theme is deliberately not imported (see the note at the top of this
+   file), so everything a dropdown needs -- the arrow, where the typed text sits, the multi-value
+   chips, the open list -- is drawn here. Before this block was complete the field had no arrow at
+   all and a hidden caret, so it read as a plain text box rather than a dropdown you can search.
+   The open list is attached to <body> (appendTo="body" on <app-select>), where ng-select copies the
+   host's classes onto the panel -- hence the `.ng-dropdown-panel.berliz-select` selectors next to the
+   descendant ones. */
 .berliz-select .ng-select-container {
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   border-radius: 0.75rem;
   border: 1px solid #e5e7eb;
   background-color: #f9fafb;
   font-size: 0.875rem;
   color: #111827;
   box-shadow: none;
+  align-items: center;
+  cursor: pointer;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.berliz-select--compact .ng-select-container {
+  min-height: 2.25rem;
+  font-size: 0.75rem;
+}
+
+.berliz-select:not(.ng-select-disabled):not(.ng-select-focused) .ng-select-container:hover {
+  border-color: #d1d5db;
 }
 
 .berliz-select.ng-select-focused .ng-select-container {
@@ -34,69 +65,187 @@
   background-color: #ffffff;
 }
 
+.berliz-select.ng-select-disabled .ng-select-container {
+  cursor: not-allowed;
+  opacity: 0.55;
+  background-color: #f3f4f6;
+}
+
 .berliz-select--error .ng-select-container {
   border-color: #ef4444;
+}
+
+/* Value, placeholder and the type-to-search box share one line. */
+.berliz-select .ng-value-container {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.25rem 0 0.25rem 0.875rem;
+}
+
+.berliz-select.ng-select-single .ng-select-container .ng-value-container .ng-input {
+  top: 0;
+  left: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 0.875rem;
+  padding-right: 3.25rem;
 }
 
 .berliz-select .ng-placeholder {
   color: #9ca3af;
 }
 
-.berliz-select .ng-value-container {
-  padding-left: 0.75rem;
-}
-
 .berliz-select .ng-value-container .ng-input > input {
-  font-size: 0.875rem;
+  font-size: inherit;
   color: #111827;
+  cursor: text;
+  caret-color: #ef4444;
 }
 
+.berliz-select.ng-select-single .ng-value-container .ng-value {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Selected values in a multi-select, as chips. */
+.berliz-select.ng-select-multiple .ng-value-container .ng-value {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  border-radius: 9999px;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.berliz-select.ng-select-multiple .ng-value-container .ng-value .ng-value-label {
+  padding: 0.125rem 0.25rem 0.125rem 0.625rem;
+}
+
+.berliz-select.ng-select-multiple .ng-value-container .ng-value .ng-value-icon {
+  padding: 0.125rem 0.5rem 0.125rem 0.25rem;
+  border-radius: 0 9999px 9999px 0;
+}
+
+.berliz-select.ng-select-multiple .ng-value-container .ng-value .ng-value-icon:hover {
+  background-color: #fecaca;
+}
+
+.berliz-select.ng-select-multiple .ng-value-container .ng-input {
+  padding: 0.125rem 0;
+}
+
+/* The arrow ng-select draws from borders (its theme file isn't loaded). */
 .berliz-select .ng-arrow-wrapper {
+  width: 2rem;
   padding-right: 0.5rem;
+}
+
+.berliz-select .ng-arrow-wrapper .ng-arrow {
+  border-style: solid;
+  border-color: #9ca3af transparent transparent;
+  border-width: 5px 4.5px 0;
+  transition: transform 0.15s ease;
+}
+
+.berliz-select.ng-select-opened .ng-arrow-wrapper .ng-arrow {
+  transform: rotate(180deg);
 }
 
 .berliz-select .ng-clear-wrapper {
   color: #9ca3af;
+  padding-right: 0.25rem;
 }
 
-.berliz-select .ng-dropdown-panel {
+.berliz-select .ng-clear-wrapper:hover {
+  color: #ef4444;
+}
+
+.berliz-select .ng-spinner-zone {
+  padding: 0.25rem 0.25rem 0 0;
+}
+
+/* The open list. */
+.berliz-select .ng-dropdown-panel,
+.ng-dropdown-panel.berliz-select {
+  z-index: 2000;
   border-radius: 0.75rem;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.10), 0 2px 8px rgba(0, 0, 0, 0.06);
+  background-color: #ffffff;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
   margin-top: 4px;
   overflow: hidden;
   font-family: inherit;
 }
 
-.berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
+.ng-dropdown-panel.berliz-select.ng-select-top {
+  margin-top: 0;
+  margin-bottom: 4px;
 }
 
-.berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+.berliz-select .ng-dropdown-panel .ng-dropdown-panel-items,
+.ng-dropdown-panel.berliz-select .ng-dropdown-panel-items {
+  max-height: 16rem;
+  padding: 0.25rem;
+}
+
+.berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option,
+.ng-dropdown-panel.berliz-select .ng-dropdown-panel-items .ng-option {
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border-radius: 0.5rem;
+  color: #111827;
+}
+
+.berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked,
+.ng-dropdown-panel.berliz-select .ng-dropdown-panel-items .ng-option.ng-option-marked {
   background-color: #fef2f2;
 }
 
 .berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected,
-.berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked {
+.berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked,
+.ng-dropdown-panel.berliz-select .ng-dropdown-panel-items .ng-option.ng-option-selected,
+.ng-dropdown-panel.berliz-select .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked {
   background-color: #fee2e2;
   color: #b91c1c;
   font-weight: 600;
 }
 
-/* Same reasoning as the .mat-dialog-container override below: .berliz-select's
-   rules above are plain CSS with hardcoded light colors, not Tailwind classes,
-   so Tailwind's dark: variant system can't touch them. Every country/state/city
-   picker (settings form, location-form, partner trainer-data) would otherwise
-   stay a bright white field inside an otherwise dark-mode'd form. */
+.ng-dropdown-panel.berliz-select .ng-dropdown-panel-items .ng-option.ng-option-disabled {
+  color: #9ca3af;
+  cursor: default;
+}
+
+.ng-dropdown-panel.berliz-select .ng-option .highlighted {
+  text-decoration: none;
+  font-weight: 700;
+  color: #dc2626;
+}
+
+/* Same reasoning as the .mat-dialog-container override below: the rules above are plain CSS with
+   hardcoded light colors, not Tailwind classes, so Tailwind's dark: variant can't touch them. */
 html.dark .berliz-select .ng-select-container {
   background-color: #1f2937; /* gray-800 */
   border-color: #374151; /* gray-700 */
   color: #f3f4f6; /* gray-100 */
 }
 
+html.dark .berliz-select:not(.ng-select-disabled):not(.ng-select-focused) .ng-select-container:hover {
+  border-color: #4b5563; /* gray-600 */
+}
+
 html.dark .berliz-select.ng-select-focused .ng-select-container {
   background-color: #111827; /* gray-900 */
+}
+
+html.dark .berliz-select.ng-select-disabled .ng-select-container {
+  background-color: #111827;
 }
 
 html.dark .berliz-select--error .ng-select-container {
@@ -108,27 +257,49 @@ html.dark .berliz-select .ng-clear-wrapper {
   color: #6b7280; /* gray-500 */
 }
 
+html.dark .berliz-select .ng-arrow-wrapper .ng-arrow {
+  border-top-color: #6b7280;
+}
+
 html.dark .berliz-select .ng-value-container .ng-input > input {
   color: #f3f4f6; /* gray-100 */
 }
 
-html.dark .berliz-select .ng-dropdown-panel {
+html.dark .berliz-select.ng-select-multiple .ng-value-container .ng-value {
+  background-color: rgba(127, 29, 29, 0.35); /* red-900/35 */
+  color: #fca5a5; /* red-300 */
+}
+
+html.dark .berliz-select.ng-select-multiple .ng-value-container .ng-value .ng-value-icon:hover {
+  background-color: rgba(127, 29, 29, 0.6);
+}
+
+html.dark .berliz-select .ng-dropdown-panel,
+html.dark .ng-dropdown-panel.berliz-select {
   background-color: #1f2937; /* gray-800 */
   border-color: #374151; /* gray-700 */
 }
 
-html.dark .berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+html.dark .berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option,
+html.dark .ng-dropdown-panel.berliz-select .ng-dropdown-panel-items .ng-option {
   color: #f3f4f6; /* gray-100 */
 }
 
-html.dark .berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+html.dark .berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked,
+html.dark .ng-dropdown-panel.berliz-select .ng-dropdown-panel-items .ng-option.ng-option-marked {
   background-color: rgba(127, 29, 29, 0.2); /* red-950/20 */
 }
 
 html.dark .berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected,
-html.dark .berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked {
+html.dark .berliz-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked,
+html.dark .ng-dropdown-panel.berliz-select .ng-dropdown-panel-items .ng-option.ng-option-selected,
+html.dark .ng-dropdown-panel.berliz-select .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked {
   background-color: rgba(127, 29, 29, 0.3); /* red-950/30 */
   color: #f87171; /* red-400 */
+}
+
+html.dark .ng-dropdown-panel.berliz-select .ng-option .highlighted {
+  color: #f87171;
 }
 
 /* ─── Native date inputs ─────────────────────────────────────────────────
@@ -195,7 +366,20 @@ body {
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: 'Inter Variable', Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-feature-settings: 'cv11', 'ss03';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Headings wrap into even lines instead of leaving a one-word last line; paragraphs avoid orphans. */
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 @media (max-width: 640px) {
@@ -242,7 +426,7 @@ body {
 }
 
 .berliz-snackbar .mdc-snackbar__label {
-  font-family: 'Inter', Roboto, sans-serif !important;
+  font-family: 'Inter Variable', Inter, Roboto, sans-serif !important;
   font-size: 13px !important;
   font-weight: 600 !important;
   padding: 0 !important;
@@ -398,6 +582,30 @@ html.dark .mat-dialog-container {
   color: #f3f4f6; /* gray-100 */
 }
 
+/* The two rules above target Angular Material's OLD dialog class (.mat-dialog-container). Since the move to the MDC
+   components the panel is .mat-mdc-dialog-container / .mdc-dialog__surface, so neither rule matched any more: every
+   dialog stayed a white panel in dark mode while its content (styled with Tailwind dark: variants) turned light-on-light --
+   headings and labels became unreadable. Same intent, current class names; the CSS variables are what MDC reads. */
+.berliz-modal .mat-mdc-dialog-surface {
+  border-radius: 12px;
+}
+
+html.dark .mat-mdc-dialog-container {
+  --mdc-dialog-container-color: #111827;
+  --mdc-dialog-subhead-color: #f3f4f6;
+  --mdc-dialog-supporting-text-color: #d1d5db;
+  --mat-dialog-container-color: #111827;
+  --mat-dialog-subhead-color: #f3f4f6;
+  --mat-dialog-supporting-text-color: #d1d5db;
+  color: #f3f4f6;
+}
+
+html.dark .mat-mdc-dialog-container .mdc-dialog__surface,
+html.dark .mat-mdc-dialog-surface {
+  background-color: #111827;
+  color: #f3f4f6;
+}
+
 .badge-pulse {
   animation: badgePulse 1.4s ease-out infinite;
 }
@@ -448,7 +656,7 @@ ngx-ui-loader .ball-spin-fade>div {
 
 /* ── Text label ─────────────────────────────────────────────────────────── */
 .ngx-ui-loader-text {
-  font-family: 'Inter', Roboto, sans-serif !important;
+  font-family: 'Inter Variable', Inter, Roboto, sans-serif !important;
   font-size: 11px !important;
   font-weight: 600 !important;
   letter-spacing: 0.08em !important;
@@ -476,4 +684,181 @@ ngx-ui-loader .logo-container img {
   object-fit: contain !important;
   border-radius: 10px !important;
   opacity: 0.90 !important;
+}
+
+/* ─── Interaction polish (app-wide, additive) ──────────────────────────────
+   Small global rules so every screen feels the same without per-template edits. */
+
+/* Keyboard users could not see where they were on buttons/links/switches/custom
+   controls (text inputs keep their own focus ring). */
+:where(a, button, summary, [role="button"], [role="switch"], [role="tab"], [tabindex="0"]):focus-visible {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* A field the user has touched and left invalid turns red on its own -- previously each
+   form had to remember to wire this up, and many didn't, so a bad value looked fine. */
+input.ng-invalid.ng-touched:not(:focus):not([type="checkbox"]):not([type="radio"]),
+textarea.ng-invalid.ng-touched:not(:focus),
+select.ng-invalid.ng-touched:not(:focus) {
+  border-color: #ef4444 !important;
+  background-color: rgba(239, 68, 68, 0.04);
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled,
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* Taps respond at once (no 300ms double-tap-zoom wait, no grey flash) and buttons give
+   a small press cue. `scale` is its own property, so it can't clobber Tailwind's
+   translate/rotate utilities the way `transform` would. */
+button,
+[role="button"],
+a {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled):not([role="switch"]):active,
+[role="button"]:active {
+  scale: 0.98;
+}
+
+button,
+[role="button"] {
+  transition-property: color, background-color, border-color, opacity, box-shadow, scale;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
+}
+
+/* Pages ease in on navigation instead of popping. Opacity only: a transform here would
+   become the containing block for position:fixed modals inside the page. */
+router-outlet + * {
+  animation: berlizPageIn 0.22s ease-out both;
+}
+
+@keyframes berlizPageIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Honour "reduce motion": no smooth scroll, no page fade, near-instant transitions.
+   Spinners keep turning -- they signal that something is loading. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .animate-spin {
+    animation-duration: 1s !important;
+    animation-iteration-count: infinite !important;
+  }
+}
+
+
+/* ─── Native-control theming ───────────────────────────────────────────────
+   Without color-scheme the browser draws its own controls (date/time pickers, <select> popups, scrollbars,
+   autofill) in light colours even when the app is in dark mode -- white pop-ups on a near-black page. */
+:root {
+  color-scheme: light;
+  accent-color: #ef4444;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+::selection {
+  background: rgba(239, 68, 68, 0.28);
+}
+
+/* Slim, quiet scrollbars (Firefox + Chromium); the default chunky grey bars clash with the dark surfaces. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.45) transparent;
+}
+
+
+/* ─── Contrast corrections ─────────────────────────────────────────────────
+   An axe-core sweep of every route found ~1,400 small texts below the WCAG AA ratio (4.5:1), almost all of them the
+   same few colour utilities used for secondary text. Fixing the utilities here corrects them everywhere at once. */
+
+/* Secondary text: gray-400 on white is 2.5:1 and gray-500 on the dark surfaces is 3.0-3.7:1. */
+html:not(.dark) .text-gray-400 {
+  color: #6b7280;
+}
+
+html.dark .dark\:text-gray-500 {
+  color: #9ca3af;
+}
+
+/* Brand red as TEXT on dark surfaces (permanently-dark marketing pages, black footer, and dark mode). */
+:is(.dark, .bg-black, .bg-gray-950, .bg-zinc-950, .bg-gray-900, .bg-zinc-900) .text-red-600:not([class*="bg-red-"]):not([class*="bg-white"]) {
+  color: #f87171;
+}
+
+/* On light surfaces plain text-red-600 is 4.4-4.5:1 on the tinted red backgrounds; a touch deeper clears AA. */
+html:not(.dark) .text-red-600 {
+  color: #c81e1e;
+}
+
+/* Links in sky blue on white / on dark. */
+html:not(.dark) .text-sky-600 {
+  color: #0369a1;
+}
+
+.dark .text-sky-600 {
+  color: #38bdf8;
+}
+
+.text-zinc-500 {
+  color: #a1a1aa;
+}
+
+/* A form whose submit is in flight (see utils/double-submit-guard.ts): dim its submit buttons so it is clear the click
+   was taken, and the guard swallows any second submit until the request settles. */
+form[data-submitting] button[type="submit"] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* Loading placeholders: Tailwind's animate-pulse only fades the grey blocks in and out. Blocks that carry their own grey
+   background (the actual skeleton bars) now also get a light sweep travelling across them, the usual "this is loading
+   content" cue, instead of looking like a disabled control. Containers that merely pulse are untouched. */
+.animate-pulse[class*="bg-gray-"],
+.animate-pulse[class*="bg-zinc-"] {
+  background-image: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.45) 50%, transparent 100%);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: berlizShimmer 1.4s ease-in-out infinite;
+}
+
+html.dark .animate-pulse[class*="bg-gray-"],
+html.dark .animate-pulse[class*="bg-zinc-"] {
+  background-image: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.08) 50%, transparent 100%);
+}
+
+@keyframes berlizShimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* zinc-600 text on the zinc-900/950 public pages is 2.6:1 (found by the populated-data audit). */
+.text-zinc-600 {
+  color: #8b8b94;
 }

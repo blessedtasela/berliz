@@ -179,8 +179,9 @@ export class TrainerComponent {
         next: (res: any) => {
           this.ngxService.stop();
           this.snackBarService.openSnackBar(res?.message || 'Your trainer photo has been updated', '');
-          // updateTrainerPhoto returns the ApiResponse wrapper; the trainer payload is under `data`.
-          this.trainerData.photoResponse = res?.data?.photoResponse;
+          // res is the ApiResponse wrapper; the new photo is res.data.photoResponse (reading res.photoResponse
+          // blanked the photo until the next page load).
+          this.trainerData.photoResponse = res?.data?.photoResponse ?? this.trainerData.photoResponse;
           this.photoError = null;
           this.showCropper = false;
           this.onEmit.emit();
@@ -198,7 +199,7 @@ export class TrainerComponent {
   }
 
   openUrl(url: any) {
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   openImagePreview() {

@@ -25,7 +25,7 @@
             <div class="flex items-center gap-3">
                 <img class="h-16 w-16 object-cover object-top rounded-xl border border-gray-200 dark:border-gray-700 shrink-0"
                     [src]="currentPhotoSrc"
-                    onerror="this.src='../../../assets/icons/user.png';" alt="Display photo" />
+                    data-fallback-src="../../../assets/icons/user.png" alt="Display photo" />
                 <input formControlName="photo" (change)="onImgSelected($event)" type="file" accept="image/*" class="w-full px-3 py-2.5 rounded-xl border text-sm text-gray-900 dark:text-gray-100 cursor-pointer
                            file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold
                            file:bg-white file:text-gray-600 file:border file:border-gray-200 file:cursor-pointer

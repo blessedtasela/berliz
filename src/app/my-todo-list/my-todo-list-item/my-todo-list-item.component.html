@@ -19,7 +19,7 @@
 
     <!-- Checkbox -->
     <button type="button" (click)="onToggleTodo($event)"
-      class="mt-1 w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 hover:border-red-400 flex items-center justify-center shrink-0 transition">
+      class="mt-1 w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 hover:border-red-400 flex items-center justify-center shrink-0 transition" aria-label="Select">
       <div *ngIf="todo.checked" class="w-2 h-2 bg-red-600 rounded-full"></div>
     </button>
 

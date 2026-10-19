@@ -140,9 +140,16 @@ describe('provider profile shared cards', () => {
       expect(t).toContain('$40 each');
       expect(t).toContain('Valid for 30 days');
       expect(t).toContain('Unlimited sessions');
-      expect(t).toContain('/ billing cycle');
+      expect(t).toContain('/ month');
       expect(t).toContain('Popular');
-      expect((f.nativeElement as HTMLElement).querySelectorAll('a[href="/trainers/jo/book"]').length).toBe(2);
+      // Each card says what it is and what its button does, and links to the booking page on that plan.
+      expect(t).toContain('Session pack');
+      expect(t).toContain('Buy pack');
+      expect(t).toContain('Subscription');
+      expect(t).toContain('Subscribe');
+      expect(t).not.toContain('Choose this plan');
+      const links = Array.from((f.nativeElement as HTMLElement).querySelectorAll('a')).map(a => a.getAttribute('href'));
+      expect(links).toEqual(jasmine.arrayContaining(['/trainers/jo/book?plan=1', '/trainers/jo/book?plan=2']));
       // sorted by sortOrder: Starter (0) before Unlimited (1)
       expect(t.indexOf('Starter')).toBeLessThan(t.indexOf('Unlimited'));
     });
