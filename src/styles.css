@@ -324,6 +324,38 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   overflow-wrap: anywhere;
 }
 
+/* "anywhere" also shrinks an element's min-content width to a single character, which let table auto-layout crush
+   every column (headers like "SN" / "USER ID" split in two, role pills and "Deactivate" buttons broken letter by
+   letter). In tables, long words still break, but only once the cell has run out of room; headers, pills and
+   buttons stay on one line, and a wide table scrolls inside its overflow-x-auto wrapper. */
+table th,
+table td,
+table td * {
+  overflow-wrap: break-word;
+}
+
+/* A cell never grows past this: an over-long unbroken value wraps inside its own cell instead of pushing the
+   email, role and action columns off-screen. */
+table td {
+  max-width: 22rem;
+}
+
+table th,
+table td .rounded-full,
+table td button,
+table td a {
+  white-space: nowrap;
+}
+
+/* Same single-character min-content problem for flex rows of buttons / link-buttons on a phone ("Histor|y",
+   "Assign|ed to|me", "New|workou|t"): a word now breaks only if it really cannot fit. */
+button,
+button *,
+a[class*="rounded-"],
+a[class*="rounded-"] * {
+  overflow-wrap: break-word;
+}
+
 /* iOS Safari auto-zooms the whole page on focus of any form field whose
    computed font-size is under 16px. Almost every input/textarea/select in
    this app uses text-sm (14px) or smaller, so every modal was triggering it.

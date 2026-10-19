@@ -74,7 +74,7 @@ export class AccountabilityCardComponent implements OnInit {
   }
 
   daysLabel(p: PartnerStatusResponse): string {
-    if (p.daysSinceLastActivity < 0) return 'no logged sessions yet';
+    if (p.daysSinceLastActivity == null || p.daysSinceLastActivity < 0) return 'no logged sessions yet';
     if (p.daysSinceLastActivity === 0) return 'trained today';
     if (p.daysSinceLastActivity === 1) return '1 day since a session';
     return `${p.daysSinceLastActivity} days since a session`;

@@ -556,6 +556,22 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 
+### Unreleased — UI pass: crushed tables and buttons, stray scrollbar, empty-state polish
+
+Looked at every dashboard screen (68 routes, desktop and phone) rather than only running automated checks. Fixed:
+- **Tables and button rows were being crushed.** The global `overflow-wrap: anywhere` also shrinks an element's minimum width to one
+  character, so table headers split ("S/N", "USER ID"), role pills and "Deactivate" broke letter by letter, and on a phone the Workouts
+  buttons read "Histor|y", "Assign|ed to|me". Tables and buttons now keep headers/pills/buttons on one line, a cell is capped at 22rem
+  and wraps a long value inside itself, and a wide table scrolls within its card.
+- Sessions page showed a stray vertical scrollbar next to the tabs (1px overflow from the tab underline).
+- Providers without a photo showed a huge cropped grey circle; the stock silhouette is now shown whole. "+ yrs" no longer appears
+  when a trainer/center has no experience set (3 places); "Best: · active days total", "undefined days since a session" fall back to
+  0 / "no logged sessions yet"; the Deals card hides an empty "By" line; the to-do list hides its pagination bar when there is nothing.
+- Admin payments: the partial-refund badge sits in the Status column (desktop) and under the email (phone) so action buttons stay aligned.
+- Checked and left alone: Material and ng-select themes are not needed (the app only uses Material dialogs and snack bars, both styled in
+  styles.css, and ng-select through `.berliz-select`); the floating chat button only overlaps the page footer.
+- Verified with a production build against a local mock API: no horizontal overflow on any of the 68 routes at 1280 px or 390 px.
+
 ### Unreleased — Admin: full records manager, partial refunds, payment reminders, super-admin rules
 
 Admins can now manage every entity in the app and every transaction:
