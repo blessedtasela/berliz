@@ -47,6 +47,7 @@ import { AccountabilityCardComponent } from '../shared/accountability-card/accou
 import { ChallengesCardComponent } from '../shared/challenges-card/challenges-card.component';
 import { RecapCardComponent } from '../shared/recap/recap-card.component';
 import { OnboardingChecklistComponent } from '../shared/onboarding-checklist/onboarding-checklist.component';
+import { DashboardBillingSummaryComponent } from './dashboard-billing-summary/dashboard-billing-summary.component';
 
 
 
@@ -73,7 +74,8 @@ import { OnboardingChecklistComponent } from '../shared/onboarding-checklist/onb
     DashboardCenterDetailComponent,
     DashboardMembersComponent,
     DashboardCategoryDetailComponent,
-    DashboardQuickLinksComponent
+    DashboardQuickLinksComponent,
+    DashboardBillingSummaryComponent
   ],
   imports: [
     CommonModule,

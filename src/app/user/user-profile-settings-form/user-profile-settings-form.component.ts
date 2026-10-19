@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { City, Country, State } from 'src/app/models/Location.interface';
 import { Users } from 'src/app/models/users.interface';
 import { GENDER_OPTIONS } from 'src/app/shared/constants/gender-options';
+import { LocationFormatterService } from 'src/app/services/location-formatter.service';
 
 @Component({
     selector: 'app-user-profile-settings-form',
@@ -10,7 +11,7 @@ import { GENDER_OPTIONS } from 'src/app/shared/constants/gender-options';
     styleUrls: ['./user-profile-settings-form.component.css'],
     standalone: false
 })
-export class UserProfileSettingsFormComponent {
+export class UserProfileSettingsFormComponent implements OnInit {
 
   @Input() user!: Users;
   @Input() form!: FormGroup;
@@ -26,6 +27,27 @@ export class UserProfileSettingsFormComponent {
   @Output() stateChange = new EventEmitter<any>();
 
   genders: string[] = GENDER_OPTIONS;
+
+  constructor(private formatter: LocationFormatterService) {}
+
+  ngOnInit(): void {
+    // As-you-type phone formatting, same pattern as LocationFormComponent (signup) --
+    // this form previously left the phone field as raw digits with no region-aware
+    // formatting at all, unlike the dedicated country/phone picker used at signup.
+    const phoneCtrl = this.form.get('phone');
+    phoneCtrl?.valueChanges.subscribe(value => {
+      if (!value) return;
+      const iso = this.selectedCountryIso();
+      if (!iso) return;
+      const formatted = this.formatter.formatPhone(value, iso);
+      if (formatted !== value) phoneCtrl.setValue(formatted, { emitEvent: false });
+    });
+  }
+
+  private selectedCountryIso(): string | undefined {
+    const countryName = this.form.get('country')?.value;
+    return this.countries.find(c => c.name === countryName)?.iso2;
+  }
 
   //-----------------------------------
   // FORM SUBMIT

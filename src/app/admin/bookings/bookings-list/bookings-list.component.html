@@ -34,6 +34,11 @@
                     (click)="updateStatus(booking.id, 'completed')" title="Mark completed">
                     <i-feather name="award" class="text-green-600" style="width:16px;height:16px;"></i-feather>
                 </button>
+                <button type="button" *ngIf="canRemind(booking)"
+                    class="w-9 h-9 rounded-lg active:bg-amber-50 dark:active:bg-amber-950/20 flex items-center justify-center"
+                    (click)="remindPayment(booking)" title="Send payment reminder" aria-label="Send payment reminder">
+                    <i-feather name="bell" class="text-amber-600" style="width:16px;height:16px;"></i-feather>
+                </button>
                 <button type="button" *ngIf="booking.status === 'pending' || booking.status === 'confirmed'"
                     class="w-9 h-9 rounded-lg active:bg-red-50 dark:active:bg-red-950/20 flex items-center justify-center"
                     (click)="updateStatus(booking.id, 'cancelled')" title="Cancel">
@@ -95,6 +100,11 @@
                                 class="w-8 h-8 rounded-lg hover:bg-green-50 dark:hover:bg-green-950/20 flex items-center justify-center transition"
                                 (click)="updateStatus(booking.id, 'completed')" title="Mark completed">
                                 <i-feather name="award" class="text-green-600" style="width:15px;height:15px;"></i-feather>
+                            </button>
+                            <button type="button" *ngIf="canRemind(booking)"
+                                class="w-8 h-8 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-950/20 flex items-center justify-center transition"
+                                (click)="remindPayment(booking)" title="Send payment reminder" aria-label="Send payment reminder">
+                                <i-feather name="bell" class="text-amber-600" style="width:15px;height:15px;"></i-feather>
                             </button>
                             <button type="button" *ngIf="booking.status === 'pending' || booking.status === 'confirmed'"
                                 class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"

@@ -1,0 +1,45 @@
+<div class="flex flex-col gap-4 font-sans">
+
+  <div class="flex items-center justify-between flex-wrap gap-2">
+    <div>
+      <h1 class="text-lg font-extrabold text-gray-900 dark:text-gray-100">Billing</h1>
+      <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Subscribers, payments, payouts and Stripe Connect — all from Berliz, no Stripe dashboard needed.</p>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-1 overflow-x-auto border-b border-gray-200 dark:border-gray-800">
+    <button type="button" (click)="setTab('overview')"
+      class="px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 transition"
+      [ngClass]="activeTab === 'overview' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'">
+      Overview
+    </button>
+    <button type="button" (click)="setTab('payouts')"
+      class="px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 transition"
+      [ngClass]="activeTab === 'payouts' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'">
+      Payouts
+    </button>
+    <button type="button" (click)="setTab('connect')"
+      class="px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 transition"
+      [ngClass]="activeTab === 'connect' ? 'border-red-600 text-red-600' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'">
+      Connect accounts
+    </button>
+    <!-- Payments and Subscriptions already have full admin pages of their own -- link out rather than duplicate them here. -->
+    <a routerLink="/dashboard/payments"
+      class="px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition flex items-center gap-1">
+      Payments
+      <i-feather name="external-link" style="width:11px;height:11px;"></i-feather>
+    </a>
+    <a routerLink="/dashboard/subscriptions"
+      class="px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition flex items-center gap-1">
+      Subscriptions
+      <i-feather name="external-link" style="width:11px;height:11px;"></i-feather>
+    </a>
+  </div>
+
+  <div [ngSwitch]="activeTab">
+    <app-billing-overview *ngSwitchCase="'overview'"></app-billing-overview>
+    <app-payouts-list *ngSwitchCase="'payouts'"></app-payouts-list>
+    <app-connect-accounts-list *ngSwitchCase="'connect'"></app-connect-accounts-list>
+  </div>
+
+</div>

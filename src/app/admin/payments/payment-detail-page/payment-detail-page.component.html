@@ -65,6 +65,18 @@
                 <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Last update</span>
                 <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ formatDate(paymentData.lastUpdate) }}</span>
             </div>
+            <div class="flex items-center justify-between px-4 py-2.5" *ngIf="paymentData.stripeInvoiceId">
+                <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Stripe invoice</span>
+                <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right truncate max-w-[220px]">{{ paymentData.stripeInvoiceId }}</span>
+            </div>
+            <div class="flex items-center justify-between px-4 py-2.5" *ngIf="paymentData.storeTransactionId">
+                <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Store transaction</span>
+                <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right truncate max-w-[220px]">{{ paymentData.storeTransactionId }}</span>
+            </div>
+            <div class="flex items-center justify-between px-4 py-2.5" *ngIf="paymentData.refundedAmount">
+                <span class="text-[11px] font-semibold text-amber-600 uppercase tracking-wide">Refunded</span>
+                <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ paymentData.refundedAmount }}<span *ngIf="paymentData.refundedAt"> &middot; {{ formatDate(paymentData.refundedAt) }}</span></span>
+            </div>
         </div>
 
     </div>

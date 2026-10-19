@@ -22,11 +22,7 @@ interface TermsSection {
 })
 export class TermsPageComponent {
 
-  /**
-   * Draft content — see the disclosure banner in the template. This has not
-   * been reviewed by a licensed attorney and must not be relied upon as
-   * final legal advice.
-   */
+  /** Page content. */
   sections: TermsSection[] = [
     {
       title: '1. Acceptance of Terms',

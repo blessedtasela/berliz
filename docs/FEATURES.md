@@ -109,6 +109,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Bypass / promo codes | ✅ | Admin creates discount codes at `/dashboard/hub/promo-codes` (percent or fixed amount; scope = everyone / one role / one plan; expiry, redemption cap, once per user; pause/resume). On **My Subscriptions → Plans** a user enters a code, sees the discounted price per plan, and checkout sends `discountCode`; the backend re-validates it and applies a one-time Stripe `Coupon` (never discounts below the minimum charge). Redemption is recorded when the Stripe webhook confirms payment. Backend: `DiscountCode`/`DiscountCodeRedemption` (V63), `DiscountCodeService`, `/discountCode/*`. Codes that grant free access (no Stripe) are still the older redeem-a-code box |
 | Pre-renewal reminder + one-tap cancel | ✅ | Daily sweep emails + bells a member ~2 days before renewal (once/period); "Cancel auto-renew" / "Resume auto-renew" in the My Subscriptions menu — cancel keeps access until `endDate` and also sets Stripe `cancel_at_period_end`. `POST /subscription/cancel` \| `/resume` |
 | Stripe Connect payouts (to trainers/partners) | ✅ | One Express account per provider, reused on every later call. The Earnings tab shows a "Set up payouts" / "Finish setting up payouts" / "Payouts ready" banner from `GET /payment/stripe/connect/status`; its button opens a Stripe link from `POST /payment/stripe/connect/onboarding-link` (setup while unfinished, the Express dashboard once done). Stripe sends the provider back to `/dashboard/my-bookings?payoutSetup=return` (or `=refresh` if the link expired, which opens a fresh one for the same account). `Transfer.create` pays out to that account |
+| Admin Billing section — Stripe data inside Berliz, no Stripe dashboard needed | ✅ | `/dashboard/billing` (admin-only): **Overview** tab (gross payment volume this month, active-subscription count + recurring total — labelled Berliz's own number, not Stripe's MRR — payouts pending/paid totals, refunds this month) from `GET /dashboard/billing-summary`, all local-DB aggregate queries kept in sync by webhooks, no live Stripe calls; **Payouts** tab — admin-wide payout table (gross/commission/payout amount, status, Stripe transfer id) with a "Pay out" action for PENDING rows, wiring the already-built `loadAllPayouts`/`payOutViaStripe` NgRx state that previously had no UI; **Connect accounts** tab — one row per provider with a Stripe Connect account, cached `chargesEnabled`/`payoutsEnabled`/`detailsSubmitted` (set opportunistically whenever `getConnectStatus`/`createConnectOnboardingLink` already calls `Account.retrieve`/`Account.create` — no new Stripe calls) plus a per-row "Refresh from Stripe" (`GET`/`PUT /payment/stripe/connect/accounts*`, admin-only). Payments/Subscriptions tabs link out to their existing admin pages, which also now surface the Stripe fields (`stripeInvoiceId`, `storeTransactionId`, `refundedAmount`, `stripeSubscriptionId`, `pastDueSince`, …) that reached the entity/DTO but never the UI. A compact version of the Overview numbers also shows on the admin dashboard home |
 | Bills / orders / store / products | ✅ | Commerce primitives present |
 
 ## 7. Notifications
@@ -153,6 +154,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | Analytics dashboard | ✅ | `Analytics` |
 | Berliz feedback + problem reports | ✅ | |
 | Server-side role & ownership authorization | ✅ | Every admin-only backend operation and every "only the owner (or an admin)" operation is now enforced twice: by the existing in-method check *and* by Spring method security (`@PreAuthorize`) before the method runs. Roles now map to real authorities (`ROLE_ADMIN`, `ROLE_TRAINER`, …) — previously every signed-in user carried an empty authority list, so declarative checks could never pass. Ownership rules (who may edit a booking, task, review, post, comment, message, …) live in one small bean per domain under `com.berliz.security`. No user-visible change in what is allowed; it stops a future endpoint from forgetting its guard |
+| Admin records manager (full CMS) | ✅ | `/dashboard/cms`, linked from the admin Hub. Every record type (bookings, posts, workouts, payouts, reviews, promotions, orders, …) is listed from the JPA metamodel, so new entities appear without code: search, page, edit plain fields (only what changed is sent), delete with confirmation. Passwords, tokens and secrets are never exposed; accounts are managed on the Users screen. Deleting payments, payouts, bills, orders and promo redemptions needs a super admin. Backend: `/admin/cms` |
 | Help center / FAQs | ✅ | Public + per-user. Deep-linkable to a specific FAQ (`/dashboard/my-faqs?faqId=`) — expands and scrolls to it, used by global search and the notification entity-link resolver |
 | Hub, News & updates | ✅ | |
 | Global search (multi-entity) | ✅ | Top-bar. Public: trainers, centers, services, exercises, testimonials, equipment, workout templates, FAQs, members, posts (own + connections' feed). Admin-only: users, tasks, payments, subscriptions, partners, contact-us, newsletters, tags, muscle groups. Client-side filtering over data each entity's own NgRx slice (or, for posts, a locally-cached one-time fetch — the only entity with no store slice) already loads; deep-links to the specific item where a route/anchor exists (exercises, workout templates, FAQs, members, posts, testimonials), otherwise to that entity's list page |
@@ -201,6 +203,11 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
   links to Level Up for the rest. An old `/book?plan=<id>` link for a plan you don't own is forwarded to Level Up on that plan.
 - Mobile (the separate `mobile` app) is unchanged: its booking sheet is a native sheet and has no Level Up screen yet; see its parity tracker.
 
+### Unreleased — Fix: links lost their query parameters (login return, notification deep links)
+
+- The URL serializer lowercased the *whole* URL, query string included, so `?returnUrl=`, `?postId=`, `?userId=`, `?logId=`, `?faqId=`, `?payoutId=` and others arrived as `returnurl`, `postid`… and the code reading the camelCase names never saw them. Visitors sent to log in were not returned to the page they wanted, and notification deep links that carry an id (a post's comments, a message thread, a logged workout or run) opened the page without the item. Only the path is lowercased now; query keys, values and the fragment keep their case.
+- `ng serve` no longer server-renders every route. SSR/prerender stay on for production builds, but in development they made guarded pages such as `/dashboard` answer with a redirect to login before the app could read the signed-in token, so signed-in screens could not be developed or checked locally.
+
 ### Unreleased — Plans, packs and single sessions are three different things
 
 Before, every plan card said "Choose this plan" and led to a page whose only button was **Request booking** — so buying the
@@ -247,7 +254,7 @@ and home:
 
 ### Unreleased — Faster first load, media on the dashboard timeline, bookable times only, quarter-hour availability
 
-- **Faster first load.** The 9 MB fire background video on the landing page no longer downloads with the page: it starts after the page has loaded, only on desktop, and never for data-saver, slow-connection or reduced-motion visitors (they keep the poster image). The PDF viewer library (~660 KB, only used by the admin CV / certificate modals) is now loaded when one of those modals is opened instead of being part of every visitor's first download. Not done: the video file itself is still 9 MB and the `.webm` is a copy of the `.mp4`; re-encoding it to about 1 MB needs ffmpeg.
+- **Faster first load.** The 9 MB fire background video on the landing page no longer downloads with the page: it starts after the page has loaded, only on desktop, and never for data-saver, slow-connection or reduced-motion visitors (they keep the poster image). The PDF viewer library (~660 KB, only used by the admin CV / certificate modals) is now loaded when one of those modals is opened instead of being part of every visitor's first download. The video file itself is also much smaller now: the 3840x2160, 9.2 MB loop was re-encoded to a 1280x720 H.264 file of 0.65 MB (the 2.6-second loop is shown at 20% opacity as a background), and the `.webm` that was only a renamed copy of the `.mp4` was removed.
 - **Dashboard timeline shows media.** The "See what others are doing" cards on the Overview page now show the post's photo, or a still frame with a play icon for a video, instead of text only.
 - **Only the provider's own times can be booked.** The booking dialog no longer offers a free date/time picker when a trainer or center hasn't set their availability; it says they haven't set their available times yet (as the booking page already did) and the request button is disabled. The urgent-request path for a provider who *has* availability is unchanged.
 - **Quarter-hour availability.** My Availability (and the admin availability editor) use the shared time picker instead of the browser's native time input, so every hour offers :00 / :15 / :30 / :45.
@@ -562,6 +569,39 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Not yet: the fee is displayed, not charged (client payment checkout is still unwired).
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
+
+### Unreleased — UI pass: crushed tables and buttons, stray scrollbar, empty-state polish
+
+Looked at every dashboard screen (68 routes, desktop and phone) rather than only running automated checks. Fixed:
+- **Tables and button rows were being crushed.** The global `overflow-wrap: anywhere` also shrinks an element's minimum width to one
+  character, so table headers split ("S/N", "USER ID"), role pills and "Deactivate" broke letter by letter, and on a phone the Workouts
+  buttons read "Histor|y", "Assign|ed to|me". Tables and buttons now keep headers/pills/buttons on one line, a cell is capped at 22rem
+  and wraps a long value inside itself, and a wide table scrolls within its card.
+- Sessions page showed a stray vertical scrollbar next to the tabs (1px overflow from the tab underline).
+- Providers without a photo showed a huge cropped grey circle; the stock silhouette is now shown whole. "+ yrs" no longer appears
+  when a trainer/center has no experience set (3 places); "Best: · active days total", "undefined days since a session" fall back to
+  0 / "no logged sessions yet"; the Deals card hides an empty "By" line; the to-do list hides its pagination bar when there is nothing.
+- Admin payments: the partial-refund badge sits in the Status column (desktop) and under the email (phone) so action buttons stay aligned.
+- Checked and left alone: Material and ng-select themes are not needed (the app only uses Material dialogs and snack bars, both styled in
+  styles.css, and ng-select through `.berliz-select`); the floating chat button only overlaps the page footer.
+- Verified with a production build against a local mock API: no horizontal overflow on any of the 68 routes at 1280 px or 390 px.
+
+### Unreleased — Admin: full records manager, partial refunds, payment reminders, super-admin rules
+
+Admins can now manage every entity in the app and every transaction:
+
+- **Records manager** (`/dashboard/cms`): browse, search, edit and delete the records of any type. Generic on the backend (`AdminCmsService`, JPA metamodel), audit-logged, secret fields hidden.
+- **Refunds**: a Stripe payment can be refunded in full or in part (dialog with the refundable amount and what was already refunded; `POST /payment/stripe/refund/{id}?amount=`). Over-refunds are rejected; the booking's refunded amount is kept in step. The payments list shows "Partly refunded".
+- **Reminders**: "Send payment reminder" on a confirmed/completed unpaid booking (same message as the automatic sweep), and "Send reminder" on a subscription (past due / active / lapsed wording; not for App Store / Google Play subscriptions). Both notify in-app and by email.
+- **Who may do what**: an admin manages all entities, refunds, reminders and can delete ordinary accounts. Only the super admin can make or remove an admin, change an admin account's password or profile, and delete payments/payouts/bills/orders in the records manager. Nobody can change the super admin's role.
+
+Specs cover the CMS service/component, the refund dialog, both reminder buttons and the new service calls. The records manager has not been exercised against a real database (the local test harness has none).
+
+### Unreleased — Client intake: removed the "not reviewed by a licensed professional" banner
+
+The amber banner at the top of the client intake form (web and mobile) told clients the form had not been reviewed for legal/medical-liability
+compliance. The form only collects information the trainer needs for liability purposes, so that message was never meant to be shown and is
+gone, and so are the draft/legal-review notices at the top of the Terms and Privacy pages (web and mobile). Specs assert they are absent.
 
 ### Unreleased — Double-submit guard, skeleton shimmer, populated-data audit, mobile labels
 

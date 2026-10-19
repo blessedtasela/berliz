@@ -55,3 +55,22 @@ export interface StripeConnectStatus {
   ready: boolean;
   message?: string;
 }
+
+/** Mirrors the backend `ConnectAccountSummaryResponse` — one row of the admin Connect-accounts list. */
+export interface ConnectAccountSummary {
+  partnerId: number;
+  role: string;
+  userId?: number | null;
+  firstname?: string | null;
+  lastname?: string | null;
+  email?: string | null;
+
+  stripeConnectAccountId?: string | null;
+  /** Cached from the last time we actually fetched the account from Stripe — see Partner's own doc comment. */
+  chargesEnabled?: boolean | null;
+  payoutsEnabled?: boolean | null;
+  detailsSubmitted?: boolean | null;
+  lastUpdate?: Date | null;
+
+  message?: string;
+}

@@ -67,6 +67,7 @@
 
     <!-- Admin only -->
     <ng-container *ngIf="userData?.role === 'admin'">
+        <app-dashboard-billing-summary></app-dashboard-billing-summary>
         <app-dashboard-top-users></app-dashboard-top-users>
     </ng-container>
 

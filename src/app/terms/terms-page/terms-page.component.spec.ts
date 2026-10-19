@@ -23,17 +23,11 @@ describe('TermsPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('renders a non-dismissible draft/legal-review disclaimer banner', () => {
-    const banner = fixture.debugElement.query(By.css('[data-testid="legal-disclaimer-banner"]'));
-    expect(banner).withContext('disclaimer banner should be present').toBeTruthy();
-
-    const bannerText = ((banner.nativeElement as HTMLElement).textContent || '').replace(/\s+/g, ' ').trim();
-    expect(bannerText).toContain('has not yet been reviewed by a licensed attorney');
-    expect(bannerText.toLowerCase()).toContain('legal review is required');
-
-    // Non-dismissible: no close/dismiss control inside the banner.
-    const dismissControl = banner.query(By.css('button, [aria-label*="close" i], [aria-label*="dismiss" i]'));
-    expect(dismissControl).withContext('banner must not have a close/dismiss control').toBeFalsy();
+  it('does not show a draft / legal-review warning banner', () => {
+    expect(fixture.debugElement.query(By.css('[data-testid="legal-disclaimer-banner"]'))).toBeNull();
+    const text = ((fixture.nativeElement as HTMLElement).textContent || '').toLowerCase();
+    expect(text).not.toContain('has not yet been reviewed');
+    expect(text).not.toContain('legal review is required');
   });
 
   it('renders the real Terms of Service content instead of a placeholder', () => {

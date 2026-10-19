@@ -1,0 +1,70 @@
+<app-load-error *ngIf="loadError && payouts.length === 0" title="Couldn't load payouts" [message]="loadError" (retry)="retryLoad()"></app-load-error>
+
+<div *ngIf="!(loadError && payouts.length === 0)" class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden">
+
+  <!-- Mobile: card rows -->
+  <div class="sm:hidden divide-y divide-gray-100 dark:divide-gray-800">
+    <div *ngFor="let payout of payouts" class="flex items-center gap-3 px-4 py-3">
+      <div class="min-w-0 flex-1">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-gray-900 dark:text-gray-100 truncate">{{ providerName(payout) }}</p>
+          <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold" [ngClass]="statusClasses(payout.status)">
+            {{ payout.status | titlecase }}
+          </span>
+        </div>
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate">
+          Gross {{ payout.grossAmount | currency }} &middot; Payout {{ payout.payoutAmount | currency }}
+        </p>
+      </div>
+      <button type="button" *ngIf="payout.status === 'PENDING'" (click)="payOut(payout)" [disabled]="!!payingId"
+        class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 transition">
+        {{ payingId === payout.id ? 'Paying…' : 'Pay out' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="hidden sm:block overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+          <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Provider</th>
+          <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Status</th>
+          <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Gross</th>
+          <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Commission</th>
+          <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Payout</th>
+          <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Stripe transfer</th>
+          <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Last update</th>
+          <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+        <tr *ngFor="let payout of payouts" class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+          <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{{ providerName(payout) }}</td>
+          <td class="px-4 py-3">
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-semibold" [ngClass]="statusClasses(payout.status)">
+              {{ payout.status | titlecase }}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-right text-gray-500 dark:text-gray-400 tabular-nums">{{ payout.grossAmount | currency }}</td>
+          <td class="px-4 py-3 text-right text-gray-500 dark:text-gray-400 tabular-nums">{{ payout.commissionAmount | currency }}</td>
+          <td class="px-4 py-3 text-right font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{{ payout.payoutAmount | currency }}</td>
+          <td class="px-4 py-3 text-gray-500 dark:text-gray-400 truncate max-w-[160px]" [title]="payout.stripeTransferId || ''">{{ payout.stripeTransferId || '—' }}</td>
+          <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ payout.lastUpdate | date:'dd/MM/yyyy' }}</td>
+          <td class="px-4 py-3 text-right">
+            <button type="button" *ngIf="payout.status === 'PENDING'" (click)="payOut(payout)" [disabled]="!!payingId"
+              class="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 transition">
+              {{ payingId === payout.id ? 'Paying…' : 'Pay out' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!loading && payouts.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-center">
+    <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+      <i-feather name="dollar-sign" class="text-gray-300 dark:text-gray-600" style="width:22px;height:22px;"></i-feather>
+    </div>
+    <p class="text-sm text-gray-400 dark:text-gray-500">No payouts yet.</p>
+  </div>
+</div>
