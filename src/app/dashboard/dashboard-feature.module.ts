@@ -579,6 +579,7 @@ const dashboardRoutes: Routes = [
           { path: 'faqs', loadChildren: () => import('../admin/faqs/faqs.module').then(m => m.FaqsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'FAQs', expectedRole: ['admin'] } },
           { path: 'members', loadChildren: () => import('../admin/members/members.module').then(m => m.MembersModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Members', expectedRole: ['admin'] } },
           { path: 'payments', loadChildren: () => import('../admin/payments/payments.module').then(m => m.PaymentsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Payments', expectedRole: ['admin'] } },
+          { path: 'billing', loadChildren: () => import('../admin/billing/billing.module').then(m => m.BillingModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Billing', expectedRole: ['admin'] } },
           { path: 'bookings', loadChildren: () => import('../admin/bookings/bookings.module').then(m => m.BookingsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Bookings', expectedRole: ['admin'] } },
           { path: 'cms', loadComponent: () => import('../admin/cms/admin-cms.component').then(m => m.AdminCmsComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Records', expectedRole: ['admin'] } },
           { path: 'settings', component: UserProfileSettingsComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Settings', expectedRole: expectedRoleAll } },
@@ -639,6 +640,7 @@ const dashboardRoutes: Routes = [
       { path: 'faqs', loadChildren: () => import('../admin/faqs/faqs.module').then(m => m.FaqsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'FAQs', expectedRole: ['admin'] } },
       { path: 'members', loadChildren: () => import('../admin/members/members.module').then(m => m.MembersModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Members', expectedRole: ['admin'] } },
       { path: 'payments', loadChildren: () => import('../admin/payments/payments.module').then(m => m.PaymentsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Payments', expectedRole: ['admin'] } },
+      { path: 'billing', loadChildren: () => import('../admin/billing/billing.module').then(m => m.BillingModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Billing', expectedRole: ['admin'] } },
       { path: 'bookings', loadChildren: () => import('../admin/bookings/bookings.module').then(m => m.BookingsModule), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Bookings', expectedRole: ['admin'] } },
       { path: 'cms', loadComponent: () => import('../admin/cms/admin-cms.component').then(m => m.AdminCmsComponent), canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Records', expectedRole: ['admin'] } },
 

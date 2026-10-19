@@ -31,6 +31,11 @@ export interface Subscriptions {
   /** D11 — false once the member cancels; access still runs to endDate. */
   autoRenew?: boolean;
   cancelledAt?: Date | null;
+  /** Stripe recurring subscription this row is billed by (null for one-time / admin-comped / store-billed). */
+  stripeSubscriptionId?: string | null;
+  stripeCustomerId?: string | null;
+  /** Set on a failed renewal charge — starts the grace clock before access is revoked. */
+  pastDueSince?: Date | null;
   /** Set only when this Subscription is a client's purchase of a trainer/center's ProviderPackage (POST /subscription/purchasePackage), rather than a platform Plan tier. */
   providerPackage?: ProviderPackage | null;
   sessionsTotal?: number | null;
