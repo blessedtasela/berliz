@@ -64,6 +64,11 @@ export class BookingService {
     });
   }
 
+  /** Sends the client the "pay for your session" reminder right now (the booking's provider or an admin). */
+  remindPayment(id: number) {
+    return this.httpClient.post<ApiResponse<string>>(this.url + `/booking/remindPayment/${id}`, null);
+  }
+
   /** Provider-only, and only once the booking is already cancelled -- clears it off their list entirely. */
   deleteBooking(id: number) {
     return this.httpClient.delete<ApiResponse<string>>(this.url + `/booking/${id}`);

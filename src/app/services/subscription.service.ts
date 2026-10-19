@@ -24,6 +24,11 @@ export class SubscriptionService {
     })
   }
 
+  /** Admin: nudge the subscriber now (fix a failed payment, renew a lapsed plan, or a heads-up before renewal). */
+  remind(id: number) {
+    return this.httpClient.post(this.url + `/subscription/remind/${id}`, null, { responseType: 'text' });
+  }
+
   updateStatus(id: number) {
     return this.httpClient.put<{ message: string }>(this.url + `/subscription/updateStatus/${id}`, null, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')

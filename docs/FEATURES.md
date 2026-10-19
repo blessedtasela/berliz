@@ -154,6 +154,7 @@ Each moves to 🚧 then ✅ with its own row above as it ships.
 | Analytics dashboard | ✅ | `Analytics` |
 | Berliz feedback + problem reports | ✅ | |
 | Server-side role & ownership authorization | ✅ | Every admin-only backend operation and every "only the owner (or an admin)" operation is now enforced twice: by the existing in-method check *and* by Spring method security (`@PreAuthorize`) before the method runs. Roles now map to real authorities (`ROLE_ADMIN`, `ROLE_TRAINER`, …) — previously every signed-in user carried an empty authority list, so declarative checks could never pass. Ownership rules (who may edit a booking, task, review, post, comment, message, …) live in one small bean per domain under `com.berliz.security`. No user-visible change in what is allowed; it stops a future endpoint from forgetting its guard |
+| Admin records manager (full CMS) | ✅ | `/dashboard/cms`, linked from the admin Hub. Every record type (bookings, posts, workouts, payouts, reviews, promotions, orders, …) is listed from the JPA metamodel, so new entities appear without code: search, page, edit plain fields (only what changed is sent), delete with confirmation. Passwords, tokens and secrets are never exposed; accounts are managed on the Users screen. Deleting payments, payouts, bills, orders and promo redemptions needs a super admin. Backend: `/admin/cms` |
 | Help center / FAQs | ✅ | Public + per-user. Deep-linkable to a specific FAQ (`/dashboard/my-faqs?faqId=`) — expands and scrolls to it, used by global search and the notification entity-link resolver |
 | Hub, News & updates | ✅ | |
 | Global search (multi-entity) | ✅ | Top-bar. Public: trainers, centers, services, exercises, testimonials, equipment, workout templates, FAQs, members, posts (own + connections' feed). Admin-only: users, tasks, payments, subscriptions, partners, contact-us, newsletters, tags, muscle groups. Client-side filtering over data each entity's own NgRx slice (or, for posts, a locally-cached one-time fetch — the only entity with no store slice) already loads; deep-links to the specific item where a route/anchor exists (exercises, workout templates, FAQs, members, posts, testimonials), otherwise to that entity's list page |
@@ -554,6 +555,33 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Not yet: the fee is displayed, not charged (client payment checkout is still unwired).
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
+
+### Unreleased — UI pass: crushed tables and buttons, stray scrollbar, empty-state polish
+
+Looked at every dashboard screen (68 routes, desktop and phone) rather than only running automated checks. Fixed:
+- **Tables and button rows were being crushed.** The global `overflow-wrap: anywhere` also shrinks an element's minimum width to one
+  character, so table headers split ("S/N", "USER ID"), role pills and "Deactivate" broke letter by letter, and on a phone the Workouts
+  buttons read "Histor|y", "Assign|ed to|me". Tables and buttons now keep headers/pills/buttons on one line, a cell is capped at 22rem
+  and wraps a long value inside itself, and a wide table scrolls within its card.
+- Sessions page showed a stray vertical scrollbar next to the tabs (1px overflow from the tab underline).
+- Providers without a photo showed a huge cropped grey circle; the stock silhouette is now shown whole. "+ yrs" no longer appears
+  when a trainer/center has no experience set (3 places); "Best: · active days total", "undefined days since a session" fall back to
+  0 / "no logged sessions yet"; the Deals card hides an empty "By" line; the to-do list hides its pagination bar when there is nothing.
+- Admin payments: the partial-refund badge sits in the Status column (desktop) and under the email (phone) so action buttons stay aligned.
+- Checked and left alone: Material and ng-select themes are not needed (the app only uses Material dialogs and snack bars, both styled in
+  styles.css, and ng-select through `.berliz-select`); the floating chat button only overlaps the page footer.
+- Verified with a production build against a local mock API: no horizontal overflow on any of the 68 routes at 1280 px or 390 px.
+
+### Unreleased — Admin: full records manager, partial refunds, payment reminders, super-admin rules
+
+Admins can now manage every entity in the app and every transaction:
+
+- **Records manager** (`/dashboard/cms`): browse, search, edit and delete the records of any type. Generic on the backend (`AdminCmsService`, JPA metamodel), audit-logged, secret fields hidden.
+- **Refunds**: a Stripe payment can be refunded in full or in part (dialog with the refundable amount and what was already refunded; `POST /payment/stripe/refund/{id}?amount=`). Over-refunds are rejected; the booking's refunded amount is kept in step. The payments list shows "Partly refunded".
+- **Reminders**: "Send payment reminder" on a confirmed/completed unpaid booking (same message as the automatic sweep), and "Send reminder" on a subscription (past due / active / lapsed wording; not for App Store / Google Play subscriptions). Both notify in-app and by email.
+- **Who may do what**: an admin manages all entities, refunds, reminders and can delete ordinary accounts. Only the super admin can make or remove an admin, change an admin account's password or profile, and delete payments/payouts/bills/orders in the records manager. Nobody can change the super admin's role.
+
+Specs cover the CMS service/component, the refund dialog, both reminder buttons and the new service calls. The records manager has not been exercised against a real database (the local test harness has none).
 
 ### Unreleased — Client intake: removed the "not reviewed by a licensed professional" banner
 

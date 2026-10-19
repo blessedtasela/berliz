@@ -1,0 +1,155 @@
+<section class="font-sans flex flex-col gap-4 mt-4">
+
+    <!-- Header -->
+    <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
+            <i-feather name="layers" class="text-red-600" style="width:16px;height:16px;"></i-feather>
+        </div>
+        <div>
+            <h1 class="text-sm font-bold text-gray-900 dark:text-gray-100">Records manager</h1>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500">Browse, edit and delete the records of every type in Berliz. Accounts are on the Users screen.</p>
+        </div>
+    </div>
+
+    <app-load-error *ngIf="loadError && !selected" title="Couldn't load the record types" [message]="loadError"
+        (retry)="loadEntities()"></app-load-error>
+
+    <div class="grid grid-cols-1 lg:grid-cols-[14rem_1fr] gap-4 items-start" *ngIf="!(loadError && !selected)">
+
+        <!-- Record types -->
+        <aside class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3 flex flex-col gap-2">
+            <input type="search" [(ngModel)]="entityFilter" placeholder="Find a record type" aria-label="Find a record type"
+                class="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-xs text-gray-700 dark:text-gray-300
+                       focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent" />
+            <div *ngIf="loadingEntities" class="text-[11px] text-gray-400 dark:text-gray-500 px-1 py-2">Loading…</div>
+            <nav class="flex flex-row lg:flex-col gap-1 overflow-x-auto lg:overflow-y-auto lg:max-h-[60vh]" aria-label="Record types">
+                <button type="button" *ngFor="let e of filteredEntities" (click)="select(e)"
+                    class="shrink-0 text-left px-3 py-2 rounded-lg text-xs font-semibold transition whitespace-nowrap"
+                    [attr.aria-current]="selected?.key === e.key ? 'true' : null"
+                    [ngClass]="selected?.key === e.key
+                        ? 'bg-red-600 text-white'
+                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'">
+                    {{ e.label }}
+                </button>
+            </nav>
+            <p *ngIf="!loadingEntities && filteredEntities.length === 0" class="text-[11px] text-gray-400 dark:text-gray-500 px-1 py-2">No record type matches.</p>
+        </aside>
+
+        <!-- Records -->
+        <div class="min-w-0 flex flex-col gap-3">
+
+            <div *ngIf="!selected" class="rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 p-10 text-center">
+                <i-feather name="arrow-left" class="text-gray-300 dark:text-gray-600 mx-auto" style="width:28px;height:28px;"></i-feather>
+                <p class="text-sm font-semibold text-gray-600 dark:text-gray-300 mt-3">Pick a record type to start</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Everything stored in Berliz is here: bookings, posts, workouts, payouts, reviews, promotions and more.</p>
+            </div>
+
+            <ng-container *ngIf="selected">
+                <div class="flex items-center justify-between gap-3 flex-wrap">
+                    <div>
+                        <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ selected.label }}</h2>
+                        <p class="text-[11px] text-gray-400 dark:text-gray-500">{{ total }} {{ total === 1 ? 'record' : 'records' }}<span *ngIf="query"> matching “{{ query }}”</span></p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="search" [ngModel]="query" (ngModelChange)="onSearch($event)" placeholder="Search" aria-label="Search records"
+                            class="w-44 sm:w-56 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-xs text-gray-700 dark:text-gray-300
+                                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent" />
+                        <button type="button" (click)="loadRows()" aria-label="Refresh"
+                            class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex items-center justify-center hover:border-gray-300 dark:hover:border-gray-600">
+                            <i-feather name="refresh-cw" class="text-gray-500 dark:text-gray-400" [class.animate-spin]="loading" style="width:14px;height:14px;"></i-feather>
+                        </button>
+                    </div>
+                </div>
+
+                <app-load-error *ngIf="loadError" title="Couldn't load these records" [message]="loadError" (retry)="loadRows()"></app-load-error>
+
+                <div *ngIf="!loadError" class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-x-auto">
+                    <table class="w-full text-xs">
+                        <thead>
+                            <tr class="text-left text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-gray-800">
+                                <th *ngFor="let c of tableColumns" scope="col" class="px-3 py-2.5 font-semibold whitespace-nowrap">{{ c.name }}</th>
+                                <th scope="col" class="px-3 py-2.5"><span class="sr-only">Actions</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let row of rows; trackBy: trackRow"
+                                class="border-b border-gray-50 dark:border-gray-800 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                                [ngClass]="editing && editing['id'] === row['id'] ? 'bg-red-50/60 dark:bg-red-950/20' : ''">
+                                <td *ngFor="let c of tableColumns" class="px-3 py-2.5 text-gray-700 dark:text-gray-300 whitespace-nowrap max-w-[16rem] truncate">{{ cell(row, c) }}</td>
+                                <td class="px-3 py-2.5 whitespace-nowrap text-right">
+                                    <button type="button" (click)="open(row)" class="px-2 py-1 rounded-lg text-[11px] font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30">Edit</button>
+                                    <button type="button" (click)="remove(row)" class="px-2 py-1 rounded-lg text-[11px] font-semibold text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p *ngIf="!loading && rows.length === 0" class="text-center text-xs text-gray-500 dark:text-gray-400 py-10">
+                        {{ query ? 'Nothing matches that search.' : 'There are no records of this type yet.' }}
+                    </p>
+                    <p *ngIf="loading && rows.length === 0" class="text-center text-xs text-gray-500 dark:text-gray-400 py-10">Loading…</p>
+                </div>
+
+                <div *ngIf="!loadError && total > size" class="flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-400">
+                    <span>Page {{ page + 1 }} of {{ pageCount }}</span>
+                    <div class="flex gap-2">
+                        <button type="button" (click)="prev()" [disabled]="page === 0"
+                            class="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 font-semibold disabled:opacity-40">Previous</button>
+                        <button type="button" (click)="next()" [disabled]="page + 1 >= pageCount"
+                            class="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 font-semibold disabled:opacity-40">Next</button>
+                    </div>
+                </div>
+
+                <!-- Editor -->
+                <form *ngIf="editing" (ngSubmit)="save()" class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-4">
+                    <div class="flex items-center justify-between gap-3">
+                        <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ selected.label }} #{{ editing['id'] }}</h3>
+                        <button type="button" (click)="closeEditor()" aria-label="Close editor"
+                            class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800">
+                            <i-feather name="x" style="width:14px;height:14px;"></i-feather>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <label *ngFor="let c of editableColumns" class="flex flex-col gap-1" [class.sm:col-span-2]="isLongText(c)">
+                            <span class="text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">{{ c.name }}</span>
+
+                            <select *ngIf="isBoolean(c)" [(ngModel)]="form[c.name]" [name]="c.name"
+                                class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-xs text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500">
+                                <option [ngValue]="true">Yes</option>
+                                <option [ngValue]="false">No</option>
+                                <option [ngValue]="''">(empty)</option>
+                            </select>
+
+                            <textarea *ngIf="!isBoolean(c) && isLongText(c)" rows="4" [(ngModel)]="form[c.name]" [name]="c.name"
+                                class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-xs text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+
+                            <input *ngIf="!isBoolean(c) && !isLongText(c)" [type]="isNumber(c) ? 'number' : 'text'" [step]="isNumber(c) ? 'any' : null"
+                                [(ngModel)]="form[c.name]" [name]="c.name" [placeholder]="isDate(c) ? 'YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS' : ''"
+                                class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-xs text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500" />
+                        </label>
+                    </div>
+
+                    <div *ngIf="readOnlyColumns.length" class="border-t border-gray-100 dark:border-gray-800 pt-3">
+                        <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2">Fixed fields</p>
+                        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-xs">
+                            <div *ngFor="let c of readOnlyColumns" class="flex gap-2 min-w-0">
+                                <dt class="text-gray-500 dark:text-gray-400 shrink-0">{{ c.name }}</dt>
+                                <dd class="text-gray-800 dark:text-gray-200 break-all">{{ cell(editing, c) }}</dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    <p *ngIf="formError" role="alert" class="text-xs text-red-600 dark:text-red-400">{{ formError }}</p>
+
+                    <div class="flex items-center justify-end gap-2">
+                        <button type="button" (click)="closeEditor()" class="px-4 py-2 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300">Cancel</button>
+                        <button type="submit" [disabled]="!hasChanges || saving"
+                            class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                            {{ saving ? 'Saving…' : 'Save changes' }}
+                        </button>
+                    </div>
+                </form>
+            </ng-container>
+        </div>
+    </div>
+</section>

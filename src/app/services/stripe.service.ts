@@ -50,10 +50,11 @@ export class StripeService {
     return this.httpClient.post<ApiResponse<StripeConnectOnboardingResponse>>(this.url + '/payment/stripe/connect/onboarding-link', request);
   }
 
-  /** Admin-only — full Stripe refund of a payment. */
-  refundPayment(paymentId: number): Observable<ApiResponse<{ id?: number; message?: string }>> {
+  /** Admin-only — refund a payment: all that is left by default, or just `amount` (dollars) for a partial refund. */
+  refundPayment(paymentId: number, amount?: number | null): Observable<ApiResponse<{ id?: number; message?: string }>> {
+    const query = amount != null ? `?amount=${encodeURIComponent(amount.toFixed(2))}` : '';
     return this.httpClient.post<ApiResponse<{ id?: number; message?: string }>>(
-      this.url + `/payment/stripe/refund/${paymentId}`,
+      this.url + `/payment/stripe/refund/${paymentId}${query}`,
       null
     );
   }

@@ -30,6 +30,9 @@ export interface Payments {
   /** Total handed back so far (partial refunds add up), and what can still be refunded. */
   refundedAmount?: number | null;
   refundableAmount?: number | null;
+  /** The booking this payment paid for, when it was a session payment. */
+  bookingId?: number | null;
+
 
   /** Set for recurring-renewal payments (invoice.paid), null for one-time Checkout/booking payments. */
   stripeInvoiceId?: string | null;
