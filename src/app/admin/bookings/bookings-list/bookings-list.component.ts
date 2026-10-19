@@ -46,6 +46,26 @@ export class BookingsListComponent {
     return booking.trainerName || booking.centerName || '—';
   }
 
+  /** A confirmed or completed booking the customer still hasn't paid for. */
+  canRemind(booking: Booking): boolean {
+    return booking.paymentStatus === 'UNPAID' && (booking.status === 'confirmed' || booking.status === 'completed');
+  }
+
+  remindPayment(booking: Booking) {
+    if (!this.canRemind(booking)) return;
+    this.ngxService.start();
+    this.bookingService.remindPayment(booking.id).subscribe({
+      next: (response: any) => {
+        this.ngxService.stop();
+        this.snackbarService.openSnackBar(response?.message || 'Reminder sent', '');
+      },
+      error: (error: any) => {
+        this.ngxService.stop();
+        this.snackbarService.openSnackBar(error.error?.message || genericError, 'error');
+      },
+    });
+  }
+
   updateStatus(id: number, status: string) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
@@ -72,7 +92,9 @@ export class BookingsListComponent {
   }
 
   formatDate(dateString: any): any {
+    if (!dateString) return '';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
     return this.datePipe.transform(date, 'dd/MM/yyyy HH:mm');
   }
 

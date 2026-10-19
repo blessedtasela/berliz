@@ -125,8 +125,15 @@ export class FindProvidersComponent implements OnInit, OnDestroy {
     );
   }
 
+  /** The stock silhouette: shown whole on its tile instead of cropped to a big grey circle like a real photo. */
+  isFallbackPhoto(url: string): boolean {
+    return url === 'assets/avatar.png';
+  }
+
   onImageError(event: any): void {
     event.target.src = 'assets/avatar.png';
+    event.target.classList.remove('object-cover', 'object-top');
+    event.target.classList.add('object-contain', 'p-4', 'opacity-70');
   }
 
   onCriteria(criteria: ProviderFilterCriteria): void {

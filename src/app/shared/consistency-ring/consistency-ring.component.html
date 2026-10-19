@@ -36,8 +36,8 @@
       </div>
 
       <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-2">
-        Best: <span class="font-bold text-gray-600 dark:text-gray-400">{{ streak.longestStreak }}</span> ·
-        {{ streak.totalActiveDays }} active {{ streak.totalActiveDays === 1 ? 'day' : 'days' }} total
+        Best: <span class="font-bold text-gray-600 dark:text-gray-400">{{ streak.longestStreak ?? 0 }}</span> ·
+        {{ streak.totalActiveDays ?? 0 }} active {{ streak.totalActiveDays === 1 ? 'day' : 'days' }} total
       </p>
     </div>
   </ng-container>

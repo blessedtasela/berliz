@@ -1,0 +1,32 @@
+<div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl font-sans">
+
+  <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+    <h2 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Billing</h2>
+    <a routerLink="/dashboard/billing" class="text-[11px] font-semibold text-red-600 hover:underline flex items-center gap-1">
+      View all
+      <i-feather name="arrow-right" style="width:11px;height:11px;"></i-feather>
+    </a>
+  </div>
+
+  <app-load-error *ngIf="loadError && !loading" [compact]="true" title="Couldn't load billing data" [message]="loadError" (retry)="load()"></app-load-error>
+
+  <div *ngIf="!loadError || loading" class="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4">
+    <div>
+      <p class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Gross volume</p>
+      <p class="text-base font-bold text-gray-900 dark:text-gray-100 mt-0.5">{{ loading ? '—' : (summary?.grossPaymentVolumeThisMonth ?? 0 | currency) }}</p>
+    </div>
+    <div>
+      <p class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Active recurring</p>
+      <p class="text-base font-bold text-gray-900 dark:text-gray-100 mt-0.5">{{ loading ? '—' : (summary?.activeRecurringRevenue ?? 0 | currency) }}</p>
+    </div>
+    <div>
+      <p class="text-[10px] font-semibold text-amber-600 uppercase tracking-wide">Payouts pending</p>
+      <p class="text-base font-bold text-gray-900 dark:text-gray-100 mt-0.5">{{ loading ? '—' : (summary?.payoutsPendingTotal ?? 0 | currency) }}</p>
+    </div>
+    <div>
+      <p class="text-[10px] font-semibold text-red-600 uppercase tracking-wide">Refunds this month</p>
+      <p class="text-base font-bold text-gray-900 dark:text-gray-100 mt-0.5">{{ loading ? '—' : (summary?.refundsThisMonthTotal ?? 0 | currency) }}</p>
+    </div>
+  </div>
+
+</div>

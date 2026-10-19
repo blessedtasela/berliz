@@ -1,0 +1,70 @@
+<app-load-error *ngIf="loadError && accounts.length === 0" title="Couldn't load Connect accounts" [message]="loadError" (retry)="load()"></app-load-error>
+
+<div *ngIf="!(loadError && accounts.length === 0)" class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden">
+
+  <!-- Mobile: card rows -->
+  <div class="sm:hidden divide-y divide-gray-100 dark:divide-gray-800">
+    <div *ngFor="let account of accounts" class="flex items-center gap-3 px-4 py-3">
+      <div class="min-w-0 flex-1">
+        <p class="font-semibold text-gray-900 dark:text-gray-100 truncate">{{ providerName(account) }}</p>
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate">{{ account.role | titlecase }} &middot; {{ account.stripeConnectAccountId }}</p>
+        <div class="flex items-center gap-1.5 mt-1.5 flex-wrap">
+          <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full border" [ngClass]="account.chargesEnabled ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-green-100 dark:border-green-900' : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700'">Charges</span>
+          <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full border" [ngClass]="account.payoutsEnabled ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-green-100 dark:border-green-900' : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700'">Payouts</span>
+          <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full border" [ngClass]="account.detailsSubmitted ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-green-100 dark:border-green-900' : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700'">Details</span>
+        </div>
+      </div>
+      <button type="button" (click)="refresh(account)" [disabled]="!!refreshingId"
+        class="w-9 h-9 rounded-lg active:bg-gray-100 dark:active:bg-gray-700 flex items-center justify-center shrink-0 disabled:opacity-50" title="Refresh from Stripe">
+        <i-feather name="refresh-cw" class="text-gray-500 dark:text-gray-400" style="width:15px;height:15px;"></i-feather>
+      </button>
+    </div>
+  </div>
+
+  <div class="hidden sm:block overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+          <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Provider</th>
+          <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Role</th>
+          <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Account id</th>
+          <th class="px-4 py-3 text-center text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Charges</th>
+          <th class="px-4 py-3 text-center text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Payouts</th>
+          <th class="px-4 py-3 text-center text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Details</th>
+          <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Last synced</th>
+          <th class="px-4 py-3 text-right text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+        <tr *ngFor="let account of accounts" class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+          <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-100">{{ providerName(account) }}</td>
+          <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ account.role | titlecase }}</td>
+          <td class="px-4 py-3 text-gray-500 dark:text-gray-400 truncate max-w-[180px]" [title]="account.stripeConnectAccountId || ''">{{ account.stripeConnectAccountId || '—' }}</td>
+          <td class="px-4 py-3 text-center">
+            <i-feather [name]="account.chargesEnabled ? 'check-circle' : 'x-circle'" [class]="account.chargesEnabled ? 'text-green-600' : 'text-gray-300 dark:text-gray-600'" style="width:15px;height:15px;"></i-feather>
+          </td>
+          <td class="px-4 py-3 text-center">
+            <i-feather [name]="account.payoutsEnabled ? 'check-circle' : 'x-circle'" [class]="account.payoutsEnabled ? 'text-green-600' : 'text-gray-300 dark:text-gray-600'" style="width:15px;height:15px;"></i-feather>
+          </td>
+          <td class="px-4 py-3 text-center">
+            <i-feather [name]="account.detailsSubmitted ? 'check-circle' : 'x-circle'" [class]="account.detailsSubmitted ? 'text-green-600' : 'text-gray-300 dark:text-gray-600'" style="width:15px;height:15px;"></i-feather>
+          </td>
+          <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ account.lastUpdate | date:'dd/MM/yyyy' }}</td>
+          <td class="px-4 py-3 text-right">
+            <button type="button" (click)="refresh(account)" [disabled]="!!refreshingId"
+              class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition disabled:opacity-50 ml-auto" title="Refresh from Stripe">
+              <i-feather name="refresh-cw" [class]="refreshingId === account.partnerId ? 'text-red-600 animate-spin' : 'text-gray-500 dark:text-gray-400'" style="width:15px;height:15px;"></i-feather>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!loading && accounts.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-center">
+    <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+      <i-feather name="credit-card" class="text-gray-300 dark:text-gray-600" style="width:22px;height:22px;"></i-feather>
+    </div>
+    <p class="text-sm text-gray-400 dark:text-gray-500">No providers have set up Connect payouts yet.</p>
+  </div>
+</div>

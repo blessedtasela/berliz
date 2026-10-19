@@ -60,6 +60,31 @@ export class SubscriptionsListComponent implements OnDestroy {
   }
 
 
+  /** Stripe-billed or comped subscriptions can be nudged; App Store / Google Play ones are the store's to bill. */
+  canRemind(subscription: Subscriptions): boolean {
+    return !subscription?.store;
+  }
+
+  remind(subscription: Subscriptions) {
+    if (!this.canRemind(subscription)) return;
+    this.ngxService.start();
+    this.subscriptionService.remind(subscription.id).subscribe({
+      next: (body: string) => {
+        this.ngxService.stop();
+        let message = 'Reminder sent';
+        try { message = JSON.parse(body)?.message || message; } catch { if (body) message = body; }
+        this.snackbarService.openSnackBar(message, '');
+      },
+      error: (error: any) => {
+        this.ngxService.stop();
+        let message = genericError;
+        const e = error?.error;
+        try { message = (typeof e === 'string' ? JSON.parse(e)?.message : e?.message) || message; } catch { if (typeof e === 'string' && e) message = e; }
+        this.snackbarService.openSnackBar(message, 'error');
+      },
+    });
+  }
+
   openUpdateSubscription(id: number) {
     try {
       const subscription = this.subscriptionsData.find(subscription => subscription.id === id);
@@ -172,7 +197,9 @@ export class SubscriptionsListComponent implements OnDestroy {
   }
 
   formatDate(dateString: any): any {
+    if (!dateString) return '';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 

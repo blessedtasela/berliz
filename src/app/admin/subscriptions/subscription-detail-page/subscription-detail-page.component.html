@@ -88,6 +88,22 @@
                 <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ formatDate(subscriptionData.lastUpdate)
                     }}</span>
             </div>
+            <div class="flex items-center justify-between px-4 py-2.5" *ngIf="subscriptionData.stripeSubscriptionId">
+                <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Stripe subscription</span>
+                <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right truncate max-w-[220px]">{{ subscriptionData.stripeSubscriptionId }}</span>
+            </div>
+            <div class="flex items-center justify-between px-4 py-2.5" *ngIf="subscriptionData.store">
+                <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Store</span>
+                <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ subscriptionData.store }}</span>
+            </div>
+            <div class="flex items-center justify-between px-4 py-2.5" *ngIf="subscriptionData.providerPackage">
+                <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Package</span>
+                <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ subscriptionData.providerPackage?.name }}</span>
+            </div>
+            <div class="flex items-center justify-between px-4 py-2.5" *ngIf="subscriptionData.pastDueSince">
+                <span class="text-[11px] font-semibold text-amber-600 uppercase tracking-wide">Past due since</span>
+                <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ formatDate(subscriptionData.pastDueSince) }}</span>
+            </div>
         </div>
 
     </div>

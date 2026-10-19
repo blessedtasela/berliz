@@ -28,4 +28,18 @@ describe('StripeService', () => {
 
     expect(checkoutUrl).toBe('https://checkout.stripe.com/c/pay/cs_1');
   });
+
+  it('refunds the whole payment when no amount is given', () => {
+    service.refundPayment(9).subscribe();
+    const req = http.expectOne(`${environment.api}/payment/stripe/refund/9`);
+    expect(req.request.method).toBe('POST');
+    req.flush({ message: 'ok' });
+  });
+
+  it('refunds just the part asked for, to the cent', () => {
+    service.refundPayment(9, 4.5).subscribe();
+    const req = http.expectOne(`${environment.api}/payment/stripe/refund/9?amount=4.50`);
+    expect(req.request.method).toBe('POST');
+    req.flush({ message: 'ok' });
+  });
 });
