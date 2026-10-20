@@ -17,6 +17,7 @@ export class ForgotPasswordModalComponent {
   forgotPasswordForm!: FormGroup;
   invalidForm: boolean = false;
   responseMessage: any;
+  submitError: string | null = null;
 
   constructor(private fb: FormBuilder,
     private userService: UserService,
@@ -32,10 +33,12 @@ export class ForgotPasswordModalComponent {
   }
 
   submitForm(): void {
+    this.submitError = null;
     if (this.forgotPasswordForm.invalid) {
       this.invalidForm = true;
       this.responseMessage = "Invalid form";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      this.forgotPasswordForm.markAllAsTouched();
+      this.submitError = 'Enter the email address of your Berliz account so we can send the reset link.';
       return;
     }
 
@@ -46,7 +49,7 @@ export class ForgotPasswordModalComponent {
         this.dialogRef.close();
         this.invalidForm = false;
         this.ngxService.stop();
-        this.responseMessage = response?.message;
+        this.responseMessage = response?.message || 'Password reset link sent to your email';
         this.snackBarService.openSnackBar(this.responseMessage, "");
         this.router.navigate(['/login']);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -58,7 +61,7 @@ export class ForgotPasswordModalComponent {
           } else {
             this.responseMessage = genericError;
           }
-          this.snackBarService.openSnackBar(this.responseMessage, "error")
+          this.submitError = this.responseMessage;
         });
   }
 

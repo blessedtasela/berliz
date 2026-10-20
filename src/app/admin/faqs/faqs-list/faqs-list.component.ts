@@ -81,6 +81,8 @@ export class FaqsListComponent {
 
   formatDate(dateString: any): any {
     if (!dateString) return '';
-    return this.datePipe.transform(new Date(dateString), 'dd/MM/yyyy');
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
+    return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 }

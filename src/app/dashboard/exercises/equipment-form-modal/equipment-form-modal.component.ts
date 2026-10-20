@@ -8,6 +8,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { Categories } from 'src/app/models/categories.interface';
 import { CenterEquipment } from 'src/app/models/centers.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { addCenterEquipment, updateCenterEquipment } from 'src/app/state/center/center.actions';
 
 export interface EquipmentFormData {
@@ -26,7 +27,7 @@ export interface EquipmentFormData {
  */
 @Component({
     selector: 'app-equipment-form-modal',
-    imports: [CommonModule, ReactiveFormsModule, IconsModule],
+    imports: [CommonModule, ReactiveFormsModule, IconsModule, SharedModule],
     templateUrl: './equipment-form-modal.component.html',
     styleUrls: ['./equipment-form-modal.component.css']
 })
@@ -34,6 +35,7 @@ export class EquipmentFormModalComponent implements OnInit {
 
   form!: FormGroup;
   invalidForm = false;
+  submitError: string | null = null;
 
   categories: Categories[] = [];
   selectedCategoryIds: number[] = [];
@@ -83,11 +85,13 @@ export class EquipmentFormModalComponent implements OnInit {
   save(): void {
     if (this.form.invalid || this.selectedCategoryIds.length === 0) {
       this.invalidForm = true;
-      this.snackbar.openSnackBar('Invalid form — fill every field and pick at least one discipline', 'error');
+      this.form.markAllAsTouched();
+      this.submitError = 'Fill in every field and pick at least one discipline before saving.';
       return;
     }
 
     this.invalidForm = false;
+    this.submitError = null;
 
     const data = new FormData();
     if (this.isEdit && this.dialogData.equipment) {

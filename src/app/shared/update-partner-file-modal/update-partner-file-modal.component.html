@@ -132,6 +132,8 @@
 
     </form>
 
+    <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
+
     <!-- Footer -->
     <div class="flex gap-2 justify-end pt-1 border-t border-gray-100 dark:border-gray-800">
         <button type="button" (click)="closeDialog()"

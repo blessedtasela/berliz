@@ -38,6 +38,8 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
   /** What the applied code does to each plan it fits, keyed by plan id. */
   promoPreviews: Record<number, DiscountPreview> = {};
   promoError: string | null = null;
+  /** Why the typed access code couldn't be redeemed -- shown under the code field until the user edits/dismisses it. */
+  redeemError: string | null = null;
 
   // ── Redeem a code (free access, no payment) ──────────────────────────────
   redeemCode = '';
@@ -246,18 +248,19 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
     if (!code || this.redeeming) return;
 
     this.redeeming = true;
+    this.redeemError = null;
     this.bypassCodeService.redeem(code)
       .pipe(take(1))
       .subscribe({
         next: (res) => {
           this.redeeming = false;
           this.redeemCode = '';
-          this.snackBar.openSnackBar(res?.message || 'Code redeemed!', '');
+          this.snackBar.openSnackBar(res?.message || 'Access code redeemed', '');
           this.store.dispatch(loadMySubscriptions());
         },
         error: (err) => {
           this.redeeming = false;
-          this.snackBar.openSnackBar(err?.error?.message || 'Could not redeem that code.', 'error');
+          this.redeemError = err?.error?.message || 'Could not redeem that code.';
         }
       });
   }

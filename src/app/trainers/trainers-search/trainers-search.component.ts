@@ -19,6 +19,8 @@ export class TrainersSearchComponent implements OnInit, OnDestroy {
 
   activeTrainers: Trainers[] = [];
   searchQuery: string = '';
+  /** Inline message under the search bar (empty query / failed search). */
+  searchError: string | null = null;
   selectedSearchCriteria: string = 'name';
 
   readonly searchOptions = [
@@ -63,8 +65,8 @@ export class TrainersSearchComponent implements OnInit, OnDestroy {
         tap(),
         switchMap((q: string) => this.runSearch(q))
       ).subscribe({
-        next: results => { this.allTrainers.emit(results); },
-        error: () => { this.snackbar.openSnackBar('Search failed.', 'error'); }
+        next: results => { this.searchError = null; this.allTrainers.emit(results); },
+        error: () => { this.searchError = 'Search failed. Try again or change your search term.'; }
       })
     );
   }
@@ -85,9 +87,10 @@ export class TrainersSearchComponent implements OnInit, OnDestroy {
 
   searchByButton(): void {
     if (!this.searchQuery?.trim()) {
-      this.snackbar.openSnackBar('Enter a search term.', 'error');
+      this.searchError = 'Enter a name, service or location to search for.';
       return;
     }
+    this.searchError = null;
     this.runSearch(this.searchQuery).subscribe({
     });
   }

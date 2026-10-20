@@ -125,13 +125,13 @@ export class RunsComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.busyEventId = null;
-          this.snackbar.openSnackBar(res?.message || 'Request sent', '');
+          this.snackbar.openSnackBar(res?.message || `Request to join "${event.title || 'the run'}" sent`, '');
           if (res?.data) this.discoverable = this.discoverable.map(e => e.id === res.data.id ? res.data : e);
           this.refreshMyRuns();
         },
         error: (err) => {
           this.busyEventId = null;
-          this.snackbar.openSnackBar(err?.error?.message || 'Could not send request', 'error');
+          this.snackbar.openSnackBar(err?.error?.message || 'Could not send your request to join this run', 'error');
         },
       });
   }
@@ -165,7 +165,7 @@ export class RunsComponent implements OnInit {
     const ref = this.dialog.open(CreateRunModalComponent, { width: '460px', maxWidth: '95vw' });
     ref.afterClosed().subscribe(saved => {
       if (saved) {
-        this.snackbar.openSnackBar('Run scheduled', '');
+        this.snackbar.openSnackBar('Group run scheduled', '');
         this.refreshMyRuns();
         this.refreshDiscover();
       }
@@ -176,7 +176,7 @@ export class RunsComponent implements OnInit {
     const ref = this.dialog.open(CreateRunModalComponent, { width: '460px', maxWidth: '95vw', data: { event } });
     ref.afterClosed().subscribe(saved => {
       if (saved) {
-        this.snackbar.openSnackBar('Run updated', '');
+        this.snackbar.openSnackBar(`"${event.title || 'Group run'}" updated`, '');
         this.refreshMyRuns();
         this.refreshDiscover();
       }
@@ -189,7 +189,7 @@ export class RunsComponent implements OnInit {
     });
     dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
       this.runService.cancelRunEvent(event.id).pipe(take(1)).subscribe(() => {
-        this.snackbar.openSnackBar('Run cancelled', '');
+        this.snackbar.openSnackBar(`"${event.title || 'Group run'}" cancelled`, '');
         this.refreshMyRuns();
       });
       dialogRef.close();
@@ -212,12 +212,12 @@ export class RunsComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.busyEventId = null;
-          this.snackbar.openSnackBar(res?.message || (accept ? "You're in" : 'Declined'), '');
+          this.snackbar.openSnackBar(res?.message || (accept ? `You've joined "${event.title || 'the run'}"` : 'Invitation declined'), '');
           this.refreshMyRuns();
         },
         error: (err) => {
           this.busyEventId = null;
-          this.snackbar.openSnackBar(err?.error?.message || 'Could not respond', 'error');
+          this.snackbar.openSnackBar(err?.error?.message || 'Could not send your response to this run', 'error');
         },
       });
   }
@@ -228,10 +228,10 @@ export class RunsComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (res) => {
-          this.snackbar.openSnackBar(res?.message || (accept ? 'Runner confirmed' : 'Declined'), '');
+          this.snackbar.openSnackBar(res?.message || (accept ? 'Runner confirmed for your run' : 'Join request declined'), '');
           if (res?.data) this.myRuns = this.myRuns.map(e => e.id === res.data.id ? res.data : e);
         },
-        error: (err) => this.snackbar.openSnackBar(err?.error?.message || 'Could not respond', 'error'),
+        error: (err) => this.snackbar.openSnackBar(err?.error?.message || 'Could not respond to that join request', 'error'),
       });
   }
 
@@ -310,14 +310,14 @@ export class RunsComponent implements OnInit {
   logRun(): void {
     const ref = this.dialog.open(LogRunModalComponent, { width: '420px', maxWidth: '95vw' });
     ref.afterClosed().subscribe(saved => {
-      if (saved) { this.snackbar.openSnackBar('Run logged', ''); this.refreshHistory(); }
+      if (saved) { this.snackbar.openSnackBar('Run logged to your history', ''); this.refreshHistory(); }
     });
   }
 
   editLog(entry: RunLogResponse): void {
     const ref = this.dialog.open(LogRunModalComponent, { width: '420px', maxWidth: '95vw', data: { log: entry } });
     ref.afterClosed().subscribe(saved => {
-      if (saved) { this.snackbar.openSnackBar('Run updated', ''); this.refreshHistory(); }
+      if (saved) { this.snackbar.openSnackBar('Logged run updated', ''); this.refreshHistory(); }
     });
   }
 
@@ -327,7 +327,7 @@ export class RunsComponent implements OnInit {
     });
     dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
       this.runService.deleteRunLog(entry.id).pipe(take(1)).subscribe(() => {
-        this.snackbar.openSnackBar('Run deleted', '');
+        this.snackbar.openSnackBar('Logged run deleted', '');
         this.refreshHistory();
       });
       dialogRef.close();

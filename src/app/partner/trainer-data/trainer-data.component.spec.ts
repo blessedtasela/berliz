@@ -95,7 +95,9 @@ describe('TrainerDataComponent', () => {
       component.updateTrainer();
 
       expect(ngxService.stop).toHaveBeenCalledTimes(1);
-      expect(snackbar.openSnackBar).toHaveBeenCalledWith('Nope', 'error');
+      // A failed save is shown inline by the form (and stays until fixed), not as a transient snackbar.
+      expect(component.submitError).toBe('Nope');
+      expect(snackbar.openSnackBar).not.toHaveBeenCalled();
     });
   });
 

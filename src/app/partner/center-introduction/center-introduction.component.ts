@@ -26,6 +26,7 @@ export class CenterIntroductionComponent implements OnInit, OnChanges, OnDestroy
   updateCenterIntroductionForm!: FormGroup;
 
   invalidForm = false;
+  submitError: string | null = null;
   originalValue: any;
 
   readonly MIN_LENGTH = 250;
@@ -112,10 +113,11 @@ export class CenterIntroductionComponent implements OnInit, OnChanges, OnDestroy
   }
 
   updateCenterIntroduction(): void {
+    this.submitError = null;
     if (this.updateCenterIntroductionForm.invalid) {
       this.invalidForm = true;
       this.updateCenterIntroductionForm.markAllAsTouched();
-      this.snackbar.openSnackBar('Invalid form. Please complete all sections', 'error');
+      // The form already shows an inline notice while invalidForm is set.
       return;
     }
 
@@ -129,14 +131,14 @@ export class CenterIntroductionComponent implements OnInit, OnChanges, OnDestroy
 
     request$.pipe(take(1)).subscribe({
       next: (response: any) => {
-        this.snackbar.openSnackBar(response?.message || 'Saved successfully', '');
+        this.snackbar.openSnackBar(response?.message || 'Your center introduction has been saved', '');
         this.clear(response?.data ?? response);
         this.store.dispatch(loadMyCenterIntroductions());
         this.emitEvent.emit();
         this.loader.stop();
       },
       error: (err: any) => {
-        this.snackbar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.submitError = err?.error?.message || genericError;
         this.loader.stop();
       }
     });

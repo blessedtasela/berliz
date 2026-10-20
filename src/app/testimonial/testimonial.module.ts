@@ -9,6 +9,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { NavbarModule } from '../navbar/navbar.module';
 import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
+import { SharedModule } from '../shared/shared.module';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 
@@ -29,7 +30,8 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     MatDialogModule,
     NavbarModule,
     FooterModule,
-    IconsModule
+    IconsModule,
+    SharedModule
   ],
   exports: [
     TestimonialListComponent

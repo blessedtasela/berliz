@@ -49,6 +49,8 @@ export class CenterPhotoAlbumComponent implements OnInit, OnChanges, OnDestroy {
   slots: PhotoSlot[] = [];
 
   invalidForm = false;
+  submitError: string | null = null;
+  uploadError: string | null = null;
   originalValue: any;
 
   uploadingAll = false;
@@ -161,6 +163,7 @@ export class CenterPhotoAlbumComponent implements OnInit, OnChanges, OnDestroy {
     const files: FileList = event.target.files;
     if (!files?.length) return;
 
+    this.uploadError = null;
     const maxBytes = this.MAX_PHOTO_MB * 1024 * 1024;
     let rejected = 0;
     const available = this.MAX_PHOTOS - this.photoCount;
@@ -178,8 +181,8 @@ export class CenterPhotoAlbumComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     if (rejected > 0) {
-      this.snackbar.openSnackBar(
-        `${rejected} file(s) skipped — images only, up to ${this.MAX_PHOTO_MB}MB each.`, 'error');
+      this.uploadError =
+        `${rejected} file(s) skipped — images only, up to ${this.MAX_PHOTO_MB}MB each.`;
     }
 
     (event.target as HTMLInputElement).value = '';
@@ -255,8 +258,8 @@ export class CenterPhotoAlbumComponent implements OnInit, OnChanges, OnDestroy {
         slot.rawFile = null;
 
       } catch {
-        this.snackbar.openSnackBar(
-          `Photo ${this.slots.indexOf(slot) + 1} failed to upload. Retry or remove it.`, 'error');
+        this.uploadError =
+          `Photo ${this.slots.indexOf(slot) + 1} failed to upload. Retry or remove it.`;
       }
 
       slot.uploading = false;
@@ -269,7 +272,7 @@ export class CenterPhotoAlbumComponent implements OnInit, OnChanges, OnDestroy {
 
     const failed = this.slots.filter(s => s.rawFile && !s.uploaded).length;
     if (failed > 0) {
-      this.snackbar.openSnackBar(`${failed} photo(s) failed to upload.`, 'error');
+      this.uploadError = `${failed} photo(s) failed to upload. Retry or remove them.`;
       return false;
     }
 
@@ -278,16 +281,18 @@ export class CenterPhotoAlbumComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async updateCenterPhotoAlbum(): Promise<void> {
+    this.submitError = null;
+    this.uploadError = null;
+
+    // The form shows an inline notice (min photos + comment length) while invalidForm is set.
     if (this.photoCount < this.MIN_PHOTOS) {
       this.invalidForm = true;
-      this.snackbar.openSnackBar(`Please select at least ${this.MIN_PHOTOS} photos.`, 'error');
       return;
     }
 
     if (this.updateCenterPhotoAlbumForm.invalid) {
       this.invalidForm = true;
       this.updateCenterPhotoAlbumForm.markAllAsTouched();
-      this.snackbar.openSnackBar(`Please add a comment (min. ${this.MIN_COMMENT} characters).`, 'error');
       return;
     }
 
@@ -312,14 +317,14 @@ export class CenterPhotoAlbumComponent implements OnInit, OnChanges, OnDestroy {
 
     request$.pipe(take(1)).subscribe({
       next: (response: any) => {
-        this.snackbar.openSnackBar(response?.message || 'Saved successfully', '');
+        this.snackbar.openSnackBar(response?.message || 'Your center photo album has been saved', '');
         this.clear(response?.data ?? response);
         this.store.dispatch(loadMyCenterPhotoAlbums());
         this.emitEvent.emit();
         this.loader.stop();
       },
       error: (err: any) => {
-        this.snackbar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.submitError = err?.error?.message || genericError;
         this.loader.stop();
       }
     });

@@ -53,6 +53,8 @@ export class WorkoutBuilderComponent implements OnInit, OnDestroy {
 
   loading = false;
   error: string | null = null;
+  /** Client-side validation problem found on Save; shown inline above the Save button. */
+  submitError: string | null = null;
   invalidForm = false;
   saving = false;
 
@@ -83,7 +85,11 @@ export class WorkoutBuilderComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(
       this.store.select(selectWorkoutLoading).subscribe(l => this.loading = l),
-      this.store.select(selectWorkoutError).subscribe(e => this.error = e),
+      this.store.select(selectWorkoutError).subscribe(e => {
+        this.error = e;
+        // A failed save must release the Save button so the user can fix and retry.
+        if (e) this.saving = false;
+      }),
       this.store.select(selectUser).subscribe(user => this.user = user)
     );
 
@@ -315,14 +321,14 @@ export class WorkoutBuilderComponent implements OnInit, OnDestroy {
     if (!this.workoutForm.valid || this.exercisesArray.length === 0) {
       this.invalidForm = true;
       this.workoutForm.markAllAsTouched();
-      this.snackbar.openSnackBar(
-        this.exercisesArray.length === 0
-          ? 'Add at least one exercise to this workout'
-          : 'Please fix the highlighted fields', 'error');
+      this.submitError = this.exercisesArray.length === 0
+        ? 'Add at least one exercise to this workout before saving.'
+        : 'Fix the highlighted fields (workout name and each exercise\'s sets, reps and rest) before saving.';
       return;
     }
 
     this.invalidForm = false;
+    this.submitError = null;
     this.saving = true;
 
     const raw = this.workoutForm.getRawValue();

@@ -10,6 +10,8 @@ import { ReferralService } from 'src/app/services/referral.service';
 import { PromotionService } from 'src/app/services/promotion.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SessionCredit, ReferralStats, ReferralLeaderboardEntry } from 'src/app/models/promo-offer.model';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { genericError } from 'src/validators/form-validators.module';
 
 /**
@@ -19,7 +21,7 @@ import { genericError } from 'src/validators/form-validators.module';
  */
 @Component({
     selector: 'app-my-rewards',
-    imports: [CommonModule, FormsModule, RouterModule, IconsModule],
+    imports: [CommonModule, FormsModule, RouterModule, IconsModule, SharedModule, LoadErrorComponent],
     templateUrl: './my-rewards.component.html',
     styleUrls: ['./my-rewards.component.css']
 })
@@ -27,6 +29,10 @@ export class MyRewardsComponent implements OnInit {
 
   credits: SessionCredit[] = [];
   loading = true;
+  /** Set when the rewards list failed to load; shown inline with a Retry. */
+  loadError: string | null = null;
+  /** Why the typed private code couldn't be redeemed -- shown under the code field. */
+  redeemError: string | null = null;
 
   stats: ReferralStats | null = null;
   statsLoading = true;
@@ -52,11 +58,12 @@ export class MyRewardsComponent implements OnInit {
     this.loadLeaderboard();
   }
 
-  private loadCredits(): void {
+  loadCredits(): void {
     this.loading = true;
+    this.loadError = null;
     this.sessionCreditService.getMine().pipe(take(1)).subscribe({
       next: (res) => { this.credits = res?.data ?? []; this.loading = false; },
-      error: () => { this.loading = false; this.snackBar.openSnackBar(genericError, 'error'); }
+      error: (err: any) => { this.loading = false; this.loadError = err?.error?.message || genericError; }
     });
   }
 
@@ -146,16 +153,17 @@ export class MyRewardsComponent implements OnInit {
     if (!code || this.redeeming) return;
 
     this.redeeming = true;
+    this.redeemError = null;
     this.promotionService.redeemCode(code).pipe(take(1)).subscribe({
       next: (res: any) => {
         this.redeeming = false;
         this.redeemCodeInput = '';
-        this.snackBar.openSnackBar(res?.message || res?.data?.message || 'Code redeemed', '');
+        this.snackBar.openSnackBar(res?.message || res?.data?.message || 'Private code redeemed -- check your available rewards', '');
         this.loadCredits();
       },
       error: (err: any) => {
         this.redeeming = false;
-        this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.redeemError = err?.error?.message || genericError;
       }
     });
   }

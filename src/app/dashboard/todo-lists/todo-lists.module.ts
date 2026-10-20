@@ -8,6 +8,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { EditTodoComponent } from './edit-todo/edit-todo.component';
 import { SearchTodoComponent } from './search-todo/search-todo.component';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
     FooterModule,
     ReactiveFormsModule,
     FormsModule,
-    IconsModule
+    IconsModule,
+    SharedModule
   ]
 })
 export class TodoListsModule { }

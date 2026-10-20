@@ -273,6 +273,10 @@
 
         </div>
 
+        <div class="px-4 pb-2" *ngIf="submitError">
+            <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
+        </div>
+
         <!-- Save -->
         <div class="px-4 py-2 flex items-center justify-between">
             <div class="flex">

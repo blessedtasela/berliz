@@ -32,6 +32,7 @@ export class AddSubscriptionsModalComponent {
   addSubscriptionForm!: FormGroup;
   invalidForm: boolean = false;
   responseMessage: any;
+  submitError: string | null = null;
   users: Users[] = [];
   trainers: Trainers[] = [];
   centers: Centers[] = [];
@@ -285,11 +286,12 @@ export class AddSubscriptionsModalComponent {
 
   addSubscription(): void {
     this.ngxService.start();
+    this.submitError = null;
     if (this.addSubscriptionForm.invalid) {
       this.invalidForm = true
-      this.responseMessage = "Invalid form"
+      this.addSubscriptionForm.markAllAsTouched();
+      this.submitError = "Please fill in the highlighted fields";
       this.ngxService.stop();
-      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       const selectedTagIds = this.addSubscriptionForm.value.categoryIds.map((category: any) => category.categoryIds);
       const categoryIdsString = selectedTagIds.join(',');
@@ -309,12 +311,7 @@ export class AddSubscriptionsModalComponent {
         }, (error: any) => {
           this.ngxService.stop();
           console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackbarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = error?.error?.message || genericError;
         });
     }
     this.ngxService.stop();

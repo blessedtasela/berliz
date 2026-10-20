@@ -15,6 +15,7 @@ export class TodoFormComponent {
   addTodoForm!: FormGroup;
   invalidForm: boolean = false;
   responseMessage: any;
+  submitError: string | null = null;
   @Output() emitEvent = new EventEmitter()
 
   constructor(private formBuilder: FormBuilder,
@@ -34,17 +35,19 @@ export class TodoFormComponent {
   }
 
   addTodo(): void {
+    this.submitError = null;
     if (this.addTodoForm.invalid) {
       this.invalidForm = true;
       this.responseMessage = "Invalid form. Please complete all sections";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      this.addTodoForm.markAllAsTouched();
+      this.submitError = 'Describe the task (at least 20 characters) and pick a due date.';
     } else {
       this.ngxService.start();
       this.todoService.addTodo(this.addTodoForm.value)
         .subscribe((response: any) => {
           this.addTodoForm.reset();
           this.invalidForm = false;
-          this.responseMessage = response?.message;
+          this.responseMessage = response?.message || 'Task added to your to-do list';
           this.emitEvent.emit()
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.ngxService.stop();
@@ -56,7 +59,7 @@ export class TodoFormComponent {
           } else {
             this.responseMessage = genericError;
           }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = this.responseMessage;
           this.ngxService.stop();
         })
     }

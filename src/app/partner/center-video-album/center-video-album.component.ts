@@ -49,6 +49,8 @@ export class CenterVideoAlbumComponent implements OnInit, OnChanges, OnDestroy {
   slots: VideoSlot[] = [];
 
   invalidForm = false;
+  submitError: string | null = null;
+  uploadError: string | null = null;
   originalValue: any;
 
   uploadingAll = false;
@@ -159,17 +161,18 @@ export class CenterVideoAlbumComponent implements OnInit, OnChanges, OnDestroy {
     if (!files?.length) return;
 
     const available = this.MAX_VIDEOS - this.videoCount;
+    const problems: string[] = [];
+    this.uploadError = null;
 
     Array.from(files).slice(0, available).forEach(file => {
       if (!file.type.startsWith('video/')) {
-        this.snackbar.openSnackBar(`${file.name} isn't a video file.`, 'error');
+        problems.push(`${file.name} isn't a video file.`);
         return;
       }
 
       const fileMB = file.size / 1024 / 1024;
       if (fileMB > this.MAX_FILE_MB) {
-        this.snackbar.openSnackBar(
-          `${file.name} is too large (${fileMB.toFixed(1)} MB). Max is ${this.MAX_FILE_MB} MB.`, 'error');
+        problems.push(`${file.name} is too large (${fileMB.toFixed(1)} MB). Max is ${this.MAX_FILE_MB} MB.`);
         return;
       }
 
@@ -181,6 +184,10 @@ export class CenterVideoAlbumComponent implements OnInit, OnChanges, OnDestroy {
       this.slots[idx].uploaded = false;
       this.slots[idx].uploadedResponse = null;
     });
+
+    if (problems.length > 0) {
+      this.uploadError = problems.join(' ');
+    }
 
     (event.target as HTMLInputElement).value = '';
     this.cdr.detectChanges();
@@ -259,8 +266,8 @@ export class CenterVideoAlbumComponent implements OnInit, OnChanges, OnDestroy {
         slot.rawFile = null;
 
       } catch {
-        this.snackbar.openSnackBar(
-          `Video ${this.slots.indexOf(slot) + 1} failed to upload. Retry or remove it.`, 'error');
+        this.uploadError =
+          `Video ${this.slots.indexOf(slot) + 1} failed to upload. Retry or remove it.`;
       }
 
       slot.uploading = false;
@@ -273,7 +280,7 @@ export class CenterVideoAlbumComponent implements OnInit, OnChanges, OnDestroy {
 
     const failed = this.slots.filter(s => s.rawFile && !s.uploaded).length;
     if (failed > 0) {
-      this.snackbar.openSnackBar(`${failed} video(s) failed to upload.`, 'error');
+      this.uploadError = `${failed} video(s) failed to upload. Retry or remove them.`;
       return false;
     }
 
@@ -282,16 +289,18 @@ export class CenterVideoAlbumComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async updateCenterVideoAlbum(): Promise<void> {
+    this.submitError = null;
+    this.uploadError = null;
+
+    // The form shows an inline notice (min videos + comment length) while invalidForm is set.
     if (this.videoCount < this.MIN_VIDEOS) {
       this.invalidForm = true;
-      this.snackbar.openSnackBar(`Please select at least ${this.MIN_VIDEOS} videos.`, 'error');
       return;
     }
 
     if (this.updateCenterVideoAlbumForm.invalid) {
       this.invalidForm = true;
       this.updateCenterVideoAlbumForm.markAllAsTouched();
-      this.snackbar.openSnackBar(`Please add a comment (min. ${this.MIN_COMMENT} characters).`, 'error');
       return;
     }
 
@@ -316,14 +325,14 @@ export class CenterVideoAlbumComponent implements OnInit, OnChanges, OnDestroy {
 
     request$.pipe(take(1)).subscribe({
       next: (response: any) => {
-        this.snackbar.openSnackBar(response?.message || 'Saved successfully', '');
+        this.snackbar.openSnackBar(response?.message || 'Your center video album has been saved', '');
         this.clear(response?.data ?? response);
         this.store.dispatch(loadMyCenterVideoAlbums());
         this.emitEvent.emit();
         this.loader.stop();
       },
       error: (err: any) => {
-        this.snackbar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.submitError = err?.error?.message || genericError;
         this.loader.stop();
       }
     });

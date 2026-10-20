@@ -212,7 +212,7 @@ export class WorkoutHistoryComponent implements OnInit {
     const ref = this.dialog.open(LogWorkoutModalComponent, { width: '560px', maxWidth: '95vw' });
     ref.afterClosed().subscribe(saved => {
       if (saved) {
-        this.snackbar.openSnackBar('Workout logged', '');
+        this.snackbar.openSnackBar('Workout session logged to your history', '');
         this.refresh();
       }
     });
@@ -222,7 +222,7 @@ export class WorkoutHistoryComponent implements OnInit {
     const ref = this.dialog.open(LogWorkoutModalComponent, { width: '560px', maxWidth: '95vw', data: { log } });
     ref.afterClosed().subscribe(saved => {
       if (saved) {
-        this.snackbar.openSnackBar('Session updated', '');
+        this.snackbar.openSnackBar(log.title ? `"${log.title}" session updated` : 'Workout session updated', '');
         this.refresh();
       }
     });
@@ -239,7 +239,7 @@ export class WorkoutHistoryComponent implements OnInit {
 
     dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
       this.workoutService.deleteWorkoutLog(log.id).pipe(take(1)).subscribe(() => {
-        this.snackbar.openSnackBar('Session deleted', '');
+        this.snackbar.openSnackBar(log.title ? `"${log.title}" session deleted` : 'Workout session deleted', '');
         this.refresh();
       });
       dialogRef.close();

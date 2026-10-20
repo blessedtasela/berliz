@@ -20,8 +20,11 @@ export class UserProfileSettingsFormComponent implements OnInit {
   @Input() states: State[] = [];
   @Input() cities: City[] = [];
   @Input() invalidForm = false;
+  /** Inline save-failure message shown just above the Save button. */
+  @Input() submitError: string | null = null;
 
   @Output() submitForm = new EventEmitter<void>();
+  @Output() submitErrorDismissed = new EventEmitter<void>();
   @Output() genderChange = new EventEmitter<string>();
   @Output() countryChange = new EventEmitter<any>();
   @Output() stateChange = new EventEmitter<any>();

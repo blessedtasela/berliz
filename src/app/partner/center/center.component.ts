@@ -34,6 +34,7 @@ export class CenterComponent {
   imageChangedEvent: any = '';
   croppedImage: any = '';
   showCropper: boolean = false;
+  photoError: string | null = null;
 
   constructor(
     private dialog: MatDialog,
@@ -125,7 +126,9 @@ export class CenterComponent {
   // }
 
   formatDate(dateString: any): any {
+    if (!dateString) return '';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
@@ -153,6 +156,7 @@ export class CenterComponent {
   }
 
   cancelUpload() {
+    this.photoError = null;
     this.showCropper = false;
   }
 
@@ -178,6 +182,7 @@ export class CenterComponent {
   // }
 
   updatePhoto(): void {
+    this.photoError = null;
     this.ngxService.start();
     const requestData = new FormData();
     requestData.append('id', this.updateCenterPhotoForm.get('id')?.value);
@@ -187,7 +192,7 @@ export class CenterComponent {
         (response: any) => {
           this.ngxService.stop();
           this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
+          this.snackBarService.openSnackBar(this.responseMessage || 'Your center photo has been updated', "");
           this.showCropper = false;
           this.handleEmitEvent()
           this.onEmit.emit()
@@ -199,7 +204,7 @@ export class CenterComponent {
           } else {
             this.responseMessage = genericError;
           }
-          this.snackBarService.openSnackBar(this.responseMessage, 'error');
+          this.photoError = this.responseMessage;
         });
   }
 

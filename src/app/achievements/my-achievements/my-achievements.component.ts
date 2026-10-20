@@ -145,7 +145,7 @@ export class MyAchievementsComponent implements OnInit {
       next: res => { this.form.certificate = res?.[0]?.url ?? null; this.uploading = false; },
       error: (err: any) => {
         this.uploading = false;
-        this.snackBar.openSnackBar(err?.error?.message || 'Could not upload that file.', 'error');
+        this.formError = err?.error?.message || 'Could not upload that certificate file. Try again or pick a different file.';
       },
     });
   }
@@ -168,7 +168,7 @@ export class MyAchievementsComponent implements OnInit {
     request$.pipe(take(1)).subscribe({
       next: res => {
         this.saving = false;
-        this.snackBar.openSnackBar(res?.message || 'Saved', '');
+        this.snackBar.openSnackBar(res?.message || `Achievement "${this.form.name}" saved`, '');
         this.editing = null;
         this.load();
       },
@@ -188,7 +188,7 @@ export class MyAchievementsComponent implements OnInit {
       next: () => {
         this.confirmingDeleteId = null;
         this.achievements = this.achievements.filter(x => x.id !== a.id);
-        this.snackBar.openSnackBar('Achievement deleted', '');
+        this.snackBar.openSnackBar(`Achievement "${a.name}" deleted`, '');
       },
       error: (err: any) => {
         this.confirmingDeleteId = null;

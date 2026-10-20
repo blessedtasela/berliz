@@ -21,6 +21,7 @@ import { ChatThreadHeaderComponent } from '../messages/shared/chat-thread-header
 import { MessageBubbleComponent } from '../messages/shared/message-bubble/message-bubble.component';
 import { ConversationRowComponent } from '../messages/shared/conversation-row/conversation-row.component';
 import { MessageComposerComponent } from '../messages/shared/message-composer/message-composer.component';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
@@ -51,6 +52,7 @@ import { MessageComposerComponent } from '../messages/shared/message-composer/me
     MessageBubbleComponent,
     ConversationRowComponent,
     MessageComposerComponent,
+    SharedModule,
   ],
   exports: [
     NavigationBarComponent,

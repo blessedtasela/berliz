@@ -19,6 +19,7 @@ import { RoleGuard } from 'src/app/services/role.guard';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { AdminAvailabilityModule } from 'src/app/admin/availability/admin-availability.module';
 
 
@@ -39,6 +40,7 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
   imports: [
     LoadErrorComponent,
     ClickablePhotoDirective,
+    SharedModule,
     CommonModule,
     IconsModule,
     FormsModule,

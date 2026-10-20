@@ -245,6 +245,11 @@
 
         </div>
 
+        <!-- Save failure stays here until fixed or dismissed -->
+        <div *ngIf="submitError" class="px-4 pb-3">
+            <app-inline-alert [message]="submitError" [kind]="'error'" [dismissible]="true" (dismissed)="submitErrorDismissed.emit()"></app-inline-alert>
+        </div>
+
         <!-- Footer -->
         <div class="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-800">
 

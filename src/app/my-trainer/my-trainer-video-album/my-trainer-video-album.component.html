@@ -49,6 +49,8 @@
 
         <div class="flex flex-col gap-4 p-5 overflow-y-auto">
 
+            <app-inline-alert [message]="editorError" (dismissed)="editorError = null"></app-inline-alert>
+
             <!-- ── TRIM STEP ─────────────────────────────────────────── -->
             <ng-container *ngIf="trimStep === 'trimming'">
 
@@ -285,6 +287,8 @@
             </span>
         </div>
 
+        <app-inline-alert [message]="uploadError" (dismissed)="uploadError = null"></app-inline-alert>
+
         <!-- Upload progress bar -->
         <div *ngIf="uploadingAll" class="flex flex-col gap-1">
             <div class="flex justify-between text-[11px] text-gray-500 dark:text-gray-400">
@@ -423,6 +427,8 @@
         </div>
 
         <div class="border-t border-gray-100 dark:border-gray-800"></div>
+
+        <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
 
         <!-- Footer -->
         <div class="flex items-center justify-between">

@@ -30,6 +30,7 @@ export class UpdateCenterModalComponent {
   invalidForm: boolean = false;
   categories: Categories[] = [];
   responseMessage: any;
+  submitError: string | null = null;
   selectedPhoto: any;
   center!: Centers;
   selectedCategoriesId: any;
@@ -103,7 +104,7 @@ export class UpdateCenterModalComponent {
   }
 
   loadImageFailed(): void {
-    this.snackBarService.openSnackBar('Failed to load image', 'error');
+    this.submitError = 'Failed to load image';
     this.showCropper = false;
     this.imageChangedEvent = null;
   }
@@ -131,6 +132,7 @@ export class UpdateCenterModalComponent {
     this.imageChangedEvent = null;
     this.croppedImageBlob = null;
 
+    this.submitError = null;
     this.previewUrl = URL.createObjectURL(file);
 
     try {
@@ -154,7 +156,7 @@ export class UpdateCenterModalComponent {
         lastUpdate: new Date(),
       };
     } catch (err: any) {
-      this.snackBarService.openSnackBar(err?.error?.message || err?.message || 'Photo upload failed', 'error');
+      this.submitError = err?.error?.message || err?.message || 'Photo upload failed';
     } finally {
       this.uploadingPhoto = false;
     }
@@ -190,11 +192,12 @@ export class UpdateCenterModalComponent {
       ...(this.photoRequest ? { photoRequest: this.photoRequest } : {}),
     };
 
+    this.submitError = null;
     if (this.updateCenterForm.invalid) {
       this.ngxService.start();
       this.invalidForm = true;
-      this.responseMessage = "Invalid form. Please complete all sections";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      this.updateCenterForm.markAllAsTouched();
+      this.submitError = "Please fill in the highlighted fields and complete all sections";
       this.ngxService.stop();
     } else {
       this.ngxService.start();
@@ -210,12 +213,7 @@ export class UpdateCenterModalComponent {
         }, (error: any) => {
           this.ngxService.start();
           console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = error?.error?.message || genericError;
           this.ngxService.stop();
         })
     }

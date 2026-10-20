@@ -23,6 +23,7 @@ export class AdminUpdateUserModalComponent {
   formIndex: number = 0;
   countries: any[] = [];
   responseMessage: any;
+  submitError: string | null = null;
   userData: any;
   private _photoUri = memoizePhotoUri();
   /** Stable data-URI for the user's base64 profile photo. */
@@ -85,11 +86,12 @@ export class AdminUpdateUserModalComponent {
 
   updateUserAdmin(): void {
     this.ngxService.start();
+    this.submitError = null;
     if (this.updateUserForm.invalid) {
       this.invalidForm = true
-      this.responseMessage = "Invalid form"
+      this.updateUserForm.markAllAsTouched();
+      this.submitError = 'Please fill in the highlighted fields';
       this.ngxService.stop();
-      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       this.userService.updateSuperUser(this.updateUserForm.value)
         .subscribe((response: any) => {
@@ -104,12 +106,7 @@ export class AdminUpdateUserModalComponent {
         }, (error: any) => {
           this.ngxService.stop();
           console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackbarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = error?.error?.message || genericError;
         });
     }
     this.ngxService.stop();

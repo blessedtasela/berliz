@@ -19,6 +19,7 @@ export class ChangePasswordModalComponent {
   changePasswordForm!: FormGroup;
   invalidForm: boolean = false;
   responseMessage: any;
+  submitError: string | null = null;
 
   constructor(private fb: FormBuilder,
     private userService: UserService,
@@ -43,10 +44,14 @@ export class ChangePasswordModalComponent {
   }
 
   submitForm(): void {
+    this.submitError = null;
     this.ngxService.start();
     if (this.changePasswordForm.invalid) {
       this.invalidForm = true
       this.responseMessage = 'Invalid form';
+      this.changePasswordForm.markAllAsTouched();
+      this.submitError = 'Enter your current password, then a new password of at least 8 characters and confirm it.';
+      this.ngxService.stop();
     } else {
       this.userService.changePassword(this.changePasswordForm.value)
         .subscribe(
@@ -55,7 +60,7 @@ export class ChangePasswordModalComponent {
           this.dialogRef.close('Password changed successfully');
           this.invalidForm = false;
           this.ngxService.stop();
-          this.responseMessage = response?.message;
+          this.responseMessage = response?.message || 'Password changed';
           this.snackBarService.openSnackBar(this.responseMessage, "");
          this.onChangePassword.emit();
         }
@@ -67,10 +72,9 @@ export class ChangePasswordModalComponent {
           } else {
             this.responseMessage = genericError;
           }
-          this.snackBarService.openSnackBar(this.responseMessage, 'error');
+          this.submitError = this.responseMessage;
         });
     }
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
   }
   
 }

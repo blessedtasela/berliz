@@ -13,6 +13,7 @@ import { SubscriptionService } from 'src/app/services/subscription.service';
 })
 export class RenewSubscriptionModalComponent {
  durationMonths = 1;
+  submitError: string | null = null;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: RenewData,
@@ -44,6 +45,7 @@ export class RenewSubscriptionModalComponent {
   }
 
   renew() {
+    this.submitError = null;
     this.loader.start();
     const payload = {
       id: this.data.subscription.id,
@@ -53,12 +55,12 @@ export class RenewSubscriptionModalComponent {
     this.subscriptionService.renewSubscription(payload).subscribe({
       next: (res: any) => {
         this.loader.stop();
-        this.snackbar.openSnackBar(res?.message || 'Subscription renewed', '');
+        this.snackbar.openSnackBar(res?.message || `Your subscription has been renewed for ${this.durationMonths} month(s)`, '');
         this.dialogRef.close(true);
       },
       error: (err: any) => {
         this.loader.stop();
-        this.snackbar.openSnackBar(err.error?.message || 'Error', 'error');
+        this.submitError = err.error?.message || 'We could not renew your subscription. Please try again.';
       }
     });
   }

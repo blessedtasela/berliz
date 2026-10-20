@@ -23,6 +23,8 @@
         </button>
     </div>
 
+    <app-inline-alert class="block mt-3" [message]="searchError" (dismissed)="searchError = null"></app-inline-alert>
+
     <!-- Criteria pills -->
     <div class="flex items-center gap-2 mt-4 flex-wrap">
         <span class="text-[11px] text-zinc-500 font-medium">Filter by:</span>

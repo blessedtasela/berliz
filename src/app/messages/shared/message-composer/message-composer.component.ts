@@ -6,6 +6,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { Message } from 'src/app/models/message.model';
 import { StrapiService } from 'src/app/services/strapi.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { validateUpload } from 'src/app/utils/media-upload.util';
 
 export interface ComposerSendPayload {
@@ -53,7 +54,7 @@ const MAX_ATTACHMENT_MB = 25;
  */
 @Component({
     selector: 'app-message-composer',
-    imports: [CommonModule, FormsModule, IconsModule],
+    imports: [CommonModule, FormsModule, IconsModule, SharedModule],
     templateUrl: './message-composer.component.html'
 })
 export class MessageComposerComponent implements OnChanges, OnDestroy {
@@ -70,6 +71,8 @@ export class MessageComposerComponent implements OnChanges, OnDestroy {
   body = '';
   pendingAttachment: PendingAttachment | null = null;
   uploadingAttachment = false;
+  /** Inline reason the picked file was rejected or failed to upload; shown above the input row. */
+  attachmentError: string | null = null;
 
   private isTyping = false;
   private stopTypingTimer: ReturnType<typeof setTimeout> | null = null;
@@ -93,9 +96,10 @@ export class MessageComposerComponent implements OnChanges, OnDestroy {
     input.value = ''; // allow picking the exact same file again later
 
     if (!file) return;
+    this.attachmentError = null;
     const problem = validateUpload(file, { maxMb: MAX_ATTACHMENT_MB });
     if (problem) {
-      this.snackBar.openSnackBar(problem, 'error');
+      this.attachmentError = problem;
       return;
     }
 
@@ -109,7 +113,7 @@ export class MessageComposerComponent implements OnChanges, OnDestroy {
       },
       error: (err) => {
         this.uploadingAttachment = false;
-        this.snackBar.openSnackBar(err?.error?.message || 'Could not upload that file. Try again.', 'error');
+        this.attachmentError = err?.error?.message || `"${file.name}" could not be uploaded. Try attaching it again.`;
       },
     });
   }

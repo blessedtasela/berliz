@@ -61,6 +61,8 @@
                        file:bg-red-50 file:text-red-600 hover:file:bg-red-100
                        focus:outline-none transition" />
 
+            <app-inline-alert [message]="uploadError" kind="warning" (dismissed)="uploadError = null"></app-inline-alert>
+
             <!-- Progress -->
             <div *ngIf="uploadingAll" class="flex flex-col gap-1">
                 <div class="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -118,6 +120,8 @@
         </div>
 
         <div class="border-t border-gray-100 dark:border-gray-800"></div>
+
+        <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
 
         <!-- Save -->
         <div class="flex items-center justify-between">

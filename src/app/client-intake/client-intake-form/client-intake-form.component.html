@@ -29,7 +29,10 @@
       <p class="text-sm font-bold text-gray-700 dark:text-gray-300">Intake not found</p>
     </div>
 
-    <form *ngIf="!accessDenied && !notFound" [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
+    <app-load-error *ngIf="loadError && !accessDenied && !notFound" title="Couldn't load this intake"
+      [message]="loadError" (retry)="retryLoad()"></app-load-error>
+
+    <form *ngIf="!accessDenied && !notFound && !loadError" [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
 
       <!-- Medical conditions -->
       <div class="flex flex-col gap-1.5">
@@ -96,6 +99,8 @@
         class="text-[11px] text-red-600 dark:text-red-400 -mt-3">
         You must confirm this information is accurate before submitting.
       </span>
+
+      <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
 
       <button type="submit" [disabled]="loading" data-testid="submit-intake"
         class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-gray-900 dark:bg-gray-700 text-white hover:bg-gray-800 dark:hover:bg-gray-600 transition disabled:opacity-50">

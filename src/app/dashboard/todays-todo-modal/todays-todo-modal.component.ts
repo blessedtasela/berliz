@@ -25,6 +25,7 @@ export class TodaysTodoModalComponent implements OnInit {
 
   invalidForm = false;
   responseMessage: any;
+  submitError: string | null = null;
   addTodoForm!: FormGroup;
 
   @Output() emitEvent = new EventEmitter();
@@ -58,10 +59,11 @@ export class TodaysTodoModalComponent implements OnInit {
   }
 
   addTodo(): void {
+    this.submitError = null;
     if (this.addTodoForm.invalid) {
       this.invalidForm = true;
       this.addTodoForm.markAllAsTouched();
-      this.snackBarService.openSnackBar('Please fill in what you\'re working on and pick a due date.', 'error');
+      this.submitError = 'Please fill in what you\'re working on and pick a due date.';
       return;
     }
 
@@ -85,7 +87,7 @@ export class TodaysTodoModalComponent implements OnInit {
       next: (response: any) => {
         this.addTodoForm.reset();
         this.invalidForm = false;
-        this.responseMessage = response?.message;
+        this.responseMessage = response?.message || 'Task added to your to-do list';
         this.emitEvent.emit();
         this.snackBarService.openSnackBar(this.responseMessage, '');
         this.dialogRef.close();
@@ -93,7 +95,7 @@ export class TodaysTodoModalComponent implements OnInit {
       },
       error: (error: any) => {
         this.responseMessage = error.error?.message || genericError;
-        this.snackBarService.openSnackBar(this.responseMessage, 'error');
+        this.submitError = this.responseMessage;
         this.ngxService.stop();
       }
     });

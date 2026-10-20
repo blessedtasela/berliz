@@ -34,6 +34,7 @@ export class TrainerDataComponent {
   invalidForm: boolean = false;
   categories: Categories[] = [];
   responseMessage: any;
+  submitError: string | null = null;
   selectedPhoto: any;
   @Input() trainer!: Trainers | null;
   selectedCategoriesId: any;
@@ -257,7 +258,9 @@ export class TrainerDataComponent {
 
 
   formatDate(dateString: any): any {
+    if (!dateString) return '';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
@@ -309,10 +312,12 @@ export class TrainerDataComponent {
   }
 
   updateTrainer(): void {
+    this.submitError = null;
     if (this.updateTrainerForm.invalid) {
       this.invalidForm = true;
+      this.updateTrainerForm.markAllAsTouched();
       this.responseMessage = "Invalid form. Please complete all sections";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      // The form shows an inline "complete all required fields" notice while invalidForm is set.
       return;
     }
 
@@ -346,10 +351,8 @@ export class TrainerDataComponent {
         // The loader is stopped in `finally`: anything below throwing used to leave it spinning forever.
         try {
           this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
+          this.snackBarService.openSnackBar(this.responseMessage || 'Your trainer profile has been updated', "");
           // The saved trainer is `response.data` -- the endpoint answers with an ApiResponse wrapper.
-          // This used to read the wrapper itself as a Trainers, so `categories.map` threw on undefined
-          // and the "Loading" overlay never went away after a successful save.
           const saved = response?.data;
           if (saved) {
             this.updateFormValues(saved);
@@ -364,7 +367,7 @@ export class TrainerDataComponent {
 
       error: (error: any) => {
         this.responseMessage = error.error?.message || genericError;
-        this.snackBarService.openSnackBar(this.responseMessage, "error");
+        this.submitError = this.responseMessage;
         this.ngxService.stop();
       }
     });

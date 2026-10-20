@@ -24,6 +24,8 @@ export class UpdateUserModalComponent {
   formIndex: number = 0;
   countries: any[] = [];
   responseMessage: any;
+  /** Inline error shown above the Update button. */
+  submitError: string | null = null;
   userData: Users;
 
   constructor(private fb: FormBuilder,
@@ -92,12 +94,14 @@ export class UpdateUserModalComponent {
   }
 
   updateUser(): void {
+    this.submitError = null;
     this.ngxService.start();
     if (this.updateUserForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
-      this.snackbarService.openSnackBar(this.responseMessage, "error");
+      this.updateUserForm.markAllAsTouched();
+      this.submitError = 'Some account details are missing or invalid. Go back through each step and fix the highlighted fields.';
     } else {
       this.userService.updateUser(this.updateUserForm.value)
         .subscribe((response: any) => {
@@ -106,7 +110,7 @@ export class UpdateUserModalComponent {
           this.invalidForm = false;
           this.dialogRef.close('Account updated successfully');
           this.ngxService.stop();
-          this.responseMessage = response?.message;
+          this.responseMessage = response?.message || 'Account details updated';
           this.snackbarService.openSnackBar(this.responseMessage, "");
          this.onUpdateUser.emit();
         }
@@ -118,7 +122,7 @@ export class UpdateUserModalComponent {
           } else {
             this.responseMessage = genericError;
           }
-          this.snackbarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = this.responseMessage;
         });
     }
     this.ngxService.stop();
@@ -151,7 +155,7 @@ export class UpdateUserModalComponent {
       } else{
         this.responseMessage = genericError;
       }
-      this.snackbarService.openSnackBar(this.responseMessage, 'error');
+      this.submitError = this.responseMessage;
     })
   }
 

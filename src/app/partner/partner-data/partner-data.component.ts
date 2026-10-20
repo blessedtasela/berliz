@@ -29,6 +29,7 @@ export class PartnerDataComponent {
   invalidForm: boolean = false;
   formIndex: number = 0;
   responseMessage: any;
+  submitError: string | null = null;
   subscriptions: Subscription[] = []
   roles: Role[] = [{
     id: 1, role: 'center'
@@ -57,7 +58,9 @@ export class PartnerDataComponent {
   }
 
   formatDate(dateString: any): any {
+    if (!dateString) return '';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
@@ -130,11 +133,13 @@ export class PartnerDataComponent {
   }
 
   updatePartner(): void {
+    this.submitError = null;
     if (this.updatePartnerForm.invalid) {
       this.invalidForm = true;
 
       if (this.updatePartnerForm.invalid) {
-        this.snackBarService.openSnackBar('Please fix the form before submitting.', 'error');
+        this.updatePartnerForm.markAllAsTouched();
+        this.submitError = 'Please complete the highlighted fields (motivation, role, and valid Facebook and Instagram links) before saving.';
         return;
       }
 
@@ -156,12 +161,14 @@ export class PartnerDataComponent {
         next: (res: any) => {
           this.ngxService.stop();
 
-          this.snackBarService.openSnackBar(res?.message ?? 'Partner updated successfully', '');
-          this.updateFormValues(res);
+          this.submitError = null;
+          this.snackBarService.openSnackBar(res?.message ?? 'Your partner application has been updated', '');
+          // updateFile returns the ApiResponse wrapper; the partner payload is under `data`.
+          if (res?.data) this.updateFormValues(res.data);
         },
         error: (err: any) => {
           this.ngxService.stop();
-          this.snackBarService.openSnackBar(err?.error?.message ?? genericError, 'error');
+          this.submitError = err?.error?.message ?? genericError;
         }
       });
     }

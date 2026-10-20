@@ -35,6 +35,8 @@ export class UserProgressComponent implements OnInit, OnDestroy {
 
   entries: ProgressEntry[] = [];
   loading = true;
+  /** Inline error from the progress-entry slice (failed load or save); dismissible, cleared on the next refresh. */
+  progressError: string | null = null;
 
   // ── New entry form ─────────────────────────────────────────────────────
   weightKg: number | null = null;
@@ -69,7 +71,7 @@ export class UserProgressComponent implements OnInit, OnDestroy {
       this.store.select(selectMyProgressEntries).pipe(takeUntil(this.destroy$)).subscribe(entries => this.entries = entries),
       this.store.select(selectProgressEntryLoading).pipe(takeUntil(this.destroy$)).subscribe(loading => this.loading = loading),
       this.store.select(selectProgressEntryError).pipe(takeUntil(this.destroy$)).subscribe(error => {
-        if (error) this.snackBar.openSnackBar(error || genericError, 'error');
+        this.progressError = error ? (error || genericError) : null;
       }),
     );
   }
@@ -81,6 +83,7 @@ export class UserProgressComponent implements OnInit, OnDestroy {
   }
 
   refresh(): void {
+    this.progressError = null;
     this.store.dispatch(ProgressEntryActions.loadMyProgressEntries());
   }
 

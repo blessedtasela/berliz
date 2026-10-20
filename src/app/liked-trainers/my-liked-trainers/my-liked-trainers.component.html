@@ -16,8 +16,12 @@
         <i-feather name="loader" class="text-gray-300 dark:text-gray-600 animate-spin" style="width:20px;height:20px;"></i-feather>
     </div>
 
+    <!-- Failed to load -->
+    <app-load-error *ngIf="!loading && loadError" title="Couldn't load your liked trainers" [message]="loadError"
+        (retry)="loadLikes()"></app-load-error>
+
     <!-- Empty state -->
-    <div *ngIf="!loading && likes.length === 0"
+    <div *ngIf="!loading && !loadError && likes.length === 0"
         class="flex flex-col items-center justify-center py-16 gap-3 text-center bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
         <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
             <i-feather name="heart" class="text-gray-300 dark:text-gray-600" style="width:22px;height:22px;"></i-feather>
@@ -28,7 +32,7 @@
     </div>
 
     <!-- List -->
-    <div *ngIf="!loading && likes.length > 0" class="flex flex-col bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 divide-y divide-gray-100 dark:divide-gray-800 overflow-hidden">
+    <div *ngIf="!loading && !loadError && likes.length > 0" class="flex flex-col bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 divide-y divide-gray-100 dark:divide-gray-800 overflow-hidden">
         <div *ngFor="let like of likes" class="flex items-center gap-3 px-4 py-3 transition-opacity"
             [class.opacity-40]="removingId === like.trainerId">
 

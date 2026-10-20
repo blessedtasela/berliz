@@ -13,6 +13,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavbarModule } from '../navbar/navbar.module';
 import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
+import { SharedModule } from '../shared/shared.module';
 import { AvatarComponent } from '../shared/avatar/avatar.component';
 import { CenterSearchComponent } from './center-search/center-search.component';
 import { CenterDetailComponent } from './center-detail/center-detail.component';
@@ -77,6 +78,7 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     NavbarModule,
     FooterModule,
     IconsModule,
+    SharedModule,
     AvatarComponent,
     RouterModule,
     PromoBadgeListComponent,

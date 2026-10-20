@@ -7,6 +7,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { ProviderPackageService } from 'src/app/services/provider-package.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { ProviderPackageFormModalComponent } from '../provider-package-form-modal/provider-package-form-modal.component';
 import { ProviderPackage, ProviderPackageRequest } from 'src/app/models/provider-package.model';
 import { genericError } from 'src/validators/form-validators.module';
@@ -20,7 +21,7 @@ import { genericError } from 'src/validators/form-validators.module';
  */
 @Component({
     selector: 'app-my-provider-packages',
-    imports: [CommonModule, IconsModule],
+    imports: [CommonModule, IconsModule, LoadErrorComponent],
     templateUrl: './my-provider-packages.component.html',
     styleUrls: ['./my-provider-packages.component.css']
 })
@@ -28,6 +29,8 @@ export class MyProviderPackagesComponent implements OnInit {
 
   packages: ProviderPackage[] = [];
   loading = true;
+  /** Set when the packages list failed to load; shown inline with a Retry. */
+  loadError: string | null = null;
 
   constructor(
     private packageService: ProviderPackageService,
@@ -43,16 +46,17 @@ export class MyProviderPackagesComponent implements OnInit {
     this.load();
   }
 
-  private load(): void {
+  load(): void {
     this.loading = true;
+    this.loadError = null;
     this.packageService.getMine().pipe(take(1)).subscribe({
       next: (res) => {
         this.packages = res?.data ?? [];
         this.loading = false;
       },
-      error: () => {
+      error: (err: any) => {
         this.loading = false;
-        this.snackBar.openSnackBar(genericError, 'error');
+        this.loadError = err?.error?.message || genericError;
       }
     });
   }
@@ -84,7 +88,7 @@ export class MyProviderPackagesComponent implements OnInit {
 
     this.packageService.update(pkg.id, payload).pipe(take(1)).subscribe({
       next: (res: any) => {
-        this.snackBar.openSnackBar(res?.message || 'Updated', '');
+        this.snackBar.openSnackBar(res?.message || `Package "${pkg.name}" ${pkg.isActive ? 'deactivated' : 'activated'}`, '');
         this.load();
       },
       error: (err: any) => this.snackBar.openSnackBar(err?.error?.message || genericError, 'error')
@@ -102,7 +106,7 @@ export class MyProviderPackagesComponent implements OnInit {
     dialogRef.componentInstance.onEmitStatusChange.pipe(take(1)).subscribe(() => {
       this.packageService.delete(pkg.id).pipe(take(1)).subscribe({
         next: (res: any) => {
-          this.snackBar.openSnackBar(res?.message || 'Package deleted', '');
+          this.snackBar.openSnackBar(res?.message || `Package "${pkg.name}" deleted`, '');
           dialogRef.close();
           this.load();
         },

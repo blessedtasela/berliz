@@ -26,6 +26,7 @@ export class CenterPricingComponent implements OnInit, OnChanges, OnDestroy {
   updateCenterPricingForm!: FormGroup;
 
   invalidForm = false;
+  submitError: string | null = null;
   originalValue: any;
 
   pricingFields = [
@@ -117,10 +118,11 @@ export class CenterPricingComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   updateCenterPricing(): void {
+    this.submitError = null;
     if (this.updateCenterPricingForm.invalid) {
       this.invalidForm = true;
       this.updateCenterPricingForm.markAllAsTouched();
-      this.snackbar.openSnackBar('Invalid form. Please complete all sections', 'error');
+      // The form already shows an inline notice while invalidForm is set.
       return;
     }
 
@@ -134,14 +136,14 @@ export class CenterPricingComponent implements OnInit, OnChanges, OnDestroy {
 
     request$.pipe(take(1)).subscribe({
       next: (response: any) => {
-        this.snackbar.openSnackBar(response?.message || 'Saved successfully', '');
+        this.snackbar.openSnackBar(response?.message || 'Your center pricing has been saved', '');
         this.clear(response?.data ?? response);
         this.store.dispatch(loadMyCenterPricing());
         this.emitEvent.emit();
         this.loader.stop();
       },
       error: (err: any) => {
-        this.snackbar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.submitError = err?.error?.message || genericError;
         this.loader.stop();
       }
     });

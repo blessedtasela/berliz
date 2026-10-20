@@ -111,7 +111,7 @@ describe('LoginFormComponent', () => {
     it('loginWithGoogleFallback shows a "not configured" message', () => {
       fixture.detectChanges();
       component.loginWithGoogleFallback();
-      expect(snackBarService.openSnackBar).toHaveBeenCalledWith(jasmine.stringMatching(/not configured/i), 'error');
+      expect(component.submitError).toMatch(/not configured/i);
     });
 
     it('logs the user in when the GIS callback fires with an ID token', fakeAsync(() => {
@@ -141,7 +141,7 @@ describe('LoginFormComponent', () => {
 
       expect(localStorage.getItem('token')).toBeNull();
       expect(router.navigateByUrl).not.toHaveBeenCalled();
-      expect(snackBarService.openSnackBar).toHaveBeenCalledWith('Invalid or expired Google token', 'error');
+      expect(component.submitError).toBe('Invalid or expired Google token');
     }));
   });
 
@@ -174,7 +174,7 @@ describe('LoginFormComponent', () => {
       tick();
 
       expect(userService.loginWithFacebook).not.toHaveBeenCalled();
-      expect(snackBarService.openSnackBar).toHaveBeenCalledWith('Facebook Login is not configured yet.', 'error');
+      expect(component.submitError).toBe('Facebook Login is not configured yet.');
     }));
 
     it('surfaces the backend error message when Facebook token verification fails', fakeAsync(() => {
@@ -187,7 +187,7 @@ describe('LoginFormComponent', () => {
       tick();
 
       expect(router.navigateByUrl).not.toHaveBeenCalled();
-      expect(snackBarService.openSnackBar).toHaveBeenCalledWith('Invalid Facebook token', 'error');
+      expect(component.submitError).toBe('Invalid Facebook token');
     }));
   });
 
@@ -231,7 +231,7 @@ describe('LoginFormComponent', () => {
       fillAndSubmit();
 
       expect(router.navigateByUrl).not.toHaveBeenCalled();
-      expect(snackBarService.openSnackBar).toHaveBeenCalledWith('Incorrect email or password', 'error');
+      expect(component.submitError).toBe('Incorrect email or password');
     });
   });
 });

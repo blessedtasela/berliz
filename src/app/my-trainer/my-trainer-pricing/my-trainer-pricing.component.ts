@@ -22,6 +22,7 @@ export class MyTrainerPricingComponent implements OnInit, OnChanges {
   updateTrainerPricingForm!: FormGroup;
   invalidForm: boolean = false;
   responseMessage: any;
+  submitError: string | null = null;
   @Input() trainerPricing!: TrainerPricing | null;
   subscriptions: Subscription[] = [];
   originalValue: any;
@@ -94,7 +95,9 @@ export class MyTrainerPricingComponent implements OnInit, OnChanges {
   }
 
   formatDate(dateString: any): any {
+    if (!dateString) return '';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
@@ -113,10 +116,12 @@ export class MyTrainerPricingComponent implements OnInit, OnChanges {
   }
 
   updateTrainerPricing(): void {
+    this.submitError = null;
     if (this.updateTrainerPricingForm.invalid) {
       this.invalidForm = true;
+      this.updateTrainerPricingForm.markAllAsTouched();
       this.responseMessage = 'Invalid form. Please complete all sections';
-      this.snackBarService.openSnackBar(this.responseMessage, 'error');
+      // The form shows an inline "complete all required fields" banner while invalidForm is set.
       return; // Exit early if the form is invalid
     }
 
@@ -129,11 +134,13 @@ export class MyTrainerPricingComponent implements OnInit, OnChanges {
         (response: any) => {
           this.invalidForm = false;
           this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, '');
+          this.snackBarService.openSnackBar(this.responseMessage || 'Your trainer pricing has been updated', '');
 
-          // 🔥 Update UI with backend response
-          this.updateFormValues(response);
-          this.trainerPricing = response;
+          // 🔥 Update UI with backend response (payload is under `data` of the ApiResponse wrapper)
+          if (response?.data) {
+            this.updateFormValues(response.data);
+            this.trainerPricing = response.data;
+          }
 
           this.originalValue = this.updateTrainerPricingForm.getRawValue();
           this.emitEvent.emit();
@@ -141,7 +148,7 @@ export class MyTrainerPricingComponent implements OnInit, OnChanges {
         },
         (error: any) => {
           this.responseMessage = error.error?.message || genericError;
-          this.snackBarService.openSnackBar(this.responseMessage, 'error');
+          this.submitError = this.responseMessage;
           this.ngxService.stop();
         }
       );
@@ -152,18 +159,21 @@ export class MyTrainerPricingComponent implements OnInit, OnChanges {
           this.updateTrainerPricingForm.reset();
           this.invalidForm = false;
           this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, '');
+          this.snackBarService.openSnackBar(this.responseMessage || 'Your trainer pricing has been added', '');
           this.handleEmitEvent();
           this.emitEvent.emit();
-          this.updateFormValues(response);
-          this.trainerPricing = response;
+          // addTrainerPricing returns the ApiResponse wrapper; the payload is under `data`.
+          if (response?.data) {
+            this.updateFormValues(response.data);
+            this.trainerPricing = response.data;
+          }
           this.originalValue = this.updateTrainerPricingForm.getRawValue();
           this.ngxService.stop();
         },
         (error: any) => {
           console.error('error');
           this.responseMessage = error.error?.message || genericError;
-          this.snackBarService.openSnackBar(this.responseMessage, 'error');
+          this.submitError = this.responseMessage;
           this.ngxService.stop();
         }
       );

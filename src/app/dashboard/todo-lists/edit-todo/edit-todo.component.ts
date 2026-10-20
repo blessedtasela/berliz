@@ -18,6 +18,7 @@ export class EditTodoComponent {
   updateTodoForm!: FormGroup;
   invalidForm: boolean = false;
   responseMessage: any;
+  submitError: string | null = null;
   @Output() emitEvent = new EventEmitter()
   myTodo!: TodoList;
 
@@ -42,11 +43,13 @@ export class EditTodoComponent {
   }
 
   updateTodo(): void {
+    this.submitError = null;
     if (this.updateTodoForm.invalid) {
       this.ngxService.start();
       this.invalidForm = true;
       this.responseMessage = "Invalid form. Please complete all sections";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      this.updateTodoForm.markAllAsTouched();
+      this.submitError = 'Complete every field before saving this task.';
       this.ngxService.stop();
     } else {
       this.ngxService.start();
@@ -54,7 +57,7 @@ export class EditTodoComponent {
         .subscribe((response: any) => {
           this.updateTodoForm.reset();
           this.invalidForm = false;
-          this.responseMessage = response?.message;
+          this.responseMessage = response?.message || 'Task updated';
           this.emitEvent.emit()
           this.onUpdateTodo.emit()
           this.dialogRef.close("task updated successfully")
@@ -68,7 +71,7 @@ export class EditTodoComponent {
           } else {
             this.responseMessage = genericError;
           }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = this.responseMessage;
           this.ngxService.stop();
         })
     }

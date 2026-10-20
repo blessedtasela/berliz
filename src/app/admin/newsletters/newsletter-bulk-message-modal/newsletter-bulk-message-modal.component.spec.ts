@@ -49,15 +49,15 @@ describe('NewsletterBulkMessageModalComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('shows exactly one error snackbar when the form is invalid, and never calls the service', () => {
+  it('shows an inline error (no snackbar) when the form is invalid, and never calls the service', () => {
     component.newsletterBulkMessageForm.patchValue({ subject: '', body: '' });
 
     component.sendNewsletterMessage();
 
     expect(component.invalidForm).toBeTrue();
     expect(newsletterServiceSpy.sendBulkMessage).not.toHaveBeenCalled();
-    expect(snackBarServiceSpy.openSnackBar).toHaveBeenCalledTimes(1);
-    expect(snackBarServiceSpy.openSnackBar).toHaveBeenCalledWith('Invalid form', 'error');
+    expect(component.submitError).toBe('Please fill in the highlighted fields');
+    expect(snackBarServiceSpy.openSnackBar).not.toHaveBeenCalled();
   });
 
   it('shows exactly one success snackbar on a valid submit, never a trailing error one', () => {
@@ -73,7 +73,7 @@ describe('NewsletterBulkMessageModalComponent', () => {
     expect(snackBarServiceSpy.openSnackBar).toHaveBeenCalledWith('Sent to 42 subscribers', '');
   });
 
-  it('shows exactly one error snackbar when the send fails', () => {
+  it('shows the failure inline (no snackbar) when the send fails', () => {
     component.newsletterBulkMessageForm.patchValue({
       subject: 'A subject over 12 chars',
       body: 'A message body that is well over fifty characters long for validation.',
@@ -82,7 +82,7 @@ describe('NewsletterBulkMessageModalComponent', () => {
 
     component.sendNewsletterMessage();
 
-    expect(snackBarServiceSpy.openSnackBar).toHaveBeenCalledTimes(1);
-    expect(snackBarServiceSpy.openSnackBar).toHaveBeenCalledWith('Mail server unreachable', 'error');
+    expect(component.submitError).toBe('Mail server unreachable');
+    expect(snackBarServiceSpy.openSnackBar).not.toHaveBeenCalled();
   });
 });

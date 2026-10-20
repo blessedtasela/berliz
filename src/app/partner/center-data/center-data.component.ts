@@ -29,6 +29,7 @@ export class CenterDataComponent {
   invalidForm: boolean = false;
   categories: Categories[] = [];
   responseMessage: any;
+  submitError: string | null = null;
   selectedPhoto: any;
   @Input() center!: Centers |  null;
   selectedCategoriesId: any;
@@ -82,7 +83,9 @@ export class CenterDataComponent {
   }
 
   formatDate(dateString: any): any {
+    if (!dateString) return '';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
@@ -117,20 +120,21 @@ export class CenterDataComponent {
       categoryIds: categoryToStrings
     };
 
+    this.submitError = null;
     if (this.updateCenterForm.invalid) {
-      this.ngxService.start();
+      // The "Please complete all required fields" notice in the template shows while invalidForm is set.
+      this.updateCenterForm.markAllAsTouched();
       this.invalidForm = true;
       this.responseMessage = "Invalid form. Please complete all sections";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
-      this.ngxService.stop();
     } else {
       this.ngxService.start();
       this.centerService.updateCenter(formData)
         .subscribe((response: any) => {
           this.updateCenterForm.reset();
           this.invalidForm = false;
+          this.submitError = null;
           this.responseMessage = response?.message;
-          this.snackBarService.openSnackBar(this.responseMessage, "");
+          this.snackBarService.openSnackBar(this.responseMessage || 'Your center details have been updated', "");
           this.ngxService.stop();
           this.emitEvent.emit();
         }, (error: any) => {
@@ -141,7 +145,7 @@ export class CenterDataComponent {
           } else {
             this.responseMessage = genericError;
           }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = this.responseMessage;
           this.ngxService.stop();
         })
     }

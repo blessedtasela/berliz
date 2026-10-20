@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { Subject, catchError, of, take, takeUntil } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { CenterService } from 'src/app/services/center.service';
 import { ProviderPackageService } from 'src/app/services/provider-package.service';
@@ -36,7 +37,7 @@ import { ProviderKind, providerSlug, resolveProviderBySlug } from '../resolve-pr
  */
 @Component({
   selector: 'app-level-up-page',
-  imports: [CommonModule, RouterModule, IconsModule],
+  imports: [CommonModule, RouterModule, IconsModule, SharedModule],
   templateUrl: './level-up-page.component.html'
 })
 export class LevelUpPageComponent implements OnInit, OnDestroy {
@@ -59,6 +60,8 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
 
   selectedPlan: ProviderPackage | null = null;
   buyingPlanId: number | null = null;
+  /** Inline message above the pay button: a purchase or checkout that failed to start. Stays until dismissed or the next try. */
+  submitError: string | null = null;
   /** The plan the link asked for (`?plan=`); used once the provider's plans have loaded. */
   private pendingPlanId: number | null = null;
 
@@ -259,6 +262,7 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
 
   choose(plan: ProviderPackage): void {
     this.selectedPlan = plan;
+    this.submitError = null;
     setTimeout(() => document.getElementById('level-up-checkout')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
   }
 
@@ -272,13 +276,14 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.submitError = null;
     this.buyingPlanId = plan.id;
     this.subscriptionService.purchasePackage(plan.id).subscribe({
       next: res => {
         const purchase = res?.data;
         if (!purchase?.subscriptionId) {
           this.buyingPlanId = null;
-          this.snackBar.openSnackBar(res?.message || 'Could not start that purchase — try again.', 'error');
+          this.submitError = res?.message || 'Could not start that purchase — try again.';
           return;
         }
         this.stripeService.createCheckoutSession({
@@ -293,20 +298,20 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
             const checkoutUrl = checkoutRes.data?.checkoutUrl;
             if (!checkoutUrl) {
               this.buyingPlanId = null;
-              this.snackBar.openSnackBar('Could not start checkout — try again.', 'error');
+              this.submitError = 'Could not start checkout — try again.';
               return;
             }
             window.location.href = checkoutUrl;
           },
           error: () => {
             this.buyingPlanId = null;
-            this.snackBar.openSnackBar('Could not start checkout — try again.', 'error');
+            this.submitError = 'Could not start checkout — try again.';
           }
         });
       },
       error: err => {
         this.buyingPlanId = null;
-        this.snackBar.openSnackBar(err?.error?.message || 'Could not start that purchase — try again.', 'error');
+        this.submitError = err?.error?.message || 'Could not start that purchase — try again.';
       }
     });
   }

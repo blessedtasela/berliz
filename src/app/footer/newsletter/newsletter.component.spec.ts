@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { InlineAlertComponent } from '../../shared/inline-alert/inline-alert.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -12,7 +13,7 @@ describe('NewsletterComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [NewsletterComponent],
+      declarations: [NewsletterComponent, InlineAlertComponent],
       imports: [ReactiveFormsModule],
       providers: [
         { provide: NewsletterService, useValue: jasmine.createSpyObj('NewsletterService', ['addNewsletter']) },
