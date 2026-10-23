@@ -65,7 +65,7 @@
                             &middot; {{ p.usageCount || 0 }}/{{ p.usageLimit }} redeemed
                         </ng-container>
                         <ng-container *ngIf="p.endDate">
-                            &middot; ends {{ p.endDate | date:'mediumDate' }}
+                            &middot; ends {{ p.endDate | date:'mediumDate':'UTC' }}
                         </ng-container>
                     </p>
                 </div>

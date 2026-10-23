@@ -567,6 +567,19 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 
+### Unreleased — Dates: the user's own day, and calendar days that no longer slip a day
+
+- **"Today" defaults were UTC's today.** A date picker defaulted with `new Date().toISOString().slice(0, 10)` offered tomorrow's date in
+  the evening for anyone west of UTC (Vancouver after 5 pm). Progress check-in, workout log, run, challenge, sign-up max-birthdate and the
+  to-do reminder now use the user's local calendar (`utils/local-date.ts` on web, `src/utils/local-date.ts` on mobile).
+- **Calendar-day fields showed one day early west of UTC.** A progress check-in, workout log, task start/end or promotion end is a whole
+  day, sent as `yyyy-MM-dd` and stored at UTC midnight; shown in the viewer's zone it read the day before. They are now displayed in UTC
+  (web: `| date:'mediumDate':'UTC'`; mobile: read back through `calendarDayDate`), and streaks and week counts use the same day. Mobile
+  now sends a check-in as the day at UTC midnight, like the web, instead of "now". Runs are real moments: the picked day is sent as that
+  day at the current time, so it lands on the right day in any zone. Existing records are already stored this way and now read correctly.
+- **Billing overview "Refunds this month"** now counts refund events (new `payment_refund_log` table, one row per refund, backfilled from
+  existing payments) instead of a payment's whole running total in the month of its latest refund.
+
 ### Unreleased — Follow-ups: super-admin role picker, blank Trainers list, mobile visual pass
 
 - **Role picker:** the admin Users "Update user role" dialog no longer offers "admin" unless you are the super admin, and an admin

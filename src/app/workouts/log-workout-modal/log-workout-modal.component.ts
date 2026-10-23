@@ -19,6 +19,7 @@ import { WorkoutService } from 'src/app/services/workout.service';
 import { PrCelebrationService } from 'src/app/services/pr-celebration.service';
 import { loadActiveExercises } from 'src/app/state/exercise/exercise.actions';
 import { selectActiveExercises } from 'src/app/state/exercise/exercise.selectors';
+import { localDateString } from 'src/app/utils/local-date';
 
 interface EditableSet {
   reps: number | null;
@@ -101,7 +102,7 @@ export class LogWorkoutModalComponent implements OnInit, OnDestroy {
   }
 
   private today(): string {
-    return new Date().toISOString().slice(0, 10);
+    return localDateString();
   }
 
   private loadFromLog(log: WorkoutLogResponse): void {

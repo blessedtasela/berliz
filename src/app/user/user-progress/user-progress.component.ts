@@ -9,6 +9,7 @@ import { imageValidator, genericError } from 'src/validators/form-validators.mod
 
 import * as ProgressEntryActions from 'src/app/state/progress-entry/progress-entry.actions';
 import { selectMyProgressEntries, selectProgressEntryError, selectProgressEntryLoading } from 'src/app/state/progress-entry/progress-entry.selectors';
+import { localDateString } from 'src/app/utils/local-date';
 
 interface PhotoSlot {
   file: File | null;
@@ -41,7 +42,7 @@ export class UserProgressComponent implements OnInit, OnDestroy {
   // ── New entry form ─────────────────────────────────────────────────────
   weightKg: number | null = null;
   bodyFatPercent: number | null = null;
-  date: string = new Date().toISOString().slice(0, 10);
+  date: string = localDateString();
   saving = false;
 
   newEntryPhotoSlots: PhotoSlot[] = Array.from({ length: MAX_NEW_ENTRY_PHOTOS }, () => this.emptySlot());
@@ -165,7 +166,7 @@ export class UserProgressComponent implements OnInit, OnDestroy {
     // fast second entry rather than blocking on the round trip.
     this.weightKg = null;
     this.bodyFatPercent = null;
-    this.date = new Date().toISOString().slice(0, 10);
+    this.date = localDateString();
     this.newEntryPhotoSlots = Array.from({ length: MAX_NEW_ENTRY_PHOTOS }, () => this.emptySlot());
     this.saving = false;
   }

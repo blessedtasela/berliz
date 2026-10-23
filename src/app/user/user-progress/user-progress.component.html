@@ -131,7 +131,7 @@
                     </label>
                 </div>
 
-                <span class="text-[11px] text-gray-400 dark:text-gray-500">{{ entry.date | date:'mediumDate' }}</span>
+                <span class="text-[11px] text-gray-400 dark:text-gray-500">{{ entry.date | date:'mediumDate':'UTC' }}</span>
             </ng-container>
 
             <!-- Edit mode -->

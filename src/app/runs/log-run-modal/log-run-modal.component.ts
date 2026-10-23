@@ -8,6 +8,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { RunLogRequest, RunLogResponse } from 'src/app/models/run.interface';
 import { RunService } from 'src/app/services/run.service';
 import { PrCelebrationService } from 'src/app/services/pr-celebration.service';
+import { instantOnLocalDay, localDateString, localDayOfInstant } from 'src/app/utils/local-date';
 
 /**
  * Log a completed run's actual time — duration is the only required field
@@ -45,7 +46,7 @@ export class LogRunModalComponent implements OnInit {
     if (this.data?.log) {
       const l = this.data.log;
       this.title = l.title ?? '';
-      this.ranAt = new Date(l.ranAt).toISOString().slice(0, 10);
+      this.ranAt = localDayOfInstant(l.ranAt);
       this.hours = Math.floor(l.durationSeconds / 3600) || null;
       this.minutes = Math.floor((l.durationSeconds % 3600) / 60);
       this.seconds = l.durationSeconds % 60;
@@ -59,7 +60,7 @@ export class LogRunModalComponent implements OnInit {
   }
 
   private today(): string {
-    return new Date().toISOString().slice(0, 10);
+    return localDateString();
   }
 
   private get totalSeconds(): number {
@@ -83,7 +84,7 @@ export class LogRunModalComponent implements OnInit {
       id: this.data?.log?.id,
       runEventId: this.data?.log?.runEventId ?? this.data?.runEventId ?? null,
       title: this.title.trim() || null,
-      ranAt: new Date(this.ranAt).toISOString(),
+      ranAt: instantOnLocalDay(this.ranAt).toISOString(),
       durationSeconds: this.totalSeconds,
       distanceKm: this.distanceKm,
       notes: this.notes.trim() || null,
