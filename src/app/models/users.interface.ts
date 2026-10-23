@@ -41,6 +41,9 @@ export interface Users {
     /** Whether the floating message popup widget shows up anywhere in the app. Defaults to true. */
     messagePopupEnabled?: boolean;
 
+    /** Whether other people see this user's achievements on their public profile. Defaults to true. */
+    showAchievements?: boolean;
+
     /** Email notification category preferences — whether these get emailed in addition to the in-app notification. Messages/bookings/account default to true; social (likes/comments) defaults to false — it's opt-in. */
     emailNotifyMessages?: boolean;
     emailNotifyBookings?: boolean;

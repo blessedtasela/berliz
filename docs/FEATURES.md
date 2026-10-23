@@ -189,6 +189,11 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Hide my achievements (web, mobile, backend)
+
+- **A separate switch for achievements.** Settings → Profile visibility (web) and Settings → Public profile (mobile) now have *Achievements shown / hidden*. Before, achievements simply followed the profile-visibility switch, so someone with a public profile could not keep their achievements private. When hidden, the public profile sends an empty list (indistinguishable from having none), the rest of the profile is unaffected, and the owner and Berliz's super admin still see them. Default is shown, so nobody's profile changes until they switch it off.
+- Backend: `PUT /user/updateShowAchievements` (body `{"showAchievements": "true"|"false"}`, caller only), nullable `users.show_achievements` (migration V74, null reads as shown), and `showAchievements` on the user response. Deploy the backend before the apps use the switch.
+
 ### Unreleased — Fix: links lost their query parameters (login return, notification deep links)
 
 - The URL serializer lowercased the *whole* URL, query string included, so `?returnUrl=`, `?postId=`, `?userId=`, `?logId=`, `?faqId=`, `?payoutId=` and others arrived as `returnurl`, `postid`… and the code reading the camelCase names never saw them. Visitors sent to log in were not returned to the page they wanted, and notification deep links that carry an id (a post's comments, a message thread, a logged workout or run) opened the page without the item. Only the path is lowercased now; query keys, values and the fragment keep their case.

@@ -279,6 +279,14 @@ export class UserService {
     );
   }
 
+  /** Shows or hides the signed-in user's achievements on their public profile (the owner always still sees them). */
+  updateShowAchievements(show: boolean): Observable<ApiResponse<string>> {
+    return this.httpClient.put<ApiResponse<string>>(
+      this.url + "/user/updateShowAchievements",
+      { showAchievements: String(show) }
+    );
+  }
+
   /** Sets any/all of the signed-in user's email notification category preferences in one call -- only the keys present are changed. */
   updateEmailNotificationPreferences(preferences: EmailNotificationPreferences): Observable<ApiResponse<string>> {
     const body: Record<string, string> = {};

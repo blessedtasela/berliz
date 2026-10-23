@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Actions } from '@ngrx/effects';
-import { Subject, of } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 import { UserProfileSettingsComponent } from './user-profile-settings.component';
@@ -23,7 +23,7 @@ describe('UserProfileSettingsComponent', () => {
   let store: MockStore;
 
   beforeEach(() => {
-    const userServiceSpy = jasmine.createSpyObj('UserService', ['updateUser']);
+    const userServiceSpy = jasmine.createSpyObj('UserService', ['updateUser', 'updateShowAchievements']);
     const countryServiceSpy = jasmine.createSpyObj('CountryService', ['getCountries']);
     countryServiceSpy.getCountries.and.returnValue(of([]));
     const ngxServiceSpy = jasmine.createSpyObj('NgxUiLoaderService', ['start', 'stop']);
@@ -66,6 +66,30 @@ describe('UserProfileSettingsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('shows achievements by default and sends the flipped value when the switch is used', () => {
+    const userService = TestBed.inject(UserService) as jasmine.SpyObj<UserService>;
+    userService.updateShowAchievements.and.returnValue(of({ data: 'Achievements hidden on your public profile', message: '', success: true, statusCode: 200 }));
+    expect(component.showAchievements).toBeTrue();
+
+    component.toggleShowAchievements();
+
+    expect(userService.updateShowAchievements).toHaveBeenCalledOnceWith(false);
+    expect(component.showAchievements).toBeFalse();
+    expect(component.savingShowAchievements).toBeFalse();
+  });
+
+  it('keeps the old achievements setting and reports the error when saving fails', () => {
+    const userService = TestBed.inject(UserService) as jasmine.SpyObj<UserService>;
+    const snackbar = TestBed.inject(SnackBarService) as jasmine.SpyObj<SnackBarService>;
+    userService.updateShowAchievements.and.returnValue(throwError(() => ({ error: { message: 'Server unavailable' } })));
+
+    component.toggleShowAchievements();
+
+    expect(component.showAchievements).toBeTrue();
+    expect(component.savingShowAchievements).toBeFalse();
+    expect(snackbar.openSnackBar).toHaveBeenCalledWith('Server unavailable', 'error');
   });
 
   it('toggleMessagePopupEnabled dispatches updateMessagePopupEnabled with the flipped value', () => {
