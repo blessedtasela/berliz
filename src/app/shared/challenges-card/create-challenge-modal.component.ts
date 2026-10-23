@@ -8,6 +8,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { CHALLENGE_METRICS, ChallengeMetric, ChallengeScope } from 'src/app/models/challenge.interface';
 import { ChallengeService } from 'src/app/services/challenge.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { localDateString } from 'src/app/utils/local-date';
 
 @Component({
     selector: 'app-create-challenge-modal',
@@ -80,8 +81,8 @@ export class CreateChallengeModalComponent {
   description = '';
   metric: ChallengeMetric = 'SESSIONS';
   goal: number | null = 10;
-  startsAt = new Date().toISOString().slice(0, 10);
-  endsAt = new Date(Date.now() + 30 * 86_400_000).toISOString().slice(0, 10);
+  startsAt = localDateString();
+  endsAt = localDateString(new Date(Date.now() + 30 * 86_400_000));
   connectionsOnly = false;
   saving = false;
 
