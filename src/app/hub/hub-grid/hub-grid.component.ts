@@ -152,7 +152,7 @@ export class HubGridComponent implements OnChanges {
   private readonly ROUTE_OVERRIDES: Record<string, string> = {
     // No admin CRUD table for equipment — it's center-scoped and managed from
     // "My equipment" on /dashboard/exercises, so point at the public browser.
-    'equipments': '/services/equipment',
+    'equipments': '/disciplines/equipment',
     'workouts': '/dashboard/workouts',
     'my-workouts': '/dashboard/workouts',
     // No dedicated route exists for the client roster — it's a section of the

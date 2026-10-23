@@ -1,5 +1,5 @@
 <!-- ═══════════════════════════════════════════════
-     SERVICE CARDS GRID
+     DISCIPLINE CARDS GRID
 ════════════════════════════════════════════════ -->
 <section class="w-full bg-zinc-950 px-4 pb-16 font-sans">
 
@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <h3 class="text-lg font-bold text-white">More services coming soon</h3>
+                    <h3 class="text-lg font-bold text-white">More disciplines coming soon</h3>
                     <p class="text-sm text-zinc-500 max-w-xs">
                         We're building out new programs and disciplines. Check back soon.
                     </p>
@@ -33,7 +33,7 @@
                 <span class="text-white font-semibold">
                     {{ categoriesResult.length > visibleItems ? visibleItems : categoriesResult.length }}
                 </span>
-                of <span class="text-white font-semibold">{{ categoriesResult.length }}</span> services
+                of <span class="text-white font-semibold">{{ categoriesResult.length }}</span> disciplines
             </p>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -105,7 +105,7 @@
                                 </button>
 
                                 <!-- Know More -->
-                                <a [routerLink]="['/services', category.id, category.name]" class="px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-semibold
+                                <a [routerLink]="['/disciplines', category.id, category.name]" class="px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-semibold
                                           hover:bg-red-700 active:scale-[0.98] transition">
                                     Know more
                                 </a>
@@ -122,7 +122,7 @@
                            hover:border-red-600 hover:text-white transition flex items-center gap-2">
                     <i-feather [name]="showFullData ? 'chevron-up' : 'chevron-down'"
                         style="width:13px;height:13px;"></i-feather>
-                    {{ showFullData ? 'Show less' : 'Show more services' }}
+                    {{ showFullData ? 'Show less' : 'Show more disciplines' }}
                 </button>
             </div>
 

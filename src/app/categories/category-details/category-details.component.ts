@@ -51,7 +51,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
   trainers: Trainers[] = [];
   centers: Centers[] = [];
   exercises: Exercises[] = [];
-  /** Public workout templates that use at least one exercise from this service. */
+  /** Public workout templates that use at least one exercise from this discipline. */
   templates: WorkoutResponse[] = [];
 
   /** Template currently being cloned — drives the button spinner. */
@@ -159,7 +159,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
     this.exercises = this.allExercises.filter(e => (e.categories ?? []).some(c => c.id === id));
 
     // WorkoutExerciseResponse only carries exerciseId/exerciseName — it has no
-    // nested category list — so a template "belongs" to this service when at
+    // nested category list — so a template "belongs" to this discipline when at
     // least one of its exercises is in `this.exercises`, which the line above
     // has already narrowed to this category.
     const categoryExerciseIds = new Set(this.exercises.map(e => e.id));
@@ -224,7 +224,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
     );
   }
 
-  private promptLogin(message = 'You need to be logged in to like a service. Log in to continue?'): void {
+  private promptLogin(message = 'You need to be logged in to like a discipline. Log in to continue?'): void {
     const ref = this.dialog.open(PromptModalComponent, {
       width: '400px',
       maxWidth: '95vw',
@@ -247,8 +247,8 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
 
   // ── Helpers ─────────────────────────────────────────────────────────────────
 
-  backToServices(): void {
-    this.router.navigate(['/services']);
+  backToDisciplines(): void {
+    this.router.navigate(['/disciplines']);
   }
 
   formatUrl(name: string): string {

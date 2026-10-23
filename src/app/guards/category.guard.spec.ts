@@ -40,7 +40,7 @@ describe('CategoryGuard', () => {
 
     guard.canActivate(route, state).subscribe(result => {
       expect(result).toBe(false);
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/services']);
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/disciplines']);
       expect(mockCategoryService.getCategory).not.toHaveBeenCalled();
       done();
     });
@@ -65,7 +65,7 @@ describe('CategoryGuard', () => {
 
     guard.canActivate(route, state).subscribe(result => {
       expect(result).toBe(false);
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/services']);
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/disciplines']);
       expect(mockSnackBarService.openSnackBar).toHaveBeenCalled();
       done();
     });

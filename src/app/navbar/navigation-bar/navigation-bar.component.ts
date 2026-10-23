@@ -19,7 +19,8 @@ export class NavigationBarComponent implements OnInit {
   { label: 'Contact', path: '/contact' },
   { label: 'About', path: '/about' },
   { label: 'Centers', path: '/centers' },
-  { label: 'Programs', path: '/services' },
+  { label: 'Services', path: '/services' },
+  { label: 'Disciplines', path: '/disciplines' },
   { label: 'Trainers', path: '/trainers' },
   { label: 'Members', path: '/members' },
   // Optional: products

@@ -54,13 +54,13 @@ export class DashboardActionComponent {
   private readonly ROUTE_OVERRIDES: Record<string, string> = {
     // No admin CRUD table for equipment — it's center-scoped and managed from
     // "My equipment" on /dashboard/exercises, so point at the public browser.
-    'equipments': '/services/equipment',
+    'equipments': '/disciplines/equipment',
     'workouts': '/dashboard/workouts',
     'my-workouts': '/dashboard/workouts',
     'liked-trainers': '/trainers',
     // No dedicated "my testimonials" page exists (a user has at most one
     // testimonial); the merged Programs/testimonials page is the sensible landing spot.
-    'my-testimonials': '/services',
+    'my-testimonials': '/disciplines',
   };
 
   resolveRoute(key: any): string {

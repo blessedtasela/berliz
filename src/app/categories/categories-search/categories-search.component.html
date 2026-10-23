@@ -1,5 +1,5 @@
 <!-- ═══════════════════════════════════════════════
-     SERVICES SEARCH BAR
+     DISCIPLINES SEARCH BAR
      Sits on a zinc-950 background
 ════════════════════════════════════════════════ -->
 <div class="w-full font-sans">
@@ -13,7 +13,7 @@
                         focus-within:border-red-600 focus-within:ring-1 focus-within:ring-red-600/30 transition">
                 <i-feather name="search" class="ml-3 text-zinc-500 shrink-0" style="width:15px;height:15px;"></i-feather>
                 <input type="text" [(ngModel)]="searchQuery" placeholder="Search by name, tag or description…" class="flex-1 min-w-0 bg-transparent px-3 py-2.5 text-sm text-white placeholder-zinc-500
-                           focus:outline-none" aria-label="Search services" />
+                           focus:outline-none" aria-label="Search disciplines" />
             </div>
 
             <!-- Button -->
@@ -56,10 +56,10 @@
         <div *ngIf="searchQuery && searchQuery.trim() !== ''" class="mt-4 text-xs text-center">
             <span *ngIf="filteredCategories.length > 0" class="text-zinc-400">
                 <span class="text-white font-semibold">{{ filteredCategories.length }}</span>
-                service{{ filteredCategories.length === 1 ? '' : 's' }} found
+                discipline{{ filteredCategories.length === 1 ? '' : 's' }} found
             </span>
             <span *ngIf="filteredCategories.length === 0" class="text-red-500 font-medium">
-                No services found for "{{ searchQuery }}"
+                No disciplines found for "{{ searchQuery }}"
             </span>
         </div>
 

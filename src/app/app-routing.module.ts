@@ -39,20 +39,23 @@ export const routes: Routes = [
   { path: '', loadChildren: () => import('./login/login-feature.module').then(m => m.LoginFeatureModule) },
   { path: 'trainers', loadChildren: () => import('./trainers/trainers-feature.module').then(m => m.TrainersFeatureModule) },
   { path: 'centers', loadChildren: () => import('./centers/centers-feature.module').then(m => m.CentersFeatureModule) },
-  { path: 'services', loadChildren: () => import('./categories/services-feature.module').then(m => m.ServicesFeatureModule) },
-  { path: 'testimonials', redirectTo: 'services', pathMatch: 'full' },
-  // Equipment and exercises now have real pages at /services/equipment and
-  // /services/exercises (see ServicesFeatureModule's children) — these old
-  // top-level paths redirect straight to the dedicated page rather than the
-  // generic Programs page.
-  { path: 'equipments', redirectTo: 'services/equipment', pathMatch: 'full' },
-  { path: 'exercises', redirectTo: 'services/exercises', pathMatch: 'full' },
+  // Disciplines (Boxing, Yoga, Powerlifting… — the `category` data) live at /disciplines. They used to be called
+  // "Services" and sat at /services/<id>/<name>; "Services" now means what Berliz offers (online, hybrid and in-person
+  // training, gyms & centers, the shop to come). The redirects below keep every old link, bookmark and indexed URL alive.
+  { path: 'disciplines', loadChildren: () => import('./categories/disciplines-feature.module').then(m => m.DisciplinesFeatureModule) },
+  { path: 'services/equipment', redirectTo: 'disciplines/equipment', pathMatch: 'full' },
+  { path: 'services/exercises', redirectTo: 'disciplines/exercises', pathMatch: 'full' },
+  { path: 'services/faqs', redirectTo: 'faqs', pathMatch: 'full' },
+  { path: 'services/:id/:name', redirectTo: 'disciplines/:id/:name', pathMatch: 'full' },
+  { path: 'services', loadChildren: () => import('./berliz-services/berliz-services.routes').then(m => m.BERLIZ_SERVICES_ROUTES) },
+  { path: 'testimonials', redirectTo: 'disciplines', pathMatch: 'full' },
+  // Equipment and exercises are real pages at /disciplines/equipment and /disciplines/exercises — these old
+  // top-level paths redirect straight to them.
+  { path: 'equipments', redirectTo: 'disciplines/equipment', pathMatch: 'full' },
+  { path: 'exercises', redirectTo: 'disciplines/exercises', pathMatch: 'full' },
   { path: 'report-problem', loadChildren: () => import('./report-problem/report-problem-feature.module').then(m => m.ReportProblemFeatureModule) },
-  // FAQs moved to /services/faqs (a real child page of Services). Keep the old
-  // top-level path alive as a redirect so existing bookmarks, inbound links and
-  // already-indexed search results don't 404 — same pattern as /equipments and
-  // /exercises above.
-  { path: 'faqs', redirectTo: 'services/faqs', pathMatch: 'full' },
+  // FAQs are a page of their own at /faqs (old /services/faqs redirects here).
+  { path: 'faqs', loadChildren: () => import('./faqs/faqs-feature.module').then(m => m.FaqsFeatureModule) },
   { path: 'help-center', loadChildren: () => import('./help-center/help-center-feature.module').then(m => m.HelpCenterFeatureModule) },
   { path: 'terms', loadComponent: () => import('./terms/terms-page/terms-page.component').then(m => m.TermsPageComponent), data: { breadcrumb: 'Terms' } },
   // The old "Legal & Policies" drawer widget (LegalMainComponent /
