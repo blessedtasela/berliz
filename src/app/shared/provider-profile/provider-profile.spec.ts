@@ -128,7 +128,7 @@ describe('provider profile shared cards', () => {
       const f = TestBed.createComponent(ProviderPackagesComponent);
       f.componentRef.setInput('trainerId', 9);
       f.componentRef.setInput('highlightFirst', true);
-      f.componentRef.setInput('bookLink', ['/trainers', 'jo', 'book']);
+      f.componentRef.setInput('planLink', ['/trainers', 'jo', 'level-up']);
       f.detectChanges();
       http.expectOne(r => r.url.includes('/provider-package/provider?trainerId=9'))
         .flush({ data: [pkg({ id: 2, name: 'Unlimited', sessionCount: null, price: 150, billingType: 'RECURRING', sortOrder: 1 }), pkg({})] });
@@ -149,7 +149,7 @@ describe('provider profile shared cards', () => {
       expect(t).toContain('Subscribe');
       expect(t).not.toContain('Choose this plan');
       const links = Array.from((f.nativeElement as HTMLElement).querySelectorAll('a')).map(a => a.getAttribute('href'));
-      expect(links).toEqual(jasmine.arrayContaining(['/trainers/jo/book?plan=1', '/trainers/jo/book?plan=2']));
+      expect(links).toEqual(jasmine.arrayContaining(['/trainers/jo/level-up?plan=1', '/trainers/jo/level-up?plan=2']));
       // sorted by sortOrder: Starter (0) before Unlimited (1)
       expect(t.indexOf('Starter')).toBeLessThan(t.indexOf('Unlimited'));
     });

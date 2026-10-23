@@ -49,6 +49,8 @@ describe('UserProgressComponent', () => {
     component = fixture.componentInstance;
   });
 
+  afterEach(() => store.resetSelectors());
+
   it('should create', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
@@ -113,5 +115,20 @@ describe('UserProgressComponent', () => {
     fixture.detectChanges();
     component.deleteEntry(entries[0]);
     expect(store.dispatch).toHaveBeenCalledWith(ProgressEntryActions.deleteProgressEntry({ entryId: 1 }));
+  });
+
+  it('shows a check-in on the calendar day that was picked, not the day before (days are stored at UTC midnight)', () => {
+    store.overrideSelector(selectMyProgressEntries, [
+      { id: 2, clientId: 5, weightKg: 80, bodyFatPercent: 17, photos: [], date: new Date('2026-10-19T00:00:00.000Z'), lastUpdate: new Date() },
+    ]);
+    store.refreshState();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Oct 19, 2026');
+  });
+
+  it('defaults the new check-in to the own local day of the user', () => {
+    const d = new Date();
+    const expected = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    expect(component.date).toBe(expected);
   });
 });

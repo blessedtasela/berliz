@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { CenterDetailComponent } from './center-detail.component';
 import { CenterService } from 'src/app/services/center.service';
 import { TestimonialDialogService } from 'src/app/testimonial/testimonial-dialog.service';
-import { BookingDialogService } from 'src/app/booking/booking-dialog.service';
+import { BookingLauncherService } from 'src/app/booking/booking-launcher.service';
 
 describe('CenterDetailComponent', () => {
   let component: CenterDetailComponent;
@@ -29,7 +29,7 @@ describe('CenterDetailComponent', () => {
     centerServiceSpy.getVideoAlbumsByCenterId.and.returnValue(of(null));
     centerServiceSpy.getCenterTrainersByCenterId.and.returnValue(of(null));
     const testimonialDialogSpy = jasmine.createSpyObj('TestimonialDialogService', ['openTestimonialForm']);
-    const bookingDialogSpy = jasmine.createSpyObj('BookingDialogService', ['openBookingForm']);
+    const bookingLauncherSpy = jasmine.createSpyObj('BookingLauncherService', ['startBooking', 'startLevelUp']);
     const matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
 
     TestBed.configureTestingModule({
@@ -47,7 +47,7 @@ describe('CenterDetailComponent', () => {
         { provide: Router, useValue: routerSpy },
         { provide: CenterService, useValue: centerServiceSpy },
         { provide: TestimonialDialogService, useValue: testimonialDialogSpy },
-        { provide: BookingDialogService, useValue: bookingDialogSpy },
+        { provide: BookingLauncherService, useValue: bookingLauncherSpy },
         { provide: MatDialog, useValue: matDialogSpy }
       ]
     });

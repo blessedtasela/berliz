@@ -26,7 +26,7 @@ import { CenterService } from 'src/app/services/center.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { environment } from 'src/environments/environment';
 import { TestimonialDialogService } from 'src/app/testimonial/testimonial-dialog.service';
-import { BookingDialogService } from 'src/app/booking/booking-dialog.service';
+import { BookingLauncherService } from 'src/app/booking/booking-launcher.service';
 import { CenterTrainerCard } from '../center-trainers/center-trainers.component';
 
 import * as CenterActions from 'src/app/state/center/center.actions';
@@ -95,7 +95,7 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     private providerAnalytics: ProviderAnalyticsService,
     private seoService: SeoService,
     private testimonialDialog: TestimonialDialogService,
-    private bookingDialog: BookingDialogService,
+    private bookingLauncher: BookingLauncherService,
     private dialog: MatDialog,
   ) { }
 
@@ -219,7 +219,7 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * A login gate (BookingDialogService/TestimonialDialogService) sent the
+   * A login gate (TestimonialDialogService) sent the
    * user here with ?action=book|testimonial after signing in -- finish what
    * they were trying to do instead of leaving them to find the button again.
    * Fires once and strips the query param so a manual refresh doesn't reopen it.
@@ -391,19 +391,31 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     this.testimonialDialog.openTestimonialForm();
   }
 
-  /** Opens the "Book a session" form for this center. */
+  /** Opens this center's booking page, to request a single session. */
   bookSession(): void {
     if (!this.center) return;
-    this.bookingDialog.openBookingForm({
+    this.bookingLauncher.startBooking({
       centerId: this.centerId,
       providerName: this.center.name || 'this center'
     });
   }
 
-  /** A plan card was chosen: the booking page opens on that plan, ready to subscribe or buy it. */
+  /** Opens this center's Level Up page, to subscribe, buy a session pack or get a membership. */
+  levelUp(): void {
+    if (!this.center) return;
+    this.bookingLauncher.startLevelUp({
+      centerId: this.centerId,
+      providerName: this.center.name || 'this center'
+    });
+  }
+
+  /** A plan card was chosen: the Level Up page opens on that plan. */
   openPlan(plan: ProviderPackage): void {
     if (!this.center) return;
-    this.router.navigate(['/centers', this.center.name.split(' ').join('-'), 'book'], { queryParams: { plan: plan.id } });
+    this.bookingLauncher.startLevelUp({
+      centerId: this.centerId,
+      providerName: this.center.name
+    }, plan.id);
   }
 
   /** Hero's "See plans & pricing": glide to the packages section. */

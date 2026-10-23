@@ -1,4 +1,4 @@
-import { planActionLabel, planCheckoutNote, planIncludes, planKind, planPriceNote } from './provider-package.util';
+import { groupPlansByKind, planActionLabel, planCheckoutNote, planIncludes, planKind, planPriceNote } from './provider-package.util';
 
 describe('provider-package util', () => {
   const pack = { billingType: 'ONE_TIME' as const, sessionCount: 5 };
@@ -39,5 +39,24 @@ describe('provider-package util', () => {
     expect(planCheckoutNote({ ...pack, durationDays: 60 })).toContain('valid for 60 days');
     expect(planCheckoutNote({ ...pack, durationDays: null })).not.toContain('valid for');
     expect(planCheckoutNote({ ...membership, durationDays: 30 })).toContain('unlimited sessions for 30 days');
+  });
+
+  it('groups plans by kind in a fixed order, skipping kinds that are not sold', () => {
+    const plans = [
+      { id: 1, ...membership },
+      { id: 2, ...pack },
+      { id: 3, ...pack },
+    ];
+
+    const groups = groupPlansByKind(plans);
+
+    expect(groups.map(g => g.kind)).toEqual(['pack', 'membership']);
+    expect(groups[0].plans.map(p => p.id)).toEqual([2, 3]);
+  });
+
+  it('puts the subscription first', () => {
+    const groups = groupPlansByKind([{ id: 1, ...pack }, { id: 2, ...subscription }]);
+
+    expect(groups.map(g => g.kind)).toEqual(['subscription', 'pack']);
   });
 });

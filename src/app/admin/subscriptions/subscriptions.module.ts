@@ -22,6 +22,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
 
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
 @NgModule({
   declarations: [
     AddSubscriptionsModalComponent,
@@ -33,6 +34,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
     SubscriptionsHeaderComponent
   ],
   imports: [
+    PageHeaderComponent,
     LoadErrorComponent,
     ClickablePhotoDirective,
     SharedModule,

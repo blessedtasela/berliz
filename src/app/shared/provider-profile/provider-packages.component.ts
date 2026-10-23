@@ -13,7 +13,7 @@ import { ProfileTheme, ProfileThemeClasses, profileTheme } from './profile-theme
  * A provider's active packages and memberships as plan cards. Fetches its own
  * data from the public endpoint. Each card says what it is (subscription, session
  * pack or membership) and its button says what it does ("Subscribe", "Buy pack").
- * With `bookLink` the button opens the booking page on that plan; with `selectable`
+ * With `planLink` the button opens the Level Up page on that plan; with `selectable`
  * it emits `choose` instead.
  */
 @Component({
@@ -64,9 +64,9 @@ import { ProfileTheme, ProfileThemeClasses, profileTheme } from './profile-theme
             </li>
           </ul>
 
-          <a *ngIf="bookLink" [routerLink]="bookLink" [queryParams]="{ plan: p.id }"
+          <a *ngIf="planLink" [routerLink]="planLink" [queryParams]="{ plan: p.id }"
              class="mt-auto text-center px-3 py-2 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition">{{ actionLabel(p) }}</a>
-          <button *ngIf="!bookLink && selectable" type="button" (click)="choose.emit(p)"
+          <button *ngIf="!planLink && selectable" type="button" (click)="choose.emit(p)"
              class="mt-auto px-3 py-2 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition">{{ actionLabel(p) }}</button>
         </div>
       </div>
@@ -77,12 +77,12 @@ export class ProviderPackagesComponent implements OnChanges {
   @Input() theme: ProfileTheme = 'light';
   @Input() trainerId: number | null | undefined = null;
   @Input() centerId: number | null | undefined = null;
-  @Input() bookLink: any[] | null = null;
+  @Input() planLink: any[] | null = null;
   @Input() eyebrow = 'Save on regular training';
   @Input() showEmpty = false;
   /** Marketing pages flag the first plan; the business view keeps cards neutral. */
   @Input() highlightFirst = false;
-  /** Show a button that emits `choose` even without a `bookLink`. */
+  /** Show a button that emits `choose` even without a `planLink`. */
   @Input() selectable = false;
   @Output() choose = new EventEmitter<ProviderPackage>();
 

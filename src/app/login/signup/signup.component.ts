@@ -6,6 +6,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { LocationFormComponent } from 'src/app/shared/location-form/location-form.component';
 import { GENDER_OPTIONS } from 'src/app/shared/constants/gender-options';
+import { localDateString } from 'src/app/utils/local-date';
 import {
   emailExtensionValidator,
   passwordMatchValidator,
@@ -97,7 +98,7 @@ export class SignupComponent {
   get maxDob(): string {
     const d = new Date();
     d.setFullYear(d.getFullYear() - MINIMUM_SIGNUP_AGE);
-    return d.toISOString().split('T')[0];
+    return localDateString(d);
   }
 
   isStepValid(step: number): boolean {

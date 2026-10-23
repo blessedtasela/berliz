@@ -8,6 +8,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { GENDER_OPTIONS } from 'src/app/shared/constants/gender-options';
 import { fileValidator, emailExtensionValidator, passwordMatchValidator, genericError, minimumAgeValidator } from 'src/validators/form-validators.module';
+import { localDateString } from 'src/app/utils/local-date';
 
 /** Berliz requires signups to be 16 or older. */
 export const MINIMUM_SIGNUP_AGE = 16;
@@ -65,7 +66,7 @@ export class SignupModalComponent {
   get maxDob(): string {
     const d = new Date();
     d.setFullYear(d.getFullYear() - MINIMUM_SIGNUP_AGE);
-    return d.toISOString().split('T')[0];
+    return localDateString(d);
   }
 
   closeDialog() {

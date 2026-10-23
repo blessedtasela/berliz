@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { Observable, Subject, catchError, of, take, takeUntil } from 'rxjs';
+import { Subject, catchError, of, take, takeUntil } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
 import { DateStripComponent } from 'src/app/shared/date-strip/date-strip.component';
@@ -17,11 +17,11 @@ import { TrainerService } from 'src/app/services/trainer.service';
 import { CenterService } from 'src/app/services/center.service';
 import { ProviderPackageService } from 'src/app/services/provider-package.service';
 import { SubscriptionService } from 'src/app/services/subscription.service';
-import { StripeService } from 'src/app/services/stripe.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { WaitlistService } from 'src/app/services/waitlist.service';
 import { clearGuestDraft, loadGuestDraft, saveGuestDraft } from '../guest-booking-draft';
+import { ProviderKind, providerSlug, resolveProviderBySlug } from '../resolve-provider';
 import { environment } from 'src/environments/environment';
 
 import { loadUser } from 'src/app/state/user/user.actions';
@@ -30,35 +30,27 @@ import { createBooking, createBookingFailure, createBookingSuccess } from 'src/a
 import { clearAvailableSlots, loadAvailableSlots } from 'src/app/state/availability/availability.actions';
 import { selectAvailabilityLoading, selectAvailableSlots } from 'src/app/state/availability/availability.selectors';
 
-import { ApiResponse } from 'src/app/models/Api.interface';
 import { AvailableSlot } from 'src/app/models/availability.model';
 import { ProviderPackage } from 'src/app/models/provider-package.model';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { Users } from 'src/app/models/users.interface';
 import { genericError } from 'src/validators/form-validators.module';
-import { PLAN_KIND_LABEL, planActionLabel, planCheckoutNote, planIncludes, planKind, planPriceNote } from 'src/app/utils/provider-package.util';
-
-type ProviderKind = 'trainer' | 'center';
+import { PLAN_KIND_LABEL, planIncludes, planKind } from 'src/app/utils/provider-package.util';
 
 /** What the client has chosen to book with, right now. */
 type BookingOption =
   | { kind: 'single' }
-  | { kind: 'ownedPackage'; subscription: Subscriptions }
-  | { kind: 'buyPackage'; pkg: ProviderPackage };
+  | { kind: 'ownedPackage'; subscription: Subscriptions };
 
 /**
- * Standalone, shareable booking page — `/trainers/:name/book` and
- * `/centers/:name/book`. Complements (doesn't replace) BookingDialogService's
- * modal: a real URL a provider or client can share/deep-link directly to,
- * and the only place a client can buy or redeem a ProviderPackage rather
- * than just book one ad-hoc single session.
- *
- * Three different things can be done here and the page keeps them apart:
+ * The booking page — `/trainers/:name/book` and `/centers/:name/book`. A real, shareable page (not a
+ * pop-up) that works for a visitor who is not signed in yet, for booking a session:
  *  - single session: pick a time, send a request, the provider confirms, then you pay (Bookings)
- *  - buy a plan (subscription / session pack / membership): no time to pick -- you pay now and it
- *    lands in My Subscriptions
- *  - use a plan you own: pick a time and book a session out of it (Bookings, tagged as from the pack)
- * `?plan=<id>` opens the page on that plan (the plan cards link here).
+ *  - a session out of a plan you own: pick a time and book it from the pack (Bookings, tagged as from the pack)
+ *
+ * Buying a plan (subscription / session pack / membership) is the Level Up page's job
+ * (`/level-up`, see LevelUpPageComponent). An old `?plan=<id>` link for a plan you don't own is sent
+ * there; for a plan you do own it opens the page with that plan selected.
  */
 @Component({
     selector: 'app-booking-page',
@@ -77,22 +69,22 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   providerName = '';
   providerPhotoUrl: string | null = null;
 
+  /** What this provider sells (only used to point at the Level Up page, which is where plans are bought). */
   packages: ProviderPackage[] = [];
   /** This client's own ACTIVE purchases of one of this provider's packages, keyed by providerPackage id. */
   ownedByPackageId = new Map<number, Subscriptions>();
 
   selectedOption: BookingOption = { kind: 'single' };
-  buyingPackageId: number | null = null;
   /** The plan the link asked for (`?plan=`); used once the provider's plans have loaded. */
   private pendingPlanId: number | null = null;
+  private packagesLoaded = false;
+  /** Whether we know yet which plans the signed-in client owns (a guest owns none, so never waits on this). */
+  private ownedLoaded = false;
 
   readonly kindLabel = (pkg: ProviderPackage) => PLAN_KIND_LABEL[planKind(pkg)];
-  readonly actionLabel = planActionLabel;
-  readonly priceNote = planPriceNote;
   readonly includes = planIncludes;
-  readonly checkoutNote = planCheckoutNote;
 
-  // ── Slot picker — same shape/behavior as BookingFormComponent's ──────────
+  // ── Slot picker ──────────────────────────────────────────────────────────
   selectedDate: string = this.formatDateLocal(new Date());
   selectedSlot: AvailableSlot | null = null;
   slots: AvailableSlot[] = [];
@@ -133,7 +125,6 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     private centerService: CenterService,
     private providerPackageService: ProviderPackageService,
     private subscriptionService: SubscriptionService,
-    private stripeService: StripeService,
     private authRedirect: AuthRedirectService,
     private snackBar: SnackBarService,
     private seoService: SeoService,
@@ -168,18 +159,13 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     return this.selectedOption.kind === 'single';
   }
 
-  isPackageOwned(pkg: ProviderPackage): boolean {
-    return this.ownedByPackageId.has(pkg.id);
+  /** The plans this client already has with this provider, to book a session out of. */
+  get ownedPlans(): Subscriptions[] {
+    return Array.from(this.ownedByPackageId.values());
   }
 
-  isPackageSelected(pkg: ProviderPackage): boolean {
-    return (this.selectedOption.kind === 'ownedPackage' && this.selectedOption.subscription.providerPackage?.id === pkg.id)
-      || (this.selectedOption.kind === 'buyPackage' && this.selectedOption.pkg.id === pkg.id);
-  }
-
-  /** The plan being bought, when that's what is selected. */
-  get planToBuy(): ProviderPackage | null {
-    return this.selectedOption.kind === 'buyPackage' ? this.selectedOption.pkg : null;
+  isPackageSelected(subscription: Subscriptions): boolean {
+    return this.selectedOption.kind === 'ownedPackage' && this.selectedOption.subscription.id === subscription.id;
   }
 
   /** The owned plan a session would be booked out of, when that's what is selected. */
@@ -187,36 +173,24 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     return this.selectedOption.kind === 'ownedPackage' ? this.selectedOption.subscription : null;
   }
 
-  /** The main button says what it will do: request a session, book from your pack, or pay for a plan. */
+  /** The main button says what it will do: request a session, or book it from your pack. */
   get primaryLabel(): string {
     if (this.submitting) return 'Sending…';
-    const plan = this.planToBuy;
-    if (plan) {
-      if (this.buyingPackageId === plan.id) return 'Starting checkout…';
-      return `${planActionLabel(plan)} · $${plan.price}${planKind(plan) === 'subscription' ? ' / month' : ''}`;
-    }
     if (this.ownedPlan) return this.isGuest ? 'Continue' : 'Book with your pack';
     return this.isGuest ? 'Continue' : 'Request booking';
   }
 
   get primaryIcon(): string {
-    if (this.submitting || (this.planToBuy && this.buyingPackageId === this.planToBuy.id)) return 'loader';
-    return this.planToBuy ? 'credit-card' : 'send';
-  }
-
-  get primaryBusy(): boolean {
-    return this.submitting || this.buyingPackageId != null;
+    return this.submitting ? 'loader' : 'send';
   }
 
   get primaryDisabled(): boolean {
-    if (this.planToBuy) return this.buyingPackageId != null;
     return this.submitting || this.availabilityConfigured !== true;
   }
 
-  onPrimaryAction(): void {
-    const plan = this.planToBuy;
-    if (plan) this.buyPackage(plan);
-    else this.submit();
+  /** Where plans are bought: this provider's Level Up page. */
+  get levelUpPath(): string[] {
+    return [this.kind === 'trainer' ? '/trainers' : '/centers', providerSlug(this.providerName), 'level-up'];
   }
 
   ngOnInit(): void {
@@ -278,36 +252,25 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     this.resolving = true;
     this.notFound = false;
 
-    if (!name) {
-      this.resolving = false;
-      this.notFound = true;
-      return;
-    }
+    resolveProviderBySlug(this.kind, name, this.trainerService, this.centerService)
+      .pipe(take(1))
+      .subscribe(provider => {
+        this.resolving = false;
 
-    const list$: Observable<ApiResponse<any[]> | null> = this.kind === 'trainer'
-      ? this.trainerService.getActiveTrainers()
-      : this.centerService.getActiveCenters();
+        if (!provider) {
+          this.notFound = true;
+          return;
+        }
 
-    list$.pipe(take(1), catchError(() => of(null))).subscribe(response => {
-      const providers = response?.data ?? [];
-      const match = providers.find((p: any) => p.name?.replace(/ /g, '-').toLowerCase() === name.toLowerCase());
+        this.providerId = provider.id;
+        this.providerName = provider.name;
+        this.providerPhotoUrl = provider.photoUrl;
 
-      this.resolving = false;
-
-      if (!match) {
-        this.notFound = true;
-        return;
-      }
-
-      this.providerId = match.id;
-      this.providerName = match.name;
-      this.providerPhotoUrl = match.photoResponse?.photoUrl || null;
-
-      this.updateSeoTags();
-      this.fetchPackages();
-      this.restoreGuestDraft();
-      this.fetchSlotsForSelectedDate();
-    });
+        this.updateSeoTags();
+        this.fetchPackages();
+        this.restoreGuestDraft();
+        this.fetchSlotsForSelectedDate();
+      });
   }
 
   /**
@@ -372,7 +335,8 @@ export class BookingPageComponent implements OnInit, OnDestroy {
 
     pkgs$.pipe(take(1), catchError(() => of(null))).subscribe(res => {
       this.packages = (res?.data ?? []).filter(p => p.isActive);
-      if (!this.user?.email) this.preselectPlan();
+      this.packagesLoaded = true;
+      this.preselectPlan();
     });
 
     if (!this.user?.email) return;
@@ -388,18 +352,28 @@ export class BookingPageComponent implements OnInit, OnDestroy {
         if (sameProvider) owned.set(pkgId, sub);
       }
       this.ownedByPackageId = owned;
+      this.ownedLoaded = true;
       this.preselectPlan();
     });
   }
 
-  /** Opens on the plan the link named, if it's one of this provider's active plans (once, so a later pick sticks). */
+  /**
+   * Acts on the plan the link named (once, so a later pick sticks): a plan you own opens selected here, so
+   * the session comes out of it; a plan you don't own is bought on the Level Up page, so the link goes there
+   * (replacing this URL, so Back doesn't bounce).
+   */
   private preselectPlan(): void {
     const id = this.pendingPlanId;
-    if (id == null || this.packages.length === 0) return;
-    const pkg = this.packages.find(p => p.id === id);
-    if (!pkg) return;
+    if (id == null || !this.packagesLoaded) return;
+    if (this.user?.email && !this.ownedLoaded) return;
+
     this.pendingPlanId = null;
-    this.choosePackage(pkg);
+    const owned = this.ownedByPackageId.get(id);
+    if (owned) {
+      this.selectedOption = { kind: 'ownedPackage', subscription: owned };
+    } else if (this.packages.some(p => p.id === id)) {
+      this.router.navigate(this.levelUpPath, { queryParams: { plan: id }, replaceUrl: true });
+    }
   }
 
   // ── Option selection ─────────────────────────────────────────────────────
@@ -408,58 +382,8 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     this.selectedOption = { kind: 'single' };
   }
 
-  choosePackage(pkg: ProviderPackage): void {
-    const owned = this.ownedByPackageId.get(pkg.id);
-    this.selectedOption = owned
-      ? { kind: 'ownedPackage', subscription: owned }
-      : { kind: 'buyPackage', pkg };
-  }
-
-  /** "Buy this package" — starts Stripe Checkout; booking itself happens in a later visit once it's paid/active. */
-  buyPackage(pkg: ProviderPackage): void {
-    if (this.buyingPackageId != null) return;
-    if (!this.user?.email) {
-      this.promptToSignIn();
-      return;
-    }
-
-    this.buyingPackageId = pkg.id;
-    this.subscriptionService.purchasePackage(pkg.id).subscribe({
-      next: res => {
-        const purchase = res?.data;
-        if (!purchase?.subscriptionId) {
-          this.buyingPackageId = null;
-          this.snackBar.openSnackBar(res?.message || 'Could not start that purchase — try again.', 'error');
-          return;
-        }
-        this.stripeService.createCheckoutSession({
-          subscriptionId: purchase.subscriptionId,
-          amount: purchase.price,
-          currency: purchase.currency,
-          productName: purchase.packageName,
-          // A subscription is charged again every month; a pack or membership is paid once.
-          recurring: planKind(pkg) === 'subscription',
-        }).subscribe({
-          next: checkoutRes => {
-            const checkoutUrl = checkoutRes.data?.checkoutUrl;
-            if (!checkoutUrl) {
-              this.buyingPackageId = null;
-              this.snackBar.openSnackBar('Could not start checkout — try again.', 'error');
-              return;
-            }
-            window.location.href = checkoutUrl;
-          },
-          error: () => {
-            this.buyingPackageId = null;
-            this.snackBar.openSnackBar('Could not start checkout — try again.', 'error');
-          }
-        });
-      },
-      error: (err) => {
-        this.buyingPackageId = null;
-        this.snackBar.openSnackBar(err?.error?.message || 'Could not start that purchase — try again.', 'error');
-      }
-    });
+  chooseOwnedPlan(subscription: Subscriptions): void {
+    this.selectedOption = { kind: 'ownedPackage', subscription };
   }
 
   // ── Slot picker ──────────────────────────────────────────────────────────
@@ -573,7 +497,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
       slotStart: this.selectedSlot?.startTime ?? null,
       notes: (this.notes ?? '').slice(0, this.maxNotesLength),
       path: (this.kind === 'trainer' ? `/trainers/${slug}/book` : `/centers/${slug}/book`)
-        + (this.planToBuy ? `?plan=${this.planToBuy.id}` : ''),
+        + (this.ownedPlan?.providerPackage ? `?plan=${this.ownedPlan.providerPackage.id}` : ''),
     });
   }
 

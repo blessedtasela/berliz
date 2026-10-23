@@ -147,7 +147,7 @@
                     <span class="text-[11px] uppercase tracking-wide text-gray-400 dark:text-gray-500">Starts</span>
                     <span class="text-xs text-gray-700 dark:text-gray-300 flex items-center gap-1">
                         <i-feather name="play-circle" class="text-gray-400 dark:text-gray-500" style="width:11px;height:11px;"></i-feather>
-                        {{ task.startDate ? (task.startDate | date:'mediumDate') : '—' }}
+                        {{ task.startDate ? (task.startDate | date:'mediumDate':'UTC') : '—' }}
                     </span>
                 </div>
 
@@ -156,7 +156,7 @@
                     <span class="text-xs font-medium flex items-center gap-1"
                         [ngClass]="isOverdue(task) ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'">
                         <i-feather name="calendar" style="width:11px;height:11px;"></i-feather>
-                        {{ task.endDate ? (task.endDate | date:'mediumDate') : '—' }}
+                        {{ task.endDate ? (task.endDate | date:'mediumDate':'UTC') : '—' }}
                     </span>
                     <span *ngIf="daysLeft(task) !== null && !isTaskComplete(task)" class="text-[10px]"
                         [ngClass]="isOverdue(task) ? 'text-red-500 dark:text-red-400' : 'text-gray-400 dark:text-gray-500'">

@@ -54,11 +54,11 @@
             </div>
             <div class="flex items-center justify-between px-4 py-2.5">
                 <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Start date</span>
-                <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ formatDate(taskData.startDate) }}</span>
+                <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ (taskData.startDate | date:'dd/MM/yyyy':'UTC') }}</span>
             </div>
             <div class="flex items-center justify-between px-4 py-2.5">
                 <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">End date</span>
-                <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ formatDate(taskData.endDate) }}</span>
+                <span class="text-xs font-medium text-gray-900 dark:text-gray-100 text-right">{{ (taskData.endDate | date:'dd/MM/yyyy':'UTC') }}</span>
             </div>
             <div class="flex items-center justify-between px-4 py-2.5">
                 <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Last update</span>

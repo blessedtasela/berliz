@@ -57,3 +57,25 @@ export function planCheckoutNote(plan: Pick<ProviderPackage, 'billingType' | 'se
       return `You pay once now for unlimited sessions${plan.durationDays ? ` for ${plan.durationDays} days` : ''}. Book as many as you like while it lasts.`;
   }
 }
+
+/** The order the Level Up page lists them in: the ongoing commitment first, then the one-off buys. */
+export const PLAN_KIND_ORDER: PlanKind[] = ['subscription', 'pack', 'membership'];
+
+/** One line under each group's heading, saying how that kind is billed and used. */
+export const PLAN_KIND_BLURB: Record<PlanKind, string> = {
+  subscription: 'Billed every month until you cancel.',
+  pack: 'Pay once, then book your sessions whenever suits you.',
+  membership: 'Pay once for unlimited sessions over a set period.',
+};
+
+export interface PlanGroup<T extends PlanLike = ProviderPackage> {
+  kind: PlanKind;
+  plans: T[];
+}
+
+/** Plans split by kind, in {@link PLAN_KIND_ORDER}, skipping kinds the provider doesn't sell. Keeps each group's incoming order. */
+export function groupPlansByKind<T extends PlanLike>(plans: T[]): PlanGroup<T>[] {
+  return PLAN_KIND_ORDER
+    .map(kind => ({ kind, plans: plans.filter(p => planKind(p) === kind) }))
+    .filter(group => group.plans.length > 0);
+}
