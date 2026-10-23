@@ -581,6 +581,13 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 
+### Unreleased — Admin list headers, fewer wasted renders
+
+- Admin Users, Payments, Bookings, Subscriptions, Tasks and Trainers now open with the same icon + title + one-line subtitle as the
+  user-facing pages (shared `app-page-header`), instead of starting straight at the search box.
+- The subscriptions and to-do timelines no longer build a new sorted array on every change-detection pass (cached per input array).
+  The other array-returning getters (booking slots, overdue / due-soon to-dos) depend on the current time or selection, so they stay as they are.
+
 ### Unreleased — Dates: the user's own day, and calendar days that no longer slip a day
 
 - **"Today" defaults were UTC's today.** A date picker defaulted with `new Date().toISOString().slice(0, 10)` offered tomorrow's date in

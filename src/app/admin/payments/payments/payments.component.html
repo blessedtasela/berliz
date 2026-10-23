@@ -1,3 +1,4 @@
+<app-page-header icon="credit-card" title="Payments" subtitle="Every payment, with refunds and status"></app-page-header>
 <app-admin-search [selector]="selectPayments" [fields]="paymentSearchFields"
     placeholder="Search payments..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-load-error *ngIf="loadError && paymentsData.length === 0" title="Couldn't load payments" [message]="loadError" (retry)="retryLoad()"></app-load-error>
