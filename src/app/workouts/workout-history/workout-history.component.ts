@@ -17,6 +17,7 @@ import { WhatsNewService } from 'src/app/services/whats-new.service';
 import { LogWorkoutModalComponent } from '../log-workout-modal/log-workout-modal.component';
 import { ExerciseProgressModalComponent } from '../exercise-progress-modal/exercise-progress-modal.component';
 import { ShareWorkoutLogModalComponent } from '../share-workout-log-modal/share-workout-log-modal.component';
+import { calendarDayDate } from 'src/app/utils/local-date';
 
 interface PersonalRecord {
   exerciseId: number;
@@ -117,7 +118,7 @@ export class WorkoutHistoryComponent implements OnInit {
    */
   get weekStreak(): number {
     if (!this.logs.length) return 0;
-    const weekKeys = new Set(this.logs.map(l => this.isoWeekKey(new Date(l.logDate))));
+    const weekKeys = new Set(this.logs.map(l => this.isoWeekKey(calendarDayDate(l.logDate))));
 
     const cursor = new Date();
     let streak = weekKeys.has(this.isoWeekKey(cursor)) ? 1 : 0;

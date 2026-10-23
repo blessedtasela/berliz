@@ -168,7 +168,7 @@
                     <div *ngFor="let w of clientWorkoutLogs" class="flex items-center justify-between gap-3 py-1.5 border-b border-gray-50 dark:border-gray-800 last:border-0">
                         <div class="min-w-0">
                             <p class="text-[11px] font-bold text-gray-800 dark:text-gray-200 truncate">{{ w.title || w.workoutName || 'Workout' }}</p>
-                            <p class="text-[10px] text-gray-400 dark:text-gray-500">{{ w.logDate | date:'MMM d, y' }}</p>
+                            <p class="text-[10px] text-gray-400 dark:text-gray-500">{{ w.logDate | date:'MMM d, y':'UTC' }}</p>
                         </div>
                         <button type="button" (click)="toggleVerifyWorkout(w)" [disabled]="verifyingKey === 'w:' + w.id"
                             class="shrink-0 text-[10px] font-semibold px-2.5 py-1 rounded-lg transition disabled:opacity-50"

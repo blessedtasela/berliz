@@ -121,6 +121,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Categories — messages, comments, mentions, posts & feed activity | ✅ | |
 | Notification deep-linking | ✅ | Every notification carries an `entityType`/`entityId` pair; clicking it in the bell/My Notifications routes straight to the thing it's about (a conversation, a booking, a post's comment thread, ...) instead of just showing text — `notification-entity-link.util.ts` |
 | Email notifications, per-category opt-out/opt-in, with the same deep link | ✅ | Messages/bookings/account-&-partnership default ON; likes-&-comments on your own posts ("social") defaults OFF since it's by far the highest-frequency category — all four toggle independently in Settings ("Email notifications" card, with Allow-all/Stop-all shortcuts). One choke point, `NotificationListener`, decides per notification whether to also email it; the email's button reuses the exact same `entityType`/`entityId` deep link the in-app notification carries (`EmailDeepLinkUtil`, mirroring the frontend's own routing table) so it lands on the actual conversation/booking/post, not just the dashboard home. Likes on a post or comment didn't notify anyone at all before this — `PostServiceImplement`/`CommentServiceImplement` now publish a notification (in-app + push + email) the same way comments already did |
+| My Notifications page — views, categories, shareable links | ✅ | `/dashboard/my-notifications`: header with unread count and **Mark all as read**; **All / Unread / Read** tabs; category chips (Messages, Bookings, Payments, Social, Training, Account, Other) that show only categories you have, with counts; text search plus date chips (today, yesterday, week, month, date range). Every view is a link: `?view=unread&category=bookings&q=cancelled`. `?id=123` deep-links one notification — the page jumps to the right page of the list, scrolls to it and highlights it (widening any filter that would hide it, and saying so if it no longer exists). Each notification's menu has **Copy link**. The category of a notification comes from its `entityType` |
 | Newsletter subscribe / status | ✅ | |
 
 ## 8. Planned — competitive differentiators
@@ -202,6 +203,11 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 - **The booking page no longer sells plans.** It books a single session, or a session out of a plan you already own (shown only if you own one), and
   links to Level Up for the rest. An old `/book?plan=<id>` link for a plan you don't own is forwarded to Level Up on that plan.
 - Mobile (the separate `mobile` app) is unchanged: its booking sheet is a native sheet and has no Level Up screen yet; see its parity tracker.
+
+### Unreleased — Notifications page redesign + deep links, and calendar buttons that work
+
+- **My Notifications** now opens with a proper header (unread count, Mark all as read), All/Unread/Read tabs, category chips with counts, search and date chips, and a calmer list that shows each notification's category. Where you are on the page is in the URL, so a filtered view can be bookmarked or shared; `?id=` links straight to one notification (see the Notifications table above). Read/Unread moved from the filter chips to the tabs; the date chips stay in the search panel. New `notification-category.util` maps `entityType` → category.
+- **Add to your calendar** (My bookings): the single "Open in calendar app" button is now **Google Calendar**, **Outlook** and **Apple Calendar**. It used to swap `https://` for `webcal://`, which Google and Outlook on the web and Windows can't open, and looked like the link was being stripped. The link in the box and **Copy link** stay plain `https://`; the help text explains the `webcal://` prefix Apple Calendar needs.
 
 ### Unreleased — Hide my achievements (web, mobile, backend)
 
@@ -574,6 +580,19 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Not yet: the fee is displayed, not charged (client payment checkout is still unwired).
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
+
+### Unreleased — Dates: the user's own day, and calendar days that no longer slip a day
+
+- **"Today" defaults were UTC's today.** A date picker defaulted with `new Date().toISOString().slice(0, 10)` offered tomorrow's date in
+  the evening for anyone west of UTC (Vancouver after 5 pm). Progress check-in, workout log, run, challenge, sign-up max-birthdate and the
+  to-do reminder now use the user's local calendar (`utils/local-date.ts` on web, `src/utils/local-date.ts` on mobile).
+- **Calendar-day fields showed one day early west of UTC.** A progress check-in, workout log, task start/end or promotion end is a whole
+  day, sent as `yyyy-MM-dd` and stored at UTC midnight; shown in the viewer's zone it read the day before. They are now displayed in UTC
+  (web: `| date:'mediumDate':'UTC'`; mobile: read back through `calendarDayDate`), and streaks and week counts use the same day. Mobile
+  now sends a check-in as the day at UTC midnight, like the web, instead of "now". Runs are real moments: the picked day is sent as that
+  day at the current time, so it lands on the right day in any zone. Existing records are already stored this way and now read correctly.
+- **Billing overview "Refunds this month"** now counts refund events (new `payment_refund_log` table, one row per refund, backfilled from
+  existing payments) instead of a payment's whole running total in the month of its latest refund.
 
 ### Unreleased — Follow-ups: super-admin role picker, blank Trainers list, mobile visual pass
 
