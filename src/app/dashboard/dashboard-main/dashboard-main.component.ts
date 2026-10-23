@@ -19,6 +19,7 @@ import { selectDashboardData, selectDashboardError } from 'src/app/state/dashboa
 import { loadMySubscriptions } from 'src/app/state/subscription/subscription.actions';
 import { selectMySubscriptions } from 'src/app/state/subscription/subscription.selectors';
 import { selectTodoLoading } from 'src/app/state/todo/todo.selectors';
+import { localDateString } from 'src/app/utils/local-date';
 
 @Component({
     selector: 'app-dashboard-main',
@@ -150,7 +151,7 @@ export class DashboardMainComponent {
   }
 
   private todayKey(date: Date = new Date()): string {
-    return date.toISOString().split('T')[0];
+    return localDateString(date);
   }
 
   openTodaysTodo() {

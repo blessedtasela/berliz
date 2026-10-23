@@ -20,7 +20,6 @@ import { FeatherModule } from 'angular-feather';
 import { RouterModule, UrlSerializer } from '@angular/router';
 import { AppRoutingModule, routes } from './app-routing.module';
 import { TestimonialModule } from './testimonial/testimonial.module';
-import { BookingModule } from './booking/booking.module';
 import { RxStompService } from './services/rx-stomp.service';
 import { rxStompServiceFactory } from './rx-stomp-service-factory';
 import { DBConfig } from 'ngx-indexed-db';
@@ -176,7 +175,6 @@ const dbConfig: DBConfig = {
         RouterModule,
         AppRoutingModule,
         TestimonialModule,
-        BookingModule,
         NavbarModule,
         FooterModule,
         BreadcrumbComponent,

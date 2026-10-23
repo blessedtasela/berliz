@@ -16,7 +16,7 @@ export class AuthRedirectService {
   /**
    * @param action optional one-word flag a handful of pages check for on
    *   return to resume the specific action (e.g. "book", "testimonial") --
-   *   see BookingDialogService/TestimonialDialogService. Most call sites
+   *   see TestimonialDialogService. Most call sites
    *   don't pass one; landing back on the right page is enough there.
    */
   goToLogin(action?: string): void {

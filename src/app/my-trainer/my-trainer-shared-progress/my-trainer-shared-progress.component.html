@@ -108,7 +108,7 @@
                         <span *ngIf="entry.weightKg != null" class="text-[11px] font-bold text-gray-800 dark:text-gray-200">{{ entry.weightKg }} kg</span>
                         <span *ngIf="entry.bodyFatPercent != null" class="text-[11px] font-bold text-gray-800 dark:text-gray-200">{{ entry.bodyFatPercent }}% BF</span>
                     </div>
-                    <span class="text-[10px] text-gray-400 dark:text-gray-500">{{ entry.date | date:'mediumDate' }}</span>
+                    <span class="text-[10px] text-gray-400 dark:text-gray-500">{{ entry.date | date:'mediumDate':'UTC' }}</span>
                 </div>
                 <div *ngIf="entry.photos?.length" class="flex gap-1.5 flex-wrap">
                     <img *ngFor="let photo of entry.photos" [src]="photo.photoUrl"

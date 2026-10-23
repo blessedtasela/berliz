@@ -15,6 +15,12 @@ const routes: Routes = [
     canActivate: [TrainerGuard],
     data: { kind: 'trainer', breadcrumb: 'Book' }
   },
+  {
+    path: ':name/level-up',
+    loadComponent: () => import('../booking/level-up-page/level-up-page.component').then(m => m.LevelUpPageComponent),
+    canActivate: [TrainerGuard],
+    data: { kind: 'trainer', breadcrumb: 'Level up' }
+  },
   { path: ':name', component: TrainersDetailsComponent, canActivate: [TrainerGuard], data: { breadcrumb: { alias: 'trainerName' } } },
 ];
 

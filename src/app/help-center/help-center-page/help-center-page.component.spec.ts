@@ -33,7 +33,7 @@ describe('HelpCenterPageComponent', () => {
     const links = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('a'))
       .map(a => a.getAttribute('routerLink') || a.getAttribute('ng-reflect-router-link'));
 
-    expect(links).toContain('/services/faqs');
+    expect(links).toContain('/faqs');
     expect(links).toContain('/report-problem');
   });
 

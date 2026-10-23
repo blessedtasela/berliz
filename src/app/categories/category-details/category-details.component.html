@@ -1,12 +1,12 @@
 <!-- ═══════════════════════════════════════════════
-     PUBLIC SERVICE DETAIL  /services/:id/:name
+     PUBLIC DISCIPLINE DETAIL  /disciplines/:id/:name
 ════════════════════════════════════════════════ -->
 
 <!-- ── RESOLVING ─────────────────────────────────────────────────────── -->
 <section *ngIf="!resolved" class="w-full bg-zinc-950 font-sans min-h-[70vh] flex items-center justify-center px-4">
     <div class="flex flex-col items-center gap-4 text-center">
         <div class="w-14 h-14 rounded-full border-2 border-zinc-800 border-t-red-600 animate-spin"></div>
-        <p class="text-xs text-zinc-500">Loading service…</p>
+        <p class="text-xs text-zinc-500">Loading discipline…</p>
     </div>
 </section>
 
@@ -20,21 +20,21 @@
         </div>
 
         <div class="flex flex-col gap-2">
-            <h1 class="text-lg font-bold text-white">Service not found</h1>
+            <h1 class="text-lg font-bold text-white">Discipline not found</h1>
             <p class="text-sm text-zinc-500 leading-relaxed">
-                This service is no longer available, or the link you followed is incorrect.
+                This discipline is no longer available, or the link you followed is incorrect.
             </p>
         </div>
 
-        <button type="button" (click)="backToServices()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+        <button type="button" (click)="backToDisciplines()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
                    hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
             <i-feather name="arrow-left" style="width:13px;height:13px;"></i-feather>
-            Back to all services
+            Back to all disciplines
         </button>
     </div>
 </section>
 
-<!-- ── SERVICE ───────────────────────────────────────────────────────── -->
+<!-- ── DISCIPLINE ───────────────────────────────────────────────────────── -->
 <ng-container *ngIf="resolved && category">
 
     <!-- ═══════════════════ HERO ═══════════════════ -->
@@ -68,7 +68,7 @@
                 </h1>
 
                 <p class="text-sm text-zinc-300 max-w-2xl leading-relaxed">
-                    {{ category.description || 'No description has been added for this service yet.' }}
+                    {{ category.description || 'No description has been added for this discipline yet.' }}
                 </p>
 
                 <!-- Tag chips -->
@@ -108,10 +108,10 @@
                         {{ category.likes || 0 }} {{ category.likes === 1 ? 'like' : 'likes' }}
                     </span>
 
-                    <a [routerLink]="['/services']"
+                    <a [routerLink]="['/disciplines']"
                         class="text-[11px] text-zinc-400 hover:text-red-400 transition flex items-center gap-1.5">
                         <i-feather name="arrow-left" style="width:12px;height:12px;"></i-feather>
-                        Back to all services
+                        Back to all disciplines
                     </a>
                 </div>
             </div>
@@ -124,7 +124,7 @@
 
             <!-- ══════════════════════════════════════════════════════════
                  EXPLORE — derived from trainer/center/exercise data,
-                 not part of the service's own record
+                 not part of the discipline's own record
                  ══════════════════════════════════════════════════════════ -->
             <div class="flex items-center gap-3 mb-2">
                 <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Explore</span>
@@ -139,7 +139,7 @@
 
             <!-- ═══════════════════════════════════════════════
                  RELATED WORKOUTS — public templates whose exercises
-                 overlap the exercises derived for this service
+                 overlap the exercises derived for this discipline
             ════════════════════════════════════════════════ -->
             <section *ngIf="templates.length > 0"
                 class="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 flex flex-col gap-4 font-sans">
@@ -211,10 +211,10 @@
 
             <!-- Footer CTA -->
             <div class="flex justify-center pt-4">
-                <a [routerLink]="['/services']" class="px-5 py-2.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-semibold
+                <a [routerLink]="['/disciplines']" class="px-5 py-2.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-semibold
                           hover:border-red-600 hover:text-white transition flex items-center gap-2">
                     <i-feather name="arrow-left" style="width:13px;height:13px;"></i-feather>
-                    Back to all services
+                    Back to all disciplines
                 </a>
             </div>
 

@@ -112,7 +112,7 @@ export class CategoriesSearchResultComponent implements OnInit, OnDestroy {
       data: {
         confirmation: true,
         title: 'Login required',
-        message: 'You need to be logged in to like a service. Log in to continue?',
+        message: 'You need to be logged in to like a discipline. Log in to continue?',
         confirmText: 'Log in',
         cancelText: 'Cancel',
         icon: 'log-in'

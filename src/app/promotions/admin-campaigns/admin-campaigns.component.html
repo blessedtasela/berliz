@@ -55,7 +55,7 @@
                     <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
                         {{ p.audience === 'new_members' ? 'New members only' : 'Everyone' }}
                         <ng-container *ngIf="p.usageLimit">&middot; {{ p.usageCount || 0 }}/{{ p.usageLimit }} redeemed</ng-container>
-                        <ng-container *ngIf="p.endDate">&middot; ends {{ p.endDate | date:'mediumDate' }}</ng-container>
+                        <ng-container *ngIf="p.endDate">&middot; ends {{ p.endDate | date:'mediumDate':'UTC' }}</ng-container>
                     </p>
                 </div>
 

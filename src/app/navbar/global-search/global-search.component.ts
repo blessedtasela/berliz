@@ -213,7 +213,7 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
     },
     {
       key: 'categories',
-      label: 'Services',
+      label: 'Disciplines',
       icon: 'layers',
       adminOnly: false,
       load: loadActiveCategories(),
@@ -223,9 +223,9 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         id: c.id,
         label: c.name,
         sublabel: truncate(c.description, 60),
-        link: ['/services', c.id, c.name]
+        link: ['/disciplines', c.id, c.name]
       }),
-      browseAllLink: ['/services']
+      browseAllLink: ['/disciplines']
     },
     {
       key: 'exercises',
@@ -346,10 +346,10 @@ export class GlobalSearchComponent implements OnInit, OnDestroy {
         id: e.id,
         label: e.name,
         sublabel: e.centerName,
-        link: ['/services/equipment'],
+        link: ['/disciplines/equipment'],
         queryParams: { equipmentId: e.id }
       }),
-      browseAllLink: ['/services/equipment']
+      browseAllLink: ['/disciplines/equipment']
     },
 
     // ── ADMIN ONLY ────────────────────────────────────────────────────────

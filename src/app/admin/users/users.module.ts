@@ -21,6 +21,7 @@ import { UserHoverCardComponent } from 'src/app/shared/user-hover-card/user-hove
 
 
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
 @NgModule({
   declarations: [
     AdminUpdateUserModalComponent,
@@ -32,6 +33,7 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
   ],
 
   imports: [
+    PageHeaderComponent,
     LoadErrorComponent,
     ClickablePhotoDirective,
     SharedModule,

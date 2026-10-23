@@ -77,7 +77,7 @@
         class="text-left p-3 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-red-200 dark:hover:border-red-900 transition flex flex-col gap-1">
         <p class="text-[11px] font-bold text-gray-800 dark:text-gray-200 truncate">{{ pr.exerciseName }}</p>
         <p class="text-sm font-extrabold text-red-600">{{ pr.weight }}{{ pr.weightUnit }}</p>
-        <p class="text-[10px] text-gray-400 dark:text-gray-500">{{ pr.logDate | date:'MMM d' }}</p>
+        <p class="text-[10px] text-gray-400 dark:text-gray-500">{{ pr.logDate | date:'MMM d':'UTC' }}</p>
       </button>
     </div>
   </div>
@@ -116,7 +116,7 @@
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
           <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-xs font-bold text-gray-900 dark:text-gray-100">{{ log.logDate | date:'EEE dd MMM, y' }}</span>
+            <span class="text-xs font-bold text-gray-900 dark:text-gray-100">{{ log.logDate | date:'EEE dd MMM, y':'UTC' }}</span>
             <span *ngIf="log.workoutName" class="text-[10px] font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">
               from "{{ log.workoutName }}"
             </span>

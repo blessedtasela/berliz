@@ -27,10 +27,10 @@ describe('SeoService', () => {
     expect(description?.getAttribute('content')).toBeTruthy();
   });
 
-  it('resolves a redirecting route (testimonials -> services) by its post-redirect path', () => {
+  it('resolves a redirecting route (testimonials -> disciplines) by its post-redirect path', () => {
     // SeoService is always called with urlAfterRedirects, so a visit to
-    // /testimonials is seen here as /services.
-    service.updateForRoute('/services');
-    expect(document.title).toContain('Services');
+    // /testimonials is seen here as /disciplines.
+    service.updateForRoute('/disciplines');
+    expect(document.title).toContain('Disciplines');
   });
 });

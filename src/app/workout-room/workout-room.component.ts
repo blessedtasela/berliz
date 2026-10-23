@@ -8,6 +8,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { WorkoutLogResponse, WorkoutResponse } from 'src/app/models/workout.interface';
 import { WorkoutService } from 'src/app/services/workout.service';
 import { selectUser } from 'src/app/state/user/user.selector';
+import { calendarDayKey, localDayKey } from 'src/app/utils/local-date';
 
 /**
  * One landing page for every workout-adjacent tool instead of them being
@@ -81,14 +82,10 @@ export class WorkoutRoomComponent implements OnInit {
     if (logs.length === 0) return { current: 0, longest: 0 };
 
     const dayMs = 24 * 60 * 60 * 1000;
-    const toDayKey = (d: string | Date) => {
-      const date = new Date(d);
-      return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
-    };
+    // A log's date is a stored calendar day (UTC midnight); "today" is the user's own local day.
+    const uniqueDays = Array.from(new Set(logs.map(l => calendarDayKey(l.logDate)))).sort((a, b) => b - a);
 
-    const uniqueDays = Array.from(new Set(logs.map(l => toDayKey(l.logDate)))).sort((a, b) => b - a);
-
-    const todayKey = toDayKey(new Date());
+    const todayKey = localDayKey(new Date());
     let current = 0;
     if (uniqueDays.length > 0 && (uniqueDays[0] === todayKey || uniqueDays[0] === todayKey - dayMs)) {
       current = 1;

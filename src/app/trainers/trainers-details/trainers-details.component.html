@@ -65,7 +65,7 @@
             <!-- ── PLANS & PRICING ───────────────────────────────────────── -->
             <div id="plans" class="scroll-mt-24 flex flex-col gap-6">
                 <app-provider-packages theme="dark" eyebrow="Choose how you train" [highlightFirst]="true"
-                    [trainerId]="trainer?.id" [bookLink]="trainer ? ['/trainers', trainer.name.split(' ').join('-'), 'book'] : null">
+                    [trainerId]="trainer?.id" [planLink]="trainer ? ['/trainers', trainer.name.split(' ').join('-'), 'level-up'] : null">
                 </app-provider-packages>
 
                 <app-trainer-pricing-card [trainerPricing]="trainerPricing">

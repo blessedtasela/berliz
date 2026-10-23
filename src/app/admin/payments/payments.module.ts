@@ -22,6 +22,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 
 
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
 @NgModule({
   declarations: [
     PaymentsComponent,
@@ -33,6 +34,7 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     PaymentDetailPageComponent
   ],
   imports: [
+    PageHeaderComponent,
     SelectComponent,
     LoadErrorComponent,
     ClickablePhotoDirective,

@@ -18,7 +18,7 @@ export interface MetaData {
  * `app-routing.module.ts`. Keyed by the route's first path segment, e.g.
  * '/trainers/:name' and '/trainers' both resolve to the 'trainers' key.
  * A real child page that needs its own SEO copy distinct from its parent
- * (e.g. '/services/faqs') is keyed by its first TWO segments instead — see
+ * (e.g. '/disciplines/equipment') is keyed by its first TWO segments instead — see
  * SeoService.resolveMetaData.
  *
  * `SeoService` looks a route up here on every NavigationEnd and falls back to
@@ -51,8 +51,14 @@ export const MetaDataConfig: Record<string, MetaData> = {
         structuredData: StructuredDataConfig.localBusiness,
     },
     services: {
-        title: 'Services - Fitness Programs, Equipment & Exercises | Berliz',
-        description: 'Browse Berliz training programs and services, explore equipment and exercise guides, and read member testimonials before you book.',
+        title: 'Services - Online, Hybrid & In-Person Personal Training | Berliz',
+        description: 'What Berliz offers: online, hybrid and in-person personal training, gyms and training centers, and a shop on the way.',
+        imageUrl: `${environment.assetsUrl}berliz-site.png`,
+        ogType: 'website',
+    },
+    disciplines: {
+        title: 'Disciplines - Boxing, Yoga, Strength & More | Berliz',
+        description: 'Browse the disciplines you can train in on Berliz, explore equipment and exercise guides, and read member testimonials before you book.',
         imageUrl: `${environment.assetsUrl}berliz-site.png`,
         ogType: 'website',
     },
@@ -74,10 +80,7 @@ export const MetaDataConfig: Record<string, MetaData> = {
         imageUrl: `${environment.assetsUrl}berliz-site.png`,
         ogType: 'website',
     },
-    // FAQs live at /services/faqs (a real child page of Services), so this is
-    // keyed by both segments — see SeoService.resolveMetaData, which tries the
-    // two-segment key before falling back to the 'services' entry above.
-    'services/faqs': {
+    faqs: {
         title: 'Frequently Asked Questions | Berliz',
         description: 'Answers to the most common questions about Berliz, our centers, trainers and billing.',
         imageUrl: `${environment.assetsUrl}berliz-site.png`,

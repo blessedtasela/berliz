@@ -20,10 +20,11 @@ describe('WorkoutRoomComponent streaks', () => {
   let fixture: ComponentFixture<WorkoutRoomComponent>;
   let workoutService: jasmine.SpyObj<WorkoutService>;
 
+  // What the app really stores for "a workout on day X": that calendar day at UTC midnight.
   const daysAgo = (n: number): string => {
     const d = new Date();
     d.setDate(d.getDate() - n);
-    return d.toISOString();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + 'T00:00:00.000Z';
   };
 
   const logAt = (daysBack: number): WorkoutLogResponse => ({

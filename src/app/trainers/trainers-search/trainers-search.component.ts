@@ -25,7 +25,7 @@ export class TrainersSearchComponent implements OnInit, OnDestroy {
 
   readonly searchOptions = [
     { value: 'name', label: 'Name' },
-    { value: 'category', label: 'Services' },
+    { value: 'category', label: 'Disciplines' },
     { value: 'address', label: 'Location' },
   ];
 
