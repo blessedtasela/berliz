@@ -121,6 +121,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Categories — messages, comments, mentions, posts & feed activity | ✅ | |
 | Notification deep-linking | ✅ | Every notification carries an `entityType`/`entityId` pair; clicking it in the bell/My Notifications routes straight to the thing it's about (a conversation, a booking, a post's comment thread, ...) instead of just showing text — `notification-entity-link.util.ts` |
 | Email notifications, per-category opt-out/opt-in, with the same deep link | ✅ | Messages/bookings/account-&-partnership default ON; likes-&-comments on your own posts ("social") defaults OFF since it's by far the highest-frequency category — all four toggle independently in Settings ("Email notifications" card, with Allow-all/Stop-all shortcuts). One choke point, `NotificationListener`, decides per notification whether to also email it; the email's button reuses the exact same `entityType`/`entityId` deep link the in-app notification carries (`EmailDeepLinkUtil`, mirroring the frontend's own routing table) so it lands on the actual conversation/booking/post, not just the dashboard home. Likes on a post or comment didn't notify anyone at all before this — `PostServiceImplement`/`CommentServiceImplement` now publish a notification (in-app + push + email) the same way comments already did |
+| My Notifications page — views, categories, shareable links | ✅ | `/dashboard/my-notifications`: header with unread count and **Mark all as read**; **All / Unread / Read** tabs; category chips (Messages, Bookings, Payments, Social, Training, Account, Other) that show only categories you have, with counts; text search plus date chips (today, yesterday, week, month, date range). Every view is a link: `?view=unread&category=bookings&q=cancelled`. `?id=123` deep-links one notification — the page jumps to the right page of the list, scrolls to it and highlights it (widening any filter that would hide it, and saying so if it no longer exists). Each notification's menu has **Copy link**. The category of a notification comes from its `entityType` |
 | Newsletter subscribe / status | ✅ | |
 
 ## 8. Planned — competitive differentiators
@@ -188,6 +189,11 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Notifications page redesign + deep links, and calendar buttons that work
+
+- **My Notifications** now opens with a proper header (unread count, Mark all as read), All/Unread/Read tabs, category chips with counts, search and date chips, and a calmer list that shows each notification's category. Where you are on the page is in the URL, so a filtered view can be bookmarked or shared; `?id=` links straight to one notification (see the Notifications table above). Read/Unread moved from the filter chips to the tabs; the date chips stay in the search panel. New `notification-category.util` maps `entityType` → category.
+- **Add to your calendar** (My bookings): the single "Open in calendar app" button is now **Google Calendar**, **Outlook** and **Apple Calendar**. It used to swap `https://` for `webcal://`, which Google and Outlook on the web and Windows can't open, and looked like the link was being stripped. The link in the box and **Copy link** stay plain `https://`; the help text explains the `webcal://` prefix Apple Calendar needs.
 
 ### Unreleased — Hide my achievements (web, mobile, backend)
 

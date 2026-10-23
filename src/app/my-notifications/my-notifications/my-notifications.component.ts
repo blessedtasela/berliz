@@ -19,6 +19,7 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { NotificationDetailsComponent } from 'src/app/shared/notification-details/notification-details.component';
 import { navigateToNotificationEntity, notificationHasDeepLink } from 'src/app/utils/notification-entity-link.util';
+import { categoryOf } from 'src/app/utils/notification-category.util';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { Store } from '@ngrx/store';
 import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
@@ -42,6 +43,11 @@ import { selectMyNotifications } from 'src/app/state/notification/notification.s
 })
 export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
 
+  /** The notification a ?id= deep link points at: shown, scrolled into view and highlighted. */
+  @Input() highlightId: number | null = null;
+  /** True when any filter/search is narrowing the list, so an empty list reads "nothing matches" not "no notifications yet". */
+  @Input() filtered = false;
+  private revealedId: number | null = null;
   @Input() notificationData: Notifications[] = []; // current page slice
   @Input() totalNotifications: number = 0;
   @Input() notificationsLength: number = 0;
@@ -95,8 +101,65 @@ export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
       this.totalNotifications = this.allNotificationData.length;
 
       this.currentPage = 1;
+      const jumped = this.revealHighlighted();
       this.updatePage();
+      if (jumped) this.scrollToHighlighted();
+    } else if (changes['highlightId']) {
+      const jumped = this.revealHighlighted();
+      if (jumped) {
+        this.updatePage();
+        this.scrollToHighlighted();
+      }
     }
+  }
+
+  // ---------------------------------------------------------
+  // DEEP LINK (?id=) -- jump to the page the notification is on, scroll to it, highlight it
+  // ---------------------------------------------------------
+  isHighlighted(n: Notifications): boolean {
+    return this.highlightId !== null && n.id === this.highlightId;
+  }
+
+  /**
+   * Moves to the page that holds the highlighted notification (the list is paged, so it may not be on page 1).
+   * Happens once per link: later refreshes (e.g. a websocket reload) must not pull the user back to it.
+   * Returns true when it jumped.
+   */
+  private revealHighlighted(): boolean {
+    if (this.highlightId === null) { this.revealedId = null; return false; }
+    if (this.highlightId === this.revealedId) return false;
+    const idx = this.allNotificationData.findIndex(n => n.id === this.highlightId);
+    if (idx < 0) return false;
+    this.currentPage = Math.floor(idx / this.pageSize) + 1;
+    this.revealedId = this.highlightId;
+    return true;
+  }
+
+  private scrollToHighlighted(): void {
+    if (this.highlightId === null) return;
+    const id = this.highlightId;
+    // Wait a tick so the page slice has rendered before looking the row up.
+    setTimeout(() => document.getElementById('notification-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 60);
+  }
+
+  categoryIcon(n: Notifications): string {
+    return categoryOf(n).icon;
+  }
+
+  categoryLabel(n: Notifications): string {
+    return categoryOf(n).label;
+  }
+
+  /** A link that opens the notifications page scrolled to (and highlighting) this notification. */
+  async copyLink(n: Notifications): Promise<void> {
+    const url = `${window.location.origin}/dashboard/my-notifications?id=${n.id}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      this.snackbar.openSnackBar('Link to this notification copied', '');
+    } catch {
+      this.snackbar.openSnackBar('Could not copy the link. Copy it from the address bar after opening the notification.', 'error');
+    }
+    this.closeAllMenus();
   }
 
   ngOnDestroy(): void {
