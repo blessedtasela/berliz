@@ -19,6 +19,7 @@ export class UpdatePartnerFileModalComponent implements OnInit {
 
   updatePartnerForm!: FormGroup;
   invalidForm        = false;
+  submitError: string | null = null;
   partnerData:        Partner;
 
   // Actual File objects — tracked outside the FormControl for UI preview
@@ -92,15 +93,18 @@ export class UpdatePartnerFileModalComponent implements OnInit {
 
   updatePartner(): void {
     this.invalidForm = true;
+    this.submitError = null;
 
     // Guard — belt-and-suspenders even though the button is disabled when missing
     if (!this.selectedCertification || !this.selectedResume) {
-      this.snackBar.openSnackBar('Both certification and resume are required.', 'error');
+      this.updatePartnerForm.markAllAsTouched();
+      this.submitError = 'Both certification and resume are required.';
       return;
     }
 
     if (this.updatePartnerForm.invalid) {
-      this.snackBar.openSnackBar('Please fix the form before submitting.', 'error');
+      this.updatePartnerForm.markAllAsTouched();
+      this.submitError = 'Please fix the highlighted documents (PDF files up to 10MB) before submitting.';
       return;
     }
 
@@ -113,13 +117,13 @@ export class UpdatePartnerFileModalComponent implements OnInit {
     this.partnerService.updateFile(fd).subscribe({
       next: (res: any) => {
         this.ngxService.stop();
-        this.snackBar.openSnackBar(res?.message ?? 'Documents updated successfully', '');
+        this.snackBar.openSnackBar(res?.message ?? 'Your certification and resume have been updated', '');
         this.dialogRef.close('Documents updated');
         this.onUpdatePartnerFileEmit.emit();
       },
       error: (err: any) => {
         this.ngxService.stop();
-        this.snackBar.openSnackBar(err?.error?.message ?? genericError, 'error');
+        this.submitError = err?.error?.message ?? genericError;
       }
     });
   }

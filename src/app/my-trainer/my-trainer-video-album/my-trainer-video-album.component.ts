@@ -41,6 +41,12 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
   // ── Form ──────────────────────────────────────────────────────────────────
   updateTrainerVideoAlbumForm!: FormGroup;
   invalidForm = false;
+  /** Save problems, shown above the footer buttons. */
+  submitError: string | null = null;
+  /** File-selection / upload problems, shown next to the video grid. */
+  uploadError: string | null = null;
+  /** Trim / optimise problems, shown inside the trimmer modal. */
+  editorError: string | null = null;
   originalValue: any;
 
   // ── Constants ─────────────────────────────────────────────────────────────
@@ -176,10 +182,12 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
     const file: File = event.target.files?.[0];
     if (!file) return;
 
+    this.uploadError = null;
+    this.editorError = null;
     const fileMB = file.size / 1024 / 1024;
     if (fileMB > this.MAX_FILE_MB) {
-      this.snackbar.openSnackBar(
-        `${file.name} is too large (${fileMB.toFixed(1)} MB). Max is ${this.MAX_FILE_MB} MB.`, 'error');
+      this.uploadError =
+        `${file.name} is too large (${fileMB.toFixed(1)} MB). Max is ${this.MAX_FILE_MB} MB.`;
       (event.target as HTMLInputElement).value = '';
       return;
     }
@@ -272,6 +280,7 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
   }
 
   cancelTrimmer(): void {
+    this.editorError = null;
     this.trimStep = 'idle';
     this.activeSlotIndex = -1;
     this.trimRawFile = null;
@@ -282,6 +291,7 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
   }
 
   backToTrim(): void {
+    this.editorError = null;
     this.trimStep = 'trimming';
     this.processedFile = null;
     this.cdr.detectChanges();
@@ -292,8 +302,9 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
   async processAndPreview(): Promise<void> {
     if (!this.trimRawFile || !this.trimValid) return;
 
+    this.editorError = null;
     const videoEl = document.getElementById('albumTrimPreview') as HTMLVideoElement | null;
-    if (!videoEl) { this.snackbar.openSnackBar('Video element not ready.', 'error'); return; }
+    if (!videoEl) { this.editorError = 'The video preview is not ready yet. Please try again.'; return; }
 
     const canCapture = 'captureStream' in videoEl || 'mozCaptureStream' in videoEl;
     if (!canCapture) {
@@ -358,7 +369,7 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
       const outputMB = blob.size / 1024 / 1024;
 
       if (blob.size < 5000) {
-        this.snackbar.openSnackBar('Trimmed video too small. Try again.', 'error');
+        this.editorError = 'The trimmed video is too small. Please adjust the trim and try again.';
         this.trimStep = 'trimming';
         return;
       }
@@ -390,6 +401,7 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
 
   async optimizeVideo(): Promise<void> {
     if (!this.processedFile) return;
+    this.editorError = null;
     this.optimizing = true;
     this.cdr.detectChanges();
 
@@ -401,7 +413,7 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
       await new Promise<void>(res => { videoEl.onloadedmetadata = () => res(); });
 
       const canCapture = 'captureStream' in videoEl || 'mozCaptureStream' in videoEl;
-      if (!canCapture) { this.snackbar.openSnackBar('Optimization not supported.', 'error'); return; }
+      if (!canCapture) { this.editorError = 'Video optimization is not supported in this browser. Upload a smaller video instead.'; return; }
 
       videoEl.currentTime = 0;
       await new Promise<void>(res => { videoEl.onseeked = () => res(); });
@@ -428,7 +440,7 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
       const newMB = blob.size / 1024 / 1024;
       if (newMB > this.MAX_FILE_MB) {
         this.overSizeMB = newMB;
-        this.snackbar.openSnackBar(`Still too large (${newMB.toFixed(1)} MB). Upload a new video.`, 'error');
+        this.editorError = `Still too large (${newMB.toFixed(1)} MB). Upload a new video.`;
         return;
       }
 
@@ -439,7 +451,7 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
       this.trimStep = 'previewing';
       this.snackbar.openSnackBar(`Optimized to ${newMB.toFixed(1)} MB ✓`, '');
 
-    } catch { this.snackbar.openSnackBar('Optimization failed.', 'error'); }
+    } catch { this.editorError = 'Optimization failed. Please try again or upload a smaller video.'; }
     finally { this.optimizing = false; this.cdr.detectChanges(); }
   }
 
@@ -485,13 +497,14 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
     const toUpload = this.slots.filter(s => s.rawFile != null && !s.uploaded);
 
     if (this.videoCount < this.MIN_VIDEOS) {
-      this.snackbar.openSnackBar(`Please select at least ${this.MIN_VIDEOS} videos.`, 'error');
+      this.uploadError = `Please select at least ${this.MIN_VIDEOS} videos.`;
       return false;
     }
 
     // Nothing new to upload — all existing/already-uploaded slots
     if (toUpload.length === 0) return true;
 
+    this.uploadError = null;
     this.uploadingAll = true;
     this.uploadProgress = 0;
     this.cdr.detectChanges();
@@ -541,8 +554,8 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
 
       } catch (e: any) {
         console.error(`[VideoAlbum] Upload failed for slot ${this.slots.indexOf(slot) + 1}:`, e?.message ?? e);
-        this.snackbar.openSnackBar(
-          `Video ${this.slots.indexOf(slot) + 1} failed to upload. Check console for details.`, 'error');
+        this.uploadError =
+          `Video ${this.slots.indexOf(slot) + 1} failed to upload. Retry or remove it.`;
       }
 
       slot.uploading = false;
@@ -555,8 +568,7 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
 
     const failedCount = this.slots.filter(s => s.rawFile != null && !s.uploaded).length;
     if (failedCount > 0) {
-      this.snackbar.openSnackBar(
-        `${failedCount} video(s) failed to upload. Check console and retry.`, 'error');
+      this.uploadError = `${failedCount} video(s) failed to upload. Retry or remove them.`;
       return false;
     }
 
@@ -567,15 +579,16 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
   // ── Save to backend ───────────────────────────────────────────────────────
 
   async updateTrainerVideoAlbumFn(): Promise<void> {
+    this.submitError = null;
+    this.uploadError = null;
+    // The form shows inline notices (min videos, comment length) while invalidForm is set.
     if (this.videoCount < this.MIN_VIDEOS) {
       this.invalidForm = true;
-      this.snackbar.openSnackBar(`Please select at least ${this.MIN_VIDEOS} videos.`, 'error');
       return;
     }
     if (this.updateTrainerVideoAlbumForm.get('comment')?.invalid) {
       this.invalidForm = true;
       this.updateTrainerVideoAlbumForm.markAllAsTouched();
-      this.snackbar.openSnackBar('Please add a comment (min. 500 characters).', 'error');
       return;
     }
 
@@ -600,13 +613,16 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
 
     request$.pipe(take(1)).subscribe({
       next: (res: any) => {
-        this.snackbar.openSnackBar(res?.message || 'Saved successfully', '');
+        this.snackbar.openSnackBar(res?.message || 'Your trainer video album has been saved', '');
         this.emitEvent.emit();
         this.loader.stop();
-        this.clear(res);
+        // The service returns the ApiResponse wrapper; the saved album is under `data`.
+        if (res?.data) {
+          this.clear(res.data);
+        }
       },
       error: (err: any) => {
-        this.snackbar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.submitError = err?.error?.message || genericError;
         this.loader.stop();
       }
     });

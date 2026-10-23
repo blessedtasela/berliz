@@ -75,7 +75,10 @@ export class AdminContentReportsComponent implements OnInit {
   }
 
   formatDate(dateString: string): string | null {
-    return this.datePipe.transform(new Date(dateString), 'dd/MM/yyyy HH:mm');
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
+    return this.datePipe.transform(date, 'dd/MM/yyyy HH:mm');
   }
 
   trackByReport(_: number, report: ContentReportResponse): number {

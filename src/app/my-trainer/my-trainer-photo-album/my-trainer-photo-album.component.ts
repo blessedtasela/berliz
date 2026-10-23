@@ -43,6 +43,10 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
   // ── Form ──────────────────────────────────────────────────────────────────
   updateTrainerPhotoAlbumForm!: FormGroup;
   invalidForm = false;
+  /** Save problems, shown above the footer buttons. */
+  submitError: string | null = null;
+  /** Crop / upload problems, shown next to the photo grid. */
+  uploadError: string | null = null;
   originalValue: any;
 
   // ── Constants ─────────────────────────────────────────────────────────────
@@ -239,6 +243,7 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
     const slot = this.slots[index];
     if (!slot.rawFile && !slot.previewUrl) return;
 
+    this.uploadError = null;
     this.cropQueueIndex = index;
     this.croppedBlob = null;
     this.cropImageBase64 = '';
@@ -257,7 +262,7 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
         };
         reader.readAsDataURL(blob);
       })
-      .catch(() => this.snackbar.openSnackBar('Could not load photo for cropping.', 'error'));
+      .catch(() => { this.uploadError = 'Could not load photo for cropping.'; this.cdr.detectChanges(); });
   }
 
   onImageCropped(event: ImageCroppedEvent): void {
@@ -265,7 +270,7 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
   }
 
   onCropLoadFailed(): void {
-    this.snackbar.openSnackBar('Could not load image.', 'error');
+    this.uploadError = 'Could not load image for cropping.';
     this.cropStep = 'idle';
     this.cropQueueIndex = -1;
   }
@@ -319,10 +324,11 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
 
     const toUpload = this.slots.filter(s => (s.rawFile || s.croppedBlob) && !s.uploaded);
     if (this.photoCount < this.MIN_PHOTOS) {
-      this.snackbar.openSnackBar(`Please select at least ${this.MIN_PHOTOS} photos.`, 'error');
+      this.uploadError = `Please select at least ${this.MIN_PHOTOS} photos.`;
       return false;
     }
 
+    this.uploadError = null;
     this.uploadingAll = true;
     this.uploadProgress = 0;
     this.cdr.detectChanges();
@@ -358,7 +364,7 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
         slot.previewUrl = this.resolvePhotoUrl(uploaded.url);
 
       } catch (e) {
-        this.snackbar.openSnackBar(`Failed to upload photo ${this.slots.indexOf(slot) + 1}. Continuing...`, 'error');
+        this.uploadError = `Failed to upload photo ${this.slots.indexOf(slot) + 1}. Continuing...`;
       }
 
       slot.uploading = false;
@@ -370,8 +376,7 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
     this.uploadingAll = false;
     const failedCount = this.slots.filter(s => (s.rawFile || s.croppedBlob) && !s.uploaded).length;
     if (failedCount > 0) {
-      this.snackbar.openSnackBar(
-        `${failedCount} photo(s) failed to upload. Retry or remove them.`, 'error');
+      this.uploadError = `${failedCount} photo(s) failed to upload. Retry or remove them.`;
       return false;
     }
     this.cdr.detectChanges();
@@ -380,16 +385,18 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
 
   // ── Save to backend ───────────────────────────────────────────────────────
   async updateTrainerPhotoAlbum(): Promise<void> {
+    this.submitError = null;
+    this.uploadError = null;
+
+    // The form shows inline notices (min photos, inspiration length) while invalidForm is set.
     if (this.photoCount < this.MIN_PHOTOS) {
       this.invalidForm = true;
-      this.snackbar.openSnackBar(`Please select at least ${this.MIN_PHOTOS} photos.`, 'error');
       return;
     }
 
     if (this.updateTrainerPhotoAlbumForm.get('comment')?.invalid) {
       this.invalidForm = true;
       this.updateTrainerPhotoAlbumForm.markAllAsTouched();
-      this.snackbar.openSnackBar('Please add a photo inspiration (min. 500 characters).', 'error');
       return;
     }
     this.loader.start();
@@ -397,6 +404,7 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
     // Upload any new/changed photos first, then save album with returned Strapi IDs
     const uploadSuccess = await this.uploadAllToStrapi();
     if (!uploadSuccess) {
+      this.loader.stop();
       return;
     }
 
@@ -419,13 +427,16 @@ export class MyTrainerPhotoAlbumComponent implements OnInit, OnChanges, OnDestro
 
     request$.pipe(take(1)).subscribe({
       next: (res: any) => {
-        this.snackbar.openSnackBar(res?.message || 'Saved successfully', '');
+        this.snackbar.openSnackBar(res?.message || 'Your trainer photo album has been saved', '');
         this.emitEvent.emit();
         this.loader.stop();
-        this.clear(res);
+        // The service returns the ApiResponse wrapper; the saved album is under `data`.
+        if (res?.data) {
+          this.clear(res.data);
+        }
       },
       error: (err: any) => {
-        this.snackbar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.submitError = err?.error?.message || genericError;
         this.loader.stop();
       }
     });

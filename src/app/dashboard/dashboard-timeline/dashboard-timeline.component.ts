@@ -98,6 +98,8 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   /** The post whose linked template is currently being cloned. */
   cloningWorkoutPostId: number | null = null;
   posting = false;
+  /** Inline failure from the composer's Post button (the draft is kept so it can be retried). */
+  postError: string | null = null;
   uploadedPhoto: { strapiId: number; photoUrl: string } | null = null;
   /** A post carries a photo OR a video; the composer disables whichever picker the other one is using. */
   uploadedVideo: { strapiId: number; videoUrl: string; mimeType: string } | null = null;
@@ -319,6 +321,7 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
   submitPost(): void {
     if (!this.canPost) return;
 
+    this.postError = null;
     this.posting = true;
     this.postService.addPost({
       content: this.draftContent.trim(),
@@ -340,11 +343,11 @@ export class DashboardTimelineComponent implements OnInit, OnDestroy {
         this.uploadedPhoto = null;
         this.uploadedVideo = null;
         this.draftService.discard('post');
-        this.snackBarService.openSnackBar('Posted', '');
+        this.snackBarService.openSnackBar('Post published to your timeline', '');
       },
-      error: () => {
+      error: err => {
         this.posting = false;
-        this.snackBarService.openSnackBar('Could not post — try again', 'error');
+        this.postError = err?.error?.message || 'Your post could not be published. Your draft is kept, so you can try again.';
       },
     });
   }

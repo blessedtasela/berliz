@@ -27,6 +27,7 @@ export class CenterTrainersComponent implements OnInit, OnChanges, OnDestroy {
 
   showEditor = false;
   invalidForm = false;
+  submitError: string | null = null;
   originalValue: any;
 
   showAll = false;
@@ -101,21 +102,23 @@ export class CenterTrainersComponent implements OnInit, OnChanges, OnDestroy {
   toggleEditor(): void {
     this.showEditor = !this.showEditor;
     this.invalidForm = false;
+    this.submitError = null;
     this.initForm();
   }
 
   addTrainer(): void {
+    this.submitError = null;
     if (this.addTrainerForm.invalid) {
       this.invalidForm = true;
       this.addTrainerForm.markAllAsTouched();
-      this.snackbar.openSnackBar('Please provide a valid trainer id', 'error');
+      // The form already shows an inline "provide a valid trainer id" notice while invalidForm is set.
       return;
     }
 
     this.loader.start();
     this.centerService.addCenterTrainer(this.addTrainerForm.getRawValue()).pipe(take(1)).subscribe({
       next: (response: any) => {
-        this.snackbar.openSnackBar(response?.message || 'Trainer added', '');
+        this.snackbar.openSnackBar(response?.message || 'Trainer added to your center', '');
         this.store.dispatch(loadMyCenterTrainers());
         this.emitEvent.emit();
         this.showEditor = false;
@@ -124,7 +127,7 @@ export class CenterTrainersComponent implements OnInit, OnChanges, OnDestroy {
         this.loader.stop();
       },
       error: (err: any) => {
-        this.snackbar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.submitError = err?.error?.message || genericError;
         this.loader.stop();
       }
     });

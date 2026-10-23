@@ -23,6 +23,7 @@ export class MyTrainerBenefitsComponent implements OnInit, OnChanges {
   updateTrainerBenefitForm!: FormGroup;
   invalidForm = false;
   responseMessage: string = '';
+  submitError: string | null = null;
   subscriptions: Subscription[] = [];
 
   originalValue: any;
@@ -103,10 +104,12 @@ export class MyTrainerBenefitsComponent implements OnInit, OnChanges {
   // -----------------------------
   updateTrainerBenefit(): void {
 
+    this.submitError = null;
     if (this.updateTrainerBenefitForm.invalid) {
       this.invalidForm = true;
+      this.updateTrainerBenefitForm.markAllAsTouched();
       this.responseMessage = "Invalid form. Please complete all sections";
-      this.snackbar.openSnackBar(this.responseMessage, "error");
+      // The form shows an inline "at least 5 benefits required" banner while invalidForm is set.
       return;
     }
 
@@ -119,11 +122,7 @@ export class MyTrainerBenefitsComponent implements OnInit, OnChanges {
 
     if (hasDuplicates) {
 
-      this.invalidForm = true;
-      this.snackbar.openSnackBar(
-        "Duplicate benefits detected. Please remove repeated items.",
-        "error"
-      );
+      this.submitError = "Duplicate benefits detected. Please remove repeated items.";
       return;
     }
 
@@ -140,11 +139,14 @@ export class MyTrainerBenefitsComponent implements OnInit, OnChanges {
     request$.subscribe({
       next: (response: any) => {
         this.invalidForm = false;
+        this.submitError = null;
         this.responseMessage = response?.message;
-        this.snackbar.openSnackBar(this.responseMessage, "");
+        this.snackbar.openSnackBar(this.responseMessage || 'Your trainer benefits have been saved', "");
 
-        // ⭐ Update UI using backend DTO
-        this.updateUIFromResponse(response);
+        // ⭐ Update UI using backend DTO (the payload is under `data` of the ApiResponse wrapper)
+        if (response?.data) {
+          this.updateUIFromResponse(response.data);
+        }
         this.emitEvent.emit();
         this.loader.stop();
       },
@@ -152,7 +154,7 @@ export class MyTrainerBenefitsComponent implements OnInit, OnChanges {
       error: (err: any) => {
         console.error("🔥 Backend error:", err);
         this.responseMessage = err.error?.message || genericError;
-        this.snackbar.openSnackBar(this.responseMessage, "error");
+        this.submitError = this.responseMessage;
         this.loader.stop();
       }
     });
@@ -197,7 +199,9 @@ export class MyTrainerBenefitsComponent implements OnInit, OnChanges {
   }
 
   formatDate(dateString: any): any {
+    if (!dateString) return '';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
     return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 }

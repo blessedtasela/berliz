@@ -133,6 +133,10 @@
 
         </div>
 
+        <div class="px-4 pb-3" *ngIf="submitError">
+            <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
+        </div>
+
         <!-- Documents + actions -->
         <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-gray-100 dark:border-gray-800">
 

@@ -55,6 +55,12 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
   /** Why the saved hours couldn't be loaded. The editor is hidden while this is set: saving the default hours it would otherwise show would overwrite the real ones. */
   loadError: string | null = null;
   saving = false;
+  /** Inline failure/validation message for the weekly schedule save. */
+  submitError: string | null = null;
+  /** Inline failure/validation message for the booking-notice (lead time) save. */
+  leadTimeError: string | null = null;
+  /** Inline failure/validation message for the session-length save. */
+  slotDurationError: string | null = null;
 
   /** Shown so a trainer/center understands their hours are zone-aware -- see AvailabilityService.setMyAvailability's own doc comment for the bug this closes. */
   get detectedTimezone(): string {
@@ -126,14 +132,15 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
       .pipe(ofType(setMyAvailabilitySuccess), takeUntil(this.destroy$))
       .subscribe(() => {
         this.saving = false;
-        this.snackBar.openSnackBar('Your availability has been saved.', '');
+        this.submitError = null;
+        this.snackBar.openSnackBar('Your weekly availability has been saved.', '');
       });
 
     this.actions$
       .pipe(ofType(setMyAvailabilityFailure), takeUntil(this.destroy$))
       .subscribe(({ error }) => {
         this.saving = false;
-        this.snackBar.openSnackBar(error || genericError, 'error');
+        this.submitError = error || genericError;
       });
   }
 
@@ -212,13 +219,14 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
 
   save(): void {
     if (this.saving) return;
+    this.submitError = null;
 
     let hasError = false;
     for (const day of this.days) {
       if (!this.validateDay(day)) hasError = true;
     }
     if (hasError) {
-      this.snackBar.openSnackBar('Fix the highlighted time blocks — each needs a start before its end, and blocks on the same day can\'t overlap.', 'error');
+      this.submitError = 'Fix the highlighted time blocks — each needs a start before its end, and blocks on the same day can\'t overlap.';
       return;
     }
 
@@ -252,8 +260,9 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
 
   saveLeadTime(): void {
     if (this.leadTimeSaving) return;
+    this.leadTimeError = null;
     if (this.leadTimeMinutes != null && this.leadTimeMinutes < 0) {
-      this.snackBar.openSnackBar('Lead time can\'t be negative.', 'error');
+      this.leadTimeError = 'Booking notice can\'t be negative — enter 0 or more minutes.';
       return;
     }
 
@@ -263,11 +272,11 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
       .subscribe({
         next: res => {
           this.leadTimeSaving = false;
-          this.snackBar.openSnackBar(res?.message || 'Lead time updated.', '');
+          this.snackBar.openSnackBar(res?.message || 'Booking notice updated.', '');
         },
         error: (err: any) => {
           this.leadTimeSaving = false;
-          this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+          this.leadTimeError = err?.error?.message || genericError;
         },
       });
   }
@@ -296,8 +305,9 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
 
   saveSlotDuration(): void {
     if (this.slotDurationSaving) return;
+    this.slotDurationError = null;
     if (this.slotDurationMinutes != null && (this.slotDurationMinutes < 5 || this.slotDurationMinutes > 480)) {
-      this.snackBar.openSnackBar('Session length must be between 5 and 480 minutes.', 'error');
+      this.slotDurationError = 'Session length must be between 5 and 480 minutes.';
       return;
     }
 
@@ -311,7 +321,7 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           this.slotDurationSaving = false;
-          this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+          this.slotDurationError = err?.error?.message || genericError;
         },
       });
   }

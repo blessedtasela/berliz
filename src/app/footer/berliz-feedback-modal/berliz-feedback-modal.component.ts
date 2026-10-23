@@ -22,6 +22,7 @@ import { genericError } from 'src/validators/form-validators.module';
 export class BerlizFeedbackModalComponent {
   feedbackForm: FormGroup;
   submitting = false;
+  submitError: string | null = null;
 
   constructor(
     public dialogRef: MatDialogRef<BerlizFeedbackModalComponent>,
@@ -52,6 +53,7 @@ export class BerlizFeedbackModalComponent {
   submit(): void {
     if (this.feedbackForm.invalid || this.submitting) return;
 
+    this.submitError = null;
     this.submitting = true;
     this.feedbackService.addFeedback(this.feedbackForm.value.message).subscribe({
       next: response => {
@@ -61,7 +63,7 @@ export class BerlizFeedbackModalComponent {
       },
       error: err => {
         this.submitting = false;
-        this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.submitError = err?.error?.message || genericError;
       }
     });
   }

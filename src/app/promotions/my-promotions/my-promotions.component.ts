@@ -7,6 +7,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { PromotionService } from 'src/app/services/promotion.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { PromotionFormModalComponent } from '../promotion-form-modal/promotion-form-modal.component';
 import { PromoOffer } from 'src/app/models/promo-offer.model';
 import { genericError } from 'src/validators/form-validators.module';
@@ -19,7 +20,7 @@ import { genericError } from 'src/validators/form-validators.module';
  */
 @Component({
     selector: 'app-my-promotions',
-    imports: [CommonModule, IconsModule],
+    imports: [CommonModule, IconsModule, LoadErrorComponent],
     templateUrl: './my-promotions.component.html',
     styleUrls: ['./my-promotions.component.css']
 })
@@ -27,6 +28,8 @@ export class MyPromotionsComponent implements OnInit {
 
   promotions: PromoOffer[] = [];
   loading = true;
+  /** Set when the promotions list failed to load; shown inline with a Retry. */
+  loadError: string | null = null;
 
   constructor(
     private promotionService: PromotionService,
@@ -42,16 +45,17 @@ export class MyPromotionsComponent implements OnInit {
     this.load();
   }
 
-  private load(): void {
+  load(): void {
     this.loading = true;
+    this.loadError = null;
     this.promotionService.getMine().pipe(take(1)).subscribe({
       next: (res) => {
         this.promotions = res?.data ?? [];
         this.loading = false;
       },
-      error: () => {
+      error: (err: any) => {
         this.loading = false;
-        this.snackBar.openSnackBar(genericError, 'error');
+        this.loadError = err?.error?.message || genericError;
       }
     });
   }
@@ -69,7 +73,7 @@ export class MyPromotionsComponent implements OnInit {
   toggle(promotion: PromoOffer): void {
     this.promotionService.toggle(promotion.id, !promotion.active).pipe(take(1)).subscribe({
       next: (res: any) => {
-        this.snackBar.openSnackBar(res?.message || 'Updated', '');
+        this.snackBar.openSnackBar(res?.message || `"${promotion.title}" ${promotion.active ? 'paused' : 'activated'}`, '');
         this.load();
       },
       error: (err: any) => this.snackBar.openSnackBar(err?.error?.message || genericError, 'error')
@@ -87,7 +91,7 @@ export class MyPromotionsComponent implements OnInit {
     dialogRef.componentInstance.onEmitStatusChange.pipe(take(1)).subscribe(() => {
       this.promotionService.delete(promotion.id).pipe(take(1)).subscribe({
         next: (res: any) => {
-          this.snackBar.openSnackBar(res?.message || 'Promotion deleted', '');
+          this.snackBar.openSnackBar(res?.message || `Promotion "${promotion.title}" deleted`, '');
           dialogRef.close();
           this.load();
         },

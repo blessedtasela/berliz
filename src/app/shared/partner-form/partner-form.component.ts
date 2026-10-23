@@ -20,6 +20,7 @@ export class PartnerFormComponent implements OnInit {
 
   addPartnerForm!: FormGroup;
   invalidForm = false;
+  submitError: string | null = null;
   uploading = false;
   uploadProgress = 0;
 
@@ -231,7 +232,7 @@ export class PartnerFormComponent implements OnInit {
       return true;
 
     } catch {
-      this.snackBar.openSnackBar('Failed to upload documents. Please try again.', 'error');
+      this.submitError = 'Failed to upload your certification and resume. Please try again.';
       return false;
     }
   }
@@ -240,15 +241,16 @@ export class PartnerFormComponent implements OnInit {
 
   async submit(): Promise<void> {
     this.invalidForm = true;
+    this.submitError = null;
 
     if (!this.selectedCertification || !this.selectedResume) {
-      this.snackBar.openSnackBar('Please upload both your certification and resume.', 'error');
+      this.submitError = 'Please upload both your certification and resume.';
       return;
     }
 
     if (this.addPartnerForm.invalid) {
       this.addPartnerForm.markAllAsTouched();
-      this.snackBar.openSnackBar('Please complete all required fields.', 'error');
+      this.submitError = 'Please complete all required fields (highlighted above).';
       return;
     }
 
@@ -270,7 +272,7 @@ export class PartnerFormComponent implements OnInit {
         next: (res: any) => {
           this.uploading = false;
           this.ngxService.stop();
-          this.snackBar.openSnackBar(res?.message ?? 'Application submitted!', '');
+          this.snackBar.openSnackBar(res?.message ?? 'Your partner application has been submitted', '');
           this.dialogRef.close('saved');
           sessionStorage.removeItem(this.STORAGE_KEY);
           sessionStorage.removeItem(this.STORAGE_KEY + '_files');
@@ -278,7 +280,7 @@ export class PartnerFormComponent implements OnInit {
         error: (err: any) => {
           this.uploading = false;
           this.ngxService.stop();
-          this.snackBar.openSnackBar(err?.error?.message ?? genericError, 'error');
+          this.submitError = err?.error?.message ?? genericError;
         }
       });
   }

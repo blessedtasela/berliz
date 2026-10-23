@@ -4,6 +4,7 @@ import { CategoriesHeroComponent } from './categories-hero/categories-hero.compo
 import { NavbarModule } from '../navbar/navbar.module';
 import { FooterModule } from '../footer/footer.module';
 import { IconsModule } from '../icons/icons.module';
+import { SharedModule } from '../shared/shared.module';
 import { CategoryDetailsComponent } from './category-details/category-details.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -39,6 +40,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
     NavbarModule,
     FooterModule,
     IconsModule,
+    SharedModule,
     RouterModule,
     ReactiveFormsModule,
     FormsModule,

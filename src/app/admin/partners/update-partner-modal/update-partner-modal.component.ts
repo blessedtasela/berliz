@@ -28,6 +28,7 @@ export class UpdatePartnerModalComponent {
   partnerData: Partner;
   users: Users[] = [];
   responseMessage: any;
+  submitError: string | null = null;
   roles: Role[] = [{
     id: 1, role: 'admin'
   }, {
@@ -90,14 +91,16 @@ export class UpdatePartnerModalComponent {
 
   updatePartner(): void {
     this.ngxService.start();
+    this.submitError = null;
     if (this.updatePartnerForm.invalid) {
       this.invalidForm = true
-      this.responseMessage = "Invalid form"
+      this.updatePartnerForm.markAllAsTouched();
+      this.submitError = 'Please fill in the highlighted fields';
       this.ngxService.stop();
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
     } else {
       this.partnerService.updatePartner(this.updatePartnerForm.value)
         .subscribe((response: any) => {
+          this.submitError = null;
           this.updatePartnerForm.reset();
           this.partnerService.setPartnerFormIndex(0);
           this.invalidForm = false;
@@ -110,12 +113,7 @@ export class UpdatePartnerModalComponent {
           , (error: any) => {
             this.ngxService.stop();
             console.error("error");
-            if (error.error?.message) {
-              this.responseMessage = error.error?.message;
-            } else {
-              this.responseMessage = genericError;
-            }
-            this.snackBarService.openSnackBar(this.responseMessage, "error");
+            this.submitError = error?.error?.message || genericError;
           });
     }
     this.ngxService.stop();

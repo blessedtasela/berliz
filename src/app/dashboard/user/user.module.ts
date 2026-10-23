@@ -14,6 +14,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { NavbarModule } from 'src/app/navbar/navbar.module';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
     FooterModule,
     IconsModule,
     NavbarModule,
-    ImageCropperModule
+    ImageCropperModule,
+    SharedModule
   ],
   providers: [
   ],

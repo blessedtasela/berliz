@@ -66,9 +66,12 @@ export class AssignWorkoutModalComponent implements OnInit, OnDestroy {
     }
 
     this.subscriptions.push(
-      this.actions$.pipe(ofType(assignWorkoutSuccess)).subscribe(() => {
+      this.actions$.pipe(ofType(assignWorkoutSuccess)).subscribe(({ response }) => {
         this.submitting = false;
-        this.snackbar.openSnackBar('Workout assigned', '');
+        this.snackbar.openSnackBar(
+          response?.message || (this.workout?.name ? `"${this.workout.name}" has been assigned` : 'Your workout has been assigned'),
+          ''
+        );
         this.dialogRef.close(true);
       }),
       this.actions$.pipe(ofType(assignWorkoutFailure)).subscribe(({ error }) => {

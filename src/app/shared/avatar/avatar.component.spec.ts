@@ -38,6 +38,9 @@ describe('AvatarComponent', () => {
 
     component.name = '';
     expect(component.initials).toBe('?');
+
+    component.name = undefined as any;
+    expect(component.initials).toBe('?');
   });
 
   // Regression: a photo that fails to load (corrupt/invalid data) used to

@@ -17,6 +17,8 @@ export class CenterSearchComponent {
   activeCenters: Centers[] = [];
   @Output() allCenters: EventEmitter<Centers[]> = new EventEmitter<Centers[]>();
   searchQuery: string = '';
+  /** Inline message under the search bar (empty query / failed search). */
+  searchError: string | null = null;
   selectedSearchCriteria: any = 'name';
   subscription!: Subscription;
 
@@ -62,10 +64,11 @@ export class CenterSearchComponent {
       )
       .subscribe(
         (results: Centers[]) => {
+          this.searchError = null;
           this.allCenters.emit(results);
         },
         (error: any) => {
-          this.snackbarService.openSnackBar(error, 'error');
+          this.searchError = (typeof error === 'string' && error) || 'Search failed. Try again or change your search term.';
         }
       );
   }
@@ -74,17 +77,17 @@ export class CenterSearchComponent {
     const query = this.searchQuery?.trim();
 
     if (!query) {
-      this.snackbarService.openSnackBar('Please enter a search term.', 'error');
+      this.searchError = 'Enter a name, service or address to search for.';
       return;
     }
-
+    this.searchError = null;
 
     this.search(query).subscribe(
       (results) => {
         this.allCenters.emit(results);
       },
       (error) => {
-        this.snackbarService.openSnackBar('Search failed.', 'error');
+        this.searchError = 'Search failed. Try again or change your search term.';
       }
     );
   }

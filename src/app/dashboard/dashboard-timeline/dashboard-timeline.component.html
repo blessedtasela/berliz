@@ -79,6 +79,8 @@
 
         <p *ngIf="uploadError" role="alert" class="text-[11px] text-red-600 dark:text-red-400">{{ uploadError }}</p>
 
+        <app-inline-alert [message]="postError" [kind]="'error'" [dismissible]="true" (dismissed)="postError = null"></app-inline-alert>
+
         <div class="flex items-center justify-between gap-2 pt-1 border-t border-gray-100 dark:border-gray-800">
             <label class="flex items-center gap-1.5 text-[11px] font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100
                           cursor-pointer transition px-2 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">

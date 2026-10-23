@@ -24,6 +24,7 @@ export class MyTrainerSubModalComponent implements OnInit {
   @Output() savedEvent = new EventEmitter<void>();
 
   subscriptionForm!: FormGroup;
+  submitError: string | null = null;
 
   readonly plans: PlanOption[] = [
     { value: 'MONTH_TO_MONTH', label: 'Month to Month', description: '30-day rolling plan' },
@@ -59,10 +60,11 @@ export class MyTrainerSubModalComponent implements OnInit {
   }
 
   submitSubscription(): void {
+    this.submitError = null;
     if (this.subscriptionForm.invalid) {
       this.subscriptionForm.markAllAsTouched();
       this.subscriptionForm.markAsDirty();
-      this.snackbar.openSnackBar('Please fill in all required fields.', 'error');
+      this.submitError = 'Please enter your activation code and choose a subscription plan.';
       return;
     }
 
@@ -83,7 +85,7 @@ export class MyTrainerSubModalComponent implements OnInit {
           this.loader.stop();
         },
         error: (err: any) => {
-          this.snackbar.openSnackBar(err?.error?.message || genericError, 'error');
+          this.submitError = err?.error?.message || genericError;
           this.loader.stop();
         }
       });

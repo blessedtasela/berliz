@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { take } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { PromotionService } from 'src/app/services/promotion.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PromoOffer } from 'src/app/models/promo-offer.model';
@@ -23,7 +24,7 @@ export interface PromotionFormModalData {
  */
 @Component({
     selector: 'app-promotion-form-modal',
-    imports: [CommonModule, ReactiveFormsModule, IconsModule],
+    imports: [CommonModule, ReactiveFormsModule, IconsModule, SharedModule],
     templateUrl: './promotion-form-modal.component.html',
     styleUrls: ['./promotion-form-modal.component.css']
 })
@@ -32,6 +33,8 @@ export class PromotionFormModalComponent {
   form: FormGroup;
   invalidForm = false;
   saving = false;
+  /** Inline message above the Save button: validation problems and failed saves. */
+  submitError: string | null = null;
   isEdit: boolean;
 
   constructor(
@@ -68,10 +71,12 @@ export class PromotionFormModalComponent {
 
   submit(): void {
     if (this.saving) return;
+    this.submitError = null;
 
     if (this.form.invalid) {
       this.invalidForm = true;
       this.form.markAllAsTouched();
+      this.submitError = 'Fix the highlighted fields (a title is required) before saving the promotion.';
       return;
     }
 
@@ -98,12 +103,12 @@ export class PromotionFormModalComponent {
     request$.pipe(take(1)).subscribe({
       next: (res: any) => {
         this.saving = false;
-        this.snackBar.openSnackBar(res?.message || (this.isEdit ? 'Promotion updated' : 'Promotion created'), '');
+        this.snackBar.openSnackBar(res?.message || (this.isEdit ? `Promotion "${payload.title}" updated` : `Promotion "${payload.title}" created`), '');
         this.dialogRef.close(true);
       },
       error: (err: any) => {
         this.saving = false;
-        this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.submitError = err?.error?.message || genericError;
       }
     });
   }

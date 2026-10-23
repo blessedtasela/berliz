@@ -85,6 +85,8 @@
             <p class="text-[11px] text-gray-400 dark:text-gray-500">Share this privately -- e.g. with a corporate or gym partner. A coded offer never shows on your public profile or the Deals feed; only someone with the code can redeem it.</p>
         </div>
 
+        <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
+
         <div class="flex items-center justify-end gap-2 mt-2">
             <button type="button" (click)="closeDialog()" [disabled]="saving"
                 class="text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition px-3 py-2">Cancel</button>

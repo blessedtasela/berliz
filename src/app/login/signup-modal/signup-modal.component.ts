@@ -26,6 +26,8 @@ export class SignupModalComponent {
   formIndex: number = 0;
   countries: any[] = [];
   responseMessage: any;
+  /** Inline error shown above the Create Account button. */
+  submitError: string | null = null;
   selectedImage: any;
 
   constructor(private fb: FormBuilder,
@@ -159,6 +161,7 @@ export class SignupModalComponent {
   }
 
   submitForm(): void {
+    this.submitError = null;
     this.ngxService.start();
     const requestData = new FormData();
     requestData.append('firstname', this.signupForm.get('firstname')?.value);
@@ -179,7 +182,8 @@ export class SignupModalComponent {
       this.invalidForm = true
       this.responseMessage = "Invalid form"
       this.ngxService.stop();
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      this.signupForm.markAllAsTouched();
+      this.submitError = 'Some sign-up details are missing or invalid. Go back through each step and fix the highlighted fields.';
     } else {
       this.userService.signup(requestData)
         .subscribe((response: any) => {
@@ -200,7 +204,7 @@ export class SignupModalComponent {
             } else {
               this.responseMessage = genericError;
             }
-            this.snackBarService.openSnackBar(this.responseMessage, "error");
+            this.submitError = this.responseMessage;
           });
     }
     this.ngxService.stop();

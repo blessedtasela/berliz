@@ -30,6 +30,7 @@ export class AddCenterModalComponent {
   invalidForm: boolean = false;
   categories: Categories[] = [];
   responseMessage: any;
+  submitError: string | null = null;
   selectedPhoto: any;
   activePartners: Partner[] = [];
   displayPhoto: any = "../../../assets/icons/user.png";
@@ -105,7 +106,7 @@ export class AddCenterModalComponent {
   }
 
   loadImageFailed(): void {
-    this.snackBarService.openSnackBar('Failed to load image', 'error');
+    this.submitError = 'Failed to load image';
     this.showCropper = false;
     this.imageChangedEvent = null;
   }
@@ -130,6 +131,7 @@ export class AddCenterModalComponent {
       type: this.croppedImageBlob.type || 'image/jpeg'
     });
 
+    this.submitError = null;
     this.selectedPhoto = file;
     this.displayPhoto = URL.createObjectURL(file);
 
@@ -158,7 +160,7 @@ export class AddCenterModalComponent {
         lastUpdate: new Date(),
       };
     } catch (err: any) {
-      this.snackBarService.openSnackBar(err?.error?.message || err?.message || 'Photo upload failed', 'error');
+      this.submitError = err?.error?.message || err?.message || 'Photo upload failed';
     } finally {
       this.uploadingPhoto = false;
     }
@@ -190,11 +192,12 @@ export class AddCenterModalComponent {
     const selectedCategoryIds = this.addCenterForm.value.categoryIds.map((categories: any) => categories.categoryIds);
     const categoryToStrings = selectedCategoryIds.join(',');
 
+    this.submitError = null;
     if (this.addCenterForm.invalid || !this.photoRequest) {
       this.ngxService.start();
       this.invalidForm = true;
-      this.responseMessage = this.photoRequest ? "Invalid form. Please complete all sections" : "Please select a photo";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      this.addCenterForm.markAllAsTouched();
+      this.submitError = this.photoRequest ? "Please fill in the highlighted fields and complete all sections" : "Please select a photo";
       this.ngxService.stop();
     } else {
       this.ngxService.start();
@@ -220,12 +223,7 @@ export class AddCenterModalComponent {
         }, (error: any) => {
           this.ngxService.start();
           console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = error?.error?.message || genericError;
           this.ngxService.stop();
         })
     }

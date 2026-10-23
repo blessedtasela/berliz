@@ -43,6 +43,7 @@ export class TrainerComponent {
   showImageModal = false;
   showCropper = false;
   responseMessage: any;
+  photoError: string | null = null;
   previewUrl: string = 'assets/icons/user.png';
 
   constructor(
@@ -82,6 +83,7 @@ export class TrainerComponent {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    this.photoError = null;
     this.imageChangedEvent = event;
     this.showCropper = true;
   }
@@ -100,6 +102,7 @@ export class TrainerComponent {
   }
 
   cancelUpload(): void {
+    this.photoError = null;
     this.showCropper = false;
     this.imageChangedEvent = null;
     this.croppedImageBlob = null;
@@ -108,8 +111,10 @@ export class TrainerComponent {
 
   async updatePhoto(): Promise<void> {
 
+    this.photoError = null;
+
     if (!this.selectedFile) {
-      this.snackBarService.openSnackBar('Please select a photo', 'error');
+      this.photoError = 'Please select a photo and crop it before uploading.';
       return;
     }
 
@@ -154,12 +159,10 @@ export class TrainerComponent {
 
     } catch (err: any) {
       this.ngxService.stop();
-      this.snackBarService.openSnackBar(
+      this.photoError =
         err?.error?.message ||
         err?.message ||
-        'Strapi upload failed',
-        'error'
-      );
+        'Strapi upload failed';
     }
   }
 
@@ -175,26 +178,27 @@ export class TrainerComponent {
       .subscribe({
         next: (res: any) => {
           this.ngxService.stop();
-          this.snackBarService.openSnackBar(res?.message, '');
+          this.snackBarService.openSnackBar(res?.message || 'Your trainer photo has been updated', '');
           // res is the ApiResponse wrapper; the new photo is res.data.photoResponse (reading res.photoResponse
           // blanked the photo until the next page load).
           this.trainerData.photoResponse = res?.data?.photoResponse ?? this.trainerData.photoResponse;
+          this.photoError = null;
           this.showCropper = false;
           this.onEmit.emit();
         },
 
         error: (err: any) => {
           this.ngxService.stop();
-          this.snackBarService.openSnackBar(
-            err?.error?.message || genericError,
-            'error'
-          );
+          this.photoError = err?.error?.message || genericError;
         }
       });
   }
 
   formatDate(dateString: any): any {
-    return this.datePipe.transform(new Date(dateString), 'dd/MM/yyyy');
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
+    return this.datePipe.transform(date, 'dd/MM/yyyy');
   }
 
   openUrl(url: any) {

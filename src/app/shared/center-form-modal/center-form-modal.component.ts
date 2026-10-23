@@ -25,6 +25,7 @@ invalidForm: boolean = false;
 partner!: Partner;
 categories: Categories[] = [];
 responseMessage: any;
+submitError: string | null = null;
 selectedPhoto: any;
 subscriptions: Subscription[] = [];
 
@@ -113,12 +114,12 @@ addCenter(): void {
   requestData.append('photo', this.selectedPhoto);
   requestData.append('categoryIds', categoryToStrings);
 
+  this.submitError = null;
   if (this.addCenterForm.invalid) {
-    this.ngxService.start();
     this.invalidForm = true;
+    this.addCenterForm.markAllAsTouched();
     this.responseMessage = "Invalid form. Please complete all sections";
-    this.snackBarService.openSnackBar(this.responseMessage, "error");
-    this.ngxService.stop();
+    // The form already shows an inline "complete all sections" notice while invalidForm is set.
   } else {
     this.ngxService.start();
     this.centerService.addCenter(requestData)
@@ -127,7 +128,7 @@ addCenter(): void {
         this.invalidForm = false;
         this.dialogRef.close('Center account added successfully');
         this.responseMessage = response?.message;
-        this.snackBarService.openSnackBar(this.responseMessage, "");
+        this.snackBarService.openSnackBar(this.responseMessage || 'Your center account has been added', "");
         this.ngxService.stop();
         this.onAddCenterEmit.emit();
       }, (error: any) => {
@@ -138,7 +139,7 @@ addCenter(): void {
         } else {
           this.responseMessage = genericError;
         }
-        this.snackBarService.openSnackBar(this.responseMessage, "error");
+        this.submitError = this.responseMessage;
         this.ngxService.stop();
       })
   }

@@ -29,6 +29,8 @@ export class SignupComponent {
   invalidForm = false;
   formIndex = 0;
   responseMessage: string = '';
+  /** Inline error shown above the Back/Create account buttons (failed sign-up, incomplete form). */
+  submitError: string | null = null;
   selectedImage: File | null = null;
   imagePreview: string = '';
   @ViewChild(LocationFormComponent) locationFormComponent!: LocationFormComponent;
@@ -179,9 +181,11 @@ export class SignupComponent {
   }
 
   submitForm(): void {
+    this.submitError = null;
     if (this.signupForm.invalid) {
       this.invalidForm = true;
-      this.snackBarService.openSnackBar('Please complete all sections', 'error');
+      this.signupForm.markAllAsTouched();
+      this.submitError = 'Some sign-up details are missing or invalid. Go back through each step and fix the highlighted fields.';
       return;
     }
 
@@ -213,7 +217,7 @@ export class SignupComponent {
       },
       err => {
         this.responseMessage = err.error?.message || genericError;
-        this.snackBarService.openSnackBar(this.responseMessage, 'error');
+        this.submitError = this.responseMessage;
         this.ngxService.stop();
       }
     );

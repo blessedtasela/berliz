@@ -15,6 +15,7 @@ import { UnderConstructionComponent } from './under-construction/under-construct
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BerlizFeedbackModalComponent } from './berliz-feedback-modal/berliz-feedback-modal.component';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
@@ -38,6 +39,7 @@ import { BerlizFeedbackModalComponent } from './berliz-feedback-modal/berliz-fee
     IconsModule,
     ReactiveFormsModule,
     MatDialogModule,
+    SharedModule,
   ],
   exports: [
     FooterComponent,

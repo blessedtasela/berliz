@@ -51,9 +51,12 @@ describe('MyTrainerFeatureVideosComponent', () => {
     const uploaded = { strapiId: 9, name: 'intro.mp4', mimeType: 'video/mp4', videoUrl: '/uploads/intro.mp4', byteSize: 1000 } as any;
     component.slots[0] = { savedId: null, previewUrl: '', uploaded: true, video: uploaded, originalMotivation: '', touched: true } as any;
     component.featureVideosForm.get('motivation_0')?.setValue('x'.repeat(320));
-    trainerService.addTrainerFeatureVideo.and.returnValue(of({ id: 5, message: 'saved' }) as any);
+    trainerService.addTrainerFeatureVideo.and.returnValue(of({ message: 'saved', data: { id: 5 } }) as any);
 
     component.saveSlot(0);
+
+    // the saved id lives under the ApiResponse `data` wrapper
+    expect(component.slots[0].savedId).toBe(5);
 
     expect(trainerService.addTrainerFeatureVideo).toHaveBeenCalledTimes(1);
     const payload = trainerService.addTrainerFeatureVideo.calls.mostRecent().args[0];

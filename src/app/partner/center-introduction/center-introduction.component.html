@@ -78,6 +78,8 @@
 
         <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
+        <app-inline-alert [message]="submitError" (dismissed)="submitError = null"></app-inline-alert>
+
         <!-- Save -->
         <div class="flex items-center justify-between">
             <span *ngIf="hasChanges()" class="text-xs text-blue-600 font-semibold">Unsaved changes</span>

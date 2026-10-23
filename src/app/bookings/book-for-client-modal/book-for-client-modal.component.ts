@@ -37,6 +37,8 @@ export class BookForClientModalComponent implements OnInit {
   durationMinutes = 60;
   notes = '';
   submitting = false;
+  /** Inline failure message for the create-booking submit (e.g. slot taken) -- stays until fixed/dismissed. */
+  submitError: string | null = null;
 
   /** The signed-in provider's own trainer record when they are a trainer (centers have none) -- feeds the location picker. */
   myTrainer: Trainers | null = null;
@@ -89,6 +91,7 @@ export class BookForClientModalComponent implements OnInit {
     if (!this.canSubmit) return;
 
     this.submitting = true;
+    this.submitError = null;
     this.bookingService.createBookingForClient({
       clientId: this.selectedClientId,
       localDate: this.date,
@@ -104,7 +107,7 @@ export class BookForClientModalComponent implements OnInit {
       },
       error: (err) => {
         this.submitting = false;
-        this.snackBar.openSnackBar(err?.error?.message || genericError, 'error');
+        this.submitError = err?.error?.message || genericError;
       },
     });
   }

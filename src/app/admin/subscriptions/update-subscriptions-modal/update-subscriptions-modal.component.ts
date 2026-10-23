@@ -29,6 +29,7 @@ export class UpdateSubscriptionsModalComponent {
   updateSubscriptionForm!: FormGroup;
   invalidForm: boolean = false;
   responseMessage: any;
+  submitError: string | null = null;
   subscriptionData!: Subscriptions;
   trainers: Trainers[] = [];
   centers: Centers[] = [];
@@ -282,11 +283,12 @@ export class UpdateSubscriptionsModalComponent {
 
   updateSubscription(): void {
     this.ngxService.start();
+    this.submitError = null;
     if (this.updateSubscriptionForm.invalid) {
       this.invalidForm = true;
-      this.responseMessage = "Invalid form";
+      this.updateSubscriptionForm.markAllAsTouched();
+      this.submitError = "Please fill in the highlighted fields";
       this.ngxService.stop();
-      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       const selectedTagIds = this.updateSubscriptionForm.value.categoryIds.map((category: any) => category.categoryIds);
       const categoryIdsString = selectedTagIds.join(',');
@@ -306,12 +308,7 @@ export class UpdateSubscriptionsModalComponent {
           this.dialogRef.close('Subscription updated successfully');
         }, (error: any) => {
           this.ngxService.stop();
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackbarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = error?.error?.message || genericError;
         });
     }
     this.ngxService.stop();

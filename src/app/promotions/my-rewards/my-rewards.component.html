@@ -49,6 +49,7 @@
                 {{ redeeming ? 'Checking...' : 'Redeem' }}
             </button>
         </div>
+        <app-inline-alert [message]="redeemError" (dismissed)="redeemError = null"></app-inline-alert>
         <p class="text-[11px] text-gray-400 dark:text-gray-500">A code shared privately by a trainer, center, or a Berliz partnership -- not shown on any public page.</p>
     </div>
 
@@ -57,7 +58,10 @@
         <i-feather name="loader" class="text-gray-300 dark:text-gray-600 animate-spin" style="width:18px;height:18px;"></i-feather>
     </div>
 
-    <ng-container *ngIf="!loading">
+    <app-load-error *ngIf="loadError && !loading" title="Couldn't load your rewards"
+        [message]="loadError" (retry)="loadCredits()"></app-load-error>
+
+    <ng-container *ngIf="!loading && !loadError">
 
         <!-- Available credits -->
         <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-3">

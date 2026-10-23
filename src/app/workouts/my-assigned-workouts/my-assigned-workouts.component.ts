@@ -112,7 +112,13 @@ export class MyAssignedWorkoutsComponent implements OnInit, OnDestroy {
   setStatus(assignment: WorkoutAssignmentResponse, status: string): void {
     if (this.normalized(assignment.status) === status) return;
     this.store.dispatch(updateAssignmentStatus({ id: assignment.id, status }));
-    this.snackbar.openSnackBar(`Marked as ${this.statusLabel(status).toLowerCase()}`, '');
+    const workoutName = assignment.workout?.name;
+    this.snackbar.openSnackBar(
+      workoutName
+        ? `"${workoutName}" marked as ${this.statusLabel(status).toLowerCase()}`
+        : `Workout marked as ${this.statusLabel(status).toLowerCase()}`,
+      ''
+    );
   }
 
   trackByAssignmentId(_: number, assignment: WorkoutAssignmentResponse): number {

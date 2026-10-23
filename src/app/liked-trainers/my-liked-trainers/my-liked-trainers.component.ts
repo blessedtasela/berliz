@@ -9,6 +9,7 @@ import { TrainerService } from 'src/app/services/trainer.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { TrainerLikes } from 'src/app/models/trainers.interface';
 import { genericError } from 'src/validators/form-validators.module';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 
 /**
@@ -20,7 +21,7 @@ import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
  */
 @Component({
     selector: 'app-my-liked-trainers',
-    imports: [CommonModule, RouterModule, IconsModule],
+    imports: [CommonModule, RouterModule, IconsModule, LoadErrorComponent],
     providers: [DatePipe],
     templateUrl: './my-liked-trainers.component.html',
     styleUrls: ['./my-liked-trainers.component.css']
@@ -29,6 +30,8 @@ export class MyLikedTrainersComponent implements OnInit {
 
   likes: TrainerLikes[] = [];
   loading = true;
+  /** Set when the list failed to load; shown inline with a retry instead of the empty state. */
+  loadError: string | null = null;
   /** trainerId currently mid-unlike, so its row can show a disabled/pending state. */
   removingId: number | null = null;
 
@@ -38,6 +41,12 @@ export class MyLikedTrainersComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.loadLikes();
+  }
+
+  loadLikes(): void {
+    this.loading = true;
+    this.loadError = null;
     this.trainerService.getMyLikedTrainers()
       .pipe(take(1))
       .subscribe({
@@ -45,9 +54,9 @@ export class MyLikedTrainersComponent implements OnInit {
           this.likes = res?.data ?? [];
           this.loading = false;
         },
-        error: () => {
+        error: (err: any) => {
           this.loading = false;
-          this.snackBar.openSnackBar(genericError, 'error');
+          this.loadError = err?.error?.message || genericError;
         }
       });
   }

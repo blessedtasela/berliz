@@ -1,0 +1,6 @@
+<div *ngIf="message" [attr.role]="role" [ngClass]="classes"
+     class="flex items-start gap-2 rounded-xl border px-3 py-2.5 text-sm leading-snug">
+  <span class="flex-1 min-w-0 break-words">{{ message }}</span>
+  <button *ngIf="dismissible" type="button" (click)="dismiss()" aria-label="Dismiss message"
+          class="shrink-0 -mr-1 px-1 leading-none opacity-60 hover:opacity-100 transition">✕</button>
+</div>

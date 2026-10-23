@@ -58,7 +58,7 @@ export class SavedService {
       : this.http.post<ApiResponse<void>>(`${this.url}/saved`, { targetType: type, targetId: id });
 
     req$.pipe(take(1)).subscribe({
-      next: () => this.snackBar.openSnackBar(wasSaved ? 'Removed from saved' : 'Saved', ''),
+      next: () => this.snackBar.openSnackBar(wasSaved ? 'Removed from your saved items' : 'Added to your saved items', ''),
       error: () => {
         if (wasSaved) this.saved.add(k); else this.saved.delete(k);
         this.snackBar.openSnackBar('Could not update saved items', 'error');

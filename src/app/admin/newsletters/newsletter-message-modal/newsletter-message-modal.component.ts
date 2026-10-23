@@ -23,6 +23,7 @@ export class NewsletterMessageModalComponent {
   newsletterData!: Newsletter;
   invalidForm: boolean = false;
   responseMessage: string = '';
+  submitError: string | null = null;
   selectedMessage: string = ''
   selectedSubject: string = ''
   savedMessages: NewsletterMessage[] = [];
@@ -75,11 +76,12 @@ export class NewsletterMessageModalComponent {
 
   sendNewsletterMessage() {
     this.ngxService.start();
+    this.submitError = null;
     if (this.newsletterMessageForm.invalid) {
       this.invalidForm = true
-      this.responseMessage = "Invalid form"
+      this.newsletterMessageForm.markAllAsTouched();
+      this.submitError = 'Please fill in the highlighted fields';
       this.ngxService.stop()
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
     }
     else {
       this.newsletterService.sendMessage(this.newsletterMessageForm.value)
@@ -94,12 +96,7 @@ export class NewsletterMessageModalComponent {
         }, (error: any) => {
           this.ngxService.stop();
           console.error("error");
-          if (error.error?.message) {
-            this.responseMessage = error.error?.message;
-          } else {
-            this.responseMessage = genericError;
-          }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = error?.error?.message || genericError;
         });
     }
     this.ngxService.stop();

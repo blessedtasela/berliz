@@ -16,6 +16,8 @@ export class MyTodoListFormComponent {
   addTodoForm!: FormGroup;
   @Output() emitEvent = new EventEmitter();
   submitted: boolean = false;
+  /** Inline message above the Add button: validation problem or the server's reason the add failed. */
+  submitError: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -34,10 +36,11 @@ export class MyTodoListFormComponent {
 
   addTodo(): void {
     this.submitted = true;
+    this.submitError = null;
 
     if (this.addTodoForm.invalid) {
       this.addTodoForm.markAllAsTouched();
-      this.snackbar.openSnackBar('Please fix the errors in the form', 'error');
+      this.submitError = 'Describe the task in at least 20 characters and choose a due date before adding it.';
       return;
     }
 
@@ -58,13 +61,13 @@ export class MyTodoListFormComponent {
 
     this.todoService.addTodo(this.addTodoForm.value).subscribe({
       next: (res: any) => {
-        this.snackbar.openSnackBar(res.message || 'Todo added', '');
+        this.snackbar.openSnackBar(res.message || 'Task added to your to-do list', '');
         this.addTodoForm.reset({ priority: 'NORMAL' });
         this.emitEvent.emit();
         this.loader.stop();
       },
       error: (err: any) => {
-        this.snackbar.openSnackBar(err.error?.message || genericError, 'error');
+        this.submitError = err.error?.message || genericError;
         this.loader.stop();
       }
     });

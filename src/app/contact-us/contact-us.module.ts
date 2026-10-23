@@ -9,6 +9,7 @@ import { ContactUsHeroComponent } from './contact-us-hero/contact-us-hero.compon
 import { ContactUsPageComponent } from './contact-us-page/contact-us-page.component';
 import { FeatherModule } from 'angular-feather';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
     NavbarModule,
     FooterModule,
     MatDialogModule,
-    FeatherModule
+    FeatherModule,
+    SharedModule
   ]
 })
 export class ContactUsModule { }

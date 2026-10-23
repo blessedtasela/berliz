@@ -147,6 +147,8 @@
       </span>
     </div>
 
+    <app-inline-alert [message]="submitError" [kind]="'error'" [dismissible]="true" (dismissed)="submitError = null"></app-inline-alert>
+
     <button type="button"
       (click)="addTodo()"
       [disabled]="addTodoForm.invalid"

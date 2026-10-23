@@ -238,7 +238,7 @@ export class MyWorkoutsComponent implements OnInit, OnDestroy {
 
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe(() => {
       this.store.dispatch(deleteWorkout({ id: workout.id }));
-      this.snackbar.openSnackBar('Workout deleted', '');
+      this.snackbar.openSnackBar(`"${workout.name}" deleted`, '');
       dialogRef.close();
     });
 

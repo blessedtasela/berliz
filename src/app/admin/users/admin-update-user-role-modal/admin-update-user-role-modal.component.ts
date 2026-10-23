@@ -6,6 +6,7 @@ import { Role, Users } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { genericError } from 'src/validators/form-validators.module';
 import { UserService } from 'src/app/services/user.service';
+import jwt_decode from 'jwt-decode';
 
 @Component({
     selector: 'app-update-user-role-modal',
@@ -19,6 +20,7 @@ export class AdminUpdateUserRoleModalComponent {
   updateUserRoleForm!: FormGroup;
   userData: Users;
   responseMessage: any;
+  submitError: string | null = null;
   roles: Role[] = [{
     id: 1, role: 'admin'
   }, {
@@ -37,6 +39,12 @@ export class AdminUpdateUserRoleModalComponent {
     id: 8, role: 'driver'
   },]
 
+  /**
+   * Only the super admin may make or remove an admin, or change an admin's role (the server enforces it; this just
+   * stops the UI offering what would be refused). The token carries a `superAdmin` hint.
+   */
+  isSuperAdmin = false;
+
   constructor(private formBuilder: FormBuilder,
     private userService: UserService,
     public dialogRef: MatDialogRef<AdminUpdateUserRoleModalComponent>,
@@ -44,6 +52,16 @@ export class AdminUpdateUserRoleModalComponent {
     private snackbarService: SnackBarService,
     @Inject(MAT_DIALOG_DATA) public data: any) {
     this.userData = this.data.userData;
+    try {
+      const token = localStorage.getItem('token');
+      this.isSuperAdmin = !!token && (jwt_decode(token) as any)?.superAdmin === true;
+    } catch { this.isSuperAdmin = false; }
+    if (!this.isSuperAdmin) this.roles = this.roles.filter(r => r.role !== 'admin');
+  }
+
+  /** An admin account's role is the super admin's to change. */
+  get locked(): boolean {
+    return this.userData?.role === 'admin' && !this.isSuperAdmin;
   }
 
 
@@ -55,12 +73,14 @@ export class AdminUpdateUserRoleModalComponent {
   }
 
   updateUserRole(): void {
+    if (this.locked) return;
     this.ngxService.start();
+    this.submitError = null;
     if (this.updateUserRoleForm.invalid) {
       this.invalidForm = true
-      this.responseMessage = "Invalid form"
+      this.updateUserRoleForm.markAllAsTouched();
+      this.submitError = 'Please fill in the highlighted fields';
       this.ngxService.stop();
-      this.snackbarService.openSnackBar(this.responseMessage, "error");
     } else {
       this.userService.updateUserRole(this.updateUserRoleForm.value)
         .subscribe((response: any) => {
@@ -76,12 +96,7 @@ export class AdminUpdateUserRoleModalComponent {
           , (error: any) => {
             this.ngxService.stop();
             console.error("error");
-            if (error.error?.message) {
-              this.responseMessage = error.error?.message;
-            } else {
-              this.responseMessage = genericError;
-            }
-            this.snackbarService.openSnackBar(this.responseMessage, "error");
+            this.submitError = error?.error?.message || genericError;
           });
     }
     this.ngxService.stop();

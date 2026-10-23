@@ -16,6 +16,7 @@ export class ContactUsFormComponent implements OnInit {
   contactUsForm!: FormGroup;
   invalidForm: boolean = false;
   responseMessage: string = '';
+  submitError: string | null = null;
 
   constructor(private formBuilder: FormBuilder,
     private contactUsService: ContactUsService,
@@ -36,10 +37,12 @@ export class ContactUsFormComponent implements OnInit {
 
   submitForm() {
     this.responseMessage = '';
+    this.submitError = null;
     if (this.contactUsForm.invalid) {
       this.invalidForm = true
       this.responseMessage = "Please fill out the form correctly.";
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
+      this.contactUsForm.markAllAsTouched();
+      this.submitError = 'Enter your full name, a valid email, and a message of at least 20 characters.';
     }
     else {
       this.ngxService.start()
@@ -47,7 +50,7 @@ export class ContactUsFormComponent implements OnInit {
         .subscribe((response: any) => {
           this.contactUsForm.reset();
           this.invalidForm = false;
-          this.responseMessage = response?.message;
+          this.responseMessage = response?.message || 'Your message has been sent. We will get back to you soon.';
           this.snackBarService.openSnackBar(this.responseMessage, "");
           this.onAddContactUsEmit.emit()
           this.ngxService.stop()
@@ -59,7 +62,7 @@ export class ContactUsFormComponent implements OnInit {
           } else {
             this.responseMessage = genericError;
           }
-          this.snackBarService.openSnackBar(this.responseMessage, "error");
+          this.submitError = this.responseMessage;
         });
     }
   }

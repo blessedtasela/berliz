@@ -561,6 +561,24 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 
+### Unreleased — Follow-ups: super-admin role picker, blank Trainers list, mobile visual pass
+
+- **Role picker:** the admin Users "Update user role" dialog no longer offers "admin" unless you are the super admin, and an admin
+  account's role shows as locked with a note for everyone else (the server already refused it; the UI just stopped offering it).
+  The access token now carries a `superAdmin` hint claim for that one account (display only: every operation is still authorised
+  server-side).
+- **Admin Trainers list was completely blank** (every cell empty) as soon as one trainer had no photo, because the template read
+  `photoResponse.photoUrl` on `null`. Fixed here and in the trainer detail page/modal and the pricing dialog.
+- **One bad date no longer blanks a list:** the `formatDate` helper copied into 72 list/detail components threw on a missing or unreadable
+  date (Angular's date pipe), which stopped the whole table rendering. They now show nothing for such a date. Avatar no longer throws when
+  a name is missing.
+- **Mobile app** (looked at the screens in a web build against a mock API, light and dark): the header wordmark was dark-on-dark in dark
+  mode (now the white logo in the top bar, guest header and welcome screen); the home "App analytics" chart printed every module name on
+  top of each other (now at most four evenly spaced labels); Workout Room showed "Invalid Date" for a log without a date; the Runs
+  search box was a thin sliver next to the 44 px button (now 44 px); Deals showed a bare "By" with no owner.
+- Billing overview "Refunds this month" counts a payment's whole cumulative refunded total when it was refunded at all this month, so a
+  payment partly refunded last month and again this month is counted at its full total. Fine for a glance; not an accounting report.
+
 ### Unreleased — UI pass: crushed tables and buttons, stray scrollbar, empty-state polish
 
 Looked at every dashboard screen (68 routes, desktop and phone) rather than only running automated checks. Fixed:

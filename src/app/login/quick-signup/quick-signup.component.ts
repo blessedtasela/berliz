@@ -19,6 +19,8 @@ export class QuickSignupComponent implements AfterViewInit {
   quickSignupForm!: FormGroup;
   invalidForm: boolean = false;
   responseMessage: any;
+  /** Inline error shown above the submit button (failed sign-up, invalid form, social sign-up failure). */
+  submitError: string | null = null;
   /** True once the official "Sign in with Google" button has actually rendered. */
   googleReady = false;
 
@@ -63,9 +65,12 @@ export class QuickSignupComponent implements AfterViewInit {
   }
 
   quickSignup(): void {
+    this.submitError = null;
     if (this.quickSignupForm.invalid) {
       this.invalidForm = true;
       this.responseMessage = 'Invalid form';
+      this.quickSignupForm.markAllAsTouched();
+      this.submitError = 'Enter a valid email address and a matching password of at least 8 characters.';
       this.ngxService.stop();
     } else {
       this.ngxService.start();
@@ -93,19 +98,19 @@ export class QuickSignupComponent implements AfterViewInit {
             } else {
               this.responseMessage = genericError;
             }
-            this.snackBarService.openSnackBar(this.responseMessage, "error");
+            this.submitError = this.responseMessage;
           });
-      this.snackBarService.openSnackBar(this.responseMessage, "error");
     }
   }
 
   clear() {
     this.quickSignupForm.reset();
+    this.submitError = null;
   }
 
   /** Fallback click handler shown only while Google Sign-In isn't configured yet. */
   loginWithGoogleFallback(): void {
-    this.snackBarService.openSnackBar('Google sign-up is not configured yet. Please try again later.', 'error');
+    this.submitError = 'Google sign-up is not configured yet. Please try again later.';
   }
 
   private handleGoogleCredential(idToken: string): void {
@@ -117,6 +122,7 @@ export class QuickSignupComponent implements AfterViewInit {
   }
 
   loginWithFacebook(): void {
+    this.submitError = null;
     this.socialAuthService.loginWithFacebook()
       .then((accessToken) => {
         this.ngxService.start();
@@ -126,7 +132,7 @@ export class QuickSignupComponent implements AfterViewInit {
         });
       })
       .catch((err: any) => {
-        this.snackBarService.openSnackBar(err?.message || 'Facebook sign-up is not configured yet.', 'error');
+        this.submitError = err?.message || 'Facebook sign-up is not configured yet.';
       });
   }
 
@@ -135,7 +141,7 @@ export class QuickSignupComponent implements AfterViewInit {
     const auth = response?.data;
     if (!auth?.accessToken) {
       this.responseMessage = response?.message || genericError;
-      this.snackBarService.openSnackBar(this.responseMessage, 'error');
+      this.submitError = this.responseMessage;
       return;
     }
 
@@ -150,7 +156,7 @@ export class QuickSignupComponent implements AfterViewInit {
   private handleSocialAuthError(error: any): void {
     this.ngxService.stop();
     this.responseMessage = error.error?.message || genericError;
-    this.snackBarService.openSnackBar(this.responseMessage, 'error');
+    this.submitError = this.responseMessage;
   }
 
 }

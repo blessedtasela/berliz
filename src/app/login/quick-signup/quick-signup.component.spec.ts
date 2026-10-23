@@ -141,7 +141,7 @@ describe('QuickSignupComponent', () => {
       tick();
 
       expect(router.navigate).not.toHaveBeenCalledWith(['/dashboard']);
-      expect(snackBarService.openSnackBar).toHaveBeenCalledWith('Invalid Facebook token', 'error');
+      expect(component.submitError).toBe('Invalid Facebook token');
     }));
   });
 });
