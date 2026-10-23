@@ -85,6 +85,12 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   private localVisibility: ProfileVisibility | null = null;
   savingVisibility = false;
 
+  // ── Achievements on the public profile ──────────────────────────────────
+  /** Null until the user flips the switch, then the value just saved; otherwise the server's value wins. */
+  private localShowAchievements: boolean | null = null;
+  private serverShowAchievements = true;
+  savingShowAchievements = false;
+
   // ── Sidebar display preference ──────────────────────────────────────────
   savingSidebarDisplay = false;
 
@@ -156,6 +162,8 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
         if (user) {
           this.user = user;
           this.serverVisibility = user.profileVisibility === 'public' ? 'public' : 'private';
+          this.serverShowAchievements = user.showAchievements !== false;
+          this.localShowAchievements = null;
           this.serverMessagePopupEnabled = user.messagePopupEnabled !== false;
           this.serverEmailNotifyMessages = user.emailNotifyMessages !== false;
           this.serverEmailNotifyBookings = user.emailNotifyBookings !== false;
@@ -279,6 +287,31 @@ export class UserProfileSettingsComponent implements OnInit, OnDestroy {
   get publicProfileLink(): string | null {
     if (this.user?.username) return `/user/${this.user.username}`;
     return this.user?.id ? `/user/${this.user.id}` : null;
+  }
+
+  get showAchievements(): boolean {
+    return this.localShowAchievements ?? this.serverShowAchievements;
+  }
+
+  toggleShowAchievements(): void {
+    if (this.savingShowAchievements) return;
+
+    const next = !this.showAchievements;
+    this.savingShowAchievements = true;
+    this.userService.updateShowAchievements(next)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          this.savingShowAchievements = false;
+          this.localShowAchievements = next;
+          this.snackBarService.openSnackBar(res?.data || res?.message || 'Saved.', '');
+          this.store.dispatch(refreshUser());
+        },
+        error: err => {
+          this.savingShowAchievements = false;
+          this.snackBarService.openSnackBar(err?.error?.message || genericError, 'error');
+        },
+      });
   }
 
   toggleProfileVisibility(): void {
