@@ -1538,6 +1538,12 @@ careful pass so the two mechanisms don't fight each other. `draft-resume-banner`
 `bg-amber-50` card that would need a real dark-mode treatment (not just swapped text colors)
 to avoid looking like a bright patch on a dark page — deferred rather than doing it half-right.
 
+### Unreleased — Disciplines vs Services
+
+- **Renamed.** What was called "Services" (Boxing, Yoga, Powerlifting… — the `category` data) is now **Disciplines**: `/disciplines`, `/disciplines/:id/:name`, `/disciplines/equipment`, `/disciplines/exercises`, with the wording changed in the hero, search, cards, footer, nav bar, global search and dashboard. `category` stays the data/API name. FAQs moved to their own `/faqs`. Old `/services/<id>/<name>`, `/services/equipment|exercises|faqs`, `/testimonials`, `/equipments` and `/exercises` redirect.
+- **Services is now what Berliz offers.** `/services` lists online, hybrid and in-person personal training, gyms & training centers, and the shop (coming soon), with the Disciplines underneath; `/services/:slug` is a detail page for each (summary, how it works, what you get, who it suits, and the trainers for that mode or the centers you can book). Content lives in `berliz-services/berliz-services.ts` — keep the mobile copy (`utils/berliz-services.ts`) in step. The training-mode buttons open `/trainers?mode=ONLINE|HYBRID|IN_PERSON`. The landing page's "What Berliz offers" section now shows these services (it was an empty list) and links to them.
+- Prerender list and sitemap updated; SEO copy for `/services`, `/disciplines` and `/faqs`.
+
 ### Unreleased — Dark mode: first batch of high-traffic surfaces (D13 continued)
 
 Second pass on top of the theme infrastructure/shell/Settings work already on master. Added

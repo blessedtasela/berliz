@@ -78,11 +78,10 @@ export class SeoService {
 
   /**
    * Maps a path like '/trainers/jane-doe' to the 'trainers' config key, falling
-   * back to 'default'. Tries the first TWO segments first (e.g. '/services/faqs'
-   * -> 'services/faqs') so real child pages nested under a parent route (like
-   * FAQs under Services) can carry their own SEO copy instead of silently
-   * inheriting the parent's — then falls back to the first segment alone (e.g.
-   * '/services/42/some-category' -> 'services').
+   * back to 'default'. Tries the first TWO segments first (e.g. '/disciplines/equipment'
+   * -> 'disciplines/equipment') so real child pages nested under a parent route can carry their own SEO copy
+   * instead of silently inheriting the parent's — then falls back to the first segment alone (e.g.
+   * '/disciplines/42/some-category' -> 'disciplines').
    */
   private resolveMetaData(cleanPath: string): MetaData {
     const segments = cleanPath.split('/').filter(Boolean);

@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Optional, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 import { Trainers, TrainerLikes } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { TrainerService } from 'src/app/services/trainer.service';
@@ -15,7 +16,7 @@ import { selectCurrentTrainer, selectTrainerLikes } from 'src/app/state/trainer/
 import { loadTrainerLikes } from 'src/app/state/trainer/trainer.actions';
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
-import { DEFAULT_PROVIDER_CRITERIA, ProviderFilterCriteria, applyProviderFilters } from 'src/app/shared/provider-profile/provider-filters';
+import { DEFAULT_PROVIDER_CRITERIA, ProviderFilterCriteria, ProviderMode, applyProviderFilters } from 'src/app/shared/provider-profile/provider-filters';
 
 
 @Component({
@@ -81,9 +82,17 @@ export class TrainersSearchResultComponent implements OnInit, OnDestroy {
     private snackbar: SnackBarService,
     private dialog: MatDialog,
     private authRedirect: AuthRedirectService,
+    @Optional() private route?: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
+    // Opened from a service page ("Find online trainers"): start filtered to that mode.
+    const mode = (this.route?.snapshot?.queryParamMap?.get('mode') ?? '').toUpperCase();
+    if (mode === 'ONLINE' || mode === 'HYBRID' || mode === 'IN_PERSON') {
+      this.criteria = { ...this.criteria, mode: mode as ProviderMode };
+      this.recompute();
+    }
+
     // User
     this.subs.push(this.store.select(selectUser).subscribe(u => this.user = u));
 

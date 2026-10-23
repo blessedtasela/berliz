@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
 import { IconsModule } from 'src/app/icons/icons.module';
+import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 import { Categories } from 'src/app/models/categories.interface';
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
@@ -17,7 +18,7 @@ import { BERLIZ_SERVICES, BerlizService } from '../berliz-services';
  */
 @Component({
   selector: 'app-services-page',
-  imports: [CommonModule, RouterModule, IconsModule],
+  imports: [CommonModule, RouterModule, IconsModule, StrapiUrlPipe],
   templateUrl: './services-page.component.html',
 })
 export class ServicesPageComponent implements OnInit {

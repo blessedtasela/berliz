@@ -1,6 +1,7 @@
 <!-- ═══════════════════════════════════════════════
      OFFER CARD
 ════════════════════════════════════════════════ -->
+<a [routerLink]="offers.slug ? ['/services', offers.slug] : null" class="block h-full">
 <div class="h-full flex flex-col items-center justify-start text-center gap-4 p-6
             bg-zinc-900 rounded-2xl border border-zinc-800
             hover:border-red-600/40 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(220,38,38,0.12)]
@@ -21,3 +22,4 @@
     {{ offers.description }}
   </p>
 </div>
+</a>

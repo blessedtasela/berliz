@@ -1,5 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Promotions } from '../../models/promotion.model';
+import { BERLIZ_SERVICES } from 'src/app/berliz-services/berliz-services';
 import { Offers } from '../../models/offers.model';
 import { StateService } from 'src/app/services/state.service';
 
@@ -12,11 +13,13 @@ import { StateService } from 'src/app/services/state.service';
 
 export class LandingPageComponent implements OnInit {
   promotions: Promotions[] = [];
-  offers: Offers[] = [];
+  offers: Offers[] = BERLIZ_SERVICES.filter(s => !s.comingSoon).map((s, i) => ({
+    id: i + 1, title: s.title, description: s.tagline, subTitle: '', iconUrl: s.icon, slug: s.slug,
+  }));
 
   constructor(private stateService: StateService) {
     this.promotions = this.stateService.promotions;
-    this.offers = this.stateService.offers;
+    // offers: the real services (see berliz-services.ts), not an empty state-service list.
   }
 
   ngOnInit(): void {

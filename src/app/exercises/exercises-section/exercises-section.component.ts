@@ -15,7 +15,7 @@ import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-u
 
 /**
  * PUBLIC exercise browsing. Rendered as its own full page at
- * `/services/exercises`, with a cinematic hero banner (see
+ * `/disciplines/exercises`, with a cinematic hero banner (see
  * exercises-section.component.html). There was no working public exercises
  * page to reuse: the old `/exercises` route pointed at a "Coming Soon" stub,
  * so this is built fresh on the same `loadActiveExercises()` /
