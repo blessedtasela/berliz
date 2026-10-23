@@ -10,9 +10,17 @@ import { Subscriptions } from 'src/app/models/subscriptions.interface';
 export class MySubscriptionsTimelineComponent {
  @Input() subscriptions: Subscriptions[] = [];
 
+  // Cached per input array: a getter that returned a fresh array on every change-detection pass made *ngFor re-diff each time.
+  private sortedFrom: Subscriptions[] | null = null;
+  private sortedCache: Subscriptions[] = [];
+
   get sorted() {
-    return [...this.subscriptions].sort((a, b) =>
-      new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
-    );
+    if (this.sortedFrom !== this.subscriptions) {
+      this.sortedFrom = this.subscriptions;
+      this.sortedCache = [...this.subscriptions].sort((a, b) =>
+        new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+      );
+    }
+    return this.sortedCache;
   }
 }

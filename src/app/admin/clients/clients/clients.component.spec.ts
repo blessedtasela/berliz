@@ -42,7 +42,7 @@ describe('ClientsComponent', () => {
 
       expect(el().textContent).toContain("Couldn't load clients");
       expect(el().textContent).toContain('Server exploded');
-      expect(/<app-[a-z-]+-(header|list)\b/.test(el().innerHTML)).toBeFalse();
+      expect(/<app-(?!page-)[a-z-]+-(header|list)\b/.test(el().innerHTML)).toBeFalse();
     });
 
     it('retrying loads them again, and a success brings the table back', () => {

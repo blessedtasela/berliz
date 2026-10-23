@@ -11,10 +11,18 @@ export class MyTodoListTimelineComponent {
 
   @Input() todos: TodoList[] = [];
 
+  // Cached per input array (see MySubscriptionsTimelineComponent.sorted).
+  private sortedFrom: TodoList[] | null = null;
+  private sortedCache: TodoList[] = [];
+
   get sortedTodos() {
-    return [...this.todos].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-    );
+    if (this.sortedFrom !== this.todos) {
+      this.sortedFrom = this.todos;
+      this.sortedCache = [...this.todos].sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+      );
+    }
+    return this.sortedCache;
   }
 
   isOverdue(t: TodoList): boolean {

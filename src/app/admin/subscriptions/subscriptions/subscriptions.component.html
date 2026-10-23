@@ -1,3 +1,4 @@
+<app-page-header icon="layers" title="Subscriptions" subtitle="Plans and packages members have bought"></app-page-header>
 <app-admin-search [selector]="selectSubscriptions" [fields]="subscriptionSearchFields"
     placeholder="Search subscriptions..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-load-error *ngIf="loadError && subscriptionsData.length === 0" title="Couldn't load subscriptions" [message]="loadError" (retry)="retryLoad()"></app-load-error>
