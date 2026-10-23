@@ -35,6 +35,7 @@ import { UnderConstructionPageComponent } from './under-construction-page/under-
 import { TimeAgoPipe } from './shared/pipes/time-ago.pipe';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { ClientMetaInterceptor } from './services/client-meta.interceptor';
+import { MutationRefreshInterceptor } from './services/mutation-refresh.interceptor';
 import { RequestActivityInterceptor } from './services/request-activity.service';
 import { GlobalErrorHandlerService } from './services/global-error-handler.service';
 import { StoreModule } from '@ngrx/store';
@@ -240,6 +241,12 @@ const dbConfig: DBConfig = {
         {
             provide: MAT_DIALOG_DEFAULT_OPTIONS,
             useValue: { disableClose: true, hasBackdrop: true }
+        },
+        // Outermost, so it sees the final response (after the auth interceptor's token-refresh retry).
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: MutationRefreshInterceptor,
+            multi: true
         },
         {
             provide: HTTP_INTERCEPTORS,

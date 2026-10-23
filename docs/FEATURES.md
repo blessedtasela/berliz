@@ -189,6 +189,11 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Fix: changes now show on screen straight away (admin and user lists)
+
+- **What was wrong.** An admin could activate or deactivate a trainer and get "success", but the row kept its old status until a manual refresh. Over a hundred components save through a service call directly and then wait for the server's WebSocket broadcast to update the list; if that push is missed (reconnecting socket, a payload the server could not serialize, a second tab) the list stays stale.
+- **The fix.** After any successful create / update / delete, the app now re-fetches the lists that change affects (`MutationRefreshInterceptor` + `MUTATION_REFRESH_RULES`): trainers and each trainer section (pricing, benefits, intro, photo/video albums, feature videos, reviews, subscriptions), centers and each center section, clients, partners, members, FAQs, testimonials, categories, exercises, muscle groups, newsletters, contact messages, tags, to-dos, tasks, plans, payments, payouts, subscriptions, users, bookings, workouts, connections, progress, intake forms and availability. Admins refresh the full admin lists; other roles refresh only what they may load (their own records, public lists). Bursts refresh once, failed calls and `success:false` answers refresh nothing, and likes and view counters are skipped. New endpoint? Add a line to the rules table.
+
 ### Unreleased — Hide my achievements (web, mobile, backend)
 
 - **A separate switch for achievements.** Settings → Profile visibility (web) and Settings → Public profile (mobile) now have *Achievements shown / hidden*. Before, achievements simply followed the profile-visibility switch, so someone with a public profile could not keep their achievements private. When hidden, the public profile sends an empty list (indistinguishable from having none), the rest of the profile is unaffected, and the owner and Berliz's super admin still see them. Default is shown, so nobody's profile changes until they switch it off.
