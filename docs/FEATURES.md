@@ -190,6 +190,12 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Fix: a discipline's page falsely said "not found"; expired-session purchases showed a raw backend error
+
+- **Discipline detail page.** `/category/getCategory/{id}` (and its `/discipline` alias) were bypassed in `JWTFilter`'s public-path regex but missing from `SecurityConfig`'s own `permitAll` list, so `.anyRequest().authenticated()` 401'd every anonymous visitor before the controller ever ran. `CategoryGuard` couldn't tell that 401 apart from a genuinely missing discipline and showed "Category not found" for a perfectly real one. Fixed on both sides: the backend route is now actually public, and the guard says "Discipline not found" and only for a real 404 — any other failure (401, network) lets the page through instead of lying about non-existence. Also fixed two dead `/categories` links (center profile's "Disciplines" section, and the unused `TrainerCategoryComponent`) that 404'd instead of reaching `/disciplines/:id/:name`.
+- **Buying a plan after a quiet session expiry.** Access tokens last about an hour; a signed-in-looking user whose token expired mid-visit would get the raw backend message ("Full authentication is required to access this resource") instead of something they could act on, on both the Level Up page (buy a pack/subscription) and My Subscriptions → Plans (select a plan, checkout, redeem a code). Both now recognize a 401/auth-flavored failure and send the user to sign back in — Level Up reuses its existing guest "sign in to continue" hand-off (treats the expired session as the equivalent state), My Subscriptions redirects straight to `/login` with a `returnUrl` back to the page. New shared `utils/auth-error.util.ts` (`isUnauthorizedHttpError`, `isSessionExpiredMessage`).
+- **Booking-is-a-page and the Level Up page were already shipped** (see the entry below) — this pass found and closed the gap where their error handling still leaked raw backend text.
+
 ### Unreleased — Booking is always a page; plans get their own "Level Up" page
 
 - **Book a session is a page, never a pop-up.** Every "Book a session" button (public and signed-in trainer/center pages, the book button on feed posts

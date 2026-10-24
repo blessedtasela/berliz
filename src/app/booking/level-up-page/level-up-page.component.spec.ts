@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ProviderPackage } from 'src/app/models/provider-package.model';
 import { LevelUpPageComponent } from './level-up-page.component';
@@ -133,6 +133,49 @@ describe('LevelUpPageComponent', () => {
       page.buy();
 
       expect(purchasePackage).not.toHaveBeenCalled();
+    });
+
+    /**
+     * Regression coverage: a session that quietly expired while this page was open (access tokens
+     * last about an hour) used to show the raw backend message ("Full authentication is required
+     * to access this resource") via submitError instead of the same "sign in to continue" hand-off
+     * a true guest sees -- isGuest alone doesn't catch this, since the page's cached user profile
+     * still looks signed-in until the request actually fails.
+     */
+    it('a 401 starting the purchase is treated as an expired session, not a generic failure', () => {
+      purchasePackage.and.returnValue(throwError(() => ({ status: 401 })));
+      page.selectedPlan = plan();
+      const saveDraft = spyOn(page, 'saveDraft');
+
+      page.buy();
+
+      expect(page.user).toBeNull();
+      expect(page.showAuthPrompt).toBeTrue();
+      expect(saveDraft).toHaveBeenCalled();
+      expect(page.submitError).toBeNull();
+    });
+
+    it('a 401 starting checkout (after a successful purchase) is also treated as an expired session', () => {
+      createCheckoutSession.and.returnValue(throwError(() => ({ status: 401 })));
+      page.selectedPlan = plan();
+      const saveDraft = spyOn(page, 'saveDraft');
+
+      page.buy();
+
+      expect(page.user).toBeNull();
+      expect(page.showAuthPrompt).toBeTrue();
+      expect(saveDraft).toHaveBeenCalled();
+      expect(page.submitError).toBeNull();
+    });
+
+    it('a non-401 failure still shows the plain message, not the sign-in hand-off', () => {
+      purchasePackage.and.returnValue(throwError(() => ({ status: 500, error: { message: 'boom' } })));
+      page.selectedPlan = plan();
+
+      page.buy();
+
+      expect(page.showAuthPrompt).toBeFalse();
+      expect(page.submitError).toBe('boom');
     });
   });
 

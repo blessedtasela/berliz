@@ -23,6 +23,7 @@ import {
   PLAN_KIND_BLURB, PLAN_KIND_LABEL, PlanGroup, groupPlansByKind, planActionLabel, planCheckoutNote, planIncludes, planKind, planPriceNote,
 } from 'src/app/utils/provider-package.util';
 import { environment } from 'src/environments/environment';
+import { isUnauthorizedHttpError } from 'src/app/utils/auth-error.util';
 import { clearGuestDraft, loadGuestDraft, saveGuestDraft } from '../guest-booking-draft';
 import { ProviderKind, providerSlug, resolveProviderBySlug } from '../resolve-provider';
 
@@ -303,17 +304,31 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
             }
             window.location.href = checkoutUrl;
           },
-          error: () => {
+          error: err => {
             this.buyingPlanId = null;
-            this.submitError = 'Could not start checkout — try again.';
+            if (!this.handleSessionExpired(err)) this.submitError = 'Could not start checkout — try again.';
           }
         });
       },
       error: err => {
         this.buyingPlanId = null;
-        this.submitError = err?.error?.message || 'Could not start that purchase — try again.';
+        if (!this.handleSessionExpired(err)) this.submitError = err?.error?.message || 'Could not start that purchase — try again.';
       }
     });
+  }
+
+  /**
+   * A 401 here means the session quietly expired while this page was open (access tokens last
+   * about an hour) -- `isGuest` only catches someone who was never logged in, so without this the
+   * raw backend message ("Full authentication is required to access this resource") would show
+   * verbatim via submitError instead of a sentence anyone can act on. Routing it through the same
+   * "sign in to continue" hand-off a true guest sees reuses a UI that already works correctly.
+   */
+  private handleSessionExpired(err: { status?: number }): boolean {
+    if (!isUnauthorizedHttpError(err)) return false;
+    this.user = null;
+    this.promptToSignIn();
+    return true;
   }
 
   // ── Guest hand-off ───────────────────────────────────────────────────────

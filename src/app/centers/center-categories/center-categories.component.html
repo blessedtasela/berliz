@@ -39,7 +39,7 @@
                     <i-feather name="thumbs-up" style="width:11px;height:11px;" class="text-red-400"></i-feather>
                     {{ c.likes || 0 }}
                 </span>
-                <a [routerLink]="['/categories', c.id, formatCategoryName(c.name)]"
+                <a [routerLink]="['/disciplines', c.id, formatCategoryName(c.name)]"
                     class="text-[10px] font-semibold text-red-400 hover:text-red-300 transition">
                     Know more
                 </a>

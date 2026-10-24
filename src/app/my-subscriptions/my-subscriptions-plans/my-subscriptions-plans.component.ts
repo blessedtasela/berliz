@@ -4,11 +4,13 @@ import { Store } from '@ngrx/store';
 import { Subject, catchError, forkJoin, map, of, take, takeUntil } from 'rxjs';
 
 import { Plan } from 'src/app/models/plan.model';
+import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { BypassCodeService } from 'src/app/services/bypass-code.service';
 import { DiscountCodeService, DiscountPreview } from 'src/app/services/discount-code.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { StripeService } from 'src/app/services/stripe.service';
+import { isSessionExpiredMessage, isUnauthorizedHttpError } from 'src/app/utils/auth-error.util';
 import { loadPlans, loadPlansFailure, loadPlansSuccess } from 'src/app/state/plan/plan.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectPlanLoading, selectPlans } from 'src/app/state/plan/plan.selectors';
@@ -54,11 +56,24 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
     private store: Store,
     private actions$: Actions,
     private authService: AuthService,
+    private authRedirect: AuthRedirectService,
     private bypassCodeService: BypassCodeService,
     private discountCodeService: DiscountCodeService,
     private snackBar: SnackBarService,
     private stripeService: StripeService,
   ) { }
+
+  /**
+   * This page is behind AuthGuard, so the only way to reach it unauthenticated is a session that
+   * quietly expired while it was already open (access tokens last about an hour). Without this, a
+   * purchase/redeem action would show the raw backend message ("Full authentication is required to
+   * access this resource") instead of a sentence anyone can act on. There's no guest-friendly state
+   * on this page the way Level Up's has, so the fix is simply to send them to log back in.
+   */
+  private handleSessionExpired(): void {
+    this.snackBar.openSnackBar('Your session has expired. Please log in again to continue.', 'error');
+    this.authRedirect.goToLogin();
+  }
 
   /** Which subset of the shared Plan catalog this signed-in role should see. */
   private get myTargetRole(): 'client' | 'trainer' | 'center' {
@@ -149,6 +164,7 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
       .pipe(ofType(selectPlanFailure), takeUntil(this.destroy$))
       .subscribe(({ error }) => {
         this.selectingPlanId = null;
+        if (isSessionExpiredMessage(error)) { this.handleSessionExpired(); return; }
         this.snackBar.openSnackBar(error || 'Could not select that plan. Please try again.', 'error');
       });
   }
@@ -195,6 +211,7 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
       error: err => {
         this.redirectingToCheckout = false;
         this.selectingPlanId = null;
+        if (isUnauthorizedHttpError(err)) { this.handleSessionExpired(); return; }
         this.snackBar.openSnackBar(err.error?.message || 'Could not start checkout — try again', 'error');
       },
     });
@@ -260,6 +277,7 @@ export class MySubscriptionsPlansComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.redeeming = false;
+          if (isUnauthorizedHttpError(err)) { this.handleSessionExpired(); return; }
           this.redeemError = err?.error?.message || 'Could not redeem that code.';
         }
       });

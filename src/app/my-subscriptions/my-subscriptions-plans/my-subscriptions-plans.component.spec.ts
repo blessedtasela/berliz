@@ -5,10 +5,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { InlineAlertComponent } from '../../shared/inline-alert/inline-alert.component';
 import { Actions } from '@ngrx/effects';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { Subject } from 'rxjs';
+import { Subject, throwError } from 'rxjs';
 
 import { MySubscriptionsPlansComponent } from './my-subscriptions-plans.component';
 import { IconsModule } from 'src/app/icons/icons.module';
+import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { BypassCodeService } from 'src/app/services/bypass-code.service';
@@ -24,6 +25,7 @@ describe('MySubscriptionsPlansComponent', () => {
   let store: MockStore;
   let actions$: Subject<any>;
   let snackBarSpy: jasmine.SpyObj<SnackBarService>;
+  let authRedirectSpy: jasmine.SpyObj<AuthRedirectService>;
   let httpMock: HttpTestingController;
 
   const plans: Plan[] = [
@@ -42,6 +44,7 @@ describe('MySubscriptionsPlansComponent', () => {
   beforeEach(() => {
     actions$ = new Subject<any>();
     snackBarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
+    authRedirectSpy = jasmine.createSpyObj('AuthRedirectService', ['goToLogin']);
     const bypassCodeServiceSpy = jasmine.createSpyObj('BypassCodeService', ['redeem']);
 
     TestBed.configureTestingModule({
@@ -56,6 +59,7 @@ describe('MySubscriptionsPlansComponent', () => {
         }),
         { provide: Actions, useValue: actions$ },
         { provide: SnackBarService, useValue: snackBarSpy },
+        { provide: AuthRedirectService, useValue: authRedirectSpy },
         { provide: BypassCodeService, useValue: bypassCodeServiceSpy },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
@@ -161,6 +165,52 @@ describe('MySubscriptionsPlansComponent', () => {
       'You already have an active subscription.', 'error'
     );
     expect(component.selectingPlanId).toBeNull();
+  });
+
+  /**
+   * This page is behind AuthGuard, so the only way selectPlan/checkout/redeem can fail with an
+   * auth error is a session that quietly expired while the page was already open (access tokens
+   * last about an hour). Before this fix, the raw backend message ("Full authentication is
+   * required to access this resource") was shown verbatim instead of something anyone could act on.
+   */
+  describe('a session that expired mid-page', () => {
+    it('sends the user to log back in instead of showing the raw message, on selectPlanFailure', () => {
+      fixture.detectChanges();
+      component.choosePlan(plans[0]);
+
+      actions$.next(selectPlanFailure({ error: 'Full authentication is required to access this resource' }));
+
+      expect(snackBarSpy.openSnackBar).toHaveBeenCalledWith('Your session has expired. Please log in again to continue.', 'error');
+      expect(authRedirectSpy.goToLogin).toHaveBeenCalled();
+      expect(component.selectingPlanId).toBeNull();
+    });
+
+    it('sends the user to log back in instead of showing the raw message, when checkout itself 401s', () => {
+      fixture.detectChanges();
+      component.choosePlan(plans[0]);
+      actions$.next(selectPlanSuccess({ response: { message: 'ok', success: true, statusCode: 200,
+        data: { subscriptionId: 10, planId: 1, planName: 'Basic', planPrice: 17, status: 'PENDING_PAYMENT' } } } as any));
+
+      const checkout = httpMock.expectOne(r => r.url.endsWith('/payment/stripe/create-checkout-session'));
+      checkout.flush({ message: 'Full authentication is required to access this resource' }, { status: 401, statusText: 'Unauthorized' });
+
+      expect(snackBarSpy.openSnackBar).toHaveBeenCalledWith('Your session has expired. Please log in again to continue.', 'error');
+      expect(authRedirectSpy.goToLogin).toHaveBeenCalled();
+    });
+
+    it('sends the user to log back in instead of showing the raw message, when redeeming a code 401s', () => {
+      fixture.detectChanges();
+      const bypassCodeService = TestBed.inject(BypassCodeService) as jasmine.SpyObj<BypassCodeService>;
+      (bypassCodeService.redeem as jasmine.Spy).and.returnValue(
+        throwError(() => ({ status: 401, error: { message: 'Full authentication is required to access this resource' } }))
+      );
+
+      component.redeemCode = 'SOMECODE';
+      component.redeem();
+
+      expect(authRedirectSpy.goToLogin).toHaveBeenCalled();
+      expect(component.redeemError).toBeNull();
+    });
   });
 
   it('cleans up its subscriptions on destroy without throwing', () => {
