@@ -5,6 +5,10 @@ import { Categories, CategoryLikes, Icons } from '../models/categories.interface
 import { ApiResponse } from '../models/Api.interface';
 import { Tags } from '../models/tags.interface';
 
+/**
+ * A Category is a Discipline everywhere a person sees it. The API is the same under /discipline (the product name)
+ * and /category (kept on the server for older installed apps); this service uses /discipline.
+ */
 @Injectable({ providedIn: 'root' })
 export class CategoryService {
 
@@ -37,35 +41,35 @@ export class CategoryService {
   // ─────────────────────────────
 
   addCategory(data: any) {
-    return this.http.post<ApiResponse<Categories>>(`${this.url}/category/add`, data);
+    return this.http.post<ApiResponse<Categories>>(`${this.url}/discipline/add`, data);
   }
 
   getCategories() {
-    return this.http.get<ApiResponse<Categories[]>>(`${this.url}/category/get`);
+    return this.http.get<ApiResponse<Categories[]>>(`${this.url}/discipline/get`);
   }
 
   getActiveCategories() {
-    return this.http.get<ApiResponse<Categories[]>>(`${this.url}/category/getActiveCategories`);
+    return this.http.get<ApiResponse<Categories[]>>(`${this.url}/discipline/getActiveCategories`);
   }
 
   getCategory(id: number) {
-    return this.http.get<ApiResponse<Categories>>(`${this.url}/category/getCategory/${id}`);
+    return this.http.get<ApiResponse<Categories>>(`${this.url}/discipline/getCategory/${id}`);
   }
 
   getCategoriesByTag(tagId: number) {
-    return this.http.get<ApiResponse<Categories[]>>(`${this.url}/category/getByTag/${tagId}`);
+    return this.http.get<ApiResponse<Categories[]>>(`${this.url}/discipline/getByTag/${tagId}`);
   }
 
   updateCategory(data: any) {
-    return this.http.put<ApiResponse<Categories>>(`${this.url}/category/update`, data);
+    return this.http.put<ApiResponse<Categories>>(`${this.url}/discipline/update`, data);
   }
 
   updateStatus(id: number) {
-    return this.http.put<ApiResponse<Categories>>(`${this.url}/category/updateStatus/${id}`, null);
+    return this.http.put<ApiResponse<Categories>>(`${this.url}/discipline/updateStatus/${id}`, null);
   }
 
   deleteCategory(id: number) {
-    return this.http.delete<ApiResponse<void>>(`${this.url}/category/delete/${id}`);
+    return this.http.delete<ApiResponse<void>>(`${this.url}/discipline/delete/${id}`);
   }
 
   // ─────────────────────────────
@@ -73,15 +77,15 @@ export class CategoryService {
   // ─────────────────────────────
 
   likeCategory(id: number) {
-    return this.http.put<ApiResponse<Categories>>(`${this.url}/category/like/${id}`, null);
+    return this.http.put<ApiResponse<Categories>>(`${this.url}/discipline/like/${id}`, null);
   }
 
   getCategoryLikes() {
-    return this.http.get<ApiResponse<CategoryLikes[]>>(`${this.url}/category/getCategoryLikes`);
+    return this.http.get<ApiResponse<CategoryLikes[]>>(`${this.url}/discipline/getCategoryLikes`);
   }
 
   getMyCategoryLikes() {
-    return this.http.get<ApiResponse<CategoryLikes[]>>(`${this.url}/category/getMyCategoryLikes`);
+    return this.http.get<ApiResponse<CategoryLikes[]>>(`${this.url}/discipline/getMyCategoryLikes`);
   }
 
   // ─────────────────────────────
@@ -89,18 +93,18 @@ export class CategoryService {
   // ─────────────────────────────
 
   addTag(data: any) {
-    return this.http.post<ApiResponse<Tags>>(`${this.url}/category/tag/add`, data);
+    return this.http.post<ApiResponse<Tags>>(`${this.url}/discipline/tag/add`, data);
   }
 
   updateTag(data: any) {
-    return this.http.put<ApiResponse<Tags>>(`${this.url}/category/tag/update`, data);
+    return this.http.put<ApiResponse<Tags>>(`${this.url}/discipline/tag/update`, data);
   }
 
   getAllTags() {
-    return this.http.get<ApiResponse<Tags[]>>(`${this.url}/category/tag/getAll`);
+    return this.http.get<ApiResponse<Tags[]>>(`${this.url}/discipline/tag/getAll`);
   }
 
   deleteTag(id: number) {
-    return this.http.delete<ApiResponse<void>>(`${this.url}/category/tag/delete/${id}`);
+    return this.http.delete<ApiResponse<void>>(`${this.url}/discipline/tag/delete/${id}`);
   }
 }
