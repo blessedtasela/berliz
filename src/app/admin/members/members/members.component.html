@@ -1,3 +1,4 @@
+<app-page-header icon="users" title="Members" subtitle="Members of trainers and centers"></app-page-header>
 <app-admin-search [selector]="selectMembers" [fields]="memberSearchFields"
     placeholder="Search members..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-load-error *ngIf="loadError && membersData.length === 0" title="Couldn't load members" [message]="loadError" (retry)="retryLoad()"></app-load-error>

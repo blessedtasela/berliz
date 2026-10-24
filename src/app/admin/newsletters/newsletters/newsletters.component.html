@@ -1,3 +1,4 @@
+<app-page-header icon="mail" title="Newsletters" subtitle="Subscribers and the messages sent to them"></app-page-header>
 <app-admin-search [selector]="selectNewsletters" [fields]="newsletterSearchFields"
     placeholder="Search newsletters..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-load-error *ngIf="loadError && newsletterData.length === 0" title="Couldn't load newsletters" [message]="loadError" (retry)="retryLoad()"></app-load-error>

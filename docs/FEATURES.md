@@ -586,6 +586,13 @@ name their own location (with its own optional fee). Clients choose at booking t
 - Also fixed three specs that were already failing on master (missing `HttpClient`/router/dialog
   providers): `BookingFormComponent`, `MyAvailabilityEditorComponent`, `ProviderBookingsMainComponent`.
 
+### Unreleased — Every admin list has a page header; the time-based getters are cached too
+
+- The other 15 admin lists (categories, centers, clients, contact-us, exercises, members, muscle groups, newsletters, partners, pricing,
+  sub-tasks, tags, testimonials, to-do lists) now open with the same icon + title + subtitle as the rest.
+- Overdue / due-soon to-dos and the bookable-slot list are cached per input list and per minute (`utils/memo.ts`), so the template gets the
+  same array between changes while the clock-dependent results still refresh within a minute.
+
 ### Unreleased — Admin list headers, fewer wasted renders
 
 - Admin Users, Payments, Bookings, Subscriptions, Tasks and Trainers now open with the same icon + title + one-line subtitle as the

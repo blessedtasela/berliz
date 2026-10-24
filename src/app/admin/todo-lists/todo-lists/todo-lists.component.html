@@ -1,3 +1,4 @@
+<app-page-header icon="list" title="To-do lists" subtitle="Every account’s to-do items"></app-page-header>
 <app-load-error *ngIf="loadError && todoListData.length === 0" title="Couldn't load to-do lists" [message]="loadError" (retry)="retryLoad()"></app-load-error>
 <ng-container *ngIf="!(loadError && todoListData.length === 0)">
 <app-admin-search [selector]="selectTodos" [fields]="todoSearchFields"

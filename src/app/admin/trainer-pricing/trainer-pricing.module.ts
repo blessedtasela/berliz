@@ -19,6 +19,7 @@ import { RoleGuard } from 'src/app/services/role.guard';
 import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
 
 
 
@@ -33,6 +34,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
     UpdateTrainerPricingModalComponent
   ],
   imports: [
+    PageHeaderComponent,
     ClickablePhotoDirective,
     SharedModule,
     CommonModule,

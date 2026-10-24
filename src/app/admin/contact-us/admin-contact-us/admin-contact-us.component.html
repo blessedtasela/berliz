@@ -1,3 +1,4 @@
+<app-page-header icon="inbox" title="Contact us" subtitle="Messages sent through the contact form"></app-page-header>
 <app-admin-search [selector]="selectContactUsList" [fields]="contactUsSearchFields"
     placeholder="Search submissions..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-load-error *ngIf="loadError && contactUsData.length === 0" title="Couldn't load contact submissions" [message]="loadError" (retry)="retryLoad()"></app-load-error>

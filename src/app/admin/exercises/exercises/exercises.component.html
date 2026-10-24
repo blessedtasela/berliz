@@ -1,3 +1,4 @@
+<app-page-header icon="activity" title="Exercises" subtitle="The exercise library"></app-page-header>
 <app-admin-search [selector]="selectExercises" [fields]="exerciseSearchFields"
     placeholder="Search exercises..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-load-error *ngIf="loadError && exercisesData.length === 0" title="Couldn't load exercises" [message]="loadError" (retry)="retryLoad()"></app-load-error>

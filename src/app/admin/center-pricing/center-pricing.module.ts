@@ -13,6 +13,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { AdminSearchModule } from 'src/app/shared/admin-search/admin-search.module';
 import { AuthGuard } from 'src/app/services/auth.guard';
 import { RoleGuard } from 'src/app/services/role.guard';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
 
 
 
@@ -26,6 +27,7 @@ import { RoleGuard } from 'src/app/services/role.guard';
     CenterPricingsHeaderComponent
   ],
   imports: [
+    PageHeaderComponent,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,

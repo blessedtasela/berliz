@@ -21,6 +21,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
 @NgModule({
   declarations: [
     AddCategoryModalComponent,
@@ -33,6 +34,7 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
   ],
 
   imports: [
+    PageHeaderComponent,
     LoadErrorComponent,
     ClickablePhotoDirective,
     CommonModule,

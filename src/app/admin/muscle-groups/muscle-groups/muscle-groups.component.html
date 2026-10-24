@@ -1,3 +1,4 @@
+<app-page-header icon="activity" title="Muscle groups" subtitle="Groups exercises are filed under"></app-page-header>
 <app-admin-search [selector]="selectMuscleGroups" [fields]="muscleGroupSearchFields"
     placeholder="Search muscle groups..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-load-error *ngIf="loadError && muscleGroupsData.length === 0" title="Couldn't load muscle groups" [message]="loadError" (retry)="retryLoad()"></app-load-error>

@@ -21,6 +21,7 @@ import { StrapiUrlPipe } from 'src/app/shared/pipes/strapi-url.pipe';
 
 
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
 @NgModule({
   declarations: [
     ExercisesComponent,
@@ -32,6 +33,7 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     UpdateExercisesModalComponent
   ],
   imports: [
+    PageHeaderComponent,
     LoadErrorComponent,
     ClickablePhotoDirective,
     CommonModule,

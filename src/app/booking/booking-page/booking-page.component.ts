@@ -36,6 +36,7 @@ import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { Users } from 'src/app/models/users.interface';
 import { genericError } from 'src/validators/form-validators.module';
 import { PLAN_KIND_LABEL, planIncludes, planKind } from 'src/app/utils/provider-package.util';
+import { memoized, newMemoSlot } from 'src/app/utils/memo';
 
 /** What the client has chosen to book with, right now. */
 type BookingOption =
@@ -135,12 +136,18 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     return Date.now() + this.minLeadTimeMinutes * 60_000;
   }
 
+  // Read on every change-detection pass: cached per slot list, day and minute (the lead-time cutoff moves with the clock).
+  private visibleSlotsMemo = newMemoSlot<AvailableSlot[]>();
+
   get visibleSlots(): AvailableSlot[] {
-    const cutoff = this.earliestBookableTime;
-    return this.slots.filter(s => {
-      const start = new Date(`${this.selectedDate}T${s.startTime}`).getTime();
-      return isNaN(start) || start >= cutoff;
-    });
+    return memoized(this.visibleSlotsMemo,
+      [this.slots, this.selectedDate, this.minLeadTimeMinutes, Math.floor(Date.now() / 60_000)], () => {
+        const cutoff = this.earliestBookableTime;
+        return this.slots.filter(s => {
+          const start = new Date(`${this.selectedDate}T${s.startTime}`).getTime();
+          return isNaN(start) || start >= cutoff;
+        });
+      });
   }
 
   get allSlotsWithinLeadTime(): boolean {

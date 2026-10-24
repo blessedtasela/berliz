@@ -1,3 +1,4 @@
+<app-page-header icon="map-pin" title="Centers" subtitle="Every gym and center profile on the platform"></app-page-header>
 <app-admin-search [selector]="selectCenters" [fields]="centerSearchFields"
     placeholder="Search centers..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-load-error *ngIf="loadError && centersData.length === 0" title="Couldn't load centers" [message]="loadError" (retry)="retryLoad()"></app-load-error>

@@ -21,6 +21,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
 
 
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
 @NgModule({
   declarations: [
     MembersComponent,
@@ -32,6 +33,7 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     MemberDetailPageComponent
   ],
   imports: [
+    PageHeaderComponent,
     SelectComponent,
     LoadErrorComponent,
     ClickablePhotoDirective,

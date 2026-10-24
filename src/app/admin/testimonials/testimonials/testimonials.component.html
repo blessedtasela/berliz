@@ -1,3 +1,4 @@
+<app-page-header icon="message-square" title="Testimonials" subtitle="Reviews and testimonials awaiting or on display"></app-page-header>
 <app-admin-search [selector]="selectTestimonials" [fields]="testimonialSearchFields"
     placeholder="Search testimonials..." (results)="handleSearchResults($event)"></app-admin-search>
 <app-load-error *ngIf="loadError && testimonialsData.length === 0" title="Couldn't load testimonials" [message]="loadError" (retry)="retryLoad()"></app-load-error>

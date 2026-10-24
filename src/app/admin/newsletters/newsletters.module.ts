@@ -24,6 +24,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 
 
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
 @NgModule({
   declarations: [
     AddNewsletterModalComponent,
@@ -38,6 +39,7 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
   ],
 
   imports: [
+    PageHeaderComponent,
     LoadErrorComponent,
     ClickablePhotoDirective,
     SharedModule,

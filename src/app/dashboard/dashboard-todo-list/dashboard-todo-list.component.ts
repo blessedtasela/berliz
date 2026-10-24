@@ -18,6 +18,7 @@ import { loadUser } from 'src/app/state/user/user.actions';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { loadMyAssignedWorkouts } from 'src/app/state/workout/workout.actions';
 import { selectMyAssignedWorkouts } from 'src/app/state/workout/workout.selector';
+import { memoized, newMemoSlot } from 'src/app/utils/memo';
 
 /**
  * Same key MyTasksComponent writes to. Sub-step completion has no API yet
@@ -331,26 +332,36 @@ export class DashboardTodoListComponent implements OnInit, OnDestroy {
     });
   }
 
+  // These are read by the template on every change-detection pass. They depend on the list (always replaced, never
+  // mutated) and on the clock, so they are cached per list and per minute instead of rebuilt each pass.
+  private overdueMemo = newMemoSlot<TodoList[]>();
+  private dueSoonMemo = newMemoSlot<TodoList[]>();
+  private displayedMemo = newMemoSlot<TodoList[]>();
+
   get overdueTodos(): TodoList[] {
-    const now = Date.now();
-    return this.todoData.filter(t =>
-      new Date(t.dueDate).getTime() < now &&
-      t.status !== 'completed' &&
-      t.status !== 'cancelled'
-    );
+    return memoized(this.overdueMemo, [this.todoData, Math.floor(Date.now() / 60_000)], () => {
+      const now = Date.now();
+      return this.todoData.filter(t =>
+        new Date(t.dueDate).getTime() < now &&
+        t.status !== 'completed' &&
+        t.status !== 'cancelled'
+      );
+    });
   }
 
   get dueSoonTodos(): TodoList[] {
-    const now = Date.now();
-    return this.todoData.filter(t => {
-      const diff = new Date(t.dueDate).getTime() - now;
-      return diff > 0 && diff <= 2 * 24 * 60 * 60 * 1000 &&
-        t.status !== 'completed' && t.status !== 'cancelled';
+    return memoized(this.dueSoonMemo, [this.todoData, Math.floor(Date.now() / 60_000)], () => {
+      const now = Date.now();
+      return this.todoData.filter(t => {
+        const diff = new Date(t.dueDate).getTime() - now;
+        return diff > 0 && diff <= 2 * 24 * 60 * 60 * 1000 &&
+          t.status !== 'completed' && t.status !== 'cancelled';
+      });
     });
   }
 
   get displayedTodos(): TodoList[] {
-    return this.todoData.slice(0, 12);
+    return memoized(this.displayedMemo, [this.todoData], () => this.todoData.slice(0, 12));
   }
 
   get metrics() {
