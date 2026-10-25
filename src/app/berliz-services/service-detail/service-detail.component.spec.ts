@@ -13,6 +13,10 @@ describe('ServiceDetailComponent', () => {
   let params: BehaviorSubject<any>;
   let store: MockStore;
 
+  // provideMockStore({ selectors }) patches the shared selector instances; without this the overridden
+  // selectActiveCenters/selectActiveTrainers results leak into every later spec in the run.
+  afterEach(() => store?.resetSelectors());
+
   function setup(slug: string) {
     params = new BehaviorSubject(convertToParamMap({ slug }));
     TestBed.configureTestingModule({
