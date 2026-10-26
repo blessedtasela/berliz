@@ -1,0 +1,61 @@
+<div class="max-w-3xl mx-auto p-4 sm:p-6 flex flex-col gap-5 font-sans">
+
+  <div *ngIf="loading" class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 flex items-center justify-center py-24">
+    <div class="w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-700 border-t-red-600 animate-spin"></div>
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <!-- State 1: no application yet -->
+    <div *ngIf="!hasStoreApplication" class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden">
+      <div class="bg-red-600 px-5 py-4">
+        <h1 class="text-sm font-bold text-white">Sell on Berliz</h1>
+        <p class="text-[11px] text-red-100 mt-0.5">List new or used fitness gear for sale to the Berliz community</p>
+      </div>
+      <div class="p-5 flex flex-col gap-4">
+        <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+          Every seller is reviewed by an admin before their store goes live — tell us a bit about what you'd like to sell.
+        </p>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">What do you want to sell?</label>
+          <textarea [(ngModel)]="motivation" rows="4" maxlength="1000"
+            placeholder="E.g. Used dumbbells, resistance bands and a treadmill I no longer need, plus some new equipment I resell."
+            class="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
+                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition resize-none"></textarea>
+          <span class="text-[10px] text-gray-400 dark:text-gray-500 self-end">{{ motivation.length }}/1000</span>
+        </div>
+        <div class="flex justify-end">
+          <button type="button" (click)="submitApplication()" [disabled]="!motivation.trim() || applying"
+            class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition
+                   flex items-center gap-2 disabled:opacity-50">
+            <i-feather [name]="applying ? 'loader' : 'send'" [ngClass]="{'animate-spin': applying}" style="width:12px;height:12px;"></i-feather>
+            {{ applying ? 'Submitting…' : 'Apply to sell' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 2: pending approval -->
+    <div *ngIf="isPending" class="rounded-2xl border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/20 p-6 flex flex-col items-center gap-3 text-center">
+      <div class="w-14 h-14 rounded-full bg-white dark:bg-gray-900 border border-amber-200 dark:border-amber-900 flex items-center justify-center">
+        <i-feather name="clock" class="text-amber-600" style="width:22px;height:22px;"></i-feather>
+      </div>
+      <p class="text-sm font-bold text-gray-900 dark:text-gray-100">Your application is under review</p>
+      <p class="text-xs text-gray-500 dark:text-gray-400 max-w-sm">We'll email you once an admin has reviewed your seller application. This usually doesn't take long.</p>
+    </div>
+
+    <!-- State: rejected -->
+    <div *ngIf="isRejected" class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 flex flex-col items-center gap-3 text-center">
+      <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+        <i-feather name="x-circle" class="text-gray-400" style="width:22px;height:22px;"></i-feather>
+      </div>
+      <p class="text-sm font-bold text-gray-900 dark:text-gray-100">Your application wasn't approved this time</p>
+      <p class="text-xs text-gray-500 dark:text-gray-400 max-w-sm">Contact support if you'd like to know more, or reach out about applying again.</p>
+    </div>
+
+    <!-- State 3/4: approved -- create or manage the store -->
+    <app-my-store *ngIf="isApproved" [store]="store" (storeCreated)="onStoreCreated($event)"></app-my-store>
+
+  </ng-container>
+
+</div>

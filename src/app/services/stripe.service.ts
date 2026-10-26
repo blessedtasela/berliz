@@ -37,6 +37,17 @@ export class StripeService {
     );
   }
 
+  /**
+   * "Pay now" for a Shop order. The amount is the order's own `totalAmount` -- the server never
+   * takes a price from the client. Redirect the browser to the returned `checkoutUrl`.
+   */
+  createOrderCheckout(orderId: number): Observable<ApiResponse<StripeCheckoutSessionResponse>> {
+    return this.httpClient.post<ApiResponse<StripeCheckoutSessionResponse>>(
+      this.url + `/payment/stripe/order-checkout/${orderId}`,
+      null
+    );
+  }
+
   /** Whether the signed-in trainer/center has finished setting up payouts. Safe to call on every page load. */
   getConnectStatus(): Observable<ApiResponse<StripeConnectStatus>> {
     return this.httpClient.get<ApiResponse<StripeConnectStatus>>(this.url + '/payment/stripe/connect/status');

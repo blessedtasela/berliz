@@ -44,7 +44,6 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { WebSocketService } from './services/web-socket.service';
 import * as fromTrainer from './state/trainer/trainer.reducer';
 import { TrainerEffects } from './state/trainer/trainer.effects';
-import { ProductsModule } from './products/products.module';
 import { userFeatureKey, userReducer } from './state/user/user.reducer';
 import { categoryFeatureKey, categoryReducer } from './state/category/category.reducer';
 import { trainerFeatureKey, trainerReducer } from './state/trainer/trainer.reducer';
@@ -168,7 +167,6 @@ const dbConfig: DBConfig = {
         NgxUiLoaderModule.forRoot(ngxUiLoaderConfig),
         MatSnackBarModule,
         FormsModule,
-        ProductsModule,
         MatDialogModule,
         SharedModule,
         FeatherModule,
