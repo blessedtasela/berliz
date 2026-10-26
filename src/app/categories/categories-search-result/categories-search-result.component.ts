@@ -20,6 +20,9 @@ import { selectUser } from 'src/app/state/user/user.selector';
     standalone: false
 })
 export class CategoriesSearchResultComponent implements OnInit, OnDestroy {
+  /** False until the list's first load has finished: until then show a skeleton, not "coming soon". */
+  @Input() loaded = true;
+
   @Input() categoriesResult: Categories[] = [];
   @Input() totalCategories: number = 0;
 

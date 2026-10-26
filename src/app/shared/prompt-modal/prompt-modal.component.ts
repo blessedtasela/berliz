@@ -23,6 +23,24 @@ export class PromptModalComponent implements OnInit {
     this.details = this.dialogData || {};
   }
 
+  /** A plain "please log in" prompt must not read like a destructive one. */
+  get isLoginPrompt(): boolean {
+    return this.details?.icon === 'log-in';
+  }
+
+  get title(): string {
+    const t = this.details?.title;
+    if (this.isLoginPrompt && (!t || t === 'Login required')) return 'Log in to continue';
+    return t || (this.details?.confirmation ? 'Are you sure?' : 'Heads up');
+  }
+
+  /** The line under the title: an explicit one, else the irreversible warning for destructive confirmations only. */
+  get subtitle(): string | null {
+    if (this.details?.subtitle) return this.details.subtitle;
+    if (this.details?.confirmation && !this.isLoginPrompt) return 'This action may be irreversible';
+    return null;
+  }
+
   handleChangeAction() {
     this.onEmitStatusChange.emit(true);
     this.dialogRef.close(true);

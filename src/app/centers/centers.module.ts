@@ -44,6 +44,8 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
 import { StarRatingComponent } from 'src/app/shared/star-rating/star-rating.component';
 
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import { ListSkeletonComponent } from 'src/app/shared/list-skeleton/list-skeleton.component';
+import { BookingAssuranceComponent } from 'src/app/shared/provider-profile/booking-assurance.component';
 @NgModule({
   declarations: [
     CenterPageComponent,
@@ -71,6 +73,8 @@ import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.compone
     CenterFormComponent
   ],
   imports: [
+    ListSkeletonComponent,
+    BookingAssuranceComponent,
     StarRatingComponent,
     LoadErrorComponent,
     ClickablePhotoDirective,

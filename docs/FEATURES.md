@@ -190,6 +190,32 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Visitor-review batch 2: prices, testimonials, honest first paint, funnel, copy
+
+More from the same first-time-visitor review (batch 1 covered the minimum age, unknown trainer links and center contact):
+- **Unknown center links never dead-end** (same as trainers): "Did you mean ...?" for a close name, else the centers directory with a note.
+- **Prices say what currency they are.** Berliz charges in Canadian dollars; sessions, booking estimates, monthly rates and center memberships were a bare "$" or a bare
+  number and are now "CA$". New public `/pricing` page (footer link, sitemap): what a session, a pack and a Berliz plan cost, with the platform plans listed
+  (needs `/plan/get` readable without signing in, a backend change). Like counts on discipline cards say "likes".
+- **Testimonials:** `/testimonials` is the real page again (it redirected to /disciplines, and the same list was also pasted into the disciplines page). The home
+  carousel shows a human date, hides itself when there is nothing to show, and the empty state reads "Be the first to share your experience".
+- **Marketing the supply can back up:** "world-class", "elite", "top-tier", "curated network" removed from About and the home pages; the About counter that read
+  "Our Services 15" is "Disciplines" (it counts disciplines; the Services page lists 5 services).
+- **Where a trainer works:** "+1 more" names the second place ("& Toronto, Canada"); several extra still reads "+N more".
+- **No promise without terms:** the home newsletter popup no longer says "Sign up today and WIN" (there is no prize, draw date or terms).
+- **Sign-up funnel:** "Join for Free" goes to sign-up; sign-up and quick sign-up greet "Join Berliz" (login keeps "Welcome back"). A signed-out visitor to /dashboard is
+  redirected at once (a route-level check before the big dashboard chunk downloads, which is what made it a blank page for about ten seconds) and the login page says
+  "Log in to view your dashboard."
+- **Honest first paint:** the prerendered copy of trainers, centers, disciplines, equipment and exercises baked "More ... coming soon" whenever the API was unreachable
+  during the deploy build, which is what a crawler or a no-JavaScript reader saw. Empty states now appear only after the first load finished in the browser; until then a
+  skeleton shows. The equipment/exercises search box is hidden while there is nothing to search.
+- **Calmer copy:** log-in prompts no longer say "This action may be irreversible" ("Log in to continue", "Log in to apply as a trainer / center"); the footer says
+  "Give Feedback (login required)" before the click; one shop destination (`/shop` and the home "Shop Now" go to `/services/shop`); `/help` goes to the help center;
+  `/disciplines/boxing` goes to `/disciplines/2/boxing`.
+- **Terms before the login gate:** under "Book a session" on trainer and center profiles: nothing is charged until they confirm, the free-cancellation window, the refund after it.
+- Needs content, not code (for the owner): the trainer header says "5+ years coaching" while the intro says "over a decade"; a pack is named "Group session invade"; single
+  sessions show "Rate on request" until a trainer sets an hourly rate; testimonials and reviews only accumulate with real bookings.
+
 ### Unreleased — Visitor-review fixes, batch 1: sign-up age, unknown trainer links, center booking dead end
 
 From the 2026-10-24 first-time-visitor review (items 1–3).

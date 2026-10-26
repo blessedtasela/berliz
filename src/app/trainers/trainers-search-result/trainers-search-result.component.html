@@ -11,7 +11,9 @@
             (criteriaChange)="onCriteria($event)"></app-provider-filter-bar>
 
         <!-- ── EMPTY STATE ──────────────────────────────────────────── -->
-        <ng-container *ngIf="trainersResult.length === 0">
+        <app-list-skeleton *ngIf="trainersResult.length === 0 && !loaded"></app-list-skeleton>
+
+        <ng-container *ngIf="trainersResult.length === 0 && loaded">
             <div class="flex flex-col items-center justify-center py-24 gap-6 text-center">
 
                 <!-- Icon ring -->
@@ -122,7 +124,7 @@
                                     <i-feather name="map-pin" style="width:11px;height:11px;"
                                         class="text-zinc-600 group-hover/map:text-red-400 transition"></i-feather>
                                     {{ primaryLocationLabel(trainer) }}
-                                    <span *ngIf="extraLocationCount(trainer) > 0" class="text-zinc-600">+{{ extraLocationCount(trainer) }}</span>
+                                    <span *ngIf="extraLocationCount(trainer) > 0" class="text-zinc-600">{{ extraLocationsText(trainer) }}</span>
                                     <span *ngIf="(trainer.locations?.length ?? 0) > 0" class="pointer-events-none absolute left-0 -top-7 whitespace-nowrap px-2 py-1 rounded-lg
                                                  bg-zinc-800 border border-zinc-700 text-[10px] text-zinc-200 font-medium
                                                  opacity-0 group-hover/map:opacity-100 transition-opacity duration-150 z-10">

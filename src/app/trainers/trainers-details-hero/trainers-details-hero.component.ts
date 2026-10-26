@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { LikersModalComponent } from 'src/app/shared/likers-modal/likers-modal.component';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
-import { clientPlaceFeeLabel, isApproximateSpot, spotAddress, spotHeading } from 'src/app/utils/trainer-location.util';
+import { clientPlaceFeeLabel, isApproximateSpot, spotAddress, spotHeading, extraLocationsLabel } from 'src/app/utils/trainer-location.util';
 
 /**
  * Public hero header for a single trainer profile.
@@ -53,6 +53,11 @@ export class TrainersDetailsHeroComponent {
     const first = this.trainer?.locations?.[0];
     if (!first) return '—';
     return [first.city, first.country].filter(Boolean).join(', ');
+  }
+
+  /** After the first location: the second place by name, or "+N more". */
+  get extraLocationsText(): string {
+    return extraLocationsLabel(this.trainer?.locations);
   }
 
   get extraLocationCount(): number {

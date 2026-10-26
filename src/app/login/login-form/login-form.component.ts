@@ -75,6 +75,13 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
     return pendingGuestBookingPath() ?? '/dashboard';
   }
 
+  /** Why the visitor landed here, when a protected page sent them: shown instead of the generic "Enter your details below". */
+  get gateMessage(): string | null {
+    const url = this.route.snapshot.queryParamMap.get('returnUrl');
+    if (!url || !url.startsWith('/') || url.startsWith('//')) return null;
+    return url.startsWith('/dashboard') ? 'Log in to view your dashboard.' : 'Log in to continue.';
+  }
+
   /** From a shared referral link (?ref=<userId>) -- only meaningful if signing in here creates a brand-new account. */
   private get referredBy(): string | null {
     return this.route.snapshot.queryParamMap.get('ref');

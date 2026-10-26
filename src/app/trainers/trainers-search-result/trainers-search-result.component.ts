@@ -17,6 +17,7 @@ import { loadTrainerLikes } from 'src/app/state/trainer/trainer.actions';
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { DEFAULT_PROVIDER_CRITERIA, ProviderFilterCriteria, ProviderMode, applyProviderFilters } from 'src/app/shared/provider-profile/provider-filters';
+import { extraLocationsLabel } from 'src/app/utils/trainer-location.util';
 
 
 @Component({
@@ -26,6 +27,9 @@ import { DEFAULT_PROVIDER_CRITERIA, ProviderFilterCriteria, ProviderMode, applyP
     standalone: false
 })
 export class TrainersSearchResultComponent implements OnInit, OnDestroy {
+  /** False until the list's first load has finished: until then show a skeleton, not "coming soon". */
+  @Input() loaded = true;
+
 
   private _trainersResult: Trainers[] = [];
 
@@ -221,6 +225,10 @@ export class TrainersSearchResultComponent implements OnInit, OnDestroy {
     const first = trainer?.locations?.[0];
     if (!first) return '—';
     return [first.city, first.country].filter(Boolean).join(', ');
+  }
+
+  extraLocationsText(trainer: Trainers): string {
+    return extraLocationsLabel(trainer?.locations);
   }
 
   extraLocationCount(trainer: Trainers): number {

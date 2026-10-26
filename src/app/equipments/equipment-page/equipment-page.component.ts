@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -8,13 +8,15 @@ import { Categories } from 'src/app/models/categories.interface';
 import { CenterEquipment } from 'src/app/models/centers.interface';
 import { Users } from 'src/app/models/users.interface';
 
-import { loadAllCenterEquipment } from 'src/app/state/center/center.actions';
+import { loadAllCenterEquipment, loadAllCenterEquipmentFailure, loadAllCenterEquipmentSuccess } from 'src/app/state/center/center.actions';
 import { selectCenterEquipment } from 'src/app/state/center/center.selectors';
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 import { selectUser } from 'src/app/state/user/user.selector';
 
 import { EquipmentDetailsModalComponent } from '../equipment-details-modal/equipment-details-modal.component';
+import { Actions } from '@ngrx/effects';
+import { injectActionsOrNull, watchFirstLoad } from 'src/app/utils/first-load';
 
 /**
  * PUBLIC equipment browsing — reads the shared `selectCenterEquipment` slice
@@ -39,6 +41,15 @@ import { EquipmentDetailsModalComponent } from '../equipment-details-modal/equip
     standalone: false
 })
 export class EquipmentPageComponent implements OnInit, OnDestroy {
+  /** True once the first load has finished (never on the server): a skeleton shows until then instead of "coming soon". */
+  firstLoaded = false;
+  private platformId = inject(PLATFORM_ID);
+  private actionsOpt = injectActionsOrNull();
+
+  get actionsAvailable(): boolean {
+    return !!this.actionsOpt;
+  }
+
 
   /** Hides the standalone hero when this sits inside another page. */
   @Input() embedded = false;
@@ -78,6 +89,9 @@ export class EquipmentPageComponent implements OnInit, OnDestroy {
     this.store.dispatch(loadActiveCategories());
 
     this.subscriptions.push(
+      this.actionsOpt
+        ? watchFirstLoad(this.actionsOpt, this.platformId, [loadAllCenterEquipmentSuccess, loadAllCenterEquipmentFailure], () => this.firstLoaded = true)
+        : new Subscription(),
       this.store.select(selectCenterEquipment).subscribe(list => {
         this.equipment = list ?? [];
         this.openDeepLinkedEquipment();

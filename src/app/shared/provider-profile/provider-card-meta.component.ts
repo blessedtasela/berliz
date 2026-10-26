@@ -16,7 +16,7 @@ import { ProfileTheme } from './profile-theme';
   template: `
     <div class="flex items-center justify-between gap-3 text-[11px] font-sans">
       <span *ngIf="rateNumber" [ngClass]="strong" class="font-bold">
-        {{ rateNumber | currency:'USD':'symbol':'1.0-2' }}<span [ngClass]="muted" class="font-normal"> / hour</span>
+        {{ rateNumber | currency:'CAD':'symbol':'1.0-2' }}<span [ngClass]="muted" class="font-normal"> / hour</span>
       </span>
       <span *ngIf="!rateNumber" [ngClass]="muted">Rate on request</span>
 

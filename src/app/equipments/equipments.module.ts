@@ -9,6 +9,7 @@ import { EquipmentPageComponent } from './equipment-page/equipment-page.componen
 import { EquipmentDetailsModalComponent } from './equipment-details-modal/equipment-details-modal.component';
 import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { ListSkeletonComponent } from 'src/app/shared/list-skeleton/list-skeleton.component';
 
 
 
@@ -18,6 +19,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
     EquipmentDetailsModalComponent
   ],
   imports: [
+    ListSkeletonComponent,
     ClickablePhotoDirective,
     CommonModule,
     RouterModule,

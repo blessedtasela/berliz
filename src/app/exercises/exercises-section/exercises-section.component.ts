@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 
@@ -6,12 +6,14 @@ import { Categories } from 'src/app/models/categories.interface';
 import { Exercises } from 'src/app/models/exercise.interface';
 import { Users } from 'src/app/models/users.interface';
 
-import { loadActiveExercises } from 'src/app/state/exercise/exercise.actions';
+import { loadActiveExercises, loadActiveExercisesFailure, loadActiveExercisesSuccess } from 'src/app/state/exercise/exercise.actions';
 import { selectActiveExercises } from 'src/app/state/exercise/exercise.selectors';
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
+import { Actions } from '@ngrx/effects';
+import { injectActionsOrNull, watchFirstLoad } from 'src/app/utils/first-load';
 
 /**
  * PUBLIC exercise browsing. Rendered as its own full page at
@@ -36,6 +38,15 @@ import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-u
     standalone: false
 })
 export class ExercisesSectionComponent implements OnInit, OnDestroy {
+  /** True once the first load has finished (never on the server): a skeleton shows until then instead of "coming soon". */
+  firstLoaded = false;
+  private platformId = inject(PLATFORM_ID);
+  private actionsOpt = injectActionsOrNull();
+
+  get actionsAvailable(): boolean {
+    return !!this.actionsOpt;
+  }
+
 
   /** Hides the standalone hero when this sits inside another page. */
   @Input() embedded = false;

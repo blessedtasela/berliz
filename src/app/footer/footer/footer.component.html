@@ -46,8 +46,10 @@
         <div>
             <h2 class="text-lg font-bold uppercase text-red-600 tracking-wide">Quick Links</h2>
             <ul class="mt-4 text-sm font-sans space-y-2">
+                <li><a [routerLink]="['/pricing']"
+                        class="hover:text-red-600 transition-all duration-300">Pricing</a></li>
                 <li><a [routerLink]="['/testimonials']"
-                        class="hover:text-red-600 transition-all duration-300">Testimonial</a></li>
+                        class="hover:text-red-600 transition-all duration-300">Testimonials</a></li>
                 <li><a [routerLink]="['/dashboard']"
                         class="hover:text-red-600 transition-all duration-300">Dashboard</a></li>
                 <li><a [routerLink]="['/disciplines/equipment']"
@@ -59,7 +61,7 @@
                 <li><a [routerLink]="['/report-problem']" class="hover:text-red-600 transition-all duration-300">Report
                         a Problem</a></li>
                 <li><a (click)="openFeedback()" class="hover:text-red-600 transition-all duration-300 cursor-pointer">Give
-                        Feedback</a></li>
+                        Feedback<span *ngIf="feedbackNeedsLogin" class="text-[11px] text-zinc-400"> (login required)</span></a></li>
             </ul>
         </div>
 

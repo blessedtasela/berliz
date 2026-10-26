@@ -1,7 +1,7 @@
 <app-categories-hero></app-categories-hero>
 <app-categories-search (results)="handleSearchResults($event)"
  [categories]="categories"></app-categories-search>
-<app-categories-search-result [categoriesResult]="categories"
+<app-categories-search-result [categoriesResult]="categories" [loaded]="firstLoaded"
     [totalCategories]="countResult"></app-categories-search-result>
 
 <!-- ═══════════════════════════════════════════════
@@ -88,4 +88,3 @@
     </div>
 </section>
 
-<app-testimonial-list></app-testimonial-list>

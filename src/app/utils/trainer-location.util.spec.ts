@@ -1,7 +1,6 @@
 import { TrainerLocation } from 'src/app/models/trainers.interface';
 import {
-  clientPlaceFeeLabel, flattenAreas, groupLocations, isApproximateSpot, normPlace, placeLabel, quoteClientLocation, sameCity, spotAddress, spotHeading, TrainerArea,
-} from './trainer-location.util';
+  clientPlaceFeeLabel, flattenAreas, groupLocations, isApproximateSpot, normPlace, placeLabel, quoteClientLocation, sameCity, spotAddress, spotHeading, TrainerArea, extraLocationsLabel } from './trainer-location.util';
 
 const row = (over: Partial<TrainerLocation>): TrainerLocation => ({
   country: 'Canada', stateProvince: 'British Columbia', city: 'Vancouver', ...over,
@@ -258,6 +257,26 @@ describe('trainer-location util', () => {
       expect(clientPlaceFeeLabel(t({ customLocationAllowed: false }))).toBeNull();
       expect(clientPlaceFeeLabel(t({ customLocationOutsideAllowed: false, locations: [row({ clientLocationAllowed: false })] }))).toBeNull();
       expect(clientPlaceFeeLabel(null)).toBeNull();
+    });
+  });
+
+  describe('extraLocationsLabel', () => {
+    const van = { city: 'Vancouver', country: 'Canada' };
+    it('is empty for none or one location', () => {
+      expect(extraLocationsLabel(undefined)).toBe('');
+      expect(extraLocationsLabel([])).toBe('');
+      expect(extraLocationsLabel([van])).toBe('');
+    });
+    it('names the second place instead of "+1 more"', () => {
+      expect(extraLocationsLabel([van, { city: 'Toronto', country: 'Canada' }])).toBe('& Toronto, Canada');
+    });
+    it('names a second spot in the same city by its venue or address', () => {
+      expect(extraLocationsLabel([van, { ...van, venue: 'Kits Beach Gym' }])).toBe('& Kits Beach Gym');
+      expect(extraLocationsLabel([van, { ...van, address: '12 Main St' }])).toBe('& 12 Main St');
+      expect(extraLocationsLabel([van, { ...van }])).toBe('+1 more');
+    });
+    it('counts when there are several', () => {
+      expect(extraLocationsLabel([van, van, van])).toBe('+2 more');
     });
   });
 });

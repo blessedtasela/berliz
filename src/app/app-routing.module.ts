@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes, UrlMatchResult, UrlSegment } from '@angular/router';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { TestimonialPageComponent } from './testimonial/testimonial-page/testimonial-page.component';
 import { ProductsPageComponent } from './products/products-page/products-page.component';
 import { ProductsModule, productChildRoutes } from './products/products.module';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { AuthGuard } from './services/auth.guard';
+import { dashboardEntryGuard } from './guards/dashboard-entry.guard';
 
 
 
@@ -48,7 +50,7 @@ export const routes: Routes = [
   { path: 'services/faqs', redirectTo: 'faqs', pathMatch: 'full' },
   { path: 'services/:id/:name', redirectTo: 'disciplines/:id/:name', pathMatch: 'full' },
   { path: 'services', loadChildren: () => import('./berliz-services/berliz-services.routes').then(m => m.BERLIZ_SERVICES_ROUTES) },
-  { path: 'testimonials', redirectTo: 'disciplines', pathMatch: 'full' },
+  { path: 'testimonials', component: TestimonialPageComponent, data: { breadcrumb: 'Testimonials' } },
   // Equipment and exercises are real pages at /disciplines/equipment and /disciplines/exercises — these old
   // top-level paths redirect straight to them.
   { path: 'equipments', redirectTo: 'disciplines/equipment', pathMatch: 'full' },
@@ -56,6 +58,9 @@ export const routes: Routes = [
   { path: 'report-problem', loadChildren: () => import('./report-problem/report-problem-feature.module').then(m => m.ReportProblemFeatureModule) },
   // FAQs are a page of their own at /faqs (old /services/faqs redirects here).
   { path: 'faqs', loadChildren: () => import('./faqs/faqs-feature.module').then(m => m.FaqsFeatureModule) },
+  // Obvious guesses resolve instead of 404ing.
+  { path: 'help', redirectTo: 'help-center', pathMatch: 'full' },
+  { path: 'pricing', loadComponent: () => import('./pricing/pricing-page.component').then(m => m.PricingPageComponent), data: { breadcrumb: 'Pricing' } },
   { path: 'help-center', loadChildren: () => import('./help-center/help-center-feature.module').then(m => m.HelpCenterFeatureModule) },
   { path: 'terms', loadComponent: () => import('./terms/terms-page/terms-page.component').then(m => m.TermsPageComponent), data: { breadcrumb: 'Terms' } },
   // The old "Legal & Policies" drawer widget (LegalMainComponent /
@@ -79,6 +84,7 @@ export const routes: Routes = [
   // UserModule distinct from the top-level one — see DashboardUserFeatureModule's
   // comment. Mounted at root (empty path) since both are already full paths.
   { path: '', loadChildren: () => import('./dashboard/user/dashboard-user-feature.module').then(m => m.DashboardUserFeatureModule) },
+  { path: 'shop', redirectTo: 'services/shop', pathMatch: 'full' },
   { path: 'shop', component: ProductsPageComponent, children: productChildRoutes, data: { breadcrumb: 'Shop' } },
 
   // Member profile — page itself has NO guard, so anonymous visitors can land
@@ -111,6 +117,9 @@ export const routes: Routes = [
   // inlined here.
   {
     path: 'dashboard',
+    // canMatch runs before the lazy chunk is downloaded: a signed-out visitor goes to /login at once instead of staring
+    // at a blank page while the whole dashboard loads just to be turned away (AuthGuard on the children still runs).
+    canMatch: [dashboardEntryGuard],
     loadChildren: () => import('./dashboard/dashboard-feature.module').then(m => m.DashboardFeatureModule)
   },
   { path: '**', component: PageNotFoundComponent }

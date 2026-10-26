@@ -23,6 +23,9 @@ import { DEFAULT_PROVIDER_CRITERIA, ProviderFilterCriteria, applyProviderFilters
     standalone: false
 })
 export class CenterSearchResultComponent implements OnInit, OnDestroy {
+  /** False until the list's first load has finished: until then show a skeleton, not "coming soon". */
+  @Input() loaded = true;
+
 
   private _centersResult: Centers[] = [];
 

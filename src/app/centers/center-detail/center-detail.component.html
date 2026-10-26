@@ -24,6 +24,11 @@
             </p>
         </div>
 
+        <a *ngIf="suggestion" [routerLink]="suggestionLink()" class="px-5 py-3 rounded-xl border border-zinc-700 bg-zinc-900 text-sm text-zinc-200
+                       hover:border-red-600 hover:text-white transition">
+            Did you mean <span class="font-semibold text-white">{{ suggestion.name }}</span>?
+        </a>
+
         <button type="button" (click)="backToCenters()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
                        hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
             <i-feather name="arrow-left" style="width:13px;height:13px;"></i-feather>
@@ -119,6 +124,9 @@
                         </button>
                     </div>
 
+                    <app-booking-assurance *ngIf="acceptingBookings !== false" providerLabel="this center" [freeCancelHours]="center.freeCancelHours"
+                        [lateCancelRefundPercent]="center.lateCancelRefundPercent"></app-booking-assurance>
+
                     <div *ngIf="centerCategories.length" class="flex flex-wrap gap-2">
                         <span *ngFor="let c of centerCategories"
                             class="text-[10px] font-semibold uppercase tracking-wide text-zinc-400 bg-zinc-950 border border-zinc-800 px-2.5 py-1 rounded-full">
@@ -157,7 +165,7 @@
                 <div class="border-t border-zinc-800"></div>
 
                 <div class="flex items-baseline gap-2">
-                    <span class="text-2xl font-bold text-red-500">{{ centerPricing.price }}</span>
+                    <span class="text-2xl font-bold text-red-500">{{ centerPricing.price | currency:'CAD':'symbol':'1.0-2' }}</span>
                     <span class="text-[11px] uppercase tracking-wide text-zinc-500">per month</span>
                 </div>
 

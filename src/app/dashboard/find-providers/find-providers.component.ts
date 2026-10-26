@@ -13,6 +13,7 @@ import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 import { DEFAULT_PROVIDER_CRITERIA, ProviderFilterCriteria, applyProviderFilters, searchableLocation } from 'src/app/shared/provider-profile/provider-filters';
+import { extraLocationsLabel } from 'src/app/utils/trainer-location.util';
 
 type ProviderTab = 'trainers' | 'centers' | 'categories';
 
@@ -153,6 +154,10 @@ export class FindProvidersComponent implements OnInit, OnDestroy {
     const first = trainer?.locations?.[0];
     if (!first) return '—';
     return [first.city, first.country].filter(Boolean).join(', ');
+  }
+
+  extraLocationsText(trainer: Trainers): string {
+    return extraLocationsLabel(trainer?.locations);
   }
 
   extraLocationCount(trainer: Trainers): number {

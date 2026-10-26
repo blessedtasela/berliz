@@ -64,13 +64,13 @@ describe('TestimonialListComponent', () => {
 
     beforeEach(() => fixture.detectChanges());
 
-    it('shows a retryable error instead of "Stories coming soon"', () => {
+    it('shows a retryable error instead of the empty state', () => {
       actions$.next(loadActiveTestimonialsFailure({ error: 'Server exploded' }));
       fixture.detectChanges();
 
       expect(el().textContent).toContain("Couldn't load the testimonials");
       expect(el().textContent).toContain('Server exploded');
-      expect(el().textContent).not.toContain('Stories coming soon');
+      expect(el().textContent).not.toContain('Be the first to share your experience');
     });
 
     it('retrying loads them again, and a success clears the error', () => {
@@ -83,11 +83,11 @@ describe('TestimonialListComponent', () => {
       actions$.next(loadActiveTestimonialsSuccess({ response: [] } as any));
       fixture.detectChanges();
       expect(el().querySelector('app-load-error')).toBeNull();
-      expect(el().textContent).toContain('Stories coming soon');
+      expect(el().textContent).toContain('Be the first to share your experience');
     });
 
-    it('shows the genuine "coming soon" state when nothing failed', () => {
-      expect(el().textContent).toContain('Stories coming soon');
+    it('shows the "be the first" prompt when nothing failed', () => {
+      expect(el().textContent).toContain('Be the first to share your experience');
     });
   });
 });

@@ -59,7 +59,8 @@
 <!-- ═══════════════════════════════════════════════
      SEARCH + DISCIPLINE FILTER
 ════════════════════════════════════════════════ -->
-<section class="w-full bg-zinc-950 font-sans">
+<!-- No search box over an empty library: the controls appear once there is something to search. -->
+<section *ngIf="equipment.length > 0" class="w-full bg-zinc-950 font-sans">
     <div class="w-full max-w-2xl mx-auto px-4 py-8">
 
         <!-- Search row -->
@@ -111,7 +112,8 @@
     <div class="max-w-6xl mx-auto">
 
         <!-- ── EMPTY STATE ──────────────────────────────────────────── -->
-        <ng-container *ngIf="filteredEquipment.length === 0">
+        <app-list-skeleton *ngIf="filteredEquipment.length === 0 && !firstLoaded && actionsAvailable"></app-list-skeleton>
+        <ng-container *ngIf="filteredEquipment.length === 0 && (firstLoaded || !actionsAvailable)">
             <div class="flex flex-col items-center justify-center py-24 gap-6 text-center">
 
                 <div class="w-20 h-20 rounded-full bg-zinc-900 border border-zinc-800

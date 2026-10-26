@@ -24,10 +24,7 @@ export interface MetaData {
  * `SeoService` looks a route up here on every NavigationEnd and falls back to
  * `default` for anything not listed (private/dashboard routes, 404s, etc).
  *
- * NOTE on 'testimonials': `{ path: 'testimonials', redirectTo: 'services' }`
- * redirects before any component renders, and SeoService reads
- * `urlAfterRedirects`, so a visitor to /testimonials always resolves to the
- * 'services' entry below. No separate entry needed.
+ * NOTE on 'testimonials': /testimonials is a real page again (hero + list), so it has its own entry below.
  */
 export const MetaDataConfig: Record<string, MetaData> = {
     home: {
@@ -36,6 +33,18 @@ export const MetaDataConfig: Record<string, MetaData> = {
         imageUrl: `${environment.assetsUrl}berliz-site.png`,
         ogType: 'website',
         structuredData: StructuredDataConfig.organization,
+    },
+    pricing: {
+        title: 'Pricing - What Berliz Costs | Berliz',
+        description: 'What a session, a pack and a Berliz plan cost, in Canadian dollars, before you create an account.',
+        imageUrl: `${environment.assetsUrl}berliz-site.png`,
+        ogType: 'website',
+    },
+    testimonials: {
+        title: 'Testimonials - Real Stories from Berliz Members | Berliz',
+        description: 'What members say about training with Berliz coaches and centers.',
+        imageUrl: `${environment.assetsUrl}berliz-site.png`,
+        ogType: 'website',
     },
     about: {
         title: 'About Berliz - Connecting You to Gyms, Trainers & Community',

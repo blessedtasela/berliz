@@ -38,6 +38,8 @@ import * as TrainerActions from 'src/app/state/trainer/trainer.actions';
 import * as TrainerSelectors from 'src/app/state/trainer/trainer.selector';
 import * as TestimonialActions from 'src/app/state/testimonial/testimonial.actions';
 import * as TestimonialSelectors from 'src/app/state/testimonial/testimonial.selectors';
+import { closestBySlug, nameSlug } from 'src/app/utils/closest-slug';
+import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 /**
  * PUBLIC center profile page — route `/centers/:name`.
@@ -89,6 +91,24 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
   acceptingBookings: boolean | null = null;
 
   private availabilityService = inject(AvailabilityService);
+  private snack = inject(SnackBarService);
+
+  /** The center a mistyped slug most likely meant, offered on the not-found card. */
+  suggestion: Centers | null = null;
+
+  /** Where an unknown center link with no close match is sent. Overridden by the dashboard subclass so a signed-in user stays inside it. */
+  protected get directoryRoute(): string {
+    return '/centers';
+  }
+
+  /** Where the suggested center's profile lives, for the "Did you mean...?" link. */
+  protected suggestionRoute(center: Centers): string[] {
+    return ['/centers', nameSlug(center.name)];
+  }
+
+  suggestionLink(): string[] {
+    return this.suggestion ? this.suggestionRoute(this.suggestion) : [this.directoryRoute];
+  }
 
   private affiliations: CenterTrainers[] = [];
   private activeTrainers: Trainers[] = [];
@@ -151,6 +171,7 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
   private resolveCenter(name: string | null): void {
     this.loading = true;
     this.notFound = false;
+    this.suggestion = null;
 
     if (!name) {
       this.loading = false;
@@ -182,8 +203,14 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
         this.loading = false;
 
         if (!match) {
-          this.notFound = true;
           this.center = null;
+          this.suggestion = closestBySlug(target, centers, c => this.formatStringToUrl(c.name));
+          if (!this.suggestion) {
+            // A dead link to a center that isn't here: land on the directory so there is something to browse.
+            this.snack.openSnackBar("We couldn't find that center, so here's everyone.", '');
+            this.router.navigate([this.directoryRoute], { replaceUrl: true });
+          }
+          this.notFound = true;
           return;
         }
 

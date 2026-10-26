@@ -6,6 +6,7 @@ import { CategoryDetailsComponent } from './category-details/category-details.co
 import { CategoryGuard } from '../guards/category.guard';
 import { EquipmentPageComponent } from '../equipments/equipment-page/equipment-page.component';
 import { ExercisesSectionComponent } from '../exercises/exercises-section/exercises-section.component';
+import { DisciplineSlugRedirectComponent } from './discipline-slug-redirect/discipline-slug-redirect.component';
 
 // Lazy-loading wrapper for the `disciplines` path and its children, mounted from app-routing.module.ts.
 // CategoriesModule already imports EquipmentsModule and ExercisesModule internally, so EquipmentPageComponent /
@@ -23,12 +24,15 @@ const routes: Routes = [
       { path: 'equipment', component: EquipmentPageComponent, data: { breadcrumb: 'Equipment' } },
       { path: 'exercises', component: ExercisesSectionComponent, data: { breadcrumb: 'Exercises' } },
 
+      // /disciplines/boxing (no id) forwards to /disciplines/2/boxing.
+      { path: ':slug', component: DisciplineSlugRedirectComponent, data: { breadcrumb: null } },
       { path: ':id/:name', component: CategoryDetailsComponent, canActivate: [CategoryGuard], data: { breadcrumb: { alias: 'disciplineName' } } },
     ]
   }
 ];
 
 @NgModule({
+  declarations: [DisciplineSlugRedirectComponent],
   imports: [
     CategoriesModule,
     RouterModule.forChild(routes),

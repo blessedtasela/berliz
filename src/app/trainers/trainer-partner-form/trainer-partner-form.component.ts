@@ -72,7 +72,7 @@ export class TrainerPartnerFormComponent implements OnInit {
         maxWidth: '95vw',
         data: {
           confirmation: true,
-          title: 'Login required',
+          title: 'Log in to apply as a trainer',
           message: 'You need to be logged in to apply as a trainer. Log in to continue?',
           confirmText: 'Log in',
           cancelText: 'Cancel',

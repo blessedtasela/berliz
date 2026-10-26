@@ -59,7 +59,7 @@ export class CenterPartnerFormComponent implements OnInit {
         maxWidth: '95vw',
         data: {
           confirmation: true,
-          title: 'Login required',
+          title: 'Log in to apply as a center',
           message: 'You need to be logged in to apply as a center partner. Log in to continue?',
           confirmText: 'Log in',
           cancelText: 'Cancel',

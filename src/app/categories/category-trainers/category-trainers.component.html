@@ -78,9 +78,9 @@
                 <div class="border-t border-zinc-800 mt-auto"></div>
 
                 <div class="flex items-center justify-between">
-                    <span class="flex items-center gap-1.5 text-[11px] text-zinc-500">
+                    <span class="flex items-center gap-1.5 text-[11px] text-zinc-500" [title]="(trainer.likes || 0) + ' likes'">
                         <i-feather name="heart" style="width:11px;height:11px;"></i-feather>
-                        {{ trainer.likes || 0 }}
+                        {{ trainer.likes || 0 }} {{ (trainer.likes || 0) === 1 ? 'like' : 'likes' }}
                     </span>
 
                     <a [routerLink]="['/trainers', formatUrl(trainer.name)]" class="px-3 py-1.5 rounded-lg bg-red-600 text-white text-[11px] font-semibold

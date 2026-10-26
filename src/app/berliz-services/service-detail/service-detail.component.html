@@ -125,7 +125,7 @@
                         <div class="min-w-0 flex flex-col gap-0.5">
                             <span class="text-sm font-bold text-white truncate">{{ t.name }}</span>
                             <span class="text-[11px] text-zinc-400 line-clamp-2">{{ t.motto }}</span>
-                            <span class="text-[11px] font-semibold text-red-400">{{ t.hourlyRate ? ('$' + t.hourlyRate + '/hr') : 'Rate on request' }}</span>
+                            <span class="text-[11px] font-semibold text-red-400">{{ t.hourlyRate ? ((t.hourlyRate | currency:'CAD':'symbol':'1.0-2') + ' / hour') : 'Rate on request' }}</span>
                         </div>
                     </a>
                 </div>

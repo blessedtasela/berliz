@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Route, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { BerlizFeedbackModalComponent } from '../berliz-feedback-modal/berliz-feedback-modal.component';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
     selector: 'app-footer',
@@ -12,8 +13,15 @@ import { BerlizFeedbackModalComponent } from '../berliz-feedback-modal/berliz-fe
 export class FooterComponent {
 
   currentYear: number = new Date().getFullYear();
+  private auth = inject(AuthService);
+
   constructor(private router: Router, private dialog: MatDialog) {
 
+  }
+
+  /** Feedback needs an account (Report a Problem does not), so the link says so before it is clicked. */
+  get feedbackNeedsLogin(): boolean {
+    return !this.auth.isAuthenticated();
   }
 
   openFeedback(): void {

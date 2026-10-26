@@ -29,7 +29,7 @@ export const DEFAULT_LATE_CANCEL_REFUND_PERCENT = 50;
             <i-feather name="dollar-sign" style="width:12px;height:12px;"></i-feather> Session rate
           </span>
           <span *ngIf="hourlyRate" class="text-lg font-extrabold" [ngClass]="t.heading">
-            {{ hourlyRate | currency:'USD':'symbol':'1.0-2' }}<span class="text-[11px] font-medium" [ngClass]="t.muted"> / hour</span>
+            {{ hourlyRate | currency:'CAD':'symbol':'1.0-2' }}<span class="text-[11px] font-medium" [ngClass]="t.muted"> / hour</span>
           </span>
           <span *ngIf="!hourlyRate" class="text-sm font-bold" [ngClass]="t.heading">Agreed with {{ providerLabel }}</span>
           <span class="text-[11px] leading-snug" [ngClass]="t.muted">

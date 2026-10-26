@@ -15,6 +15,14 @@ import { LocationMenuItem } from 'src/app/shared/locations-menu/locations-menu.c
 })
 export class DashboardCenterDetailComponent extends CenterDetailComponent {
 
+  protected override get directoryRoute(): string {
+    return '/dashboard/find-providers';
+  }
+
+  protected override suggestionRoute(center: { id: number; name: string }): string[] {
+    return ['/dashboard/find-centers', String(center.id), center.name.trim().replace(/ /g, '-').toLowerCase()];
+  }
+
   resolveStrapiUrl = resolveStrapiUrl;
 
   private menuItemsCenter: unknown;

@@ -8,8 +8,8 @@
                     style="width:18px;height:18px;"></i-feather>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ details.title || (details.confirmation ? 'Are you sure?' : 'Heads up') }}</h2>
-                <p *ngIf="details.confirmation" class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">This action may be irreversible</p>
+                <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ title }}</h2>
+                <p *ngIf="subtitle" class="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">{{ subtitle }}</p>
             </div>
         </div>
         <button type="button" (click)="closeDialog()"

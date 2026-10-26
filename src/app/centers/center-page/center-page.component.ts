@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -8,6 +8,7 @@ import { CenterCategory, Centers } from 'src/app/models/centers.interface';
 import { selectActiveCenters } from 'src/app/state/center/center.selectors';
 import { loadActiveCenters, loadActiveCentersFailure, loadActiveCentersSuccess } from 'src/app/state/center/center.actions';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
+import { watchFirstLoad } from 'src/app/utils/first-load';
 
 @Component({
     selector: 'app-center-page',
@@ -17,6 +18,11 @@ import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 })
 
 export class CenterPageComponent implements OnInit {
+  /** True once the first load has finished (never on the server): a skeleton shows until then instead of "coming soon". */
+  firstLoaded = false;
+  private firstLoadSub?: Subscription;
+  private platformId = inject(PLATFORM_ID);
+
   centers: Centers[] = [];
   countResult: number = 0;
   allCenters: Centers[] = [];
@@ -33,6 +39,7 @@ export class CenterPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.subscription.add(watchFirstLoad(this.actions$, this.platformId, [loadActiveCentersSuccess, loadActiveCentersFailure], () => this.firstLoaded = true));
     this.subscription.add(watchLoadError(this.actions$, loadActiveCentersFailure, [loadActiveCenters, loadActiveCentersSuccess], null, m => this.loadError = m));
     this.store.dispatch(loadActiveCenters());
     this.store.select(selectActiveCenters).subscribe((cachedData) => {

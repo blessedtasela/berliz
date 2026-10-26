@@ -20,6 +20,7 @@ import { EquipmentsModule } from '../equipments/equipments.module';
 import { ExercisesModule } from '../exercises/exercises.module';
 import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
+import { ListSkeletonComponent } from 'src/app/shared/list-skeleton/list-skeleton.component';
 
 
 
@@ -35,6 +36,7 @@ import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable
     CategoryExercisesComponent
   ],
   imports: [
+    ListSkeletonComponent,
     ClickablePhotoDirective,
     CommonModule,
     NavbarModule,

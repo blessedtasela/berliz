@@ -6,7 +6,9 @@
     <div class="max-w-6xl mx-auto">
 
         <!-- ── EMPTY STATE ──────────────────────────────────────────── -->
-        <ng-container *ngIf="categoriesResult.length === 0">
+        <app-list-skeleton *ngIf="categoriesResult.length === 0 && !loaded"></app-list-skeleton>
+
+        <ng-container *ngIf="categoriesResult.length === 0 && loaded">
             <div class="flex flex-col items-center justify-center py-24 gap-6 text-center">
 
                 <!-- Icon ring -->
@@ -91,6 +93,8 @@
 
                                 <!-- Like button -->
                                 <button type="button" (click)="likeCategory(category)"
+                                    [attr.aria-label]="(isLiked(category) ? 'Unlike ' : 'Like ') + category.name + ' (' + category.likes + (category.likes === 1 ? ' like)' : ' likes)')"
+                                    [title]="(isLiked(category) ? 'Unlike ' : 'Like ') + category.name"
                                     class="flex items-center gap-1.5 text-xs font-medium rounded-full px-2.5 py-1 border transition"
                                     [ngClass]="isLiked(category) ? 'text-red-400 bg-red-950 border-red-900' : 'text-zinc-500 border-transparent hover:text-red-400 hover:border-zinc-800'">
                                     <!-- Solid heart when liked (Feather's is outline-only) -->
@@ -101,7 +105,7 @@
                                     </svg>
                                     <i-feather *ngIf="!isLiked(category)" name="heart"
                                         style="width:13px;height:13px;"></i-feather>
-                                    {{ category.likes }}
+                                    {{ category.likes }} {{ category.likes === 1 ? 'like' : 'likes' }}
                                 </button>
 
                                 <!-- Know More -->

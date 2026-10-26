@@ -1,0 +1,112 @@
+<!-- ═══════════════════════════════════════════════
+     PRICING: what Berliz costs  /pricing
+════════════════════════════════════════════════ -->
+<section class="relative w-full overflow-hidden font-sans">
+    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('assets/landing/hero-crossfit.jpg');"></div>
+    <div class="absolute inset-0"
+        style="background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(80,0,0,0.55) 60%, rgba(0,0,0,0.8) 100%);"></div>
+
+    <div class="relative z-10 max-w-5xl mx-auto px-4 py-16 sm:py-20 flex flex-col items-center text-center gap-3">
+        <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">Pricing</span>
+        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+            What it <span class="text-red-500">costs</span>
+        </h1>
+        <p class="text-sm sm:text-base text-zinc-300 max-w-xl leading-relaxed">
+            Joining is free. You pay the trainer or center for sessions, and Berliz plans unlock more. Every price is in Canadian dollars (CAD).
+        </p>
+        <div class="w-12 h-0.5 bg-red-600 rounded-full mt-1"></div>
+    </div>
+</section>
+
+<div class="w-full bg-zinc-950 font-sans px-4 py-14">
+    <div class="max-w-5xl mx-auto flex flex-col gap-14">
+
+        <!-- Sessions, packs and memberships -->
+        <section aria-labelledby="sessions-heading" class="flex flex-col gap-6">
+            <div class="flex flex-col gap-2">
+                <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">Sessions</span>
+                <h2 id="sessions-heading" class="text-2xl font-extrabold tracking-tight text-white">Set by each trainer and center</h2>
+                <p class="text-sm text-zinc-400 max-w-2xl leading-relaxed">
+                    Berliz does not mark up sessions. Each trainer and center sets their own rate and shows it on their profile.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 flex flex-col gap-2">
+                    <i-feather name="clock" class="text-red-500" style="width:18px;height:18px;"></i-feather>
+                    <h3 class="text-sm font-bold text-white">Single session</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed">
+                        An hourly rate, prorated by session length. You are charged only after the provider confirms, with 24 hours to pay.
+                    </p>
+                </div>
+                <div class="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 flex flex-col gap-2">
+                    <i-feather name="layers" class="text-red-500" style="width:18px;height:18px;"></i-feather>
+                    <h3 class="text-sm font-bold text-white">Packs and monthly plans</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed">
+                        Buy several sessions at once or subscribe monthly with a trainer or center. Prices are on the Level up page of their profile.
+                    </p>
+                </div>
+                <div class="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 flex flex-col gap-2">
+                    <i-feather name="shield" class="text-red-500" style="width:18px;height:18px;"></i-feather>
+                    <h3 class="text-sm font-bold text-white">Cancelling</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed">
+                        Free cancellation up to 24 hours before a paid session; inside that window 50% is refunded. A provider may set their own terms, shown on their profile.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+                <a routerLink="/trainers" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition">Browse trainers</a>
+                <a routerLink="/centers" class="px-5 py-2.5 rounded-xl border border-zinc-700 text-zinc-200 text-xs font-semibold hover:border-red-600 hover:text-white transition">Browse centers</a>
+            </div>
+        </section>
+
+        <!-- Platform plans -->
+        <section aria-labelledby="plans-heading" class="flex flex-col gap-6">
+            <div class="flex flex-col gap-2">
+                <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-red-400">Berliz plans</span>
+                <h2 id="plans-heading" class="text-2xl font-extrabold tracking-tight text-white">Subscribe to Berliz itself</h2>
+            </div>
+
+            <div *ngIf="loading" class="grid grid-cols-1 sm:grid-cols-3 gap-4" role="status" aria-label="Loading plans">
+                <div *ngFor="let n of [1, 2, 3]" class="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 h-40 animate-pulse"></div>
+            </div>
+
+            <div *ngIf="!loading && loadError" class="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 flex flex-col items-start gap-3">
+                <p class="text-sm text-zinc-300">We could not load the plan prices just now.</p>
+                <button type="button" (click)="load()" class="px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition">Try again</button>
+            </div>
+
+            <p *ngIf="!loading && !loadError && groups.length === 0" class="text-sm text-zinc-400">
+                There are no paid plans right now. Everything you need to get started is free.
+            </p>
+
+            <div *ngFor="let g of groups" class="flex flex-col gap-3">
+                <div>
+                    <h3 class="text-base font-extrabold text-white">{{ g.title }}</h3>
+                    <p class="text-xs text-zinc-500">{{ g.blurb }}</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div *ngFor="let p of g.plans; trackBy: trackById" class="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 flex flex-col gap-3" data-testid="plan-card">
+                        <h4 class="text-sm font-bold text-white">{{ p.name }}</h4>
+                        <div class="flex items-baseline gap-1.5">
+                            <span class="text-2xl font-extrabold text-white">{{ p.price | currency:'CAD':'symbol':'1.0-2' }}</span>
+                            <span class="text-[11px] uppercase tracking-wide text-zinc-500">{{ intervalLabel(p) }}</span>
+                        </div>
+                        <p *ngIf="p.description" class="text-xs text-zinc-400 leading-relaxed">{{ p.description }}</p>
+                        <p *ngIf="p.accessScope" class="text-[11px] text-zinc-500">{{ p.accessScope }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Start -->
+        <section class="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h2 class="text-base font-extrabold text-white">Ready to start?</h2>
+                <p class="text-xs text-zinc-400">Create a free account, then book a session or pick a plan.</p>
+            </div>
+            <a routerLink="/sign-up" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition text-center">Join for free</a>
+        </section>
+    </div>
+</div>

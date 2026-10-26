@@ -28,7 +28,7 @@ export class StateService {
         id: 2,
         title: "Personal Trainers",
         subTitle: "One-on-One. All In.",
-        description: "Get matched with elite Berliz-certified personal trainers who craft every rep around your goals, pace, and lifestyle — in person or online.",
+        description: "Get matched with Berliz-certified personal trainers who craft every rep around your goals, pace, and lifestyle — in person or online.",
         imageUrl: "../../../assets/landing/hero-personal-trainer.jpg",
         button: "Find your coach",
         buttonUrl: "/trainers"
@@ -46,7 +46,7 @@ export class StateService {
         id: 4,
         title: "Martial Arts Schools",
         subTitle: "Discipline Meets Legacy",
-        description: "Berliz connects you to top-tier martial arts academies. From Muay Thai to Karate, train where skill meets spirit.",
+        description: "Berliz connects you to martial arts academies. From Muay Thai to Karate, train where skill meets spirit.",
         imageUrl: "../../../assets/landing/hero-martial-school.jpg",
         button: "Find a school",
         buttonUrl: "/centers"
@@ -58,7 +58,7 @@ export class StateService {
         description: "Explore premium fitness gear, supplements, and apparel curated for every discipline. The Berliz marketplace fuels your grind with quality and style.",
         imageUrl: "../../../assets/landing/hero-marketplace.jpg",
         button: "Shop Now",
-        buttonUrl: "/shop"
+        buttonUrl: "/services/shop"
       },
       {
         id: 6,
@@ -134,7 +134,7 @@ export class StateService {
       {
         id: 1,
         title: "Personalized Training Programs",
-        description: "Train your way. From elite martial artists to personal fitness coaches, Berliz connects you with certified trainers tailored to your style, goals, and intensity.",
+        description: "Train your way. From martial artists to personal fitness coaches, Berliz connects you with certified trainers tailored to your style, goals, and intensity.",
         subTitle: "Train with Purpose, Transform with Power",
         iconUrl: "Map"
       },

@@ -227,3 +227,23 @@ export function spotAddress(loc: { venue?: string | null; address?: string | nul
 export function isApproximateSpot(loc: { locationPrecision?: string | null; address?: string | null }): boolean {
   return loc.locationPrecision === 'AREA' && !!loc.address?.trim();
 }
+
+type PlaceLike = { city?: string | null; country?: string | null; venue?: string | null; address?: string | null };
+
+/**
+ * What to print after the first location on a card: the second place by name when there is exactly one ("& Toronto, Canada")
+ * so "+1 more" never leaves a visitor wondering where; "+N more" for several; '' for none.
+ * A second spot in the same city is named by its venue/address instead of repeating the city.
+ */
+export function extraLocationsLabel(locations: PlaceLike[] | null | undefined): string {
+  const list = locations ?? [];
+  const extra = list.length - 1;
+  if (extra <= 0) return '';
+  if (extra > 1) return `+${extra} more`;
+  const place = (l: PlaceLike) => [l.city, l.country].filter(Boolean).join(', ');
+  const first = place(list[0]);
+  const second = place(list[1]);
+  if (second && second !== first) return `& ${second}`;
+  const spot = spotHeading(list[1]);
+  return spot ? `& ${spot}` : '+1 more';
+}

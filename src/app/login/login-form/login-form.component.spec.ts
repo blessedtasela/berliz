@@ -199,6 +199,17 @@ describe('LoginFormComponent', () => {
       component.login();
     }
 
+    it('says why the visitor is here when a protected page sent them', () => {
+      returnUrl = '/dashboard';
+      expect(component.gateMessage).toBe('Log in to view your dashboard.');
+      returnUrl = '/trainers/some-trainer/level-up';
+      expect(component.gateMessage).toBe('Log in to continue.');
+      returnUrl = null;
+      expect(component.gateMessage).toBeNull();
+      returnUrl = '//evil.example.com';
+      expect(component.gateMessage).toBeNull();
+    });
+
     it('goes to /dashboard when there is no returnUrl (a plain, unprompted visit to /login)', () => {
       userService.login.and.returnValue(of(successResponse()));
 

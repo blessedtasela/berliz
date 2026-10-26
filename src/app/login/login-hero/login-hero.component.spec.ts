@@ -20,4 +20,16 @@ describe('LoginHeroComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('welcomes a returning member back, on the login page', () => {
+    expect(fixture.nativeElement.textContent).toContain('Welcome back');
+  });
+
+  it('greets someone creating an account instead of saying "Welcome back"', () => {
+    component.mode = 'signup';
+    fixture.detectChanges();
+    const text = fixture.nativeElement.textContent;
+    expect(text).toContain('Join Berliz');
+    expect(text).not.toContain('Welcome back');
+  });
 });

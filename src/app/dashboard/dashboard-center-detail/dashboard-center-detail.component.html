@@ -19,6 +19,10 @@
         <h1 class="text-sm font-bold text-gray-900 dark:text-gray-100">Center not found</h1>
         <p class="text-xs text-gray-400 dark:text-gray-500 leading-relaxed">This profile is no longer available, or the link is incorrect.</p>
     </div>
+    <a *ngIf="suggestion" [routerLink]="suggestionLink()" class="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs text-gray-700 dark:text-gray-200
+            hover:border-red-600 transition">
+        Did you mean <span class="font-semibold">{{ suggestion.name }}</span>?
+    </a>
     <a routerLink="/dashboard/find-providers" class="px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold
             hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
         <i-feather name="arrow-left" style="width:12px;height:12px;"></i-feather>

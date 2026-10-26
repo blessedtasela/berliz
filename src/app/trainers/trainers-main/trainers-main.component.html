@@ -6,7 +6,7 @@
         <app-load-error [compact]="true" title="Couldn't load trainers" [message]="loadError" (retry)="retryLoad()"></app-load-error>
     </div>
 </div>
-<app-trainers-search-result *ngIf="!(loadError && trainers.length === 0)" [trainersResult]="trainers">
+<app-trainers-search-result *ngIf="!(loadError && trainers.length === 0)" [trainersResult]="trainers" [loaded]="firstLoaded">
 </app-trainers-search-result>
 <app-trainer-partner-form>
 </app-trainer-partner-form>

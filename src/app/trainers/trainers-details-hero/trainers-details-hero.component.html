@@ -88,6 +88,9 @@
                     </button>
                 </div>
 
+                <app-booking-assurance providerLabel="this trainer" [freeCancelHours]="trainer?.freeCancelHours"
+                    [lateCancelRefundPercent]="trainer?.lateCancelRefundPercent"></app-booking-assurance>
+
                 <!-- Proof, at a glance -->
                 <div class="flex flex-wrap gap-x-5 gap-y-2 justify-center sm:justify-start text-xs text-zinc-400 pt-1">
                     <span *ngIf="trainer?.experience" class="flex items-center gap-1.5">
@@ -123,7 +126,7 @@
                         <span class="text-sm font-bold text-white flex items-center gap-1.5 truncate">
                             <i-feather name="map-pin" class="text-red-500 shrink-0" style="width:13px;height:13px;"></i-feather>
                             <span class="truncate">{{ primaryLocationLabel }}</span>
-                            <span *ngIf="extraLocationCount > 0" class="text-red-400 font-semibold shrink-0">+{{ extraLocationCount }} more</span>
+                            <span *ngIf="extraLocationCount > 0" class="text-red-400 font-semibold shrink-0">{{ extraLocationsText }}</span>
                         </span>
                         <span *ngIf="extraLocationCount > 0" class="text-[10px] text-zinc-500">Tap to see all {{ trainer?.locations?.length }} locations</span>
                     </button>

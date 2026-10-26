@@ -27,4 +27,35 @@ describe('PromptModalComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  describe('wording', () => {
+    function withData(data: any) {
+      component.details = data;
+      fixture.detectChanges();
+      return fixture.nativeElement.textContent as string;
+    }
+
+    it('warns that a destructive confirmation may be irreversible', () => {
+      const text = withData({ confirmation: true, message: 'Delete it?' });
+      expect(text).toContain('This action may be irreversible');
+      expect(component.title).toBe('Are you sure?');
+    });
+
+    it('does not call a log-in prompt irreversible, and titles it plainly', () => {
+      const text = withData({ confirmation: true, icon: 'log-in', title: 'Login required', message: 'Log in to continue?' });
+      expect(text).not.toContain('irreversible');
+      expect(component.title).toBe('Log in to continue');
+    });
+
+    it('keeps a specific title on a log-in prompt', () => {
+      withData({ confirmation: true, icon: 'log-in', title: 'Log in to apply as a trainer', message: 'x' });
+      expect(component.title).toBe('Log in to apply as a trainer');
+    });
+
+    it('shows an explicit subtitle instead of the warning', () => {
+      const text = withData({ confirmation: true, subtitle: 'Your plan stays active until the end of the month', message: 'Cancel?' });
+      expect(text).toContain('Your plan stays active');
+      expect(text).not.toContain('irreversible');
+    });
+  });
 });

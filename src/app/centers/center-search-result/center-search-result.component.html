@@ -11,7 +11,9 @@
             (criteriaChange)="onCriteria($event)"></app-provider-filter-bar>
 
         <!-- ── EMPTY STATE ──────────────────────────────────────────── -->
-        <ng-container *ngIf="centersResult.length === 0">
+        <app-list-skeleton *ngIf="centersResult.length === 0 && !loaded"></app-list-skeleton>
+
+        <ng-container *ngIf="centersResult.length === 0 && loaded">
             <div class="flex flex-col items-center justify-center py-24 gap-6 text-center">
 
                 <!-- Icon ring -->

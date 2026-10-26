@@ -29,7 +29,7 @@ export class FactsComponent {
       { id: 1, name: "Our Partners", iconUrl: "users", value: 65, counterValue: 0 },
       { id: 2, name: "Our Centers", iconUrl: "map-pin", value: 23, counterValue: 0 },
       { id: 3, name: "Our Members", iconUrl: "user-check", value: 400, counterValue: 0 },
-      { id: 4, name: "Our Services", iconUrl: "grid", value: 400, counterValue: 0 },
+      { id: 4, name: "Disciplines", iconUrl: "grid", value: 400, counterValue: 0 },
     ]
 
   }

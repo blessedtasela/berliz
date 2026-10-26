@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, PLATFORM_ID, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Categories } from 'src/app/models/categories.interface';
 import { RxStompService } from 'src/app/services/rx-stomp.service';
-import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { loadActiveCategories, loadActiveCategoriesFailure, loadActiveCategoriesSuccess } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
+import { Actions } from '@ngrx/effects';
+import { injectActionsOrNull, watchFirstLoad } from 'src/app/utils/first-load';
 
 @Component({
     selector: 'app-categories',
@@ -15,6 +17,12 @@ import { selectActiveCategories } from 'src/app/state/category/category.selector
 })
 export class CategoriesComponent {
   categories: Categories[] = [];
+
+  /** True once the first load has finished (never on the server): a skeleton shows until then instead of "coming soon". */
+  firstLoaded = false;
+  private platformId = inject(PLATFORM_ID);
+  private actionsOpt = injectActionsOrNull();
+
   countResult: number = 0;
   subscriptions: Subscription[] = [];
 
@@ -23,6 +31,11 @@ export class CategoriesComponent {
     private rxStompService: RxStompService,) { }
 
   ngOnInit(): void {
+    if (this.actionsOpt) {
+      this.subscriptions.push(watchFirstLoad(this.actionsOpt, this.platformId, [loadActiveCategoriesSuccess, loadActiveCategoriesFailure], () => this.firstLoaded = true));
+    } else {
+      this.firstLoaded = true;
+    }
     this.handleEmitEvent()
     this.watchLikeCategory()
     this.watchUpdateCategory()

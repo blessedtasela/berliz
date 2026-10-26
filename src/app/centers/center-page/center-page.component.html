@@ -5,5 +5,5 @@
         <app-load-error [compact]="true" title="Couldn't load centers" [message]="loadError" (retry)="retryLoad()"></app-load-error>
     </div>
 </div>
-<app-center-search-result *ngIf="!(loadError && centers.length === 0)" [centersResult]="centers" [totalCenters]="countResult"></app-center-search-result>
+<app-center-search-result *ngIf="!(loadError && centers.length === 0)" [centersResult]="centers" [totalCenters]="countResult" [loaded]="firstLoaded"></app-center-search-result>
 <app-center-partner-form></app-center-partner-form>

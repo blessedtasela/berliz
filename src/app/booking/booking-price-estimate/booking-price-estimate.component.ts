@@ -22,20 +22,20 @@ import { DEFAULT_FREE_CANCEL_HOURS, DEFAULT_LATE_CANCEL_REFUND_PERCENT } from 's
     <div *ngIf="estimate as e" class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2.5 flex flex-col gap-1.5">
       <div class="flex items-center justify-between gap-3">
         <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Estimated total</span>
-        <span class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ e.total | currency:'USD':'symbol':'1.2-2' }}</span>
+        <span class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ e.total | currency:'CAD':'symbol':'1.2-2' }}</span>
       </div>
       <div class="text-[11px] text-gray-500 dark:text-gray-400 flex flex-col gap-0.5">
         <span class="flex justify-between gap-3">
           <span>Session ({{ minutes }} min)</span>
-          <span [ngClass]="e.discounted ? 'line-through text-gray-400 dark:text-gray-500' : ''">{{ e.sessionPrice | currency:'USD':'symbol':'1.2-2' }}</span>
+          <span [ngClass]="e.discounted ? 'line-through text-gray-400 dark:text-gray-500' : ''">{{ e.sessionPrice | currency:'CAD':'symbol':'1.2-2' }}</span>
         </span>
         <span *ngIf="e.discounted" class="flex justify-between gap-3 text-emerald-700 dark:text-emerald-400">
           <span>After your reward</span>
-          <span>{{ e.sessionAfterRewards | currency:'USD':'symbol':'1.2-2' }}</span>
+          <span>{{ e.sessionAfterRewards | currency:'CAD':'symbol':'1.2-2' }}</span>
         </span>
         <span *ngIf="e.locationFee > 0" class="flex justify-between gap-3">
           <span>Location fee</span>
-          <span>{{ e.locationFee | currency:'USD':'symbol':'1.2-2' }}</span>
+          <span>{{ e.locationFee | currency:'CAD':'symbol':'1.2-2' }}</span>
         </span>
       </div>
       <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
