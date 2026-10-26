@@ -2,8 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes, UrlMatchResult, UrlSegment } from '@angular/router';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { TestimonialPageComponent } from './testimonial/testimonial-page/testimonial-page.component';
-import { ProductsPageComponent } from './products/products-page/products-page.component';
-import { ProductsModule, productChildRoutes } from './products/products.module';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { AuthGuard } from './services/auth.guard';
 import { dashboardEntryGuard } from './guards/dashboard-entry.guard';
@@ -84,8 +82,7 @@ export const routes: Routes = [
   // UserModule distinct from the top-level one — see DashboardUserFeatureModule's
   // comment. Mounted at root (empty path) since both are already full paths.
   { path: '', loadChildren: () => import('./dashboard/user/dashboard-user-feature.module').then(m => m.DashboardUserFeatureModule) },
-  { path: 'shop', redirectTo: 'services/shop', pathMatch: 'full' },
-  { path: 'shop', component: ProductsPageComponent, children: productChildRoutes, data: { breadcrumb: 'Shop' } },
+  { path: 'shop', loadChildren: () => import('./shop/shop-feature.module').then(m => m.ShopFeatureModule) },
 
   // Member profile — page itself has NO guard, so anonymous visitors can land
   // here, but the backend requires auth for the actual data (SecurityConfig).

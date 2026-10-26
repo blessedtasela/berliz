@@ -58,7 +58,7 @@ export class StateService {
         description: "Explore premium fitness gear, supplements, and apparel curated for every discipline. The Berliz marketplace fuels your grind with quality and style.",
         imageUrl: "../../../assets/landing/hero-marketplace.jpg",
         button: "Shop Now",
-        buttonUrl: "/services/shop"
+        buttonUrl: "/shop"
       },
       {
         id: 6,

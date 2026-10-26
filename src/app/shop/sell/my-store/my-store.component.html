@@ -1,0 +1,118 @@
+<!-- No store yet: create it -->
+<div *ngIf="!store" class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden">
+  <div class="bg-red-600 px-5 py-4">
+    <h1 class="text-sm font-bold text-white">You're approved to sell!</h1>
+    <p class="text-[11px] text-red-100 mt-0.5">Set up your store to start listing items</p>
+  </div>
+  <div class="p-5 flex flex-col gap-4">
+
+    <div class="flex items-center gap-3">
+      <div class="w-16 h-16 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center overflow-hidden shrink-0">
+        <img *ngIf="form.photo" [src]="form.photo" class="w-full h-full object-cover" alt="Store photo" />
+        <i-feather *ngIf="!form.photo" name="camera" class="text-gray-300 dark:text-gray-600" style="width:20px;height:20px;"></i-feather>
+      </div>
+      <label class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition">
+        {{ uploadingPhoto ? 'Uploading…' : 'Upload photo' }}
+        <input type="file" accept="image/*" class="hidden" [disabled]="uploadingPhoto" (change)="onPhotoSelected($event)" />
+      </label>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Store name</label>
+      <input type="text" [(ngModel)]="form.name" maxlength="100" placeholder="e.g. Jane's Fitness Gear"
+        class="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Short motto (optional)</label>
+      <input type="text" [(ngModel)]="form.motto" maxlength="150" placeholder="e.g. Quality used gear at honest prices"
+        class="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Introduction (optional)</label>
+      <textarea [(ngModel)]="form.introduction" rows="3" maxlength="1000" placeholder="Tell buyers about your store"
+        class="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition resize-none"></textarea>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Location (optional)</label>
+      <input type="text" [(ngModel)]="form.location" maxlength="150" placeholder="e.g. Vancouver, BC"
+        class="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+    </div>
+
+    <div class="flex justify-end">
+      <button type="button" (click)="createStore()" [disabled]="!form.name.trim() || saving"
+        class="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition
+               flex items-center gap-2 disabled:opacity-50">
+        <i-feather [name]="saving ? 'loader' : 'check'" [ngClass]="{'animate-spin': saving}" style="width:12px;height:12px;"></i-feather>
+        {{ saving ? 'Creating…' : 'Create my store' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Store exists: manage it -->
+<div *ngIf="store" class="flex flex-col gap-4">
+
+  <div class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 flex items-center gap-4">
+    <div class="w-16 h-16 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center overflow-hidden shrink-0">
+      <img *ngIf="store.photoUrl" [src]="store.photoUrl" class="w-full h-full object-cover" alt="Store photo" />
+      <i-feather *ngIf="!store.photoUrl" name="shopping-bag" class="text-gray-300 dark:text-gray-600" style="width:22px;height:22px;"></i-feather>
+    </div>
+    <div class="min-w-0 flex-1">
+      <h1 class="text-sm font-bold text-gray-900 dark:text-gray-100 truncate">{{ store.name }}</h1>
+      <p *ngIf="store.motto" class="text-xs text-gray-400 dark:text-gray-500 truncate">{{ store.motto }}</p>
+    </div>
+    <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full text-[10px] font-semibold"
+      [ngClass]="store.status === 'true' ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-gray-600'">
+      {{ store.status === 'true' ? 'Live' : 'Deactivated' }}
+    </span>
+  </div>
+
+  <div class="flex items-center justify-between">
+    <h2 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Your listings</h2>
+    <button type="button" (click)="openAddProduct()"
+      class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition">
+      <i-feather name="plus" style="width:12px;height:12px;"></i-feather>
+      List an item
+    </button>
+  </div>
+
+  <div *ngIf="productsLoaded && products.length === 0" class="rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 p-8 text-center">
+    <i-feather name="package" class="text-gray-300 dark:text-gray-600 mx-auto" style="width:24px;height:24px;"></i-feather>
+    <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">Nothing listed yet.</p>
+  </div>
+
+  <div *ngIf="products.length > 0" class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-800 overflow-hidden">
+    <div *ngFor="let product of products" class="flex items-center gap-3 px-4 py-3">
+      <div class="w-12 h-12 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center overflow-hidden shrink-0">
+        <img *ngIf="product.photoUrl" [src]="product.photoUrl" class="w-full h-full object-cover" alt="" />
+        <i-feather *ngIf="!product.photoUrl" name="image" class="text-gray-300 dark:text-gray-600" style="width:16px;height:16px;"></i-feather>
+      </div>
+      <div class="min-w-0 flex-1">
+        <div class="flex items-center gap-1.5">
+          <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{{ product.name }}</p>
+          <span class="shrink-0 text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full"
+            [ngClass]="product.classify === 'new' ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400' : 'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400'">
+            {{ product.classify }}
+          </span>
+        </div>
+        <p class="text-[11px] text-gray-400 dark:text-gray-500">{{ product.price | currency }} &middot; qty {{ product.quantity ?? 0 }}</p>
+      </div>
+      <div class="flex items-center gap-1 shrink-0">
+        <button type="button" (click)="openEditProduct(product)" class="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition" title="Edit">
+          <i-feather name="edit-2" class="text-gray-500 dark:text-gray-400" style="width:14px;height:14px;"></i-feather>
+        </button>
+        <button type="button" (click)="deleteProduct(product)" class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition" title="Remove">
+          <i-feather name="trash-2" class="text-red-600" style="width:14px;height:14px;"></i-feather>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
