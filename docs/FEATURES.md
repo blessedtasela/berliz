@@ -190,6 +190,15 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Visitor-review fixes, batch 1: sign-up age, unknown trainer links, center booking dead end
+
+From the 2026-10-24 first-time-visitor review (items 1–3).
+
+- **Minimum age is 18 everywhere.** Terms said 16, Privacy said 18+. Both now say 18, the sign-up form (web, modal and mobile) and the backend (`MINIMUM_SIGNUP_AGE`, email and social sign-up) enforce 18, and both documents are dated October 25, 2026. Existing accounts are untouched.
+- **A mistyped trainer link no longer dead-ends.** `/trainers/<slug>` that matches nobody now offers "Did you mean …?" when the slug is within two typos of a trainer (`closest-slug.ts`), otherwise redirects to the trainers directory. If the trainers couldn't be loaded at all the plain "Trainer not found" card stays (a server error shouldn't bounce you away). The signed-in dashboard profile redirects/links within the dashboard.
+- **Center booking dead end closed.** A center with no weekly hours no longer shows "Book a session", the bottom call to action or the sticky book bar; the profile says online booking isn't open yet. (If the hours check fails, booking stays visible.)
+- **Centers can publish a contact email and phone/WhatsApp** (optional, public). New `contact_email` / `contact_phone` on `center` (migration V77, validated by `ProviderContactRules`; phone is stored as `+` and digits). Edited in the center editor (Partner → Center data); shown as a "Contact {center}" card (Call / WhatsApp / Email) on the public and dashboard center profiles, in place of the booking button when booking isn't open, and on the center's booking page. Not yet on mobile (see the parity table).
+
 ### Unreleased — Fix: a discipline's page falsely said "not found"; expired-session purchases showed a raw backend error
 
 - **Discipline detail page.** `/category/getCategory/{id}` (and its `/discipline` alias) were bypassed in `JWTFilter`'s public-path regex but missing from `SecurityConfig`'s own `permitAll` list, so `.anyRequest().authenticated()` 401'd every anonymous visitor before the controller ever ran. `CategoryGuard` couldn't tell that 401 apart from a genuinely missing discipline and showed "Category not found" for a perfectly real one. Fixed on both sides: the backend route is now actually public, and the guard says "Discipline not found" and only for a real 404 — any other failure (401, network) lets the page through instead of lying about non-existence. Also fixed two dead `/categories` links (center profile's "Disciplines" section, and the unused `TrainerCategoryComponent`) that 404'd instead of reaching `/disciplines/:id/:name`.

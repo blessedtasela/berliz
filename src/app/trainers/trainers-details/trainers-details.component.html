@@ -27,6 +27,11 @@
             </p>
         </div>
 
+        <a *ngIf="suggestion" [routerLink]="suggestionLink()" class="px-5 py-3 rounded-xl border border-zinc-700 bg-zinc-900 text-sm text-zinc-200
+                       hover:border-red-600 hover:text-white transition">
+            Did you mean <span class="font-semibold text-white">{{ suggestion.name }}</span>?
+        </a>
+
         <button type="button" (click)="backToTrainers()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
                        hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2">
             <i-feather name="arrow-left" style="width:13px;height:13px;"></i-feather>

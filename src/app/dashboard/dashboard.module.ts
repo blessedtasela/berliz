@@ -1,6 +1,7 @@
 import { ProviderTermsComponent } from '../shared/provider-profile/provider-terms.component';
 import { ProviderPackagesComponent } from '../shared/provider-profile/provider-packages.component';
 import { ProviderAvailabilityComponent } from '../shared/provider-profile/provider-availability.component';
+import { ProviderContactComponent } from '../shared/provider-profile/provider-contact.component';
 import { HowItWorksComponent } from '../shared/provider-profile/how-it-works.component';
 import { ProviderFilterBarComponent } from '../shared/provider-profile/provider-filter-bar.component';
 import { ProviderCardMetaComponent } from '../shared/provider-profile/provider-card-meta.component';
@@ -94,6 +95,7 @@ import { DashboardBillingSummaryComponent } from './dashboard-billing-summary/da
     ProviderTermsComponent,
     ProviderPackagesComponent,
     ProviderAvailabilityComponent,
+    ProviderContactComponent,
     HowItWorksComponent,
     ProviderFilterBarComponent,
     ProviderCardMetaComponent,

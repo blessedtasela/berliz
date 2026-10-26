@@ -9,6 +9,9 @@ export interface ResolvedProvider {
   id: number;
   name: string;
   photoUrl: string | null;
+  /** Public contact details the provider chose to publish (centers only so far). */
+  contactEmail?: string | null;
+  contactPhone?: string | null;
 }
 
 /** "Jo Smith" <-> "Jo-Smith": the provider's name is its URL segment. */
@@ -35,7 +38,13 @@ export function resolveProviderBySlug(
       const providers: any[] = response?.data ?? [];
       const match = providers.find(p => p.name && providerSlug(p.name).toLowerCase() === slug.toLowerCase());
       return match
-        ? { id: match.id, name: match.name, photoUrl: match.photoResponse?.photoUrl || null }
+        ? {
+          id: match.id,
+          name: match.name,
+          photoUrl: match.photoResponse?.photoUrl || null,
+          contactEmail: match.contactEmail || null,
+          contactPhone: match.contactPhone || null,
+        }
         : null;
     }),
   );

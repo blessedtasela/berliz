@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ProviderContactComponent } from '../../shared/provider-profile/provider-contact.component';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
@@ -55,7 +56,7 @@ type BookingOption =
  */
 @Component({
     selector: 'app-booking-page',
-    imports: [CommonModule, FormsModule, RouterModule, IconsModule, SharedModule, DateStripComponent, BookingLocationPickerComponent, BookingPriceEstimateComponent],
+    imports: [CommonModule, FormsModule, RouterModule, IconsModule, SharedModule, DateStripComponent, BookingLocationPickerComponent, BookingPriceEstimateComponent, ProviderContactComponent],
     templateUrl: './booking-page.component.html'
 })
 export class BookingPageComponent implements OnInit, OnDestroy {
@@ -68,6 +69,9 @@ export class BookingPageComponent implements OnInit, OnDestroy {
 
   providerId = 0;
   providerName = '';
+  /** The provider's published contact details, offered when they have no hours to book into. */
+  contactEmail: string | null = null;
+  contactPhone: string | null = null;
   providerPhotoUrl: string | null = null;
 
   /** What this provider sells (only used to point at the Level Up page, which is where plans are bought). */
@@ -272,6 +276,8 @@ export class BookingPageComponent implements OnInit, OnDestroy {
         this.providerId = provider.id;
         this.providerName = provider.name;
         this.providerPhotoUrl = provider.photoUrl;
+        this.contactEmail = provider.contactEmail ?? null;
+        this.contactPhone = provider.contactPhone ?? null;
 
         this.updateSeoTags();
         this.fetchPackages();

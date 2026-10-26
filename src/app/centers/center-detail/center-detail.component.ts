@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { AvailabilityService } from 'src/app/services/availability.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProviderPackage } from 'src/app/models/provider-package.model';
 import { MatDialog } from '@angular/material/dialog';
@@ -81,6 +82,13 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
 
   loading: boolean = true;
   notFound: boolean = false;
+  /**
+   * Whether the center has any weekly hours to book into. null until known, and stays null if the check fails --
+   * only a confirmed "no hours" hides the booking buttons, so a hiccup never takes booking away from a center that has it.
+   */
+  acceptingBookings: boolean | null = null;
+
+  private availabilityService = inject(AvailabilityService);
 
   private affiliations: CenterTrainers[] = [];
   private activeTrainers: Trainers[] = [];
@@ -188,10 +196,21 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
         if (this.centerId !== match.id) {
           this.centerId = match.id;
           this.providerAnalytics.recordProfileView({ centerId: match.id });
+          this.loadBookingAvailability(match.id);
           this.loadCenterDetails();
           this.resumePendingAction();
         }
       })
+    );
+  }
+
+  private loadBookingAvailability(centerId: number): void {
+    this.subscription.add(
+      this.availabilityService.getProviderAvailability(undefined, centerId)
+        .pipe(catchError(() => of(null)))
+        .subscribe(response => {
+          if (response) this.acceptingBookings = (response.data ?? []).some(day => day.isActive);
+        })
     );
   }
 

@@ -89,11 +89,12 @@
             </div>
             <div>
                 <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Ready to train?</h2>
-                <p class="text-xs text-gray-400 dark:text-gray-500">Book a session at {{ center?.name }} — pick a date and time that works for you.</p>
+                <p *ngIf="acceptingBookings !== false" class="text-xs text-gray-400 dark:text-gray-500">Book a session at {{ center?.name }} — pick a date and time that works for you.</p>
+                <p *ngIf="acceptingBookings === false" class="text-xs text-gray-400 dark:text-gray-500">{{ center?.name }} hasn't opened online booking yet.</p>
             </div>
         </div>
         <div class="flex flex-col sm:flex-row gap-2 shrink-0 w-full sm:w-auto">
-            <button type="button" (click)="bookSession()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+            <button *ngIf="acceptingBookings !== false" type="button" (click)="bookSession()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
                     hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2 justify-center">
                 <i-feather name="calendar" style="width:13px;height:13px;"></i-feather>
                 Book a session
@@ -111,6 +112,8 @@
         [freeCancelHours]="center?.freeCancelHours" [lateCancelRefundPercent]="center?.lateCancelRefundPercent"></app-provider-terms>
     <app-provider-packages theme="light" [centerId]="center?.id" [showEmpty]="true" [selectable]="true" (choose)="openPlan($event)"></app-provider-packages>
     <app-provider-availability theme="light" [centerId]="center?.id" [showEmpty]="true"></app-provider-availability>
+    <app-provider-contact theme="light" [name]="center?.name ?? 'this center'"
+        [phone]="center?.contactPhone" [email]="center?.contactEmail"></app-provider-contact>
 
     <!-- Introduction -->
     <div *ngIf="centerIntro?.introduction" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex flex-col gap-3">

@@ -10,8 +10,8 @@ import { GENDER_OPTIONS } from 'src/app/shared/constants/gender-options';
 import { fileValidator, emailExtensionValidator, passwordMatchValidator, genericError, minimumAgeValidator } from 'src/validators/form-validators.module';
 import { localDateString } from 'src/app/utils/local-date';
 
-/** Berliz requires signups to be 16 or older. */
-export const MINIMUM_SIGNUP_AGE = 16;
+/** Berliz requires signups to be 18 or older (Terms and Privacy both say so). */
+export const MINIMUM_SIGNUP_AGE = 18;
 
 @Component({
     selector: 'app-signup-modal',

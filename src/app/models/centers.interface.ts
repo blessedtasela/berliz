@@ -12,6 +12,9 @@ export interface Centers {
   freeCancelHours?: number | null;
   /** Share (0-100) refunded when a client cancels inside that window; null = platform default (50). */
   lateCancelRefundPercent?: number | null;
+  /** Public contact details the center chose to publish, so visitors can reach it before (or instead of) booking online. */
+  contactEmail?: string | null;
+  contactPhone?: string | null;
   location: string;
   /** Same nested shape Trainers.photoResponse already uses -- was a flat `photoUrl` that the API never actually sent, so every center image silently fell back to a placeholder. */
   photoResponse: PhotoResponse;

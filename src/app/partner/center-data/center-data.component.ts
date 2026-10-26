@@ -56,6 +56,9 @@ export class CenterDataComponent {
       'experience': new FormControl(this.center?.experience, Validators.compose([Validators.required, Validators.minLength(1)])),
       'categoryIds': this.formBuilder.array(this.selectedCategoriesId, this.validateCheckbox()),
       ...providerPricingControls(this.center),
+      // Optional and public: shown on the center's profile and booking page so visitors can reach it. Blank removes them.
+      'contactEmail': new FormControl(this.center?.contactEmail ?? '', Validators.email),
+      'contactPhone': new FormControl(this.center?.contactPhone ?? '', Validators.pattern(/^\+?[0-9 ()\-.]{7,32}$/)),
     });
   }
 

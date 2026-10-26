@@ -99,12 +99,18 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-3 pt-1">
-                        <button type="button" (click)="bookSession()"
+                        <button *ngIf="acceptingBookings !== false" type="button" (click)="bookSession()"
                             class="px-7 py-3 rounded-xl bg-red-600 text-white text-sm font-bold shadow-[0_8px_24px_rgba(220,38,38,0.35)]
                                    hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2 justify-center">
                             <i-feather name="calendar" style="width:15px;height:15px;"></i-feather>
                             Book a session
                         </button>
+                        <!-- No weekly hours yet, so there is nothing to book: say so, and offer the owner's contact details if they gave any -->
+                        <div *ngIf="acceptingBookings === false" class="flex flex-col gap-2">
+                            <p class="text-xs text-zinc-400">Online booking isn't open for this center yet.</p>
+                            <app-provider-contact theme="dark" [compact]="true" [name]="center.name"
+                                [phone]="center.contactPhone" [email]="center.contactEmail"></app-provider-contact>
+                        </div>
                         <button type="button" (click)="scrollToPlans()"
                             class="px-6 py-3 rounded-xl border border-zinc-700 text-zinc-200 text-sm font-semibold
                                    hover:border-red-600 hover:text-white transition flex items-center gap-2 justify-center">
@@ -243,6 +249,9 @@
             <!-- REASSURANCE -->
             <app-provider-availability theme="dark" [centerId]="center.id"></app-provider-availability>
 
+            <app-provider-contact theme="dark" [name]="center.name"
+                [phone]="center.contactPhone" [email]="center.contactEmail"></app-provider-contact>
+
             <app-provider-terms theme="dark" providerLabel="this center" [hourlyRate]="center.hourlyRate"
                 [freeCancelHours]="center.freeCancelHours" [lateCancelRefundPercent]="center.lateCancelRefundPercent">
             </app-provider-terms>
@@ -251,14 +260,14 @@
 
             <app-center-video-gallery [centerVideoAlbums]="centerVideoAlbums"></app-center-video-gallery>
 
-            <app-profile-cta [name]="center.name" providerLabel="this center" (book)="bookSession()"
+            <app-profile-cta *ngIf="acceptingBookings !== false" [name]="center.name" providerLabel="this center" (book)="bookSession()"
                 [bookLink]="['/centers', center.name.split(' ').join('-'), 'book']">
             </app-profile-cta>
 
         </div>
     </div>
 
-    <app-sticky-book-bar [name]="center.name" (book)="bookSession()"></app-sticky-book-bar>
+    <app-sticky-book-bar *ngIf="acceptingBookings !== false" [name]="center.name" (book)="bookSession()"></app-sticky-book-bar>
 
 </ng-container>
 

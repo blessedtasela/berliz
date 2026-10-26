@@ -29,6 +29,14 @@ export class DashboardTrainerDetailComponent extends TrainersDetailsComponent {
     return '/dashboard/user';
   }
 
+  protected override get directoryRoute(): string {
+    return '/dashboard/find-providers';
+  }
+
+  protected override get profileRoutePrefix(): string {
+    return '/dashboard/find-trainers';
+  }
+
   get photoUrl(): string {
     const url = this.trainer?.photoResponse?.photoUrl;
     return url ? resolveStrapiUrl(url) : 'assets/avatar.png';

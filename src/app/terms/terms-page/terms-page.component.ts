@@ -30,7 +30,7 @@ export class TermsPageComponent {
     },
     {
       title: '2. Eligibility & Age Requirement',
-      body: 'You must be at least 16 years old to create an account or use Berliz. By registering, you confirm that you meet this age requirement. Berliz may request age verification and may suspend or terminate accounts found to belong to users under 16.'
+      body: 'You must be at least 18 years old to create an account or use Berliz. By registering, you confirm that you meet this age requirement. Berliz may request age verification and may suspend or terminate accounts found to belong to users under 18.'
     },
     {
       title: '3. Nature of the Platform',

@@ -15,8 +15,8 @@ import {
   minimumAgeValidator
 } from 'src/validators/form-validators.module';
 
-/** Berliz requires signups to be 16 or older. */
-export const MINIMUM_SIGNUP_AGE = 16;
+/** Berliz requires signups to be 18 or older (Terms and Privacy both say so). */
+export const MINIMUM_SIGNUP_AGE = 18;
 
 @Component({
     selector: 'app-signup',

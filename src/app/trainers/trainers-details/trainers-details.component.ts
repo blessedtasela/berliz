@@ -21,6 +21,7 @@ import { ProviderAnalyticsService } from 'src/app/services/provider-analytics.se
 import { TrainerService } from 'src/app/services/trainer.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { environment } from 'src/environments/environment';
+import { closestBySlug, nameSlug } from 'src/app/utils/closest-slug';
 import { TestimonialDialogService } from 'src/app/testimonial/testimonial-dialog.service';
 import { BookingLauncherService } from 'src/app/booking/booking-launcher.service';
 import { loadTestimonialsByTrainer } from 'src/app/state/testimonial/testimonial.actions';
@@ -74,6 +75,8 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
   resolved = false;
   /** true when the slug does not match any active trainer */
   notFound = false;
+  /** The trainer a mistyped slug most likely meant, offered on the not-found card. */
+  suggestion: Trainers | null = null;
 
   private subs: Subscription[] = [];
 
@@ -93,6 +96,20 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
    *  never send a signed-in user out to the public /user/:username page. */
   protected get likersRoutePrefix(): string {
     return '/user';
+  }
+
+  /** Where an unknown trainer link is sent. Overridden by the dashboard subclass so a signed-in user stays inside the dashboard. */
+  protected get directoryRoute(): string {
+    return '/trainers';
+  }
+
+  /** Where a trainer's profile lives, for the "Did you mean...?" link. */
+  protected get profileRoutePrefix(): string {
+    return '/trainers';
+  }
+
+  suggestionLink(): string[] {
+    return [this.profileRoutePrefix, nameSlug(this.suggestion?.name)];
   }
 
   viewLikers(): void {
@@ -123,6 +140,7 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
 
     this.resolved = false;
     this.notFound = false;
+    this.suggestion = null;
 
     if (!name) {
       this.resolved = true;
@@ -144,8 +162,15 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
         this.resolved = true;
 
         if (!match) {
-          this.notFound = true;
           this.trainer = null;
+          this.suggestion = response ? closestBySlug(name, trainers, t => nameSlug(t.name)) : null;
+          if (response && !this.suggestion) {
+            // A dead link to a trainer who isn't here: land on the directory so there's something to browse.
+            this.router.navigate([this.directoryRoute], { replaceUrl: true });
+            return;
+          }
+          // A close slug gets a "Did you mean...?"; a failed load keeps the plain card rather than bouncing away.
+          this.notFound = true;
           return;
         }
 
@@ -210,7 +235,7 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
 
   /** Back to the trainers directory from the not-found state. */
   backToTrainers(): void {
-    this.router.navigate(['/trainers']);
+    this.router.navigate([this.directoryRoute]);
   }
 
   // ── Data ──────────────────────────────────────────────────────────────────
