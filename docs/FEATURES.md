@@ -191,6 +191,14 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Fix: the public exercise library never loaded for signed-out visitors
+
+Found while checking review item 14 (equipment and exercises). The equipment page already listed every center's gear; the exercises page sat on "Loading…" forever.
+
+- **`/exercise/getActiveExercises` was 401 for anyone not signed in** (it was in neither `SecurityConfig`'s `permitAll` list nor `JWTFilter`'s public-path regex), so `/disciplines/exercises` and the exercise list on a discipline's page could never fill. It is public now, like `/exercise/getTrending` (same rows, active exercises only); liking, editing and the full list stay behind a login (`PublicExerciseLibraryAccessTest`).
+- **The skeleton never ended.** `ExercisesSectionComponent` imported `watchFirstLoad` but never called it, so `firstLoaded` stayed false and an empty or failed load showed the skeleton forever. Wired up.
+- **A failed load no longer reads as "coming soon".** The exercises and equipment pages show the shared retryable "Couldn't load …" state when the fetch fails and there is nothing to show; "coming soon" appears only after a load that really came back empty.
+
 ### Unreleased — Visitor-review batch 2: prices, testimonials, honest first paint, funnel, copy
 
 More from the same first-time-visitor review (batch 1 covered the minimum age, unknown trainer links and center contact):

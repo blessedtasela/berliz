@@ -14,6 +14,7 @@ import { selectUser } from 'src/app/state/user/user.selector';
 import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 import { Actions } from '@ngrx/effects';
 import { injectActionsOrNull, watchFirstLoad } from 'src/app/utils/first-load';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 
 /**
  * PUBLIC exercise browsing. Rendered as its own full page at
@@ -75,13 +76,26 @@ export class ExercisesSectionComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
 
+  /** Why the exercises couldn't be loaded -- so a failed load never reads as "coming soon". */
+  loadError: string | null = null;
+
   constructor(private store: Store) { }
+
+  retryLoad(): void {
+    this.store.dispatch(loadActiveExercises());
+  }
 
   ngOnInit(): void {
     this.store.dispatch(loadActiveExercises());
     this.store.dispatch(loadActiveCategories());
 
     this.subscriptions.push(
+      this.actionsOpt
+        ? watchFirstLoad(this.actionsOpt, this.platformId, [loadActiveExercisesSuccess, loadActiveExercisesFailure], () => this.firstLoaded = true)
+        : new Subscription(),
+      this.actionsOpt
+        ? watchLoadError(this.actionsOpt, loadActiveExercisesFailure, [loadActiveExercises, loadActiveExercisesSuccess], null, m => this.loadError = m)
+        : new Subscription(),
       this.store.select(selectActiveExercises).subscribe(list => this.exercises = list ?? []),
       this.store.select(selectActiveCategories).subscribe(list => this.categories = list ?? []),
       this.store.select(selectUser).subscribe(user => this.user = user ?? null)
