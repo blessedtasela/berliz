@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
 import { provideMockStore } from '@ngrx/store/testing';
 
 import { WorkoutRoomComponent } from './workout-room.component';
 import { WorkoutService } from 'src/app/services/workout.service';
+import { MessageService } from 'src/app/services/message.service';
 import { WorkoutLogResponse } from 'src/app/models/workout.interface';
 
 /**
@@ -100,5 +101,61 @@ describe('WorkoutRoomComponent streaks', () => {
     setup([logAt(0), logAt(10), logAt(11), logAt(12), logAt(13), logAt(14)]);
     expect(component.currentStreak).toBe(1);
     expect(component.longestStreak).toBe(5);
+  });
+});
+
+describe('WorkoutRoomComponent message link', () => {
+  let contacts: any[];
+  let navigate: jasmine.Spy;
+  let component: WorkoutRoomComponent;
+
+  function setup(role: string) {
+    const workoutService = jasmine.createSpyObj('WorkoutService', ['getMyWorkoutLogs', 'getTemplates']);
+    workoutService.getMyWorkoutLogs.and.returnValue(of({ message: '', success: true, statusCode: 200, data: [] }));
+    workoutService.getTemplates.and.returnValue(of({ message: '', success: true, statusCode: 200, data: [] }));
+    TestBed.configureTestingModule({
+      imports: [WorkoutRoomComponent],
+      providers: [
+        { provide: WorkoutService, useValue: workoutService },
+        { provide: MessageService, useValue: { getContacts: () => of({ data: contacts }) } },
+        provideMockStore({ initialState: { user: { user: { data: { role } } } } }),
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({}), queryParamMap: convertToParamMap({}) } } },
+      ],
+    });
+    navigate = spyOn(TestBed.inject(Router), 'navigate');
+    const fixture = TestBed.createComponent(WorkoutRoomComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  }
+
+  it('lands a client with exactly one trainer in that conversation', () => {
+    contacts = [{ userId: 40, name: 'Coach Dee', role: 'trainer', relation: 'trainer' }];
+    setup('user');
+    component.openMessages();
+    expect(navigate).toHaveBeenCalledWith(['/dashboard/messages'], { queryParams: { userId: 40 } });
+  });
+
+  it('opens Messages (which lists them, or explains how to get a trainer) with none or several', () => {
+    contacts = [];
+    setup('user');
+    component.openMessages();
+    expect(navigate).toHaveBeenCalledWith(['/dashboard/messages']);
+  });
+
+  it('opens Messages when there are two trainers to choose from', () => {
+    contacts = [
+      { userId: 40, name: 'Coach Dee', role: 'trainer', relation: 'trainer' },
+      { userId: 41, name: 'Coach Eli', role: 'trainer', relation: 'trainer' },
+    ];
+    setup('user');
+    component.openMessages();
+    expect(navigate).toHaveBeenCalledWith(['/dashboard/messages']);
+  });
+
+  it('lands a trainer with one client in that conversation', () => {
+    contacts = [{ userId: 31, name: 'Jane Doe', role: 'user', relation: 'client' }, { userId: 40, name: 'Coach Dee', role: 'trainer', relation: 'trainer' }];
+    setup('trainer');
+    component.openMessages();
+    expect(navigate).toHaveBeenCalledWith(['/dashboard/messages'], { queryParams: { userId: 31 } });
   });
 });

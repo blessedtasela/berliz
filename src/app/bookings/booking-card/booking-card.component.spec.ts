@@ -363,4 +363,42 @@ describe('BookingCardComponent', () => {
       expect(fixture.nativeElement.querySelector('[data-testid=book-again]')).toBeTruthy();
     });
   });
+
+  describe('onboarding flag (provider view)', () => {
+    function show(percent: number | null | undefined, status = 'pending') {
+      component.mode = 'provider';
+      component.booking = { ...component.booking, status } as Booking;
+      component.onboardingPercent = percent;
+      fixture.detectChanges();
+      return fixture.nativeElement.querySelector('[data-testid=onboarding-chip]') as HTMLElement | null;
+    }
+
+    it('flags a pending request whose client has not finished onboarding', () => {
+      const chip = show(33);
+      expect(chip?.textContent).toContain('Onboarding incomplete');
+      expect(chip?.getAttribute('title')).toContain('33%');
+    });
+
+    it('shows a complete one as complete', () => {
+      expect(show(100, 'confirmed')?.textContent).toContain('Onboarding complete');
+    });
+
+    it('shows nothing while the percentage is unknown, for a client, or once the session is over', () => {
+      expect(show(undefined)).toBeNull();
+      expect(show(50, 'completed')).toBeNull();
+      component.mode = 'client';
+      component.onboardingPercent = 50;
+      component.booking = { ...component.booking, status: 'pending' } as Booking;
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('[data-testid=onboarding-chip]')).toBeNull();
+    });
+
+    it('opens the onboarding answers of the client without opening the booking details', () => {
+      const navigate = spyOn(TestBed.inject(Router), 'navigate');
+      const chip = show(33)!;
+      chip.click();
+      expect(navigate).toHaveBeenCalledWith(['/dashboard/clients', 1, 'onboarding']);
+      expect(dialogSpy.open).not.toHaveBeenCalled();
+    });
+  });
 });

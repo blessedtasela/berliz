@@ -40,8 +40,17 @@
                     </app-conversation-row>
                 </div>
 
-                <div *ngIf="conversations.length === 0 && startableContacts.length === 0" class="px-4 py-10 text-center">
-                    <p class="text-xs text-gray-400 dark:text-gray-500">No conversations yet.</p>
+                <div *ngIf="conversations.length === 0 && startableContacts.length === 0" class="px-4 py-10 flex flex-col items-center gap-2 text-center" data-testid="no-contacts">
+                    <p class="text-xs font-semibold text-gray-700 dark:text-gray-200">No conversations yet</p>
+                    <ng-container *ngIf="!isTrainer">
+                        <p class="text-[11px] text-gray-400 dark:text-gray-500">You can message a trainer once you have booked a session with them, or connected with them.</p>
+                        <a routerLink="/dashboard/find-providers" class="mt-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 text-white hover:bg-red-700 transition">Find a trainer</a>
+                        <a routerLink="/dashboard/connections" class="text-[11px] font-semibold text-red-600 hover:text-red-700">Connect with someone</a>
+                    </ng-container>
+                    <ng-container *ngIf="isTrainer">
+                        <p class="text-[11px] text-gray-400 dark:text-gray-500">Your clients show up here as soon as they book a session with you.</p>
+                        <a routerLink="/dashboard/my-provider-bookings" class="mt-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 text-white hover:bg-red-700 transition">See my bookings</a>
+                    </ng-container>
                 </div>
             </div>
         </div>
@@ -66,6 +75,8 @@
                         [role]="activeContact.role" [typing]="activePartyTyping">
                     </app-chat-thread-header>
                 </div>
+
+                <app-onboarding-summary-card [otherUserId]="activeUserId" [otherRole]="activeContact.role"></app-onboarding-summary-card>
 
                 <div *ngIf="loadingConversation" class="flex-1 flex items-center justify-center">
                     <i-feather name="loader" class="text-gray-300 animate-spin" style="width:18px;height:18px;"></i-feather>

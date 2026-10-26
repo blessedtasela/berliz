@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../models/Api.interface';
-import { ConversationSummary, Message, MessageRequest } from '../models/message.model';
+import { ConversationSummary, Message, MessageContact, MessageRequest } from '../models/message.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +17,11 @@ export class MessageService {
     return this.httpClient.post<ApiResponse<Message>>(this.url + "/message/send", request, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     });
+  }
+
+  /** People you can start a conversation with through a booking (your trainers; for a trainer, their clients). */
+  getContacts() {
+    return this.httpClient.get<ApiResponse<MessageContact[]>>(this.url + "/message/contacts");
   }
 
   getConversations() {

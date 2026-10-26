@@ -58,6 +58,20 @@ that ships a feature — add the row under the right domain, and log it under
 | Image / file attachments (25 MB cap) | ✅ | Uploads via backend → Strapi |
 | Pop-out message window | ✅ | `messagePopupEnabled` user setting |
 | Read receipts / conversation read state | ✅ | |
+| Start a conversation with your trainer / a client | ✅ | Booked trainers and, for a trainer, their clients are listed under "Start a conversation"; "Message your trainer" opens the thread directly when there is exactly one |
+| Empty Messages explains itself | ✅ | A client with no trainer is told how to get one; a trainer is told clients appear after they book |
+| Onboarding summary card in a trainer-client thread | ✅ | Trainer sees the client's answers + link to the full view; client sees their own + Edit |
+
+## 3b. Client onboarding
+
+| Feature | Status | Notes |
+|---|---|---|
+| Onboarding wizard (7 steps, resumable) | ✅ | `/dashboard/onboarding`; each step saves as you move on; reachable from Sidebar → Me → Onboarding, the checklist and the booking page |
+| Required answers | ✅ | Where + how you train, level, a goal, injuries ("none" is valid), an available day. Everything else optional |
+| Health answers are private | ✅ | Only the client and trainers they have a live booking or active subscription with; client can delete them |
+| Trainer's view of a client | ✅ | `/dashboard/clients/:id/onboarding`; chips on pending/confirmed bookings show "Onboarding incomplete / complete" |
+| "Tell your trainer about you" on the checklist | ✅ | Ticks when every required answer is filled |
+| Soft prompt on the booking page | ✅ | Never blocks booking |
 
 ## 4. Training & tracking
 
@@ -190,6 +204,18 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Client onboarding (wizard + messaging that works for both sides)
+
+A structured onboarding profile instead of onboarding-by-chat: one record per client, saved a step at a time, read by the trainer, with messaging as the follow-up channel.
+
+- **Wizard** (`/dashboard/onboarding`): training setup (center from the directory / another gym / home / outdoors / none yet; in person, online or hybrid; equipment), fitness level with a one-line meaning for each, goals (up to 2, target date), health and safety (injuries, medical, doctor note, with the "not medical advice" note and the privacy promise), nutrition and supplements, schedule and preferences, emergency contact. Under five minutes, resumes at the step you reached, no payment step anywhere.
+- **What counts as complete** (also the checklist rule): where you train, how you train, level, at least one goal, an answer about injuries, at least one available day. "Complete your profile" ticks on a saved photo + country + city (it used to tick on a click); the new "Tell your trainer about you" item ticks on the six required answers.
+- **Who sees it:** the client; an admin; trainers the client has a non-cancelled booking or an active subscription with. Other members and (in version 1) centers never do. The client can delete the health answers; doing so reopens the required injuries question.
+- **Trainer side:** full view at `/dashboard/clients/:id/onboarding`; an "Onboarding incomplete / complete" chip on pending and confirmed booking requests (booking is never blocked); an in-app notification when a client finishes, or edits after finishing (at most once per 30 minutes), worded for users and carrying no answers.
+- **Messaging:** new `GET /message/contacts` (your trainers; for a trainer, their clients) so a trainer can finally start a thread; "Message your trainer" lands in the thread when there is exactly one trainer; an empty Messages page now says how to get a trainer (or where clients come from); the onboarding summary card sits at the top of a trainer-client thread.
+- **Backend:** Flyway V79 `client_onboarding`, `/client-onboarding/*`, 17 service tests; web: 8 new spec files.
+- **Not built (by design, version 1):** onboarding over chat, a payment step, health data for anyone but assigned trainers, a hard booking block, auto-generated programs, trainer-defined questions, sharing with centers.
 
 ### Unreleased — Fix: the public exercise library never loaded for signed-out visitors
 

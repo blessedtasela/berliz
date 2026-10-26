@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, Subscription, take, takeUntil } from 'rxjs';
 
 import { ConversationSummary, Message } from 'src/app/models/message.model';
 import { ComposerSendPayload } from 'src/app/messages/shared/message-composer/message-composer.component';
@@ -31,11 +31,16 @@ import { Connection } from 'src/app/models/connection.model';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { PhotoLightboxService } from 'src/app/services/photo-lightbox.service';
 import { genericError } from 'src/validators/form-validators.module';
+import { MessageContact } from 'src/app/models/message.model';
+import { MessageService } from 'src/app/services/message.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 /** A person you can start (or already have) a conversation with -- either a booked trainer or an accepted Connection. */
 interface StartableContact {
   userId: number;
   name: string;
+  /** The other person's role when known (a booked trainer is 'trainer'), so the onboarding card knows which side it is on. */
+  role?: string;
 }
 
 /**
@@ -60,6 +65,9 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
 
   myTrainers: MyTrainerSummary[] = [];
   connections: Connection[] = [];
+  /** Booking-derived contacts in both directions: a client's trainers and a trainer's clients. */
+  bookingContacts: MessageContact[] = [];
+  isTrainer = false;
 
   /**
    * Derived when `conversations` / `myTrainers` / `connections` change — NOT a
@@ -92,9 +100,13 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
     public lightbox: PhotoLightboxService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
+    private messageService: MessageService,
+    private auth: AuthService,
   ) { }
 
   ngOnInit(): void {
+    this.isTrainer = (this.auth.getCurrentUserRole() || '').toLowerCase() === 'trainer';
+    this.loadBookingContacts();
     this.store.dispatch(MessageActions.loadConversations());
     this.store.dispatch(loadMyTrainers());
     this.store.dispatch(loadMyConnections());
@@ -135,14 +147,19 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
 
     const fromTrainers: StartableContact[] = this.myTrainers
       .filter(t => t.type === 'trainer' && t.userId != null && !existingIds.has(t.userId))
-      .map(t => ({ userId: t.userId as number, name: t.name }));
+      .map(t => ({ userId: t.userId as number, name: t.name, role: 'trainer' }));
+
+    // A trainer's own clients (and, for a client, the trainers they booked): without this a trainer had no way to start a thread.
+    const fromBookings: StartableContact[] = this.bookingContacts
+      .filter(c => !existingIds.has(c.userId))
+      .map(c => ({ userId: c.userId, name: c.name, role: c.relation === 'trainer' ? 'trainer' : c.role }));
 
     const fromConnections: StartableContact[] = this.connections
       .filter(c => !existingIds.has(c.otherUserId))
       .map(c => ({ userId: c.otherUserId, name: c.otherUserName }));
 
     const seen = new Set<number>();
-    this.startableContacts = [...fromTrainers, ...fromConnections].filter(c => {
+    this.startableContacts = [...fromTrainers, ...fromBookings, ...fromConnections].filter(c => {
       if (seen.has(c.userId)) return false;
       seen.add(c.userId);
       return true;
@@ -158,10 +175,18 @@ export class MessagesMainComponent implements OnInit, OnDestroy {
       return;
     }
     const contact = this.startableContacts.find(c => c.userId === this.activeUserId);
-    this.activeContact = { userId: this.activeUserId ?? 0, name: contact?.name ?? 'Conversation', role: '' };
+    this.activeContact = { userId: this.activeUserId ?? 0, name: contact?.name ?? 'Conversation', role: contact?.role ?? '' };
+  }
+
+  private loadBookingContacts(): void {
+    this.messageService.getContacts().pipe(take(1)).subscribe({
+      next: res => { this.bookingContacts = res?.data ?? []; this.recomputeContacts(); },
+      error: () => { this.bookingContacts = []; },
+    });
   }
 
   refresh(): void {
+    this.loadBookingContacts();
     this.store.dispatch(MessageActions.loadConversations());
     this.store.dispatch(loadMyTrainers());
     this.store.dispatch(loadMyConnections());

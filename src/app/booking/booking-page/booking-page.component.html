@@ -162,6 +162,8 @@
     <app-booking-location-picker *ngIf="availabilityConfigured === true && kind === 'trainer' && providerId"
       [trainerId]="providerId" (selectionChange)="locationSelection = $event"></app-booking-location-picker>
 
+    <app-onboarding-nudge></app-onboarding-nudge>
+
     <!-- ── Estimated total (hidden when the provider has no rate set) ── -->
     <app-booking-price-estimate *ngIf="availabilityConfigured === true && providerId"
       [trainerId]="kind === 'trainer' ? providerId : null" [centerId]="kind === 'center' ? providerId : null"

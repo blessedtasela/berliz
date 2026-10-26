@@ -12,6 +12,9 @@
                     <i-feather name="zap" style="width:9px;height:9px;"></i-feather>
                     Urgent
                 </span>
+                <button *ngIf="onboardingChip as oc" type="button" (click)="openOnboarding($event)" data-testid="onboarding-chip"
+                    [title]="onboardingPercent + '% of the required onboarding answers. Tap to read them.'"
+                    class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [ngClass]="oc.classes">{{ oc.label }}</button>
                 <span *ngIf="paymentBadge as pb" class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [ngClass]="pb.classes">
                     {{ pb.label }}
                 </span>

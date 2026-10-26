@@ -4,10 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
 
 import { MessagesMainComponent } from './messages-main.component';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { MessageService } from 'src/app/services/message.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { MessageContact } from 'src/app/models/message.model';
 import { ConversationSummary, Message } from 'src/app/models/message.model';
 import { MyTrainerSummary } from 'src/app/models/progress-share.model';
 
@@ -32,6 +35,8 @@ describe('MessagesMainComponent', () => {
   let fixture: ComponentFixture<MessagesMainComponent>;
   let store: MockStore;
   let matDialogSpy: jasmine.SpyObj<MatDialog>;
+  let bookingContacts: MessageContact[];
+  let role: string;
 
   const conversations: ConversationSummary[] = [
     { otherUserId: 5, otherUserName: 'Coach Sam', otherUserRole: 'trainer', lastMessage: 'Hey!', lastMessageDate: new Date(), unreadCount: 1 }
@@ -51,6 +56,8 @@ describe('MessagesMainComponent', () => {
   ];
 
   beforeEach(() => {
+    bookingContacts = [];
+    role = 'user';
     const snackbarSpy = jasmine.createSpyObj('SnackBarService', ['openSnackBar']);
     matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
 
@@ -75,6 +82,8 @@ describe('MessagesMainComponent', () => {
         { provide: SnackBarService, useValue: snackbarSpy },
         { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } },
         { provide: MatDialog, useValue: matDialogSpy },
+        { provide: MessageService, useValue: { getContacts: () => of({ data: bookingContacts }) } },
+        { provide: AuthService, useValue: { getCurrentUserRole: () => role } },
       ]
     });
 
@@ -204,5 +213,54 @@ describe('MessagesMainComponent', () => {
     component.ngOnDestroy();
 
     expect(store.dispatch).toHaveBeenCalledWith(MessageActions.clearActiveConversation());
+  });
+
+  describe('booking contacts and empty states', () => {
+    it('lets a trainer start a conversation with a client who booked them', () => {
+      role = 'trainer';
+      bookingContacts = [{ userId: 31, name: 'Jane Doe', role: 'user', relation: 'client' }];
+      fixture.detectChanges();
+
+      const jane = component.startableContacts.find(c => c.userId === 31);
+      expect(jane?.name).toBe('Jane Doe');
+      expect(jane?.role).toBe('user');
+    });
+
+    it('marks a booked trainer as a trainer, so the onboarding card shows the client their own answers', () => {
+      bookingContacts = [{ userId: 40, name: 'Coach Dee', role: 'trainer', relation: 'trainer' }];
+      fixture.detectChanges();
+      expect(component.startableContacts.find(c => c.userId === 40)?.role).toBe('trainer');
+    });
+
+    it('does not list someone twice or someone who already has a conversation', () => {
+      bookingContacts = [
+        { userId: 5, name: 'Coach Sam', role: 'trainer', relation: 'trainer' },
+        { userId: 6, name: 'Coach Alex', role: 'trainer', relation: 'trainer' },
+      ];
+      fixture.detectChanges();
+      expect(component.startableContacts.filter(c => c.userId === 6).length).toBe(1);
+      expect(component.startableContacts.some(c => c.userId === 5)).toBeFalse();
+    });
+
+    it('tells a client with no trainer how to get one, instead of an empty list', () => {
+      store.overrideSelector(selectConversations, []);
+      store.overrideSelector(selectMyTrainers, []);
+      store.overrideSelector(selectMyConnections, []);
+      store.refreshState();
+      fixture.detectChanges();
+      const box: HTMLElement = fixture.nativeElement.querySelector('[data-testid="no-contacts"]');
+      expect(box.textContent).toContain('once you have booked a session with them');
+      expect(box.textContent).toContain('Find a trainer');
+    });
+
+    it('tells a trainer with no clients yet where clients come from', () => {
+      role = 'trainer';
+      store.overrideSelector(selectConversations, []);
+      store.overrideSelector(selectMyTrainers, []);
+      store.overrideSelector(selectMyConnections, []);
+      store.refreshState();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('[data-testid="no-contacts"]').textContent).toContain('as soon as they book a session with you');
+    });
   });
 });
