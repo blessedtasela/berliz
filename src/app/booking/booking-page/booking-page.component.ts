@@ -198,6 +198,11 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     return this.submitting || this.availabilityConfigured !== true;
   }
 
+  /** Where a client plans many sessions at once: this provider's monthly plan page. */
+  get planPath(): string[] {
+    return [this.kind === 'trainer' ? '/trainers' : '/centers', providerSlug(this.providerName), 'plan'];
+  }
+
   /** Where plans are bought: this provider's Level Up page. */
   get levelUpPath(): string[] {
     return [this.kind === 'trainer' ? '/trainers' : '/centers', providerSlug(this.providerName), 'level-up'];

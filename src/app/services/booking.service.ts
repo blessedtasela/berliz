@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../models/Api.interface';
-import { Booking, MyClientSummary } from '../models/booking.model';
+import { Booking, BookingPlan, BookingPlanPreview, BookingPlanRequest, MyClientSummary } from '../models/booking.model';
 import { MyTrainerSummary } from '../models/progress-share.model';
 
 @Injectable({
@@ -38,6 +38,36 @@ export class BookingService {
   /** Provider-only: the distinct clients the current trainer/center has a booking relationship with. */
   getMyClients() {
     return this.httpClient.get<ApiResponse<MyClientSummary[]>>(this.url + "/booking/myClients");
+  }
+
+  // ── Monthly plans: several sessions booked in one go ─────────────────────
+
+  /** Checks the plan against the provider's real availability and prices it; saves nothing. */
+  previewPlan(data: BookingPlanRequest) {
+    return this.httpClient.post<ApiResponse<BookingPlanPreview>>(this.url + "/booking/plan/preview", data);
+  }
+
+  /** Books every session at once (all or none); the provider then accepts or declines the whole plan. */
+  createPlan(data: BookingPlanRequest) {
+    return this.httpClient.post<ApiResponse<BookingPlan>>(this.url + "/booking/plan/add", data);
+  }
+
+  getMyPlans() {
+    return this.httpClient.get<ApiResponse<BookingPlan[]>>(this.url + "/booking/plan/mine");
+  }
+
+  getProviderPlans() {
+    return this.httpClient.get<ApiResponse<BookingPlan[]>>(this.url + "/booking/plan/provider");
+  }
+
+  /** Provider (or admin): accept or decline every session of the plan still waiting for a reply. */
+  respondToPlan(id: number, action: 'confirm' | 'decline') {
+    return this.httpClient.put<ApiResponse<BookingPlan>>(this.url + `/booking/plan/${id}/respond`, { action });
+  }
+
+  /** Client: cancels the plan's upcoming sessions, each under the normal cancellation and refund rules. */
+  cancelPlan(id: number) {
+    return this.httpClient.put<ApiResponse<BookingPlan>>(this.url + `/booking/plan/${id}/cancel`, null);
   }
 
   getMyBookings() {

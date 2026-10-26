@@ -1,0 +1,381 @@
+<div class="min-h-screen bg-gray-50 dark:bg-gray-950 font-sans pb-32">
+
+  <!-- Resolving -->
+  <div *ngIf="resolving" class="flex items-center justify-center py-24 gap-2 text-gray-400 dark:text-gray-500">
+    <i-feather name="loader" class="animate-spin" style="width:18px;height:18px;"></i-feather>
+    <span class="text-sm">Loading...</span>
+  </div>
+
+  <!-- Not found -->
+  <div *ngIf="!resolving && notFound" class="flex flex-col items-center justify-center py-24 gap-3 px-4 text-center">
+    <i-feather name="alert-circle" class="text-gray-300 dark:text-gray-700" style="width:32px;height:32px;"></i-feather>
+    <p class="text-sm text-gray-500 dark:text-gray-400">We couldn't find that {{ kind }}.</p>
+    <a [routerLink]="kind === 'trainer' ? '/trainers' : '/centers'" class="text-xs font-semibold text-red-600 hover:text-red-700">
+      Back to {{ kind === 'trainer' ? 'trainers' : 'centers' }}
+    </a>
+  </div>
+
+  <div *ngIf="!resolving && !notFound" class="max-w-2xl mx-auto px-4 py-8 flex flex-col gap-5">
+
+    <!-- Header -->
+    <div class="flex items-center gap-3">
+      <img alt="" [src]="providerPhotoUrl || '../../../assets/icons/user.png'"
+        class="w-12 h-12 rounded-full object-cover object-top border border-gray-200 dark:border-gray-700"
+        data-fallback-src="../../../assets/icons/user.png" />
+      <div class="flex-1 min-w-0">
+        <h1 class="text-base font-bold text-gray-900 dark:text-gray-100">Plan your sessions with {{ providerName }}</h1>
+        <p class="text-[11px] text-gray-400 dark:text-gray-500">Pick your days and times for the whole period. You pay for each session as you go.</p>
+      </div>
+    </div>
+
+    <a [routerLink]="[kind === 'trainer' ? '/trainers' : '/centers', providerName.replace(' ', '-'), 'book']"
+      class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition self-start flex items-center gap-1">
+      <i-feather name="arrow-left" style="width:11px;height:11px;"></i-feather>
+      Just one session? Book a single time
+    </a>
+
+    <!-- ═══ 1. WHEN ═══ -->
+    <section class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-4" data-testid="step-when">
+      <header class="flex items-center gap-2.5">
+        <span class="w-6 h-6 rounded-full bg-red-600 text-white text-[11px] font-bold flex items-center justify-center">1</span>
+        <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">When does it start?</h2>
+      </header>
+
+      <app-date-strip [selectedDate]="startDate" (dateSelected)="chooseStart($event)"></app-date-strip>
+
+      <div class="flex flex-col gap-1.5">
+        <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">For how long?</span>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" *ngFor="let p of periodOptions" (click)="choosePeriod(p.weeks)"
+            class="px-3.5 py-2 rounded-xl border text-xs font-semibold transition"
+            [ngClass]="periodWeeks === p.weeks
+              ? 'bg-red-600 border-red-600 text-white'
+              : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:border-red-300 dark:hover:border-red-800'">
+            {{ p.label }}
+          </button>
+        </div>
+        <p class="text-[11px] text-gray-400 dark:text-gray-500">
+          {{ longDayLabel(startDate) }} to {{ longDayLabel(endDate) }}
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">How long is each session?</span>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" *ngFor="let m of durationOptions" (click)="durationMinutes = m; changed()"
+            class="px-3 py-1.5 rounded-lg border text-xs font-semibold transition"
+            [ngClass]="durationMinutes === m
+              ? 'bg-gray-900 dark:bg-gray-100 border-gray-900 dark:border-gray-100 text-white dark:text-gray-900'
+              : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:border-gray-300'">
+            {{ m }} min
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 2. HOW ═══ -->
+    <section class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-4" data-testid="step-how">
+      <header class="flex items-center gap-2.5">
+        <span class="w-6 h-6 rounded-full bg-red-600 text-white text-[11px] font-bold flex items-center justify-center">2</span>
+        <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Which days and times suit you?</h2>
+      </header>
+
+      <!-- Pattern tabs -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-1 rounded-xl bg-gray-100 dark:bg-gray-800" role="tablist">
+        <button type="button" role="tab" *ngFor="let t of patternTabs" (click)="choosePattern(t.kind)"
+          [attr.aria-selected]="patternKind === t.kind"
+          class="px-2 py-2 rounded-lg text-[11px] font-semibold transition"
+          [ngClass]="patternKind === t.kind
+            ? 'bg-white dark:bg-gray-900 text-red-600 dark:text-red-400 shadow-sm'
+            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'">
+          {{ t.label }}
+        </button>
+      </div>
+      <p class="text-[11px] text-gray-400 dark:text-gray-500 -mt-2">{{ patternHint }}</p>
+
+      <!-- Weekday chips (same time + different times) -->
+      <div *ngIf="patternKind === 'weekly' || patternKind === 'weeklyCustom'" class="flex flex-col gap-3">
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" *ngFor="let w of weekdayLabels" (click)="toggleWeekday(w.value)"
+            [attr.aria-pressed]="isWeekdayOn(w.value)" [attr.aria-label]="w.long"
+            class="w-11 h-11 rounded-full border text-xs font-bold transition"
+            [ngClass]="isWeekdayOn(w.value)
+              ? 'bg-red-600 border-red-600 text-white'
+              : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 hover:border-red-300 dark:hover:border-red-800'">
+            {{ w.short }}
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" *ngFor="let p of weekdayPresets" (click)="applyWeekdayPreset(p.days)"
+            class="px-2.5 py-1 rounded-full text-[11px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400
+                   hover:border-red-300 hover:text-red-600 dark:hover:text-red-400 transition">
+            {{ p.label }}
+          </button>
+        </div>
+
+        <!-- Same time -->
+        <div *ngIf="patternKind === 'weekly'" class="flex flex-col gap-1">
+          <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">What time?</span>
+          <app-time-picker [(ngModel)]="weeklyTime" (ngModelChange)="changed()" placeholder="Select a time"></app-time-picker>
+        </div>
+
+        <!-- A time per day -->
+        <div *ngIf="patternKind === 'weeklyCustom'" class="flex flex-col gap-2">
+          <p *ngIf="weekdays.length === 0" class="text-[11px] text-gray-400 dark:text-gray-500">Pick the days above, then choose a time for each.</p>
+          <ng-container *ngFor="let w of weekdayLabels">
+            <div *ngIf="isWeekdayOn(w.value)" class="flex items-center gap-3">
+              <span class="w-12 text-xs font-bold text-gray-700 dark:text-gray-300">{{ w.short }}</span>
+              <div class="flex-1">
+                <app-time-picker [ngModel]="customTimes[w.value] || null" (ngModelChange)="setCustomTime(w.value, $event)" placeholder="Select a time"></app-time-picker>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Days on / off -->
+      <div *ngIf="patternKind === 'rotation'" class="flex flex-col gap-3">
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" *ngFor="let p of rotationPresets" (click)="applyRotationPreset(p.steps)"
+            class="px-2.5 py-1 rounded-full text-[11px] font-semibold border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400
+                   hover:border-red-300 hover:text-red-600 dark:hover:text-red-400 transition">
+            {{ p.label }}
+          </button>
+        </div>
+
+        <div *ngFor="let step of rotationSteps; let i = index"
+          class="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 px-3 py-2.5">
+          <span class="text-[11px] font-bold text-gray-400 dark:text-gray-500 w-10">Step {{ i + 1 }}</span>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-600 dark:text-gray-300">Train</span>
+            <div class="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+              <button type="button" (click)="stepRotation(i, 'on', -1)" aria-label="One fewer training day" class="w-7 h-7 text-gray-500 hover:text-red-600">−</button>
+              <span class="w-6 text-center text-xs font-bold text-gray-900 dark:text-gray-100">{{ step.on }}</span>
+              <button type="button" (click)="stepRotation(i, 'on', 1)" aria-label="One more training day" class="w-7 h-7 text-gray-500 hover:text-red-600">+</button>
+            </div>
+            <span class="text-xs text-gray-600 dark:text-gray-300">{{ step.on === 1 ? 'day' : 'days' }} in a row</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-600 dark:text-gray-300">then rest</span>
+            <div class="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+              <button type="button" (click)="stepRotation(i, 'off', -1)" aria-label="One fewer rest day" class="w-7 h-7 text-gray-500 hover:text-red-600">−</button>
+              <span class="w-6 text-center text-xs font-bold text-gray-900 dark:text-gray-100">{{ step.off }}</span>
+              <button type="button" (click)="stepRotation(i, 'off', 1)" aria-label="One more rest day" class="w-7 h-7 text-gray-500 hover:text-red-600">+</button>
+            </div>
+            <span class="text-xs text-gray-600 dark:text-gray-300">{{ step.off === 1 ? 'day' : 'days' }}</span>
+          </div>
+          <button type="button" *ngIf="rotationSteps.length > 1" (click)="removeRotationStep(i)" aria-label="Remove this step"
+            class="ml-auto w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition">
+            <i-feather name="x" style="width:13px;height:13px;"></i-feather>
+          </button>
+        </div>
+
+        <button type="button" (click)="addRotationStep()"
+          class="self-start text-[11px] font-semibold text-red-600 hover:text-red-700 flex items-center gap-1">
+          <i-feather name="plus" style="width:11px;height:11px;"></i-feather>
+          Add another step (e.g. 2 on, 1 off, then 3 on, 2 off)
+        </button>
+
+        <div class="flex flex-col gap-1">
+          <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">What time?</span>
+          <app-time-picker [(ngModel)]="rotationTime" (ngModelChange)="changed()" placeholder="Select a time"></app-time-picker>
+        </div>
+        <p class="text-[11px] text-gray-400 dark:text-gray-500">The cycle starts on your first day and repeats until the end of the period.</p>
+      </div>
+
+      <!-- Pick dates -->
+      <div *ngIf="patternKind === 'dates'" class="flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <button type="button" (click)="stepMonth(-1)" aria-label="Previous month"
+            class="w-8 h-8 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 hover:text-red-600 transition">
+            <i-feather name="chevron-left" style="width:14px;height:14px;"></i-feather>
+          </button>
+          <span class="text-xs font-bold text-gray-900 dark:text-gray-100">{{ calendarTitle }}</span>
+          <button type="button" (click)="stepMonth(1)" aria-label="Next month"
+            class="w-8 h-8 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 hover:text-red-600 transition">
+            <i-feather name="chevron-right" style="width:14px;height:14px;"></i-feather>
+          </button>
+        </div>
+        <div class="grid grid-cols-7 gap-1 text-center">
+          <span *ngFor="let w of weekdayLabels" class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase">{{ w.short }}</span>
+          <ng-container *ngFor="let cell of calendarCells">
+            <span *ngIf="!cell"></span>
+            <button *ngIf="cell" type="button" (click)="toggleDate(cell)" [disabled]="!cell.inPeriod"
+              [attr.aria-pressed]="cell.selected" [attr.aria-label]="longDayLabel(cell.date)"
+              class="h-9 rounded-lg text-xs font-semibold transition disabled:cursor-not-allowed"
+              [ngClass]="cell.selected
+                ? 'bg-red-600 text-white'
+                : (cell.inPeriod
+                    ? 'bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600'
+                    : 'text-gray-300 dark:text-gray-700')">
+              {{ cell.day }}
+            </button>
+          </ng-container>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">What time?</span>
+          <app-time-picker [(ngModel)]="datesTime" (ngModelChange)="changed()" placeholder="Select a time"></app-time-picker>
+        </div>
+        <p class="text-[11px] text-gray-400 dark:text-gray-500">Need a different time on one day? Change it in the next step.</p>
+      </div>
+    </section>
+
+    <!-- ═══ 3. REVIEW ═══ -->
+    <section class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-4" data-testid="step-review">
+      <header class="flex items-center gap-2.5">
+        <span class="w-6 h-6 rounded-full bg-red-600 text-white text-[11px] font-bold flex items-center justify-center">3</span>
+        <div class="flex-1 min-w-0">
+          <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Your sessions</h2>
+          <p class="text-[11px] text-gray-400 dark:text-gray-500 truncate">{{ patternSummary }}</p>
+        </div>
+        <span class="text-[11px] font-semibold text-gray-500 bg-gray-100 dark:bg-gray-800 dark:text-gray-300 rounded-full px-2.5 py-1">{{ sessions.length }} sessions</span>
+      </header>
+
+      <div *ngIf="sessions.length < 2" data-testid="empty-schedule"
+        class="flex flex-col items-center justify-center gap-1.5 py-8 rounded-xl border border-dashed border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+        <i-feather name="calendar" class="text-gray-300 dark:text-gray-700" style="width:20px;height:20px;"></i-feather>
+        <p class="text-xs text-gray-400 dark:text-gray-500 text-center px-4">
+          {{ sessions.length === 0 ? 'Choose your days and a time above to see your sessions.' : 'A plan needs at least 2 sessions. Add another day.' }}
+        </p>
+      </div>
+
+      <!-- Checking -->
+      <div *ngIf="previewLoading" class="flex items-center gap-2 text-gray-400 dark:text-gray-500 text-xs">
+        <i-feather name="loader" class="animate-spin" style="width:13px;height:13px;"></i-feather>
+        Checking {{ providerName }}'s availability...
+      </div>
+      <p *ngIf="previewError" role="alert" class="text-xs text-red-600 dark:text-red-400 flex items-start gap-1.5">
+        <i-feather name="alert-circle" class="shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
+        {{ previewError }}
+      </p>
+
+      <!-- Guests cannot be checked against availability until they sign in -->
+      <div *ngIf="!user?.email && sessions.length >= 2"
+        class="rounded-xl border border-amber-100 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 px-3 py-2.5 text-[11px] text-amber-800 dark:text-amber-300 flex items-start gap-1.5">
+        <i-feather name="info" class="shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
+        <span>Sign in to check these times against {{ providerName }}'s availability and see the price. We'll keep what you picked.</span>
+      </div>
+
+      <!-- Problems -->
+      <div *ngIf="unavailableCount > 0" role="alert" data-testid="unavailable-banner"
+        class="rounded-xl border border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-950/30 px-3 py-2.5 flex flex-wrap items-center justify-between gap-2">
+        <p class="text-[11px] text-red-700 dark:text-red-300 flex items-start gap-1.5">
+          <i-feather name="alert-triangle" class="shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
+          {{ unavailableCount }} {{ unavailableCount === 1 ? 'session is' : 'sessions are' }} not available. Remove {{ unavailableCount === 1 ? 'it' : 'them' }} or change the time.
+        </p>
+        <button type="button" (click)="removeUnavailable()"
+          class="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 transition">
+          Remove unavailable
+        </button>
+      </div>
+
+      <!-- Sessions by week -->
+      <div *ngFor="let week of weeks" class="flex flex-col gap-1.5">
+        <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">{{ week.label }}</span>
+        <div *ngFor="let row of week.rows; trackBy: trackByDate" data-testid="session-row"
+          class="rounded-xl border px-3 py-2.5 flex flex-col gap-2"
+          [ngClass]="row.available === false
+            ? 'border-red-200 dark:border-red-900 bg-red-50/60 dark:bg-red-950/20'
+            : 'border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900'">
+          <div class="flex items-center gap-3">
+            <span class="w-5 shrink-0 flex justify-center">
+              <i-feather *ngIf="row.available === true" name="check-circle" class="text-emerald-600" style="width:15px;height:15px;"></i-feather>
+              <i-feather *ngIf="row.available === false" name="alert-circle" class="text-red-600" style="width:15px;height:15px;"></i-feather>
+              <i-feather *ngIf="row.available === null" name="clock" class="text-gray-300 dark:text-gray-600" style="width:15px;height:15px;"></i-feather>
+            </span>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-semibold text-gray-900 dark:text-gray-100">{{ longDayLabel(row.date) }} · {{ time12(row.time) }}</p>
+              <p class="text-[11px] text-gray-400 dark:text-gray-500">{{ row.durationMinutes }} min<span *ngIf="row.price != null"> · {{ row.price | currency:'CAD':'symbol':'1.2-2' }}</span></p>
+            </div>
+            <button type="button" (click)="editTime(row.date)" [attr.aria-label]="'Change the time on ' + longDayLabel(row.date)"
+              class="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition">
+              <i-feather name="clock" style="width:13px;height:13px;"></i-feather>
+            </button>
+            <button type="button" (click)="removeSession(row.date)" [attr.aria-label]="'Remove ' + longDayLabel(row.date)"
+              class="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition">
+              <i-feather name="x" style="width:13px;height:13px;"></i-feather>
+            </button>
+          </div>
+          <p *ngIf="row.available === false && row.reason" class="text-[11px] text-red-700 dark:text-red-300 pl-8">{{ row.reason }}</p>
+          <div *ngIf="editingDate === row.date" class="pl-8">
+            <app-time-picker [ngModel]="row.time" (ngModelChange)="setSessionTime(row.date, $event)" placeholder="Select a time"></app-time-picker>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" *ngIf="removed.size > 0" (click)="restoreRemoved()"
+        class="self-start text-[11px] font-semibold text-gray-500 dark:text-gray-400 hover:text-red-600 transition">
+        Put back the {{ removed.size }} removed {{ removed.size === 1 ? 'session' : 'sessions' }}
+      </button>
+    </section>
+
+    <!-- ═══ 4. DETAILS ═══ -->
+    <section class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-4" data-testid="step-details">
+      <header class="flex items-center gap-2.5">
+        <span class="w-6 h-6 rounded-full bg-red-600 text-white text-[11px] font-bold flex items-center justify-center">4</span>
+        <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">A few details</h2>
+      </header>
+
+      <!-- Offer on the whole plan -->
+      <div *ngIf="offerChoices.length > 0" class="flex flex-col gap-1.5">
+        <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Use an offer (optional)</span>
+        <select aria-label="Use an offer" [(ngModel)]="promotionId" (ngModelChange)="changed()"
+          class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
+                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+          <option [ngValue]="null">No offer</option>
+          <option *ngFor="let o of offerChoices" [ngValue]="o.id">{{ o.title }} — {{ offerLabel(o) }}</option>
+        </select>
+      </div>
+
+      <app-booking-location-picker *ngIf="kind === 'trainer' && providerId" [trainerId]="providerId"
+        (selectionChange)="locationSelection = $event"></app-booking-location-picker>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="plan-notes" class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
+          Notes <span class="normal-case text-gray-300 dark:text-gray-600">(optional)</span>
+        </label>
+        <textarea id="plan-notes" rows="3" [(ngModel)]="notes" (ngModelChange)="changed()" maxlength="1000"
+          placeholder="Goals, injuries, anything {{ providerName }} should know before accepting."
+          class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100
+                 placeholder-gray-400 dark:placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"></textarea>
+      </div>
+    </section>
+
+    <!-- ═══ PRICE ═══ -->
+    <section *ngIf="preview?.priced" class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-2" data-testid="price-summary">
+      <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Price</span>
+      <div class="flex justify-between text-xs text-gray-600 dark:text-gray-300">
+        <span>{{ preview!.sessionCount }} sessions</span>
+        <span>{{ preview!.subtotal | currency:'CAD':'symbol':'1.2-2' }}</span>
+      </div>
+      <div *ngIf="(preview!.discount || 0) > 0" class="flex justify-between text-xs text-emerald-700 dark:text-emerald-400">
+        <span>{{ preview!.promotionLabel || 'Offer' }}</span>
+        <span>−{{ preview!.discount | currency:'CAD':'symbol':'1.2-2' }}</span>
+      </div>
+      <div class="flex justify-between text-sm font-bold text-gray-900 dark:text-gray-100 border-t border-gray-100 dark:border-gray-800 pt-2">
+        <span>Plan total</span>
+        <span>{{ preview!.total | currency:'CAD':'symbol':'1.2-2' }}</span>
+      </div>
+      <p class="text-[11px] text-gray-500 dark:text-gray-400 flex items-start gap-1.5" data-testid="pay-as-you-go">
+        <i-feather name="credit-card" class="shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
+        <span>You pay <strong class="text-gray-900 dark:text-gray-100">{{ preview!.perSession | currency:'CAD':'symbol':'1.2-2' }}</strong> per session, as you go, up to 24 hours before each one. Nothing is charged until {{ providerName }} accepts the plan.</span>
+      </p>
+    </section>
+    <p *ngIf="preview && !preview.priced && preview.sessionCount > 0" class="text-[11px] text-gray-400 dark:text-gray-500">
+      {{ providerName }} agrees the price with you directly, so nothing is charged here.
+    </p>
+
+    <p *ngIf="submitError" role="alert" data-testid="submit-error" class="text-xs text-red-600 dark:text-red-400 flex items-start gap-1.5">
+      <i-feather name="alert-circle" class="shrink-0 mt-0.5" style="width:12px;height:12px;"></i-feather>
+      {{ submitError }}
+    </p>
+
+    <button type="button" (click)="send()" [disabled]="!canSubmit" data-testid="send-plan"
+      class="w-full px-4 py-3 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-[0.98] transition flex items-center justify-center gap-2
+             disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100">
+      <i-feather [name]="submitting ? 'loader' : 'send'" [ngClass]="{'animate-spin': submitting}" style="width:15px;height:15px;"></i-feather>
+      {{ submitting ? 'Sending…' : (user?.email ? 'Send plan request' : 'Sign in to send') }}
+    </button>
+    <p class="text-[11px] text-center text-gray-400 dark:text-gray-500">{{ providerName }} accepts or declines the whole plan. You can cancel upcoming sessions any time.</p>
+  </div>
+</div>

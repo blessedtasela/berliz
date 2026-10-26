@@ -12,6 +12,11 @@
                     <i-feather name="zap" style="width:9px;height:9px;"></i-feather>
                     Urgent
                 </span>
+                <span *ngIf="booking.planId" data-testid="plan-tag" title="Booked as part of a monthly plan"
+                    class="text-[10px] font-bold uppercase tracking-wide text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-2 py-0.5 flex items-center gap-1">
+                    <i-feather name="calendar" style="width:9px;height:9px;"></i-feather>
+                    Plan
+                </span>
                 <span *ngIf="paymentBadge as pb" class="text-[10px] font-semibold px-2 py-0.5 rounded-full border" [ngClass]="pb.classes">
                     {{ pb.label }}
                 </span>

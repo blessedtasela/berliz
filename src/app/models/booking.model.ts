@@ -48,6 +48,11 @@ export interface Booking {
   /** While confirmed and unpaid: the moment it is cancelled automatically for non-payment. */
   paymentDueAt?: Date | null;
 
+  /** Set when this session is part of a monthly plan. */
+  planId?: number | null;
+  /** This session's share of the plan total (discount already included). */
+  planSessionPrice?: number | null;
+
   date: Date;
   lastUpdate: Date;
 
@@ -71,4 +76,76 @@ export interface MyClientSummary {
   status: string;
   lastBookingAt: Date;
   bookingCount: number;
+}
+
+/** One session a client asks for in a monthly plan: the exact day and wall-clock time of a slot. */
+export interface BookingPlanSessionRequest {
+  /** YYYY-MM-DD */
+  localDate: string;
+  /** HH:mm */
+  localTime: string;
+  durationMinutes: number;
+}
+
+export interface BookingPlanRequest {
+  trainerId?: number;
+  centerId?: number;
+  sessions: BookingPlanSessionRequest[];
+  promotionId?: number | null;
+  notes?: string;
+  trainerLocationId?: number;
+  customLocation?: string;
+  customLocationCountry?: string;
+  customLocationState?: string;
+  customLocationCity?: string;
+}
+
+export interface BookingPlanPreviewItem {
+  localDate: string;
+  localTime: string;
+  durationMinutes: number;
+  available: boolean;
+  /** Why it cannot be booked, in words the client can act on. */
+  reason: string | null;
+  /** This session's share of the plan total, once priced. */
+  price: number | null;
+}
+
+export interface BookingPlanPreview {
+  sessions: BookingPlanPreviewItem[];
+  sessionCount: number;
+  allAvailable: boolean;
+  /** False when the provider has no hourly rate, so the plan cannot be priced here. */
+  priced: boolean;
+  subtotal: number | null;
+  discount: number | null;
+  total: number | null;
+  perSession: number | null;
+  promotionLabel: string | null;
+  message: string;
+}
+
+export interface BookingPlan {
+  id: number;
+  clientId: number;
+  clientName: string;
+  trainerId: number | null;
+  trainerName: string | null;
+  centerId: number | null;
+  centerName: string | null;
+  /** pending | confirmed | cancelled -- worked out from the sessions. */
+  status: 'pending' | 'confirmed' | 'cancelled';
+  sessionCount: number;
+  activeSessionCount: number;
+  subtotal: number | null;
+  discount: number | null;
+  total: number | null;
+  perSession: number | null;
+  promotionLabel: string | null;
+  startDate: string;
+  endDate: string;
+  notes: string | null;
+  date: Date;
+  message?: string;
+  sessions: Booking[];
 }
