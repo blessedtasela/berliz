@@ -19,6 +19,19 @@ import { DEFAULT_FREE_CANCEL_HOURS, DEFAULT_LATE_CANCEL_REFUND_PERCENT } from 's
     selector: 'app-booking-price-estimate',
     imports: [CommonModule, IconsModule],
     template: `
+    <div *ngIf="loaded" class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2.5 flex flex-col gap-1.5" data-testid="booking-summary">
+      <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Your request</span>
+      <div class="text-xs text-gray-700 dark:text-gray-300 flex flex-col gap-0.5">
+        <span class="flex justify-between gap-3" data-testid="summary-with"><span class="text-gray-400 dark:text-gray-500">With</span><span class="font-semibold text-right">{{ providerName || 'the provider' }}</span></span>
+        <span class="flex justify-between gap-3" data-testid="summary-when"><span class="text-gray-400 dark:text-gray-500">When</span><span class="font-semibold text-right">{{ when || 'Pick a date and time above' }}</span></span>
+        <span class="flex justify-between gap-3"><span class="text-gray-400 dark:text-gray-500">Length</span><span class="font-semibold text-right">{{ minutes }} minutes</span></span>
+        <span *ngIf="where" class="flex justify-between gap-3" data-testid="summary-where"><span class="text-gray-400 dark:text-gray-500">Where</span><span class="font-semibold text-right">{{ where }}</span></span>
+      </div>
+      <div *ngIf="!estimate" class="flex items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700 pt-1.5" data-testid="summary-unpriced">
+        <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Price</span>
+        <span class="text-xs font-semibold text-gray-900 dark:text-gray-100 text-right">Agreed with {{ providerName || 'the provider' }}</span>
+      </div>
+    </div>
     <div *ngIf="estimate as e" class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2.5 flex flex-col gap-1.5">
       <div class="flex items-center justify-between gap-3">
         <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Estimated total</span>
@@ -47,6 +60,16 @@ import { DEFAULT_FREE_CANCEL_HOURS, DEFAULT_LATE_CANCEL_REFUND_PERCENT } from 's
         {{ cancellationPolicyText }}
       </p>
     </div>
+    <div *ngIf="loaded && !estimate" class="px-1 flex flex-col gap-1">
+      <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
+        <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+        You pay only after {{ providerName || 'the provider' }} confirms: nothing is charged now.
+      </p>
+      <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
+        <i-feather name="calendar" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+        {{ cancellationPolicyText }}
+      </p>
+    </div>
   `
 })
 export class BookingPriceEstimateComponent implements OnInit, OnChanges {
@@ -58,6 +81,12 @@ export class BookingPriceEstimateComponent implements OnInit, OnChanges {
   @Input() promotion: Offer | null | undefined = null;
   @Input() credit: Offer | null | undefined = null;
   @Input() usesPackage = false;
+  /** Summary lines from the booking page: when and where the session is. */
+  @Input() when: string | null | undefined = null;
+  @Input() where: string | null | undefined = null;
+
+  /** True once the provider's rate has been looked up, so the card never flashes "agreed with" before it knows. */
+  loaded = false;
 
   hourlyRate: number | null = null;
   /** The provider's own cancellation policy (null = platform default). */
@@ -94,6 +123,7 @@ export class BookingPriceEstimateComponent implements OnInit, OnChanges {
   }
 
   private loadRate(): void {
+    this.loaded = false;
     this.hourlyRate = null;
     this.freeCancelHours = null;
     this.lateCancelRefundPercent = null;
@@ -104,6 +134,7 @@ export class BookingPriceEstimateComponent implements OnInit, OnChanges {
         this.hourlyRate = t?.hourlyRate ?? null;
         this.freeCancelHours = t?.freeCancelHours ?? null;
         this.lateCancelRefundPercent = t?.lateCancelRefundPercent ?? null;
+        this.loaded = true;
       });
     } else if (this.centerId) {
       const id = this.centerId;
@@ -112,6 +143,7 @@ export class BookingPriceEstimateComponent implements OnInit, OnChanges {
         this.hourlyRate = c?.hourlyRate ?? null;
         this.freeCancelHours = c?.freeCancelHours ?? null;
         this.lateCancelRefundPercent = c?.lateCancelRefundPercent ?? null;
+        this.loaded = true;
       });
     }
   }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, of } from 'rxjs';
+import { catchError, map, mergeMap, of, switchMap } from 'rxjs';
 import { AvailabilityService } from '../../services/availability.service';
 import * as A from './availability.actions';
 
@@ -38,7 +38,9 @@ export class AvailabilityEffects {
 
   loadAvailableSlots$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadAvailableSlots),
-    mergeMap(({ trainerId, centerId, date }) => this.svc.getAvailableSlots(trainerId, centerId, date).pipe(
+    // switchMap, not mergeMap: picking Mon right after Sat must drop Sat's still-in-flight answer, or its times
+    // landed on Monday (a closed day) when the slower response arrived last.
+    switchMap(({ trainerId, centerId, date }) => this.svc.getAvailableSlots(trainerId, centerId, date).pipe(
       map(response => A.loadAvailableSlotsSuccess({ response })),
       catchError(e => of(A.loadAvailableSlotsFailure({ error: e?.error?.message || 'Failed to load available times' })))
     ))

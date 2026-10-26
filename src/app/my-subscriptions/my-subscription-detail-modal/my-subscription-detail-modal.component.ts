@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
+import { subscriptionStatusClasses, subscriptionStatusLabel } from '../subscription-status.util';
 
 @Component({
     selector: 'app-my-subscription-detail-modal',
@@ -9,6 +10,9 @@ import { Subscriptions } from 'src/app/models/subscriptions.interface';
     standalone: false
 })
 export class MySubscriptionDetailModalComponent {
+  statusLabel = subscriptionStatusLabel;
+  statusClasses = subscriptionStatusClasses;
+
   emitEvent = new EventEmitter()
   subscriptionData!: Subscriptions;
 

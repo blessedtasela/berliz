@@ -191,6 +191,15 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Behind-login QA, second pass: booking, subscriptions, workout page
+
+From the signed-in review of a test account (web):
+
+- **Booking times can no longer cross days.** Picking Monday right after Saturday used to show Saturday's times on Monday when the slower answer landed last. The slots request now drops an older day's answer, and the page ignores any answer for a day that is not on screen.
+- **Booking summary.** The booking page shows a "Your request" card (who, when, length, where) as soon as a time is picked, even for providers without a set rate (price reads "Agreed with …", plus the pay-after-confirm and cancellation lines).
+- **Unpaid checkouts are no longer "Expired".** My subscriptions understands the five server states (active, ended, awaiting payment, payment failed, cancelled): an amber "Awaiting payment" tile and section with a Finish payment / Retry payment button back to the provider's Level up page, matching pills in the list, timeline, detail and bulk views, and "not started" instead of "Ongoing" for unpaid plans.
+- **Workout page.** `/dashboard/workouts/:id` starts on the spinner (no "Workout not found" flash), treats the empty workout the server returns on an internal error as not found, shows "We couldn't load this workout" with Try again when the request fails, and no longer spins forever on a link with no usable id.
+
 ### Unreleased — Visitor-review batch 2: prices, testimonials, honest first paint, funnel, copy
 
 More from the same first-time-visitor review (batch 1 covered the minimum age, unknown trainer links and center contact):
