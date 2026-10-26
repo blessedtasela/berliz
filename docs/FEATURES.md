@@ -214,6 +214,7 @@ More from the same first-time-visitor review (batch 1 covered the minimum age, u
   "Give Feedback (login required)" before the click; `/help` goes to the help center;
   `/disciplines/boxing` goes to `/disciplines/2/boxing`.
 - **Terms before the login gate:** under "Book a session" on trainer and center profiles: nothing is charged until they confirm, the free-cancellation window, the refund after it.
+- **Book again:** a client's completed or cancelled session shows a one-tap "Book again" that goes straight to booking with the same trainer or center.
 - Needs content, not code (for the owner): the trainer header says "5+ years coaching" while the intro says "over a decade"; a pack is named "Group session invade"; single
   sessions show "Rate on request" until a trainer sets an hourly rate; testimonials and reviews only accumulate with real bookings.
 

@@ -7,6 +7,7 @@ import { BookingCardComponent } from './booking-card.component';
 import { Booking } from 'src/app/models/booking.model';
 import { BookingDetailsModalComponent } from '../booking-details-modal/booking-details-modal.component';
 import { ReviewBookingModalComponent } from '../review-booking-modal/review-booking-modal.component';
+import { Router } from '@angular/router';
 
 describe('BookingCardComponent', () => {
   let component: BookingCardComponent;
@@ -320,6 +321,46 @@ describe('BookingCardComponent', () => {
       component.showDetails();
 
       expect(dialogSpy.open).toHaveBeenCalledWith(BookingDetailsModalComponent, jasmine.any(Object));
+    });
+  });
+
+  describe('book again', () => {
+    let navigate: jasmine.Spy;
+    beforeEach(() => { navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true); });
+
+    it('is offered to a client on a completed or cancelled session, not on one still in play', () => {
+      component.mode = 'client';
+      for (const [status, offered] of [['completed', true], ['cancelled', true], ['pending', false], ['confirmed', false], ['no_show', false]] as const) {
+        component.booking = { ...component.booking, status } as Booking;
+        expect(component.canRebook).withContext(status).toBe(offered);
+      }
+    });
+
+    it('is never offered to the provider', () => {
+      component.mode = 'provider';
+      component.booking = { ...component.booking, status: 'completed' } as Booking;
+      expect(component.canRebook).toBeFalse();
+    });
+
+    it('goes straight to booking with the same trainer', () => {
+      component.mode = 'client';
+      component.booking = { ...component.booking, status: 'completed', trainerName: 'Blessed Fit', centerName: null } as Booking;
+      component.rebook();
+      expect(navigate).toHaveBeenCalledWith(['/trainers', 'blessed-fit', 'book']);
+    });
+
+    it('goes straight to booking with the same center', () => {
+      component.mode = 'client';
+      component.booking = { ...component.booking, status: 'cancelled', trainerName: null, centerName: 'M Fitness Sources' } as Booking;
+      component.rebook();
+      expect(navigate).toHaveBeenCalledWith(['/centers', 'm-fitness-sources', 'book']);
+    });
+
+    it('shows the button on a completed session', () => {
+      component.mode = 'client';
+      component.booking = { ...component.booking, status: 'completed' } as Booking;
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('[data-testid=book-again]')).toBeTruthy();
     });
   });
 });

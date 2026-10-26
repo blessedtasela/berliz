@@ -6,6 +6,7 @@ import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { ReviewBookingModalComponent, ReviewBookingModalResult } from '../review-booking-modal/review-booking-modal.component';
 import { BookingDetailsModalComponent } from '../booking-details-modal/booking-details-modal.component';
+import { nameSlug } from 'src/app/utils/closest-slug';
 import {
   PaymentBadge, canClientPay, canMarkNoShow, clientCancelNote, isRefundedCancellation,
   payByNote, payLabel, paymentBadge, statusLabel
@@ -118,6 +119,19 @@ export class BookingCardComponent {
   /** A client can withdraw a pending request, or cancel a confirmed session (the refund depends on how late -- see clientCancelNote). */
   get canClientCancel(): boolean {
     return this.mode === 'client' && (this.booking.status === 'pending' || this.booking.status === 'confirmed');
+  }
+
+  /** One tap back into booking with the same trainer or center, from a session that is over (completed, or cancelled). */
+  get canRebook(): boolean {
+    return this.mode === 'client'
+      && (this.booking.status === 'completed' || this.booking.status === 'cancelled')
+      && !!(this.booking.trainerName || this.booking.centerName);
+  }
+
+  rebook(): void {
+    const isTrainer = !!this.booking.trainerName;
+    const name = (isTrainer ? this.booking.trainerName : this.booking.centerName) as string;
+    this.router.navigate([isTrainer ? '/trainers' : '/centers', nameSlug(name), 'book']);
   }
 
   /** Confirmed, and the start time has passed: the provider can record that the client never came. */
