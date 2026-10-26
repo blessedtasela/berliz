@@ -191,6 +191,14 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Fix: the public exercise library never loaded for signed-out visitors
+
+Found while checking review item 14 (equipment and exercises). The equipment page already listed every center's gear; the exercises page sat on "Loading…" forever.
+
+- **`/exercise/getActiveExercises` was 401 for anyone not signed in** (it was in neither `SecurityConfig`'s `permitAll` list nor `JWTFilter`'s public-path regex), so `/disciplines/exercises` and the exercise list on a discipline's page could never fill. It is public now, like `/exercise/getTrending` (same rows, active exercises only); liking, editing and the full list stay behind a login (`PublicExerciseLibraryAccessTest`).
+- **The skeleton never ended.** `ExercisesSectionComponent` imported `watchFirstLoad` but never called it, so `firstLoaded` stayed false and an empty or failed load showed the skeleton forever. Wired up.
+- **A failed load no longer reads as "coming soon".** The exercises and equipment pages show the shared retryable "Couldn't load …" state when the fetch fails and there is nothing to show; "coming soon" appears only after a load that really came back empty.
+
 ### Unreleased — Monthly plans: book a whole period at once, pay as you go
 
 - **Plan page.** `/trainers/:name/plan` and `/centers/:name/plan` (linked from the booking page: "Want regular sessions? Plan a month at once"). Step 1: when it starts and for how long (2 weeks, 1 month, 2 months, 3 months) plus the session length. Step 2: how you train: **Same time** on chosen weekdays (with quick picks: weekdays, Mon·Wed·Fri, Tue·Thu, weekends), **Different times** per weekday, **Days on / off** (e.g. 5 on 2 off, 2 on 1 off, every other day, or your own steps like 2 on 1 off then 3 on 2 off), or **Pick dates** on a calendar. Step 3: the exact sessions grouped by week, each checked against the provider's real availability as you build it; take a session out, change one session's time, or remove everything that is unavailable in one tap. Step 4: an optional offer, where to train, notes.

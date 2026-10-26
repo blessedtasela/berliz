@@ -10,6 +10,7 @@ import { EquipmentDetailsModalComponent } from './equipment-details-modal/equipm
 import { StrapiUrlPipe } from '../shared/pipes/strapi-url.pipe';
 import { ClickablePhotoDirective } from 'src/app/shared/photo-lightbox/clickable-photo.directive';
 import { ListSkeletonComponent } from 'src/app/shared/list-skeleton/list-skeleton.component';
+import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
 
 
 
@@ -20,6 +21,7 @@ import { ListSkeletonComponent } from 'src/app/shared/list-skeleton/list-skeleto
   ],
   imports: [
     ListSkeletonComponent,
+    LoadErrorComponent,
     ClickablePhotoDirective,
     CommonModule,
     RouterModule,

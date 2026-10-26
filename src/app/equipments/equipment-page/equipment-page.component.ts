@@ -17,6 +17,7 @@ import { selectUser } from 'src/app/state/user/user.selector';
 import { EquipmentDetailsModalComponent } from '../equipment-details-modal/equipment-details-modal.component';
 import { Actions } from '@ngrx/effects';
 import { injectActionsOrNull, watchFirstLoad } from 'src/app/utils/first-load';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 
 /**
  * PUBLIC equipment browsing — reads the shared `selectCenterEquipment` slice
@@ -54,6 +55,9 @@ export class EquipmentPageComponent implements OnInit, OnDestroy {
   /** Hides the standalone hero when this sits inside another page. */
   @Input() embedded = false;
 
+  /** Why the equipment couldn't be loaded -- so a failed load never reads as "listings coming soon". */
+  loadError: string | null = null;
+
   equipment: CenterEquipment[] = [];
   categories: Categories[] = [];
   user: Users | null = null;
@@ -81,6 +85,10 @@ export class EquipmentPageComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute
   ) { }
 
+  retryLoad(): void {
+    this.store.dispatch(loadAllCenterEquipment());
+  }
+
   ngOnInit(): void {
     const raw = this.route.snapshot.queryParamMap.get('equipmentId');
     this.deepLinkEquipmentId = raw ? Number(raw) : null;
@@ -91,6 +99,9 @@ export class EquipmentPageComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.actionsOpt
         ? watchFirstLoad(this.actionsOpt, this.platformId, [loadAllCenterEquipmentSuccess, loadAllCenterEquipmentFailure], () => this.firstLoaded = true)
+        : new Subscription(),
+      this.actionsOpt
+        ? watchLoadError(this.actionsOpt, loadAllCenterEquipmentFailure, [loadAllCenterEquipment, loadAllCenterEquipmentSuccess], null, m => this.loadError = m)
         : new Subscription(),
       this.store.select(selectCenterEquipment).subscribe(list => {
         this.equipment = list ?? [];
