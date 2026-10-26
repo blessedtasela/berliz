@@ -36,7 +36,7 @@ import { ProviderPackage } from 'src/app/models/provider-package.model';
 import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { Users } from 'src/app/models/users.interface';
 import { genericError } from 'src/validators/form-validators.module';
-import { PLAN_KIND_LABEL, planIncludes, planKind } from 'src/app/utils/provider-package.util';
+import { PLAN_KIND_LABEL, planKind } from 'src/app/utils/provider-package.util';
 import { memoized, newMemoSlot } from 'src/app/utils/memo';
 
 /** What the client has chosen to book with, right now. */
@@ -87,7 +87,6 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   private ownedLoaded = false;
 
   readonly kindLabel = (pkg: ProviderPackage) => PLAN_KIND_LABEL[planKind(pkg)];
-  readonly includes = planIncludes;
 
   // ── Slot picker ──────────────────────────────────────────────────────────
   selectedDate: string = this.formatDateLocal(new Date());

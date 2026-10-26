@@ -11,8 +11,8 @@ const ENTRY_PREFIX = 'berliz.draft.entry.';
  * a user expects to survive an accidental tab close or a wrong back-button
  * tap, without needing a server round trip just to keep typing.
  *
- * Usage from a feature (see DashboardTimelineComponent / BookingFormComponent
- * for the two wired-up examples):
+ * Usage from a feature (see DashboardTimelineComponent
+ * for the wired-up example):
  *   ngOnInit() {
  *     const existing = this.draftService.get('post');
  *     if (existing) this.pendingDraft = existing; // show the resume banner, don't auto-restore

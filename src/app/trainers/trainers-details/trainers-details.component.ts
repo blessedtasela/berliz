@@ -213,8 +213,8 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * A login gate (TestimonialDialogService) sent the
-   * user here with ?action=book|testimonial after signing in -- finish what
+   * The login gate (TestimonialDialogService) sent the
+   * user here with ?action=testimonial after signing in -- finish what
    * they were trying to do instead of leaving them to find the button again.
    * Fires once and strips the query param so a manual refresh doesn't reopen it.
    */
@@ -222,7 +222,6 @@ export class TrainersDetailsComponent implements OnInit, OnDestroy {
     const action = this.route.snapshot.queryParamMap.get('action');
     if (!action) return;
 
-    if (action === 'book') this.bookSession();
     if (action === 'testimonial') this.leaveTestimonial();
 
     this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });

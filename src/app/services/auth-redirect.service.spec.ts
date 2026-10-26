@@ -32,10 +32,10 @@ describe('AuthRedirectService', () => {
   });
 
   it('also carries an action flag when one is given', () => {
-    service.goToLogin('book');
+    service.goToLogin('testimonial');
 
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/login'], {
-      queryParams: { returnUrl: '/trainers/allen-fits', action: 'book' }
+      queryParams: { returnUrl: '/trainers/allen-fits', action: 'testimonial' }
     });
   });
 
