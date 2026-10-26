@@ -120,7 +120,7 @@ describe('BookingLocationPickerComponent', () => {
       expect(emitted.pop()).toEqual({
         trainerLocationId: undefined, customLocation: '12 Elm St',
         customLocationCountry: 'USA', customLocationState: 'TX', customLocationCity: 'Austin',
-        incomplete: false, fee: 25,
+        incomplete: false, fee: 25, label: 'Your place: 12 Elm St',
       });
     });
 

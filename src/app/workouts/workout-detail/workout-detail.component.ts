@@ -29,7 +29,11 @@ import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-u
 export class WorkoutDetailComponent implements OnInit {
 
   workout: WorkoutResponse | null = null;
-  loading = false;
+  /** Starts true: until the first answer there is nothing to call "not found", and a flash of it reads as a broken page. */
+  loading = true;
+  /** The request itself failed (network/server), as opposed to the workout not existing: offers a retry. */
+  loadFailed = false;
+  private requestedId: number | null = null;
 
   private _demoUri = memoizeMediaUriByKey('image/jpeg');
 
@@ -46,33 +50,44 @@ export class WorkoutDetailComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const id = Number(params.get('id'));
-      if (!id || Number.isNaN(id)) return;
+      if (!id || Number.isNaN(id)) {
+        // a bad link has nothing to wait for: show "not found" instead of spinning forever
+        this.workout = null;
+        this.loading = false;
+        return;
+      }
       this.load(id);
     });
   }
 
   refresh(): void {
-    if (this.workout?.id) this.load(this.workout.id);
+    const id = this.workout?.id ?? this.requestedId;
+    if (id) this.load(id);
   }
 
   private load(id: number): void {
+    this.requestedId = id;
     this.loading = true;
+    this.loadFailed = false;
     this.workoutService.getWorkout(id)
       .pipe(take(1))
       .subscribe({
         next: (res) => {
-          this.workout = res?.data ?? null;
+          // The server answers an internal failure with an empty workout (no id): that is not a workout to show.
+          const data = res?.data ?? null;
+          this.workout = data && data.id ? data : null;
           this.loading = false;
         },
         error: () => {
           this.workout = null;
+          this.loadFailed = true;
           this.loading = false;
         }
       });
   }
 
   get notFound(): boolean {
-    return !this.loading && !this.workout;
+    return !this.loading && !this.workout && !this.loadFailed;
   }
 
   get sortedExercises(): WorkoutExerciseResponse[] {

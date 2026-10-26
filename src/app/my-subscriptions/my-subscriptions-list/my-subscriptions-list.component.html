@@ -12,6 +12,26 @@
             </app-my-subscriptions-active>
         </div>
 
+        <!-- Awaiting payment / payment failed -->
+        <div *ngIf="awaitingPayment.length > 0" class="flex flex-col gap-2" data-testid="awaiting-section">
+            <span class="text-[11px] font-semibold text-amber-600 uppercase tracking-wide flex items-center gap-1">
+                <i-feather name="clock" style="width:11px;height:11px;"></i-feather>
+                Awaiting payment
+            </span>
+            <div *ngFor="let sub of awaitingPayment" class="p-3 border border-amber-100 dark:border-amber-900 rounded-xl bg-amber-50/60 dark:bg-amber-950/10 flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                    <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">{{ sub.providerPackage?.name || sub.plan || 'Subscription' }}</p>
+                    <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+                        {{ isFailed(sub) ? 'The last payment did not go through.' : 'You started checkout but have not paid. Nothing was charged.' }}
+                    </p>
+                </div>
+                <button *ngIf="canFinishPayment(sub)" type="button" (click)="finishPayment(sub)"
+                    class="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700 transition">
+                    {{ isFailed(sub) ? 'Retry payment' : 'Finish payment' }}
+                </button>
+            </div>
+        </div>
+
         <!-- Expiring soon -->
         <div *ngIf="due.length > 0" class="flex flex-col gap-2">
             <span class="text-[11px] font-semibold text-yellow-600 uppercase tracking-wide flex items-center gap-1">

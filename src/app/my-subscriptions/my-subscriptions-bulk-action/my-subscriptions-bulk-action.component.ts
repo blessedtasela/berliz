@@ -5,6 +5,7 @@ import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SubscriptionService } from 'src/app/services/subscription.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
+import { subscriptionState, subscriptionStatusLabel } from '../subscription-status.util';
 
 @Component({
     selector: 'app-my-subscriptions-bulk-action',
@@ -13,6 +14,9 @@ import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.c
     standalone: false
 })
 export class MySubscriptionsBulkActionComponent {
+  statusLabel = subscriptionStatusLabel;
+  isActive = (sub: { status?: string | null }) => subscriptionState(sub) === 'active';
+
  @Input() subscriptions: Subscriptions[] = [];
   @Output() refresh = new EventEmitter<void>();
 

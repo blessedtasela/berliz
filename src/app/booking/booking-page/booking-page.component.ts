@@ -229,6 +229,8 @@ export class BookingPageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(response => {
         if (!response) return;
+        // An answer for a different day than the one on screen is stale: never show another day's times.
+        if (response.date && this.selectedDate && response.date !== this.selectedDate) return;
         this.availabilityConfigured = response.availabilityConfigured;
         this.slots = response.slots ?? [];
         this.slotDurationMinutes = response.slotDurationMinutes ?? 60;
@@ -404,6 +406,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     if (this.selectedDate === dateValue) return;
     this.selectedDate = dateValue;
     this.selectedSlot = null;
+    this.slots = [];
     this.submitError = null;
     this.fetchSlotsForSelectedDate();
   }
@@ -429,6 +432,21 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     h = h % 12;
     if (h === 0) h = 12;
     return `${h}:${mStr} ${suffix}`;
+  }
+
+  /** "Saturday, October 24 · 7:00 PM - 8:00 PM" for the booking summary, or null until a time is picked. */
+  get summaryWhen(): string | null {
+    if (!this.selectedSlot || !this.selectedDate) return null;
+    const day = new Date(this.selectedDate + 'T12:00:00');
+    const dayText = isNaN(day.getTime())
+      ? this.selectedDate
+      : day.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    return `${dayText} · ${this.slotLabel(this.selectedSlot)} - ${this.slotLabel({ ...this.selectedSlot, startTime: this.selectedSlot.endTime })}`;
+  }
+
+  /** Where the session happens, for the summary: the chosen spot, or the center itself. */
+  get summaryWhere(): string | null {
+    return this.locationSelection?.label || (this.kind === 'center' ? this.providerName || null : null);
   }
 
   /** Only worth showing once a slot's window actually allows more than 1 person. */

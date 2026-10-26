@@ -9,7 +9,7 @@ import { Trainers, TrainerLocation } from 'src/app/models/trainers.interface';
 import { LocationService } from 'src/app/services/location.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { SelectComponent } from 'src/app/shared/select/select.component';
-import { ClientLocationQuote, groupLocations, normPlace, placeLabel, quoteClientLocation, sameCity } from 'src/app/utils/trainer-location.util';
+import { ClientLocationQuote, groupLocations, normPlace, placeLabel, quoteClientLocation, sameCity, spotHeading } from 'src/app/utils/trainer-location.util';
 
 /** What a booking request needs to carry; spread straight into the payload (see {@link locationPayload}). */
 export interface BookingLocationSelection {
@@ -23,6 +23,8 @@ export interface BookingLocationSelection {
   incomplete: boolean;
   /** The fee that comes with this choice (null when none), so the booking form can include it in the estimated total. */
   fee: number | null;
+  /** A readable name for the choice (a spot's venue or address and city, or the client's own place), for the booking summary. */
+  label?: string;
 }
 
 /** The location fields of a booking request. Safe to spread whether or not a location was picked. */
@@ -290,7 +292,15 @@ export class BookingLocationPickerComponent implements OnInit, OnChanges {
       customLocationCity: place?.city.trim() || undefined,
       incomplete: this.customSelected && (!custom || !this.placeKnown || refused),
       fee: this.selectedFee,
+      label: this.selectionLabel(custom),
     });
+  }
+
+  private selectionLabel(custom: string): string | undefined {
+    if (this.customSelected) return custom ? `Your place: ${custom}` : undefined;
+    const loc = this.locations.find(l => l.id === this.selectedId);
+    if (!loc) return undefined;
+    return [spotHeading(loc), loc.city, loc.country].filter(Boolean).join(', ') || undefined;
   }
 
   private setPlace(country: string, stateProvince: string, city: string): void {

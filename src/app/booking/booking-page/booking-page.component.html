@@ -165,7 +165,7 @@
     <!-- ── Estimated total (hidden when the provider has no rate set) ── -->
     <app-booking-price-estimate *ngIf="availabilityConfigured === true && providerId"
       [trainerId]="kind === 'trainer' ? providerId : null" [centerId]="kind === 'center' ? providerId : null"
-      [providerName]="providerName" [minutes]="slotDurationMinutes"
+      [providerName]="providerName" [minutes]="slotDurationMinutes" [when]="summaryWhen" [where]="summaryWhere"
       [locationFee]="locationSelection?.fee ?? null"
       [usesPackage]="selectedOption.kind === 'ownedPackage'"></app-booking-price-estimate>
 

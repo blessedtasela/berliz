@@ -30,8 +30,8 @@
                     (change)="toggleSelect(sub.id, $any($event.target).checked)" class="w-3.5 h-3.5 accent-red-600" />
                 <span class="text-xs text-gray-700 dark:text-gray-300">{{ sub.plan }}</span>
                 <span class="text-[10px] ml-auto font-semibold"
-                    [ngClass]="sub.status === 'true' ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'">
-                    {{ sub.status === 'true' ? 'Active' : 'Expired' }}
+                    [ngClass]="isActive(sub) ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'">
+                    {{ statusLabel(sub) }}
                 </span>
             </label>
         </div>

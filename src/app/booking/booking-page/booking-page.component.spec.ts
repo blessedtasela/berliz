@@ -211,3 +211,47 @@ describe('BookingPageComponent plans', () => {
     });
   });
 });
+
+describe('BookingPageComponent summary and day switching', () => {
+  let page: BookingPageComponent;
+  let dispatch: jasmine.Spy;
+
+  beforeEach(() => {
+    // Only the fields these members read: skip the 13-service constructor.
+    page = Object.create(BookingPageComponent.prototype);
+    dispatch = jasmine.createSpy('dispatch');
+    (page as any).store = { dispatch };
+    page.kind = 'trainer';
+    page.providerId = 7;
+    page.providerName = 'Blessed Fit';
+    page.selectedDate = '2026-10-24';
+    page.selectedSlot = { startTime: '19:00:00', endTime: '20:00:00' } as any;
+    page.slots = [{ startTime: '19:00:00', endTime: '20:00:00' } as any];
+  });
+
+  it('describes the picked time, the day spelled out', () => {
+    expect(page.summaryWhen).toBe('Saturday, October 24 · 7:00 PM - 8:00 PM');
+  });
+
+  it('has no "when" until a time is picked', () => {
+    page.selectedSlot = null;
+    expect(page.summaryWhen).toBeNull();
+  });
+
+  it('names the chosen spot, or the center itself, as the place', () => {
+    page.locationSelection = { label: 'Kits Beach Gym, Vancouver, Canada', incomplete: false, fee: null };
+    expect(page.summaryWhere).toBe('Kits Beach Gym, Vancouver, Canada');
+    page.locationSelection = null;
+    expect(page.summaryWhere).toBeNull();
+    page.kind = 'center';
+    page.providerName = 'Berliz Works';
+    expect(page.summaryWhere).toBe('Berliz Works');
+  });
+
+  it("clears the old day's times the moment another day is picked, before the new ones arrive", () => {
+    page.selectDate('2026-10-26');
+    expect(page.slots).toEqual([]);
+    expect(page.selectedSlot).toBeNull();
+    expect(dispatch).toHaveBeenCalled();
+  });
+});

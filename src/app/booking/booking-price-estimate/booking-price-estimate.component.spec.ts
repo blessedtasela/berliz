@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 
 import { CenterService } from 'src/app/services/center.service';
 import { TrainerService } from 'src/app/services/trainer.service';
@@ -77,14 +77,45 @@ describe('BookingPriceEstimateComponent', () => {
     expect(text()).toContain("Free cancellation until 48 hours before; after that it's not refunded.");
   });
 
-  it('renders nothing for a provider with no rate set', () => {
-    show({ trainerId: 10, minutes: 60 });
-    expect(text().trim()).toBe('');
+  it('still shows who, when and how long for a provider with no rate, and says the price is agreed with them', () => {
+    show({ trainerId: 10, minutes: 60, providerName: 'Coach Jane', when: 'Monday, October 26 · 7:00 PM - 8:00 PM' });
+    expect(text()).toContain('Your request');
+    expect(text()).toContain('Coach Jane');
+    expect(text()).toContain('Monday, October 26 · 7:00 PM - 8:00 PM');
+    expect(text()).toContain('60 minutes');
+    expect(text()).toContain('Agreed with Coach Jane');
+    expect(text()).not.toContain('Estimated total');
+    expect(text()).toContain('nothing is charged now');
+    expect(text()).toContain('Free cancellation until 24 hours before');
   });
 
-  it('renders nothing, and does not break booking, if the lookup fails', () => {
-    trainerService.getActiveTrainers.and.returnValue(throwError(() => new Error('boom')));
-    show({ trainerId: 9, minutes: 60 });
+  it('asks for a time until one is picked, and shows where when it is known', () => {
+    show({ centerId: 3, minutes: 60, providerName: 'Berliz Works', where: 'Berliz Works' });
+    expect(text()).toContain('Pick a date and time above');
+    expect(text()).toContain('Where');
+  });
+
+  it('shows the summary with the price breakdown when there is a rate', () => {
+    show({ trainerId: 9, minutes: 60, providerName: 'Coach Jane', when: 'Tuesday' });
+    expect(text()).toContain('Your request');
+    expect(text()).toContain('Estimated total');
+    expect(text()).not.toContain('Agreed with');
+  });
+
+  it('does not flash "agreed with" before the rate has loaded', () => {
+    const pending = new Subject<any>();
+    trainerService.getActiveTrainers.and.returnValue(pending.asObservable());
+    show({ trainerId: 9, minutes: 60, providerName: 'Coach Jane' });
     expect(text().trim()).toBe('');
+    pending.next({ data: [{ id: 9, hourlyRate: 100 }] });
+    fixture.detectChanges();
+    expect(text()).toContain('Estimated total');
+  });
+
+  it('still shows the summary, and the agreed-price line, if the lookup fails (booking is not blocked)', () => {
+    trainerService.getActiveTrainers.and.returnValue(throwError(() => new Error('boom')));
+    show({ trainerId: 9, minutes: 60, providerName: 'Coach Jane' });
+    expect(text()).toContain('Your request');
+    expect(text()).toContain('Agreed with Coach Jane');
   });
 });
