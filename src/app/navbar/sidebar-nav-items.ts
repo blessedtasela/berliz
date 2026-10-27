@@ -49,6 +49,9 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { name: 'Messages', icon: 'message-circle', route: '/dashboard/messages' },
   { name: 'Notifications', icon: 'inbox', route: '/dashboard/my-notifications' },
   { name: 'Bookings', icon: 'clock', route: '/dashboard/my-bookings' },
+  // The Hub is where every module and entity lives (a client's tools, an admin's managed entities), so it stays a
+  // top-level row for every role. It was folded into the collapsed Community group, which made it look gone.
+  { name: 'Hub', icon: 'globe', route: '/dashboard/hub' },
 
   // A trainer/center is a partner first-class citizen, not just "a user with
   // extra pages" -- same reasoning as the mobile app's TRAINER_SECTION /
@@ -111,7 +114,6 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
       { name: 'Timeline', icon: 'file-text', route: '/dashboard/timeline' },
       { name: 'Connections', icon: 'users', route: '/dashboard/connections' },
       { name: 'Members', icon: 'grid', route: '/dashboard/member-directory' },
-      { name: 'Hub', icon: 'globe', route: '/dashboard/hub' },
     ],
   },
   {

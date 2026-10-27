@@ -86,3 +86,17 @@ describe('sidebar-nav-items groups', () => {
     expect(filterSidebarNavItems('user')).not.toBe(filterSidebarNavItems('trainer'));
   });
 });
+
+describe('sidebar-nav-items Hub', () => {
+  it('is a top-level row, visible without opening any group, for every role including admin', () => {
+    for (const role of ['user', 'client', 'trainer', 'center', 'admin', null, undefined]) {
+      const topLevel = filterSidebarNavItems(role as any).filter(i => !i.label && !i.items);
+      expect(topLevel.some(i => i.name === 'Hub' && i.route === '/dashboard/hub')).toBeTrue();
+    }
+  });
+
+  it('appears once, not also inside a group', () => {
+    const all = SIDEBAR_NAV_ITEMS.flatMap(i => i.items ?? [i]);
+    expect(all.filter(i => i.route === '/dashboard/hub').length).toBe(1);
+  });
+});
