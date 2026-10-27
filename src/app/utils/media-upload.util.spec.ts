@@ -12,6 +12,13 @@ describe('media-upload.util', () => {
       expect(effectiveUploadType(file('a.png', 'image/png'))).toBe('image/png');
     });
 
+    it('ignores MIME parameters, so a trimmed video labelled with its codecs is still a video', () => {
+      expect(effectiveUploadType(file('feature_1.webm', 'video/webm;codecs=vp9'))).toBe('video/webm');
+      expect(effectiveUploadType(file('feature_1.webm', 'video/webm; codecs=vp8,opus'))).toBe('video/webm');
+      expect(effectiveUploadType(file('clip.mp4', 'video/mp4;codecs=avc1.42E01E'))).toBe('video/mp4');
+      expect(validateUpload(file('feature_1.webm', 'video/webm;codecs=vp9', 4 * MB))).toBeNull();
+    });
+
     it('works the type out from the extension when the browser gave none', () => {
       expect(effectiveUploadType(file('clip.MOV', ''))).toBe('video/quicktime');
       expect(effectiveUploadType(file('plan.docx', ''))).toContain('wordprocessingml');

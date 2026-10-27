@@ -31,9 +31,13 @@ const EXTENSION_TYPES: Record<string, string> = {
   txt: 'text/plain', csv: 'text/csv', mp3: 'audio/mpeg', m4a: 'audio/mp4', wav: 'audio/wav',
 };
 
-/** `image/jpg` is what some devices report for a JPEG. */
+/**
+ * `image/jpg` is what some devices report for a JPEG. A MIME type can also carry parameters
+ * (`video/webm;codecs=vp9`, which is exactly what the browser's MediaRecorder labels a trimmed clip), and those are
+ * not part of the type: comparing the whole string made every trimmed video "an unsupported file type".
+ */
 function normalizeType(type: string): string {
-  const t = (type || '').toLowerCase();
+  const t = (type || '').split(';')[0].trim().toLowerCase();
   return t === 'image/jpg' || t === 'image/pjpeg' ? 'image/jpeg' : t;
 }
 
