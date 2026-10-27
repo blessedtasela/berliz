@@ -89,7 +89,7 @@ interface LocationGroup {
           </span>
           <span class="shrink-0 text-[11px] font-semibold"
             [ngClass]="loc.fee ? 'text-amber-700 dark:text-amber-400' : 'text-gray-400 dark:text-gray-500'">
-            {{ loc.fee ? '+$' + (loc.fee | number:'1.2-2') : 'No extra fee' }}
+            {{ loc.fee ? '+$' + (loc.fee | number:'1.2-2') : 'No extra trainer fee' }}
           </span>
         </button>
       </div>
@@ -105,7 +105,7 @@ interface LocationGroup {
         </span>
         <span class="shrink-0 text-[11px] font-semibold"
           [ngClass]="ownPlaceFee ? 'text-amber-700 dark:text-amber-400' : 'text-gray-400 dark:text-gray-500'">
-          {{ ownPlaceFee ? (placeKnown ? '+$' : 'from +$') + (ownPlaceFee | number:'1.2-2') : 'No extra fee' }}
+          {{ ownPlaceFee ? (placeKnown ? '+$' : 'from +$') + (ownPlaceFee | number:'1.2-2') : 'No extra trainer fee' }}
         </span>
       </button>
 
@@ -131,7 +131,7 @@ interface LocationGroup {
         </div>
 
         <input type="text" [(ngModel)]="customText" [ngModelOptions]="{ standalone: true }" (ngModelChange)="emit()" maxlength="200"
-          aria-label="Address or place" placeholder="Address or place, e.g. 12 Elm St or my apartment gym"
+          aria-label="Address or place" placeholder="Address or place, e.g. 12 Elm St, or the name of your gym"
           class="berliz-input w-full text-sm" />
 
         <p *ngIf="quote && !quote.ok" class="text-[11px] text-red-600 dark:text-red-400 flex items-start gap-1.5">
@@ -148,6 +148,11 @@ interface LocationGroup {
       <p *ngIf="selectedFee" class="text-[11px] text-amber-700 dark:text-amber-400 flex items-start gap-1.5">
         <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
         This location adds a &#36;{{ selectedFee | number:'1.2-2' }} fee on top of the session price.
+      </p>
+
+      <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5" data-testid="gym-dropin-note">
+        <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+        If the gym you pick charges a drop-in fee, you pay that to the gym directly. It is not part of the trainer fee and not paid through Berliz.
       </p>
     </div>
   `
