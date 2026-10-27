@@ -2,12 +2,14 @@ import { Observable, catchError, map, of } from 'rxjs';
 
 import { CenterService } from 'src/app/services/center.service';
 import { TrainerService } from 'src/app/services/trainer.service';
+import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 
 export type ProviderKind = 'trainer' | 'center';
 
 export interface ResolvedProvider {
   id: number;
   name: string;
+  /** A full URL, ready for `<img [src]>` (the provider's Strapi photo path is resolved here, once, for every page that shows it). */
   photoUrl: string | null;
   /** Public contact details the provider chose to publish (centers only so far). */
   contactEmail?: string | null;
@@ -41,7 +43,9 @@ export function resolveProviderBySlug(
         ? {
           id: match.id,
           name: match.name,
-          photoUrl: match.photoResponse?.photoUrl || null,
+          // Strapi hands back a path like /uploads/x.jpg; bound as-is it is requested from this site's own origin, 404s,
+          // and the page falls back to the default avatar.
+          photoUrl: resolveStrapiUrl(match.photoResponse?.photoUrl) || null,
           contactEmail: match.contactEmail || null,
           contactPhone: match.contactPhone || null,
         }
