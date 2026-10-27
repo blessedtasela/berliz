@@ -110,8 +110,7 @@
           </a>
 
           <div class="flex items-center gap-1 shrink-0">
-            <i-feather *ngIf="exercise.video" name="film" class="text-blue-400" style="width:13px;height:13px;" title="Has demo video"></i-feather>
-            <button *ngIf="exercise.demo" type="button" (click)="toggleDemo(exercise)"
+            <button *ngIf="exercise.hasDemo" type="button" (click)="toggleDemo(exercise)"
               class="w-7 h-7 rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition"
               [attr.aria-label]="openDemoId === exercise.id ? 'Hide demo' : 'Show demo'">
               <i-feather [name]="openDemoId === exercise.id ? 'x' : 'image'"
@@ -123,7 +122,7 @@
         <!-- Demo image — /exercise/updateDemo validates this server-side as an
              image (isValidImageType/isValidImageSize), not a video, so this
              renders as a still photo demonstrating the movement. -->
-        <img *ngIf="exercise.demo && openDemoId === exercise.id" [src]="demoSrc(exercise)"
+        <img *ngIf="exercise.hasDemo && openDemoId === exercise.id" [src]="demoUrl(exercise)" loading="lazy"
           class="w-full rounded-xl border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800 object-cover" alt="{{ exercise.name }} demo" />
 
         <div class="border-t border-gray-100 dark:border-gray-800"></div>

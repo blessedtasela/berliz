@@ -5,7 +5,8 @@ import { Subscription } from 'rxjs';
 
 import { Categories } from 'src/app/models/categories.interface';
 import { CenterEquipment } from 'src/app/models/centers.interface';
-import { Exercises } from 'src/app/models/exercise.interface';
+import { PublicExercise } from 'src/app/models/exercise.interface';
+import { exerciseDemoUrl } from 'src/app/utils/exercise-demo';
 import { MuscleGroups } from 'src/app/models/muscle-groups.interface';
 import { Users } from 'src/app/models/users.interface';
 
@@ -19,22 +20,21 @@ import {
   loadMyCenterEquipment
 } from 'src/app/state/center/center.actions';
 import { selectCenterEquipment, selectMyCenterEquipment } from 'src/app/state/center/center.selectors';
-import { loadActiveExercises, loadActiveExercisesFailure, loadActiveExercisesSuccess } from 'src/app/state/exercise/exercise.actions';
+import { loadPublicExercises, loadPublicExercisesFailure, loadPublicExercisesSuccess } from 'src/app/state/exercise/exercise.actions';
 import { injectActionsOrNull, watchFirstLoad } from 'src/app/utils/first-load';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
-import { selectActiveExercises } from 'src/app/state/exercise/exercise.selectors';
+import { selectPublicExercises } from 'src/app/state/exercise/exercise.selectors';
 import { loadActiveMuscleGroups } from 'src/app/state/muscle-group/muscle-group.actions';
 import { selectActiveMuscleGroups } from 'src/app/state/muscle-group/muscle-group.selectors';
 import { selectUser } from 'src/app/state/user/user.selector';
 
 import { EquipmentFormModalComponent } from './equipment-form-modal/equipment-form-modal.component';
-import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 /**
  * READ-ONLY exercise library for any signed-in user — `/dashboard/exercises`.
  *
  * Admin CRUD for exercises lives in `src/app/admin/exercises`; this page only
- * browses/searches the same `selectActiveExercises` store slice.
+ * browses/searches the slim public list (`selectPublicExercises`): text and tags only, the demo image is fetched per card.
  *
  * The page is tabbed: "Exercises" (the library) and "Equipment" (every center's
  * gear, plus a "My equipment" management section when the signed-in user owns a
@@ -50,7 +50,7 @@ export class DashboardExercisesComponent implements OnInit, OnDestroy {
 
   activeTab: 'exercises' | 'equipment' = 'exercises';
 
-  exercises: Exercises[] = [];
+  exercises: PublicExercise[] = [];
   categories: Categories[] = [];
   muscleGroups: MuscleGroups[] = [];
 
@@ -71,12 +71,8 @@ export class DashboardExercisesComponent implements OnInit, OnDestroy {
   openDemoId: number | null = null;
 
   private subs: Subscription[] = [];
-  private _demoUri = memoizeMediaUriByKey('image/jpeg');
-
-  /** Stable data-URI for an exercise's base64 still-image demo. */
-  demoSrc(exercise: Exercises): string | null {
-    return this._demoUri(exercise.id, exercise.demo);
-  }
+  /** The demo is its own cacheable image URL, not bytes inside the list (the list is text and tags only). */
+  demoUrl = exerciseDemoUrl;
 
   refreshing = false;
 
@@ -95,7 +91,7 @@ export class DashboardExercisesComponent implements OnInit, OnDestroy {
 
   refresh(): void {
     this.refreshing = true;
-    this.store.dispatch(loadActiveExercises());
+    this.store.dispatch(loadPublicExercises());
     this.store.dispatch(loadActiveCategories());
     this.store.dispatch(loadActiveMuscleGroups());
     this.store.dispatch(loadAllCenterEquipment());
@@ -104,14 +100,14 @@ export class DashboardExercisesComponent implements OnInit, OnDestroy {
   }
 
   retryExercises(): void {
-    this.store.dispatch(loadActiveExercises());
+    this.store.dispatch(loadPublicExercises());
   }
 
   ngOnInit(): void {
     if (this.actions$) {
       this.subs.push(
-        watchFirstLoad(this.actions$, this.platformId, [loadActiveExercisesSuccess, loadActiveExercisesFailure], () => this.firstLoaded = true),
-        watchLoadError(this.actions$, loadActiveExercisesFailure, [loadActiveExercises, loadActiveExercisesSuccess], null, m => this.loadError = m),
+        watchFirstLoad(this.actions$, this.platformId, [loadPublicExercisesSuccess, loadPublicExercisesFailure], () => this.firstLoaded = true),
+        watchLoadError(this.actions$, loadPublicExercisesFailure, [loadPublicExercises, loadPublicExercisesSuccess], null, m => this.loadError = m),
       );
     } else {
       this.firstLoaded = true; // no effects wired (a bare test bed)
@@ -119,7 +115,7 @@ export class DashboardExercisesComponent implements OnInit, OnDestroy {
     this.refresh();
 
     this.subs.push(
-      this.store.select(selectActiveExercises).subscribe(list => this.exercises = list ?? []),
+      this.store.select(selectPublicExercises).subscribe(list => this.exercises = list ?? []),
       this.store.select(selectActiveCategories).subscribe(list => this.categories = list ?? []),
       this.store.select(selectActiveMuscleGroups).subscribe(list => this.muscleGroups = list ?? []),
       this.store.select(selectCenterEquipment).subscribe(list => this.equipment = list ?? []),
@@ -152,7 +148,7 @@ export class DashboardExercisesComponent implements OnInit, OnDestroy {
 
   // ── Filtering: exercises ────────────────────────────────────────────────────
 
-  get filteredExercises(): Exercises[] {
+  get filteredExercises(): PublicExercise[] {
     const term = this.searchTerm.trim().toLowerCase();
 
     return this.exercises.filter(e => {
@@ -269,11 +265,11 @@ export class DashboardExercisesComponent implements OnInit, OnDestroy {
 
   // ── Display helpers ─────────────────────────────────────────────────────────
 
-  toggleDemo(exercise: Exercises): void {
+  toggleDemo(exercise: PublicExercise): void {
     this.openDemoId = this.openDemoId === exercise.id ? null : exercise.id;
   }
 
-  muscleGroupsFor(exercise: Exercises): string {
+  muscleGroupsFor(exercise: PublicExercise): string {
     return (exercise?.muscleGroups ?? []).map(m => m.name).join(' · ');
   }
 
@@ -288,7 +284,7 @@ export class DashboardExercisesComponent implements OnInit, OnDestroy {
     return (value ?? '').replace(/ /g, '-');
   }
 
-  trackByExerciseId(_index: number, exercise: Exercises): number {
+  trackByExerciseId(_index: number, exercise: PublicExercise): number {
     return exercise.id;
   }
 

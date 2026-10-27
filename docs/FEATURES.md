@@ -208,7 +208,7 @@ Newest first. Each entry: what shipped, which surfaces, PR/commit.
 ### Unreleased — Behind-login QA, second pass (items 6-20): honest loading, readable notifications, breadcrumbs
 
 - **No false "none yet" while loading (item 6):** the dashboard Notifications widget, Popular programs / Popular workouts, Find a provider (trainers and centers, and its "N of M" bar), My Tasks (count and empty message), the signed-in Exercise library and the center profile's Reviews / Trainers tiles now show a skeleton or a dash until their first load answers. A failed load ends the wait too.
-- **Exercise library (item 7):** the signed-in library shows a skeleton, then either the list or a "Couldn't load exercises" card with Retry, never a bare "No exercises yet" for a load that failed.
+- **Exercise library (item 7):** the signed-in library read the heavy list (every exercise with its demo bytes inline, about 240 KB each), which is the likely reason it came back empty. It now reads the slim list and fetches each demo as its own image, shows a skeleton while loading, and a "Couldn't load exercises" card with Retry if the load fails, never a bare "No exercises yet".
 - **Notifications (item 8):** the old admin audit lines ("User with id: 6, and email ... profile photo has been changed by admin") are worded for the user ("An admin changed your profile photo."); long notifications are cut at a whole word instead of mid-word.
 - **Center and trainer breadcrumbs (item 14):** "find-centers/2/berliz-works" reads "Berliz Works" (and trainers likewise).
 - **Likes tile (item 15):** the tile is now a plain stat when there are no likes, with a tooltip saying so, instead of a button that looks broken.
