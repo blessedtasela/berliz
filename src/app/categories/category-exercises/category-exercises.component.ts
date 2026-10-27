@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { Exercises } from 'src/app/models/exercise.interface';
-import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
+import { PublicExercise } from 'src/app/models/exercise.interface';
+import { exerciseDemoUrl } from 'src/app/utils/exercise-demo';
 
 /**
  * "Exercises tagged with this discipline" — DERIVED client-side from
@@ -13,17 +13,12 @@ import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-u
     standalone: false
 })
 export class CategoryExercisesComponent {
-  @Input() exercises: Exercises[] = [];
+  @Input() exercises: PublicExercise[] = [];
   @Input() categoryName = '';
 
-  private _demoUri = memoizeMediaUriByKey('video/mp4');
+  demoUrl = exerciseDemoUrl;
 
-  /** Stable data-URI for an exercise's base64 demo clip (rebuilt only when the payload changes). */
-  demoSrc(exercise: Exercises): string | null {
-    return this._demoUri(exercise.id, exercise.demo);
-  }
-
-  muscleGroupsFor(exercise: Exercises): string {
+  muscleGroupsFor(exercise: PublicExercise): string {
     return (exercise?.muscleGroups ?? []).map(m => m.name).join(' · ');
   }
 }

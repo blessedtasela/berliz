@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { ExerciseLikes, Exercises } from '../../models/exercise.interface';
+import { ExerciseLikes, Exercises, PublicExercise } from '../../models/exercise.interface';
 
 type Err  = { error: string };
 type Id   = { id: number };
@@ -12,6 +12,11 @@ export const loadExercisesFailure = createAction('[Exercise] Load All Failure', 
 export const loadActiveExercises = createAction('[Exercise] Load Active');
 export const loadActiveExercisesSuccess = createAction('[Exercise] Load Active Success', props<{ data: Exercises[] }>());
 export const loadActiveExercisesFailure = createAction('[Exercise] Load Active Failure', props<Err>());
+
+/** The signed-out library: slim, public. The signed-in screens use loadActiveExercises (full rows). */
+export const loadPublicExercises = createAction('[Exercise] Load Public');
+export const loadPublicExercisesSuccess = createAction('[Exercise] Load Public Success', props<{ data: PublicExercise[] }>());
+export const loadPublicExercisesFailure = createAction('[Exercise] Load Public Failure', props<Err>());
 
 export const loadExercise = createAction('[Exercise] Load By Id', props<Id>());
 export const loadExerciseSuccess = createAction('[Exercise] Load By Id Success', props<{ data: Exercises }>());

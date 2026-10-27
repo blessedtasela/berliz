@@ -31,6 +31,29 @@ export interface Exercises {
     status: string;
 }
 
+/**
+ * An exercise as the signed-out library gets it (GET /exercise/getPublicExercises): text and tags only. The full
+ * `Exercises` carries the demo image and every muscle group's image inline (about 240 KB per exercise), which is far
+ * too heavy for a public page. The demo is a separate cacheable image: see `exerciseDemoUrl`.
+ */
+export interface PublicExercise {
+    id: number;
+    name: string;
+    description: string | null;
+    benefit: string | null;
+    howToPerform: string | null;
+    /** "BEGINNER" | "INTERMEDIATE" | "ADVANCED" — nullable. */
+    difficultyLevel: string | null;
+    likes: number | null;
+    /** True when /exercise/demo/{id} has an image to show. */
+    hasDemo: boolean;
+    /** Changes when the exercise is edited; goes on the demo URL so a replaced image isn't served stale. */
+    demoVersion: number;
+    muscleGroups: { id: number; name: string }[];
+    categories: { id: number; name: string }[];
+    date: Date;
+}
+
 export type ExerciseSuggestionStatus = 'PENDING' | 'APPROVED' | 'DISMISSED';
 
 /**
