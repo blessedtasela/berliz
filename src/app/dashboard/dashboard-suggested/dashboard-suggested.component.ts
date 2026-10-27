@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -11,16 +11,19 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
 import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
-import { loadActiveCategories } from 'src/app/state/category/category.actions';
+import { loadActiveCategories, loadActiveCategoriesFailure, loadActiveCategoriesSuccess } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 import { selectUser } from 'src/app/state/user/user.selector';
 import {
   cloneWorkoutTemplate,
   cloneWorkoutTemplateFailure,
   cloneWorkoutTemplateSuccess,
-  loadWorkoutTemplates
+  loadWorkoutTemplates,
+  loadWorkoutTemplatesFailure,
+  loadWorkoutTemplatesSuccess
 } from 'src/app/state/workout/workout.actions';
 import { selectWorkoutTemplates } from 'src/app/state/workout/workout.selector';
+import { injectActionsOrNull, watchFirstLoad } from 'src/app/utils/first-load';
 
 /**
  * Dashboard discovery widget: suggested programs + suggested workouts.
@@ -49,6 +52,10 @@ export class DashboardSuggestedComponent implements OnInit, OnDestroy {
   /** Public workout templates, most-cloned first. */
   templates: WorkoutResponse[] = [];
 
+  /** False until each list's first load answers: "No programs yet" is a skeleton before that. */
+  programsLoaded = false;
+  templatesLoaded = false;
+
   user!: Users | null;
   cloningTemplateId: number | null = null;
 
@@ -56,6 +63,9 @@ export class DashboardSuggestedComponent implements OnInit, OnDestroy {
   private readonly templateLimit = 4;
 
   private subs: Subscription[] = [];
+
+  private platformId = inject(PLATFORM_ID);
+  private firstLoadActions = injectActionsOrNull();
 
   constructor(
     private store: Store,
@@ -66,6 +76,10 @@ export class DashboardSuggestedComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.subs.push(
+      watchFirstLoad(this.firstLoadActions ?? this.actions$, this.platformId, [loadActiveCategoriesSuccess, loadActiveCategoriesFailure], () => this.programsLoaded = true),
+      watchFirstLoad(this.firstLoadActions ?? this.actions$, this.platformId, [loadWorkoutTemplatesSuccess, loadWorkoutTemplatesFailure], () => this.templatesLoaded = true),
+    );
     this.store.dispatch(loadActiveCategories());
     this.store.dispatch(loadWorkoutTemplates());
 

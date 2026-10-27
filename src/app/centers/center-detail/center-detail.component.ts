@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { AvailabilityService } from 'src/app/services/availability.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProviderPackage } from 'src/app/models/provider-package.model';
@@ -39,6 +39,7 @@ import * as TrainerSelectors from 'src/app/state/trainer/trainer.selector';
 import * as TestimonialActions from 'src/app/state/testimonial/testimonial.actions';
 import * as TestimonialSelectors from 'src/app/state/testimonial/testimonial.selectors';
 import { closestBySlug, nameSlug } from 'src/app/utils/closest-slug';
+import { injectActionsOrNull, watchFirstLoad } from 'src/app/utils/first-load';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 
 /**
@@ -109,6 +110,12 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
   suggestionLink(): string[] {
     return this.suggestion ? this.suggestionRoute(this.suggestion) : [this.directoryRoute];
   }
+
+  /** False until the reviews / trainers lists have answered: the count tiles show a dash before that, never a false 0. */
+  reviewsLoaded = false;
+  trainersLoaded = false;
+  private platformId = inject(PLATFORM_ID);
+  private firstLoadActions = injectActionsOrNull();
 
   private affiliations: CenterTrainers[] = [];
   private activeTrainers: Trainers[] = [];
@@ -280,6 +287,13 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
   }
 
   private loadCenterDetails(): void {
+    if (this.firstLoadActions) {
+      this.subscription.add(watchFirstLoad(this.firstLoadActions, this.platformId, [CenterActions.loadActiveCenterReviewsSuccess, CenterActions.loadActiveCenterReviewsFailure], () => this.reviewsLoaded = true));
+      this.subscription.add(watchFirstLoad(this.firstLoadActions, this.platformId, [TrainerActions.loadActiveTrainersSuccess, TrainerActions.loadActiveTrainersFailure], () => this.trainersLoaded = true));
+    } else {
+      this.reviewsLoaded = this.trainersLoaded = true; // no effects wired (a bare test bed)
+    }
+
     // Id-scoped public endpoints, via the store.
     this.store.dispatch(CenterActions.loadActiveCenterAnnouncements({ id: this.centerId }));
     this.store.dispatch(CenterActions.loadActiveCenterReviews({ id: this.centerId }));

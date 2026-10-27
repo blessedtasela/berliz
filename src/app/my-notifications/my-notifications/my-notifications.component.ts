@@ -23,6 +23,7 @@ import { categoryOf } from 'src/app/utils/notification-category.util';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { Store } from '@ngrx/store';
 import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
+import { truncateAtWord } from 'src/app/utils/notification-text.util';
 
 @Component({
     selector: 'app-my-notifications',
@@ -42,6 +43,9 @@ import { selectMyNotifications } from 'src/app/state/notification/notification.s
     standalone: false
 })
 export class MyNotificationsComponent implements OnInit, OnDestroy, OnChanges {
+
+  /** Cuts a long notification at a whole word (the full text opens on click). */
+  truncate = truncateAtWord;
 
   /** The notification a ?id= deep link points at: shown, scrolled into view and highlighted. */
   @Input() highlightId: number | null = null;

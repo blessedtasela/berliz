@@ -1,10 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 
 import { SubTasks, Tasks } from 'src/app/models/tasks.interface';
-import { loadClientTasks, loadTrainerTasks } from 'src/app/state/task/task.actions';
+import { loadClientTasks, loadClientTasksFailure, loadClientTasksSuccess, loadTrainerTasks, loadTrainerTasksFailure, loadTrainerTasksSuccess } from 'src/app/state/task/task.actions';
 import {
   selectClientTasks,
   selectTaskLoading,
@@ -13,6 +13,7 @@ import {
 import { loadUser } from 'src/app/state/user/user.actions';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { AssignTaskModalComponent } from '../assign-task-modal/assign-task-modal.component';
+import { injectActionsOrNull, watchFirstLoad } from 'src/app/utils/first-load';
 
 /**
  * Local-only sub-step progress.
@@ -47,6 +48,11 @@ export class MyTasksComponent implements OnInit, OnDestroy {
 
   role = '';
   loading = false;
+  /** True once a task list has answered: before that the count and "No tasks yet" would be false zeros, so a skeleton shows. */
+  loaded = false;
+
+  private platformId = inject(PLATFORM_ID);
+  private actions$ = injectActionsOrNull();
 
   trainerTasks: Tasks[] = [];
   clientTasks: Tasks[] = [];
@@ -61,6 +67,12 @@ export class MyTasksComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.restoreProgress();
+
+    if (this.actions$) {
+      this.subs.push(watchFirstLoad(this.actions$, this.platformId, [loadClientTasksSuccess, loadClientTasksFailure, loadTrainerTasksSuccess, loadTrainerTasksFailure], () => this.loaded = true));
+    } else {
+      this.loaded = true; // no effects wired (a bare test bed)
+    }
 
     this.subs.push(
       this.store.select(selectTrainerTasks).subscribe(t => this.trainerTasks = t ?? []),

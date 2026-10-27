@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { BreadcrumbService } from 'xng-breadcrumb';
+import { humanizeBreadcrumbLabel } from './breadcrumb-label.util';
 
 
 @Component({
@@ -19,7 +20,7 @@ export class NavbarBreadcrumbComponent {
   ngOnInit() {
     this.breadcrumbService.breadcrumbs$.subscribe(breadcrumbs => {
       this.breadcrumbs = breadcrumbs.map((b: any) => ({
-        label: b.label,
+        label: humanizeBreadcrumbLabel(b.label),
         url: b.routeLink
       }));
       this.cdr.detectChanges();

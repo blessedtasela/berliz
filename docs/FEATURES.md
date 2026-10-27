@@ -205,6 +205,16 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Behind-login QA, second pass (items 6-20): honest loading, readable notifications, breadcrumbs
+
+- **No false "none yet" while loading (item 6):** the dashboard Notifications widget, Popular programs / Popular workouts, Find a provider (trainers and centers, and its "N of M" bar), My Tasks (count and empty message), the signed-in Exercise library and the center profile's Reviews / Trainers tiles now show a skeleton or a dash until their first load answers. A failed load ends the wait too.
+- **Exercise library (item 7):** the signed-in library shows a skeleton, then either the list or a "Couldn't load exercises" card with Retry, never a bare "No exercises yet" for a load that failed.
+- **Notifications (item 8):** the old admin audit lines ("User with id: 6, and email ... profile photo has been changed by admin") are worded for the user ("An admin changed your profile photo."); long notifications are cut at a whole word instead of mid-word.
+- **Center and trainer breadcrumbs (item 14):** "find-centers/2/berliz-works" reads "Berliz Works" (and trainers likewise).
+- **Likes tile (item 15):** the tile is now a plain stat when there are no likes, with a tooltip saying so, instead of a button that looks broken.
+- **Progress sharing (item 20):** the trainers request gives up after 30 seconds with a Retry instead of spinning forever.
+- **Already fixed earlier:** 9 (public pages list the same providers: the live API returns them, the old "coming soon" was a baked-empty prerender), 12 (messaging), 19 (checklist rule). Not code: 18 (the test account's bio is stored profile data, edit it in Settings).
+
 ### Unreleased — Client onboarding (wizard + messaging that works for both sides)
 
 A structured onboarding profile instead of onboarding-by-chat: one record per client, saved a step at a time, read by the trainer, with messaging as the follow-up channel.

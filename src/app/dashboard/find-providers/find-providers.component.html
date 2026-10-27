@@ -48,14 +48,18 @@
     </div>
 
     <!-- ── TRAINERS ─────────────────────────────────────────── -->
-    <app-provider-filter-bar *ngIf="tab !== 'categories'" theme="light" [noun]="tab === 'centers' ? 'centers' : 'trainers'"
+    <app-provider-filter-bar *ngIf="tab !== 'categories' && (tab === 'centers' ? (centersLoaded || centers.length > 0) : (trainersLoaded || trainers.length > 0))" theme="light" [noun]="tab === 'centers' ? 'centers' : 'trainers'"
         [showMode]="tab === 'trainers'" [criteria]="criteria"
         [shown]="tab === 'centers' ? filteredCenters.length : filteredTrainers.length" [total]="unfilteredTotal"
         (criteriaChange)="onCriteria($event)"></app-provider-filter-bar>
 
     <ng-container *ngIf="tab === 'trainers'">
 
-        <div *ngIf="filteredTrainers.length === 0"
+        <div *ngIf="!trainersLoaded && trainers.length === 0">
+            <div class="flex flex-col gap-2 animate-pulse" aria-hidden="true"><div class="h-12 rounded-xl bg-gray-100 dark:bg-gray-800"></div><div class="h-12 rounded-xl bg-gray-100 dark:bg-gray-800"></div><div class="h-12 rounded-xl bg-gray-100 dark:bg-gray-800"></div></div>
+        </div>
+
+        <div *ngIf="(trainersLoaded || trainers.length > 0) && filteredTrainers.length === 0"
             class="flex flex-col items-center justify-center py-16 gap-3 text-center bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
             <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
                 <i-feather name="award" class="text-gray-300 dark:text-gray-600" style="width:22px;height:22px;"></i-feather>
@@ -111,7 +115,11 @@
     <!-- ── CENTERS ──────────────────────────────────────────── -->
     <ng-container *ngIf="tab === 'centers'">
 
-        <div *ngIf="filteredCenters.length === 0"
+        <div *ngIf="!centersLoaded && centers.length === 0">
+            <div class="flex flex-col gap-2 animate-pulse" aria-hidden="true"><div class="h-12 rounded-xl bg-gray-100 dark:bg-gray-800"></div><div class="h-12 rounded-xl bg-gray-100 dark:bg-gray-800"></div><div class="h-12 rounded-xl bg-gray-100 dark:bg-gray-800"></div></div>
+        </div>
+
+        <div *ngIf="(centersLoaded || centers.length > 0) && filteredCenters.length === 0"
             class="flex flex-col items-center justify-center py-16 gap-3 text-center bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
             <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
                 <i-feather name="map-pin" class="text-gray-300 dark:text-gray-600" style="width:22px;height:22px;"></i-feather>

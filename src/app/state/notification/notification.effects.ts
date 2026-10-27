@@ -3,6 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, mergeMap, of, switchMap } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
 import * as A from './notification.actions';
+import { userFacingNotificationText } from 'src/app/utils/notification-text.util';
 
 @Injectable()
 export class NotificationEffects {
@@ -35,7 +36,7 @@ export class NotificationEffects {
   loadMyNotifications$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadMyNotifications, A.refreshNotifications),
     switchMap(() => this.svc.getMyNotifications().pipe(
-      map(r => A.loadMyNotificationsSuccess({ response: r })),
+      map(r => A.loadMyNotificationsSuccess({ response: { ...r, data: (r.data ?? []).map(n => ({ ...n, notification: userFacingNotificationText(n.notification) })) } })),
       catchError(e => of(A.loadMyNotificationsFailure({
         error: e?.error?.message || 'Failed to load notifications'
       })))

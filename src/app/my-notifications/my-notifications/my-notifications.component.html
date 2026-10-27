@@ -136,7 +136,7 @@
                                       'font-semibold text-gray-900 dark:text-gray-100': !n.read,
                                       'font-medium text-gray-600 dark:text-gray-400': n.read
                                     }">
-                                    {{ n.notification.length > 120 ? (n.notification | slice:0:120) + '…' : n.notification }}
+                                    {{ truncate(n.notification, 120) }}
                                 </span>
 
                                 <span *ngIf="!n.read"

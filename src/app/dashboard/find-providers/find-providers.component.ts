@@ -5,15 +5,17 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Centers } from 'src/app/models/centers.interface';
 import { Categories } from 'src/app/models/categories.interface';
-import { loadActiveTrainers } from 'src/app/state/trainer/trainer.actions';
+import { loadActiveTrainers, loadActiveTrainersFailure, loadActiveTrainersSuccess } from 'src/app/state/trainer/trainer.actions';
 import { selectActiveTrainers } from 'src/app/state/trainer/trainer.selector';
-import { loadActiveCenters } from 'src/app/state/center/center.actions';
+import { loadActiveCenters, loadActiveCentersFailure, loadActiveCentersSuccess } from 'src/app/state/center/center.actions';
 import { selectActiveCenters } from 'src/app/state/center/center.selectors';
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
 import { DEFAULT_PROVIDER_CRITERIA, ProviderFilterCriteria, applyProviderFilters, searchableLocation } from 'src/app/shared/provider-profile/provider-filters';
 import { extraLocationsLabel } from 'src/app/utils/trainer-location.util';
+import { PLATFORM_ID, inject } from '@angular/core';
+import { injectActionsOrNull, watchFirstLoad } from 'src/app/utils/first-load';
 
 type ProviderTab = 'trainers' | 'centers' | 'categories';
 
@@ -44,6 +46,12 @@ export class FindProvidersComponent implements OnInit, OnDestroy {
 
   trainers: Trainers[] = [];
   centers: Centers[] = [];
+  /** False until each list's first load answers, so "No trainers available yet" never shows for data still loading. */
+  trainersLoaded = false;
+  centersLoaded = false;
+
+  private platformId = inject(PLATFORM_ID);
+  private actions$ = injectActionsOrNull();
   categories: Categories[] = [];
 
   private destroy$ = new Subject<void>();
@@ -56,6 +64,14 @@ export class FindProvidersComponent implements OnInit, OnDestroy {
   }
 
   private load(): void {
+    if (this.actions$) {
+      this.subs.push(
+        watchFirstLoad(this.actions$, this.platformId, [loadActiveTrainersSuccess, loadActiveTrainersFailure], () => this.trainersLoaded = true),
+        watchFirstLoad(this.actions$, this.platformId, [loadActiveCentersSuccess, loadActiveCentersFailure], () => this.centersLoaded = true),
+      );
+    } else {
+      this.trainersLoaded = this.centersLoaded = true; // no effects wired (a bare test bed)
+    }
     this.store.dispatch(loadActiveTrainers());
     this.store.dispatch(loadActiveCenters());
     this.store.dispatch(loadActiveCategories());

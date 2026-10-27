@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
@@ -19,7 +19,9 @@ import {
   loadMyCenterEquipment
 } from 'src/app/state/center/center.actions';
 import { selectCenterEquipment, selectMyCenterEquipment } from 'src/app/state/center/center.selectors';
-import { loadActiveExercises } from 'src/app/state/exercise/exercise.actions';
+import { loadActiveExercises, loadActiveExercisesFailure, loadActiveExercisesSuccess } from 'src/app/state/exercise/exercise.actions';
+import { injectActionsOrNull, watchFirstLoad } from 'src/app/utils/first-load';
+import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
 import { selectActiveExercises } from 'src/app/state/exercise/exercise.selectors';
 import { loadActiveMuscleGroups } from 'src/app/state/muscle-group/muscle-group.actions';
 import { selectActiveMuscleGroups } from 'src/app/state/muscle-group/muscle-group.selectors';
@@ -78,6 +80,14 @@ export class DashboardExercisesComponent implements OnInit, OnDestroy {
 
   refreshing = false;
 
+  /** True once the library's first load has answered (never on the server): a skeleton shows until then, not "No exercises yet". */
+  firstLoaded = false;
+  /** Why the library could not load, so a failed load is never mistaken for an empty library. */
+  loadError: string | null = null;
+
+  private platformId = inject(PLATFORM_ID);
+  private actions$ = injectActionsOrNull();
+
   constructor(
     private store: Store,
     private dialog: MatDialog
@@ -93,7 +103,19 @@ export class DashboardExercisesComponent implements OnInit, OnDestroy {
     setTimeout(() => this.refreshing = false, 500);
   }
 
+  retryExercises(): void {
+    this.store.dispatch(loadActiveExercises());
+  }
+
   ngOnInit(): void {
+    if (this.actions$) {
+      this.subs.push(
+        watchFirstLoad(this.actions$, this.platformId, [loadActiveExercisesSuccess, loadActiveExercisesFailure], () => this.firstLoaded = true),
+        watchLoadError(this.actions$, loadActiveExercisesFailure, [loadActiveExercises, loadActiveExercisesSuccess], null, m => this.loadError = m),
+      );
+    } else {
+      this.firstLoaded = true; // no effects wired (a bare test bed)
+    }
     this.refresh();
 
     this.subs.push(

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, of } from 'rxjs';
+import { TimeoutError, catchError, map, mergeMap, of, timeout } from 'rxjs';
 import { BookingService } from '../../services/booking.service';
 import * as A from './booking.actions';
 
@@ -79,8 +79,10 @@ export class BookingEffects {
   loadMyTrainers$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadMyTrainers),
     mergeMap(() => this.svc.getMyTrainers().pipe(
+      // A request that never answers would leave "Loading your trainers..." spinning forever; give up and offer a retry.
+      timeout(30000),
       map(response => A.loadMyTrainersSuccess({ response })),
-      catchError(e => of(A.loadMyTrainersFailure({ error: e?.error?.message || 'Failed to load your trainers' })))
+      catchError(e => of(A.loadMyTrainersFailure({ error: e instanceof TimeoutError ? 'This is taking too long. Please try again.' : (e?.error?.message || 'Failed to load your trainers') })))
     ))
   ));
 }

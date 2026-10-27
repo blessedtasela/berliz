@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
@@ -10,7 +10,8 @@ import { NotificationService } from 'src/app/services/notification.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { Store } from '@ngrx/store';
 import { selectMyNotifications } from 'src/app/state/notification/notification.selector';
-import { loadMyNotifications } from 'src/app/state/notification/notification.actions';
+import { loadMyNotifications, loadMyNotificationsFailure, loadMyNotificationsSuccess } from 'src/app/state/notification/notification.actions';
+import { injectActionsOrNull, watchFirstLoad } from 'src/app/utils/first-load';
 
 @Component({
     selector: 'app-dashboard-notification',
@@ -23,6 +24,11 @@ export class DashboardNotificationComponent implements OnInit, OnDestroy {
   notifications: Notifications[] = [];
   allNotifications: Notifications[] = [];
   subscriptions: Subscription[] = [];
+  /** False until the first load answers, so "No unread notifications" never shows for data that is still on its way. */
+  loaded = false;
+
+  private platformId = inject(PLATFORM_ID);
+  private actions$ = injectActionsOrNull();
 
   constructor(
     private rxStompService: RxStompService,
@@ -60,6 +66,11 @@ export class DashboardNotificationComponent implements OnInit, OnDestroy {
   }
 
   private loadInitialNotifications() {
+    if (this.actions$) {
+      this.subscriptions.push(watchFirstLoad(this.actions$, this.platformId, [loadMyNotificationsSuccess, loadMyNotificationsFailure], () => this.loaded = true));
+    } else {
+      this.loaded = true; // no effects wired (a bare test bed): nothing to wait for
+    }
     this.store.dispatch(loadMyNotifications());
     const sub = this.store.select(selectMyNotifications).subscribe(data => {
       this.notifications = data || [];

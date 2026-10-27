@@ -17,6 +17,7 @@ import { DashboardTodoListComponent } from './dashboard-todo-list/dashboard-todo
 import { DashboardLoginChartComponent } from './dashboard-login-chart/dashboard-login-chart.component';
 import { DashboardNotificationComponent } from './dashboard-notification/dashboard-notification.component';
 import { LoadErrorComponent } from 'src/app/shared/load-error/load-error.component';
+import { ListSkeletonComponent } from 'src/app/shared/list-skeleton/list-skeleton.component';
 import { DashboardActionComponent } from './dashboard-action/dashboard-action.component';
 import { DashboardAppAnalyticsComponent } from './dashboard-app-analytics/dashboard-app-analytics.component';
 import { TodoListsModule } from './todo-lists/todo-lists.module';
@@ -106,7 +107,8 @@ import { DashboardBillingSummaryComponent } from './dashboard-billing-summary/da
     ChallengesCardComponent,
     RecapCardComponent,
     OnboardingChecklistComponent,
-    LoadErrorComponent
+    LoadErrorComponent,
+    ListSkeletonComponent
   ]
 })
 export class DashboardModule { }

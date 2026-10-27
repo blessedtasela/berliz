@@ -16,7 +16,11 @@
       <a routerLink="/dashboard/find-providers" class="text-red-600 text-xs font-semibold hover:underline">Browse all</a>
     </div>
 
-    <div *ngIf="programs.length === 0" class="flex flex-col items-center text-center py-6 gap-2">
+    <div *ngIf="!programsLoaded && programs.length === 0" class="py-2">
+      <div class="flex flex-col gap-2 animate-pulse" aria-hidden="true"><div class="h-12 rounded-xl bg-gray-100 dark:bg-gray-800"></div><div class="h-12 rounded-xl bg-gray-100 dark:bg-gray-800"></div></div>
+    </div>
+
+    <div *ngIf="programsLoaded && programs.length === 0" class="flex flex-col items-center text-center py-6 gap-2">
       <i-feather name="grid" class="text-gray-300 dark:text-gray-600" style="width:26px;height:26px;"></i-feather>
       <p class="text-xs text-gray-400 dark:text-gray-500 italic">No programs yet</p>
     </div>
@@ -58,7 +62,11 @@
       </a>
     </div>
 
-    <div *ngIf="templates.length === 0" class="flex flex-col items-center text-center py-6 gap-2">
+    <div *ngIf="!templatesLoaded && templates.length === 0" class="py-2">
+      <div class="flex flex-col gap-2 animate-pulse" aria-hidden="true"><div class="h-12 rounded-xl bg-gray-100 dark:bg-gray-800"></div><div class="h-12 rounded-xl bg-gray-100 dark:bg-gray-800"></div></div>
+    </div>
+
+    <div *ngIf="templatesLoaded && templates.length === 0" class="flex flex-col items-center text-center py-6 gap-2">
       <i-feather name="layers" class="text-gray-300 dark:text-gray-600" style="width:26px;height:26px;"></i-feather>
       <p class="text-xs text-gray-400 dark:text-gray-500 italic">No workout templates yet</p>
     </div>

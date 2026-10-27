@@ -30,7 +30,10 @@
   </div>
 
   <!-- Empty state -->
-  <div *ngIf="notifications.length === 0"
+  <div *ngIf="!loaded && notifications.length === 0" class="py-6">
+    <div class="flex flex-col gap-2 animate-pulse" aria-hidden="true"><div class="h-12 rounded-xl bg-gray-100 dark:bg-gray-800"></div><div class="h-12 rounded-xl bg-gray-100 dark:bg-gray-800"></div><div class="h-12 rounded-xl bg-gray-100 dark:bg-gray-800"></div></div>
+  </div>
+  <div *ngIf="loaded && notifications.length === 0"
     class="flex flex-col items-center text-center py-10 gap-2">
     <i-feather name="check-circle" class="text-gray-300 dark:text-gray-600" style="width:40px;height:40px;"></i-feather>
     <p class="text-gray-500 dark:text-gray-400 text-sm italic">No unread notifications</p>
