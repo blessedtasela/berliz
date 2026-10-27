@@ -22,4 +22,19 @@ describe('CategoryExercisesComponent', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
+
+  it('shows a demo as a lazy image from its own URL, and nothing for an exercise without one', () => {
+    const exercise = (id: number, name: string, hasDemo: boolean) => ({
+      id, name, description: null, benefit: null, howToPerform: null, difficultyLevel: null, likes: 0,
+      hasDemo, demoVersion: 42, muscleGroups: [], categories: [], date: new Date(),
+    });
+    component.exercises = [exercise(1, 'Squat', true), exercise(2, 'Plank', false)];
+    fixture.detectChanges();
+
+    const imgs = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('img'));
+    expect(imgs.length).toBe(1);
+    expect(imgs[0].getAttribute('src')).toContain('/exercise/demo/1?v=42');
+    expect(imgs[0].getAttribute('loading')).toBe('lazy');
+    expect((fixture.nativeElement as HTMLElement).querySelector('video')).toBeNull();
+  });
 });

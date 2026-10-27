@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { ExerciseLikes, Exercises, ExerciseSuggestionResponse } from '../models/exercise.interface';
+import { ExerciseLikes, Exercises, ExerciseSuggestionResponse, PublicExercise } from '../models/exercise.interface';
 import { ApiResponse } from '../models/Api.interface';
 
 @Injectable({
@@ -22,6 +22,11 @@ export class ExerciseService {
 
   getActiveExercises() {
     return this.httpClient.get<Exercises[]>(this.url + "/exercise/getActiveExercises");
+  }
+
+  /** The signed-out library: public, text and tags only (the heavy list above needs a login). */
+  getPublicExercises() {
+    return this.httpClient.get<PublicExercise[]>(this.url + "/exercise/getPublicExercises");
   }
 
   updateExercise(data: any) {

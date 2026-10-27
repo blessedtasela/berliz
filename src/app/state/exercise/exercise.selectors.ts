@@ -10,6 +10,7 @@ export const selectExerciseMessage = createSelector(selectState, s => s.lastMess
 
 export const selectExercises        = createSelector(selectState, s => s.exercises);
 export const selectActiveExercises  = createSelector(selectState, s => s.activeExercises);
+export const selectPublicExercises  = createSelector(selectState, s => s.publicExercises);
 export const selectSelectedExercise = createSelector(selectState, s => s.selectedExercise);
 
 // ── Trending ──────────────────────────────────────────────────────────────────

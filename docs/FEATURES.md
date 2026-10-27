@@ -205,6 +205,14 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — A light public exercise library (and its demo pictures actually show)
+
+Follow-up to the entry below. Measuring the live endpoint showed the open list was 2.4 MB for 10 exercises: every row carried its demo image and every muscle group's image inline.
+
+- **Public list is slim.** New `GET /exercise/getPublicExercises` (active only) returns text and tags — name, description, benefit, how-to, difficulty, likes, muscle groups, disciplines, `hasDemo`, `demoVersion` — and no bytes. The demo image is `GET /exercise/demo/{id}`: public, 404 for an inactive exercise or one without a demo, content type sniffed from the bytes, cached for a day (the page puts the exercise's last-update time on the URL so a replaced image is fetched again), Range-capable. `/exercise/getActiveExercises` (full rows) is behind a login again; the signed-in screens (workouts, tasks, search, dashboard) are unchanged.
+- **Demos were never shown correctly.** The stored `demo` is a JPEG still, but both public pages put it in a `<video>` as an mp4 data URI. They now render it as a lazy `<img>`.
+- **Web:** `/disciplines/exercises` and a discipline's exercise list read the new `loadPublicExercises` / `selectPublicExercises` slice. Deploy the backend and web together.
+
 ### Unreleased — Client onboarding (wizard + messaging that works for both sides)
 
 A structured onboarding profile instead of onboarding-by-chat: one record per client, saved a step at a time, read by the trainer, with messaging as the follow-up channel.

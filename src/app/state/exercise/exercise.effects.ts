@@ -28,6 +28,14 @@ export class ExerciseEffects {
     ))
   ));
 
+  loadPublicExercises$ = createEffect(() => this.actions$.pipe(
+    ofType(A.loadPublicExercises),
+    mergeMap(() => this.svc.getPublicExercises().pipe(
+      map(data => A.loadPublicExercisesSuccess({ data })),
+      catchError(e => of(A.loadPublicExercisesFailure({ error: e?.error?.message || 'Failed' })))
+    ))
+  ));
+
   loadExercise$ = createEffect(() => this.actions$.pipe(
     ofType(A.loadExercise),
     mergeMap(({ id }) => this.svc.getExercise(id).pipe(

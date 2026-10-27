@@ -1,4 +1,4 @@
-import { ExerciseLikes, Exercises } from '../../models/exercise.interface';
+import { ExerciseLikes, Exercises, PublicExercise } from '../../models/exercise.interface';
 
 export interface ExerciseState {
     loading: boolean;
@@ -7,6 +7,8 @@ export interface ExerciseState {
 
     exercises: Exercises[];
     activeExercises: Exercises[];
+    /** The signed-out library's slim list; the signed-in screens use activeExercises. */
+    publicExercises: PublicExercise[];
     selectedExercise: Exercises | null;
 
     /** Backend-ranked trending list, already filtered to trendingCategoryId. */
@@ -26,6 +28,7 @@ export const initialExerciseState: ExerciseState = {
 
     exercises: [],
     activeExercises: [],
+    publicExercises: [],
     selectedExercise: null,
 
     trending: [],
