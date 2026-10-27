@@ -205,6 +205,13 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Phone-width search button, and a rejected partner application now says so
+
+From the 375 px audit of the public pages (live site, home / trainers / centers / pricing / disciplines / exercises / equipment / profiles / booking / login / sign-up / testimonials) and the application-status review item.
+
+- **The Search button ran off the right edge** of the trainers and centers search rows (the input's flex box could not shrink); both now match the disciplines search (`min-w-0`). Every other audited page had no sideways overflow.
+- **A rejected partner application showed nothing.** Applicants already get a received email, an approved/revoked email and a rejection email, and the dashboard card said "under review" or "approved"; a `rejected` application matched neither, so the card showed no status at all (and still read "Application pending"). It now shows "Application not approved", a plain explanation that the details were emailed, and a Contact link. Re-applying is still blocked (one application per email) — that is a product decision, not changed here.
+
 ### Unreleased — Signed-in provider pages match the public ones: review forms, "how it works", richer cards
 
 - **Leave a review** now sits on the signed-in trainer and center pages (it only existed on the public ones). Same rules: the server decides who may review (a completed session), a refusal is shown above the button, and the review goes in for approval. The forms take a `theme` (dark on the public page, light and dark-mode aware in the dashboard), so one component serves both.
