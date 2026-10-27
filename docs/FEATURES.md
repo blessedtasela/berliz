@@ -205,6 +205,13 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Signed-in provider pages match the public ones: review forms, "how it works", richer cards
+
+- **Leave a review** now sits on the signed-in trainer and center pages (it only existed on the public ones). Same rules: the server decides who may review (a completed session), a refusal is shown above the button, and the review goes in for approval. The forms take a `theme` (dark on the public page, light and dark-mode aware in the dashboard), so one component serves both.
+- **How it works** (pick a time, get confirmed, pay and train) is on both signed-in pages, and the review lists show their star ratings.
+- **Find a provider** cards: trainers show their motto and centers their disciplines, as on the public directory.
+- **Testimonials:** the "Leave a testimonial" button was already on both signed-in pages and opens the testimonial form.
+
 ### Unreleased — Behind-login QA, second pass (items 6-20): honest loading, readable notifications, breadcrumbs
 
 - **No false "none yet" while loading (item 6):** the dashboard Notifications widget, Popular programs / Popular workouts, Find a provider (trainers and centers, and its "N of M" bar), My Tasks (count and empty message), the signed-in Exercise library and the center profile's Reviews / Trainers tiles now show a skeleton or a dash until their first load answers. A failed load ends the wait too.

@@ -77,10 +77,10 @@ import { BookingAssuranceComponent } from 'src/app/shared/provider-profile/booki
     TrainersListComponent,
     TrainersMainComponent,
     TrainerVideoAlbumComponent,
-    TrainerPricingCardComponent,
-    TrainerAddReviewComponent
+    TrainerPricingCardComponent
   ],
   imports: [
+    TrainerAddReviewComponent,
     BookingAssuranceComponent,
     ListSkeletonComponent,
     StarRatingComponent,

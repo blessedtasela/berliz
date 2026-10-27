@@ -175,6 +175,9 @@
         </div>
     </div>
 
+    <!-- How it works: the same three steps the public profile shows -->
+    <app-how-it-works theme="light" providerLabel="this center"></app-how-it-works>
+
     <!-- Announcements -->
     <div *ngIf="centerAnnouncements.length > 0" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex flex-col gap-3">
         <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Announcements</h2>
@@ -210,11 +213,15 @@
         <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ centerReview.length }} review{{ centerReview.length === 1 ? '' : 's' }}</h2>
         <div class="flex flex-col gap-2">
             <div *ngFor="let review of centerReview" class="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 flex flex-col gap-1.5">
+                <app-star-rating *ngIf="review.rating" [value]="review.rating" [size]="13" textClass="text-gray-500 dark:text-gray-400"></app-star-rating>
                 <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed italic">"{{ review.comment }}"</p>
                 <span class="text-[11px] font-semibold text-red-600 uppercase tracking-wide">{{ review.memberName }}</span>
             </div>
         </div>
     </div>
+
+    <!-- Leave a review -->
+    <app-center-review-form *ngIf="centerId" theme="light" [centerId]="centerId"></app-center-review-form>
 
     <!-- Testimonials -->
     <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex flex-col gap-3">

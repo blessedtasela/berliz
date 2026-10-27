@@ -1,9 +1,9 @@
-<section class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 font-sans flex flex-col gap-3">
+<section class="{{ t.card }} font-sans flex flex-col gap-3" data-testid="review-form">
 
-    <h3 class="text-sm font-bold text-white">Leave a review</h3>
+    <h3 class="text-sm font-bold {{ t.heading }}">Leave a review</h3>
 
-    <div *ngIf="!user" class="flex items-center justify-between gap-3 bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3">
-        <p class="text-xs text-zinc-400">Log in to leave a review for this trainer.</p>
+    <div *ngIf="!user" class="flex items-center justify-between gap-3 {{ t.tile }} px-4 py-3">
+        <p class="text-xs {{ t.body }}">Log in to leave a review for this trainer.</p>
         <button type="button" (click)="goToLogin()"
             class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 text-white hover:bg-red-700 transition shrink-0">
             Log in
@@ -15,11 +15,11 @@
             <app-star-rating [interactive]="true" [size]="22" label="Your rating for this trainer" formControlName="rating"></app-star-rating>
         </div>
         <textarea formControlName="review" rows="3" placeholder="Share how your sessions with this trainer went..."
-            class="w-full px-3 py-2.5 rounded-xl border border-zinc-700 bg-zinc-800 text-sm text-white placeholder-zinc-500
+            class="w-full px-3 py-2.5 rounded-xl {{ inputClass }} text-sm
                    focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition resize-none"></textarea>
 
         <p *ngIf="reviewForm.get('review')?.invalid && reviewForm.get('review')?.touched"
-            class="text-red-400 text-[11px] flex items-center gap-1">
+            class="{{ errorClass }} text-[11px] flex items-center gap-1">
             <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
             Write at least 10 characters
         </p>

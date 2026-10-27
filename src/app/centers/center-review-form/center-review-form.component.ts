@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
@@ -10,6 +10,11 @@ import { selectUser } from 'src/app/state/user/user.selector';
 import { addCenterReview, addCenterReviewSuccess, addCenterReviewFailure } from 'src/app/state/center/center.actions';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { genericError } from 'src/validators/form-validators.module';
+import { CommonModule } from '@angular/common';
+import { IconsModule } from 'src/app/icons/icons.module';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { StarRatingComponent } from 'src/app/shared/star-rating/star-rating.component';
+import { ProfileTheme, ProfileThemeClasses, profileTheme } from 'src/app/shared/provider-profile/profile-theme';
 
 /**
  * "Leave a review" form for a center's public profile. Context-aware: the
@@ -25,10 +30,23 @@ import { genericError } from 'src/validators/form-validators.module';
     selector: 'app-center-review-form',
     templateUrl: './center-review-form.component.html',
     styleUrls: ['./center-review-form.component.css'],
-    standalone: false
+    imports: [CommonModule, ReactiveFormsModule, IconsModule, SharedModule, StarRatingComponent],
 })
 export class CenterReviewFormComponent implements OnInit, OnDestroy {
   @Input() centerId!: number;
+
+  /** 'dark' on the public profile, 'light' on the signed-in dashboard (which follows the light/dark toggle). */
+  @Input() theme: ProfileTheme = 'dark';
+
+  get t(): ProfileThemeClasses { return profileTheme(this.theme); }
+
+  get inputClass(): string {
+    return this.theme === 'dark'
+      ? 'border border-zinc-700 bg-zinc-800 text-white placeholder-zinc-500'
+      : 'border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400';
+  }
+
+  get errorClass(): string { return this.theme === 'dark' ? 'text-red-400' : 'text-red-500'; }
 
   user: Users | null = null;
   reviewForm: FormGroup;

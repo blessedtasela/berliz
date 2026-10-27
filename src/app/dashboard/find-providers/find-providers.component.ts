@@ -157,6 +157,12 @@ export class FindProvidersComponent implements OnInit, OnDestroy {
     this.criteria = criteria;
   }
 
+  /** The disciplines a center offers, resolved from its category ids against the loaded catalogue. */
+  categoriesFor(center: Centers): Categories[] {
+    const ids = center.categoryIds ?? [];
+    return this.categories.filter(c => ids.includes(c.id));
+  }
+
   /** Everything the text search alone would show -- the denominator for "N of M". */
   get unfilteredTotal(): number {
     return this.tab === 'centers' ? this.centers.length : this.trainers.length;

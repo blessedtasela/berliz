@@ -50,6 +50,9 @@ import { ChallengesCardComponent } from '../shared/challenges-card/challenges-ca
 import { RecapCardComponent } from '../shared/recap/recap-card.component';
 import { OnboardingChecklistComponent } from '../shared/onboarding-checklist/onboarding-checklist.component';
 import { DashboardBillingSummaryComponent } from './dashboard-billing-summary/dashboard-billing-summary.component';
+import { TrainerAddReviewComponent } from 'src/app/trainers/trainer-add-review/trainer-add-review.component';
+import { CenterReviewFormComponent } from 'src/app/centers/center-review-form/center-review-form.component';
+import { StarRatingComponent } from 'src/app/shared/star-rating/star-rating.component';
 
 
 
@@ -108,7 +111,10 @@ import { DashboardBillingSummaryComponent } from './dashboard-billing-summary/da
     RecapCardComponent,
     OnboardingChecklistComponent,
     LoadErrorComponent,
-    ListSkeletonComponent
+    ListSkeletonComponent,
+    TrainerAddReviewComponent,
+    CenterReviewFormComponent,
+    StarRatingComponent
   ]
 })
 export class DashboardModule { }

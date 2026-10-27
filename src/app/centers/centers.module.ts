@@ -66,13 +66,13 @@ import { BookingAssuranceComponent } from 'src/app/shared/provider-profile/booki
     CenterHeroDetailComponent,
     CenterTrainersComponent,
     CenterSubscriptionFormComponent,
-    CenterReviewFormComponent,
     CenterLocationsComponent,
     CenterHeaderComponent,
     CenterPartnerFormComponent,
     CenterFormComponent
   ],
   imports: [
+    CenterReviewFormComponent,
     ListSkeletonComponent,
     BookingAssuranceComponent,
     StarRatingComponent,
