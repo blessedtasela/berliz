@@ -233,6 +233,13 @@ Found while checking review item 14 (equipment and exercises). The equipment pag
 - **The skeleton never ended.** `ExercisesSectionComponent` imported `watchFirstLoad` but never called it, so `firstLoaded` stayed false and an empty or failed load showed the skeleton forever. Wired up.
 - **A failed load no longer reads as "coming soon".** The exercises and equipment pages show the shared retryable "Couldn't load …" state when the fetch fails and there is nothing to show; "coming soon" appears only after a load that really came back empty.
 
+### Unreleased — Monthly plans: book a whole period at once, pay as you go
+
+- **Plan page.** `/trainers/:name/plan` and `/centers/:name/plan` (linked from the booking page: "Want regular sessions? Plan a month at once"). Step 1: when it starts and for how long (2 weeks, 1 month, 2 months, 3 months) plus the session length. Step 2: how you train: **Same time** on chosen weekdays (with quick picks: weekdays, Mon·Wed·Fri, Tue·Thu, weekends), **Different times** per weekday, **Days on / off** (e.g. 5 on 2 off, 2 on 1 off, every other day, or your own steps like 2 on 1 off then 3 on 2 off), or **Pick dates** on a calendar. Step 3: the exact sessions grouped by week, each checked against the provider's real availability as you build it; take a session out, change one session's time, or remove everything that is unavailable in one tap. Step 4: an optional offer, where to train, notes.
+- **Pricing.** The plan total, with any offer applied to the whole plan, is split equally across the sessions (the last absorbs a rounding cent). Each session is paid as it comes up through the normal checkout; its payment window opens 48 hours before it and closes 24 hours before it, so a session three weeks away is not due tomorrow. Nothing is charged until the provider accepts.
+- **One decision for the provider.** The provider accepts or declines the whole plan in one tap (My Bookings → Requests → "Plan requests"); the client can cancel the plan's upcoming sessions, each under the normal cancellation and refund rules. Sessions stay ordinary bookings, tagged "Plan", so payment, reminders, cancellation and payouts are unchanged. A guest can build a plan and is asked to sign in only when sending; what they picked is kept.
+- Backend: `POST /booking/plan/preview`, `/plan/add`, `GET /plan/mine`, `/plan/provider`, `/plan/{id}`, `PUT /plan/{id}/respond`, `/plan/{id}/cancel`; tables `booking_plan` (V78) and `booking.plan_fk` / `plan_session_price`. Limits: 2 to 62 sessions over at most 3 months. Not built yet: mobile app screens (tracked in the mobile parity table).
+
 ### Unreleased — Behind-login QA, second pass: booking, subscriptions, workout page
 
 From the signed-in review of a test account (web):

@@ -45,6 +45,16 @@ describe('BookingCardComponent', () => {
     } as Booking;
   });
 
+  it('tags a session that is part of a monthly plan, and only those', () => {
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[data-testid="plan-tag"]')).toBeNull();
+
+    component.booking = { ...component.booking, planId: 4 } as Booking;
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[data-testid="plan-tag"]')).not.toBeNull();
+  });
+
   it('should create', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();

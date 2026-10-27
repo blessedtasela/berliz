@@ -27,6 +27,9 @@
         </div>
     </div>
 
+    <app-booking-plans *ngIf="view === 'mine'" mode="client"></app-booking-plans>
+    <app-booking-plans *ngIf="isProvider && view === 'requests'" mode="provider"></app-booking-plans>
+
     <app-my-bookings-main *ngIf="view === 'mine'" [embedded]="true"></app-my-bookings-main>
     <app-provider-bookings-main *ngIf="isProvider && view === 'requests'" [embedded]="true"></app-provider-bookings-main>
 

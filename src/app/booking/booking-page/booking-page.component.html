@@ -78,6 +78,22 @@
       This session comes out of your {{ owned.providerPackage?.name }}{{ owned.sessionsRemaining != null ? ' (' + owned.sessionsRemaining + ' left)' : '' }} — nothing more to pay for it.
     </p>
 
+    <!-- Several sessions at once: pick days and times for a whole month -->
+    <a [routerLink]="planPath" data-testid="plan-link"
+      class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 flex items-center justify-between gap-3
+             hover:border-gray-300 dark:hover:border-gray-700 transition">
+      <span class="flex items-center gap-3 min-w-0">
+        <span class="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 flex items-center justify-center shrink-0">
+          <i-feather name="calendar" class="text-red-600" style="width:14px;height:14px;"></i-feather>
+        </span>
+        <span class="min-w-0">
+          <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100">Want regular sessions? Plan a month at once</span>
+          <span class="block text-[11px] text-gray-400 dark:text-gray-500">Pick your days and times for the whole period, then pay for each session as you go.</span>
+        </span>
+      </span>
+      <i-feather name="arrow-right" class="shrink-0 text-gray-400" style="width:14px;height:14px;"></i-feather>
+    </a>
+
     <!-- Booking more than once? Plans are bought on their own page -->
     <a *ngIf="packages.length > 0" [routerLink]="levelUpPath" data-testid="level-up-link"
       class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 flex items-center justify-between gap-3

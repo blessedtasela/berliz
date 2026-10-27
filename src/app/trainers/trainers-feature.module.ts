@@ -16,6 +16,12 @@ const routes: Routes = [
     data: { kind: 'trainer', breadcrumb: 'Book' }
   },
   {
+    path: ':name/plan',
+    loadComponent: () => import('../booking/plan-page/booking-plan-page.component').then(m => m.BookingPlanPageComponent),
+    canActivate: [TrainerGuard],
+    data: { kind: 'trainer', breadcrumb: 'Plan' }
+  },
+  {
     path: ':name/level-up',
     loadComponent: () => import('../booking/level-up-page/level-up-page.component').then(m => m.LevelUpPageComponent),
     canActivate: [TrainerGuard],

@@ -15,6 +15,7 @@ import { TimePickerComponent } from '../shared/time-picker/time-picker.component
 import { BookingLocationPickerComponent } from '../booking/booking-location-picker/booking-location-picker.component';
 
 import { BookingCardComponent } from './booking-card/booking-card.component';
+import { BookingPlansComponent } from './booking-plans/booking-plans.component';
 import { BookingsEmptyComponent } from './bookings-empty/bookings-empty.component';
 import { MyBookingsMainComponent } from './my-bookings-main/my-bookings-main.component';
 import { ProviderBookingsMainComponent } from './provider-bookings-main/provider-bookings-main.component';
@@ -52,6 +53,7 @@ import { BookForClientModalComponent } from './book-for-client-modal/book-for-cl
     RouterModule,
     SharedModule,
     LoadErrorComponent,
+    BookingPlansComponent,
     ProviderInsightsComponent,
     CalendarFeedCardComponent,
     DateStripComponent,

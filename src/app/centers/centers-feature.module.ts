@@ -16,6 +16,12 @@ const routes: Routes = [
     data: { kind: 'center', breadcrumb: 'Book' }
   },
   {
+    path: ':name/plan',
+    loadComponent: () => import('../booking/plan-page/booking-plan-page.component').then(m => m.BookingPlanPageComponent),
+    canActivate: [CenterGuard],
+    data: { kind: 'center', breadcrumb: 'Plan' }
+  },
+  {
     path: ':name/level-up',
     loadComponent: () => import('../booking/level-up-page/level-up-page.component').then(m => m.LevelUpPageComponent),
     canActivate: [CenterGuard],
