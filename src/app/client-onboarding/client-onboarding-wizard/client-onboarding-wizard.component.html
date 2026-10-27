@@ -1,0 +1,347 @@
+<section class="font-sans flex flex-col gap-4 max-w-2xl mx-auto" data-testid="onboarding-wizard">
+
+  <app-page-header icon="check-circle" title="Tell your trainer about you"
+    subtitle="A few quick questions so your first session starts in the right place. About 5 minutes, and you can change any answer later."></app-page-header>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex items-center justify-center py-16">
+    <div class="w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-700 border-t-red-600 animate-spin"></div>
+  </div>
+
+  <!-- Could not load -->
+  <div *ngIf="loadFailed" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-10 flex flex-col items-center gap-3 text-center" data-testid="onboarding-load-failed">
+    <p class="text-sm font-bold text-gray-900 dark:text-gray-100">We could not load your answers</p>
+    <p class="text-[11px] text-gray-400 dark:text-gray-500">Check your connection and try again.</p>
+    <button type="button" (click)="load()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 text-white hover:bg-red-700 transition">Try again</button>
+  </div>
+
+  <!-- All done -->
+  <div *ngIf="!loading && !loadFailed && finished" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-8 flex flex-col items-center gap-4 text-center" data-testid="onboarding-done">
+    <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 flex items-center justify-center">
+      <i-feather name="check" class="text-emerald-600" style="width:22px;height:22px;"></i-feather>
+    </div>
+    <div>
+      <h2 class="text-base font-bold text-gray-900 dark:text-gray-100">You are all set</h2>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-sm">Your trainers can now read your goals, schedule and training setup. Only they can see your health answers, and you can edit or delete them whenever you like.</p>
+    </div>
+    <div class="flex flex-wrap items-center justify-center gap-2">
+      <a routerLink="/dashboard/find-providers" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 text-white hover:bg-red-700 transition">Find a trainer</a>
+      <a routerLink="/dashboard/messages" class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition">Messages</a>
+      <button type="button" (click)="finished = false; step = 1" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition">Review my answers</button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!loading && !loadFailed && !finished">
+
+    <!-- Progress -->
+    <div class="flex flex-col gap-2">
+      <div class="flex items-center justify-between text-[11px] text-gray-400 dark:text-gray-500">
+        <span data-testid="onboarding-step-label">Step {{ step }} of {{ steps.length }}: <span class="font-semibold text-gray-700 dark:text-gray-200">{{ current.title }}</span></span>
+        <span *ngIf="draft.complete" class="text-emerald-600 dark:text-emerald-400 font-semibold">Required answers done</span>
+      </div>
+      <div class="h-1.5 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+        <div class="h-full bg-red-600 transition-all" [style.width.%]="progressPct"></div>
+      </div>
+      <div class="flex gap-1.5">
+        <button *ngFor="let s of steps" type="button" (click)="goToStep(s.n)" [attr.aria-label]="'Step ' + s.n + ': ' + s.title"
+          [disabled]="s.n >= step"
+          class="h-1.5 flex-1 rounded-full transition"
+          [ngClass]="s.n < step ? 'bg-red-300 dark:bg-red-900 cursor-pointer' : (s.n === step ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-700')"></button>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex flex-col gap-5">
+
+      <div>
+        <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ current.title }}</h2>
+        <p class="text-[11px] text-gray-400 dark:text-gray-500">{{ current.subtitle }}<span *ngIf="!isRequiredStep"> · you can skip this step</span></p>
+      </div>
+
+      <!-- ═══ 1. Training setup ═══ -->
+      <ng-container *ngIf="step === 1">
+        <fieldset class="flex flex-col gap-2">
+          <legend class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">Where do you train? <span class="text-red-600">*</span></legend>
+          <div class="flex flex-wrap gap-2">
+            <button *ngFor="let o of locationTypes" type="button" (click)="pick('locationType', o.value)" [attr.aria-pressed]="draft.locationType === o.value"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition"
+              [ngClass]="draft.locationType === o.value ? 'bg-red-600 border-red-600 text-white' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-red-300'">{{ o.label }}</button>
+          </div>
+          <p *ngIf="errors['locationType']" class="text-[11px] text-red-600" role="alert">{{ errors['locationType'] }}</p>
+
+          <div *ngIf="draft.locationType === 'center'" class="flex flex-col gap-2 mt-1">
+            <div *ngIf="draft.centerId" class="flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+              <span class="text-xs font-semibold text-gray-800 dark:text-gray-100">{{ draft.centerName || 'Your center' }}</span>
+              <button type="button" (click)="clearCenter()" class="text-[11px] font-semibold text-red-600 hover:text-red-700">Change</button>
+            </div>
+            <ng-container *ngIf="!draft.centerId">
+              <label class="text-[11px] text-gray-500 dark:text-gray-400" for="ob-center">Search the directory</label>
+              <input id="ob-center" type="text" [(ngModel)]="centerQuery" autocomplete="off" placeholder="Start typing the center name"
+                class="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+              <div *ngIf="centerMatches.length" class="flex flex-col rounded-lg border border-gray-200 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-800">
+                <button *ngFor="let c of centerMatches" type="button" (click)="chooseCenter(c)" class="text-left px-3 py-2 text-xs text-gray-800 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800">{{ c.name }}</button>
+              </div>
+              <p *ngIf="centerQuery.trim() && !centerMatches.length" class="text-[11px] text-gray-400 dark:text-gray-500">No center matches that. You can go on without one and add it later.</p>
+            </ng-container>
+          </div>
+
+          <div *ngIf="draft.locationType === 'other_gym'" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
+            <div class="flex flex-col gap-1">
+              <label class="text-[11px] text-gray-500 dark:text-gray-400" for="ob-gym">Gym name</label>
+              <input id="ob-gym" type="text" [(ngModel)]="draft.gymName" maxlength="160" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-[11px] text-gray-500 dark:text-gray-400" for="ob-city">City</label>
+              <input id="ob-city" type="text" [(ngModel)]="draft.gymCity" maxlength="120" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="flex flex-col gap-2">
+          <legend class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">How do you want to train? <span class="text-red-600">*</span></legend>
+          <div class="flex flex-wrap gap-2">
+            <button *ngFor="let o of trainingModes" type="button" (click)="pick('trainingMode', o.value)" [attr.aria-pressed]="draft.trainingMode === o.value"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition"
+              [ngClass]="draft.trainingMode === o.value ? 'bg-red-600 border-red-600 text-white' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-red-300'">{{ o.label }}</button>
+          </div>
+          <p *ngIf="errors['trainingMode']" class="text-[11px] text-red-600" role="alert">{{ errors['trainingMode'] }}</p>
+        </fieldset>
+
+        <fieldset class="flex flex-col gap-2">
+          <legend class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">Equipment you can use <span class="font-normal text-gray-400">(optional)</span></legend>
+          <div class="flex flex-wrap gap-2">
+            <button *ngFor="let o of equipment" type="button" (click)="toggle('equipment', o.value)" [attr.aria-pressed]="has(draft.equipment, o.value)"
+              class="px-2.5 py-1 rounded-full text-[11px] font-semibold border transition"
+              [ngClass]="has(draft.equipment, o.value) ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800 text-red-700 dark:text-red-300' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-red-300'">{{ o.label }}</button>
+          </div>
+          <label class="text-[11px] text-gray-500 dark:text-gray-400 mt-1" for="ob-equip-other">Anything else</label>
+          <input id="ob-equip-other" type="text" [(ngModel)]="draft.equipmentOther" maxlength="300" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+        </fieldset>
+      </ng-container>
+
+      <!-- ═══ 2. Fitness level ═══ -->
+      <ng-container *ngIf="step === 2">
+        <fieldset class="flex flex-col gap-2">
+          <legend class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">How would you rate your level? <span class="text-red-600">*</span></legend>
+          <button *ngFor="let o of levels" type="button" (click)="pick('fitnessLevel', o.value)" [attr.aria-pressed]="draft.fitnessLevel === o.value"
+            class="text-left px-3 py-2.5 rounded-lg border transition"
+            [ngClass]="draft.fitnessLevel === o.value ? 'border-red-500 bg-red-50 dark:bg-red-950/20' : 'border-gray-200 dark:border-gray-700 hover:border-red-300'">
+            <span class="block text-xs font-bold text-gray-900 dark:text-gray-100">{{ o.label }}</span>
+            <span class="block text-[11px] text-gray-500 dark:text-gray-400">{{ o.hint }}</span>
+          </button>
+          <p *ngIf="errors['fitnessLevel']" class="text-[11px] text-red-600" role="alert">{{ errors['fitnessLevel'] }}</p>
+        </fieldset>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1">
+            <label class="text-[11px] text-gray-500 dark:text-gray-400" for="ob-years">Years of training <span class="text-gray-400">(optional)</span></label>
+            <input id="ob-years" type="text" [(ngModel)]="draft.yearsTraining" maxlength="60" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-[11px] text-gray-500 dark:text-gray-400" for="ob-sports">Sports you play <span class="text-gray-400">(optional)</span></label>
+            <input id="ob-sports" type="text" [(ngModel)]="draft.sportsPlayed" maxlength="300" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+          </div>
+          <div class="flex flex-col gap-1 sm:col-span-2">
+            <label class="text-[11px] text-gray-500 dark:text-gray-400" for="ob-weekly">What you do in a normal week <span class="text-gray-400">(optional)</span></label>
+            <input id="ob-weekly" type="text" [(ngModel)]="draft.weeklyActivity" maxlength="300" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+          </div>
+          <div class="flex flex-col gap-1 sm:col-span-2">
+            <label class="text-[11px] text-gray-500 dark:text-gray-400" for="ob-bench">Current benchmarks, such as key lifts <span class="text-gray-400">(optional)</span></label>
+            <textarea id="ob-bench" rows="2" [(ngModel)]="draft.benchmarks" maxlength="2000" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100"></textarea>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- ═══ 3. Goals ═══ -->
+      <ng-container *ngIf="step === 3">
+        <fieldset class="flex flex-col gap-2">
+          <legend class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">What is your main goal? Pick up to 2. <span class="text-red-600">*</span></legend>
+          <div class="flex flex-wrap gap-2">
+            <button *ngFor="let o of goalOptions" type="button" (click)="toggleGoal(o.value)" [attr.aria-pressed]="has(draft.goals, o.value)"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition"
+              [ngClass]="has(draft.goals, o.value) ? 'bg-red-600 border-red-600 text-white' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-red-300'">{{ o.label }}</button>
+          </div>
+          <p *ngIf="errors['goals']" class="text-[11px] text-red-600" role="alert">{{ errors['goals'] }}</p>
+        </fieldset>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1">
+            <label class="text-[11px] text-gray-500 dark:text-gray-400" for="ob-target">Target date or event <span class="text-gray-400">(optional)</span></label>
+            <input id="ob-target" type="date" [(ngModel)]="draft.targetDate" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-[11px] text-gray-500 dark:text-gray-400" for="ob-success">What would success look like? <span class="text-gray-400">(optional)</span></label>
+            <input id="ob-success" type="text" [(ngModel)]="draft.successText" maxlength="300" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- ═══ 4. Health and safety ═══ -->
+      <ng-container *ngIf="step === 4">
+        <div class="flex items-start gap-2 px-3 py-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900" data-testid="health-disclaimer">
+          <i-feather name="shield" class="text-amber-600 shrink-0 mt-0.5" style="width:14px;height:14px;"></i-feather>
+          <p class="text-[11px] text-amber-800 dark:text-amber-300 leading-relaxed">
+            This information helps your trainer plan safely. It is not medical advice, and your trainer may ask for medical clearance.
+            Only the trainers you work with can see these answers, never other members. You can edit or delete them at any time.
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-semibold text-gray-700 dark:text-gray-200" for="ob-injuries">Injuries, pain or movement limits <span class="text-red-600">*</span></label>
+          <textarea id="ob-injuries" rows="3" [(ngModel)]="draft.injuries" (ngModelChange)="onInjuriesTyped()" maxlength="2000"
+            placeholder="For example: left knee, recovering from a sprain, avoid deep squats"
+            class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100"></textarea>
+          <label class="flex items-center gap-2 text-[11px] text-gray-600 dark:text-gray-300 w-fit cursor-pointer">
+            <input type="checkbox" [ngModel]="noInjuries" (ngModelChange)="setNoInjuries($event)" class="rounded border-gray-300">
+            I have no injuries or limits
+          </label>
+          <p *ngIf="errors['injuries']" class="text-[11px] text-red-600" role="alert">{{ errors['injuries'] }}</p>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[11px] text-gray-500 dark:text-gray-400" for="ob-medical">Medical conditions that affect training <span class="text-gray-400">(optional)</span></label>
+          <textarea id="ob-medical" rows="2" [(ngModel)]="draft.medicalConditions" maxlength="2000" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100"></textarea>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[11px] text-gray-500 dark:text-gray-400" for="ob-clearance">Doctor clearance note <span class="text-gray-400">(optional)</span></label>
+          <textarea id="ob-clearance" rows="2" [(ngModel)]="draft.doctorClearance" maxlength="2000" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100"></textarea>
+        </div>
+
+        <div *ngIf="hasSavedHealthAnswers" class="flex flex-wrap items-center gap-2 pt-1 border-t border-gray-100 dark:border-gray-800">
+          <button *ngIf="!confirmingHealthDelete" type="button" (click)="confirmingHealthDelete = true" class="text-[11px] font-semibold text-red-600 hover:text-red-700 flex items-center gap-1" data-testid="delete-health">
+            <i-feather name="trash-2" style="width:12px;height:12px;"></i-feather> Delete my saved health answers
+          </button>
+          <ng-container *ngIf="confirmingHealthDelete">
+            <span class="text-[11px] text-gray-600 dark:text-gray-300">Delete your injuries, medical and clearance answers?</span>
+            <button type="button" (click)="deleteHealthAnswers()" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-red-600 text-white hover:bg-red-700" data-testid="confirm-delete-health">Yes, delete</button>
+            <button type="button" (click)="confirmingHealthDelete = false" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold text-gray-500 hover:text-gray-900 dark:hover:text-gray-100">Keep them</button>
+          </ng-container>
+        </div>
+      </ng-container>
+
+      <!-- ═══ 5. Nutrition ═══ -->
+      <ng-container *ngIf="step === 5">
+        <fieldset class="flex flex-col gap-2">
+          <legend class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">Supplements you take now</legend>
+          <div class="flex flex-wrap gap-2">
+            <button *ngFor="let o of supplementOptions" type="button" (click)="toggle('supplements', o.value)" [attr.aria-pressed]="has(draft.supplements, o.value)"
+              class="px-2.5 py-1 rounded-full text-[11px] font-semibold border transition"
+              [ngClass]="has(draft.supplements, o.value) ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800 text-red-700 dark:text-red-300' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-red-300'">{{ o.label }}</button>
+          </div>
+          <input type="text" [(ngModel)]="draft.supplementsOther" maxlength="300" aria-label="Other supplements" placeholder="Anything else you take"
+            class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+        </fieldset>
+
+        <fieldset class="flex flex-col gap-2">
+          <legend class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">Diet</legend>
+          <div class="flex flex-wrap gap-2">
+            <button *ngFor="let o of dietPatterns" type="button" (click)="pick('dietPattern', o.value)" [attr.aria-pressed]="draft.dietPattern === o.value"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition"
+              [ngClass]="draft.dietPattern === o.value ? 'bg-red-600 border-red-600 text-white' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-red-300'">{{ o.label }}</button>
+          </div>
+          <input type="text" [(ngModel)]="draft.dietNotes" maxlength="300" aria-label="Diet notes" placeholder="Notes about how you eat"
+            class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+          <input type="text" [(ngModel)]="draft.allergies" maxlength="300" aria-label="Allergies" placeholder="Allergies"
+            class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+        </fieldset>
+
+        <fieldset class="flex flex-col gap-2">
+          <legend class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">Would you like supplement guidance?</legend>
+          <div class="flex flex-wrap gap-2">
+            <button *ngFor="let o of guidanceOptions" type="button" (click)="pick('supplementGuidance', o.value)" [attr.aria-pressed]="draft.supplementGuidance === o.value"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition"
+              [ngClass]="draft.supplementGuidance === o.value ? 'bg-red-600 border-red-600 text-white' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-red-300'">{{ o.label }}</button>
+          </div>
+        </fieldset>
+      </ng-container>
+
+      <!-- ═══ 6. Schedule ═══ -->
+      <ng-container *ngIf="step === 6">
+        <fieldset class="flex flex-col gap-2">
+          <legend class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">Which days can you train? <span class="text-red-600">*</span></legend>
+          <div class="flex flex-wrap gap-2">
+            <button *ngFor="let o of days" type="button" (click)="toggle('availableDays', o.value)" [attr.aria-pressed]="has(draft.availableDays, o.value)"
+              class="w-12 py-1.5 rounded-lg text-xs font-semibold border transition"
+              [ngClass]="has(draft.availableDays, o.value) ? 'bg-red-600 border-red-600 text-white' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-red-300'">{{ o.label }}</button>
+          </div>
+          <p *ngIf="errors['availableDays']" class="text-[11px] text-red-600" role="alert">{{ errors['availableDays'] }}</p>
+        </fieldset>
+
+        <fieldset class="flex flex-col gap-2">
+          <legend class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">Best times of day <span class="font-normal text-gray-400">(optional)</span></legend>
+          <div class="flex flex-wrap gap-2">
+            <button *ngFor="let o of times" type="button" (click)="toggle('availableTimes', o.value)" [attr.aria-pressed]="has(draft.availableTimes, o.value)"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition" [title]="o.hint"
+              [ngClass]="has(draft.availableTimes, o.value) ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800 text-red-700 dark:text-red-300' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-red-300'">{{ o.label }}</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="flex flex-col gap-2">
+          <legend class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">Preferred session length <span class="font-normal text-gray-400">(optional)</span></legend>
+          <div class="flex flex-wrap gap-2">
+            <button *ngFor="let m of sessionMinutes" type="button" (click)="setSessionMinutes(m)" [attr.aria-pressed]="draft.sessionMinutes === m"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition"
+              [ngClass]="draft.sessionMinutes === m ? 'bg-red-600 border-red-600 text-white' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-red-300'">{{ m }} min</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="flex flex-col gap-2">
+          <legend class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">Trainer preferences <span class="font-normal text-gray-400">(optional)</span></legend>
+          <div class="flex flex-wrap gap-2">
+            <button *ngFor="let o of trainerModePrefs" type="button" (click)="pick('trainerModePref', o.value)" [attr.aria-pressed]="draft.trainerModePref === o.value"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition"
+              [ngClass]="draft.trainerModePref === o.value ? 'bg-red-600 border-red-600 text-white' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-red-300'">{{ o.label }}</button>
+          </div>
+          <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-1">I would like to train with</p>
+          <div class="flex flex-wrap gap-2">
+            <button *ngFor="let o of trainerGenderPrefs" type="button" (click)="pick('trainerGenderPref', o.value)" [attr.aria-pressed]="draft.trainerGenderPref === o.value"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition"
+              [ngClass]="draft.trainerGenderPref === o.value ? 'bg-red-600 border-red-600 text-white' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-red-300'">{{ o.label }}</button>
+          </div>
+          <input type="text" [(ngModel)]="draft.languagePref" maxlength="80" aria-label="Preferred language" placeholder="Language you want to train in"
+            class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+          <input type="text" [(ngModel)]="draft.checkInPref" maxlength="200" aria-label="Check-in preference" placeholder="How often you want check-ins in Messages, for example weekly"
+            class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+        </fieldset>
+      </ng-container>
+
+      <!-- ═══ 7. Admin ═══ -->
+      <ng-container *ngIf="step === 7">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1">
+            <label class="text-[11px] text-gray-500 dark:text-gray-400" for="ob-ec-name">Emergency contact name</label>
+            <input id="ob-ec-name" type="text" [(ngModel)]="draft.emergencyContactName" maxlength="120" autocomplete="off" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-[11px] text-gray-500 dark:text-gray-400" for="ob-ec-phone">Emergency contact phone</label>
+            <input id="ob-ec-phone" type="tel" [(ngModel)]="draft.emergencyContactPhone" maxlength="40" autocomplete="off" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+          </div>
+          <div class="flex flex-col gap-1 sm:col-span-2">
+            <label class="text-[11px] text-gray-500 dark:text-gray-400" for="ob-heard">How did you find Berliz?</label>
+            <input id="ob-heard" type="text" [(ngModel)]="draft.heardFrom" maxlength="160" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-xs text-gray-900 dark:text-gray-100">
+          </div>
+        </div>
+        <p class="text-[11px] text-gray-400 dark:text-gray-500">Nothing here is required, and nothing on any step asks for payment.</p>
+      </ng-container>
+
+      <!-- Save error -->
+      <p *ngIf="saveError" class="text-xs text-red-600" role="alert" data-testid="onboarding-save-error">{{ saveError }}</p>
+
+      <!-- Navigation -->
+      <div class="flex items-center justify-between gap-2 pt-1 border-t border-gray-100 dark:border-gray-800">
+        <button type="button" (click)="back()" [disabled]="step === 1 || saving"
+          class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 disabled:opacity-30 transition flex items-center gap-1">
+          <i-feather name="chevron-left" style="width:13px;height:13px;"></i-feather> Back
+        </button>
+        <div class="flex items-center gap-2">
+          <button *ngIf="!isRequiredStep && step < 7" type="button" (click)="skip()" [disabled]="saving"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition">Skip</button>
+          <button type="button" (click)="next()" [disabled]="saving" data-testid="onboarding-next"
+            class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 transition flex items-center gap-1">
+            {{ saving ? 'Saving' : (step === 7 ? 'Finish' : 'Save and continue') }}
+            <i-feather *ngIf="!saving && step < 7" name="chevron-right" style="width:13px;height:13px;"></i-feather>
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</section>

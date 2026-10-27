@@ -33,6 +33,8 @@ export class BookingCardComponent {
    *  'provider' shows who booked you + confirm/complete/cancel actions. */
   @Input() mode: 'client' | 'provider' = 'client';
   @Input() booking!: Booking;
+  /** The client's onboarding completion (0-100) for the provider view; undefined while unknown, so nothing is shown. */
+  @Input() onboardingPercent: number | null | undefined;
 
   @Output() cancelRequested = new EventEmitter<number>();
   @Output() statusChangeRequested = new EventEmitter<{ id: number; status: string }>();
@@ -119,6 +121,19 @@ export class BookingCardComponent {
   /** A client can withdraw a pending request, or cancel a confirmed session (the refund depends on how late -- see clientCancelNote). */
   get canClientCancel(): boolean {
     return this.mode === 'client' && (this.booking.status === 'pending' || this.booking.status === 'confirmed');
+  }
+
+  get onboardingChip(): { label: string; classes: string } | null {
+    if (this.mode !== 'provider' || this.onboardingPercent == null) return null;
+    if (this.booking.status !== 'pending' && this.booking.status !== 'confirmed') return null;
+    return this.onboardingPercent >= 100
+      ? { label: 'Onboarding complete', classes: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900' }
+      : { label: 'Onboarding incomplete', classes: 'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border-amber-100 dark:border-amber-900' };
+  }
+
+  openOnboarding(event: Event): void {
+    event.stopPropagation();
+    this.router.navigate(['/dashboard/clients', this.booking.clientId, 'onboarding']);
   }
 
   /** One tap back into booking with the same trainer or center, from a session that is over (completed, or cancelled). */

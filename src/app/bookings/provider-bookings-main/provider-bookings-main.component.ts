@@ -28,6 +28,7 @@ import {
 } from 'src/app/state/client-intake/client-intake.actions';
 
 import { genericError } from 'src/validators/form-validators.module';
+import { ClientOnboardingService } from 'src/app/services/client-onboarding.service';
 
 /**
  * Trainer/Center-facing "Bookings" page — every session a client has
@@ -51,6 +52,8 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
   activeTab: 'bookings' | 'availability' | 'earnings' | 'insights' = 'bookings';
 
   bookings: Booking[] = [];
+  /** Onboarding completion (0-100) by client user id, for the clients on pending and confirmed requests. */
+  onboardingByClient: Record<number, number> = {};
   loading = false;
   /** Why loading the list failed, while there is nothing to show -- so a failed load is never mistaken for "no bookings yet". */
   loadError: string | null = null;
@@ -71,7 +74,20 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
+    private onboardingService: ClientOnboardingService,
   ) { }
+
+  /** Whether each requesting or booked client has finished onboarding, so the card can flag it before the trainer confirms. */
+  private loadOnboardingFlags(): void {
+    const ids = Array.from(new Set(
+      this.bookings.filter(b => b.status === 'pending' || b.status === 'confirmed').map(b => b.clientId).filter(Boolean)
+    ));
+    if (!ids.length) { this.onboardingByClient = {}; return; }
+    this.onboardingService.getCompletion(ids).pipe(take(1)).subscribe({
+      next: map => { this.onboardingByClient = map; },
+      error: () => { this.onboardingByClient = {}; },
+    });
+  }
 
   ngOnInit(): void {
     const rawSetup = this.route.snapshot.queryParamMap.get('payoutSetup');
@@ -89,7 +105,10 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     this.store.dispatch(loadMyProviderBookings());
     this.store.select(selectProviderBookings)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(bookings => this.bookings = bookings ?? []);
+      .subscribe(bookings => {
+        this.bookings = bookings ?? [];
+        this.loadOnboardingFlags();
+      });
     this.store.select(selectBookingLoading)
       .pipe(takeUntil(this.destroy$))
       .subscribe(loading => this.loading = loading);

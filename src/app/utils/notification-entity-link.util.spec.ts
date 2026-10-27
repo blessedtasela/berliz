@@ -178,4 +178,16 @@ describe('navigateToNotificationEntity', () => {
     expect(navigateToNotificationEntity(router, notification({ entityType: 'referralSlot' }))).toBeTrue();
     expect(router.navigate).toHaveBeenCalledWith(['/dashboard/my-rewards']);
   });
+
+  it('routes a client onboarding notification to the onboarding answers of that client', () => {
+    const result = navigateToNotificationEntity(router, notification({ entityType: 'clientOnboarding', entityId: 7 }));
+
+    expect(result).toBeTrue();
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/clients', 7, 'onboarding']);
+  });
+
+  it('does not navigate a client onboarding notification missing its entityId', () => {
+    expect(navigateToNotificationEntity(router, notification({ entityType: 'clientOnboarding' }))).toBeFalse();
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
 });

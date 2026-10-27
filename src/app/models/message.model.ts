@@ -66,3 +66,12 @@ export interface ConversationSummary {
 
   unreadCount: number;
 }
+
+/** Someone you can start a conversation with because of a booking: your trainer, or (for a trainer) one of your clients. */
+export interface MessageContact {
+  userId: number;
+  name: string;
+  role: string;
+  /** 'trainer' = this person is your trainer; 'client' = this person is your client. */
+  relation: 'trainer' | 'client';
+}

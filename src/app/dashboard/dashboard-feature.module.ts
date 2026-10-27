@@ -69,6 +69,8 @@ import { MyTrainerMainComponent } from '../my-trainer/my-trainer-main/my-trainer
 import { HubModule } from '../hub/hub.module';
 import { HubRouteComponent } from '../hub/hub-route/hub-route.component';
 import { HubMainComponent } from '../hub/hub-main/hub-main.component';
+import { ClientOnboardingWizardComponent } from '../client-onboarding/client-onboarding-wizard/client-onboarding-wizard.component';
+import { ClientOnboardingViewComponent } from '../client-onboarding/client-onboarding-view/client-onboarding-view.component';
 
 const expectedRoleAll = ['admin', 'user', 'partner', 'trainer', 'center', 'driver', 'store', 'client'];
 
@@ -401,6 +403,21 @@ const dashboardRoutes: Routes = [
         }
       },
 
+      // Client onboarding: the wizard (everyone edits their own), and the trainer's view of a client's answers
+      // (the server only answers the client, an admin, or a trainer the client has a live booking or subscription with).
+      {
+        path: 'onboarding',
+        component: ClientOnboardingWizardComponent,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { breadcrumb: 'Onboarding', expectedRole: expectedRoleAll }
+      },
+      {
+        path: 'clients/:userId/onboarding',
+        component: ClientOnboardingViewComponent,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { breadcrumb: 'Client onboarding', expectedRole: ['trainer', 'admin', ...expectedRoleAll] }
+      },
+
       // Scheduled runs — solo plans or group runs discoverable by city.
       {
         path: 'runs',
@@ -595,6 +612,8 @@ const dashboardRoutes: Routes = [
           { path: 'client-intake/new/:clientId', component: ClientIntakeFormComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'New Client Intake', expectedRole: ['trainer'] } },
           { path: 'client-intake/:id', component: ClientIntakeFormComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Client Intake', expectedRole: expectedRoleAll } },
           { path: 'my-client-intakes', component: MyClientIntakesComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Client Intakes', expectedRole: ['trainer'] } },
+          { path: 'onboarding', component: ClientOnboardingWizardComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Onboarding', expectedRole: expectedRoleAll } },
+          { path: 'clients/:userId/onboarding', component: ClientOnboardingViewComponent, canActivate: [AuthGuard, RoleGuard], data: { breadcrumb: 'Client onboarding', expectedRole: expectedRoleAll } },
 
           {
             path: 'partnership',

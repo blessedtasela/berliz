@@ -91,7 +91,7 @@
             </div>
         </a>
 
-        <a routerLink="/dashboard/messages" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-3.5 flex flex-col gap-2 hover:shadow-sm hover:-translate-y-0.5 transition">
+        <a href="/dashboard/messages" (click)="$event.preventDefault(); openMessages()" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-3.5 flex flex-col gap-2 hover:shadow-sm hover:-translate-y-0.5 transition cursor-pointer">
             <div class="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900 flex items-center justify-center">
                 <i-feather name="message-square" class="text-sky-600" style="width:16px;height:16px;"></i-feather>
             </div>

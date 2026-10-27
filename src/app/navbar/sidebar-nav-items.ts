@@ -118,6 +118,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
     name: 'Me', icon: 'user', items: [
       { name: 'Profile', icon: 'user', route: '/dashboard/profile/view' },
       { name: 'Settings', icon: 'settings', route: '/dashboard/profile/edit' },
+      { name: 'Onboarding', icon: 'clipboard', route: '/dashboard/onboarding' },
       { name: 'Saved', icon: 'bookmark', route: '/dashboard/saved' },
       { name: 'My Drafts', icon: 'edit-3', route: '/dashboard/my-drafts' },
       { name: 'Rewards', icon: 'gift', route: '/dashboard/my-rewards' },

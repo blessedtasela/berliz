@@ -14,14 +14,14 @@ const KNOWN_ENTITY_TYPES = new Set([
   'message', 'connection', 'peerSession', 'booking', 'post', 'workoutLog',
   'workout', 'run', 'task', 'faq', 'payment', 'subscription', 'payout',
   'partnership', 'centerProfile', 'trainerProfile', 'accountSettings',
-  'memberProfile', 'accountabilityNudge', 'recap', 'clientIntake',
+  'memberProfile', 'accountabilityNudge', 'recap', 'clientIntake', 'clientOnboarding',
   'testimonial', 'category', 'referralSlot',
 ]);
 
 /** True when this notification's entityType is one navigateToNotificationEntity can actually route (and, for the types that need one, it has an entityId too). */
 export function notificationHasDeepLink(notification: Notifications): boolean {
   if (!notification.entityType || !KNOWN_ENTITY_TYPES.has(notification.entityType)) return false;
-  if ((notification.entityType === 'message' || notification.entityType === 'post' || notification.entityType === 'clientIntake') && !notification.entityId) return false;
+  if ((notification.entityType === 'message' || notification.entityType === 'post' || notification.entityType === 'clientIntake' || notification.entityType === 'clientOnboarding') && !notification.entityId) return false;
   return true;
 }
 
@@ -120,6 +120,12 @@ export function navigateToNotificationEntity(router: Router, notification: Notif
 
     case 'recap':
       router.navigate(['/dashboard/recap']);
+      return true;
+
+    // The entity id is the CLIENT's user id: the trainer lands on that client's onboarding answers.
+    case 'clientOnboarding':
+      if (!notification.entityId) return false;
+      router.navigate(['/dashboard/clients', notification.entityId, 'onboarding']);
       return true;
 
     case 'clientIntake':

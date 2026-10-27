@@ -12,6 +12,7 @@ import { ChatThreadHeaderComponent } from './shared/chat-thread-header/chat-thre
 import { MessageBubbleComponent } from './shared/message-bubble/message-bubble.component';
 import { ConversationRowComponent } from './shared/conversation-row/conversation-row.component';
 import { MessageComposerComponent } from './shared/message-composer/message-composer.component';
+import { OnboardingSummaryCardComponent } from '../client-onboarding/onboarding-summary-card/onboarding-summary-card.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { MessageComposerComponent } from './shared/message-composer/message-comp
     MessageBubbleComponent,
     ConversationRowComponent,
     MessageComposerComponent,
+    OnboardingSummaryCardComponent,
   ]
 })
 export class MessagesModule { }

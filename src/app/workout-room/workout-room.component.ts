@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
 
@@ -9,6 +9,7 @@ import { WorkoutLogResponse, WorkoutResponse } from 'src/app/models/workout.inte
 import { WorkoutService } from 'src/app/services/workout.service';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { calendarDayKey, localDayKey } from 'src/app/utils/local-date';
+import { MessageService } from 'src/app/services/message.service';
 
 /**
  * One landing page for every workout-adjacent tool instead of them being
@@ -37,6 +38,8 @@ export class WorkoutRoomComponent implements OnInit {
   constructor(
     private workoutService: WorkoutService,
     private store: Store,
+    private messageService: MessageService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -63,6 +66,23 @@ export class WorkoutRoomComponent implements OnInit {
     this.workoutService.getTemplates().pipe(take(1)).subscribe({
       next: res => { this.templates = res?.data ?? []; },
       error: () => { },
+    });
+  }
+
+  /**
+   * "Message your trainer": with exactly one trainer (or, for a trainer, one client) it opens that conversation
+   * straight away; with several, or none, it opens Messages, which lists who you can start with or explains how to
+   * get a trainer, rather than dropping you on an empty page.
+   */
+  openMessages(): void {
+    this.messageService.getContacts().pipe(take(1)).subscribe({
+      next: res => {
+        const wanted = this.isProvider ? 'client' : 'trainer';
+        const matches = (res?.data ?? []).filter(c => c.relation === wanted);
+        if (matches.length === 1) this.router.navigate(['/dashboard/messages'], { queryParams: { userId: matches[0].userId } });
+        else this.router.navigate(['/dashboard/messages']);
+      },
+      error: () => { this.router.navigate(['/dashboard/messages']); },
     });
   }
 

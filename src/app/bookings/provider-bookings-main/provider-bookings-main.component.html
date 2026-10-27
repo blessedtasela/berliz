@@ -63,7 +63,7 @@
                     <i-feather name="clock" style="width:11px;height:11px;"></i-feather>
                     Awaiting your response
                 </span>
-                <app-booking-card *ngFor="let b of pending" mode="provider" [booking]="b"
+                <app-booking-card *ngFor="let b of pending" mode="provider" [booking]="b" [onboardingPercent]="onboardingByClient[b.clientId]"
                     (statusChangeRequested)="onStatusChangeRequested($event)"
                     (rescheduleRequested)="onRescheduleRequested($event)"
                     (startIntakeRequested)="onStartIntakeRequested($event)"
@@ -76,7 +76,7 @@
                     <i-feather name="check-circle" style="width:11px;height:11px;"></i-feather>
                     Confirmed
                 </span>
-                <app-booking-card *ngFor="let b of confirmed" mode="provider" [booking]="b"
+                <app-booking-card *ngFor="let b of confirmed" mode="provider" [booking]="b" [onboardingPercent]="onboardingByClient[b.clientId]"
                     (statusChangeRequested)="onStatusChangeRequested($event)"
                     (startIntakeRequested)="onStartIntakeRequested($event)"
                     (sendIntakeRequested)="onSendIntakeRequested($event)"></app-booking-card>
@@ -88,7 +88,7 @@
                     <i-feather name="award" style="width:11px;height:11px;"></i-feather>
                     Completed
                 </span>
-                <app-booking-card *ngFor="let b of completed" mode="provider" [booking]="b"
+                <app-booking-card *ngFor="let b of completed" mode="provider" [booking]="b" [onboardingPercent]="onboardingByClient[b.clientId]"
                     (startIntakeRequested)="onStartIntakeRequested($event)"
                     (sendIntakeRequested)="onSendIntakeRequested($event)"></app-booking-card>
             </div>
@@ -99,7 +99,7 @@
                     <i-feather name="user-x" style="width:11px;height:11px;"></i-feather>
                     No-show
                 </span>
-                <app-booking-card *ngFor="let b of noShow" mode="provider" [booking]="b"
+                <app-booking-card *ngFor="let b of noShow" mode="provider" [booking]="b" [onboardingPercent]="onboardingByClient[b.clientId]"
                     (startIntakeRequested)="onStartIntakeRequested($event)"
                     (sendIntakeRequested)="onSendIntakeRequested($event)"></app-booking-card>
             </div>
@@ -110,7 +110,7 @@
                     <i-feather name="x-circle" style="width:11px;height:11px;"></i-feather>
                     Cancelled
                 </span>
-                <app-booking-card *ngFor="let b of cancelled" mode="provider" [booking]="b"
+                <app-booking-card *ngFor="let b of cancelled" mode="provider" [booking]="b" [onboardingPercent]="onboardingByClient[b.clientId]"
                     (statusChangeRequested)="onStatusChangeRequested($event)"
                     (deleteRequested)="onDeleteRequested($event)"
                     (startIntakeRequested)="onStartIntakeRequested($event)"

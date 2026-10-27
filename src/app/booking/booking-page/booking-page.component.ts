@@ -38,6 +38,7 @@ import { Users } from 'src/app/models/users.interface';
 import { genericError } from 'src/validators/form-validators.module';
 import { PLAN_KIND_LABEL, planKind } from 'src/app/utils/provider-package.util';
 import { memoized, newMemoSlot } from 'src/app/utils/memo';
+import { OnboardingNudgeComponent } from 'src/app/client-onboarding/onboarding-nudge/onboarding-nudge.component';
 
 /** What the client has chosen to book with, right now. */
 type BookingOption =
@@ -56,7 +57,7 @@ type BookingOption =
  */
 @Component({
     selector: 'app-booking-page',
-    imports: [CommonModule, FormsModule, RouterModule, IconsModule, SharedModule, DateStripComponent, BookingLocationPickerComponent, BookingPriceEstimateComponent, ProviderContactComponent],
+    imports: [CommonModule, FormsModule, RouterModule, IconsModule, SharedModule, DateStripComponent, BookingLocationPickerComponent, BookingPriceEstimateComponent, ProviderContactComponent, OnboardingNudgeComponent],
     templateUrl: './booking-page.component.html'
 })
 export class BookingPageComponent implements OnInit, OnDestroy {

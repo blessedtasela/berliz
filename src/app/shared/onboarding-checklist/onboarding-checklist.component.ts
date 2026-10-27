@@ -9,6 +9,7 @@ import { IconsModule } from 'src/app/icons/icons.module';
 import { AuthService } from 'src/app/services/auth.service';
 import { WorkoutService } from 'src/app/services/workout.service';
 import { ConnectionService } from 'src/app/services/connection.service';
+import { ClientOnboardingService } from 'src/app/services/client-onboarding.service';
 import { selectUser } from 'src/app/state/user/user.selector';
 import { TourService } from 'src/app/shared/demo/tour.service';
 
@@ -24,6 +25,17 @@ interface OnboardingStep {
 }
 
 const DISMISS_KEY = 'berliz.onboarding.v1.dismissed';
+
+/**
+ * WHEN "COMPLETE YOUR PROFILE" TICKS (client checklist): the member has a profile photo AND a location (country and
+ * city). Nothing else, and it is read from the saved profile, never from having clicked the link. The separate
+ * "Tell your trainer about you" item ticks when the onboarding wizard's required answers are all filled in (where
+ * and how they train, level, a goal, an answer about injuries, and an available day: see the backend
+ * ClientOnboardingServiceImplement.missingRequired). Together they cover onboarding, photo and location.
+ */
+export function isClientProfileComplete(user: { profilePhoto?: unknown; country?: string | null; city?: string | null } | null | undefined): boolean {
+  return !!(user?.profilePhoto && user?.country?.trim() && user?.city?.trim());
+}
 
 /**
  * D12 — value-first onboarding. A dismissible, role-aware first-run checklist
@@ -77,6 +89,7 @@ export class OnboardingChecklistComponent implements OnInit {
     private authService: AuthService,
     private workoutService: WorkoutService,
     private connectionService: ConnectionService,
+    private onboardingService: ClientOnboardingService,
     private store: Store,
     public tour: TourService,
   ) {}
@@ -91,20 +104,24 @@ export class OnboardingChecklistComponent implements OnInit {
     forkJoin({
       workouts: this.workoutService.getMyWorkoutLogs().pipe(catchError(() => of(null))),
       connections: this.connectionService.getMyConnections().pipe(catchError(() => of(null))),
+      // Clients only (trainers and centers have no onboarding of their own).
+      onboarding: (role === 'trainer' || role === 'center') ? of(null) : this.onboardingService.getMine().pipe(catchError(() => of(null))),
       // Reuses the already-loaded user slice -- no extra request -- so "Complete your
       // profile" can be a real, data-derived check instead of marking itself done the
       // instant the trainer/center merely clicks through to the profile page.
       user: this.store.select(selectUser).pipe(take(1), catchError(() => of(null))),
     })
       .pipe(take(1))
-      .subscribe(({ workouts, connections, user }) => {
+      .subscribe(({ workouts, connections, onboarding, user }) => {
         const hasWorkout = !!(workouts?.data && workouts.data.length > 0);
         const hasConnection = !!(connections?.data && connections.data.length > 0);
-        const hasCompletedProfile = !!(user?.bio?.trim() && user?.profilePhoto);
+        const isProvider = role === 'trainer' || role === 'center';
+        const hasCompletedProfile = isProvider ? !!(user?.bio?.trim() && user?.profilePhoto) : isClientProfileComplete(user);
         this.setDone('log-workout', hasWorkout);
         this.setDone('connect', hasConnection);
         this.setDone('post', hasWorkout); // trainers: a shared workout counts as a first post
         this.setDone('profile', hasCompletedProfile);
+        this.setDone('onboarding', !!onboarding?.complete);
         this.refreshVisibility();
       });
   }
@@ -125,7 +142,8 @@ export class OnboardingChecklistComponent implements OnInit {
       // fields down to the essentials), so this is the first time most regular
       // users are prompted for them -- genuinely useful for "find a provider
       // near you" below, not just busywork.
-      { key: 'profile', label: 'Complete your profile', hint: 'Add your photo and location', icon: 'user', link: ['/dashboard/profile/edit'], done: clicked('profile'), clickToComplete: true },
+      { key: 'profile', label: 'Complete your profile', hint: 'Add your photo and location', icon: 'user', link: ['/dashboard/profile/edit'], done: false },
+      { key: 'onboarding', label: 'Tell your trainer about you', hint: 'Goals, schedule and any injuries. About 5 minutes.', icon: 'clipboard', link: ['/dashboard/onboarding'], done: false },
       { key: 'log-workout', label: 'Log your first workout', hint: 'Track a session, run or lift', icon: 'activity', link: ['/dashboard/workouts'], done: false },
       { key: 'connect', label: 'Connect with someone', hint: 'Find people to train with', icon: 'users', link: ['/dashboard/member-directory'], done: false },
       { key: 'find-provider', label: 'Find a trainer or gym', hint: 'Browse providers near you', icon: 'search', link: ['/dashboard/find-providers'], done: clicked('find-provider'), clickToComplete: true },
