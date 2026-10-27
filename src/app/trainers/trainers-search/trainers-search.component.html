@@ -8,10 +8,10 @@
     <div class="flex items-stretch gap-2">
 
         <!-- Input -->
-        <div class="flex-1 flex items-center bg-zinc-900 border border-zinc-700 rounded-xl
+        <div class="flex-1 min-w-0 flex items-center bg-zinc-900 border border-zinc-700 rounded-xl
                     focus-within:border-red-600 focus-within:ring-1 focus-within:ring-red-600/30 transition">
             <i-feather name="search" class="ml-3 text-zinc-500 shrink-0" style="width:15px;height:15px;"></i-feather>
-            <input type="text" [(ngModel)]="searchQuery" placeholder="Search by name, services or location…" class="flex-1 bg-transparent px-3 py-2.5 text-sm text-white placeholder-zinc-500
+            <input type="text" [(ngModel)]="searchQuery" placeholder="Search by name, services or location…" class="flex-1 min-w-0 bg-transparent px-3 py-2.5 text-sm text-white placeholder-zinc-500
                        focus:outline-none" aria-label="Search trainers" />
         </div>
 
