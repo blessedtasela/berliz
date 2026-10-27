@@ -61,7 +61,7 @@ describe('BookingLocationPickerComponent', () => {
     expect(text).toContain('12 Main St');
     expect(text).toContain('+$15.00');
     expect(text).toContain('Anywhere in Dallas');
-    expect(text).toContain('No extra fee');
+    expect(text).toContain('No extra trainer fee');
     expect(text).toContain('my own place');
     expect(text).toContain('+$25.00');
   });

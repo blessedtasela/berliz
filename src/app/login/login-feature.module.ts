@@ -4,6 +4,7 @@ import { LoginModule } from './login.module';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { QuickSignupComponent } from './quick-signup/quick-signup.component';
+import { signedOutOnlyGuard } from '../guards/signed-out-only.guard';
 
 // Lazy-loading wrapper covering three sibling top-level paths (`login`,
 // `sign-up`, `quick-sign-up`) that all share LoginModule. Mounted from
@@ -12,8 +13,8 @@ import { QuickSignupComponent } from './quick-signup/quick-signup.component';
 // boundary LoginModule itself doesn't have.
 const routes: Routes = [
   { path: 'login', component: LoginComponent, data: { breadcrumb: 'Login' } },
-  { path: 'sign-up', component: SignupComponent, data: { breadcrumb: 'Sign Up' } },
-  { path: 'quick-sign-up', component: QuickSignupComponent, data: { breadcrumb: 'Quick Sign Up' } },
+  { path: 'sign-up', component: SignupComponent, canActivate: [signedOutOnlyGuard], data: { breadcrumb: 'Sign Up' } },
+  { path: 'quick-sign-up', component: QuickSignupComponent, canActivate: [signedOutOnlyGuard], data: { breadcrumb: 'Quick Sign Up' } },
 ];
 
 @NgModule({

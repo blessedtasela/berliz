@@ -213,3 +213,22 @@ describe('LevelUpPageComponent', () => {
     });
   });
 });
+
+describe('LevelUpPageComponent intro', () => {
+  const pageWith = (...kinds: string[]): any => {
+    const page = Object.create(LevelUpPageComponent.prototype);
+    page.groups = kinds.map(kind => ({ kind, plans: [] }));
+    return page;
+  };
+
+  it('names only what the provider sells', () => {
+    expect(pageWith('pack').introText).toContain('buy a session pack.');
+    expect(pageWith('pack').introText).not.toContain('subscribe');
+    expect(pageWith('subscription', 'pack', 'membership').introText)
+      .toContain('subscribe, buy a session pack or get a membership.');
+  });
+
+  it('has a plain fallback when there are no plans', () => {
+    expect(pageWith().introText).toBe('Commit to more than one session with this provider.');
+  });
+});

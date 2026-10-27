@@ -129,6 +129,15 @@ export class LevelUpPageComponent implements OnInit, OnDestroy {
     return `${planActionLabel(plan)} · $${plan.price}${planKind(plan) === 'subscription' ? ' / month' : ''}`;
   }
 
+  /** The intro names only what this provider actually sells, so it never promises a product the page does not list. */
+  get introText(): string {
+    const verbs: Record<string, string> = { subscription: 'subscribe', pack: 'buy a session pack', membership: 'get a membership' };
+    const offered = this.groups.map(g => verbs[g.kind]);
+    if (offered.length === 0) return 'Commit to more than one session with this provider.';
+    const list = offered.length === 1 ? offered[0] : offered.slice(0, -1).join(', ') + ' or ' + offered[offered.length - 1];
+    return `Commit to more than one session: ${list}. Pay now, then book your sessions whenever suits you.`;
+  }
+
   get buyBusy(): boolean {
     return this.buyingPlanId != null;
   }
