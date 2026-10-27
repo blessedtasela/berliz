@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 
 import { Categories } from 'src/app/models/categories.interface';
 import { Centers } from 'src/app/models/centers.interface';
-import { Exercises } from 'src/app/models/exercise.interface';
+import { PublicExercise } from 'src/app/models/exercise.interface';
 import { Trainers } from 'src/app/models/trainers.interface';
 import { Users } from 'src/app/models/users.interface';
 import { WorkoutResponse } from 'src/app/models/workout.interface';
@@ -22,8 +22,8 @@ import { loadActiveTrainers } from 'src/app/state/trainer/trainer.actions';
 import { selectActiveTrainers } from 'src/app/state/trainer/trainer.selector';
 import { loadActiveCenters } from 'src/app/state/center/center.actions';
 import { selectActiveCenters } from 'src/app/state/center/center.selectors';
-import { loadActiveExercises } from 'src/app/state/exercise/exercise.actions';
-import { selectActiveExercises } from 'src/app/state/exercise/exercise.selectors';
+import { loadPublicExercises } from 'src/app/state/exercise/exercise.actions';
+import { selectPublicExercises } from 'src/app/state/exercise/exercise.selectors';
 import { selectUser } from 'src/app/state/user/user.selector';
 import {
   cloneWorkoutTemplate,
@@ -50,7 +50,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
   /** Everything below is DERIVED client-side from the relations each entity carries. */
   trainers: Trainers[] = [];
   centers: Centers[] = [];
-  exercises: Exercises[] = [];
+  exercises: PublicExercise[] = [];
   /** Public workout templates that use at least one exercise from this discipline. */
   templates: WorkoutResponse[] = [];
 
@@ -59,7 +59,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
 
   private allTrainers: Trainers[] = [];
   private allCenters: Centers[] = [];
-  private allExercises: Exercises[] = [];
+  private allExercises: PublicExercise[] = [];
   private allTemplates: WorkoutResponse[] = [];
 
   private likedCategoryIds: number[] = [];
@@ -94,7 +94,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(loadActiveTrainers());
     this.store.dispatch(loadActiveCenters());
-    this.store.dispatch(loadActiveExercises());
+    this.store.dispatch(loadPublicExercises());
     this.store.dispatch(loadWorkoutTemplates());
     this.store.dispatch(loadMyCategoryLikes());
 
@@ -122,7 +122,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
         this.applyFilters();
       }),
 
-      this.store.select(selectActiveExercises).subscribe(list => {
+      this.store.select(selectPublicExercises).subscribe(list => {
         this.allExercises = list ?? [];
         this.applyFilters();
       }),

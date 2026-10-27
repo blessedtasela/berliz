@@ -158,10 +158,10 @@
                             hover:border-red-600/40 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(220,38,38,0.12)]
                             transition-all duration-300">
 
-                    <!-- Demo clip (base64 mp4 from the backend), when present -->
-                    <div *ngIf="exercise.demo" class="w-full h-40 bg-zinc-800 overflow-hidden">
-                        <video [src]="demoSrc(exercise)" class="w-full h-full object-cover object-top" muted
-                            loop playsinline></video>
+                    <!-- Demo image: its own cacheable URL, fetched only as the card scrolls into view -->
+                    <div *ngIf="exercise.hasDemo" class="w-full h-40 bg-zinc-800 overflow-hidden">
+                        <img [src]="demoUrl(exercise)" [alt]="exercise.name + ' demo'" loading="lazy"
+                            class="w-full h-full object-cover object-top" />
                     </div>
 
                     <div class="flex flex-col gap-3 p-5 flex-1">

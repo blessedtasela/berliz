@@ -28,6 +28,12 @@ export const exerciseReducer = createReducer(
     ...s, loading: false, activeExercises: data ?? []
   })),
 
+  // Its own slice and no shared loading/error flags: pages read the outcome from the action stream
+  // (watchFirstLoad / watchLoadError), and a failed public list must not flag the signed-in screens.
+  on(A.loadPublicExercisesSuccess, (s, { data }) => ({
+    ...s, publicExercises: data ?? []
+  })),
+
   on(A.loadExerciseSuccess, (s, { data }) => ({
     ...s, loading: false, selectedExercise: data ?? null
   })),

@@ -3,15 +3,15 @@ import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 
 import { Categories } from 'src/app/models/categories.interface';
-import { Exercises } from 'src/app/models/exercise.interface';
+import { PublicExercise } from 'src/app/models/exercise.interface';
 import { Users } from 'src/app/models/users.interface';
 
-import { loadActiveExercises, loadActiveExercisesFailure, loadActiveExercisesSuccess } from 'src/app/state/exercise/exercise.actions';
-import { selectActiveExercises } from 'src/app/state/exercise/exercise.selectors';
+import { loadPublicExercises, loadPublicExercisesFailure, loadPublicExercisesSuccess } from 'src/app/state/exercise/exercise.actions';
+import { selectPublicExercises } from 'src/app/state/exercise/exercise.selectors';
 import { loadActiveCategories } from 'src/app/state/category/category.actions';
 import { selectActiveCategories } from 'src/app/state/category/category.selectors';
 import { selectUser } from 'src/app/state/user/user.selector';
-import { memoizeMediaUriByKey } from 'src/app/shared/photo-lightbox/photo-data-uri';
+import { exerciseDemoUrl } from 'src/app/utils/exercise-demo';
 import { Actions } from '@ngrx/effects';
 import { injectActionsOrNull, watchFirstLoad } from 'src/app/utils/first-load';
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
@@ -21,9 +21,9 @@ import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
  * `/disciplines/exercises`, with a cinematic hero banner (see
  * exercises-section.component.html). There was no working public exercises
  * page to reuse: the old `/exercises` route pointed at a "Coming Soon" stub,
- * so this is built fresh on the same `loadActiveExercises()` /
- * `selectActiveExercises` slice that `CategoryDetailsComponent` already
- * derives its exercise list from.
+ * so this is built fresh on the slim `loadPublicExercises()` /
+ * `selectPublicExercises` slice that `CategoryDetailsComponent` also
+ * derives its exercise list from (text and tags only; each demo image is its own cacheable URL).
  *
  * Also reused with `[embedded]="true"` on the Programs page (`/services`),
  * the same way `EquipmentPageComponent` is — that drops the standalone hero
@@ -52,7 +52,7 @@ export class ExercisesSectionComponent implements OnInit, OnDestroy {
   /** Hides the standalone hero when this sits inside another page. */
   @Input() embedded = false;
 
-  exercises: Exercises[] = [];
+  exercises: PublicExercise[] = [];
   categories: Categories[] = [];
   user: Users | null = null;
 
@@ -67,12 +67,7 @@ export class ExercisesSectionComponent implements OnInit, OnDestroy {
   showFullData = false;
   visibleItems = this.pageSize;
 
-  private _demoUri = memoizeMediaUriByKey('video/mp4');
-
-  /** Stable data-URI for an exercise's base64 demo clip (rebuilt only when the payload changes). */
-  demoSrc(exercise: Exercises): string | null {
-    return this._demoUri(exercise.id, exercise.demo);
-  }
+  demoUrl = exerciseDemoUrl;
 
   private subscriptions: Subscription[] = [];
 
@@ -82,21 +77,21 @@ export class ExercisesSectionComponent implements OnInit, OnDestroy {
   constructor(private store: Store) { }
 
   retryLoad(): void {
-    this.store.dispatch(loadActiveExercises());
+    this.store.dispatch(loadPublicExercises());
   }
 
   ngOnInit(): void {
-    this.store.dispatch(loadActiveExercises());
+    this.store.dispatch(loadPublicExercises());
     this.store.dispatch(loadActiveCategories());
 
     this.subscriptions.push(
       this.actionsOpt
-        ? watchFirstLoad(this.actionsOpt, this.platformId, [loadActiveExercisesSuccess, loadActiveExercisesFailure], () => this.firstLoaded = true)
+        ? watchFirstLoad(this.actionsOpt, this.platformId, [loadPublicExercisesSuccess, loadPublicExercisesFailure], () => this.firstLoaded = true)
         : new Subscription(),
       this.actionsOpt
-        ? watchLoadError(this.actionsOpt, loadActiveExercisesFailure, [loadActiveExercises, loadActiveExercisesSuccess], null, m => this.loadError = m)
+        ? watchLoadError(this.actionsOpt, loadPublicExercisesFailure, [loadPublicExercises, loadPublicExercisesSuccess], null, m => this.loadError = m)
         : new Subscription(),
-      this.store.select(selectActiveExercises).subscribe(list => this.exercises = list ?? []),
+      this.store.select(selectPublicExercises).subscribe(list => this.exercises = list ?? []),
       this.store.select(selectActiveCategories).subscribe(list => this.categories = list ?? []),
       this.store.select(selectUser).subscribe(user => this.user = user ?? null)
     );
@@ -108,7 +103,7 @@ export class ExercisesSectionComponent implements OnInit, OnDestroy {
 
   // ── Filtering ───────────────────────────────────────────────────────────────
 
-  get filteredExercises(): Exercises[] {
+  get filteredExercises(): PublicExercise[] {
     const term = this.searchTerm.trim().toLowerCase();
 
     return this.exercises.filter(exercise => {
@@ -160,13 +155,13 @@ export class ExercisesSectionComponent implements OnInit, OnDestroy {
    * The matches a visitor is allowed to reach at all: everything when signed
    * in, only the first `previewLimit` otherwise.
    */
-  get browsableExercises(): Exercises[] {
+  get browsableExercises(): PublicExercise[] {
     const matches = this.filteredExercises;
     return this.isLoggedIn ? matches : matches.slice(0, this.previewLimit);
   }
 
   /** The slice actually rendered right now (show-more expands within the cap). */
-  get visibleExercises(): Exercises[] {
+  get visibleExercises(): PublicExercise[] {
     return this.browsableExercises.slice(0, this.visibleItems);
   }
 
@@ -183,7 +178,7 @@ export class ExercisesSectionComponent implements OnInit, OnDestroy {
     return this.filteredExercises.length;
   }
 
-  trackByExerciseId(_index: number, exercise: Exercises): number {
+  trackByExerciseId(_index: number, exercise: PublicExercise): number {
     return exercise.id;
   }
 }
