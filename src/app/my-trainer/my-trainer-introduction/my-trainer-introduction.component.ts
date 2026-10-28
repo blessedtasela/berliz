@@ -83,8 +83,8 @@ export class MyTrainerIntroductionComponent implements OnInit, OnChanges {
         introduction: [
           this.trainerIntroduction?.introduction || '',
           [
+            // Required and capped, but no minimum length: a short approved introduction has to be saveable.
             Validators.required,
-            Validators.minLength(900),
             Validators.maxLength(1200)
           ]
         ],

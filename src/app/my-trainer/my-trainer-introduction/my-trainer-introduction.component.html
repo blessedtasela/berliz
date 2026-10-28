@@ -120,7 +120,7 @@
                 <p *ngIf="updateTrainerIntroductionForm.get('introduction')?.invalid && invalidForm"
                     class="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1">
                     <i-feather name="alert-circle" class="text-red-500" style="width:11px;height:11px;"></i-feather>
-                    Minimum 250 characters required.
+                    Write your introduction (up to 1,200 characters).
                 </p>
 
                 <p *ngIf="updateTrainerIntroductionForm.get('introduction')?.valid &&
@@ -130,12 +130,8 @@
                     Looks good.
                 </p>
 
-                <span class="text-[10px] ml-auto font-semibold" [ngClass]="{
-        'text-red-500':   (updateTrainerIntroductionForm.get('introduction')?.value?.length || 0) < 900,
-        'text-green-600 dark:text-green-400': (updateTrainerIntroductionForm.get('introduction')?.value?.length || 0) >= 900 &&
-        (updateTrainerIntroductionForm.get('introduction')?.value?.length || 0) < 900,
-        'text-gray-400 dark:text-gray-500':  (updateTrainerIntroductionForm.get('introduction')?.value?.length || 0) === 900
-      }">
+                <span class="text-[10px] ml-auto font-semibold" [ngClass]="(updateTrainerIntroductionForm.get('introduction')?.value?.length || 0) === 0
+        ? 'text-red-500' : 'text-gray-400 dark:text-gray-500'">
                     {{ updateTrainerIntroductionForm.get('introduction')?.value?.length || 0 }} / 1200
                 </span>
 

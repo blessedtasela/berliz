@@ -126,9 +126,9 @@
                         <span class="text-sm font-bold text-white flex items-center gap-1.5 truncate">
                             <i-feather name="map-pin" class="text-red-500 shrink-0" style="width:13px;height:13px;"></i-feather>
                             <span class="truncate">{{ primaryLocationLabel }}</span>
-                            <span *ngIf="extraLocationCount > 0" class="text-red-400 font-semibold shrink-0">{{ extraLocationsText }}</span>
+                            <span *ngIf="extraLocationCount > 0" class="shrink-0 text-[10px] font-semibold text-red-400 bg-red-950 border border-red-900 px-2 py-0.5 rounded-full">All {{ trainer?.locations?.length }} gyms</span>
                         </span>
-                        <span *ngIf="extraLocationCount > 0" class="text-[10px] text-zinc-500">Tap to see all {{ trainer?.locations?.length }} locations</span>
+                        <span *ngIf="extraLocationCount > 0" class="text-[10px] text-zinc-500">Open the list to see each gym by name, with a map link</span>
                     </button>
 
                     <!-- Dropdown: every location, each linking out to Maps -->

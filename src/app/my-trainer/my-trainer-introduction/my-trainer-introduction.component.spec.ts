@@ -41,4 +41,26 @@ describe('MyTrainerIntroductionComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  describe('introduction length', () => {
+    const control = () => component.updateTrainerIntroductionForm.get('introduction')!;
+
+    it('saves a short introduction: there is no minimum length', () => {
+      control().setValue('Certified coach helping beginners build strength.');
+      expect(control().valid).toBeTrue();
+    });
+
+    it('still needs something written', () => {
+      control().setValue('');
+      expect(control().invalid).toBeTrue();
+      expect(control().errors?.['required']).toBeTruthy();
+    });
+
+    it('still stops at 1,200 characters', () => {
+      control().setValue('x'.repeat(1200));
+      expect(control().valid).toBeTrue();
+      control().setValue('x'.repeat(1201));
+      expect(control().errors?.['maxlength']).toBeTruthy();
+    });
+  });
 });

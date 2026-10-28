@@ -212,6 +212,13 @@ From the 375 px audit of the public pages (live site, home / trainers / centers 
 - **The Search button ran off the right edge** of the trainers and centers search rows (the input's flex box could not shrink); both now match the disciplines search (`min-w-0`). Every other audited page had no sideways overflow.
 - **A rejected partner application showed nothing.** Applicants already get a received email, an approved/revoked email and a rejection email, and the dashboard card said "under review" or "approved"; a `rejected` application matched neither, so the card showed no status at all (and still read "Application pending"). It now shows "Application not approved", a plain explanation that the details were emailed, and a Contact link. Re-applying is still blocked (one application per email) — that is a product decision, not changed here.
 
+### Unreleased — Trainer dashboard: video album, short introductions, and a clear gyms list
+
+- **Video album:** there is no longer a minimum number of clips (it used to need 6 to 12), so a trainer can remove clips and save with fewer. The most is still 12. Each empty tile's file picker is now a real, focusable input inside the tile (it was hidden with display:none), so a click, the keyboard, and assistive technology all open the picker.
+- **Introduction:** the 900-character minimum is gone (it is still required, and capped at 1,200), so a short approved introduction saves. The counter only turns red when the field is empty.
+- **Gyms list:** the public trainer tile reads "All N gyms" instead of a bare "+N more", and the signed-in tile "All N", so it is plain that it opens a list of each location by name, with a map link on each row.
+- **Not changed:** the video album comment still needs 900 characters.
+
 ### Unreleased — Signed-in provider pages match the public ones: review forms, "how it works", richer cards
 
 - **Leave a review** now sits on the signed-in trainer and center pages (it only existed on the public ones). Same rules: the server decides who may review (a completed session), a refusal is shown above the button, and the review goes in for approval. The forms take a `theme` (dark on the public page, light and dark-mode aware in the dashboard), so one component serves both.

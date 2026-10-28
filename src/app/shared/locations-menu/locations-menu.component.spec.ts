@@ -27,7 +27,7 @@ describe('LocationsMenuComponent', () => {
     component.items = items;
     fixture.detectChanges();
     expect(text()).toContain('3 locations');
-    expect(text()).toContain('+2 more');
+    expect(text()).toContain('All 3');
   });
 
   it('lists every location with its venue and fee once the tile is clicked', () => {

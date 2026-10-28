@@ -48,10 +48,11 @@ describe('TrainersDetailsHeroComponent', () => {
       return fixture.nativeElement as HTMLElement;
     }
 
-    it("labels the tile with how many more locations there are", () => {
+    it("labels the tile with how many gyms there are, so it reads as a list to open", () => {
       component.trainer = trainer;
       fixture.detectChanges();
-      expect((fixture.nativeElement as HTMLElement).textContent).toContain("+2 more");
+      expect((fixture.nativeElement as HTMLElement).textContent).toContain("All 3 gyms");
+      expect((fixture.nativeElement as HTMLElement).textContent).not.toContain("+2 more");
     });
 
     it("lists every location with venue and fee once opened", () => {

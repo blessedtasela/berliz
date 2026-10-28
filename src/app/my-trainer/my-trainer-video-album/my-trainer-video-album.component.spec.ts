@@ -41,4 +41,27 @@ describe('MyTrainerVideoAlbumComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  describe('album size and the add-video tiles', () => {
+    it('has no minimum, so removing clips below six can still be saved', () => {
+      expect(component.MIN_VIDEOS).toBe(0);
+      expect(component.MAX_VIDEOS).toBe(12);
+    });
+
+    it('is ready to save with no clips once the comment is valid', () => {
+      component.updateTrainerVideoAlbumForm.get('comment')?.setValue('x'.repeat(900));
+      expect(component.videoCount).toBe(0);
+      expect(component.formReady).toBeTrue();
+    });
+
+    it('gives every empty tile a real, focusable file input inside its label', () => {
+      fixture.detectChanges();
+      const inputs = fixture.nativeElement.querySelectorAll('label [data-testid="album-file-input"]') as NodeListOf<HTMLInputElement>;
+      expect(inputs.length).toBe(12);
+      expect(inputs[0].type).toBe('file');
+      expect(inputs[0].classList).toContain('sr-only');
+      expect(inputs[0].classList).not.toContain('hidden');
+      expect(inputs[3].getAttribute('aria-label')).toBe('Add video 4');
+    });
+  });
 });
