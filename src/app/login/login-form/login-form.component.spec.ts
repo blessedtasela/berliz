@@ -245,4 +245,20 @@ describe('LoginFormComponent', () => {
       expect(component.submitError).toBe('Incorrect email or password');
     });
   });
+
+  describe("an account that is not activated yet", () => {
+    it("offers the activation page instead of a dead end", () => {
+      component.submitError = "Your account is not yet activated. Please check your email.";
+      fixture.detectChanges();
+      expect(component.needsActivation).toBeTrue();
+      expect(fixture.nativeElement.querySelector("[data-testid=enter-activation-code]")).not.toBeNull();
+    });
+
+    it("says nothing extra for an ordinary wrong password", () => {
+      component.submitError = "Incorrect email or password";
+      fixture.detectChanges();
+      expect(component.needsActivation).toBeFalse();
+      expect(fixture.nativeElement.querySelector("[data-testid=enter-activation-code]")).toBeNull();
+    });
+  });
 });

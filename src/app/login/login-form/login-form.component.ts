@@ -146,6 +146,11 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
   }
 
 
+  /** The server said the account is not activated yet: offer the activation page. */
+  get needsActivation(): boolean {
+    return /not yet activated/i.test(this.submitError ?? '');
+  }
+
   get email() {
     return this.loginForm.get('email');
   }

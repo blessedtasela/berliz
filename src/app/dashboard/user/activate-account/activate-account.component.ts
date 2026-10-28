@@ -7,6 +7,11 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserService } from 'src/app/services/user.service';
 import { genericError } from 'src/validators/form-validators.module';
 
+/** The success answer of POST /user/activateAccount: the data says so, not just the HTTP status. */
+export function isActivated(response: any): boolean {
+  return typeof response?.data === 'string' && response.data.toLowerCase().includes('activated successfully');
+}
+
 @Component({
     selector: 'app-activate-account',
     templateUrl: './activate-account.component.html',
@@ -61,14 +66,27 @@ export class ActivateAccountComponent implements OnInit {
       return;
     }
 
+    // A code copied from an email often carries a space or a line break: send it clean.
+    const token = String(this.activateAccountForm.value.token ?? '').replace(/\s/g, '');
+    if (token.length < 8) {
+      this.submitError = 'Enter the full 8-digit code from your email.';
+      return;
+    }
+
     this.submitting = true;
     this.ngxService.start();
-    this.userService.activateAccount(this.activateAccountForm.value)
+    this.userService.activateAccount({ ...this.activateAccountForm.value, token })
       .pipe(take(1))
       .subscribe({
         next: (response: any) => {
           this.submitting = false;
           this.ngxService.stop();
+          // Only the server's own "activated" answer is a success. Anything else in the data (a wrong or superseded
+          // code, an older server that still answers 200) must not be shown as an activated account.
+          if (!isActivated(response)) {
+            this.submitError = typeof response?.data === 'string' && response.data ? response.data : genericError;
+            return;
+          }
           this.activateAccountForm.reset();
           this.snackBarService.openSnackBar(response?.message || 'Account activated. You can log in now.', '');
           this.router.navigate(['/login']);
