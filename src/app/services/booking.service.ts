@@ -70,6 +70,16 @@ export class BookingService {
     return this.httpClient.put<ApiResponse<BookingPlan>>(this.url + `/booking/plan/${id}/cancel`, null);
   }
 
+  /** Whether the signed-in client still gets the first-trial new-member offer (50% off). */
+  getNewMemberOffer() {
+    return this.httpClient.get<ApiResponse<{ eligible: boolean; percent: number; defaultTrialPrice: number }>>(this.url + "/booking/newMemberOffer");
+  }
+
+  /** Provider: settle the travel zone of a gym the client typed in, before accepting the booking. */
+  setTravelZone(id: number, travelZone: 'DOWNTOWN' | 'NEARBY' | 'FAR') {
+    return this.httpClient.put<ApiResponse<Booking>>(this.url + `/booking/zone/${id}`, { travelZone });
+  }
+
   getMyBookings() {
     return this.httpClient.get<ApiResponse<Booking[]>>(this.url + "/booking/getMyBookings");
   }

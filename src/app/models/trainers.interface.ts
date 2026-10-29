@@ -16,6 +16,8 @@ export interface Trainers {
   experience: string;
   /** The trainer's own per-hour session rate; null/absent when they haven't set one (then sessions aren't priced in-app). */
   hourlyRate?: number | null;
+  /** The trainer's own trial-session price; null = the platform trial price (CA$100). */
+  trialPrice?: number | null;
   /** Free-cancellation window in hours (a client cancelling at least this far ahead is refunded in full); null = platform default (24). */
   freeCancelHours?: number | null;
   /** Share (0-100) refunded when a client cancels inside that window; null = platform default (50). */
@@ -65,6 +67,14 @@ export interface TrainerLocation {
   address?: string | null;
   /** How precise `address` is: EXACT (a real address) or AREA (only a general area). Null reads as EXACT. */
   locationPrecision?: 'EXACT' | 'AREA' | null;
+  /** Google Maps link the spot was added from; its coordinates give the travel zone. */
+  mapsUrl?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  /** What the gym charges for a day pass: paid to the gym, never through Berliz. */
+  dropInFee?: number | null;
+  /** DOWNTOWN | NEARBY | FAR from the coordinates; null when the link carried none. */
+  travelZone?: 'DOWNTOWN' | 'NEARBY' | 'FAR' | null;
   /** Optional surcharge for training here; null/0 means none. */
   fee?: number | null;
   /** Per city: does the trainer come to a client's own place here? Null reads as yes. */

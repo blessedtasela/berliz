@@ -58,4 +58,45 @@ describe('booking-price.util', () => {
     expect(estimateBookingPrice({ hourlyRate: 100, minutes: 60, locationFee: null })!.total).toBe(100);
     expect(estimateBookingPrice({ hourlyRate: 100, minutes: 60, locationFee: -5 })!.total).toBe(100);
   });
+
+  describe('trial sessions', () => {
+    it('is one flat price whatever the length, with no hourly rate needed', () => {
+      const e = estimateBookingPrice({ hourlyRate: null, minutes: 90, sessionType: 'TRIAL', trialPrice: 100 })!;
+      expect(e.isTrial).toBeTrue();
+      expect(e.sessionPrice).toBe(100);
+      expect(e.total).toBe(100);
+    });
+
+    it('takes 50% off a new member's first trial and says how much', () => {
+      const e = estimateBookingPrice({ hourlyRate: null, minutes: 60, sessionType: 'TRIAL', trialPrice: 100, newMemberPercent: 50 })!;
+      expect(e.introDiscount).toBe(50);
+      expect(e.sessionAfterRewards).toBe(50);
+      expect(e.discounted).toBeTrue();
+      expect(e.total).toBe(50);
+    });
+
+    it('keeps the gym drop-in out of the total and adds the travel fee to it', () => {
+      const e = estimateBookingPrice({
+        hourlyRate: null, minutes: 60, sessionType: 'TRIAL', trialPrice: 100, newMemberPercent: 50,
+        gymDropIn: 25, locationFee: 30,
+      })!;
+      expect(e.gymDropIn).toBe(25);
+      expect(e.total).toBe(80);
+    });
+
+    it('does not stack the new-member offer on another reward', () => {
+      const e = estimateBookingPrice({
+        hourlyRate: null, minutes: 60, sessionType: 'TRIAL', trialPrice: 100, newMemberPercent: 50,
+        promotion: { type: 'percentage', value: 20 },
+      })!;
+      expect(e.introDiscount).toBe(0);
+      expect(e.total).toBe(80);
+    });
+
+    it('is not offered on a single session', () => {
+      const e = estimateBookingPrice({ hourlyRate: 100, minutes: 60, sessionType: 'SINGLE', newMemberPercent: 50 })!;
+      expect(e.introDiscount).toBe(0);
+      expect(e.total).toBe(100);
+    });
+  });
 });

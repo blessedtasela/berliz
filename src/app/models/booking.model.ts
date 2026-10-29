@@ -33,6 +33,16 @@ export interface Booking {
   locationFee?: number | null;
   /** True when the client supplied their own location rather than picking a listed one. */
   locationCustom?: boolean | null;
+  /** SINGLE or TRIAL. */
+  sessionType?: 'SINGLE' | 'TRIAL' | null;
+  trialPrice?: number | null;
+  /** The new-member offer taken off this booking (Berliz-funded); null if none. */
+  introDiscount?: number | null;
+  /** DOWNTOWN | NEARBY | FAR, or PENDING while the trainer still has to settle it before accepting. */
+  travelZone?: 'DOWNTOWN' | 'NEARBY' | 'FAR' | 'PENDING' | null;
+  /** Paid to the gym at the door; never part of amountDue. */
+  gymDropInFee?: number | null;
+  locationMapsUrl?: string | null;
 
   /** What the client owes for this session (price + location fee, less rewards); set when the provider confirms it. */
   amountDue?: number | null;
