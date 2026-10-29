@@ -9,6 +9,7 @@ import { Trainers, TrainerLocation } from 'src/app/models/trainers.interface';
 import { LocationService } from 'src/app/services/location.service';
 import { TrainerService } from 'src/app/services/trainer.service';
 import { SelectComponent } from 'src/app/shared/select/select.component';
+import { TRAVEL_FEE, TravelZone, parseMapsLink, travelZoneFor, travelZoneLabel } from 'src/app/utils/travel-zone.util';
 import { ClientLocationQuote, groupLocations, normPlace, placeLabel, quoteClientLocation, sameCity, spotHeading } from 'src/app/utils/trainer-location.util';
 
 /** What a booking request needs to carry; spread straight into the payload (see {@link locationPayload}). */
@@ -25,6 +26,13 @@ export interface BookingLocationSelection {
   fee: number | null;
   /** A readable name for the choice (a spot's venue or address and city, or the client's own place), for the booking summary. */
   label?: string;
+  /** A gym the trainer has not listed: its name, and the Google Maps link that gives its travel zone. */
+  customGym?: string;
+  customGymMapsUrl?: string;
+  /** What the chosen gym charges at the door (shown, paid to the gym, never in the total); null when unknown. */
+  dropInFee?: number | null;
+  /** DOWNTOWN | NEARBY | FAR, or PENDING when the trainer will settle it on accepting; null when there is no gym. */
+  travelZone?: TravelZone | null;
 }
 
 /** The location fields of a booking request. Safe to spread whether or not a location was picked. */
@@ -36,6 +44,8 @@ export function locationPayload(selection: BookingLocationSelection | null | und
     customLocationCountry: selection.customLocationCountry,
     customLocationState: selection.customLocationState,
     customLocationCity: selection.customLocationCity,
+    customGym: selection.customGym,
+    customGymMapsUrl: selection.customGymMapsUrl,
   };
 }
 
@@ -85,13 +95,39 @@ interface LocationGroup {
             <span class="flex flex-col min-w-0">
               <span class="text-xs font-semibold text-gray-800 dark:text-gray-100 break-words">{{ spotName(loc) }}</span>
               <span *ngIf="spotDetail(loc)" class="text-[11px] text-gray-500 dark:text-gray-400 break-words">{{ spotDetail(loc) }}</span>
+              <span *ngIf="loc.dropInFee" class="text-[11px] text-gray-500 dark:text-gray-400" data-testid="spot-dropin">Gym drop-in about &#36;{{ loc.dropInFee | number:'1.2-2' }}, paid to the gym</span>
             </span>
           </span>
-          <span class="shrink-0 text-[11px] font-semibold"
-            [ngClass]="loc.fee ? 'text-amber-700 dark:text-amber-400' : 'text-gray-400 dark:text-gray-500'">
-            {{ loc.fee ? '+$' + (loc.fee | number:'1.2-2') : 'No extra trainer fee' }}
+          <span class="shrink-0 text-[11px] font-semibold text-right"
+            [ngClass]="spotFee(loc) ? 'text-amber-700 dark:text-amber-400' : 'text-gray-400 dark:text-gray-500'">
+            {{ spotFee(loc) ? '+$' + (spotFee(loc) | number:'1.2-2') + (spotZoneText(loc) ? ' travel' : '') : 'No extra trainer fee' }}
           </span>
         </button>
+      </div>
+
+      <button type="button" (click)="selectGym()" data-testid="custom-gym-option"
+        class="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl border text-left transition"
+        [ngClass]="gymSelected
+          ? 'bg-red-50 dark:bg-red-950/20 border-red-300 dark:border-red-800'
+          : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-red-300'">
+        <span class="flex items-center gap-2 min-w-0">
+          <i-feather name="map-pin" class="shrink-0 text-red-500" style="width:13px;height:13px;"></i-feather>
+          <span class="text-xs font-semibold text-gray-800 dark:text-gray-100">Another gym — my own pick</span>
+        </span>
+        <span class="shrink-0 text-[11px] font-semibold text-gray-400 dark:text-gray-500">Zone sets the travel fee</span>
+      </button>
+
+      <div *ngIf="gymSelected" class="flex flex-col gap-2 bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 rounded-xl p-3" data-testid="custom-gym-form">
+        <input type="text" [(ngModel)]="gymName" [ngModelOptions]="{ standalone: true }" (ngModelChange)="emit()" maxlength="200"
+          aria-label="Gym name" placeholder="Gym name, e.g. Evolve Strength" class="berliz-input w-full text-sm" />
+        <input type="url" [(ngModel)]="gymLink" [ngModelOptions]="{ standalone: true }" (ngModelChange)="emit()" maxlength="1000"
+          aria-label="Google Maps link of the gym (optional)" placeholder="Google Maps link (optional, sets the travel zone)" class="berliz-input w-full text-sm" />
+        <p class="text-[11px] text-gray-500 dark:text-gray-400 flex items-start gap-1.5" data-testid="custom-gym-zone">
+          <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+          <span *ngIf="gymZone !== 'PENDING'">{{ zoneText(gymZone) }}: {{ gymFee ? 'travel fee $' + (gymFee | number:'1.2-2') + '.' : 'no travel fee.' }}</span>
+          <span *ngIf="gymZone === 'PENDING'">Without a Google Maps link the trainer confirms the zone when accepting (no travel fee downtown, &#36;30 up to 30&nbsp;km, &#36;50 beyond). You will see the final amount before you pay.</span>
+        </p>
+        <p class="text-[11px] text-gray-500 dark:text-gray-400">The gym may charge a drop-in fee at the door: you pay that to the gym, it is not in your total.</p>
       </div>
 
       <button type="button" *ngIf="customAllowed" (click)="selectCustom()"
@@ -192,7 +228,46 @@ export class BookingLocationPickerComponent implements OnInit, OnChanges {
     else if (changes['preselect'] && !changes['preselect'].firstChange) this.apply(this.loadedTrainer, true);
   }
 
-  get hasOptions(): boolean { return this.locations.length > 0 || this.customAllowed; }
+  /** A trainer's clients can always name a gym of their own, so the picker is there whenever it knows the trainer. */
+  get hasOptions(): boolean { return this.locations.length > 0 || this.customAllowed || this.loadedTrainer != null; }
+
+  // ── "Another gym" ──
+  gymSelected = false;
+  gymName = '';
+  gymLink = '';
+
+  /** DOWNTOWN | NEARBY | FAR from the pasted Maps link, else PENDING (the trainer settles it on accepting). */
+  get gymZone(): TravelZone {
+    const point = parseMapsLink(this.gymLink);
+    return point ? travelZoneFor(point) : 'PENDING';
+  }
+
+  get gymFee(): number { return TRAVEL_FEE[this.gymZone]; }
+
+  zoneText(zone: string | null | undefined): string { return travelZoneLabel(zone); }
+
+  /** The travel fee that comes with a listed spot: the trainer's own fee for it, else its zone's. Mirrors the server. */
+  spotFee(loc: TrainerLocation): number | null {
+    if (loc.fee && loc.fee > 0) return loc.fee;
+    const zone = this.spotZone(loc);
+    return zone && TRAVEL_FEE[zone] > 0 ? TRAVEL_FEE[zone] : (loc.fee || null);
+  }
+
+  spotZone(loc: TrainerLocation): TravelZone | null {
+    if (loc.travelZone) return loc.travelZone;
+    return loc.latitude != null && loc.longitude != null ? travelZoneFor({ latitude: loc.latitude, longitude: loc.longitude }) : null;
+  }
+
+  spotZoneText(loc: TrainerLocation): string | null {
+    const zone = this.spotZone(loc);
+    return zone ? travelZoneLabel(zone) : null;
+  }
+
+  selectGym(): void {
+    this.gymSelected = !this.gymSelected;
+    if (this.gymSelected) { this.selectedId = null; this.customSelected = false; }
+    this.emit();
+  }
 
   /** The country and city are both given, so the exact fee for that place is known. */
   get placeKnown(): boolean { return !!normPlace(this.place.country) && !!normPlace(this.place.city); }
@@ -210,11 +285,13 @@ export class BookingLocationPickerComponent implements OnInit, OnChanges {
   }
 
   get selectedFee(): number | null {
+    if (this.gymSelected) return this.gymFee || null;
     if (this.customSelected) {
       const q = this.quote;
       return q?.ok ? (q.fee || null) : null;
     }
-    return this.locations.find(l => l.id === this.selectedId)?.fee || null;
+    const chosen = this.locations.find(l => l.id === this.selectedId);
+    return chosen ? this.spotFee(chosen) : null;
   }
 
   get refusal(): string {
@@ -252,12 +329,14 @@ export class BookingLocationPickerComponent implements OnInit, OnChanges {
     // Tapping the selected one again clears it -- the choice is optional.
     this.selectedId = this.selectedId === loc.id ? null : (loc.id ?? null);
     this.customSelected = false;
+    this.gymSelected = false;
     this.emit();
   }
 
   selectCustom(): void {
     this.customSelected = !this.customSelected;
     this.selectedId = null;
+    this.gymSelected = false;
     if (this.customSelected) this.ensureCountries();
     this.emit();
   }
@@ -289,19 +368,26 @@ export class BookingLocationPickerComponent implements OnInit, OnChanges {
     const place = this.customSelected ? this.place : null;
     const quote = this.quote;
     const refused = this.customSelected && !!quote && !quote.ok;
+    const gym = this.gymSelected ? this.gymName.trim() : '';
+    const chosen = this.locations.find(l => l.id === this.selectedId);
     this.selectionChange.emit({
+      customGym: gym || undefined,
+      customGymMapsUrl: gym && this.gymLink.trim() ? this.gymLink.trim() : undefined,
+      dropInFee: chosen?.dropInFee ?? null,
+      travelZone: this.gymSelected ? this.gymZone : (chosen ? this.spotZone(chosen) : null),
       trainerLocationId: this.selectedId ?? undefined,
       customLocation: this.customSelected && custom ? custom : undefined,
       customLocationCountry: place?.country.trim() || undefined,
       customLocationState: place?.stateProvince.trim() || undefined,
       customLocationCity: place?.city.trim() || undefined,
-      incomplete: this.customSelected && (!custom || !this.placeKnown || refused),
+      incomplete: (this.customSelected && (!custom || !this.placeKnown || refused)) || (this.gymSelected && !gym),
       fee: this.selectedFee,
       label: this.selectionLabel(custom),
     });
   }
 
   private selectionLabel(custom: string): string | undefined {
+    if (this.gymSelected) return this.gymName.trim() ? `${this.gymName.trim()} (your pick)` : undefined;
     if (this.customSelected) return custom ? `Your place: ${custom}` : undefined;
     const loc = this.locations.find(l => l.id === this.selectedId);
     if (!loc) return undefined;

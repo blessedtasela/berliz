@@ -21,6 +21,8 @@ import { SubscriptionService } from 'src/app/services/subscription.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { WaitlistService } from 'src/app/services/waitlist.service';
+import { BookingService } from 'src/app/services/booking.service';
+import { DEFAULT_TRIAL_PRICE } from '../booking-price-estimate/booking-price.util';
 import { clearGuestDraft, loadGuestDraft, saveGuestDraft } from '../guest-booking-draft';
 import { ProviderKind, providerSlug, resolveProviderBySlug } from '../resolve-provider';
 import { environment } from 'src/environments/environment';
@@ -101,6 +103,48 @@ export class BookingPageComponent implements OnInit, OnDestroy {
 
   notes = '';
 
+  // ── Trial or single ──────────────────────────────────────────────────────
+  /** A trial is a trainer's first-session price; a center only sells single sessions. */
+  sessionType: 'SINGLE' | 'TRIAL' = 'SINGLE';
+  /** The trainer's own trial price, else the platform's CA$100. */
+  trialPrice = DEFAULT_TRIAL_PRICE;
+  /**
+   * Percent off a new member's first trial. A visitor who is not signed in is shown the offer ("New members: ...");
+   * a signed-in client sees it only while the server says they are still new.
+   */
+  newMemberPercent: number | null = 50;
+  private offerRequested = false;
+
+  /** "CA$100 down to CA$50": what the new-member offer does to this trainer's trial. */
+  get trialOfferText(): string | null {
+    if (!this.newMemberPercent) return null;
+    const after = Math.round(this.trialPrice * (100 - this.newMemberPercent)) / 100;
+    return `New members: ${this.newMemberPercent}% off your first trial session, CA$${this.trialPrice} down to CA$${after}.`;
+  }
+
+  get canChooseTrial(): boolean {
+    return this.kind === 'trainer' && !this.ownedPlan;
+  }
+
+  /** The session type the request will carry: only a trainer trial, and never out of a pack (that session is already paid for). */
+  get requestedSessionType(): 'SINGLE' | 'TRIAL' {
+    return this.sessionType === 'TRIAL' && this.canChooseTrial ? 'TRIAL' : 'SINGLE';
+  }
+
+  chooseSessionType(type: 'SINGLE' | 'TRIAL'): void {
+    this.sessionType = type;
+    if (type === 'TRIAL' && this.selectedOption.kind !== 'single') this.selectedOption = { kind: 'single' };
+  }
+
+  private loadNewMemberOffer(): void {
+    if (this.offerRequested) return;
+    this.offerRequested = true;
+    this.bookingService.getNewMemberOffer().pipe(take(1), catchError(() => of(null))).subscribe(res => {
+      const offer = res?.data;
+      if (offer) this.newMemberPercent = offer.eligible ? offer.percent : null;
+    });
+  }
+
   /** Where to train -- trainers only; set by the location picker, which hides itself when the trainer offers no choice. */
   locationSelection: BookingLocationSelection | null = null;
   readonly maxNotesLength = 500;
@@ -134,6 +178,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     private snackBar: SnackBarService,
     private seoService: SeoService,
     private waitlistService: WaitlistService,
+    private bookingService: BookingService,
   ) { }
 
   private get earliestBookableTime(): number {
@@ -217,6 +262,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     this.store.dispatch(loadUser());
     this.store.select(selectUser).pipe(takeUntil(this.destroy$)).subscribe(user => {
       this.user = user;
+      if (user?.email) this.loadNewMemberOffer();
       // The profile can arrive after the provider does (back from sign-in): pick the saved choice up then.
       if (user?.email && this.providerId && this.restoreGuestDraft()) {
         this.fetchSlotsForSelectedDate();
@@ -285,6 +331,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
         this.providerPhotoUrl = provider.photoUrl;
         this.contactEmail = provider.contactEmail ?? null;
         this.contactPhone = provider.contactPhone ?? null;
+        this.trialPrice = provider.trialPrice ?? DEFAULT_TRIAL_PRICE;
 
         this.updateSeoTags();
         this.fetchPackages();
@@ -580,6 +627,8 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     if (this.kind === 'trainer' && this.locationSelection) {
       Object.assign(payload, locationPayload(this.locationSelection));
     }
+
+    if (this.requestedSessionType === 'TRIAL') payload.sessionType = 'TRIAL';
 
     if (this.selectedOption.kind === 'ownedPackage') {
       payload.packageSubscriptionId = this.selectedOption.subscription.id;

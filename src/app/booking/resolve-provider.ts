@@ -14,6 +14,8 @@ export interface ResolvedProvider {
   /** Public contact details the provider chose to publish (centers only so far). */
   contactEmail?: string | null;
   contactPhone?: string | null;
+  /** A trainer's own trial-session price; null = the platform's CA$100 trial. */
+  trialPrice?: number | null;
 }
 
 /** "Jo Smith" <-> "Jo-Smith": the provider's name is its URL segment. */
@@ -48,6 +50,7 @@ export function resolveProviderBySlug(
           photoUrl: resolveStrapiUrl(match.photoResponse?.photoUrl) || null,
           contactEmail: match.contactEmail || null,
           contactPhone: match.contactPhone || null,
+          trialPrice: match.trialPrice ?? null,
         }
         : null;
     }),
