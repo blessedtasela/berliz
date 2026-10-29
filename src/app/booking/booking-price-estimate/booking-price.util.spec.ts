@@ -59,3 +59,51 @@ describe('booking-price.util', () => {
     expect(estimateBookingPrice({ hourlyRate: 100, minutes: 60, locationFee: -5 })!.total).toBe(100);
   });
 });
+
+describe('booking-price.util trial sessions', () => {
+  it('prices a trial at its flat price, whatever the length or the hourly rate', () => {
+    const e = estimateBookingPrice({ hourlyRate: 80, minutes: 90, trialPrice: 100 })!;
+    expect(e.trial).toBeTrue();
+    expect(e.sessionPrice).toBe(100);
+    expect(e.total).toBe(100);
+  });
+
+  it('prices a trial for a trainer with no hourly rate', () => {
+    const e = estimateBookingPrice({ hourlyRate: null, minutes: 60, trialPrice: 100 })!;
+    expect(e.total).toBe(100);
+  });
+
+  it('takes the new-member offer off a first trial: CA$100 down to CA$50', () => {
+    const e = estimateBookingPrice({ hourlyRate: null, minutes: 60, trialPrice: 100, introPercent: 50 })!;
+    expect(e.introDiscount).toBe(50);
+    expect(e.sessionAfterRewards).toBe(50);
+    expect(e.payable).toBe(50);
+    expect(e.discounted).toBeTrue();
+  });
+
+  it('keeps the gym drop-in out of what Berliz charges, but in the real total (the Evolve Strength example)', () => {
+    const e = estimateBookingPrice({ hourlyRate: null, minutes: 60, trialPrice: 100, introPercent: 50, locationFee: 0, dropInFee: 25 })!;
+    expect(e.payable).toBe(50);
+    expect(e.dropInFee).toBe(25);
+    expect(e.totalWithDropIn).toBe(75);
+  });
+
+  it('adds a travel fee to what is payable, and the drop-in on top of that', () => {
+    const e = estimateBookingPrice({ hourlyRate: null, minutes: 60, trialPrice: 100, introPercent: 50, locationFee: 30, dropInFee: 25 })!;
+    expect(e.payable).toBe(80);
+    expect(e.totalWithDropIn).toBe(105);
+  });
+
+  it('never gives the new-member offer to a regular session, and a package covers the whole session', () => {
+    const regular = estimateBookingPrice({ hourlyRate: 100, minutes: 60, introPercent: 50 })!;
+    expect(regular.introDiscount).toBe(0);
+    expect(regular.total).toBe(100);
+    const covered = estimateBookingPrice({ hourlyRate: 100, minutes: 60, usesPackage: true, dropInFee: 20 })!;
+    expect(covered.total).toBe(0);
+    expect(covered.totalWithDropIn).toBe(20);
+  });
+
+  it('still returns nothing for a regular session with no rate', () => {
+    expect(estimateBookingPrice({ hourlyRate: null, minutes: 60 })).toBeNull();
+  });
+});

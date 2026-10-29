@@ -16,6 +16,10 @@ export interface Trainers {
   experience: string;
   /** The trainer's own per-hour session rate; null/absent when they haven't set one (then sessions aren't priced in-app). */
   hourlyRate?: number | null;
+  /** The trainer's own price for a trial (first) session; null = the platform default. */
+  trialPrice?: number | null;
+  /** Free-text booking terms the trainer wrote, shown beside the generated terms. */
+  bookingPolicy?: string | null;
   /** Free-cancellation window in hours (a client cancelling at least this far ahead is refunded in full); null = platform default (24). */
   freeCancelHours?: number | null;
   /** Share (0-100) refunded when a client cancels inside that window; null = platform default (50). */
@@ -71,6 +75,12 @@ export interface TrainerLocation {
   clientLocationAllowed?: boolean | null;
   /** Per city fee for that; null = use the trainer-wide fee, 0 = free. */
   clientLocationFee?: number | null;
+  /** What the gym charges at the door for a day pass (paid to the gym, never through Berliz). Null = none. */
+  dropInFee?: number | null;
+  /** Google Maps link of this spot; its coordinates give the travel zone. */
+  mapsUrl?: string | null;
+  /** DOWNTOWN | NEARBY | FAR, from the link's coordinates; null when it carried none. */
+  travelZone?: string | null;
 }
 
 export interface UpdateTrainerPhotoRequest {

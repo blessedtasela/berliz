@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../models/Api.interface';
-import { Booking, BookingPlan, BookingPlanPreview, BookingPlanRequest, MyClientSummary } from '../models/booking.model';
+import { Booking, BookingPlan, BookingPlanPreview, BookingPlanRequest, MyClientSummary, NewMemberOffer } from '../models/booking.model';
 import { MyTrainerSummary } from '../models/progress-share.model';
 
 @Injectable({
@@ -16,6 +16,11 @@ export class BookingService {
 
   createBooking(data: any) {
     return this.httpClient.post<ApiResponse<Booking>>(this.url + "/booking/add", data);
+  }
+
+  /** Whether the signed-in client still gets the new-member offer on a first trial, and the platform default trial price. */
+  getNewMemberOffer() {
+    return this.httpClient.get<ApiResponse<NewMemberOffer>>(this.url + "/booking/newMemberOffer");
   }
 
   /** Client-facing: a time outside the provider's normal lead-time/availability rules. `data.notes` is required. */
