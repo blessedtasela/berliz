@@ -114,7 +114,8 @@ export class ActivateAccountComponent implements OnInit {
       .subscribe({
         next: (response: any) => {
           this.resending = false;
-          this.resent = true;
+          // An already-active account is told so; only a real send should say a new code is on its way.
+          this.resent = response?.data !== 'ALREADY_ACTIVE';
           this.snackBarService.openSnackBar(response?.message || 'A new code is on its way.', '');
         },
         error: (error: any) => {

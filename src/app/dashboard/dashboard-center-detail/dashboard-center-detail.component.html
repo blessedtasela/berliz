@@ -203,7 +203,7 @@
         <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Videos</h2>
         <p *ngIf="album.comment" class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-line break-words">{{ album.comment }}</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <video *ngFor="let video of album.videos" [src]="resolveStrapiUrl(video.videoUrl)" controls
+            <video loop *ngFor="let video of album.videos" [src]="resolveStrapiUrl(video.videoUrl)" controls
                 class="w-full aspect-video rounded-xl border border-gray-200 dark:border-gray-700 bg-black object-cover"></video>
         </div>
     </div>

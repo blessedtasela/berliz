@@ -64,6 +64,9 @@ export interface Booking {
   /** This session's share of the plan total (discount already included). */
   planSessionPrice?: number | null;
 
+  /** What both sides quote about this booking, e.g. BK-000123. */
+  reference?: string | null;
+
   date: Date;
   lastUpdate: Date;
 

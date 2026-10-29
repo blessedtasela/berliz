@@ -10,7 +10,8 @@ describe('Berliz services content', () => {
       expect(s.benefits.length).toBeGreaterThan(0);
       expect(s.bestFor.length).toBeGreaterThan(0);
     }
-    expect(findService('shop')?.comingSoon).toBeTrue();
+    expect(findService('shop')?.comingSoon).toBeFalsy();
+    expect(findService('shop')?.ctaLink).toBe('/shop');
   });
 
   it('finds a service by slug, ignoring case', () => {

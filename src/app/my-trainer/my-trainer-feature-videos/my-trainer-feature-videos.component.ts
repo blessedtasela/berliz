@@ -47,8 +47,8 @@ export class MyTrainerFeatureVideosComponent implements OnInit, OnChanges, OnDes
   slots: VideoSlot[] = [];
 
   readonly defaultVideo = 'assets/videos/demo_ok.mp4';
-  readonly MIN_DURATION = 15;
-  readonly MAX_DURATION = 30;
+  readonly MIN_DURATION = 7;
+  readonly MAX_DURATION = 15;
   readonly MAX_FILE_MB = 50;
   readonly Math = Math;
 

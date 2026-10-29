@@ -145,7 +145,7 @@
         <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Featured videos</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <div *ngFor="let fv of trainerFeatureVideos" class="flex flex-col gap-2">
-                <video *ngIf="fv.video?.videoUrl" [src]="resolveStrapiUrl(fv.video.videoUrl)" controls
+                <video loop *ngIf="fv.video?.videoUrl" [src]="resolveStrapiUrl(fv.video.videoUrl)" controls
                     class="w-full aspect-video rounded-xl border border-gray-200 dark:border-gray-700 bg-black object-cover"></video>
                 <p *ngIf="fv.motivation" class="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-3">{{ fv.motivation }}</p>
             </div>
@@ -189,7 +189,7 @@
         <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Videos</h2>
         <p *ngIf="trainerVideoAlbum?.comment" class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-line break-words">{{ trainerVideoAlbum?.comment }}</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <video *ngFor="let video of trainerVideoAlbum?.videos" [src]="resolveStrapiUrl(video.videoUrl)" controls
+            <video loop *ngFor="let video of trainerVideoAlbum?.videos" [src]="resolveStrapiUrl(video.videoUrl)" controls
                 class="w-full aspect-video rounded-xl border border-gray-200 dark:border-gray-700 bg-black object-cover"></video>
         </div>
     </div>

@@ -38,7 +38,7 @@ export class UserService {
 
   sendActivationToken(email: string): Observable<ApiResponse<string>> {
     return this.httpClient.post<ApiResponse<string>>(
-      this.url + `/user/sendActivationToken/${email}`,
+      this.url + `/user/sendActivationToken/${encodeURIComponent((email ?? '').trim())}`,
       null
     );
   }

@@ -54,8 +54,8 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
   /** No minimum: the server accepts any number, and a trainer must be able to save after removing clips. */
   readonly MIN_VIDEOS = 0;
   readonly MAX_FILE_MB = 100;
-  readonly MIN_DURATION = 15;
-  readonly MAX_DURATION = 30;
+  readonly MIN_DURATION = 7;
+  readonly MAX_DURATION = 15;
   readonly Math = Math;
 
   // ── Slots ─────────────────────────────────────────────────────────────────

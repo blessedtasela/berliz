@@ -24,7 +24,7 @@
     <div *ngIf="!loading && exercise" class="flex flex-col gap-5">
 
         <!-- Video (real demo) or still image fallback -->
-        <video *ngIf="exercise.video?.videoUrl" [src]="exercise.video!.videoUrl | strapiUrl" controls
+        <video loop *ngIf="exercise.video?.videoUrl" [src]="exercise.video!.videoUrl | strapiUrl" controls
             class="w-full rounded-2xl border border-gray-200 dark:border-gray-800 bg-black"></video>
         <img alt="" *ngIf="!exercise.video?.videoUrl && exercise.demo" [src]="demoSrc" appZoom
             class="w-full h-52 object-cover rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800" />
