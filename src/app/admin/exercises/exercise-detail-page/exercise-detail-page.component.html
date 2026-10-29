@@ -38,7 +38,7 @@
             class="w-full h-40 object-contain rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800" />
 
         <!-- Real demo video, Strapi-hosted -->
-        <video *ngIf="exerciseData.video?.videoUrl" [src]="exerciseData.video!.videoUrl | strapiUrl" controls
+        <video loop *ngIf="exerciseData.video?.videoUrl" [src]="exerciseData.video!.videoUrl | strapiUrl" controls
             class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-black"></video>
 
         <div class="flex items-center gap-2 flex-wrap">

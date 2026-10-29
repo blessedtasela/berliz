@@ -27,7 +27,7 @@
 
         <!-- Media -->
         <div *ngIf="mediaUrl" class="shrink-0 bg-black flex items-center justify-center" style="max-height: 45%;">
-            <video *ngIf="isVideo; else imgTpl" [src]="mediaUrl | strapiUrl"
+            <video loop *ngIf="isVideo; else imgTpl" [src]="mediaUrl | strapiUrl"
                 class="max-h-full max-w-full" controls autoplay playsinline
                 (pointerdown)="$event.stopPropagation()"></video>
             <ng-template #imgTpl>

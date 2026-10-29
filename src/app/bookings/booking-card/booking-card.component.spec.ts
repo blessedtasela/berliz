@@ -118,6 +118,24 @@ describe('BookingCardComponent', () => {
     });
   });
 
+  describe('the booking reference', () => {
+    const ref = () => (fixture.nativeElement as HTMLElement).querySelector('[data-testid="booking-reference"]');
+
+    it('shows the reference both sides can quote', () => {
+      component.booking.reference = 'BK-000123';
+      fixture.detectChanges();
+
+      expect(ref()?.textContent).toContain('BK-000123');
+    });
+
+    it('shows nothing for an older booking without one', () => {
+      component.booking.reference = null;
+      fixture.detectChanges();
+
+      expect(ref()).toBeNull();
+    });
+  });
+
   describe('cancel, no-show and reopen', () => {
     const lastDialogMessage = (): string => (dialogSpy.open.calls.mostRecent().args[1] as any).data.message;
 
