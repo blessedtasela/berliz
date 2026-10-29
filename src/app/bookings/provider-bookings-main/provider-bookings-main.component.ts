@@ -223,6 +223,9 @@ export class ProviderBookingsMainComponent implements OnInit, OnDestroy {
     this.dialog.open(BookForClientModalComponent, {
       width: '400px',
       maxWidth: '95vw',
+      maxHeight: '92vh',
+      // The modal scrolls its own body so the buttons stay reachable on short screens.
+      autoFocus: false,
     }).afterClosed().subscribe((created: boolean | undefined) => {
       if (created) this.refresh();
     });
