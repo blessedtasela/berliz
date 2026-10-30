@@ -63,6 +63,10 @@
             <i-feather name="clock" style="width:12px;height:12px;"></i-feather>
             {{ payByText }}
         </div>
+        <div *ngIf="directPaymentText" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400" data-testid="direct-payment-note">
+            <i-feather name="info" style="width:12px;height:12px;"></i-feather>
+            {{ directPaymentText }}
+        </div>
     </div>
 
     <button *ngIf="canClientPay" type="button" (click)="pay()"

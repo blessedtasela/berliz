@@ -20,6 +20,8 @@ export interface Trainers {
   trialPrice?: number | null;
   /** Free-text booking terms the trainer wrote, shown beside the generated terms. */
   bookingPolicy?: string | null;
+  /** "DIRECT" when clients pay this trainer directly: Berliz keeps the booking on record but never charges, refunds or pays out. Read-only; null otherwise. */
+  paymentMode?: 'DIRECT' | null;
   /** Free-cancellation window in hours (a client cancelling at least this far ahead is refunded in full); null = platform default (24). */
   freeCancelHours?: number | null;
   /** Share (0-100) refunded when a client cancels inside that window; null = platform default (50). */

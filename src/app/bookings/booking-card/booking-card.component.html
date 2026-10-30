@@ -72,6 +72,10 @@
             <i-feather name="clock" class="shrink-0" style="width:11px;height:11px;"></i-feather>
             {{ payByText }}
         </p>
+        <p *ngIf="directPaymentText" class="text-[11px] text-gray-500 dark:text-gray-400 mt-1.5 flex items-center gap-1" data-testid="direct-payment-note">
+            <i-feather name="info" class="shrink-0" style="width:11px;height:11px;"></i-feather>
+            {{ directPaymentText }}
+        </p>
 
         <div class="flex items-center gap-1.5 mt-2 flex-wrap" (click)="$event.stopPropagation()">
             <button *ngIf="canClientPay" type="button" (click)="pay()"

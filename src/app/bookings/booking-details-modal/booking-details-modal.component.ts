@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { Booking } from 'src/app/models/booking.model';
 import { resolveStrapiUrl } from 'src/app/utils/strapi-url.util';
-import { amountToPay, canClientPay, payByNote, payLabel, paymentBadge, statusLabel } from '../booking-payment.util';
+import { amountToPay, canClientPay, directPaymentNote, payByNote, payLabel, paymentBadge, statusLabel } from '../booking-payment.util';
 
 export interface BookingDetailsModalData {
   booking: Booking;
@@ -116,6 +116,11 @@ export class BookingDetailsModalComponent {
 
   get payByText(): string | null {
     return payByNote(this.booking);
+  }
+
+  /** "Pay <provider> directly. Berliz keeps the booking on record." for a provider who takes payment themselves. */
+  get directPaymentText(): string | null {
+    return directPaymentNote(this.booking, this.mode, this.booking.trainerName ?? this.booking.centerName ?? null);
   }
 
   pay(): void {

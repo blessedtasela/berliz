@@ -72,6 +72,12 @@ export function paymentBadge(b: Booking, mode: BookingMode): PaymentBadge | null
       return { label: 'Refunded', classes: 'text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700' };
     case 'PARTIALLY_REFUNDED':
       return { label: 'Partly refunded', classes: 'text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700' };
+    case 'DIRECT':
+      // Berliz tracks the booking but never takes money for it: the client pays the provider themselves.
+      return {
+        label: mode === 'provider' ? 'Paid directly' : 'Pay directly',
+        classes: 'text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700',
+      };
     case 'UNPAID':
       if (b.status === 'pending') return null;
       return {
@@ -81,6 +87,18 @@ export function paymentBadge(b: Booking, mode: BookingMode): PaymentBadge | null
     default:
       return null;
   }
+}
+
+/**
+ * What to say about a booking whose provider takes payment themselves (paymentStatus DIRECT): no Pay button, no deadline,
+ * no reminders and no refund through Berliz, so the client is told who to pay and that the booking is still on record.
+ * Null for every other booking, and for a cancelled one.
+ */
+export function directPaymentNote(b: Booking, mode: BookingMode, providerName?: string | null): string | null {
+  if (b.paymentStatus !== 'DIRECT' || b.status === 'cancelled') return null;
+  return mode === 'client'
+    ? `Pay ${providerName?.trim() || 'your provider'} directly. Berliz keeps the booking on record.`
+    : 'This client pays you directly. Berliz keeps the booking on record but does not charge, refund or pay out for it.';
 }
 
 /** One line for a payment that has to be made by a deadline (a confirmed, wholly unpaid session). */

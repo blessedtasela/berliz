@@ -12,6 +12,8 @@ export interface Centers {
   freeCancelHours?: number | null;
   /** Share (0-100) refunded when a client cancels inside that window; null = platform default (50). */
   lateCancelRefundPercent?: number | null;
+  /** "DIRECT" when clients pay this center directly: Berliz keeps the booking on record but never charges, refunds or pays out. Read-only; null otherwise. */
+  paymentMode?: 'DIRECT' | null;
   /** Public contact details the center chose to publish, so visitors can reach it before (or instead of) booking online. */
   contactEmail?: string | null;
   contactPhone?: string | null;

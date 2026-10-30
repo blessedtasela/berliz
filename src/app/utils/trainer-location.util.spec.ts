@@ -40,7 +40,7 @@ describe('trainer-location util', () => {
       expect(areas.length).toBe(2);
       expect(areas[0].city).toBe('Vancouver');
       expect(areas[0].spots.length).toBe(2);
-      expect(areas[0].spots[0]).toEqual({ venue: "Gold's Gym", address: '1234 W Broadway', precision: 'EXACT', fee: 5 });
+      expect(areas[0].spots[0]).toEqual({ venue: "Gold's Gym", address: '1234 W Broadway', precision: 'EXACT', fee: 5, dropInFee: null, mapsUrl: '' });
       expect(areas[0].spots[1].precision).toBe('AREA');
       expect(areas[1].city).toBe('Burnaby');
       expect(areas[1].spots).toEqual([], 'a bare row is just "I cover this city", not a spot');
@@ -85,8 +85,8 @@ describe('trainer-location util', () => {
       const rows = flattenAreas([vancouver({
         clientFee: 10,
         spots: [
-          { venue: "Gold's Gym", address: '1234 W Broadway', precision: 'EXACT', fee: 5 },
-          { venue: 'Kits Beach', address: 'near Kits', precision: 'AREA', fee: null },
+          { venue: "Gold's Gym", address: '1234 W Broadway', precision: 'EXACT', fee: 5, dropInFee: null, mapsUrl: '' },
+          { venue: 'Kits Beach', address: 'near Kits', precision: 'AREA', fee: null, dropInFee: null, mapsUrl: '' },
         ],
       })]);
 
@@ -105,8 +105,8 @@ describe('trainer-location util', () => {
 
     it('drops a spot left completely blank, and a blank address has no precision', () => {
       const rows = flattenAreas([vancouver({ spots: [
-        { venue: '', address: '  ', precision: 'AREA', fee: null },
-        { venue: 'Home studio', address: '', precision: 'AREA', fee: null },
+        { venue: '', address: '  ', precision: 'AREA', fee: null, dropInFee: null, mapsUrl: '' },
+        { venue: 'Home studio', address: '', precision: 'AREA', fee: null, dropInFee: null, mapsUrl: '' },
       ] })]);
 
       expect(rows.length).toBe(1);
@@ -120,9 +120,51 @@ describe('trainer-location util', () => {
     });
 
     it('turns a spot fee of zero or blank into no fee', () => {
-      const rows = flattenAreas([vancouver({ spots: [{ venue: 'Gym', address: '', precision: 'EXACT', fee: 0 }] })]);
+      const rows = flattenAreas([vancouver({ spots: [{ venue: 'Gym', address: '', precision: 'EXACT', fee: 0, dropInFee: null, mapsUrl: '' }] })]);
 
       expect(rows[0].fee).toBeNull();
+    });
+
+    describe("the gym's own drop-in fee and Maps link", () => {
+      const spot = (over: Partial<TrainerArea['spots'][number]> = {}) =>
+        ({ venue: "Gold's Gym", address: '', precision: 'EXACT' as const, fee: null, dropInFee: null, mapsUrl: '', ...over });
+
+      it('saves the drop-in fee and the Maps link on the spot, apart from the trainer fee', () => {
+        const rows = flattenAreas([vancouver({ spots: [spot({ fee: 5, dropInFee: 20, mapsUrl: '  https://maps.app.goo.gl/abc  ' })] })]);
+
+        expect(rows[0].fee).toBe(5);
+        expect(rows[0].dropInFee).toBe(20);
+        expect(rows[0].mapsUrl).toBe('https://maps.app.goo.gl/abc');
+      });
+
+      it('treats a blank or zero drop-in fee and a blank link as none', () => {
+        const rows = flattenAreas([vancouver({ spots: [spot({ dropInFee: 0 }), spot({ venue: 'B', dropInFee: null, mapsUrl: '   ' })] })]);
+
+        expect(rows.map(r => r.dropInFee)).toEqual([null, null]);
+        expect(rows.map(r => r.mapsUrl)).toEqual([null, null]);
+      });
+
+      it('keeps a spot that only has a drop-in fee or only a Maps link', () => {
+        const rows = flattenAreas([vancouver({ spots: [spot({ venue: '', dropInFee: 15 }), spot({ venue: '', mapsUrl: 'https://maps.app.goo.gl/x' })] })]);
+
+        expect(rows.length).toBe(2);
+      });
+
+      it('gives a bare city row neither', () => {
+        const rows = flattenAreas([vancouver()]);
+
+        expect(rows[0]).toEqual(jasmine.objectContaining({ dropInFee: null, mapsUrl: null }));
+      });
+
+      it('round-trips through saved rows without changing either field', () => {
+        const saved: TrainerLocation[] = [row({ venue: "Gold's Gym", fee: 5, dropInFee: 20, mapsUrl: 'https://maps.app.goo.gl/abc' })];
+
+        const [again] = flattenAreas(groupLocations(saved));
+
+        expect(again.fee).toBe(5);
+        expect(again.dropInFee).toBe(20);
+        expect(again.mapsUrl).toBe('https://maps.app.goo.gl/abc');
+      });
     });
 
     it('skips a city with no country or no name', () => {

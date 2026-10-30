@@ -14,8 +14,12 @@ export interface TrainerSpot {
   address: string;
   /** How precise `address` is: a real address, or only a general area. */
   precision: LocationPrecision;
-  /** Extra charge for training at this spot; null = none. */
+  /** Extra charge for training at this spot (the trainer's own cost, paid through Berliz); null = none. */
   fee: number | null;
+  /** What the GYM charges a visitor at the door (a day pass), paid at the gym and never through Berliz; null = none. */
+  dropInFee: number | null;
+  /** Google Maps link of the spot; the server works out the travel zone from it. */
+  mapsUrl: string;
 }
 
 export interface TrainerArea {
@@ -38,6 +42,8 @@ export interface TrainerLocationPayload {
   address: string | null;
   locationPrecision: LocationPrecision | null;
   fee: number | null;
+  dropInFee: number | null;
+  mapsUrl: string | null;
   clientLocationAllowed: boolean;
   clientLocationFee: number | null;
 }
@@ -70,7 +76,8 @@ export function placeLabel(place: { city?: string | null; stateProvince?: string
 
 /** A bare city row has nothing about a particular spot; it only says "I cover this city". */
 function isBareRow(row: TrainerLocation): boolean {
-  return !row.venue?.trim() && !row.address?.trim() && !(row.fee && row.fee > 0);
+  return !row.venue?.trim() && !row.address?.trim() && !(row.fee && row.fee > 0)
+    && !(row.dropInFee && row.dropInFee > 0) && !row.mapsUrl?.trim();
 }
 
 /** Saved rows -> cities with their spots, in the order the cities first appear. */
@@ -100,6 +107,8 @@ export function groupLocations(rows: TrainerLocation[] | null | undefined): Trai
         address: row.address ?? '',
         precision: row.locationPrecision === 'AREA' ? 'AREA' : 'EXACT',
         fee: row.fee ?? null,
+        dropInFee: row.dropInFee ?? null,
+        mapsUrl: row.mapsUrl ?? '',
       });
     }
   }
@@ -130,10 +139,11 @@ export function flattenAreas(areas: TrainerArea[] | null | undefined): TrainerLo
     const clientLocationFee = cleanFeeKeepZero(area.clientFee);
 
     const base = { country, stateProvince: state, city, clientLocationAllowed: area.clientAllowed !== false, clientLocationFee };
-    const spots = (area.spots ?? []).filter(s => s.venue?.trim() || s.address?.trim() || cleanFee(s.fee) !== null);
+    const spots = (area.spots ?? []).filter(s =>
+      s.venue?.trim() || s.address?.trim() || cleanFee(s.fee) !== null || cleanFee(s.dropInFee) !== null || s.mapsUrl?.trim());
 
     if (spots.length === 0) {
-      rows.push({ ...base, venue: null, address: null, locationPrecision: null, fee: null });
+      rows.push({ ...base, venue: null, address: null, locationPrecision: null, fee: null, dropInFee: null, mapsUrl: null });
       continue;
     }
     for (const spot of spots) {
@@ -144,6 +154,8 @@ export function flattenAreas(areas: TrainerArea[] | null | undefined): TrainerLo
         address,
         locationPrecision: address ? (spot.precision === 'AREA' ? 'AREA' : 'EXACT') : null,
         fee: cleanFee(spot.fee),
+        dropInFee: cleanFee(spot.dropInFee),
+        mapsUrl: spot.mapsUrl?.trim() || null,
       });
     }
   }
