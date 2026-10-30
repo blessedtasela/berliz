@@ -108,6 +108,36 @@ describe('BookingPageComponent plans', () => {
     page.user = { email: 'a@b.c' };
   });
 
+  describe('trial session', () => {
+    beforeEach(() => {
+      page.kind = 'trainer';
+      page.trialPrice = 100;
+      page.newMemberPercent = 50;
+    });
+
+    it('states the new-member offer with the real prices', () => {
+      expect(page.trialOfferText).toBe('New members: 50% off your first trial session, CA$100 down to CA$50.');
+      page.trialPrice = 80;
+      expect(page.trialOfferText).toBe('New members: 50% off your first trial session, CA$80 down to CA$40.');
+    });
+
+    it('has no offer text once the client is no longer new', () => {
+      page.newMemberPercent = null;
+      expect(page.trialOfferText).toBeNull();
+    });
+
+    it('asks for a trial only for a trainer, and never out of a pack', () => {
+      page.sessionType = 'TRIAL';
+      expect(page.requestedSessionType).toBe('TRIAL');
+      page.kind = 'center';
+      expect(page.requestedSessionType).toBe('SINGLE');
+      page.kind = 'trainer';
+      page.selectedOption = { kind: 'ownedPackage', subscription: { id: 1, providerPackage: plan() } };
+      page.ownedByPackageId = new Map([[plan().id, { id: 1, providerPackage: plan() } as any]]);
+      expect(page.requestedSessionType).toBe('SINGLE');
+    });
+  });
+
   describe('the main button', () => {
     it('requests a booking for a single session', () => {
       expect(page.primaryLabel).toBe('Request booking');

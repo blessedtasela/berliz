@@ -67,7 +67,7 @@ describe('booking-price.util', () => {
       expect(e.total).toBe(100);
     });
 
-    it('takes 50% off a new member's first trial and says how much', () => {
+    it('takes 50% off a new member first trial and says how much', () => {
       const e = estimateBookingPrice({ hourlyRate: null, minutes: 60, sessionType: 'TRIAL', trialPrice: 100, newMemberPercent: 50 })!;
       expect(e.introDiscount).toBe(50);
       expect(e.sessionAfterRewards).toBe(50);

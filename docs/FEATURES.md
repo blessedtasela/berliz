@@ -104,6 +104,7 @@ that ships a feature — add the row under the right domain, and log it under
 | Member directory | ✅ | `/dashboard/member-directory` |
 | "Find a Provider" flow | ✅ | |
 | Bookings | ✅ | `/dashboard/my-bookings`; each provider can set their own booking notice (lead time) AND their own session length (slot duration, 5-480 min, default 60) in My Availability Editor — `/availability/leadTime` \| `/slotDuration`. A client can also send an "urgent request" outside normal hours (flagged on the provider's list); a provider can approve-and-reschedule a pending request to a new time in one step, or book+confirm directly for one of their own clients |
+| Trial session, new-member offer, gym drop-in and travel zones on the booking page | ✅ | A trainer booking offers **Single session** or **Trial session** (one flat price: the trainer's own, else CA$100). A client new to Berliz sees "New members: 50% off your first trial session, CA$100 down to CA$50." and the discount is already in the total they see before sending the request (Berliz funds it, so the trainer is paid in full; it is not stacked on another reward). The estimate card always shows a clear total, the list price crossed out, what was taken off, the travel fee with its zone, and what is saved. A gym's drop-in fee is shown as "Pay at the gym" and is never in the total; nothing is charged until the trainer confirms and the client has 24 hours to pay; the cancellation line gives a concrete refund example. A client can also pick "Another gym": name + optional Google Maps link, whose coordinates set the zone (downtown/West End CA$0, up to 30 km CA$30, beyond CA$50); without a link the trainer settles the zone when accepting. Backend: `POST /booking/add` takes `sessionType`, `customGym`, `customGymMapsUrl`; `GET /booking/newMemberOffer`; `PUT /booking/zone/{id}`. |
 | Client intake forms | ✅ | |
 | Testimonials & reviews (trainer/center) | ✅ | |
 | Trainer location + service mode (in-person / online / hybrid) | ✅ | |
@@ -204,6 +205,14 @@ instead).
 ## Changelog
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
+
+### Unreleased — Booking page: trial session, the new-member price up front, gym drop-in outside the total
+
+- **The total is always shown, and any discount is announced.** The "Estimated total" card shows the list price (crossed out when discounted), a green line for the new-member offer or reward, the travel fee named by its zone, an "You save" line, and the total the client will actually pay.
+- **Trial or single session** on the booking page for trainers; the trial price is the trainer's own or the platform's CA$100, and a client's first trial is 50% off (CA$100 down to CA$50) before they send anything.
+- **Gym drop-in (about CA$25) is a separate "Pay at the gym" line**, paid to the gym, never added to the total.
+- **Another gym** option with an optional Google Maps link; the zone and travel fee come from the link (`src/app/utils/travel-zone.util.ts`, mirrors the server), or the trainer confirms the zone when accepting.
+- Mobile: not built yet (see the mobile README parity table).
 
 ### Unreleased — Phone-width search button, and a rejected partner application now says so
 

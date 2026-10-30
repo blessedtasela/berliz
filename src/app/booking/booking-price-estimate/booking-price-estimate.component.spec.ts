@@ -112,6 +112,61 @@ describe('BookingPriceEstimateComponent', () => {
     expect(text()).toContain('Estimated total');
   });
 
+  describe('trial session for a new member', () => {
+    beforeEach(() => {
+      trainerService.getActiveTrainers.and.returnValue(of({ data: [{ id: 9, hourlyRate: 100, trialPrice: null }] } as any));
+    });
+
+    it('shows the list price, the discount taken off, the total, and what is saved', () => {
+      show({ trainerId: 9, minutes: 60, sessionType: 'TRIAL', newMemberPercent: 50, providerName: 'Coach Jane' });
+      expect(text()).toContain('Trial session');
+      expect(text()).toContain('$100.00');
+      expect(text()).toContain('New member offer (50% off your first trial)');
+      expect(text()).toContain('$50.00');
+      expect(text()).toContain('You save CA$50.00');
+      const total = fixture.nativeElement.querySelector('.text-sm.font-bold') as HTMLElement;
+      expect(total.textContent).toContain('$50.00');
+      expect(text()).toContain('You pay CA$50.00 only after Coach Jane confirms');
+    });
+
+    it('uses the trainer own trial price when they have set one', () => {
+      trainerService.getActiveTrainers.and.returnValue(of({ data: [{ id: 9, hourlyRate: 100, trialPrice: 60 }] } as any));
+      show({ trainerId: 9, minutes: 60, sessionType: 'TRIAL', newMemberPercent: 50 });
+      expect(text()).toContain('$60.00');
+      expect(text()).toContain('$30.00');
+    });
+
+    it('lists the gym drop-in as paid to the gym and keeps it out of the total', () => {
+      show({ trainerId: 9, minutes: 60, sessionType: 'TRIAL', newMemberPercent: 50, gymDropIn: 25 });
+      const line = fixture.nativeElement.querySelector('[data-testid="gym-dropin-line"]') as HTMLElement;
+      expect(line.textContent).toContain('$25.00');
+      expect(line.textContent).toContain('not part of the total');
+      const total = fixture.nativeElement.querySelector('.text-sm.font-bold') as HTMLElement;
+      expect(total.textContent).toContain('$50.00');
+      expect(total.textContent).not.toContain('$75.00');
+    });
+
+    it('names the travel zone with its fee, and says the trainer will set it when unknown', () => {
+      show({ trainerId: 9, minutes: 60, sessionType: 'TRIAL', locationFee: 30, travelZone: 'NEARBY' });
+      expect(text()).toContain('Travel fee (Greater Vancouver (up to 30 km))');
+      expect(text()).toContain('$130.00');
+      show({ trainerId: 9, minutes: 60, sessionType: 'TRIAL', locationFee: null, travelZone: 'PENDING' });
+      expect(text()).toContain('set by the trainer');
+    });
+
+    it('gives a concrete refund example under the cancellation rule', () => {
+      show({ trainerId: 9, minutes: 60, sessionType: 'TRIAL', newMemberPercent: 50 });
+      expect(text()).toContain('50% of what you paid: e.g. $25.00 back on $50.00.');
+    });
+
+    it('never applies to a center', () => {
+      centerService.getActiveCenters.and.returnValue(of({ data: [{ id: 3, hourlyRate: 80 }] } as any));
+      show({ centerId: 3, minutes: 60, sessionType: 'TRIAL', newMemberPercent: 50 });
+      expect(text()).not.toContain('New member offer');
+      expect(text()).toContain('$80.00');
+    });
+  });
+
   it('still shows the summary, and the agreed-price line, if the lookup fails (booking is not blocked)', () => {
     trainerService.getActiveTrainers.and.returnValue(throwError(() => new Error('boom')));
     show({ trainerId: 9, minutes: 60, providerName: 'Coach Jane' });

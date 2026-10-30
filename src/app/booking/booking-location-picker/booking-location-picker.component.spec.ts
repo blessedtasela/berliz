@@ -73,10 +73,81 @@ describe('BookingLocationPickerComponent', () => {
     expect(el.textContent).toContain('near Kitsilano · approximate area');
   });
 
-  it('renders nothing when the trainer offers no locations and no own-place option', () => {
+  it('offers only "another gym" when the trainer lists no locations and no own-place option', () => {
     const el = render(trainer({ locations: [], customLocationAllowed: false }));
-    expect(el.querySelector('button')).toBeNull();
-    expect((el.textContent ?? '').trim()).toBe('');
+    expect(el.querySelectorAll('button').length).toBe(1);
+    expect(el.querySelector('[data-testid="custom-gym-option"]')).not.toBeNull();
+    expect(el.textContent).not.toContain('my own place');
+  });
+
+  describe('another gym and travel zones', () => {
+    const downtown = 'https://www.google.com/maps/place/Evolve/@49.2745,-123.1210,17z';
+    const burnaby = 'https://www.google.com/maps/place/Metrotown/@49.2276,-123.0076,17z';
+
+    it('a gym with a downtown link has no travel fee and is sent with its name and link', () => {
+      render(trainer());
+      component.selectGym();
+      component.gymName = 'Evolve Strength';
+      component.gymLink = downtown;
+      component.emit();
+      const last = emitted.pop()!;
+      expect(last.customGym).toBe('Evolve Strength');
+      expect(last.customGymMapsUrl).toBe(downtown);
+      expect(last.travelZone).toBe('DOWNTOWN');
+      expect(last.fee).toBeNull();
+      expect(last.incomplete).toBeFalse();
+      expect(locationPayload(last).customGym).toBe('Evolve Strength');
+    });
+
+    it('a gym in Burnaby adds the CA$30 travel fee', () => {
+      render(trainer());
+      component.selectGym();
+      component.gymName = 'Metrotown Fitness';
+      component.gymLink = burnaby;
+      component.emit();
+      expect(emitted.pop()!.fee).toBe(30);
+    });
+
+    it('a gym without a usable link waits for the trainer to settle the zone, and needs a name', () => {
+      const el = render(trainer());
+      component.selectGym();
+      fixture.detectChanges();
+      expect(emitted.pop()!.incomplete).toBeTrue();
+      component.gymName = 'Some gym';
+      component.emit();
+      const last = emitted.pop()!;
+      expect(last.incomplete).toBeFalse();
+      expect(last.travelZone).toBe('PENDING');
+      expect(last.fee).toBeNull();
+      fixture.detectChanges();
+      expect(el.querySelector('[data-testid="custom-gym-zone"]')!.textContent).toContain('trainer confirms the zone');
+    });
+
+    it('picking a listed spot drops the gym, and a listed spot with coordinates gets its zone fee and drop-in', () => {
+      render(trainer({ locations: [
+        { id: 51, venue: 'Evolve Strength', city: 'Vancouver', country: 'Canada', latitude: 49.2745, longitude: -123.121, dropInFee: 25 },
+        { id: 52, venue: 'Metrotown Fitness', city: 'Burnaby', country: 'Canada', latitude: 49.2276, longitude: -123.0076 },
+      ] as any }));
+      component.selectGym();
+      component.selectListed(component['locations'][0]);
+      expect(component.gymSelected).toBeFalse();
+      const first = emitted.pop()!;
+      expect(first.dropInFee).toBe(25);
+      expect(first.travelZone).toBe('DOWNTOWN');
+      expect(first.fee).toBeNull();
+      component.selectListed(component['locations'][1]);
+      const second = emitted.pop()!;
+      expect(second.fee).toBe(30);
+      expect(second.travelZone).toBe('NEARBY');
+    });
+
+    it('the trainer\'s own fee for a spot wins over its zone fee', () => {
+      render(trainer({ locations: [
+        { id: 53, venue: 'Boutique', city: 'Burnaby', country: 'Canada', latitude: 49.2276, longitude: -123.0076, fee: 10 },
+      ] as any }));
+      component.selectListed(component['locations'][0]);
+      expect(emitted.pop()!.fee).toBe(10);
+    });
   });
 
   it('hides the own-place option when the trainer does not allow it', () => {
@@ -121,6 +192,7 @@ describe('BookingLocationPickerComponent', () => {
         trainerLocationId: undefined, customLocation: '12 Elm St',
         customLocationCountry: 'USA', customLocationState: 'TX', customLocationCity: 'Austin',
         incomplete: false, fee: 25, label: 'Your place: 12 Elm St',
+        customGym: undefined, customGymMapsUrl: undefined, dropInFee: null, travelZone: null,
       });
     });
 
@@ -247,6 +319,7 @@ describe('BookingLocationPickerComponent', () => {
         customLocation: 'Home', customLocationCountry: 'USA', customLocationState: 'TX', customLocationCity: 'Austin', incomplete: false, fee: 5,
       })).toEqual({
         trainerLocationId: undefined, customLocation: 'Home', customLocationCountry: 'USA', customLocationState: 'TX', customLocationCity: 'Austin',
+        customGym: undefined, customGymMapsUrl: undefined,
       });
     });
   });

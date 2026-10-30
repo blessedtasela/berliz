@@ -16,10 +16,9 @@ const EARTH_RADIUS_KM = 6371.0088;
 
 export const TRAVEL_FEE: Record<TravelZone, number> = { DOWNTOWN: 0, NEARBY: 30, FAR: 50, PENDING: 0 };
 
-const NUM = '(-?\d{1,3}(?:\.\d+)?)';
-const AT = new RegExp(`@${NUM},${NUM}`);
-const PIN = new RegExp(`!3d${NUM}!4d${NUM}`);
-const PAIR = new RegExp(`^\s*${NUM}\s*,\s*${NUM}\s*$`);
+const AT = /@(-?\d{1,3}(?:\.\d+)?),(-?\d{1,3}(?:\.\d+)?)/;
+const PIN = /!3d(-?\d{1,3}(?:\.\d+)?)!4d(-?\d{1,3}(?:\.\d+)?)/;
+const PAIR = /^\s*(-?\d{1,3}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)\s*$/;
 
 function point(lat: string, lng: string): MapPoint | null {
   const latitude = Number(lat);
