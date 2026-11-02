@@ -53,6 +53,8 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
   readonly MAX_VIDEOS = 12;
   /** No minimum: the server accepts any number, and a trainer must be able to save after removing clips. */
   readonly MIN_VIDEOS = 0;
+  /** The album comment is a short note, not an essay: 50 characters. It used to demand 900, which blocked saving any album change for an owner whose comment was shorter. */
+  readonly MIN_COMMENT_LENGTH = 50;
   readonly MAX_FILE_MB = 100;
   readonly MIN_DURATION = 7;
   readonly MAX_DURATION = 15;
@@ -141,7 +143,7 @@ export class MyTrainerVideoAlbumComponent implements OnInit, OnChanges, OnDestro
         id: [this.trainerVideoAlbum?.id],
         comment: [
           this.trainerVideoAlbum?.comment || '',
-          [Validators.required, Validators.minLength(900)]
+          [Validators.required, Validators.minLength(this.MIN_COMMENT_LENGTH)]
         ],
         trainerId: [this.trainerVideoAlbum?.trainerId]
       });

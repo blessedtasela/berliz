@@ -272,7 +272,7 @@
             <p *ngIf="updateTrainerVideoAlbumForm.get('comment')?.invalid" class="text-[11px] text-red-600 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 rounded-xl
                        px-3 py-2 flex items-center gap-1.5">
                 <i-feather name="alert-circle" style="width:12px;height:12px;"></i-feather>
-                Please add a comment (min. 500 characters).
+                Please add a comment (at least {{ MIN_COMMENT_LENGTH }} characters).
             </p>
         </div>
 
@@ -407,7 +407,7 @@
                 <p *ngIf="commentControl?.invalid && (commentControl?.dirty || invalidForm)"
                     class="text-[11px] text-red-500 flex items-center gap-1">
                     <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
-                    Minimum 900 characters required.
+                    Minimum {{ MIN_COMMENT_LENGTH }} characters required.
                 </p>
                 <p *ngIf="commentControl?.valid && commentControl?.dirty"
                     class="text-[11px] text-green-600 dark:text-green-400 flex items-center gap-1">
@@ -417,8 +417,8 @@
                 <span class="text-[10px] ml-auto font-semibold" [ngClass]="{
                         'text-gray-400 dark:text-gray-500':  (commentControl?.value?.length || 0) === 0,
                         'text-red-500':   (commentControl?.value?.length || 0) > 0 &&
-                         (commentControl?.value?.length || 0) < 900,
-                        'text-gray-600 dark:text-gray-400': (commentControl?.value?.length || 0) >= 900
+                         (commentControl?.value?.length || 0) < MIN_COMMENT_LENGTH,
+                        'text-gray-600 dark:text-gray-400': (commentControl?.value?.length || 0) >= MIN_COMMENT_LENGTH
                     }">
                     {{ commentControl?.value?.length || 0 }} / 1200
                 </span>
