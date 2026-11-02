@@ -40,6 +40,18 @@
                 <span *ngIf="booking.locationFee" class="font-semibold text-amber-700 dark:text-amber-400"> &middot; +${{ booking.locationFee | number:'1.2-2' }} location fee</span>
             </span>
         </div>
+        <div *ngIf="booking.sessionType === 'TRIAL'" class="flex items-center gap-1.5" data-testid="trial-line">
+            <i-feather name="star" style="width:12px;height:12px;" class="text-amber-500"></i-feather>
+            <span class="text-gray-700 dark:text-gray-300 font-medium">Trial session<span *ngIf="booking.trialPrice"> &middot; {{ booking.trialPrice | currency:'CAD':'symbol':'1.2-2' }}</span><span *ngIf="booking.introDiscount" class="text-emerald-700 dark:text-emerald-400"> &middot; new member offer &minus;{{ booking.introDiscount | currency:'CAD':'symbol':'1.2-2' }}</span></span>
+        </div>
+        <div *ngIf="booking.travelZone" class="flex items-center gap-1.5" data-testid="zone-line">
+            <i-feather name="navigation" style="width:12px;height:12px;" class="text-gray-400 dark:text-gray-500"></i-feather>
+            <span>{{ zoneText(booking.travelZone) }}<span *ngIf="booking.travelZone !== 'PENDING'"> &middot; {{ booking.locationFee ? (booking.locationFee | currency:'CAD':'symbol':'1.2-2') + ' travel fee' : 'no travel fee' }}</span></span>
+        </div>
+        <div *ngIf="booking.gymDropInFee" class="flex items-center gap-1.5" data-testid="dropin-line">
+            <i-feather name="map-pin" style="width:12px;height:12px;" class="text-gray-400 dark:text-gray-500"></i-feather>
+            <span>Gym drop-in about {{ booking.gymDropInFee | currency:'CAD':'symbol':'1.2-2' }}, paid to the gym &middot; not part of the amount due</span>
+        </div>
         <div *ngIf="booking.notes" class="flex items-start gap-1.5">
             <i-feather name="file-text" style="width:12px;height:12px;" class="text-gray-400 dark:text-gray-500 mt-0.5"></i-feather>
             <span class="italic">"{{ booking.notes }}"</span>

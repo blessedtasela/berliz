@@ -206,6 +206,12 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Trainers settle the travel zone when accepting; trial and zone show on every booking view
+
+- **A gym the client typed in with no usable Google Maps link** now asks the trainer, in the review dialog, to pick its zone (Downtown / West End: no fee, up to 30 km: CA$30, beyond: CA$50). Confirm stays disabled until they do; the zone is saved first (`PUT /booking/zone/{id}`) so the booking is priced with the right travel fee, and the client sees the final amount before paying.
+- **Trial, new-member offer, zone and the gym's drop-in** appear in the booking details and the trainer's review dialog. The drop-in is labelled as paid to the gym and not part of the amount due.
+- Mobile: not built yet (see the mobile README parity table).
+
 ### Unreleased — Earnings show where each amount came from
 
 - **Each earning now says who booked, what, where, when and how.** The row names the client ("CA$50 trial session from Alex Doe"); "Where did this come from?" opens the full trail: a one-line description, who booked (name and email), the kind of session (trial, monthly plan, single, shop sale), the place and travel fee, what the client paid and how, the commission split, the Stripe transfer id, and a dated timeline (requested, client paid, session time, your share recorded, paid out). Shop sales show the buyer and item count. Backend: `GET /payout/getMyPayouts` now carries `source`, `description`, `clientName`, `clientEmail`, `bookedAt`, `sessionType`, `locationLabel`, `clientPaid`, `paymentMethod`, `events` and more.
