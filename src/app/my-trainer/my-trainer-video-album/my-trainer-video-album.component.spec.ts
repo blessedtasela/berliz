@@ -49,9 +49,21 @@ describe('MyTrainerVideoAlbumComponent', () => {
     });
 
     it('is ready to save with no clips once the comment is valid', () => {
-      component.updateTrainerVideoAlbumForm.get('comment')?.setValue('x'.repeat(900));
+      component.updateTrainerVideoAlbumForm.get('comment')?.setValue('x'.repeat(50));
       expect(component.videoCount).toBe(0);
       expect(component.formReady).toBeTrue();
+    });
+
+    it('needs only a short comment: the existing 441-character one passes as it is, 49 characters do not, 50 do', () => {
+      const comment = component.updateTrainerVideoAlbumForm.get('comment')!;
+      comment.setValue('x'.repeat(441));
+      expect(comment.valid).toBeTrue();
+      comment.setValue('x'.repeat(49));
+      expect(comment.valid).toBeFalse();
+      comment.setValue('x'.repeat(50));
+      expect(comment.valid).toBeTrue();
+      comment.setValue('');
+      expect(comment.valid).toBeFalse();
     });
 
     it('gives every empty tile a real, focusable file input inside its label', () => {
