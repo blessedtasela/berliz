@@ -18,6 +18,8 @@ export interface Trainers {
   hourlyRate?: number | null;
   /** The trainer's own price for a trial (first) session; null = the platform default. */
   trialPrice?: number | null;
+  /** The trainer's price per person in a group session; null = the platform's CA$75. */
+  groupPrice?: number | null;
   /** Free-text booking terms the trainer wrote, shown beside the generated terms. */
   bookingPolicy?: string | null;
   /** "DIRECT" when clients pay this trainer directly: Berliz keeps the booking on record but never charges, refunds or pays out. Read-only; null otherwise. */

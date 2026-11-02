@@ -22,6 +22,9 @@ import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { WaitlistService } from 'src/app/services/waitlist.service';
 import { BookingService } from 'src/app/services/booking.service';
+import { GroupSessionService } from 'src/app/services/group-session.service';
+import { DEFAULT_GROUP_PRICE, GROUP_MAX_SIZE, GROUP_MIN_SIZE } from 'src/app/models/group-session.model';
+import { GroupSessionsListComponent } from '../group-sessions-list/group-sessions-list.component';
 import { DEFAULT_TRIAL_PRICE } from '../booking-price-estimate/booking-price.util';
 import { clearGuestDraft, loadGuestDraft, saveGuestDraft } from '../guest-booking-draft';
 import { ProviderKind, providerSlug, resolveProviderBySlug } from '../resolve-provider';
@@ -59,7 +62,7 @@ type BookingOption =
  */
 @Component({
     selector: 'app-booking-page',
-    imports: [CommonModule, FormsModule, RouterModule, IconsModule, SharedModule, DateStripComponent, BookingLocationPickerComponent, BookingPriceEstimateComponent, ProviderContactComponent, OnboardingNudgeComponent],
+    imports: [CommonModule, FormsModule, RouterModule, IconsModule, SharedModule, DateStripComponent, BookingLocationPickerComponent, BookingPriceEstimateComponent, ProviderContactComponent, OnboardingNudgeComponent, GroupSessionsListComponent],
     templateUrl: './booking-page.component.html'
 })
 export class BookingPageComponent implements OnInit, OnDestroy {
@@ -105,7 +108,39 @@ export class BookingPageComponent implements OnInit, OnDestroy {
 
   // ── Trial or single ──────────────────────────────────────────────────────
   /** A trial is a trainer's first-session price; a center only sells single sessions. */
-  sessionType: 'SINGLE' | 'TRIAL' = 'SINGLE';
+  sessionType: 'SINGLE' | 'TRIAL' | 'GROUP' = 'SINGLE';
+
+  // ── Group session ────────────────────────────────────────────────────────
+  /** The trainer's own price per person, else the platform's CA$75. */
+  groupPrice = DEFAULT_GROUP_PRICE;
+  /** How many people the group has (2 to 5), and how many places the person starting takes. */
+  groupSize = 3;
+  groupSlots = 1;
+  readonly groupSizes = Array.from({ length: GROUP_MAX_SIZE - GROUP_MIN_SIZE + 1 }, (_, i) => GROUP_MIN_SIZE + i);
+  /** Bumped after a group is started so the list of groups reloads. */
+  groupRefresh = 0;
+
+  get isGroup(): boolean {
+    return this.sessionType === 'GROUP' && this.canChooseTrial;
+  }
+
+  get groupSlotOptions(): number[] {
+    return Array.from({ length: this.groupSize }, (_, i) => i + 1);
+  }
+
+  /** What the person starting pays if the group fills: their places at the per-person price. */
+  get groupTotal(): number {
+    return Math.round(this.groupPrice * this.groupSlots * 100) / 100;
+  }
+
+  get groupPlacesToFill(): number {
+    return this.groupSize - this.groupSlots;
+  }
+
+  onGroupSize(size: number): void {
+    this.groupSize = size;
+    if (this.groupSlots > size) this.groupSlots = size;
+  }
   /** The trainer's own trial price, else the platform's CA$100. */
   trialPrice = DEFAULT_TRIAL_PRICE;
   /**
@@ -131,9 +166,9 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     return this.sessionType === 'TRIAL' && this.canChooseTrial ? 'TRIAL' : 'SINGLE';
   }
 
-  chooseSessionType(type: 'SINGLE' | 'TRIAL'): void {
+  chooseSessionType(type: 'SINGLE' | 'TRIAL' | 'GROUP'): void {
     this.sessionType = type;
-    if (type === 'TRIAL' && this.selectedOption.kind !== 'single') this.selectedOption = { kind: 'single' };
+    if (type !== 'SINGLE' && this.selectedOption.kind !== 'single') this.selectedOption = { kind: 'single' };
   }
 
   private loadNewMemberOffer(): void {
@@ -179,6 +214,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     private seoService: SeoService,
     private waitlistService: WaitlistService,
     private bookingService: BookingService,
+    private groupService: GroupSessionService,
   ) { }
 
   private get earliestBookableTime(): number {
@@ -233,6 +269,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   get primaryLabel(): string {
     if (this.submitting) return 'Sending…';
     if (this.ownedPlan) return this.isGuest ? 'Continue' : 'Book with your pack';
+    if (this.isGroup) return this.isGuest ? 'Continue' : 'Start this group';
     return this.isGuest ? 'Continue' : 'Request booking';
   }
 
@@ -332,6 +369,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
         this.contactEmail = provider.contactEmail ?? null;
         this.contactPhone = provider.contactPhone ?? null;
         this.trialPrice = provider.trialPrice ?? DEFAULT_TRIAL_PRICE;
+        this.groupPrice = provider.groupPrice ?? DEFAULT_GROUP_PRICE;
 
         this.updateSeoTags();
         this.fetchPackages();
@@ -586,6 +624,33 @@ export class BookingPageComponent implements OnInit, OnDestroy {
 
   // ── Submit ───────────────────────────────────────────────────────────────
 
+  /** Starts a group at the picked time: the person starting is its first member and fills the rest. */
+  private startGroup(): void {
+    if (!this.selectedSlot) return;
+    this.submitting = true;
+    this.groupService.start({
+      trainerId: this.providerId,
+      localDate: this.selectedDate,
+      localTime: this.selectedSlot.startTime,
+      durationMinutes: this.slotDurationMinutes,
+      size: this.groupSize,
+      slots: this.groupSlots,
+      locationLabel: this.summaryWhere ?? undefined,
+      notes: (this.notes ?? '').trim() || undefined,
+    }).pipe(take(1)).subscribe({
+      next: res => {
+        this.submitting = false;
+        this.groupRefresh++;
+        this.snackBar.openSnackBar(res?.data?.message || res?.message
+          || `Your group is open. It goes ahead once all ${this.groupSize} places are taken, so share this page.`, '');
+      },
+      error: err => {
+        this.submitting = false;
+        this.submitError = err?.error?.message || genericError;
+      },
+    });
+  }
+
   submit(): void {
     if (this.submitting) return;
     this.submitError = null;
@@ -597,6 +662,11 @@ export class BookingPageComponent implements OnInit, OnDestroy {
 
     if (!this.user?.email) {
       this.promptToSignIn();
+      return;
+    }
+
+    if (this.isGroup) {
+      this.startGroup();
       return;
     }
 
