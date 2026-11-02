@@ -206,6 +206,11 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Earnings show where each amount came from
+
+- **Each earning now says who booked, what, where, when and how.** The row names the client ("CA$50 trial session from Alex Doe"); "Where did this come from?" opens the full trail: a one-line description, who booked (name and email), the kind of session (trial, monthly plan, single, shop sale), the place and travel fee, what the client paid and how, the commission split, the Stripe transfer id, and a dated timeline (requested, client paid, session time, your share recorded, paid out). Shop sales show the buyer and item count. Backend: `GET /payout/getMyPayouts` now carries `source`, `description`, `clientName`, `clientEmail`, `bookedAt`, `sessionType`, `locationLabel`, `clientPaid`, `paymentMethod`, `events` and more.
+- Mobile: earnings list not built there yet; it can read the same fields.
+
 ### Unreleased — Trainer editor: a gym's drop-in fee and Maps link; "pay directly" bookings (web)
 
 Web side of the backend's per-gym drop-in fee, travel zones and direct-payment providers (the booking page, price estimate and picker are in the trial/gym-zones pass).

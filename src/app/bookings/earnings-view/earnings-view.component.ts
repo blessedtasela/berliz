@@ -39,6 +39,8 @@ export class EarningsViewComponent implements OnInit, OnDestroy {
   /** ?payoutId=<id> from a notification deep link, set by the parent tab host. Scrolled to (and briefly highlighted) once its row has actually rendered. */
   @Input() deepLinkPayoutId: number | null = null;
   highlightedPayoutId: number | null = null;
+  /** The earning whose full trail (who, what, when, how) is open. */
+  expandedPayoutId: number | null = null;
   private deepLinkHandled = false;
 
   /** ?payoutSetup=return|refresh — Stripe sent the provider back here after (or midway through) payout onboarding. */
@@ -59,6 +61,18 @@ export class EarningsViewComponent implements OnInit, OnDestroy {
     private stripeService: StripeService,
     private snackBar: SnackBarService,
   ) { }
+
+  toggleDetails(id: number): void {
+    this.expandedPayoutId = this.expandedPayoutId === id ? null : id;
+  }
+
+  /** "Trial session", "Monthly plan session", "Session" or "Shop sale": what this earning is for. */
+  kindLabel(p: Payout): string {
+    if (p.source === 'ORDER') return 'Shop sale';
+    if (p.sessionType === 'TRIAL') return 'Trial session';
+    if (p.planId) return 'Monthly plan session';
+    return 'Session';
+  }
 
   retryLoad(): void {
     this.store.dispatch(loadMyPayouts());

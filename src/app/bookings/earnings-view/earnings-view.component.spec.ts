@@ -105,6 +105,61 @@ describe('EarningsViewComponent', () => {
     expect(component.loading).toBeFalse();
   });
 
+  describe('where an earning came from', () => {
+    const detailed = {
+      ...pendingPayout, id: 77, source: 'BOOKING', sessionType: 'TRIAL', clientName: 'Alex Doe', clientEmail: 'alex@example.com',
+      description: 'Alex Doe booked a 60-minute trial session at Evolve Strength; it was completed and your share was recorded.',
+      locationLabel: 'Evolve Strength', locationFee: 0, clientPaid: 50, paymentMethod: 'card', planId: null,
+      events: [
+        { label: 'Session requested', at: new Date('2026-10-20T10:00:00Z') },
+        { label: 'Client paid (card)', at: new Date('2026-10-21T10:00:00Z') },
+        { label: 'Your share recorded', at: new Date('2026-10-22T10:00:00Z') },
+      ],
+    } as unknown as Payout;
+
+    beforeEach(() => {
+      store.overrideSelector(selectMyPayouts, [detailed]);
+      store.refreshState();
+      fixture.detectChanges();
+    });
+
+    it('names who booked and what kind of session in the row', () => {
+      const row = fixture.nativeElement.querySelector('#payout-77') as HTMLElement;
+      expect(row.textContent).toContain('trial session');
+      expect(row.textContent).toContain('from Alex Doe');
+    });
+
+    it('keeps the full trail closed until asked, then shows who, what, where, what was paid and the timeline', () => {
+      expect(fixture.nativeElement.querySelector('[data-testid="payout-details"]')).toBeNull();
+      (fixture.nativeElement.querySelector('[data-testid="payout-details-toggle"]') as HTMLElement).click();
+      fixture.detectChanges();
+      const details = fixture.nativeElement.querySelector('[data-testid="payout-details"]') as HTMLElement;
+      expect(details.textContent).toContain('Alex Doe booked a 60-minute trial session');
+      expect(details.textContent).toContain('alex@example.com');
+      expect(details.textContent).toContain('Evolve Strength');
+      expect(details.textContent).toContain('$50.00');
+      expect(details.textContent).toContain('via card');
+      const events = fixture.nativeElement.querySelectorAll('[data-testid="payout-events"] li');
+      expect(events.length).toBe(3);
+      expect(events[0].textContent).toContain('Session requested');
+    });
+
+    it('closes again on a second tap', () => {
+      const toggle = fixture.nativeElement.querySelector('[data-testid="payout-details-toggle"]') as HTMLElement;
+      toggle.click();
+      fixture.detectChanges();
+      toggle.click();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('[data-testid="payout-details"]')).toBeNull();
+    });
+
+    it('labels shop sales and plan sessions', () => {
+      expect(component.kindLabel({ source: 'ORDER' } as Payout)).toBe('Shop sale');
+      expect(component.kindLabel({ planId: 4 } as Payout)).toBe('Monthly plan session');
+      expect(component.kindLabel({} as Payout)).toBe('Session');
+    });
+  });
+
   it('maps status to the correct badge classes', () => {
     fixture.detectChanges();
     expect(component.statusClasses('PAID')).toContain('green');
