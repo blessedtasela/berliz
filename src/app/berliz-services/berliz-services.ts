@@ -30,6 +30,8 @@ export interface BerlizService {
   /** For a training mode: the directory filter it maps to. */
   mode?: ProviderMode;
   comingSoon?: boolean;
+  /** Where the main button goes when it is not a provider directory (e.g. /shop). */
+  ctaLink?: string;
   /** The main button's wording. */
   ctaLabel: string;
 }
@@ -129,20 +131,20 @@ export const BERLIZ_SERVICES: BerlizService[] = [
   {
     slug: 'shop',
     title: 'Shop',
-    tagline: 'Training essentials — coming soon.',
+    tagline: 'New and used fitness gear from the Berliz community.',
     icon: 'shopping-bag',
     summary:
-      'We are building a shop for the things that make training easier: gear and essentials from partners we trust. It is not open yet — the first products will appear here when it is.',
+      'The Berliz shop is a community marketplace for fitness gear. Members, trainers and centers list new and used equipment, and you can buy it with secure checkout — or sell your own. Listings are added by the community, so what is for sale changes day to day.',
     steps: [
-      { title: 'Browse', text: 'Find gear and essentials alongside your training.' },
-      { title: 'Order', text: 'Check out securely inside Berliz.' },
-      { title: 'Delivered', text: 'Track your order from the same place you track your workouts.' },
+      { title: 'Browse', text: 'Filter by new or used, and open a listing to see photos, price and condition.' },
+      { title: 'Order', text: 'Add to your cart and check out securely inside Berliz.' },
+      { title: 'Or sell', text: 'List your own gear from your account and get paid through Berliz.' },
     ],
-    benefits: ['Curated, not endless', 'One account for training and shopping', 'Secure checkout'],
-    bestFor: ['Everyone who trains with Berliz'],
+    benefits: ['New and used, side by side', 'One account for training and shopping', 'Secure checkout', 'Sell your own gear'],
+    bestFor: ['Anyone kitting out a home gym', 'Trainers and centers with gear to sell', 'Members upgrading equipment'],
     audience: 'none',
-    comingSoon: true,
-    ctaLabel: 'Coming soon',
+    ctaLabel: 'Open the shop',
+    ctaLink: '/shop',
   },
 ];
 

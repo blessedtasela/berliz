@@ -33,21 +33,22 @@ export interface Booking {
   locationFee?: number | null;
   /** True when the client supplied their own location rather than picking a listed one. */
   locationCustom?: boolean | null;
-  /** SINGLE or TRIAL. */
+  /** SINGLE (null reads as this) or TRIAL. */
   sessionType?: 'SINGLE' | 'TRIAL' | null;
+  /** A trial's price when it was requested. */
   trialPrice?: number | null;
   /** The new-member offer taken off this booking (Berliz-funded); null if none. */
   introDiscount?: number | null;
-  /** DOWNTOWN | NEARBY | FAR, or PENDING while the trainer still has to settle it before accepting. */
-  travelZone?: 'DOWNTOWN' | 'NEARBY' | 'FAR' | 'PENDING' | null;
-  /** Paid to the gym at the door; never part of amountDue. */
+  /** DOWNTOWN | NEARBY | FAR, or PENDING when the trainer still has to confirm the zone of a gym the client typed in. */
+  travelZone?: string | null;
+  /** What the gym charges at the door: paid to the gym, not part of amountDue. */
   gymDropInFee?: number | null;
   locationMapsUrl?: string | null;
 
   /** What the client owes for this session (price + location fee, less rewards); set when the provider confirms it. */
   amountDue?: number | null;
   /** null (never priced / provider has no rate) | NOT_REQUIRED | UNPAID | PAID | REFUNDED | PARTIALLY_REFUNDED. */
-  paymentStatus?: 'NOT_REQUIRED' | 'UNPAID' | 'PAID' | 'REFUNDED' | 'PARTIALLY_REFUNDED' | null;
+  paymentStatus?: 'NOT_REQUIRED' | 'UNPAID' | 'PAID' | 'REFUNDED' | 'PARTIALLY_REFUNDED' | 'DIRECT' | null;
   /** The cancellation policy that applies to this session (the provider's, pinned at confirmation, or the platform default). */
   freeCancelHours?: number | null;
   lateCancelRefundPercent?: number | null;
@@ -62,6 +63,9 @@ export interface Booking {
   planId?: number | null;
   /** This session's share of the plan total (discount already included). */
   planSessionPrice?: number | null;
+
+  /** What both sides quote about this booking, e.g. BK-000123. */
+  reference?: string | null;
 
   date: Date;
   lastUpdate: Date;
@@ -158,4 +162,13 @@ export interface BookingPlan {
   date: Date;
   message?: string;
   sessions: Booking[];
+}
+
+/** GET /booking/newMemberOffer: whether this client still gets the first-trial offer, and what it is. */
+export interface NewMemberOffer {
+  eligible: boolean;
+  /** Percent off the first trial session. */
+  percent: number;
+  /** The trial price when a trainer has not set their own. */
+  defaultTrialPrice: number;
 }

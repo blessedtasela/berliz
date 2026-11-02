@@ -41,7 +41,7 @@ import { DEFAULT_FREE_CANCEL_HOURS, DEFAULT_LATE_CANCEL_REFUND_PERCENT } from 's
       </div>
       <div class="text-[11px] text-gray-500 dark:text-gray-400 flex flex-col gap-0.5" data-testid="price-breakdown">
         <span class="flex justify-between gap-3">
-          <span>{{ e.isTrial ? 'Trial session' : 'Session (' + minutes + ' min)' }}</span>
+          <span>{{ e.trial ? 'Trial session' : 'Session (' + minutes + ' min)' }}</span>
           <span [ngClass]="e.discounted ? 'line-through text-gray-400 dark:text-gray-500' : ''">{{ e.sessionPrice | currency:'CAD':'symbol':'1.2-2' }}</span>
         </span>
         <span *ngIf="e.introDiscount > 0" class="flex justify-between gap-3 text-emerald-700 dark:text-emerald-400 font-semibold" data-testid="intro-discount">
@@ -64,9 +64,9 @@ import { DEFAULT_FREE_CANCEL_HOURS, DEFAULT_LATE_CANCEL_REFUND_PERCENT } from 's
       <p *ngIf="e.discounted" class="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400" data-testid="you-save">
         You save {{ e.sessionPrice - e.sessionAfterRewards | currency:'CAD':'symbol':'1.2-2' }} — the total above already includes it.
       </p>
-      <p *ngIf="e.gymDropIn > 0" class="text-[11px] text-gray-500 dark:text-gray-400 flex items-start gap-1.5" data-testid="gym-dropin-line">
+      <p *ngIf="e.dropInFee > 0" class="text-[11px] text-gray-500 dark:text-gray-400 flex items-start gap-1.5" data-testid="gym-dropin-line">
         <i-feather name="map-pin" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
-        Pay at the gym: about {{ e.gymDropIn | currency:'CAD':'symbol':'1.2-2' }} drop-in, paid to the gym at the door. It is not part of the total above.
+        Pay at the gym: about {{ e.dropInFee | currency:'CAD':'symbol':'1.2-2' }} drop-in, paid to the gym at the door. It is not part of the total above.
       </p>
       <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
         <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
@@ -136,10 +136,10 @@ export class BookingPriceEstimateComponent implements OnInit, OnChanges {
       promotion: this.promotion,
       credit: this.credit,
       usesPackage: this.usesPackage,
-      sessionType: this.centerId ? 'SINGLE' : this.sessionType,
-      trialPrice: this.trialPrice,
-      newMemberPercent: this.newMemberPercent,
-      gymDropIn: this.gymDropIn,
+      // A trial is one flat price: setting trialPrice is what makes the estimate a trial (trainers only).
+      trialPrice: this.trial ? this.trialPrice : null,
+      introPercent: this.trial ? this.newMemberPercent : null,
+      dropInFee: this.gymDropIn,
     });
   }
 

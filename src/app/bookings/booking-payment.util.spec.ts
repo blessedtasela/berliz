@@ -1,6 +1,6 @@
 import { Booking } from 'src/app/models/booking.model';
 import {
-  amountToPay, canClientPay, canMarkNoShow, clientCancelNote, clientRefundFraction,
+  amountToPay, canClientPay, canMarkNoShow, clientCancelNote, clientRefundFraction, directPaymentNote,
   isRefundedCancellation, payByNote, payLabel, paymentBadge, statusLabel
 } from './booking-payment.util';
 
@@ -151,6 +151,39 @@ describe('booking-payment.util', () => {
 
     it('falls back to the platform default when the booking carries none', () => {
       expect(clientRefundFraction(booking({ ...paid, scheduledAt: inHours(5) }), NOW)).toBe(0.5);
+    });
+  });
+
+  describe('a provider who takes payment directly', () => {
+    const direct = (over: Partial<Booking> = {}) => booking({ paymentStatus: 'DIRECT', amountDue: 80, ...over });
+
+    it('is never offered a Pay button, however much is shown for reference', () => {
+      expect(canClientPay(direct(), 'client')).toBeFalse();
+      expect(canClientPay(direct({ status: 'completed' }), 'client')).toBeFalse();
+    });
+
+    it('has no payment deadline', () => {
+      expect(payByNote(direct({ paymentDueAt: inHours(24) }))).toBeNull();
+    });
+
+    it('is badged for each side, and not once cancelled', () => {
+      expect(paymentBadge(direct(), 'client')?.label).toBe('Pay directly');
+      expect(paymentBadge(direct(), 'provider')?.label).toBe('Paid directly');
+      expect(paymentBadge(direct({ status: 'cancelled' }), 'client')).toBeNull();
+    });
+
+    it('tells the client who to pay and that Berliz keeps the booking on record', () => {
+      expect(directPaymentNote(direct(), 'client', 'Blessed Fit')).toBe('Pay Blessed Fit directly. Berliz keeps the booking on record.');
+      expect(directPaymentNote(direct(), 'client', null)).toBe('Pay your provider directly. Berliz keeps the booking on record.');
+    });
+
+    it('tells the provider Berliz does not charge, refund or pay out', () => {
+      expect(directPaymentNote(direct(), 'provider')).toContain('does not charge, refund or pay out');
+    });
+
+    it('says nothing for an ordinary booking or a cancelled one', () => {
+      expect(directPaymentNote(booking(), 'client', 'Blessed Fit')).toBeNull();
+      expect(directPaymentNote(direct({ status: 'cancelled' }), 'client', 'Blessed Fit')).toBeNull();
     });
   });
 

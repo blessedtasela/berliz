@@ -158,6 +158,20 @@
                                         [attr.aria-label]="spot.get('precision')?.value === 'AREA' ? 'General area' : 'Street address'"
                                         [placeholder]="spot.get('precision')?.value === 'AREA' ? 'General area, e.g. near Kitsilano Beach (optional)' : 'Street address (optional)'" class="berliz-input w-full text-xs" />
 
+                                    <!-- The gym's own day-pass fee (paid by the client AT the gym) and the Maps link that sets the travel zone -->
+                                    <div class="grid grid-cols-1 sm:grid-cols-[9rem_1fr] gap-2 items-start">
+                                        <div class="flex flex-col gap-1">
+                                            <div class="relative">
+                                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">$</span>
+                                                <input type="number" formControlName="dropInFee" min="0" step="0.01" aria-label="Gym drop-in fee, paid at the gym"
+                                                    placeholder="Gym drop-in" class="berliz-input w-full text-xs pl-6" />
+                                            </div>
+                                            <span class="text-[11px] text-gray-400 dark:text-gray-500">What the gym charges clients at the door. They pay it at the gym; it isn't part of your price.</span>
+                                        </div>
+                                        <input type="url" formControlName="mapsUrl" maxlength="500" aria-label="Google Maps link of this spot"
+                                            placeholder="Google Maps link (sets your travel zone)" class="berliz-input w-full text-xs" />
+                                    </div>
+
                                     <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
                                         <div class="inline-flex rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden text-[11px] font-semibold" role="radiogroup" aria-label="How exact is this location">
                                             <label class="px-2.5 py-1 cursor-pointer transition"
@@ -173,7 +187,7 @@
                                             {{ spot.get('precision')?.value === 'AREA' ? 'Clients see this as an approximate area.' : 'Clients see this as the exact place.' }}
                                         </span>
                                     </div>
-                                    <p *ngIf="spot.get('fee')?.invalid" class="text-red-500 text-[11px]">A fee can't be negative.</p>
+                                    <p *ngIf="spot.get('fee')?.invalid || spot.get('dropInFee')?.invalid" class="text-red-500 text-[11px]">A fee can't be negative.</p>
                                 </div>
                             </div>
 
@@ -201,7 +215,7 @@
                     </div>
                 </div>
                 <p *ngIf="totalPlaces > 0" class="text-[11px] text-gray-400 dark:text-gray-500">
-                    Clients pick one of your spots when they book. Add an extra fee to any spot that costs you more (gym entry, parking); leave it blank for none.
+                    Clients pick one of your spots when they book. Use "Extra fee" only for your own costs at a spot (parking, travel); leave it blank for none. A gym's day-pass fee goes in "Gym drop-in" instead: clients pay it to the gym, not through Berliz.
                 </p>
 
                 <!-- Coming to the client's own place -->

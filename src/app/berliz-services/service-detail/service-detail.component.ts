@@ -73,7 +73,10 @@ export class ServiceDetailComponent implements OnInit, OnDestroy {
   get previewCenters(): Centers[] { return this.centers.slice(0, PREVIEW_COUNT); }
 
   /** The directory the main button opens: trainers pre-filtered to the mode, or all centers. */
-  get ctaLink(): string[] { return this.service?.audience === 'centers' ? ['/centers'] : ['/trainers']; }
+  get ctaLink(): string[] {
+    if (this.service?.ctaLink) return [this.service.ctaLink];
+    return this.service?.audience === 'centers' ? ['/centers'] : ['/trainers'];
+  }
   get ctaQueryParams(): { mode?: string } | null { return this.service?.mode ? { mode: this.service.mode } : null; }
 
   photoUrl(p: { photoResponse?: { photoUrl?: string } | null } | null | undefined): string {

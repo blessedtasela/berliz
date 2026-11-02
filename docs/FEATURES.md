@@ -206,6 +206,13 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Trainer editor: a gym's drop-in fee and Maps link; "pay directly" bookings (web)
+
+Web side of the backend's per-gym drop-in fee, travel zones and direct-payment providers (the booking page, price estimate and picker are in the trial/gym-zones pass).
+
+- **A gym's drop-in fee is its own field.** In Partner → Trainer data, each spot now has **Gym drop-in** (what the gym charges at the door, paid by the client at the gym, never through Berliz) next to the trainer's own **Extra fee**, and a **Google Maps link** (the server works out the travel zone from it). The help text no longer tells trainers to put "gym entry" in the extra fee, which would have been charged through Berliz. Both fields round-trip through the saved rows; a spot with only a drop-in fee or only a link is kept.
+- **Direct-payment providers' bookings** (`paymentStatus: DIRECT`, `paymentMode` on trainer/center): no Pay button, deadline or reminder (already true because those need `UNPAID`; now tested). The client's booking card and details show "Pay <provider> directly. Berliz keeps the booking on record." with a "Pay directly" pill; the provider sees "This client pays you directly…" and a "Paid directly" pill.
+
 ### Unreleased — Booking page: trial session, the new-member price up front, gym drop-in outside the total
 
 - **The total is always shown, and any discount is announced.** The "Estimated total" card shows the list price (crossed out when discounted), a green line for the new-member offer or reward, the travel fee named by its zone, an "You save" line, and the total the client will actually pay.

@@ -9,7 +9,7 @@ import { BookingDetailsModalComponent } from '../booking-details-modal/booking-d
 import { nameSlug } from 'src/app/utils/closest-slug';
 import {
   PaymentBadge, canClientPay, canMarkNoShow, clientCancelNote, isRefundedCancellation,
-  payByNote, payLabel, paymentBadge, statusLabel
+  directPaymentNote, payByNote, payLabel, paymentBadge, statusLabel
 } from '../booking-payment.util';
 
 export interface RescheduleRequest {
@@ -107,6 +107,11 @@ export class BookingCardComponent {
   /** "Pay by Tue, Oct 6, 3:00 PM or it's cancelled" while a confirmed session is waiting on payment. */
   get payByText(): string | null {
     return payByNote(this.booking);
+  }
+
+  /** "Pay <provider> directly. Berliz keeps the booking on record." for a provider who takes payment themselves. */
+  get directPaymentText(): string | null {
+    return directPaymentNote(this.booking, this.mode, this.booking.trainerName ?? this.booking.centerName ?? null);
   }
 
   /** Payment pill shown to both sides; null when there's nothing worth saying (never priced, or nothing to pay). */

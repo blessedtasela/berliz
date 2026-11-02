@@ -64,7 +64,7 @@
         </div>
 
         <div *ngIf="uploadedVideo" class="relative w-fit">
-            <video [src]="uploadedVideo.videoUrl | strapiUrl" controls preload="metadata" playsinline class="max-h-40 rounded-xl border border-gray-200 dark:border-gray-700 bg-black"></video>
+            <video loop [src]="uploadedVideo.videoUrl | strapiUrl" controls preload="metadata" playsinline class="max-h-40 rounded-xl border border-gray-200 dark:border-gray-700 bg-black"></video>
             <button type="button" (click)="removeVideo()" aria-label="Remove video"
                 class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 flex items-center justify-center
                        hover:bg-black dark:hover:bg-white transition">
@@ -181,7 +181,7 @@
             </span>
         </button>
 
-        <video *ngIf="post.videoUrl" [src]="post.videoUrl | strapiUrl" controls preload="metadata" playsinline
+        <video loop *ngIf="post.videoUrl" [src]="post.videoUrl | strapiUrl" controls preload="metadata" playsinline
             class="w-full max-h-96 rounded-xl border border-gray-100 dark:border-gray-800 bg-black"></video>
 
         <!-- Linked workout template -->

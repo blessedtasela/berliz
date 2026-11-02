@@ -125,8 +125,8 @@ describe('BookingLocationPickerComponent', () => {
 
     it('picking a listed spot drops the gym, and a listed spot with coordinates gets its zone fee and drop-in', () => {
       render(trainer({ locations: [
-        { id: 51, venue: 'Evolve Strength', city: 'Vancouver', country: 'Canada', latitude: 49.2745, longitude: -123.121, dropInFee: 25 },
-        { id: 52, venue: 'Metrotown Fitness', city: 'Burnaby', country: 'Canada', latitude: 49.2276, longitude: -123.0076 },
+        { id: 51, venue: 'Evolve Strength', city: 'Vancouver', country: 'Canada', travelZone: 'DOWNTOWN', dropInFee: 25 },
+        { id: 52, venue: 'Metrotown Fitness', city: 'Burnaby', country: 'Canada', travelZone: 'NEARBY' },
       ] as any }));
       component.selectGym();
       component.selectListed(component['locations'][0]);
@@ -143,7 +143,7 @@ describe('BookingLocationPickerComponent', () => {
 
     it('the trainer\'s own fee for a spot wins over its zone fee', () => {
       render(trainer({ locations: [
-        { id: 53, venue: 'Boutique', city: 'Burnaby', country: 'Canada', latitude: 49.2276, longitude: -123.0076, fee: 10 },
+        { id: 53, venue: 'Boutique', city: 'Burnaby', country: 'Canada', travelZone: 'NEARBY', fee: 10 },
       ] as any }));
       component.selectListed(component['locations'][0]);
       expect(emitted.pop()!.fee).toBe(10);

@@ -118,6 +118,57 @@ describe('BookingCardComponent', () => {
     });
   });
 
+  describe('the booking reference', () => {
+    const ref = () => (fixture.nativeElement as HTMLElement).querySelector('[data-testid="booking-reference"]');
+
+    it('shows the reference both sides can quote', () => {
+      component.booking.reference = 'BK-000123';
+      fixture.detectChanges();
+
+      expect(ref()?.textContent).toContain('BK-000123');
+    });
+
+    it('shows nothing for an older booking without one', () => {
+      component.booking.reference = null;
+      fixture.detectChanges();
+
+      expect(ref()).toBeNull();
+    });
+  });
+
+  describe('a provider who takes payment directly', () => {
+    const el = () => fixture.nativeElement as HTMLElement;
+
+    beforeEach(() => {
+      component.booking.status = 'confirmed';
+      component.booking.paymentStatus = 'DIRECT';
+      component.booking.amountDue = 80;
+    });
+
+    it('tells the client who to pay, and offers no Pay button', () => {
+      component.mode = 'client';
+      fixture.detectChanges();
+
+      expect(el().querySelector('[data-testid="direct-payment-note"]')?.textContent)
+        .toContain('Pay Trainer Name directly. Berliz keeps the booking on record.');
+      expect(el().textContent).not.toContain('Pay $80.00');
+    });
+
+    it('tells the provider Berliz is not handling the money', () => {
+      component.mode = 'provider';
+      fixture.detectChanges();
+
+      expect(el().querySelector('[data-testid="direct-payment-note"]')?.textContent).toContain('does not charge, refund or pay out');
+    });
+
+    it('shows no direct-payment note on an ordinary unpaid booking', () => {
+      component.booking.paymentStatus = 'UNPAID';
+      fixture.detectChanges();
+
+      expect(el().querySelector('[data-testid="direct-payment-note"]')).toBeNull();
+    });
+  });
+
   describe('cancel, no-show and reopen', () => {
     const lastDialogMessage = (): string => (dialogSpy.open.calls.mostRecent().args[1] as any).data.message;
 

@@ -24,13 +24,15 @@ export interface PriceEstimateInput {
   credit?: Offer | null;
   /** The session is covered by a package the client already bought. */
   usesPackage?: boolean;
-  /** A trial session is one flat price (not rate x minutes); the price is the trainer's own, else the platform's. */
-  sessionType?: 'SINGLE' | 'TRIAL' | null;
+  /**
+   * Set for a trial session: its flat price (the trainer's own, else the platform default). Replaces rate x length, and
+   * works for a trainer with no hourly rate at all.
+   */
   trialPrice?: number | null;
-  /** Percent off a first trial for a new member (Berliz-funded); ignored when another reward is used instead. */
-  newMemberPercent?: number | null;
-  /** What the gym charges at the door. Shown, but paid to the gym: never part of the total. */
-  gymDropIn?: number | null;
+  /** Percent off a first trial for a new member (Berliz-funded), when the client is eligible. */
+  introPercent?: number | null;
+  /** What the gym charges at the door. Paid to the gym, never part of the Berliz total. */
+  dropInFee?: number | null;
 }
 
 export interface PriceEstimate {
@@ -42,11 +44,15 @@ export interface PriceEstimate {
   total: number;
   /** True when a reward or package brought the session part down. */
   discounted: boolean;
+  trial: boolean;
   /** The new-member offer taken off a first trial (0 when none). */
   introDiscount: number;
-  /** Paid to the gym, on top of the total. */
-  gymDropIn: number;
-  isTrial: boolean;
+  /** The gym's drop-in, paid to the gym (0 when none). */
+  dropInFee: number;
+  /** What the client pays Berliz now-ish: session after offers plus any travel/location fee. Same as `total`. */
+  payable: number;
+  /** The real cost of the session: everything payable through Berliz plus the gym's drop-in. */
+  totalWithDropIn: number;
 }
 
 const round2 = (n: number): number => Math.round((n + Number.EPSILON) * 100) / 100;
@@ -71,33 +77,36 @@ export function applyOffer(price: number, offer: Offer | null | undefined): numb
 
 /** null when there is no rate to price from. */
 export function estimateBookingPrice(input: PriceEstimateInput): PriceEstimate | null {
-  const isTrial = input.sessionType === 'TRIAL' && input.trialPrice != null;
-  if (!isTrial && (input.hourlyRate == null || !(input.minutes > 0))) return null;
+  const trial = input.trialPrice != null;
+  if (!trial && (input.hourlyRate == null || !(input.minutes > 0))) return null;
 
-  const base = isTrial ? round2(input.trialPrice as number) : sessionPrice(input.hourlyRate as number, input.minutes);
+  const base = trial ? round2(input.trialPrice as number) : sessionPrice(input.hourlyRate as number, input.minutes);
   let session = base;
-  let introDiscount = 0;
   if (input.usesPackage) {
     session = 0;
   } else {
     session = applyOffer(session, input.promotion);
     session = applyOffer(session, input.credit);
-    // The first-trial offer is never stacked on another reward.
-    const otherReward = !!input.promotion?.type || !!input.credit?.type;
-    if (isTrial && !otherReward && input.newMemberPercent) {
-      introDiscount = round2(base * Math.min(Math.max(input.newMemberPercent, 0), 100) / 100);
-      session = round2(Math.max(session - introDiscount, 0));
-    }
+  }
+  // The first-trial offer is Berliz-funded and taken off after promotions and credits, like the server does.
+  let introDiscount = 0;
+  if (trial && !input.usesPackage && input.introPercent && input.introPercent > 0) {
+    introDiscount = Math.min(round2(base * Math.min(input.introPercent, 100) / 100), session);
+    session = round2(Math.max(session - introDiscount, 0));
   }
   const fee = input.locationFee && input.locationFee > 0 ? input.locationFee : 0;
+  const dropIn = input.dropInFee && input.dropInFee > 0 ? round2(input.dropInFee) : 0;
+  const total = round2(session + fee);
   return {
     sessionPrice: base,
     sessionAfterRewards: session,
     locationFee: fee,
-    total: round2(session + fee),
+    total,
     discounted: session < base,
+    trial,
     introDiscount,
-    gymDropIn: input.gymDropIn && input.gymDropIn > 0 ? round2(input.gymDropIn) : 0,
-    isTrial,
+    dropInFee: dropIn,
+    payable: total,
+    totalWithDropIn: round2(total + dropIn),
   };
 }

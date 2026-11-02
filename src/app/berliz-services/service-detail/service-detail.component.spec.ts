@@ -55,9 +55,10 @@ describe('ServiceDetailComponent', () => {
     expect(el.textContent).toContain('Iron Works');
   });
 
-  it('is honest that the shop is not open yet', () => {
+  it('sends the shop page to the real shop', () => {
     const el = setup('shop');
-    expect(el.textContent).toContain("isn't open yet");
+    expect(el.textContent).toContain('Open the shop');
+    expect(el.textContent).toContain('community marketplace');
   });
 
   it('says so for an unknown service', () => {

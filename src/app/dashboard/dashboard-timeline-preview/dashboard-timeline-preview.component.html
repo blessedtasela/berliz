@@ -49,7 +49,7 @@
 
         <!-- Not playable inside the card (the whole card is a link to the timeline); #t=0.1 shows a still frame. -->
         <div *ngIf="!post.photoUrl && post.videoUrl" class="relative w-full h-28 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-black">
-          <video [src]="(post.videoUrl | strapiUrl) + '#t=0.1'" preload="metadata" muted playsinline
+          <video loop [src]="(post.videoUrl | strapiUrl) + '#t=0.1'" preload="metadata" muted playsinline
             class="w-full h-full object-cover" aria-hidden="true"></video>
           <span class="absolute inset-0 flex items-center justify-center bg-black/20">
             <span class="w-8 h-8 rounded-full bg-black/60 flex items-center justify-center">

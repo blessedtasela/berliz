@@ -254,8 +254,9 @@ export class BookingLocationPickerComponent implements OnInit, OnChanges {
   }
 
   spotZone(loc: TrainerLocation): TravelZone | null {
-    if (loc.travelZone) return loc.travelZone;
-    return loc.latitude != null && loc.longitude != null ? travelZoneFor({ latitude: loc.latitude, longitude: loc.longitude }) : null;
+    // The server works the zone out from the spot's coordinates and sends it with the location.
+    const zone = loc.travelZone as TravelZone | null | undefined;
+    return zone && zone in TRAVEL_FEE ? zone : null;
   }
 
   spotZoneText(loc: TrainerLocation): string | null {
