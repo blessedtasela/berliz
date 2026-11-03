@@ -2,7 +2,11 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
+import { take } from 'rxjs';
+
 import { Booking } from 'src/app/models/booking.model';
+import { BookingService } from 'src/app/services/booking.service';
+import { TRAVEL_FEE, TravelZone, travelZoneLabel } from 'src/app/utils/travel-zone.util';
 import { memoizePhotoUri } from 'src/app/shared/photo-lightbox/photo-data-uri';
 
 export interface ReviewBookingModalData {
@@ -35,6 +39,12 @@ export class ReviewBookingModalComponent {
   private readonly _uri = memoizePhotoUri();
 
   rescheduling = false;
+
+  // ── Travel zone of a gym the client typed in ──
+  readonly zoneOptions: ('DOWNTOWN' | 'NEARBY' | 'FAR')[] = ['DOWNTOWN', 'NEARBY', 'FAR'];
+  zoneChoice: 'DOWNTOWN' | 'NEARBY' | 'FAR' | null = null;
+  savingZone = false;
+  zoneError: string | null = null;
   readonly durationOptions = [30, 45, 60, 90, 120];
   rescheduleDate: string;
   rescheduleTime = '';
@@ -44,6 +54,7 @@ export class ReviewBookingModalComponent {
     public dialogRef: MatDialogRef<ReviewBookingModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ReviewBookingModalData,
     private router: Router,
+    private bookingService: BookingService,
   ) {
     this.booking = data.booking;
     this.rescheduleDate = this.formatDateLocal(new Date(this.booking.scheduledAt));
@@ -89,8 +100,33 @@ export class ReviewBookingModalComponent {
     this.dialogRef.close({ decision: 'declined' } as ReviewBookingModalResult);
   }
 
+  /** The client named a gym without a usable Maps link: the zone (and so the travel fee) is still open. */
+  get zonePending(): boolean {
+    return this.booking.travelZone === 'PENDING';
+  }
+
+  zoneText(zone: string | null | undefined): string { return travelZoneLabel(zone); }
+  zoneFee(zone: TravelZone): number { return TRAVEL_FEE[zone]; }
+
   confirm(): void {
-    this.dialogRef.close({ decision: 'confirmed' } as ReviewBookingModalResult);
+    if (!this.zonePending) {
+      this.dialogRef.close({ decision: 'confirmed' } as ReviewBookingModalResult);
+      return;
+    }
+    if (!this.zoneChoice || this.savingZone) return;
+    // The zone is settled first so the booking is priced with the right travel fee when it is accepted.
+    this.savingZone = true;
+    this.zoneError = null;
+    this.bookingService.setTravelZone(this.booking.id, this.zoneChoice).pipe(take(1)).subscribe({
+      next: () => {
+        this.savingZone = false;
+        this.dialogRef.close({ decision: 'confirmed' } as ReviewBookingModalResult);
+      },
+      error: (err: any) => {
+        this.savingZone = false;
+        this.zoneError = err?.error?.message || 'Could not set the travel zone. Try again.';
+      },
+    });
   }
 
   confirmReschedule(): void {

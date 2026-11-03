@@ -15,7 +15,7 @@ const KNOWN_ENTITY_TYPES = new Set([
   'workout', 'run', 'task', 'faq', 'payment', 'subscription', 'payout',
   'partnership', 'centerProfile', 'trainerProfile', 'accountSettings',
   'memberProfile', 'accountabilityNudge', 'recap', 'clientIntake', 'clientOnboarding',
-  'testimonial', 'category', 'referralSlot',
+  'testimonial', 'category', 'referralSlot', 'groupPack',
 ]);
 
 /** True when this notification's entityType is one navigateToNotificationEntity can actually route (and, for the types that need one, it has an entityId too). */
@@ -51,6 +51,7 @@ export function navigateToNotificationEntity(router: Router, notification: Notif
       return true;
 
     case 'booking':
+    case 'groupPack':
       router.navigate(['/dashboard/my-bookings']);
       return true;
 

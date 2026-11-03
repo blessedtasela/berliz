@@ -81,7 +81,7 @@
     <!-- Trial or single session (trainers) -->
     <div *ngIf="canChooseTrial" class="flex flex-col gap-2" data-testid="session-type">
       <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Session type</label>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
         <button type="button" (click)="chooseSessionType('SINGLE')" data-testid="type-single"
           class="text-left px-4 py-3 rounded-xl border transition"
           [ngClass]="sessionType === 'SINGLE'
@@ -98,8 +98,16 @@
           <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100">Trial session · CA${{ trialPrice }}</span>
           <span class="block text-[11px] text-gray-400 dark:text-gray-500">A first session to see if you click. One per trainer.</span>
         </button>
+        <button type="button" (click)="chooseSessionType('GROUP')" data-testid="type-group"
+          class="text-left px-4 py-3 rounded-xl border transition"
+          [ngClass]="sessionType === 'GROUP'
+            ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800'
+            : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'">
+          <span class="block text-xs font-semibold text-gray-900 dark:text-gray-100">Group session · CA${{ groupPrice }} each</span>
+          <span class="block text-[11px] text-gray-400 dark:text-gray-500">Train with 2 to 5 people, booked together.</span>
+        </button>
       </div>
-      <p *ngIf="trialOfferText" class="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900 rounded-xl px-3 py-2"
+      <p *ngIf="trialOfferText && sessionType !== 'GROUP'" class="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900 rounded-xl px-3 py-2"
         data-testid="new-member-banner">
         {{ trialOfferText }}
       </p>
@@ -209,14 +217,75 @@
 
     <app-onboarding-nudge></app-onboarding-nudge>
 
+    <!-- ── Group session: size, places, the price and how it works ── -->
+    <div *ngIf="availabilityConfigured === true && isGroup" class="flex flex-col gap-3" data-testid="group-setup">
+      <div class="grid grid-cols-2 gap-3">
+        <label class="flex flex-col gap-1">
+          <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">People in the group</span>
+          <select [ngModel]="groupSize" (ngModelChange)="onGroupSize($event)" data-testid="group-size" aria-label="People in the group"
+            class="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100">
+            <option *ngFor="let n of groupSizes" [ngValue]="n">{{ n }} people</option>
+          </select>
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Places you take</span>
+          <select [(ngModel)]="groupSlots" data-testid="group-slots" aria-label="Places you take"
+            class="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100">
+            <option *ngFor="let n of groupSlotOptions" [ngValue]="n">{{ n }} {{ n === 1 ? 'place' : 'places' }}</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2.5 flex flex-col gap-1.5" data-testid="group-summary">
+        <div class="flex items-center justify-between gap-3">
+          <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Your total if the group fills</span>
+          <span class="text-sm font-bold text-gray-900 dark:text-gray-100" data-testid="group-total">{{ groupTotal | currency:'CAD':'symbol':'1.2-2' }}</span>
+        </div>
+        <p class="text-[11px] text-gray-500 dark:text-gray-400">
+          {{ groupSlots }} {{ groupSlots === 1 ? 'place' : 'places' }} × {{ groupPrice | currency:'CAD':'symbol':'1.2-2' }} each.
+          <span *ngIf="groupPlacesToFill > 0">You are responsible for filling the other {{ groupPlacesToFill }} {{ groupPlacesToFill === 1 ? 'place' : 'places' }}: friends join from this page, each paying for their own.</span>
+        </p>
+        <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
+          <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+          Nothing is charged now. It goes ahead only once every place is taken and {{ providerName }} confirms; you then have 24 hours to pay. If it is not full 24 hours before, it is cancelled and nobody is charged.
+        </p>
+      </div>
+
+      <app-group-sessions-list [trainerId]="providerId" [providerName]="providerName" [signedIn]="!isGuest"
+        [refreshKey]="groupRefresh" (signInRequired)="promptToSignIn()"></app-group-sessions-list>
+
+      <app-group-packs-list [trainerId]="providerId" [providerName]="providerName" [signedIn]="!isGuest" [packages]="packages"
+        [canBook]="!!selectedSlot && !submitting" [refreshKey]="groupRefresh" (signInRequired)="promptToSignIn()"
+        (usePack)="startGroupFromPack($event)"></app-group-packs-list>
+    </div>
+
     <!-- ── Estimated total (hidden when the provider has no rate set) ── -->
-    <app-booking-price-estimate *ngIf="availabilityConfigured === true && providerId"
+    <app-booking-price-estimate *ngIf="availabilityConfigured === true && providerId && !isGroup"
       [trainerId]="kind === 'trainer' ? providerId : null" [centerId]="kind === 'center' ? providerId : null"
       [providerName]="providerName" [minutes]="slotDurationMinutes" [when]="summaryWhen" [where]="summaryWhere"
       [locationFee]="locationSelection?.fee ?? null"
       [usesPackage]="selectedOption.kind === 'ownedPackage'"
       [sessionType]="requestedSessionType" [newMemberPercent]="requestedSessionType === 'TRIAL' ? newMemberPercent : null"
       [gymDropIn]="locationSelection?.dropInFee ?? null" [travelZone]="locationSelection?.travelZone ?? null"></app-booking-price-estimate>
+
+    <!-- ── A unique code from the trainer ───────────────────────────── -->
+    <div *ngIf="availabilityConfigured === true && !isGroup" class="flex flex-col gap-1.5" data-testid="payment-code">
+      <button type="button" (click)="showPaymentCode = !showPaymentCode" [attr.aria-expanded]="showPaymentCode"
+        class="self-start text-[11px] font-semibold text-red-600 hover:text-red-700 flex items-center gap-1">
+        <i-feather [name]="showPaymentCode ? 'chevron-up' : 'chevron-down'" style="width:12px;height:12px;"></i-feather>
+        I have a unique code
+      </button>
+      <ng-container *ngIf="showPaymentCode">
+        <input type="text" [(ngModel)]="paymentCode" maxlength="40" autocomplete="off" aria-label="Unique code from your trainer"
+          placeholder="Code from {{ providerName }}"
+          class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600
+                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+        <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
+          <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+          The code is checked when you send the request. Once {{ providerName }} confirms, it settles this session, so there is nothing to pay.
+        </p>
+      </ng-container>
+    </div>
 
     <!-- ── Notes ─────────────────────────────────────────────────────── -->
     <div *ngIf="availabilityConfigured === true" class="flex flex-col gap-1">

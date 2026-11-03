@@ -1,3 +1,4 @@
+import { of, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ProviderPackage } from 'src/app/models/provider-package.model';
 import { BookingPageComponent } from './booking-page.component';
@@ -135,6 +136,140 @@ describe('BookingPageComponent plans', () => {
       page.selectedOption = { kind: 'ownedPackage', subscription: { id: 1, providerPackage: plan() } };
       page.ownedByPackageId = new Map([[plan().id, { id: 1, providerPackage: plan() } as any]]);
       expect(page.requestedSessionType).toBe('SINGLE');
+    });
+  });
+
+  describe('unique payment code', () => {
+    function send(code: string): any {
+      const dispatch = jasmine.createSpy('dispatch');
+      (page as any).store = { dispatch };
+      page.kind = 'trainer';
+      page.providerId = 9;
+      page.selectedDate = '2099-01-05';
+      page.selectedSlot = { startTime: '17:00:00', endTime: '18:00:00' } as any;
+      page.slotDurationMinutes = 60;
+      page.minLeadTimeMinutes = 60;
+      page.notes = '';
+      page.locationSelection = null;
+      page.paymentCode = code;
+      page.submit();
+      return dispatch.calls.mostRecent().args[0].data;
+    }
+
+    it('sends a trimmed code with the request', () => {
+      expect(send('  ABC-123 ').paymentCode).toBe('ABC-123');
+    });
+
+    it('sends nothing when the field is empty', () => {
+      expect('paymentCode' in send('   ')).toBeFalse();
+    });
+  });
+
+  describe('group session', () => {
+    beforeEach(() => {
+      page.kind = 'trainer';
+      page.groupPrice = 75;
+      page.groupSize = 4;
+      page.groupSlots = 1;
+      page.sessionType = 'GROUP';
+    });
+
+    it('is only for a trainer, and never out of a pack', () => {
+      expect(page.isGroup).toBeTrue();
+      page.kind = 'center';
+      expect(page.isGroup).toBeFalse();
+    });
+
+    it('works out the starter total and the places left to fill', () => {
+      expect(page.groupTotal).toBe(75);
+      expect(page.groupPlacesToFill).toBe(3);
+      page.groupSlots = 2;
+      expect(page.groupTotal).toBe(150);
+      expect(page.groupPlacesToFill).toBe(2);
+    });
+
+    it('shrinks the places taken when the group gets smaller, and offers 2 to 5 people', () => {
+      page.groupSlots = 4;
+      page.onGroupSize(2);
+      expect(page.groupSlots).toBe(2);
+      expect(page.groupSlotOptions).toEqual([1, 2]);
+    });
+
+    it('is not a trial or a single session request, and says what the button does', () => {
+      expect(page.requestedSessionType).toBe('SINGLE');
+      expect(page.primaryLabel).toBe('Start this group');
+      page.user = null;
+      expect(page.primaryLabel).toBe('Continue');
+    });
+
+    it('starts the group at the picked time with the chosen size and places', () => {
+      const start = jasmine.createSpy('start').and.returnValue(of({ data: { message: 'Your group is open.' } }));
+      (page as any).groupService = { start };
+      (page as any).snackBar = { openSnackBar: jasmine.createSpy('openSnackBar') };
+      page.providerId = 9;
+      page.selectedDate = '2026-11-10';
+      page.selectedSlot = { startTime: '17:00:00', endTime: '18:00:00' } as any;
+      page.slotDurationMinutes = 60;
+      page.groupSlots = 2;
+      page.notes = ' leg day ';
+      page.locationSelection = null;
+      page.groupRefresh = 0;
+      const before = 0;
+
+      (page as any).startGroup();
+
+      expect(start).toHaveBeenCalledWith(jasmine.objectContaining({
+        trainerId: 9, localDate: '2026-11-10', localTime: '17:00:00', durationMinutes: 60, size: 4, slots: 2, notes: 'leg day',
+      }));
+      expect(page.groupRefresh).toBe(before + 1);
+      expect(page.submitting).toBeFalse();
+    });
+
+    it('shows the server reason when the group cannot be started', () => {
+      (page as any).groupService = { start: () => throwError(() => ({ error: { message: 'A trainer cannot join their own group.' } })) };
+      page.selectedSlot = { startTime: '17:00:00', endTime: '18:00:00' } as any;
+
+      (page as any).startGroup();
+
+      expect(page.submitError).toBe('A trainer cannot join their own group.');
+      expect(page.submitting).toBeFalse();
+    });
+
+    it('books the picked time under an active pack: the pack decides who is in it, nothing else is sent', () => {
+      const start = jasmine.createSpy('start').and.returnValue(of({ data: { message: 'Booked with your pack.' } }));
+      (page as any).groupService = { start };
+      (page as any).snackBar = { openSnackBar: jasmine.createSpy('openSnackBar') };
+      page.selectedDate = '2026-11-10';
+      page.selectedSlot = { startTime: '17:00:00', endTime: '18:00:00' } as any;
+      page.slotDurationMinutes = 60;
+      page.notes = '';
+      page.locationSelection = null;
+      page.groupRefresh = 0;
+      const before = 0;
+
+      page.startGroupFromPack({ id: 50 } as any);
+
+      expect(start).toHaveBeenCalledWith(jasmine.objectContaining({
+        groupPackId: 50, localDate: '2026-11-10', localTime: '17:00:00', durationMinutes: 60,
+      }));
+      const sent = start.calls.mostRecent().args[0];
+      expect(sent.size).toBeUndefined();
+      expect(sent.slots).toBeUndefined();
+      expect(page.groupRefresh).toBe(before + 1);
+      expect(page.submitting).toBeFalse();
+    });
+
+    it('does nothing without a picked time, and shows the reason when the pack cannot cover it', () => {
+      const start = jasmine.createSpy('start');
+      (page as any).groupService = { start };
+      page.selectedSlot = null;
+      page.startGroupFromPack({ id: 50 } as any);
+      expect(start).not.toHaveBeenCalled();
+
+      (page as any).groupService = { start: () => throwError(() => ({ error: { message: 'This group pack has no sessions left (or has expired).' } })) };
+      page.selectedSlot = { startTime: '17:00:00', endTime: '18:00:00' } as any;
+      page.startGroupFromPack({ id: 50 } as any);
+      expect(page.submitError).toBe('This group pack has no sessions left (or has expired).');
     });
   });
 

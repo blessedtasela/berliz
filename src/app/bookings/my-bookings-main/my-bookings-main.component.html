@@ -24,6 +24,9 @@
 
     <app-calendar-feed-card *ngIf="bookings.length > 0"></app-calendar-feed-card>
 
+    <!-- Group packs the person is in: pay a share, see the sessions left. Shows nothing when they are in none. -->
+    <app-group-packs-list [allTrainers]="true" [signedIn]="true"></app-group-packs-list>
+
     <app-load-error *ngIf="loadError && bookings.length === 0" title="Couldn't load your bookings"
         [message]="loadError" (retry)="loadBookings()"></app-load-error>
 
