@@ -25,6 +25,8 @@ import { BookingService } from 'src/app/services/booking.service';
 import { GroupSessionService } from 'src/app/services/group-session.service';
 import { DEFAULT_GROUP_PRICE, GROUP_SIZE_OPTIONS } from 'src/app/models/group-session.model';
 import { GroupSessionsListComponent } from '../group-sessions-list/group-sessions-list.component';
+import { GroupPacksListComponent } from '../group-packs-list/group-packs-list.component';
+import { GroupPack } from 'src/app/models/group-pack.model';
 import { DEFAULT_TRIAL_PRICE } from '../booking-price-estimate/booking-price.util';
 import { clearGuestDraft, loadGuestDraft, saveGuestDraft } from '../guest-booking-draft';
 import { ProviderKind, providerSlug, resolveProviderBySlug } from '../resolve-provider';
@@ -62,7 +64,7 @@ type BookingOption =
  */
 @Component({
     selector: 'app-booking-page',
-    imports: [CommonModule, FormsModule, RouterModule, IconsModule, SharedModule, DateStripComponent, BookingLocationPickerComponent, BookingPriceEstimateComponent, ProviderContactComponent, OnboardingNudgeComponent, GroupSessionsListComponent],
+    imports: [CommonModule, FormsModule, RouterModule, IconsModule, SharedModule, DateStripComponent, BookingLocationPickerComponent, BookingPriceEstimateComponent, ProviderContactComponent, OnboardingNudgeComponent, GroupSessionsListComponent, GroupPacksListComponent],
     templateUrl: './booking-page.component.html'
 })
 export class BookingPageComponent implements OnInit, OnDestroy {
@@ -630,6 +632,32 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     this.submitting = true;
     this.groupService.start({
       trainerId: this.providerId,
+  /** Books the picked time for the whole group of an active pack: one of the pack's sessions covers it, nobody pays again. */
+  startGroupFromPack(pack: GroupPack): void {
+    if (!this.selectedSlot || this.submitting) return;
+    this.submitting = true;
+    this.submitError = null;
+    this.groupService.start({
+      groupPackId: pack.id,
+      localDate: this.selectedDate,
+      localTime: this.selectedSlot.startTime,
+      durationMinutes: this.slotDurationMinutes,
+      locationLabel: this.summaryWhere ?? undefined,
+      notes: (this.notes ?? '').trim() || undefined,
+    }).pipe(take(1)).subscribe({
+      next: res => {
+        this.submitting = false;
+        this.groupRefresh++;
+        this.snackBar.openSnackBar(res?.data?.message || res?.message
+          || 'Your group session is booked with your pack. It goes ahead once the trainer confirms it.', '');
+      },
+      error: err => {
+        this.submitting = false;
+        this.submitError = err?.error?.message || genericError;
+      },
+    });
+  }
+
       localDate: this.selectedDate,
       localTime: this.selectedSlot.startTime,
       durationMinutes: this.slotDurationMinutes,

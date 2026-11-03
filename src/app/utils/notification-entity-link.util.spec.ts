@@ -1,6 +1,6 @@
 import { Router } from '@angular/router';
 import { Notifications } from '../models/Notifications.interface';
-import { navigateToNotificationEntity } from './notification-entity-link.util';
+import { navigateToNotificationEntity, notificationHasDeepLink } from './notification-entity-link.util';
 
 describe('navigateToNotificationEntity', () => {
   let router: jasmine.SpyObj<Router>;
@@ -177,6 +177,12 @@ describe('navigateToNotificationEntity', () => {
   it('routes a referralSlot notification to My Rewards', () => {
     expect(navigateToNotificationEntity(router, notification({ entityType: 'referralSlot' }))).toBeTrue();
     expect(router.navigate).toHaveBeenCalledWith(['/dashboard/my-rewards']);
+  });
+
+  it('routes a group pack notification (pay your share, someone left) to My Bookings, where the pack is', () => {
+    expect(notificationHasDeepLink(notification({ entityType: 'groupPack', entityId: 5 }))).toBeTrue();
+    expect(navigateToNotificationEntity(router, notification({ entityType: 'groupPack', entityId: 5 }))).toBeTrue();
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/my-bookings']);
   });
 
   it('routes a client onboarding notification to the onboarding answers of that client', () => {

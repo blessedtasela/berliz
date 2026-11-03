@@ -55,12 +55,12 @@ describe('GroupSessionsListComponent', () => {
     expect(fixture.nativeElement.querySelector('[data-testid="no-open-groups"]')).not.toBeNull();
   });
 
-  it('states the rules: booked together, nothing charged until full, 48 hours, who fills it, cancellation policy', () => {
+  it('states the rules: booked together, nothing charged until full, 24 hours, who fills it, cancellation policy', () => {
     show(false, []);
     const rules = (fixture.nativeElement.querySelector('[data-testid="group-rules"]') as HTMLElement).textContent!;
     expect(rules).toContain('only goes ahead once every place is taken');
     expect(rules).toContain('Nothing is charged until the group is full');
-    expect(rules).toContain('48 hours');
+    expect(rules).toContain('24 hours');
     expect(rules).toContain('responsible for filling it');
     expect(rules).toContain("Coach Jane's cancellation policy");
   });

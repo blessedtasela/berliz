@@ -245,12 +245,16 @@
         </p>
         <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
           <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
-          Nothing is charged now. It goes ahead only once every place is taken and {{ providerName }} confirms; you then have 24 hours to pay. If it is not full 48 hours before, it is cancelled and nobody is charged.
+          Nothing is charged now. It goes ahead only once every place is taken and {{ providerName }} confirms; you then have 24 hours to pay. If it is not full 24 hours before, it is cancelled and nobody is charged.
         </p>
       </div>
 
       <app-group-sessions-list [trainerId]="providerId" [providerName]="providerName" [signedIn]="!isGuest"
         [refreshKey]="groupRefresh" (signInRequired)="promptToSignIn()"></app-group-sessions-list>
+
+      <app-group-packs-list [trainerId]="providerId" [providerName]="providerName" [signedIn]="!isGuest" [packages]="packages"
+        [canBook]="!!selectedSlot && !submitting" [refreshKey]="groupRefresh" (signInRequired)="promptToSignIn()"
+        (usePack)="startGroupFromPack($event)"></app-group-packs-list>
     </div>
 
     <!-- ── Estimated total (hidden when the provider has no rate set) ── -->

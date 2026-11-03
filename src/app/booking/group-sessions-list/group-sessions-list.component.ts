@@ -24,7 +24,7 @@ export function groupStatusText(status: string, mine: boolean): string {
 /**
  * The groups with one trainer: the ones the signed-in person is in (with Leave), and the open ones anyone can join.
  * A group is booked together as one block: nobody is charged until it is full and the trainer confirms, and one that
- * is still short of people 48 hours before it starts is cancelled and everyone is told.
+ * is still short of people 24 hours before it starts is cancelled and everyone is told.
  */
 @Component({
     selector: 'app-group-sessions-list',
@@ -92,7 +92,7 @@ export function groupStatusText(status: string, mine: boolean): string {
       <ul class="text-[11px] text-gray-400 dark:text-gray-500 flex flex-col gap-1 list-disc pl-4" data-testid="group-rules">
         <li>A group is booked together as one block, and only goes ahead once every place is taken.</li>
         <li>Nothing is charged until the group is full and {{ providerName }} confirms. Then each person pays for their own places.</li>
-        <li>If it is still short of people 48 hours before it starts, it is cancelled and everyone is told. Nobody is charged.</li>
+        <li>If it is still short of people 24 hours before it starts, it is cancelled and everyone is told. Nobody is charged.</li>
         <li>The person who starts a group is responsible for filling it. If they leave, the group passes to the next person.</li>
         <li>Cancelling or not turning up follows {{ providerName }}'s cancellation policy, the same as any session.</li>
       </ul>

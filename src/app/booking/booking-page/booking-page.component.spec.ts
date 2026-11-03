@@ -234,6 +234,43 @@ describe('BookingPageComponent plans', () => {
       page.availabilityConfigured = true;
       page.submitting = true;
       expect(page.primaryDisabled).toBeTrue();
+
+    it('books the picked time under an active pack: the pack decides who is in it, nothing else is sent', () => {
+      const start = jasmine.createSpy('start').and.returnValue(of({ data: { message: 'Booked with your pack.' } }));
+      (page as any).groupService = { start };
+      (page as any).snackBar = { openSnackBar: jasmine.createSpy('openSnackBar') };
+      page.selectedDate = '2026-11-10';
+      page.selectedSlot = { startTime: '17:00:00', endTime: '18:00:00' } as any;
+      page.slotDurationMinutes = 60;
+      page.notes = '';
+      page.locationSelection = null;
+      page.groupRefresh = 0;
+      const before = 0;
+
+      page.startGroupFromPack({ id: 50 } as any);
+
+      expect(start).toHaveBeenCalledWith(jasmine.objectContaining({
+        groupPackId: 50, localDate: '2026-11-10', localTime: '17:00:00', durationMinutes: 60,
+      }));
+      const sent = start.calls.mostRecent().args[0];
+      expect(sent.size).toBeUndefined();
+      expect(sent.slots).toBeUndefined();
+      expect(page.groupRefresh).toBe(before + 1);
+      expect(page.submitting).toBeFalse();
+    });
+
+    it('does nothing without a picked time, and shows the reason when the pack cannot cover it', () => {
+      const start = jasmine.createSpy('start');
+      (page as any).groupService = { start };
+      page.selectedSlot = null;
+      page.startGroupFromPack({ id: 50 } as any);
+      expect(start).not.toHaveBeenCalled();
+
+      (page as any).groupService = { start: () => throwError(() => ({ error: { message: 'This group pack has no sessions left (or has expired).' } })) };
+      page.selectedSlot = { startTime: '17:00:00', endTime: '18:00:00' } as any;
+      page.startGroupFromPack({ id: 50 } as any);
+      expect(page.submitError).toBe('This group pack has no sessions left (or has expired).');
+    });
       expect(page.primaryIcon).toBe('loader');
     });
   });
