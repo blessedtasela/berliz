@@ -23,7 +23,7 @@ import { SeoService } from 'src/app/services/seo.service';
 import { WaitlistService } from 'src/app/services/waitlist.service';
 import { BookingService } from 'src/app/services/booking.service';
 import { GroupSessionService } from 'src/app/services/group-session.service';
-import { DEFAULT_GROUP_PRICE, GROUP_MAX_SIZE, GROUP_MIN_SIZE } from 'src/app/models/group-session.model';
+import { DEFAULT_GROUP_PRICE, GROUP_SIZE_OPTIONS } from 'src/app/models/group-session.model';
 import { GroupSessionsListComponent } from '../group-sessions-list/group-sessions-list.component';
 import { DEFAULT_TRIAL_PRICE } from '../booking-price-estimate/booking-price.util';
 import { clearGuestDraft, loadGuestDraft, saveGuestDraft } from '../guest-booking-draft';
@@ -116,7 +116,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   /** How many people the group has (2 to 5), and how many places the person starting takes. */
   groupSize = 3;
   groupSlots = 1;
-  readonly groupSizes = Array.from({ length: GROUP_MAX_SIZE - GROUP_MIN_SIZE + 1 }, (_, i) => GROUP_MIN_SIZE + i);
+  readonly groupSizes = GROUP_SIZE_OPTIONS;
   /** Bumped after a group is started so the list of groups reloads. */
   groupRefresh = 0;
 

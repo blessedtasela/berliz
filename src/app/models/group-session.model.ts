@@ -56,3 +56,5 @@ export interface GroupSessionRequest {
 export const DEFAULT_GROUP_PRICE = 75;
 export const GROUP_MIN_SIZE = 2;
 export const GROUP_MAX_SIZE = 5;
+/** [2, 3, 4, 5]: the sizes a group can have. */
+export const GROUP_SIZE_OPTIONS = Array.from({ length: GROUP_MAX_SIZE - GROUP_MIN_SIZE + 1 }, (_, i) => GROUP_MIN_SIZE + i);
