@@ -46,6 +46,29 @@
 
             <app-provider-pricing-fields [form]="updateTrainerForm"></app-provider-pricing-fields>
 
+            <div class="flex flex-col gap-1" data-testid="trial-price-field">
+                <label for="trialPrice" class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Trial session price (CA$)</label>
+                <input id="trialPrice" formControlName="trialPrice" type="number" min="0" step="0.01" placeholder="Platform default: 100"
+                    class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+                <p class="text-[11px] text-gray-400 dark:text-gray-500">
+                    What you charge for a first session. A client can book it once; new members get 50% off it automatically (Berliz covers that,
+                    you are paid the full price). Leave empty to use the platform's CA$100 trial.
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-1" data-testid="booking-policy-field">
+                <label for="bookingPolicy" class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Booking policy</label>
+                <textarea id="bookingPolicy" formControlName="bookingPolicy" rows="5" [attr.maxlength]="MAX_BOOKING_POLICY_LENGTH"
+                    placeholder="Group rules, no-show notice, monthly plan minimums..."
+                    class="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100
+                           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"></textarea>
+                <p class="text-[11px] text-gray-400 dark:text-gray-500 flex justify-between gap-2">
+                    <span>Shown to clients on your profile and on the booking page, beside the standard terms.</span>
+                    <span>{{ updateTrainerForm.get('bookingPolicy')?.value?.length || 0 }} / {{ MAX_BOOKING_POLICY_LENGTH }}</span>
+                </p>
+            </div>
+
             <div *ngIf="user?.role === 'admin'" class="flex flex-col gap-1">
                 <label class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Likes</label>
                 <input aria-label="Likes" formControlName="likes" type="number" readonly class="w-full px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-500 dark:text-gray-400

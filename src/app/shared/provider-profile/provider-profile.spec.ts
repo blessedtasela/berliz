@@ -43,6 +43,18 @@ describe('provider profile shared cards', () => {
       expect(text(f)).toContain('25% is refunded');
     });
 
+    it("shows the trainer's own booking policy under the standard terms, as plain text, and nothing when there is none", () => {
+      const f = make({ providerLabel: 'this trainer', policy: 'Groups must be full.\n<i>Notify</i> 24h ahead.' });
+      const block = (f.nativeElement as HTMLElement).querySelector('[data-testid="provider-policy"]')!;
+      expect(block.textContent).toContain("Trainer's booking policy");
+      expect(block.textContent).toContain('Groups must be full.');
+      expect(block.querySelector('i')).toBeNull();
+      expect(text(f)).toContain('Free up to 24h before');   // the standard terms are still there
+
+      const none = make({ policy: null });
+      expect((none.nativeElement as HTMLElement).querySelector('[data-testid="provider-policy"]')).toBeNull();
+    });
+
     it('falls back to the platform defaults (24h / 50%) when unset', () => {
       const f = make({});
       expect(text(f)).toContain('Free up to 24h before');
