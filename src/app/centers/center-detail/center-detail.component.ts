@@ -90,6 +90,8 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
    * only a confirmed "no hours" hides the booking buttons, so a hiccup never takes booking away from a center that has it.
    */
   acceptingBookings: boolean | null = null;
+  /** True once the hours lookup has come back (or failed), so the Book button is never shown on a guess and then taken away. */
+  availabilityChecked = false;
 
   private availabilityService = inject(AvailabilityService);
   private snack = inject(SnackBarService);
@@ -238,12 +240,18 @@ export class CenterDetailComponent implements OnInit, OnDestroy {
     );
   }
 
+  /** Offer booking once we know the center takes it; if the hours could not be checked, still offer it rather than taking booking away on a hiccup. */
+  get bookingOffered(): boolean {
+    return this.acceptingBookings === true || (this.acceptingBookings === null && this.availabilityChecked);
+  }
+
   private loadBookingAvailability(centerId: number): void {
     this.subscription.add(
       this.availabilityService.getProviderAvailability(undefined, centerId)
         .pipe(catchError(() => of(null)))
         .subscribe(response => {
           if (response) this.acceptingBookings = (response.data ?? []).some(day => day.isActive);
+          this.availabilityChecked = true;
         })
     );
   }

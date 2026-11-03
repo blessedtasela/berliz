@@ -57,6 +57,13 @@ export const DEFAULT_LATE_CANCEL_REFUND_PERCENT = 50;
           </span>
         </div>
       </div>
+
+      <div *ngIf="policy" [ngClass]="t.tile" class="p-4 mt-3 flex flex-col gap-1.5" data-testid="provider-policy">
+        <span class="text-[11px] uppercase tracking-wide font-semibold flex items-center gap-1.5" [ngClass]="t.muted">
+          <i-feather name="file-text" style="width:12px;height:12px;"></i-feather> {{ providerLabel === 'this trainer' ? 'Trainer' : 'Provider' }}'s booking policy
+        </span>
+        <p class="text-xs leading-relaxed whitespace-pre-line" [ngClass]="t.body">{{ policy }}</p>
+      </div>
     </section>
   `
 })
@@ -67,6 +74,8 @@ export class ProviderTermsComponent {
   @Input() lateCancelRefundPercent: number | null | undefined = null;
   /** "this trainer" / "this center" -- reads naturally in the copy. */
   @Input() providerLabel = 'the provider';
+  /** The provider's own written booking policy (group rules, no-show notice, monthly minimums...), shown under the standard terms. */
+  @Input() policy: string | null | undefined = null;
 
   get t(): ProfileThemeClasses { return profileTheme(this.theme); }
   get freeHours(): number { return this.freeCancelHours ?? DEFAULT_FREE_CANCEL_HOURS; }

@@ -114,7 +114,7 @@
     </div>
 
     <!-- Several sessions at once: pick days and times for a whole month -->
-    <a [routerLink]="planPath" data-testid="plan-link"
+    <a *ngIf="availabilityConfigured === true" [routerLink]="planPath" data-testid="plan-link"
       class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 flex items-center justify-between gap-3
              hover:border-gray-300 dark:hover:border-gray-700 transition">
       <span class="flex items-center gap-3 min-w-0">
@@ -161,6 +161,8 @@
 
       <div class="flex flex-col gap-1.5">
         <label class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Available times</label>
+        <p *ngIf="timezoneNote" class="text-[11px] text-gray-400 dark:text-gray-500" data-testid="timezone-note">{{ timezoneNote }}</p>
+        <p *ngIf="yourTimeNote" class="text-[11px] font-semibold text-gray-600 dark:text-gray-300" data-testid="your-time-note">{{ yourTimeNote }}</p>
 
         <div *ngIf="slotsLoading" class="flex items-center justify-center py-6 gap-2 text-gray-400 dark:text-gray-500">
           <i-feather name="loader" class="animate-spin" style="width:14px;height:14px;"></i-feather>

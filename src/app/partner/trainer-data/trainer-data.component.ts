@@ -9,6 +9,7 @@ import { Trainers } from 'src/app/models/trainers.interface';
 import { cleanFeeKeepZero, flattenAreas, groupLocations, normPlace, placeLabel, sameCity, TrainerArea } from 'src/app/utils/trainer-location.util';
 import { ApiResponse } from 'src/app/models/Api.interface';
 import { providerPricingControls, providerPricingControlValues, providerPricingPayload } from '../provider-pricing-fields/provider-pricing-fields.component';
+import { trainerBookingControls, trainerBookingControlValues, trainerBookingPayload, MAX_BOOKING_POLICY_LENGTH } from '../trainer-booking-fields/trainer-booking-fields';
 import { Users } from 'src/app/models/users.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -29,6 +30,7 @@ import { selectActiveCategories } from 'src/app/state/category/category.selector
     standalone: false
 })
 export class TrainerDataComponent {
+  readonly MAX_BOOKING_POLICY_LENGTH = MAX_BOOKING_POLICY_LENGTH;
   @Output() emitEvent = new EventEmitter();
   updateTrainerForm!: FormGroup;
   invalidForm: boolean = false;
@@ -77,6 +79,7 @@ export class TrainerDataComponent {
       'categoryIds': this.formBuilder.array(this.selectedCategoriesId, this.validateCheckbox()),
       'serviceMode': [this.trainer?.serviceMode ?? 'IN_PERSON'],
       ...providerPricingControls(this.trainer),
+      ...trainerBookingControls(this.trainer),
       'areas': this.formBuilder.array([]),
       'customLocationAllowed': [!!this.trainer?.customLocationAllowed],
       'customLocationFee': [this.trainer?.customLocationFee ?? null, Validators.min(0)],
@@ -276,6 +279,7 @@ export class TrainerDataComponent {
       categoryIds: (trainer.categories ?? []).map(category => category.id),
       serviceMode: trainer.serviceMode ?? 'IN_PERSON',
       ...providerPricingControlValues(trainer),
+      ...trainerBookingControlValues(trainer),
       customLocationAllowed: !!trainer.customLocationAllowed,
       customLocationFee: trainer.customLocationFee ?? null,
       customLocationOutsideAllowed: trainer.customLocationOutsideAllowed !== false,
@@ -339,6 +343,7 @@ export class TrainerDataComponent {
       serviceMode: formValue.serviceMode,
       locations: flattenAreas(formValue.areas),
       ...providerPricingPayload(formValue),
+      ...trainerBookingPayload(formValue),
       customLocationAllowed: !!formValue.customLocationAllowed,
       // The backend treats a null fee as "leave untouched", so a cleared field is sent as 0 (= no surcharge).
       customLocationFee: this.toFee(formValue.customLocationFee) ?? 0,

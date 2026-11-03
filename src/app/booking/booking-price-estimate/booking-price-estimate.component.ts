@@ -68,16 +68,23 @@ import { DEFAULT_FREE_CANCEL_HOURS, DEFAULT_LATE_CANCEL_REFUND_PERCENT } from 's
         <i-feather name="map-pin" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
         Pay at the gym: about {{ e.dropInFee | currency:'CAD':'symbol':'1.2-2' }} drop-in, paid to the gym at the door. It is not part of the total above.
       </p>
-      <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
+      <ng-container *ngIf="!direct; else directNote">
+      <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5" data-testid="payment-timing">
         <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
         Nothing is charged now. You pay {{ e.total | currency:'CAD':'symbol':'1.2-2' }} only after {{ providerName || 'the provider' }} confirms, and you have 24 hours to pay.
+      </p>
+      <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5" data-testid="request-hold">
+        <i-feather name="clock" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+        {{ holdText }}
       </p>
       <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
         <i-feather name="calendar" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
         {{ cancellationPolicyText }} {{ refundExample(e.total) }}
       </p>
+      </ng-container>
     </div>
     <div *ngIf="loaded && !estimate" class="px-1 flex flex-col gap-1">
+      <ng-container *ngIf="!direct; else directNote">
       <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
         <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
         You pay only after {{ providerName || 'the provider' }} confirms: nothing is charged now.
@@ -86,6 +93,21 @@ import { DEFAULT_FREE_CANCEL_HOURS, DEFAULT_LATE_CANCEL_REFUND_PERCENT } from 's
         <i-feather name="calendar" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
         {{ cancellationPolicyText }}
       </p>
+      <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5" data-testid="request-hold">
+        <i-feather name="clock" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+        {{ holdText }}
+      </p>
+      </ng-container>
+    </div>
+    <ng-template #directNote>
+      <p class="px-1 text-[11px] text-gray-500 dark:text-gray-400 flex items-start gap-1.5" data-testid="direct-payment-note">
+        <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+        Pay {{ providerName || 'the provider' }} directly. Berliz keeps the booking on record and does not charge you.
+      </p>
+    </ng-template>
+    <div *ngIf="loaded && bookingPolicy" class="rounded-xl border border-gray-200 dark:border-gray-700 px-3 py-2.5 flex flex-col gap-1" data-testid="booking-policy">
+      <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">{{ providerName || 'The provider' }}'s booking policy</span>
+      <p class="text-xs text-gray-600 dark:text-gray-300 whitespace-pre-line">{{ bookingPolicy }}</p>
     </div>
   `
 })
@@ -116,6 +138,10 @@ export class BookingPriceEstimateComponent implements OnInit, OnChanges {
   hourlyRate: number | null = null;
   /** The trainer's own trial price; the platform's CA$100 trial when they have not set one. */
   trialPrice: number = DEFAULT_TRIAL_PRICE;
+  /** The trainer's own booking policy text (group rules, monthly-plan minimums...); shown with the generated terms. */
+  bookingPolicy: string | null = null;
+  /** DIRECT = the provider takes payment themselves: Berliz keeps the booking on record and charges nothing. */
+  paymentMode: string | null = null;
   /** The provider's own cancellation policy (null = platform default). */
   private freeCancelHours: number | null = null;
   private lateCancelRefundPercent: number | null = null;
@@ -141,6 +167,13 @@ export class BookingPriceEstimateComponent implements OnInit, OnChanges {
       introPercent: this.trial ? this.newMemberPercent : null,
       dropInFee: this.gymDropIn,
     });
+  }
+
+  get direct(): boolean { return this.paymentMode === 'DIRECT'; }
+
+  /** How long a request is held, in the numbers the server actually uses (a request nobody answers for 2 days is released). */
+  get holdText(): string {
+    return `Your time is held while ${this.providerName || 'the provider'} answers. A request left unanswered for 2 days is released and nothing is charged.`;
   }
 
   get trial(): boolean { return !!this.trainerId && this.sessionType === 'TRIAL'; }
@@ -171,6 +204,8 @@ export class BookingPriceEstimateComponent implements OnInit, OnChanges {
     this.hourlyRate = null;
     this.trialPrice = DEFAULT_TRIAL_PRICE;
     this.freeCancelHours = null;
+    this.bookingPolicy = null;
+    this.paymentMode = null;
     this.lateCancelRefundPercent = null;
     if (this.trainerId) {
       const id = this.trainerId;
@@ -178,6 +213,8 @@ export class BookingPriceEstimateComponent implements OnInit, OnChanges {
         const t = (res?.data ?? []).find(x => x.id === id);
         this.hourlyRate = t?.hourlyRate ?? null;
         this.trialPrice = t?.trialPrice ?? DEFAULT_TRIAL_PRICE;
+        this.bookingPolicy = t?.bookingPolicy ?? null;
+        this.paymentMode = t?.paymentMode ?? null;
         this.freeCancelHours = t?.freeCancelHours ?? null;
         this.lateCancelRefundPercent = t?.lateCancelRefundPercent ?? null;
         this.loaded = true;
@@ -187,6 +224,7 @@ export class BookingPriceEstimateComponent implements OnInit, OnChanges {
       this.centerService.getActiveCenters().pipe(take(1), catchError(() => of(null))).subscribe(res => {
         const c = (res?.data ?? []).find(x => x.id === id);
         this.hourlyRate = c?.hourlyRate ?? null;
+        this.paymentMode = c?.paymentMode ?? null;
         this.freeCancelHours = c?.freeCancelHours ?? null;
         this.lateCancelRefundPercent = c?.lateCancelRefundPercent ?? null;
         this.loaded = true;

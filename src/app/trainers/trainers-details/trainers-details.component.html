@@ -133,7 +133,7 @@
             <!-- ── REASSURANCE ───────────────────────────────────────────── -->
             <app-provider-availability theme="dark" [trainerId]="trainer?.id"></app-provider-availability>
 
-            <app-provider-terms theme="dark" providerLabel="this trainer" [hourlyRate]="trainer?.hourlyRate"
+            <app-provider-terms theme="dark" providerLabel="this trainer" [policy]="trainer?.bookingPolicy" [hourlyRate]="trainer?.hourlyRate"
                 [freeCancelHours]="trainer?.freeCancelHours" [lateCancelRefundPercent]="trainer?.lateCancelRefundPercent">
             </app-provider-terms>
 

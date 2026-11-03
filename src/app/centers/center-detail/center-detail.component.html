@@ -104,7 +104,7 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-3 pt-1">
-                        <button *ngIf="acceptingBookings !== false" type="button" (click)="bookSession()"
+                        <button *ngIf="bookingOffered" type="button" (click)="bookSession()"
                             class="px-7 py-3 rounded-xl bg-red-600 text-white text-sm font-bold shadow-[0_8px_24px_rgba(220,38,38,0.35)]
                                    hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2 justify-center">
                             <i-feather name="calendar" style="width:15px;height:15px;"></i-feather>
@@ -124,7 +124,7 @@
                         </button>
                     </div>
 
-                    <app-booking-assurance *ngIf="acceptingBookings !== false" providerLabel="this center" [freeCancelHours]="center.freeCancelHours"
+                    <app-booking-assurance *ngIf="bookingOffered" providerLabel="this center" [freeCancelHours]="center.freeCancelHours"
                         [lateCancelRefundPercent]="center.lateCancelRefundPercent"></app-booking-assurance>
 
                     <div *ngIf="centerCategories.length" class="flex flex-wrap gap-2">
@@ -268,14 +268,14 @@
 
             <app-center-video-gallery [centerVideoAlbums]="centerVideoAlbums"></app-center-video-gallery>
 
-            <app-profile-cta *ngIf="acceptingBookings !== false" [name]="center.name" providerLabel="this center" (book)="bookSession()"
+            <app-profile-cta *ngIf="bookingOffered" [name]="center.name" providerLabel="this center" (book)="bookSession()"
                 [bookLink]="['/centers', center.name.split(' ').join('-'), 'book']">
             </app-profile-cta>
 
         </div>
     </div>
 
-    <app-sticky-book-bar *ngIf="acceptingBookings !== false" [name]="center.name" (book)="bookSession()"></app-sticky-book-bar>
+    <app-sticky-book-bar *ngIf="bookingOffered" [name]="center.name" (book)="bookSession()"></app-sticky-book-bar>
 
 </ng-container>
 

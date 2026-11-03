@@ -3,7 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { Observable, of, throwError } from 'rxjs';
+import { NEVER, Observable, of, throwError } from 'rxjs';
 
 import { CenterDetailComponent } from './center-detail.component';
 import { CenterService } from 'src/app/services/center.service';
@@ -105,6 +105,15 @@ describe('CenterDetailComponent', () => {
       expect(el.querySelector('app-sticky-book-bar')).toBeNull();
       expect(el.querySelector('app-profile-cta')).toBeNull();
       expect(el.textContent).toContain("Online booking isn't open for this center yet");
+    });
+
+    it('shows no Book button while the hours are still loading, so it never flashes up and is taken away', () => {
+      const el = setup({ slug: 'iron-works', centers: [ironWorks], availability: NEVER });
+
+      expect(component.acceptingBookings).toBeNull();
+      expect(component.bookingOffered).toBeFalse();
+      expect(bookButtons(el).length).toBe(0);
+      expect(el.querySelector('app-sticky-book-bar')).toBeNull();
     });
 
     it('is not offered when every day is switched off', () => {

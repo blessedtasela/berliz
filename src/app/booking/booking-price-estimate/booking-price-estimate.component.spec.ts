@@ -46,6 +46,39 @@ describe('BookingPriceEstimateComponent', () => {
     expect(text()).toContain('after Coach Jane confirms');
   });
 
+  it('explains the request hold, in the numbers the server uses', () => {
+    show({ trainerId: 9, minutes: 60, providerName: 'Coach Jane' });
+    expect(text()).toContain('Your time is held while Coach Jane answers');
+    expect(text()).toContain('unanswered for 2 days is released and nothing is charged');
+    expect(text()).toContain('24 hours to pay');
+  });
+
+  it("shows the trainer's own booking policy beside the generated terms, as plain text", () => {
+    trainerService.getActiveTrainers.and.returnValue(of({
+      data: [{ id: 9, hourlyRate: 100, bookingPolicy: 'Groups must be full before training starts.\n<b>No shows</b> notify 24h ahead.' }],
+    } as any));
+    show({ trainerId: 9, minutes: 60, providerName: 'Coach Jane' });
+    const policy = (fixture.nativeElement as HTMLElement).querySelector('[data-testid="booking-policy"]')!;
+    expect(policy.textContent).toContain("Coach Jane's booking policy");
+    expect(policy.textContent).toContain('Groups must be full before training starts.');
+    expect(policy.querySelector('b')).toBeNull();
+    expect(text()).toContain('Nothing is charged now');
+  });
+
+  it('shows no policy block when the trainer has not written one', () => {
+    show({ trainerId: 9, minutes: 60 });
+    expect((fixture.nativeElement as HTMLElement).querySelector('[data-testid="booking-policy"]')).toBeNull();
+  });
+
+  it('for a provider who takes payment directly, says so and drops the pay-after-confirm and refund lines', () => {
+    trainerService.getActiveTrainers.and.returnValue(of({ data: [{ id: 9, hourlyRate: 100, paymentMode: 'DIRECT' }] } as any));
+    show({ trainerId: 9, minutes: 60, providerName: 'Coach Jane' });
+    expect(text()).toContain('Pay Coach Jane directly. Berliz keeps the booking on record');
+    expect(text()).not.toContain('Nothing is charged now');
+    expect(text()).not.toContain('Free cancellation');
+    expect(text()).not.toContain('Your time is held');
+  });
+
   it('prices a center from its own rate', () => {
     show({ centerId: 3, minutes: 90 });
     expect(text()).toContain('$120.00');

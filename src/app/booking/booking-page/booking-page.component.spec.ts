@@ -420,3 +420,35 @@ describe('BookingPageComponent summary and day switching', () => {
     expect(dispatch).toHaveBeenCalled();
   });
 });
+
+describe('BookingPageComponent timezone notes', () => {
+  let page: any;
+
+  beforeEach(() => {
+    page = Object.create(BookingPageComponent.prototype);
+    page.selectedDate = '2026-07-15';
+    page.slotsTimezone = 'America/Vancouver';
+    page.selectedSlot = null;
+  });
+
+  it('says which clock the offered times are on, and says nothing until the provider zone is known', () => {
+    expect(page.timezoneNote).toContain('Times are on Vancouver (');
+    expect(page.timezoneNote).toMatch(/PDT|GMT-7/);
+    page.slotsTimezone = null;
+    expect(page.timezoneNote).toBeNull();
+  });
+
+  it('tells a client in another zone what the picked slot is on their clock', () => {
+    page.selectedSlot = { startTime: '18:00:00', endTime: '19:00:00' };
+    page.viewerZoneId = () => 'Africa/Casablanca';
+
+    const note = page.yourTimeNote as string;
+
+    expect(note).toContain('in your time');
+    expect(note).toMatch(/^That is \d{1,2}:\d{2} [AP]M in your time \(Casablanca/);
+  });
+
+  it('adds no conversion note until a slot is picked', () => {
+    expect(page.yourTimeNote).toBeNull();
+  });
+});
