@@ -1,0 +1,87 @@
+<div class="max-w-4xl mx-auto p-4 flex flex-col gap-4">
+  <div>
+    <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Weekly subscriptions</h1>
+    <p class="text-sm text-gray-600 dark:text-gray-400">
+      Train with the same trainer at fixed times every week. Your sessions are booked for you and held for as long as the subscription runs.
+    </p>
+  </div>
+
+  <div *ngIf="loading" class="rounded-xl border border-gray-200 dark:border-gray-800 p-4 text-sm animate-pulse">Loading…</div>
+  <div *ngIf="!loading && subs.length === 0" class="rounded-xl border border-gray-200 dark:border-gray-800 p-4 text-sm text-gray-600 dark:text-gray-400" data-test="empty">
+    No weekly subscriptions yet. Pick a weekly plan on a trainer's Level Up page.
+  </div>
+
+  <div *ngFor="let s of subs" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col gap-3" data-test="weekly-card">
+    <div class="flex justify-between gap-2 flex-wrap">
+      <div>
+        <div class="font-medium text-gray-900 dark:text-gray-100">{{ s.packageName }}</div>
+        <div class="text-sm text-gray-600 dark:text-gray-400">
+          {{ s.sessionsPerWeek }} session{{ s.sessionsPerWeek === 1 ? '' : 's' }} a week · {{ s.sessionMinutes }} min · {{ s.providerName }} with {{ s.clientName }}
+        </div>
+        <div class="text-sm text-gray-600 dark:text-gray-400" *ngIf="s.endDate">
+          Runs to {{ s.endDate | date:'mediumDate' }}{{ s.autoRenew ? ' and renews' : ' (does not renew)' }} · {{ s.sessionsRemaining ?? 0 }} session{{ s.sessionsRemaining === 1 ? '' : 's' }} left to book
+        </div>
+      </div>
+      <span class="text-xs px-2 py-1 rounded-full h-fit" data-test="state"
+        [ngClass]="s.status !== 'true' ? 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' : s.paused ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'">
+        {{ s.status !== 'true' ? 'Cancelled' : s.paused ? 'Paused' : 'Active' }}
+      </span>
+    </div>
+
+    <!-- weekly times -->
+    <div *ngIf="!editing[s.subscriptionId]" class="flex flex-col gap-2">
+      <div *ngIf="s.slots.length" class="flex gap-2 flex-wrap" data-test="slots">
+        <span *ngFor="let x of s.slots" class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-sm">{{ dayLabel(x.dayOfWeek) }} · {{ x.time }}</span>
+      </div>
+      <div *ngIf="s.needsSchedule" class="text-sm text-amber-700 dark:text-amber-300">Choose your weekly times to start booking your sessions.</div>
+      <div *ngIf="isActive(s) && !s.paused">
+        <button type="button" (click)="startEdit(s)" class="px-3 py-1.5 rounded-xl border border-gray-300 dark:border-gray-600 text-sm" data-test="edit">
+          {{ s.slots.length ? 'Change my times' : 'Choose my times' }}
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="editing[s.subscriptionId]" class="flex flex-col gap-2" data-test="editor">
+      <div *ngFor="let row of editing[s.subscriptionId]; let i = index" class="flex gap-2 items-center">
+        <select [(ngModel)]="row.dayOfWeek" [attr.aria-label]="'Day ' + (i + 1)" class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm">
+          <option *ngFor="let d of weekdays" [ngValue]="d.value">{{ d.label }}</option>
+        </select>
+        <input type="time" [(ngModel)]="row.time" [attr.aria-label]="'Time ' + (i + 1)" class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm" />
+      </div>
+      <p class="text-xs text-gray-600 dark:text-gray-400">Times are in the trainer's local time. Dates outside their availability or on a holiday are skipped and listed below, with the reason.</p>
+      <p *ngIf="problem(s)" class="text-sm text-red-600" role="alert" data-test="problem">{{ problem(s) }}</p>
+      <div class="flex gap-2">
+        <button type="button" (click)="save(s)" [disabled]="busyId === s.subscriptionId || !!problem(s)" data-test="save"
+          class="px-4 py-2 rounded-xl bg-gray-900 text-white dark:bg-white dark:text-gray-900 text-sm font-medium disabled:opacity-50">Save and book my sessions</button>
+        <button *ngIf="!s.needsSchedule" type="button" (click)="cancelEdit(s)" class="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 text-sm">Close</button>
+      </div>
+    </div>
+
+    <p *ngIf="errors[s.subscriptionId]" class="text-sm text-red-600" role="alert">{{ errors[s.subscriptionId] }}</p>
+
+    <!-- skipped -->
+    <div *ngIf="s.skipped?.length" class="rounded-lg bg-amber-50 dark:bg-amber-900/20 p-3 text-sm text-amber-900 dark:text-amber-200" data-test="skipped">
+      <div class="font-medium">Could not be booked</div>
+      <ul class="list-disc pl-5">
+        <li *ngFor="let k of s.skipped">{{ k.date }} {{ k.time }}: {{ k.reason }}</li>
+      </ul>
+    </div>
+
+    <!-- upcoming -->
+    <div *ngIf="s.upcoming?.length" data-test="upcoming">
+      <div class="text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Upcoming sessions</div>
+      <ul class="text-sm text-gray-700 dark:text-gray-300 grid grid-cols-1 sm:grid-cols-2 gap-1">
+        <li *ngFor="let u of s.upcoming.slice(0, 12)">{{ u.scheduledAt | date:'EEE, MMM d, h:mm a' }}</li>
+      </ul>
+    </div>
+
+    <div *ngIf="isActive(s)" class="flex gap-2 flex-wrap">
+      <button *ngIf="!s.paused" type="button" (click)="pause(s)" [disabled]="busyId === s.subscriptionId" data-test="pause"
+        class="px-3 py-1.5 rounded-xl border border-gray-300 dark:border-gray-600 text-sm disabled:opacity-50">Pause</button>
+      <button *ngIf="s.paused" type="button" (click)="resume(s)" [disabled]="busyId === s.subscriptionId" data-test="resume"
+        class="px-3 py-1.5 rounded-xl bg-gray-900 text-white dark:bg-white dark:text-gray-900 text-sm disabled:opacity-50">Resume</button>
+      <button type="button" (click)="cancel(s)" [disabled]="busyId === s.subscriptionId" data-test="cancel"
+        class="px-3 py-1.5 rounded-xl border border-red-300 text-red-700 dark:text-red-300 text-sm disabled:opacity-50">Cancel subscription</button>
+    </div>
+  </div>
+</div>
