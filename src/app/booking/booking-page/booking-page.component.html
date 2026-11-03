@@ -266,6 +266,25 @@
       [sessionType]="requestedSessionType" [newMemberPercent]="requestedSessionType === 'TRIAL' ? newMemberPercent : null"
       [gymDropIn]="locationSelection?.dropInFee ?? null" [travelZone]="locationSelection?.travelZone ?? null"></app-booking-price-estimate>
 
+    <!-- ── A unique code from the trainer ───────────────────────────── -->
+    <div *ngIf="availabilityConfigured === true && !isGroup" class="flex flex-col gap-1.5" data-testid="payment-code">
+      <button type="button" (click)="showPaymentCode = !showPaymentCode" [attr.aria-expanded]="showPaymentCode"
+        class="self-start text-[11px] font-semibold text-red-600 hover:text-red-700 flex items-center gap-1">
+        <i-feather [name]="showPaymentCode ? 'chevron-up' : 'chevron-down'" style="width:12px;height:12px;"></i-feather>
+        I have a unique code
+      </button>
+      <ng-container *ngIf="showPaymentCode">
+        <input type="text" [(ngModel)]="paymentCode" maxlength="40" autocomplete="off" aria-label="Unique code from your trainer"
+          placeholder="Code from {{ providerName }}"
+          class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600
+                 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+        <p class="text-[11px] text-gray-400 dark:text-gray-500 flex items-start gap-1.5">
+          <i-feather name="info" class="shrink-0 mt-0.5" style="width:11px;height:11px;"></i-feather>
+          The code is checked when you send the request. Once {{ providerName }} confirms, it settles this session, so there is nothing to pay.
+        </p>
+      </ng-container>
+    </div>
+
     <!-- ── Notes ─────────────────────────────────────────────────────── -->
     <div *ngIf="availabilityConfigured === true" class="flex flex-col gap-1">
       <div class="flex items-center justify-between">

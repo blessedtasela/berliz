@@ -139,6 +139,32 @@ describe('BookingPageComponent plans', () => {
     });
   });
 
+  describe('unique payment code', () => {
+    function send(code: string): any {
+      const dispatch = jasmine.createSpy('dispatch');
+      (page as any).store = { dispatch };
+      page.kind = 'trainer';
+      page.providerId = 9;
+      page.selectedDate = '2099-01-05';
+      page.selectedSlot = { startTime: '17:00:00', endTime: '18:00:00' } as any;
+      page.slotDurationMinutes = 60;
+      page.minLeadTimeMinutes = 60;
+      page.notes = '';
+      page.locationSelection = null;
+      page.paymentCode = code;
+      page.submit();
+      return dispatch.calls.mostRecent().args[0].data;
+    }
+
+    it('sends a trimmed code with the request', () => {
+      expect(send('  ABC-123 ').paymentCode).toBe('ABC-123');
+    });
+
+    it('sends nothing when the field is empty', () => {
+      expect('paymentCode' in send('   ')).toBeFalse();
+    });
+  });
+
   describe('group session', () => {
     beforeEach(() => {
       page.kind = 'trainer';
@@ -208,32 +234,6 @@ describe('BookingPageComponent plans', () => {
       expect(page.submitError).toBe('A trainer cannot join their own group.');
       expect(page.submitting).toBeFalse();
     });
-  });
-
-  describe('the main button', () => {
-    it('requests a booking for a single session', () => {
-      expect(page.primaryLabel).toBe('Request booking');
-      expect(page.primaryDisabled).toBeFalse();
-    });
-
-    it('is "Continue" for a guest, on a single session and on an owned pack', () => {
-      page.user = null;
-      expect(page.primaryLabel).toBe('Continue');
-      page.selectedOption = { kind: 'ownedPackage', subscription: { id: 1, providerPackage: plan() } };
-      expect(page.primaryLabel).toBe('Continue');
-    });
-
-    it('books from the pack when you own it', () => {
-      page.selectedOption = { kind: 'ownedPackage', subscription: { id: 1, providerPackage: plan() } };
-      expect(page.primaryLabel).toBe('Book with your pack');
-    });
-
-    it('is disabled until the provider has availability, and while sending', () => {
-      page.availabilityConfigured = false;
-      expect(page.primaryDisabled).toBeTrue();
-      page.availabilityConfigured = true;
-      page.submitting = true;
-      expect(page.primaryDisabled).toBeTrue();
 
     it('books the picked time under an active pack: the pack decides who is in it, nothing else is sent', () => {
       const start = jasmine.createSpy('start').and.returnValue(of({ data: { message: 'Booked with your pack.' } }));
@@ -271,6 +271,32 @@ describe('BookingPageComponent plans', () => {
       page.startGroupFromPack({ id: 50 } as any);
       expect(page.submitError).toBe('This group pack has no sessions left (or has expired).');
     });
+  });
+
+  describe('the main button', () => {
+    it('requests a booking for a single session', () => {
+      expect(page.primaryLabel).toBe('Request booking');
+      expect(page.primaryDisabled).toBeFalse();
+    });
+
+    it('is "Continue" for a guest, on a single session and on an owned pack', () => {
+      page.user = null;
+      expect(page.primaryLabel).toBe('Continue');
+      page.selectedOption = { kind: 'ownedPackage', subscription: { id: 1, providerPackage: plan() } };
+      expect(page.primaryLabel).toBe('Continue');
+    });
+
+    it('books from the pack when you own it', () => {
+      page.selectedOption = { kind: 'ownedPackage', subscription: { id: 1, providerPackage: plan() } };
+      expect(page.primaryLabel).toBe('Book with your pack');
+    });
+
+    it('is disabled until the provider has availability, and while sending', () => {
+      page.availabilityConfigured = false;
+      expect(page.primaryDisabled).toBeTrue();
+      page.availabilityConfigured = true;
+      page.submitting = true;
+      expect(page.primaryDisabled).toBeTrue();
       expect(page.primaryIcon).toBe('loader');
     });
   });

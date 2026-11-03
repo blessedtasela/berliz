@@ -112,6 +112,11 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   /** A trial is a trainer's first-session price; a center only sells single sessions. */
   sessionType: 'SINGLE' | 'TRIAL' | 'GROUP' = 'SINGLE';
 
+  // ── Unique payment code ─────────────────────────────────────────────────
+  /** A code the trainer gave this client: checked when the request is sent, and once the trainer confirms it settles the session. */
+  paymentCode = '';
+  showPaymentCode = false;
+
   // ── Group session ────────────────────────────────────────────────────────
   /** The trainer's own price per person, else the platform's CA$75. */
   groupPrice = DEFAULT_GROUP_PRICE;
@@ -627,11 +632,6 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   // ── Submit ───────────────────────────────────────────────────────────────
 
   /** Starts a group at the picked time: the person starting is its first member and fills the rest. */
-  private startGroup(): void {
-    if (!this.selectedSlot) return;
-    this.submitting = true;
-    this.groupService.start({
-      trainerId: this.providerId,
   /** Books the picked time for the whole group of an active pack: one of the pack's sessions covers it, nobody pays again. */
   startGroupFromPack(pack: GroupPack): void {
     if (!this.selectedSlot || this.submitting) return;
@@ -658,6 +658,11 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     });
   }
 
+  private startGroup(): void {
+    if (!this.selectedSlot) return;
+    this.submitting = true;
+    this.groupService.start({
+      trainerId: this.providerId,
       localDate: this.selectedDate,
       localTime: this.selectedSlot.startTime,
       durationMinutes: this.slotDurationMinutes,
@@ -727,6 +732,9 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     }
 
     if (this.requestedSessionType === 'TRIAL') payload.sessionType = 'TRIAL';
+
+    const code = (this.paymentCode ?? '').trim();
+    if (code) payload.paymentCode = code;
 
     if (this.selectedOption.kind === 'ownedPackage') {
       payload.packageSubscriptionId = this.selectedOption.subscription.id;
