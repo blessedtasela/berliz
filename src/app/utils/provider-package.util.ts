@@ -9,16 +9,18 @@ import { ProviderPackage } from 'src/app/models/provider-package.model';
  *
  * A single session is none of these -- it's a request the provider confirms, with no commitment.
  */
-export type PlanKind = 'subscription' | 'pack' | 'membership';
+export type PlanKind = 'weekly' | 'subscription' | 'pack' | 'membership';
 
-type PlanLike = Pick<ProviderPackage, 'billingType' | 'sessionCount'>;
+type PlanLike = Pick<ProviderPackage, 'billingType' | 'sessionCount'> & { sessionsPerWeek?: number | null };
 
 export function planKind(plan: PlanLike): PlanKind {
+  if (plan.sessionsPerWeek) return 'weekly';
   if (plan.billingType === 'RECURRING') return 'subscription';
   return plan.sessionCount ? 'pack' : 'membership';
 }
 
 export const PLAN_KIND_LABEL: Record<PlanKind, string> = {
+  weekly: 'Weekly plan',
   subscription: 'Subscription',
   pack: 'Session pack',
   membership: 'Membership',
@@ -27,6 +29,7 @@ export const PLAN_KIND_LABEL: Record<PlanKind, string> = {
 /** The button on a plan: what pressing it actually does. */
 export function planActionLabel(plan: PlanLike): string {
   switch (planKind(plan)) {
+    case 'weekly': return 'Subscribe';
     case 'subscription': return 'Subscribe';
     case 'pack': return 'Buy pack';
     default: return 'Get membership';
@@ -35,11 +38,14 @@ export function planActionLabel(plan: PlanLike): string {
 
 /** Next to the price: "/ month" for a subscription, "one-time" otherwise. */
 export function planPriceNote(plan: PlanLike): string {
-  return planKind(plan) === 'subscription' ? '/ month' : 'one-time';
+  const kind = planKind(plan);
+  if (kind === 'weekly') return plan.billingType === 'RECURRING' ? '/ month, renews' : 'per term';
+  return kind === 'subscription' ? '/ month' : 'one-time';
 }
 
 /** One line on what's included, e.g. "5 sessions" or "Unlimited sessions". */
-export function planIncludes(plan: Pick<ProviderPackage, 'billingType' | 'sessionCount' | 'groupSize'>): string {
+export function planIncludes(plan: Pick<ProviderPackage, 'billingType' | 'sessionCount' | 'groupSize'> & { sessionsPerWeek?: number | null }): string {
+  if (plan.sessionsPerWeek) return `${plan.sessionsPerWeek} session${plan.sessionsPerWeek === 1 ? '' : 's'} a week at fixed times${plan.sessionCount ? ` · ${plan.sessionCount} sessions` : ''}`;
   const sessions = plan.sessionCount
     ? `${plan.sessionCount} session${plan.sessionCount === 1 ? '' : 's'}`
     : 'Unlimited sessions';
@@ -47,8 +53,10 @@ export function planIncludes(plan: Pick<ProviderPackage, 'billingType' | 'sessio
 }
 
 /** What happens next, in plain words, shown before the client pays. */
-export function planCheckoutNote(plan: Pick<ProviderPackage, 'billingType' | 'sessionCount' | 'durationDays'>): string {
+export function planCheckoutNote(plan: Pick<ProviderPackage, 'billingType' | 'sessionCount' | 'durationDays'> & { sessionsPerWeek?: number | null }): string {
   switch (planKind(plan)) {
+    case 'weekly':
+      return `You pay now${plan.billingType === 'RECURRING' ? ' and again each month until you cancel' : ' for the whole term'}. Then you choose your weekly days and times and your sessions are booked and held for you every week. You can pause or cancel any time from Weekly subscriptions.`;
     case 'subscription':
       return 'You\'re charged now and again every month until you cancel. Cancel any time from My Subscriptions — access runs to the end of the period you paid for.';
     case 'pack':
@@ -59,10 +67,11 @@ export function planCheckoutNote(plan: Pick<ProviderPackage, 'billingType' | 'se
 }
 
 /** The order the Level Up page lists them in: the ongoing commitment first, then the one-off buys. */
-export const PLAN_KIND_ORDER: PlanKind[] = ['subscription', 'pack', 'membership'];
+export const PLAN_KIND_ORDER: PlanKind[] = ['weekly', 'subscription', 'pack', 'membership'];
 
 /** One line under each group's heading, saying how that kind is billed and used. */
 export const PLAN_KIND_BLURB: Record<PlanKind, string> = {
+  weekly: 'Fixed days and times every week, booked and held for you.',
   subscription: 'Billed every month until you cancel.',
   pack: 'Pay once, then book your sessions whenever suits you.',
   membership: 'Pay once for unlimited sessions over a set period.',

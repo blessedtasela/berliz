@@ -247,6 +247,26 @@ const dashboardRoutes: Routes = [
         }
       },
 
+      // Payment codes (admin-approved codes that stand in for a payment) and weekly fixed-time subscriptions
+      {
+        path: 'payment-codes',
+        loadComponent: () => import('../payment-codes/payment-codes.component').then(m => m.PaymentCodesComponent),
+        canActivate: [AuthGuard, RoleGuard],
+        data: {
+          breadcrumb: 'Payment codes',
+          expectedRole: expectedRoleAll
+        }
+      },
+      {
+        path: 'weekly-subscriptions',
+        loadComponent: () => import('../weekly-subscriptions/weekly-subscriptions.component').then(m => m.WeeklySubscriptionsComponent),
+        canActivate: [AuthGuard, RoleGuard],
+        data: {
+          breadcrumb: 'Weekly subscriptions',
+          expectedRole: expectedRoleAll
+        }
+      },
+
       // FAQs
       {
         path: 'my-faqs',

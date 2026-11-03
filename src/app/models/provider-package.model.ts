@@ -20,6 +20,9 @@ export interface ProviderPackage {
   currency: string;
   durationDays: number | null;
   groupSize: number;
+  /** Weekly fixed-time subscription: sessions per week (null = an ordinary pack or membership). */
+  sessionsPerWeek?: number | null;
+  sessionMinutes?: number | null;
   billingType: ProviderPackageBillingType;
   isActive: boolean;
   sortOrder: number;
@@ -48,6 +51,8 @@ export interface ProviderPackageRequest {
   currency?: string | null;
   durationDays?: number | null;
   groupSize?: number | null;
+  sessionsPerWeek?: number | null;
+  sessionMinutes?: number | null;
   billingType?: ProviderPackageBillingType | null;
   isActive?: boolean | null;
   sortOrder?: number | null;

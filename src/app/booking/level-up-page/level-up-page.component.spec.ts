@@ -212,6 +212,127 @@ describe('LevelUpPageComponent', () => {
       }
     });
   });
+
+  describe('"I have a unique code"', () => {
+    let purchasePackage: jasmine.Spy;
+    let createCheckoutSession: jasmine.Spy;
+    let navigate: jasmine.Spy;
+
+    beforeEach(() => {
+      createCheckoutSession = jasmine.createSpy('createCheckoutSession').and.returnValue(of({ data: {} }));
+      purchasePackage = jasmine.createSpy('purchasePackage');
+      navigate = jasmine.createSpy('navigate');
+      page.subscriptionService = { purchasePackage };
+      page.stripeService = { createCheckoutSession };
+      page.router = { navigate };
+    });
+
+    it('buys with the typed code, skips Stripe and lands on My Subscriptions when the code activated it', () => {
+      purchasePackage.and.returnValue(of({ message: 'Your code is applied', data: { subscriptionId: 55, packageId: 7, packageName: 'Plan', price: 200, currency: 'USD', status: 'true' } }));
+      page.selectedPlan = plan();
+      page.showCodeBox = true;
+      page.paymentCode = '  BZ-ABCD-EFGH ';
+
+      page.buy();
+
+      expect(purchasePackage).toHaveBeenCalledWith(7, 'BZ-ABCD-EFGH');
+      expect(createCheckoutSession).not.toHaveBeenCalled();
+      expect(navigate).toHaveBeenCalledWith(['/dashboard/my-subscriptions'], {});
+    });
+
+    it('sends a weekly plan bought with a code to its weekly times page', () => {
+      purchasePackage.and.returnValue(of({ data: { subscriptionId: 55, packageId: 7, packageName: 'Plan', price: 200, currency: 'USD', status: 'true' } }));
+      page.selectedPlan = plan({ sessionsPerWeek: 2, sessionCount: 8, billingType: 'ONE_TIME' });
+      page.showCodeBox = true;
+      page.paymentCode = 'BZ-ABCD-EFGH';
+
+      page.buy();
+
+      expect(navigate).toHaveBeenCalledWith(['/dashboard/weekly-subscriptions'], { queryParams: { id: 55 } });
+    });
+
+    it('shows why a wrong code was refused and does not charge', () => {
+      purchasePackage.and.returnValue(throwError(() => ({ status: 400, error: { message: 'This code has expired.' } })));
+      page.selectedPlan = plan();
+      page.showCodeBox = true;
+      page.paymentCode = 'BZ-OLD';
+
+      page.buy();
+
+      expect(page.submitError).toBe('This code has expired.');
+      expect(createCheckoutSession).not.toHaveBeenCalled();
+      expect(page.buyingPlanId).toBeNull();
+    });
+
+    it('ignores a typed code while the code box is closed', () => {
+      purchasePackage.and.returnValue(of({ data: { subscriptionId: 55, packageId: 7, packageName: 'Plan', price: 200, currency: 'USD', status: 'PENDING_PAYMENT' } }));
+      page.selectedPlan = plan();
+      page.showCodeBox = false;
+      page.paymentCode = 'BZ-ABCD-EFGH';
+
+      page.buy();
+
+      expect(purchasePackage).toHaveBeenCalledWith(7, undefined);
+      expect(createCheckoutSession).toHaveBeenCalled();
+    });
+
+    it('labels the button "with my code" once a code is typed', () => {
+      page.selectedPlan = plan();
+      page.showCodeBox = true;
+      page.paymentCode = 'BZ-ABCD-EFGH';
+      expect(page.buyLabel).toBe('Buy pack with my code');
+    });
+
+    it('lets a client without a code ask their trainer, once', () => {
+      const askTrainer = jasmine.createSpy('askTrainer').and.returnValue(of({ data: {} }));
+      page.paymentCodeService = { askTrainer };
+      page.selectedPlan = plan();
+
+      page.askTrainerForCode();
+      page.askTrainerForCode();
+
+      expect(askTrainer).toHaveBeenCalledTimes(1);
+      expect(askTrainer).toHaveBeenCalledWith({ targetType: 'PACKAGE', packageId: 7 });
+      expect(page.askSent).toBeTrue();
+    });
+
+    it('asks a guest to sign in instead of asking the trainer', () => {
+      const askTrainer = jasmine.createSpy('askTrainer');
+      page.paymentCodeService = { askTrainer };
+      page.saveDraft = jasmine.createSpy('saveDraft');
+      page.user = null;
+      page.selectedPlan = plan();
+
+      page.askTrainerForCode();
+
+      expect(askTrainer).not.toHaveBeenCalled();
+      expect(page.showAuthPrompt).toBeTrue();
+    });
+  });
+
+  describe('weekly plans', () => {
+    it('is a weekly plan when it has sessions per week, with its own price note and label', () => {
+      page.selectedPlan = plan({ sessionsPerWeek: 2, sessionCount: 8, billingType: 'RECURRING', price: 240 });
+      expect(page.buyLabel).toBe('Subscribe · $240 / month');
+      page.selectedPlan = plan({ sessionsPerWeek: 2, sessionCount: 8, billingType: 'ONE_TIME', price: 240 });
+      expect(page.buyLabel).toBe('Subscribe · $240 / term');
+    });
+
+    it('charges a renewing weekly plan every month and a fixed-term one once', () => {
+      const createCheckoutSession = jasmine.createSpy('c').and.returnValue(of({ data: {} }));
+      page.subscriptionService = { purchasePackage: jasmine.createSpy('p').and.returnValue(of({ data: { subscriptionId: 5, price: 240, currency: 'USD', packageName: 'W', status: 'PENDING_PAYMENT' } })) };
+      page.stripeService = { createCheckoutSession };
+
+      page.selectedPlan = plan({ sessionsPerWeek: 2, sessionCount: 8, billingType: 'RECURRING' });
+      page.buy();
+      expect(createCheckoutSession.calls.mostRecent().args[0].recurring).toBeTrue();
+
+      page.buyingPlanId = null;
+      page.selectedPlan = plan({ sessionsPerWeek: 2, sessionCount: 8, billingType: 'ONE_TIME' });
+      page.buy();
+      expect(createCheckoutSession.calls.mostRecent().args[0].recurring).toBeFalse();
+    });
+  });
 });
 
 describe('LevelUpPageComponent intro', () => {
