@@ -51,7 +51,7 @@ export const deleteExerciseFailure = createAction('[Exercise] Delete Failure', p
 export const loadTrendingExercises = createAction(
   '[Exercise] Load Trending', props<{ categoryId: number | null }>());
 export const loadTrendingExercisesSuccess = createAction(
-  '[Exercise] Load Trending Success', props<{ data: Exercises[]; categoryId: number | null }>());
+  '[Exercise] Load Trending Success', props<{ data: PublicExercise[]; categoryId: number | null }>());
 export const loadTrendingExercisesFailure = createAction(
   '[Exercise] Load Trending Failure', props<Err>());
 

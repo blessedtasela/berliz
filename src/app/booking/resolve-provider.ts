@@ -16,6 +16,8 @@ export interface ResolvedProvider {
   contactPhone?: string | null;
   /** A trainer's own trial-session price; null = the platform's CA$100 trial. */
   trialPrice?: number | null;
+  /** A trainer's own price per person in a group session; null = the platform's CA$75. */
+  groupPrice?: number | null;
 }
 
 /** "Jo Smith" <-> "Jo-Smith": the provider's name is its URL segment. */
@@ -51,6 +53,7 @@ export function resolveProviderBySlug(
           contactEmail: match.contactEmail || null,
           contactPhone: match.contactPhone || null,
           trialPrice: match.trialPrice ?? null,
+          groupPrice: match.groupPrice ?? null,
         }
         : null;
     }),
