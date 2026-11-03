@@ -39,6 +39,7 @@ import { Subscriptions } from 'src/app/models/subscriptions.interface';
 import { Users } from 'src/app/models/users.interface';
 import { genericError } from 'src/validators/form-validators.module';
 import { PLAN_KIND_LABEL, planKind } from 'src/app/utils/provider-package.util';
+import { formatClock, instantInZone, sameClock, viewerZone, zoneLabel } from 'src/app/utils/timezone-label.util';
 import { memoized, newMemoSlot } from 'src/app/utils/memo';
 import { OnboardingNudgeComponent } from 'src/app/client-onboarding/onboarding-nudge/onboarding-nudge.component';
 
@@ -100,6 +101,8 @@ export class BookingPageComponent implements OnInit, OnDestroy {
   minLeadTimeMinutes = 60;
   availabilityConfigured: boolean | null = null;
   slotsMessage = '';
+  /** The provider's clock the slot times are on (IANA id), from the slots response. */
+  slotsTimezone: string | null = null;
 
   notes = '';
 
@@ -207,6 +210,28 @@ export class BookingPageComponent implements OnInit, OnDestroy {
     return this.availabilityConfigured === false;
   }
 
+  /** "Times are on Vancouver (PDT) time" -- which clock the offered times use. Null until the provider's zone is known. */
+  get timezoneNote(): string | null {
+    if (!this.slotsTimezone) return null;
+    const at = instantInZone(this.selectedDate, '12:00', this.slotsTimezone) ?? new Date();
+    return `Times are on ${zoneLabel(this.slotsTimezone, at)} time.`;
+  }
+
+  /** The browser's own zone; a method so a test can stand in for a client elsewhere. */
+  viewerZoneId(): string | null {
+    return viewerZone();
+  }
+
+  /** For a client in another zone: what the picked slot is on their own clock. Null when the clocks match or nothing is picked. */
+  get yourTimeNote(): string | null {
+    const zone = this.slotsTimezone;
+    const mine = this.viewerZoneId();
+    if (!zone || !mine || !this.selectedSlot) return null;
+    const at = instantInZone(this.selectedDate, this.selectedSlot.startTime, zone);
+    if (!at || sameClock(zone, mine, at)) return null;
+    return `That is ${formatClock(at, mine)} in your time (${zoneLabel(mine, at)}).`;
+  }
+
   get remainingNotesChars(): number {
     return this.maxNotesLength - (this.notes?.length ?? 0);
   }
@@ -288,6 +313,7 @@ export class BookingPageComponent implements OnInit, OnDestroy {
         this.slotDurationMinutes = response.slotDurationMinutes ?? 60;
         this.minLeadTimeMinutes = response.leadTimeMinutes ?? 60;
         this.slotsMessage = response.message ?? '';
+        this.slotsTimezone = response.timezone ?? null;
         this.selectedSlot = this.takePendingSlot();
       });
 

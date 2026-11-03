@@ -50,6 +50,8 @@ export interface AvailableSlotsResponse {
   availabilityConfigured: boolean;
   slots: AvailableSlot[];
   message?: string;
+  /** IANA zone these slot times are on: the provider's own clock, not the viewer's. */
+  timezone?: string;
 }
 
 export const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
