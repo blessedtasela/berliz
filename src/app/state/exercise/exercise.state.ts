@@ -12,7 +12,7 @@ export interface ExerciseState {
     selectedExercise: Exercises | null;
 
     /** Backend-ranked trending list, already filtered to trendingCategoryId. */
-    trending: Exercises[];
+    trending: PublicExercise[];
     /** Category the trending list is currently scoped to; null means "All". */
     trendingCategoryId: number | null;
     /** Tracked separately so a pill toggle can show a spinner without blanking other widgets. */

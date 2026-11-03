@@ -206,6 +206,13 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — The public trending list is light too; the mobile exercise demo shows as the picture it is
+
+Follow-up to the slim public exercise library. Security review found `/exercise/getTrending` still public and returning the full exercise rows (every demo image and muscle-group image inline: about 2.4 MB for 10 exercises).
+
+- **`GET /exercise/getTrending` returns the light exercise** (text and tags, `hasDemo`, no image bytes), same 12-row cap and ranking. Its only consumer, the signed-in dashboard's trending widget, uses name, description, categories and likes, so only its types changed (`PublicExercise` in the service, state, actions and widget); a like also updates the light lists now. Test: `PublicExerciseLibraryAccessTest` seeds an exercise with an image and asserts the response carries no `demo` or `image` bytes.
+- **Mobile "Play demo" never worked.** The stored `demo` is a JPEG still (all 10 seeded exercises start `ffd8ffe0`), but the app wrote it to an `.mp4` and handed it to the video player. It now shows the picture ("View demo"). The parity table lists the web-only pieces added since (center contact, slim library, trainer drop-in/Maps fields, direct-payment wording).
+
 ### Unreleased — Trainers settle the travel zone when accepting; trial and zone show on every booking view
 
 - **A gym the client typed in with no usable Google Maps link** now asks the trainer, in the review dialog, to pick its zone (Downtown / West End: no fee, up to 30 km: CA$30, beyond: CA$50). Confirm stays disabled until they do; the zone is saved first (`PUT /booking/zone/{id}`) so the booking is priced with the right travel fee, and the client sees the final amount before paying.

@@ -70,7 +70,7 @@ export class ExerciseService {
     if (categoryId != null) {
       params = params.set('categoryId', categoryId);
     }
-    return this.httpClient.get<Exercises[]>(this.url + "/exercise/getTrending", { params });
+    return this.httpClient.get<PublicExercise[]>(this.url + "/exercise/getTrending", { params });
   }
 
   // ── Likes ───────────────────────────────────────────────────────────────────

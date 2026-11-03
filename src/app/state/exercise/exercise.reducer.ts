@@ -81,12 +81,14 @@ export const exerciseReducer = createReducer(
   // fold it into every list holding that row so counts stay consistent.
   on(A.likeExerciseSuccess, (s, { data }) => {
     if (!data?.id) { return { ...s, loading: false }; }
-    const upsert = (list: Exercises[]) =>
+    const upsert = <T extends { id: number; likes: number | null }>(list: T[]): T[] =>
       list.map(e => (e.id === data.id ? { ...e, likes: data.likes } : e));
     return {
       ...s, loading: false,
       exercises: upsert(s.exercises),
       activeExercises: upsert(s.activeExercises),
+      // The light lists carry the same like count; keep them consistent too.
+      publicExercises: upsert(s.publicExercises),
       trending: upsert(s.trending),
       selectedExercise: s.selectedExercise?.id === data.id
         ? { ...s.selectedExercise, likes: data.likes }

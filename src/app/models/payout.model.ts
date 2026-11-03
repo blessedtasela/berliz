@@ -49,6 +49,9 @@ export interface Payout {
 
   paymentMethod?: string | null;
   paidAt?: Date | null;
+  /** For a shop sale: the order and the store it was bought from (the earnings view reads both; the backend's PayoutResponse sends them). */
+  orderId?: number | null;
+  storeName?: string | null;
   orderItemCount?: number | null;
 
   /** What happened, in order: requested, client paid, session time, share recorded, paid out. */
