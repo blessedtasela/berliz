@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 
 import { Categories } from 'src/app/models/categories.interface';
-import { Exercises } from 'src/app/models/exercise.interface';
+import { PublicExercise } from 'src/app/models/exercise.interface';
 import { Users } from 'src/app/models/users.interface';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { AuthRedirectService } from 'src/app/services/auth-redirect.service';
@@ -44,7 +44,7 @@ import { selectUser } from 'src/app/state/user/user.selector';
 })
 export class DashboardTrendingExercisesComponent implements OnInit, OnDestroy {
 
-  exercises: Exercises[] = [];
+  exercises: PublicExercise[] = [];
   categories: Categories[] = [];
   activeCategoryId: number | null = null;
   loading = false;
@@ -102,16 +102,16 @@ export class DashboardTrendingExercisesComponent implements OnInit, OnDestroy {
 
   // ── Cards ───────────────────────────────────────────────────────────────────
 
-  categoryNames(exercise: Exercises, limit = 2): string[] {
+  categoryNames(exercise: PublicExercise, limit = 2): string[] {
     return (exercise.categories ?? []).slice(0, limit).map(c => c.name);
   }
 
-  extraCategoryCount(exercise: Exercises, limit = 2): number {
+  extraCategoryCount(exercise: PublicExercise, limit = 2): number {
     return Math.max(0, (exercise.categories ?? []).length - limit);
   }
 
   /** Optimistic flip is +/-1 on top of the stored count, which may be null. */
-  likeCount(exercise: Exercises): number {
+  likeCount(exercise: PublicExercise): number {
     const stored = exercise.likes ?? 0;
     if (!this.optimisticLikes.has(exercise.id)) { return stored; }
     return Math.max(0, stored + (this.likedExerciseIds.includes(exercise.id) ? -1 : 1));
@@ -119,12 +119,12 @@ export class DashboardTrendingExercisesComponent implements OnInit, OnDestroy {
 
   // ── Likes ───────────────────────────────────────────────────────────────────
 
-  isLiked(exercise: Exercises): boolean {
+  isLiked(exercise: PublicExercise): boolean {
     const cached = this.likedExerciseIds.includes(exercise.id);
     return this.optimisticLikes.has(exercise.id) ? !cached : cached;
   }
 
-  likeExercise(exercise: Exercises): void {
+  likeExercise(exercise: PublicExercise): void {
     if (!this.user?.email) {
       this.promptLogin();
       return;
@@ -166,7 +166,7 @@ export class DashboardTrendingExercisesComponent implements OnInit, OnDestroy {
     });
   }
 
-  trackById(_: number, exercise: Exercises): number {
+  trackById(_: number, exercise: PublicExercise): number {
     return exercise.id;
   }
 }

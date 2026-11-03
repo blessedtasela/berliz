@@ -206,6 +206,13 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — The public trending list is light too; the mobile exercise demo shows as the picture it is
+
+Follow-up to the slim public exercise library. Security review found `/exercise/getTrending` still public and returning the full exercise rows (every demo image and muscle-group image inline: about 2.4 MB for 10 exercises).
+
+- **`GET /exercise/getTrending` returns the light exercise** (text and tags, `hasDemo`, no image bytes), same 12-row cap and ranking. Its only consumer, the signed-in dashboard's trending widget, uses name, description, categories and likes, so only its types changed (`PublicExercise` in the service, state, actions and widget); a like also updates the light lists now. Test: `PublicExerciseLibraryAccessTest` seeds an exercise with an image and asserts the response carries no `demo` or `image` bytes.
+- **Mobile "Play demo" never worked.** The stored `demo` is a JPEG still (all 10 seeded exercises start `ffd8ffe0`), but the app wrote it to an `.mp4` and handed it to the video player. It now shows the picture ("View demo"). The parity table lists the web-only pieces added since (center contact, slim library, trainer drop-in/Maps fields, direct-payment wording).
+
 ### Unreleased — Earnings show where each amount came from
 
 - **Each earning now says who booked, what, where, when and how.** The row names the client ("CA$50 trial session from Alex Doe"); "Where did this come from?" opens the full trail: a one-line description, who booked (name and email), the kind of session (trial, monthly plan, single, shop sale), the place and travel fee, what the client paid and how, the commission split, the Stripe transfer id, and a dated timeline (requested, client paid, session time, your share recorded, paid out). Shop sales show the buyer and item count. Backend: `GET /payout/getMyPayouts` now carries `source`, `description`, `clientName`, `clientEmail`, `bookedAt`, `sessionType`, `locationLabel`, `clientPaid`, `paymentMethod`, `events` and more.
