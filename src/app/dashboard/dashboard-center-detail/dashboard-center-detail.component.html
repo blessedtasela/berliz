@@ -93,12 +93,12 @@
             </div>
             <div>
                 <h2 class="text-sm font-bold text-gray-900 dark:text-gray-100">Ready to train?</h2>
-                <p *ngIf="acceptingBookings !== false" class="text-xs text-gray-400 dark:text-gray-500">Book a session at {{ center?.name }} — pick a date and time that works for you.</p>
+                <p *ngIf="bookingOffered" class="text-xs text-gray-400 dark:text-gray-500">Book a session at {{ center?.name }} — pick a date and time that works for you.</p>
                 <p *ngIf="acceptingBookings === false" class="text-xs text-gray-400 dark:text-gray-500">{{ center?.name }} hasn't opened online booking yet.</p>
             </div>
         </div>
         <div class="flex flex-col sm:flex-row gap-2 shrink-0 w-full sm:w-auto">
-            <button *ngIf="acceptingBookings !== false" type="button" (click)="bookSession()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
+            <button *ngIf="bookingOffered" type="button" (click)="bookSession()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold
                     hover:bg-red-700 active:scale-[0.98] transition flex items-center gap-2 justify-center">
                 <i-feather name="calendar" style="width:13px;height:13px;"></i-feather>
                 Book a session
