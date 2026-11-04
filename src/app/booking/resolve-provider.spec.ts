@@ -62,4 +62,33 @@ describe('resolveProviderBySlug', () => {
   it('makes the URL segment from the name', () => {
     expect(providerSlug('Coach Sam Lee')).toBe('Coach-Sam-Lee');
   });
+
+  describe('discipline/category names (BK-19: the booking page showed none at all)', () => {
+    it('pulls a trainer\'s category names from their full category objects', done => {
+      const service = trainers([{ id: 1, name: 'Coach Sam', categories: [{ id: 1, name: 'Yoga' }, { id: 2, name: 'Strength' }] }]);
+
+      resolveProviderBySlug('trainer', 'Coach-Sam', service, centers([])).subscribe(provider => {
+        expect(provider!.categoryNames).toEqual(['Yoga', 'Strength']);
+        done();
+      });
+    });
+
+    it('pulls a center\'s category names from categoryNames directly', done => {
+      const service = centers([{ id: 4, name: 'Iron Gym', categoryNames: ['Boxing', 'CrossFit'] }]);
+
+      resolveProviderBySlug('center', 'Iron-Gym', trainers([]), service).subscribe(provider => {
+        expect(provider!.categoryNames).toEqual(['Boxing', 'CrossFit']);
+        done();
+      });
+    });
+
+    it('gives an empty list rather than throwing when a provider has no categories at all', done => {
+      const service = trainers([{ id: 1, name: 'Coach Sam' }]);
+
+      resolveProviderBySlug('trainer', 'Coach-Sam', service, centers([])).subscribe(provider => {
+        expect(provider!.categoryNames).toEqual([]);
+        done();
+      });
+    });
+  });
 });
