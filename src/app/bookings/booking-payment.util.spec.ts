@@ -21,13 +21,13 @@ describe('booking-payment.util', () => {
   describe('what to pay', () => {
     it('is the whole amount when nothing has been paid', () => {
       expect(amountToPay(booking())).toBe(115);
-      expect(payLabel(booking())).toBe('Pay $115.00');
+      expect(payLabel(booking())).toBe('Pay CA$115.00');
     });
 
     it('is only the balance after a paid session was extended', () => {
       const b = booking({ amountPaid: 100, amountDue: 150, balanceDue: 50 });
       expect(amountToPay(b)).toBe(50);
-      expect(payLabel(b)).toBe('Pay extra $50.00');
+      expect(payLabel(b)).toBe('Pay extra CA$50.00');
     });
 
     it('lets the client pay a confirmed or completed unpaid session, but not the provider', () => {
@@ -54,12 +54,12 @@ describe('booking-payment.util', () => {
     });
 
     it('words the badge per side and per state', () => {
-      expect(paymentBadge(booking(), 'client')?.label).toBe('Payment due');
-      expect(paymentBadge(booking(), 'provider')?.label).toBe('Awaiting payment');
-      expect(paymentBadge(booking({ amountPaid: 100, balanceDue: 50 }), 'client')?.label).toBe('Balance due');
-      expect(paymentBadge(booking({ paymentStatus: 'PAID' }), 'client')?.label).toBe('Paid');
+      expect(paymentBadge(booking(), 'client')?.label).toBe('Payment due CA$115.00');
+      expect(paymentBadge(booking(), 'provider')?.label).toBe('Awaiting payment CA$115.00');
+      expect(paymentBadge(booking({ amountPaid: 100, balanceDue: 50 }), 'client')?.label).toBe('Balance due CA$50.00');
+      expect(paymentBadge(booking({ paymentStatus: 'PAID', amountPaid: 115 }), 'client')?.label).toBe('Paid CA$115.00');
       expect(paymentBadge(booking({ paymentStatus: 'REFUNDED', status: 'cancelled' }), 'client')?.label).toBe('Refunded');
-      expect(paymentBadge(booking({ paymentStatus: 'PARTIALLY_REFUNDED', status: 'cancelled' }), 'client')?.label).toBe('Partly refunded');
+      expect(paymentBadge(booking({ paymentStatus: 'PARTIALLY_REFUNDED', status: 'cancelled', amountPaid: 40 }), 'client')?.label).toBe('Partly refunded · kept CA$40.00');
     });
 
     it('has no badge for an unpriced booking, a pending one, or a cancelled one that was never paid', () => {
