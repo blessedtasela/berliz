@@ -84,7 +84,8 @@ export class SignupComponent {
           [Validators.required, Validators.email, emailExtensionValidator(['com', 'org'])]
         ],
         password: ['', [Validators.required, Validators.minLength(8)]],
-        confirmPassword: ['', [Validators.required, Validators.minLength(8)]]
+        confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
+        agreeToTerms: [false, Validators.requiredTrue]
       },
       { validator: passwordMatchValidator }
     );
@@ -118,6 +119,7 @@ export class SignupComponent {
       this.f('email').valid &&
       this.f('password').valid &&
       this.f('confirmPassword').valid &&
+      this.f('agreeToTerms').valid &&
       !this.signupForm.hasError('passwordMismatch')
     );
   }
@@ -193,6 +195,8 @@ export class SignupComponent {
     this.ngxService.start();
     const data = new FormData();
     Object.keys(this.signupForm.controls).forEach(key => {
+      // Client-side gate only -- the backend has no use for it and doesn't expect the field.
+      if (key === 'agreeToTerms') return;
       const value = this.f(key).value;
       if (key === 'profilePhoto') {
         data.append(key, this.selectedImage!);

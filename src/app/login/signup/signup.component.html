@@ -211,6 +211,20 @@
               Passwords do not match
             </p>
           </div>
+
+          <!-- Terms / Privacy -->
+          <label class="flex items-start gap-2 text-[11px] text-gray-600 dark:text-gray-400 cursor-pointer">
+            <input type="checkbox" formControlName="agreeToTerms" aria-label="Agree to the Terms and Privacy Policy"
+              class="mt-0.5 h-3.5 w-3.5 rounded border-gray-300 dark:border-gray-600 text-red-600 focus:ring-red-500 shrink-0" />
+            <span>
+              I agree to Berliz's <a routerLink="/terms" target="_blank" class="font-semibold text-red-600 hover:underline">Terms</a>
+              and <a routerLink="/privacy" target="_blank" class="font-semibold text-red-600 hover:underline">Privacy Policy</a>.
+            </span>
+          </label>
+          <p *ngIf="f('agreeToTerms').invalid && f('agreeToTerms').touched" class="text-red-500 text-[11px] flex items-center gap-1">
+            <i-feather name="alert-circle" style="width:11px;height:11px;"></i-feather>
+            You must agree to the Terms and Privacy Policy to create an account
+          </p>
         </div>
 
         <app-inline-alert [message]="submitError" [kind]="'error'" [dismissible]="true" (dismissed)="submitError = null"></app-inline-alert>
