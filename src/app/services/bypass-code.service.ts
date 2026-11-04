@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../models/Api.interface';
 import { PlanSubscriptionResponse } from '../models/plan.model';
+import { PlanCodeRequest, PlanCodeRequestInput } from '../models/payment-code.model';
 
 export interface BypassCode {
   id: number;
@@ -61,5 +62,26 @@ export class BypassCodeService {
   /** Admin only. */
   updateStatus(id: number): Observable<ApiResponse<BypassCode>> {
     return this.httpClient.put<ApiResponse<BypassCode>>(this.url + `/bypassCode/updateStatus/${id}`, null);
+  }
+
+  /** Client only — "I don't have a code, please send me one for this plan." */
+  requestCode(input: PlanCodeRequestInput): Observable<ApiResponse<PlanCodeRequest>> {
+    return this.httpClient.post<ApiResponse<PlanCodeRequest>>(this.url + '/bypassCode/requestCode', input);
+  }
+
+  /** Any authenticated user — their own past requests, so the page can show "already asked". */
+  getMyCodeRequests(): Observable<ApiResponse<PlanCodeRequest[]>> {
+    return this.httpClient.get<ApiResponse<PlanCodeRequest[]>>(this.url + '/bypassCode/myCodeRequests');
+  }
+
+  /** Admin only. */
+  getAllCodeRequests(status?: 'OPEN' | 'CLOSED'): Observable<ApiResponse<PlanCodeRequest[]>> {
+    const params = status ? { status } : undefined;
+    return this.httpClient.get<ApiResponse<PlanCodeRequest[]>>(this.url + '/bypassCode/codeRequests', { params });
+  }
+
+  /** Admin only. */
+  closeCodeRequest(id: number, note?: string): Observable<ApiResponse<PlanCodeRequest>> {
+    return this.httpClient.put<ApiResponse<PlanCodeRequest>>(this.url + `/bypassCode/codeRequests/${id}/close`, { note });
   }
 }

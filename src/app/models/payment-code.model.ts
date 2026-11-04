@@ -95,3 +95,25 @@ export interface PaymentCodeRedeemResult {
   status: string;
   usesLeft: number;
 }
+
+/** A client asking the administration for a Plan bypass code -- no trainer involved, unlike PaymentCodeRequest. */
+export interface PlanCodeRequest {
+  id: number;
+  status: 'OPEN' | 'CLOSED';
+  planId: number;
+  planName: string;
+  clientId: number;
+  clientName: string;
+  clientEmail: string;
+  note: string | null;
+  decidedByName: string | null;
+  decidedAt: string | null;
+  decisionNote: string | null;
+  date: string;
+  lastUpdate: string;
+}
+
+export interface PlanCodeRequestInput {
+  planId: number;
+  note?: string | null;
+}
