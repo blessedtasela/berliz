@@ -173,7 +173,7 @@ describe('BookingPriceEstimateComponent', () => {
       show({ trainerId: 9, minutes: 60, sessionType: 'TRIAL', newMemberPercent: 50, gymDropIn: 25 });
       const line = fixture.nativeElement.querySelector('[data-testid="gym-dropin-line"]') as HTMLElement;
       expect(line.textContent).toContain('$25.00');
-      expect(line.textContent).toContain('not part of the total');
+      expect(line.textContent).toContain('not included in your payment to Berliz');
       const total = fixture.nativeElement.querySelector('.text-sm.font-bold') as HTMLElement;
       expect(total.textContent).toContain('$50.00');
       expect(total.textContent).not.toContain('$75.00');
@@ -189,7 +189,7 @@ describe('BookingPriceEstimateComponent', () => {
 
     it('gives a concrete refund example under the cancellation rule', () => {
       show({ trainerId: 9, minutes: 60, sessionType: 'TRIAL', newMemberPercent: 50 });
-      expect(text()).toContain('50% of what you paid: e.g. $25.00 back on $50.00.');
+      expect(text()).toContain('50% of what you paid: e.g. CA$25.00 back on CA$50.00.');
     });
 
     it('never applies to a center', () => {

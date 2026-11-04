@@ -185,11 +185,11 @@
                                     <div class="grid grid-cols-1 sm:grid-cols-[9rem_1fr] gap-2 items-start">
                                         <div class="flex flex-col gap-1">
                                             <div class="relative">
-                                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">$</span>
-                                                <input type="number" formControlName="dropInFee" min="0" step="0.01" aria-label="Gym drop-in fee, paid at the gym"
-                                                    placeholder="Gym drop-in" class="berliz-input w-full text-xs pl-6" />
+                                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">CA$</span>
+                                                <input type="number" formControlName="dropInFee" min="0" max="25" step="0.01" aria-label="Gym drop-in fee, paid at the gym"
+                                                    placeholder="Gym drop-in" class="berliz-input w-full text-xs pl-9" />
                                             </div>
-                                            <span class="text-[11px] text-gray-400 dark:text-gray-500">What the gym charges clients at the door. They pay it at the gym; it isn't part of your price.</span>
+                                            <span class="text-[11px] text-gray-400 dark:text-gray-500">What the gym charges clients at the door, up to CA$25. They pay it at the gym; it isn't part of your price.</span>
                                         </div>
                                         <input type="url" formControlName="mapsUrl" maxlength="500" aria-label="Google Maps link of this spot"
                                             placeholder="Google Maps link (sets your travel zone)" class="berliz-input w-full text-xs" />
@@ -210,7 +210,8 @@
                                             {{ spot.get('precision')?.value === 'AREA' ? 'Clients see this as an approximate area.' : 'Clients see this as the exact place.' }}
                                         </span>
                                     </div>
-                                    <p *ngIf="spot.get('fee')?.invalid || spot.get('dropInFee')?.invalid" class="text-red-500 text-[11px]">A fee can't be negative.</p>
+                                    <p *ngIf="spot.get('fee')?.invalid" class="text-red-500 text-[11px]">A fee can't be negative.</p>
+                                    <p *ngIf="spot.get('dropInFee')?.invalid" class="text-red-500 text-[11px]">The gym drop-in must be between CA$0 and CA$25.</p>
                                 </div>
                             </div>
 
