@@ -16,6 +16,14 @@ describe('navigateToNotificationEntity', () => {
     };
   }
 
+  it('routes a payment code notification to the payment codes page', () => {
+    const n = notification({ entityType: 'paymentCode', entityId: 11 });
+
+    expect(notificationHasDeepLink(n)).toBeTrue();
+    expect(navigateToNotificationEntity(router, n)).toBeTrue();
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/payment-codes']);
+  });
+
   it('routes a message notification to the conversation with that sender', () => {
     const result = navigateToNotificationEntity(router, notification({ entityType: 'message', entityId: 42 }));
 
