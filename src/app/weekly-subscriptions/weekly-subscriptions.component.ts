@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 
 import { WeeklySlot, WeeklySubscription } from 'src/app/models/weekly-subscription.model';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { WeeklySubscriptionService } from 'src/app/services/weekly-subscription.service';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 
 export const WEEKDAYS = [
   { value: 1, label: 'Monday' }, { value: 2, label: 'Tuesday' }, { value: 3, label: 'Wednesday' },
@@ -20,7 +22,7 @@ export const WEEKDAYS = [
 @Component({
   selector: 'app-weekly-subscriptions',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatDialogModule],
   templateUrl: './weekly-subscriptions.component.html'
 })
 export class WeeklySubscriptionsComponent implements OnInit {
@@ -34,7 +36,12 @@ export class WeeklySubscriptionsComponent implements OnInit {
   errors: Record<number, string> = {};
   focusId: number | null = null;
 
-  constructor(private weekly: WeeklySubscriptionService, private snackBar: SnackBarService, private route: ActivatedRoute) { }
+  constructor(
+    private weekly: WeeklySubscriptionService,
+    private snackBar: SnackBarService,
+    private route: ActivatedRoute,
+    private dialog: MatDialog,
+  ) { }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.queryParamMap.get('id'));
@@ -103,8 +110,20 @@ export class WeeklySubscriptionsComponent implements OnInit {
   }
 
   cancel(s: WeeklySubscription): void {
-    if (!window.confirm('Cancel this subscription? It stops renewing and your upcoming sessions are released (sessions starting within the free-cancel window stay booked).')) return;
-    this.run(s, this.weekly.cancel(s.subscriptionId));
+    this.dialog.open(PromptModalComponent, {
+      width: '400px',
+      maxWidth: '95vw',
+      data: {
+        confirmation: true,
+        title: 'Cancel this subscription?',
+        message: 'It stops renewing and your upcoming sessions are released (sessions starting within the free-cancel window stay booked).',
+        confirmText: 'Cancel subscription',
+        cancelText: 'Keep it',
+      }
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.run(s, this.weekly.cancel(s.subscriptionId));
+    });
   }
 
   private run(s: WeeklySubscription, call: import('rxjs').Observable<{ message?: string; data: WeeklySubscription }>, done?: () => void): void {

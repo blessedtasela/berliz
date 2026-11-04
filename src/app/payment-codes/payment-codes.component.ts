@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import jwt_decode from 'jwt-decode';
 import { Subject, takeUntil } from 'rxjs';
@@ -9,6 +10,7 @@ import { PaymentCode, PaymentCodeRequest, PaymentCodeTargetType } from 'src/app/
 import { Users } from 'src/app/models/users.interface';
 import { PaymentCodeService } from 'src/app/services/payment-code.service';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { PromptModalComponent } from 'src/app/shared/prompt-modal/prompt-modal.component';
 import { selectUser } from 'src/app/state/user/user.selector';
 
 type Tab = 'review' | 'requests' | 'codes' | 'new';
@@ -22,7 +24,7 @@ type Tab = 'review' | 'requests' | 'codes' | 'new';
 @Component({
   selector: 'app-payment-codes',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatDialogModule],
   templateUrl: './payment-codes.component.html'
 })
 export class PaymentCodesComponent implements OnInit, OnDestroy {
@@ -49,7 +51,7 @@ export class PaymentCodesComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private codes: PaymentCodeService, private store: Store, private snackBar: SnackBarService) { }
+  constructor(private codes: PaymentCodeService, private store: Store, private snackBar: SnackBarService, private dialog: MatDialog) { }
 
   get isProvider(): boolean {
     const role = this.user?.role;
@@ -176,8 +178,21 @@ export class PaymentCodesComponent implements OnInit, OnDestroy {
   }
 
   revoke(code: PaymentCode): void {
-    if (!window.confirm('Cancel this code? It can no longer be used.')) return;
-    this.run(code.id, this.codes.revoke(code.id), 'Code cancelled');
+    this.dialog.open(PromptModalComponent, {
+      width: '400px',
+      maxWidth: '95vw',
+      data: {
+        confirmation: true,
+        title: 'Cancel this code?',
+        message: 'It can no longer be used.',
+        confirmText: 'Cancel code',
+        cancelText: 'Keep it',
+        icon: 'alert-triangle'
+      }
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.run(code.id, this.codes.revoke(code.id), 'Code cancelled');
+    });
   }
 
   private run(id: number, call: import('rxjs').Observable<{ message?: string }>, okMessage: string): void {
