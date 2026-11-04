@@ -76,3 +76,20 @@ export function instantInZone(date: string, time: string, zone: string): Date | 
     return null;
   }
 }
+
+/** Every time zone the browser knows (sorted), always including `current`, so a saved zone is never missing from a picker. */
+export function timezoneOptions(current?: string | null): string[] {
+  let zones: string[] = [];
+  try {
+    zones = (Intl as any).supportedValuesOf?.('timeZone') ?? [];
+  } catch {
+    zones = [];
+  }
+  if (zones.length === 0) {
+    zones = ['America/Vancouver', 'America/Edmonton', 'America/Toronto', 'America/Halifax', 'America/New_York', 'America/Los_Angeles',
+      'Europe/London', 'Europe/Paris', 'Africa/Casablanca', 'Africa/Lagos', 'Asia/Dubai', 'Asia/Kolkata', 'Australia/Sydney'];
+  }
+  const set = new Set(zones);
+  if (current) set.add(current);
+  return [...set].sort((a, b) => a.localeCompare(b));
+}

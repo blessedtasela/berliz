@@ -5,7 +5,7 @@ import { Availability, AvailabilityDay, AvailableSlotsResponse } from '../../mod
 type Res<T> = { response: ApiResponse<T> };
 type Err = { error: string };
 
-export const setMyAvailability = createAction('[Availability] Set Mine', props<{ days: AvailabilityDay[] }>());
+export const setMyAvailability = createAction('[Availability] Set Mine', props<{ days: AvailabilityDay[]; timezone?: string }>());
 export const setMyAvailabilitySuccess = createAction('[Availability] Set Mine Success', props<Res<Availability[]>>());
 export const setMyAvailabilityFailure = createAction('[Availability] Set Mine Failure', props<Err>());
 

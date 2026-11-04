@@ -2,7 +2,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Actions } from '@ngrx/effects';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Subject } from 'rxjs';
 
 import { MyAvailabilityEditorComponent } from './my-availability-editor.component';
@@ -42,5 +42,34 @@ describe('MyAvailabilityEditorComponent', () => {
   it('should create', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
+  });
+
+  describe('timezone', () => {
+    it('starts from the browser zone, and offers a list that includes it', () => {
+      fixture.detectChanges();
+      expect(component.timezone).toBe(component.detectedTimezone);
+      expect(component.timezones).toContain(component.timezone);
+    });
+
+    it('shows the zone the trainer saved, even if this device is somewhere else', () => {
+      const store = TestBed.inject(MockStore);
+      store.overrideSelector(selectMyAvailability, [{ id: 1, dayOfWeek: 1, startTime: '09:00:00', endTime: '17:00:00', isActive: true, timezone: 'Pacific/Auckland' } as any]);
+      fixture.detectChanges();
+      expect(component.timezone).toBe('Pacific/Auckland');
+      expect(component.timezones).toContain('Pacific/Auckland');
+    });
+
+    it('saves the zone the trainer picked, not the one the browser reports', () => {
+      const store = TestBed.inject(MockStore);
+      const dispatch = spyOn(store, 'dispatch');
+      fixture.detectChanges();
+      component.timezone = 'Africa/Casablanca';
+
+      component.save();
+
+      const saved = dispatch.calls.allArgs().map(a => a[0] as any).find(a => a.type === '[Availability] Set Mine');
+      expect(saved).toBeDefined();
+      expect(saved.timezone).toBe('Africa/Casablanca');
+    });
   });
 });

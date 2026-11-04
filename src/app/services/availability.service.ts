@@ -24,10 +24,11 @@ export class AvailabilityService {
    * overlapping (see AvailabilityServiceImplement.effectiveZone on the
    * backend for the fallback this replaces once saved).
    */
-  setMyAvailability(days: AvailabilityDay[]) {
+  /** `timezone` is the zone the trainer chose in the editor; when none is given the browser's own zone is used, as before. */
+  setMyAvailability(days: AvailabilityDay[], timezone?: string) {
     return this.httpClient.post<ApiResponse<Availability[]>>(this.url + "/availability/setMine", {
       days,
-      timezone: this.browserTimezone(),
+      timezone: timezone || this.browserTimezone(),
     }, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     });

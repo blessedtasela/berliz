@@ -18,6 +18,7 @@ import {
 import { selectAvailabilityLoading, selectMyAvailability } from 'src/app/state/availability/availability.selectors';
 
 import { watchLoadError } from 'src/app/shared/load-error/load-error-tracker';
+import { timezoneOptions } from 'src/app/utils/timezone-label.util';
 import { genericError } from 'src/validators/form-validators.module';
 
 interface TimeBlock {
@@ -62,6 +63,10 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
   /** Inline failure/validation message for the session-length save. */
   slotDurationError: string | null = null;
 
+  /** The zone the hours are in: the saved one once loaded, else this browser's. Chosen explicitly, never guessed silently. */
+  timezone = '';
+  timezones: string[] = [];
+
   /** Shown so a trainer/center understands their hours are zone-aware -- see AvailabilityService.setMyAvailability's own doc comment for the bug this closes. */
   get detectedTimezone(): string {
     try {
@@ -99,6 +104,8 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.timezone = this.detectedTimezone;
+    this.timezones = timezoneOptions(this.timezone);
     watchLoadError(this.actions$, loadMyAvailabilityFailure, [loadMyAvailability, loadMyAvailabilitySuccess], this.destroy$, m => this.loadError = m);
     this.store.dispatch(loadMyAvailability());
     this.loadLeadTime();
@@ -112,6 +119,8 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(rows => {
         if (!rows || rows.length === 0) return;
+        const saved = rows.find(r => !!r.timezone)?.timezone;
+        if (saved) { this.timezone = saved; this.timezones = timezoneOptions(saved); }
         this.days = this.buildDefaultDays().map(defaultDay => {
           const matches = rows
             .filter(r => r.dayOfWeek === defaultDay.dayOfWeek && r.isActive)
@@ -232,6 +241,7 @@ export class MyAvailabilityEditorComponent implements OnInit, OnDestroy {
 
     this.saving = true;
     this.store.dispatch(setMyAvailability({
+      timezone: this.timezone || undefined,
       days: this.days.flatMap(day => day.blocks.map(b => ({
         dayOfWeek: day.dayOfWeek,
         isActive: true,

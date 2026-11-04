@@ -11,6 +11,9 @@ export interface Availability {
   /** 0 = Sunday .. 6 = Saturday (matches JS Date#getDay()). */
   dayOfWeek: number;
 
+  /** IANA zone this provider's hours are in (null = never set). */
+  timezone?: string | null;
+
   /** "HH:mm:ss" (time-of-day, not a full timestamp). */
   startTime: string;
   endTime: string;
