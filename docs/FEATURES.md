@@ -208,6 +208,15 @@ instead).
 
 Newest first. Each entry: what shipped, which surfaces, PR/commit.
 
+### Unreleased — Test-mode earnings tracking, a plan-code request path, and the last native confirm() dialogs
+
+Continuation of the owner's Nov 3 fix list plus a few ad hoc asks (a Muse email-research doc, "add a request-code button"); see `docs/ISSUE_LOG.md` for full status, including several items that turned out to already be shipped: star ratings, calendar link, provider insights, waitlist, sidebar groups, hide-my-achievements, and — found mid-session, right as it was about to be built from scratch — the entire Admin Billing section (`/dashboard/billing`: Overview/Payouts/Connect-accounts, line 129 below).
+
+- **Stripe test-mode money can no longer count as real earnings** (PY-17). `Payment`/`Payout` now carry Stripe's own `livemode` flag, set at the moment each payment is recorded; billing-summary sums exclude anything explicitly marked test-mode. Historical contaminated rows (4 known, Oct 27) still need manual identification — no DB/Stripe-dashboard access from here.
+- **A Plan tier (Basic/Plus/Exclusive-style) can now be requested without a code.** Plans have no trainer to ask first, unlike a booking or package, so there was no "I don't have a code" path at all. Every plan card now has "No code? Request one," going straight to the administration's queue (`PlanCodeRequest`, backend `/bypassCode/requestCode` + `/bypassCode/codeRequests`).
+- **Trainer payment-notification email now says something.** It used to read only "X paid for their session" — no amount, currency, date, booking reference, or which account received it. Now states all of those, and that the figure is gross, not the net payout.
+- **The last two raw `window.confirm()` dialogs replaced** with the app's own `PromptModalComponent` (payment-codes revoke, weekly-subscriptions cancel), plus removal of a dead, unused `AuthenticationGuard` that unconditionally `alert()`'d.
+
 ### Unreleased — Drop-in fee cap, commission-tier fix, sign-up 500s, and a silent client-link crash
 
 Owner's Nov 3 fix list, money items first; see `docs/ISSUE_LOG.md` for the full session status.
