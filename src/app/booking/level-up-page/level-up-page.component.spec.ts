@@ -26,6 +26,8 @@ describe('LevelUpPageComponent', () => {
     page.buyingPlanId = null;
     page.pendingPlanId = null;
     page.ownedByPlanId = new Map();
+    page.askingTrainerForPlanId = null;
+    page.askSentPlanIds = new Set();
     page.showAuthPrompt = false;
     page.user = { email: 'a@b.c' };
   });
@@ -286,14 +288,26 @@ describe('LevelUpPageComponent', () => {
     it('lets a client without a code ask their trainer, once', () => {
       const askTrainer = jasmine.createSpy('askTrainer').and.returnValue(of({ data: {} }));
       page.paymentCodeService = { askTrainer };
-      page.selectedPlan = plan();
+      const p = plan();
 
-      page.askTrainerForCode();
-      page.askTrainerForCode();
+      page.askTrainerForCode(p);
+      page.askTrainerForCode(p);
 
       expect(askTrainer).toHaveBeenCalledTimes(1);
       expect(askTrainer).toHaveBeenCalledWith({ targetType: 'PACKAGE', packageId: 7 });
-      expect(page.askSent).toBeTrue();
+      expect(page.hasAskedFor(p)).toBeTrue();
+    });
+
+    it('tracks the ask separately per plan, so asking about one does not mark another as asked', () => {
+      const askTrainer = jasmine.createSpy('askTrainer').and.returnValue(of({ data: {} }));
+      page.paymentCodeService = { askTrainer };
+      const planA = plan({ id: 7 });
+      const planB = plan({ id: 8 });
+
+      page.askTrainerForCode(planA);
+
+      expect(page.hasAskedFor(planA)).toBeTrue();
+      expect(page.hasAskedFor(planB)).toBeFalse();
     });
 
     it('asks a guest to sign in instead of asking the trainer', () => {
@@ -301,9 +315,8 @@ describe('LevelUpPageComponent', () => {
       page.paymentCodeService = { askTrainer };
       page.saveDraft = jasmine.createSpy('saveDraft');
       page.user = null;
-      page.selectedPlan = plan();
 
-      page.askTrainerForCode();
+      page.askTrainerForCode(plan());
 
       expect(askTrainer).not.toHaveBeenCalled();
       expect(page.showAuthPrompt).toBeTrue();
